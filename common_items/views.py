@@ -1878,6 +1878,20 @@ class ResourceManagement(IsAuthenticated,View):
 class Productivity(IsAuthenticated,View):
 	def get(self,request):
 
+		#save ajax productivity
+		response_dict = {}
+		action = request.GET.get('action_type')
+		if action == 'edit_productivity':
+			productivity_id    = request.GET.get('productivity_id')
+			productivity_value = request.GET.get('productivity_value')
+
+			productivity                  = ServiceProductivity.objects.get(id=productivity_id)
+			productivity.perhour_cleaning = productivity_value
+			productivity.save()
+			response_dict['success'] =True
+			return JsonResponse(response_dict)
+		
+		
 		try:
 			service_types = ServiceType.objects.filter(is_active=True)	
 		except:
@@ -1896,7 +1910,9 @@ class Productivity(IsAuthenticated,View):
 		return render(request,'common/productivity/productivity.html',{'service_price_ranges':service_price_ranges,'service_productivities':service_productivities,'service_types':service_types})
 
 	def post(self,request):
+		
 		action = request.POST.get('action_type')
+	
 		if action == 'edit_price_range':
 			price_range_id       = request.POST.get('price_range')
 			price_range          = ServicePriceRange.objects.get(id=price_range_id)
@@ -1915,4 +1931,9 @@ class Productivity(IsAuthenticated,View):
 			else:
 				messages.error(request,get_error(price_range_form))
 
-		return redirect('commmon:productivity')
+		if action == 'delete_price_range':
+			price_range_id       = request.POST.get('price_range')
+			price_range          = ServicePriceRange.objects.filter(id=price_range_id).delete()
+			messages.success(request,"Service Price Range Deleted Successfully")
+		
+		return redirect('common_items:productivity')

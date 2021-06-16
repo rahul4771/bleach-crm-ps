@@ -38,27 +38,73 @@
                 <div class="white-wrapper">
                     <!--white-wrapper-->
                     <div class="row">
-                        <button data-toggle="modal" data-target="#editModal"  class="pricerange_edit_button" ></button>
-                        <button data-toggle="modal" data-target="#addModal" class="pricerange_add_button"></button>
-                        <button data-toggle="modal" data-target="#DeleteModal" class="pricerange_delete_button"></button>
+                        <button data-toggle="modal" data-target="#editModal"  class="pricerange_edit_button" style="display:none;"></button>
+                        <button data-toggle="modal" data-target="#addModal" class="pricerange_add_button" style="display:none;"></button>
+                        <button data-toggle="modal" data-target="#DeleteModal" class="pricerange_delete_button" style="display:none;"></button>
                         {% for service_type in service_types %}
                         <div class="col-md-6">
                             <div class="productivity-card">
                               <h2 class="productivity-name"> {{service_type.name}}</h2>
                               <div class="productivity-card-sub">
-                                  <div class="productivity-sub-top">
-                                      <div class="productivity-sub-top-item-left">
-                                        Productivity
-                                      </div>
-                                      <div class="productivity-sub-top-item-right"> 
-                                          <img id="id_edit_1" onclick="editPro(1)" class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                          <button  id="id_done_1" onclick="doneEdit(1)" class="productivity-card-done">Done</button>
+                                    {% for service_productivity in service_productivities %}
+                                    {% if service_productivity.service_type == service_type %}
+                                    {% if not service_productivity.is_newkitchen and not service_productivity.is_highprice_facade and not service_productivity.is_highprice_window and service_productivity.upholstery_type != 'CHAIR' and service_productivity.upholstery_type != 'CURTAIN' %}
+                                    <div class="productivity-sub-top" id="productivityhead_{{service_type.id}}1">
+                                        <div class="productivity-sub-top-item-left">
+                                          Productivity
+                                        </div>
+                                        <div class="productivity-sub-top-item-right"> 
+                                            <img id="id_edit_{{service_productivity.id}}" onclick="editPro({{service_productivity.id}})" class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
+                                            <button  id="id_done_{{service_productivity.id}}" onclick="doneEdit({{service_productivity.id}})" class="productivity-card-done">Done</button>
+                                        </div>
                                     </div>
-                                  </div>
-                                  <div class="productivity-card-sub-content">
-                                    <h1 id="id_pro_value_1" >11.5 <span class="productivity-card-sub-content-text">sqm/man/hr</span></h1>
-                                    <input  id="id_pro_1" type="number" class="productivity-card-sub-input" placeholder=" " required="required">
-                                 </div>
+                                    <div class="productivity-card-sub-content" id="productivitycontent_{{service_type.id}}1">
+                                    <h1 id="id_pro_value_{{service_productivity.id}}" >{{service_productivity.perhour_cleaning}} <span class="productivity-card-sub-content-text">sqm/man/hr</span></h1>
+                                    <input  id="id_pro_{{service_productivity.id}}" type="number" class="productivity-card-sub-input" placeholder=" " required="required">
+                                    </div>
+                                    {% endif %}
+                                    {% endif %}
+                                    {% endfor %}
+                                    
+                                    {% for service_productivity in service_productivities %}
+                                    {% if service_productivity.service_type == service_type %}
+                                    {% if service_productivity.is_newkitchen or service_productivity.is_highprice_facade or service_productivity.is_highprice_window or service_productivity.upholstery_type == 'CHAIR' %}
+                                    <div class="productivity-sub-top" id="productivityhead_{{service_type.id}}2" style="display: none;">
+                                        <div class="productivity-sub-top-item-left">
+                                          Productivity
+                                        </div>
+                                        <div class="productivity-sub-top-item-right"> 
+                                            <img id="id_edit_{{service_productivity.id}}" onclick="editPro({{service_productivity.id}})" class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
+                                            <button  id="id_done_{{service_productivity.id}}" onclick="doneEdit({{service_productivity.id}})" class="productivity-card-done">Done</button>
+                                        </div>
+                                    </div>
+                                    <div class="productivity-card-sub-content" id="productivitycontent_{{service_type.id}}2" style="display: none;">
+                                    <h1 id="id_pro_value_{{service_productivity.id}}" >{{service_productivity.id}} <span class="productivity-card-sub-content-text">sqm/man/hr</span></h1>
+                                    <input  id="id_pro_{{service_productivity.id}}" type="number" class="productivity-card-sub-input" placeholder=" " required="required">
+                                    </div>
+                                    {% endif %}
+                                    {% endif %}
+                                    {% endfor %}
+
+                                    {% for service_productivity in service_productivities %}
+                                    {% if service_productivity.service_type == service_type %}
+                                    {% if service_productivity.upholstery_type == 'CURTAIN' %}
+                                    <div class="productivity-sub-top" id="productivityhead_{{service_type.id}}3" style="display: none;">
+                                        <div class="productivity-sub-top-item-left">
+                                          Productivity
+                                        </div>
+                                        <div class="productivity-sub-top-item-right"> 
+                                            <img id="id_edit_{{service_productivity.id}}" onclick="editPro({{service_productivity.id}})" class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
+                                            <button  id="id_done_{{service_productivity.id}}" onclick="doneEdit({{service_productivity.id}})" class="productivity-card-done">Done</button>
+                                        </div>
+                                    </div>
+                                    <div class="productivity-card-sub-content" id="productivitycontent_{{service_type.id}}3" style="display: none;">
+                                    <h1 id="id_pro_value_{{service_productivity.id}}" >{{service_productivity.id}} <span class="productivity-card-sub-content-text">sqm/man/hr</span></h1>
+                                    <input  id="id_pro_{{service_productivity.id}}" type="number" class="productivity-card-sub-input" placeholder=" " required="required">
+                                   </div>
+                                    {% endif %}
+                                    {% endif %}
+                                    {% endfor %}
                               </div>
                               <div class="productivity-tab">
                                   <button id="normal_button_id_{{service_type.id}}" class="productivity-tab-item productivity-tab-border"  onclick="viewNormal({{service_type.id}})">Normal</button>
@@ -81,7 +127,7 @@
                                         {{service_price_range.price|floatformat:'3'}} KD
                                     </div>
                                     <div class="col-md-3 productivity-card-items-4">
-                                        <button onclick="edit_price_range(this);" class="img-button" data-service_type_name="{{service_price_range.service_type.name}}" data-service_type_id="{{service_price_range.service_type.id}}" data-id="{{service_price_range.id}}" data-name="{{service_price_range.name}}" data-minimum_area="{{service_price_range.minimum_area}}" data-maximum_area="{{service_price_range.maximum_area}}" data-price="{{service_price_range.price}}" data-unit_price="{{service_price_range.unit_price}}" data-is_newkitchen="{{service_price_range.is_newkitchen}}" data-is_highprice_facade="{{service_price_range.is_highprice_facade}}" data-is_highprice_window="{{service_price_range.is_highprice_window}}" data-upholstery_type="{{service_price_range.upholstery_type}}">
+                                        <button onclick="edit_price_range(this);" class="img-button" data-service_type_name="{{service_price_range.service_type.name}}" data-service_type_id="{{service_price_range.service_type.id}}" data-id="{{service_price_range.id}}" data-name="{{service_price_range.name}}" data-minimum_area="{{service_price_range.minimum_area}}" data-maximum_area="{{service_price_range.maximum_area}}" data-price="{{service_price_range.price}}" data-unit_price="{{service_price_range.unit_price|default_if_none:''}}" data-is_newkitchen="{{service_price_range.is_newkitchen}}" data-is_highprice_facade="{{service_price_range.is_highprice_facade}}" data-is_highprice_window="{{service_price_range.is_highprice_window}}" data-upholstery_type="{{service_price_range.upholstery_type}}">
                                             <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
                                         </button>
                                         <button class="img-button" onclick="delete_price_range(this);" data-id="{{service_price_range.id}}">
@@ -138,7 +184,7 @@
                                           {{service_price_range.price|floatformat:'3'}} KD
                                       </div>
                                       <div class="col-md-3 productivity-card-items-4">
-                                        <button onclick="edit_price_range(this);" class="img-button" data-service_type_name="{{service_price_range.service_type.name}}" data-service_type_id="{{service_price_range.service_type.id}}" data-id="{{service_price_range.id}}" data-name="{{service_price_range.name}}" data-minimum_area="{{service_price_range.minimum_area}}" data-maximum_area="{{service_price_range.maximum_area}}" data-price="{{service_price_range.price}}" data-unit_price="{{service_price_range.unit_price}}" data-is_newkitchen="{{service_price_range.is_newkitchen}}" data-is_highprice_facade="{{service_price_range.is_highprice_facade}}" data-is_highprice_window="{{service_price_range.is_highprice_window}}" data-upholstery_type="{{service_price_range.upholstery_type}}">
+                                        <button onclick="edit_price_range(this);" class="img-button" data-service_type_name="{{service_price_range.service_type.name}}" data-service_type_id="{{service_price_range.service_type.id}}" data-id="{{service_price_range.id}}" data-name="{{service_price_range.name}}" data-minimum_area="{{service_price_range.minimum_area}}" data-maximum_area="{{service_price_range.maximum_area}}" data-price="{{service_price_range.price}}" data-unit_price="{{service_price_range.unit_price|default_if_none:''}}" data-is_newkitchen="{{service_price_range.is_newkitchen}}" data-is_highprice_facade="{{service_price_range.is_highprice_facade}}" data-is_highprice_window="{{service_price_range.is_highprice_window}}" data-upholstery_type="{{service_price_range.upholstery_type}}">
                                               <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
                                           </button>
                                           <button class="img-button" onclick="delete_price_range(this);" data-id="{{service_price_range.id}}">
@@ -157,922 +203,6 @@
                             </div>
                         </div>
                         {% endfor %}
-                        <div class="col-md-6">
-                            <div class="productivity-card">
-                              <h2 class="productivity-name"> General Cleaning</h2>
-                              <div class="productivity-card-sub">
-                                  <div class="productivity-sub-top">
-                                      <div class="productivity-sub-top-item-left">
-                                        Productivity
-                                      </div>
-                                      <div class="productivity-sub-top-item-right"> 
-                                          <img id="id_edit_2" onclick="editPro(2)" class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                          <button  id="id_done_2" onclick="doneEdit(2)" class="productivity-card-done">Done</button>
-                                    </div>
-                                  </div>
-                                  <div class="productivity-card-sub-content">
-                                    <h1 id="id_pro_value_2" >20.2 <span class="productivity-card-sub-content-text">sqm/man/hr</span></h1>
-                                    <input  id="id_pro_2" type="number" class="productivity-card-sub-input" placeholder=" " required="required">
-                                 </div>
-                              </div>
-                              <div class="productivity-tab">
-                                  <button id="normal_button_id_2" class="productivity-tab-item productivity-tab-border"  onclick="viewNormal(2)">Normal</button>
-                                  <button id="special_button_id_2" class="productivity-tab-item " onclick="viewSpecial(2)">Special</button>
-                              </div>
-                              <div id="normal_id_2" class="productivity-card-content"> <!--normal-->              
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Small
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-50 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        25 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Small
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-50 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        25 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Small
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-50 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        25 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                    </div>
-                                </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Small
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-50 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        25 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                           
-
-                              </div>
-                              <div id="special_id_2" class="productivity-card-content none-div"> <!--Special-->
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Normal
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-500 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        250 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Normal
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-500 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        250 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Normal
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-500 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        250 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Normal
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-500 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        250 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-
-                              </div>
-                              <div class="addNewPrice">
-                                    <button class="border-button" data-toggle="modal" data-target="#addModal"><i class="fa fa-plus-circle" aria-hidden="true"></i> Price Range</button>
-                              </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="productivity-card">
-                              <h2 class="productivity-name"> General Cleaning</h2>
-                              <div class="productivity-card-sub">
-                                  <div class="productivity-sub-top">
-                                      <div class="productivity-sub-top-item-left">
-                                        Productivity
-                                      </div>
-                                      <div class="productivity-sub-top-item-right"> 
-                                          <img id="id_edit_1" onclick="editPro(1)" class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                          <button  id="id_done_1" onclick="doneEdit(1)" class="productivity-card-done">Done</button>
-                                    </div>
-                                  </div>
-                                  <div class="productivity-card-sub-content">
-                                    <h1 id="id_pro_value_1" >11.23 <span class="productivity-card-sub-content-text">sqm/man/hr</span></h1>
-                                    <input  id="id_pro_1" type="number" class="productivity-card-sub-input" placeholder=" " required="required">
-                                 </div>
-                              </div>
-                              <div class="productivity-tab">
-                                  <button id="normal_button_id_1" class="productivity-tab-item productivity-tab-border"  onclick="viewNormal(1)">Normal</button>
-                                  <button id="special_button_id_1" class="productivity-tab-item " onclick="viewSpecial(1)">Special</button>
-                              </div>
-                              <div id="normal_id_1" class="productivity-card-content"> <!--normal-->              
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Small
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-50 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        25 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Small
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-50 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        25 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Small
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-50 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        25 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Small
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-50 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        25 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-
-                              </div>
-                              <div id="special_id_1" class="productivity-card-content none-div"> <!--Special-->
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Normal
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-500 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        250 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Normal
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-500 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        250 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Normal
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-500 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        250 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Normal
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-500 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        250 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-
-                              </div>
-                              <div class="addNewPrice">
-                                    <button class="border-button" data-toggle="modal" data-target="#addModal"><i class="fa fa-plus-circle" aria-hidden="true"></i> Price Range</button>
-                              </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="productivity-card">
-                              <h2 class="productivity-name"> General Cleaning</h2>
-                              <div class="productivity-card-sub">
-                                  <div class="productivity-sub-top">
-                                      <div class="productivity-sub-top-item-left">
-                                        Productivity
-                                      </div>
-                                      <div class="productivity-sub-top-item-right"> 
-                                          <img id="id_edit_2" onclick="editPro(2)" class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                          <button  id="id_done_2" onclick="doneEdit(2)" class="productivity-card-done">Done</button>
-                                    </div>
-                                  </div>
-                                  <div class="productivity-card-sub-content">
-                                    <h1 id="id_pro_value_2" >20.2 <span class="productivity-card-sub-content-text">sqm/man/hr</span></h1>
-                                    <input  id="id_pro_2" type="number" class="productivity-card-sub-input" placeholder=" " required="required">
-                                 </div>
-                              </div>
-                              <div class="productivity-tab">
-                                  <button id="normal_button_id_2" class="productivity-tab-item productivity-tab-border"  onclick="viewNormal(2)">Normal</button>
-                                  <button id="special_button_id_2" class="productivity-tab-item " onclick="viewSpecial(2)">Special</button>
-                              </div>
-                              <div id="normal_id_2" class="productivity-card-content"> <!--normal-->              
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Small
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-50 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        25 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Small
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-50 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        25 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Small
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-50 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        25 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                    </div>
-                                </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Small
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-50 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        25 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                           
-
-                              </div>
-                              <div id="special_id_2" class="productivity-card-content none-div"> <!--Special-->
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Normal
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-500 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        250 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Normal
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-500 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        250 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Normal
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-500 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        250 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Normal
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-500 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        250 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-
-                              </div>
-                              <div class="addNewPrice">
-                                    <button class="border-button" data-toggle="modal" data-target="#addModal"><i class="fa fa-plus-circle" aria-hidden="true"></i> Price Range</button>
-                              </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="productivity-card">
-                              <h2 class="productivity-name"> General Cleaning</h2>
-                              <div class="productivity-card-sub">
-                                  <div class="productivity-sub-top">
-                                      <div class="productivity-sub-top-item-left">
-                                        Productivity
-                                      </div>
-                                      <div class="productivity-sub-top-item-right"> 
-                                          <img id="id_edit_1" onclick="editPro(1)" class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                          <button  id="id_done_1" onclick="doneEdit(1)" class="productivity-card-done">Done</button>
-                                    </div>
-                                  </div>
-                                  <div class="productivity-card-sub-content">
-                                    <h1 id="id_pro_value_1" >11.23 <span class="productivity-card-sub-content-text">sqm/man/hr</span></h1>
-                                    <input  id="id_pro_1" type="number" class="productivity-card-sub-input" placeholder=" " required="required">
-                                 </div>
-                              </div>
-                              <div class="productivity-tab">
-                                  <button id="normal_button_id_1" class="productivity-tab-item productivity-tab-border"  onclick="viewNormal(1)">Normal</button>
-                                  <button id="special_button_id_1" class="productivity-tab-item " onclick="viewSpecial(1)">Special</button>
-                              </div>
-                              <div id="normal_id_1" class="productivity-card-content"> <!--normal-->              
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Small
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-50 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        25 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Small
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-50 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        25 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Small
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-50 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        25 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Small
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-50 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        25 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-
-                              </div>
-                              <div id="special_id_1" class="productivity-card-content none-div"> <!--Special-->
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Normal
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-500 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        250 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Normal
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-500 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        250 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Normal
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-500 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        250 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Normal
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-500 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        250 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-
-                              </div>
-                              <div class="addNewPrice">
-                                    <button class="border-button" data-toggle="modal" data-target="#addModal"><i class="fa fa-plus-circle" aria-hidden="true"></i> Price Range</button>
-                              </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="productivity-card">
-                              <h2 class="productivity-name"> General Cleaning</h2>
-                              <div class="productivity-card-sub">
-                                  <div class="productivity-sub-top">
-                                      <div class="productivity-sub-top-item-left">
-                                        Productivity
-                                      </div>
-                                      <div class="productivity-sub-top-item-right"> 
-                                          <img id="id_edit_2" onclick="editPro(2)" class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                          <button  id="id_done_2" onclick="doneEdit(2)" class="productivity-card-done">Done</button>
-                                    </div>
-                                  </div>
-                                  <div class="productivity-card-sub-content">
-                                    <h1 id="id_pro_value_2" >20.2 <span class="productivity-card-sub-content-text">sqm/man/hr</span></h1>
-                                    <input  id="id_pro_2" type="number" class="productivity-card-sub-input" placeholder=" " required="required">
-                                 </div>
-                              </div>
-                              <div class="productivity-tab">
-                                  <button id="normal_button_id_2" class="productivity-tab-item productivity-tab-border"  onclick="viewNormal(2)">Normal</button>
-                                  <button id="special_button_id_2" class="productivity-tab-item " onclick="viewSpecial(2)">Special</button>
-                              </div>
-                              <div id="normal_id_2" class="productivity-card-content"> <!--normal-->              
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Small
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-50 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        25 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Small
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-50 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        25 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Small
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-50 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        25 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                    </div>
-                                </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Small
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-50 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        25 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                           
-
-                              </div>
-                              <div id="special_id_2" class="productivity-card-content none-div"> <!--Special-->
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Normal
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-500 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        250 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Normal
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-500 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        250 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Normal
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-500 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        250 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        x-Normal
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        0-500 sqm
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        250 KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button data-toggle="modal" data-target="#editModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-
-                              </div>
-                              <div class="addNewPrice">
-                                    <button class="border-button" data-toggle="modal" data-target="#addModal"><i class="fa fa-plus-circle" aria-hidden="true"></i> Price Range</button>
-                              </div>
-                            </div>
-                        </div>
                        
                         
                        
@@ -1107,17 +237,20 @@
                 </div>
 
             </div>
+            <form method="POST" action="">
+                {% csrf_token %}
             <div class="row">
                 <input type="hidden" name="action_type" value="delete_price_range">
                 <input type="hidden" name="price_range" id="delete_price_range_id">
                 <div class="col-md-12 text-center">
                     <div class="cancel-model-content">
-                        <button class="sent-button">Yes</button>
+                        <button class="sent-button"><input type="submit" value="Yes"></button>
                         <button data-dismiss="modal" class="view-button">No</button>
                     </div>
                 </div>
 
             </div>
+            </form>
         </div>
     </div>
   </div>
@@ -1138,6 +271,8 @@
             </div>
             <h2 class="productivity-name" id="edit_service_type_name_id"> </h2>
             <!-- <h3 class="productivity-name-type"> Normal</h3> -->
+            <form method="POST" action="">
+                {% csrf_token %}
             <input type="hidden" name="action_type" value="edit_price_range">
             <input type="hidden" name="price_range" id="edit_price_range_id">
             <input type="hidden" name="service_type" id="edit_service_type_id">
@@ -1156,11 +291,11 @@
                 </div>
                 <div class="col-md-6 mt-10">
                     <label > Maximum Area</label>
-                    <input name="maxium_area" id="edit_maximum_area_id" type="text" placeholder=" " required="required" class="textBox model-text-border">
+                    <input name="maximum_area" id="edit_maximum_area_id" type="text" placeholder=" " required="required" class="textBox model-text-border">
                 </div>
                 <div class="col-md-6 mt-10">
                     <label > Unit Price</label>
-                    <input name="unit_price" id="edit_unit_price_id" type="text" placeholder=" " required="required" class="textBox model-text-border">
+                    <input name="unit_price" id="edit_unit_price_id" type="text" placeholder=" " class="textBox model-text-border">
                 </div>
                 <div class="col-md-6 mt-10 kitchen-checkbox">
                     <label > New Kitchen</label>
@@ -1187,12 +322,13 @@
             <div class="row">
                 <div class="col-md-12 text-center">
                     <div class="cancel-model-content">
-                        <button class="sent-button">Submit</button>
+                        <button class="sent-button"><input type="submit" value="Submit"></button>
                         <button data-dismiss="modal" class="view-button">Cancel</button>
                     </div>
                 </div>
 
             </div>
+            </form>
         </div>
     </div>
   </div>
@@ -1213,6 +349,8 @@
                     </div>
                 </div>
                 <h2 class="productivity-name" id="add_service_type_name_id"> </h2>
+                <form method="POST" action="">
+                    {% csrf_token %}
                 <input type="hidden" name="action_type" value="add_price_range">
                 <input type="hidden" name="service_type" id="add_service_type_id">
                 <div class="row mt-10">
@@ -1230,11 +368,11 @@
                     </div>
                     <div class="col-md-6 mt-10">
                         <label > Maximum Area</label>
-                        <input name="maxium_area" id="add_maximum_area_id" type="text" placeholder=" " required="required" class="textBox model-text-border">
+                        <input name="maximum_area" id="add_maximum_area_id" type="text" placeholder=" " required="required" class="textBox model-text-border">
                     </div>
                     <div class="col-md-6 mt-10">
                         <label > Unit Price</label>
-                        <input name="unit_price" id="add_unit_price_id" type="text" placeholder=" " required="required" class="textBox model-text-border">
+                        <input name="unit_price" id="add_unit_price_id" type="text" placeholder=" " class="textBox model-text-border">
                     </div>
                     <div class="col-md-6 mt-10 kitchen-checkbox">
                         <label > New Kitchen</label>
@@ -1261,12 +399,13 @@
                 <div class="row">
                     <div class="col-md-12 text-center">
                         <div class="cancel-model-content">
-                            <button class="sent-button">Submit</button>
+                            <button class="sent-button"><input type="submit" value="Submit"></button>
                             <button data-dismiss="modal" class="view-button">Cancel</button>
                         </div>
                     </div>
     
                 </div>
+                </form>
             </div>
         </div>
       </div>
@@ -1285,7 +424,15 @@
     $("#veryspecial_button_id_"+id).addClass("productivity-tab-border");
     $("#normal_button_id_"+id).removeClass("productivity-tab-border");
     $("#special_button_id_"+id).removeClass("productivity-tab-border");
+
+    $("#productivityhead_"+id+"1").hide();
+    $("#productivityhead_"+id+"2").hide();
+    $("#productivityhead_"+id+"3").show();
+    $("#productivitycontent_"+id+"1").hide();
+    $("#productivitycontent_"+id+"2").hide();
+    $("#productivitycontent_"+id+"3").show();
   }
+
   function viewSpecial(id) {
     document.getElementById("special_id_"+id).style.display = "block";
     document.getElementById("normal_id_"+id).style.display = "none";
@@ -1293,6 +440,13 @@
     $("#special_button_id_"+id).addClass("productivity-tab-border");
     $("#normal_button_id_"+id).removeClass("productivity-tab-border");
     $("#veryspecial_button_id_"+id).removeClass("productivity-tab-border");
+
+    $("#productivityhead_"+id+"1").hide();
+    $("#productivityhead_"+id+"2").show();
+    $("#productivityhead_"+id+"3").hide();
+    $("#productivitycontent_"+id+"1").hide();
+    $("#productivitycontent_"+id+"2").show();
+    $("#productivitycontent_"+id+"3").hide();
   }
   function viewNormal(id) {
     document.getElementById("normal_id_"+id).style.display = "block";
@@ -1301,7 +455,15 @@
     $("#normal_button_id_"+id).addClass("productivity-tab-border");
     $("#special_button_id_"+id).removeClass("productivity-tab-border");
     $("#veryspecial_button_id_"+id).removeClass("productivity-tab-border");
+    
+    $("#productivityhead_"+id+"1").show();
+    $("#productivityhead_"+id+"2").hide();
+    $("#productivityhead_"+id+"3").hide();
+    $("#productivitycontent_"+id+"1").show();
+    $("#productivitycontent_"+id+"2").hide();
+    $("#productivitycontent_"+id+"3").hide();
   }
+
   function editPro(id) {
     document.getElementById("id_edit_"+id).style.display = "none";
     document.getElementById("id_done_"+id).style.display = "block";
@@ -1317,7 +479,30 @@
     document.getElementById("id_done_"+id).style.display = "none";
     document.getElementById("id_pro_value_"+id).style.display = "block";
     document.getElementById("id_pro_"+id).style.display = "none";
-  }
+    productivity_id    = id;
+    productivity_value = $("#id_pro_"+id).val();
+
+    // var csrf_header = {'X-CSRFToken':'{{csrf_token}}'};
+    $.ajax({
+            url: "{% url 'common_items:productivity' %}",
+            data: {
+            'productivity_id': productivity_id,
+            'productivity_value':productivity_value,
+            'action_type':'edit_productivity'
+            },
+            dataType: "json",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            
+            success: function(data) {
+                if(data['success'] == true)
+                {
+                    window.location.href="{% url 'common_items:productivity' %}";
+                }
+            }
+        });
+
+}
 
 
 //edit price range
@@ -1396,9 +581,7 @@
       $('.kitchen-checkbox').hide()
     }
 
-    $('#editModal').modal('show')
-    // $(".pricerange_edit_button").click(function(){
-    //     });
+    $(".pricerange_edit_button").click();
 }
 
 
@@ -1443,16 +626,14 @@ function add_price_range(elem)
       $('.kitchen-checkbox').hide()
     }
 
-    $('#addModal').modal('show')
-    // $(".pricerange_add_button").click(function(){
-    //     });
+    $(".pricerange_add_button").click();
 }
 
 //Delete Price Range
 function delete_price_range(elem)
 {
     $('#delete_price_range_id').val($(elem).data('id'));
-    $('#DeleteModal').modal('show')
+    $(".pricerange_delete_button").click();
 }
 </script>
 {% endblock %}
