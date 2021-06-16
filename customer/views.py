@@ -57,7 +57,9 @@ def get_client_ip(request):
 class TermsandConditions(View):
 	def get(self,request):
 		return render(request,"customer/termsandconditions.html",{})
-
+class Cart(View):
+	def get(self,request):
+		return render(request,"customer/cart.html",{})
 
 class Quatation(View):
 	def get(self,request,evaluation_id):
