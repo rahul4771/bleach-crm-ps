@@ -1,1 +1,506 @@
-<h2>Cleaning check in </h2>
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'files/css/booking/booking.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+<div class="wrapper" id="app"><!--wrapper-->
+{% include "tl/common/header.html" %}
+    
+    <section class="content"><!--content-->
+        <div class="container-fluid space topspace"><!--container-fluid space-->
+            <div class="welcome-wrapper"><!--welcome-wrapper-->
+        <h1 class="dashboard-head">Cleaning Form</h1>
+        <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p>   
+            </div><!--welcome-wrapper-->
+       
+           
+            
+     <div class="main-content-holder"><!--main-content-holder-->            
+     
+      
+            
+<div class="white-wrapper"><!--white-wrapper-->
+<div class="center-formDiv"><!--center-formDiv-->
+
+             <div class="common-sub-head align-left">Details</div> 
+    <div class="commnDiv-border ltyellow-border"><!--commnDiv-border-->          
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  	<div class="ticket-form-left"><!--ticket-form-left-->
+ 		<div class="blc-number-big">{{cleaning_team_detail.order_scheduler.order.order_no}}</div>
+    <br>        
+        <div class="green-bg-lg">{% if cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}One-Time{% else %}Subscription{% endif %}</div><div class="blue-bg-lg">{% if cleaning_team_detail.order_scheduler.order.payment_status == 'COMPLETED' %}Paid{% elif cleaning_team_detail.order_scheduler.order.payment_status == 'ON_HOLD' %}ON HOLD<{% else %}Pending{% endif %}</div>
+
+        <div class="customer-name"> {{cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.name}}</div>
+        <div class="email"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_method}}</div>
+        <div class="email"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{cleaning_team_detail.order_scheduler.order_scheduler_book.area_type}}</div>
+        <div class="email"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{cleaning_team_detail.order_scheduler.order_scheduler_book.location_type}}</div>
+  	</div><!--ticket-form-left-->
+	<div class="ticket-form-right"><!--ticket-form-right-->
+        <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> {{cleaning_team_detail.order_scheduler.start_at}}</div>
+        <br>
+        <div class="common-gray-text align-left"><i class="fa fa-lg fa-clock-o orange-text" aria-hidden="true"></i> {{cleaning_team_detail.order_scheduler.start_at|date:'h:i A'}}</div>
+        <br>
+        <div class="common-gray-text align-left"><i class="fa fa-lg fa-hourglass-o yellow-text" aria-hidden="true"></i> {{cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_hours}} Hours</div>
+	      <br> 
+         <div class="common-gray-text align-left"><i class="fa fa-lg fa-building-o green-text" aria-hidden="true"></i> <b>{{cleaning_team_detail.order_scheduler.customer_address.apartment}}</b>: {% if cleaning_team_detail.order_scheduler.customer_address.floor %}{{cleaning_team_detail.order_scheduler.customer_address.floor}}, {% else %}{% endif %} {{cleaning_team_detail.order_scheduler.customer_address.building}}, {{cleaning_team_detail.order_scheduler.customer_address.block}}, {{cleaning_team_detail.order_scheduler.customer_address.street}}, {% if cleaning_team_detail.order_scheduler.customer_address.avenue %}{{cleaning_team_detail.order_scheduler.customer_address.avenue}}, {% else %}{% endif %} {{cleaning_team_detail.order_scheduler.customer_address.area.name}}, {{cleaning_team_detail.order_scheduler.customer_address.governorate.name}}</div>
+        <br>
+
+        {% if cleaning_team_detail.order_scheduler.customer_address.gps_location %}
+        <div class="common-gray-text align-left"><i class="fa fa-globe fa-lg" aria-hidden="true" style="color:blue;"></i> <a href="{{cleaning_team_detail.order_scheduler.customer_address.gps_location}}">GPS Location</a></div>
+        <br>
+        {% endif %}
+
+        <div class="common-gray-text align-left"><i class="fa fa-lg fa-users blue-text" aria-hidden="true"></i> {{cleaning_team_detail.order_scheduler.order_scheduler_book.number_of_cleaners}} Cleaners</div>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<hr class="hr-dashedpad">
+
+<div class="narrow-head align-left">Cleaners</div>
+{% for cleaner in cleaning_team_members %}
+{% if cleaner.member != request.user %}
+<div class="common-gray-text align-left"><strong>{{cleaner.member.name}}</strong></div>
+{% endif %}
+{% endfor %}
+
+<hr class="hr-dashedpad">
+
+{% for section in  cleaning_team_detail.order_scheduler.order_scheduler_book.sections %}
+<div class="narrow-head align-left">Section {{forloop.counter}} : {{section.section_name}}</div>
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+
+  <div class="ticket-form-left"><!--ticket-form-left-->
+    {% if section.category %}
+  	<div class="common-gray-text align-left"><label class="common-labels">Category</label> :<strong> {{section.category}}</strong></div>
+    {% endif %}
+    {% if section.dirt_level %}
+    <div class="common-gray-text align-left"><label class="common-labels">Dirt Level</label> : <strong>{{section.dirt_level}}</strong></div>
+    {% endif %}
+    <div class="common-gray-text align-left d-flex"><label class="common-labels">Size</label> &nbsp;: <span id="id_size"> <strong>{{section.size}} {{section.unit}}</strong> </span>
+        <select id="id_sizelist" class="minimal size-edit-select" style="display: none; height: 28px;" >
+            <option value="0" > 0 Square meter</option>
+            <option value="1" >1 Square meter</option>
+            <option value="2" >2 Square meter</option>
+    </select>
+    
+    </div>
+    {% if section.floor %}
+    <div class="common-gray-text align-left"><label class="common-labels">Floors</label> : <strong>{{section.floor}}</strong></div>
+    {% endif %}
+    {% if section.apartment %}
+    <div class="common-gray-text align-left"><label class="common-labels">Appartments</label> : <strong>{{section.apartment}}</strong></div>
+    {% endif %}
+    {% if section.room %}
+    <div class="common-gray-text align-left"><label class="common-labels">Rooms</label> : <strong>{{section.room}}</strong></div>
+    {% endif %}
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+	{% if section.wall_type %}
+  <div class="common-gray-text align-left"><label class="common-labels">Wall Type</label> : <strong>{{section.wall_type}}</strong></div>
+  {% endif %}
+  {% if section.ceiling_type %}
+    <div class="common-gray-text align-left"><label class="common-labels">Ceiling Type</label> : <strong>{{section.ceiling_type}}</strong></div>
+  {% endif %}
+  {% if section.floor_type %}  
+    <div class="common-gray-text align-left"><label class="common-labels">Floor Type</label> : <strong>{{section.floor_type}}</strong></div>
+  {% endif %}
+  {% if section.material %}
+  <div class="common-gray-text align-left"><label class="common-labels">Material</label> : <strong>{{section.material}}</strong></div>
+  {% endif %}
+  {% if section.colour %}  
+    <div class="common-gray-text align-left"><label class="common-labels">Colour</label> : <strong>{{section.colour}}</strong></div>
+  {% endif %}
+  {% if section.cause_of_stain %}  
+    <div class="common-gray-text align-left"><label class="common-labels">Cause of Stain</label> : <strong>{{section.cause_of_stain}}</strong></div>
+  {% endif %}
+  {% if section.quantity %}  
+    <div class="common-gray-text align-left"><label class="common-labels">Quantity</label> : <strong>{{section.quantity}}</strong></div>
+  {% endif %}
+  {% if section.age %}  
+    <div class="common-gray-text align-left"><label class="common-labels">Age</label> : <strong>{{section.age}}</strong></div>
+  {% endif %}  
+  </div><!--ticket-form-right-->
+
+
+
+
+
+
+  
+  <div class="ticket-form-right">
+      <div class="cleaning-button-section">
+        <div id="id_verified" style="display: none;"  class="mb-5">
+            <button class="cleaning-status-button-1" > <i class="fa fa-check cleaning-status-button-round ml-5" aria-hidden="true"></i> Verifed</button>
+        </div>
+        <div id="id_done_update" style="display: none;"   class="mb-5">
+            <button class="cleaning-status-button-1" > <i class="fa fa-check cleaning-status-button-round ml-5" aria-hidden="true"></i> Updated</button>
+         </div>
+        <div id="id_verify" class="mb-5">
+        <button data-toggle="modal" data-target="#verifyModal"   class="cleaning-status-button-1"> Verified OK</button>
+        </div>
+        <div id="id_update" class="mb-5">
+        <button onclick="editSize()" class="cleaning-status-button-1"> Update</button>
+        </div>
+        <div onclick="doneSizeEdit()" style="display: none;" id="id_done">
+            <button class="cleaning-status-button-done">Done</button>
+        </div>
+      </div>
+  </div>
+
+
+
+
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+<br>
+<div class="evaluation-card-wrapper"><!--evaluation-card-wrapper-->
+{% if section.sectionkeynotes %}
+{% for keynote in section.sectionkeynotes %}
+		<div class="evaluation-card"><!--evaluation-card-->
+        <div class="evaluation-section"><label>{{keynote.sub_area}}</label>{{keynote.quantity}}</div> 
+        </div><!--evaluation-card-->        
+{% endfor %}
+{% endif %}
+</div><!--evaluation-card-wrapper-->
+<hr class="hr-dashedpad">
+{% endfor %}
+   
+<div class="eval-note-columns border"><!--eval-note-columns-->
+    	<div class="eval-note-columns-left"><!--eval-note-columns-left-->
+			<div class="profile-pic">
+        {% if cleaning_team_detail.order_scheduler.evaluation_details.evaluator.profile_image %}
+        <img src="{{cleaning_team_detail.order_scheduler.evaluation_details.evaluator.profile_image.url}}" title="{{cleaning_team_detail.order_scheduler.evaluation_details.evaluator.name}}"></div>
+        <div class="client-name">{{cleaning_team_detail.order_scheduler.evaluation_details.evaluator.name}}<div class="common-gray-text">Evaluator</div></div>
+        {% elif cleaning_team_detail.order_scheduler.evaluation_details.evaluation.call_attender.profile_image %}
+        <img src="{{cleaning_team_detail.order_scheduler.evaluation_details.evaluation.call_attender.profile_image.url}}" title="{{cleaning_team_detail.order_scheduler.evaluation_details.evaluation.call_attender.name}}"></div>
+        <div class="client-name">{{cleaning_team_detail.order_scheduler.evaluation_details.evaluation.call_attender.name}}<div class="common-gray-text">Evaluator</div></div>
+        {% else %}
+        <img src="{% static 'files/images/profile-pic.png' %}"></div>
+        <div class="client-name"><div class="common-gray-text">Evaluator</div></div>
+        {% endif %}    
+    	</div><!--eval-note-columns-left-->
+
+        <div class="eval-note-columns-middle"><!--eval-note-columns-middle-->
+            <div class="notes">Evaluation Notes</div>
+            <p>{{cleaning_team_detail.order_scheduler.order_scheduler_book.evaluator_note|default_if_none:''}}</p>
+        </div><!--eval-note-columns-middle-->
+</div><!--eval-note-columns-->
+
+{% if cleaning_team_detail.order_scheduler.order_scheduler_book.evaluationmedias %}
+<div class="details-sub-head align-left">Media</div>
+<div class="order-clean-outer-wrapper"><!--order-clean-outer-wrapper-->
+<div class="gallery-wrapper"><!--gallery-wrapper-->
+  <div class="gallery-widget-column-column1"><!--gallery-widget-column-column1-->
+    <div class="media-heading align-left">Evaluation</div>
+        <section>
+        <div id="data-pn-1" data-pn="1" data-src="{% for media in  cleaning_team_detail.order_scheduler.order_scheduler_book.evaluationmedias %}{{media.media.url}},{% endfor %}"></div>
+    </section>
+    
+    </div><!--gallery-widget-column-column1-->    
+</div><!--gallery-wrapper-->
+{% endif %}
+
+
+ </div><!--commnDiv-border--> 
+{% comment %} <div align="center"><input class="assignButton expandbutton" name="submit" type="button" value="Check-in"> </div> {% endcomment %}
+
+    <br><br>
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class="checklist">
+
+        {% if cleaning_team_detail.order_scheduler.order_scheduler_book.sections %} 
+        <div class="common-sub-head align-left">Check List</div> 
+            <div class="commnDiv-border ltyellow-border"><!--commnDiv-border-->          
+        
+        {% for section in  cleaning_team_detail.order_scheduler.order_scheduler_book.sections %} 
+        <div class="narrow-head align-left cleaningsection">Section {{forloop.counter}} : {{section.section_name}}</div>
+        <div class="ticket-wrapper-row ticket-forms-boxes cleaningkeynotes"><!--ticket-wrapper-row ticket-forms-boxes-->
+          <div class="ticket-form-left"><!--ticket-form-left-->
+          {% for keynote in section.sectionkeynotes %}  
+          {% if not forloop.counter|divisibleby:2 %}
+          <div class="narrow-label"><input class="keynote" name="keynote{{keynote.id}}" type="checkbox" value="{{keynote.id}}" {% if keynote.completion_status %}checked{% endif %}> {{keynote.sub_area}} {{keynote.quantity}}</div>
+          {% endif %}
+          {% endfor %}
+          </div><!--ticket-form-left-->
+          <div class="ticket-form-right"><!--ticket-form-right-->
+          {% for keynote in section.sectionkeynotes %}  
+          {% if forloop.counter|divisibleby:2 %}
+          <div class="narrow-label"><input class="keynote" name="keynote{{keynote.id}}" type="checkbox" value="{{keynote.id}}" {% if keynote.completion_status %}checked{% endif %}> {{keynote.sub_area}} {{keynote.quantity}}</div>
+          {% endif %}
+          {% endfor %}
+          </div><!--ticket-form-right-->
+        </div><!--ticket-wrapper-row ticket-forms-boxes-->
+        
+        <hr class="hr-dashedpad hr1">
+        {% endfor %}
+        
+        {% endif %}
+        
+        <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
+        
+        <div class="ticket-wrapper-row ticket-forms-boxes beforecleaning"><!--ticket-wrapper-row ticket-forms-boxes-->
+          <div class="ticket-form-left"><!--ticket-form-left--> 
+          <div class="details-notes align-left">Before Cleaning Photos</div>        
+          <div class="row" >
+            <div class="col-md-3" v-for="(image, imageindex) in imageData" v-bind:key="imageindex">
+              <div class="bk-image-upload">
+                <img :src="image.url" style="max-width: 100%" class="h-100 w-100"/>
+              </div>
+              <div class="image-footer">
+                <!-- <i class="far fa-edit img-icon"  v-on:click="editImage(imageindex)"></i>-->
+                <i class="far fa-trash-alt pl-2 img-icon" v-on:click="deleteImage(imageindex)"></i>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="addImg">
+                <div class="item_image" @click="$refs.itemfile.click()" ref="item-image"
+                  v-on:change="onImageFileChanged">
+                  <input type="file" ref="itemfile" style="display: none" accept="image/*"
+                    id="itemfileselected" />
+                  <i class="ImageIcon fa fa-plus"></i>
+                </div>
+              </div>
+            </div>
+          </div>      
+          </div><!--ticket-form-left--> 
+          </div><!--ticket-wrapper-row ticket-forms-boxes-->
+        
+        <div class="ticket-wrapper-row ticket-forms-boxes aftercleaning"><!--ticket-wrapper-row ticket-forms-boxes-->
+          <div class="ticket-form-left"><!--ticket-form-left--> 
+          <div class="details-notes align-left">After Cleaning Photos</div>        
+          <div class="row" >
+            <div class="col-md-3" v-for="(image, imageindex) in imageData" v-bind:key="imageindex">
+              <div class="bk-image-upload">
+                <img :src="image.url" style="max-width: 100%" class="h-100 w-100"/>
+              </div>
+              <div class="image-footer">
+                <!-- <i class="far fa-edit img-icon"  v-on:click="editImage(imageindex)"></i>-->
+                <i class="far fa-trash-alt pl-2 img-icon" v-on:click="deleteImage(imageindex)"></i>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="addImg">
+                <div class="item_image" @click="$refs.itemfile.click()" ref="item-image"
+                  v-on:change="onImageFileChanged">
+                  <input type="file" ref="itemfile" style="display: none" accept="image/*"
+                    id="itemfileselected" />
+                  <i class="ImageIcon fa fa-plus"></i>
+                </div>
+              </div>
+            </div>
+          </div>          
+          </div><!--ticket-form-left--> 
+          </div><!--ticket-wrapper-row ticket-forms-boxes-->
+         
+        </div><!--order-clean-outer-wrapper-->
+        
+        </div>
+
+        <br>
+        <br>
+    
+
+
+
+
+ </div><!--commnDiv-border--> 
+<br>
+ 
+ <div align="center"><input class="assignButton checkoutbutton" name="assign" type="submit" value="Check Out">
+ <input class="assignButton checkinbutton" name="assign" type="submit" value="Check In">
+  <!-- <input class="cancel-Button" name="assign" type="submit" value="Submit"></div> --> </form>    	
+<br> <br>      
+        
+        </div><!--center-formDiv-->
+</div><!--white-wrapper-->      
+             
+            
+            
+      </div><!--main-content-holder-->
+
+
+      <div class="modal fade" id="verifyModal" role="dialog">
+        <div class="modal-dialog cancel-model cancel-order-border" role="document">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+    
+                        <div class="d-flex cl-modal-icons">
+                            <button data-dismiss="modal" class="img-button">
+                                <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                            </button>
+    
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="cancel-model-content">
+                            <h1>Do you want to verify ?</h1>
+                        </div>
+                    </div>
+    
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <div class="cancel-model-content">
+                            <button class="sent-button" onclick="verify()">Yes</button>
+                            <button data-dismiss="modal" class="view-button">No</button>
+                            <button style="display: none;" id="modal_close" data-dismiss="modal" class="view-button">No</button>
+                        </div>
+                    </div>
+    
+                </div>
+            </div>
+        </div>
+      </div>
+
+
+
+        </div><!--container-fluid space-->
+    </section><!--content-->
+{% include 'tl/common/footer.html' %}
+</div><!--wrapper-->
+{% endblock %}
+
+{% block javascript %} 
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/browser-image-compression@1.0.13/dist/browser-image-compression.js"></script>
+<script src="{% static 'files/js/checkin.js' %}"></script>
+
+<script>
+
+    function editSize() {
+        //after integration use dymanic id's to enable edit
+        document.getElementById("id_size").style.display = "none";
+        document.getElementById("id_update").style.display = "none";
+        document.getElementById("id_done").style.display = "block";
+        document.getElementById("id_sizelist").style.display = "block";
+    }
+    function doneSizeEdit() {
+        //after integration use dymanic id'
+        document.getElementById("id_done").style.display = "none";
+        document.getElementById("id_sizelist").style.display = "none";
+        document.getElementById("id_size").style.display = "block";
+        document.getElementById("id_done_update").style.display = "block";
+    }
+    function verify() {
+        $('#modal_close').click();
+        document.getElementById("id_verify").style.display = "none";
+        document.getElementById("id_verified").style.display = "block";
+    }
+$(document).ready(function(){
+
+  {% if cleaning_team_detail.order_scheduler.work_status == 'CLEANING_IN_PROGRESS' %}
+    $('input[name="mediaafter"]').attr("required",true);
+    $('input[name="mediabefore"]').attr("required",false);
+    $('.checkinbutton').attr("hidden",true);
+    $('.checkoutbutton').attr("hidden",false);
+    $('.aftercleaning').attr("hidden",false);
+    $('.beforecleaning').attr("hidden",true);
+    $('.cleaningsection').attr("hidden",false);
+    $('.cleaningkeynotes').attr("hidden",false);
+    $('.hr1').attr("hidden",false);
+  {% else %}
+    $('input[name="mediaafter"]').attr("required",false);
+    $('input[name="mediabefore"]').attr("required",true);
+    $('.checkinbutton').attr("hidden",false);
+    $('.checkoutbutton').attr("hidden",true);
+    $('.beforecleaning').attr("hidden",false);
+    $('.aftercleaning').attr("hidden",true);
+    $('.cleaningsection').attr("hidden",true);
+    $('.cleaningkeynotes').attr("hidden",true);
+    $('.hr1').attr("hidden",true);
+  {% endif %}
+
+  //$('.checklist').css('display','none');
+
+  //$('.expandbutton').click(function(){
+  //  $('.checklist').css('display','block');  
+  //});
+
+  //update address status
+$(".keynote").change(function(){
+
+  $.ajax({
+
+        url: "{% url 'tl:ajax-updatekeynote' %}",
+
+        data: {'keynote_id':this.value,'status':this.checked,'keynote_type':"cleaning"}, 
+
+        dataType: 'json',
+
+        success: function (data) { 
+
+          console.log(data);
+
+                                }
+          });                       
+
+    })
+
+
+})
+
+
+
+
+$(".imgAdd").click(function () {
+  name=$(this).data('name');
+  console.log(name)
+  $(this).closest(".row").find('.imgAdd').before('<div class="col-sm-2 imgUp"><div class="imagePreview"></div><label class="btn btn-primary">Upload<input type="file" name="'+name+'" class="uploadFile img" value="Upload Photo" style="width:0px;height:0px;overflow:hidden;"></label><i class="fa fa-times del"></i></div>');
+});
+$(document).on("click", "i.del", function () {
+  $(this).parent().remove();
+});
+$(function () {
+  $(document).on("change", ".uploadFile", function ()
+  {
+    var uploadFile = $(this);
+    var files = !!this.files ? this.files : [];
+    if (!files.length || !window.FileReader) return; // no file selected, or no FileReader support
+
+    if (/^image/.test(files[0].type)) {// only image file
+      var reader = new FileReader(); // instance of the FileReader
+      reader.readAsDataURL(files[0]); // read the local file
+
+      reader.onloadend = function () {// set image data as background of div
+        //alert(uploadFile.closest(".upimage").find('.imagePreview').length);
+        uploadFile.closest(".imgUp").find('.imagePreview').css("background-image", "url(" + this.result + ")");
+      };
+    }
+
+  });
+});
+//# sourceURL=pen.js
+    </script>
+{% endblock %}

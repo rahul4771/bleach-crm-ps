@@ -1222,3 +1222,190 @@ hr.hr-dashedpad { border: 0; margin:8px 0 5px 0; padding:0; border-bottom: 1px d
     overflow-x: visible;
   }
 }
+
+.cleaning-button-section{float: right;margin-right: 10px;}
+.cleaning-status-button-1{width: 120px;text-align: center;background: #fff;padding: 5px  0px 5px 0px;border: 1px solid #608BDF;border-radius: 5px;font-size: 13px;color: #2E4E85;}
+.cleaning-status-button-done{width: 120px;text-align: center;background: #528ce6;padding: 5px  0px 5px 0px;border:1px solid #528ce6;border-radius: 5px;font-size: 13px;color: #fff;}
+.cleaning-status-button-round{background-color: #10A82F;border-radius: 50%;color: #fff;padding: 2px;border: none;}
+select.minimal {
+  padding-left: 5px;
+  border: 1px solid #707070 !important;
+  border-radius: 5px !important;
+  background-color: #fff;
+  background-image: linear-gradient(45deg, transparent 50%, gray 50%),
+    linear-gradient(135deg, gray 50%, transparent 50%),
+    linear-gradient(to right, #ccc, #ccc);
+  background-position: calc(100% - 20px) calc(1em + 2px),
+    calc(100% - 15px) calc(1em + 2px), calc(100% - 2.5em) 0.5em;
+  background-size: 5px 5px, 5px 5px, 0px 1.5em;
+  background-repeat: no-repeat;
+}
+
+select.minimal:focus {
+  background-repeat: no-repeat;
+  border-color: #707070;
+  outline: 0;
+}
+.size-edit-select{
+ 
+  width: 100px;
+  height: 28px;
+  font-size: 9px;
+  font-weight: bolder;
+}
+@media screen and (max-width: 600px){
+  .cleaning-button-section{
+    float: none;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+}
+
+.backup-card{
+  border: 1px solid #707070;
+  border-radius: 10px;
+  opacity: 1;
+  display: flex;
+  width: 100%;
+  padding: 15px;
+  padding-top: 25px;
+  
+}
+.backup-card-2{
+  border: 1px solid #707070;
+  border-radius: 10px;
+  opacity: 1;
+  background: #E6E6E6;
+  width: 100%;
+  padding: 15px;
+  text-align: center;
+  cursor: pointer;
+}
+.backup-card-img{
+  width: 100%;
+  border-radius: 50%;
+}
+.backup-card-name{
+  font-size: 14px;
+  color: #434343;
+  margin: 0px !important;
+  padding: 0px !important;
+  font-weight: 300;
+}
+.backup-card-role{
+  font-size: 12px;
+  color: #434343;
+  font-weight: 300;
+  margin-top: 5px;
+  padding: 0px !important;
+}
+.backup-card-button{width: 120px;text-align: center;background: #fff;padding: 10px  0px 10px 0px;border: 1px solid #608BDF;border-radius: 7px;font-size: 13px;color: #2E4E85;}
+.backup-add{
+  background: #fff;
+  border-radius: 50%;
+  padding: 10px;
+  color: #707070;
+}
+.backup-released{
+  padding: 10px 0px 10px 0px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #8B8B8B;
+  font-weight: 800;
+}
+.backup-released:hover{
+  background: none;
+  color: #8B8B8B;
+
+}
+
+
+.c2-container {
+  display: block;
+  position: relative;
+  padding-left: 30px;
+  margin-bottom: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  color: #434343;
+  font-weight: 300;
+}
+
+.c2-container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.c2-checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 20px;
+  width: 20px;
+  background: #ffffff 0% 0% no-repeat padding-box;
+  border: 1px solid #707070;
+  border-radius: 4px;
+  opacity: 1;
+}
+
+.c2-container:hover input ~ .c2-checkmark {
+  background-color: #ccc;
+}
+
+.c2-container input:checked ~ .c2-checkmark {
+  color: #434343;
+  background-color: #fff;
+}
+
+.c2-checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.c2-container input:checked ~ .c2-checkmark:after {
+  display: block;
+}
+
+.c2-container .c2-checkmark:after {
+  left: 5px;
+  top: 2px;
+  width: 5px;
+  height: 10px;
+  border: solid #707070;
+  border-width: 0 1px 1px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+
+.client-address-text{
+  font-size: 24px;
+  color: #434343;
+  font-weight: 100;
+  text-align: center;
+
+}
+.client-address-items{
+  width: 100%;
+  margin-top: 10px;
+  text-align: left;
+  font-size: 16px;
+  color: #434343;
+  font-weight: 100;
+  text-align: justify;
+}
+.cd-client-name{
+  color: #434343;
+  font-size: 28px;
+  text-align: center;
+}
