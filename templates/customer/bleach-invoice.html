@@ -23,6 +23,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" />
     <link rel="stylesheet" href="{% static 'files/css/customer/main.css' %}">
+    <link rel="stylesheet" href="{% static 'files/css/colors.css' %}">
     <title>Bleach Cleaning Services | Invoice</title>
 
   </head>
@@ -525,109 +526,58 @@
                 </div>
               </div>
             </div>
-        
+            {% endif %}
               <div class="col-12 mt-4 inv-text-color ">
                 Payment Option
               </div>
               <div class="col-12">
                 <div class="d-flex">
 
-                <!--<form method="post" class="inv-payment-box" action="https://testpay.bleach-kw.com/SendPerformREQuest.php" enctype= "multipart/form-data" id="debit-form">-->
-                 <form method="post" class="inv-payment-box" action="https://payment.bleachkw.com/SendPerformREQuest.php" enctype= "multipart/form-data" id="debit-form"> {% csrf_token %} 
-                {% if order.evaluation.payment_method == 'BREAKDOWN' %}
-                {% if order.evaluation.before_cleaning_amount != order.preamount_paid %}
-                <input type="hidden" name="price" class="beforecleaningamount" value="{{order.evaluation.before_cleaning_amount|floatformat:'3'}}">
-                <input type="hidden" name="payment_mode" value="before_cleaning">
-                {% elif order.evaluation.after_cleaning_amount != order.postamount_paid %}
-                <input type="hidden" name="price" class="aftercleaningamount" value="{{order.remining_amount|floatformat:'3'}}">
-                <input type="hidden" name="payment_mode" value="after_cleaning">
-                {% endif %}
-                {% elif order.evaluation.payment_method == 'PREPAID' %}
-                <input type="hidden" name="price" class="evaluationtotalcost" value="{{order.remining_amount|floatformat:'3'}}">
-                <input type="hidden" name="payment_mode" value="prepaid">
-                {% elif order.evaluation.payment_method == 'POSTPAID' %}
-                <input type="hidden" name="price" class="evaluationtotalcost" value="{{order.remining_amount|floatformat:'3'}}">
-                <input type="hidden" name="payment_mode" value="postpaid">
-                {% endif %}
-                <input type="hidden" name="qty" value="1">
-                <input type="hidden" name="evaluation_id" value="{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}">
-                {% if request.user.user_type == 'AGENT' %}
-                {% elif request.user.user_type == 'EVALUATOR' %}
-                {% else %}
+                
 
-                {% if order.evaluation.quatation_status == 'APPROVED' %}
-                  <div class="inv-payment-card mt-4 text-center" id="inv-debit" onclick="selectPayment('debit')">
-                    <input class="assignButton clickable-cursor debitcardbtn d-none" name="pay" type="submit" value="">
-                    <img src="{% static 'files/icons/knet-icon.png' %}" class="inv-card-icon " id="inv-knet" />
-                    <div class="inv-payment-text" >
-                      Debit Card
-                    </div>
-                    <div class="inv-check-box mt-2 mb-2 mx-auto" id="inv-debit-check-box">
-                      <i class="fa fa-check inv-check-icon " id="inv-check-debit"></i>
-                    </div>
-                  </div>
-                {% endif %}
-
-                {% endif %}
-                </form>
-
-                {% if order.evaluation.payment_method == 'POSTPAID' or order.preamount_paid > 0 %}
+             
                 <div class="inv-payment-box">
-                  <div class="inv-payment-card mt-4 text-center" id="inv-cash" onclick="selectPayment('cash')">
+                  <div class="inv-payment-card mt-4 text-center" id="inv-cash" onclick="selectPayment('paynbook')">
                     <img src="{% static 'files/icons/wallet.png' %}" class="inv-card-icon "  id="inv-cash-img"/>
                     <div class="inv-payment-text">
-                     Cash 
+                        Book & Pay
                     </div>
                     <div class="inv-check-box mt-2 mb-2 mx-auto" id="inv-cash-check-box">
                       <i class="fa fa-check inv-check-icon " id="inv-check-cash"></i>
                     </div>
                   </div>
                 </div>
-                {% endif %}
+              
                 <div class="inv-payment-box">
-                  <div class="inv-payment-card mt-4 text-center inv-click-disable" id="inv-credit" onclick="selectPayment('credit')"><!-- to disable click add class inv-click-disable -->
-                    <img src="{% static 'files/icons/debit-card.png' %}" class="inv-card-icon inv-payment-disabled" id="inv-credit-img"  /> <!-- to disable  add class inv-payment-disabled -->
-                    <div class="inv-payment-text inv-payment-disabled"> <!-- to disable  add class inv-payment-disabled -->
-                      Credit Card
+                    <div class="inv-payment-card mt-4 text-center" id="inv-debit" onclick="selectPayment('pay')"><!-- to disable click add class inv-click-disable -->
+                      <img src="{% static 'files/icons/debit-card.png' %}" class="inv-card-icon" id="inv-credit-img"  /> <!-- to disable  add class inv-payment-disabled -->
+                      <div class="inv-payment-text"> <!-- to disable  add class inv-payment-disabled -->
+                        Pay
+                      </div>
+                      <div class="inv-check-box mt-2 mb-2 mx-auto" id="inv-debit-check-box">
+                        <i class="fa fa-check inv-check-icon " id="inv-check-debit"></i>
+                      </div>
                     </div>
-                    <div class="inv-check-box mt-2 mb-2 mx-auto" id="inv-credit-check-box">
-                      <i class="fa fa-check inv-check-icon " id="inv-check-credit"></i>
                     </div>
-                  </div>
-                  </div>
+               
 
                 </div>
               </div>
               
               
-             <!-- <div class="col-4 ">
-                <div class="inv-payment-card mt-4 text-center" id="inv-debit" onclick="selectPayment('debit')">
-                  <img src="./icons/knet-icon.png" class="inv-card-icon " id="inv-knet" />
-                  <div class="inv-payment-text">
-                    Debit Card
-                  </div>
-                </div>
-              </div>
-              <div class="col-4 ">
-                <div class="inv-payment-card mt-4 text-center" id="inv-cash" onclick="selectPayment('cash')">
-                  <img src="./icons/wallet.png" class="inv-card-icon "  id="inv-cash-img"/>
-                  <div class="inv-payment-text">
-                   Cash 
-                  </div>
-                </div>
-              </div>-->
+            
               
               <div class="col-12   text-center text-white mt-4">
                 <div class="inv-btn" onclick="proceedInvoice()">
                 Proceed
               </div>
               </div>
-        {% endif %}
+        
 
-              <div class="col-5 offset-1 inv-white-btn text-center  mt-4 mb-4 ">
+              <div class="col-5 offset-1 inv-white-btn text-center  mt-4 mb-4 " onclick="window.location.href=`/customer/test/invoice/download/paw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}`">
 
                 <i class="fa fa-download" ></i>
-                <a href="/customer/test/invoice/download/paw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}">Download</a>
+                Download
               </div> 
               <div class="col-5 offset-1  inv-white-btn text-center  mt-4 mb-4 " onclick="printDiv()">
                 <i class="fa fa-print"></i>
@@ -692,9 +642,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js" integrity="sha512-jzL0FvPiDtXef2o2XZJWgaEpVAihqquZT/tT89qCVaxVuHwJ/1DFcJ+8TBMXplSJXE8gLbVAUv+Lj20qHpGx+A==" crossorigin="anonymous"></script>
     <script src="{% static 'files/js/convertToPdf.js' %}"></script>
     <script src="{% static 'files/js/modal.js' %}"> </script>
-
+ 
     <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" type="text/javascript"></script>
-        <script src="{% static 'files/js/customer/main.js' %}"></script>
+        <script src="{% static 'files/js/customer/customer-invoice.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>

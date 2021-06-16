@@ -62,4 +62,5 @@ urlpatterns = [
 		url(r'^bookingmediasave$',views.ClientCleaningBookingMediaSave.as_view(),name='clientcleaningbookingmediasave'),
 
 		url(r'^emailtest$',views.EmailTest.as_view(),name='email-test'),
+		url(r'^cart$',views.Cart.as_view(),name='cart'),
 	]
