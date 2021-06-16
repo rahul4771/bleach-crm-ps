@@ -44,7 +44,7 @@
                 <div class="cleaning-column-widget cleaning-column-widget-column1"><!--
                 
                 cleaning-column-widget cleaning-column-widget-column1-->
-                	<div class="details-head align-left"><a href="{% url 'agent:agent-client-orderdetails' order.id %}">{{order.evaluation.evaluation_id}}</a></div>
+                	<div class="details-head align-left"><a href="{% url 'common_items:client-orderdetails' order.id %}">{{order.evaluation.evaluation_id}}</a></div>
                 	
                     {% if order.payment_status == 'COMPLETED' %}
                     <div class="green-bg-lg">Paid</div>
@@ -103,7 +103,7 @@
 		</div><!--cleaning--left-stretch-->  
         
         <div class="cleaning--right-fixed"><!--cleaning--right-fixed-->
-        	<div class="order-card-column whitebg red-border clickable-row-list" data-href="{% url 'agent:agent-client-orders' client_details.id %}"><!--order-card-column-->
+        	<div class="order-card-column whitebg red-border clickable-row-list" data-href="{% url 'common_items:client-orders' client_details.id %}"><!--order-card-column-->
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-orders-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->

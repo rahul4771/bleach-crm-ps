@@ -339,6 +339,55 @@
   display: none;
 }
 
+@media only screen and (max-width: 1280px) {
+  .solt-filter-box {
+    padding: 5px 6px 1px 6px !important;
+
+}
+  .resource-user-rating i {
+    width: 7px;
+   
+}
+  .resource-card {
+    height: 270px !important;
+}
+.flip-container, .front, .back {
+  width: 100%;
+  height: 290px !important;
+}
+  .woking-details{
+    font-size: 11px !important;
+  }
+  .skil-list {
+    font-size: 11px !important;
+  }
+  .skil-list-edit{
+    font-size: 11px !important;
+  }
+  .c-container {
+    font-size: 11px;
+  }
+  .resource-card-text {
+    font-size: 9px;
+  }
+  .woking-details h2 {
+    font-size: 11px;
+  }
+  .resource-user-details h2 {
+
+    font-size: 9px;
+ 
+  }
+  .resource-user-details h6 {
+   
+    font-size: 9px;
+  }
+  .resource-user-details h2 {
+    font-size: 13px;
+
+  }
+}
+
 @media only screen and (max-width: 1400px) {
   .flip-container,
   .front,
