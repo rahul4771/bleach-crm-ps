@@ -38,6 +38,8 @@
                 <div class="white-wrapper">
                     <!--white-wrapper-->
                     <div class="row">
+                        <button data-toggle="modal" data-target="#editModal"  class="pricerange_edit_button" ></button>
+                        <button data-toggle="modal" data-target="#addModal" class="pricerange_add_button"></button>
                         {% for service_type in service_types %}
                         <div class="col-md-6">
                             <div class="productivity-card">
@@ -78,7 +80,7 @@
                                         {{service_price_range.price|floatformat:'3'}} KD
                                     </div>
                                     <div class="col-md-3 productivity-card-items-4">
-                                        <button onclick="edit_price_range(this);" class="img-button" data-service_type_name="{{service_price_range.service_type.name}}" data-service_type_id="{{service_price_range.service_type.id}}" data-id="{{service_price_range.id}}" data-name="{{service_price_range.name}}" data-minimum_area="{{service_price_range.minimum_area}}" data-maximum_area="{{service_price_range.maximum_area}}" data-price="{{service_price_range.price}}" data-unit_price="{{service_price_range.unit_price}}">
+                                        <button onclick="edit_price_range(this);" class="img-button" data-service_type_name="{{service_price_range.service_type.name}}" data-service_type_id="{{service_price_range.service_type.id}}" data-id="{{service_price_range.id}}" data-name="{{service_price_range.name}}" data-minimum_area="{{service_price_range.minimum_area}}" data-maximum_area="{{service_price_range.maximum_area}}" data-price="{{service_price_range.price}}" data-unit_price="{{service_price_range.unit_price}}" data-is_newkitchen="{{service_price_range.is_newkitchen}}" data-is_highprice_facade="{{service_price_range.is_highprice_facade}}" data-is_highprice_window="{{service_price_range.is_highprice_window}}" data-upholstery_type="{{service_price_range.upholstery_type}}">
                                             <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
                                         </button>
                                         <button data-toggle="modal" data-target="#DeleteModal"  class="img-button" data-id="{{service_price_range.id}}">
@@ -107,7 +109,7 @@
                                         {{service_price_range.price|floatformat:'3'}} KD
                                     </div>
                                     <div class="col-md-3 productivity-card-items-4">
-                                        <button onclick="edit_price_range(this);" class="img-button" data-service_type_name="{{service_price_range.service_type.name}}" data-service_type_id="{{service_price_range.service_type.id}}" data-id="{{service_price_range.id}}" data-name="{{service_price_range.name}}" data-minimum_area="{{service_price_range.minimum_area}}" data-maximum_area="{{service_price_range.maximum_area}}" data-price="{{service_price_range.price}}" data-unit_price="{{service_price_range.unit_price|default_if_none:''}}">
+                                        <button onclick="edit_price_range(this);" class="img-button" data-service_type_name="{{service_price_range.service_type.name}}" data-service_type_id="{{service_price_range.service_type.id}}" data-id="{{service_price_range.id}}" data-name="{{service_price_range.name}}" data-minimum_area="{{service_price_range.minimum_area}}" data-maximum_area="{{service_price_range.maximum_area}}" data-price="{{service_price_range.price}}" data-unit_price="{{service_price_range.unit_price|default_if_none:''}}" data-is_newkitchen="{{service_price_range.is_newkitchen}}" data-is_highprice_facade="{{service_price_range.is_highprice_facade}}" data-is_highprice_window="{{service_price_range.is_highprice_window}}" data-upholstery_type="{{service_price_range.upholstery_type}}">
                                             <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
                                         </button>
                                         <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
@@ -135,7 +137,7 @@
                                           {{service_price_range.price|floatformat:'3'}} KD
                                       </div>
                                       <div class="col-md-3 productivity-card-items-4">
-                                        <button onclick="edit_price_range(this);" class="img-button" data-service_type_name="{{service_price_range.service_type.name}}" data-service_type_id="{{service_price_range.service_type.id}}" data-id="{{service_price_range.id}}" data-name="{{service_price_range.name}}" data-minimum_area="{{service_price_range.minimum_area}}" data-maximum_area="{{service_price_range.maximum_area}}" data-price="{{service_price_range.price}}" data-unit_price="{{service_price_range.unit_price}}">
+                                        <button onclick="edit_price_range(this);" class="img-button" data-service_type_name="{{service_price_range.service_type.name}}" data-service_type_id="{{service_price_range.service_type.id}}" data-id="{{service_price_range.id}}" data-name="{{service_price_range.name}}" data-minimum_area="{{service_price_range.minimum_area}}" data-maximum_area="{{service_price_range.maximum_area}}" data-price="{{service_price_range.price}}" data-unit_price="{{service_price_range.unit_price}}" data-is_newkitchen="{{service_price_range.is_newkitchen}}" data-is_highprice_facade="{{service_price_range.is_highprice_facade}}" data-is_highprice_window="{{service_price_range.is_highprice_window}}" data-upholstery_type="{{service_price_range.upholstery_type}}">
                                               <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
                                           </button>
                                           <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
@@ -149,7 +151,7 @@
                                 </div>
 
                               <div class="addNewPrice">
-                                    <button class="border-button" data-toggle="modal" data-target="#addModal"><i class="fa fa-plus-circle" aria-hidden="true"></i> Price Range</button>
+                                    <button class="border-button" onclick="add_price_range(this);" data-id="{{service_price_range.id}}" data-service_type_name="{{service_price_range.service_type.name}}" data-service_type_id="{{service_price_range.service_type.id}}"><i class="fa fa-plus-circle" aria-hidden="true"></i> Price Range</button>
                               </div>
                             </div>
                         </div>
@@ -1207,31 +1209,50 @@
                         </div>
                     </div>
                 </div>
-                <h2 class="productivity-name"> General Cleaning</h2>
-                <div class="row mt-10">
-                    <div class="col-md-6">
-                    <select id="id_payment" class="minimal">
-                        <option value="Prepaid">Normal</option>
-                        <option value="Post Paid">Special</option>
-                      </select>
-                    </div>
-                </div>
+                <h2 class="productivity-name" id="add_service_type_name_id"> </h2>
+                <input type="hidden" name="action_type" value="add_price_range">
+                <input type="hidden" name="price_range" id="add_price_range_id">
+                <input type="hidden" name="service_type" id="add_service_type_id">
                 <div class="row mt-10">
                     <div class="col-md-6 mt-10">
                         <label > Name</label>
-                        <input name="before_cleaning" id="id_name" type="text" placeholder=" " required="required" class="textBox model-text-border">
+                        <input name="name" id="add_name_id" type="text" placeholder=" " required="required" class="textBox model-text-border">
                     </div>
                     <div class="col-md-6 mt-10">
                         <label > Price</label>
-                        <input name="id_price" id="id_before_cleaning" type="text" placeholder=" " required="required" class="textBox model-text-border">
+                        <input name="price" id="add_price_id" type="text" placeholder=" " required="required" class="textBox model-text-border">
                     </div>
                     <div class="col-md-6 mt-10">
                         <label > Minimum Area</label>
-                        <input name="id_minimum" id="id_before_cleaning" type="text" placeholder=" " required="required" class="textBox model-text-border">
+                        <input name="minimum_area" id="add_minimum_area_id" type="text" placeholder=" " required="required" class="textBox model-text-border">
                     </div>
                     <div class="col-md-6 mt-10">
                         <label > Maximum Area</label>
-                        <input name="id_maxium" id="id_before_cleaning" type="text" placeholder=" " required="required" class="textBox model-text-border">
+                        <input name="maxium_area" id="add_maximum_area_id" type="text" placeholder=" " required="required" class="textBox model-text-border">
+                    </div>
+                    <div class="col-md-6 mt-10">
+                        <label > Unit Price</label>
+                        <input name="unit_price" id="add_unit_price_id" type="text" placeholder=" " required="required" class="textBox model-text-border">
+                    </div>
+                    <div class="col-md-6 mt-10 kitchen-checkbox">
+                        <label > New Kitchen</label>
+                        <input name="is_newkitchen" id="add_is_newkitchen_id" type="checkbox">
+                    </div>
+                    <div class="col-md-6 mt-10 facade-checkbox">
+                        <label > High Price Facade</label>
+                        <input name="is_highprice_facade" id="add_is_highprice_facade_id" type="checkbox">
+                    </div>
+                    <div class="col-md-6 mt-10 window-checkbox">
+                        <label > High Price Window</label>
+                        <input name="is_newkitchen" id="add_is_highprice_window_id" type="checkbox">
+                    </div>
+                    <div class="col-md-6 mt-10 upholstery-checkbox">
+                        <label > Upholstery Type</label>
+                        <select name="upholstery_type" id="add_upholstery_type_id" class="textBox model-text-border">
+                            <option value="SOFA" selected>SOFA</option>
+                            <option value="CHAIR">CHAIR</option>
+                            <option value="CURTAIN">CURTAIN</option>
+                        </select>
                     </div>
     
                 </div>
@@ -1347,7 +1368,6 @@
       $('.window-checkbox').hide()
     
       $('.kitchen-checkbox').hide()
-    
       $('#edit_upholstery_type_id').val($(elem).data('upholstery_type'));
     }
     else if(servicename=='Kitchen Cleaning'){
@@ -1374,6 +1394,54 @@
     }
 
     $('#editModal').modal('show')
+    // $(".pricerange_edit_button").click(function(){
+    //     });
+}
+
+
+function add_price_range(elem)
+{
+    $('#add_price_range_id').val($(elem).data('id'));
+    $("#add_service_type_name_id").text($(elem).data('service_type_name'));
+    $("#add_service_type_id").val($(elem).data('service_type_id'));
+
+    servicename = $(elem).data('service_type_name');
+  
+  if(servicename=='Facade Cleaning'){
+      $('.facade-checkbox').show()
+      $('.window-checkbox').hide()
+      $('.upholstery-checkbox').hide()
+      $('.kitchen-checkbox').hide()
+    }
+    else if(servicename=='Window Cleaning'){
+      $('.window-checkbox').show()
+      $('.facade-checkbox').hide() 
+      $('.upholstery-checkbox').hide()
+      $('.kitchen-checkbox').hide()
+    
+    }
+    else if(servicename=='Upholstery Cleaning'){
+      $('.upholstery-checkbox').show()
+      $('.facade-checkbox').hide()
+      $('.window-checkbox').hide()
+      $('.kitchen-checkbox').hide()
+    }
+    else if(servicename=='Kitchen Cleaning'){
+      $('.kitchen-checkbox').show()
+      $('.facade-checkbox').hide()
+      $('.window-checkbox').hide()
+      $('.upholstery-checkbox').hide()
+    }
+    else{
+      $('.facade-checkbox').hide()
+      $('.window-checkbox').hide()
+      $('.upholstery-checkbox').hide()
+      $('.kitchen-checkbox').hide()
+    }
+
+    $('#addModal').modal('show')
+    // $(".pricerange_add_button").click(function(){
+    //     });
 }
 </script>
 {% endblock %}
