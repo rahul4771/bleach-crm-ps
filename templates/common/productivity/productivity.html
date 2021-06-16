@@ -40,6 +40,7 @@
                     <div class="row">
                         <button data-toggle="modal" data-target="#editModal"  class="pricerange_edit_button" ></button>
                         <button data-toggle="modal" data-target="#addModal" class="pricerange_add_button"></button>
+                        <button data-toggle="modal" data-target="#DeleteModal" class="pricerange_delete_button"></button>
                         {% for service_type in service_types %}
                         <div class="col-md-6">
                             <div class="productivity-card">
@@ -83,7 +84,7 @@
                                         <button onclick="edit_price_range(this);" class="img-button" data-service_type_name="{{service_price_range.service_type.name}}" data-service_type_id="{{service_price_range.service_type.id}}" data-id="{{service_price_range.id}}" data-name="{{service_price_range.name}}" data-minimum_area="{{service_price_range.minimum_area}}" data-maximum_area="{{service_price_range.maximum_area}}" data-price="{{service_price_range.price}}" data-unit_price="{{service_price_range.unit_price}}" data-is_newkitchen="{{service_price_range.is_newkitchen}}" data-is_highprice_facade="{{service_price_range.is_highprice_facade}}" data-is_highprice_window="{{service_price_range.is_highprice_window}}" data-upholstery_type="{{service_price_range.upholstery_type}}">
                                             <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
                                         </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button" data-id="{{service_price_range.id}}">
+                                        <button class="img-button" onclick="delete_price_range(this);" data-id="{{service_price_range.id}}">
                                             <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
                                         </button>
                                     </div>
@@ -112,7 +113,7 @@
                                         <button onclick="edit_price_range(this);" class="img-button" data-service_type_name="{{service_price_range.service_type.name}}" data-service_type_id="{{service_price_range.service_type.id}}" data-id="{{service_price_range.id}}" data-name="{{service_price_range.name}}" data-minimum_area="{{service_price_range.minimum_area}}" data-maximum_area="{{service_price_range.maximum_area}}" data-price="{{service_price_range.price}}" data-unit_price="{{service_price_range.unit_price|default_if_none:''}}" data-is_newkitchen="{{service_price_range.is_newkitchen}}" data-is_highprice_facade="{{service_price_range.is_highprice_facade}}" data-is_highprice_window="{{service_price_range.is_highprice_window}}" data-upholstery_type="{{service_price_range.upholstery_type}}">
                                             <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
                                         </button>
-                                        <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
+                                        <button class="img-button" onclick="delete_price_range(this);" data-id="{{service_price_range.id}}">
                                             <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
                                         </button>
                                     </div>
@@ -140,7 +141,7 @@
                                         <button onclick="edit_price_range(this);" class="img-button" data-service_type_name="{{service_price_range.service_type.name}}" data-service_type_id="{{service_price_range.service_type.id}}" data-id="{{service_price_range.id}}" data-name="{{service_price_range.name}}" data-minimum_area="{{service_price_range.minimum_area}}" data-maximum_area="{{service_price_range.maximum_area}}" data-price="{{service_price_range.price}}" data-unit_price="{{service_price_range.unit_price}}" data-is_newkitchen="{{service_price_range.is_newkitchen}}" data-is_highprice_facade="{{service_price_range.is_highprice_facade}}" data-is_highprice_window="{{service_price_range.is_highprice_window}}" data-upholstery_type="{{service_price_range.upholstery_type}}">
                                               <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
                                           </button>
-                                          <button data-toggle="modal" data-target="#DeleteModal"  class="img-button">
+                                          <button class="img-button" onclick="delete_price_range(this);" data-id="{{service_price_range.id}}">
                                               <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
                                           </button>
                                       </div>
@@ -151,7 +152,7 @@
                                 </div>
 
                               <div class="addNewPrice">
-                                    <button class="border-button" onclick="add_price_range(this);" data-id="{{service_price_range.id}}" data-service_type_name="{{service_price_range.service_type.name}}" data-service_type_id="{{service_price_range.service_type.id}}"><i class="fa fa-plus-circle" aria-hidden="true"></i> Price Range</button>
+                                    <button class="border-button" onclick="add_price_range(this);" data-service_type_name="{{service_type.name}}" data-service_type_id="{{service_type.id}}"><i class="fa fa-plus-circle" aria-hidden="true"></i> Price Range</button>
                               </div>
                             </div>
                         </div>
@@ -1107,6 +1108,8 @@
 
             </div>
             <div class="row">
+                <input type="hidden" name="action_type" value="delete_price_range">
+                <input type="hidden" name="price_range" id="delete_price_range_id">
                 <div class="col-md-12 text-center">
                     <div class="cancel-model-content">
                         <button class="sent-button">Yes</button>
@@ -1211,7 +1214,6 @@
                 </div>
                 <h2 class="productivity-name" id="add_service_type_name_id"> </h2>
                 <input type="hidden" name="action_type" value="add_price_range">
-                <input type="hidden" name="price_range" id="add_price_range_id">
                 <input type="hidden" name="service_type" id="add_service_type_id">
                 <div class="row mt-10">
                     <div class="col-md-6 mt-10">
@@ -1318,6 +1320,7 @@
   }
 
 
+//edit price range
   function edit_price_range(elem)
   {
   $('#edit_price_range_id').val($(elem).data('id'));
@@ -1399,9 +1402,10 @@
 }
 
 
+
+//Add price range
 function add_price_range(elem)
 {
-    $('#add_price_range_id').val($(elem).data('id'));
     $("#add_service_type_name_id").text($(elem).data('service_type_name'));
     $("#add_service_type_id").val($(elem).data('service_type_id'));
 
@@ -1442,6 +1446,13 @@ function add_price_range(elem)
     $('#addModal').modal('show')
     // $(".pricerange_add_button").click(function(){
     //     });
+}
+
+//Delete Price Range
+function delete_price_range(elem)
+{
+    $('#delete_price_range_id').val($(elem).data('id'));
+    $('#DeleteModal').modal('show')
 }
 </script>
 {% endblock %}

@@ -1906,4 +1906,13 @@ class Productivity(IsAuthenticated,View):
 				messages.success(request,"Service Price Range Updated Successfully")
 			else:
 				messages.error(request,get_error(price_range_form))
+
+		if action == 'add_price_range':
+			price_range_form     = ServicePriceRangeForm(request.POST)
+			if price_range_form.is_valid():
+				price_range_form.save()
+				messages.success(request,"Service Price Range Added Successfully")
+			else:
+				messages.error(request,get_error(price_range_form))
+
 		return redirect('commmon:productivity')
