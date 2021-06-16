@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from django.views import View
 
 from django.conf import settings
-from bleach_crm_ps.permissions import IsTeamLeader
+from bleach_crm_ps.permissions import IsTeamLeader,IsAuthenticated
 
 import functools
 import operator
@@ -532,3 +532,11 @@ class FollowupCleaning(IsTeamLeader,View):
 		my_cleaning_calendar_date = request.GET.get('my_cleaning_calendar_date') or ''
 				
 		return redirect('/tl/dashboard/?my_cleaning_calendar_date='+my_cleaning_calendar_date)
+
+class CleaningTest(IsAuthenticated,View):
+	def get(self,request):
+		return render(request,"tl/cleaning/cleaningtest.html")
+
+class CleaningBackup(IsAuthenticated,View):
+	def get(self,request):
+		return render(request,"tl/cleaning/cleaningbackup.html")
