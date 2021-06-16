@@ -124,7 +124,7 @@ class Order(models.Model):
 	
 	instructions		   = models.CharField(max_length=5000,blank=True,null=True)
 	
-	callback_status		   = models.CharField(max_length=100,blank=True,null=True,default='WAITING',choices=CALLBACK_CHOICES)
+	# callback_status		   = models.CharField(max_length=100,blank=True,null=True,default='WAITING',choices=CALLBACK_CHOICES)
 	
 	feedback_notes  	= models.CharField(max_length=5000,blank=True,null=True)
 	is_feedback_marked	= models.BooleanField(null=False,blank=True,default=False)
@@ -213,7 +213,7 @@ class Investigation(models.Model):
 	title				 = models.CharField(max_length=500,blank=True,null=True)
 	secondary_investigation_notes  = models.CharField(max_length=5000,blank=True,null=True)
 	secondary_investigator		 = models.ForeignKey(UserProfile,blank=True,null=True,related_name='second_investigator')
-	secondary_investigation_created = models.DateTimeField(blank=True,null=True)
+	# secondary_investigation_created = models.DateTimeField(blank=True,null=True)
 	
 	is_followup_approved           = models.BooleanField(null=False,blank=True,default=False)
 	is_buybackgiftpromo_approved   = models.BooleanField(null=False,blank=True,default=False)
@@ -287,9 +287,9 @@ class PaybackDiscount(models.Model):
 	investigation      = models.ForeignKey('Investigation',blank=False,null=False,related_name='paybackdiscount_investigation')
 	total_cost         = models.FloatField(blank=True,null=True)
 	approved_total_cost= models.FloatField(blank=True,null=True)
-	approved_by		   = models.ForeignKey(UserProfile,blank=True,null=True,related_name="admin_payback")
+	# approved_by		   = models.ForeignKey(UserProfile,blank=True,null=True,related_name="admin_payback")
 	approved_option    = models.CharField(max_length=500,blank=True,null=True,choices=PAYBACKDISCOUNT_CHOICES)
-	accountant_approval= models.ForeignKey(UserProfile,blank=True,null=True,related_name="accountant_payback")
+	# accountant_approval= models.ForeignKey(UserProfile,blank=True,null=True,related_name="accountant_payback")
 	accountant_notes   = models.CharField(max_length=5000,blank=True,null=True)
 	is_completed       = models.BooleanField(null=False,blank=True,default=False)
 
@@ -338,7 +338,7 @@ class BuybackPromocodeGift(models.Model):
 	approved_total_cost             = models.FloatField(blank=True,null=True)
 	approved_promo_code				= models.CharField(max_length=100,blank=True,null=True)
 	approved_option                 = models.CharField(max_length=500,blank=True,null=True,choices=BUYBACKPROMOGIFT_CHOICES)
-	approved_by						= models.ForeignKey(UserProfile,blank=True,null=True)
+	# approved_by						= models.ForeignKey(UserProfile,blank=True,null=True)
 	is_completed                    = models.BooleanField(null=False,blank=True,default=False)
 
 	is_active          		        = models.BooleanField(null=False,blank=True,default=True)
@@ -394,7 +394,7 @@ class FollowUp(models.Model):
 	created         = models.DateTimeField(auto_now_add=True)
 	updated         = models.DateTimeField(auto_now=True)
 	closed			= models.DateTimeField(blank=True,null=True,auto_now=False)
-	closed_by		= models.ForeignKey(UserProfile,blank=True,null=True)
+	# closed_by		= models.ForeignKey(UserProfile,blank=True,null=True)
 
 	def save(self,*args, **kwargs):
 		last_ticket_no  		 = FollowUp.objects.filter(is_active=True).aggregate(t=Max('ticket_no'))['t']

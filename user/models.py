@@ -122,8 +122,8 @@ class UserProfile(AbstractUser):
     is_outdoor_skill            = models.BooleanField(null=False,blank=True,default=False)
     is_window_skill             = models.BooleanField(null=False,blank=True,default=False)
 
-    shift_start                 = models.TimeField(blank=True,null=True)
-    shift_end                   = models.TimeField(blank=True,null=True)
+    # shift_start                 = models.TimeField(blank=True,null=True)
+    # shift_end                   = models.TimeField(blank=True,null=True)
 
     is_onlineevaluator     = models.BooleanField(null=False,blank=True,default=True)
 
