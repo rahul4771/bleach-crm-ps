@@ -947,7 +947,7 @@ def receipt_html_to_pdf_view(request,payment_id):
 	return response	
 
 
-def statement_of_account(request,client_id):
+def statement_of_account_old(request,client_id):
 	client = UserProfile.objects.get(is_active=True,id=int(client_id))
 	address = Address.objects.filter(customer__id=int(client_id)).first()
 
@@ -1065,8 +1065,13 @@ def statement_of_account(request,client_id):
 	
 	return render(request,"customer/statement_of_account.html",{"client":client,"address":address,"accounts":accounts_list,"pending_payments":pending_payments})
 
-def statement_of_account_test(request):
-	return render(request,"customer/soa_test.html")
+def statement_of_account(request,client_id):
+	customer = UserProfile.objects.get(is_active=True,id=int(client_id))
+	address = Address.objects.filter(customer__id=int(client_id)).first()
+
+	customer_orders = Order.objects.filter(is_active=True,evaluation__customer__id=client_id).order_by('created')
+	print(customer_orders,"ods")
+	return render(request,"customer/soa_test.html",{"customer":customer,"address":address,"orders":customer_orders})
 
 def addpromocode(request):
 	

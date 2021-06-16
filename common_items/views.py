@@ -1030,7 +1030,7 @@ class ClientOrderDetails(IsAuthenticated,View):
 		except:
 			booking_id = None
 		
-		invoice = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='bookschedules')),to_attr='orderschedules')).annotate(total_cleanings_count=Count('order_scheduler_order'),completed_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())), remaining_cleanings_count= F('total_cleanings_count') - F('completed_cleanings_count') ).exclude(Q( Q(remaining_cleanings_count = 0) & Q(payment_status='COMPLETED') )).get(is_active=True,id=order_id)
+		# invoice = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='bookschedules')),to_attr='orderschedules')).annotate(total_cleanings_count=Count('order_scheduler_order'),completed_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())), remaining_cleanings_count= F('total_cleanings_count') - F('completed_cleanings_count') ).exclude(Q( Q(remaining_cleanings_count = 0) & Q(payment_status='COMPLETED') )).get(is_active=True,id=order_id)
 		
 		try:
 			client_details = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(is_active=True,id=order.evaluation.customer_id)
@@ -1045,21 +1045,21 @@ class ClientOrderDetails(IsAuthenticated,View):
 		#average feedbacks
 		average_feedback 	= order.feed_backs_order.aggregate(Avg('rating'))['rating__avg']
 
-		if invoice:
-			cleaning_price = 0
-			for scheduler in invoice.orderschedules:
-				if scheduler.work_status=='CLEANING_FULFILLED':
-					cleaning_price += scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules)	
-			if cleaning_price > invoice.amount_paid:
-				invoice.balance       = cleaning_price-invoice.amount_paid
-			else:
-				invoice.balance       = cleaning_price-invoice.amount_paid
+		# if invoice:
+		# 	cleaning_price = 0
+		# 	for scheduler in invoice.orderschedules:
+		# 		if scheduler.work_status=='CLEANING_FULFILLED':
+		# 			cleaning_price += scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules)	
+		# 	if cleaning_price > invoice.amount_paid:
+		# 		invoice.balance       = cleaning_price-invoice.amount_paid
+		# 	else:
+		# 		invoice.balance       = cleaning_price-invoice.amount_paid
 
-			if invoice.balance == int(invoice.balance):
-				invoice.balance = int(invoice.balance)
+		# 	if invoice.balance == int(invoice.balance):
+		# 		invoice.balance = int(invoice.balance)
 
 
-		return render(request,"common/client/order-page.html",{"invoice":invoice,"booking_id":booking_id,"order":order,"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"average_feedback":average_feedback,})
+		return render(request,"common/client/order-page.html",{"booking_id":booking_id,"order":order,"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"average_feedback":average_feedback,})
 
 	def post(self,request,order_id):
 		action = request.POST.get('action_type')

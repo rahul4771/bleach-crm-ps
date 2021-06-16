@@ -51,19 +51,19 @@
         <h6>Customer Details</h6>
         <div id="soa_detials">
           <div id="soa_right">Customer ID </div>
-          <div>: 0000000 </div>
+          <div>: {{customer.customer_id}} </div>
         </div>
         <div id="soa_detials">
           <div id="soa_right">Name </div>
-          <div>: TABCO </div>
+          <div>: {{customer.name}} </div>
         </div>
         <div id="soa_detials">
           <div id="soa_right">Address </div>
-          <div>: 0 Floor, 0,0 Block,0 Street,0 Avenue,Sharq, Al Asimah </div>
+          <div>: <b>{{address.apartment}}</b>: {% if address.floor %}{{address.floor}}, {% else %}{% endif %} {{address.building}}, {{address.block}}, {{address.street}}, {% if address.avenue %}{{address.avenue}}, {% else %}{% endif %} {{address.area.name}}, {{address.governorate.name}} </div>
         </div>
         <div id="soa_detials">
           <div id="soa_right">Contact </div>
-          <div>: 000000000 </div>
+          <div>: {{customer.mobile_number}} </div>
         </div>
       </div>
       <table id="soa_table">
@@ -76,52 +76,26 @@
           <th style="text-align: center;">Balance</th>
           <th style="text-align: center;">Due Inv</th>
         </tr>
+        {% for order in orders %}
         <tr>
+          <td>{{order.created|date:'d-m-Y'}}</td>
+          <td>{{order.order_no}}</td>
+          <td>Cleaning Service</td>
+          <td style="text-align: right;">{{order.total_amount|floatformat:3}}</td>
+          <td style="text-align: right;">{{order.amount_paid|floatformat:3}}</td>
+
+          <td style="text-align: right;">{{order.remining_amount|floatformat:3}}</td>
+          <td style="text-align: right;">{% if order.amount_paid == 0 %}{{order.remining_amount|floatformat:3}}{% else %}--{% endif %}</td>
+        </tr>
+        {% endfor %}
+        {% comment %} <tr>
           <td>30-05-21</td>
-          <td>BLC20210510115</td>
+          <td>BLC2006270</td>
           <td>Sterilization</td>
           <td style="text-align: right;">100.000</td>
+          <td style="text-align: right;">--</td>
           <td style="text-align: right;">100.000</td>
 
-          <td style="text-align: right;">100.000</td>
-          <td style="text-align: right;">--</td>
-        </tr>
-        <tr>
-          <td>30-05-21</td>
-          <td>BLC2006270</td>
-          <td>Sterilization</td>
-          <td style="text-align: right;">100.000</td>
-          <td style="text-align: right;">--</td>
-          <td style="text-align: right;">100.000</td>
-
-          <td style="text-align: right;">--</td>
-        </tr>
-        <tr>
-          <td>30-05-21</td>
-          <td>BLC2006270</td>
-          <td>Sterilization</td>
-          <td style="text-align: right;">100.000</td>
-          <td style="text-align: right;">100.000</td>
-
-          <td style="text-align: right;">100.000</td>
-          <td style="text-align: right;">--</td>
-        </tr>
-        <tr>
-          <td>30-05-21</td>
-          <td>BLC2006270</td>
-          <td>Sterilization</td>
-          <td style="text-align: right;">100.000</td>
-          <td style="text-align: right;">100.000</td>
-          <td style="text-align: right;">100.000</td>
-          <td style="text-align: right;">--</td>
-        </tr>
-        <tr>
-          <td>30-05-21</td>
-          <td>BLC2006270</td>
-          <td>Sterilization</td>
-          <td style="text-align: right;">100.000</td>
-          <td style="text-align: right;">--</td>
-          <td style="text-align: right;">100.000</td>
           <td style="text-align: right;">--</td>
         </tr>
         <tr>
@@ -148,7 +122,17 @@
           <td>BLC2006270</td>
           <td>Sterilization</td>
           <td style="text-align: right;">100.000</td>
+          <td style="text-align: right;">--</td>
           <td style="text-align: right;">100.000</td>
+          <td style="text-align: right;">--</td>
+        </tr>
+        <tr>
+          <td>30-05-21</td>
+          <td>BLC2006270</td>
+          <td>Sterilization</td>
+          <td style="text-align: right;">100.000</td>
+          <td style="text-align: right;">100.000</td>
+
           <td style="text-align: right;">100.000</td>
           <td style="text-align: right;">--</td>
         </tr>
@@ -170,6 +154,24 @@
           <td style="text-align: right;">100.000</td>
           <td style="text-align: right;">--</td>
         </tr>
+        <tr>
+          <td>30-05-21</td>
+          <td>BLC2006270</td>
+          <td>Sterilization</td>
+          <td style="text-align: right;">100.000</td>
+          <td style="text-align: right;">100.000</td>
+          <td style="text-align: right;">100.000</td>
+          <td style="text-align: right;">--</td>
+        </tr>
+        <tr>
+          <td>30-05-21</td>
+          <td>BLC2006270</td>
+          <td>Sterilization</td>
+          <td style="text-align: right;">100.000</td>
+          <td style="text-align: right;">100.000</td>
+          <td style="text-align: right;">100.000</td>
+          <td style="text-align: right;">--</td>
+        </tr> {% endcomment %}
         <tr>
           <td colspan="3">
             Total
