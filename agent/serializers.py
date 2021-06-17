@@ -54,8 +54,6 @@ class CleaningTeamShowSerializer(serializers.ModelSerializer):
 
 
 class CleaningScheduleSerializer(serializers.ModelSerializer):
-	start_at             = serializers.DateTimeField(format="%d-%m-%Y %I:%M %p")
-	end_at               = serializers.DateTimeField(format="%d-%m-%Y %I:%M %p")
 	customer_address     = AddressSerializer(read_only=True)
 	evaluation_details   = EvaluationDetailsShowSerializer(read_only=True)
 	order                = OrderShowSerializer(read_only=True)
@@ -67,8 +65,8 @@ class CleaningScheduleSerializer(serializers.ModelSerializer):
 	
 	def to_representation(self,obj):
 		td = super(CleaningScheduleSerializer,self).to_representation(obj)	
-		td['start_at']  = (obj.start_at)+timedelta(hours=3)
-		td['end_at'] 	= (obj.end_at)+timedelta(hours=3)
+		td['start_at']  = ((obj.start_at)+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
+		td['end_at'] 	= ((obj.end_at)+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
 		return(td)
 
 
@@ -96,8 +94,6 @@ class FollowUpTeamShowSerializer(serializers.ModelSerializer):
 
 class FollowupScheduleSerializer(serializers.ModelSerializer):
 	customer_address              = AddressSerializer(read_only=True)
-	start_at                      = serializers.DateTimeField(format="%d-%m-%Y %I:%M %p")
-	end_at                        = serializers.DateTimeField(format="%d-%m-%Y %I:%M %p")
 	follow_up                     = FollowupSerializer(read_only=True)
 	followupteam_followupschedule = FollowUpTeamShowSerializer(many=True,read_only=True)
 	class Meta:		
@@ -106,6 +102,6 @@ class FollowupScheduleSerializer(serializers.ModelSerializer):
 	
 	def to_representation(self,obj):
 		td = super(FollowupScheduleSerializer,self).to_representation(obj)	
-		td['start_at']  = (obj.start_at)+timedelta(hours=3)
-		td['end_at'] 	= (obj.end_at)+timedelta(hours=3)
+		td['start_at']  = ((obj.start_at)+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
+		td['end_at'] 	= ((obj.end_at)+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
 		return(td)
