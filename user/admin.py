@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.admin import UserAdmin
 
-from user.models import UserProfile,Governorate,Area,Address,LeaveSchedule,ShiftSchedule
+from user.models import UserProfile,Governorate,Area,Address,LeaveSchedule,ShiftSchedule,Shift
 # Register your models here.
 
 
@@ -52,3 +52,4 @@ admin.site.register(Area)
 admin.site.register(Address)    
 admin.site.register(LeaveSchedule)       
 admin.site.register(ShiftSchedule)
+admin.site.register(Shift)
