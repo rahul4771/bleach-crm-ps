@@ -416,7 +416,7 @@ function addToShift1(){
     
         /* add leave */
     
-        axios.post(url+'/api/shift-scheduler',shiftList)
+        axios.post(url+'/api/shift-scheduler/',shiftList)
         .then(function (response) {
           // handle success
        
@@ -478,7 +478,7 @@ function addToShift2(){
 
     /* add leave */
 
-    axios.post(url+'/api/shift-scheduler',shiftList)
+    axios.post(url+'/api/shift-scheduler/',shiftList)
     .then(function (response) {
       // handle success
    

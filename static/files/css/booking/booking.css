@@ -617,6 +617,14 @@ padding:10px;
 .bk-image-upload{
     height: 200px;
 }
+.bg-white{
+    background:#ffffff;
+}
+.page-main-title{
+    color:#289bac;
+    font-size:3.5rem;
+    font-weight:500;
+}
 /*.owl-prev {
   
     position: absolute;
