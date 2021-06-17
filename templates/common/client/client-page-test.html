@@ -42,7 +42,7 @@
                         <div class="cd-client-data ">
                             {{client_details.date_day}}-{{client_details.date_month}}-{{client_details.date_year|default_if_none:'----'}} {{client_details.nationality.name}}
                         </div>
-                        <hr class="cd-hr">
+                        <hr class="cd-hr mb-5">
                         <div class="cd-client-data ">
                             {% if client_details.customer_type == 'CORPORATE' %}
                             {{client_details.job_title}} at {{client_details.company}}
@@ -67,13 +67,13 @@
                         <h1 class="cd-box-value cd-text-blue">
                             {{total_services}}
                         </h1>
-                        <div class="row ml-0 mr-0">
-                            <div class="col-xs-8 cd-card-title2">Ongoing</div>
-                            <div class="col-xs-4">: <span class="cd-count cd-text-blue">{{ongoing_services}}</span></div>
+                        <div class="row ml-0 mr-0 mb-20">
+                            <div class="col-xs-8 cd-card-title3">Ongoing</div>
+                            <div class="col-xs-4">: <span class="cd-count cd-text-blue cd-f20">{{ongoing_services}}</span></div>
                         </div>
                         <div class="row ml-0 mr-0">
-                            <div class="col-xs-8 cd-card-title2">Completed</div>
-                            <div class="col-xs-4">: <span class="cd-count cd-text-blue">{{closed_services}}</span></div>
+                            <div class="col-xs-8 cd-card-title3">Completed</div>
+                            <div class="col-xs-4">: <span class="cd-count cd-text-blue cd-f20">{{closed_services}}</span></div>
                         </div>
                     </div>
                 </div>
@@ -83,38 +83,37 @@
                             Ticket Rased
                         </div>
                         <h1 class="cd-box-value cd-text-red">
-                            {{total_tickets}}
+                            {{total_tickets}} 
                         </h1>
-                        <div class="row ml-0 mr-0">
-                            <div class="col-xs-8 cd-card-title2">Active</div>
-                            <div class="col-xs-4">: <span class="cd-count cd-text-red">{{active_tickets}}</span></div>
+                        <div class="row ml-0 mr-0 mb-20">
+                            <div class="col-xs-8 cd-card-title3">Active</div>
+                            <div class="col-xs-4">: <span class="cd-count cd-text-red cd-f20">{{active_tickets}}</span></div>
                         </div>
                         <div class="row ml-0 mr-0">
-                            <div class="col-xs-8 cd-card-title2">Closed</div>
-                            <div class="col-xs-4">: <span class="cd-count cd-text-green">{{completed_tickets}}</span></div>
+                            <div class="col-xs-8 cd-card-title3">Closed</div>
+                            <div class="col-xs-4">: <span class="cd-count cd-text-green cd-f20">{{completed_tickets}}</span></div>
                         </div>
                     </div>
                 </div>
 
                 <div class="col-md-4 no-float cd-mt-4">
-                    <div class="cd-service-box cd-p-20">
+                    <div class="cd-service-box ">
                         <div class="cd-box-head-name">
                             Wallet
                         </div>
-                        <br>
-                            <div class=" cd-card-title2  text-center"><span class="cd-price cd-text-green-2">{{client_details.credit_amount}} KD</span>
-                            
-                            
-                        </div>
-                        <div class="row ml-0 mr-0 cd-mt-50">
-                            <div class="col-xs-6 col-md-8 cd-key">Total Paid
-                            </div><div class="col-xs-6 col-md-4 cd-text-blue cd-card-title2">: {{total_paid}} KD
+                        <h1 class="cd-box-value cd-text-green-2">
+                            {{client_details.credit_amount}} KD
+                        </h1>
+
+                        <div class="row ml-0 mr-0   mb-20">
+                            <div class="col-xs-6 col-md-8 cd-card-title3">Total Paid
+                            </div><div class="col-xs-6 col-md-4 cd-text-blue cd-f20">: {{total_paid}} KD
                             </div>
                             
                         </div>
                         <div class="row ml-0 mr-0">
-                            <div class="col-xs-6 col-md-8 cd-key cd-mt-2">Total Balance
-                            </div><div class="col-xs-6 col-md-4 cd-card-title2 cd-text-green-2 no-float cd-mt-2">: {{balance}} KD
+                            <div class="col-xs-6 col-md-8 cd-card-title3 cd-mt-2">Total Balance
+                            </div><div class="col-xs-6 col-md-4 cd-card-title2 cd-text-green-2 no-float cd-mt-2 cd-f20">: {{balance}} KD
                             </div>
                             
                         </div>
@@ -257,7 +256,7 @@
         
                             {% for evaluation_detail in order.evaluation.evaluationdetails %}
                             <div class="cd-card-content2 cd-mt-4">
-                                {{evaluation_detail.address.area.name}}
+                               <b> {{evaluation_detail.address.area.name}}</b>
                             </div>
                             {% for evaluation_book in evaluation_detail.evaluationbooks %}
                             <div class="cd-card-content cd-mt-4">
@@ -270,14 +269,14 @@
                             <div class="row ml-0 mr-0">
                                 <div class="col-xs-12">
                                     <div class="cd-card-title2">
-                                        Payment
+                                        <b>Payment</b>
                                     </div>
                                 </div>
                             </div>    
                             
         
                             <div class="row ml-0 mr-0 cd-mt-4">
-                                <div class="col-xs-6 col-md-6 cd-key cd-mt-4">Payment Policy</div>
+                                <div class="col-xs-6 col-md-6 cd-key cd-mt-4"><b>Payment Policy</b></div>
                                 <div class="col-md-6 col-xs-6 cd-mt-4">: <span class="cd-count">{{order.evaluation.payment_method}}</span></div>
                             </div>
                             <div class="row ml-0 mr-0 cd-mt-2">
@@ -337,6 +336,13 @@
                             <p style="text-align: center;">Address1</p>
                             <p>Lorem ipsum dolor sit amet, consectetur adip</p> 
                         </div>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <div  class="secondary-btn cd-ml-4">
+                        <i class="far fa-file-alt primary-icon"></i>
+                        Statement Of Account
                     </div>
                 </div>
 

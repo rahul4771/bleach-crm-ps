@@ -1389,23 +1389,26 @@ select.minimal:focus {
 }
 
 .client-address-text{
-  font-size: 24px;
+  font-size: 20px;
   color: #434343;
   font-weight: 100;
   text-align: center;
+  margin-bottom: 10px;
 
 }
 .client-address-items{
   width: 100%;
   margin-top: 10px;
   text-align: left;
-  font-size: 16px;
+  font-size: 14px;
   color: #434343;
   font-weight: 100;
   text-align: justify;
 }
 .cd-client-name{
   color: #434343;
-  font-size: 28px;
+  font-size: 32px;
   text-align: center;
+  font-weight: 600;
+}
 }
