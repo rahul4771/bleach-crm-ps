@@ -232,6 +232,9 @@ const app=  new Vue({
         this.getEvaluationSlots()
       },
       methods:{
+        editCleaningTeam(slot){
+          window.location.href='/stl/editcleaning/team/'+slot
+        },
         selectEditSlot(slot){
          
 
