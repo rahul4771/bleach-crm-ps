@@ -48,16 +48,16 @@ urlpatterns = [
 		url(r'^ajax/getservicesizeprice$',views.GetServiceSizePrice.as_view(),name='ajax-getservicesizeprice'),
 		url(r'^ajax/getserviceproductivity$',views.GetServiceProductivity.as_view(),name='ajax-serviceproductivity'),
 		
-		url(r'^ajax/getcleaningslotes$',views.GetCleaningSlotes.as_view(),name='ajax-cleaningslotes'),
-		url(r'^ajax/getmultipleservicecleaningslotes$',views.GetMultipleServiceCleaningSlotes.as_view(),name='ajax-multipleservicecleaningslotes'),
-		url(r'^ajax/multipleservice/multipledates/cleaningslotes/$',views.GetMultipleServiceDateCleaningSlotes.as_view(),name='ajax-multipleservicedatecleaningslotes'),
-		url(r'^ajax/multipleservice/multipledates/cleaningslotes/autofix/$',views.GetMultipleServiceDateCleaningSlotesAutofix.as_view(),name='ajax-multipleservicedatecleaningslotes-autofix'),
+		url(r'^ajax/getcleaningslotes$',views.GetCleaningSlotes.as_view(),name='ajax-cleaningslotes'),#done
+		url(r'^ajax/getmultipleservicecleaningslotes$',views.GetMultipleServiceCleaningSlotes.as_view(),name='ajax-multipleservicecleaningslotes'),#done
+		url(r'^ajax/multipleservice/multipledates/cleaningslotes/$',views.GetMultipleServiceDateCleaningSlotes.as_view(),name='ajax-multipleservicedatecleaningslotes'),#done
+		url(r'^ajax/multipleservice/multipledates/cleaningslotes/autofix/$',views.GetMultipleServiceDateCleaningSlotesAutofix.as_view(),name='ajax-multipleservicedatecleaningslotes-autofix'),#done
 		url(r'^ajax/addressotpsend$',views.AddressOtpSend,name='ajax-addressotpsend'),
 		url(r'^ajax/addressotpverify$',views.AddressOtpVerify,name='ajax-addressotpverify'),
 		
 		url(r'^bookingphase1$',views.ClientCleaningBookingPhase1.as_view(),name='clientcleaningbookingphase1'),
-		url(r'^bookingphase2$',views.ClientCleaningBookingPhase2.as_view(),name='clientcleaningbookingphase2'),
-		url(r'^bookingmultiplephase2$',views.ClientMultipleCleaningBookingPhase2.as_view(),name='clientcleaningmultiplebookingphase2'),
+		url(r'^bookingphase2$',views.ClientCleaningBookingPhase2.as_view(),name='clientcleaningbookingphase2'),#done
+		url(r'^bookingmultiplephase2$',views.ClientMultipleCleaningBookingPhase2.as_view(),name='clientcleaningmultiplebookingphase2'),#done
 		url(r'^bookingphase3$',views.ClientCleaningBookingPhase3.as_view(),name='clientcleaningbookingphase3'),
 		url(r'^bookingmediasave$',views.ClientCleaningBookingMediaSave.as_view(),name='clientcleaningbookingmediasave'),
 

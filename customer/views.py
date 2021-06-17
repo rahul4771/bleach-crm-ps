@@ -23,7 +23,7 @@ from django.db.models import Prefetch
 from django.contrib import messages
 
 
-from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule
+from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,Promocode
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
@@ -1896,8 +1896,12 @@ class GetCleaningSlotes(APIView):
 				slote_starttime 			  = cleaning_date.replace(hour=slote,minute=0,second=0,microsecond=0)
 				slote_endtime                 = slote_starttime+timedelta(hours=slote_duration)
 
-				total_newcleaners = total_cleaners.filter(Q(Q(Q(shift_start__lte=slote_starttime.time())&Q(shift_end__gte=slote_starttime.time()))&Q(Q(shift_start__lte=slote_endtime.time())&Q(shift_end__gte=slote_endtime.time())))).count()-1
-				total_newleaders  = total_leaders.filter(Q(Q(Q(shift_start__lte=slote_starttime.time())&Q(shift_end__gte=slote_starttime.time()))&Q(Q(shift_start__lte=slote_endtime.time())&Q(shift_end__gte=slote_endtime.time())))).count()-1
+				#included shift cleaners
+				shift_cleaners  = ShiftSchedule.objects.select_related('staff').filter(shift_date=cleaning_date).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=slote_starttime.time())&Q(shift1_end_at__gte=slote_starttime.time()))&Q(Q(shift1_start_at__lte=slote_endtime.time())&Q(shift1_end_at__gte=slote_endtime.time()))) | Q(Q(Q(shift2_start_at__lte=slote_starttime.time())&Q(shift2_end_at__gte=slote_starttime.time()))&Q(Q(shift2_start_at__lte=slote_endtime.time())&Q(shift2_end_at__gte=slote_endtime.time())))).values_list('staff',flat=True)
+				shift_leaders   = ShiftSchedule.objects.select_related('staff').filter(shift_date=cleaning_date).filter(staff__user_type='TEAMINCHARGE').filter(Q(Q(Q(shift1_start_at__lte=slote_starttime.time())&Q(shift1_end_at__gte=slote_starttime.time()))&Q(Q(shift1_start_at__lte=slote_endtime.time())&Q(shift1_end_at__gte=slote_endtime.time()))) | Q(Q(Q(shift2_start_at__lte=slote_starttime.time())&Q(shift2_end_at__gte=slote_starttime.time()))&Q(Q(shift2_start_at__lte=slote_endtime.time())&Q(shift2_end_at__gte=slote_endtime.time())))).values_list('staff',flat=True)
+
+				total_newcleaners = total_cleaners.filter(id__in=shift_cleaners).count()-1
+				total_newleaders  = total_leaders.filter(id__in=shift_leaders).count()-1
 
 				if service_type == 'General Cleaning':
 					active_cleaners1 	= CleaningTeamMember.objects.select_related('member').filter(member__is_general_skill=True).filter(Q(Q(Q(start_at__gte=slote_starttime)&Q(start_at__lte=slote_endtime))|Q(Q(end_at__gte=slote_starttime)&Q(end_at__lte=slote_endtime))|Q(Q(start_at__lte=slote_starttime)&Q(end_at__gte=slote_starttime)&Q(start_at__lte=slote_endtime)&Q(end_at__gte=slote_endtime))|Q(Q(start_at__gte=slote_starttime)&Q(end_at__gte=slote_starttime)&Q(start_at__lte=slote_endtime)&Q(end_at__lte=slote_endtime))))
@@ -2040,8 +2044,12 @@ class GetMultipleServiceCleaningSlotes(APIView):
 				slote_starttime 			  = cleaning_date.replace(hour=slote,minute=0,second=0,microsecond=0)
 				slote_endtime                 = slote_starttime+timedelta(hours=slote_duration)
 
-				total_newcleaners = total_cleaners.filter(Q(Q(Q(shift_start__lte=slote_starttime.time())&Q(shift_end__gte=slote_starttime.time()))&Q(Q(shift_start__lte=slote_endtime.time())&Q(shift_end__gte=slote_endtime.time())))).count()-1
-				total_newleaders  = total_leaders.filter(Q(Q(Q(shift_start__lte=slote_starttime.time())&Q(shift_end__gte=slote_starttime.time()))&Q(Q(shift_start__lte=slote_endtime.time())&Q(shift_end__gte=slote_endtime.time())))).count()-1
+				#included shift cleaners
+				shift_cleaners  = ShiftSchedule.objects.select_related('staff').filter(shift_date=cleaning_date).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=slote_starttime.time())&Q(shift1_end_at__gte=slote_starttime.time()))&Q(Q(shift1_start_at__lte=slote_endtime.time())&Q(shift1_end_at__gte=slote_endtime.time()))) | Q(Q(Q(shift2_start_at__lte=slote_starttime.time())&Q(shift2_end_at__gte=slote_starttime.time()))&Q(Q(shift2_start_at__lte=slote_endtime.time())&Q(shift2_end_at__gte=slote_endtime.time())))).values_list('staff',flat=True)
+				shift_leaders   = ShiftSchedule.objects.select_related('staff').filter(shift_date=cleaning_date).filter(staff__user_type='TEAMINCHARGE').filter(Q(Q(Q(shift1_start_at__lte=slote_starttime.time())&Q(shift1_end_at__gte=slote_starttime.time()))&Q(Q(shift1_start_at__lte=slote_endtime.time())&Q(shift1_end_at__gte=slote_endtime.time()))) | Q(Q(Q(shift2_start_at__lte=slote_starttime.time())&Q(shift2_end_at__gte=slote_starttime.time()))&Q(Q(shift2_start_at__lte=slote_endtime.time())&Q(shift2_end_at__gte=slote_endtime.time())))).values_list('staff',flat=True)
+
+				total_newcleaners = total_cleaners.filter(id__in=shift_cleaners).count()-1
+				total_newleaders  = total_leaders.filter(id__in=shift_leaders).count()-1
 				
 				active_cleaners1 	= CleaningTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=slote_starttime)&Q(start_at__lte=slote_endtime))|Q(Q(end_at__gte=slote_starttime)&Q(end_at__lte=slote_endtime))|Q(Q(start_at__lte=slote_starttime)&Q(end_at__gte=slote_starttime)&Q(start_at__lte=slote_endtime)&Q(end_at__gte=slote_endtime))|Q(Q(start_at__gte=slote_starttime)&Q(end_at__gte=slote_starttime)&Q(start_at__lte=slote_endtime)&Q(end_at__lte=slote_endtime))))
 				active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=slote_starttime)&Q(start_at__lte=slote_endtime))|Q(Q(end_at__gte=slote_starttime)&Q(end_at__lte=slote_endtime))|Q(Q(start_at__lte=slote_starttime)&Q(end_at__gte=slote_starttime)&Q(start_at__lte=slote_endtime)&Q(end_at__gte=slote_endtime))|Q(Q(start_at__gte=slote_starttime)&Q(end_at__gte=slote_starttime)&Q(start_at__lte=slote_endtime)&Q(end_at__lte=slote_endtime))))
@@ -2190,8 +2198,12 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
 			start_at_date = start_at.date()
 			end_at_date   = end_at.date()
 
-			total_newcleaners = total_cleaners.filter(Q(Q(Q(shift_start__lte=start_at.time())&Q(shift_end__gte=start_at.time()))&Q(Q(shift_start__lte=end_at.time())&Q(shift_end__gte=end_at.time())))).count()-1
-			total_newleaders  = total_leaders.filter(Q(Q(Q(shift_start__lte=start_at.time())&Q(shift_end__gte=start_at.time()))&Q(Q(shift_start__lte=end_at.time())&Q(shift_end__gte=end_at.time())))).count()-1
+			#included shift cleaners
+			shift_cleaners  = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_at_date)|Q(shift_date=end_at_date))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=start_at.time())&Q(shift1_end_at__gte=start_at.time()))&Q(Q(shift1_start_at__lte=end_at.time())&Q(shift1_end_at__gte=end_at.time()))) | Q(Q(Q(shift2_start_at__lte=start_at.time())&Q(shift2_end_at__gte=start_at.time()))&Q(Q(shift2_start_at__lte=end_at.time())&Q(shift2_end_at__gte=end_at.time())))).values_list('staff',flat=True)
+			shift_leaders   = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_at_date)|Q(shift_date=end_at_date))).filter(staff__user_type='TEAMINCHARGE').filter(Q(Q(Q(shift1_start_at__lte=start_at.time())&Q(shift1_end_at__gte=start_at.time()))&Q(Q(shift1_start_at__lte=end_at.time())&Q(shift1_end_at__gte=end_at.time()))) | Q(Q(Q(shift2_start_at__lte=start_at.time())&Q(shift2_end_at__gte=start_at.time()))&Q(Q(shift2_start_at__lte=end_at.time())&Q(shift2_end_at__gte=end_at.time())))).values_list('staff',flat=True)
+
+			total_newcleaners = total_cleaners.filter(id__in=shift_cleaners).count()-1
+			total_newleaders  = total_leaders.filter(id__in=shift_leaders).count()-1
 			
 			#absent cleaners and leaders	
 			absent_cleaners = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=start_at_date)|Q(leave_date=end_at_date))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
@@ -2346,12 +2358,16 @@ class GetMultipleServiceDateCleaningSlotesAutofix(APIView):
 				
 				start_at = datetime.strptime(cleaning_datetime,'%d-%m-%Y %I:%M %p')+timedelta(hours=slote_checking)
 				end_at   = start_at+timedelta(hours=cleaing_hours)
-	
-				total_newcleaners = total_cleaners.filter(Q(Q(Q(shift_start__lte=start_at.time())&Q(shift_end__gte=start_at.time()))&Q(Q(shift_start__lte=end_at.time())&Q(shift_end__gte=end_at.time())))).count()-1
-				total_newleaders  = total_leaders.filter(Q(Q(Q(shift_start__lte=start_at.time())&Q(shift_end__gte=start_at.time()))&Q(Q(shift_start__lte=end_at.time())&Q(shift_end__gte=end_at.time())))).count()-1
 		
 				start_at_date = start_at.date()
 				end_at_date   = end_at.date()
+
+				#included shift cleaners
+				shift_cleaners  = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_at_date)|Q(shift_date=end_at_date))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=start_at.time())&Q(shift1_end_at__gte=start_at.time()))&Q(Q(shift1_start_at__lte=end_at.time())&Q(shift1_end_at__gte=end_at.time()))) | Q(Q(Q(shift2_start_at__lte=start_at.time())&Q(shift2_end_at__gte=start_at.time()))&Q(Q(shift2_start_at__lte=end_at.time())&Q(shift2_end_at__gte=end_at.time())))).values_list('staff',flat=True)
+				shift_leaders   = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_at_date)|Q(shift_date=end_at_date))).filter(staff__user_type='TEAMINCHARGE').filter(Q(Q(Q(shift1_start_at__lte=start_at.time())&Q(shift1_end_at__gte=start_at.time()))&Q(Q(shift1_start_at__lte=end_at.time())&Q(shift1_end_at__gte=end_at.time()))) | Q(Q(Q(shift2_start_at__lte=start_at.time())&Q(shift2_end_at__gte=start_at.time()))&Q(Q(shift2_start_at__lte=end_at.time())&Q(shift2_end_at__gte=end_at.time())))).values_list('staff',flat=True)
+
+				total_newcleaners = total_cleaners.filter(id__in=shift_cleaners).count()-1
+				total_newleaders  = total_leaders.filter(id__in=shift_leaders).count()-1
 				
 				if start_at_date == actual_cleaningdate and end_at_date == actual_cleaningdate:				
 
@@ -2586,13 +2602,16 @@ class ClientCleaningBookingPhase2(APIView):
 
 				number_of_cleaners      = test_schedules_dict[key]['no_of_cleaners']-1
 
-				#total cleaners
-				total_newcleaners = total_cleaners.filter(Q(Q(Q(shift_start__lte=start_date_time)|Q(shift_end__gte=start_date_time))&Q(Q(shift_start__lte=end_date_time)|Q(shift_end__gte=end_date_time)))).count()-1
-				total_newleaders  = total_leaders.filter(Q(Q(Q(shift_start__lte=start_date_time)|Q(shift_end__gte=start_date_time))&Q(Q(shift_start__lte=end_date_time)|Q(shift_end__gte=end_date_time)))).count()-1
+				#included shift cleaners
+				shift_cleaners  = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_date_time.date())|Q(shift_date=end_date_time.date()))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=start_date_time.time())&Q(shift1_end_at__gte=start_date_time.time()))&Q(Q(shift1_start_at__lte=end_date_time.time())&Q(shift1_end_at__gte=end_date_time.time()))) | Q(Q(Q(shift2_start_at__lte=start_date_time.time())&Q(shift2_end_at__gte=start_date_time.time()))&Q(Q(shift2_start_at__lte=end_date_time.time())&Q(shift2_end_at__gte=end_date_time.time())))).values_list('staff',flat=True)
+				shift_leaders   = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_date_time.date())|Q(shift_date=end_date_time.date()))).filter(staff__user_type='TEAMINCHARGE').filter(Q(Q(Q(shift1_start_at__lte=start_date_time.time())&Q(shift1_end_at__gte=start_date_time.time()))&Q(Q(shift1_start_at__lte=end_date_time.time())&Q(shift1_end_at__gte=end_date_time.time()))) | Q(Q(Q(shift2_start_at__lte=start_date_time.time())&Q(shift2_end_at__gte=start_date_time.time()))&Q(Q(shift2_start_at__lte=end_date_time.time())&Q(shift2_end_at__gte=end_date_time.time())))).values_list('staff',flat=True)
 
 				#absent cleaners and leaders	
 				absent_cleaners = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=start_date_time.date())|Q(leave_date=end_date_time.date()))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
 				absent_leaders  = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=start_date_time.date())|Q(leave_date=end_date_time.date()))).filter(staff__user_type='TEAMINCHARGE').values_list('staff',flat=True)
+
+				total_newcleaners = total_cleaners.filter(id__in=shift_cleaners).exclude(id__in=absent_cleaners).count()-1
+				total_newleaders  = total_leaders.filter(id__in=shift_leaders).exclude(id__in=absent_leaders).count()-1
 
 				if service_type == 'General Cleaning':
 					active_cleaners1 	= CleaningTeamMember.objects.select_related('member').filter(member__is_general_skill=True).filter(Q(Q(Q(start_at__gte=start_date_time)&Q(start_at__lte=end_date_time))|Q(Q(end_at__gte=start_date_time)&Q(end_at__lte=end_date_time))|Q(Q(start_at__lte=start_date_time)&Q(end_at__gte=start_date_time)&Q(start_at__lte=end_date_time)&Q(end_at__gte=end_date_time))|Q(Q(start_at__gte=start_date_time)&Q(end_at__gte=start_date_time)&Q(start_at__lte=end_date_time)&Q(end_at__lte=end_date_time))))
@@ -2833,8 +2852,13 @@ class ClientCleaningBookingPhase2(APIView):
 				active_cleaners2 	= FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).values_list("member",flat=True)
 
 		
-				leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').filter(Q(Q(Q(shift_start__lte=start_date_time)|Q(shift_end__gte=start_date_time))&Q(Q(shift_start__lte=end_date_time)|Q(shift_end__gte=end_date_time)))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_leaders)))
-				cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).filter(Q(Q(Q(shift_start__lte=start_date_time)|Q(shift_end__gte=start_date_time))&Q(Q(shift_start__lte=end_date_time)|Q(shift_end__gte=end_date_time)))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_cleaners)))
+				#included shift cleaners
+				shift_cleaners  = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_date_time.date())|Q(shift_date=end_date_time.date()))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=start_date_time.time())&Q(shift1_end_at__gte=start_date_time.time()))&Q(Q(shift1_start_at__lte=end_date_time.time())&Q(shift1_end_at__gte=end_date_time.time()))) | Q(Q(Q(shift2_start_at__lte=start_date_time.time())&Q(shift2_end_at__gte=start_date_time.time()))&Q(Q(shift2_start_at__lte=end_date_time.time())&Q(shift2_end_at__gte=end_date_time.time())))).values_list('staff',flat=True)
+				shift_leaders   = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_date_time.date())|Q(shift_date=end_date_time.date()))).filter(staff__user_type='TEAMINCHARGE').filter(Q(Q(Q(shift1_start_at__lte=start_date_time.time())&Q(shift1_end_at__gte=start_date_time.time()))&Q(Q(shift1_start_at__lte=end_date_time.time())&Q(shift1_end_at__gte=end_date_time.time()))) | Q(Q(Q(shift2_start_at__lte=start_date_time.time())&Q(shift2_end_at__gte=start_date_time.time()))&Q(Q(shift2_start_at__lte=end_date_time.time())&Q(shift2_end_at__gte=end_date_time.time())))).values_list('staff',flat=True)
+
+
+				leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_leaders))).filter(id__in=shift_leaders)
+				cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_cleaners))).filter(id__in=shift_cleaners)
 				
 
 				service_type        = saved_service.service_type.name
@@ -2937,12 +2961,16 @@ class ClientCleaningBookingPhase2(APIView):
 
 				number_of_cleaners      = test_schedules_dict[key]['no_of_cleaners']-1
 
-				total_newcleaners = total_cleaners.filter(Q(Q(Q(shift_start__lte=start_date_time)|Q(shift_end__gte=start_date_time))&Q(Q(shift_start__lte=end_date_time)|Q(shift_end__gte=end_date_time)))).count()-1
-				total_newleaders  = total_leaders.filter(Q(Q(Q(shift_start__lte=start_date_time)|Q(shift_end__gte=start_date_time))&Q(Q(shift_start__lte=end_date_time)|Q(shift_end__gte=end_date_time)))).count()-1
+				#included shift cleaners
+				shift_cleaners  = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_date_time.date())|Q(shift_date=end_date_time.date()))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=start_date_time.time())&Q(shift1_end_at__gte=start_date_time.time()))&Q(Q(shift1_start_at__lte=end_date_time.time())&Q(shift1_end_at__gte=end_date_time.time()))) | Q(Q(Q(shift2_start_at__lte=start_date_time.time())&Q(shift2_end_at__gte=start_date_time.time()))&Q(Q(shift2_start_at__lte=end_date_time.time())&Q(shift2_end_at__gte=end_date_time.time())))).values_list('staff',flat=True)
+				shift_leaders   = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_date_time.date())|Q(shift_date=end_date_time.date()))).filter(staff__user_type='TEAMINCHARGE').filter(Q(Q(Q(shift1_start_at__lte=start_date_time.time())&Q(shift1_end_at__gte=start_date_time.time()))&Q(Q(shift1_start_at__lte=end_date_time.time())&Q(shift1_end_at__gte=end_date_time.time()))) | Q(Q(Q(shift2_start_at__lte=start_date_time.time())&Q(shift2_end_at__gte=start_date_time.time()))&Q(Q(shift2_start_at__lte=end_date_time.time())&Q(shift2_end_at__gte=end_date_time.time())))).values_list('staff',flat=True)
 
 				#absent cleaners and leaders	
 				absent_cleaners = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=start_date_time.date())|Q(leave_date=end_date_time.date()))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
 				absent_leaders  = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=start_date_time.date())|Q(leave_date=end_date_time.date()))).filter(staff__user_type='TEAMINCHARGE').values_list('staff',flat=True)
+
+				total_newcleaners = total_cleaners.filter(id__in=shift_cleaners).exclude(id__in=absent_cleaners).count()-1
+				total_newleaders  = total_leaders.filter(id__in=shift_leaders).exclude(id__in=absent_leaders).count()-1
 
 				#same blc cleaners for excluding
 				sameblc_cleaners    = CleaningTeamMember.objects.select_related('team__order_scheduler__evaluation_details__evaluation').filter(team__order_scheduler__evaluation_details__evaluation=evaluation).filter(Q(Q(Q(start_at__gte=start_date_time)&Q(start_at__lte=end_date_time))|Q(Q(end_at__gte=start_date_time)&Q(end_at__lte=end_date_time))|Q(Q(start_at__lte=start_date_time)&Q(end_at__gte=start_date_time)&Q(start_at__lte=end_date_time)&Q(end_at__gte=end_date_time))|Q(Q(start_at__gte=start_date_time)&Q(end_at__gte=start_date_time)&Q(start_at__lte=end_date_time)&Q(end_at__lte=end_date_time)))).values_list("member",flat=True)
@@ -3152,8 +3180,13 @@ class ClientCleaningBookingPhase2(APIView):
 				active_cleaners1 	= CleaningTeamMember.objects.filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).exclude(member__id__in=sameblc_cleaners).values_list("member",flat=True)
 				active_cleaners2 	= FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).values_list("member",flat=True)
 		
-				leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').filter(Q(Q(Q(shift_start__lte=start_date_time)|Q(shift_end__gte=start_date_time))&Q(Q(shift_start__lte=end_date_time)|Q(shift_end__gte=end_date_time)))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_cleaners)))
-				cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).filter(Q(Q(Q(shift_start__lte=start_date_time)|Q(shift_end__gte=start_date_time))&Q(Q(shift_start__lte=end_date_time)|Q(shift_end__gte=end_date_time)))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_leaders)))
+				#included shift cleaners
+				shift_cleaners  = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_date_time.date())|Q(shift_date=end_date_time.date()))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=start_date_time.time())&Q(shift1_end_at__gte=start_date_time.time()))&Q(Q(shift1_start_at__lte=end_date_time.time())&Q(shift1_end_at__gte=end_date_time.time()))) | Q(Q(Q(shift2_start_at__lte=start_date_time.time())&Q(shift2_end_at__gte=start_date_time.time()))&Q(Q(shift2_start_at__lte=end_date_time.time())&Q(shift2_end_at__gte=end_date_time.time())))).values_list('staff',flat=True)
+				shift_leaders   = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_date_time.date())|Q(shift_date=end_date_time.date()))).filter(staff__user_type='TEAMINCHARGE').filter(Q(Q(Q(shift1_start_at__lte=start_date_time.time())&Q(shift1_end_at__gte=start_date_time.time()))&Q(Q(shift1_start_at__lte=end_date_time.time())&Q(shift1_end_at__gte=end_date_time.time()))) | Q(Q(Q(shift2_start_at__lte=start_date_time.time())&Q(shift2_end_at__gte=start_date_time.time()))&Q(Q(shift2_start_at__lte=end_date_time.time())&Q(shift2_end_at__gte=end_date_time.time())))).values_list('staff',flat=True)
+
+
+				leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_leaders))).filter(id__in=shift_leaders)
+				cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_cleaners))).filter(id__in=shift_cleaners)
 
 				service_type        = saved_service.service_type.name
 				
@@ -3318,17 +3351,22 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 			for key in test_schedules_dict.keys():
 				schedule_date           =  test_schedules_dict[key]['date']
 				schedule_time           =  test_schedules_dict[key]['time']
+
 				start_date_time         =  datetime.strptime(schedule_date+' '+schedule_time,'%d-%m-%Y %I:%M %p')
 				end_date_time           =  start_date_time + timedelta(hours=test_schedules_dict[key]['cleaning_hours']) 	
 
 				number_of_cleaners      = test_schedules_dict[key]['no_of_cleaners']-1
 				
-				total_newcleaners = total_cleaners.filter(Q(Q(Q(shift_start__lte=start_date_time)|Q(shift_end__gte=start_date_time))&Q(Q(shift_start__lte=end_date_time)|Q(shift_end__gte=end_date_time)))).count()-1
-				total_newleaders  = total_leaders.filter(Q(Q(Q(shift_start__lte=start_date_time)|Q(shift_end__gte=start_date_time))&Q(Q(shift_start__lte=end_date_time)|Q(shift_end__gte=end_date_time)))).count()-1
-
+				#included shift cleaners
+				shift_cleaners  = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_date_time.date())|Q(shift_date=end_date_time.date()))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=start_date_time.time())&Q(shift1_end_at__gte=start_date_time.time()))&Q(Q(shift1_start_at__lte=end_date_time.time())&Q(shift1_end_at__gte=end_date_time.time()))) | Q(Q(Q(shift2_start_at__lte=start_date_time.time())&Q(shift2_end_at__gte=start_date_time.time()))&Q(Q(shift2_start_at__lte=end_date_time.time())&Q(shift2_end_at__gte=end_date_time.time())))).values_list('staff',flat=True)
+				shift_leaders   = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_date_time.date())|Q(shift_date=end_date_time.date()))).filter(staff__user_type='TEAMINCHARGE').filter(Q(Q(Q(shift1_start_at__lte=start_date_time.time())&Q(shift1_end_at__gte=start_date_time.time()))&Q(Q(shift1_start_at__lte=end_date_time.time())&Q(shift1_end_at__gte=end_date_time.time()))) | Q(Q(Q(shift2_start_at__lte=start_date_time.time())&Q(shift2_end_at__gte=start_date_time.time()))&Q(Q(shift2_start_at__lte=end_date_time.time())&Q(shift2_end_at__gte=end_date_time.time())))).values_list('staff',flat=True)
+				
 				#absent cleaners and leaders	
 				absent_cleaners = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=start_date_time.date())|Q(leave_date=end_date_time.date()))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
 				absent_leaders  = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=start_date_time.date())|Q(leave_date=end_date_time.date()))).filter(staff__user_type='TEAMINCHARGE').values_list('staff',flat=True)
+				
+				total_newcleaners = total_cleaners.filter(id__in=shift_cleaners).exclude(id__in=absent_cleaners).count()-1
+				total_newleaders  = total_leaders.filter(id__in=shift_leaders).exclude(id__in=absent_leaders).count()-1
 
 				active_cleaners1 	= CleaningTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=start_date_time)&Q(start_at__lte=end_date_time))|Q(Q(end_at__gte=start_date_time)&Q(end_at__lte=end_date_time))|Q(Q(start_at__lte=start_date_time)&Q(end_at__gte=start_date_time)&Q(start_at__lte=end_date_time)&Q(end_at__gte=end_date_time))|Q(Q(start_at__gte=start_date_time)&Q(end_at__gte=start_date_time)&Q(start_at__lte=end_date_time)&Q(end_at__lte=end_date_time))))
 				active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=start_date_time)&Q(start_at__lte=end_date_time))|Q(Q(end_at__gte=start_date_time)&Q(end_at__lte=end_date_time))|Q(Q(start_at__lte=start_date_time)&Q(end_at__gte=start_date_time)&Q(start_at__lte=end_date_time)&Q(end_at__gte=end_date_time))|Q(Q(start_at__gte=start_date_time)&Q(end_at__gte=start_date_time)&Q(start_at__lte=end_date_time)&Q(end_at__lte=end_date_time))))
@@ -3477,7 +3515,6 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 			else:
 				address_saveupdate_serializer = AddressSaveSerializer(data=request.data.get('address_details'))
 
-			print(address_saveupdate_serializer)
 			if address_saveupdate_serializer.is_valid():
 				savedupdated_address = address_saveupdate_serializer.save(customer=savedupdated_customer,currently_active=True)
 
@@ -3600,8 +3637,13 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 					active_cleaners2 	= FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).values_list("member",flat=True)
 
 			
-					leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').filter(Q(Q(Q(shift_start__lte=start_date_time)|Q(shift_end__gte=start_date_time))&Q(Q(shift_start__lte=end_date_time)|Q(shift_end__gte=end_date_time)))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_leaders)))
-					cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).filter(Q(Q(Q(shift_start__lte=start_date_time)|Q(shift_end__gte=start_date_time))&Q(Q(shift_start__lte=end_date_time)|Q(shift_end__gte=end_date_time)))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_cleaners)))
+					#included shift cleaners
+					shift_cleaners  = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_date_time.date())|Q(shift_date=end_date_time.date()))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=start_date_time.time())&Q(shift1_end_at__gte=start_date_time.time()))&Q(Q(shift1_start_at__lte=end_date_time.time())&Q(shift1_end_at__gte=end_date_time.time()))) | Q(Q(Q(shift2_start_at__lte=start_date_time.time())&Q(shift2_end_at__gte=start_date_time.time()))&Q(Q(shift2_start_at__lte=end_date_time.time())&Q(shift2_end_at__gte=end_date_time.time())))).values_list('staff',flat=True)
+					shift_leaders   = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_date_time.date())|Q(shift_date=end_date_time.date()))).filter(staff__user_type='TEAMINCHARGE').filter(Q(Q(Q(shift1_start_at__lte=start_date_time.time())&Q(shift1_end_at__gte=start_date_time.time()))&Q(Q(shift1_start_at__lte=end_date_time.time())&Q(shift1_end_at__gte=end_date_time.time()))) | Q(Q(Q(shift2_start_at__lte=start_date_time.time())&Q(shift2_end_at__gte=start_date_time.time()))&Q(Q(shift2_start_at__lte=end_date_time.time())&Q(shift2_end_at__gte=end_date_time.time())))).values_list('staff',flat=True)
+
+
+					leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_leaders))).filter(id__in=shift_leaders)
+					cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_cleaners))).filter(id__in=shift_cleaners)
 					
 
 					for service_detail in services.keys():
@@ -3708,12 +3750,16 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 
 				number_of_cleaners      = test_schedules_dict[key]['no_of_cleaners']-1
 
-				total_newcleaners = total_cleaners.filter(Q(Q(Q(shift_start__lte=start_date_time)|Q(shift_end__gte=start_date_time))&Q(Q(shift_start__lte=end_date_time)|Q(shift_end__gte=end_date_time)))).count()-1
-				total_newleaders  = total_leaders.filter(Q(Q(Q(shift_start__lte=start_date_time)|Q(shift_end__gte=start_date_time))&Q(Q(shift_start__lte=end_date_time)|Q(shift_end__gte=end_date_time)))).count()-1
+				#included shift cleaners
+				shift_cleaners  = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_date_time.date())|Q(shift_date=end_date_time.date()))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=start_date_time.time())&Q(shift1_end_at__gte=start_date_time.time()))&Q(Q(shift1_start_at__lte=end_date_time.time())&Q(shift1_end_at__gte=end_date_time.time()))) | Q(Q(Q(shift2_start_at__lte=start_date_time.time())&Q(shift2_end_at__gte=start_date_time.time()))&Q(Q(shift2_start_at__lte=end_date_time.time())&Q(shift2_end_at__gte=end_date_time.time())))).values_list('staff',flat=True)
+				shift_leaders   = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_date_time.date())|Q(shift_date=end_date_time.date()))).filter(staff__user_type='TEAMINCHARGE').filter(Q(Q(Q(shift1_start_at__lte=start_date_time.time())&Q(shift1_end_at__gte=start_date_time.time()))&Q(Q(shift1_start_at__lte=end_date_time.time())&Q(shift1_end_at__gte=end_date_time.time()))) | Q(Q(Q(shift2_start_at__lte=start_date_time.time())&Q(shift2_end_at__gte=start_date_time.time()))&Q(Q(shift2_start_at__lte=end_date_time.time())&Q(shift2_end_at__gte=end_date_time.time())))).values_list('staff',flat=True)
 
 				#absent cleaners and leaders	
 				absent_cleaners = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=start_date_time.date())|Q(leave_date=end_date_time.date()))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
 				absent_leaders  = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=start_date_time.date())|Q(leave_date=end_date_time.date()))).filter(staff__user_type='TEAMINCHARGE').values_list('staff',flat=True)
+
+				total_newcleaners = total_cleaners.filter(id__in=shift_cleaners).exclude(id__in=absent_cleaners).count()-1
+				total_newleaders  = total_leaders.filter(id__in=shift_leaders).exclude(id__in=absent_leaders).count()-1
 
 				#same blc cleaners for excluding
 				sameblc_cleaners    = CleaningTeamMember.objects.select_related('team__order_scheduler__evaluation_details__evaluation').filter(team__order_scheduler__evaluation_details__evaluation=evaluation).filter(Q(Q(Q(start_at__gte=start_date_time)&Q(start_at__lte=end_date_time))|Q(Q(end_at__gte=start_date_time)&Q(end_at__lte=end_date_time))|Q(Q(start_at__lte=start_date_time)&Q(end_at__gte=start_date_time)&Q(start_at__lte=end_date_time)&Q(end_at__gte=end_date_time))|Q(Q(start_at__gte=start_date_time)&Q(end_at__gte=start_date_time)&Q(start_at__lte=end_date_time)&Q(end_at__lte=end_date_time)))).values_list("member",flat=True)
@@ -3920,15 +3966,23 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 
 					#schedule
 					order_schedule = OrderScheduler.objects.create(order=order,status='CONFIRMED',customer_address=savedupdated_address,evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,order_scheduler_book=saved_service)
-						
+
+					absent_cleaners = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=order_schedule.start_at.date())|Q(leave_date=order_schedule.end_at.date()))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
+					absent_leaders  = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=order_schedule.start_at.date())|Q(leave_date=order_schedule.end_at.date()))).filter(staff__user_type='TEAMINCHARGE').values_list('staff',flat=True)						
+
 					#same blc cleaners for excluding
 					sameblc_cleaners    = CleaningTeamMember.objects.select_related('team__order_scheduler__evaluation_details__evaluation').filter(team__order_scheduler__evaluation_details__evaluation=order_schedule.evaluation_details.evaluation).filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).values_list("member",flat=True)
 
 					active_cleaners1 	= CleaningTeamMember.objects.filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).exclude(member__id__in=sameblc_cleaners).values_list("member",flat=True)
 					active_cleaners2 	= FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).values_list("member",flat=True)
-			
-					leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').filter(Q(Q(Q(shift_start__lte=start_date_time)|Q(shift_end__gte=start_date_time))&Q(Q(shift_start__lte=end_date_time)|Q(shift_end__gte=end_date_time)))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)))
-					cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).filter(Q(Q(Q(shift_start__lte=start_date_time)|Q(shift_end__gte=start_date_time))&Q(Q(shift_start__lte=end_date_time)|Q(shift_end__gte=end_date_time)))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)))
+
+					#included shift cleaners
+					shift_cleaners  = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_date_time.date())|Q(shift_date=end_date_time.date()))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=start_date_time.time())&Q(shift1_end_at__gte=start_date_time.time()))&Q(Q(shift1_start_at__lte=end_date_time.time())&Q(shift1_end_at__gte=end_date_time.time()))) | Q(Q(Q(shift2_start_at__lte=start_date_time.time())&Q(shift2_end_at__gte=start_date_time.time()))&Q(Q(shift2_start_at__lte=end_date_time.time())&Q(shift2_end_at__gte=end_date_time.time())))).values_list('staff',flat=True)
+					shift_leaders   = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_date_time.date())|Q(shift_date=end_date_time.date()))).filter(staff__user_type='TEAMINCHARGE').filter(Q(Q(Q(shift1_start_at__lte=start_date_time.time())&Q(shift1_end_at__gte=start_date_time.time()))&Q(Q(shift1_start_at__lte=end_date_time.time())&Q(shift1_end_at__gte=end_date_time.time()))) | Q(Q(Q(shift2_start_at__lte=start_date_time.time())&Q(shift2_end_at__gte=start_date_time.time()))&Q(Q(shift2_start_at__lte=end_date_time.time())&Q(shift2_end_at__gte=end_date_time.time())))).values_list('staff',flat=True)
+
+
+					leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_leaders))).filter(id__in=shift_leaders)
+					cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_cleaners))).filter(id__in=shift_cleaners)
 
 					for service_detail in services.keys():
 						service        		= ServiceType.objects.get(id=services[service_detail]['service_type'])

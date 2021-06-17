@@ -1,4 +1,22 @@
+
 .lv-shift-btn {
+    margin-left: 10px !important;
+    padding: 12px;
+    cursor: pointer;
+    background-color:#3cbbb1;
+    color: #ffffff;
+    border-radius: 20px;
+    font-size: 14px;
+    height: 100%;
+    border: none;
+}
+.lv-shift-btn:hover {
+    border:1px solid #3cbbb1;
+    background-color:#ffffff;
+    color: #3cbbb1;
+
+}
+.lv-shift2-btn {
     margin-left: 10px !important;
     padding: 12px;
     cursor: pointer;
@@ -9,10 +27,11 @@
     height: 100%;
     border: none;
 }
-.lv-shift-btn:hover {
+.lv-shift2-btn:hover {
 
-    background-color: #3968c6;
-    color: #ffffff;
+    border:1px solid #3968c6;
+    background-color:#ffffff;
+    color: #3968c6;
 
 }
 .lv-day{
