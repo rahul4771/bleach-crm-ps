@@ -75,7 +75,7 @@ $(document).ready(function(){
       vuetify: new Vuetify({theme: {
           themes: {
             light: {
-              primary: '#2e4e85', // #E53935
+              primary: '#289bac', // #E53935
               secondary: '#FFCDD2', // #FFCDD2
               accent: '#3F51B5', // #3F51B5
             },
@@ -87,7 +87,7 @@ $(document).ready(function(){
       data: {
         customDateSelected:[],
         customDialog:false,
-        cleaningPolicy:'',
+        cleaningPolicy:'One Time',
         altweekStat:false,
         subStat:'',
         altdaysStat:false,
@@ -547,10 +547,99 @@ $(document).ready(function(){
   onetime_scheduled:{},
   togetherStat:false,
   del_confirmation_dialog:false,
-  service_index:null
-  
+  service_index:null,
+  schedule_confirmation_dialog:false,
+  schedule_warning:false,
+  payment_dialog:false
         },
         methods: {
+            goToPaymentDialog(){
+                this.selectPayment('debit')
+                this.payment_dialog=true
+            },
+            goToScheduleConf(){
+                if(this.scheduleStat && this.scheduleChecker()){
+                   // this.schedule_confirmation_dialog=true
+                   this.schedule_warning=true
+                }
+                else{
+                    this.goToSchedule()
+                }
+            },
+            dummyDataGenerator(num){
+                this.billingData={
+                    
+                name:"Building 1 Floor 1",
+                section:{
+                apartment:false,
+                apartments:[],
+                ceiling_type:['WOODEN'],
+                cement_residue:false,
+                completed:true,
+                floor_type:['MARBLE'],
+                keynote_data:[],
+                keynotes:{},
+                kitchen:false,
+                kitchens:[],
+                no_of_bathrooms:"3",
+                no_of_rooms:"2",
+                no_of_windows:"4",
+                paint_residue:false,
+                section_cost:190,
+                section_name:"",
+                section_net_cost:"",
+                size:{
+                    combinedSize:"Medium( 51 sq. m - 100 sq. m )",
+                    cost:190,
+                    max_size:100,
+                    min_size:51,
+                    name:"Medium",
+                },
+                upholsteries:[],
+                wall_type:["BRICKS"]
+
+                }
+            }
+            for(var i=0;i<num;i++){
+                this.multiServicesBill.push({
+                    area_type:"APARTMENT",
+                    bill:[],
+                    evaluator_note:"wdwdwd",
+                    location_type:"Fully Furnished",
+                    service:"General Cleaning",
+                    serviceNo:1 ,
+                    total_cost:190,
+                    schedule_details:{}
+                })
+                this.multiServicesBill[this.multiServicesBill.length-1].bill.push(this.billingData)
+            }
+        },
+        scheduleStatChecker(){
+            var flag=false
+            for(var i=0;i<this.multiServicesBill.length;i++){
+                if(Object.keys(this.multiServicesBill[i].schedule_details).length<1){
+                    flag=false;
+                    break
+                }
+                else {
+                    flag=true
+                }
+            }
+            return flag
+        },
+        scheduleChecker(){
+            var flag=false
+            for(var i=0;i<this.multiServicesBill.length;i++){
+                if(Object.keys(this.multiServicesBill[i].schedule_details).length>0){
+                    flag=true;
+                    break
+                }
+                else {
+                    flag=false
+                }
+            }
+            return flag
+        },
           openDelConfirm(index){
             this.service_index=index
             this.del_confirmation_dialog=true
@@ -1843,7 +1932,7 @@ $(document).ready(function(){
         }
       
     
-    
+       this.addOneTimeToSchedule()
       this.onetime_dialog=false
       this.oneTimeSelectionStat=true
     },
@@ -2707,9 +2796,25 @@ $(document).ready(function(){
     }).trigger('refresh.owl.carousel');
     },
     goToSchedule(){
-        
-        this.activeTab='Schedule'
-        this.currentPageTitle='Schedule'
+        this.schedule_confirmation_dialog=false
+        this.onetime_dialog=false
+        this.schedule_warning=false
+        if(this.scheduleStat){
+            for(var i=0;i<this.multiServicesBill.length;i++){
+                this.multiServicesBill[i].schedule_details={}
+            }
+           
+        }
+        this.one_time_slots[this.oneTimeDateSelected]={
+            slots:[]
+          }
+          this.selectedDuration={
+            cleaners:null,
+            hours:null,
+            slots:null,
+            
+          }
+        this.onetime_dialog=true
         if(this.scheduleStat){
           this.addAllServiceTypes()
         }
@@ -3828,6 +3933,7 @@ $(document).ready(function(){
     this.getAreaTypes()
     this.getIp()
     this.getGovernorate()
+    this.dummyDataGenerator(3)
     console.log("current time is" + moment().format());
   
     this.dateSelected = moment().format().split("T")[0];

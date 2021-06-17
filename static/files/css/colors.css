@@ -129,6 +129,9 @@
 .primary-text{
     color:#2f4e85 !important;
 }
+.primary-green-text{
+    color:#289bac !important;
+}
 .completed-text{
     color: #779F39 !important;
 }
@@ -195,7 +198,9 @@ Popups
 .not-approved-popup{
     border-bottom:6px solid  #8B8B8B !important;
 }
-
+.primary-popup{
+    border-bottom:6px solid  #289bac !important;
+}
 
 /** Border **/
 
