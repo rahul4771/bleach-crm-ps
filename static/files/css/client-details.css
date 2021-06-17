@@ -1,3 +1,6 @@
+.cd-mt-30{
+    margin-top: 30px;
+}
 .cd-card-border{
     border: 1px solid #707070;
 }
@@ -9,7 +12,7 @@ border-radius: 69px;
 }
 .cd-card-title{
     color: #434343;
-    font-size:16px;
+    font-size:22px;
 }
 .cd-card-title2{
     color: #434343;
@@ -211,12 +214,31 @@ hr.cd-hr{
     margin-bottom: 5px !important;
 }
 .cd-box-head-name{
+    
     margin-top: 10px;
     color: #434343;
-    font-size: 20px;
+    font-size: 26px;
     text-align: center;
 }
 .cd-box-value{
     text-align: center;
     font-size: 40px;
+}
+
+.cd-head-text{
+    font: normal normal normal 28px/34px Avenir LT Std;
+letter-spacing: 0px;
+color: #434343;
+opacity: 1;
+font-size: 28px;
+text-align: center;
+}
+.cd-card-title3 {
+    color: #434343;
+    font-size: 20px;
+    font-weight: 400;
+}
+
+.cd-f20{
+    font-size: 20px !important;
 }
