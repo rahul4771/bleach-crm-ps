@@ -1049,7 +1049,7 @@ class="cl-service-list"
        <b>Time Slots Available</b>
      </div>
     <div class="time-slots row mt-2" >
-     <div class="col-md-6" v-for="(slot,index) in availableSlots" v-bind:key="index">
+     <div class="col-md-4" v-for="(slot,index) in availableSlots" v-bind:key="index">
        <div class="time-slot" @click="selectEditSlot(slot.split(' ')[0]+' '+slot.split(' ')[1])"  v-if="!selectedEditSlot.includes((slot.split(' ')[0]+' '+slot.split(' ')[1])) && checkslot(index)">
         <% slot %>
        </div>
@@ -1249,7 +1249,7 @@ class="cl-service-list"
                 <b>Time Slots Available</b>
               </div>
              <div class="time-slots row mt-2" >
-              <div class="col-md-6" v-for="(slot,index) in availableSlots" v-bind:key="index">
+              <div class="col-md-4" v-for="(slot,index) in availableSlots" v-bind:key="index">
                 <div class="time-slot" @click="selectEditSlot(slot.split(' ')[0]+' '+slot.split(' ')[1])"  v-if="!selectedEditSlot.includes((slot.split(' ')[0]+' '+slot.split(' ')[1])) && checkslot(index)">
                  <% slot %>
                 </div>
