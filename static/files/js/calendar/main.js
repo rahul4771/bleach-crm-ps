@@ -7,7 +7,9 @@ $(document).ready(function(){
     $('#cleaningCalendar-carousel').owlCarousel({
         loop:false,
         margin:10,
+        startPosition:4,
         nav:true,
+        dots:false,
         navText:[`<i class='fa fa-chevron-left service-control' @click='prevService()'></i>`,
       `<i class='fa fa-chevron-right service-control'></i>`], 
         responsive:{
