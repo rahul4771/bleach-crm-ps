@@ -107,10 +107,14 @@
                                     {% endfor %}
                               </div>
                               <div class="productivity-tab">
-                                  <button id="normal_button_id_{{service_type.id}}" class="productivity-tab-item productivity-tab-border"  onclick="viewNormal({{service_type.id}})">Normal</button>
-                                  <button id="special_button_id_{{service_type.id}}" class="productivity-tab-item " onclick="viewSpecial({{service_type.id}})">Special</button>
-                                  <button id="veryspecial_button_id_{{service_type.id}}" class="productivity-tab-item " onclick="viewVerySpecial({{service_type.id}})">Very Special</button>
-                              </div>
+                                  <button id="normal_button_id_{{service_type.id}}" class="productivity-tab-item productivity-tab-border"  onclick="viewNormal({{service_type.id}})">{% if service_type.name == 'Upholstery Cleaning' %}Sofa{% elif service_type.name == 'Window Cleaning' %}Old Window{% elif service_type.name == 'Facade Cleaning' %}Old Facade{%elif service_type.name == 'Kitchen Cleaning'%}Old Kitchen{% else %}Normal{% endif %}</button>
+                                  {% if service_type.name == 'Upholstery Cleaning' or service_type.name == 'Kitchen Cleaning' or service_type.name == 'Facade Cleaning' or service_type.name == 'Window Cleaning' %}
+                                  <button id="special_button_id_{{service_type.id}}" class="productivity-tab-item " onclick="viewSpecial({{service_type.id}})">{% if service_type.name == 'Upholstery Cleaning' %}Chair{% elif service_type.name == 'Window Cleaning' %}New Window{% elif service_type.name == 'Facade Cleaning' %}New Facade{%elif service_type.name == 'Kitchen Cleaning'%}New Kitchen{% endif %}</button>
+                                  {% endif %}
+                                  {% if service_type.name == 'Upholstery Cleaning' %}
+                                  <button id="veryspecial_button_id_{{service_type.id}}" class="productivity-tab-item " onclick="viewVerySpecial({{service_type.id}})">Curtain</button>
+                                  {% endif %}
+                                </div>
 
                               <div id="normal_id_{{service_type.id}}" class="productivity-card-content"> <!--normal-->
                               {% for service_price_range in service_price_ranges %}
