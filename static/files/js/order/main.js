@@ -1,10 +1,19 @@
 
 
 $(document).ready(function () {
+  $("#content-slider").lightSlider({
+
+          item:2,
+          loop:true,
+          slideMove:1,
+          speed:600,
+         
+  });
   $('#calendar').datepicker({
     language: "en",
     
   });
+  
   $('#calendar').on('changeDate', function() {
     $('#date_hidden').val(
         $('#calendar').datepicker('getFormattedDate')
@@ -12,6 +21,7 @@ $(document).ready(function () {
     console.log($('#date_hidden').val()) 
     app.setDate($('#date_hidden').val())
 });
+
   $(".owl-carousel").owlCarousel({
     items: 2,
     nav: true,

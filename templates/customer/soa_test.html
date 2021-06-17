@@ -81,117 +81,43 @@
           <td>{{order.date|date:'d-m-Y'}}</td>
           <td>{{order.invoice_no}}</td>
           <td>{{order.details}}</td>
-          <td style="text-align: right;">{{order.amount|floatformat:3}}</td>
-          <td style="text-align: right;">{{order.credit|floatformat:3}}</td>
+          <td style="text-align: right;" class="orderamount">{% if order.amount %}{{order.amount|floatformat:3|default_if_none:'-'}}{% else %}-{% endif %}</td>
+          <td style="text-align: right;" class="ordercredit">{% if order.credit %}{{order.credit|floatformat:3|default_if_none:'-'}}{% else %}-{% endif %}</td>
 
-          <td style="text-align: right;">{{order.debit|floatformat:3}}</td>
-          <td style="text-align: right;">{% if order.amount_paid == 0 %}{{order.remining_amount|floatformat:3}}{% else %}--{% endif %}</td>
+          <td style="text-align: right;" class="orderdebit">{% if order.debit %}{{order.debit|floatformat:3}}{% else %}-{% endif %}</td>
+          <td style="text-align: right;" class="orderbalance"></td>
         </tr>
         {% endfor %}
-        {% comment %} <tr>
-          <td>30-05-21</td>
-          <td>BLC2006270</td>
-          <td>Sterilization</td>
-          <td style="text-align: right;">100.000</td>
-          <td style="text-align: right;">--</td>
-          <td style="text-align: right;">100.000</td>
-
-          <td style="text-align: right;">--</td>
-        </tr>
-        <tr>
-          <td>30-05-21</td>
-          <td>BLC2006270</td>
-          <td>Sterilization</td>
-          <td style="text-align: right;">100.000</td>
-          <td style="text-align: right;">100.000</td>
-
-          <td style="text-align: right;">100.000</td>
-          <td style="text-align: right;">--</td>
-        </tr>
-        <tr>
-          <td>30-05-21</td>
-          <td>BLC2006270</td>
-          <td>Sterilization</td>
-          <td style="text-align: right;">100.000</td>
-          <td style="text-align: right;">100.000</td>
-          <td style="text-align: right;">100.000</td>
-          <td style="text-align: right;">--</td>
-        </tr>
-        <tr>
-          <td>30-05-21</td>
-          <td>BLC2006270</td>
-          <td>Sterilization</td>
-          <td style="text-align: right;">100.000</td>
-          <td style="text-align: right;">--</td>
-          <td style="text-align: right;">100.000</td>
-          <td style="text-align: right;">--</td>
-        </tr>
-        <tr>
-          <td>30-05-21</td>
-          <td>BLC2006270</td>
-          <td>Sterilization</td>
-          <td style="text-align: right;">100.000</td>
-          <td style="text-align: right;">100.000</td>
-
-          <td style="text-align: right;">100.000</td>
-          <td style="text-align: right;">--</td>
-        </tr>
-        <tr>
-          <td>30-05-21</td>
-          <td>BLC2006270</td>
-          <td>Sterilization</td>
-          <td style="text-align: right;">100.000</td>
-          <td style="text-align: right;">100.000</td>
-          <td style="text-align: right;">100.000</td>
-          <td style="text-align: right;">--</td>
-        </tr>
-        <tr>
-          <td>30-05-21</td>
-          <td>BLC2006270</td>
-          <td>Sterilization</td>
-          <td style="text-align: right;">100.000</td>
-          <td style="text-align: right;">100.000</td>
-          <td style="text-align: right;">100.000</td>
-          <td style="text-align: right;">--</td>
-        </tr>
-        <tr>
-          <td>30-05-21</td>
-          <td>BLC2006270</td>
-          <td>Sterilization</td>
-          <td style="text-align: right;">100.000</td>
-          <td style="text-align: right;">100.000</td>
-          <td style="text-align: right;">100.000</td>
-          <td style="text-align: right;">--</td>
-        </tr>
-        <tr>
-          <td>30-05-21</td>
-          <td>BLC2006270</td>
-          <td>Sterilization</td>
-          <td style="text-align: right;">100.000</td>
-          <td style="text-align: right;">100.000</td>
-          <td style="text-align: right;">100.000</td>
-          <td style="text-align: right;">--</td>
-        </tr> {% endcomment %}
         <tr>
           <td colspan="3">
             Total
           </td>
-          <td style="text-align: right;">
-            7,916.900
-          </td>
-          <td style="text-align: right;">
-            4,996.000
-          </td>
           <td style="text-align: right;"></td>
-          <td style="text-align: right;">2,920.900</td>
+          <td style="text-align: right;" id="total_credit">
+            0.000
+          </td>
+          <td style="text-align: right;" id="total_debit">
+            0.000
+          </td>
+          <td style="text-align: right;" id="total_balance">0.000</td>
         </tr>
       </table>
+
+      <script>
+      $("#soa_table").table2excel({  
+      exclude: ".excludeThisClass",  
+      name: "Worksheet Name",  
+      filename: "SomeFile"  
+      }); 
+      </script>
+
+
       <div class="soa_section3">
         <div id="soa_amount_section">
           <div id="soa_balance">
             Balance Due
           </div>
-          <h1 id="soa_balance_amount">2,920.900</h1>
+          <h1 id="closingbalance">2,920.900</h1>
         </div>
       </div>
     </div>
@@ -275,7 +201,7 @@
       </div>
       <br>
       <div style="text-align: center;">
-        <button class="soa-button"> <i class="fa fa-file-excel mr-5" aria-hidden="true"></i> Export to exel</button>
+        <button class="soa-button" onclick="exportTableToExcel()"> <i class="fa fa-file-excel mr-5" aria-hidden="true"></i> Export to excel</button>
         <button class="soa-button"> <i class="fa fa-paper-plane mr-5" aria-hidden="true"></i>Sent to customer</button>
       </div>
 
@@ -284,6 +210,67 @@
 
 
   </div>
+
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+<script src="{% static 'files/js/table2excel.js' %}"></script>
+<script>
+
+    $(document).ready(function(){
+      add_console();
+    });
+
+    function add_console(){
+      console.log("war")
+            var tds = document.getElementById('soa_table').getElementsByTagName('td');
+            
+            var sum1 = 0;
+            var sum2 = 0;
+            var sum3 = 0;
+
+            for(var i = 0; i < tds.length; i ++) {
+              console.log(tds[i].className,"mok")
+                if(tds[i].className == 'orderdebit') {
+                    console.log(tds[i].className,"kol")
+                    sum1 += isNaN(tds[i].innerHTML) ? 0 : parseFloat(tds[i].innerHTML)||0;
+                }
+                if(tds[i].className == 'ordercredit') {
+                     console.log(tds[i].className,"kol2")
+                    sum2 += isNaN(tds[i].innerHTML) ? 0 : parseFloat(tds[i].innerHTML)||0;
+                }
+                if(tds[i].className == 'orderamount') {
+                    console.log(tds[i].className,"kol")
+                    sum3 += isNaN(tds[i].innerHTML) ? 0 : parseFloat(tds[i].innerHTML)||0;
+                }
+                
+
+                if (tds[i].className == 'orderbalance') {
+                      var balance = parseFloat(sum2) + (isNaN(tds[i].innerHTML) ? 0 : parseFloat(tds[i].innerHTML)||0) - parseFloat(sum1) ;
+                      tds[i].innerHTML = parseFloat(balance).toFixed(3) ;
+                      console.log(balance,"abal")
+
+                      if (i < tds.length - 1){
+                        document.getElementById('total_balance').innerHTML =  parseFloat(balance).toFixed(3) ;
+                        document.getElementById('closingbalance').innerHTML =  parseFloat(balance).toFixed(3) ;
+                      }
+                }
+            
+            }
+            
+            document.getElementById('total_debit').innerHTML =  parseFloat(sum1).toFixed(3) ;
+            document.getElementById('total_credit').innerHTML =  parseFloat(sum2).toFixed(3) ;
+            
+          }
+
+
+function exportTableToExcel(){
+    $("#soa_table").table2excel({    
+                    filename: "Your_File_Name.xls"    
+                }); 
+}
+
+
+</script>
+
 
 </body>
 
