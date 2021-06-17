@@ -1069,9 +1069,104 @@ def statement_of_account(request,client_id):
 	customer = UserProfile.objects.get(is_active=True,id=int(client_id))
 	address = Address.objects.filter(customer__id=int(client_id)).first()
 
-	customer_orders = Order.objects.filter(is_active=True,evaluation__customer__id=client_id).order_by('created')
-	print(customer_orders,"ods")
-	return render(request,"customer/soa_test.html",{"customer":customer,"address":address,"orders":customer_orders})
+	orders = Order.objects.filter(is_active=True,evaluation__customer__id=client_id).order_by('created').prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'))
+	print(orders,"ods")
+	customer_orders = Order.objects.filter(is_active=True).order_by('evaluation__quatation_approved_date').filter(evaluation__customer__id=int(client_id),evaluation__quatation_status='APPROVED',order_status__isnull=False).prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='evaluationdetails'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules')).annotate(cleaning_count=Count('order_scheduler_order'),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())),cleaning_in_progress_count=Sum(Case(When(Q(Q(order_scheduler_order__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler_order__work_status='CLEANING_IN_PROGRESS')),then=1),default=0,output_field=IntegerField())))
+	
+	accounts_list = []
+
+		
+	for order in customer_orders:
+		if order.evaluation.payment_method != 'SUBSCRIPTION' and order.order_status == 'ORDER_CLOSED':
+			accounts_list.append({
+						"date":order.created.date(),
+						"invoice_no":order.order_no,
+						"details":"Cleaning Services",
+						"amount":order.total_amount,
+						"credit":order.amount_paid,
+						"debit":""
+					})
+
+			for payment in order.paymenthistory:
+				if payment:
+					if payment.payment_mode == 'CASH':
+						details = 'CASH'
+					elif payment.payment_mode == 'CHEQUE':
+						details = payment.check_no
+					elif payment.payment_mode == 'BANK':
+						details = payment.bank_name
+					else:
+						details = payment.payment_gateway
+
+					accounts_list.append({
+							"date":payment.created.date(),
+							"invoice_no":payment.payment_mode,
+							"details":details,
+							"amount":"",
+							"credit":"",
+							"debit":payment.amount_paid
+						})
+
+		elif order.evaluation.payment_method == 'SUBSCRIPTION' and order.order_status == 'ORDER_IN_PROGRESS' or order.order_status == 'ORDER_CLOSED':
+			
+			evaluationbooks = EvaluationBook.objects.filter(is_active=True,evaluation_details__evaluation__id=order.evaluation.id)
+			evaluationbooks_count = evaluationbooks.count()
+
+			job_completed = 0
+			job_remaining = 0
+
+			for book in evaluationbooks:
+				cleanings_count = OrderScheduler.objects.filter(is_active=True,order__id=order.id,order_scheduler_book__id=book.id).count()
+				completed_cleanings = OrderScheduler.objects.filter(is_active=True,order__id=order.id,order_scheduler_book__id=book.id,work_status='CLEANING_FULFILLED')
+				completed_cleanings_count = completed_cleanings.count()
+
+				total_cost = book.total_cost
+
+				per_cleaning_amount = float(book.total_cost/cleanings_count)
+				job_completed += float(per_cleaning_amount*completed_cleanings_count)
+				# job_remaining += float(book.total_cost - job_completed)	
+
+				if order.evaluation.fine_amount:
+					job_completed -= float(order.evaluation.fine_amount/cleanings_count)
+
+				if order.evaluation.writeback_amount:
+					job_completed -= float(order.evaluation.writeback_amount/cleanings_count)
+
+				if order.evaluation.promocode_amount:
+					job_completed -= float(order.evaluation.promocode_amount/cleanings_count)
+			
+			accounts_list.append({
+						"date":order.created.date(),
+						"invoice_no":order.order_no,
+						"details":"Cleaning Services",
+						"amount":order.total_amount,
+						"credit":job_completed,
+						"debit":""
+					})
+
+			for payment in order.paymenthistory:
+				if payment:
+					if payment.payment_mode == 'CASH':
+						details = 'CASH'
+					elif payment.payment_mode == 'CHEQUE':
+						details = payment.check_no
+					elif payment.payment_mode == 'BANK':
+						details = payment.bank_name
+					else:
+						details = payment.payment_gateway
+
+					accounts_list.append({
+							"date":payment.created.date(),
+							"invoice_no":payment.payment_mode,
+							"details":details,
+							"amount":"",
+							"credit":"",
+							"debit":payment.amount_paid
+						})
+		else:
+			pass
+	
+	return render(request,"customer/soa_test.html",{"customer":customer,"address":address,"orders":accounts_list})
 
 def addpromocode(request):
 	

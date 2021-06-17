@@ -5,6 +5,8 @@ from evaluator.models import EvaluationDetails,EvaluationBook,ServiceType
 from user.models import UserProfile
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember
 
+from datetime import timedelta,date,datetime
+
 
 class ServiceTypeShowSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -62,8 +64,12 @@ class CleaningScheduleSerializer(serializers.ModelSerializer):
 	class Meta:
 		model  = OrderScheduler
 		fields = ('id','start_at','end_at','customer_address','work_status','no_of_cleaners','cleaning_hours','evaluation_details','order','order_scheduler_book','cleaning_team_order_scheduler')
-
-
+	
+	def to_representation(self,obj):
+		td = super(CleaningScheduleSerializer,self).to_representation(obj)	
+		td['start_at']  = (obj.start_at)+timedelta(hours=3)
+		td['end_at'] 	= (obj.end_at)+timedelta(hours=3)
+		return(td)
 
 
 
@@ -97,4 +103,9 @@ class FollowupScheduleSerializer(serializers.ModelSerializer):
 	class Meta:		
 		model  = FollowUpScheduler
 		fields = ('id','start_at','end_at','customer_address','work_status','follow_up','followupteam_followupschedule')
-
+	
+	def to_representation(self,obj):
+		td = super(FollowupScheduleSerializer,self).to_representation(obj)	
+		td['start_at']  = (obj.start_at)+timedelta(hours=3)
+		td['end_at'] 	= (obj.end_at)+timedelta(hours=3)
+		return(td)
