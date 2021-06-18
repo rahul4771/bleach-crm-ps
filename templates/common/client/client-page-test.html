@@ -55,7 +55,12 @@
                             <div class="cd-card-content"> Language : {{client_details.sms_preference}}</div>
                             <div class="cd-card-content"> Platform : {% if client_details.is_sms %}SMS,{% elif client_details.is_email %}Email,{% elif client_details.is_whatsapp %}Whatsapp,{% endif %}</div>
                         </div>
-        
+                        <div class="text-center">
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input" id="customSwitch1">
+                                <label class="custom-control-label" for="customSwitch1">Credit Card</label>
+                              </div>
+                        </div>
                     </div>
                     
                 </div>
