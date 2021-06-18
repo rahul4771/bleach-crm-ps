@@ -407,12 +407,94 @@ class ClientOrders(IsAuthenticated,View):
 		except:
 			client_details = None
 
-		orders = Order.objects.filter(evaluation__customer_id=client_id).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluationbooks')),to_attr='evaluationdetails')).annotate(total_cleaners=Sum('evaluation__evaluation_details__evaluation_book_evaluation_details__number_of_cleaners'))
+		orders = Order.objects.filter(evaluation__customer_id=client_id).select_related('evaluation__customer').prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluationbooks')),to_attr='evaluationdetails')).annotate(total_cleaners=Sum('evaluation__evaluation_details__evaluation_book_evaluation_details__number_of_cleaners'),total_tickets=Count('investigation_orders__followup_investigation'))
 
 		#COUNT
 		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
+		completed_orders_count = orders.filter(order_status='ORDER_CLOSED').count()
 
-		return render(request,"common/client/client-page.html",{"client_details":client_details,"orders":orders,"active_orders_count":active_orders_count,})
+		active_followups = FollowUp.objects.filter(is_active=True,investigation__order_schedule__order__evaluation__customer_id=client_id).filter(Q(status='TICKET_RISED')|Q(status='FOLLOWUP_IN_PROGRESS')).count()
+		closed_followups = FollowUp.objects.filter(is_active=True,investigation__order_schedule__order__evaluation__customer_id=client_id,status='FOLLOWUP_CLOSED').count()
+
+		total_paid = orders.aggregate(paid=Sum('amount_paid'))['paid']
+		total_balance = orders.aggregate(balance=Sum('remining_amount'))['balance']
+
+		return render(request,"common/client/client-page-test.html",{"client_details":client_details,"orders":orders,"active_orders_count":active_orders_count,"completed_orders_count":completed_orders_count,"active_followups":active_followups,"closed_followups":closed_followups,"total_paid":total_paid,"total_balance":total_balance})
+
+	def post(self,request,client_id):
+
+		enquiry_user    = UserProfile.objects.get(id=client_id)
+
+		action_mode 	= request.POST.get('action_type')
+
+		print(enquiry_user,action_mode,"llp")
+
+		if action_mode == 'edit_customer':
+			
+			enquiry_form    = UserProfileForm(request.POST,request.FILES or None,instance=enquiry_user)
+
+			if enquiry_form.is_valid():
+				
+				enquiry_form_save            = enquiry_form.save(commit=False)
+
+				#To Save Contact Platform
+				contact_platforms 			 = request.POST.get('contact_platform')
+				contact_platform_list 		 = contact_platforms.split(",")
+
+				if 'Whatsapp' in contact_platform_list:
+					enquiry_form_save.is_whatsapp = True
+				else:
+					enquiry_form_save.is_whatsapp = False
+
+				if 'Email' in contact_platform_list:
+					enquiry_form_save.is_email    = True
+				else:
+					enquiry_form_save.is_email    = False
+
+				if 'SMS' in contact_platform_list:
+					enquiry_form_save.is_sms      = True
+				else:
+					enquiry_form_save.is_sms      = False
+
+				#APPEND MR / MS TO NAME
+				customer_name = enquiry_form_save.name
+				customer_name = customer_name.lower()
+
+				if enquiry_form_save.gender == 'MALE':
+					prefix_list = ['mr.','mr']
+					for prefix in prefix_list:
+						
+						prefix_exists = customer_name.startswith(prefix)
+
+						if prefix_exists == False :
+							if customer_name.startswith('dr.') == True or customer_name.startswith('dr') == True :
+								enquiry_form_save.name = customer_name.title()
+							else:	
+								enquiry_form_save.name = 'Mr. '+customer_name
+						else:
+							enquiry_form_save.name = customer_name.title()													
+
+				elif enquiry_form_save.gender == 'FEMALE':
+					prefix_list = ['ms.','ms']
+					for prefix in prefix_list:
+						
+						prefix_exists = customer_name.startswith(prefix)
+
+						if prefix_exists == False :
+							if customer_name.startswith('dr.') == True or customer_name.startswith('dr') == True or customer_name.startswith('mrs.') == True or customer_name.startswith('mrs') == True:
+								enquiry_form_save.name = customer_name.title()
+							else:	
+								enquiry_form_save.name = 'Ms. '+customer_name
+						else:
+							enquiry_form_save.name = customer_name.title()
+
+				else:
+					pass
+
+				enquiry_form_save.save()
+				messages.success(request,"Client Details Succesfully updated")
+
+		return redirect('common_items:client-orders',client_id)
 
 class TicketDetails(IsAuthenticated,View):
 	def get(self,request):
@@ -934,7 +1016,7 @@ class ActiveSubscriptions(IsAuthenticated,View):
 		if search:
 			subscriptions = Order.objects.filter(Q(Q( Q(payment_status='PENDING') |Q(payment_status='ON_HOLD') | Q(payment_status='COMPLETED') ) & Q(evaluation__payment_method='SUBSCRIPTION') & Q(evaluation__quatation_status='APPROVED') & ~Q(order_status='ORDER_CANCELLED') & Q(Q(order_no__icontains=search)|Q(evaluation__customer__name__icontains=search)|Q(evaluation__customer__mobile_number__icontains=search)) )).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='bookschedules')),to_attr='orderschedules')).annotate(total_cleanings_count=Count('order_scheduler_order'),completed_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())), remaining_cleanings_count= F('total_cleanings_count') - F('completed_cleanings_count') ).exclude(Q( Q(remaining_cleanings_count = 0) & Q(payment_status='COMPLETED') ))
 		else:
-			subscriptions = Order.objects.filter(Q(Q( Q(payment_status='PENDING') |Q(payment_status='ON_HOLD') | Q(payment_status='COMPLETED') ) & Q(evaluation__payment_method='SUBSCRIPTION') & Q(evaluation__quatation_status='APPROVED') & ~Q(order_status='ORDER_CANCELLED') )).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='bookschedules')),to_attr='orderschedules')).annotate(total_cleanings_count=Count('order_scheduler_order'),completed_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())), remaining_cleanings_count= F('total_cleanings_count') - F('completed_cleanings_count') ).exclude(Q( Q(remaining_cleanings_count = 0) & Q(payment_status='COMPLETED') ))
+			subscriptions = Order.objects.filter(Q(Q( Q(payment_status='PENDING') |Q(payment_status='ON_HOLD') | Q(payment_status='COMPLETED') ) & Q(evaluation__payment_method='SUBSCRIPTION') & Q(evaluation__quatation_status='APPROVED') & ~Q(order_status='ORDER_CANCELLED') )).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='bookschedules')),to_attr='orderschedules')) #.annotate(total_cleanings_count=Count('order_scheduler_order'),completed_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())), remaining_cleanings_count= F('total_cleanings_count') - F('completed_cleanings_count') ).exclude(Q( Q(remaining_cleanings_count = 0) & Q(payment_status='COMPLETED') ))
 		
 		if subscriptions:
 			for invoice in subscriptions:
@@ -942,6 +1024,10 @@ class ActiveSubscriptions(IsAuthenticated,View):
 				for scheduler in invoice.orderschedules:
 					if scheduler.work_status=='CLEANING_FULFILLED':
 						cleaning_price += scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules)	
+						cleaning_price -= invoice.evaluation.promocode_amount
+						cleaning_price -= invoice.evaluation.writeback_amount
+						cleaning_price += invoice.evaluation.fine_amount
+
 				if cleaning_price > invoice.amount_paid:
 					invoice.balance       = cleaning_price-invoice.amount_paid
 				else:

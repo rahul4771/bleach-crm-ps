@@ -6,6 +6,7 @@ from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investi
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
+from bleachadmin.models import ServicePriceRange
 
 from Api.serializers import UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, LeaveUsersSerializer,ShiftScheduleSerializer
 from agent.views import generate_random_username
@@ -904,3 +905,126 @@ class CleaningTeamAPI(APIView):
 			response_dict = {'success':False}
 
 		return Response(response_dict,HTTP_200_OK)	
+
+class SectionVerificationUpdationAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+		section_id = request.GET.get('section_id')
+		action_type = request.GET.get('action_type')
+		price_id = request.GET.get('price_id')
+		cleaning_team_id = request.GET.get('cleaning_team_id')
+
+		section = EvaluationBookSection.objects.get(is_active=True,id=int(section_id))
+
+		if action_type == 'verified':
+			section.section_verified_by = request.user.id
+			section.save()
+			response_dict = {'success':True,'action_type':action_type}
+
+		elif action_type == 'updated':
+			price_range = ServicePriceRange.objects.get(is_active=True,id=int(price_id))
+			
+			old_section_price = section.section_net_cost
+
+			section.size = price_range.maximum_area
+			section.section_cost = price_range.price
+			section.section_net_cost = float(price_range.price*section.section_cleanings)
+			section.section_updated_by = request.user.id
+			section.section_verified_by = request.user.id
+			section.save()
+
+			evaluationbook = EvaluationBook.objects.filter(is_active=True,id=section.evaluation_book.id).first()
+			evaluationbook.estimated_cost = float(evaluationbook.estimated_cost-old_section_price+section.section_net_cost)
+			evaluationbook.total_cost = float(evaluationbook.total_cost-old_section_price+section.section_net_cost)
+			evaluationbook.save()
+
+			evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluationbook.evaluation_details.id).first()
+			evaluation_details.estimated_cost = float(evaluation_details.estimated_cost-old_section_price+section.section_net_cost)
+			evaluation_details.total_cost = float(evaluation_details.total_cost-old_section_price+section.section_net_cost)
+			evaluation_details.save()
+
+			evaluation = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).first()
+			evaluation.estimated_cost = float(evaluation.estimated_cost-old_section_price+section.section_net_cost)
+			evaluation.total_cost = float(evaluation.total_cost-old_section_price+section.section_net_cost)
+			evaluation.save()
+
+			order = Order.objects.filter(is_active=True,evaluation__id=evaluation.id).first()
+			order.total_amount = float(order.total_amount-old_section_price+section.section_net_cost)
+			order.remining_amount = float(order.remining_amount+section.section_net_cost)
+			order.save()
+
+			cleaningteam = CleaningTeam.objects.filter(is_active=True,id=int(cleaning_team_id)).first()
+			cleaningteam.is_section_updated = True
+			cleaningteam.save()
+			
+			response_dict = {'success':True,'section_size':price_range.maximum_area,'action_type':action_type}
+
+		else:
+			response_dict = {'success':False}
+		
+		print(section_id,action_type,price_id,section,"test")
+
+		
+
+		return Response(response_dict,HTTP_200_OK)	
+
+class CheckInAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+		team_id = request.GET.get('team_id')
+		media = request.GET.getlist('media')
+		print(team_id,media,"zack")
+		try:
+			cleaning_team_detail = CleaningTeam.objects.select_related('order_scheduler__order').get(is_active=True,id=team_id)
+		except:	
+			cleaning_team_detail = None
+
+		# if not cleaning_team_detail.check_in:
+		# 	cleaning_team_detail.check_in                    = timezone.now()
+		# if not cleaning_team_detail.check_out:
+		# 	cleaning_team_detail.order_scheduler.work_status     = 'CLEANING_IN_PROGRESS'
+		# cleaning_team_detail.save()	
+		# cleaning_team_detail.order_scheduler.save()
+
+		#To Save Media
+		# medias = request.FILES.getlist('mediabefore')
+		# if not medias==['']:
+		# 	for media in medias:
+		# 		CleaningTeamMedia.objects.create(
+		# 				team_id=team_id,
+		# 				media=media,
+		# 				taken_status='BEFORE_CLEANING'
+		# 				)
+
+		if cleaning_team_detail.is_section_updated == True:
+			print("send smmsr")
+			evaluaation = cleaning_team_detail.order_scheduler.order.evaluation
+			if evaluaation.customer.is_sms == True:
+
+				url = "https://smsapi.future-club.com/fccsms.aspx"
+
+				if evaluaation.customer.sms_preference == 'ENGLISH':
+
+					message = "Dear Customer, Please find the updated Invoice against the order number "+str(evaluaation.evaluation_id)+"  here https://my.bleachkw.com/customer/subscription/invoice/prw"+str(evaluaation.evaluation_id[3:])+""+str(evaluaation.customer.username)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+			
+					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluaation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
+				
+				else:
+
+					message = "عزيزينا العميل نرجوا الاطلاع على الفاتورة الخاصة بالطلب رقم "+str(evaluaation.evaluation_id)+" في هذا الرابط https://my.bleachkw.com/customer/subscription/invoice/prw"+str(evaluaation.evaluation_id[3:])+""+str(evaluaation.customer.username)+" لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
+			
+					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluaation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
+				
+				headers = {
+					'cache-control': "no-cache"
+				}
+
+				response = requests.request("GET", url, headers=headers, params=querystring)
+
+				print(message,response.text,"respo")
+		response_dict = {'success':True}
+		return Response(response_dict,HTTP_200_OK)
