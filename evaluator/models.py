@@ -367,6 +367,9 @@ class EvaluationBookSection(models.Model):
 	section_cleanings= models.FloatField(blank=True,null=True)
 	section_net_cost = models.FloatField(blank=True,null=True)
 
+	section_verified_by		 = models.CharField(max_length=50,null=True,blank=True)
+	section_updated_by		 = models.CharField(max_length=50,null=True,blank=True)
+
 	is_active            = models.BooleanField(null=False,blank=True,default=True)
 	created              = models.DateTimeField(auto_now_add=True)
 	updated              = models.DateTimeField(auto_now=True)

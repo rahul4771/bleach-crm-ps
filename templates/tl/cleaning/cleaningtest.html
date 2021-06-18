@@ -78,19 +78,23 @@
     {% if section.dirt_level %}
     <div class="common-gray-text align-left"><label class="common-labels">Dirt Level</label> : <strong>{{section.dirt_level}}</strong></div>
     {% endif %}
-    <div class="common-gray-text align-left d-flex"><label class="common-labels">Size</label> &nbsp;: <span id="id_size"> <strong>{{section.size}} {{section.unit}}</strong> </span>
-        <select id="id_sizelist" class="minimal size-edit-select" style="display: none; height: 28px;" >
-            <option value="0" > 0 Square meter</option>
-            <option value="1" >1 Square meter</option>
-            <option value="2" >2 Square meter</option>
-    </select>
+    <div class="common-gray-text align-left d-flex"><label class="common-labels">Size</label> &nbsp;: <span id="id_size"> <strong class="size_text{{section.id}}">{{section.size}}</strong> <strong>{{section.unit}}</strong> </span>
+        {% if cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.name == 'Upholstery Cleaning' %}
+        <input type="text" name="size" class="minimal size-edit-select price{{section.id}}" placeholder="Enter area size" />
+        {% else %}
+        <select id="id_sizelist" class="minimal size-edit-select price{{section.id}}" style="display: none; height: 28px;" >
+            {% for range in price_ranges %}
+            <option value="{{range.id}}" >{{range.minimum_area}}-{{range.maximum_area}} Square meter</option>
+            {% endfor %}
+        </select>
+        {% endif %}
     
     </div>
     {% if section.floor %}
     <div class="common-gray-text align-left"><label class="common-labels">Floors</label> : <strong>{{section.floor}}</strong></div>
     {% endif %}
     {% if section.apartment %}
-    <div class="common-gray-text align-left"><label class="common-labels">Appartments</label> : <strong>{{section.apartment}}</strong></div>
+    <div class="common-gray-text align-left"><label class="common-labels">Apartments</label> : <strong>{{section.apartment}}</strong></div>
     {% endif %}
     {% if section.room %}
     <div class="common-gray-text align-left"><label class="common-labels">Rooms</label> : <strong>{{section.room}}</strong></div>
@@ -124,32 +128,73 @@
   </div><!--ticket-form-right-->
 
 
-
-
-
-
-  
+  {% if cleaning_team_detail.check_in and cleaning_team_detail.check_out == None %}
+  {% else %}
   <div class="ticket-form-right">
       <div class="cleaning-button-section">
-        <div id="id_verified" style="display: none;"  class="mb-5">
+      {% if cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' and section.section_verified_by != '' %}
+        <div id="id_verified" class="mb-5">
             <button class="cleaning-status-button-1" > <i class="fa fa-check cleaning-status-button-round ml-5" aria-hidden="true"></i> Verifed</button>
         </div>
+      {% else %}
+          <div id="id_verify" class="verify{{section.id}}" class="mb-5">
+            <button data-toggle="modal" data-target="#verifyModal"   class="cleaning-status-button-1" > Verified OK</button>
+          </div>
+          <div id="id_verified" style="display: none;"  class="mb-5">
+            <button class="cleaning-status-button-1" > <i class="fa fa-check cleaning-status-button-round ml-5" aria-hidden="true"></i> Verifed</button>
+        </div>
+      {% endif %}
+
         <div id="id_done_update" style="display: none;"   class="mb-5">
             <button class="cleaning-status-button-1" > <i class="fa fa-check cleaning-status-button-round ml-5" aria-hidden="true"></i> Updated</button>
          </div>
-        <div id="id_verify" class="mb-5">
-        <button data-toggle="modal" data-target="#verifyModal"   class="cleaning-status-button-1"> Verified OK</button>
-        </div>
+        
         <div id="id_update" class="mb-5">
-        <button onclick="editSize()" class="cleaning-status-button-1"> Update</button>
+        <button onclick="editSize()" class="cleaning-status-button-1" > Update</button>
         </div>
         <div onclick="doneSizeEdit()" style="display: none;" id="id_done">
-            <button class="cleaning-status-button-done">Done</button>
+            <button class="cleaning-status-button-done" onclick="sectionupdate({{section.id}},'updated')">Done</button>
         </div>
       </div>
   </div>
+  {% endif %}
 
-
+  <!--section verification popup-->
+  <div class="modal fade" id="verifyModal" role="dialog">
+        <div class="modal-dialog cancel-model cancel-order-border" role="document">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+    
+                        <div class="d-flex cl-modal-icons">
+                            <button data-dismiss="modal" class="img-button">
+                                <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                            </button>
+    
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="cancel-model-content">
+                            <h1>Do you want to verify ?</h1>
+                        </div>
+                    </div>
+    
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <div class="cancel-model-content">
+                            <button class="sent-button" onclick="sectionupdate({{section.id}},'verified')">Yes</button>
+                            <button data-dismiss="modal" class="view-button">No</button>
+                            <button style="display: none;" id="modal_close" data-dismiss="modal" class="view-button">No</button>
+                        </div>
+                    </div>
+    
+                </div>
+            </div>
+        </div>
+      </div>
 
 
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
@@ -206,33 +251,6 @@
 {% comment %} <div align="center"><input class="assignButton expandbutton" name="submit" type="button" value="Check-in"> </div> {% endcomment %}
 
     <br><br>
-    
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     <div class="checklist">
@@ -247,14 +265,14 @@
           <div class="ticket-form-left"><!--ticket-form-left-->
           {% for keynote in section.sectionkeynotes %}  
           {% if not forloop.counter|divisibleby:2 %}
-          <div class="narrow-label"><input class="keynote" name="keynote{{keynote.id}}" type="checkbox" value="{{keynote.id}}" {% if keynote.completion_status %}checked{% endif %}> {{keynote.sub_area}} {{keynote.quantity}}</div>
+          <div class="narrow-label"><input class="keynote" name="keynote{{keynote.id}}" type="checkbox" value="{{keynote.id}}" {% if cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_policy == 'ONE TIME CLEANING' %}{% if keynote.completion_status %}checked{% endif %}{% endif %}> {{keynote.sub_area}} {{keynote.quantity}}</div>
           {% endif %}
           {% endfor %}
           </div><!--ticket-form-left-->
           <div class="ticket-form-right"><!--ticket-form-right-->
           {% for keynote in section.sectionkeynotes %}  
           {% if forloop.counter|divisibleby:2 %}
-          <div class="narrow-label"><input class="keynote" name="keynote{{keynote.id}}" type="checkbox" value="{{keynote.id}}" {% if keynote.completion_status %}checked{% endif %}> {{keynote.sub_area}} {{keynote.quantity}}</div>
+          <div class="narrow-label"><input class="keynote" name="keynote{{keynote.id}}" type="checkbox" value="{{keynote.id}}" {% if cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_policy == 'ONE TIME CLEANING' %}{% if keynote.completion_status %}checked{% endif %}{% endif %}> {{keynote.sub_area}} {{keynote.quantity}}</div>
           {% endif %}
           {% endfor %}
           </div><!--ticket-form-right-->
@@ -265,7 +283,7 @@
         
         {% endif %}
         
-        <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
+        <form method="POST" action="" id="check_in_out_form" enctype= "multipart/form-data">{% csrf_token %}
         
         <div class="ticket-wrapper-row ticket-forms-boxes beforecleaning"><!--ticket-wrapper-row ticket-forms-boxes-->
           <div class="ticket-form-left"><!--ticket-form-left--> 
@@ -285,7 +303,7 @@
                 <div class="item_image" @click="$refs.itemfile.click()" ref="item-image"
                   v-on:change="onImageFileChanged">
                   <input type="file" ref="itemfile" style="display: none" accept="image/*"
-                    id="itemfileselected" />
+                    class="itemfileselected_before" />
                   <i class="ImageIcon fa fa-plus"></i>
                 </div>
               </div>
@@ -312,7 +330,7 @@
                 <div class="item_image" @click="$refs.itemfile.click()" ref="item-image"
                   v-on:change="onImageFileChanged">
                   <input type="file" ref="itemfile" style="display: none" accept="image/*"
-                    id="itemfileselected" />
+                    class="itemfileselected_after" />
                   <i class="ImageIcon fa fa-plus"></i>
                 </div>
               </div>
@@ -334,12 +352,11 @@
 
  </div><!--commnDiv-border--> 
 <br>
- 
+ <input type="hidden" name="jax" value="CheckIn" />
  <div align="center"><input class="assignButton checkoutbutton" name="assign" type="submit" value="Check Out">
- <input class="assignButton checkinbutton" name="assign" type="submit" value="Check In">
+ <input class="assignButton checkinbutton" id="checkin_id" name="assign" type="submit" onclick="submitform()" value="Check In">
   <!-- <input class="cancel-Button" name="assign" type="submit" value="Submit"></div> --> </form>    	
-<br> <br>      
-        
+<br> <br>             
         </div><!--center-formDiv-->
 </div><!--white-wrapper-->      
              
@@ -348,41 +365,7 @@
       </div><!--main-content-holder-->
 
 
-      <div class="modal fade" id="verifyModal" role="dialog">
-        <div class="modal-dialog cancel-model cancel-order-border" role="document">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-12">
-    
-                        <div class="d-flex cl-modal-icons">
-                            <button data-dismiss="modal" class="img-button">
-                                <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
-                            </button>
-    
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="cancel-model-content">
-                            <h1>Do you want to verify ?</h1>
-                        </div>
-                    </div>
-    
-                </div>
-                <div class="row">
-                    <div class="col-md-12 text-center">
-                        <div class="cancel-model-content">
-                            <button class="sent-button" onclick="verify()">Yes</button>
-                            <button data-dismiss="modal" class="view-button">No</button>
-                            <button style="display: none;" id="modal_close" data-dismiss="modal" class="view-button">No</button>
-                        </div>
-                    </div>
-    
-                </div>
-            </div>
-        </div>
-      </div>
+      
 
 
 
@@ -393,9 +376,46 @@
 {% endblock %}
 
 {% block javascript %} 
-<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/browser-image-compression@1.0.13/dist/browser-image-compression.js"></script>
-<script src="{% static 'files/js/checkin.js' %}"></script>
+
+
+
+
+<script>
+//verify and update section
+function sectionupdate(section_id,action_type){
+
+  if (action_type == 'updated'){
+    var price_id = $('.price'+section_id+'').val();
+  }else{
+    console.log("act")
+    var section_size = 0;
+    $('#modal_close').click();
+    document.getElementById("id_verify").style.display = "none";
+    document.getElementById("id_verified").style.display = "block";
+  }
+  axios.get(url+'/api/section-verification-updation/',{ params: { 'section_id': section_id, 'action_type':action_type, 'price_id':price_id,'cleaning_team_id':{{cleaning_team_detail.id}} } })
+    .then(function (response) {
+      if (response.data.success == true){
+        alert("Action completed successfully !")
+        if (response.data.action_type == 'updated'){
+          $('.size_text'+section_id+'').text(response.data.section_size);
+          $('.verify'+section_id+'').hide();
+        }
+      }
+    })
+}
+
+function submitform(){
+  console.log("fromm")
+  axios.get(url+'/api/check-in/',{ params: { 'team_id': {{cleaning_team_detail.id}}, 'media':app.imageData } })
+    .then(function (response) {
+
+    })
+}
+
+
+</script>
 
 <script>
 
@@ -413,11 +433,7 @@
         document.getElementById("id_size").style.display = "block";
         document.getElementById("id_done_update").style.display = "block";
     }
-    function verify() {
-        $('#modal_close').click();
-        document.getElementById("id_verify").style.display = "none";
-        document.getElementById("id_verified").style.display = "block";
-    }
+    
 $(document).ready(function(){
 
   {% if cleaning_team_detail.order_scheduler.work_status == 'CLEANING_IN_PROGRESS' %}
@@ -482,6 +498,7 @@ $(".imgAdd").click(function () {
 $(document).on("click", "i.del", function () {
   $(this).parent().remove();
 });
+
 $(function () {
   $(document).on("change", ".uploadFile", function ()
   {
@@ -503,4 +520,7 @@ $(function () {
 });
 //# sourceURL=pen.js
     </script>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+<script type="text/javascript" src="{% static 'files/js/checkin.js' %}"></script>
 {% endblock %}

@@ -35,6 +35,7 @@ class CleaningTeam(models.Model):
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
 	created         = models.DateTimeField(auto_now_add=True)
 	updated         = models.DateTimeField(auto_now=True)
+	is_section_updated = models.BooleanField(null=False,blank=True,default=False)
 
 	def __unicode__(self):
 		return str(self.order_scheduler)
