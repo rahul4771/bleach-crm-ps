@@ -550,7 +550,8 @@ togetherStat:false,
 del_confirmation_dialog:false,
 service_index:null,
 editScheduleData:{},
-editScheduleStat:false
+editScheduleStat:false,
+reconfirmation_dialog:false
 
       },
       methods: {
@@ -579,22 +580,59 @@ editScheduleStat:false
           
           this.calcSlots()
         },
+        reconfirmScheduler(){
+          this.reconfirmation_dialog=false
+          for(var i=0;i<this.multiServicesBill.length;i++){
+            this.multiServicesBill[i].schedule_details={}
+          }
+          this.resetScheduler()
+          this.goToSchedule()
+        },
+        scheduleTogether()
+        {
+          if(this.checkScheduleAvail()){
+            this.reconfirmation_dialog=true
+          }
+          else{
+            this.goToSchedule()
+          }
+        },
+        checkScheduleAvail(){
+          var flag=false
+          for(var i=0;i<this.multiServicesBill.length;i++){
+            if(Object.keys(this.multiServicesBill[i].schedule_details).length>0){
+              flag=true
+              break
+            }
+            else{
+              flag=false
+            }
+          }
+          return flag
+        },
         resetScheduler(){
 
-          this.cleaningPolicy='',
-          this.subStat='',
-          this.visits=[],
-          this.fixedSlots={},
-          this.altdaysStat=false,
-          this.altweekStat=false,
-          this.selected_double_slots=[],
-          this.selected_monthly_date=[],
-          this.autofixStat=false,
-          this.selected_monthly_date=[],
-          this.reselectDialog=false,
-          this.reselectSlot=[],
-          this.reselectDate={},
-          this.reselectDateIndex=null,
+          this.cleaningPolicy=''
+          this.subStat=''
+          this.visits=[]
+          this.fixedSlots={}
+          this.altdaysStat=false
+          this.altweekStat=false
+          this.selected_double_slots=[]
+          this.selected_monthly_date=[]
+          this.autofixStat=false
+          this.selected_monthly_date=[]
+          this.reselectDialog=false
+          this.reselectSlot=[]
+          this.reselectDate={}
+          this.reselectDateIndex=null
+         // this.one_time_slots={},
+
+          this.selectedDuration={
+            cleaners:null,
+            hours:null,
+            slots:null
+          }
           this.scheduleFormat={
             allSchedule:{},
             individual:{}
@@ -604,16 +642,15 @@ editScheduleStat:false
           this.confirmation_dialog=false
           this.monthly_starting_date=''
           this.customDateSelected=[]
-          this.selectedDuration={
-            cleaners:null,
-            hours:null,
-            slots:null
-          },
           this.schedule_err_msg=false
           if(this.editScheduleStat){
             this.editScheduleStat=false
             this.editScheduleData.schedule_details={}
           }
+           this.oneTimeDateSelected=moment().format().split("T")[0];
+            this.one_time_slots[this.oneTimeDateSelected]={
+                slots:[]
+            }
 
         },
         addKeynote(building,floor){
@@ -2723,7 +2760,10 @@ try {
   }).trigger('refresh.owl.carousel');
   },
   goToSchedule(){
-      
+    if(!this.editScheduleStat){
+      this.resetScheduler()
+    }
+   
       this.activeTab='Schedule'
       this.currentPageTitle='Schedule'
       if(this.scheduleStat){
@@ -2750,7 +2790,8 @@ try {
        serviceNo:this.serviceCount,
        area_type:this.area_type,
        location_type:this.location_type,
-       evaluator_note:this.evaluator_note
+       evaluator_note:this.evaluator_note,
+       schedule_details:{}
      }
    
        this.serviceTypes.push(this.serviceType)
