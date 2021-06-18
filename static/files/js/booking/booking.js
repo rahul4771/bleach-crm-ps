@@ -328,6 +328,7 @@ const app=new Vue({
     sections: {},
   },
   area_types: [],
+  
 
   location_types: [
     "Post Construction",
@@ -547,10 +548,20 @@ oneTimeSelectionStat:false,
 onetime_scheduled:{},
 togetherStat:false,
 del_confirmation_dialog:false,
-service_index:null
+service_index:null,
+editScheduleData:{},
+editScheduleStat:false
 
       },
       methods: {
+        viewEditSchedule(service,index){
+          this.schedule_serviceTypes_selected=[]
+          this.editScheduleData=service
+          this.editScheduleStat=true
+          this.schedule_serviceTypes_selected.push(index)
+         
+          this.goToSchedule()
+        },
         openDelConfirm(index){
           this.service_index=index
           this.del_confirmation_dialog=true
@@ -569,6 +580,7 @@ service_index:null
           this.calcSlots()
         },
         resetScheduler(){
+
           this.cleaningPolicy='',
           this.subStat='',
           this.visits=[],
@@ -598,6 +610,10 @@ service_index:null
             slots:null
           },
           this.schedule_err_msg=false
+          if(this.editScheduleStat){
+            this.editScheduleStat=false
+            this.editScheduleData.schedule_details={}
+          }
 
         },
         addKeynote(building,floor){

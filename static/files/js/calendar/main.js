@@ -226,12 +226,15 @@ const app=  new Vue({
 
         this.formatDate()
         this.parseDate()
-       // this.getSlots()
+       this.getSlots()
        
        
         this.getEvaluationSlots()
       },
       methods:{
+        editCleaningTeam(slot){
+          window.location.href='/stl/editcleaning/team/'+slot
+        },
         selectEditSlot(slot){
          
 
@@ -352,6 +355,8 @@ const app=  new Vue({
           },
           parseDate(){
             this.cleaningDate=this.selectedDate.split('-')[2]+'-'+this.selectedDate.split('-')[1]+'-'+this.selectedDate.split('-')[0]
+            $('#cl_cleaning_calendar').val(this.cleaningDate)
+            
           },
           getSlots(){
            // console.log($('#cl_cleaning_calendar').val())
