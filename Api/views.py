@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule
+from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule,Shift
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
@@ -440,17 +440,23 @@ class ShiftScheduleAPI(APIView):
 		response_dict = {'success':False}
 
 		for schedule in request.data:
-			serializer = ShiftScheduleSerializer(data=schedule)
-			
-			if serializer.shift1:
-				serializer.shift1_start_at = datetime.strptime('06:00:00 AM',"%I:%M %p")
-				serializer.shift1_end_at   = datetime.strptime('06:00:00 PM',"%I:%M %p")
-			if serializer.shift2:
-				serializer.shift2_start_at = datetime.strptime('09:00:00 AM',"%I:%M %p")
-				serializer.shift2_end_at   = datetime.strptime('09:00:00 PM',"%I:%M %p")
+			print(schedule)
+			if schedule['shift1']:
+				shift1_start_at  = Shift.objects.get(shift='SHIFT1').start_at
+				shift1_end_at    = Shift.objects.get(shift='SHIFT1').end_at
+			else:
+				shift1_start_at  = None
+				shift1_end_at    = None
+			if schedule['shift2']:
+				shift2_start_at = Shift.objects.get(shift='SHIFT2').start_at
+				shift2_end_at   = Shift.objects.get(shift='SHIFT2').end_at
+			else:
+				shift2_start_at = None
+				shift2_end_at   = None
 
+			serializer = ShiftScheduleSerializer(data=schedule)
 			if serializer.is_valid():
-				serializer.save()
+				serializer.save(shift1_start_at=shift1_start_at,shift2_start_at=shift2_start_at,shift1_end_at=shift1_end_at,shift2_end_at=shift2_end_at)
    
 			else: 
 				errors= serializer.errors   

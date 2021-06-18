@@ -416,7 +416,7 @@ function addToShift1(){
     
         /* add leave */
     
-        axios.post(url+'/api/shift-scheduler',shiftList)
+        axios.post(url+'/api/shift-scheduler/',shiftList)
         .then(function (response) {
           // handle success
        
@@ -470,7 +470,7 @@ function addToShift2(){
             leaveSelected['shift_date']=lvyear+'-'+lvmonth+'-'+lvday;
             leaveSelected['staff']=resourceList[i].id;
             leaveSelected['shift1']=false
-            leaveSelected['shift2']=false
+            leaveSelected['shift2']=true
             shiftList.push(leaveSelected);
            // resourceList[i].leave.push(leaveData);
         }
@@ -478,7 +478,7 @@ function addToShift2(){
 
     /* add leave */
 
-    axios.post(url+'/api/shift-scheduler',shiftList)
+    axios.post(url+'/api/shift-scheduler/',shiftList)
     .then(function (response) {
       // handle success
    

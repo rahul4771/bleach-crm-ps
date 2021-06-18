@@ -50,6 +50,11 @@ LEAVE_TYPES = (
     ('MATERNITY/PATERNITY','MATERNITY_PATERNITY')
 )
 
+SHIFT_CHOICES =(
+    ('SHIFT1','SHIFT1'),
+    ('SHIFT2','SHIFT2')
+)
+
 #profile image Size Validator
 def validate_image(image):
     file_size = image.file.size
@@ -246,3 +251,17 @@ class ShiftSchedule(models.Model):
 
     def __str__(self):
         return self.staff.name
+
+class Shift(models.Model):
+    shift    = models.CharField(max_length=20,blank=True,null=True,choices=SHIFT_CHOICES)
+    start_at = models.TimeField(blank=True,null=True)
+    end_at   = models.TimeField(blank=True,null=True)
+
+    is_active       = models.BooleanField(null=False,blank=True,default=True)
+    created         = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return str(self.shift)
+
+    def __str__(self):
+        return self.shift

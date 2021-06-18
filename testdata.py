@@ -1,3 +1,8 @@
+{
+"service_types":["General Cleaning"],
+"cleaning_datetime_start":"13-06-2021 12:00 pm",
+"cleaning_datetime_end":"13-06-2021 03:00 pm"
+}
 
 {
 "action_type": "edit_cleaning_withautofix",

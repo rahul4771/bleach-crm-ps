@@ -7,7 +7,9 @@ $(document).ready(function(){
     $('#cleaningCalendar-carousel').owlCarousel({
         loop:false,
         margin:10,
+        startPosition:4,
         nav:true,
+        dots:false,
         navText:[`<i class='fa fa-chevron-left service-control' @click='prevService()'></i>`,
       `<i class='fa fa-chevron-right service-control'></i>`], 
         responsive:{
@@ -224,12 +226,15 @@ const app=  new Vue({
 
         this.formatDate()
         this.parseDate()
-       // this.getSlots()
+       this.getSlots()
        
        
         this.getEvaluationSlots()
       },
       methods:{
+        editCleaningTeam(slot){
+          window.location.href='/stl/editcleaning/team/'+slot
+        },
         selectEditSlot(slot){
          
 
@@ -350,6 +355,8 @@ const app=  new Vue({
           },
           parseDate(){
             this.cleaningDate=this.selectedDate.split('-')[2]+'-'+this.selectedDate.split('-')[1]+'-'+this.selectedDate.split('-')[0]
+            $('#cl_cleaning_calendar').val(this.cleaningDate)
+            
           },
           getSlots(){
            // console.log($('#cl_cleaning_calendar').val())
@@ -561,7 +568,7 @@ const app=  new Vue({
               }
             }
             console.log("max is "+moment(max).format('hh:mm A'))
-            var end = (moment(max).add(3, 'hours'))
+            var end = (moment(max).add(2, 'hours'))
 
             axios.post(this.url+'/agent/cleaningcallendar/cleaning/edit/save/',{
              // cleaning_date:this.currentSlotDetails.start_at.split(' ')[0],
@@ -631,11 +638,11 @@ const app=  new Vue({
             this.availableSlots=[]
               for(var slot in this.cleaningEditSlots){
 
-                if(this.cleaningEditSlots[slot].includes(3))
+                if(this.cleaningEditSlots[slot].includes(2))
                 {
                  
                   
-                   var slotno=(parseInt(slot)/3)+1
+                   var slotno=(parseInt(slot)/2)+1
                     var start=this.slotFormat[slotno].start_time
                     var end=this.slotFormat[slotno].end_time
                    

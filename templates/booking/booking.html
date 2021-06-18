@@ -38,10 +38,10 @@
    <!-- service deletion Confirmation Dialog Begins -->
    <v-dialog
    v-model="del_confirmation_dialog"
-   max-width="290"
+   max-width="400"
  >
    <v-card>
-     <v-card-title class="text-h5">
+     <v-card-title >
       Are you sure do you want to delete this service ?
      </v-card-title>
 
@@ -68,7 +68,43 @@
      </v-card-actions>
    </v-card>
  </v-dialog>
- 
+ <!-- Re Confirmation Dialog Begins -->
+ <v-dialog
+ v-model="reconfirmation_dialog"
+ max-width="400"
+>
+ <v-card>
+   <v-card-title >
+    Are you sure do you want to schedule the services together?
+   </v-card-title>
+
+   <v-card-text>
+   All scheduled data will be lost
+   </v-card-text>
+
+   <v-card-actions>
+     <v-spacer></v-spacer>
+
+     <v-btn
+       color="primary"
+       text
+       @click="reconfirmScheduler"
+     >
+       Continue
+     </v-btn>
+
+     <v-btn
+       color="primary"
+       text
+       @click="reconfirmation_dialog = false"
+     >
+       Cancel
+     </v-btn>
+   </v-card-actions>
+ </v-card>
+</v-dialog>
+
+<!-- CRe onfirmation Dialog Ends-->
  <!-- Confirmation Dialog Ends-->
     <!-- Confirmation Dialog Begins -->
     <v-dialog
@@ -162,7 +198,7 @@
       Select  Slots
     </div>
 <div class="row mt-2" style="margin:0 !important">
-  <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex">
+  <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex" v-if="one_time_slots[oneTimeDateSelected]">
     <div class="time-slot duration text-center p-2" 
    @click="addOneTimeSlot(slot.start_time,slot.end_time,(sindex+1))" v-if='!one_time_slots[oneTimeDateSelected].slots.includes((sindex+1)) && checkOneTimeSlotStat((sindex+1))'>
      <% slot.start_time+' - '+ slot.end_time %>
@@ -1050,17 +1086,17 @@ width="1000"
               <div class="row">
             <div class="col-md-12">
               <div class="d-flex sr-tabs" v-if="activeTab!='Schedule'">
-                <div class="p-3 sr-tab-active" id="tab-1" @click="goToServices()"
+                <div class="p-3 sr-tab-active" id="tab-1" 
                   v-if="activeTab == 'Services'">
                   Services
                 </div>
-                <div class="p-3 sr-tab" id="tab-1" @click="goToServices()" v-else>
+                <div class="p-3 sr-tab" id="tab-1" v-else>
                   Services
                 </div>
-                <div class="p-3 sr-tab-active" id="tab-2" @click="activeTab = 'Cart'" v-if="activeTab == 'Cart'">
+                <div class="p-3 sr-tab-active" id="tab-2"  v-if="activeTab == 'Cart'">
                   Cart
                 </div>
-                <div class="p-3 sr-tab" id="tab-2" @click="activeTab = 'Cart'" v-else>
+                <div class="p-3 sr-tab" id="tab-2"  v-else>
                   Cart
                 </div>
                 <!--    <div
@@ -2410,7 +2446,7 @@ width="1000"
                                 v-model="schedule_serviceTypes_selected"
                                 :value='sindex'
                                 class="mt-0 pt-0 "
-                                v-if="!scheduleStat && !service.schedule_details"
+                                v-if="!scheduleStat && Object.keys(service.schedule_details).length<1"
                                
                               ></v-checkbox>
                              
@@ -2439,8 +2475,13 @@ width="1000"
                             <div class="ml-4">
                               <% Object.keys(service.schedule_details).length %> Visits
                             </div>
+                            
                           </div>
-                          <div class="d-flex" v-if="service.schedule_details && cleaningPolicy=='One Time'">
+                          <div v-if="service.schedule_details && service.cleaning_policy=='SUBSCRIPTION'" @click="viewEditSchedule(service,sindex)">
+                            <a>View Schedule</a> 
+                           </div>
+                           
+                          <div class="d-flex" v-if="service.schedule_details && service.cleaning_policy=='ONE TIME SERVICE'">
                            
                             <div v-if='service.schedule_details[1]'>
                               <% service.schedule_details[1].date %>
@@ -2450,6 +2491,9 @@ width="1000"
                               <% scheduleFormat.individual[sindex].visits.length %> Visits
                             </div>-->
                           </div>
+                          <div v-if="service.schedule_details && service.cleaning_policy=='ONE TIME SERVICE'" @click="viewEditSchedule(service)">
+                            <a>View Schedule</a> 
+                           </div>
                           <div class="cart-card-items">
                           <div v-for="(bill,bindex) in service.bill" v-bind:key="bindex">
                             <div><b><% bill.name%></b></div>
@@ -2507,9 +2551,19 @@ width="1000"
       outlined
       color="primary"
       @click="goToSchedule()"
+      v-if="!scheduleStat"
     >
       Schedule
     </v-btn>
+    <v-btn
+    class="ma-2"
+    outlined
+    color="primary"
+    @click="scheduleTogether()"
+    v-if="scheduleStat"
+  >
+    Schedule
+  </v-btn>
     <v-btn
       class="ma-2 text-white"
      disabled
@@ -2536,7 +2590,8 @@ width="1000"
 
                   <!-- Cart ends here-->
                   <div v-if="activeTab=='Schedule'">
-                    <div class="row m-0" v-if="!this.scheduleDateSat">
+                    <div >
+                    <div class="row m-0" v-if="!scheduleDateSat && !editScheduleStat">
                       <div class="col-md-3">
                         <div>
                           <v-select
@@ -2588,7 +2643,7 @@ width="1000"
                       </div>
 
                     </div>
-                    <div class="row m-0" v-if="subStat=='Weekly' && !this.scheduleDateSat">
+                    <div class="row m-0" v-if="subStat=='Weekly' && !this.scheduleDateSat && !editScheduleStat">
                       <div class="col-md-12">
                       <div> Preferred Days</div> </div>
                       <div class="col-sm-2 col-md-1">
@@ -2648,7 +2703,7 @@ width="1000"
                           </div>
                           </div>
                           </div>
-                          <div class="row m-0"  v-if="!this.scheduleDateSat">
+                          <div class="row m-0"  v-if="!this.scheduleDateSat && !editScheduleStat">
                             <div class="col-md-12 " v-if="subStat=='Custom'">
                               <v-btn
                               tile
@@ -2663,7 +2718,7 @@ width="1000"
                             </v-btn>
                              </div>
                           </div>
-                          <div class="row m-0" v-if="subStat && cleaningPolicy && no_of_visits && !scheduleDateSat && cleaningPolicy!='One Time'">
+                          <div class="row m-0" v-if="subStat && cleaningPolicy && no_of_visits && !scheduleDateSat && cleaningPolicy!='One Time' && !editScheduleStat">
                          
                              <div class="col-md-12 " v-if="subStat!='Monthly' && subStat!='Custom'">
                               <v-btn
@@ -2721,7 +2776,7 @@ width="1000"
                            
                              </div>
                              </div>
-                             <div class="row schedule-details-head" v-if="scheduleDateSat && cleaningPolicy!='One Time'">
+                             <div class="row schedule-details-head" v-if="scheduleDateSat && cleaningPolicy!='One Time' && !editScheduleStat">
                                <div class="col-md-2">
                                  <div>
                                   <b>Cleaning Policy</b> 
@@ -2766,6 +2821,75 @@ width="1000"
                                </v-btn>
                               </div>
                              </div>
+                             <div v-if="editScheduleStat">
+                               <div class="mt-2 mb-2">
+
+                                 <v-btn color="primary" outlined @click="activeTab='Cart'">
+                                  <v-icon
+                                  
+                                  left
+                                >
+                                  mdi-arrow-left
+                                </v-icon>
+                                  Back
+                                 </v-btn>
+                               </div>
+                             <div class="row schedule-details-head mt-4" >
+                              <div class="col-md-2">
+                                <div>
+                                 <b>Cleaning Policy</b> 
+                                </div>
+                                <div>
+                                  <% editScheduleData.cleaning_policy %>
+                                </div>
+                              </div>
+                              
+                             <div class="col-md-2">
+                               <div>
+                               <b> Number Of Visits</b>
+                               </div>
+                               <div>
+                                 <% Object.keys(editScheduleData.schedule_details).length %>
+                               </div>
+                             </div>
+                             <div class="col-md-2">
+                               <div>
+                               <b> Starting Date</b>
+                               </div>
+                               <div >
+                                <%  editScheduleData.schedule_details[1].date %>
+                               </div>
+                               
+                             </div>
+                             <div class="col-md-2 offset-md-2">
+                              <v-btn color="primary" @click="confirmation_dialog=true">
+                                 Reset 
+                              </v-btn>
+                             </div>
+                            </div>
+                            <div class="row">
+                              <div class="col-md-12" class="primary-text schedule-heading mt-2">
+                                <b>Visits</b>
+                              </div>
+                              <div class="col-md-2" v-for="(service,sindex) in editScheduleData.schedule_details" v-bind:key="sindex">
+                                <div class="available-slot-card p-2">
+                                  <div class="d-flex">
+                                    <div>
+                                     <b>Visit <% sindex %></b> 
+                                    </div>
+                                    <div class="ml-auto">
+                                     <% service.date %>
+                                    </div>
+                                  </div>
+                                  <div class="text-center pt-2">
+                                    <% service.time %>
+                                 <!-- <span v-for="(time,tindex) in visit.slots" v-bind:key="tindex"><% slotFormat[time].start_time + ' - '+ slotFormat[time].end_time%> </span> -->
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
                              <div class="row m-0 mt-4">
                              <div class="col-md-12" v-if="visits.length>0 && cleaningPolicy!='One Time'">
                                 <div>
@@ -2890,7 +3014,8 @@ width="1000"
                          </div>
                       </div>
                       <!-- one tim ecleaning ends here-->
-                      
+                    </div>
+                    <!-- Schedule ends here-->
 
                     </div>
                   
