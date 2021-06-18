@@ -2572,6 +2572,14 @@ width="1000"
     >
       Submit
     </v-btn>
+    <v-btn
+      class="ma-2 text-white"
+    v-if="checkScheduleStatus()"
+      color="primary"
+     @click="arrangeData()"
+    >
+      Submit
+    </v-btn>
 
                     </div>
                     
