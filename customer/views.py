@@ -4768,7 +4768,22 @@ class EvaluatorMultipleCleaningBookingSeperatePhase2(APIView):
 		#evaluation,evaluation details, and order
 		evaluation_details = EvaluationDetails.objects.select_related('evaluation').get(id=evaluation_details_id)
 		evaluation         = evaluation_details.evaluation
-		order              = Order.objects.get(evaluation=evaluation)
+		##order
+		last_invoice_no  		 = Order.objects.filter(is_active=True).aggregate(t=Max('invoice_no'))['t']
+		current_invoice_starting = str(timezone.now().year)
+		if last_invoice_no:		
+			if current_invoice_starting == last_invoice_no[0:4]:
+				new_invoice_no 		 = str(int(last_invoice_no[4:]) + 1 )
+				new_invoice_no 		 = last_invoice_no[0:-(len(new_invoice_no))]+new_invoice_no
+			else:
+				new_invoice_no 		 = str(timezone.now().year)+'00001'
+		else:
+			new_invoice_no 		 = str(timezone.now().year)+'00001'
+
+		try:
+			order              = Order.objects.get(evaluation=evaluation)
+		except:
+			order              = Order.objects.create(evaluation=evaluation,order_no=evaluation.evaluation_id,payment_status='PENDING',invoice_no=new_invoice_no)
 
 		##multiple services #count total cleaners and total leaders for availability
 		total_cleaners 	= UserProfile.objects.filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
