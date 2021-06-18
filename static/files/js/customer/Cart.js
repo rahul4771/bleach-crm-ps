@@ -552,7 +552,12 @@ $(document).ready(function(){
   schedule_warning:false,
   payment_dialog:false
         },
+/* header data */
+
+
         methods: {
+          /** Header js begins*/
+           
             goToPaymentDialog(){
                 this.selectPayment('debit')
                 this.payment_dialog=true
