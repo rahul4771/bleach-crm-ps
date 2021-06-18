@@ -58,7 +58,8 @@ urlpatterns = [
 		url(r'^bookingphase1$',views.ClientCleaningBookingPhase1.as_view(),name='clientcleaningbookingphase1'),
 		url(r'^bookingphase2$',views.ClientCleaningBookingPhase2.as_view(),name='clientcleaningbookingphase2'),#done
 		url(r'^bookingmultiplephase2$',views.ClientMultipleCleaningBookingPhase2.as_view(),name='clientcleaningmultiplebookingphase2'),#done
-		url(r'^evaluatorbookingmultiplephase2/(?P<evaluation_details_id>[-\w]+)/$',views.EvaluatorMultipleCleaningBookingPhase2.as_view(),name='evaluatorclientcleaningmultiplebookingphase2'),#done
+		url(r'^evaluatorbookingmultiplephase2/together/(?P<evaluation_details_id>[-\w]+)/$',views.EvaluatorMultipleCleaningBookingTogetherPhase2.as_view(),name='evaluatorclientcleaningmultiplebookingphase2'),#done
+		url(r'^evaluatorbookingmultiplephase2/seperate/(?P<evaluation_details_id>[-\w]+)/$',views.EvaluatorMultipleCleaningBookingSeperatePhase2.as_view(),name='evaluatorclientcleaningmultiplebookingphase2'),#done
 		url(r'^bookingphase3$',views.ClientCleaningBookingPhase3.as_view(),name='clientcleaningbookingphase3'),
 		url(r'^bookingmediasave$',views.ClientCleaningBookingMediaSave.as_view(),name='clientcleaningbookingmediasave'),
 
