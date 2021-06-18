@@ -724,10 +724,11 @@ userid:''
               }
               
             }
-          
+          var cleaners=this.selectedDuration.cleaners
           for(var j=0;j<this.schedule_serviceTypes_selected.length;j++){
             this.multiServicesBill[this.schedule_serviceTypes_selected[j]].cleaning_policy='SUBSCRIPTION'
             this.multiServicesBill[this.schedule_serviceTypes_selected[j]].schedule_details={}
+            this.multiServicesBill[this.schedule_serviceTypes_selected[j]].number_of_cleaners=cleaners
             for(var k=0;k<this.visits.length;k++){
               var min_slot=Math.min(...this.visits[k].slots)
               
@@ -1282,7 +1283,7 @@ console.log(response)
                  "evaluator_note":this.multiServicesBill[i].evaluator_note,
                  "estimated_cost":this.multiServicesBill[i].total_cost,
                  "total_cost":this.multiServicesBill[i].total_cost,
-                 "number_of_cleaners":this.selectedDuration.cleaners,
+                 "number_of_cleaners":this.multiServicesBill[i].number_of_cleaners,
                    "cleaning_hours":parseInt(this.selectedDuration.hours),
                    sections:{}
               }
@@ -2789,7 +2790,8 @@ try {
        area_type:this.area_type,
        location_type:this.location_type,
        evaluator_note:this.evaluator_note,
-       schedule_details:{}
+       schedule_details:{},
+       cleaners:null
      }
    
        this.serviceTypes.push(this.serviceType)
