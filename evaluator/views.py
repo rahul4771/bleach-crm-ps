@@ -3206,7 +3206,7 @@ class EvaluatorPaymentEdit(IsEvaluator,View):
 
 		return redirect('evaluator:evaluator-client-orderdetails',order.id)
 class Booking(IsEvaluator,View):
-	def get(self,request):
+	def get(self,request,evaluation_detail_id):
 		return render(request,"booking/booking.html")
 class ClientDetails(IsEvaluator,View):
 	def get(self,request):

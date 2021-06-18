@@ -4463,7 +4463,7 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 		evaluation         = evaluation_details.evaluation
 
 		###testing availability ####
-		test_schedules_dict = request.data.get('schedule_details')
+		test_schedules_dict = (request.data.get("service_details")[0])['schedule_details']
 		for key in test_schedules_dict.keys():
 			schedule_date           =  test_schedules_dict[key]['date']
 			schedule_time           =  test_schedules_dict[key]['time']
@@ -4602,7 +4602,7 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 				return Response(response_dict,HTTP_200_OK)
 			
 			#create scheduler
-			schedules_dict = request.data.get('schedule_details')
+			schedules_dict = (request.data.get("service_details")[0])['schedule_details']
 			for key in schedules_dict.keys():
 				schedule_date           =  schedules_dict[key]['date']
 				schedule_time           =  schedules_dict[key]['time']
@@ -5105,7 +5105,7 @@ class EmailTest(APIView):
 
 		#send mail
 		msg_html = render_to_string('email/quatation.html',{})
-		msg = EmailMultiAlternatives('Bleach Quatation', '', 'notification@bleach-kw.com', ['sonu.george@bleach-kw.com'], bcc=['ansab.m@bleach-kw.com'], cc=['vinayak.muralidharan@bleach-kw.com'])
+		msg = EmailMultiAlternatives('Bleach Quatation', '', 'notification@bleach-kw.com', ['sonu.george@bleach-kw.com'], bcc=['ansab.m@bleach-kw.com'], cc=['ansabm2015@gmail.com'])
 		msg.attach_alternative(msg_html, "text/html")
 		msg.send(fail_silently=False)
 
