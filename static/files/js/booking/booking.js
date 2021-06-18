@@ -2190,10 +2190,18 @@ responsive:{
    
   },
   bookMultipleService(){
+
    this.userid=window.location.href.split('/')[5]
+   var posturl=''
+   if(this.scheduleStat){
+     posturl='/customer/evaluatorbookingmultiplephase2/together/'
+   }
+   else{
+    posturl='/customer/evaluatorbookingmultiplephase2/seperate/'
+   }
     axios
       .post(
-         this.url+"/customer/bookingmultiplephase2/together/"+this.userid+'/',this.serviceDetails
+         this.url+posturl+this.userid+'/',this.serviceDetails
        
       )
       .then((response) => {
