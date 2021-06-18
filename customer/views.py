@@ -5103,10 +5103,10 @@ class EmailTest(APIView):
 	def get(self,request):
 		response_dict = {}
 
-		# send_mail('Using SparkPost with Django', 'This is a message from Django using SparkPost!', 'ansab.m@bleach-kw.com',['ansabm2015@gmail.com'],fail_silently=False)
-		
-		msg = EmailMultiAlternatives('Test From Ansab', 'Test Test Test Test', 'ansab.m@bleach-kw.com', ['ansabm2015@gmail.com'], bcc=['ansabm2018@gmail.com'], cc=['ansabm594@gmail.com'])
-		msg.attach_alternative('<p>This is an <strong>important</strong> message.</p>', "text/html")
+		#send mail
+		msg_html = render_to_string('email/quatation.html',{})
+		msg = EmailMultiAlternatives('Bleach Quatation', '', 'notification@bleach-kw.com', ['sonu.george@bleach-kw.com'], bcc=['ansab.m@bleach-kw.com'], cc=['vinayak.muralidharan@bleach-kw.com'])
+		msg.attach_alternative(msg_html, "text/html")
 		msg.send(fail_silently=False)
 
 		response_dict['success'] = True
