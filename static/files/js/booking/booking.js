@@ -26,7 +26,7 @@ $('#service-carousel').owlCarousel({
     responsive:{
         0:{
             items:1,
-            nav:true,
+            nav:false,
             loop:true
         },
         600:{
@@ -551,7 +551,8 @@ del_confirmation_dialog:false,
 service_index:null,
 editScheduleData:{},
 editScheduleStat:false,
-reconfirmation_dialog:false
+reconfirmation_dialog:false,
+userid:''
 
       },
       methods: {
@@ -1281,12 +1282,26 @@ console.log(response)
        
         
     },
+    checkScheduleStatus(){
+      var flag=false
+      for(var i=0;i<this.multiServicesBill.length;i++){
+        if(Object.keys(this.multiServicesBill[i].schedule_details).length<1){
+          flag=false
+          break
+        }
+        else{
+          flag=true
+        }
+      }
+      return flag
+    },
     arrangeData(){
           for(var i=0;i<this.multiServicesBill.length;i++){
 
             var service_id=this.getServiceId(this.multiServicesBill[i].service)
              this.serviceDetails.service_details[i]={
                 "service_type":service_id,
+                "schedule_details":this.multiServicesBill[i].schedule_details,
                 "location_type":this.multiServicesBill[i].location_type,
                 "area_type":this.multiServicesBill[i].area_type,
                  "evaluator_note":this.multiServicesBill[i].evaluator_note,
@@ -1351,7 +1366,7 @@ console.log(response)
            }
             }
           }
-          if(this.userStat)
+         /* if(this.userStat)
           {
           this.serviceDetails.customer_details= {   
               "name":this.customerDetails.customer_details.name,
@@ -1383,7 +1398,7 @@ console.log(response)
             this.serviceDetails.customer_details.date_day=this.dob.split('-')[2]
             this.serviceDetails.customer_details.date_month=this.dob.split('-')[1]
             this.serviceDetails.customer_details.date_year=this.dob.split('-')[0]
-          }
+          }*/
           this.serviceDetails.total_cost=this.totalCost
           this.serviceDetails.estimated_cost=this.totalCost
           //this.customerDetails.customer_details
@@ -2182,7 +2197,7 @@ responsiveClass:true,
 responsive:{
     0:{
         items:1,
-        nav:true,
+        nav:false,
         loop:true
     },
     600:{
@@ -2203,7 +2218,7 @@ responsive:{
    
     axios
       .post(
-         this.url+"/customer/bookingmultiplephase2",this.serviceDetails
+         this.url+"/customer/bookingmultiplephase2/together/"+this.userid,this.serviceDetails
        
       )
       .then((response) => {
@@ -2745,7 +2760,7 @@ try {
       responsive:{
           0:{
               items:1,
-              nav:true
+              nav:false
           },
           600:{
               items:4,

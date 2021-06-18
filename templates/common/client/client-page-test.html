@@ -55,7 +55,7 @@
                             <div class="cd-card-content"> Language : {{client_details.sms_preference}}</div>
                             <div class="cd-card-content"> Platform : {% if client_details.is_sms %}SMS,{% elif client_details.is_email %}Email,{% elif client_details.is_whatsapp %}Whatsapp,{% endif %}</div>
                         </div>
-        
+                        
                     </div>
                     
                 </div>
@@ -67,12 +67,12 @@
                         <h1 class="cd-box-value cd-text-blue">
                             {{total_services}}
                         </h1>
-                        <div class="row ml-0 mr-0">
-                            <div class="col-xs-8 cd-card-title2">Ongoing</div>
+                        <div class="row ml-0 mr-0 mb-20">
+                            <div class="col-xs-8 cd-card-title3">Ongoing</div>
                             <div class="col-xs-4">: <span class="cd-count cd-text-blue cd-f20">{{active_orders_count}}</span></div>
                         </div>
                         <div class="row ml-0 mr-0">
-                            <div class="col-xs-8 cd-card-title2">Completed</div>
+                            <div class="col-xs-8 cd-card-title3">Completed</div>
                             <div class="col-xs-4">: <span class="cd-count cd-text-blue cd-f20">{{completed_orders_count}}</span></div>
                         </div>
                     </div>
@@ -85,12 +85,12 @@
                         <h1 class="cd-box-value cd-text-red">
                             {{total_tickets}} 
                         </h1>
-                        <div class="row ml-0 mr-0">
-                            <div class="col-xs-8 cd-card-title2">Active</div>
+                        <div class="row ml-0 mr-0 mb-20">
+                            <div class="col-xs-8 cd-card-title3">Active</div>
                             <div class="col-xs-4">: <span class="cd-count cd-text-red cd-f20">{{active_followups}}</span></div>
                         </div>
                         <div class="row ml-0 mr-0">
-                            <div class="col-xs-8 cd-card-title2">Closed</div>
+                            <div class="col-xs-8 cd-card-title3">Closed</div>
                             <div class="col-xs-4">: <span class="cd-count cd-text-green cd-f20">{{closed_followups}}</span></div>
                         </div>
                     </div>
@@ -361,7 +361,7 @@
                     <p><label>Click to view <span></span></label></p>
                     </div><!--column-right-->
                     </div><!--card-innerwrapper-->
-                </div><!--order-card-column-->
+                </div>
 
                 </div>
 
@@ -393,7 +393,7 @@
                     <input type="hidden" name="action_type" value="edit_customer">
                  <div class="row ml-0 mr-0 cd-mt-4">
                     <div class="col-md-6 cd-mt-4">
-                        <div><div class=" bold-text common-label"> <label class="section_label">Name</label></div><input name="name" type="text" class="textBox section_time" placeholder=" "  required="" value="{{client_details.name}}"></div>
+                        <div><div class=" bold-text common-label required-field"> <label class="section_label">Name</label></div><input name="name" type="text" class="textBox section_time" placeholder=" "  required="" value="{{client_details.name}}"></div>
                      </div>
                      <div class="col-md-6 cd-mt-4">
                         <div><div class=" bold-text common-label"> <label class="section_label">Name in Arabic</label></div><input name="name_arabic" type="text" class="textBox section_time" placeholder=" "  required="" value="{{client_details.name_arabic}}"></div>
@@ -500,6 +500,7 @@
                           </label>
                         </div>
                      </div>
+                     
                      <div class="col-md-6 cd-mt-4">
                         <div ><!--ticket-form-right-->
                             <div class=" bold-text common-label required-field"> <label>Contact Platform</label></div>
@@ -521,6 +522,23 @@
                                   <p class="contact_platform_alert" style="color:Red;"></p>
                     </div>
                      </div>
+                     <div class="col-md-12 cd-mt-4">
+                        <div ><!--ticket-form-left-->
+                            <div ><!--ticket-form-left-->
+                                <div class=" bold-text common-label required-field"> <label>Credit Card</label></div>
+                              <label style="width: 47%;" for="favcity">
+                              <select  name="sms_preference" required="">
+                              <option value="ACTIVE" >Active</option>
+                              <option value="INACTIVE">Inactive</option>
+                              </select>
+                              </label>
+                            </div>
+                        </div>
+                     </div>
+                    
+                     <!-- <div class="col-md-6 cd-mt-4">
+                        <div ><!--ticket-form-right-->
+           
                     
                  </div>
                  <div class="d-flex justify-center cd-mt-4">
