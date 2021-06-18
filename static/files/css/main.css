@@ -1320,6 +1320,9 @@ select.minimal:focus {
   color: #8B8B8B;
 
 }
+.backup-card-disabled{
+  opacity: 0.7;
+}
 
 
 .c2-container {

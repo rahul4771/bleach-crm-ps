@@ -44,7 +44,7 @@
                                 </div>
                             </div>
                             <div class="col-md-4 mb-2">
-                                <div id="id_card_1" class="backup-card">
+                                <div id="id_card_1" class="backup-card backup-card-disabled">
                                    <div>
                                        <div class="row">
                                            <div class="col-xs-3 pr-0 ">
@@ -57,8 +57,8 @@
                                        </div>
                                    </div>
                                    <div style="margin-left: auto;">
-                                       <button id="id_relese_1" data-toggle="modal" data-target="#releseModel"  class="backup-card-button"> Relese</button>
-                                       <button id="id_disabled_1" style="display: none;" class="backup-released">Relesed</button>
+                                       <!-- <button id="id_relese_1" data-toggle="modal" data-target="#releseModel"  class="backup-card-button"> Relese</button> -->
+                                       <button id="id_disabled_1"  class="backup-released">Relesed</button>
                                    </div>
                                 </div>
                             </div>
@@ -161,48 +161,85 @@
         </section>
         <v-dialog
         v-model="dialog"
-        width="500"
+        width="600"
       >
 
   
-        <v-card>
+        <v-card class=" cancel-model">
           <v-card-title class="mb-5">
             
             <div style="margin-left: auto;">
-                <button class="cleaning-status-button-1" @click="dialog = false">Cancel</button>
-                <button class="cleaning-status-button-done" @click="dialog = false">Done</button>
+               <button @click="dialog = false">
+                                <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                            </button>
   
             </div>
           </v-card-title>
           <v-card-text>
           <div class="row mb-1">
-            <label class="c2-container">Abdul Fatha<br>
-                <span class="backup-card-role">Team incharge</span>
-                <input type="checkbox" >
-                <span class="c2-checkmark"></span>
-            </label>
+              <div class="col-md-4">
+                <label class="c2-container">Abdul Fatha<br>
+                    <span class="backup-card-role">Team incharge</span>
+                    <input type="checkbox" >
+                    <span class="c2-checkmark"></span>
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="c2-container">Abdul Fatha<br>
+                    <span class="backup-card-role">Team incharge</span>
+                    <input type="checkbox" >
+                    <span class="c2-checkmark"></span>
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="c2-container">Abdul Fatha<br>
+                    <span class="backup-card-role">Team incharge</span>
+                    <input type="checkbox" >
+                    <span class="c2-checkmark"></span>
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="c2-container">Abdul Fatha<br>
+                    <span class="backup-card-role">Team incharge</span>
+                    <input type="checkbox" >
+                    <span class="c2-checkmark"></span>
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="c2-container">Abdul Fatha<br>
+                    <span class="backup-card-role">Team incharge</span>
+                    <input type="checkbox" >
+                    <span class="c2-checkmark"></span>
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="c2-container">Abdul Fatha<br>
+                    <span class="backup-card-role">Team incharge</span>
+                    <input type="checkbox" >
+                    <span class="c2-checkmark"></span>
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="c2-container">Abdul Fatha<br>
+                    <span class="backup-card-role">Team incharge</span>
+                    <input type="checkbox" >
+                    <span class="c2-checkmark"></span>
+                </label>
+              </div>
+  
+             
+           
           </div>
-          <div class="row mb-1">
-            <label class="c2-container">Abdul Fatha<br>
-                <span class="backup-card-role">Team incharge</span>
-                <input type="checkbox" >
-                <span class="c2-checkmark"></span>
-            </label>
-          </div>
-          <div class="row mb-1">
-            <label class="c2-container">Abdul Fatha<br>
-                <span class="backup-card-role">Team incharge</span>
-                <input type="checkbox" >
-                <span class="c2-checkmark"></span>
-            </label>
-          </div>
-          <div class="row mb-1">
-            <label class="c2-container">Abdul Fatha<br>
-                <span class="backup-card-role">Team incharge</span>
-                <input type="checkbox" >
-                <span class="c2-checkmark"></span>
-            </label>
-          </div>
+
+          <div class="row">
+            <div class="col-md-12 text-center">
+                <div class="cancel-model-content" style="padding: 0px !important;">
+                    <button class="sent-button" @click="dialog = false"l>Done</button>
+                    <button data-dismiss="modal" class="view-button" @click="dialog = false">Cancel</button>
+                </div>
+            </div>
+
+        </div>
           </v-card-text>
   
         </v-card>
