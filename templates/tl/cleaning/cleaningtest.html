@@ -302,7 +302,7 @@
               <div class="addImg">
                 <div class="item_image" @click="$refs.itemfile.click()" ref="item-image"
                   v-on:change="onImageFileChanged">
-                  <input type="file" ref="itemfile" style="display: none" accept="image/*"
+                  <input type="file" ref="itemfile" name="mediabefore" style="display: none" accept="image/*"
                     class="itemfileselected_before" />
                   <i class="ImageIcon fa fa-plus"></i>
                 </div>
@@ -329,7 +329,7 @@
               <div class="addImg">
                 <div class="item_image" @click="$refs.itemfile.click()" ref="item-image"
                   v-on:change="onImageFileChanged">
-                  <input type="file" ref="itemfile" style="display: none" accept="image/*"
+                  <input type="file" ref="itemfile" name="mediaafter" style="display: none" accept="image/*"
                     class="itemfileselected_after" />
                   <i class="ImageIcon fa fa-plus"></i>
                 </div>
@@ -352,9 +352,8 @@
 
  </div><!--commnDiv-border--> 
 <br>
- <input type="hidden" name="jax" value="CheckIn" />
  <div align="center"><input class="assignButton checkoutbutton" name="assign" type="submit" value="Check Out">
- <input class="assignButton checkinbutton" id="checkin_id" name="assign" type="submit" onclick="submitform()" value="Check In">
+ <input class="assignButton checkinbutton" id="checkin_id" name="assign" type="button" onclick="submitform()" value="Check In">
   <!-- <input class="cancel-Button" name="assign" type="submit" value="Submit"></div> --> </form>    	
 <br> <br>             
         </div><!--center-formDiv-->
@@ -394,7 +393,7 @@ function sectionupdate(section_id,action_type){
     document.getElementById("id_verify").style.display = "none";
     document.getElementById("id_verified").style.display = "block";
   }
-  axios.get(url+'/api/section-verification-updation/',{ params: { 'section_id': section_id, 'action_type':action_type, 'price_id':price_id,'cleaning_team_id':{{cleaning_team_detail.id}} } })
+  axios.post(url+'/api/section-verification-updation/',{ params: { 'section_id': section_id, 'action_type':action_type, 'price_id':price_id,'cleaning_team_id':{{cleaning_team_detail.id}} } })
     .then(function (response) {
       if (response.data.success == true){
         alert("Action completed successfully !")
@@ -406,12 +405,13 @@ function sectionupdate(section_id,action_type){
     })
 }
 
-function submitform(){
-  console.log("fromm")
-  axios.get(url+'/api/check-in/',{ params: { 'team_id': {{cleaning_team_detail.id}}, 'media':app.imageData } })
-    .then(function (response) {
 
-    })
+function submitform(){
+  var testarray = $('.itemfileselected_before').val();
+  console.log(testarray,"testtt")
+  console.log("fromm")
+
+  
 }
 
 
