@@ -55,7 +55,7 @@
                             <div class="cd-card-content"> Language : {{client_details.sms_preference}}</div>
                             <div class="cd-card-content"> Platform : {% if client_details.is_sms %}SMS,{% elif client_details.is_email %}Email,{% elif client_details.is_whatsapp %}Whatsapp,{% endif %}</div>
                         </div>
-        
+                        
                     </div>
                     
                 </div>
@@ -69,29 +69,29 @@
                         </h1>
                         <div class="row ml-0 mr-0 mb-20">
                             <div class="col-xs-8 cd-card-title3">Ongoing</div>
-                            <div class="col-xs-4">: <span class="cd-count cd-text-blue cd-f20">{{ongoing_services}}</span></div>
+                            <div class="col-xs-4">: <span class="cd-count cd-text-blue cd-f20">{{active_orders_count}}</span></div>
                         </div>
                         <div class="row ml-0 mr-0">
                             <div class="col-xs-8 cd-card-title3">Completed</div>
-                            <div class="col-xs-4">: <span class="cd-count cd-text-blue cd-f20">{{closed_services}}</span></div>
+                            <div class="col-xs-4">: <span class="cd-count cd-text-blue cd-f20">{{completed_orders_count}}</span></div>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-2 cd-mt-4">
                     <div class="cd-service-box">
                         <div class="cd-box-head-name">
-                            Ticket Rased
+                            Ticket Raised
                         </div>
                         <h1 class="cd-box-value cd-text-red">
                             {{total_tickets}} 
                         </h1>
                         <div class="row ml-0 mr-0 mb-20">
                             <div class="col-xs-8 cd-card-title3">Active</div>
-                            <div class="col-xs-4">: <span class="cd-count cd-text-red cd-f20">{{active_tickets}}</span></div>
+                            <div class="col-xs-4">: <span class="cd-count cd-text-red cd-f20">{{active_followups}}</span></div>
                         </div>
                         <div class="row ml-0 mr-0">
                             <div class="col-xs-8 cd-card-title3">Closed</div>
-                            <div class="col-xs-4">: <span class="cd-count cd-text-green cd-f20">{{completed_tickets}}</span></div>
+                            <div class="col-xs-4">: <span class="cd-count cd-text-green cd-f20">{{closed_followups}}</span></div>
                         </div>
                     </div>
                 </div>
@@ -107,13 +107,13 @@
 
                         <div class="row ml-0 mr-0   mb-20">
                             <div class="col-xs-6 col-md-8 cd-card-title3">Total Paid
-                            </div><div class="col-xs-6 col-md-4 cd-text-blue cd-f20">: {{total_paid}} KD
+                            </div><div class="col-xs-6 col-md-4 cd-text-blue cd-f20">: {{total_paid|floatformat:3}} KD
                             </div>
                             
                         </div>
                         <div class="row ml-0 mr-0">
                             <div class="col-xs-6 col-md-8 cd-card-title3 cd-mt-2">Total Balance
-                            </div><div class="col-xs-6 col-md-4 cd-card-title2 cd-text-green-2 no-float cd-mt-2 cd-f20">: {{balance}} KD
+                            </div><div class="col-xs-6 col-md-4 cd-card-title2 cd-text-green-2 no-float cd-mt-2 cd-f20">: {{total_balance|floatformat:3}} KD
                             </div>
                             
                         </div>
@@ -125,19 +125,23 @@
         </div>
 
        
-        {% for order in orders %}
-        {% if request.user.user_type == 'AGENT' %}
-        <a href="{% url 'agent:agent-client-orderdetails' order.id %}">
-        {%  elif request.user.user_type == 'EVALUATOR' %}
-        <a href="{% url 'evaluator:evaluator-client-orderdetails' order.id %}"> 
-        {% endif %}
+        
 
         <div class="row">
+
             <div class="col-md-9 pr-0 ">
+
+            {% for order in orders %}
+            
+            <a href="{% url 'common_items:client-orderdetails' order.id %}" target="_blank">
+            
+
                 <div class="main-content-holder clickable-cursor">
+
+
                     <div class="row white-wrapper cd-card-border m-0" >
                         <div class="col-md-8 cd-mt-4">
-                            <div class="cd-card-title">{{order.evaluation.evaluation_id}}</div>
+                            <div class="cd-card-title" style="font-size:22px; !important">{{order.evaluation.evaluation_id}}</div>
                             <div class="d-flex cd-mt-4">
                                 {% for evaluation_detail in order.evaluation.evaluationdetails %}
                                 {% for evaluation_book in evaluation_detail.evaluationbooks %}
@@ -156,102 +160,102 @@
                                 {% endfor %}
         
                                 <div class="red-chip chip cd-ml-4">
-                                   {{order.total_tickets}} Tickets <i class="fas fa-flag icon-white"></i>
+                                   {{order.total_tickets}} Ticket(s) <i class="fas fa-flag icon-white"></i>
                                 </div>
                             </div>
         
-                <div class="d-flex cd-mt-4">
-                {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION' %}
-                
-                {% if order.order_status == 'APPROVED_BY_CLIENT' %}
-                <div class="approved-bg chip">
-                    Approved
-                </div>
-                {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
-                <div class="order-in-progress-bg chip">
-                    Order in Progress
-                </div>
-                {% elif order.order_status == 'ORDER_CLOSED' %}
-                <div class="completed-bg chip">
-                    Completed
-                </div>
-                {% elif order.order_status == 'CANCEL_IN_PROGRESS' %}
-                Cancell in Progress
-                {% elif order.order_status == 'CANCELLED' %}
-                <div class="cancelled-bg chip">
-                    Cancelled
-                </div>
-                {% endif %}
-                
-                {% else %}
-                {% if order.evaluation.quatation_status == 'APPROVED' %}
-                <div class="approved-not-paid-bg chip">
-                    Approved Not Paid
-                </div>
-                {% endif %}
-                
-                {% endif %}
-                
-                {% if order.evaluation.quatation_status == 'REJECTED' %}
-                <div class="rejected-bg chip">
-                    Rejected
-                </div>
-                {% elif order.evaluation.quatation_status == 'PENDING' %}
-                <div class="pending-bg chip">
-                    Pending
-                </div>
-                {% elif order.evaluation.quatation_status == 'EXPIRED' %}
-                <div class="expired-bg chip">
-                    Expired
-                </div>
-                {% elif not order.evaluation.quatation_status %}
-                <div class="evaluating-bg chip">
-                    Evaluating
-                </div>
-                {%endif%}
-        
-                {% if order.feedback_details %}
-                <div class="cd-ml-4 cd-mt-2">
-                {% if order.avg_starring >= 4.5 and order.avg_starring <= 5 %}
-                <i class="fas fa-star yellow-icon"></i>
-                <i class="fas fa-star yellow-icon"></i>
-                <i class="fas fa-star yellow-icon"></i>
-                <i class="fas fa-star yellow-icon"></i>
-                <i class="fas fa-star yellow-icon"></i>
-                {% elif order.avg_starring >= 3.5 and order.avg_starring < 4.5 %}
-                <i class="fas fa-star yellow-icon"></i>
-                <i class="fas fa-star yellow-icon"></i>
-                <i class="fas fa-star yellow-icon"></i>
-                <i class="fas fa-star yellow-icon"></i>
-                <i class="fas fa-star"></i>
-                {% elif order.avg_starring >= 2.5 and order.avg_starring < 3.5 %}
-                <i class="fas fa-star yellow-icon"></i>
-                <i class="fas fa-star yellow-icon"></i>
-                <i class="fas fa-star yellow-icon"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                {% elif order.avg_starring >= 1.5 and order.avg_starring < 2.5 %}
-                <i class="fas fa-star yellow-icon"></i>
-                <i class="fas fa-star yellow-icon"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                {% elif order.avg_starring >= .5 and order.avg_starring <= 1.5 %}
-                <i class="fas fa-star yellow-icon"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                {% elif order.avg_starring < .5 %}
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                {% endif %}
-                </div>
-                {% endif %}
-                </div>
+                            <div class="d-flex cd-mt-4">
+                            {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION' %}
+                            
+                            {% if order.order_status == 'APPROVED_BY_CLIENT' %}
+                            <div class="approved-bg chip">
+                                Approved
+                            </div>
+                            {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
+                            <div class="order-in-progress-bg chip">
+                                Order in Progress
+                            </div>
+                            {% elif order.order_status == 'ORDER_CLOSED' %}
+                            <div class="completed-bg chip">
+                                Completed
+                            </div>
+                            {% elif order.order_status == 'CANCEL_IN_PROGRESS' %}
+                            Cancell in Progress
+                            {% elif order.order_status == 'CANCELLED' %}
+                            <div class="cancelled-bg chip">
+                                Cancelled
+                            </div>
+                            {% endif %}
+                            
+                            {% else %}
+                            {% if order.evaluation.quatation_status == 'APPROVED' %}
+                            <div class="approved-not-paid-bg chip">
+                                Approved Not Paid
+                            </div>
+                            {% endif %}
+                            
+                            {% endif %}
+                            
+                            {% if order.evaluation.quatation_status == 'REJECTED' %}
+                            <div class="rejected-bg chip">
+                                Rejected
+                            </div>
+                            {% elif order.evaluation.quatation_status == 'PENDING' %}
+                            <div class="pending-bg chip">
+                                Pending
+                            </div>
+                            {% elif order.evaluation.quatation_status == 'EXPIRED' %}
+                            <div class="expired-bg chip">
+                                Expired
+                            </div>
+                            {% elif not order.evaluation.quatation_status %}
+                            <div class="evaluating-bg chip">
+                                Evaluating
+                            </div>
+                            {%endif%}
+                    
+                            {% if order.feedback_details %}
+                            <div class="cd-ml-4 cd-mt-2">
+                            {% if order.avg_starring >= 4.5 and order.avg_starring <= 5 %}
+                            <i class="fas fa-star yellow-icon"></i>
+                            <i class="fas fa-star yellow-icon"></i>
+                            <i class="fas fa-star yellow-icon"></i>
+                            <i class="fas fa-star yellow-icon"></i>
+                            <i class="fas fa-star yellow-icon"></i>
+                            {% elif order.avg_starring >= 3.5 and order.avg_starring < 4.5 %}
+                            <i class="fas fa-star yellow-icon"></i>
+                            <i class="fas fa-star yellow-icon"></i>
+                            <i class="fas fa-star yellow-icon"></i>
+                            <i class="fas fa-star yellow-icon"></i>
+                            <i class="fas fa-star"></i>
+                            {% elif order.avg_starring >= 2.5 and order.avg_starring < 3.5 %}
+                            <i class="fas fa-star yellow-icon"></i>
+                            <i class="fas fa-star yellow-icon"></i>
+                            <i class="fas fa-star yellow-icon"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            {% elif order.avg_starring >= 1.5 and order.avg_starring < 2.5 %}
+                            <i class="fas fa-star yellow-icon"></i>
+                            <i class="fas fa-star yellow-icon"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            {% elif order.avg_starring >= .5 and order.avg_starring <= 1.5 %}
+                            <i class="fas fa-star yellow-icon"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            {% elif order.avg_starring < .5 %}
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            {% endif %}
+                            </div>
+                            {% endif %}
+                            </div>
         
         
                             {% for evaluation_detail in order.evaluation.evaluationdetails %}
@@ -291,11 +295,17 @@
                                 <div class="col-xs-6 col-md-6 cd-key">Payment Type(s)</div>
                                 <div class="col-md-6 col-xs-6">: <span class="cd-count">
                                 {% for payment in  order.paymenthistory %}
-                                {% if forloop.last %}
-                                {{payment.payment_gateway}}
+                                {% if payment.payment_gateway %}
+                                    {% if forloop.last %}
+                                    {{payment.payment_gateway|default_if_none:"-"}}
+                                    {% else %}
+                                    {{payment.payment_gateway|default_if_none:"-"}},
+                                    {% endif %}
                                 {% else %}
-                                {{payment.payment_gateway}},
+                                {% if forloop.last %}{{payment.payment_mode|default_if_none:"-"}}{% else %}{{payment.payment_mode|default_if_none:"-"}},{% endif %}
                                 {% endif %}
+                                {% empty %}
+                                -
                                 {% endfor %}
                             </span></div>
                             </div>
@@ -322,21 +332,37 @@
                     </div>
                     
                 </div>
+            </a>
+            {% endfor %}
+   
             </div>
+
             <div class="col-md-3">
-                <div style="padding-left: 0px !important;" class="main-content-holder clickable-cursor">
+                <div style="padding-left: 0px !important;" class="main-content-holder ">
                     <div class="row white-wrapper cd-card-border m-0" >
                         <p class="client-address-text" >Address</p>
+
+                        {% for address in client_details.customer_addresses %}
                         <div class="client-address-items">
-                            <p style="text-align: center;">Address1</p>
-                            <p style="width: 100%;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas convallis massa.tty </p> 
+                            <p style="text-align: center;">Address {{forloop.counter}}</p>
+                            <p style="width: 100%;">{% if address.floor %}{{address.floor}}, {% else %}{% endif %} {{address.building}}, {{address.block}}, {{address.street}}, {% if address.avenue %}{{address.avenue}}, {% else %}{% endif %} {{address.area.name}}, {{address.governorate.name}}</p> 
 
                         </div>
-                        <div class="client-address-items">
-                            <p style="text-align: center;">Address1</p>
-                            <p>Lorem ipsum dolor sit amet, consectetur adip</p> 
-                        </div>
+                        {% endfor %}
+    
                     </div>
+                <BR>
+                <div class="order-card-column whitebg green-border clickable-row-list" data-href="{% url 'customer:statement-of-account' client_details.id %}" data-target="_blank"><!--order-card-column-->
+                    <div class="card-innerwrapper"><!--card-innerwrapper-->
+                    <div class="column-left"><img src="{% static "/files/images/card-soa-icon.png" %}"></div>
+                    <div class="column-right"><!--column-right-->
+                    <!-- <h1>Click To View</h1> -->
+                    <h2 class="green-text"><label>SOA<span><i class="fa fa-external-link" aria-hidden="true"></i></span></label></h2>
+                    <p><label>Click to view <span></span></label></p>
+                    </div><!--column-right-->
+                    </div><!--card-innerwrapper-->
+                </div>
+
                 </div>
 
                 <div class="text-center">
@@ -350,10 +376,9 @@
 
         </div>
        
-        </a>
-        {% endfor %}
+        
         <!--    Edit modal-->
-        <form method="post" action="">
+        <form method="POST" action="">
             {% csrf_token %}
         <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -368,7 +393,7 @@
                     <input type="hidden" name="action_type" value="edit_customer">
                  <div class="row ml-0 mr-0 cd-mt-4">
                     <div class="col-md-6 cd-mt-4">
-                        <div><div class=" bold-text common-label"> <label class="section_label">Name</label></div><input name="name" type="text" class="textBox section_time" placeholder=" "  required="" value="{{client_details.name}}"></div>
+                        <div><div class=" bold-text common-label required-field"> <label class="section_label">Name</label></div><input name="name" type="text" class="textBox section_time" placeholder=" "  required="" value="{{client_details.name}}"></div>
                      </div>
                      <div class="col-md-6 cd-mt-4">
                         <div><div class=" bold-text common-label"> <label class="section_label">Name in Arabic</label></div><input name="name_arabic" type="text" class="textBox section_time" placeholder=" "  required="" value="{{client_details.name_arabic}}"></div>
@@ -475,9 +500,11 @@
                           </label>
                         </div>
                      </div>
+                     
                      <div class="col-md-6 cd-mt-4">
                         <div ><!--ticket-form-right-->
                             <div class=" bold-text common-label required-field"> <label>Contact Platform</label></div>
+                            <input type="hidden" name="contact_platform" value="{% if client_details.is_sms %}SMS{% endif %}{% if client_details.is_email%},Email{% endif %}{% if client_details.is_whatsapp%},Whatsapp{% endif %}">
                             <div class="d-flex">
                             <div class="form-check">
                                 <input type="checkbox" name="is_sms" class="form-check-input" id="sms" value="SMS" {% if client_details.is_sms %}checked{% endif %}>
@@ -495,6 +522,23 @@
                                   <p class="contact_platform_alert" style="color:Red;"></p>
                     </div>
                      </div>
+                     <div class="col-md-12 cd-mt-4">
+                        <div ><!--ticket-form-left-->
+                            <div ><!--ticket-form-left-->
+                                <div class=" bold-text common-label required-field"> <label>Credit Card</label></div>
+                              <label style="width: 47%;" for="favcity">
+                              <select  name="sms_preference" required="">
+                              <option value="ACTIVE" >Active</option>
+                              <option value="INACTIVE">Inactive</option>
+                              </select>
+                              </label>
+                            </div>
+                        </div>
+                     </div>
+                    
+                     <!-- <div class="col-md-6 cd-mt-4">
+                        <div ><!--ticket-form-right-->
+           
                     
                  </div>
                  <div class="d-flex justify-center cd-mt-4">
@@ -502,7 +546,7 @@
                         Cancel
                     </div>
                      <div class="primary-btn cd-ml-4 cd-mt-4">
-                         <input type="submit" value=Submit class="restrict-input-btn">
+                         <input type="submit" value="Submit" class="restrict-input-btn">
                      </div>
                  </div>
                 </div>

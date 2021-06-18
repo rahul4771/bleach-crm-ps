@@ -195,7 +195,7 @@ width:100% !important;
 }
 
 .booking-dialog .agent-border{
-    border-bottom: 10px solid #0D87C5 !important;
+    border-bottom: 10px solid #779F39 !important;
 }
 .cl-link{
     color: #528CE6;
@@ -205,7 +205,7 @@ width:100% !important;
     text-align: right;
 }
 .booking-dialog .customer-border{
-    border-bottom: 10px solid #139275 !important;
+    border-bottom: 10px solid #12AED8 !important;
 }
 #evaluationAgentModal .modal-dialog{
     border-radius: 0px 0px 12px 12px !important;
@@ -216,11 +216,11 @@ width:100% !important;
 }
 
 #evaluationAgentModal .agent-border{
-    border-bottom: 10px solid #12AED8 !important;
+    border-bottom: 10px solid #779F39 !important;
 }
 
 #evaluationAgentModal .customer-border{
-    border-bottom: 10px solid #779F39 !important;
+    border-bottom: 10px solid #12AED8 !important;
 }
 
 #cancelledModal .modal-dialog{
@@ -381,26 +381,26 @@ width:100% !important;
 /** AGENT **/
 
 .agent-booked-bg{
-    background-color: #0D87C5 !important;
+    background-color: #779F39 !important;
 }
 .agent-booked-text{
-    color: #0D87C5 !important;
+    color: #779F39 !important;
 }
 
 .agent-booked-border{
-    border-color: #0D87C5 !important;
+    border-color: #779F39 !important;
 }
 
 
 /***  CUSTOMER **/
 .customer-booked-text{
-    color: #139275 !important;
+    color: #12AED8 !important;
 }
 .customer-booked-bg{
-    background-color: #139275 !important;
+    background-color: #12AED8 !important;
 }
 .customer-booked-border{
-    border-color: #139275  !important;
+    border-color: #12AED8  !important;
 }
 
 
@@ -421,11 +421,11 @@ width:100% !important;
 /** calendar markers**/
 
 .agent-submitted{
-    background:#12AED8;
+    background:#779F39;
     margin-left: 1px;
 }
 .customer-submitted{
-    background:#779F39;
+    background:#12AED8;
     margin-left: 1px;
 }
 .cl-cancelled{
@@ -490,7 +490,7 @@ width:100% !important;
     
 }
 .cl-customer-marker{
-    background: #139275;
+    background: #12AED8;
     height:42px;
     color:#ffffff;
     
