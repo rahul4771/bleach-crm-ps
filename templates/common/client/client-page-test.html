@@ -54,6 +54,7 @@
                         <div class="text-center">
                             <div class="cd-card-content"> Language : {{client_details.sms_preference}}</div>
                             <div class="cd-card-content"> Platform : {% if client_details.is_sms %}SMS,{% elif client_details.is_email %}Email,{% elif client_details.is_whatsapp %}Whatsapp,{% endif %}</div>
+                            <div class="cd-card-content"> Credit : {% if client_details.is_credit %}Active{% else %}Inactive{% endif %}</div>
                         </div>
                         
                     </div>
@@ -352,25 +353,19 @@
     
                     </div>
                 <BR>
-                <div class="order-card-column whitebg green-border clickable-row-list" data-href="{% url 'customer:statement-of-account' client_details.id %}" data-target="_blank"><!--order-card-column-->
-                    <div class="card-innerwrapper"><!--card-innerwrapper-->
-                    <div class="column-left"><img src="{% static "/files/images/card-soa-icon.png" %}"></div>
-                    <div class="column-right"><!--column-right-->
-                    <!-- <h1>Click To View</h1> -->
-                    <h2 class="green-text"><label>SOA<span><i class="fa fa-external-link" aria-hidden="true"></i></span></label></h2>
-                    <p><label>Click to view <span></span></label></p>
-                    </div><!--column-right-->
-                    </div><!--card-innerwrapper-->
-                </div>
 
-                </div>
-
+                <a href="{% url 'customer:statement-of-account' client_details.id %}" target="_blank">
                 <div class="text-center">
                     <div  class="secondary-btn cd-ml-4">
                         <i class="far fa-file-alt primary-icon"></i>
                         Statement Of Account
                     </div>
                 </div>
+                </a>
+                
+                </div>
+
+                
 
             </div>
 
@@ -527,9 +522,9 @@
                             <div ><!--ticket-form-left-->
                                 <div class=" bold-text common-label required-field"> <label>Credit Card</label></div>
                               <label style="width: 47%;" for="favcity">
-                              <select  name="sms_preference" required="">
-                              <option value="ACTIVE" >Active</option>
-                              <option value="INACTIVE">Inactive</option>
+                              <select  name="is_credit" id="credit" required="">
+                              <option value="True" {% if client_details.is_credit == True %}selected{% endif %}>Active</option>
+                              <option value="False" {% if client_details.is_credit == False %}selected{% endif %}>Inactive</option>
                               </select>
                               </label>
                             </div>

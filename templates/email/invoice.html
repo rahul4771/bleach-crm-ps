@@ -38,7 +38,7 @@
             padding: 0%;
         }
 
-        header {
+        .header-class {
             padding-top: 3%;
             background: #EEEEEE;
             min-height: 200px;
@@ -52,7 +52,7 @@
 
         }
 
-        .button-a{
+        .button-a {
             text-decoration: none;
             color: #fff;
         }
@@ -82,6 +82,11 @@
         .blu-color {
             color: #289BAC;
         }
+
+        .mt-10 {
+            margin-top: 10px;
+        }
+
         h1 {
 
             letter-spacing: 0px;
@@ -139,9 +144,11 @@
         .info-section-item-left {
             width: 100px !important;
         }
+
         .info-section-item-left-2 {
             width: 155px !important;
         }
+
         .info-section-item-left-3 {
             width: 200px !important;
         }
@@ -153,41 +160,38 @@
         .text-right {
             text-align: right;
         }
-        .order-items{
+
+        .order-items {
             width: auto;
             margin-top: 10px;
             padding: 2%;
             border: 1px solid #d0d0d0;
             color: #707070;
         }
-        .order-item-in{
+
+        .order-item-in {
             display: flex;
         }
-        .amount-text{
+
+        .amount-text {
             text-align: right;
         }
-        .mb-20{
+
+        .mb-20 {
             margin-bottom: 20px;
         }
-        .mb-10{
-            margin-bottom: 10px;
-        }
-        .d-flex-3{
+
+        .d-flex-3 {
             flex-grow: 3;
         }
-        #item-left{
+
+        #item-left {
             flex-grow: 3;
         }
-        #inovice_amount{
-            font-size: 26px;
-            font-weight: bolder;
-        }
-        .mt-10{
-            margin-top: 10px;
-        }
+
         @media screen and (max-width: 600px) {
-            
-            header {
+
+            .header-class {
                 min-height: 140px;
             }
 
@@ -200,20 +204,25 @@
             }
 
         }
+
         @media screen and (max-width: 690px) {
-            .amount-text{
-            text-align: left;
-        }
-        .m-mt-10{
-            margin-top: 10px;
-        }
-            .m-mt-20{
+            .amount-text {
+                text-align: left;
+            }
+
+            .m-mt-10 {
+                margin-top: 10px;
+            }
+
+            .m-mt-20 {
                 margin-top: 20px;
             }
-            .order-item-in{
+
+            .order-item-in {
                 display: block;
             }
-            header {
+
+            .header-class {
                 min-height: 140px;
             }
 
@@ -228,13 +237,14 @@
         }
 
         @media screen and (max-width: 500px) {
-            header {
+            .header-class {
                 min-height: 120px;
             }
 
             .info-section {
                 display: block;
             }
+
             .info-section-left {
                 width: auto;
             }
@@ -246,12 +256,18 @@
 
 <body>
     <div id="wrapper">
-        <header>
+        <div style="padding-top: 3%;
+        background: #EEEEEE;
+        min-height: 200px;" class="header-class">
             <div id="logo">
                 <img src="./logo2.png" alt="">
             </div>
-        </header>
-        <div style="margin-left: 3%; margin-right: 3%;" id="content" class="mb-20">
+        </div>
+        <div style="background: #FFFFFF 0% 0% no-repeat padding-box;
+        border: 1px solid #707070;
+        width: auto;
+        margin: -10% 3% 3% 3%;
+        padding: 2%;" class="mb-20">
             <h1>Invoice</h1>
             <div class="info-section">
                 <div class="info-section-left">
@@ -465,46 +481,52 @@
             </div>
         </div>
     </div>
-    <footer>
+    <div style=" width: auto;
+    color: #707070; text-align: center; background: #EEEEEE; padding: 2%;">
         <div id="footer-content">
             <p style="font-weight: 600; font-size: 14px;">This is an automatically generated email form CRM system of
                 Bleach. Please do not reply directly to this email.</p>
             <p style="margin-top: 10px; font-size: 12px;">Visit us on <a style="text-decoration: none; color: #2A8EA2;"
                     href="https://www.bleach-kw.com/">Bleach-kw.com</a></p>
-            <ul class="mt-10">
-                <li>
-                    <a ><img src="./icons/fb.png" style="width: 20px;" alt=""></a>
-                  </li>
-                  <li>
-                      <a>
-                          <img src="./icons/in.png" style="width: 20px;" alt="">
-                      </a>
-                      
-  
-                  </li>
-                  <li>
-                      <a>
-                          <img src="./icons/instagram.png" style="width: 20px;" alt="">
-                      </a>
-                     
-  
-                  </li>
-                  <li>
-                      <a >
-                          <img src="./icons/twitter.png" style="width: 20px;" alt="">
-                      </a>
-                     
-  
-                  </li>
-                  <li>
-                      <a >
-                          <img src="./icons/youtube.png" style="width: 20px;" alt="">
-                      </a>
-                  </li>
+            <ul class="mt-10" style="list-style: none;">
+                <li style=" display: inline;
+                margin: 2px;">
+                    <a><img src="./icons/fb.png" style="width: 20px;" alt=""></a>
+                </li>
+                <li style=" display: inline;
+                margin: 2px;">
+                    <a>
+                        <img src="./icons/in.png" style="width: 20px;" alt="">
+                    </a>
+
+
+                </li>
+                <li style=" display: inline;
+                margin: 2px;">
+                    <a>
+                        <img src="./icons/instagram.png" style="width: 20px;" alt="">
+                    </a>
+
+
+                </li>
+                <li style=" display: inline;
+                margin: 2px;">
+                    <a>
+                        <img src="./icons/twitter.png" style="width: 20px;" alt="">
+                    </a>
+
+
+                </li>
+                <li style=" display: inline;
+                margin: 2px;">
+                    <a>
+                        <img src="./icons/youtube.png" style="width: 20px;" alt="">
+                    </a>
+                </li>
             </ul>
             <div style="display: flex;">
                 <div style="text-align: left; font-size: 14px;">
-                    Term
+                    Terms
 
                 </div>
                 <div style="margin-left: auto; text-align: right; font-size: 14px;">
@@ -512,7 +534,7 @@
                 </div>
             </div>
         </div>
-    </footer>
+    </div>
 </body>
 
 </html>
