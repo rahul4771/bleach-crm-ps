@@ -4086,7 +4086,7 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 class EvaluatorMultipleCleaningBookingPhase2(APIView):  
 	permission_classes        = (AllowAny,)
 	authentication_classes    = ()
-	def post(self,request,evaluaation_details_id): 
+	def post(self,request,evaluation_details_id): 
 		response_dict = {'success':False}
 
 		##multiple services #count total cleaners and total leaders for availability
@@ -4135,7 +4135,7 @@ class EvaluatorMultipleCleaningBookingPhase2(APIView):
 				total_cleaners 	= total_cleaners.filter(is_outdoor_skill=True)
 				total_leaders 	= total_leaders.filter(is_outdoor_skill=True)
 
-		evaluation_details = EvaluationDetails.objects.select_related('evaluation').get(id=evaluaation_details_id)
+		evaluation_details = EvaluationDetails.objects.select_related('evaluation').get(id=evaluation_details_id)
 		evaluation         = evaluation_details.evaluation
 
 		###testing availability ####
