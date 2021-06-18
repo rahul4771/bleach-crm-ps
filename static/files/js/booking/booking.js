@@ -107,33 +107,8 @@ const app=new Vue({
   serviceDetails:{
     total_cost:0,
     estimated_cost:0,
-   
-    customer_id:null,
-    address_id:null,
     service_details:{},
-    schedule_details:{},
-    address_details:{
-    "governorate":null,
-    "area":null,
-    "block":null,
-    "avenue":"",
-    "building":"",
-    "street":"",
-    "floor":null,
-    "apartment":""
- },
-    customer_details:{
-      "name":"",
-    "gender":"",
-    "email":"",
-    "mobile_number":"",
-    "date_day":null,
-    "date_month":null,
-    "date_year":null,
-    "nationality":"",
-    "sms_preference":"",
-    "contact_platform":""
-    }
+
   },
   tempCost:0,
   scale:80,
@@ -2215,10 +2190,10 @@ responsive:{
    
   },
   bookMultipleService(){
-   
+   this.userid=window.location.href.split('/')[5]
     axios
       .post(
-         this.url+"/customer/bookingmultiplephase2/together/"+this.userid,this.serviceDetails
+         this.url+"/customer/bookingmultiplephase2/together/"+this.userid+'/',this.serviceDetails
        
       )
       .then((response) => {
