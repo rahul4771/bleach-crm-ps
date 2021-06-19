@@ -527,7 +527,9 @@ service_index:null,
 editScheduleData:{},
 editScheduleStat:false,
 reconfirmation_dialog:false,
-userid:''
+userid:'',
+snackbar:false,
+responseText:''
 
       },
       methods: {
@@ -2213,13 +2215,16 @@ responsive:{
         this.phase2Result=response.data
         if(response.data.success)
         {
-        
+        this.responseText='Booking Successful'
+        this.snackbar=true
         this.getBookingDetails(response.data.booking_id)
      
     this.uploadImages()
+    window.location.href='/evaluator/newenquiry/'
         }
       })
        .catch((error) => {
+        this.responseText=error
         console.log(error);
       });
   },

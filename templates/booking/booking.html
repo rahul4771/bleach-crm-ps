@@ -35,6 +35,25 @@
 
 
       <div>
+        <!-- snackbar-->
+        <v-snackbar
+      v-model="snackbar"
+      color="primary"
+    >
+     <% responseText %>
+
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="#ffffff"
+          text
+          v-bind="attrs"
+          @click="snackbar = false"
+        >
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
+        <!-- snackbar ends here-->
    <!-- service deletion Confirmation Dialog Begins -->
    <v-dialog
    v-model="del_confirmation_dialog"
