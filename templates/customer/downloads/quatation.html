@@ -29,6 +29,9 @@
   <!-- Reject Modal-->
 
   <div id="container">
+    <section>
+      <h1 id="qu-text">QUOTATION</h1>
+   </section>
     {% for orderschedule in order.orderschedules %}
     {% if forloop.first %}
     <section id="new-customer-info">
@@ -53,10 +56,10 @@
     {% endif %}
     {% endfor %}
     <section id="quotation_data">
-      <h1 id="qu-text">QUOTATION</h1>
+     
       <div>
         <span id="contact-text">Quotation Number</span>
-        <span id="contact-number">{{order.order_no}}</span>
+        <span id="contact-number">  <b>{{order.order_no}} </b> </span>
       </div>
       <div>
         <span id="contact-text">Initiated Date</span>

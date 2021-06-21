@@ -1,3 +1,6 @@
+.cd-mt-30{
+    margin-top: 30px;
+}
 .cd-card-border{
     border: 1px solid #707070;
 }
@@ -9,7 +12,7 @@ border-radius: 69px;
 }
 .cd-card-title{
     color: #434343;
-    font-size:16px;
+    font-size:22px;
 }
 .cd-card-title2{
     color: #434343;
@@ -37,7 +40,7 @@ border-radius: 69px;
 opacity: 1;
 height:100%;
 padding:10px;
-min-height: 180px;
+min-height: 210px;
 }
 .cd-count{
     margin-left: auto;
@@ -79,6 +82,9 @@ min-height: 180px;
 }
 .cd-text-green{
     color: #00A400;
+}
+.cd-text-green-2{
+    color: #139275;
 }
 .cd-text-red{
     color: #C90000;
@@ -189,3 +195,50 @@ input[type="checkbox"]:checked {
     border: none !important;
 }
 
+.cd-client-data{
+    font-size: 14px;
+    color: #434343;
+    text-align: center;
+}
+.cd-client-data-2{
+    font-size: 14px;
+    color: #6f6c6c;
+    text-align: center;
+    font-weight: 600;
+}
+hr.cd-hr{
+    color: #707070;
+    border: 1px solid #707070;
+    opacity: 0.5;
+    margin-top: 5px !important;
+    margin-bottom: 5px !important;
+}
+.cd-box-head-name{
+    
+    margin-top: 10px;
+    color: #434343;
+    font-size: 26px;
+    text-align: center;
+}
+.cd-box-value{
+    text-align: center;
+    font-size: 40px;
+}
+
+.cd-head-text{
+    font: normal normal normal 28px/34px Avenir LT Std;
+letter-spacing: 0px;
+color: #434343;
+opacity: 1;
+font-size: 28px;
+text-align: center;
+}
+.cd-card-title3 {
+    color: #434343;
+    font-size: 20px;
+    font-weight: 400;
+}
+
+.cd-f20{
+    font-size: 20px !important;
+}

@@ -50,6 +50,11 @@ LEAVE_TYPES = (
     ('MATERNITY/PATERNITY','MATERNITY_PATERNITY')
 )
 
+SHIFT_CHOICES =(
+    ('SHIFT1','SHIFT1'),
+    ('SHIFT2','SHIFT2')
+)
+
 #profile image Size Validator
 def validate_image(image):
     file_size = image.file.size
@@ -108,6 +113,7 @@ class UserProfile(AbstractUser):
     is_email        = models.BooleanField(null=False,blank=True,default=False)
     customer_id     = models.CharField(max_length=12,blank=True,null=True)
     credit_amount   = models.FloatField(blank=True,null=True,default=0)
+    is_credit       = models.BooleanField(null=False,blank=True,default=False)
 
     is_general_skill       = models.BooleanField(null=False,blank=True,default=False)
     is_deep_skill          = models.BooleanField(null=False,blank=True,default=False)
@@ -233,10 +239,10 @@ class ShiftSchedule(models.Model):
     shift_date      = models.DateField(blank=False,null=False)
     shift1          = models.BooleanField(null=False,blank=True,default=False)
     shift2          = models.BooleanField(null=False,blank=True,default=False)
-    shift1_start_at = models.DateField(blank=True,null=True)
-    shift1_end_at   = models.DateField(blank=True,null=True)
-    shift2_start_at = models.DateField(blank=True,null=True)
-    shift2_end_at   = models.DateField(blank=True,null=True)
+    shift1_start_at = models.TimeField(blank=True,null=True)
+    shift1_end_at   = models.TimeField(blank=True,null=True)
+    shift2_start_at = models.TimeField(blank=True,null=True)
+    shift2_end_at   = models.TimeField(blank=True,null=True)
 
     is_active       = models.BooleanField(null=False,blank=True,default=True)
     created         = models.DateTimeField(auto_now_add=True)
@@ -246,3 +252,17 @@ class ShiftSchedule(models.Model):
 
     def __str__(self):
         return self.staff.name
+
+class Shift(models.Model):
+    shift    = models.CharField(max_length=20,blank=True,null=True,choices=SHIFT_CHOICES)
+    start_at = models.TimeField(blank=True,null=True)
+    end_at   = models.TimeField(blank=True,null=True)
+
+    is_active       = models.BooleanField(null=False,blank=True,default=True)
+    created         = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return str(self.shift)
+
+    def __str__(self):
+        return self.shift

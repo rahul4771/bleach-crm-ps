@@ -26,7 +26,7 @@ $('#service-carousel').owlCarousel({
     responsive:{
         0:{
             items:1,
-            nav:true,
+            nav:false,
             loop:true
         },
         600:{
@@ -107,33 +107,8 @@ const app=new Vue({
   serviceDetails:{
     total_cost:0,
     estimated_cost:0,
-   
-    customer_id:null,
-    address_id:null,
     service_details:{},
-    schedule_details:{},
-    address_details:{
-    "governorate":null,
-    "area":null,
-    "block":null,
-    "avenue":"",
-    "building":"",
-    "street":"",
-    "floor":null,
-    "apartment":""
- },
-    customer_details:{
-      "name":"",
-    "gender":"",
-    "email":"",
-    "mobile_number":"",
-    "date_day":null,
-    "date_month":null,
-    "date_year":null,
-    "nationality":"",
-    "sms_preference":"",
-    "contact_platform":""
-    }
+
   },
   tempCost:0,
   scale:80,
@@ -149,7 +124,7 @@ const app=new Vue({
   buildingCount:1,
   kitchenCleaningServices:[],
   infectionControlServices:[],
-    valid:true,
+    valid:[],
     validApartment:true,
     validKitchen:true,
     validKitchenDialog:true,
@@ -328,6 +303,7 @@ const app=new Vue({
     sections: {},
   },
   area_types: [],
+  
 
   location_types: [
     "Post Construction",
@@ -527,44 +503,266 @@ slotFormat:{
     end_time:'12:00 AM'
   }
 },
-fixedSlots:{}    
+fixedSlots:{},
+keynote_list:[],
+keynote_data:{
+  name:'',
+  value:''
+},    
+keynote_name:'',
+keynote_value:'',
+scheduleDateSat:false,
+confirmation_dialog:false,
+schedule_err_msg:false,
+onetime_dialog:false,
+oneTimeDateSelected:'',
+one_time_slots:{},
+onetimerender:true,
+selected_onetime_slots:{},
+oneTimeSelectionStat:false,
+onetime_scheduled:{},
+togetherStat:false,
+del_confirmation_dialog:false,
+service_index:null,
+editScheduleData:{},
+editScheduleStat:false,
+reconfirmation_dialog:false,
+userid:'',
+snackbar:false,
+responseText:''
+
       },
       methods: {
-        calcSelectedServices(){
-          this.schedule_serviceTypes=[]
-          if(this.scheduleStat){
-            this.schedule_serviceTypes=[...this.serviceTypes]
+        viewEditSchedule(service,index){
+          this.schedule_serviceTypes_selected=[]
+          this.editScheduleData=service
+          this.editScheduleStat=true
+          this.schedule_serviceTypes_selected.push(index)
+         
+          this.goToSchedule()
+        },
+        openDelConfirm(index){
+          this.service_index=index
+          this.del_confirmation_dialog=true
+        },
+        removeService(){
+            this.multiServicesBill.splice(this.service_index,1)
+            this.del_confirmation_dialog=false
+        },
+        oneTimeDateChange(){
+          if(!this.one_time_slots[this.oneTimeDateSelected]){
+            this.one_time_slots[this.oneTimeDateSelected]={
+              slots:[]
+            }
+          }
+          
+          this.calcSlots()
+        },
+        reconfirmScheduler(){
+          this.reconfirmation_dialog=false
+          for(var i=0;i<this.multiServicesBill.length;i++){
+            this.multiServicesBill[i].schedule_details={}
+          }
+          this.resetScheduler()
+          this.goToSchedule()
+        },
+        scheduleTogether()
+        {
+          if(this.checkScheduleAvail()){
+            this.reconfirmation_dialog=true
           }
           else{
+            this.goToSchedule()
+          }
+        },
+        checkScheduleAvail(){
+          var flag=false
+          for(var i=0;i<this.multiServicesBill.length;i++){
+            if(Object.keys(this.multiServicesBill[i].schedule_details).length>0){
+              flag=true
+              break
+            }
+            else{
+              flag=false
+            }
+          }
+          return flag
+        },
+        resetScheduler(){
+
+          this.cleaningPolicy=''
+          this.subStat=''
+          this.visits=[]
+          this.fixedSlots={}
+          this.altdaysStat=false
+          this.altweekStat=false
+          this.selected_double_slots=[]
+          this.selected_monthly_date=[]
+          this.autofixStat=false
+          this.selected_monthly_date=[]
+          this.reselectDialog=false
+          this.reselectSlot=[]
+          this.reselectDate={}
+          this.reselectDateIndex=null
+         // this.one_time_slots={},
+
+          this.selectedDuration={
+            cleaners:null,
+            hours:null,
+            slots:null
+          }
+          this.scheduleFormat={
+            allSchedule:{},
+            individual:{}
+          },
+          this.no_of_visits='',
+          this.scheduleDateSat=false
+          this.confirmation_dialog=false
+          this.monthly_starting_date=''
+          this.customDateSelected=[]
+          this.schedule_err_msg=false
+          if(this.editScheduleStat){
+            this.editScheduleStat=false
+            this.editScheduleData.schedule_details={}
+          }
+           this.oneTimeDateSelected=moment().format().split("T")[0];
+            this.one_time_slots[this.oneTimeDateSelected]={
+                slots:[]
+            }
+
+        },
+        addKeynote(building,floor){
+          this.building[building].floors[floor].keynote_data.push({
+            name:this.keynote_name,
+            value:this.keynote_value
+          })
+          this.keynote_name=''
+          this.keynote_value=''
+        },
+        removeKeynote(building,floor,keynote){
+            this.building[building].floors[floor].keynote_data.splice(keynote,1)
+        },
+        addApartmentKeynote(building,floor,apartment){
+          this.building[building].floors[floor].apartments[apartment].keynote_data.push({
+            name:this.keynote_name,
+            value:this.keynote_value
+          })
+          this.keynote_name=''
+          this.keynote_value=''
+        },
+        removeApartmentKeynote(building,floor,apartment,keynote){
+            this.building[building].floors[floor].apartments[apartment].keynote_data.splice(keynote,1)
+        },
+        calcSelectedServices(){
+          this.schedule_serviceTypes=[]
+          
             for(var i=0;i<this.schedule_serviceTypes_selected.length;i++){
               this.schedule_serviceTypes.push(this.multiServicesBill[this.schedule_serviceTypes_selected[i]].service)
             }
-          }
+          
         },
         addScheduledService(service,index){
           this.schedule_serviceTypes_selected[index]={
             service:service
           }
         },
-       
-        addToSchedule(){
+        addOneTimeToSchedule(){
+          
+          
+            for(var j=0;j<this.schedule_serviceTypes_selected.length;j++){
+              this.onetime_scheduled[this.schedule_serviceTypes_selected[j]]={
+                slot:this.selected_onetime_slots
+              }
+            }
+          
+          for(var j=0;j<this.schedule_serviceTypes_selected.length;j++){
+            this.multiServicesBill[this.schedule_serviceTypes_selected[j]].cleaning_policy='ONE TIME SERVICE'
+            this.multiServicesBill[this.schedule_serviceTypes_selected[j]].schedule_details={}
+            this.multiServicesBill[this.schedule_serviceTypes_selected[j]].cleaners=this.selectedDuration.cleaners
+            var count=0
+            for(var k in this.selected_onetime_slots){
+              var yr=k.split('-')[0]
+              var month=k.split('-')[1]
+              var day=k.split('-')[2]
+              var date=day+'-'+month+'-'+yr
+              var min_slot=Math.min(...this.selected_onetime_slots[k].slots)
+              this.multiServicesBill[this.schedule_serviceTypes_selected[j]].schedule_details[count+1]={
+                
+                "date":date,
+               "time":this.slotFormat[min_slot].start_time,
+              "no_of_cleaners":this.selectedDuration.cleaners,
+               "cleaning_hours":this.selectedDuration.hours
+              }
+              count=count+1
+            }
+          }
+          this.selected_onetime_slots={}
+
+          this.onetime_scheduled={}
+          this.oneTimeSelectionStat=false
+          this.schedule_serviceTypes_selected=[]
+         // this.oneTimeDateSelected=''
+         //this.one_time_slots={}
+          this.activeTab='Cart'
+        },
+        addAllServiceTypes(){
+          this.schedule_serviceTypes_selected=[]
           if(this.scheduleStat){
-            this.scheduleFormat.allSchedule={
-              starting_date:this.visits[0].dateTime,
-              visits:this.visits
+            for(var i=0;i<this.multiServicesBill.length;i++){
+              this.schedule_serviceTypes_selected.push(i)
             }
           }
           else{
+            this.schedule_serviceTypes_selected=[]
+          }
+          this.calcSelectedServices()
+        },
+        addToSchedule(){
+          
+          
             for(var i=0;i<this.schedule_serviceTypes_selected.length;i++){
               
               this.scheduleFormat.individual[this.schedule_serviceTypes_selected[i]]={
                 starting_date:this.visits[0].dateTime,
                 visits:this.visits
               }
+              
             }
+          var cleaners=this.selectedDuration.cleaners
+          for(var j=0;j<this.schedule_serviceTypes_selected.length;j++){
+            this.multiServicesBill[this.schedule_serviceTypes_selected[j]].cleaning_policy='SUBSCRIPTION'
+            this.multiServicesBill[this.schedule_serviceTypes_selected[j]].schedule_details={}
+            this.multiServicesBill[this.schedule_serviceTypes_selected[j]].cleaners=cleaners
+            for(var k=0;k<this.visits.length;k++){
+              var min_slot=Math.min(...this.visits[k].slots)
+              
+              this.multiServicesBill[this.schedule_serviceTypes_selected[j]].schedule_details[k+1]={
+                
+                "date":this.visits[k].date,
+               "time":this.slotFormat[min_slot].start_time,
+              "no_of_cleaners":this.selectedDuration.cleaners,
+               "cleaning_hours":this.selectedDuration.hours
+              }
+            }
+           
           }
+
+          this.visits=[]
+          this.selected_double_slots=[]
+         this.selectedDuration={
+            cleaners:'',
+            hours:'',
+            slots:''
+          }
+          this.fixedSlots={}
+          this.reselectDateIndex=null
+          this.reselectDate={}
+          this.subStat='',
+          cleaningPolicy='',
+          no_of_visits='',
           this.visits=[]
           
+          this.scheduleDateSat=false
           this.activeTab='Cart'
         },
         changeVisitDate(){
@@ -656,6 +854,8 @@ fixedSlots:{}
           return combined
         },
         findCustomVisits(){
+          if(this.customDateSelected.length>0 && this.selected_double_slots.length>0 )
+          {
          for(var i=0;i<this.customDateSelected.length;i++){
            var day=moment(this.customDateSelected[i],'YYYY-MM-DD')
            var dayname=day.format('ddd')
@@ -672,10 +872,17 @@ fixedSlots:{}
          }
          this.checkAvailablility()
          this.customDialog=false
+         this.scheduleDateSat=true
+         this.schedule_err_msg=false
+        }
+        else{
+          this.schedule_err_msg=true
+        }
           
         },
         findVisits(){
-        
+        if(this.selected_double_slots.length>0 && this.dateSelected)
+        {
          this.scheduleDialog=false
 
          /* Weekly Cleaning calculator */
@@ -751,10 +958,15 @@ fixedSlots:{}
            }
           } 
          }
-          
+         this.scheduleDateSat=true
+        }
+        else{
+          this.schedule_err_msg=true
+        }
         },
         findMonthlyVisits(){
-         
+          if(this.selected_monthly_date.length>0 && this.selected_double_slots.length>0 )
+          {
           console.log("called monthly")
           var count=0
           var visitcount=0
@@ -797,6 +1009,11 @@ fixedSlots:{}
            
           }
           this.monthlyDialog=false 
+          this.scheduleDateSat=true
+        }
+        else{
+          this.schedule_err_msg=true
+        }
         },
         checkAvailablility(){
          axios.post(this.url+'/customer/ajax/multipleservice/multipledates/cleaningslotes/',{number_of_cleaners:this.selectedDuration.cleaners,
@@ -1045,18 +1262,32 @@ console.log(response)
        
         
     },
+    checkScheduleStatus(){
+      var flag=false
+      for(var i=0;i<this.multiServicesBill.length;i++){
+        if(Object.keys(this.multiServicesBill[i].schedule_details).length<1){
+          flag=false
+          break
+        }
+        else{
+          flag=true
+        }
+      }
+      return flag
+    },
     arrangeData(){
           for(var i=0;i<this.multiServicesBill.length;i++){
 
             var service_id=this.getServiceId(this.multiServicesBill[i].service)
              this.serviceDetails.service_details[i]={
                 "service_type":service_id,
+                "schedule_details":this.multiServicesBill[i].schedule_details,
                 "location_type":this.multiServicesBill[i].location_type,
                 "area_type":this.multiServicesBill[i].area_type,
                  "evaluator_note":this.multiServicesBill[i].evaluator_note,
                  "estimated_cost":this.multiServicesBill[i].total_cost,
                  "total_cost":this.multiServicesBill[i].total_cost,
-                 "number_of_cleaners":this.selectedDuration.cleaners,
+                 "number_of_cleaners":this.multiServicesBill[i].cleaners,
                    "cleaning_hours":parseInt(this.selectedDuration.hours),
                    sections:{}
               }
@@ -1115,7 +1346,7 @@ console.log(response)
            }
             }
           }
-          if(this.userStat)
+         /* if(this.userStat)
           {
           this.serviceDetails.customer_details= {   
               "name":this.customerDetails.customer_details.name,
@@ -1147,7 +1378,7 @@ console.log(response)
             this.serviceDetails.customer_details.date_day=this.dob.split('-')[2]
             this.serviceDetails.customer_details.date_month=this.dob.split('-')[1]
             this.serviceDetails.customer_details.date_year=this.dob.split('-')[0]
-          }
+          }*/
           this.serviceDetails.total_cost=this.totalCost
           this.serviceDetails.estimated_cost=this.totalCost
           //this.customerDetails.customer_details
@@ -1164,7 +1395,7 @@ console.log(response)
     },
     addKitchen(building,floor){
       
-        if(this.$refs.kitchenForm[0].validate())
+        if(this.$refs['kitchenFloor-building-'+(building)+'floor-'+(floor)][0].validate())
      { 
         console.log("kitchen data is  "+JSON.stringify(this.kitchenData))
         this.building[building].floors[floor].kitchens.push(this.kitchenData)
@@ -1203,7 +1434,7 @@ console.log(response)
     },
       addMoreKitchen(building,floor){
       
-        if(this.$refs.kitchenDialogForm.validate())
+        if(this.$refs['KitchenForm-building-'+building+'floor'-floor].validate())
      { 
         console.log("kitchen data is  "+JSON.stringify(this.kitchenData))
         this.building[building].floors[floor].kitchens.push(this.kitchenData)
@@ -1510,6 +1741,33 @@ console.log(response)
   addDoubleSlot(start,end,slot){
       this.selected_double_slots.push(slot)
   },
+  addOneTimeSlot(start,end,slot){
+   this.onetimerender=false
+    this.one_time_slots[this.oneTimeDateSelected].slots.push(slot)
+    this.onetimerender=true
+},
+removeOneTimeSlot(slot){
+  this.onetimerender=false
+  var prevSlot=parseInt(slot)-1
+  var nextSlot=parseInt(slot)+1
+  var index=this.one_time_slots[this.oneTimeDateSelected].slots.indexOf(slot)
+  this.one_time_slots[this.oneTimeDateSelected].slots.splice(index,1)
+  if(this.one_time_slots[this.oneTimeDateSelected].slots.includes(nextSlot)&&this.one_time_slots[this.oneTimeDateSelected].slots.includes(prevSlot))
+  {
+    var tempSlots=[...this.one_time_slots[this.oneTimeDateSelected].slots]
+    for(var i=0;i<this.one_time_slots[this.oneTimeDateSelected].slots.length;i++){
+      if(this.one_time_slots[this.oneTimeDateSelected].slots[i]>slot){
+        var slotindex=tempSlots.indexOf(this.one_time_slots[this.oneTimeDateSelected].slots[i])
+        tempSlots.splice(slotindex,1)
+      }
+    }
+    console.log("duble slot is "+this.selected_double_slots+"tempslot:"+tempSlots)
+    this.one_time_slots[this.oneTimeDateSelected].slots=[...tempSlots]
+
+  }
+  this.onetimerender=true
+},
+
   removeDoubleSlot(slot){
     var prevSlot=parseInt(slot)-1
     var nextSlot=parseInt(slot)+1
@@ -1568,6 +1826,74 @@ console.log(response)
   else{
     return false
   }
+  },
+  checkOneTimeSlotStat(slot){
+    var prevSlot=parseInt(slot)-1
+    var nextSlot=parseInt(slot)+1
+    var counter=0
+    for(var i in this.one_time_slots){
+      counter=counter+this.one_time_slots[i].slots.length
+    }
+    if(counter<this.selectedDuration.slots)
+    {
+    if(this.one_time_slots[this.oneTimeDateSelected].slots.length>0)
+    {
+    if(slot==1){
+      if(this.one_time_slots[this.oneTimeDateSelected].slots.includes(nextSlot)){
+        return true
+      }
+      else {
+        return false
+      }
+    }
+    else if(slot==12){
+      if(this.one_time_slots[this.oneTimeDateSelected].slots.includes(prevSlot)){
+        return true
+      }
+      else {
+        return false
+      }
+    }
+    else{
+      if(this.one_time_slots[this.oneTimeDateSelected].slots.includes(prevSlot)||this.one_time_slots[this.oneTimeDateSelected].slots.includes(nextSlot))
+      {
+        return true
+      }
+      else{
+        return false
+      }
+    }
+    }
+    else{
+      return true
+    }
+  }
+  else{
+    return false
+  }
+  },
+  oneTimeSlotCounter(){
+    var counter=0
+    for(var i in this.one_time_slots){
+      counter=counter+this.one_time_slots[i].slots.length
+    }
+    return counter
+  },
+  submitOneTimeSlots(){
+    this.selected_onetime_slots={}
+    
+      for(var i in this.one_time_slots){
+        if(this.one_time_slots[i].slots.length>0){
+          this.selected_onetime_slots[i]={
+            slots:this.one_time_slots[i].slots
+          }
+        }
+      }
+    
+  
+  
+    this.onetime_dialog=false
+    this.oneTimeSelectionStat=true
   },
   addSlot(slot) {
     if (this.time_slot[this.slotDate].selectedSlot.length == 0) {
@@ -1697,13 +2023,13 @@ this.infectionControlServices=[]
       $('#service-carousel').html(`
       <div class="sr-service-card m-2 p-2 service-one"  onclick="selectService('General Cleaning',this)">
       <i class="far fa-circle inactive-icon"></i>
-      <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+      <img src="/static/files/icons/booking/icons/detailed_cleaning.png" class="service-icon"> 
       <div class="text-center pt-2 service-title">
       General Cleaning
     </div></div>
     <div class="sr-service-card m-2 p-2 "  onclick="selectService('Deep Cleaning',this)">
     <i class="far fa-circle inactive-icon"></i>
-    <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+    <img src="/static/files/icons/booking/icons/deepcleaning.png" class="service-icon"> 
     <div class="text-center pt-2 service-title">
     Deep Cleaning
   </div>
@@ -1713,35 +2039,35 @@ this.infectionControlServices=[]
   
     <div class="sr-service-card m-2 p-2"  onclick="selectService('Facade Cleaning',this)">
     <i class="far fa-circle inactive-icon"></i>
-    <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+    <img src="/static/files/icons/booking/icons/FacadeCleaning.png" class="service-icon"> 
     <div class="text-center pt-2 service-title">
     Facade Cleaning
   </div></div>
  
     <div class="sr-service-card m-2 p-2"  onclick="selectService('Storage Area',this)">
     <i class="far fa-circle inactive-icon"></i>
-    <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+    <img src="/static/files/icons/booking/icons/StorageArea.png" class="service-icon"> 
     <div class="text-center pt-2 service-title">
     Storage Area
   </div></div>
  
     <div class="sr-service-card m-2 p-2"  onclick="selectService('Car Parking Umbrella',this)">
     <i class="far fa-circle inactive-icon"></i>
-    <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+    <img src="/static/files/icons/booking/icons/car.png" class="service-icon"> 
     <div class="text-center pt-2 service-title">
     Car Parking Umbrella
   </div></div>
   
     <div class="sr-service-card m-2 p-2"  onclick="selectService('Window Cleaning',this)">
     <i class="far fa-circle inactive-icon"></i>
-    <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+    <img src="/static/files/icons/booking/icons/WindowCleaning.png" class="service-icon"> 
     <div class="text-center pt-2 service-title">
     Window Cleaning
   </div></div>
  
     <div class="sr-service-card m-2 p-2"  onclick="selectService('Outdoor Cleaning',this)">
     <i class="far fa-circle inactive-icon"></i>
-    <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+    <img src="/static/files/icons/booking/icons/outdoorCleaning.png" class="service-icon"> 
     <div class="text-center pt-2 service-title">
     Outdoor Cleaning
   </div></div>
@@ -1764,21 +2090,21 @@ this.infectionControlServices=[]
    
     <div class="sr-service-card m-2 p-2 service-one"  onclick="selectService('Upholstery Cleaning',this)">
     <i class="far fa-circle inactive-icon"></i>
-    <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+    <img src="/static/files/icons/booking/icons/UpholsteryCleaning.png" class="service-icon"> 
     <div class="text-center pt-2 service-title">
     Upholstery Cleaning
   </div></div>
   
     <div class="sr-service-card m-2 p-2"  onclick="selectService('Mattress Cleaning',this)">
     <i class="far fa-circle inactive-icon"></i>
-    <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+    <img src="/static/files/icons/booking/icons/bed.png" class="service-icon"> 
     <div class="text-center pt-2 service-title">
     Mattress Cleaning
   </div></div>
   
     <div class="sr-service-card m-2 p-2"  onclick="selectService('Carpet Cleaning',this)">
     <i class="far fa-circle inactive-icon"></i>
-    <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+    <img src="/static/files/icons/booking/icons/carpet.png" class="service-icon"> 
     <div class="text-center pt-2 service-title">
     Carpet Cleaning
   </div></div>
@@ -1800,7 +2126,7 @@ this.infectionControlServices=[]
    
     <div class="sr-service-card m-2 p-2 service-one"   onclick="selectService('Kitchen Cleaning',this)">
     <i class="far fa-circle inactive-icon"></i>
-    <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+    <img src="/static/files/icons/booking/icons/kitchen.png" class="service-icon"> 
     <div class="text-center pt-2 service-title">
     Kitchen Cleaning
   </div></div>
@@ -1824,7 +2150,7 @@ this.infectionControlServices=[]
    
     <div class="sr-service-card m-2 p-2 service-one"  onclick="selectService('Sanitization',this)">
     <i class="far fa-circle inactive-icon"></i>
-    <img src="/static/files/icons/booking/icons/household.png" class="service-icon"> 
+    <img src="/static/files/icons/booking/icons/sanitisation.png" class="service-icon"> 
     <div class="text-center pt-2 service-title">
     Sterilization
   </div></div>
@@ -1851,7 +2177,7 @@ responsiveClass:true,
 responsive:{
     0:{
         items:1,
-        nav:true,
+        nav:false,
         loop:true
     },
     600:{
@@ -1869,10 +2195,18 @@ responsive:{
    
   },
   bookMultipleService(){
-   
+
+   this.userid=window.location.href.split('/')[5]
+   var posturl=''
+   if(this.scheduleStat){
+     posturl='/customer/evaluatorbookingmultiplephase2/together/'
+   }
+   else{
+    posturl='/customer/evaluatorbookingmultiplephase2/seperate/'
+   }
     axios
       .post(
-         this.url+"/customer/bookingmultiplephase2",this.serviceDetails
+         this.url+posturl+this.userid+'/',this.serviceDetails
        
       )
       .then((response) => {
@@ -1881,13 +2215,16 @@ responsive:{
         this.phase2Result=response.data
         if(response.data.success)
         {
-        
+        this.responseText='Booking Successful'
+        this.snackbar=true
         this.getBookingDetails(response.data.booking_id)
      
     this.uploadImages()
+    window.location.href='/evaluator/newenquiry/'
         }
       })
        .catch((error) => {
+        this.responseText=error
         console.log(error);
       });
   },
@@ -2060,7 +2397,8 @@ getAreaTypes() {
   const options = {
   maxSizeMB: 1,
   maxWidthOrHeight: 1920,
-  useWebWorker: true
+  useWebWorker: true,
+  onProgress:Function(2)
 }
 try {
   const compressedFile = await imageCompression(event.target.files[0], options);
@@ -2383,6 +2721,7 @@ try {
      }
 
   },
+  
   deleteItem(a) {
     this.otherServices.splice(a, 1);
     this.billingData.splice(a,1)
@@ -2412,7 +2751,7 @@ try {
       responsive:{
           0:{
               items:1,
-              nav:true
+              nav:false
           },
           600:{
               items:4,
@@ -2427,8 +2766,15 @@ try {
   }).trigger('refresh.owl.carousel');
   },
   goToSchedule(){
+    if(!this.editScheduleStat){
+      this.resetScheduler()
+    }
+   
       this.activeTab='Schedule'
-      this.currentPageTitle='Schedule',
+      this.currentPageTitle='Schedule'
+      if(this.scheduleStat){
+        this.addAllServiceTypes()
+      }
       this.calcSelectedServices()
       this.newdurationcalculation();
   },
@@ -2450,7 +2796,9 @@ try {
        serviceNo:this.serviceCount,
        area_type:this.area_type,
        location_type:this.location_type,
-       evaluator_note:this.evaluator_note
+       evaluator_note:this.evaluator_note,
+       schedule_details:{},
+       cleaners:null
      }
    
        this.serviceTypes.push(this.serviceType)
@@ -2506,7 +2854,8 @@ try {
        this.findTotalSize()
        this.findServiceCost()
     this.tempCost=0
-       
+      this.schedule_serviceTypes_selected=[]
+      this.schedule_serviceTypes=[]
     //  this.durationcalculation();
      
       
@@ -2577,6 +2926,7 @@ try {
         apartments: [],
         kitchen: false,
         kitchens: [],
+        keynote_data:[],
         completed: false,
         paint_residue: false,
         upholsteries: ["Sofa", ""],
@@ -2585,6 +2935,9 @@ try {
         floors: [],
         e: 1,
       });
+      this.valid.push({
+        floors:[]
+      })
     }
   },
   setApartments(building, floor) {
@@ -2609,6 +2962,7 @@ try {
         no_of_rooms: "",
         no_of_bathrooms: "",
         no_of_windows: "",
+        keynote_data:[],
         kitchen: false,
         kitchens: [],
         keynotes: {},
@@ -2780,6 +3134,8 @@ try {
   },
   nextApartment(building, floor, apartment) {
     //this.$refs.apartmentForm[0].validate()
+      if(this.$refs['building-'+building+'floor-'+floor+'apartment-'+ apartment][0].validate()){
+
       
       this.building[building].floors[floor].apartments[apartment].section_cost=0
     this.e.building[building].floors[floor].e = apartment + 2;
@@ -2830,6 +3186,7 @@ try {
 
     this.recalcApartmentPrice(building,floor,apartment);
     this.findTempcost()
+}
      
   },
   findTempcost(){
@@ -2840,7 +3197,7 @@ try {
   },
   nextFloor(building, floor) {
       console.log('validate is '+this.$refs.form)
-     if(this.$refs.form[0].validate())
+     if(this.$refs['building-'+building+'floor-'+(floor-1)][0].validate())
      { 
       console.log('validation passsed')
     this.building[building].floors[floor-1].section_cost=this.building[building].floors[floor-1].size.cost
@@ -3539,6 +3896,10 @@ mounted() {
 
   this.dateSelected = moment().format().split("T")[0];
   this.today = moment().format().split("T")[0];
+  this.oneTimeDateSelected=moment().format().split("T")[0];
+  this.one_time_slots[this.oneTimeDateSelected]={
+    slots:[]
+  }
   this.formatDate();
      // this.getMultipleSlots()
      

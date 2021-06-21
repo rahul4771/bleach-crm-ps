@@ -5,6 +5,8 @@ from evaluator.models import EvaluationDetails,EvaluationBook,ServiceType
 from user.models import UserProfile
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember
 
+from datetime import timedelta,date,datetime
+
 
 class ServiceTypeShowSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -52,8 +54,6 @@ class CleaningTeamShowSerializer(serializers.ModelSerializer):
 
 
 class CleaningScheduleSerializer(serializers.ModelSerializer):
-	start_at             = serializers.DateTimeField(format="%d-%m-%Y %I:%M %p")
-	end_at               = serializers.DateTimeField(format="%d-%m-%Y %I:%M %p")
 	customer_address     = AddressSerializer(read_only=True)
 	evaluation_details   = EvaluationDetailsShowSerializer(read_only=True)
 	order                = OrderShowSerializer(read_only=True)
@@ -62,8 +62,12 @@ class CleaningScheduleSerializer(serializers.ModelSerializer):
 	class Meta:
 		model  = OrderScheduler
 		fields = ('id','start_at','end_at','customer_address','work_status','no_of_cleaners','cleaning_hours','evaluation_details','order','order_scheduler_book','cleaning_team_order_scheduler')
-
-
+	
+	def to_representation(self,obj):
+		td = super(CleaningScheduleSerializer,self).to_representation(obj)	
+		td['start_at']  = ((obj.start_at)+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
+		td['end_at'] 	= ((obj.end_at)+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
+		return(td)
 
 
 
@@ -90,11 +94,14 @@ class FollowUpTeamShowSerializer(serializers.ModelSerializer):
 
 class FollowupScheduleSerializer(serializers.ModelSerializer):
 	customer_address              = AddressSerializer(read_only=True)
-	start_at                      = serializers.DateTimeField(format="%d-%m-%Y %I:%M %p")
-	end_at                        = serializers.DateTimeField(format="%d-%m-%Y %I:%M %p")
 	follow_up                     = FollowupSerializer(read_only=True)
 	followupteam_followupschedule = FollowUpTeamShowSerializer(many=True,read_only=True)
 	class Meta:		
 		model  = FollowUpScheduler
 		fields = ('id','start_at','end_at','customer_address','work_status','follow_up','followupteam_followupschedule')
-
+	
+	def to_representation(self,obj):
+		td = super(FollowupScheduleSerializer,self).to_representation(obj)	
+		td['start_at']  = ((obj.start_at)+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
+		td['end_at'] 	= ((obj.end_at)+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
+		return(td)

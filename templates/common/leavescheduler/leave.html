@@ -49,13 +49,13 @@
         <div class="white-wrapper" style="overflow:auto">
           <!--white-wrapper-->
 
-          {% comment %} <div id="myModal" class="lv-modal">
+          <div id="leaveModal" class="lv-modal">
             <div class="modal-dialog">
 
 
               <div class="modal-content">
                 <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  <button type="button" class="close" onclick="closeLeaveModal()">&times;</button>
                   <h4 class="modal-title"></h4>
                 </div>
                 <div class="modal-body">
@@ -76,7 +76,7 @@
               </div>
 
             </div>
-          </div> {% endcomment %}
+          </div> 
 
 
           {% if request.user.user_type == 'OPERATIONSUPERVISOR' or request.user.user_type == 'SENIORTEAMLEADER' %}
@@ -214,6 +214,8 @@
          </div>
          <!--leave ends here -->
 
+
+
          <!--shift goes here -->     
          <div id="work_id" style="display: none;">
           <div class="lv-month d-flex">
@@ -227,25 +229,25 @@
                 </div>
                 <input type="hidden" name="user-type">
                 <ul class="lv-dropdown-menu">
-                  <li id="all" onclick="resetResources('ALL')">ALL</li>
-                  <li id="team-incharge" onclick="resetResources('TEAM IN CHARGE')">TEAM IN CHARGE</li>
-                  <li id="cleaner" onclick="resetResources('CLEANER')">CLEANER</li>
+                  <li id="all-2" onclick="resetResourcesShift('ALL')">ALL</li>
+                  <li id="team-incharge-2" onclick="resetResourcesShift('TEAM IN CHARGE')">TEAM IN CHARGE</li>
+                  <li id="cleaner-2" onclick="resetResourcesShift('CLEANER')">CLEANER</li>
                 </ul>
               </div>
 
             </div>
 
 
-            <span class="material-icons next-arrow" onclick="previousMonth()">
+            <span class="material-icons next-arrow" onclick="previousMonthShift()">
               arrow_backward
             </span>
-            <span class="material-icons next-arrow" onclick="nextMonth()">
+            <span class="material-icons next-arrow" onclick="nextMonthShift()">
               arrow_forward
             </span>
             <span class="lv-month-select" id="lv-month-select-2">JANUARY 2021</span>
             {% if request.user.user_type == 'ADMIN' %}
             {% else %}
-            <div class="lv-clear-btn d-flex" onclick="clearAll()">
+            <div class="lv-clear-btn d-flex" onclick="clearAllShift()">
               <div class="lv-select-counter" id="select-counter">0</div>
               <div class="pr-20"> Clear All</div>
             </div>
@@ -253,10 +255,10 @@
             
             {% endif %}
 
-            <button id="id_shift_1" class="lv-shift-btn">
-              <i class="fa fa-plus" style="margin-right: 10px;" aria-hidden="true"></i> Shift 1
+            <button id="id_shift_1" class="lv-shift-btn" onclick="addToShift1()">
+              <i class="fa fa-plus" style="margin-right: 10px;" aria-hidden="true" ></i> Shift 1
             </button>
-            <button id="id_shift_2" class="lv-shift-btn">
+            <button id="id_shift_2" class="lv-shift2-btn" onclick="addToShift2()">
               <i class="fa fa-plus" style="margin-right: 10px;" aria-hidden="true"></i> Shift 2
             </button>
           </div>
@@ -264,7 +266,7 @@
           <div id="table-wrapper">
             <div id="#table-scroll " style="max-height:100vh;">
               <table cellspacing="0" cellpadding="0" id="leave-table">
-                <th width="200" class="noBorder " id="lv-head-2-">
+                <th width="200" class="noBorder " id="lv-head-2-1">
 
                 </th>
                 <tbody id="lv-body-head-2">
@@ -299,7 +301,6 @@
     $("#work_button_id").addClass("productivity-tab-border");
     $("#leave_button_id").removeClass("productivity-tab-border");
 
-    var url='https://test.bleach-kw.com';
 
     var resourceList=[];
     var cleanerList=[];

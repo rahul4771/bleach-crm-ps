@@ -7,7 +7,9 @@ $(document).ready(function(){
     $('#cleaningCalendar-carousel').owlCarousel({
         loop:false,
         margin:10,
+        startPosition:4,
         nav:true,
+        dots:false,
         navText:[`<i class='fa fa-chevron-left service-control' @click='prevService()'></i>`,
       `<i class='fa fa-chevron-right service-control'></i>`], 
         responsive:{
@@ -114,40 +116,69 @@ const app=  new Vue({
           "8":{
             slots:[]
           },
+          "9":{
+            slots:[]
+          },
+          "10":{
+            slots:[]
+          },
+          "11":{
+            slots:[]
+          },
+          "12":{
+            slots:[]
+          },
         },
         slotFormat:{
           "1":{
             start_time:'12:00 AM',
-            end_time:'03:00 AM'
+            end_time:'02:00 AM'
           },
           "2":{
-            start_time:'03:00 AM',
-            end_time:'06:00 AM'
+            start_time:'02:00 AM',
+            end_time:'04:00 AM'
           },
           "3":{
-            start_time:'06:00 AM',
-            end_time:'09:00 AM'
+            start_time:'04:00 AM',
+            end_time:'06:00 AM'
           },
           "4":{
-            start_time:'09:00 AM',
-            end_time:'12:00 PM'
+            start_time:'06:00 AM',
+            end_time:'08:00 AM'
           },
           "5":{
-            start_time:'12:00 PM',
-            end_time:'03:00 PM'
+            start_time:'08:00 AM',
+            end_time:'10:00 AM'
           },
           "6":{
-            start_time:'03:00 PM',
-            end_time:'06:00 PM'
+            start_time:'10:00 AM',
+            end_time:'12:00 PM'
           },
           "7":{
-            start_time:'06:00 PM',
-            end_time:'09:00 PM'
+            start_time:'12:00 PM',
+            end_time:'02:00 PM'
           },
           "8":{
-            start_time:'09:00 PM',
+            start_time:'02:00 PM',
+            end_time:'04:00 PM'
+          },
+          "9":{
+            start_time:'04:00 PM',
+            end_time:'06:00 PM'
+          },
+          "10":{
+            start_time:'06:00 PM',
+            end_time:'08:00 PM'
+          },
+          "11":{
+            start_time:'08:00 PM',
+            end_time:'10:00 PM'
+          },
+          "12":{
+            start_time:'10:00 PM',
             end_time:'12:00 AM'
-          }
+          },
+         
         },
         url:'https://test.bleach-kw.com',
         cleaningData:{
@@ -176,30 +207,34 @@ const app=  new Vue({
         }
 
       },
-      watch: {
+      /*watch: {
         services: function (val) {
-          // when the hash prop changes, this function will be fired.
+         
           this.getSlotDetails()
         } 
-      },
+      },*/
       mounted(){
-        this.getSlots()
-        this.parseDate()
         moment.locale('fr');
         this.currentTime=moment().format().split("T")[1];
         this.dateSelected = moment().format().split("T")[0];
         this.today = moment().format().split("T")[0];
-       
+        console.log("cleaning date us "+this.cleaningDate)
        
         console.log("today is "+this.today)
         console.log("time is "+this.currentTime)
-        //console.log("tiime is "+moment().format("hh:mm A"))
-       // moment(currentTime).format("hh:mm"))
+      
 
         this.formatDate()
+        this.parseDate()
+       this.getSlots()
+       
+       
         this.getEvaluationSlots()
       },
       methods:{
+        editCleaningTeam(slot){
+          window.location.href='/stl/editcleaning/team/'+slot
+        },
         selectEditSlot(slot){
          
 
@@ -320,6 +355,8 @@ const app=  new Vue({
           },
           parseDate(){
             this.cleaningDate=this.selectedDate.split('-')[2]+'-'+this.selectedDate.split('-')[1]+'-'+this.selectedDate.split('-')[0]
+            $('#cl_cleaning_calendar').val(this.cleaningDate)
+            
           },
           getSlots(){
            // console.log($('#cl_cleaning_calendar').val())
@@ -354,7 +391,20 @@ const app=  new Vue({
             },
             "8":{
               slots:[]
-            }}
+            },
+            "9":{
+              slots:[]
+            },
+            "10":{
+              slots:[]
+            },
+            "11":{
+              slots:[]
+            },
+            "12":{
+              slots:[]
+            }
+          }
             axios.get(this.url+"/agent/cleaningcallendar?cleaning_callendar_date="+this.cleaningDate).then((response) => {
                 this.slots = response.data;
                 for(var i=0;i<this.slots.notapproved_cleanings.length;i++){
@@ -385,8 +435,14 @@ const app=  new Vue({
             }
             var max=Math.max(...this.selectedCleaningSlot)
             var min=Math.min(...this.selectedCleaningSlot)
-            this.cleaningData.cleaning_datetime_start=this.cleaningDate+' '+this.slotFormat[min].start_time
-            this.cleaningData.cleaning_datetime_end=this.cleaningDate+' '+this.slotFormat[max].end_time
+            if(this.slotFormat[min].start_time){
+              this.cleaningData.cleaning_datetime_start=this.cleaningDate+' '+this.slotFormat[min].start_time
+            }
+            if(this.slotFormat[max].end_time){
+              this.cleaningData.cleaning_datetime_end=this.cleaningDate+' '+this.slotFormat[max].end_time
+            }
+           
+           
             this.cleaningData.service_types=this.services
 
            /* for(var i=0;i<this.selectedCleaningSlot.length;i++){
@@ -512,7 +568,7 @@ const app=  new Vue({
               }
             }
             console.log("max is "+moment(max).format('hh:mm A'))
-            var end = (moment(max).add(3, 'hours'))
+            var end = (moment(max).add(2, 'hours'))
 
             axios.post(this.url+'/agent/cleaningcallendar/cleaning/edit/save/',{
              // cleaning_date:this.currentSlotDetails.start_at.split(' ')[0],
@@ -582,11 +638,11 @@ const app=  new Vue({
             this.availableSlots=[]
               for(var slot in this.cleaningEditSlots){
 
-                if(this.cleaningEditSlots[slot].includes(3))
+                if(this.cleaningEditSlots[slot].includes(2))
                 {
                  
                   
-                   var slotno=(parseInt(slot)/3)+1
+                   var slotno=(parseInt(slot)/2)+1
                     var start=this.slotFormat[slotno].start_time
                     var end=this.slotFormat[slotno].end_time
                    
@@ -689,7 +745,7 @@ const app=  new Vue({
            
             axios.get(this.url+"/agent/cleaningcallendar/cleaning/popup/?cleaning_start="+item.slots.start_at+'&cleaning_end='+item.slots.end_at+'&evaluation_id='+item.slots.order.order_no).then((response) => {
               this.currentSlotDetails=response.data.cleaning_details[0]
-              this.no_of_slots=parseInt(this.currentSlotDetails.cleaning_hours)/3
+              this.no_of_slots=parseInt(this.currentSlotDetails.cleaning_hours)/2
               this.cleaningAgentDialog=true
               this.dataCompleted=true
              // $('#cleanAgentModal').modal('show');
@@ -723,7 +779,7 @@ const app=  new Vue({
                 var startslot=this.combineSlots[i].slots.start_at.split(' ')[1]+' '+this.combineSlots[i].slots.start_at.split(' ')[2]
                 var endslot=this.combineSlots[i].slots.end_at.split(' ')[1]+' '+this.combineSlots[i].slots.end_at.split(' ')[2]
                 var slots=[]
-                if(parseInt(startslot.split(':')[0])%3==0 && parseInt(endslot.split(':')[0])%3==0 && parseInt(startslot.split(':')[1])==0 && parseInt(endslot.split(':')[1])==0){
+                if(parseInt(startslot.split(':')[0])%2==0 && parseInt(endslot.split(':')[0])%2==0 && parseInt(startslot.split(':')[1])==0 && parseInt(endslot.split(':')[1])==0){
                   var color=''
                   var slot=moment(this.cleaningDate,'DD-MM-YYYY HH:mm A')
                //   var limit=moment(startdate+' 12:00 AM').format('DD MM YYYY h:mm:ss a').add(1,'days')
@@ -782,7 +838,7 @@ const app=  new Vue({
                   while(slot.isBefore(limit)){
                     if(slot.isBefore(endTime) && slot.isSameOrAfter(beginningTime)){
                       
-                      if(slot.isSame(beginningTime) && !(moment(slot).add(3, 'hours')).isSame(endTime)){
+                      if(slot.isSame(beginningTime) && !(moment(slot).add(2, 'hours')).isSame(endTime)){
                         var slotData={
                           slot:moment(slot).format('hh:mm A'),
                           classType:'cl-start-only',
@@ -797,7 +853,7 @@ const app=  new Vue({
                         }
                            
                       }
-                      else if(slot.isSame(beginningTime)&& (moment(slot).add(3, 'hours')).isSame(endTime)){
+                      else if(slot.isSame(beginningTime)&& (moment(slot).add(2, 'hours')).isSame(endTime)){
                         var slotData={
                           slot:moment(slot).format('hh:mm A'),
                           classType:'cl-start-end',
@@ -813,7 +869,7 @@ const app=  new Vue({
                         }
                            
                       }
-                      else if(!slot.isSame(beginningTime) && (moment(slot).add(3, 'hours')).isSame(endTime)){
+                      else if(!slot.isSame(beginningTime) && (moment(slot).add(2, 'hours')).isSame(endTime)){
                         var slotData={
                           slot:moment(slot).format('hh:mm A'),
                           classType:'cl-end-only',
@@ -851,39 +907,57 @@ const app=  new Vue({
                     slots.push(1)
                     this.slot["1"].slots.push(slotData)
                   }
-                  else if(slotFormatted=='03:00 AM'){
+                  else if(slotFormatted=='02:00 AM'){
                     slots.push(2)
                     this.slot["2"].slots.push(slotData)
                   }
-                  else if(slotFormatted=='06:00 AM'){
+                  else if(slotFormatted=='04:00 AM'){
                     slots.push(3)
                     this.slot["3"].slots.push(slotData)
                   }
-                  else if(slotFormatted=='09:00 AM'){
+                  else if(slotFormatted=='06:00 AM'){
                     slots.push(4)
                     this.slot["4"].slots.push(slotData)
                   }
-                  else if(slotFormatted=='12:00 PM'){
+                  else if(slotFormatted=='08:00 AM'){
                     slots.push(5)
                     this.slot["5"].slots.push(slotData)
                   }
-                  else if(slotFormatted=='03:00 PM'){
+                  else if(slotFormatted=='10:00 AM'){
                     slots.push(6)
                     this.slot["6"].slots.push(slotData)
                   }
-                  else if(slotFormatted=='06:00 PM'){
+                  else if(slotFormatted=='12:00 PM'){
                     slots.push(7)
                     this.slot["7"].slots.push(slotData)
                   }
-                  else if(slotFormatted=='09:00 PM'){
+                  else if(slotFormatted=='02:00 PM'){
                     slots.push(8)
                     this.slot["8"].slots.push(slotData)
                   }
+                  else if(slotFormatted=='04:00 PM'){
+                    slots.push(9)
+                    this.slot["9"].slots.push(slotData)
+                  }
+                  else if(slotFormatted=='06:00 PM'){
+                    slots.push(10)
+                    this.slot["10"].slots.push(slotData)
+                  }
+                  else if(slotFormatted=='08:00 PM'){
+                    slots.push(11)
+                    this.slot["11"].slots.push(slotData)
+                  }
+                  else if(slotFormatted=='10:00 PM'){
+                    slots.push(12)
+                    this.slot["12"].slots.push(slotData)
+                  }
+                  
+                 
                       console.log("end time :" +endslot+",start time :"+startslot+",slot :"+moment(slot).format('hh:mm A'))
                   }
                  
                   
-                  slot=moment(slot).add(3, 'hours');  
+                  slot=moment(slot).add(2, 'hours');  
                   }
                   console.log("slots:" +slots)
                   var rowno=this.setRow(slots)

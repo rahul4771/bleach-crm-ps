@@ -1,0 +1,957 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" />
+<div class="wrapper"><!--wrapper-->
+{% include "agent/common/header.html" %}
+    
+<section class="content"><!--content-->
+	<div class="container-fluid space topspace"><!--container-fluid space topspace-->
+            <div class="welcome-wrapper"><!--welcome-wrapper-->
+            <h1 class="dashboard-head">TKT{{followup_details.ticket_no}}</h1>
+            
+            {% if followup_details.status == 'FOLLOWUP_IN_PROGRESS' %}
+            <p><input name="open" type="button" class="yellow-button" value="Open" id="open"></p>
+            {% elif followup_details.status == 'FOLLOWUP_CLOSED' %}
+            <p><input name="open" type="button" class="green-button" value="Closed" id="closed"></p>
+            {% elif followup_details.status == 'TICKET_RISED' %}
+            <p><input name="open" type="button" class="blue-button" value="Ticket Rised" id="closed"></p>
+            {% else %}
+            <p><input name="open" type="button" class="red-button" value="Cancelled" id="cancelled"></p> 
+            {% endif %}
+            
+            </div><!--welcome-wrapper-->
+        
+        
+        
+        
+            <div class="order-top-wrapper"><!--order-top-wrapper-->
+                
+                
+                
+            <div class="order-details-wrapper"><!--order-details-wrapper--> 
+                <div class="order-details-left-stretch"><!--order-details-left-stretch-->
+                
+                   <div class="container">
+                       <div class="row">
+                           <div class="col-md-12">
+                              <span class="tk-title">{{followup_details.investigation.order_schedule.order.order_no}}</span>  <span class="tk-secondary-text tk-title fw-300">({{followup_details.investigation.order_schedule.order_scheduler_book.service_type.name}})</span>
+                           </div>
+                       </div>
+                       <div class="row">
+                           <div class="col-md-3">
+                           
+                           {% if followup_details.investigation.order_schedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}
+                            <div class="tk-capsule mt-10">
+                                One Time
+                            </div>
+                            {% else %}
+                            <div class="tk-capsule mt-10">
+                                Subscription
+                            </div>
+                            {% endif %}
+
+                            {% comment %} <div class="d-flex tk-mt-10">
+                                {% if followup_details.investigation.assigned_by.profile_image %}
+                                <img src="{{followup_details.investigation.assigned_by.profile_image.url}}" class="tk-profile tk-mt-10"/>
+                                {% else %}
+                                <img src="/static/files/images/profile-pic.png" class="tk-profile tk-mt-10"/>
+                                {% endif %}
+                                <div class="tk-ml-10 tk-mt-10">
+                                    <div class="tk-title-2 tk-mt-10">{{followup_details.investigation.assigned_by.name}}</div>
+                                    <div class="tk-subtitle ">{{followup_details.investigation.assigned_by.user_type}}</div>
+                                    <div class="tk-desc tk-secondary-text">{{followup_details.investigation.notes|default_if_none:""}}</div> 
+                                </div>
+                            </div> {% endcomment %}
+                           </div>
+                           <div class="col-md-12">
+                           <div class="col-md-4 tk-mt-10">
+                                {% if followup_details.investigation.order_schedule.order_scheduler_book.cleaning_method %}
+                                    <div><i class="fas fa-check-circle tk-mr-10 tk-tick"></i>{{followup_details.investigation.order_schedule.order_scheduler_book.cleaning_method}}</div>
+                                {% endif %}
+                                {% if followup_details.investigation.order_schedule.order_scheduler_book.area_type %}
+                                    <div><i class="fas fa-check-circle tk-mr-10 tk-tick"></i>{{followup_details.investigation.order_schedule.order_scheduler_book.area_type}}</div>
+                                {% endif %}
+                                {% if followup_details.investigation.order_schedule.order_scheduler_book.location_type %}
+                                    <div><i class="fas fa-check-circle tk-mr-10 tk-tick"></i>{{followup_details.investigation.order_schedule.order_scheduler_book.location_type}}</div>
+                                {% endif %}
+                                {% if followup_details.investigation.order_schedule.customer_address.area %}
+                                    <div><i class="fas fa-check-circle tk-mr-10 tk-tick"></i>{{followup_details.investigation.order_schedule.customer_address.area.name}}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-8 tk-mt-10">
+                                <div><i class="fa fa-lg fa-building" aria-hidden="true"></i><b>{{followup_details.investigation.order_schedule.customer_address.apartment}}</b>: {% if followup_details.investigation.order_schedule.customer_address.floor %}{{followup_details.investigation.order_schedule.customer_address.floor}}, {% else %}{% endif %} {{followup_details.investigation.order_schedule.customer_address.building}}, {{followup_details.investigation.order_schedule.customer_address.block}}, {{followup_details.investigation.order_schedule.customer_address.street}}, {% if followup_details.investigation.order_schedule.customer_address.avenue %}{{followup_details.investigation.order_schedule.customer_address.avenue}}, {% else %}{% endif %} {{followup_details.investigation.order_schedule.customer_address.area.name}}, {{followup_details.investigation.order_schedule.customer_address.governorate.name}}</div>
+                                <br>
+                                <div><i class="fa fa-globe fa-lg green-text" aria-hidden="true"></i> <a href="{{followup_details.investigation.order_schedule.customer_address.gps_location}}">GPS Location</a></div>
+                                <br>
+                                <div><i class="fa fa-lg fa-users blue-text" aria-hidden="true"></i> <b>{{followup_details.investigation.order_schedule.order_scheduler_book.number_of_cleaners}}</b> Cleaners</div>
+                                <br>
+                                <div><i class="fa fa-lg fa-clock-o blue-text" aria-hidden="true"></i> <b>{{followup_details.investigation.order_schedule.order_scheduler_book.cleaning_hours}}</b> Hour(s)</div>
+                                <br>
+                                <div><i class="fa fa-lg fa-credit-card orange-text" aria-hidden="true"></i> <b>{{followup_details.investigation.order_schedule.order_scheduler_book.total_cost|floatformat:3}}</b> KD</div>
+                            </div>
+                        </div>
+                       </div>
+                       <hr/>
+                       <div class="row tk-mt-30" id="ticket-timeline">
+                           <div class="col-md-8">
+                               <div class="d-flex">
+                                <i class="fas fa-check-circle tk-timeline-icon ticket-item"><span class="timeline-head">Ticket Raised</span></i> 
+                                   <div class="tk-timeline h-100 tk-line"></div>
+                                    <div class="tk-card tk-ml-30 tk-mt-20">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="d-flex tk-mt-10">
+                                                    {% if followup_details.investigation.assigned_by.profile_image %}
+                                                    <img src="{{followup_details.investigation.assigned_by.profile_image.url}}" class="tk-profile tk-mt-10"/>
+                                                    {% else %}
+                                                    <img src="/static/files/images/profile-pic.png" class="tk-profile tk-mt-10"/>
+                                                    {% endif %}
+                                                    <div class="tk-ml-10 tk-mt-10">
+                                                    <div class="tk-title-2 tk-mt-10">{{followup_details.investigation.assigned_by.name}}</div>
+                                                    <div class="tk-subtitle tk-mt-5 tk-secondary-text">{{followup_details.investigation.assigned_by.user_type}}</div>
+                                                    <div class="tk-desc tk-secondary-text blue-text">
+                                                        {{followup_details.created}}
+                                                    </div>
+                                                </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-8 ">
+                                            {% if followup_details.investigation.notes %}
+                                                <div class="tk-mt-30 tk-secondary-text">Note</div>
+                                                <div class="tk-desc tk-secondary-text"> {{followup_details.investigation.notes|default_if_none:""}}</div>
+                                            {% endif %}
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="tk-subtitle tk-mt-5">Cleaning</div>
+                                                <div class="row mt-10">
+                                                    <div class="col-md-3">
+                                                        <div class="dummy-card">
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <div class="dummy-card">
+                                                            
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <div class="dummy-card">
+                                                            
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <div class="dummy-card">
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                           </div>
+
+                        {% if followup_details.investigation.secondary_investigator %}
+                           <!--- Timeline Card 2-->
+                           <div class="col-md-8 tk-mt-30">
+                            <div class="d-flex">
+
+                            {% if followup_details.investigation.is_secondary_investigation_completed == False %}
+                                <i class="fas fa-check-circle tk-timeline-icon-yellow ticket-item"><span class="timeline-head">Investigation</span></i>
+                            {% else %}
+                                <i class="fas fa-check-circle tk-timeline-icon ticket-item"><span class="timeline-head">Investigation</span></i>
+                            {% endif %}
+
+                                <div class="tk-timeline h-100 tk-line"></div>
+                                 <div class="tk-card tk-ml-30 tk-mt-20">
+                                     <div class="row">
+                                         <div class="col-md-5">
+                                             <div class="d-flex tk-mt-10">
+                                                {% if followup_details.investigation.secondary_investigator.profile_image %}
+                                                    <img src="{{followup_details.investigation.secondary_investigator.profile_image.url}}" class="tk-profile tk-mt-10"/>
+                                                {% else %}
+                                                    <img src="/static/files/images/profile-pic.png" class="tk-profile tk-mt-10"/>
+                                                {% endif %}
+                                                 <div class="tk-ml-10 tk-mt-10">
+                                                    <div class="tk-title-2 tk-mt-10">{{followup_details.investigation.secondary_investigator.name}}</div>
+                                                    <div class="tk-subtitle tk-mt-5 tk-secondary-text">{{followup_details.investigation.secondary_investigator.user_type}}</div>
+                                                 <div class="tk-desc tk-secondary-text blue-text">
+                                                     {{followup_details.investigation.secondary_investigation_created|default_if_none:""}}
+                                                 </div>
+                                             </div>
+                                             </div>
+                                         </div>
+                                         <div class="col-md-7 ">
+                                             <div class="tk-mt-30 tk-secondary-text">Note</div>
+                                             <div class="tk-desc tk-secondary-text"> {{followup_details.investigation.secondary_investigation_notes|default_if_none:""}}
+                                             </div>
+                                         </div>
+                                         <div class="col-md-12">
+                                             <div class="tk-subtitle tk-mt-5">Cleaning</div>
+                                             <div class="row mt-10">
+                                                 <div class="col-md-3">
+                                                     <div class="dummy-card">
+
+                                                     </div>
+                                                 </div>
+                                                 <div class="col-md-3">
+                                                     <div class="dummy-card">
+                                                         
+                                                     </div>
+                                                 </div>
+                                                 <div class="col-md-3">
+                                                     <div class="dummy-card">
+                                                         
+                                                     </div>
+                                                 </div>
+                                                 <div class="col-md-3">
+                                                     <div class="dummy-card">
+                                                         
+                                                     </div>
+                                                 </div>
+                                             </div>
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+                        </div>
+                        {% endif %}
+                           <!---Timeline card2 ends here-->
+
+                        
+                           <!-- Time line Card3 begins here-->  
+                           {% if followup_details.investigation.investigator %}                    
+                           <div class="col-md-8 tk-mt-30">
+                            <div class="d-flex">
+                                {% if followup_details.investigation.is_casesandcomplaints_submit == True %}
+                                <i class="fas fa-check-circle tk-timeline-icon ticket-item"><span class="timeline-head">Action</span></i>
+                                {% else %}
+                                <i class="fas fa-check-circle tk-timeline-icon-yellow ticket-item"><span class="timeline-head">Action</span></i>
+                                {% endif %}
+                                <div class="tk-timeline h-100 tk-line"></div>
+                                 <div class="tk-card tk-ml-30 tk-mt-20">
+                                     <div class="row">
+                                         <div class="col-md-5">
+                                             <div class="d-flex tk-mt-10">
+                                                {% if followup_details.investigation.investigator.profile_image %}
+                                                    <img src="{{followup_details.investigation.investigator.profile_image.url}}" class="tk-profile tk-mt-10"/>
+                                                {% else %}
+                                                    <img src="/static/files/images/profile-pic.png" class="tk-profile tk-mt-10"/>
+                                                {% endif %}
+                                                 <div class="tk-ml-10 tk-mt-10">
+                                                    <div class="tk-title-2 tk-mt-10">{{followup_details.investigation.investigator.name}}</div>
+                                                    <div class="tk-subtitle tk-mt-5 tk-secondary-text">{{followup_details.investigation.investigator.user_type}}</div>
+                                                 <div class="tk-desc tk-secondary-text">
+                                                    {% comment %} {% for schedule in followup_details.follow_up_schedules %}
+                                                    {% if forloop.first %}{{schedule.created}}{% endif %}
+                                                    {% endfor %} {% endcomment %}
+                                                 </div>
+                                             </div>
+                                             </div>
+                                         </div>
+                                         <div class="col-md-7" id="actionlist">
+
+                                            {% if followup_details.follow_up_schedules %}
+                                                <div class="tk-mt-30 tk-secondary-text"> <i class="fa fa-lg fa-check-circle green-text" aria-hidden="true"></i> <b>FollowUp cleaning</b> - {% for schedule in followup_details.follow_up_schedules %}{% if forloop.first %}<span class="blue-text">{{schedule.created}}</span>{% endif %}{% endfor %}</div>
+                                            {% endif %}
+
+                                            {% if followup_details.investigation.reports %}
+                                             <div class=" tk-secondary-text"> <i class="fa fa-lg fa-check-circle green-text" aria-hidden="true"></i> <b>Internal Report</b> - {% for report in followup_details.investigation.reports %}<span class="blue-text">{{report.created}}</span>{% endfor %}</div>
+                                            {% endif %}
+
+                                            {% if followup_details.investigation.paybackdiscounts %}
+                                             <div class=" tk-secondary-text"> {% if followup_details.investigation.is_paybackdiscount_approved == True  %}<i class="fa fa-lg fa-check-circle green-text" aria-hidden="true"></i>{% else %}<i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i>{% endif %} <b>Payback / Discount</b> - {% for payback in followup_details.investigation.paybackdiscounts %}<span class="blue-text">{{payback.created}}</span>{% endfor %}</div>
+                                            {% endif %}
+
+                                            {% if followup_details.investigation.buybackpromogifts %}
+                                             <div class=" tk-secondary-text"> {% if followup_details.investigation.is_buybackgiftpromo_approved == True %}<i class="fa fa-lg fa-check-circle green-text" aria-hidden="true"></i>{% else %}<i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i>{% endif %} <b>Buyback / Promocode / Gift</b> - {% for payback in followup_details.investigation.paybackdiscounts %}<span class="blue-text">{{payback.created}}</span>{% endfor %}</div>
+                                            {% endif %}
+                                         </div>
+                                        
+                                     </div>
+                                 </div>
+                             </div>
+                        </div>
+                        {% endif %}
+
+                           <!-- Time line card3 ends here-->
+                        
+                            <div id="sort_container">
+
+                           <!-- Time line card4 begins here-->
+                           {% if followup_details.follow_up_schedules %}
+                           <div class="col-md-8 tk-mt-30">
+                            <div class="d-flex">
+                            {% if followup_details.followup_schedule_count == followup_details.completed_followup_count %}
+                                <i class="fas fa-check-circle tk-timeline-icon sort_tab ticket-item"><span class="timeline-head">Follow-up Cleaning (<span class="green-text">Completed</span>)</span></i>
+                            {% else %}
+                                <i class="fas fa-check-circle tk-timeline-icon-yellow ticket-item"><span class="timeline-head">Follow-up Cleaning (<span class="yellow-text">In Progress</span>)</span></i>
+                            {% endif %}
+                                <div class="tk-timeline h-100 tk-line"></div>
+                                 <div class="tk-card tk-ml-30 tk-mt-20">
+                                     <div class="row">
+                                        {% for section in followup_details.followupsections %}
+                                        
+                                         <div class="col-md-4">
+                                            <div><b>Section {{forloop.counter}}</b> :<span> {{section.section_name}} </span></div>
+                                         </div>
+                                         <div class="col-md-8">
+                                            {% if section.material %} <div>  <b>Material</b> : <span >{{section.material}}</span> </div> {% endif %}
+                                            {% if section.material %} <div>  <b>Color</b> : <span >{{section.colour}}</span></div> {% endif %}
+                                            <div>  <b>Cost</b> : <span >{{section.section_cost|floatformat:'3'}} KD</span> </div>
+                                         </div>
+
+                                        {% endfor %}
+                                         
+                                        <div class="col-md-8 ">
+                                        {% if followup_details.followup_notes %}
+                                            <div class="tk-title-2 tk-mt-10"><b>Followup Cleaning Notes</b></div>
+                                            <div class="tk-desc tk-secondary-text"> {{followup_details.followup_notes}}</div>
+                                        {% endif %}
+                                        </div>
+                                        
+                                        {% for follow_up_scheduler in followup_details.follow_up_schedules %}
+                                            {% for team in follow_up_scheduler.followupteams %}
+
+                                            {% if team.followupmembers %}
+
+                                            <div class="col-md-12">
+                                                <div> <b>Cleaning Team {{forloop.parentloop.counter}}</b>  <span class="tk-ml-10 blue-text">{{follow_up_scheduler.start_at}}</span></div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                
+                                                <div class="d-flex tk-mt-10">
+                                                    {% if team.team_leader.profile_image %}
+                                                    <img src="{{team.team_leader.profile_image.url}}" class="tk-profile tk-mt-10"/>
+                                                    {% else %}
+                                                    <img src="/static/files/images/profile-pic.png" class="tk-profile tk-mt-10"/>
+                                                    {% endif %}
+                                                    <div class="tk-ml-10 tk-mt-10">
+                                                        <div class="tk-title-2 tk-mt-10">{{team.team_leader}}</div>
+                                                        <div class="tk-subtitle tk-mt-5 tk-secondary-text">Team Incharge</div>
+                                                    
+                                                </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-md-12">  
+                                                {% for member in team.followupmembers %}
+                                                {% if team.team_leader.id != member.member.id %}
+                                                <div class="col-md-4">    
+                                                    <div class="d-flex tk-mt-10">
+                                                        {% if member.member.profile_image %}
+                                                            <img src="{{member.member.profile_image.url}}" class="tk-profile tk-mt-10"/>
+                                                        {% else %}
+                                                            <img src="/static/files/images/profile-pic.png" class="tk-profile tk-mt-10"/>
+                                                        {% endif %}
+                                                        <div class="tk-ml-10 tk-mt-10">
+                                                            <div class="tk-title-2 tk-mt-10">{{member.member.name}}</div>
+                                                            <div class="tk-subtitle tk-mt-5 tk-secondary-text">Team Member</div>
+                                                            
+                                                        </div>
+                                                    </div>    
+                                                </div>
+                                                {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                            
+                                         {% endif %}
+                                         {% endfor %}
+                                         {% endfor %}
+                                         
+                                         <div class="col-md-12">
+                                             <div class="tk-subtitle tk-mt-5">Cleaning</div>
+                                             <div class="row mt-10">
+                                                 <div class="col-md-3">
+                                                     <div class="dummy-card">
+
+                                                     </div>
+                                                 </div>
+                                                 <div class="col-md-3">
+                                                     <div class="dummy-card">
+                                                         
+                                                     </div>
+                                                 </div>
+                                                 <div class="col-md-3">
+                                                     <div class="dummy-card">
+                                                         
+                                                     </div>
+                                                 </div>
+                                                 <div class="col-md-3">
+                                                     <div class="dummy-card">
+                                                         
+                                                     </div>
+                                                 </div>
+                                             </div>
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+                        </div>
+                        {% endif %}
+                           <!-- Time line card4 ends here-->
+
+                        
+                        <!--- Timeline card 7 begins-->  
+                        {% if followup_details.investigation.reports %}
+                        <div class="col-md-8 tk-mt-30">
+                            <div class="d-flex">
+                                <i class="fas fa-check-circle tk-timeline-icon sort_tab ticket-item"><span class="timeline-head">Internal Reporting (<span class="green-text">Completed</span>)</span></i>
+                             
+                                <div class="tk-timeline h-100 tk-line"></div>
+                                <div class="tk-card tk-ml-30 tk-mt-20 w-100">
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                             <div class="d-flex ">
+                                                {% if followup_details.investigation.investigator.profile_image %}
+                                                    <img src="{{followup_details.investigation.investigator.profile_image.url}}" class="tk-profile "/>
+                                                {% else %}
+                                                    <img src="/static/files/images/profile-pic.png" class="tk-profile "/>
+                                                {% endif %}
+                                                 <div class="tk-ml-10 ">
+                                                    <div class="tk-title-2 tk-mt-10">{{followup_details.investigation.investigator.name}}</div>
+                                                    <div class="tk-subtitle tk-mt-5 tk-secondary-text">{{followup_details.investigation.investigator.user_type}}</div>
+                                                 <div class="tk-desc tk-secondary-text blue-text">
+                                                 {% for report in followup_details.investigation.reports %} {{report.created}} {% endfor %} 
+                                                 </div>
+                                             </div>
+                                             </div>
+                                         </div>
+                                        
+                                         <div class="col-md-7 ">
+                                            {% for report in followup_details.investigation.reports %}
+                                                <div class=" tk-secondary-text"><b>{{report.title}}</b></div>
+                                                <div class="tk-desc tk-secondary-text"> {{report.notes}}</div>
+                                            {% endfor %} 
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}  
+                         <!--- Timeline card 7 ends-->  
+                         
+
+                        
+                         <!--Timeline card 8 begins-->
+                         {% if followup_details.investigation.paybackdiscounts %}
+                         <div class="col-md-8 tk-mt-30">
+                            <div class="d-flex">
+                            {% for payback in followup_details.investigation.paybackdiscounts %}
+                            {% if followup_details.investigation.is_paybackdiscount_approved == True %}
+                                <i class="fas fa-check-circle tk-timeline-icon sort_tab ticket-item"><span class="timeline-head">Payback / Discount (<span class="green-text">Approved</span>)</span></i>
+                            {% else %}
+                                <i class="fas fa-check-circle tk-timeline-icon-yellow ticket-item"><span class="timeline-head">Payback / Discount (<span class="yellow-text">Pending Approval</span>)</span></i>
+                            {% endif %}
+                            {% endfor %}
+                                <div class="tk-timeline h-100 tk-line"></div>
+                                 <div class="tk-card tk-ml-30 tk-mt-20 w-100">
+                                     <div class="row">
+
+                                        <div class="col-md-12">
+                                        {% for paybackdiscount in followup_details.investigation.paybackdiscounts %}
+                                        {% if paybackdiscount.approved_by %}
+
+                                             <div class="d-flex ">
+                                                {% if paybackdiscount.approved_by.profile_image %}
+                                                    <img src="{{paybackdiscount.approved_by.profile_image.url}}" class="tk-profile "/>
+                                                {% else %}
+                                                    <img src="/static/files/images/profile-pic.png" class="tk-profile "/>
+                                                {% endif %}
+                                                 <div class="tk-ml-10 ">
+                                                    <div class="tk-title-2 tk-mt-10">{{paybackdiscount.approved_by.name}}</div>
+                                                    <div class="tk-subtitle tk-mt-5 tk-secondary-text">{{paybackdiscount.approved_by.user_type}}</div>
+                                                 {% comment %} <div class="tk-desc tk-secondary-text blue-text">
+                                                 {% for report in followup_details.investigation.reports %} {{report.created}} {% endfor %} 
+                                                 </div> {% endcomment %}
+                                             </div>
+                                            </div> 
+
+                                        {% endif %}
+                                        {% endfor %}
+                                        </div>
+
+                                        {% for paybackdiscount in followup_details.investigation.paybackdiscounts %}
+                                        {% for paybackdiscountdetail in  paybackdiscount.paybackdiscountdetails %}
+                                        <div class="col-md-4 ">
+                                            
+                                             <div class=" tk-secondary-text"><b>{% if paybackdiscountdetail.category == 'SERVICEQUALITY' %}Service Quality{% else %}{{paybackdiscountdetail.category|title}}{% endif %}</b></div>
+                                             <div class="tk-secondary-text"> 
+                                                 <div class="d-flex tk-items">
+                                                     <div><b>Item</b>  </div> : <div >{{paybackdiscountdetail.name}}</div>
+                                                 </div>
+                                                 <div class="d-flex tk-items">
+                                                    <div><b>Price</b> </div>: <div >{{paybackdiscountdetail.cost|floatformat:'3'}} KD</div>
+                                                </div>
+                                                
+                                             </div>
+                                        </div>
+                                        {% endfor %}
+
+                                        <div class="col-md-12 d-flex tk-title">
+                                            <div><b>Maximum Price</b> </div>: <div >{{paybackdiscount.total_cost|floatformat:'3'}} KD</div>
+                                        </div>
+
+                                        {% endfor %}
+
+                                        
+
+                                         <div class="col-md-12">
+                                            <div class="tk-subtitle tk-mt-5">Media</div>
+                                            <div class="row mt-10">
+                                                <div class="col-md-3">
+                                                    <div class="dummy-card">
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="dummy-card">
+                                                        
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="dummy-card">
+                                                        
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="dummy-card">
+                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                     </div>
+                                 </div>
+                             </div>
+                        </div>
+                        {% endif %}
+                         <!--Timeline card 8 ends here-->   
+
+
+                        <!--Timeline card 8 begins-->
+                         {% if followup_details.investigation.is_paybackdiscount_approved == True %}
+                         
+                         <div class="col-md-8 tk-mt-30">
+                            <div class="d-flex">
+                            {% for payback in followup_details.investigation.paybackdiscounts %}
+                            {% if payback.is_completed == True %}
+                                <i class="fas fa-check-circle tk-timeline-icon sort_tab ticket-item"><span class="timeline-head">Payback / Discount (<span class="green-text">Completed</span>)</span></i>
+                            
+                                <div class="tk-timeline h-100 tk-line"></div>
+                                 <div class="tk-card tk-ml-30 tk-mt-20 w-100">
+                                     <div class="row">
+
+                                        <div class="col-md-4">
+                                        {% for paybackdiscount in followup_details.investigation.paybackdiscounts %}
+                                        {% if paybackdiscount.accountant_approval %}
+
+                                             <div class="d-flex ">
+                                                {% if paybackdiscount.accountant_approval.profile_image %}
+                                                    <img src="{{paybackdiscount.accountant_approval.profile_image.url}}" class="tk-profile "/>
+                                                {% else %}
+                                                    <img src="/static/files/images/profile-pic.png" class="tk-profile "/>
+                                                {% endif %}
+                                                 <div class="tk-ml-10 ">
+                                                    <div class="tk-title-2 tk-mt-10">{{paybackdiscount.accountant_approval.name}}</div>
+                                                    <div class="tk-subtitle tk-mt-5 tk-secondary-text">{{paybackdiscount.accountant_approval.user_type}}</div>
+                                                 {% comment %} <div class="tk-desc tk-secondary-text blue-text">
+                                                 {% for report in followup_details.investigation.reports %} {{report.created}} {% endfor %} 
+                                                 </div> {% endcomment %}
+                                             </div>
+                                            </div> 
+
+                                        {% endif %}
+                                        </div>
+
+                                        
+                                        <div class="col-md-8 ">
+                                        {% if paybackdiscount.accountant_notes %}
+                                            <div class=" tk-secondary-text"><b>Accountant Notes</b></div>
+                                            <div class="tk-desc tk-secondary-text"> {{paybackdiscount.accountant_notes}}</div>
+                                        {% endif %}
+                                        </div>
+
+                                        <div class="col-md-12 ">
+                                        {% if paybackdiscount.approved_option %}
+                                            <div class=" tk-title-2"><b>{{paybackdiscount.approved_option}}</b></div>
+                                            <div class=" tk-title"> {{paybackdiscount.approved_total_cost|floatformat:"3"}} KD</div>
+                                        {% endif %}
+                                        </div>
+                                        
+
+                                        {% endfor %}
+                                        
+                                     </div>
+                                 </div>
+                            
+                            {% else %}
+                                <i class="fas fa-check-circle tk-timeline-icon-yellow ticket-item"><span class="timeline-head">Payback / Discount (<span class="yellow-text">Pending Accountant Approval</span>)</span></i>
+                                
+                            {% endif %}
+                            {% endfor %}
+                                
+                             </div>
+                        </div>
+                        {% endif %}
+                         <!--Timeline card 8 ends here-->
+
+
+                        <!--Timeline card 9 begins-->
+                         {% if followup_details.investigation.buybackpromogifts %}
+                         <div class="col-md-8 tk-mt-30">
+                            <div class="d-flex">
+                            {% for buyback in followup_details.investigation.buybackpromogifts %}
+                            {% if buyback.is_completed == True %}
+                                <i class="fas fa-check-circle tk-timeline-icon sort_tab ticket-item"><span class="timeline-head">Buyback / Promocode / Gift (<span class="green-text">Completed</span>)</span></i>
+                            {% else %}
+                                <i class="fas fa-check-circle tk-timeline-icon-yellow ticket-item"><span class="timeline-head">Buyback / Promocode / Gift {% if followup_details.investigation.is_buybackgiftpromo_approved == False %}(<span class="tk-highlight">Pending Approval</span>){% endif %}</span></i>
+                            {% endif %}
+                            {% endfor %}
+                                <div class="tk-timeline h-100 tk-line"></div>
+                                 <div class="tk-card tk-ml-30 tk-mt-20 w-100">
+                                     <div class="row">
+
+                                        <div class="col-md-5">
+                                        {% for buybackpromogift in followup_details.investigation.buybackpromogifts %}
+                                        {% if buybackpromogift.approved_by %}
+                                        
+                                             <div class="d-flex ">
+                                                {% if followup_details.investigation.investigator.profile_image %}
+                                                    <img src="{{buybackpromogift.approved_by.profile_image.url}}" class="tk-profile "/>
+                                                {% else %}
+                                                    <img src="/static/files/images/profile-pic.png" class="tk-profile "/>
+                                                {% endif %}
+                                                 <div class="tk-ml-10 ">
+                                                    <div class="tk-title-2 tk-mt-10">{{buybackpromogift.approved_by.name}}</div>
+                                                    <div class="tk-subtitle tk-mt-5 tk-secondary-text">{{buybackpromogift.approved_by.user_type}}</div>
+                                                 <div class="tk-desc tk-secondary-text blue-text">
+                                                 {% for report in followup_details.investigation.reports %} {{report.created}} {% endfor %} 
+                                                 </div>
+                                             </div>
+                                            </div>
+                                        
+                                        {% endif %}
+                                        {% endfor %}
+                                        </div>
+
+                                        <div class="col-md-7">
+                                        {% for buybackpromogift in followup_details.investigation.buybackpromogifts %}
+                                        {% if buybackpromogift.is_completed == True %}
+                                            {% if buybackpromogift.approved_option == 'PROMOCODE' %}
+                                            <div class="tk-subtitle tk-mt-5 tk-secondary-text">{{buybackpromogift.approved_option}}</div>
+                                            <div class="tk-title-2 tk-mt-10">{{buybackpromogift.approved_promo_code}}</div>
+                                            {% else %}
+                                            <div class="tk-subtitle tk-mt-5 tk-secondary-text">{{buybackpromogift.approved_option}}</div>
+                                            <div class="tk-title-2 tk-mt-10">{{buybackpromogift.approved_total_cost|floatformat:"3"}} KD</div>
+                                            {% endif %}
+                                        {% endif %}
+                                        {% endfor %}
+                                        </div>
+                                        
+                                        <div class="col-md-12">
+                                        {% for buybackpromogift in followup_details.investigation.buybackpromogifts %}
+                                        {% for buybackpromogiftdetail in  buybackpromogift.buybackpromogiftdetails %}
+                                        <div class="col-md-4 ">
+                                            
+                                             <div class="tk-secondary-text"><b>{% if buybackpromogiftdetail.category == 'SERVICEQUALITY' %}Service Quality{% else %}{{buybackpromogiftdetail.category|title}}{% endif %}</b></div>
+                                             <div class="tk-secondary-text"> 
+                                                 <div class="d-flex tk-items">
+                                                     <div>Item  </div>: <div >{{buybackpromogiftdetail.name}}</div>
+                                                 </div>
+                                                 
+                                                <div class="d-flex tk-items">
+                                                    <div>Price</div>: <div >{{buybackpromogiftdetail.cost|floatformat:'3'}} KD</div>
+                                                </div>
+                                             </div>
+                                        </div>
+                                        {% endfor %}
+
+                                        <div class="col-md-12 d-flex tk-title">
+                                            <div><b>Maximum Price</b> </div>: <div >{{buybackpromogift.total_cost|floatformat:'3'}} KD</div>
+                                        </div>
+
+                                        {% endfor %}
+                                        </div>
+                                        
+
+                                         <div class="col-md-12">
+                                            <div class="tk-subtitle tk-mt-5">Media</div>
+                                            <div class="row mt-10">
+                                                <div class="col-md-3">
+                                                    <div class="dummy-card">
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="dummy-card">
+                                                        
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="dummy-card">
+                                                        
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="dummy-card">
+                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                     </div>
+                                 </div>
+                             </div>
+                        </div>
+                        {% endif %}
+                         <!--Timeline card 9 ends here-->
+
+                        </div><!--sort container end-->
+                        
+                         <!-- Timeline card 10 begins here-->
+                         {% if followup_details.status == 'FOLLOWUP_CLOSED' %}
+                         <div class="col-md-8 tk-mt-30 ticket-close">
+                            <div class="d-flex">
+                                <i class="fas fa-check-circle tk-timeline-icon ticket-item"><span class="timeline-head">Closed</span></i>
+                             
+                                <div class="tk-timeline h-100 tk-line tk-b-none"></div>
+                                 <div class="tk-card tk-ml-30 tk-mt-20">
+                                     <div class="row">
+                                     {% if followup_details.closed_by%}
+                                         <div class="col-md-12">
+                                             <div class="d-flex ">
+                                                {% if followup_details.closed_by.profile_image %}
+                                                    <img src="{{followup_details.closed_by.profile_image.url}}" class="tk-profile "/>
+                                                {% else %}
+                                                    <img src="/static/files/images/profile-pic.png" class="tk-profile "/>
+                                                {% endif %}
+                                                 <div class="tk-ml-10 ">
+                                                    <div class="tk-title-2 tk-mt-10">{{followup_details.closed_by.name}}</div>
+                                                    <div class="tk-subtitle tk-mt-5 tk-secondary-text">{{followup_details.closed_by.user_type}}</div>
+                                                 <div class="tk-subtitle tk-mt-10 blue-text">
+                                                    {{followup_details.closed}}
+                                                 </div>
+                                             </div>
+                                             </div>
+                                         </div>
+                                         {% else %}
+
+                                         {% if followup_details.closed %}
+                                         <div class="col-md-12">
+                                             <div class="d-flex ">
+                                                 <div class="tk-title-2 tk-mt-10 blue-text">
+                                                    {{followup_details.closed}}
+                                                 </div>
+                                             </div>
+                                        </div>
+                                        {% else %}
+                                        <div class="col-md-12">
+                                             <div class="d-flex ">
+                                                 <div class="tk-title-2 tk-mt-10 blue-text">
+                                                    Ticket Closed
+                                                 </div>
+                                             </div>
+                                        </div>
+                                        {% endif %}
+
+                                        {% endif %}
+
+                                         
+
+                                        {% if followup_details.investigation.paybackdiscounts %} 
+                                        <div class="col-md-6 ">   
+                                            {% for paybackdiscount in followup_details.investigation.paybackdiscounts %}
+                                            <div class="tk-mt-30 tk-secondary-text">{{paybackdiscount.approved_option}} : <span class=" tk-title tk-mt-10">{{paybackdiscount.approved_total_cost|floatformat:"3"}} KD</span></div>
+                                            
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}
+                                    
+                                        {% if followup_details.investigation.buybackpromogifts %}
+                                        <div class="col-md-6 ">    
+                                            {% for buyback in followup_details.investigation.buybackpromogifts %}
+                                            
+                                            {% if buyback.approved_option == 'PROMOCODE' %}
+                                            <div class="tk-mt-30 tk-secondary-text">{{buyback.approved_option}} : <span class="  tk-title tk-mt-10">{{buyback.approved_promo_code}}</span></div>
+                                            {% else %}
+                                            <div class="tk-mt-30 tk-secondary-text">{{buyback.approved_option}} : <span class="  tk-title tk-mt-10">{{buyback.approved_total_cost|floatformat:"3"}} KD</span></div>
+                                            {% endif %}
+
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}            
+                                        
+                                     </div>
+                                 </div>
+                             </div>
+                        </div>
+                        {% else %}
+                        <div class="col-md-8 tk-mt-30 ticket-close">
+                            <div class="d-flex">
+                                <i class="fas fa-check-circle tk-timeline-icon-yellow"><span class="timeline-head">Waiting to be closed</span></i>
+                            </div>
+                        </div>
+                        {% endif %}
+                          <!-- Timeline card 10 ends here-->
+
+                       </div>
+                      
+                   </div>
+                    
+                     
+                    
+                    
+                    
+               
+           
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+           
+          
+             
+             
+                   
+                   
+                </div><!--order-details-left-stretch-->
+            
+                <div class="order-details-right-fixed" style="background:#eeee;padding:0px"><!--order-details-right-fixed-->
+                    <div class="order-card-column whitebg red-border clickable-row-list" data-href="{% url 'common_items:client-orders' client_details.id %}"><!--order-card-column-->
+                        <div class="card-innerwrapper"><!--card-innerwrapper-->
+                        <div class="column-left"><img src="/static/files/images/card-orders-icon.png"></div>
+                        <div class="column-right"><!--column-right-->
+                        <h1>Orders</h1>
+                        <h2 class="red-text"><label>Active<span>{{active_orders_count}}</span></label> </h2>
+                        <p><label>Total<span>{{total_orders_count}}</span></label></p>
+                        </div><!--column-right-->
+                        </div><!--card-innerwrapper-->
+                    </div><!--order-card-column-->
+                   <div class="tk-customer-card whitebg " >
+                      <div class="profile-pic mt-4"><img src="/static/files/images/profile-pic.png"></div>
+                    <div class="client-name">{{client_details.name}}</div>
+                    <div class="common-gray-text">{{client_details.mobile_number}}</div>
+                    <div class="common-gray-text">{{client_details.email}}</div>
+                    <br>
+                    <hr class="hr">
+                    
+                    {% if client_details.company  %}
+                    <div class="common-gray-text">Company Name : <span class="bold-text">{{client_details.company}}</span></div>
+                    {% endif %}
+                    {% if client_details.nationality %}
+                    <div class="common-gray-text">Nationality : <span class="bold-text">{{client_details.nationality}}</span></div>
+                    {% endif %}
+                    {% if client_details.phone_number %}
+                    <div class="common-gray-text">Other Contact : <span class="bold-text">{{client_details.phone_number}}</span></div>
+                    {% endif %}
+                    
+                    <hr class="hr">
+                    <br>
+                        {% for address in client_details.customer_addresses %}
+                        <div class="address-bold"><i class="fa fa-lg fa-home green-text" aria-hidden="true"></i> Address {{forloop.counter}}: <b>{{address.apartment}}</b></div>
+                        <div class="address">{% if address.floor %}{{address.floor}}, {% else %}{% endif %} {{address.building}}, {{address.block}}, {{address.street}}, {% if address.avenue %}{{address.avenue}}, {% else %}{% endif %} {{address.area.name}}, {{address.governorate.name}}</div>
+                        <br>
+                        {% endfor %}
+                </div><!--order-details-right-fixed-->
+          
+            </div><!--order-details-wrapper-->    
+            </div>
+       
+                 
+	</div><!--container-fluid space topspace-->
+</section>
+    
+{% include 'agent/common/footer.html' %} 
+</div><!--wrapper-->
+{% endblock %}
+{% block javascript %}
+<script>
+ $('document').ready(function(){
+    
+    //To Hide Images 
+    invest_cust_img     = $('#data-pn-1').data('src');
+    invest_secondary_img= $('#data-pn-2').data('src');
+    invest_before_img   = $('#data-pn-3').data('src');
+    invest_after_img    = $('#data-pn-4').data('src');
+    paybackdiscount_img = $('#data-pn-5').data('src');
+    buybackpromogift_img= $('#data-pn-6').data('src');
+    reporting_img       = $('#data-pn-7').data('src');
+
+
+    if(invest_cust_img == '' || invest_cust_img == undefined)
+    {
+     $('.gallery-widget-column-column1').remove();   
+    }
+
+    if(invest_secondary_img == '' || invest_secondary_img == undefined)
+    {
+     $('.gallery-widget-column-column2').remove();   
+    }
+
+    if(invest_before_img == '' || invest_before_img == undefined)
+    {
+     $('.gallery-widget-column-column3').remove();   
+    }
+
+    if(invest_after_img == '' || invest_after_img == undefined)
+    {
+     $('.gallery-widget-column-column4').remove();   
+    }
+
+
+    //hide media
+    if((invest_cust_img == undefined || invest_cust_img == '') && (invest_secondary_img == undefined || invest_secondary_img == '') && (invest_before_img == undefined || invest_before_img == '') && (invest_after_img == undefined || invest_after_img == '') && (paybackdiscount_img == undefined || paybackdiscount_img == '') && (buybackpromogift_img == undefined || buybackpromogift_img == undefined) && (reporting_img == undefined || reporting_img == ''))
+    {
+        $('.media-head').remove();
+        $('.media-explaining').remove();
+    }
+
+    //to remove black in media
+    $(".pn-prev").click();
+    
+    //Bar
+    {% if followup_details.status == 'TICKET_RISED' %}
+    $('.bar-loader').css('width','33.33%');
+    {% elif followup_details.status == 'FOLLOWUP_IN_PROGRESS' %}
+    $('.bar-loader').css('width','66.66%');
+    {% elif followup_details.status == 'FOLLOWUP_CLOSED' %}
+    $('.bar-loader').css('width','100%');
+    {% else %}
+    $('.bar-loader').css('width','0%');
+    {% endif %}
+
+    $('.sort_tab').parent().parent().prependTo('#sort_container');
+
+    var action_count = $('.ticket-item').length ;
+    var completed_action_count = $('#ticket-timeline').find('.tk-timeline-icon').length ;
+
+    if (action_count == completed_action_count){
+        $('.ticket-close').show();
+    }else{
+        $('.ticket-close').hide();
+    };
+
+    console.log(action_count,completed_action_count,"countt")
+ 
+ });   
+</script>
+{% endblock %}

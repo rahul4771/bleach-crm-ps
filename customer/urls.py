@@ -9,9 +9,11 @@ urlpatterns = [
 		url(r'^subscription/quatation/(?P<evaluation_id>[-\w]+)$',views.SubscriptionQuatation.as_view(),name='subscriptionquatation'),
 		url(r'^tc/$',views.TermsandConditions.as_view(),name='tc'),
 		url(r'^invoice/(?P<evaluation_id>[-\w]+)$',views.CustomerInvoice.as_view(),name='invoice'),
+		url(r'^bleach-invoice/(?P<evaluation_id>[-\w]+)$',views.BleachCustomerInvoice.as_view(),name='invoice'),
 		url(r'^subscription/invoice/(?P<evaluation_id>[-\w]+)$',views.CustomerSubscriptionInvoice.as_view(),name='subscriptioninvoice'),
 		
 		url(r'^statement-of-account/(?P<client_id>[-\w]+)$',views.statement_of_account,name='statement-of-account'),
+		url(r'^statement-of-account-test/$',views.statement_of_account_old,name='statement-of-account-test'),
 
 		url(r'^payment/response/$',views.PaymentResponseDebit.as_view(),name='response'),
 		url(r'^payment/receipt/(?P<payment_id>[-\w]+)$',views.PaymentReceipt.as_view(),name='payment-receipt'),
@@ -23,6 +25,7 @@ urlpatterns = [
 		url(r'^quatation/download/(?P<evaluation_id>[-\w]+)$',views.quatation_html_to_pdf_view,name='quatation-download'),
 		url(r'^test/quatation/download/(?P<evaluation_id>[-\w]+)$',views.testquatation_html_to_pdf_view,name='testquatation-download'),
 		url(r'^invoice/download/(?P<evaluation_id>[-\w]+)$',views.invoice_html_to_pdf_view,name='invoice-download'),
+		url(r'^test/invoice/download/(?P<evaluation_id>[-\w]+)$',views.testinvoice_html_to_pdf_view,name='testinvoice-download'),
 		url(r'^payment/receipt/download/(?P<payment_id>[-\w]+)$',views.receipt_html_to_pdf_view,name='payment-receipt-download'),
 		url(r'^order-detail/download/(?P<order_id>[-\w]+)/(?P<service_id>[-\w]+)/(?P<section_id>[-\w]+)$',views.orderdetail_html_to_pdf_view,name='order-detail-download'),
 		url(r'^terms-and-conditions/download$',views.termsandconditions_to_pdf,name='terms-conditions-download'),
@@ -45,18 +48,21 @@ urlpatterns = [
 		url(r'^ajax/getservicesizeprice$',views.GetServiceSizePrice.as_view(),name='ajax-getservicesizeprice'),
 		url(r'^ajax/getserviceproductivity$',views.GetServiceProductivity.as_view(),name='ajax-serviceproductivity'),
 		
-		url(r'^ajax/getcleaningslotes$',views.GetCleaningSlotes.as_view(),name='ajax-cleaningslotes'),
-		url(r'^ajax/getmultipleservicecleaningslotes$',views.GetMultipleServiceCleaningSlotes.as_view(),name='ajax-multipleservicecleaningslotes'),
-		url(r'^ajax/multipleservice/multipledates/cleaningslotes/$',views.GetMultipleServiceDateCleaningSlotes.as_view(),name='ajax-multipleservicedatecleaningslotes'),
-		url(r'^ajax/multipleservice/multipledates/cleaningslotes/autofix/$',views.GetMultipleServiceDateCleaningSlotesAutofix.as_view(),name='ajax-multipleservicedatecleaningslotes-autofix'),
+		url(r'^ajax/getcleaningslotes$',views.GetCleaningSlotes.as_view(),name='ajax-cleaningslotes'),#done
+		url(r'^ajax/getmultipleservicecleaningslotes$',views.GetMultipleServiceCleaningSlotes.as_view(),name='ajax-multipleservicecleaningslotes'),#done
+		url(r'^ajax/multipleservice/multipledates/cleaningslotes/$',views.GetMultipleServiceDateCleaningSlotes.as_view(),name='ajax-multipleservicedatecleaningslotes'),#done
+		url(r'^ajax/multipleservice/multipledates/cleaningslotes/autofix/$',views.GetMultipleServiceDateCleaningSlotesAutofix.as_view(),name='ajax-multipleservicedatecleaningslotes-autofix'),#done
 		url(r'^ajax/addressotpsend$',views.AddressOtpSend,name='ajax-addressotpsend'),
 		url(r'^ajax/addressotpverify$',views.AddressOtpVerify,name='ajax-addressotpverify'),
 		
 		url(r'^bookingphase1$',views.ClientCleaningBookingPhase1.as_view(),name='clientcleaningbookingphase1'),
-		url(r'^bookingphase2$',views.ClientCleaningBookingPhase2.as_view(),name='clientcleaningbookingphase2'),
-		url(r'^bookingmultiplephase2$',views.ClientMultipleCleaningBookingPhase2.as_view(),name='clientcleaningmultiplebookingphase2'),
+		url(r'^bookingphase2$',views.ClientCleaningBookingPhase2.as_view(),name='clientcleaningbookingphase2'),#done
+		url(r'^bookingmultiplephase2$',views.ClientMultipleCleaningBookingPhase2.as_view(),name='clientcleaningmultiplebookingphase2'),#done
+		url(r'^evaluatorbookingmultiplephase2/together/(?P<evaluation_details_id>[-\w]+)/$',views.EvaluatorMultipleCleaningBookingTogetherPhase2.as_view(),name='evaluatorclientcleaningmultiplebookingphase2'),#done
+		url(r'^evaluatorbookingmultiplephase2/seperate/(?P<evaluation_details_id>[-\w]+)/$',views.EvaluatorMultipleCleaningBookingSeperatePhase2.as_view(),name='evaluatorclientcleaningmultiplebookingphase2'),#done
 		url(r'^bookingphase3$',views.ClientCleaningBookingPhase3.as_view(),name='clientcleaningbookingphase3'),
 		url(r'^bookingmediasave$',views.ClientCleaningBookingMediaSave.as_view(),name='clientcleaningbookingmediasave'),
 
 		url(r'^emailtest$',views.EmailTest.as_view(),name='email-test'),
+		url(r'^cart$',views.Cart.as_view(),name='cart'),
 	]

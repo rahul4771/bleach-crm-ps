@@ -37,6 +37,8 @@ from customer.models import CustomerBooking
 from agent.forms import UserProfileForm,AddressForm
 from evaluator.forms import EvaluationDetailsForm,QuatationServiceForm
 from order.forms import InvestigationForm,PromocodeForm
+from bleachadmin.models import ServiceProductivity,ServicePriceRange
+from bleachadmin.forms import ServicePriceRangeForm
 
 from django.db.models import Count
 
@@ -102,9 +104,6 @@ class OrderDetails(IsAuthenticated,View):
 		else:
 			approved_orders_count = 0
 			pending_orders_count  = 0	
-
-
-		bookings = evaluations.filter(booking_evaluation__is_active=True)
 
 
 		#Prefetch filters
@@ -184,19 +183,19 @@ class OrderDetails(IsAuthenticated,View):
 		#Apply prefetch filter
 		if evaluation_book_prefetch_filter and customer_address_prefetch_filter: 
 			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(address_book_count=Count(Case(When( Q(count_evaluation_book_prefetch_filter & count_customer_address_prefetch_filter),then=1),output_field=IntegerField()))).filter(address_book_count__gt=0)
-			bookings = bookings.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(address_book_count=Count(Case(When( Q(count_evaluation_book_prefetch_filter & count_customer_address_prefetch_filter),then=1),output_field=IntegerField()))).filter(address_book_count__gt=0)		 		 
+			# bookings = bookings.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(address_book_count=Count(Case(When( Q(count_evaluation_book_prefetch_filter & count_customer_address_prefetch_filter),then=1),output_field=IntegerField()))).filter(address_book_count__gt=0)		 		 
 			print("both")
 		elif evaluation_book_prefetch_filter and not customer_address_prefetch_filter:
 			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(book_count=Count(Case(When( count_evaluation_book_prefetch_filter,then=1),output_field=IntegerField()))).filter(book_count__gt=0)
-			bookings = bookings.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(book_count=Count(Case(When( count_evaluation_book_prefetch_filter,then=1),output_field=IntegerField()))).filter(book_count__gt=0)
+			# bookings = bookings.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').filter(evaluation_book_prefetch_filter),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(book_count=Count(Case(When( count_evaluation_book_prefetch_filter,then=1),output_field=IntegerField()))).filter(book_count__gt=0)
 			print("book only")
 		elif not evaluation_book_prefetch_filter and customer_address_prefetch_filter:
 			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(address_count=Count(Case(When( count_customer_address_prefetch_filter,then=1),output_field=IntegerField()))).filter(address_count__gt=0)
-			bookings = bookings.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(address_count=Count(Case(When( count_customer_address_prefetch_filter,then=1),output_field=IntegerField()))).filter(address_count__gt=0)
+			# bookings = bookings.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').filter(customer_address_prefetch_filter).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation')).annotate(address_count=Count(Case(When( count_customer_address_prefetch_filter,then=1),output_field=IntegerField()))).filter(address_count__gt=0)
 			print("address only") 
 		else:
 			evaluations = evaluations.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation'))
-			bookings = bookings.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation'))				
+			# bookings = bookings.prefetch_related(Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True,status='EVALUATED'),to_attr='completed_evaluations'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type'),to_attr='evaluation_book')),to_attr='details_evaluation'))				
 			print("not at all")
 		
 		#exclude atleast 1 not completed evaluation
@@ -238,6 +237,8 @@ class OrderDetails(IsAuthenticated,View):
 		if fil_status or fil_payment_policy: 
 		    filters     = functools.reduce(operator.and_,filters)
 		    evaluations = evaluations.filter(filters)
+
+		bookings = evaluations.filter(booking_evaluation__is_active=True)
 			
 
 		#PAGINATION ORDERS		
@@ -406,12 +407,94 @@ class ClientOrders(IsAuthenticated,View):
 		except:
 			client_details = None
 
-		orders = Order.objects.filter(evaluation__customer_id=client_id).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluationbooks')),to_attr='evaluationdetails')).annotate(total_cleaners=Sum('evaluation__evaluation_details__evaluation_book_evaluation_details__number_of_cleaners'))
+		orders = Order.objects.filter(evaluation__customer_id=client_id).select_related('evaluation__customer').prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluationbooks')),to_attr='evaluationdetails')).annotate(total_cleaners=Sum('evaluation__evaluation_details__evaluation_book_evaluation_details__number_of_cleaners'),total_tickets=Count('investigation_orders__followup_investigation'), avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField()))
 
 		#COUNT
 		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
+		completed_orders_count = orders.filter(order_status='ORDER_CLOSED').count()
 
-		return render(request,"common/client/client-page.html",{"client_details":client_details,"orders":orders,"active_orders_count":active_orders_count,})
+		active_followups = FollowUp.objects.filter(is_active=True,investigation__order_schedule__order__evaluation__customer_id=client_id).filter(Q(status='TICKET_RISED')|Q(status='FOLLOWUP_IN_PROGRESS')).count()
+		closed_followups = FollowUp.objects.filter(is_active=True,investigation__order_schedule__order__evaluation__customer_id=client_id,status='FOLLOWUP_CLOSED').count()
+
+		total_paid = orders.aggregate(paid=Sum('amount_paid'))['paid']
+		total_balance = orders.aggregate(balance=Sum('remining_amount'))['balance']
+
+		return render(request,"common/client/client-page-test.html",{"client_details":client_details,"orders":orders,"active_orders_count":active_orders_count,"completed_orders_count":completed_orders_count,"active_followups":active_followups,"closed_followups":closed_followups,"total_paid":total_paid,"total_balance":total_balance})
+
+	def post(self,request,client_id):
+
+		enquiry_user    = UserProfile.objects.get(id=client_id)
+
+		action_mode 	= request.POST.get('action_type')
+
+		print(enquiry_user,action_mode,"llp")
+
+		if action_mode == 'edit_customer':
+			
+			enquiry_form    = UserProfileForm(request.POST,request.FILES or None,instance=enquiry_user)
+
+			if enquiry_form.is_valid():
+				
+				enquiry_form_save            = enquiry_form.save(commit=False)
+
+				#To Save Contact Platform
+				contact_platforms 			 = request.POST.get('contact_platform')
+				contact_platform_list 		 = contact_platforms.split(",")
+
+				if 'Whatsapp' in contact_platform_list:
+					enquiry_form_save.is_whatsapp = True
+				else:
+					enquiry_form_save.is_whatsapp = False
+
+				if 'Email' in contact_platform_list:
+					enquiry_form_save.is_email    = True
+				else:
+					enquiry_form_save.is_email    = False
+
+				if 'SMS' in contact_platform_list:
+					enquiry_form_save.is_sms      = True
+				else:
+					enquiry_form_save.is_sms      = False
+
+				#APPEND MR / MS TO NAME
+				customer_name = enquiry_form_save.name
+				customer_name = customer_name.lower()
+
+				if enquiry_form_save.gender == 'MALE':
+					prefix_list = ['mr.','mr']
+					for prefix in prefix_list:
+						
+						prefix_exists = customer_name.startswith(prefix)
+
+						if prefix_exists == False :
+							if customer_name.startswith('dr.') == True or customer_name.startswith('dr') == True :
+								enquiry_form_save.name = customer_name.title()
+							else:	
+								enquiry_form_save.name = 'Mr. '+customer_name
+						else:
+							enquiry_form_save.name = customer_name.title()													
+
+				elif enquiry_form_save.gender == 'FEMALE':
+					prefix_list = ['ms.','ms']
+					for prefix in prefix_list:
+						
+						prefix_exists = customer_name.startswith(prefix)
+
+						if prefix_exists == False :
+							if customer_name.startswith('dr.') == True or customer_name.startswith('dr') == True or customer_name.startswith('mrs.') == True or customer_name.startswith('mrs') == True:
+								enquiry_form_save.name = customer_name.title()
+							else:	
+								enquiry_form_save.name = 'Ms. '+customer_name
+						else:
+							enquiry_form_save.name = customer_name.title()
+
+				else:
+					pass
+
+				enquiry_form_save.save()
+				messages.success(request,"Client Details Succesfully updated")
+
+		return redirect('common_items:client-orders',client_id)
 
 class TicketDetails(IsAuthenticated,View):
 	def get(self,request):
@@ -539,7 +622,7 @@ class TicketAdvanced(IsAuthenticated,View):
 		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
 		total_orders_count  = orders.count()
 
-		return render(request,'common/ticket/followup-page.html',{"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"followup_details":followup_details,})
+		return render(request,'common/ticket/followup-tickets.html',{"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"followup_details":followup_details,})
 
 	
 class CustomerBookingsList(IsAuthenticated,View):
@@ -757,6 +840,7 @@ class PaymentDetails(IsAuthenticated,View):
 		else:
 			try:
 				invoices         = Order.objects.filter(is_active=True).order_by('-id').filter(evaluation__quatation_status='APPROVED',order_status__isnull=False).filter(~Q(order_status='ORDER_CANCELLED')).prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules')).annotate(cleaning_count=Count('order_scheduler_order'),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())),cleaning_in_progress_count=Sum(Case(When(Q(Q(order_scheduler_order__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler_order__work_status='CLEANING_IN_PROGRESS')),then=1),default=0,output_field=IntegerField())))
+									# Order.objects.filter(is_active=True).order_by('-id').filter(evaluation__quatation_status='APPROVED',order_status__isnull=False).prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules')).annotate(cleaning_count=Count('order_scheduler_order'),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())),cleaning_in_progress_count=Sum(Case(When(Q(Q(order_scheduler_order__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler_order__work_status='CLEANING_IN_PROGRESS')),then=1),default=0,output_field=IntegerField())))
 			except:
 				invoices         = None
 				
@@ -765,6 +849,16 @@ class PaymentDetails(IsAuthenticated,View):
 			pending_payments = invoices.filter(Q( Q(Q(evaluation__payment_method='PREPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))) | Q(Q(evaluation__payment_method='POSTPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(preamount_paid=0)) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) | Q(Q(evaluation__payment_method='SUBSCRIPTION')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&~Q(subscription_topay=0)) ))
 		except:
 			pending_payments = None
+
+		#due Payments
+		try:
+			due_payments = invoices.filter(Q( Q( Q(Q(evaluation__payment_method='PREPAID')|Q(evaluation__payment_method='POSTPAID')|Q(evaluation__payment_method='BREAKDOWN')) & Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD')) & Q(completed_cleaning_count=F('cleaning_count')) ) | Q(Q(evaluation__payment_method='SUBSCRIPTION')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&~Q(subscription_topay=0)) ))
+		except:
+			due_payments = None
+
+		#Due Payment and Order Count			
+		total_due_amount = due_payments.aggregate(Sum('remining_amount'))['remining_amount__sum']
+		total_due_orders = due_payments.count()
 
 		#Pending Payment and Order Count	
 		if pending_payments: 
@@ -877,9 +971,21 @@ class PaymentDetails(IsAuthenticated,View):
 		except EmptyPage:
 			pending_payments=paginator.page(paginator.num_pages) 
 
+		page = request.GET.get('page3',1) 
+
+		paginator=Paginator(due_payments,no_of_entries)
+			
+		try: 
+			due_payments=paginator.page(page) 
+		except PageNotAnInteger:
+			due_payments=paginator.page(1) 
+		except EmptyPage:
+			due_payments=paginator.page(paginator.num_pages) 
+
 		# Get the index of the current page
 		index = invoices.number - 1
 		index = pending_payments.number - 1
+		index = due_payments.number - 1
 		# edited to something easier without index
 		# This value is maximum index of your pages, so the last page - 1
 		max_index = len(paginator.page_range)
@@ -893,10 +999,11 @@ class PaymentDetails(IsAuthenticated,View):
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(invoices.end_index())-(invoices.start_index())+1
 		entry_per_page=(pending_payments.end_index())-(pending_payments.start_index())+1
+		entry_per_page=(due_payments.end_index())-(due_payments.start_index())+1
 
 		print(tab,"tab")
 
-		return render(request,'common/payment/payments.html',{'tab':tab,'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"service_types":service_types,"fil_payment_policy":fil_payment_policy,"fil_payment_status":fil_payment_status,"fil_order_status":fil_order_status,"pending_payments":pending_payments})
+		return render(request,'common/payment/payments.html',{'total_due_amount':total_due_amount,'total_due_orders':total_due_orders,'tab':tab,'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"service_types":service_types,"fil_payment_policy":fil_payment_policy,"fil_payment_status":fil_payment_status,"fil_order_status":fil_order_status,"pending_payments":pending_payments,"due_payments":due_payments})
 
 
 class ActiveSubscriptions(IsAuthenticated,View):
@@ -909,7 +1016,7 @@ class ActiveSubscriptions(IsAuthenticated,View):
 		if search:
 			subscriptions = Order.objects.filter(Q(Q( Q(payment_status='PENDING') |Q(payment_status='ON_HOLD') | Q(payment_status='COMPLETED') ) & Q(evaluation__payment_method='SUBSCRIPTION') & Q(evaluation__quatation_status='APPROVED') & ~Q(order_status='ORDER_CANCELLED') & Q(Q(order_no__icontains=search)|Q(evaluation__customer__name__icontains=search)|Q(evaluation__customer__mobile_number__icontains=search)) )).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='bookschedules')),to_attr='orderschedules')).annotate(total_cleanings_count=Count('order_scheduler_order'),completed_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())), remaining_cleanings_count= F('total_cleanings_count') - F('completed_cleanings_count') ).exclude(Q( Q(remaining_cleanings_count = 0) & Q(payment_status='COMPLETED') ))
 		else:
-			subscriptions = Order.objects.filter(Q(Q( Q(payment_status='PENDING') |Q(payment_status='ON_HOLD') | Q(payment_status='COMPLETED') ) & Q(evaluation__payment_method='SUBSCRIPTION') & Q(evaluation__quatation_status='APPROVED') & ~Q(order_status='ORDER_CANCELLED') )).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='bookschedules')),to_attr='orderschedules')).annotate(total_cleanings_count=Count('order_scheduler_order'),completed_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())), remaining_cleanings_count= F('total_cleanings_count') - F('completed_cleanings_count') ).exclude(Q( Q(remaining_cleanings_count = 0) & Q(payment_status='COMPLETED') ))
+			subscriptions = Order.objects.filter(Q(Q( Q(payment_status='PENDING') |Q(payment_status='ON_HOLD') | Q(payment_status='COMPLETED') ) & Q(evaluation__payment_method='SUBSCRIPTION') & Q(evaluation__quatation_status='APPROVED') & ~Q(order_status='ORDER_CANCELLED') )).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='bookschedules')),to_attr='orderschedules')) #.annotate(total_cleanings_count=Count('order_scheduler_order'),completed_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())), remaining_cleanings_count= F('total_cleanings_count') - F('completed_cleanings_count') ).exclude(Q( Q(remaining_cleanings_count = 0) & Q(payment_status='COMPLETED') ))
 		
 		if subscriptions:
 			for invoice in subscriptions:
@@ -917,6 +1024,10 @@ class ActiveSubscriptions(IsAuthenticated,View):
 				for scheduler in invoice.orderschedules:
 					if scheduler.work_status=='CLEANING_FULFILLED':
 						cleaning_price += scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules)	
+						cleaning_price -= invoice.evaluation.promocode_amount
+						cleaning_price -= invoice.evaluation.writeback_amount
+						cleaning_price += invoice.evaluation.fine_amount
+
 				if cleaning_price > invoice.amount_paid:
 					invoice.balance       = cleaning_price-invoice.amount_paid
 				else:
@@ -998,14 +1109,14 @@ class ActiveSubscriptions(IsAuthenticated,View):
 class ClientOrderDetails(IsAuthenticated,View):
 	def get(self,request,order_id):
 
-		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr='evaluationmedia'),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection'),Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).select_related('team_leader','drop_off_driver','pick_up_driver').prefetch_related(Prefetch('media_cleaningteam',queryset=CleaningTeamMedia.objects.filter(is_active=True),to_attr='cleaning_team_medias'),Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_team'),Prefetch('investigations_orderschedule',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('investigation_media',queryset=InvestigationMedia.objects.filter(is_active=True),to_attr='investigationmedias'),Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.filter(is_active=True),to_attr='paybackdiscounts'),Prefetch('buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.filter(is_active=True),to_attr='buybackpromocodegift'),Prefetch('followup_investigation',queryset = FollowUp.objects.filter(is_active=True).prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True).prefetch_related(Prefetch('followup_member_team',queryset=FollowUpTeamMember.objects.filter(is_active=True),to_attr='followupmembers')),to_attr='followupteams')),to_attr='follow_up_schedules')),to_attr='followups')),to_attr='investigations')),to_attr='orderschedules'),Prefetch('feed_backs_order',FeedBack.objects.filter(is_active=True).select_related('question'),to_attr='feedbacks')).get(is_active=True,id=order_id)
+		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr='evaluationmedia'),Prefetch('order_scheduler_book',queryset=EvaluationBook.objects.filter(is_active=True)),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection'),Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).select_related('team_leader','drop_off_driver','pick_up_driver').prefetch_related(Prefetch('media_cleaningteam',queryset=CleaningTeamMedia.objects.filter(is_active=True),to_attr='cleaning_team_medias'),Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_team'),Prefetch('investigations_orderschedule',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('investigation_media',queryset=InvestigationMedia.objects.filter(is_active=True),to_attr='investigationmedias'),Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.filter(is_active=True),to_attr='paybackdiscounts'),Prefetch('buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.filter(is_active=True),to_attr='buybackpromocodegift'),Prefetch('followup_investigation',queryset = FollowUp.objects.filter(is_active=True).prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True).prefetch_related(Prefetch('followup_member_team',queryset=FollowUpTeamMember.objects.filter(is_active=True),to_attr='followupmembers')),to_attr='followupteams')),to_attr='follow_up_schedules')),to_attr='followups')),to_attr='investigations')),to_attr='orderschedules'),Prefetch('feed_backs_order',FeedBack.objects.filter(is_active=True).select_related('question'),to_attr='feedbacks')).get(is_active=True,id=order_id)
 
 		try:
 			booking_id = CustomerBooking.objects.get(is_active=True,evaluation__id=order.evaluation.id).booking_id
 		except:
 			booking_id = None
 		
-		invoice = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='bookschedules')),to_attr='orderschedules')).annotate(total_cleanings_count=Count('order_scheduler_order'),completed_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())), remaining_cleanings_count= F('total_cleanings_count') - F('completed_cleanings_count') ).exclude(Q( Q(remaining_cleanings_count = 0) & Q(payment_status='COMPLETED') )).get(is_active=True,id=order_id) #
+		# invoice = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='bookschedules')),to_attr='orderschedules')).annotate(total_cleanings_count=Count('order_scheduler_order'),completed_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())), remaining_cleanings_count= F('total_cleanings_count') - F('completed_cleanings_count') ).exclude(Q( Q(remaining_cleanings_count = 0) & Q(payment_status='COMPLETED') )).get(is_active=True,id=order_id)
 		
 		try:
 			client_details = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(is_active=True,id=order.evaluation.customer_id)
@@ -1020,21 +1131,21 @@ class ClientOrderDetails(IsAuthenticated,View):
 		#average feedbacks
 		average_feedback 	= order.feed_backs_order.aggregate(Avg('rating'))['rating__avg']
 
-		if invoice:
-			cleaning_price = 0
-			for scheduler in invoice.orderschedules:
-				if scheduler.work_status=='CLEANING_FULFILLED':
-					cleaning_price += scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules)	
-			if cleaning_price > invoice.amount_paid:
-				invoice.balance       = cleaning_price-invoice.amount_paid
-			else:
-				invoice.balance       = cleaning_price-invoice.amount_paid
+		# if invoice:
+		# 	cleaning_price = 0
+		# 	for scheduler in invoice.orderschedules:
+		# 		if scheduler.work_status=='CLEANING_FULFILLED':
+		# 			cleaning_price += scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules)	
+		# 	if cleaning_price > invoice.amount_paid:
+		# 		invoice.balance       = cleaning_price-invoice.amount_paid
+		# 	else:
+		# 		invoice.balance       = cleaning_price-invoice.amount_paid
 
-			if invoice.balance == int(invoice.balance):
-				invoice.balance = int(invoice.balance)
+		# 	if invoice.balance == int(invoice.balance):
+		# 		invoice.balance = int(invoice.balance)
 
 
-		return render(request,"common/client/order-page-test.html",{"booking_id":booking_id,"order":order,"invoice":invoice,"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"average_feedback":average_feedback,})
+		return render(request,"common/client/order-page.html",{"booking_id":booking_id,"order":order,"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"average_feedback":average_feedback,})
 
 	def post(self,request,order_id):
 		action = request.POST.get('action_type')
@@ -1263,7 +1374,7 @@ class DailySales(IsAuthenticated, View):
 		return render(request,'common/dailysales/daily-sales.html',{"dailysales":daily_sales,"monthlysales":monthly_sales,"month_name":full_month_name})
 
 
-class ResourceManagement(IsAuthenticated,View):
+class ResourceManagementOld(IsAuthenticated,View):
 	def get(self,request):
 
 		try:
@@ -1734,7 +1845,7 @@ class LeaveScheduler(IsAuthenticated,View):
 	def get(self,request):
 		return render(request,'common/leavescheduler/leave.html',{})
 
-class ResourceManagementTest(IsAuthenticated,View):
+class ResourceManagement(IsAuthenticated,View):
 	def get(self,request):
 		
 		#workers_date
@@ -1850,7 +1961,65 @@ class ResourceManagementTest(IsAuthenticated,View):
 
 		return JsonResponse(response_dict)
 
-class ProductivityTest(IsAuthenticated,View):
+class Productivity(IsAuthenticated,View):
 	def get(self,request):
-		return render(request,'common/productivity/productivity-test.html',{})
 
+		#save ajax productivity
+		response_dict = {}
+		action = request.GET.get('action_type')
+		if action == 'edit_productivity':
+			productivity_id    = request.GET.get('productivity_id')
+			productivity_value = request.GET.get('productivity_value')
+
+			productivity                  = ServiceProductivity.objects.get(id=productivity_id)
+			productivity.perhour_cleaning = productivity_value
+			productivity.save()
+			response_dict['success'] =True
+			return JsonResponse(response_dict)
+		
+		
+		try:
+			service_types = ServiceType.objects.filter(is_active=True)	
+		except:
+			service_types = None
+
+		try:
+			service_price_ranges = ServicePriceRange.objects.filter(is_active=True)
+		except:
+			service_price_ranges = None
+
+		try:
+			service_productivities = ServiceProductivity.objects.filter(is_active=True)
+		except:
+			service_productivities = None
+
+		return render(request,'common/productivity/productivity.html',{'service_price_ranges':service_price_ranges,'service_productivities':service_productivities,'service_types':service_types})
+
+	def post(self,request):
+		
+		action = request.POST.get('action_type')
+	
+		if action == 'edit_price_range':
+			price_range_id       = request.POST.get('price_range')
+			price_range          = ServicePriceRange.objects.get(id=price_range_id)
+			price_range_form     = ServicePriceRangeForm(request.POST,instance=price_range)
+			if price_range_form.is_valid():
+				price_range_form.save()
+				messages.success(request,"Service Price Range Updated Successfully")
+			else:
+				messages.error(request,get_error(price_range_form))
+
+		if action == 'add_price_range':
+			price_range_form     = ServicePriceRangeForm(request.POST)
+			if price_range_form.is_valid():
+				price_range_form.save()
+				messages.success(request,"Service Price Range Added Successfully")
+			else:
+				messages.error(request,get_error(price_range_form))
+
+		if action == 'delete_price_range':
+			price_range_id       = request.POST.get('price_range')
+			price_range          = ServicePriceRange.objects.filter(id=price_range_id).delete()
+			messages.success(request,"Service Price Range Deleted Successfully")
+		
+		return redirect('common_items:productivity')

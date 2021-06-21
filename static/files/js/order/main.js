@@ -1,10 +1,19 @@
 
 
 $(document).ready(function () {
+  $("#content-slider").lightSlider({
+
+          item:2,
+          loop:true,
+          slideMove:1,
+          speed:600,
+         
+  });
   $('#calendar').datepicker({
     language: "en",
     
   });
+  
   $('#calendar').on('changeDate', function() {
     $('#date_hidden').val(
         $('#calendar').datepicker('getFormattedDate')
@@ -12,6 +21,7 @@ $(document).ready(function () {
     console.log($('#date_hidden').val()) 
     app.setDate($('#date_hidden').val())
 });
+
   $(".owl-carousel").owlCarousel({
     items: 2,
     nav: true,
@@ -29,9 +39,9 @@ $(document).ready(function () {
 
 
 
-function myFunction() {
-  document.getElementById("visti-section").classList.toggle("not-show");
-  document.getElementById("myDropdown").classList.toggle("show");
+function myFunction(book_id) {
+  document.getElementById("visti-section"+book_id+"").classList.toggle("not-show");
+  document.getElementById("myDropdown"+book_id+"").classList.toggle("show");
 }
 function onClick(element) {
   document.getElementById("img01").src = element.src;

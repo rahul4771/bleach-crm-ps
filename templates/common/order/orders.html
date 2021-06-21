@@ -353,7 +353,7 @@
           {% endif %}
           {% endif %}
           
-          {% if evaluation.quatation_status != 'APPROVED' %}<a class="d-flex dropdown-orders" href="{% url 'common_items:makequatation1edit' evaluation.customer.id evaluation.id %}"><img src="{% static 'files/images/EditQuotation.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">Edit Quotation</div></a>{% endif %}
+          {% comment %} {% if evaluation.quatation_status != 'APPROVED' %}<a class="d-flex dropdown-orders" href="{% url 'common_items:makequatation1edit' evaluation.customer.id evaluation.id %}"><img src="{% static 'files/images/EditQuotation.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">Edit Quotation</div></a>{% endif %} {% endcomment %}
           <a class="d-flex dropdown-orders" {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %} href="{% url 'common_items:client-orderdetails' order.id %}" target="_blank" {% endfor %}{% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a>
 
 

@@ -1,13 +1,14 @@
 from django.shortcuts import render
 
-from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule
+from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule,Shift
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
+from bleachadmin.models import ServicePriceRange
 
-from Api.serializers import UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, LeaveUsersSerializer
+from Api.serializers import UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, LeaveUsersSerializer,ShiftScheduleSerializer
 from agent.views import generate_random_username
 
 import re
@@ -415,6 +416,59 @@ class LeaveScheduleAPI(APIView):
 
 		return Response(response_dict,HTTP_200_OK)
 
+#Get Existing Shift
+class ShiftScheduleAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+		response_dict = {"success":False}
+
+		try:
+			shiftschedules = ShiftSchedule.objects.filter(is_active=True)
+		except:
+			shiftschedules = None
+
+		shiftschedule_serializer = ShiftScheduleSerializer(shiftschedules,many=True).data
+
+		response_dict["staffs"]  = shiftschedule_serializer
+		response_dict["success"]  = True
+
+		return Response(response_dict,HTTP_200_OK)
+
+	def post(self,request):
+		response_dict = {'success':False}
+
+		for schedule in request.data:
+			print(schedule)
+			if schedule['shift1']:
+				shift1_start_at  = Shift.objects.get(shift='SHIFT1').start_at
+				shift1_end_at    = Shift.objects.get(shift='SHIFT1').end_at
+			else:
+				shift1_start_at  = None
+				shift1_end_at    = None
+			if schedule['shift2']:
+				shift2_start_at = Shift.objects.get(shift='SHIFT2').start_at
+				shift2_end_at   = Shift.objects.get(shift='SHIFT2').end_at
+			else:
+				shift2_start_at = None
+				shift2_end_at   = None
+
+			serializer = ShiftScheduleSerializer(data=schedule)
+			if serializer.is_valid():
+				serializer.save(shift1_start_at=shift1_start_at,shift2_start_at=shift2_start_at,shift1_end_at=shift1_end_at,shift2_end_at=shift2_end_at)
+   
+			else: 
+				errors= serializer.errors   
+				key=tuple(errors.keys())[0] 
+				error=errors[key]
+				response_dict['Error']=key +':'+ error[0]
+				response_dict['Error_List'] = serializer.errors
+
+		response_dict['success']  = True  
+
+		return Response(response_dict,HTTP_200_OK)
+
 class CancelEvaluation(APIView):
 	permission_classes  	=   (AllowAny,)
 	authentication_classes  = ()
@@ -454,6 +508,28 @@ class DeleteLeaveSchedule(APIView):
 
 		if leavescehdule:
 			leavescehdule.delete()
+			response_dict = {'success':True}  
+			return Response(response_dict, HTTP_200_OK)
+		else:
+			response_dict['reason'] = 'Invalid Id' 
+
+		return Response(response_dict,HTTP_200_OK)
+
+
+class DeleteShiftSchedule(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request,shift_id):
+		response_dict = {'success':False}
+
+		try:
+			shiftscehdule = ShiftSchedule.objects.get(is_active=True,id=int(shift_id))
+		except:
+			shiftschedule = None
+
+		if shiftscehdule:
+			shiftscehdule.delete()
 			response_dict = {'success':True}  
 			return Response(response_dict, HTTP_200_OK)
 		else:
@@ -771,4 +847,190 @@ class PaymentPolicyEditAPI(APIView):
 		
 		response_dict = {'success':True}
 
+		return Response(response_dict,HTTP_200_OK)
+
+class CleaningTeamAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+
+		visit_count = request.GET.get('visit_count')
+		schedule_id = request.GET.get('schedule_id')
+
+		cleaningteam = CleaningTeam.objects.filter(is_active=True,order_scheduler__id=int(schedule_id)).prefetch_related(Prefetch('media_cleaningteam',queryset=CleaningTeamMedia.objects.filter(is_active=True),to_attr='cleaning_team_medias'),Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True),to_attr='cleaning_team_members')).first()
+
+		if cleaningteam:
+
+			team_members_list = []
+			for team_member in cleaningteam.cleaning_team_members:
+				if cleaningteam.team_leader.id != team_member.member.id :
+					team_members_list.append({"member_name":team_member.member.name,"member_image":team_member.member.profile_image.url})
+
+			before_cleaning_media_list = []
+			after_cleaning_media_list = []
+			for cleaning_media in cleaningteam.cleaning_team_medias:
+				if cleaning_media.taken_status == 'BEFORE_CLEANING':
+					before_cleaning_media_list.append({"before_cleaning_url":cleaning_media.media.url})
+				elif cleaning_media.taken_status == 'AFTER_CLEANING':
+					after_cleaning_media_list.append({"after_cleaning_url":cleaning_media.media.url})
+				else:
+					pass
+			
+			if cleaningteam.check_in:
+				check_in = cleaningteam.check_in + timedelta(hours=3)
+				check_in_time = check_in.time().strftime("%I:%M %p")
+			else:
+				check_in = None
+				check_in_time = None
+				
+
+			if cleaningteam.check_out:
+				check_out = cleaningteam.check_out + timedelta(hours=3)
+				check_out_time = check_out.time().strftime("%I:%M %p")
+			else:
+				check_out = None
+				check_out_time = None
+
+			cleaning_status = cleaningteam.order_scheduler.work_status
+
+			followup = FollowUp.objects.filter(is_active=True,investigation__order_schedule__id=cleaningteam.order_scheduler.id).last()
+			if followup:
+				followup_id = followup.id
+			else:
+				followup_id = None
+
+			customer_id = cleaningteam.order_scheduler.order.evaluation.customer.id
+			
+			print(cleaning_status,"printest")
+
+			response_dict = {'success':True,"visit_count":visit_count,"schedule_id":schedule_id, "customer_id":customer_id,"followup_id":followup_id,"cleaning_status":cleaning_status,"team_leader":cleaningteam.team_leader.name,"team_leader_image":cleaningteam.team_leader.profile_image.url,"start_at":check_in_time,"end_at":check_out_time,'members':team_members_list, 'before_cleaning_media':before_cleaning_media_list, 'after_cleaning_media':after_cleaning_media_list}
+
+		else:
+
+			response_dict = {'success':False}
+
+		return Response(response_dict,HTTP_200_OK)	
+
+class SectionVerificationUpdationAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+		section_id = request.GET.get('section_id')
+		action_type = request.GET.get('action_type')
+		price_id = request.GET.get('price_id')
+		cleaning_team_id = request.GET.get('cleaning_team_id')
+
+		section = EvaluationBookSection.objects.get(is_active=True,id=int(section_id))
+
+		if action_type == 'verified':
+			section.section_verified_by = request.user.id
+			section.save()
+			response_dict = {'success':True,'action_type':action_type}
+
+		elif action_type == 'updated':
+			price_range = ServicePriceRange.objects.get(is_active=True,id=int(price_id))
+			
+			old_section_price = section.section_net_cost
+
+			section.size = price_range.maximum_area
+			section.section_cost = price_range.price
+			section.section_net_cost = float(price_range.price*section.section_cleanings)
+			section.section_updated_by = request.user.id
+			section.section_verified_by = request.user.id
+			section.save()
+
+			evaluationbook = EvaluationBook.objects.filter(is_active=True,id=section.evaluation_book.id).first()
+			evaluationbook.estimated_cost = float(evaluationbook.estimated_cost-old_section_price+section.section_net_cost)
+			evaluationbook.total_cost = float(evaluationbook.total_cost-old_section_price+section.section_net_cost)
+			evaluationbook.save()
+
+			evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluationbook.evaluation_details.id).first()
+			evaluation_details.estimated_cost = float(evaluation_details.estimated_cost-old_section_price+section.section_net_cost)
+			evaluation_details.total_cost = float(evaluation_details.total_cost-old_section_price+section.section_net_cost)
+			evaluation_details.save()
+
+			evaluation = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).first()
+			evaluation.estimated_cost = float(evaluation.estimated_cost-old_section_price+section.section_net_cost)
+			evaluation.total_cost = float(evaluation.total_cost-old_section_price+section.section_net_cost)
+			evaluation.save()
+
+			order = Order.objects.filter(is_active=True,evaluation__id=evaluation.id).first()
+			order.total_amount = float(order.total_amount-old_section_price+section.section_net_cost)
+			order.remining_amount = float(order.remining_amount+section.section_net_cost)
+			order.save()
+
+			cleaningteam = CleaningTeam.objects.filter(is_active=True,id=int(cleaning_team_id)).first()
+			cleaningteam.is_section_updated = True
+			cleaningteam.save()
+			
+			response_dict = {'success':True,'section_size':price_range.maximum_area,'action_type':action_type}
+
+		else:
+			response_dict = {'success':False}
+		
+		print(section_id,action_type,price_id,section,"test")
+
+		
+
+		return Response(response_dict,HTTP_200_OK)	
+
+class CheckInAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+		team_id = request.GET.get('team_id')
+		media = request.GET.getlist('media')
+		print(team_id,media,"zack")
+		try:
+			cleaning_team_detail = CleaningTeam.objects.select_related('order_scheduler__order').get(is_active=True,id=team_id)
+		except:	
+			cleaning_team_detail = None
+
+		# if not cleaning_team_detail.check_in:
+		# 	cleaning_team_detail.check_in                    = timezone.now()
+		# if not cleaning_team_detail.check_out:
+		# 	cleaning_team_detail.order_scheduler.work_status     = 'CLEANING_IN_PROGRESS'
+		# cleaning_team_detail.save()	
+		# cleaning_team_detail.order_scheduler.save()
+
+		#To Save Media
+		# medias = request.FILES.getlist('mediabefore')
+		# if not medias==['']:
+		# 	for media in medias:
+		# 		CleaningTeamMedia.objects.create(
+		# 				team_id=team_id,
+		# 				media=media,
+		# 				taken_status='BEFORE_CLEANING'
+		# 				)
+
+		if cleaning_team_detail.is_section_updated == True:
+			print("send smmsr")
+			evaluaation = cleaning_team_detail.order_scheduler.order.evaluation
+			if evaluaation.customer.is_sms == True:
+
+				url = "https://smsapi.future-club.com/fccsms.aspx"
+
+				if evaluaation.customer.sms_preference == 'ENGLISH':
+
+					message = "Dear Customer, Please find the updated Invoice against the order number "+str(evaluaation.evaluation_id)+"  here https://my.bleachkw.com/customer/subscription/invoice/prw"+str(evaluaation.evaluation_id[3:])+""+str(evaluaation.customer.username)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+			
+					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluaation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
+				
+				else:
+
+					message = "عزيزينا العميل نرجوا الاطلاع على الفاتورة الخاصة بالطلب رقم "+str(evaluaation.evaluation_id)+" في هذا الرابط https://my.bleachkw.com/customer/subscription/invoice/prw"+str(evaluaation.evaluation_id[3:])+""+str(evaluaation.customer.username)+" لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
+			
+					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluaation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
+				
+				headers = {
+					'cache-control': "no-cache"
+				}
+
+				response = requests.request("GET", url, headers=headers, params=querystring)
+
+				print(message,response.text,"respo")
+		response_dict = {'success':True}
 		return Response(response_dict,HTTP_200_OK)

@@ -44,7 +44,7 @@
                 <div class="cleaning-column-widget cleaning-column-widget-column1"><!--
                 
                 cleaning-column-widget cleaning-column-widget-column1-->
-                	<div class="details-head align-left"><a href="{% url 'agent:agent-client-orderdetails' order.id %}">{{order.evaluation.evaluation_id}}</a></div>
+                	<div class="details-head align-left"><a href="{% url 'common_items:client-orderdetails' order.id %}">{{order.evaluation.evaluation_id}}</a></div>
                 	
                     {% if order.payment_status == 'COMPLETED' %}
                     <div class="green-bg-lg">Paid</div>
@@ -103,7 +103,7 @@
 		</div><!--cleaning--left-stretch-->  
         
         <div class="cleaning--right-fixed"><!--cleaning--right-fixed-->
-        	<div class="order-card-column whitebg red-border clickable-row-list" data-href="{% url 'agent:agent-client-orders' client_details.id %}"><!--order-card-column-->
+        	<div class="order-card-column whitebg red-border clickable-row-list" data-href="{% url 'common_items:client-orders' client_details.id %}"><!--order-card-column-->
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-orders-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
@@ -136,7 +136,19 @@
             <div class="address">{% if address.floor %}{{address.floor}}, {% else %}{% endif %} {{address.building}}, {{address.block}}, {{address.street}}, {% if address.avenue %}{{address.avenue}}, {% else %}{% endif %} {{address.area.name}}, {{address.governorate.name}}</div>
             <br>
             {% endfor %}
-        </div><!--right-bgwrapper-->     
+        </div><!--right-bgwrapper-->  
+
+        <div class="order-card-column whitebg green-border clickable-row-list" data-href="{% url 'customer:statement-of-account' client_details.id %}"><!--order-card-column-->
+            <div class="card-innerwrapper"><!--card-innerwrapper-->
+            <div class="column-left"><img src="{% static "/files/images/card-soa-icon.png" %}"></div>
+            <div class="column-right"><!--column-right-->
+            <!-- <h1>Click To View</h1> -->
+            <h2 class="green-text"><label>SOA<span><i class="fa fa-external-link" aria-hidden="true"></i></span></label></h2>
+            <p><label>Click to view <span></span></label></p>
+            </div><!--column-right-->
+            </div><!--card-innerwrapper-->
+        </div><!--order-card-column-->
+           
         </div><!--cleaning--right-fixed-->  
 	</div><!--cleaning-Order-wrapper-->
 </div><!--order-top-wrapper-->  

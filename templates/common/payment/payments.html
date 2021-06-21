@@ -33,22 +33,34 @@
      <div class="clients-top-card-wrapper"><!--clients-top-card-wrapper-->
      	<div class="clients-card-wrapper"><!--clients-card-wrapper-->
        	<div class="clients-card-column clients-column-left"><!--clients-card-column clients-column-left-->
-        <div class="card-column whitebg blue-border"><!--card-column-->
+
+            <div class="card-column whitebg blue-border"><!--card-column-->
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-pending-payment-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
-              	<!--  <h1>Evaluations</h1>-->
-            	<h2 class="blue-text"><label>Pending <br>Payments<span>{{total_pending_amount|default_if_none:'0.00'|floatformat:'2'}}</span><br><span class="orders">Rate</span></label> </h2>
-            	<!--<p><label>This Week <span>42</span></label></p>-->
+                <h1>Pending Payments</h1>
+            	<h2 class="blue-text"><label>Orders<span>{{total_pending_orders|default_if_none:'0'}}</span></label> </h2>
+            	<p><label>Amount <span>{{total_pending_amount|default_if_none:'0.00'|floatformat:'3'}}</span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
         
-            <div class="card-column whitebg green-border"><!--card-column-->
+            {% comment %} <div class="card-column whitebg green-border"><!--card-column-->
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-pending-payment-orders-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
             	<h2 class="green-text"><label>Pending<br>payments<span>{{total_pending_orders|default_if_none:'0'}}</span><br><span class="orders">Orders</span></label>  </h2>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--card-column--> {% endcomment %}
+
+            <div class="card-column whitebg green-border"><!--card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-pending-payment-orders-icon.png' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Due Payments</h1>
+            	<h2 class="green-text"><label>Orders<span>{{total_due_orders|default_if_none:'0'}}</span></label> </h2>
+            	<p><label>Amount <span>{{total_due_amount|default_if_none:'0.00'|floatformat:'2'}}</span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
@@ -510,87 +522,123 @@
  
         <thead>
         <tr>
-        <th>Order Date</th>
-        <th class="text-left">Order Number</th>
-        <th class="text-center" data-hide="phone,tablet">Payment Policy</th>
-        <th class="text-right" data-hide="phone,tablet">Amount</th>
-        <th class="text-right" data-hide="phone,tablet">Paid</th>
-        <th class="text-right" data-hide="phone,tablet">Balance</th>
-        <th class="text-center" data-hide="phone,tablet">Payment Mode</th>
-        <th data-hide="phone">Job Status</th>
-        <th class="align-center" data-hide="phone">Shortcuts</th>
+        <th class="text-center">Order Number</th>
+        <th class="text-left" data-hide="phone,tablet">Customer</th>
+        <th class="text-left" data-hide="phone,tablet">Service Type</th>
+        <th class="text-left" data-hide="phone,tablet">Mobile</th>
+        <th class="text-left" data-hide="phone,tablet">Amount</th>
+        <th class="text-left" data-hide="phone,tablet">Payment Method</th>
+        <th class="text-center" data-hide="phone">Shortcuts</th>
         </tr>
         </thead>
         <tbody>
-            {% for invoice in invoices %}
-            <tr>
-            <td {% if invoice.cleaning_in_progress_count == 0 and invoice.completed_cleaning_count == 0 %}
-                class="blue-line"
-                {% elif invoice.cleaning_in_progress_count >= 1 %}
-                class="yellow-line"
-                {% elif invoice.completed_cleaning_count == invoice.cleaning_count %}
-                class="green-line"
-                {% else %}
-                class="blue-line"
-                {% endif %}>{{invoice.created|date:'d-m-Y'}}</td>
-            <td class="text-left"  >{{invoice.order_no}}</td>
-            <td class="text-center">{{invoice.evaluation.payment_method}}</td>
-            </td>
-            <td class="text-right">{{invoice.total_amount|default_if_none:'0.000'|floatformat:'3'}}</td>
-            <td class="text-right">{{invoice.amount_paid|default_if_none:'0.000'|floatformat:'3'}}</td>
-            {% if invoice.evaluation.payment_method == 'SUBSCRIPTION' %}
-            <td class="text-right">{{invoice.subscription_topay|default_if_none:'0.000'|floatformat:'3'}}</td>
-            {% else %}
-            <td class="text-right">{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}</td>
-            {% endif %}
-            <td class="text-center">
-            {% for inv in invoice.paymenthistory|slice:":1" %}
-            {% if inv.payment_mode == 'ONLINECREDIT' %}
-            {{inv.payment_gateway|default_if_none:'-'}},
-            {% else %}
-            {{inv.payment_mode|default_if_none:'-'}},
-            {% endif %}
-            {% empty %}
-            -
-            {% endfor %}
-            </td>
-            <td >
-                {% if invoice.cleaning_in_progress_count == 0 and invoice.completed_cleaning_count == 0 %}
-                <div class="text-center d-flex "><div class="round-marker payment-not-started-bg"></div><span>NOT STARTED</span></div>
-                {% elif invoice.cleaning_in_progress_count >= 1 %}
-                <div class="text-center d-flex "><div class="round-marker payment-in-progress-bg"></div><span>IN PROGRESS</span></div>
-                {% elif invoice.completed_cleaning_count == invoice.cleaning_count %}
-                <div class="text-center d-flex " ><div class="round-marker payment-completed-bg"></div><span>COMPLETED</span></div>
-                {% else %}
-                <div class="text-center d-flex "><div class="round-marker payment-not-started-bg"></div><span>NOT STARTED</span></div>
-                {% endif %}
-                </td>
+        {% for invoice in due_payments %}
         
-                <td class="align-center" ><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a></td>
-            </tr>
-            {% empty %}
-            <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td><td></td><td></td></tr>
-            {% endfor %}
+        {% if invoice.evaluation.payment_method == 'PREPAID' or invoice.evaluation.payment_method == 'POSTPAID' %}
+        <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
+        <td data-label="BLC Number" {% if invoice.evaluation.payment_method == 'PREPAID' %}class="prepaid-line"{% else %}class="postpaid-line"{% endif %}>{{invoice.evaluation.evaluation_id}}</td>
+        <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
+        <td data-label="Service Type(s)">
+        {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
+        {% for book in evaluation_details.evaluation_books %}
+        {{book.service_type}}<br>
+        {% endfor %}
+        {% endfor %}
+        </td>
+        <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
+        <td data-label="Total Amount">{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}KD</td>
+        <td data-label="Payment Method">
+        <div class="text-center d-flex "><div class="round-marker {% if invoice.evaluation.payment_method == 'PREPAID' %}prepaid-bg{% else %}postpaid-bg{% endif %}"></div><span>{{invoice.evaluation.payment_method}}</span></div>
+        </td>
+        <td class="align-center" ><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a></td>
+        </tr>
+
+        {% elif invoice.evaluation.payment_method == 'BREAKDOWN' %}
         
-        </tbody>
+        {% if invoice.preamount_paid != invoice.evaluation.before_cleaning_amount %}
+        <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
+        <td data-label="BLC Number" class="breakdown-line">{{invoice.evaluation.evaluation_id}}</td>
+        <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
+        <td data-label="Service Type(s)">
+        {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
+        {% for book in evaluation_details.evaluation_books %}
+        {{book.service_type}}<br>
+        {% endfor %}
+        {% endfor %}
+        </td>
+        <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
+        <td data-label="Total Amount">{{invoice.evaluation.before_cleaning_amount|default_if_none:'0.000'|floatformat:'3'}}KD</td>
+        <td data-label="Payment Method">
+        <div class="text-center d-flex "><div class="round-marker breakdown-bg"></div><span>{{invoice.evaluation.payment_method}}</span></div>
+        </td>
+        <td class="align-center" ><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a></td>
+        </tr>
+        {% endif %}
+
+        {% if invoice.last_completed and invoice.postamount_paid != invoice.evaluation.after_cleaning_amount %}
+        <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
+        <td data-label="BLC Number" >{{invoice.evaluation.evaluation_id}}</td>
+        <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
+        <td data-label="Service Type(s)">
+        {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
+        {% for book in evaluation_details.evaluation_books %}
+        {{book.service_type}}<br>
+        {% endfor %}
+        {% endfor %}
+        </td>
+        <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
+        <td data-label="Total Amount">{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}KD</td>
+        <td data-label="Payment Method">
+        <div class="text-center d-flex "><div class="round-marker prepaid-bg"></div><span>{{invoice.evaluation.payment_method}}</span></div>
+        </td>
+        <td class="align-center" ><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a></td>
+        </tr>
+        {% endif %}
+
+
+        {% elif invoice.evaluation.payment_method == 'SUBSCRIPTION' %}
+        {% if invoice.subscription_topay != 0 %}
+        <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
+        <td data-label="BLC Number" class="subscription-line">{{invoice.evaluation.evaluation_id}}</td>
+        <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
+        <td data-label="Service Type(s)">
+        {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
+        {% for book in evaluation_details.evaluation_books %}
+        {{book.service_type}}<br>
+        {% endfor %}
+        {% endfor %}
+        </td>
+        <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
+        <td data-label="Total Amount">{{invoice.subscription_topay|default_if_none:'0.000'|floatformat:'3'}}KD</td>
+        <td data-label="Payment Method">
+        <div class="text-center d-flex "><div class="round-marker subscription-bg"></div><span>{{invoice.evaluation.payment_method}}</span></div>
+        </td>
+        <td class="align-center" ><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a></td>
+        </tr>
+        {% endif %}
+        
+        {% endif %}
+        
+        {% endfor %}
+      </tbody>
         <tfoot>
         </tfoot>
         </table>
 
-        {% comment %} <div class="white-wrapper-pagination"><!--white-wrapper-pagination-->   
+        <div class="white-wrapper-pagination"><!--white-wrapper-pagination-->   
             <div class="pagination-containter"><!--pagination-containter-->
               <div class="pagination-column pagination-column-left"><!--pagination-column pagination-column-left-->
-                Showing {{pending_payments.start_index2}} to {{pending_payments.end_index2}} of {{pending_payments.paginator2.count}} entries
+                Showing {{due_payments.start_index}} to {{due_payments.end_index}} of {{due_payments.paginator.count}} entries
                 </div><!--pagination-column pagination-column-left-->
                 
                 <div class="pagination-column pagination-column-right"><!--pagination-column pagination-column-right-->
                 <!--paginated-->
-          {% if pending_payments.has_other_pages %}
+          {% if due_payments.has_other_pages %}
           <nav aria-label="Page navigation example">
           <ul class="pagination">
-            {% if pending_payments.has_previous %}
+            {% if due_payments.has_previous %}
             <li class="page-item">
-              <a class="page-link" href="?page2={{ pending_payments.previous_page_number }}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}" aria-label="Previous">
+              <a class="page-link" href="?page3={{ due_payments.previous_page_number }}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}" aria-label="Previous">
                 <span aria-hidden="true">&laquo;</span>
                 <span class="sr-only">Previous</span>
               </a>
@@ -605,14 +653,14 @@
             {% endif %}
             {% for pg in page_range %}
             {% if vus.number == pg %}
-                    <li class="page-item"><a class="page-link active" href="?page2={{pg}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}">{{pg}}</a></li>
+                    <li class="page-item"><a class="page-link active" href="?page3={{pg}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}">{{pg}}</a></li>
             {% else %}
-                    <li class="page-item"><a class="page-link" href="?page2={{pg}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}">{{pg}}</a></li>
+                    <li class="page-item"><a class="page-link" href="?page3={{pg}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}">{{pg}}</a></li>
             {% endif %}
             {% endfor %}
-            {% if pending_payments.has_next %}        
+            {% if due_payments.has_next %}        
             <li class="page-item">
-              <a class="page-link" href="?page2={{ pending_payments.next_page_number}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}" aria-label="Next">
+              <a class="page-link" href="?page3={{ due_payments.next_page_number}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}" aria-label="Next">
                 <span aria-hidden="true">&raquo;</span>
                 <span class="sr-only">Next</span>
               </a>
@@ -631,7 +679,7 @@
             <!--paginated-->
                 </div><!--pagination-column pagination-column-right-->
             </div><!--pagination-containter-->         
-        </div><!--white-wrapper-pagination-->  {% endcomment %}
+        </div><!--white-wrapper-pagination-->
 
     </div>
 </div>

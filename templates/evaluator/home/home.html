@@ -111,7 +111,7 @@
 {% else %}
 <img src="{% static 'files/images/profile-pic.jpg' %}" class="profile-avatar" title="{{evaluation.evaluation.call_attender.name}}">
 {% endif %}</td>
-<td class="clickable-row-list" data-label=""  data-href='{% url 'evaluator:evaluator-makeassignedquatation1' evaluation.evaluation.customer.id evaluation.evaluation.id%}'>
+<td data-label=""  {% if evaluation.status == 'TOBEEVALUATED' %}class="clickable-row-list" data-href='{% url 'evaluator:evaluator-makeassignedquatation1' evaluation.evaluation.customer.id evaluation.evaluation.id%}'{% endif %}>
     {% if evaluation.status == 'EVALUATING' %}
     <span class="blue-bg">Evaluating</span>
     {% elif evaluation.status == 'EVALUATED'  %}
@@ -221,7 +221,7 @@
               ></v-checkbox>
               <div class="mt-4 mx-auto">
               <div class="cl-slot-card-title text-center mt-1">Slot 1</div> 
-                 <div class="cl-slot-card-subtitle text-center ">12 AM - 03 AM</div> 
+                 <div class="cl-slot-card-subtitle text-center ">12 AM - 02 AM</div> 
                 </div>
               </div>
             </div>
@@ -244,11 +244,12 @@
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
 
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'"><span v-if="item.slots.order.order_no"> <% item.slots.order.order_no %></span>   </div>
-                <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
+                <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'" >
                   <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
-                  <span  v-else>+</span>
+                  <span  v-else @click="editCleaningTeam(item.slots.id)">+</span>
                 
                 </div>
+                
                 
               </div>
               
@@ -269,7 +270,7 @@
               ></v-checkbox>
               <div class="mt-4 mx-auto">
               <div class="cl-slot-card-title text-center mt-1">Slot 2</div> 
-                 <div class="cl-slot-card-subtitle text-center ">03 AM - 06 AM</div> 
+                 <div class="cl-slot-card-subtitle text-center ">02 AM - 04 AM</div> 
                 </div>
               </div>
             </div>
@@ -295,7 +296,7 @@
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
-                  <span  v-else>+</span>
+                  <span  v-else @click="editCleaningTeam(item.slots.id)">+</span>
                 </div>
                 
               </div>
@@ -316,7 +317,7 @@
               ></v-checkbox>
               <div class="mt-4 mx-auto">
               <div class="cl-slot-card-title text-center mt-1">Slot 3</div> 
-                 <div class="cl-slot-card-subtitle text-center ">06 AM - 09 AM</div> 
+                 <div class="cl-slot-card-subtitle text-center ">04 AM - 06 AM</div> 
                 </div>
               </div>
             </div>
@@ -342,7 +343,7 @@
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
-                  <span  v-else>+</span>
+                  <span  v-else @click="editCleaningTeam(item.slots.id)">+</span>
                 </div>
                 
               </div>       
@@ -361,7 +362,7 @@
               ></v-checkbox>
               <div class="mt-4 mx-auto">
               <div class="cl-slot-card-title text-center mt-1" >Slot 4</div> 
-                 <div class="cl-slot-card-subtitle text-center ">09 AM - 12 PM</div> 
+                 <div class="cl-slot-card-subtitle text-center ">06 AM - 08 AM</div> 
                 </div>
               </div>
             </div>
@@ -389,7 +390,7 @@
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
-                  <span  v-else>+</span>
+                  <span  v-else @click="editCleaningTeam(item.slots.id)">+</span>
                 </div>
                 
               </div>
@@ -397,7 +398,7 @@
               
             </div>
           </div>
-          <div class="cl-slot-card">
+          <div class="cl-slot-card" id="slot-start">
             <div class="row ml-0">
               <div class="col-md-12">
                 <div class="d-flex">
@@ -409,7 +410,7 @@
               ></v-checkbox>
               <div class="mt-4 mx-auto">
               <div class="cl-slot-card-title text-center mt-1">Slot 5</div> 
-                 <div class="cl-slot-card-subtitle text-center ">12 PM -  03 PM</div> 
+                 <div class="cl-slot-card-subtitle text-center ">08 AM -  10 AM</div> 
                 </div>
               </div>
             </div>
@@ -434,7 +435,7 @@
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
-                  <span  v-else>+</span>
+                  <span  v-else @click="editCleaningTeam(item.slots.id)">+</span>
                 </div>
                 
               </div>
@@ -457,7 +458,7 @@
               ></v-checkbox>
               <div class="mt-4 mx-auto">
               <div class="cl-slot-card-title text-center mt-1">Slot 6</div> 
-                 <div class="cl-slot-card-subtitle text-center ">03 PM - 06 PM</div> 
+                 <div class="cl-slot-card-subtitle text-center ">10 AM - 12 PM</div> 
                 </div>
               </div>
             </div>
@@ -482,7 +483,7 @@
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
-                  <span  v-else>+</span>
+                  <span  v-else @click="editCleaningTeam(item.slots.id)">+</span>
                 </div>
                 
               </div>
@@ -503,7 +504,7 @@
               ></v-checkbox>
               <div class="mt-4 mx-auto">
               <div class="cl-slot-card-title text-center mt-1">Slot 7</div> 
-                 <div class="cl-slot-card-subtitle text-center ">06 PM - 09 PM</div> 
+                 <div class="cl-slot-card-subtitle text-center ">12 PM - 02 PM</div> 
                 </div>
               </div>
             </div>
@@ -528,7 +529,7 @@
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
-                  <span  v-else>+</span>
+                  <span  v-else @click="editCleaningTeam(item.slots.id)">+</span>
                 </div>
                 
               </div>
@@ -548,7 +549,7 @@
               ></v-checkbox>
               <div class="mt-4 mx-auto">
               <div class="cl-slot-card-title text-center mt-1">Slot 8</div> 
-                 <div class="cl-slot-card-subtitle text-center ">09 PM - 12 AM</div> 
+                 <div class="cl-slot-card-subtitle text-center ">02 PM - 04 PM</div> 
                 </div>
               </div>
             </div>
@@ -573,7 +574,191 @@
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
-                  <span  v-else>+</span>
+                  <span  v-else @click="editCleaningTeam(item.slots.id)">+</span>
+                </div>
+                
+              </div>
+              
+              
+              
+            </div>
+          </div>
+          <div class="cl-slot-card">
+            <div class="row ml-0">
+              <div class="col-md-12">
+                <div class="d-flex">
+                <v-checkbox
+                v-model="selectedCleaningSlot"
+                 value="8"
+                 :color="primary"
+                 @change="getSlotDetails(8)"
+              ></v-checkbox>
+              <div class="mt-4 mx-auto">
+              <div class="cl-slot-card-title text-center mt-1">Slot 9</div> 
+                 <div class="cl-slot-card-subtitle text-center ">04 PM - 06 PM</div> 
+                </div>
+              </div>
+            </div>
+            </div>
+            <div class="marker-container mt-4" v-for="(item,index) in slot[9].slots" v-bind:key="index"   >
+              <div class="cl-dummy mt-4 mb-4" v-for="(dummy,dindex) in getRowDiff(item,slot[9].slots,index)">
+
+              </div>
+              <div :class="item.classType+' '+item.color+' '+'d-flex'" @click="openCleaningModal(item)">
+                <div class="cl-marker-pic-box" v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">
+                  <img :src="url+item.slots.cleaning_team_order_scheduler[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color!='followup-cleaning-status-bg'"/>
+                  <img :src="url+item.slots.followupteam_followupschedule[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color=='followup-cleaning-status-bg'"/>                  <div class="cl-marker-completed" v-if="item.slots.order.order_status=='ORDER_CLOSED'">
+                    <div class="cl-marker-completed" v-if="item.slots.work_status=='CLEANING_FULFILLED' || item.slots.work_status=='FOLLOW_UP_CLEANING_FULFILLED'">
+                      <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
+    
+                  </div>
+  
+                </div>
+  
+                </div>
+                <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
+                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
+                <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
+                  <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
+                  <span  v-else @click="editCleaningTeam(item.slots.id)">+</span>
+                </div>
+                
+              </div>
+              
+              
+              
+            </div>
+          </div>
+          <div class="cl-slot-card">
+            <div class="row ml-0">
+              <div class="col-md-12">
+                <div class="d-flex">
+                <v-checkbox
+                v-model="selectedCleaningSlot"
+                 value="8"
+                 :color="primary"
+                 @change="getSlotDetails(8)"
+              ></v-checkbox>
+              <div class="mt-4 mx-auto">
+              <div class="cl-slot-card-title text-center mt-1">Slot 10</div> 
+                 <div class="cl-slot-card-subtitle text-center ">06 PM - 08 PM</div> 
+                </div>
+              </div>
+            </div>
+            </div>
+            <div class="marker-container mt-4" v-for="(item,index) in slot[10].slots" v-bind:key="index"   >
+              <div class="cl-dummy mt-4 mb-4" v-for="(dummy,dindex) in getRowDiff(item,slot[10].slots,index)">
+
+              </div>
+              <div :class="item.classType+' '+item.color+' '+'d-flex'" @click="openCleaningModal(item)">
+                <div class="cl-marker-pic-box" v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">
+                  <img :src="url+item.slots.cleaning_team_order_scheduler[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color!='followup-cleaning-status-bg'"/>
+                  <img :src="url+item.slots.followupteam_followupschedule[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color=='followup-cleaning-status-bg'"/>                  <div class="cl-marker-completed" v-if="item.slots.order.order_status=='ORDER_CLOSED'">
+                    <div class="cl-marker-completed" v-if="item.slots.work_status=='CLEANING_FULFILLED' || item.slots.work_status=='FOLLOW_UP_CLEANING_FULFILLED'">
+                      <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
+    
+                  </div>
+  
+                </div>
+  
+                </div>
+                <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
+                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
+                <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
+                  <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
+                  <span  v-else @click="editCleaningTeam(item.slots.id)">+</span>
+                </div>
+                
+              </div>
+              
+              
+              
+            </div>
+          </div>
+          <div class="cl-slot-card">
+            <div class="row ml-0">
+              <div class="col-md-12">
+                <div class="d-flex">
+                <v-checkbox
+                v-model="selectedCleaningSlot"
+                 value="8"
+                 :color="primary"
+                 @change="getSlotDetails(8)"
+              ></v-checkbox>
+              <div class="mt-4 mx-auto">
+              <div class="cl-slot-card-title text-center mt-1">Slot 11</div> 
+                 <div class="cl-slot-card-subtitle text-center ">08 PM - 10 PM</div> 
+                </div>
+              </div>
+            </div>
+            </div>
+            <div class="marker-container mt-4" v-for="(item,index) in slot[11].slots" v-bind:key="index"   >
+              <div class="cl-dummy mt-4 mb-4" v-for="(dummy,dindex) in getRowDiff(item,slot[11].slots,index)">
+
+              </div>
+              <div :class="item.classType+' '+item.color+' '+'d-flex'" @click="openCleaningModal(item)">
+                <div class="cl-marker-pic-box" v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">
+                  <img :src="url+item.slots.cleaning_team_order_scheduler[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color!='followup-cleaning-status-bg'"/>
+                  <img :src="url+item.slots.followupteam_followupschedule[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color=='followup-cleaning-status-bg'"/>                  <div class="cl-marker-completed" v-if="item.slots.order.order_status=='ORDER_CLOSED'">
+                    <div class="cl-marker-completed" v-if="item.slots.work_status=='CLEANING_FULFILLED' || item.slots.work_status=='FOLLOW_UP_CLEANING_FULFILLED'">
+                      <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
+    
+                  </div>
+  
+                </div>
+  
+                </div>
+                <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
+                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
+                <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
+                  <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
+                  <span  v-else @click="editCleaningTeam(item.slots.id)">+</span>
+                </div>
+                
+              </div>
+              
+              
+              
+            </div>
+          </div>
+          <div class="cl-slot-card">
+            <div class="row ml-0">
+              <div class="col-md-12">
+                <div class="d-flex">
+                <v-checkbox
+                v-model="selectedCleaningSlot"
+                 value="8"
+                 :color="primary"
+                 @change="getSlotDetails(8)"
+              ></v-checkbox>
+              <div class="mt-4 mx-auto">
+              <div class="cl-slot-card-title text-center mt-1">Slot 12</div> 
+                 <div class="cl-slot-card-subtitle text-center ">10 PM - 12 AM</div> 
+                </div>
+              </div>
+            </div>
+            </div>
+            <div class="marker-container mt-4" v-for="(item,index) in slot[12].slots" v-bind:key="index"   >
+              <div class="cl-dummy mt-4 mb-4" v-for="(dummy,dindex) in getRowDiff(item,slot[12].slots,index)">
+
+              </div>
+              <div :class="item.classType+' '+item.color+' '+'d-flex'" @click="openCleaningModal(item)">
+                <div class="cl-marker-pic-box" v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">
+                  <img :src="url+item.slots.cleaning_team_order_scheduler[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color!='followup-cleaning-status-bg'"/>
+                  <img :src="url+item.slots.followupteam_followupschedule[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color=='followup-cleaning-status-bg'"/>                  <div class="cl-marker-completed" v-if="item.slots.order.order_status=='ORDER_CLOSED'">
+                    <div class="cl-marker-completed" v-if="item.slots.work_status=='CLEANING_FULFILLED' || item.slots.work_status=='FOLLOW_UP_CLEANING_FULFILLED'">
+                      <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
+    
+                  </div>
+  
+                </div>
+  
+                </div>
+                <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
+                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
+                <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
+                  <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
+                  <span  v-else @click="editCleaningTeam(item.slots.id)">+</span>
                 </div>
                 
               </div>
@@ -845,7 +1030,7 @@ class="cl-service-list"
             </div>
             <div v-else class="cl-highlight cl-modal-text-title "> Not Assigned </div>
             <div class="text-right cl-mt-20">
-              <a class="cl-link">Edit Cleaning Team</a>
+              <a class="cl-link" @click="editCleaningTeam(currentSlotDetails.id)">Edit Cleaning Team</a>
             </div>
           </div>
         </div>
@@ -865,7 +1050,7 @@ class="cl-service-list"
        <b>Time Slots Available</b>
      </div>
     <div class="time-slots row mt-2" >
-     <div class="col-md-6" v-for="(slot,index) in availableSlots" v-bind:key="index">
+     <div class="col-md-4" v-for="(slot,index) in availableSlots" v-bind:key="index">
        <div class="time-slot" @click="selectEditSlot(slot.split(' ')[0]+' '+slot.split(' ')[1])"  v-if="!selectedEditSlot.includes((slot.split(' ')[0]+' '+slot.split(' ')[1])) && checkslot(index)">
         <% slot %>
        </div>
@@ -1065,7 +1250,7 @@ class="cl-service-list"
                 <b>Time Slots Available</b>
               </div>
              <div class="time-slots row mt-2" >
-              <div class="col-md-6" v-for="(slot,index) in availableSlots" v-bind:key="index">
+              <div class="col-md-4" v-for="(slot,index) in availableSlots" v-bind:key="index">
                 <div class="time-slot" @click="selectEditSlot(slot.split(' ')[0]+' '+slot.split(' ')[1])"  v-if="!selectedEditSlot.includes((slot.split(' ')[0]+' '+slot.split(' ')[1])) && checkslot(index)">
                  <% slot %>
                 </div>

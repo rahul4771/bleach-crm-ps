@@ -1,7 +1,7 @@
 
-var url='https://test.bleach-kw.com';
+//var url='https://test.bleach-kw.com';
 //var url = 'https://my.bleachkw.com';
-//var url = 'http://127.0.0.1:8000';
+var url = 'http://127.0.0.1:8000';
 //var url='http://localhost:8000';
 
 var resourceList=[];
@@ -16,7 +16,7 @@ getUsers();
 
 $(".lv-result-box").hide();
 $(".lv-conf").hide();
-$('.lv-modal').hide();
+$('#leaveModal').hide();
 var modalBox=false;
 var DateTime = luxon.DateTime;
 
@@ -253,12 +253,12 @@ function selectDay(el){
   
     selectedDates[userId].name=user;
     leaveId=getLeaveId($('#'+dayId).find('.lv-date').text().toString()+'-'+currentMonth.toString()+'-'+currentYear.toString(),userId);
-   
+  
     if($('#'+dayId).find('.lv-date').hasClass('lv-weekend')){
         $('#'+dayId).find('.lv-date').removeClass('lv-weekend');
     }
     if($('#'+dayId).find('.lv-date').hasClass('lv-annual')){
-      
+     
         $('.modal-title').text('Annual Leave');
         $('.modal-title').removeClass('lv-sick-text');
         $('.modal-title').removeClass('lv-maternity-text');
@@ -266,11 +266,11 @@ function selectDay(el){
         $('.modal-title').addClass('lv-annual-text');
         $('.modal-date').text($('#'+dayId).find('.lv-date').text().toString()+'-'+currentMonth.toString()+'-'+currentYear.toString());
         $('.modal-resource').text(user);
-        $('.lv-modal').show();
-        
+        $('#leaveModal').show();
+        console.log("inside it")
     }
     if($('#'+dayId).find('.lv-date').hasClass('lv-sick')){
-        
+     
         $('.modal-title').text('Sick Leave');
         $('.modal-title').removeClass('lv-maternity-text');
         $('.modal-title').removeClass('lv-annual-text');
@@ -278,10 +278,11 @@ function selectDay(el){
         $('.modal-title').addClass('lv-sick-text');
         $('.modal-date').text($('#'+dayId).find('.lv-date').text().toString()+'-'+currentMonth.toString()+'-'+currentYear.toString());
         $('.modal-resource').text(user);
-        $('.lv-modal').show();
+        $('#leaveModal').show();
+        console.log("inside it")
     }
     if($('#'+dayId).find('.lv-date').hasClass('lv-maternity')){
-        
+       
         $('.modal-title').text('Maternity/Paternity Leave');
         $('.modal-title').removeClass('lv-sick-text');
         $('.modal-title').removeClass('lv-annual-text');
@@ -289,7 +290,9 @@ function selectDay(el){
         $('.modal-title').addClass('lv-maternity-text');
         $('.modal-date').text($('#'+dayId).find('.lv-date').text().toString()+'-'+currentMonth.toString()+'-'+currentYear.toString());
         $('.modal-resource').text(user);
-        $('.lv-modal').show();
+       
+        $('#leaveModal').show();
+        console.log("inside it")
     }
     if($('#'+dayId).find('.lv-date').hasClass('lv-weekly')){
        
@@ -301,7 +304,8 @@ function selectDay(el){
         $('.modal-title').addClass('lv-weekly-text');
         $('.modal-date').text($('#'+dayId).find('.lv-date').text().toString()+'-'+currentMonth.toString()+'-'+currentYear.toString());
         $('.modal-resource').text(user);
-        $('.lv-modal').show();
+        $('#leaveModal').show();
+        console.log("inside it")
         dateCounter=dateCounter-1;
     }
     else{
@@ -559,7 +563,7 @@ function cancelLeave(){
        
        
       leaveId='';
-      $('.lv-modal').hide();
+      $('#leaveModal').hide();
       dateCounter=0;
       $('#select-counter').text(dateCounter);
       })

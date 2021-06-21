@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from django.views import View
 
 from django.conf import settings
-from bleach_crm_ps.permissions import IsTeamLeader
+from bleach_crm_ps.permissions import IsTeamLeader,IsAuthenticated
 
 import functools
 import operator
@@ -18,6 +18,7 @@ from user.models import UserProfile,Address,Governorate,Area
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationBookSection,EvaluationSectionKeynote,EvaluationMedia
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowUp,Investigation,InvestigationMedia,FollowUpSection,FollowUpSectionKeynote,PaybackDiscount,BuybackPromocodeGift,Reporting
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
+from bleachadmin.models import ServicePriceRange
 
 import requests
 
@@ -261,12 +262,13 @@ class Cleaning(IsTeamLeader,View):
 		cleaning_team_detail = CleaningTeam.objects.select_related('team_leader','drop_off_driver','pick_up_driver','order_scheduler__evaluation_details','order_scheduler__order_scheduler_book__service_type','order_scheduler__customer_address','order_scheduler__order__evaluation').prefetch_related(Prefetch('order_scheduler__order_scheduler_book__evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr="evaluationmedias"),Prefetch('order_scheduler__order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='sections')).get(is_active=True,id=team_id)
 		cleaning_team_members = CleaningTeamMember.objects.filter(team=team_id,is_active=True)
 		
+		price_ranges = ServicePriceRange.objects.filter(is_active=True,service_type__id=cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.id)
 		#checkin save	
 		
 		
-		return render(request,'tl/cleaning/cleaning.html',{"cleaning_team_detail":cleaning_team_detail,"cleaning_team_members":cleaning_team_members})
+		return render(request,'tl/cleaning/cleaningtest.html',{"price_ranges":price_ranges,"cleaning_team_detail":cleaning_team_detail,"cleaning_team_members":cleaning_team_members})
 	def post(self,request,team_id):
-		
+		print("checkk")
 		#checkout save
 		try:
 			cleaning_team_detail = CleaningTeam.objects.select_related('order_scheduler__order').get(is_active=True,id=team_id)
@@ -294,26 +296,55 @@ class Cleaning(IsTeamLeader,View):
 
 			
 		if cleaning_team_detail: 
-			submit_status = request.POST.get('assign')
+			print("ctd")
+			submit_status = request.POST.get('jax')
+			print(submit_status,"ctdd")
 			#checkin save
 			if submit_status == 'Check In':
 				print("valhalla")
-				if not cleaning_team_detail.check_in:
-					cleaning_team_detail.check_in                    = timezone.now()
-				if not cleaning_team_detail.check_out:
-					cleaning_team_detail.order_scheduler.work_status     = 'CLEANING_IN_PROGRESS'
-				cleaning_team_detail.save()	
-				cleaning_team_detail.order_scheduler.save()
+				# if not cleaning_team_detail.check_in:
+				# 	cleaning_team_detail.check_in                    = timezone.now()
+				# if not cleaning_team_detail.check_out:
+				# 	cleaning_team_detail.order_scheduler.work_status     = 'CLEANING_IN_PROGRESS'
+				# cleaning_team_detail.save()	
+				# cleaning_team_detail.order_scheduler.save()
 
-				#To Save Media
-				medias = request.FILES.getlist('mediabefore')
-				if not medias==['']:
-					for media in medias:
-						CleaningTeamMedia.objects.create(
-								team_id=team_id,
-								media=media,
-								taken_status='BEFORE_CLEANING'
-								)
+				# #To Save Media
+				# medias = request.FILES.getlist('mediabefore')
+				# if not medias==['']:
+				# 	for media in medias:
+				# 		CleaningTeamMedia.objects.create(
+				# 				team_id=team_id,
+				# 				media=media,
+				# 				taken_status='BEFORE_CLEANING'
+				# 				)
+
+				if cleaning_team_detail.is_section_updated == True:
+					print("send smmsr")
+					evaluaation = cleaning_team_detail.order_scheduler.order.evaluation
+					if evaluaation.customer.is_sms == True:
+
+						url = "https://smsapi.future-club.com/fccsms.aspx"
+
+						if evaluaation.customer.sms_preference == 'ENGLISH':
+
+							message = "Dear Customer, Please find the updated Invoice against the order number "+str(evaluaation.evaluation_id)+"  here https://my.bleachkw.com/customer/subscription/invoice/prw"+str(evaluaation.evaluation_id[3:])+""+str(evaluaation.customer.username)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+					
+							querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluaation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
+						
+						else:
+
+							message = "عزيزينا العميل نرجوا الاطلاع على الفاتورة الخاصة بالطلب رقم "+str(evaluaation.evaluation_id)+" في هذا الرابط https://my.bleachkw.com/customer/subscription/invoice/prw"+str(evaluaation.evaluation_id[3:])+""+str(evaluaation.customer.username)+" لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
+					
+							querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluaation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
+						
+						headers = {
+							'cache-control': "no-cache"
+						}
+
+						response = requests.request("GET", url, headers=headers, params=querystring)
+
+						print(message,response.text,"respo")
 
 				messages.success(request,"Check In Completed Successfully !")
 
@@ -532,3 +563,15 @@ class FollowupCleaning(IsTeamLeader,View):
 		my_cleaning_calendar_date = request.GET.get('my_cleaning_calendar_date') or ''
 				
 		return redirect('/tl/dashboard/?my_cleaning_calendar_date='+my_cleaning_calendar_date)
+
+class CleaningTest(IsAuthenticated,View):
+	def get(self,request,team_id):
+
+		cleaning_team_detail = CleaningTeam.objects.select_related('team_leader','drop_off_driver','pick_up_driver','order_scheduler__evaluation_details','order_scheduler__order_scheduler_book__service_type','order_scheduler__customer_address','order_scheduler__order__evaluation').prefetch_related(Prefetch('order_scheduler__order_scheduler_book__evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr="evaluationmedias"),Prefetch('order_scheduler__order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='sections')).get(is_active=True,id=team_id)
+		cleaning_team_members = CleaningTeamMember.objects.filter(team=team_id,is_active=True)
+		
+		return render(request,"tl/cleaning/cleaningtest.html",{"cleaning_team_detail":cleaning_team_detail,"cleaning_team_members":cleaning_team_members})
+
+class CleaningBackup(IsAuthenticated,View):
+	def get(self,request):
+		return render(request,"tl/cleaning/cleaningbackup.html")
