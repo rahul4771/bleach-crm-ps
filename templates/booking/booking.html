@@ -217,7 +217,7 @@
       Select  Slots
     </div>
 <div class="row mt-2" style="margin:0 !important">
-  <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex" v-if="one_time_slots[oneTimeDateSelected]">
+  <div class="col-md-4" v-for="(slot,sindex) in timeSlots" v-bind:key="sindex" v-if="one_time_slots[oneTimeDateSelected]">
     <div class="time-slot duration text-center p-2" 
    @click="addOneTimeSlot(slot.start_time,slot.end_time,(sindex+1))" v-if='!one_time_slots[oneTimeDateSelected].slots.includes((sindex+1)) && checkOneTimeSlotStat((sindex+1))'>
      <% slot.start_time+' - '+ slot.end_time %>

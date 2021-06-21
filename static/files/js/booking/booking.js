@@ -555,8 +555,12 @@ responseText:''
               slots:[]
             }
           }
-          
-          this.calcSlots()
+          var yr=this.oneTimeDateSelected.split('-')[0]
+          var mt=this.oneTimeDateSelected.split('-')[1]
+          var dy=this.oneTimeDateSelected.split('-')[2]
+          this.slotDate=dy+'-'+mt+'-'+yr
+          this.getMultipleSlots()
+          //this.calcSlots()
         },
         reconfirmScheduler(){
           this.reconfirmation_dialog=false
@@ -3901,7 +3905,7 @@ mounted() {
     slots:[]
   }
   this.formatDate();
-     // this.getMultipleSlots()
+      this.getMultipleSlots()
      
       this.changeNewKitchen()
 

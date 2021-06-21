@@ -1,3 +1,12 @@
+function openNav() {
+  document.getElementById("mobSidenav").style.width = "100%";
+  document.getElementById("mobSidenav").style.zIndex="1000";
+}
+
+function closeNav() {
+  document.getElementById("mobSidenav").style.width = "0";
+}  
+
 $(document).ready(function(){
     $('#category-carousel').owlCarousel({
       loop:false,
@@ -550,13 +559,26 @@ $(document).ready(function(){
   service_index:null,
   schedule_confirmation_dialog:false,
   schedule_warning:false,
-  payment_dialog:false
+  payment_dialog:false,
+  lastElem:1,
+      subItemSelected:'',
+      differentSlider:'engDifferent',
+      testimonialSlider:'engTestimonial',
+    activeWebTab:false,
+    selectedTab:'',
+    activeItem:'',
+    category:'',
+    serviceType:'',
+    activeService:'',
+    lang:'en',
+    arabic:false,
+    selectedBooking:'Cleaning'
         },
 /* header data */
 
 
         methods: {
-          /** Header js begins*/
+         
            
             goToPaymentDialog(){
                 this.selectPayment('debit')
@@ -3931,6 +3953,230 @@ $(document).ready(function(){
           console.log(error);
         });
     },
+    /* header methods begins */
+    selectTab(service){
+      this.selectedTab=service
+    },
+    goTo(url){
+      window.location.href=url
+    },
+    changeToArabic(){
+      var servicePage=false
+      var uri = window.location.href.split('?lang');
+       var uri2=window.location.href.split('&lang') 
+       if(uri2.length>1){
+          uri=uri2
+          servicePage=true
+       } 
+      this.lang="ar"
+      if(uri){
+      if(uri.length<2 && uri2.length<2){
+          if(!servicePage){
+              window.location.href=window.location.href+'?lang=ar'
+          }
+          else{
+              window.location.href=window.location.href+'&lang=ar'
+          }
+          
+      }
+      else{
+          if(uri[1]=='=ar')
+          {
+          window.location.href=window.location.href
+          }
+          else{
+              if(!servicePage){
+              window.location.href=uri[0]+'?lang=ar'
+              }
+              else{
+                  window.location.href=uri[0]+'&lang=ar'
+              }
+          }
+      }
+  }
+  },
+  changeToEnglish(){
+      var servicePage=false
+      var uri = window.location.href.split('?lang');
+       var uri2=window.location.href.split('&lang') 
+       if(uri2.length>1){
+          uri=uri2
+          servicePage=true
+       } 
+       if(uri){
+          this.lang='en'
+          if(uri.length<2 && uri2.length<2 ){
+              if(!servicePage){
+              window.location.href=window.location.href+'?lang=en'
+              }
+              else{
+                  window.location.href=window.location.href+'&lang=en'
+              }
+          }
+          else{
+              if(uri[1]=='=en')
+              {
+              window.location.href=window.location.href
+              }
+              else{
+                  if(!servicePage){
+                  window.location.href=uri[0]+'?lang=en'
+                  }
+                  else{
+                      window.location.href=uri[0]+'&lang=en'
+                  }
+              }
+          }
+      }
+  },
+changeLang(){
+   var servicePage=false
+  var uri = window.location.href.split('?lang');
+   var uri2=window.location.href.split('&lang') 
+   if(uri2.length>1){
+      uri=uri2
+      servicePage=true
+   } 
+  if(this.arabic){
+      
+      this.lang="ar"
+      if(uri){
+      if(uri.length<2 && uri2.length<2){
+          if(!servicePage){
+              window.location.href=window.location.href+'?lang=ar'
+          }
+          else{
+              window.location.href=window.location.href+'&lang=ar'
+          }
+          
+      }
+      else{
+          if(uri[1]=='=ar')
+          {
+          window.location.href=window.location.href
+          }
+          else{
+              if(!servicePage){
+              window.location.href=uri[0]+'?lang=ar'
+              }
+              else{
+                  window.location.href=uri[0]+'&lang=ar'
+              }
+          }
+      }
+  }
+     
+  }
+  else{
+      if(uri){
+      this.lang='en'
+      if(uri.length<2 && uri2.length<2 ){
+          if(!servicePage){
+          window.location.href=window.location.href+'?lang=en'
+          }
+          else{
+              window.location.href=window.location.href+'&lang=en'
+          }
+      }
+      else{
+          if(uri[1]=='=en')
+          {
+          window.location.href=window.location.href
+          }
+          else{
+              if(!servicePage){
+              window.location.href=uri[0]+'?lang=en'
+              }
+              else{
+                  window.location.href=uri[0]+'&lang=en'
+              }
+          }
+      }
+  }
+}
+ 
+
+},     
+selectNav(nav){
+this.activeWebTab = true;  
+this.activeItem=nav 
+this.category='Detailed Cleaning'
+this.serviceType='General Cleaning'
+},
+selectWebCategory(category){
+this.activeWebTab = true;  
+this.category=category;
+if(this.category=='Detailed Cleaning'){
+    this.serviceType='General Cleaning'
+}
+if(this.category=='Special Care'){
+  this.serviceType='Upholstery Cleaning'
+}
+if(this.category=='Kitchen Cleaning'){
+  this.serviceType='Kitchen Cleaning'
+}
+if(this.category=='Infection Control'){
+  this.serviceType='Sanitization & Disinfection'
+}
+},
+selectService(service){
+this.activeWebTab = true;  
+this.serviceType=service
+ 
+},
+mouseleave(){
+this.activeWebTab = false; 
+},
+selectBooking(type){
+console.log("i run")
+this.selectedBooking=type
+},
+goToBooking(service){
+var url='http://testbook.bleach-kw.com/#/'
+window.location.href=url+"?service="+service
+},
+goToBookingPage(){
+var url='http://testbook.bleach-kw.com/#/'
+if(this.selectedBooking=='Evaluation')
+{
+window.location.href=url+'evaluator'
+}
+else{
+  window.location.href=url
+}
+},
+slideChange(a){
+
+if(this.activeService=='Detailed Cleaning' && a==3){
+    this.activeService='Special Care'
+}
+else if(this.activeService=='Special Care' && a==4){
+  this.activeService='Kitchen Cleaning'
+}
+else if(this.activeService=='Kitchen Cleaning' && a==5){
+  this.activeService='Infection Control'
+}
+else if(a==4 && this.activeService=='Infection Control'){
+  this.activeService='Kitchen Cleaning'
+}
+else if(a==2 && this.activeService=='Infection Control'){
+  this.activeService='Detailed Cleaning'
+}
+else if(a==3 && this.activeService=='Kitchen Cleaning'){
+  this.activeService='Special Care'
+}
+else if(a==2 && this.activeService=='Special Care'){
+  this.activeService='Detailed Cleaning'
+}
+else if(a==1 && this.activeService=='Detailed Cleaning'){
+  this.activeService='Infection Control'
+}
+console.log("active service is"+this.activeService +"a:"+a)
+},
+prevService(){
+
+}
+    /* header methods ends */
   },
   mounted() {
      
@@ -3967,6 +4213,7 @@ $(document).ready(function(){
      
      
     });
+    
     
     
   
