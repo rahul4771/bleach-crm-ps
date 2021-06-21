@@ -5262,7 +5262,25 @@ class ClientCleaningBookingMediaSave(APIView):
 		response_dict['success'] = True
 		return Response(response_dict,HTTP_200_OK)
 
+
+class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+	def get(self,request,evaluation_id): 
+		response_dict = {'success':False}
+
+		#evaluation id decryption
+		evaluation_id_encrypted = evaluation_id
+		evaluation_id = 'BLC'+evaluation_id_encrypted[3:14]
 		
+		#evaluation books,sections,and keynotes
+		evaluation_details                  = EvaluationDetails.objects.select_related('evaluation').prefetch_related('evaluation_book_evaluation_details__evaluationsection_book__keynotesections').get(evaluation__evaluation_id=evaluation_id)
+		response_dict['evaluation_details'] = EvaluationDetailsSerializer(instance=evaluation_details,many=True).data
+
+		return Response(response_dict,HTTP_200_OK)
+
+
+
 from django.core.mail import send_mail,EmailMultiAlternatives
 class EmailTest(APIView):
 	def get(self,request):

@@ -63,6 +63,7 @@ urlpatterns = [
 		url(r'^evaluatorbookingmultiplephase2/customer/(?P<evaluation_details_id>[-\w]+)/$',views.EvaluatorMultipleCleaningBookingLetCustomerPhase2.as_view(),name='evaluatorclientcleaningmultiplebookingcustomerphase2'),
 		url(r'^bookingphase3$',views.ClientCleaningBookingPhase3.as_view(),name='clientcleaningbookingphase3'),
 		url(r'^bookingmediasave$',views.ClientCleaningBookingMediaSave.as_view(),name='clientcleaningbookingmediasave'),
+		url(r'^evaluatorbookingmultiplephase3/customer/(?P<evaluation_id>[-\w]+)$',views.EvaluatorMultipleCleaningBookingLetCustomerPhase3.as_view(),name='evaluatorclientcleaningmultiplebookingcustomerphase3'),
 
 		url(r'^emailtest$',views.EmailTest.as_view(),name='email-test'),
 		url(r'^cart$',views.Cart.as_view(),name='cart'),
