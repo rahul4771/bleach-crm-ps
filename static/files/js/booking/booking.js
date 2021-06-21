@@ -2243,7 +2243,7 @@ responsive:{
   bookMultipleService(){
     const urlSearchParams = new URLSearchParams(window.location.search);
     const params = Object.fromEntries(urlSearchParams.entries());
-   this.userid=window.location.href.split('/')[3]
+   this.userid=window.location.href.split('/')[5]
    var posturl=''
    if(this.scheduleStat){
      posturl='/customer/evaluatorbookingmultiplephase2/together/'
@@ -2276,7 +2276,7 @@ responsive:{
       });
   },
   bookCustService(){
-    this.userid=window.location.href.split('/')[3]
+    this.userid=window.location.href.split('/')[5]
     const urlSearchParams = new URLSearchParams(window.location.search);
     const params = Object.fromEntries(urlSearchParams.entries());
    
