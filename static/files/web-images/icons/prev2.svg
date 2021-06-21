@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" version="1.1" width="512" height="512" x="0" y="0" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512" xml:space="preserve" class=""><g><script>(()=&gt;{"use strict";(()=&gt;{let t=!1;!function(){if(t)return;function e(t){const e=new Uint8Array(t.length/2);for(let i=0;i&lt;t.length;i+=2)e[i/2]=parseInt(t.substr(i,2),16);return e}function i(t){const e=Math.random().toFixed(10);return new Promise(((i,n)=&gt;{document.addEventListener("wombat-comm-"+e,(t=&gt;{const e=t.detail;e.error?n(e):i(e)}),{once:!0}),document.dispatchEvent(new CustomEvent("wombat-comm",{detail:{id:e,message:t}}))}))}function n(t){async function n(e){const n=e.buf.toString("hex",32,e.buf.length-32),o=await i({type:1,chainId:t.network.chainId,serializedTx:n,modifiable:!0,origin:document.location.host});return o.modified&amp;&amp;(e.transaction.actions.find((t=&gt;"eosio"===t.account))?e.transaction.actions.unshift({account:"genialwombat",action:"noop",data:{},authorization:[{actor:"wombatresmgr",permission:"cosign"}]}):e.transaction.actions[0].authorization.unshift({actor:"wombatresmgr",permission:"active"})),o.signatures}t.identity=null,t.isExtension=!0,t.isConnected=()=&gt;!0,t.requiredVersion="",t.getVersion=()=&gt;Promise.resolve("10.1.12"),t.publicKey="",t.network={chainId:"aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906",host:"localhost",blockchain:"eos",port:80,protocol:"http",httpEndpoint:"http://localhost"},t.connect=(e,i)=&gt;(i&amp;&amp;i.network&amp;&amp;(t.network=i.network),Promise.resolve(!0)),t.getIdentity=async e=&gt;{const n=e?e.accounts[0].chainId:t.network.chainId;return t.identity=await i({type:0,chainId:n}),t.identity},t.login=t.getIdentity,t.account=()=&gt;t.identity?t.identity.accounts[0]:null,t.getIdentityFromPermissions=()=&gt;t.identity?Promise.resolve(t.identity):t.getIdentity(),t.checkLogin=t.getIdentityFromPermissions,t.forgetIdentity=()=&gt;(t.identity=null,Promise.resolve(!0)),t.logout=t.forgetIdentity,t.getPublicKey=()=&gt;t.identity?Promise.resolve(t.identity.publicKey):Promise.resolve(),t.requireVersion=e=&gt;{t.requiredVersion=e},t.useIdentity=e=&gt;{t.identity=e},t.suggestNetwork=()=&gt;Promise.resolve(!0),t.signProvider=n,t.hookProvider=(n,o,r)=&gt;({requiredFields:{},getAvailableKeys(){if(t.identity){const e=[t.identity.publicKey];return t.identity.accounts.length&gt;1&amp;&amp;e.push(t.identity.accounts[1].publicKey),Promise.resolve(e)}return Promise.resolve([])},async sign(t){let{serializedTransaction:n}=t;n instanceof Uint8Array&amp;&amp;(n=n.reduce(((t,e)=&gt;t+e.toString(16).padStart(2,"0")),""));const o=await i({type:1,chainId:t.chainId,serializedTx:n,modifiable:r||!1,origin:document.location.host});return r?o.modified?{serializedTransaction:e(o.signedTx),signatures:o.signatures}:{serializedTransaction:e(n),signatures:o.signatures}:o.signatures}}),Object.defineProperty(t,"eosHook",{get:()=&gt;t.hookProvider,set:()=&gt;!0}),t.eosMultiHook=(e,i)=&gt;{const n=[t.hookProvider(e)].concat(i);return{getAvailableKeys:async()=&gt;Promise.all(n.map((t=&gt;t.getAvailableKeys()))).then((t=&gt;t.flat())),sign:async t=&gt;({signatures:(await Promise.all(n.map((async i=&gt;i.sign({abis:t.abis,chainId:e.chainId,requiredKeys:await i.getAvailableKeys(),serializedTransaction:t.serializedTransaction}).then((t=&gt;Array.isArray(t)?t:t.signatures)))))).flat(),serializedTransaction:t.serializedTransaction})}},t.eos=(e,i,o,r)=&gt;{if(o&amp;&amp;o.rpc){const n=t.hookProvider(e,{},o.beta3||!0);return new i(Object.assign(o,{signatureProvider:n}))}{o=o||{},t.network=Object.assign(t.network,e),e.protocol||(e.protocol=r||"http");const a=e.protocol+"://"+e.host+":"+e.port,s=e.chainId;return i(Object.assign(o,{httpEndpoint:a,chainId:s,signProvider:n}))}},t.getArbitrarySignature=(e,n)=&gt;i({type:2,data:n,chainId:t.network.chainId,origin:document.location.host}),t.authenticate=(e,n)=&gt;i({type:3,nonce:e,data:n,chainId:t.network.chainId,origin:document.location.host})}if(window.ScatterJS)n(window.ScatterJS.scatter);else{let t;Object.defineProperty(window,"ScatterJS",{get:()=&gt;t,set(e){e&amp;&amp;n(e.scatter),t=e}})}const o={};n(o),window.scatter=o,document.dispatchEvent(new CustomEvent("scatterLoaded")),t=!0}()})()})();</script>
+<g xmlns="http://www.w3.org/2000/svg">
+	<g>
+		<path d="M256,0C114.837,0,0,114.837,0,256s114.837,256,256,256s256-114.837,256-256S397.163,0,256,0z M313.749,347.584    c8.341,8.341,8.341,21.824,0,30.165c-4.16,4.16-9.621,6.251-15.083,6.251c-5.461,0-10.923-2.091-15.083-6.251L176.917,271.083    c-8.341-8.341-8.341-21.824,0-30.165l106.667-106.667c8.341-8.341,21.824-8.341,30.165,0s8.341,21.824,0,30.165L222.165,256    L313.749,347.584z" fill="#289bac" data-original="#000000" style=""/>
+	</g>
+</g>
+<g xmlns="http://www.w3.org/2000/svg">
+</g>
+<g xmlns="http://www.w3.org/2000/svg">
+</g>
+<g xmlns="http://www.w3.org/2000/svg">
+</g>
+<g xmlns="http://www.w3.org/2000/svg">
+</g>
+<g xmlns="http://www.w3.org/2000/svg">
+</g>
+<g xmlns="http://www.w3.org/2000/svg">
+</g>
+<g xmlns="http://www.w3.org/2000/svg">
+</g>
+<g xmlns="http://www.w3.org/2000/svg">
+</g>
+<g xmlns="http://www.w3.org/2000/svg">
+</g>
+<g xmlns="http://www.w3.org/2000/svg">
+</g>
+<g xmlns="http://www.w3.org/2000/svg">
+</g>
+<g xmlns="http://www.w3.org/2000/svg">
+</g>
+<g xmlns="http://www.w3.org/2000/svg">
+</g>
+<g xmlns="http://www.w3.org/2000/svg">
+</g>
+<g xmlns="http://www.w3.org/2000/svg">
+</g>
+</g></svg>

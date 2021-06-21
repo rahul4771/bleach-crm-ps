@@ -24,9 +24,10 @@ body{
     position: fixed;
     background: #ffffff;
     width: 100%;
-    padding-top: 15px;
+    padding-top: 30px;
     padding-bottom: 10px;
     z-index: 999;
+    border-bottom: 1px solid #eeeeee;
 }
 
 
@@ -72,6 +73,7 @@ body{
 }
 .logo{
     height:30px;
+    width: auto;
 }
 .item-icon{
     height:20px;
