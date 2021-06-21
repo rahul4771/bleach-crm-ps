@@ -217,7 +217,7 @@
       Select  Slots
     </div>
 <div class="row mt-2" style="margin:0 !important">
-  <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex" v-if="one_time_slots[oneTimeDateSelected]">
+  <div class="col-md-4" v-for="(slot,sindex) in parsedTimeSlots" v-bind:key="sindex" v-if="one_time_slots[oneTimeDateSelected]">
     <div class="time-slot duration text-center p-2" 
    @click="addOneTimeSlot(slot.start_time,slot.end_time,(sindex+1))" v-if='!one_time_slots[oneTimeDateSelected].slots.includes((sindex+1)) && checkOneTimeSlotStat((sindex+1))'>
      <% slot.start_time+' - '+ slot.end_time %>
@@ -229,6 +229,15 @@
     <div class="time-slot duration-inactive text-center p-2"  v-if='!checkOneTimeSlotStat((sindex+1)) && !one_time_slots[oneTimeDateSelected].slots.includes((sindex+1))'>
       <% slot.start_time+' - '+ slot.end_time %>
     </div>
+  </div>
+  <div class="col-md-12" v-if="parsedTimeSlots.length<1">
+    <v-alert
+      dense
+      outlined
+      type="error"
+    >
+      Cleaners not available. Please try another date.
+    </v-alert>
   </div>
   <div class="col-md-12 ">
     <div v-if="oneTimeSlotCounter()<1">
@@ -2446,7 +2455,7 @@ width="1000"
       Customer can book only one time services
     </v-alert>
                       </div>
-                      <div>
+                      <div v-if="!custBookStat">
                         <v-switch
                            v-model="scheduleStat"
                            inset
@@ -2465,7 +2474,7 @@ width="1000"
                                 v-model="schedule_serviceTypes_selected"
                                 :value='sindex'
                                 class="mt-0 pt-0 "
-                                v-if="!scheduleStat && Object.keys(service.schedule_details).length<1"
+                                v-if="!scheduleStat && Object.keys(service.schedule_details).length<1 && !custBookStat"
                                
                               ></v-checkbox>
                              
@@ -2579,7 +2588,7 @@ width="1000"
     outlined
     color="primary"
     @click="scheduleTogether()"
-    v-if="scheduleStat"
+    v-if="scheduleStat  && !custBookStat"
   >
     Schedule
   </v-btn>
@@ -2587,15 +2596,23 @@ width="1000"
       class="ma-2 text-white"
      disabled
       color="grey"
-      v-if="!checkScheduleStatus()"
+      v-if="!checkScheduleStatus() && !custBookStat"
     >
       Submit
     </v-btn>
     <v-btn
       class="ma-2 text-white"
-    v-if="checkScheduleStatus()"
+    v-if="checkScheduleStatus() && !custBookStat"
       color="primary"
      @click="arrangeData()"
+    >
+      Submit
+    </v-btn>
+    <v-btn
+      class="ma-2 text-white"
+    v-if="custBookStat"
+      color="primary"
+     @click="arrangeCustData()"
     >
       Submit
     </v-btn>
