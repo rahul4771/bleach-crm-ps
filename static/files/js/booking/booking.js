@@ -2279,7 +2279,7 @@ responsive:{
    
      axios
        .post(
-        this.url+'/evaluatorbookingmultiplephase2/customer/'+this.userid+'/',this.serviceDetails
+        this.url+'/customer/evaluatorbookingmultiplephase2/customer/'+this.userid+'/',this.serviceDetails
         
        )
        .then((response) => {
