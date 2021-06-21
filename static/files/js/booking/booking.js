@@ -2266,7 +2266,7 @@ responsive:{
         this.getBookingDetails(response.data.booking_id)
      
     this.uploadImages()
-    window.location.href='/evaluator/newenquiry/'
+   // window.location.href='/evaluator/newenquiry/'
         }
       })
        .catch((error) => {
@@ -2293,7 +2293,7 @@ responsive:{
          this.getBookingDetails(response.data.booking_id)
       
      this.uploadImages()
-     window.location.href='/evaluator/newenquiry/'
+     //window.location.href='/evaluator/newenquiry/'
          }
        })
         .catch((error) => {
