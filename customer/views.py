@@ -4270,6 +4270,7 @@ class EvaluatorMultipleCleaningBookingSeperatePhase2(APIView):
 		evaluation_details.save()
 
 		#evaluation book
+		service_dict = {}
 		for service_detail in services.keys():
 			service_save_serializer                    = EvaluationBookSerializer(data=services[service_detail])
 			if service_save_serializer.is_valid():
@@ -4607,6 +4608,7 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 		evaluation_details.save()
 
 		#evaluation book
+		service_dict = {}
 		for service_detail in services.keys():
 			service_save_serializer                    = EvaluationBookSerializer(data=services[service_detail])
 			if service_save_serializer.is_valid():
