@@ -2241,8 +2241,9 @@ responsive:{
    
   },
   bookMultipleService(){
-
-   this.userid=window.location.href.split('/')[5]
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const params = Object.fromEntries(urlSearchParams.entries());
+   this.userid=window.location.href.split('/')[3]
    var posturl=''
    if(this.scheduleStat){
      posturl='/customer/evaluatorbookingmultiplephase2/together/'
@@ -2266,7 +2267,7 @@ responsive:{
         this.getBookingDetails(response.data.booking_id)
      
     this.uploadImages()
-   // window.location.href='/evaluator/newenquiry/'
+    window.location.href='/evaluator/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
         }
       })
        .catch((error) => {
@@ -2275,7 +2276,10 @@ responsive:{
       });
   },
   bookCustService(){
-    this.userid=window.location.href.split('/')[5]
+    this.userid=window.location.href.split('/')[3]
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const params = Object.fromEntries(urlSearchParams.entries());
+   
    
      axios
        .post(
@@ -2293,7 +2297,7 @@ responsive:{
          this.getBookingDetails(response.data.booking_id)
       
      this.uploadImages()
-     //window.location.href='/evaluator/newenquiry/'
+     window.location.href='/evaluator/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
          }
        })
         .catch((error) => {
