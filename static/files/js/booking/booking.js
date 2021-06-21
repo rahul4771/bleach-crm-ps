@@ -1286,6 +1286,7 @@ console.log(response)
             var service_id=this.getServiceId(this.multiServicesBill[i].service)
              this.serviceDetails.service_details[i]={
                 "service_type":service_id,
+                "cleaning_policy":this.multiServicesBill[i].cleaning_policy,
                 "schedule_details":this.multiServicesBill[i].schedule_details,
                 "location_type":this.multiServicesBill[i].location_type,
                 "area_type":this.multiServicesBill[i].area_type,
