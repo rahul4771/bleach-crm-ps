@@ -171,7 +171,7 @@ $(document).ready(function(){
     rules: {
       required: v => !!v || 'this field is required',
     },
-      url:'http://localhost:8000',
+      url:'https://test.bleach-kw.com',
       kitchenData:{
           wall_type:'',
           floor_type:'',
@@ -572,14 +572,17 @@ $(document).ready(function(){
     activeService:'',
     lang:'en',
     arabic:false,
-    selectedBooking:'Cleaning'
+    selectedBooking:'Cleaning',
+    custId:''
         },
 /* header data */
 
 
         methods: {
-         
-           
+          
+           getCustBookings(){
+
+           },
             goToPaymentDialog(){
                 this.selectPayment('debit')
                 this.payment_dialog=true
@@ -4175,11 +4178,21 @@ console.log("active service is"+this.activeService +"a:"+a)
 },
 prevService(){
 
+},
+getBookedServices(){
+  axios.get(this.url+'/customer/evaluatorbookingmultiplephase3/customer/'+this.custId).then(response=>{
+    this.bookedServiceDetails=response.evaluation_details
+  }).catch(e=>{
+    console.log(e)
+  })
 }
-    /* header methods ends */
+    
   },
   mounted() {
-     
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const params = Object.fromEntries(urlSearchParams.entries());
+    this.custId=params.id
+    this.getBookedServices()
     this.getServices()
     this.getAreaTypes()
     this.getIp()
