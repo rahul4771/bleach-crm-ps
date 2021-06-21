@@ -1840,7 +1840,7 @@ class ResourceManagementTest(IsAuthenticated,View):
 			###to find total rating
 			worker.rating = cleanings.aggregate(total_rating=Sum('team__order_scheduler__order__feed_backs_order__rating')/Count('team__order_scheduler__order__feed_backs_order__rating'))['total_rating']or 0			
 
-		return render(request,'common/resource/resource-new.html',{"workers":workers,"workers_date":workers_date,"service_type":service_type,"staff_type":staff_type,"search":search,"starting_datetime":starting_datetime,"ending_datetime":ending_datetime})
+		return render(request,'common/resource/resource-new.html',{"workers":workers,"workers_date":workers_date,"service_type":service_type,"staff_type":staff_type,"search":search})
 
 	def post(self,request):
 		
