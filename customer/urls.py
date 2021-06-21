@@ -9,9 +9,9 @@ urlpatterns = [
 		url(r'^subscription/quatation/(?P<evaluation_id>[-\w]+)$',views.SubscriptionQuatation.as_view(),name='subscriptionquatation'),
 		url(r'^tc/$',views.TermsandConditions.as_view(),name='tc'),
 		url(r'^invoice/(?P<evaluation_id>[-\w]+)$',views.CustomerInvoice.as_view(),name='invoice'),
-		url(r'^bleach-invoice/(?P<evaluation_id>[-\w]+)$',views.BleachCustomerInvoice.as_view(),name='invoice'),
 		url(r'^subscription/invoice/(?P<evaluation_id>[-\w]+)$',views.CustomerSubscriptionInvoice.as_view(),name='subscriptioninvoice'),
-		
+		url(r'^booking/invoice/(?P<evaluation_id>[-\w]+)$',views.BleachCustomerInvoice.as_view(),name='bookinginvoice'),
+
 		url(r'^statement-of-account/(?P<client_id>[-\w]+)$',views.statement_of_account,name='statement-of-account'),
 		url(r'^statement-of-account-test/$',views.statement_of_account_old,name='statement-of-account-test'),
 

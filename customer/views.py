@@ -287,18 +287,7 @@ class BleachCustomerInvoice(View):
 		evaluation_id = 'BLC'+evaluation_id_encrypted[3:14]
 		user_name     =  evaluation_id_encrypted[14:]
 
-		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
-
-		nonduplicate_schedules = []
-		#Remove duplicates for subscription
-		duplicate_schedules    = []
-		for orderschedule in order.orderschedules:
-			if orderschedule.order_scheduler_book in duplicate_schedules:
-				pass
-			else:	
-				nonduplicate_schedules.append(orderschedule)	
-
-			duplicate_schedules.append(orderschedule.order_scheduler_book)
+		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='booksections')),to_attr='evaluationbooks')),to_attr='evaluationdetails')).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
 
 		#for credit card
 		full_name_array = UserProfile.objects.get(username=user_name).name.split()
@@ -313,7 +302,7 @@ class BleachCustomerInvoice(View):
 		
 		customer_ip_address = get_client_ip(request)
 
-		return render(request,"customer/bleach-invoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,})		
+		return render(request,"customer/bleach-invoice.html",{'order':order,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,})		
 
 	def post(self,request,evaluation_id):
 
@@ -326,7 +315,10 @@ class BleachCustomerInvoice(View):
 		if action == 'CASH/CHEQUE':
 			Evaluation.objects.filter(evaluation_id=evaluation_id,customer__username=user_name).update(payment_way='CASH/CHEQUE')
 			messages.success(request,"Cash/Cheque payment method approved !")
-		return redirect('customer:invoice',evaluation_id_encrypted)
+
+		return redirect('customer:bookinginvoice',evaluation_id_encrypted)
+
+
 class CustomerInvoice(View):
 	def get(self,request,evaluation_id):
 
