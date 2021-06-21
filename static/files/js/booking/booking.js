@@ -527,7 +527,9 @@ service_index:null,
 editScheduleData:{},
 editScheduleStat:false,
 reconfirmation_dialog:false,
-userid:''
+userid:'',
+snackbar:false,
+responseText:''
 
       },
       methods: {
@@ -676,6 +678,7 @@ userid:''
           for(var j=0;j<this.schedule_serviceTypes_selected.length;j++){
             this.multiServicesBill[this.schedule_serviceTypes_selected[j]].cleaning_policy='ONE TIME SERVICE'
             this.multiServicesBill[this.schedule_serviceTypes_selected[j]].schedule_details={}
+            this.multiServicesBill[this.schedule_serviceTypes_selected[j]].cleaners=this.selectedDuration.cleaners
             var count=0
             for(var k in this.selected_onetime_slots){
               var yr=k.split('-')[0]
@@ -694,6 +697,7 @@ userid:''
             }
           }
           this.selected_onetime_slots={}
+
           this.onetime_scheduled={}
           this.oneTimeSelectionStat=false
           this.schedule_serviceTypes_selected=[]
@@ -724,10 +728,11 @@ userid:''
               }
               
             }
-          
+          var cleaners=this.selectedDuration.cleaners
           for(var j=0;j<this.schedule_serviceTypes_selected.length;j++){
             this.multiServicesBill[this.schedule_serviceTypes_selected[j]].cleaning_policy='SUBSCRIPTION'
             this.multiServicesBill[this.schedule_serviceTypes_selected[j]].schedule_details={}
+            this.multiServicesBill[this.schedule_serviceTypes_selected[j]].cleaners=cleaners
             for(var k=0;k<this.visits.length;k++){
               var min_slot=Math.min(...this.visits[k].slots)
               
@@ -744,7 +749,7 @@ userid:''
 
           this.visits=[]
           this.selected_double_slots=[]
-          this.selectedDuration={
+         this.selectedDuration={
             cleaners:'',
             hours:'',
             slots:''
@@ -1282,7 +1287,7 @@ console.log(response)
                  "evaluator_note":this.multiServicesBill[i].evaluator_note,
                  "estimated_cost":this.multiServicesBill[i].total_cost,
                  "total_cost":this.multiServicesBill[i].total_cost,
-                 "number_of_cleaners":this.selectedDuration.cleaners,
+                 "number_of_cleaners":this.multiServicesBill[i].cleaners,
                    "cleaning_hours":parseInt(this.selectedDuration.hours),
                    sections:{}
               }
@@ -2210,13 +2215,16 @@ responsive:{
         this.phase2Result=response.data
         if(response.data.success)
         {
-        
+        this.responseText='Booking Successful'
+        this.snackbar=true
         this.getBookingDetails(response.data.booking_id)
      
     this.uploadImages()
+    window.location.href='/evaluator/newenquiry/'
         }
       })
        .catch((error) => {
+        this.responseText=error
         console.log(error);
       });
   },
@@ -2789,7 +2797,8 @@ try {
        area_type:this.area_type,
        location_type:this.location_type,
        evaluator_note:this.evaluator_note,
-       schedule_details:{}
+       schedule_details:{},
+       cleaners:null
      }
    
        this.serviceTypes.push(this.serviceType)

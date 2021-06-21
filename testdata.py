@@ -398,4 +398,8 @@ GET
    "total_cost":500,
    "estimated_cost":500
 }
-#customer/evaluatorbookingmultiplephase2/ {{ id }}/
+#customer/evaluatorbookingmultiplephase2/together/ {{ id }}/ - together
+#customer/evaluatorbookingmultiplephase2/seperate/ {{ id }}/  - individual
+
+
+
