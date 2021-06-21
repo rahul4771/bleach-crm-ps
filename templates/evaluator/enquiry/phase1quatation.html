@@ -49,9 +49,9 @@
       </div><!--checkin-form-left-->
       <div class="checkin-form-right align-right"><!--checkin-form-right-->
         {% if detail.status == 'EVALUATED' %}
-        <a href="{% url 'evaluator:evaluator-makequatation2edit' detail.id %}?enquiry_id={{detail.evaluation.customer.id}}&evaluation_id={{detail.evaluation.id}}"><div><input name="view" type="button" value="Edit" class="checkonButton"></div></a>
+        <a href="{% url 'evaluator:evaluator-makequatation2edit' detail.id %}"><div><input name="view" type="button" value="Edit" class="checkonButton"></div></a>
         {% else %}
-        <a href="{% url 'evaluator:evaluator-booking' detail.id %}"><div><input name="view" type="button" value="Check-in" class="checkonButton"></div></a>
+        <a href="{% url 'evaluator:evaluator-booking' detail.id %}?enquiry_id={{detail.evaluation.customer.id}}&evaluation_id={{detail.evaluation.id}}"><div><input name="view" type="button" value="Check-in" class="checkonButton"></div></a>
         {% endif %}
       
       </div><!--checkin-form-right-->               

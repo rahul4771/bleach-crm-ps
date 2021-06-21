@@ -5158,6 +5158,7 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase2(APIView):
 		evaluation_details.estimated_cost = request.data.get('estimated_cost')			
 		evaluation_details.save()
 
+		service_dict = {}
 		#evaluation book
 		for service_detail in services.keys():
 			service_save_serializer                    = EvaluationBookSerializer(data=services[service_detail])
