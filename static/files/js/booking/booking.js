@@ -529,7 +529,8 @@ editScheduleStat:false,
 reconfirmation_dialog:false,
 userid:'',
 snackbar:false,
-responseText:''
+responseText:'',
+parsedTimeSlots:[]
 
       },
       methods: {
@@ -1350,44 +1351,85 @@ console.log(response)
            }
             }
           }
-         /* if(this.userStat)
-          {
-          this.serviceDetails.customer_details= {   
-              "name":this.customerDetails.customer_details.name,
-              "gender":this.customerDetails.customer_details.gender,
-               "email":this.customerDetails.customer_details.email,
-             "mobile_number":this.customerDetails.customer_details.mobile_number,
-             "date_day":this.customerDetails.customer_details.date_day,
-            "date_month":this.customerDetails.customer_details.date_month,
-           "date_year":this.customerDetails.customer_details.date_year,
-            "nationality":this.customerDetails.customer_details.nationality,
-             "sms_preference":this.customerDetails.customer_details.sms_preference,
-          "contact_platform":''
-          }
-          this.serviceDetails.customer_id=this.customerDetails.customer_details.id
-          this.serviceDetails.address_details={
-               governorate: this.selectedAddress.governorate.id,
-               area: this.selectedAddress.area.id,
-               block: this.selectedAddress.block,
-              avenue: this.selectedAddress.avenue,
-              building: this.selectedAddress.building,
-              street: this.selectedAddress.street,
-               floor: this.selectedAddress.floor,
-             apartment:this.selectedAddress.apartment,
-          }
-          this.serviceDetails.address_id=this.selectedAddress.id
-          }
-          else{
-            this.serviceDetails.customer_details.contact_platform=this.contact_platform.join(',')
-            this.serviceDetails.customer_details.date_day=this.dob.split('-')[2]
-            this.serviceDetails.customer_details.date_month=this.dob.split('-')[1]
-            this.serviceDetails.customer_details.date_year=this.dob.split('-')[0]
-          }*/
+       
           this.serviceDetails.total_cost=this.totalCost
           this.serviceDetails.estimated_cost=this.totalCost
-          //this.customerDetails.customer_details
-          //this.serviceDetails['customer_addresses']= this.customerDetails.customer_addresses
+        
           this.bookMultipleService()
+    },
+    arrangeCustData(){
+      for(var i=0;i<this.multiServicesBill.length;i++){
+
+        var service_id=this.getServiceId(this.multiServicesBill[i].service)
+         this.serviceDetails.service_details[i]={
+            "service_type":service_id,
+            "location_type":this.multiServicesBill[i].location_type,
+            "area_type":this.multiServicesBill[i].area_type,
+             "evaluator_note":this.multiServicesBill[i].evaluator_note,
+             "estimated_cost":this.multiServicesBill[i].total_cost,
+             "total_cost":this.multiServicesBill[i].total_cost,
+               sections:{}
+          }
+        for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
+          
+       if(this.multiServicesBill[i].bill[j].section.wall_type && this.multiServicesBill[i].bill[j].section.ceiling_type)
+       {
+         this.serviceDetails.service_details[i].sections[j]={
+           "section_name":this.multiServicesBill[i].bill[j].name,
+         "size":this.multiServicesBill[i].bill[j].section.size.name,
+         "wall_type":this.multiServicesBill[i].bill[j].section.wall_type.join(),
+         "ceiling_type":this.multiServicesBill[i].bill[j].section.ceiling_type.join(),
+         "cement_residue":this.multiServicesBill[i].bill[j].section.cement_residue,
+         "section_cost":this.multiServicesBill[i].bill[j].section.section_cost,
+         "section_net_cost":this.multiServicesBill[i].bill[j].section.section_cost,
+         "keynotes":{
+            "1":{
+               "sub_area":"bathroom",
+               "quantity":this.multiServicesBill[i].bill[j].section.no_of_bathrooms
+            },
+            "2":{
+               "sub_area":"rooms",
+               "quantity":this.multiServicesBill[i].bill[j].section.no_of_rooms
+            },
+            "3":{
+               "sub_area":"windows",
+               "quantity":this.multiServicesBill[i].bill[j].section.no_of_windows
+            }
+         }
+         }
+       }
+       else{
+         this.serviceDetails.service_details[i].sections[j]={
+           "section_name":this.multiServicesBill[i].bill[j].name,
+         "size":this.multiServicesBill[i].bill[j].section.size.name,
+         "wall_type":this.multiServicesBill[i].bill[j].section.wall_type,
+         "ceiling_type":this.multiServicesBill[i].bill[j].section.ceiling_type,
+         "cement_residue":this.multiServicesBill[i].bill[j].section.cement_residue,
+         "section_cost":this.multiServicesBill[i].bill[j].section.section_cost,
+         "section_net_cost":this.multiServicesBill[i].bill[j].section.section_cost,
+         "keynotes":{
+            "1":{
+               "sub_area":"bathroom",
+               "quantity":this.multiServicesBill[i].bill[j].section.no_of_bathrooms
+            },
+            "2":{
+               "sub_area":"rooms",
+               "quantity":this.multiServicesBill[i].bill[j].section.no_of_rooms
+            },
+            "3":{
+               "sub_area":"windows",
+               "quantity":this.multiServicesBill[i].bill[j].section.no_of_windows
+            }
+         }
+         }
+       }
+        }
+      }
+   
+      this.serviceDetails.total_cost=this.totalCost
+      this.serviceDetails.estimated_cost=this.totalCost
+    
+      this.bookCustService()
     },
     openFloor(index,floor){
       this.e.building[index - 1].e = floor
@@ -2232,6 +2274,33 @@ responsive:{
         console.log(error);
       });
   },
+  bookCustService(){
+    this.userid=window.location.href.split('/')[5]
+   
+     axios
+       .post(
+        this.url+'/evaluatorbookingmultiplephase2/customer/'+this.userid+'/',this.serviceDetails
+        
+       )
+       .then((response) => {
+         
+         console.log("booking details is "+response)
+         this.phase2Result=response.data
+         if(response.data.success)
+         {
+         this.responseText='Booking Successful'
+         this.snackbar=true
+         this.getBookingDetails(response.data.booking_id)
+      
+     this.uploadImages()
+     window.location.href='/evaluator/newenquiry/'
+         }
+       })
+        .catch((error) => {
+         this.responseText=error
+         console.log(error);
+       });
+  },
   uploadImages(){
    for(var i=0;i<this.multiServiceImages.length;i++){
      var image=new FormData()
@@ -2285,6 +2354,7 @@ responsive:{
       )
       .then((response) => {
          this.timeSlots = response.data.slotes;
+         this.parseOneTimeSlots()
          if(response.data.Error){
            this.errMsg=response.data['Error']
          }
@@ -2302,6 +2372,18 @@ responsive:{
        .catch((error) => {
         console.log(error);
       });
+  },
+  parseOneTimeSlots(){
+    this.parsedTimeSlots=[]
+    for(var i in this.timeSlots){
+      if(this.timeSlots[i].includes(2)){
+        var slotNo=(parseInt(i)+2)/2
+
+        this.parsedTimeSlots.push(this.slotFormat[String(slotNo)])
+        
+        
+      }
+    }
   },
   getTimeSlots() {
     this.timeSlots = {};
