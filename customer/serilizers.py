@@ -3,6 +3,7 @@ from user.models import UserProfile,Address,Governorate,Area
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationBookSection,EvaluationSectionKeynote
 from order.models import Order
 from customer.models import CustomerBooking
+from agent.serializers import ServiceTypeShowSerializer
 class UserProfileSerializer(serializers.ModelSerializer):
 	class Meta:
 		model  = UserProfile
@@ -26,10 +27,11 @@ class EvaluationBookSectionSerializer(serializers.ModelSerializer):
 
 class EvaluationBookSerializer(serializers.ModelSerializer):
 	evaluationsection_book = EvaluationBookSectionSerializer(many=True,read_only=True)
+	service_type           = ServiceTypeShowSerializer(read_only=True)
 	class Meta:
 		model = EvaluationBook
-		fields = ('id','service_type__name','service_type','cleaning_policy','area_type','location_type','total_cost','evaluator_note','number_of_cleaners','cleaning_hours','evaluationsection_book')
-		read_only_fields = ('id','service_type__name')
+		fields = ('id','service_type','cleaning_policy','area_type','location_type','total_cost','evaluator_note','number_of_cleaners','cleaning_hours','evaluationsection_book')
+		read_only_fields = ('id',)
 
 ##for data showing
 class GovernorateSerializer(serializers.ModelSerializer):
