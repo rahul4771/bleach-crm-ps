@@ -222,3 +222,28 @@ Popups
 .cancel-order-border{
     border-bottom: 1px ​solid #2C4C82 !important;
 }
+
+/** bootstrap modals **/
+
+.primary-modal{
+    border:none !important;
+}
+.primary-modal-border{
+    border-bottom: 6px solid #2e4e85 !important;
+}
+.primary-btn{
+    background:#2e4e85 !important;
+}
+
+
+.tooltip-arrow{
+    display:none !important;
+}
+
+.blue-tooltip + .tooltip > .tooltip-inner {background-color: #2e4e85 !important; }
+
+
+.tooltip-subtext{
+font-size:12px;
+text-align: right;
+}

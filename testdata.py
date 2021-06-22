@@ -321,7 +321,16 @@ GET
    "total_cost":500,
    "estimated_cost":500
 }
-#multiple service with booking id
+
+
+
+
+
+
+
+
+
+
 {
    "service_details":{
       "1":{
@@ -404,6 +413,7 @@ GET
 
 
 #let the customer book
+
 #evaluatorbookingmultiplephase2/customer/
 {
    "service_details":{
@@ -474,3 +484,22 @@ GET
    "estimated_cost":500
 }
 
+
+#evaluatorbookingmultiplephase3/customer/
+{
+   "booking_type":"together" | "seperate",
+   "service_details":{
+      "1":{
+         "id":67,
+         "evaluation_details_id":6,
+          "schedule_details":{
+            "1":{
+                  "date":"02-06-2022",
+                  "time":"08:00 pm",
+                   "no_of_cleaners":7,
+                  "cleaning_hours":3
+             }
+          },
+         }
+                    }
+}

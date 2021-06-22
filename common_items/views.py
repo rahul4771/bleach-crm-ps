@@ -522,8 +522,6 @@ class TicketDetails(IsAuthenticated,View):
 				search = 'TKT'+search
 		else:
 			tickets 	             = FollowUp.objects.filter(is_active=True).select_related('investigation__order_schedule__order__evaluation__customer','investigation__order_schedule__customer_address__area','investigation__order_schedule__customer_address__governorate').order_by('-id').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).select_related('customer_address__area'),to_attr='follow_up_scheduler_details'))		
-
-		follow_ups_count = FollowUp.objects.filter(Q(is_active=True)&Q(Q(status='TICKET_RISED')|Q(status='FOLLOWUP_IN_PROGRESS'))).count()
 		
 		#followup cleaning count	
 		try:
@@ -531,7 +529,21 @@ class TicketDetails(IsAuthenticated,View):
 		except:
 			follow_up_cleaning_count = 0
 
+		#monthlly and last monthlly lost
+		this_month_evaluations = Evaluation.objects.filter(is_active=True,quatation_approved_date__month=timezone.now().month,quatation_approved_date__year=timezone.now().year)
+		last_month_evaluations = Evaluation.objects.filter(is_active=True,quatation_approved_date__month=(timezone.now()-relativedelta(months=1)).month,quatation_approved_date__year=(timezone.now()-relativedelta(months=1)).year)		
+		
+		if this_month_evaluations:
+			thismonth_loss = this_month_evaluations.aggregate(Sum('promocode_amount'))['promocode_amount__sum']+thismonth_loss.aggregate(Sum('extra_discount'))['extra_discount__sum']+thismonth_loss.aggregate(Sum('fine_amount'))['fine_amount__sum']+thismonth_loss.aggregate(Sum('writeback_amount'))['writeback_amount__sum']
+		else:
+			thismonth_loss = 0
 
+		if last_month_evaluations:
+			lastmonth_loss = last_month_evaluations.aggregate(Sum('promocode_amount'))['promocode_amount__sum']+last_month_evaluations.aggregate(Sum('extra_discount'))['extra_discount__sum']+last_month_evaluations.aggregate(Sum('fine_amount'))['fine_amount__sum']+last_month_evaluations.aggregate(Sum('writeback_amount'))['writeback_amount__sum']
+		else:
+			lastmonth_loss = 0
+			
+			
 
 		#FILTER
 		try:
@@ -600,7 +612,7 @@ class TicketDetails(IsAuthenticated,View):
 		page_range = list(paginator.page_range)[start_index:end_index]
 		entry_per_page=(tickets.end_index())-(tickets.start_index())+1
 
-		return render(request,"common/ticket/tickets.html",{"tickets":tickets,"follow_ups_count":follow_ups_count,"follow_up_cleaning_count":follow_up_cleaning_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"investigators":investigators,"fil_governorate":fil_governorate,'fil_area':fil_area,"fil_investigator":fil_investigator,"fil_status":fil_status,})
+		return render(request,"common/ticket/tickets.html",{"tickets":tickets,"follow_up_cleaning_count":follow_up_cleaning_count,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"governorates":governorates,"areas":areas,"investigators":investigators,"fil_governorate":fil_governorate,'fil_area':fil_area,"fil_investigator":fil_investigator,"fil_status":fil_status,"lastmonth_loss":lastmonth_loss,"thismonth_loss":thismonth_loss})
 
 class TicketAdvanced(IsAuthenticated,View):
 	def get(self,request,client_id,followup_id):
