@@ -29,7 +29,7 @@ class EvaluationBookSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = EvaluationBook
 		fields = ('service_type','cleaning_policy','area_type','location_type','total_cost','evaluator_note','number_of_cleaners','cleaning_hours','evaluationsection_book')
-
+		read_only_fields = ('service_type__name',)
 
 ##for data showing
 class GovernorateSerializer(serializers.ModelSerializer):

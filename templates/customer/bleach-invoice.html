@@ -112,8 +112,6 @@
             <div class="container">
           <div class="row ">
 
-          {% for orderschedule in order.orderschedules %}
-          {% if forloop.first %}
             <div class="col-md-5 col-print-5 inv-customer-details order-2 order-md-1 mt-4 mt-md-0">
              
               <div class="">
@@ -126,7 +124,7 @@
                    <b>Customer</b> 
                   </div>
                   <div class="w-70 inv-text-right">
-                    <b>{{orderschedule.customer_address.customer.name}}</b>
+                    <b>{{order.evaluation.customer.name}}</b>
                   </div>
                 </div>
               
@@ -135,7 +133,11 @@
                  Address
                 </div>
                 <div class="w-70 inv-text-right">
-                  {{orderschedule.customer_address.apartment}}, {% if orderschedule.customer_address.floor %}{{orderschedule.customer_address.floor}} {% else %}{% endif %} {{orderschedule.customer_address.building}},{{orderschedule.customer_address.block}}, {{orderschedule.customer_address.street}},{% if orderschedule.customer_address.avenue %}{{orderschedule.customer_address.avenue}} {% else %}{% endif %}<br>{{orderschedule.customer_address.area.name}}, {{orderschedule.customer_address.governorate.name}}
+                  {% for evaluation_detail in order.evaluation.evaluationdetails %}
+                  {% if forloop.first %}
+                  {{evaluation_detail.address.apartment}}, {% if evaluation_detail.address.floor %}{{evaluation_detail.address.floor}} {% else %}{% endif %} {{evaluation_detail.address.building}},{{evaluation_detail.address.block}}, {{evaluation_detail.address.street}},{% if evaluation_detail.address.avenue %}{{evaluation_detail.address.avenue}} {% else %}{% endif %}<br>{{evaluation_detail.address.area.name}}, {{evaluation_detail.address.governorate.name}}
+                  {% endif %}
+                  {% endfor %}
                 </div>
               </div>
            
@@ -144,7 +146,7 @@
                 Contact No
                 </div>
                 <div class="w-70 inv-text-right">
-                  {{orderschedule.customer_address.customer.mobile_number}}
+                  {{order.evaluation.customer.mobile_number}}
                 </div>
               </div>
               <div class="d-flex pt-1 inv-invoice-details pb-4">
@@ -152,7 +154,7 @@
                 Email
                 </div>
                 <div class="w-70 inv-text-right">
-                  {{orderschedule.customer_address.customer.email}}
+                  {{order.evaluation.customer.email}}
                 </div>
               </div>
                 </div>
@@ -196,45 +198,30 @@
                    {{order.evaluation.evaluation_id}}
                 </div>
               </div>
-              <div class="d-flex pt-1 inv-invoice-details pb-4">
-                <div class="w-50 inv-text-left inv-highlight-text">
-                  Cleaning Appointment(s)
-                </div>
-                <div class="w-50 inv-text-right inv-highlight-text">
-                {% for orderschedule in order.orderschedules %}
-                {% if forloop.last %}
-                   {{orderschedule.start_at|date:'d-m-Y g:iA'}}<br>
-                {% else %}
-                  {{orderschedule.start_at|date:'d-m-Y g:iA'}},<br>
-                {% endif %}
-                {% endfor %}
-                </div>
-              </div>
             </div>
-            </div>
-          {% endif %}
-          {% endfor %} 
+            </div> 
               
               
             </div>
 
-            {% for orderschedule in nonduplicate_schedules %}            
-            {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
+            {% for evaluation_detail in order.evaluation.evaluationdetails %}            
+            {% for evaluation_book in evaluation_detail.evaluationbooks %}
+            {% for book_section in evaluation_book.booksections %}
             <div class="col-md-12 col-print-12 order-3">
               <div class="inv-price-card mt-4 row">
                 <div class="col-md-8 col-print-8">
                   <div class="inv-service-title p-2 inv-text-bold">
-                    {{orderschedule.order_scheduler_book.service_type}}-{{section.section_name}}
+                    {{evaluation_book.service_type}}-{{book_section.section_name}}
                   </div>
                   <div class="d-md-flex d-print-flex">
                     <div class="p-2">
-                      Size : <span class="inv-text-bold">{{section.size}} {{section.unit|default_if_none:''}}</span>
+                      Size : <span class="inv-text-bold">{{book_section.size}} {{book_section.unit|default_if_none:''}}</span>
                     </div>
                     <div class="p-2">
-                      Quantity : <span class="inv-text-bold">{% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{section.section_cleanings|floatformat:"-1"}}{% endif %}</span>
+                      Quantity : <span class="inv-text-bold">{% if evaluation_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{book_section.section_cleanings|floatformat:"-1"}}{% endif %}</span>
                     </div>
                     <div class="p-2">
-                      Unit Price : <span class="inv-text-bold">{{section.section_cost|floatformat:'3'}}</span>
+                      Unit Price : <span class="inv-text-bold">{{book_section.section_cost|floatformat:'3'}}</span>
                     </div>
                   </div>
                 </div>
@@ -245,11 +232,7 @@
                   <div class="inv-price p-1 ">
                  
                     <span class="inv-text-bold">
-                    {% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}
-                    {{section.section_cost|floatformat:'3'}}
-                    {% else %}
-                    {{section.section_cost|mul:section.section_cleanings|floatformat:'3'}}
-                    {% endif %}
+                    {{book_section.section_cost|floatformat:'3'}}
                     </span> KD
                  
                   </div>
@@ -263,7 +246,7 @@
 
             {% endfor %}
             {% endfor %} 
-          
+            {% endfor %}
          
            
           
@@ -271,26 +254,6 @@
          <!-- <hr class="mt-3 mb-3 pl-2 pr-2 inv-divider"/>-->
           <div class="row mt-4">
             <div class=" col-md-5 col-print-5 order-2 order-md-1 mb-2 ">
-
-            {% if order.evaluation.payment_method == 'BREAKDOWN' %}
-              <div class="d-flex mt-2 ">
-                  <div class="text-left w-50 qt-sub-text">
-                      Payment Before Cleaning
-                  </div>
-                  <div class="qt-sub-text  w-50 text-center">
-                      <b class="preamount">{{order.evaluation.before_cleaning_amount|floatformat:"3"}}</b> KD
-                  </div>
-              </div>
-  
-              <div class="d-flex mt-2 ">
-                  <div class="text-left w-50 qt-sub-text">
-                     Payment After Cleaning
-                  </div>
-                  <div class="  qt-sub-text  w-50 text-center">
-                      <b class="postamount">{{order.evaluation.after_cleaning_amount|floatformat:"3"}}</b> KD
-                  </div>
-              </div>
-            {% endif %}
   
               </div>
             <div class="col-md-5 col-print-5 offset-md-1 order-1 order-md-2">
@@ -347,22 +310,7 @@
                 </div>
               </div>
               {% endif %}
-              <!-- <div class="d-flex pt-2">
-                <div class="inv-text-left w-50">
-                 Paid
-                </div>
-                <div class="inv-text-right w-50">
-                  <span class="inv-text-bold">0</span> KD
-                </div>
-              </div> -->
-              <!-- <div class="d-flex pt-2">
-                <div class="inv-text-left w-50">
-                 Amount Due
-                </div>
-                <div class="inv-text-right w-50">
-                  <span class="inv-text-bold">0</span>  KD
-                </div>
-              </div> -->
+
                 {% if order.evaluation.is_promocode_applied == True %}
                 <div class="d-flex pt-2 inv-highlight-text ">
                   <div class="inv-text-left w-50">
@@ -374,6 +322,7 @@
                     </div>
                 </div>
               {% else %}
+
               {% if order.remining_amount != 0  %}
               <div class="d-flex pt-2 inv-highlight-text ">
                 <div class="inv-text-left w-100 inv-coupon-code" data-html2canvas-ignore="true" >
@@ -406,13 +355,6 @@
                    <span class="inv-text-bold finalamount">{{order.total_amount|floatformat:"3"}}</span> KD
                  </div>
                </div>
-                {% comment %} <div class="inv-text-left  pt-1">
-              Grand Total
-                </div>
-                <div class="inv-text-right inv-text-lg pb-4 ">
-                 
-                  <span class="inv-heading finalamount" >{{order.total_amount|floatformat:"3"}}</span> KD
-                </div> {% endcomment %}
               </div>
               
             </div>
@@ -438,18 +380,7 @@
               Current Payment
             </div>
             <div class="col-6 inv-text-right pt-4 inv-text-secondary">
-               
-               {% if order.evaluation.payment_method == 'BREAKDOWN' %}
-                {% if order.evaluation.before_cleaning_amount != order.preamount_paid %}
-                <b class="preamount">{{order.evaluation.before_cleaning_amount|floatformat:'3'}}</b>
-                {% elif order.evaluation.after_cleaning_amount != order.postamount_paid %}
-                <b class="postamount">{{order.remining_amount|floatformat:'3'}}</b>
-                {% endif %}
-                {% elif order.evaluation.payment_method == 'PREPAID' %}
                 <b class="evaluationtotalamount">{{order.remining_amount|floatformat:'3'}}</b>
-                {% elif order.evaluation.payment_method == 'POSTPAID' %}
-                <b class="evaluationtotalamount">{{order.remining_amount|floatformat:'3'}}</b>
-                {% endif %}
                </b> KD
             </div>
             {% endif %}
@@ -466,44 +397,26 @@
             <div class="col-6 inv-text-right pt-1 inv-text-secondary">
             <b class="remainingamount">{{order.remining_amount|floatformat:'3'}}</b> KD
             </div>
-
-        {% if order.order_status == 'ORDER_CANCELLED' %}
-        <div class="col-12">
-              <div class="inv-current-payment p-2 mt-4 mb-4">
-                <div class="inv-text-left  pt-1">
-               Payable Amount
-                </div>
-                <div class="inv-text-right inv-text-lg pb-4 ">
-                 
-                  {% if order.evaluation.payment_method == 'BREAKDOWN' %}
-                  {% if order.evaluation.before_cleaning_amount != order.preamount_paid %}
-                    <span class="inv-heading subscriptiontopay">{{order.evaluation.before_cleaning_amount|floatformat:'3'}}</span> KD
-                  {% elif order.evaluation.after_cleaning_amount != order.postamount_paid %}
-                    <span class="inv-heading subscriptiontopay">{{order.remining_amount|floatformat:'3'}}</span> KD
-                  {% endif %}
-
-                  {% else %}
-                  <span class="inv-heading subscriptiontopay">{{order.remining_amount|floatformat:'3'}}</span> KD
-                  {% endif %}
-                </div>
-              </div>
-            </div>
-
-            <br><br><br><br>
-            <div class="col-12 payment-success text-center">
-                    <div class="mx-auto inv-completed">
-                      <img src="{% static 'files/icons/call-center.png' %}"  class="inv-success-icon"/> <br> Please contact our customer service (1882707) to update the invoice.
-                    </div>
-            </div><br><br><br><br>
         
-        {% elif order.remining_amount == 0 %}
+        {% if order.remining_amount == 0 %}
         <br><br><br><br>
         <div class="col-12 payment-success text-center">
                 <div class="mx-auto inv-completed">
                   <img src="{% static 'files/icons/checked.png' %}"  class="inv-success-icon"/> Payment Completed
 
                 </div>
-              </div><br><br><br><br>
+                <div class="inv-payment-box">
+                  <div class="inv-payment-card mt-4 text-center">
+                    <img src="{% static 'files/icons/booknpay.png' %}" class="inv-card-icon "  id="inv-cash-img"/>
+                    <div class="inv-payment-text">
+                        Book
+                    </div>
+                    <div class="inv-check-box mt-2 mb-2 mx-auto" id="inv-cash-check-box">
+                      <i class="fa fa-check inv-check-icon " id="inv-check-cash"></i>
+                    </div>
+                  </div>
+                </div>
+        </div><br><br><br><br>
 
         {% else %}
             <div class="col-12">
@@ -512,21 +425,11 @@
                Payable Amount
                 </div>
                 <div class="inv-text-right inv-text-lg pb-4 ">
-
-                {% if order.evaluation.payment_method == 'BREAKDOWN' %}
-                  {% if order.evaluation.before_cleaning_amount != order.preamount_paid %}
-                    <span class="inv-heading preamount">{{order.evaluation.before_cleaning_amount|floatformat:'3'}}</span> KD
-                  {% elif order.evaluation.after_cleaning_amount != order.postamount_paid %}
-                    <span class="inv-heading postamount">{{order.remining_amount|floatformat:'3'}}</span> KD
-                  {% endif %}
-
-                {% else %}
                   <span class="inv-heading remainingamount">{{order.remining_amount|floatformat:'3'}}</span> KD
-                {% endif %}
                 </div>
               </div>
             </div>
-            {% endif %}
+
               <div class="col-12 mt-4 inv-text-color ">
                 Payment Option
               </div>
@@ -568,11 +471,11 @@
             
               
               <div class="col-12   text-center text-white mt-4">
-                <div class="inv-btn" onclick="proceedInvoice()">
+                <div class="inv-btn" onclick="proceedBookingInvoice()">
                 Proceed
               </div>
               </div>
-        
+              {% endif %}
 
               <div class="col-5 offset-1 inv-white-btn text-center  mt-4 mb-4 " onclick="window.location.href=`/customer/test/invoice/download/paw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}`">
 
