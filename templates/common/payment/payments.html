@@ -1,7 +1,35 @@
 {% extends "base.html" %}
 {% block content %}
 {% load static %}
+<link href="{% static 'files/css/colors.css'%}" rel="stylesheet"/>
 <div class="wrapper"><!--wrapper-->
+ <!-- notes modal begins here-->
+<!-- Modal -->
+
+<div class="modal fade " id="notesModalCenter" tabindex="-1" role="dialog" aria-labelledby="notesModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered primary-modal" role="document">
+    <div class="modal-content primary-modal-border">
+      <div class="d-flex">
+        <h5 class="modal-title" id="exampleModalLongTitle">Notes</h5>
+        <button type="button" class="close ml-auto" data-dismiss="modal" aria-label="Close" style="margin-left:auto">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <!--<label for="exampleInputEmail1">Notes</label>-->
+          <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Notes">
+          <small id="emailHelp" class="form-text text-muted">Maximum 20 words</small>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn primary-btn">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+ <!-- notes modal ends here-->
 
 {% if request.user.user_type == 'SALESADMIN' %}
   {% include "salesadmin/common/header.html" %}
@@ -550,8 +578,9 @@
         <td data-label="Payment Method">
         <div class="text-center d-flex "><div class="round-marker {% if invoice.evaluation.payment_method == 'PREPAID' %}prepaid-bg{% else %}postpaid-bg{% endif %}"></div><span>{{invoice.evaluation.payment_method}}</span></div>
         </td>
-        <td class="align-center" ><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a></td>
-        </tr>
+        <td class="align-center" ><div class="d-flex"><a class="dropdown-orders d-flex" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a><div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>Lorem ipsum dolor sit</div><div>by adhil</div>"  ><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2" data-toggle="modal" data-target="#notesModalCenter"/> </div></div></td>
+ 
+      </tr>
 
         {% elif invoice.evaluation.payment_method == 'BREAKDOWN' %}
         
@@ -826,7 +855,9 @@ $('.footable').footable({
     </script>
     <script>
     //for tabs
-
+    $(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
     //hiding filter box for pending and due tabs
     $('#all-tab').on("click", function () {
       $('.filter-box').show();
