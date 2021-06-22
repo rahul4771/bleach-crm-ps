@@ -3,6 +3,7 @@ const app = new Vue({
   delimiters: ["<%", "%>"],
   data: {
     imageData: [],
+    images:[],
     ImageDetails: {
         url: "",
         file: "",
@@ -21,6 +22,7 @@ const app = new Vue({
         this.ImageDetails.url = URL.createObjectURL(converted_file);
         this.ImageDetails.file = converted_file;
         this.imageData.push(this.ImageDetails);
+        this.images.push(converted_file);
         this.ImageDetails = {
           file: "",
           url: "",
@@ -31,6 +33,7 @@ const app = new Vue({
     async onImageFileChanged(event) {
       console.log(event);
       console.log("orginal file size is" + event.target.files[0].size);
+      console.log(this.imageData,this.images,"imgd");
       var file = event.target.files[0];
 
       const options = {
@@ -57,5 +60,57 @@ const app = new Vue({
         console.log(error);
       }
     },
+
+    submitform(cleaningteam_id,cleaningtype){
+      console.log(cleaningteam_id,cleaningtype,"lop")
+      var form_items = new FormData()
+      form_items.append('team_id',cleaningteam_id)
+
+    for(var i=0;i<this.imageData.length;i++){
+      form_items.append('media',this.imageData[i].file);
+      }
+
+    if (cleaningtype == 'check-in'){
+      var form_url = url+'/api/check-in/' ;
+    }else{
+      var keynote_count = document.querySelectorAll('input[type="checkbox"]').length;
+      var checked_keynotes = document.querySelectorAll('input[type="checkbox"]:checked').length;
+      
+      console.log(keynote_count,checked_keynotes,"keyns")
+
+      if(checked_keynotes == keynote_count){
+        var form_url = url+'/api/check-out/' ;
+      }else{
+        alert("Please check all keynotes !")
+      }
+      
+    };
+     
+    if (this.imageData.length > 0){
+        axios.post(
+          form_url, form_items
+        
+       )
+       .then((response) => {
+         
+         console.log(response)
+         if (response.data.success == true){
+          window.location.href='/tl/dashboard/?my_cleaning_calendar_date='+response.data.cleaning_date+'';
+         }
+       
+        
+       })
+        .catch((error) => {
+         console.log(error,"rok");
+       
+       });
+
+      }else{
+        alert("Please add before cleaning images !")
+      }
+
+  }
+
   },
+
 });

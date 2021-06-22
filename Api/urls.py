@@ -17,6 +17,7 @@ urlpatterns = [
 
 	url(r'^section-verification-updation/$',views.SectionVerificationUpdationAPI.as_view(),name='api-section-verification-updation'),
 	url(r'^check-in/$',views.CheckInAPI.as_view(),name='api-check-in'),
+	url(r'^check-out/$',views.CheckOutAPI.as_view(),name='api-check-out'),
 
 	url(r'^shift-scheduler/$',views.ShiftScheduleAPI.as_view(),name='api-shiftschedule'),
 	url(r'^shift-scheduler-delete/(?P<shift_id>\d+)/$',views.DeleteShiftSchedule.as_view(),name='api-shiftschedule-delete'),

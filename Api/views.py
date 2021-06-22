@@ -980,31 +980,34 @@ class CheckInAPI(APIView):
 	permission_classes  	=   (AllowAny,)
 	authentication_classes  = ()
 
-	def get(self,request):
-		team_id = request.GET.get('team_id')
-		media = request.GET.getlist('media')
-		print(team_id,media,"zack")
+	def post(self,request):
+		response_dict = {}
+		response_dict['success'] = False
+
+		team_id = request.data.get('team_id')
+	
+		print(team_id,"zack")
 		try:
 			cleaning_team_detail = CleaningTeam.objects.select_related('order_scheduler__order').get(is_active=True,id=team_id)
 		except:	
 			cleaning_team_detail = None
 
-		# if not cleaning_team_detail.check_in:
-		# 	cleaning_team_detail.check_in                    = timezone.now()
-		# if not cleaning_team_detail.check_out:
-		# 	cleaning_team_detail.order_scheduler.work_status     = 'CLEANING_IN_PROGRESS'
-		# cleaning_team_detail.save()	
-		# cleaning_team_detail.order_scheduler.save()
+		if not cleaning_team_detail.check_in:
+			cleaning_team_detail.check_in                    = timezone.now()
+		if not cleaning_team_detail.check_out:
+			cleaning_team_detail.order_scheduler.work_status     = 'CLEANING_IN_PROGRESS'
+		cleaning_team_detail.save()	
+		cleaning_team_detail.order_scheduler.save()
 
 		#To Save Media
-		# medias = request.FILES.getlist('mediabefore')
-		# if not medias==['']:
-		# 	for media in medias:
-		# 		CleaningTeamMedia.objects.create(
-		# 				team_id=team_id,
-		# 				media=media,
-		# 				taken_status='BEFORE_CLEANING'
-		# 				)
+		medias = request.FILES.getlist('media')
+		if not medias==['']:
+			for media in medias:
+				CleaningTeamMedia.objects.create(
+						team_id=team_id,
+						media=media,
+						taken_status='BEFORE_CLEANING'
+						)
 
 		if cleaning_team_detail.is_section_updated == True:
 			print("send smmsr")
@@ -1032,5 +1035,66 @@ class CheckInAPI(APIView):
 				response = requests.request("GET", url, headers=headers, params=querystring)
 
 				print(message,response.text,"respo")
-		response_dict = {'success':True}
+		response_dict['success'] = True
+		response_dict['cleaning_date'] = cleaning_team_detail.start_at.date().strftime('%d-%m-%Y')
+		return Response(response_dict,HTTP_200_OK)
+
+class CheckOutAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def post(self,request):
+		response_dict = {}
+		response_dict['success'] = False
+
+		team_id = request.data.get('team_id')
+	
+		print(team_id,"zack")
+		try:
+			cleaning_team_detail = CleaningTeam.objects.select_related('order_scheduler__order').get(is_active=True,id=team_id)
+		except:	
+			cleaning_team_detail = None
+
+		#remaining teams
+		# cleaning_teams = CleaningTeam.objects.filter(order_scheduler__order_scheduler_book=cleaning_team_detail.order_scheduler.order_scheduler_book).values('order_scheduler__work_status')
+		# remaining_team = 0
+		# for team in cleaning_teams:
+		# 	if team['order_scheduler__work_status'] != 'CLEANING_FULFILLED':
+		# 		remaining_team += 1
+		
+		# print(remaining_team,"rtm")
+
+		#remaining keynotes
+		# keynotes = EvaluationSectionKeynote.objects.filter(evaluation_section__evaluation_book=cleaning_team_detail.order_scheduler.order_scheduler_book).values('completion_status')
+		# remaining_keynotes = 0
+		# if keynotes:
+		# 	for key in keynotes:
+		# 		if key['completion_status'] == False:
+		# 			remaining_keynotes += 1
+		# else:
+		# 	pass
+		# print(remaining_keynotes,"rky")
+
+
+		cleaning_team_detail.order_scheduler.work_status  		= 'CLEANING_FULFILLED'	
+		cleaning_team_detail.check_out                    		= timezone.now()
+		
+		cleaning_team_detail.order_scheduler.order.order_status = 'ORDER_IN_PROGRESS'
+		
+		cleaning_team_detail.save()
+		cleaning_team_detail.order_scheduler.save()
+		cleaning_team_detail.order_scheduler.order.save()	
+
+		#To Save Media
+		medias = request.FILES.getlist('media')
+		if not medias==['']:
+			for media in medias:
+				CleaningTeamMedia.objects.create(
+						team_id=team_id,
+						media=media,
+						taken_status='AFTER_CLEANING'
+						)
+
+		response_dict['success'] = True
+		response_dict['cleaning_date'] = cleaning_team_detail.start_at.date().strftime('%d-%m-%Y')
 		return Response(response_dict,HTTP_200_OK)
