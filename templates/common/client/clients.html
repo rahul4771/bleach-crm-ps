@@ -201,7 +201,7 @@
     <td>
         <div class="d-flex" ><div id="clientstatus{{client.id}}" class="round-marker yellow-bg"></div><span class="client-status">Not Active</span></div>        
     </td>
-    <td class="align-center"><a class="d-flex dropdown-orders" href="{% url 'common_items:client-orders' client.id %}" target="_blank" ><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Client Orders</div></a></td>
+    <td class="align-center"><a class="d-flex dropdown-orders" href="{% url 'common_items:client-orders' client.id %}" target="_blank" ><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Client Details</div></a></td>
     </tr>
 {% empty %}
     <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td></tr>    
