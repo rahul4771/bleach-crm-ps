@@ -76,6 +76,10 @@ function proceedInvoice(){
     openCashModal();
   }
 }
+function proceedBookingInvoice(){
+  var custId=window.location.href.split('/')[6]
+  window.location.href="/customer/cart?id="+custId
+}
 
 function nextStepCash(){
  
