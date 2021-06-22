@@ -28,8 +28,8 @@ class EvaluationBookSerializer(serializers.ModelSerializer):
 	evaluationsection_book = EvaluationBookSectionSerializer(many=True,read_only=True)
 	class Meta:
 		model = EvaluationBook
-		fields = ('service_type','cleaning_policy','area_type','location_type','total_cost','evaluator_note','number_of_cleaners','cleaning_hours','evaluationsection_book')
-		read_only_fields = ('service_type__name',)
+		fields = ('id','service_type__name','service_type','cleaning_policy','area_type','location_type','total_cost','evaluator_note','number_of_cleaners','cleaning_hours','evaluationsection_book')
+		read_only_fields = ('id','service_type__name')
 
 ##for data showing
 class GovernorateSerializer(serializers.ModelSerializer):
@@ -70,8 +70,8 @@ class EvaluationDetailsSerializer(serializers.ModelSerializer):
 	proposed_time                      = serializers.DateTimeField(format="%d-%m-%Y %I:%M %p ")
 	class Meta:
 		model  = EvaluationDetails
-		fields = ('evaluator','proposed_time','address','evaluation_book_evaluation_details')	
-
+		fields = ('id','evaluator','proposed_time','address','evaluation_book_evaluation_details')	
+		read_only_fields = ('id',)
 class CustomerBookingSerializer(serializers.ModelSerializer):
 	evaluation = EvaluationSerializer(read_only=True)
 	class Meta:

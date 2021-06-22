@@ -38,8 +38,8 @@
                 <div class="column-left"><img src="{% static 'files/images/card-open-tickets-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <!--  <h1>Evaluations</h1>-->
-              <h2 class="blue-text"><label>Open Tickets<span>{{follow_ups_count|default_if_none:''}}</span></label> </h2>
-              <!--<p><label>This Week <span>42</span></label></p>-->
+              <h2 class="blue-text"><label>Monthly Loss<span>{{thismonth_loss|floatformat:'2'}}</span></label> </h2>
+              <p><label>Last <span>{{lastmonth_loss|floatformat:'2'}}</span></label></p>
               </div><!--column-right-->
               </div><!--card-innerwrapper-->
             </div><!--card-column-->
