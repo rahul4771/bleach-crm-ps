@@ -1,9 +1,14 @@
 from rest_framework import serializers
 from user.models import UserProfile,Address,Governorate,Area
-from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationBookSection,EvaluationSectionKeynote
+from evaluator.models import ServiceType,Evaluation,EvaluationDetails,EvaluationBook,EvaluationBookSection,EvaluationSectionKeynote
 from order.models import Order
 from customer.models import CustomerBooking
-from agent.serializers import ServiceTypeShowSerializer
+
+class ServiceTypeSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = ServiceType
+		fields= ('name',)
+
 class UserProfileSerializer(serializers.ModelSerializer):
 	class Meta:
 		model  = UserProfile
@@ -27,7 +32,7 @@ class EvaluationBookSectionSerializer(serializers.ModelSerializer):
 
 class EvaluationBookSerializer(serializers.ModelSerializer):
 	evaluationsection_book = EvaluationBookSectionSerializer(many=True,read_only=True)
-	service_type           = ServiceTypeShowSerializer(read_only=True)
+	service_type           = ServiceTypeSerializer(read_only=True)
 	class Meta:
 		model = EvaluationBook
 		fields = ('id','service_type','cleaning_policy','area_type','location_type','total_cost','evaluator_note','number_of_cleaners','cleaning_hours','evaluationsection_book')
