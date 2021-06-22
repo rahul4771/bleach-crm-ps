@@ -234,5 +234,16 @@ Popups
 .primary-btn{
     background:#2e4e85 !important;
 }
-.tooltip-arrow,
+
+
+.tooltip-arrow{
+    display:none !important;
+}
+
 .blue-tooltip + .tooltip > .tooltip-inner {background-color: #2e4e85 !important; }
+
+
+.tooltip-subtext{
+font-size:12px;
+text-align: right;
+}
