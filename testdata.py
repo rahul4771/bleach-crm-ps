@@ -484,7 +484,7 @@ GET
    "estimated_cost":500
 }
 
-<<<<<<< HEAD
+
 #evaluatorbookingmultiplephase3/customer/
 {
    "booking_type":"together" | "seperate",
@@ -503,5 +503,3 @@ GET
          }
                     }
 }
-=======
->>>>>>> fb9d55f80be556000e1b11487a18c6aad18a9667
