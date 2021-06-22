@@ -1017,6 +1017,17 @@ class PaymentDetails(IsAuthenticated,View):
 
 		return render(request,'common/payment/payments.html',{'total_due_amount':total_due_amount,'total_due_orders':total_due_orders,'tab':tab,'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"service_types":service_types,"fil_payment_policy":fil_payment_policy,"fil_payment_status":fil_payment_status,"fil_order_status":fil_order_status,"pending_payments":pending_payments,"due_payments":due_payments})
 
+	def post(self,request):
+		order_id = request.POST.get('orderid')
+		notes = request.POST.get('payment_note')
+
+		order = Order.objects.filter(is_active=True,id=int(order_id)).first()
+		order.payment_notes = notes
+		order.payment_note_by = request.user
+		order.save()
+
+		messages.success(request,"Payment note updated !!")
+		return redirect('common_items:payments')
 
 class ActiveSubscriptions(IsAuthenticated,View):
 	def get(self,request):
