@@ -1086,10 +1086,11 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 		order_schedule    = OrderScheduler.objects.select_related('evaluation_details__evaluation','order_scheduler_book__service_type').prefetch_related(Prefetch('order_scheduler_book__evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr="evaluationmedias"),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes')),to_attr='sections')).get(is_active=True,id=scheduler_id)
 		start_at_datetime = order_schedule.start_at
 		end_at_datetime   = order_schedule.end_at
-		start_at_date     = order_schedule.start_at.date()
-		end_at_date       = order_schedule.end_at.date()
-		start_at_time     = order_schedule.start_at.time()
-		end_at_time       = order_schedule.end_at.time()
+		
+		start_at_date     = (order_schedule.start_at+timedelta(hours=3)).date()
+		end_at_date       = (order_schedule.end_at+timedelta(hours=3)).date()
+		start_at_time     = (order_schedule.start_at+timedelta(hours=3)).time()
+		end_at_time       = (order_schedule.end_at+timedelta(hours=3)).time()
 
 		#same time schedules
 		order_schedules = OrderScheduler.objects.filter(start_at=start_at_datetime,end_at=end_at_datetime,evaluation_details__evaluation=order_schedule.evaluation_details.evaluation).select_related('evaluation_details__evaluation','order_scheduler_book__service_type').prefetch_related(Prefetch('order_scheduler_book__evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr="evaluationmedias"),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes')),to_attr='sections'))		
