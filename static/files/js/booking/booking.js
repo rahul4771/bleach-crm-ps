@@ -2307,6 +2307,10 @@ responsive:{
     this.uploadImages()
     window.location.href='/evaluator/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
         }
+        else{
+          this.responseText=response.data.Error
+          this.snackbar=true
+        }
       })
        .catch((error) => {
         this.responseText=error
@@ -2357,6 +2361,10 @@ responsive:{
      
     this.uploadImages()
     window.location.href='/evaluator/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
+        }
+        else{
+          this.responseText=response.data.Error
+          this.snackbar=true
         }
       })
        .catch((error) => {
