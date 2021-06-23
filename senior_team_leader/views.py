@@ -1086,10 +1086,11 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 		order_schedule    = OrderScheduler.objects.select_related('evaluation_details__evaluation','order_scheduler_book__service_type').prefetch_related(Prefetch('order_scheduler_book__evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr="evaluationmedias"),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes')),to_attr='sections')).get(is_active=True,id=scheduler_id)
 		start_at_datetime = order_schedule.start_at
 		end_at_datetime   = order_schedule.end_at
-		start_at_date     = start_at_datetime.date()
-		end_at_date       = end_at_datetime.date()
-		start_at_time     = start_at_datetime.time()
-		end_at_time       = end_at_datetime.time()
+		
+		start_at_date     = (order_schedule.start_at+timedelta(hours=3)).date()
+		end_at_date       = (order_schedule.end_at+timedelta(hours=3)).date()
+		start_at_time     = (order_schedule.start_at+timedelta(hours=3)).time()
+		end_at_time       = (order_schedule.end_at+timedelta(hours=3)).time()
 
 		#same time schedules
 		order_schedules = OrderScheduler.objects.filter(start_at=start_at_datetime,end_at=end_at_datetime,evaluation_details__evaluation=order_schedule.evaluation_details.evaluation).select_related('evaluation_details__evaluation','order_scheduler_book__service_type').prefetch_related(Prefetch('order_scheduler_book__evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr="evaluationmedias"),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes')),to_attr='sections'))		
@@ -1110,14 +1111,13 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 		leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_leaders))).filter(id__in=shift_leaders)
 		cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_cleaners))).filter(id__in=shift_cleaners)
 
-		print(order_schedules,"order_schedules")
+		print(start_at_date,"start_at_date")
+		print(start_at_time,"start_at_time")
 		print(sameblc_cleaners,"sameblc_cleaners")
 		print(active_cleaners1,"active_cleaners1")
 		print(active_cleaners2,"active_cleaners2")
 		print(shift_cleaners,"shift_cleaners")
 		print(shift_leaders,"shift_leaders")
-		print(absent_cleaners,"absent_cleaners")
-		print(absent_leaders,"absent_leaders")
 		print(leaders,"leaders")
 		print(cleaners,"cleaners")
 
