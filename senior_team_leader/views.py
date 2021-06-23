@@ -16,7 +16,7 @@ from django.db.models.functions import Cast
 from django.db.models import Prefetch
 from django.contrib import messages
 
-from user.models import UserProfile,Address,Governorate,Area,ShiftSchedule,LeaveSchedule
+from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationBookSection,EvaluationSectionKeynote,EvaluationMedia,ServiceType
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowUp,Investigation,InvestigationMedia,FollowUpSection,FollowUpSectionKeynote,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,Reporting,ReportingMedia
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
@@ -1092,6 +1092,9 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 		active_cleaners1 	= CleaningTeamMember.objects.filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).exclude(member__id__in=sameblc_cleaners).values_list("member",flat=True)
 		active_cleaners2 	= FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at))|Q(Q(end_at__gte=order_schedule.start_at)&Q(end_at__lte=order_schedule.end_at))|Q(Q(start_at__lte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__gte=order_schedule.end_at))|Q(Q(start_at__gte=order_schedule.start_at)&Q(end_at__gte=order_schedule.start_at)&Q(start_at__lte=order_schedule.end_at)&Q(end_at__lte=order_schedule.end_at)))).values_list("member",flat=True)
 
+		print(ShiftSchedule.objects.all())
+		print(order_schedule.start_at.date())
+		print(order_schedule.end_at.date())
 		#included shift cleaners
 		shift_cleaners  = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=order_schedule.start_at.date())|Q(shift_date=order_schedule.end_at.date()))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=order_schedule.start_at.time())&Q(shift1_end_at__gte=order_schedule.start_at.time()))&Q(Q(shift1_start_at__lte=order_schedule.end_at.time())&Q(shift1_end_at__gte=order_schedule.end_at.time()))) | Q(Q(Q(shift2_start_at__lte=order_schedule.start_at.time())&Q(shift2_end_at__gte=order_schedule.start_at.time()))&Q(Q(shift2_start_at__lte=order_schedule.end_at.time())&Q(shift2_end_at__gte=order_schedule.end_at.time())))).values_list('staff',flat=True)
 		shift_leaders   = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=order_schedule.start_at.date())|Q(shift_date=order_schedule.end_at.date()))).filter(staff__user_type='TEAMINCHARGE').filter(Q(Q(Q(shift1_start_at__lte=order_schedule.start_at.time())&Q(shift1_end_at__gte=order_schedule.start_at.time()))&Q(Q(shift1_start_at__lte=order_schedule.end_at.time())&Q(shift1_end_at__gte=order_schedule.end_at.time()))) | Q(Q(Q(shift2_start_at__lte=order_schedule.start_at.time())&Q(shift2_end_at__gte=order_schedule.start_at.time()))&Q(Q(shift2_start_at__lte=order_schedule.end_at.time())&Q(shift2_end_at__gte=order_schedule.end_at.time())))).values_list('staff',flat=True)
