@@ -1110,6 +1110,17 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 		leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_leaders))).filter(id__in=shift_leaders)
 		cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_cleaners))).filter(id__in=shift_cleaners)
 
+		print(order_schedules,"order_schedules")
+		print(sameblc_cleaners,"sameblc_cleaners")
+		print(active_cleaners1,"active_cleaners1")
+		print(active_cleaners2,"active_cleaners2")
+		print(shift_cleaners,"shift_cleaners")
+		print(shift_leaders,"shift_leaders")
+		print(absent_cleaners,"absent_cleaners")
+		print(absent_leaders,"absent_leaders")
+		print(leaders,"leaders")
+		print(cleaners,"cleaners")
+
 		return render(request,'stl/cleaning/cleaningteam_assign.html',{'order_schedule':order_schedule,'order_schedules':order_schedules,'cleaners':cleaners,'leaders':leaders})
 
 	def post(self,request,scheduler_id):
