@@ -686,7 +686,7 @@
       Select  Slots
     </div>
 <div class="row mt-2" style="margin:0 !important">
-  <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex">
+  <div class="col-md-4" v-for="(slot,sindex) in bookingonetimeslots" v-bind:key="sindex">
     <div class="time-slot duration text-center p-2" 
    @click="addOneTimeSlot(slot.start_time,slot.end_time,(sindex+1))" v-if='!one_time_slots[oneTimeDateSelected].slots.includes((sindex+1)) && checkOneTimeSlotStat((sindex+1))'>
      <% slot.start_time+' - '+ slot.end_time %>
@@ -698,6 +698,15 @@
     <div class="time-slot duration-inactive text-center p-2"  v-if='!checkOneTimeSlotStat((sindex+1)) && !one_time_slots[oneTimeDateSelected].slots.includes((sindex+1))'>
       <% slot.start_time+' - '+ slot.end_time %>
     </div>
+  </div>
+  <div class="col-md-12" v-if="bookingonetimeslots.length<1">
+    <v-alert
+      dense
+      outlined
+      type="error"
+    >
+      Cleaners not available. Please try another date.
+    </v-alert>
   </div>
   <div class="col-md-12 ">
     <div v-if="oneTimeSlotCounter()<1">
@@ -1210,7 +1219,7 @@ width="1000"
     v-model="validOtherServiceDialog"
   >
       <v-card-title class="headline primary text-white">
-        <% dialogmsg + " " + serviceType.split(" ")[0] %>
+     
       </v-card-title>
 
       <v-card-text>
@@ -1590,6 +1599,26 @@ width="1000"
                       <div class="ev-booking-title">
                         Services
                       </div>
+                      <div class="row mt-4" >
+                        <div class="col-md-3" v-for="(service,sindex) in bookingServicesBill" v-bind:key="sindex">
+                          <div class="cart-item-card justify-center">
+                            <div class="d-flex">
+                                
+                                <div class="text-center w-100">
+                                 <b><% service.service %></b> 
+                                </div>
+                             
+                            </div>
+                        
+                            
+                            
+                           
+                          </div>
+                        </div>
+                       
+                     
+                      </div>
+                      </div>
                      
                       <div>
                         <v-switch
@@ -1653,13 +1682,13 @@ width="1000"
                           </div>
                           <div class="cart-card-items">
                           <div v-for="(bill,bindex) in service.bill" v-bind:key="bindex">
-                            <div><b><% bill.name%></b></div>
+                            <div><b><% bill.section_name %></b></div>
                             <div class="d-flex mt-1">
                               <div >
-                               <% bill.section.size.name %>
+                               <% bill.size %>
                               </div>
                               <div class="ml-auto primary-green-text" >
-                                KD <% bill.section.section_cost %>
+                                KD <% bill.section_net_cost %>
                               </div>
                             </div>
                           </div>
@@ -1751,7 +1780,8 @@ width="1000"
     </v-btn>
     <v-btn
       class="ma-2 text-white"
-     @click="goToPaymentDialog()"
+      @click="bookLetCustService()"
+     
       color="#289bac"
       v-if="scheduleStatChecker()"
     >

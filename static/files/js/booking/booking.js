@@ -131,6 +131,7 @@ const app=new Vue({
     validOtherService:true,
     validOtherServiceDialog:true,
     hallway_check:false,
+    scheduleGroup:{},
    
     selectedCategory:'Detailed Cleaning',
   name: '',
@@ -530,7 +531,8 @@ reconfirmation_dialog:false,
 userid:'',
 snackbar:false,
 responseText:'',
-parsedTimeSlots:[]
+parsedTimeSlots:[],
+scheduleStatus:false
 
       },
       methods: {
@@ -672,7 +674,12 @@ parsedTimeSlots:[]
           }
         },
         addOneTimeToSchedule(){
-          
+          if(this.scheduleStat){
+            this.scheduleStatus=true
+          }
+          else{
+            this.scheduleStatus=false
+          }
           
             for(var j=0;j<this.schedule_serviceTypes_selected.length;j++){
               this.onetime_scheduled[this.schedule_serviceTypes_selected[j]]={
@@ -701,13 +708,28 @@ parsedTimeSlots:[]
               count=count+1
             }
           }
+          for(var k=0;k<this.schedule_serviceTypes_selected;k++)
+          {
+            for(var sch in this.scheduleGroup){
+              
+             if(this.scheduleGroup[sch].includes(this.schedule_serviceTypes_selected[k])){
+               var index=this.scheduleGroup[sch].indexOf(this.schedule_serviceTypes_selected[k])
+               console.log("index is"+index)
+               this.scheduleGroup[sch].splice(index,1)
+             }
+             }
+            }
+          var groundid=Object.keys(this.scheduleGroup).length
+          this.scheduleGroup[groundid]=[ ...this.schedule_serviceTypes_selected ]
           this.selected_onetime_slots={}
 
           this.onetime_scheduled={}
           this.oneTimeSelectionStat=false
           this.schedule_serviceTypes_selected=[]
-         // this.oneTimeDateSelected=''
-         //this.one_time_slots={}
+         this.oneTimeDateSelected=this.today
+         this.dateSelected=this.today
+         this.formatDate()
+         this.one_time_slots={}
           this.activeTab='Cart'
         },
         addAllServiceTypes(){
@@ -724,7 +746,12 @@ parsedTimeSlots:[]
         },
         addToSchedule(){
           
-          
+          if(this.scheduleStat){
+            this.scheduleStatus=true
+          }
+          else{
+            this.scheduleStatus=false
+          }
             for(var i=0;i<this.schedule_serviceTypes_selected.length;i++){
               
               this.scheduleFormat.individual[this.schedule_serviceTypes_selected[i]]={
@@ -751,6 +778,19 @@ parsedTimeSlots:[]
             }
            
           }
+          for(var k=0;k<this.schedule_serviceTypes_selected;k++)
+          {
+            for(var sch in this.scheduleGroup){
+              
+             if(this.scheduleGroup[sch].includes(this.schedule_serviceTypes_selected[k])){
+               var index=this.scheduleGroup[sch].indexOf(this.schedule_serviceTypes_selected[k])
+               console.log("index is"+index)
+               this.scheduleGroup[sch].splice(1,index)
+             }
+             }
+            }
+          var groundid=Object.keys(this.scheduleGroup).length
+          this.scheduleGroup[groundid]={ ...this.schedule_serviceTypes_selected }
 
           this.visits=[]
           this.selected_double_slots=[]
@@ -2246,12 +2286,9 @@ responsive:{
     const params = Object.fromEntries(urlSearchParams.entries());
    this.userid=window.location.href.split('/')[5]
    var posturl=''
-   if(this.scheduleStat){
+   if(this.scheduleStatus){
      posturl='/customer/evaluatorbookingmultiplephase2/together/'
-   }
-   else{
-    posturl='/customer/evaluatorbookingmultiplephase2/seperate/'
-   }
+   
     axios
       .post(
          this.url+posturl+this.userid+'/',this.serviceDetails
@@ -2275,6 +2312,52 @@ responsive:{
         this.responseText=error
         console.log(error);
       });
+    }
+    else{
+     this.seperateMultiBook()
+    }
+  },
+  seperateMultiBook(){
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const params = Object.fromEntries(urlSearchParams.entries());
+   this.userid=window.location.href.split('/')[5]
+    var  posturl='/customer/evaluatorbookingmultiplephase2/together/'
+    
+    for(var sch in this.scheduleGroup)
+    {
+      var groupData={}
+    for(var i=0;i<this.scheduleGroup[sch].length;i++){
+      var data=this.scheduleGroup[sch]
+      console.log("service details is"+JSON.stringify(this.serviceDetails))
+      groupData[i]={...this.serviceDetails.service_details[data[i]]}
+    }
+    axios
+      .post(
+         this.url+posturl+this.userid+'/',groupData
+       
+      )
+      .then((response) => {
+        
+        console.log("booking details is "+response)
+        this.phase2Result=response.data
+        groupData={}
+        if(response.data.success)
+        {
+        this.responseText='Booking Successful'
+        this.snackbar=true
+      //  this.getBookingDetails(response.data.booking_id)
+     
+    this.uploadImages()
+    window.location.href='/evaluator/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
+        }
+      })
+       .catch((error) => {
+        this.responseText=error
+        console.log(error);
+      });
+
+
+  }
   },
   bookCustService(){
     this.userid=window.location.href.split('/')[5]
