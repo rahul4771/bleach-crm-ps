@@ -1148,8 +1148,8 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 			if	cleaning_team_assign_form.is_valid() and check_cleaners.count() >= len(assigned_cleaners) and check_tl:
 				cleaning_team_assign_form_save                   = cleaning_team_assign_form.save(commit=False)
 				cleaning_team_assign_form_save.order_scheduler   = order_schedule
-				cleaning_team_assign_form_save.start_at          = order_schedule.start_at
-				cleaning_team_assign_form_save.end_at            = order_schedule.end_at
+				cleaning_team_assign_form_save.start_at          = start_at_datetime
+				cleaning_team_assign_form_save.end_at            = end_at_datetime
 				cleaning_team_assign_form_save.created_by        = request.user
 				cleaning_team_assign_form_save.save()
 
@@ -1159,12 +1159,10 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 				order_schedule.save()
 				
 				#cleaners
-				start_at_to_assign=(order_schedule.start_at+timedelta(hours=3)).time()
-				end_at_to_assign  =(order_schedule.end_at+timedelta(hours=3)).time()
 				assigned_cleaners_list   = []
 				for cleaner in assigned_cleaners:
-					assigned_cleaners_list.append(CleaningTeamMember(team=cleaning_team_assign_form_save,member_id=cleaner,start_at=order_schedule.start_at,end_at=order_schedule.end_at,start_time=start_at_to_assign,end_time=end_at_to_assign))
-				assigned_cleaners_list.append(CleaningTeamMember(team=cleaning_team_assign_form_save,member=cleaning_team_assign_form_save.team_leader,start_at=order_schedule.start_at,end_at=order_schedule.end_at,start_time=start_at_to_assign,end_time=end_at_to_assign))
+					assigned_cleaners_list.append(CleaningTeamMember(team=cleaning_team_assign_form_save,member_id=cleaner,start_at=start_at_datetime,end_at=end_at_datetime,start_time=start_at_time,end_time=end_at_time))
+				assigned_cleaners_list.append(CleaningTeamMember(team=cleaning_team_assign_form_save,member=cleaning_team_assign_form_save.team_leader,start_at=start_at_datetime,end_at=end_at_datetime,start_time=start_at_time,end_time=end_at_time))
 				#bulk create
 				CleaningTeamMember.objects.bulk_create(assigned_cleaners_list)	
 
