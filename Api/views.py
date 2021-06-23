@@ -172,6 +172,8 @@ class EvaluationDetailsList(APIView):
 			evaluators = None
 			evaluation_details = None
 
+		print(evaluation_details.evaluation.evaluation_id,"evid")
+
 		try:
 			customer_booking = CustomerBooking.objects.get(booking_type='EVALUATIONBOOKING',evaluation__id=evaluation_details.evaluation.id)
 			booking_id = customer_booking.booking_id
@@ -210,6 +212,9 @@ class EvaluationDetailsList(APIView):
 		if evaluation_details.evaluation.call_attender:
 			response_dict["agent"]=evaluation_details.evaluation.call_attender.name 
 		
+		if evaluation_details.status == 'EVALUATED':
+			response_dict["blc_number"]=evaluation_details.evaluation.evaluation_id
+
 		response_dict["agent_notes"]=evaluation_details.attender_note
 		response_dict["customer"]=evaluation_details.evaluation.customer.name 
 		response_dict["customer_mobile"]=evaluation_details.evaluation.customer.mobile_number 

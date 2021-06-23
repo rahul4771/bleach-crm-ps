@@ -38,8 +38,8 @@
                 <div class="column-left"><img src="{% static 'files/images/card-open-tickets-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <!--  <h1>Evaluations</h1>-->
-              <h2 class="blue-text"><label>Open Tickets<span>{{follow_ups_count|default_if_none:''}}</span></label> </h2>
-              <!--<p><label>This Week <span>42</span></label></p>-->
+              <h2 class="blue-text"><label>Monthly Loss<span>{{thismonth_loss|floatformat:'2'}}</span></label> </h2>
+              <p><label>Last <span>{{lastmonth_loss|floatformat:'2'}}</span></label></p>
               </div><!--column-right-->
               </div><!--card-innerwrapper-->
             </div><!--card-column-->
@@ -179,11 +179,11 @@
  
 <thead>
 <tr>
-<th>Order Number</th>
+<th>Ticket Number</th>
 <th data-hide="phone,tablet">Name</th>
 <th data-hide="phone">Area</th>
 <th data-hide="phone,tablet">Investigator </th>
-<th>Contact</th>
+<th>Ticket Type(s)</th>
 <th data-hide="phone,tablet">Status</th>
 <th class="align-center" data-hide="phone,tablet">Shortcuts</th>
 </tr>
@@ -207,7 +207,7 @@
     {{ticket.investigation.order_schedule.customer_address.area.name}}
     </td>
     <td>{{ticket.investigation.investigator.name}}</td>
-    <td>{{ticket.investigation.order_schedule.order.evaluation.customer.mobile_number}}</td> 
+    <td>{{ticket.investigation.ticket_types}}</td> 
     <td>
     {% if ticket.status == 'FOLLOWUP_IN_PROGRESS' %}
     <div class=" d-flex" ><div class="round-marker ticket-in-progress-status-bg"></div><span>In Progress</span></div>     

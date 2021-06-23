@@ -143,7 +143,6 @@
           <div id="id_verified" style="display: none;"  class="mb-5">
             <button class="cleaning-status-button-1" > <i class="fa fa-check cleaning-status-button-round ml-5" aria-hidden="true"></i> Verifed</button>
         </div>
-      {% endif %}
 
         <div id="id_done_update" style="display: none;"   class="mb-5">
             <button class="cleaning-status-button-1" > <i class="fa fa-check cleaning-status-button-round ml-5" aria-hidden="true"></i> Updated</button>
@@ -155,6 +154,10 @@
         <div onclick="doneSizeEdit()" style="display: none;" id="id_done">
             <button class="cleaning-status-button-done" onclick="sectionupdate({{section.id}},'updated')">Done</button>
         </div>
+        
+      {% endif %}
+
+        
       </div>
   </div>
   {% endif %}

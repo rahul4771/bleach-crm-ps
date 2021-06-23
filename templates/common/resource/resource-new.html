@@ -164,7 +164,7 @@
 
 
                             <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar"
-                                    placeholder="Search Worker Name Here" value="{{search|default_if_none:''}}" onchange="set_params_go()">
+                                    placeholder="Search Worker Name Here" value="{{search|default_if_none:''}}" onchange="set_params_go();">
                             <span id="resource_search"><img class="search-icon"
                                     src="{% static 'files/images/search-icon.png' %}"></span>
                             </span>
@@ -754,7 +754,7 @@
 
     function set_params_go(args)
             {
-            var url='{% url 'common_items:resource-management-new' %}';
+            var url='{% url 'common_items:resource-management' %}';
             var params={workers_calendar_date:$('#working_calendar_date').val(),search:$('#search-bar').val(),staff_type:$('#staff_type_filter_id').val(),service_type:$('#service_type_filter_id').val(),starting_time:$('#starting_id').val(),ending_time:$('#ending_id').val()
             };
             for(key in args) 
@@ -764,12 +764,7 @@
                 if(params[key]) 
                     query+='&'+key+'='+params[key].toString();
             query=query.replace('&','?');
-            // window.location.href=url+query;  
-            $( "#refresh" ).load(url+query + " #refresh" );
+            window.location.href=url+query;  
             }
-
-   
-
-
 </script>
 {% endblock %}

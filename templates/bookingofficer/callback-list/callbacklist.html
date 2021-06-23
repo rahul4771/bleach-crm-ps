@@ -84,6 +84,7 @@
 <option value="PENDING" {% if order_status == 'PENDING' %}selected{% endif %}>PENDING</option>
 <option value="REJECTED" {% if order_status == 'REJECTED' %}selected{% endif %}>REJECTED</option>
 <option value="EXPIRED" {% if order_status == 'EXPIRED' %}selected{% endif %}>EXPIRED</option>
+<option value="APPROVED_NOT_PAID" {% if order_status == 'APPROVED_NOT_PAID' %}selected{% endif %}>APPROVED-NOT PAID</option>
 </select>
 </label>
 
@@ -123,7 +124,7 @@
 
     {% for evaluation in evaluations %}
     <tr>
-    <td {% if evaluation.quatation_status == 'REJECTED' %}class="red-line clickable-row"{% elif evaluation.quatation_status == 'PENDING' %}class="yellow-line clickable-row"{% elif evaluation.quatation_status == 'EXPIRED' %}class="orange-line clickable-row"{%else%}class="blue-line clickable-row"{%endif%} {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' order.id %}"{% endfor %}{% endif %}>{{evaluation.evaluation_id}}</td>    
+    <td {% if evaluation.quatation_status == 'REJECTED' %}class="red-line clickable-row"{% elif evaluation.quatation_status == 'PENDING' %}class="yellow-line clickable-row"{% elif evaluation.quatation_status == 'EXPIRED' %}class="orange-line clickable-row"{%else%}class="approved-not-paid-line"{%endif%} {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' order.id %}"{% endfor %}{% endif %}>{{evaluation.evaluation_id}}</td>    
     <td>{{evaluation.customer.name|default_if_none:''}}</td>
     <td>{{evaluation.customer.mobile_number|default_if_none:''}}</td>
 
@@ -140,7 +141,7 @@
         {% elif evaluation.quatation_status == 'PENDING' %}<div {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="d-flex "><div class="round-marker yellow-bg"></div><span>PENDING</span></div>
         {% elif evaluation.quatation_status == 'EXPIRED' %}<div {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="d-flex "><div class="round-marker orange-bg"></div><span>EXPIRED</span></div>
         {% else %}
-        <span data-href="#" class="blue-bg clickable-row">Evaluating</span>
+        <div  class="d-flex "><div class="round-marker approved-not-paid-status-bg"></div><span>Approved-Not Paid</span></div>
         {%endif%}
     </td>
 

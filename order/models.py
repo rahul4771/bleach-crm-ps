@@ -133,7 +133,9 @@ class Order(models.Model):
 	cancell_requester   = models.ForeignKey(UserProfile,blank=True,null=True,related_name='cancellrequesting_user')
 	cancelled_by        = models.ForeignKey(UserProfile,blank=True,null=True,related_name='cancelled_user')   
 	cancell_note        = models.CharField(max_length=5000,blank=True,null=True)
-
+	payment_notes		= models.CharField(max_length=1000,blank=True,null=True)
+	payment_note_by		= models.ForeignKey(UserProfile,blank=True,null=True,related_name='payment_note_user')
+	
 	created_by      = models.ForeignKey(UserProfile,blank=True,null=True)
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
 	created         = models.DateTimeField(auto_now_add=True)
