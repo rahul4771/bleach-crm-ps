@@ -4609,7 +4609,9 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 			active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=start_date_time)&Q(start_at__lte=end_date_time))|Q(Q(end_at__gte=start_date_time)&Q(end_at__lte=end_date_time))|Q(Q(start_at__lte=start_date_time)&Q(end_at__gte=start_date_time)&Q(start_at__lte=end_date_time)&Q(end_at__gte=end_date_time))|Q(Q(start_at__gte=start_date_time)&Q(end_at__gte=start_date_time)&Q(start_at__lte=end_date_time)&Q(end_at__lte=end_date_time))))
 			
 			for service_detail in services.keys():
-				service        		= ServiceType.objects.get(id=services[service_detail]['service_type'])
+				service        		= ServiceType.objects.get(id=int(services[service_detail]['service_type']))
+				print(service,"service")
+				print(services[service_detail]['service_type'],"service id")
 				service_type   		= service.name
 
 				if service_type == 'General Cleaning':
@@ -4748,7 +4750,7 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 				cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_cleaners))).filter(id__in=shift_cleaners)
 
 				for service_detail in services.keys():
-					service        		= ServiceType.objects.get(id=services[service_detail]['service_type'])
+					service        		= ServiceType.objects.get(id=int(services[service_detail]['service_type']))
 					service_type   		= service.name 			
 				
 					if service_type == 'General Cleaning':
