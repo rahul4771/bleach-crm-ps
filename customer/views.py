@@ -4838,10 +4838,9 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 
 							return Response(response_dict,HTTP_200_OK)
 
-			# service_dict[saved_service.id] = saved_service.service_type.name				
+			service_dict[saved_service.id] = saved_service				
 		
 		response_dict['evaluation_book_ids'] = service_dict
-		response_dict['booking_id']          = customerbooking.booking_id
 		response_dict['success']             = True
 
 		return Response(response_dict,HTTP_200_OK)
