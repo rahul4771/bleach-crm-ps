@@ -1101,8 +1101,8 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 		active_cleaners2 	= FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=start_at_datetime)&Q(start_at__lte=end_at_datetime))|Q(Q(end_at__gte=start_at_datetime)&Q(end_at__lte=end_at_datetime))|Q(Q(start_at__lte=start_at_datetime)&Q(end_at__gte=start_at_datetime)&Q(start_at__lte=end_at_datetime)&Q(end_at__gte=end_at_datetime))|Q(Q(start_at__gte=start_at_datetime)&Q(end_at__gte=start_at_datetime)&Q(start_at__lte=end_at_datetime)&Q(end_at__lte=end_at_datetime)))).values_list("member",flat=True)
 
 		#included shift cleaners & exclude absent cleaners & exclude active cleaners
-		shift_cleaners  = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_at_date)|Q(shift_date=end_at_date))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=start_at_time)&Q(shift1_end_at__gte=start_at_time))&Q(Q(shift1_start_at__lte=end_at_time)&Q(shift1_end_at__gte=end_at_time))) | Q(Q(Q(shift2_start_at__lte=start_at_time)&Q(shift2_end_at__gte=start_at_time))&Q(Q(shift2_start_at__lte=end_at_time)&Q(shift2_end_at__gte=end_at_time)))).values_list('staff',flat=True)
-		shift_leaders   = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_at_date)|Q(shift_date=end_at_date))).filter(staff__user_type='TEAMINCHARGE').filter(Q(Q(Q(shift1_start_at__lte=start_at_time)&Q(shift1_end_at__gte=start_at_time))&Q(Q(shift1_start_at__lte=end_at_time)&Q(shift1_end_at__gte=end_at_time))) | Q(Q(Q(shift2_start_at__lte=start_at_time)&Q(shift2_end_at__gte=start_at_time))&Q(Q(shift2_start_at__lte=end_at_time)&Q(shift2_end_at__gte=end_at_time)))).values_list('staff',flat=True)
+		shift_cleaners  = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_at_date)|Q(shift_date=end_at_date))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=start_at_datetime)&Q(shift1_end_at__gte=start_at_datetime))&Q(Q(shift1_start_at__lte=end_at_datetime)&Q(shift1_end_at__gte=end_at_datetime))) | Q(Q(Q(shift2_start_at__lte=start_at_datetime)&Q(shift2_end_at__gte=start_at_datetime))&Q(Q(shift2_start_at__lte=end_at_datetime)&Q(shift2_end_at__gte=end_at_datetime)))).values_list('staff',flat=True)
+		shift_leaders   = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_at_date)|Q(shift_date=end_at_date))).filter(staff__user_type='TEAMINCHARGE').filter(Q(Q(Q(shift1_start_at__lte=start_at_datetime)&Q(shift1_end_at__gte=start_at_datetime))&Q(Q(shift1_start_at__lte=end_at_datetime)&Q(shift1_end_at__gte=end_at_datetime))) | Q(Q(Q(shift2_start_at__lte=start_at_datetime)&Q(shift2_end_at__gte=start_at_datetime))&Q(Q(shift2_start_at__lte=end_at_datetime)&Q(shift2_end_at__gte=end_at_datetime)))).values_list('staff',flat=True)
 
 		absent_cleaners = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=start_at_date)|Q(leave_date=end_at_date))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
 		absent_leaders  = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=start_at_date)|Q(leave_date=end_at_date))).filter(staff__user_type='TEAMINCHARGE').values_list('staff',flat=True)
@@ -1110,14 +1110,13 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 		leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_leaders))).filter(id__in=shift_leaders)
 		cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_cleaners))).filter(id__in=shift_cleaners)
 
+
 		print(order_schedules,"order_schedules")
 		print(sameblc_cleaners,"sameblc_cleaners")
 		print(active_cleaners1,"active_cleaners1")
 		print(active_cleaners2,"active_cleaners2")
 		print(shift_cleaners,"shift_cleaners")
 		print(shift_leaders,"shift_leaders")
-		print(absent_cleaners,"absent_cleaners")
-		print(absent_leaders,"absent_leaders")
 		print(leaders,"leaders")
 		print(cleaners,"cleaners")
 
