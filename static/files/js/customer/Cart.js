@@ -573,8 +573,13 @@ $(document).ready(function(){
     lang:'en',
     arabic:false,
     selectedBooking:'Cleaning',
-    custId:''
+    custId:'',
+    gotData:false,
+    bookingServicesBill:[],
+    bookingonetimeslots:[],
+    multiAddress:true
         },
+     
 /* header data */
 
 
@@ -634,6 +639,7 @@ $(document).ready(function(){
                 this.multiServicesBill.push({
                     area_type:"APARTMENT",
                     bill:[],
+                    
                     evaluator_note:"wdwdwd",
                     location_type:"Fully Furnished",
                     service:"General Cleaning",
@@ -685,7 +691,7 @@ $(document).ready(function(){
               }
             }
             
-            this.calcSlots()
+            this.getMultipleSlots()
           },
           resetScheduler(){
             this.cleaningPolicy='',
@@ -2336,11 +2342,20 @@ $(document).ready(function(){
     getMultipleSlots(){
       axios
         .post(
-           this.url+"/customer/ajax/getmultipleservicecleaningslotes",{service_types:this.serviceTypes,cleaning_date:this.slotDate,number_of_cleaners:this.selectedDuration.cleaners}
+           this.url+"/customer/ajax/getmultipleservicecleaningslotes",{service_types:this.schedule_serviceTypes,cleaning_date:this.oneTimeDateSelected,number_of_cleaners:this.selectedDuration.cleaners}
          
         )
         .then((response) => {
            this.timeSlots = response.data.slotes;
+           for(var i in this.timeSlots){
+            if(this.timeSlots[i].includes(2)){
+              var slotNo=(parseInt(i)+2)/2
+    
+              this.bookingonetimeslots.push(this.slotFormat[String(slotNo)])
+              
+              
+            }
+          }
            if(response.data.Error){
              this.errMsg=response.data['Error']
            }
@@ -3423,59 +3438,17 @@ $(document).ready(function(){
   
             var data = response.data;
           console.log(data);
-          //to find total size and manhour
-          if (selected_service == "Upholstery Cleaning") {
-            var total_sofa_size = this.sofa_size;
-            var total_chair_size = this.chair_size;
-           // var total_curtain_size = 750;
-            var manhour =
-              parseInt(total_sofa_size / data["sofa_perhour_cleaning"]) +
-              parseInt(total_chair_size / data["chair_perhour_cleaning"]);
-              console.log("up manhour is "+manhour)
-          } else if (selected_service == "Facade Cleaning") {
-            var total_highpricefacade_size = 400;
-            var total_lowpricefacade_size = 400;
-            var manhour =
-              parseInt(
-                total_highpricefacade_size /
-                  data["highpricefacade_perhour_cleaning"]
-              ) +
-              parseInt(
-                total_lowpricefacade_size /
-                  data["lowpricefacade_perhour_cleaning"]
-              );
-          } else if (selected_service == "Kitchen Cleaning") {
-            var total_newkitchen_size = this.new_kitchen_size;
-            var total_oldkitchen_size = this.old_kitchen_size;
-            var manhour =
-              parseInt(
-                total_newkitchen_size / data["newkitchen_perhour_cleaning"]
-              ) +
-              parseInt(
-                total_oldkitchen_size / data["oldkitchen_perhour_cleaning"]
-              );
-          } else if (selected_service == "Window Cleaning") {
-            var total_highpricewindow_size = 400;
-            var total_lowpricewindow_size = 400;
-            var manhour =
-              parseInt(
-                total_highpricewindow_size /
-                  data["highpricewindow_perhour_cleaning"]
-              ) +
-              parseInt(
-                total_lowpricewindow_size /
-                  data["lowpricewindow_perhour_cleaning"]
-              );
-          } else {
-            var total_estimated_size = this.total_size;
+          var total_estimated_size =0
+            for(var i=0;i<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;i++)
+            {
+              total_estimated_size = total_estimated_size+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[i].size;
+            }
+           
             var productivity = data["perhour_cleaning"];
             console.log("productivity is "+productivity)
             var manhour = parseInt(total_estimated_size / productivity);
-          }
-          console.log("size estimated is" + total_estimated_size);
-           console.log("sofa size estimated is" + total_sofa_size);
-             console.log("chair size estimated is" + total_chair_size)
-             console.log("manhour  estimated is" + manhour);
+          
+       
           //optimal finding
           this.totalmanhour=this.totalmanhour+manhour
           console.log("total man hour is "+this.totalmanhour)
@@ -4180,10 +4153,69 @@ prevService(){
 
 },
 getBookedServices(){
+  this.multiServicesBill=[]
   axios.get(this.url+'/customer/evaluatorbookingmultiplephase3/customer/'+this.custId).then(response=>{
-    this.bookedServiceDetails=response.evaluation_details
+    this.bookedServiceDetails=response.data.evaluation_details
+    console.log("booked service is"+JSON.stringify(this.bookedServiceDetails))
+    var serviceBookedDetails=this.bookedServiceDetails[0].evaluation_book_evaluation_details
+    for(var i=0;i<serviceBookedDetails.length;i++)
+    {
+      var scheduleDetails={
+        id:this.bookedServiceDetails[0].id,
+        evaluation_details_id:serviceBookedDetails[i].id,
+        area_type:serviceBookedDetails[i].area_type,
+        bill:[],
+        evaluator_note:serviceBookedDetails[i].evaluator_note,
+        location_type:serviceBookedDetails[i].location_type,
+        schedule_details:{},
+        service:serviceBookedDetails[i].service_type.name,
+        total_cost:serviceBookedDetails[i].total_cost
+      }
+      for(var j=0;j<serviceBookedDetails[i].evaluationsection_book.length;j++) {
+        scheduleDetails.bill.push(serviceBookedDetails[i].evaluationsection_book[j])
+      }
+      this.multiServicesBill.push(scheduleDetails)
+    }
+    this.gotData=true
   }).catch(e=>{
     console.log(e)
+  })
+},
+bookLetCustService(){
+  var serviceScheduled={
+    "booking_type":"",
+    "service_details":{}
+   /* "service_details":{
+       "1":{
+          "id":67,
+          "evaluation_details_id":6,
+           "schedule_details":{
+             "1":{
+                   "date":"02-06-2022",
+                   "time":"08:00 pm",
+                    "no_of_cleaners":7,
+                   "cleaning_hours":3
+              }
+           },
+          }
+      }*/
+  }
+  if(this.scheduleStat){
+    serviceScheduled.booking_type='together'
+  }
+  else{
+    serviceScheduled.booking_type='seperate'
+  }
+  for(var i=0;i<this.multiServicesBill.length;i++){
+    serviceScheduled.service_details[i+1]={
+      "id":this.multiServicesBill[i].id,
+      "evaluation_details_id":this.multiServicesBill[i].evaluation_details_id,
+      "schedule_details":this.multiServicesBill[i].schedule_details
+    }
+  }
+  
+  axios.post(this.url+'/evaluatorbookingmultiplephase3/customer/',serviceScheduled).then(response=>{
+    this.goToPaymentDialog()
   })
 }
     
@@ -4193,11 +4225,11 @@ getBookedServices(){
     const params = Object.fromEntries(urlSearchParams.entries());
     this.custId=params.id
     this.getBookedServices()
-    this.getServices()
-    this.getAreaTypes()
+   // this.getServices()
+   // this.getAreaTypes()
     this.getIp()
-    this.getGovernorate()
-    this.dummyDataGenerator(3)
+    //this.getGovernorate()
+    //this.dummyDataGenerator(3)
     console.log("current time is" + moment().format());
   
     this.dateSelected = moment().format().split("T")[0];
@@ -4209,7 +4241,7 @@ getBookedServices(){
     this.formatDate();
        // this.getMultipleSlots()
        
-        this.changeNewKitchen()
+     //   this.changeNewKitchen()
   
     this.selectCategory('Detailed Cleaning')
     

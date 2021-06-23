@@ -131,6 +131,7 @@ const app=new Vue({
     validOtherService:true,
     validOtherServiceDialog:true,
     hallway_check:false,
+    scheduleGroup:{},
    
     selectedCategory:'Detailed Cleaning',
   name: '',
@@ -530,7 +531,8 @@ reconfirmation_dialog:false,
 userid:'',
 snackbar:false,
 responseText:'',
-parsedTimeSlots:[]
+parsedTimeSlots:[],
+scheduleStatus:false
 
       },
       methods: {
@@ -672,7 +674,12 @@ parsedTimeSlots:[]
           }
         },
         addOneTimeToSchedule(){
-          
+          if(this.scheduleStat){
+            this.scheduleStatus=true
+          }
+          else{
+            this.scheduleStatus=false
+          }
           
             for(var j=0;j<this.schedule_serviceTypes_selected.length;j++){
               this.onetime_scheduled[this.schedule_serviceTypes_selected[j]]={
@@ -701,13 +708,28 @@ parsedTimeSlots:[]
               count=count+1
             }
           }
+          for(var k=0;k<this.schedule_serviceTypes_selected;k++)
+          {
+            for(var sch in this.scheduleGroup){
+              
+             if(this.scheduleGroup[sch].includes(this.schedule_serviceTypes_selected[k])){
+               var index=this.scheduleGroup[sch].indexOf(this.schedule_serviceTypes_selected[k])
+               console.log("index is"+index)
+               this.scheduleGroup[sch].splice(index,1)
+             }
+             }
+            }
+          var groundid=Object.keys(this.scheduleGroup).length
+          this.scheduleGroup[groundid]=[ ...this.schedule_serviceTypes_selected ]
           this.selected_onetime_slots={}
 
           this.onetime_scheduled={}
           this.oneTimeSelectionStat=false
           this.schedule_serviceTypes_selected=[]
-         // this.oneTimeDateSelected=''
-         //this.one_time_slots={}
+         this.oneTimeDateSelected=this.today
+         this.dateSelected=this.today
+         this.formatDate()
+         this.one_time_slots={}
           this.activeTab='Cart'
         },
         addAllServiceTypes(){
@@ -724,7 +746,12 @@ parsedTimeSlots:[]
         },
         addToSchedule(){
           
-          
+          if(this.scheduleStat){
+            this.scheduleStatus=true
+          }
+          else{
+            this.scheduleStatus=false
+          }
             for(var i=0;i<this.schedule_serviceTypes_selected.length;i++){
               
               this.scheduleFormat.individual[this.schedule_serviceTypes_selected[i]]={
@@ -751,6 +778,19 @@ parsedTimeSlots:[]
             }
            
           }
+          for(var k=0;k<this.schedule_serviceTypes_selected;k++)
+          {
+            for(var sch in this.scheduleGroup){
+              
+             if(this.scheduleGroup[sch].includes(this.schedule_serviceTypes_selected[k])){
+               var index=this.scheduleGroup[sch].indexOf(this.schedule_serviceTypes_selected[k])
+               console.log("index is"+index)
+               this.scheduleGroup[sch].splice(1,index)
+             }
+             }
+            }
+          var groundid=Object.keys(this.scheduleGroup).length
+          this.scheduleGroup[groundid]={ ...this.schedule_serviceTypes_selected }
 
           this.visits=[]
           this.selected_double_slots=[]
@@ -1998,6 +2038,44 @@ removeOneTimeSlot(slot){
       }
     }
   },
+  findSelectedTotalSize() {
+    this.total_size = 0
+    this.sofa_size=0
+    this.chair_size=0
+    for(var j=0;j<this.schedule_serviceTypes_selected.length;j++)
+    {
+        var serIndex=this.schedule_serviceTypes_selected[j]
+       if(this.multiServicesBill[serIndex].service=='Upholstery Cleaning'){
+         for (var i=0;i < this.multiServicesBill[serIndex].bill.length; i++) {
+                if(this.multiServicesBill[serIndex].bill[i].section.type=='SOFA'){
+                  this.sofa_size=this.sofa_size+ parseInt(this.multiServicesBill[serIndex].bill[i].section.size.max_size)
+                }
+                if(this.multiServicesBill[serIndex].bill[i].section.type=='CHAIR'){
+                  this.chair_size=this.chair_size+ parseInt(this.multiServicesBill[serIndex].bill[i].section.size.max_size)
+                }
+          }
+       }
+       else if(this.multiServicesBill[serIndex].service=='Kitchen Cleaning'){
+         for (var i=0;i < this.multiServicesBill[serIndex].bill.length; i++) {
+                if(this.multiServicesBill[serIndex].bill[i].section.type=='old'){
+                  this.old_kitchen_size=this.old_kitchen_size+ parseInt(this.multiServicesBill[serIndex].bill[i].section.size.max_size)
+                }
+                if(this.multiServicesBill[serIndex].bill[i].section.type=='new'){
+                  this.new_kitchen_size=this.new_kitchen_size+ parseInt(this.multiServicesBill[serIndex].bill[i].section.size.max_size)
+                }
+          }
+       }
+       else{
+
+       
+    for (var i=0;i < this.multiServicesBill[serIndex].bill.length; i++) {
+     
+      this.total_size=this.total_size + parseInt(this.multiServicesBill[serIndex].bill[i].section.size.max_size);
+    }
+    }
+    }
+    console.log("total size is "+this.total_size)
+  },
   findTotalSize() {
     this.total_size = 0
     this.sofa_size=0
@@ -2246,12 +2324,9 @@ responsive:{
     const params = Object.fromEntries(urlSearchParams.entries());
    this.userid=window.location.href.split('/')[5]
    var posturl=''
-   if(this.scheduleStat){
+   if(this.scheduleStatus){
      posturl='/customer/evaluatorbookingmultiplephase2/together/'
-   }
-   else{
-    posturl='/customer/evaluatorbookingmultiplephase2/seperate/'
-   }
+   
     axios
       .post(
          this.url+posturl+this.userid+'/',this.serviceDetails
@@ -2270,11 +2345,73 @@ responsive:{
     this.uploadImages()
     window.location.href='/evaluator/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
         }
+        else{
+          this.responseText=response.data.Error
+          this.snackbar=true
+        }
       })
        .catch((error) => {
         this.responseText=error
         console.log(error);
       });
+    }
+    else{
+     this.seperateMultiBook()
+    }
+  },
+  seperateMultiBook(){
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const params = Object.fromEntries(urlSearchParams.entries());
+   this.userid=window.location.href.split('/')[5]
+    var  posturl='/customer/evaluatorbookingmultiplephase2/together/'
+    
+    for(var sch in this.scheduleGroup)
+    {
+      var totalCost=0
+    var estimatedCost=0
+      var groupData={}
+    for(var i=0;i<this.scheduleGroup[sch].length;i++){
+      var data=this.scheduleGroup[sch]
+      console.log("service details is"+JSON.stringify(this.serviceDetails))
+      groupData[i]={...this.serviceDetails.service_details[data[i]]}
+      totalCost=totalCost+this.serviceDetails.service_details[data[i]].total_cost
+    }
+    axios
+      .post(
+         this.url+posturl+this.userid+'/',
+         {
+           estimated_cost:totalCost,
+           total_cost:totalCost,
+           service_details:groupData
+         }
+       
+      )
+      .then((response) => {
+        
+        console.log("booking details is "+response)
+        this.phase2Result=response.data
+        groupData={}
+        if(response.data.success)
+        {
+        this.responseText='Booking Successful'
+        this.snackbar=true
+      //  this.getBookingDetails(response.data.booking_id)
+     
+    this.uploadImages()
+    window.location.href='/evaluator/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
+        }
+        else{
+          this.responseText=response.data.Error
+          this.snackbar=true
+        }
+      })
+       .catch((error) => {
+        this.responseText=error
+        console.log(error);
+      });
+
+
+  }
   },
   bookCustService(){
     this.userid=window.location.href.split('/')[5]
@@ -2354,7 +2491,7 @@ responsive:{
   getMultipleSlots(){
     axios
       .post(
-         this.url+"/customer/ajax/getmultipleservicecleaningslotes",{service_types:this.serviceTypes,cleaning_date:this.slotDate,number_of_cleaners:this.selectedDuration.cleaners}
+         this.url+"/customer/ajax/getmultipleservicecleaningslotes",{service_types:this.schedule_serviceTypes,cleaning_date:this.slotDate,number_of_cleaners:this.selectedDuration.cleaners}
        
       )
       .then((response) => {
@@ -2860,7 +2997,7 @@ try {
     if(!this.editScheduleStat){
       this.resetScheduler()
     }
-   
+    this.findSelectedTotalSize()
       this.activeTab='Schedule'
       this.currentPageTitle='Schedule'
       if(this.scheduleStat){
@@ -2942,7 +3079,8 @@ try {
       this.no_of_building=0
       this.no_of_floors=[]
       this.calcTotal()
-       this.findTotalSize()
+       //this.findTotalSize()
+       this.findSelectedTotalSize()
        this.findServiceCost()
     this.tempCost=0
       this.schedule_serviceTypes_selected=[]

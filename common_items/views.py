@@ -545,7 +545,7 @@ class TicketDetails(IsAuthenticated,View):
 		last_month_evaluations = Evaluation.objects.filter(is_active=True,quatation_approved_date__month=(timezone.now()-relativedelta(months=1)).month,quatation_approved_date__year=(timezone.now()-relativedelta(months=1)).year)		
 		
 		if this_month_evaluations:
-			thismonth_loss = this_month_evaluations.aggregate(Sum('promocode_amount'))['promocode_amount__sum']+thismonth_loss.aggregate(Sum('extra_discount'))['extra_discount__sum']+thismonth_loss.aggregate(Sum('fine_amount'))['fine_amount__sum']+thismonth_loss.aggregate(Sum('writeback_amount'))['writeback_amount__sum']
+			thismonth_loss = this_month_evaluations.aggregate(Sum('promocode_amount'))['promocode_amount__sum']+this_month_evaluations.aggregate(Sum('extra_discount'))['extra_discount__sum']+this_month_evaluations.aggregate(Sum('fine_amount'))['fine_amount__sum']+this_month_evaluations.aggregate(Sum('writeback_amount'))['writeback_amount__sum']
 		else:
 			thismonth_loss = 0
 
