@@ -200,13 +200,18 @@
          <div class="row">
            <div class="col-md-12">
            
-            <div class="cl-modal-text-title cl-mt-10 agent-booked-text" id="evaluation_area_name">
+            <div class="cl-modal-text-title cl-mt-10 " id="blc_number">
               
             </div>
             
-            <div class="cl-modal-text-title cl-mt-20 agent-booked-text" id="evaluation_evaluator_name">
+            <div class="cl-modal-text-title cl-mt-10 " id="evaluation_area_name">
               
             </div>
+            
+            <div class="cl-modal-text-title cl-mt-20 " id="evaluation_evaluator_name">
+              
+            </div>
+            
             <div class="cl-modal-text-content cl-mt-5 assigned-by">
               Assigned By : <b id="evaluation_agent_name"> </b>
             </div>
@@ -607,7 +612,7 @@ function load_evaluation(evaluation_detail_id,item){
     .then(function (response) {
 
       app.setEvaluators(response.data.evaluators_list)
-      console.log(response.data.evaluation_time,response.data.evaluators_list,"evdata")
+      console.log(response.data.blc_number,"evdata")
       
       //modal border color change and field hide/show for agent evaluation or customer evaluation
 
@@ -616,6 +621,15 @@ function load_evaluation(evaluation_detail_id,item){
             $('.booking-id').show();
             $('#evaluation-modal-border').removeClass("agent-border");
             $('#evaluation-modal-border').addClass("customer-border");
+
+            $('#evaluation_area_name').removeClass("agent-booked-text");
+            $('#evaluation_area_name').addClass("customer-booked-text");
+
+            $('#blc_number').removeClass("agent-booked-text");
+            $('#blc_number').addClass("customer-booked-text");
+
+            $('#evaluation_evaluator_name').removeClass("agent-booked-text");
+            $('#evaluation_evaluator_name').addClass("customer-booked-text");
             $('#evaluation-cancelled').hide();
 
             if (response.data.evaluation_status == 'EVALUATED'){
@@ -644,6 +658,16 @@ function load_evaluation(evaluation_detail_id,item){
             
             $('#evaluation-modal-border').removeClass("customer-border");
             $('#evaluation-modal-border').addClass("agent-border");
+
+            $('#evaluation_area_name').removeClass("customer-booked-text");
+            $('#evaluation_area_name').addClass("agent-booked-text");
+
+            $('#blc_number').removeClass("customer-booked-text");
+            $('#blc_number').addClass("agent-booked-text");
+
+            $('#evaluation_evaluator_name').removeClass("customer-booked-text");
+            $('#evaluation_evaluator_name').addClass("agent-booked-text");
+
             $('#evaluation-cancelled').hide();
         }
 
@@ -653,6 +677,7 @@ function load_evaluation(evaluation_detail_id,item){
       $('#evaluation_area_name').text(response.data.area);
       $('#evaluation_evaluator_name').text(response.data.evaluator);
       $('#evaluation_agent_name').text(response.data.agent);
+      $('#blc_number').text(response.data.blc_number);
       $('#evaluation_customer_name').text(response.data.customer);
       $('#evaluation_customer_mobile').text(response.data.customer_mobile);
       $('#evaluation_proposed_date').text(response.data.evaluation_date);
