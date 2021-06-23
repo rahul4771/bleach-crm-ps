@@ -2519,7 +2519,7 @@ width="1000"
                               <% scheduleFormat.individual[sindex].visits.length %> Visits
                             </div>-->
                           </div>
-                          <div v-if="service.schedule_details && service.cleaning_policy=='ONE TIME SERVICE'" @click="viewEditSchedule(service)">
+                          <div v-if="service.schedule_details && service.cleaning_policy=='ONE TIME SERVICE'" @click="viewEditSchedule(service,sindex)">
                             <a>View Schedule</a> 
                            </div>
                           <div class="cart-card-items">
