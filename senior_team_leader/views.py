@@ -1084,8 +1084,8 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 
 		#shceduled order details
 		order_schedule    = OrderScheduler.objects.select_related('evaluation_details__evaluation','order_scheduler_book__service_type').prefetch_related(Prefetch('order_scheduler_book__evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr="evaluationmedias"),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes')),to_attr='sections')).get(is_active=True,id=scheduler_id)
-		start_at_datetime = order_schedule.start_at+timedelta(hours=3)
-		end_at_datetime   = order_schedule.end_at+timedelta(hours=3)
+		start_at_datetime = order_schedule.start_at
+		end_at_datetime   = order_schedule.end_at
 		start_at_date     = start_at_datetime.date()
 		end_at_date       = end_at_datetime.date()
 		start_at_time     = start_at_datetime.time()
@@ -1161,7 +1161,7 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 				#cleaners
 				assigned_cleaners_list   = []
 				for cleaner in assigned_cleaners:
-					assigned_cleaners_list.append(CleaningTeamMember(team=cleaning_team_assign_form_save,member_id=cleaner,start_at=start_at_datetime,end_at=end_at_datetime,start_time=start_at_time,end_time=end_at_time))
+					assigned_cleaners_list.append(CleaningTeamMember(team=cleaning_team_assign_form_save,member_id=cleaner,start_at=start_at_datetime.start_at,end_at=end_at_datetime,start_time=start_at_time,end_time=end_at_time))
 				assigned_cleaners_list.append(CleaningTeamMember(team=cleaning_team_assign_form_save,member=cleaning_team_assign_form_save.team_leader,start_at=start_at_datetime,end_at=end_at_datetime,start_time=start_at_time,end_time=end_at_time))
 				#bulk create
 				CleaningTeamMember.objects.bulk_create(assigned_cleaners_list)	
