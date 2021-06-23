@@ -1161,7 +1161,7 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 				#cleaners
 				assigned_cleaners_list   = []
 				for cleaner in assigned_cleaners:
-					assigned_cleaners_list.append(CleaningTeamMember(team=cleaning_team_assign_form_save,member_id=cleaner,start_at=start_at_datetime.start_at,end_at=end_at_datetime,start_time=start_at_time,end_time=end_at_time))
+					assigned_cleaners_list.append(CleaningTeamMember(team=cleaning_team_assign_form_save,member_id=cleaner,start_at=start_at_datetime,end_at=end_at_datetime,start_time=start_at_time,end_time=end_at_time))
 				assigned_cleaners_list.append(CleaningTeamMember(team=cleaning_team_assign_form_save,member=cleaning_team_assign_form_save.team_leader,start_at=start_at_datetime,end_at=end_at_datetime,start_time=start_at_time,end_time=end_at_time))
 				#bulk create
 				CleaningTeamMember.objects.bulk_create(assigned_cleaners_list)	
