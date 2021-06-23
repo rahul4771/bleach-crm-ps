@@ -576,8 +576,10 @@ $(document).ready(function(){
     custId:'',
     gotData:false,
     bookingServicesBill:[],
-    bookingonetimeslots:[]
+    bookingonetimeslots:[],
+    multiAddress:true
         },
+     
 /* header data */
 
 

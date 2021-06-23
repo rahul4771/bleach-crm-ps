@@ -1085,495 +1085,8 @@ width="1000"
 <!--- Schedule Dialog Ends-->
 
 
-<!-- kITCHEN DIALOG BEGINS HERE-->
-<!-- Kitchen Modal Begins -->
-<div class="text-center">
-   
-  <v-dialog v-model="kitchendialog" width="500">
-    <v-card>
-                             <v-form
-   :ref="'KitchenForm-building-'+currentBuilding+'floor'-currentFloor"
-    v-model="validKitchenDialog"
-  >
-      <v-card-title class="headline primary text-white">
-       Add Kitchen
-      </v-card-title>
-
-      <v-card-text>
-       
-        <div class="row mt-4">
-         
-          
-         
-          <div class="col-md-12">
-            <v-radio-group v-model="kitchenData.type" row v-on:change="changeNewKitchen()">
-              <v-radio label="Used Kitchen" value="old"></v-radio>
-              <v-radio label="New Kitchen" value="new"></v-radio>
-            </v-radio-group>
-          </div>
-          <div class="col-md-6" >
-            <v-select
-              :items="sizeFilteredData"
-              item-text="combinedSize"
-              return-object
-              label="Size"
-               :rules="[v => !!v || 'Size is required']"
-            required
-              v-model="kitchenData.size"
-            ></v-select>
-          </div>
-         
-        
-          
-          
-      
-          <div class="col-md-6" >
-            <v-radio-group v-model="kitchenData.residue" class="p-2">
-              <template v-slot:label>
-                <div>Oil Residue ?</div>
-              </template>
-              <v-radio :value="true">
-                <template v-slot:label>
-                  <div>Yes<strong class="success--text"></strong></div>
-                </template>
-              </v-radio>
-              <v-radio :value="false">
-                <template v-slot:label>
-                  <div>No <strong class="primary--text"></strong></div>
-                </template>
-              </v-radio>
-            </v-radio-group>
-          </div>
-          <div class="col-md-12"></div>
-        </div>
-       
-      </v-card-text>
-
-      <v-divider></v-divider>
-
-      <v-card-actions v-if="kitchenType=='floor'">
-        <v-btn @click="kitchendialog=false">
-          Close
-        </v-btn>
-        <v-spacer></v-spacer>
-        <v-btn
-          color="primary"
-        
-          v-on:click="addMoreKitchen(currentBuilding,currentFloor)"
-
-          v-if="kitchendialogStat "
-        >
-          Add
-        </v-btn>
-
-        <v-btn
-          color="primary"
-          
-          v-on:click="updateKitchen()"
-          v-if="!kitchendialogStat"
-        >
-          Save Changes
-        </v-btn>
-        
-
-      </v-card-actions>
-      <v-card-actions v-if="kitchenType=='apartment'">
-        <v-spacer></v-spacer>
-        <v-btn
-          color="primary"
-         
-          v-on:click="addMoreKitchenApartment(currentBuilding,currentFloor,currentApartment)"
-
-          v-if="kitchendialogStat "
-        >
-          Add
-        </v-btn>
-        <v-btn
-          color="primary"
-         
-          v-on:click="updateKitchenApartment()"
-          v-if="!kitchendialogStat"
-        >
-          Save Changes
-        </v-btn>
-        <v-btn @click="kitchendialog=false">
-          Close
-        </v-btn>
-      </v-card-actions>
-                             </v-form>
-    </v-card>
-  </v-dialog>
-</div>
 
 
-<!-- Kitchen modal Ends here -->
-
-<!-- KITCHEN DIALOG ENDS HERE-->
-
-<!-- Other Service Modal begins here -->
-<div class="text-center">
-  <v-dialog v-model="dialog" width="500">
-    <v-card>
-                                <v-form
-    ref="otherServiceDialogForm"
-    v-model="validOtherServiceDialog"
-  >
-      <v-card-title class="headline primary text-white">
-     
-      </v-card-title>
-
-      <v-card-text>
-        <div class="row mt-4">
-          <div
-            class="col-md-12"
-            v-if="serviceType == 'Upholstery Cleaning'"
-          >
-            <v-select
-              :items="upholsteryType"
-              label="Select the type of Upholstery"
-              v-model="otherService.type"
-              :rules="[v => !!v || 'Type of upholstery is required']"
-            required
-              v-on:change="updateSize()"
-            ></v-select>
-          </div>
-          <div class="col-md-6" v-if="serviceType == 'Facade Cleaning'">
-          
-            <v-radio-group v-model="hallway_check" row v-on:change="facadeFilter()">
-                <template v-slot:label>
-                <div>Is Hall way size greater than 5 sqm ? </div>
-              </template>
-              <v-radio label="Yes" :value="true"></v-radio>
-              <v-radio label="No" :value="false"></v-radio>
-            </v-radio-group>
-          </div>
-          <div class="col-md-6" v-if="serviceType == 'Facade Cleaning'">
-          
-            <v-text-field
-              label="Height of the building (Storey)"
-              type="number"
-              :rules="[v => !!v || 'Height of the building is required']"
-            required
-              v-model="otherService.height"
-            ></v-text-field>
-          </div>
-          <div
-            class="col-md-6"
-            v-if="
-              serviceType != 'Facade Cleaning' &&
-              serviceType != 'Car Parking Umbrella' &&
-              serviceType != 'Window Cleaning' &&
-              serviceType != 'Outdoor Cleaning' &&
-              serviceType != 'Kitchen Cleaning'
-            "
-          >
-            <v-text-field
-              label="Age (In months)"
-              type="number"
-              :rules="[v => !!v || 'Age is required']"
-            required
-              v-model="otherService.age"
-            ></v-text-field>
-          </div>
-          <div
-              class="col-md-12 text-center"
-              v-if="serviceType == 'Kitchen Cleaning'"
-            >
-              <v-radio-group
-                v-model="otherService.type"
-                row
-                v-on:change="changeKitchen()"
-              >
-                <v-radio label="Used Kitchen" value="old"></v-radio>
-                <v-radio label="New Kitchen" value="new"></v-radio>
-              </v-radio-group>
-            </div>
-
-          <div
-            class="col-md-6"
-            v-if="
-              serviceType != 'Kitchen Cleaning' &&
-              serviceType != 'Facade Cleaning' &&
-              serviceType != 'Car Parking Umbrella' &&
-              serviceType != 'Window Cleaning' &&
-              serviceType != 'Outdoor Cleaning'
-            "
-          >
-            <v-select
-              :items="materials"
-              label="Material"
-              :rules="[v => !!v || 'Material is required']"
-            required
-              multiple
-              v-model="otherService.material"
-            ></v-select>
-          </div>
-          <div
-            class="col-md-6"
-            v-if="
-              serviceType != 'Kitchen Cleaning' &&
-              serviceType != 'Facade Cleaning' &&
-              serviceType != 'Car Parking Umbrella' &&
-              serviceType != 'Window Cleaning' &&
-              serviceType != 'Outdoor Cleaning'
-            "
-          >
-            <v-select
-              :items="colors"
-              label="Color"
-              :rules="[v => !!v || 'Color is required']"
-            required
-              multiple
-              v-model="otherService.color"
-            ></v-select>
-          </div>
-          <div class="col-md-6" v-if="serviceType == 'Upholstery Cleaning'">
-            <v-text-field
-              v-if="otherService.type == 'SOFA'"
-              label="Size ( Seaters )"
-              type="number"
-              :rules="[v => !!v || 'Size is required']"
-            required
-              v-model="otherService.size"
-            ></v-text-field>
-             <v-select
-                 v-if="otherService.type == 'CHAIR'"
-                  :items="upholsterySize"
-                  item-text="combinedSize"
-                  return-object
-                  label="Size"
-                  :rules="[v => !!v || 'Size is required']"
-                required
-                  v-model="otherService.size"
-                ></v-select>
-            <v-text-field
-              v-if="otherService.type == 'CURTAIN'"
-              label="Size ( SQM )"
-              type="number"
-              :rules="[v => !!v || 'Size is required']"
-            required
-              v-model="otherService.size"
-            ></v-text-field>
-          </div>
-         
-          <div class="col-md-6" v-else>
-             <div
-              v-if="serviceType == 'Mattress Cleaning'"
-             
-            >
-             <v-select
-                
-                  :items="sizeData"
-                  item-text="combinedSize"
-                  return-object
-                  label="Size"
-                  :rules="[v => !!v || 'Size is required']"
-                required
-                  v-model="otherService.size"
-                ></v-select>
-            </div>
-              <div
-              v-if="serviceType == 'Carpet Cleaning'"
-             
-            >
-             <v-select
-                
-                  :items="sizeData"
-                  item-text="combinedSize"
-                  return-object
-                  label="Size"
-                  :rules="[v => !!v || 'Size is required']"
-                required
-                  v-model="otherService.size"
-                ></v-select>
-            </div>
-            <div v-if="serviceType == 'Kitchen Cleaning'">
-                <v-select
-                  :items="sizeFilteredData"
-                  item-text="combinedSize"
-                  return-object
-                  label="Size"
-                  :rules="[v => !!v || 'Size is required']"
-                required
-                  v-model="otherService.size"
-                ></v-select>
-              </div>
-             
-              <div v-if="serviceType == 'Facade Cleaning'">
-                <v-select
-                  :items="facadeSize"
-                  item-text="combinedSize"
-                  return-object
-                  label="Size"
-                  :rules="[v => !!v || 'Size is required']"
-                required
-                  v-model="otherService.size"
-                ></v-select>
-              </div>
-              <div v-if="serviceType == 'Car Parking Umbrella' || serviceType == 'Outdoor Cleaning' || serviceType == 'Window Cleaning'">
-                <v-select
-                  :items="sizeData"
-                  item-text="combinedSize"
-                  return-object
-                  label="Size "
-                  :rules="[v => !!v || 'Size is required']"
-                required
-                  v-model="otherService.size"
-                ></v-select>
-              </div>
-          </div>
-          <div class="col-md-6" v-if="serviceType == 'Window Cleaning'">
-            <v-select
-              :items="['Outside & Inside', 'Outside', 'Inside']"
-              label="Sides"
-              :rules="[v => !!v || 'Sides is required']"
-            required
-              v-model="otherService.sides"
-            ></v-select>
-          </div>
-          <div
-            class="col-md-6"
-            v-if="
-              serviceType != 'Kitchen Cleaning' &&
-              serviceType != 'Facade Cleaning' &&
-              serviceType != 'Car Parking Umbrella' &&
-              serviceType != 'Window Cleaning' &&
-              serviceType != 'Outdoor Cleaning'
-            "
-          >
-            <v-radio-group v-model="otherService.stain" class="p-2" row>
-              <template v-slot:label>
-                <div>Any <strong>Stain ?</strong></div>
-              </template>
-              <v-radio :value="true">
-                <template v-slot:label>
-                  <div>Yes<strong class="success--text"></strong></div>
-                </template>
-              </v-radio>
-              <v-radio :value="false">
-                <template v-slot:label>
-                  <div>No <strong class="primary--text"></strong></div>
-                </template>
-              </v-radio>
-            </v-radio-group>
-          </div>
-          <div class="col-md-6" v-if="otherService.stain">
-            <v-select
-              :items="cause_of_stain"
-              label="Cause of stain"
-              :rules="[v => !!v || 'Cause of stain is required']"
-            required
-              v-model="otherService.stain_reason"
-            ></v-select>
-          </div>
-          <div class="col-md-6" v-if="otherService.stain">
-            <v-text-field
-              label="Age of stain (In Weeks)"
-              type="number"
-              :rules="[v => !!v || 'Age of Stain is required']"
-            required
-              v-model="otherService.stain_age"
-            ></v-text-field>
-          </div>
-          <div
-            class="col-md-6"
-            v-if="
-              serviceType == 'Kitchen Cleaning' ||
-              serviceType == 'Facade Cleaning'
-            "
-          >
-            <v-select
-              :items="walltypes"
-              label="Wall type"
-              :rules="[v => !!v || 'Wall Type is required']"
-            required
-              multiple
-              v-model="otherService.wall_type"
-            ></v-select>
-          </div>
-          <div
-            class="col-md-6"
-            v-if="
-              serviceType == 'Kitchen Cleaning' ||
-              serviceType == 'Car Parking Umbrella'
-            "
-          >
-            <v-select
-              :items="floortypes"
-              label="Floor Type"
-               :rules="[v => !!v || 'Floor Type is required']"
-            required
-              multiple
-              v-model="otherService.floor_type"
-            ></v-select>
-          </div>
-          <div
-            class="col-md-6"
-            v-if="
-              serviceType == 'Kitchen Cleaning' ||
-              serviceType == 'Car Parking Umbrella'
-            "
-          >
-            <v-select
-              :items="ceilingtypes"
-              label="Ceiling Type"
-             :rules="[v => !!v || 'Ceiling Type is required']"
-            required
-              multiple
-              v-model="otherService.ceiling_type"
-            ></v-select>
-          </div>
-          <div class="col-md-6" v-if="serviceType == 'Kitchen Cleaning'">
-            <v-radio-group v-model="otherService.residue" class="p-2">
-              <template v-slot:label>
-                <div>Oil Residue ?</div>
-              </template>
-              <v-radio :value="true">
-                <template v-slot:label>
-                  <div>Yes<strong class="success--text"></strong></div>
-                </template>
-              </v-radio>
-              <v-radio :value="false">
-                <template v-slot:label>
-                  <div>No <strong class="primary--text"></strong></div>
-                </template>
-              </v-radio>
-            </v-radio-group>
-          </div>
-          <div class="col-md-12"></div>
-        </div>
-      </v-card-text>
-
-      <v-divider></v-divider>
-
-      <v-card-actions>
-        <v-btn @click="dialog=false">
-          Close
-        </v-btn>
-        <v-spacer></v-spacer>
-        <v-btn
-          color="primary"
-         
-          v-on:click="addOtherServiceDialog()"
-          v-if="dialogStat"
-        >
-          Add
-        </v-btn>
-        <v-btn
-          color="primary"
-          
-          v-on:click="saveChanges()"
-          v-if="!dialogStat"
-        >
-          Save Changes
-        </v-btn>
-        
-      </v-card-actions>
-                                </v-form>
-    </v-card>
-  </v-dialog>
-</div>
-<!-- Other Service Modal ends here -->
         <!--white-wrapper-->
 
         <div class="booking-container" style="padding:0px !important">
@@ -1594,6 +1107,53 @@ width="1000"
                     
                     <div class="mt-4">
                       You can update your cleaning or add more services in the below section. To continue, click Proceed.
+                    </div>
+                    <div class="row m-0" v-if="multiAddress">
+                      <div class="col-md-4 h-100">
+                        <div class="address-card">
+                            <div>
+                              1, 1 Floor 1,1 Block, 1 Street,1 Avenue
+                              Abu Halifa, Ahmadi
+                            </div>
+                            <div class="text-center mt-2 mb-1">
+                              <v-alert
+                              dense
+                              text
+                              type="success"
+                              color="primary"
+                              style="margin-bottom:0px"
+                            >
+                             scheduled
+                            </v-alert>
+                            </div>
+                        </div>
+                      </div>
+                      <div class="col-md-4 h-100">
+                        <div class="address-card">
+                            <div>
+                              1, 1 Floor 1,1 Block, 1 Street,1 Avenue
+                              Abu Halifa, Ahmadi
+                            </div>
+                            <div class="text-center mt-2 mb-2">
+                              <v-btn color="primary" outlined>
+                                Schedule
+                              </v-btn>
+                            </div>
+                        </div>
+                      </div>
+                      <div class="col-md-4 h-100">
+                        <div class="address-card">
+                            <div>
+                              1, 1 Floor 1,1 Block, 1 Street,1 Avenue
+                              Abu Halifa, Ahmadi
+                            </div>
+                            <div class="text-center mt-2 mb-2">
+                              <v-btn color="primary" outlined>
+                                Schedule
+                              </v-btn>
+                            </div>
+                        </div>
+                      </div>
                     </div>
                     <div class="mt-4">
                       <div class="ev-booking-title">

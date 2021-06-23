@@ -2325,15 +2325,23 @@ responsive:{
     
     for(var sch in this.scheduleGroup)
     {
+      var totalCost=0
+    var estimatedCost=0
       var groupData={}
     for(var i=0;i<this.scheduleGroup[sch].length;i++){
       var data=this.scheduleGroup[sch]
       console.log("service details is"+JSON.stringify(this.serviceDetails))
       groupData[i]={...this.serviceDetails.service_details[data[i]]}
+      totalCost=totalCost+this.serviceDetails.service_details[data[i]].total_cost
     }
     axios
       .post(
-         this.url+posturl+this.userid+'/',groupData
+         this.url+posturl+this.userid+'/',
+         {
+           estimated_cost:totalCost,
+           total_cost:totalCost,
+           service_details:groupData
+         }
        
       )
       .then((response) => {
