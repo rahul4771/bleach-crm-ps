@@ -245,7 +245,7 @@
         </div>
         <div class="dropdown-menu" id="dropdown-menu-orders">
 
-          {% if request.user.user_type == 'ADMIN' or request.user.user_type == 'SENIORTEAMLEADER' %}
+          {% if request.user.user_type == 'ADMIN' or request.user.user_type == 'SALESADMIN' %}
           {% else %}
 
           {% if invoice.dropzerosamountpaid == invoice.dropzerostotalamount %}{% else %}

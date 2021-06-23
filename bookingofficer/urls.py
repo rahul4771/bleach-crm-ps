@@ -38,7 +38,6 @@ urlpatterns = [
 	url(r'^delete/service/(?P<book_id>[-\w]+)/(?P<evaluation_detail_id>[-\w]+)/$',views.deleteservice,name='bookingofficer-delete-service'),
 	url(r'^delete/section/(?P<section_id>[-\w]+)/(?P<evaluation_detail_id>[-\w]+)/$',views.deletesection,name='bookingofficer-delete-section'),
 
-	url(r'^callback-list/$',views.CallBackList.as_view(),name='bookingofficer-callback-list'),
 	url(r'^payments/$',views.PaymentDetails.as_view(),name='bookingofficer-payments'),
 	url(r'^payment-policy/edit/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.AdminPaymentEdit.as_view(),name='bookingofficer-payment-edit'),
 	url(r'^ajax/sales-data/',views.SalesLocationData,name='sales-data'),

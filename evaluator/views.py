@@ -1724,11 +1724,15 @@ class MakeQuatationPhase2(IsAgentEvaluatorSalesAdmin,View):
 				return render(request,'evaluator/enquiry/phase2quatation.html',{'service_formset':service_formset,'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,})	
 			if request.user.user_type == 'AGENT':
 				return render(request,'agent/enquiry/phase2quatation.html',{'service_formset':service_formset,'evaluation_details':evaluation_details,'area_types':area_types,'service_types':service_types,})
+			if request.user.user_type == 'BOOKINGOFFICER':
+				return render(request,'common/enquiry/phase2quatation.html',{'service_formset':service_formset,'evaluation_details':evaluation_details,'area_types':area_types,'service_types':service_types,})
 	
 		if request.user.user_type == 'EVALUATOR':
 			return redirect('evaluator:evaluator-makequatation1',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)
 		if request.user.user_type == 'AGENT':
 			return redirect('agent:agent-makequatation1',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)
+		if request.user.user_type == 'BOOKINGOFFICER':
+			return redirect('common_items:makequatation1',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)
 
 class MakeQuatationPhase2Edit(IsAgentEvaluatorSalesAdmin,View):
 	service_formset_define    = formset_factory(QuatationServiceForm)
