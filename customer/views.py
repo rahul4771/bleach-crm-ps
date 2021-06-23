@@ -4610,8 +4610,6 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 			
 			for service_detail in services.keys():
 				service        		= ServiceType.objects.get(id=int(services[service_detail]['service_type']))
-				print(service,"service")
-				print(services[service_detail]['service_type'],"service id")
 				service_type   		= service.name
 
 				if service_type == 'General Cleaning':
@@ -4840,7 +4838,7 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 
 							return Response(response_dict,HTTP_200_OK)
 
-			service_dict[saved_service.id] = saved_service.service_type.name				
+			# service_dict[saved_service.id] = saved_service.service_type.name				
 		
 		response_dict['evaluation_book_ids'] = service_dict
 		response_dict['booking_id']          = customerbooking.booking_id
