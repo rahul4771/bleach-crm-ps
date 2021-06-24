@@ -4840,7 +4840,7 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 
 							return Response(response_dict,HTTP_200_OK)
 
-			service_dict[saved_service.id] = saved_service.service_type.id				
+			service_dict[saved_service.id] = services[service_detail]['service_type']				
 		
 		response_dict['evaluation_book_ids'] = service_dict
 		response_dict['success']             = True
