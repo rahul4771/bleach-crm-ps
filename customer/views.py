@@ -4711,7 +4711,6 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 				saved_service                              = service_save_serializer.save(evaluation_details=evaluation_details,cleaning_policy=services[service_detail]['cleaning_policy'],cleaning_method='Method1')	
 				response_dict['service_success']           = True
 			else:
-				print(service_save_serializer,"service_save_serializer")
 				errors= service_save_serializer.errors   
 				key=tuple(errors.keys())[0] 
 				error=errors[key]
@@ -4841,7 +4840,7 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 
 							return Response(response_dict,HTTP_200_OK)
 
-			service_dict[saved_service.id] = saved_service				
+			service_dict[saved_service.id] = saved_service.service_type.id				
 		
 		response_dict['evaluation_book_ids'] = service_dict
 		response_dict['success']             = True
