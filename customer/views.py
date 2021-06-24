@@ -792,9 +792,9 @@ def testquatation_html_to_pdf_view(request,evaluation_id):
 	html     = HTML(string=html_string,base_url=request.build_absolute_uri())
 	main_doc = html.render()
 
-	main_doc.write_pdf(target='/home/sonu/pdf/tmp/quatation/quatation.pdf');
+	main_doc.write_pdf(target='/home/pdf/tmp/quatation/quatation.pdf');
 
-	fs = FileSystemStorage('/home/sonu/pdf/tmp/quatation/')
+	fs = FileSystemStorage('/home/pdf/tmp/quatation/')
 	with fs.open('quatation.pdf') as pdf:
 		response = HttpResponse(pdf, content_type='application/pdf')
 		response['Content-Disposition'] = 'attachment; filename="'+evaluation_id+'_quatation.pdf"'
@@ -809,11 +809,11 @@ def orderdetail_html_to_pdf_view(request,order_id,service_id,section_id):
 	html_string = render_to_string('customer/content-page.html', {"order":order,"sectionid":int(section_id),"serviceid":int(service_id)})
 
 	html = HTML(string=html_string,base_url=request.build_absolute_uri())
-	html.write_pdf(target='/home/ansab/Desktop/orderdetails.pdf'); 
-	# html.write_pdf(target='/home/pdf/tmp/orderdetails/orderdetails.pdf'); 
+	# html.write_pdf(target='/home/ansab/Desktop/orderdetails.pdf'); 
+	html.write_pdf(target='/home/pdf/tmp/orderdetails/orderdetails.pdf'); 
 
-	fs = FileSystemStorage('/home/ansab/Desktop/')
-	# fs = FileSystemStorage('/home/pdf/tmp/orderdetails/')
+	# fs = FileSystemStorage('/home/ansab/Desktop/')
+	fs = FileSystemStorage('/home/pdf/tmp/orderdetails/')
 	with fs.open('orderdetails.pdf') as pdf:
 		response = HttpResponse(pdf, content_type='application/pdf')
 		response['Content-Disposition'] = 'attachment; filename="'+order.order_no+'_orderdetails.pdf"'
@@ -897,9 +897,9 @@ def testinvoice_html_to_pdf_view(request,evaluation_id):
 	html_string = render_to_string("customer/downloads/invoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'completed_jobs_count':completed_jobs_count})
 
 	html = HTML(string=html_string,base_url=request.build_absolute_uri())
-	html.write_pdf(target='/home/sonu/pdf/tmp/invoice/invoice.pdf');
+	html.write_pdf(target='/home/pdf/tmp/invoice/invoice.pdf');
 
-	fs = FileSystemStorage('/home/sonu/pdf/tmp/invoice/')
+	fs = FileSystemStorage('/home/pdf/tmp/invoice/')
 	with fs.open('invoice.pdf') as pdf:
 		response = HttpResponse(pdf, content_type='application/pdf')
 		response['Content-Disposition'] = 'attachment; filename="'+evaluation_id+'_invoice.pdf"'
@@ -4609,7 +4609,7 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 			active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=start_date_time)&Q(start_at__lte=end_date_time))|Q(Q(end_at__gte=start_date_time)&Q(end_at__lte=end_date_time))|Q(Q(start_at__lte=start_date_time)&Q(end_at__gte=start_date_time)&Q(start_at__lte=end_date_time)&Q(end_at__gte=end_date_time))|Q(Q(start_at__gte=start_date_time)&Q(end_at__gte=start_date_time)&Q(start_at__lte=end_date_time)&Q(end_at__lte=end_date_time))))
 			
 			for service_detail in services.keys():
-				service        		= ServiceType.objects.get(id=services[service_detail]['service_type'])
+				service        		= ServiceType.objects.get(id=int(services[service_detail]['service_type']))
 				service_type   		= service.name
 
 				if service_type == 'General Cleaning':
@@ -4748,7 +4748,7 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 				cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_cleaners))).filter(id__in=shift_cleaners)
 
 				for service_detail in services.keys():
-					service        		= ServiceType.objects.get(id=services[service_detail]['service_type'])
+					service        		= ServiceType.objects.get(id=int(services[service_detail]['service_type']))
 					service_type   		= service.name 			
 				
 					if service_type == 'General Cleaning':
@@ -4838,10 +4838,9 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 
 							return Response(response_dict,HTTP_200_OK)
 
-			service_dict[saved_service.id] = saved_service.service_type.name				
+			service_dict[saved_service.id] = saved_service				
 		
 		response_dict['evaluation_book_ids'] = service_dict
-		response_dict['booking_id']          = customerbooking.booking_id
 		response_dict['success']             = True
 
 		return Response(response_dict,HTTP_200_OK)

@@ -58,6 +58,17 @@ from agent.serializers import CleaningScheduleSerializer,FollowupScheduleSeriali
 
 # Create your views here.
 
+#Username Random Generation
+def generate_random_username(size=10, chars=string.ascii_uppercase + string.digits):
+
+	username = ''.join(random.choice(chars) for n in range(size))
+
+
+	try:
+		UserProfile.objects.get(username=username)
+		return generate_random_username(size=10, chars=string.ascii_uppercase + string.digits)
+	except UserProfile.DoesNotExist:
+		return username
 
 class OrderDetails(IsAuthenticated,View):
 	def get(self,request):
@@ -1039,7 +1050,7 @@ class ActiveSubscriptions(IsAuthenticated,View):
 		if search:
 			subscriptions = Order.objects.filter(Q(Q( Q(payment_status='PENDING') |Q(payment_status='ON_HOLD') | Q(payment_status='COMPLETED') ) & Q(evaluation__payment_method='SUBSCRIPTION') & Q(evaluation__quatation_status='APPROVED') & ~Q(order_status='ORDER_CANCELLED') & Q(Q(order_no__icontains=search)|Q(evaluation__customer__name__icontains=search)|Q(evaluation__customer__mobile_number__icontains=search)) )).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='bookschedules')),to_attr='orderschedules')).annotate(total_cleanings_count=Count('order_scheduler_order'),completed_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())), remaining_cleanings_count= F('total_cleanings_count') - F('completed_cleanings_count') ).exclude(Q( Q(remaining_cleanings_count = 0) & Q(payment_status='COMPLETED') ))
 		else:
-			subscriptions = Order.objects.filter(Q(Q( Q(payment_status='PENDING') |Q(payment_status='ON_HOLD') | Q(payment_status='COMPLETED') ) & Q(evaluation__payment_method='SUBSCRIPTION') & Q(evaluation__quatation_status='APPROVED') & ~Q(order_status='ORDER_CANCELLED') )).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='bookschedules')),to_attr='orderschedules')) #.annotate(total_cleanings_count=Count('order_scheduler_order'),completed_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())), remaining_cleanings_count= F('total_cleanings_count') - F('completed_cleanings_count') ).exclude(Q( Q(remaining_cleanings_count = 0) & Q(payment_status='COMPLETED') ))
+			subscriptions = Order.objects.filter(Q(Q( Q(payment_status='PENDING') |Q(payment_status='ON_HOLD') | Q(payment_status='COMPLETED') ) & Q(evaluation__payment_method='SUBSCRIPTION') & Q(evaluation__quatation_status='APPROVED') & ~Q(order_status='ORDER_CANCELLED') )).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='bookschedules')),to_attr='orderschedules')).annotate(total_cleanings_count=Count('order_scheduler_order'),completed_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())), remaining_cleanings_count= F('total_cleanings_count') - F('completed_cleanings_count') ).exclude(Q( Q(remaining_cleanings_count = 0) & Q(payment_status='COMPLETED') ))
 		
 		if subscriptions:
 			for invoice in subscriptions:
@@ -1139,7 +1150,7 @@ class ClientOrderDetails(IsAuthenticated,View):
 		except:
 			booking_id = None
 		
-		# invoice = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='bookschedules')),to_attr='orderschedules')).annotate(total_cleanings_count=Count('order_scheduler_order'),completed_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())), remaining_cleanings_count= F('total_cleanings_count') - F('completed_cleanings_count') ).exclude(Q( Q(remaining_cleanings_count = 0) & Q(payment_status='COMPLETED') )).get(is_active=True,id=order_id)
+		invoice = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='bookschedules')),to_attr='orderschedules')).annotate(total_cleanings_count=Count('order_scheduler_order'),completed_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())), remaining_cleanings_count= F('total_cleanings_count') - F('completed_cleanings_count') ).exclude(Q( Q(remaining_cleanings_count = 0) & Q(payment_status='COMPLETED') )).get(is_active=True,id=order_id)
 		
 		try:
 			client_details = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(is_active=True,id=order.evaluation.customer_id)
@@ -1154,21 +1165,21 @@ class ClientOrderDetails(IsAuthenticated,View):
 		#average feedbacks
 		average_feedback 	= order.feed_backs_order.aggregate(Avg('rating'))['rating__avg']
 
-		# if invoice:
-		# 	cleaning_price = 0
-		# 	for scheduler in invoice.orderschedules:
-		# 		if scheduler.work_status=='CLEANING_FULFILLED':
-		# 			cleaning_price += scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules)	
-		# 	if cleaning_price > invoice.amount_paid:
-		# 		invoice.balance       = cleaning_price-invoice.amount_paid
-		# 	else:
-		# 		invoice.balance       = cleaning_price-invoice.amount_paid
+		if invoice:
+			cleaning_price = 0
+			for scheduler in invoice.orderschedules:
+				if scheduler.work_status=='CLEANING_FULFILLED':
+					cleaning_price += scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules)	
+			if cleaning_price > invoice.amount_paid:
+				invoice.balance       = cleaning_price-invoice.amount_paid
+			else:
+				invoice.balance       = cleaning_price-invoice.amount_paid
 
-		# 	if invoice.balance == int(invoice.balance):
-		# 		invoice.balance = int(invoice.balance)
+			if invoice.balance == int(invoice.balance):
+				invoice.balance = int(invoice.balance)
 
 
-		return render(request,"common/client/order-page.html",{"booking_id":booking_id,"order":order,"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"average_feedback":average_feedback,})
+		return render(request,"common/client/order-page.html",{"invoice":invoice,"booking_id":booking_id,"order":order,"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"average_feedback":average_feedback,})
 
 	def post(self,request,order_id):
 		action = request.POST.get('action_type')
@@ -2046,3 +2057,1393 @@ class Productivity(IsAuthenticated,View):
 			messages.success(request,"Service Price Range Deleted Successfully")
 		
 		return redirect('common_items:productivity')
+
+class CallBackList(IsAuthenticated,View):
+	def get(self,request):
+		#Evaluation Details
+		search                  = request.GET.get('search')
+		#for order filtering
+		
+		order_status = request.GET.get('order_status')
+		callback_status = request.GET.get('callback_status')
+
+
+		if search:
+			evaluations = Evaluation.objects.filter(is_active=True).filter(Q( Q(Q(quatation_status='APPROVED') & Q(Q(payment_method='PREPAID')&~Q(evaluation_order__payment_status='COMPLETED'))|Q(Q(payment_method='BREAKDOWN')&Q(evaluation_order__preamount_paid=0))) | Q(quatation_status='PENDING')|Q(quatation_status='REJECTED')|Q(quatation_status='EXPIRED') )).select_related('customer').filter(Q(Q(customer__name__icontains=search)|Q(customer__mobile_number__icontains=search)|Q(evaluation_id__icontains=search))).order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_book')),to_attr='details_evaluation'))
+		else:
+			evaluations = Evaluation.objects.filter(is_active=True).filter(Q( Q(Q(quatation_status='APPROVED') & Q(Q(payment_method='PREPAID')&~Q(evaluation_order__payment_status='COMPLETED'))|Q(Q(payment_method='BREAKDOWN')&Q(evaluation_order__preamount_paid=0))) | Q(quatation_status='PENDING')|Q(quatation_status='REJECTED')|Q(quatation_status='EXPIRED') )).select_related('customer').order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_book')),to_attr='details_evaluation'))
+
+		# callback and order status filters
+		order_callback_status_filter       = []
+		if order_status:
+			if order_status == 'APPROVED_NOT_PAID':
+				case1       = Q(quatation_status='APPROVED') & Q(Q(Q(payment_method='PREPAID')&~Q(evaluation_order__payment_status='COMPLETED'))|Q(Q(payment_method='BREAKDOWN')&Q(evaluation_order__preamount_paid=0)))
+			else:
+				case1       = Q(quatation_status=order_status)
+			order_callback_status_filter.append(case1)	
+
+		if callback_status:
+			case2 		= Q(evaluation_order__callback_status=callback_status)
+			order_callback_status_filter.append(case2)
+
+		if order_status or callback_status:
+			order_callback_status_filter     = functools.reduce(operator.and_,order_callback_status_filter)
+			evaluations = evaluations.filter(order_callback_status_filter)
+		
+			
+		
+		#PAGINATION ORDERS		
+		no_of_entries = request.GET.get('no_of_entries')		
+		if not no_of_entries:
+			no_of_entries = 20
+
+		page = request.GET.get('page',1) 
+		paginator=Paginator(evaluations,no_of_entries)
+		try: 
+			evaluations=paginator.page(page) 
+		except PageNotAnInteger:
+			evaluations=paginator.page(1)
+		except EmptyPage:
+			evaluations = paginator.page(paginator.num_pages) 
+
+		# Get the index of the current page
+		index = evaluations.number - 1  # edited to something easier without index
+		# This value is maximum index of your pages, so the last page - 1
+		max_index = len(paginator.page_range)
+		# You want a range of 7, so lets calculate where to slice the list
+		start_index = index - 3 if index >= 3 else 0
+		end_index = index + 3 if index <= max_index - 3 else max_index
+		# Get our new page range. In the latest versions of Django page_range returns 
+		# an iterator. Thus pass it to list, to make our slice possible again.
+		page_range = list(paginator.page_range)[start_index:end_index]	
+		entry_per_page=(evaluations.end_index())-(evaluations.start_index())+1
+
+		return render(request,"common/callback-list/callbacklist.html",{"order_status":order_status,"callback_status":callback_status,"evaluations":evaluations,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries})
+
+	def post(self,request):
+		order_id = request.POST.get('callback_orderid')
+		notes = request.POST.get('payment_note')
+		print(order_id,notes,'notes')
+		order = Order.objects.filter(is_active=True,id=int(order_id)).first()
+		order.payment_notes = notes
+		order.payment_note_by = request.user
+		order.save()
+
+		messages.success(request,"Payment note updated !!")
+		return redirect('common_items:callback-list')
+
+class TicketDetailsEdit(IsAuthenticated,View):
+	def get(self,request,ticket_id,order_id):
+
+		order = Order.objects.filter(id=int(order_id)).prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True,work_status='CLEANING_FULFILLED').select_related('customer_address__area','order_scheduler_book').prefetch_related(Prefetch('investigations_orderschedule',queryset=Investigation.objects.filter(check_out__isnull=True),to_attr='assigned_investigations')),to_attr='orderschedules')).first()
+		ticket = FollowUp.objects.filter(is_active=True,id=int(ticket_id)).first()
+		investigators = UserProfile.objects.filter(Q(Q(user_type='QUALITYCONTROLL')|Q(user_type='OPERATIONSUPERVISOR')),is_active=True)
+		investigationmedias = InvestigationMedia.objects.filter(investigation__id=ticket.investigation.id,taken_status = 'CUSTOMER_SEND',is_active=True)
+		
+		return render(request,"common/ticket/ticket_registration_edit.html",{'order':order,'investigators':investigators,"ticket":ticket,"investigationmedias":investigationmedias})
+
+	def post(self,request,ticket_id,order_id):
+		
+		investigation_form = InvestigationForm(request.POST)
+		
+		if investigation_form.is_valid():
+			investigation_form_save = investigation_form.save(commit=False)
+			
+			ticket = FollowUp.objects.get(is_active=True,id=ticket_id)
+			investigation = Investigation.objects.filter(is_active=True,id=ticket.investigation.id).first()
+			
+			investigation.assigned_by = request.user
+			investigation.ticket_types = investigation_form_save.ticket_types
+			investigation.notes = investigation_form_save.notes
+			investigation.order_schedule = investigation_form_save.order_schedule
+			investigation.investigator = investigation_form_save.investigator
+			investigation.scheduled_at= timezone.now()
+			investigation.save()
+
+			#save media
+			investigation_medias = request.FILES.getlist('investigation_media')
+			if not investigation_medias == ['']:
+					for image in investigation_medias:
+						InvestigationMedia.objects.create(
+							investigation = investigation,
+							media = image,
+							media_type = 'PHOTO',
+							taken_status = 'CUSTOMER_SEND',
+							is_active = True
+						)
+						
+			messages.success(request,"Ticket Updated Succesfully!")
+		else:
+			messages.error(request,get_error(investigation_form))
+
+		return redirect('common_items:tickets')
+
+
+
+class NewEnquiry(IsAuthenticated,View):
+	address_formset_define    = formset_factory(AddressForm)
+	def get(self,request):
+
+		try:
+			governorates = Governorate.objects.filter(is_active=True)
+		except:
+			governorates = None
+
+		try:
+			locations = AreaType.objects.filter(is_active=True)
+		except:
+			locations = None
+
+		enquiry_form    = UserProfileForm()
+
+		try:
+			customer_info = UserProfile.objects.filter(is_active=True,user_type='CUSTOMER')
+		except:
+			customer_info = None
+
+		return render(request,'common/enquiry/newenquiry.html',{'enquiry_form':enquiry_form,'address_formset':self.address_formset_define(),'customer_info':customer_info,'governorates':governorates,'locations':locations})
+
+	def post(self,request):
+		enquiry_form     = UserProfileForm(request.POST,request.FILES or None)
+		address_formset  = self.address_formset_define(request.POST)
+
+
+		if enquiry_form.is_valid() and address_formset.is_valid():
+			enquiry_form_save            = enquiry_form.save(commit=False)
+			enquiry_form_save.username   = generate_random_username()
+			enquiry_form_save.created_by = request.user
+			enquiry_form_save.user_type  = 'CUSTOMER'
+
+			#customer id generation
+			customer_id                  = UserProfile.objects.filter(is_active=True,customer_id__isnull=False).aggregate(t=Max('customer_id'))['t'] or int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'1000')
+			current_customer_id_starting = int(str(timezone.now().year)[2:]+str(timezone.now().month).zfill(2))					
+			if current_customer_id_starting == int(str(customer_id)[:4]):
+				new_customer_id = int(customer_id)+1
+			else:
+				new_customer_id   = int(str(timezone.now().year)[2:]+str(timezone.now().month).zfill(2)+'1001')
+
+			enquiry_form_save.customer_id = new_customer_id
+
+			#To Save Contact Platform
+			contact_platforms 			 = request.POST.get('contact_platform')
+			contact_platform_list 		 = contact_platforms.split(",")
+			if contact_platform_list:
+				for contact_platform in contact_platform_list:
+					if contact_platform == 'Whatsapp':
+						enquiry_form_save.is_whatsapp = True
+					elif contact_platform == 'Email':
+						enquiry_form_save.is_email    = True
+					else:
+						enquiry_form_save.is_sms      = True
+
+			#APPEND MR / MS TO NAME
+			customer_name = enquiry_form_save.name
+			customer_name = customer_name.lower()
+
+			if enquiry_form_save.gender == 'MALE':
+				prefix_list = ['mr.','mr']
+				for prefix in prefix_list:
+					
+					prefix_exists = customer_name.startswith(prefix)
+
+					if prefix_exists == False :
+						if customer_name.startswith('dr.') == True or customer_name.startswith('dr') == True :
+							enquiry_form_save.name = customer_name.title()
+						else:	
+							enquiry_form_save.name = 'Mr. '+customer_name
+					else:
+						enquiry_form_save.name = customer_name.title()													
+
+			elif enquiry_form_save.gender == 'FEMALE':
+				prefix_list = ['ms.','ms']
+				for prefix in prefix_list:
+					
+					prefix_exists = customer_name.startswith(prefix)
+
+					if prefix_exists == False :
+						if customer_name.startswith('dr.') == True or customer_name.startswith('dr') == True or customer_name.startswith('mrs.') == True or customer_name.startswith('mrs') == True:
+							enquiry_form_save.name = customer_name.title()
+						else:	
+							enquiry_form_save.name = 'Ms. '+customer_name
+					else:
+						enquiry_form_save.name = customer_name.title()
+
+			else:
+				pass
+
+			enquiry_form_save.save()
+
+			for address_form in address_formset:
+				if address_form.is_valid():
+					address_form_save                   = address_form.save(commit=False)
+					address_form_save.customer          = enquiry_form_save
+					address_form_save.currently_active  = True
+
+					#string check
+					block_text = address_form_save.block
+					floor_text = address_form_save.floor
+					street_text = address_form_save.street
+					avenue_text = address_form_save.avenue
+
+					is_block = block_text.find("Block")
+					is_street = street_text.find("Street")
+
+					if floor_text:
+						is_floor = floor_text.find("Floor")
+
+						if is_floor == -1 :
+							floor_text += ' '
+							floor_text += 'Floor'
+							address_form_save.floor = floor_text
+						else:
+							pass
+					else: 
+						pass
+
+					if avenue_text:
+						is_avenue = avenue_text.find("Avenue")
+
+						if is_avenue == -1 :
+							avenue_text += ' '
+							avenue_text += 'Avenue'
+							address_form_save.avenue = avenue_text
+						else:
+							pass
+					else:
+						pass
+
+					print(block_text,is_block,"blockkk")
+
+					if is_block == -1 :
+						block_text += ' '
+						block_text += 'Block'
+						address_form_save.block = block_text
+					else:
+						pass
+
+					if is_street == -1 :
+						street_text += ' '
+						street_text += 'Street'
+						address_form_save.street = street_text
+					else:
+						pass
+
+					address_form_save.save()
+
+			messages.success(request,"Customer Details Succesfully Added")
+
+		else:	
+			if not enquiry_form.is_valid():
+				messages.error(request,get_error(enquiry_form))
+			if not address_formset.is_valid():
+				messages.error(request,"An Error Occured")
+
+			try:
+				governorates = Governorate.objects.filter(is_active=True)
+			except:
+				governorates = None
+
+			try:
+				locations = AreaType.objects.filter(is_active=True)
+			except:
+				locations = None
+			
+			return render(request,'agent/enquiry/newenquiry.html',{'enquiry_form':enquiry_form,'address_formset':address_formset,'governorates':governorates,'locations':locations})					
+
+		redirection = request.POST.get('redirect_to')
+
+		if redirection == 'assign_evaluator':
+			return redirect('common_items:makeevaluation',enquiry_form_save.id)
+		elif redirection == 'quatation':
+			return redirect('common_items:makequatation',enquiry_form_save.id)
+		else:
+			return redirect('common_items:existingenquiry',enquiry_form_save.id)
+
+
+class ExistingEnquiry(IsAuthenticated,View):
+
+	def get(self,request,enquiry_id):
+
+		try:
+			governorates = Governorate.objects.filter(is_active=True)
+		except:
+			governorates = None
+
+		try:
+			locations = AreaType.objects.filter(is_active=True)
+		except:
+			locations = None
+
+
+		enquiry_user    = UserProfile.objects.get(id=enquiry_id)
+
+
+		try:
+			addresses   = Address.objects.filter(customer__id=enquiry_id)
+		except:
+			addresses   = None
+
+
+		enquiry_form    = UserProfileForm(request.FILES or None,instance=enquiry_user)
+		address_form    = AddressForm()
+
+		#orders count
+		orders 				= Order.objects.filter(is_active=True,evaluation__customer_id=enquiry_id)
+		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
+		total_orders_count  = orders.count()
+
+		return render(request,'common/enquiry/existingenquiry.html',{'enquiry_user':enquiry_user,'enquiry_form':enquiry_form,"address_form":address_form,'enquiryid':enquiry_id,'addresses':addresses,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"governorates":governorates,'locations':locations})
+
+	def post(self,request,enquiry_id):
+
+		enquiry_user    = UserProfile.objects.get(id=enquiry_id)
+
+		action_mode 	= request.POST.get('action_type')
+
+		if action_mode == 'update_customer_details':
+			enquiry_form    = UserProfileForm(request.POST,request.FILES or None,instance=enquiry_user)
+
+			if enquiry_form.is_valid():
+				enquiry_form_save            = enquiry_form.save(commit=False)
+
+				#To Save Contact Platform
+				contact_platforms 			 = request.POST.get('contact_platform')
+				contact_platform_list 		 = contact_platforms.split(",")
+
+				if 'Whatsapp' in contact_platform_list:
+					enquiry_form_save.is_whatsapp = True
+				else:
+					enquiry_form_save.is_whatsapp = False
+
+				if 'Email' in contact_platform_list:
+					enquiry_form_save.is_email    = True
+				else:
+					enquiry_form_save.is_email    = False
+
+				if 'SMS' in contact_platform_list:
+					enquiry_form_save.is_sms      = True
+				else:
+					enquiry_form_save.is_sms      = False
+
+				#APPEND MR / MS TO NAME
+				customer_name = enquiry_form_save.name
+				customer_name = customer_name.lower()
+
+				if enquiry_form_save.gender == 'MALE':
+					prefix_list = ['mr.','mr']
+					for prefix in prefix_list:
+						
+						prefix_exists = customer_name.startswith(prefix)
+
+						if prefix_exists == False :
+							if customer_name.startswith('dr.') == True or customer_name.startswith('dr') == True :
+								enquiry_form_save.name = customer_name.title()
+							else:	
+								enquiry_form_save.name = 'Mr. '+customer_name
+						else:
+							enquiry_form_save.name = customer_name.title()													
+
+				elif enquiry_form_save.gender == 'FEMALE':
+					prefix_list = ['ms.','ms']
+					for prefix in prefix_list:
+						
+						prefix_exists = customer_name.startswith(prefix)
+
+						if prefix_exists == False :
+							if customer_name.startswith('dr.') == True or customer_name.startswith('dr') == True or customer_name.startswith('mrs.') == True or customer_name.startswith('mrs') == True:
+								enquiry_form_save.name = customer_name.title()
+							else:	
+								enquiry_form_save.name = 'Ms. '+customer_name
+						else:
+							enquiry_form_save.name = customer_name.title()
+
+				else:
+					pass
+
+				enquiry_form_save.save()
+				messages.success(request,"Customer Details Succesfully updated")
+
+			else:
+				messages.error(request,get_error(enquiry_form))
+
+				address_form = AddressForm()
+
+				try:
+					governorates = Governorate.objects.filter(is_active=True)
+				except:
+					governorates = None
+
+				return render(request,'common/enquiry/existingenquiry.html',{'enquiry_form':enquiry_form,'address_form':address_form,'enquiryid':enquiry_id,'governorates':governorates})
+		
+		if action_mode == 'add_address':
+			address_form = AddressForm(request.POST)
+
+			if address_form.is_valid():
+				address_form_save                  = address_form.save(commit=False)
+				address_form_save.customer         = enquiry_user
+				address_form_save.currently_active = True
+
+				#string check
+				block_text = address_form_save.block
+				floor_text = address_form_save.floor
+				street_text = address_form_save.street
+				avenue_text = address_form_save.avenue
+
+				is_block = block_text.find("Block")
+				is_street = street_text.find("Street")
+
+				if floor_text:
+					is_floor = floor_text.find("Floor")
+
+					if is_floor == -1 :
+						floor_text += ' '
+						floor_text += 'Floor'
+						address_form_save.floor = floor_text
+					else:
+						pass
+				else: 
+					pass
+
+				if avenue_text:
+					is_avenue = avenue_text.find("Avenue")
+
+					if is_avenue == -1 :
+						avenue_text += ' '
+						avenue_text += 'Avenue'
+						address_form_save.avenue = avenue_text
+					else:
+						pass
+				else:
+					pass
+
+				print(block_text,is_block,"blockkk")
+
+				if is_block == -1 :
+					block_text += ' '
+					block_text += 'Block'
+					address_form_save.block = block_text
+				else:
+					pass
+
+				if is_street == -1 :
+					street_text += ' '
+					street_text += 'Street'
+					address_form_save.street = street_text
+				else:
+					pass
+
+				address_form_save.save()
+
+				messages.success(request,"New Address Succesfully Added")
+
+			else:
+				messages.error(request,get_error(address_form))
+
+				enquiry_form = UserProfileForm(request.FILES or None,instance=enquiry_user)
+
+				return render(request,'common/enquiry/existingenquiry.html',{'enquiry_form':enquiry_form,'address_form':address_form,'enquiryid':enquiry_id,})
+
+		if action_mode == 'edit_address':
+			address_id = request.POST.get('address')
+			address = Address.objects.select_related('customer').get(id=address_id)
+
+			address_form = AddressForm(request.POST,instance=address)
+			if address_form.is_valid():
+				address_form_save                  = address_form.save(commit=False)
+				address_form_save.currently_active = True
+
+				#string check
+				block_text = address_form_save.block
+				floor_text = address_form_save.floor
+				street_text = address_form_save.street
+				avenue_text = address_form_save.avenue
+
+				is_block = block_text.find("Block")
+				is_street = street_text.find("Street")
+
+				if floor_text:
+					is_floor = floor_text.find("Floor")
+
+					if is_floor == -1 :
+						floor_text += ' '
+						floor_text += 'Floor'
+						address_form_save.floor = floor_text
+					else:
+						pass
+				else: 
+					pass
+
+				if avenue_text:
+					is_avenue = avenue_text.find("Avenue")
+
+					if is_avenue == -1 :
+						avenue_text += ' '
+						avenue_text += 'Avenue'
+						address_form_save.avenue = avenue_text
+					else:
+						pass
+				else:
+					pass
+
+				print(block_text,is_block,"blockkk")
+
+				if is_block == -1 :
+					block_text += ' '
+					block_text += 'Block'
+					address_form_save.block = block_text
+				else:
+					pass
+
+				if is_street == -1 :
+					street_text += ' '
+					street_text += 'Street'
+					address_form_save.street = street_text
+				else:
+					pass
+
+				address_form_save.save()
+
+				messages.success(request,"Address Updated Succesfully")
+
+			else:
+				messages.error(request,get_error(address_form))
+
+				enquiry_form = UserProfileForm(request.FILES or None,instance=address.customer)
+
+				return render(request,'agent/enquiry/existingenquiry.html',{'enquiry_form':enquiry_form,'address_form':address_form,'enquiryid':enquiry_id,})			
+		
+		return redirect('common_items:existingenquiry',enquiry_id)
+
+class MakeEvaluation(IsAuthenticated,View):
+	def get(self,request,enquiry_id):
+		
+		tracking_no  = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
+
+		current_blc_starting = int(str(timezone.now().year)+str(timezone.now().month).zfill(2))		
+		
+		if current_blc_starting == int(str(tracking_no)[:6]):
+			new_tracking_no = int(tracking_no)+1
+			evaluation_no   = 'BLC'+str(new_tracking_no)
+		else:
+			evaluation_no = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10001'
+			tracking_no   = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
+
+		existing_user_note = request.POST.get('agent_notes',None)
+
+		#Create New Evaluation
+		new_evaluation = Evaluation.objects.create(evaluation_id=evaluation_no,tracking_no=int(tracking_no)+1,call_attender=request.user,customer_id=enquiry_id,quatation_expiry_date=timezone.now()+timedelta(14))
+
+		return redirect('common_items:assignevaluator',enquiry_id,new_evaluation.id)
+
+
+class AssignEvaluator(IsAuthenticated,View):
+	def get(self,request,enquiry_id,evaluation_id):
+
+		evaluation_form 		    = EvaluationDetailsForm(enquiry_user_id=enquiry_id,evaluation_id=evaluation_id,)
+
+		#Evaluation details of each evaluator for evaluation table
+		evaluation_calendar_date	= request.GET.get('evaluation_calendar_date')
+
+		try:
+			evaluation_date = datetime.strptime(evaluation_calendar_date,'%d-%m-%Y')
+		except:
+			evaluation_date = timezone.now()
+
+		try:
+			evaluation_details		  = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR').prefetch_related(Prefetch('evaluator_evaluation',queryset=EvaluationDetails.objects.filter(is_active=True,proposed_time__contains=evaluation_date.date()),to_attr='evaluation_details'))
+		except:
+			evaluation_details 		  = None
+
+		assigned_addresses = EvaluationDetails.objects.filter(is_active=True,evaluation_id=evaluation_id).values_list('address')
+		active_addresses   = Address.objects.filter(is_active=True,customer_id=enquiry_id,currently_active=True).exclude(id__in=assigned_addresses)
+
+		evaluators 		   = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR')
+
+		return render(request,'common/enquiry/assign_evaluator.html',{'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'enquiryid':enquiry_id,'evaluation_id':evaluation_id,'evaluation_form':evaluation_form,"active_addresses":active_addresses,"evaluators":evaluators,})
+
+	def post(self,request,enquiry_id,evaluation_id):
+		evaluation_form  = EvaluationDetailsForm(enquiry_user_id=enquiry_id,evaluation_id=evaluation_id,data=request.POST)
+
+		action_mode    = request.POST.get('action_type')
+
+
+		if action_mode == 'add':
+
+			evaluation = Evaluation.objects.filter(id=evaluation_id).first()
+			if evaluation.customer.gender == 'MALE':
+				title = 'Mr.'
+			else:
+				title = 'Ms.'
+
+			mobile = evaluation.customer.mobile_number
+
+			#Save Evaluation Details
+			if evaluation_form.is_valid():
+				evaluation_form_save              = evaluation_form.save(commit=False)
+
+				proposed_date                     = request.POST.get('proposed_date')
+				proposed_time                     = request.POST.get('proposed_time')
+				
+				converted_proposed_time           = datetime.strptime(proposed_date+" "+proposed_time,'%d-%m-%Y %I:%M %p')
+
+				evaluation_form_save.proposed_time   = converted_proposed_time
+				evaluation_form_save.evaluation_id   = evaluation_id
+				evaluation_form_save.save()
+
+				messages.success(request,"Evaluation Details Succesfully Completed")
+
+				#address check for floor,avenue None
+				if evaluation_form_save.address.floor == None and evaluation_form_save.address.avenue == None:
+					address_list = [evaluation_form_save.address.apartment, evaluation_form_save.address.street, evaluation_form_save.address.building, evaluation_form_save.address.block, evaluation_form_save.address.area.name, evaluation_form_save.address.governorate.name]
+				
+				elif evaluation_form_save.address.floor == None:
+					address_list = [evaluation_form_save.address.apartment, evaluation_form_save.address.street, evaluation_form_save.address.building, evaluation_form_save.address.avenue, evaluation_form_save.address.block, evaluation_form_save.address.area.name, evaluation_form_save.address.governorate.name]
+				
+				elif evaluation_form_save.address.avenue == None:
+					address_list = [evaluation_form_save.address.apartment, evaluation_form_save.address.floor, evaluation_form_save.address.street, evaluation_form_save.address.building, evaluation_form_save.address.block, evaluation_form_save.address.area.name, evaluation_form_save.address.governorate.name]
+				
+				else:
+					address_list = [evaluation_form_save.address.apartment, evaluation_form_save.address.floor, evaluation_form_save.address.street, evaluation_form_save.address.building, evaluation_form_save.address.avenue, evaluation_form_save.address.block, evaluation_form_save.address.area.name, evaluation_form_save.address.governorate.name]
+
+				separator = ", "
+
+				if evaluation.customer.is_sms == True:
+				
+					url = "https://smsapi.future-club.com/fccsms.aspx"
+
+					if evaluation.customer.sms_preference == 'ENGLISH':
+
+						message = "Dear Customer , We have confirmed your Evaluation Appointment. "+ title +" "+evaluation_form_save.evaluator.name+" will be visiting you on "+str(evaluation_form_save.proposed_time)+" at  "+ separator.join(address_list) +". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+
+						querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+mobile+"","M":message,"IID":"1468","L":"L"}
+
+					else:
+
+						message = "عزيزينا العميل تم تأكيد موعد المعاينة الخاص بك.  "+ title +" "+evaluation_form_save.evaluator.name+" سيقوم بالزيارة في "+str(evaluation_form_save.proposed_time)+" في "+ separator.join(address_list)+" لأي استفسارات يمكنكم التواصل معنا على . 9651882707+  شكراً لاختياركم بليتش لخدمات التنظيف"
+
+						querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+mobile+"","M":message,"IID":"1468","L":"A"}
+					
+					headers = {
+						'cache-control': "no-cache"
+					}
+
+					response = requests.request("GET", url, headers=headers, params=querystring)
+				else:
+					pass
+
+				#Email Send
+				msg_html = render_to_string('email/evaluation_task.html',{'evaluation_form_save':evaluation_form_save})
+				msg      = EmailMultiAlternatives('Evaluation Task', '', 'notification@bleach-kw.com', [evaluation_form_save.evaluator.email])
+				msg.attach_alternative(msg_html, "text/html")
+				msg.send(fail_silently=False)
+			else:
+				messages.error(request,get_error(evaluation_form))
+
+		selected_date = request.GET.get('evaluation_calendar_date') or ''
+
+		return redirect('/common/assignevaluator/'+enquiry_id+'/'+evaluation_id+'?evaluation_calendar_date='+selected_date)
+		
+class AssignEvaluator(IsAuthenticated,View):
+	def get(self,request,enquiry_id,evaluation_id):
+
+		evaluation_form 		    = EvaluationDetailsForm(enquiry_user_id=enquiry_id,evaluation_id=evaluation_id,)
+
+		#Evaluation details of each evaluator for evaluation table
+		evaluation_calendar_date	= request.GET.get('evaluation_calendar_date')
+
+		try:
+			evaluation_date = datetime.strptime(evaluation_calendar_date,'%d-%m-%Y')
+		except:
+			evaluation_date = timezone.now()
+
+		try:
+			evaluation_details		  = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR').prefetch_related(Prefetch('evaluator_evaluation',queryset=EvaluationDetails.objects.filter(is_active=True,proposed_time__contains=evaluation_date.date()),to_attr='evaluation_details'))
+		except:
+			evaluation_details 		  = None
+
+		assigned_addresses = EvaluationDetails.objects.filter(is_active=True,evaluation_id=evaluation_id).values_list('address')
+		active_addresses   = Address.objects.filter(is_active=True,customer_id=enquiry_id,currently_active=True).exclude(id__in=assigned_addresses)
+
+		evaluators 		   = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR')
+
+		return render(request,'common/enquiry/assign_evaluator.html',{'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'enquiryid':enquiry_id,'evaluation_id':evaluation_id,'evaluation_form':evaluation_form,"active_addresses":active_addresses,"evaluators":evaluators,})
+
+	def post(self,request,enquiry_id,evaluation_id):
+		evaluation_form  = EvaluationDetailsForm(enquiry_user_id=enquiry_id,evaluation_id=evaluation_id,data=request.POST)
+
+		action_mode    = request.POST.get('action_type')
+
+
+		if action_mode == 'add':
+
+			evaluation = Evaluation.objects.filter(id=evaluation_id).first()
+			if evaluation.customer.gender == 'MALE':
+				title = 'Mr.'
+			else:
+				title = 'Ms.'
+
+			mobile = evaluation.customer.mobile_number
+
+			#Save Evaluation Details
+			if evaluation_form.is_valid():
+				evaluation_form_save              = evaluation_form.save(commit=False)
+
+				proposed_date                     = request.POST.get('proposed_date')
+				proposed_time                     = request.POST.get('proposed_time')
+				
+				converted_proposed_time           = datetime.strptime(proposed_date+" "+proposed_time,'%d-%m-%Y %I:%M %p')
+
+				evaluation_form_save.proposed_time   = converted_proposed_time
+				evaluation_form_save.evaluation_id   = evaluation_id
+				evaluation_form_save.save()
+
+				messages.success(request,"Evaluation Details Succesfully Completed")
+
+				#address check for floor,avenue None
+				if evaluation_form_save.address.floor == None and evaluation_form_save.address.avenue == None:
+					address_list = [evaluation_form_save.address.apartment, evaluation_form_save.address.street, evaluation_form_save.address.building, evaluation_form_save.address.block, evaluation_form_save.address.area.name, evaluation_form_save.address.governorate.name]
+				
+				elif evaluation_form_save.address.floor == None:
+					address_list = [evaluation_form_save.address.apartment, evaluation_form_save.address.street, evaluation_form_save.address.building, evaluation_form_save.address.avenue, evaluation_form_save.address.block, evaluation_form_save.address.area.name, evaluation_form_save.address.governorate.name]
+				
+				elif evaluation_form_save.address.avenue == None:
+					address_list = [evaluation_form_save.address.apartment, evaluation_form_save.address.floor, evaluation_form_save.address.street, evaluation_form_save.address.building, evaluation_form_save.address.block, evaluation_form_save.address.area.name, evaluation_form_save.address.governorate.name]
+				
+				else:
+					address_list = [evaluation_form_save.address.apartment, evaluation_form_save.address.floor, evaluation_form_save.address.street, evaluation_form_save.address.building, evaluation_form_save.address.avenue, evaluation_form_save.address.block, evaluation_form_save.address.area.name, evaluation_form_save.address.governorate.name]
+
+				separator = ", "
+
+				if evaluation.customer.is_sms == True:
+				
+					url = "https://smsapi.future-club.com/fccsms.aspx"
+
+					if evaluation.customer.sms_preference == 'ENGLISH':
+
+						message = "Dear Customer , We have confirmed your Evaluation Appointment. "+ title +" "+evaluation_form_save.evaluator.name+" will be visiting you on "+str(evaluation_form_save.proposed_time)+" at  "+ separator.join(address_list) +". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+
+						querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+mobile+"","M":message,"IID":"1468","L":"L"}
+
+					else:
+
+						message = "عزيزينا العميل تم تأكيد موعد المعاينة الخاص بك.  "+ title +" "+evaluation_form_save.evaluator.name+" سيقوم بالزيارة في "+str(evaluation_form_save.proposed_time)+" في "+ separator.join(address_list)+" لأي استفسارات يمكنكم التواصل معنا على . 9651882707+  شكراً لاختياركم بليتش لخدمات التنظيف"
+
+						querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+mobile+"","M":message,"IID":"1468","L":"A"}
+					
+					headers = {
+						'cache-control': "no-cache"
+					}
+
+					response = requests.request("GET", url, headers=headers, params=querystring)
+				else:
+					pass
+
+				#Email Send
+				msg_html = render_to_string('email/evaluation_task.html',{'evaluation_form_save':evaluation_form_save})
+				msg      = EmailMultiAlternatives('Evaluation Task', '', 'notification@bleach-kw.com', [evaluation_form_save.evaluator.email])
+				msg.attach_alternative(msg_html, "text/html")
+				msg.send(fail_silently=False)
+			else:
+				messages.error(request,get_error(evaluation_form))
+
+		selected_date = request.GET.get('evaluation_calendar_date') or ''
+
+		return redirect('/common/assignevaluator/'+enquiry_id+'/'+evaluation_id+'?evaluation_calendar_date='+selected_date)
+
+class MakeQuatationBase(IsAuthenticated,View):
+	def get(self,request,enquiry_id):
+		#create Main Evaluation
+		tracking_no  = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
+
+		current_blc_starting = int(str(timezone.now().year)+str(timezone.now().month).zfill(2))		
+		
+		if current_blc_starting == int(str(tracking_no)[:6]):
+			new_tracking_no = int(tracking_no)+1
+			evaluation_no   = 'BLC'+str(new_tracking_no)
+		else:
+			evaluation_no = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10001'
+			tracking_no   = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
+		
+		evaluation = Evaluation.objects.create(tracking_no=int(tracking_no)+1,evaluation_id=evaluation_no,customer_id=enquiry_id,call_attender=request.user,quatation_expiry_date=timezone.now()+timedelta(14))
+		
+
+		#create evaluation details
+		try:
+			addresses = Address.objects.filter(is_active=True,customer_id=enquiry_id,currently_active=True)
+		except:
+			addresses = None
+
+		evaluation_details_array = []
+		for address in addresses:
+			evaluation_details_array.append(EvaluationDetails(evaluation=evaluation,address=address))
+		EvaluationDetails.objects.bulk_create(evaluation_details_array)
+
+		return redirect('common_items:makequatation1',enquiry_id,evaluation.id)
+
+class MakeQuatationPhase1(IsAuthenticated,View):
+
+	def get(self,request,enquiry_id,evaluation_id):
+		enquiry_user    	  = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(id=enquiry_id)
+
+		try:
+			evaluation = Evaluation.objects.get(id=evaluation_id)
+		except:
+			evaluation = None
+
+		try:
+			evaluation_details = EvaluationDetails.objects.filter(is_active=True,evaluation=evaluation).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True,cleaning_policy='SUBSCRIPTION'),to_attr='evaluationbooks'))
+		except:
+			evaluation_details = None
+
+		#allow submition
+		evaluation_details_count         = evaluation_details.count()
+		evaluation_details_completed_count= evaluation_details.filter(status='EVALUATED').count()
+		if evaluation_details_count==evaluation_details_completed_count:
+			allow_submit = True
+		else:
+			allow_submit = False
+
+		#orders count
+		orders 				= Order.objects.filter(is_active=True,evaluation__customer_id=enquiry_id)
+		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
+		total_orders_count  = orders.count()
+
+		return render(request,'common/enquiry/phase1quatation.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,"allow_submit":allow_submit,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,})
+
+	def post(self,request,enquiry_id,evaluation_id):
+
+		payment_method 			= request.POST.get('payment_method')
+		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0)
+		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0)
+
+		#update payment method
+		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
+
+	
+		#sms integration
+		evaluation        = Evaluation.objects.filter(id=evaluation_id,is_active=True).first()
+		evaluationdetails = EvaluationDetails.objects.filter(evaluation=evaluation).first()
+		evaluationbook    = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).first()
+		language = evaluation.customer.sms_preference
+		address = evaluationdetails.address
+
+		messages.success(request,"Quotation Submitted Succesfully")
+
+		#address check for floor,avenue None
+		if address.floor == None and address.avenue == None:
+			address_list = [address.apartment, address.street, address.building, address.block, address.area.name, address.governorate.name]
+		
+		elif address.floor == None:
+			address_list = [address.apartment, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
+		
+		elif address.avenue == None:
+			address_list = [address.apartment, address.floor, address.street, address.building, address.block, address.area.name, address.governorate.name]
+		
+		else:
+			address_list = [address.apartment, address.floor, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
+
+		separator = ", "
+
+		if evaluation.customer.is_sms == True:
+		
+			url = "https://smsapi.future-club.com/fccsms.aspx"
+			
+			if evaluation.payment_method == 'SUBSCRIPTION':
+				smsurl = "https://my.bleachkw.com/customer/subscription/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+""
+			else:
+				smsurl = "https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+""
+
+			if language == 'ENGLISH':
+				print(str(evaluation.id),str(evaluation.evaluation_id),str(evaluation.total_cost),str(evaluation.quatation_expiry_date),str(evaluation.customer.username),str(evaluation.tracking_no),"trerr")
+				
+				message = "Dear Customer, Please find the Quotation against the cleaning at "+separator.join(address_list)+" here "+smsurl+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait"
+
+				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
+			
+			else:
+				message = "عزيزنا العميل نرجوا الاطلاع على عرض سعر خدمات التنظيف المطلوبة في "+separator.join(address_list)+" "+smsurl+"  لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
+
+				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
+
+			headers = {
+				'cache-control': "no-cache"
+			}
+			
+			response = requests.request("GET", url, headers=headers, params=querystring)
+
+			print(message,response.text,"respondd")
+		
+		else:
+			pass
+		
+		if request.user.user_type == 'AGENT':
+			return redirect('agent:agentdash-board')
+		elif request.user.user_type == 'EVALUATOR':
+			return redirect('evaluator:evaluatordash-board')
+		else:
+			return redirect('booking-officer:bookingofficerdash-board')
+
+class MakeQuatationPhase2(IsAuthenticated,View):
+	service_formset_define    = formset_factory(QuatationServiceForm)
+	def get(self,request,evaluation_detail_id):
+
+		evaluation_details = EvaluationDetails.objects.select_related('evaluation__customer','address__area').get(is_active=True,id=evaluation_detail_id)
+
+		try:
+			service_types = ServiceType.objects.filter(is_active=True)
+		except:	
+			service_types = None
+
+		try:
+			area_types = AreaType.objects.filter(is_active=True)
+		except:
+			area_types = None
+
+		return render(request,'common/enquiry/phase2quatation.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,})
+
+	def post(self,request,evaluation_detail_id):
+
+		service_formset       = self.service_formset_define(request.POST)
+		evaluation_details    = EvaluationDetails.objects.select_related('evaluation__customer','address__area').get(is_active=True,id=evaluation_detail_id)
+		
+		if service_formset.is_valid() : 
+
+			form_count = 0
+			#create order					
+			new_order = Order.objects.get_or_create(evaluation=evaluation_details.evaluation,order_no=evaluation_details.evaluation.evaluation_id)	
+				
+			order_schedule_array          = []
+			#Save Service Form
+			for service_form in service_formset:
+				
+				if service_form.is_valid():
+					service_form_save 					    = service_form.save(commit=False)
+					service_form_save.evaluation_details_id = evaluation_detail_id
+					service_form_save.save()
+
+					#To Save Media
+					medias = request.FILES.getlist('media'+str(form_count))
+					if not medias==['']:
+						for media in medias:
+							EvaluationMedia.objects.create(
+							        evaluation_book=service_form_save,
+							        media=media,
+							        media_type='PHOTO',
+									taken_status='AGENT_TAKEN'
+							        )
+
+					#for updating cost details in evaluation details
+					cost     = float(request.POST.get('form-'+str(form_count)+'-estimated_cost')) 
+					discount = float(request.POST.get('form-'+str(form_count)+'-discount'))
+					total    = float(request.POST.get('form-'+str(form_count)+'-total_cost'))
+
+					#for creating cleaning schedules and corresponding cleanings
+
+					cleaning_policy = request.POST.get('form-'+str(form_count)+'-cleaning_policy')
+					start_time      = request.POST.get('form-'+str(form_count)+'-tendative_time')
+					cleaning_hours  = request.POST.get('form-'+str(form_count)+'-cleaning_hours')
+
+					if cleaning_policy == 'SUBSCRIPTION':
+						tendative_dates = request.POST.get('form-'+str(form_count)+'-tendative_dates').split(',')
+						
+						for date in tendative_dates:
+							start_date_time = datetime.strptime(date+' '+start_time,'%d-%m-%Y %I:%M %p')
+							end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours)) 
+							
+							order_schedule_array.append(OrderScheduler(order=new_order[0],status='CONFIRMED',evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=service_form_save))	
+							
+
+						updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total,status='EVALUATED')
+						updated_evaluation         = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total)
+						update_order               = Order.objects.filter(is_active=True,evaluation__id=evaluation_details.evaluation.id).update(total_amount=F('total_amount')+total,remining_amount=F('remining_amount')+total)
+					else:
+						tendative_dates = request.POST.get('form-'+str(form_count)+'-tendative_date').split(',')
+						
+						for date in tendative_dates:
+							start_date_time = datetime.strptime(date+' '+start_time,'%d-%m-%Y %I:%M %p')
+							end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours)) 	
+
+							order_schedule_array.append(OrderScheduler(order=new_order[0],status='CONFIRMED',evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=service_form_save))
+						
+
+						updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total,status='EVALUATED')
+						updated_evaluation 		   = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')+cost,discount=F('discount')+discount,total_cost=F('total_cost')+total)	
+						update_order               = Order.objects.filter(is_active=True,evaluation__id=evaluation_details.evaluation.id).update(total_amount=F('total_amount')+total,remining_amount=F('remining_amount')+total)
+					#to save sections
+					no_of_sections         = int(request.POST.get('form-'+str(form_count)+'-section_counter'))
+					section_array          = []
+					for i in range(no_of_sections):
+						section_name  = request.POST.get('form'+str(form_count)+'_section'+str(i))
+						category      = request.POST.get('form'+str(form_count)+'_category'+str(i))
+						dirt_level    = request.POST.get('form'+str(form_count)+'_dirt_level'+str(i))
+						quantity      = request.POST.get('form'+str(form_count)+'_quantity'+str(i))
+						size          = request.POST.get('form'+str(form_count)+'_size'+str(i))
+						unit          = request.POST.get('form'+str(form_count)+'_unit'+str(i))
+						age           = request.POST.get('form'+str(form_count)+'_age'+str(i))
+						floor         = request.POST.get('form'+str(form_count)+'_floor'+str(i))
+						apartment     = request.POST.get('form'+str(form_count)+'_apartment'+str(i))
+						room          = request.POST.get('form'+str(form_count)+'_room'+str(i))
+						wall_type     = request.POST.get('form'+str(form_count)+'_walltype'+str(i))
+						ceiling_type  = request.POST.get('form'+str(form_count)+'_ceilingtype'+str(i))
+						floor_type    = request.POST.get('form'+str(form_count)+'_floortype'+str(i))
+						material      = request.POST.get('form'+str(form_count)+'_material'+str(i))
+						colour        = request.POST.get('form'+str(form_count)+'_colour'+str(i))
+						cause_of_stain=request.POST.get('form'+str(form_count)+'_staincause'+str(i))
+						section_cost  = request.POST.get('form'+str(form_count)+'_sectioncost'+str(i))
+						print("hereeeeeeeeeeeeeeeeeeeeeee")
+						print(wall_type)
+						print(ceiling_type)
+						print(floor_type)
+						try:
+							section_name_arabic =Translator().translate(section_name,src='en', dest='ar').text
+						except:
+							section_name_arabic = section_name
+
+						#save section
+						if cleaning_policy == 'SUBSCRIPTION':
+							section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_cost=section_cost,section_cleanings=len(tendative_dates),section_net_cost=len(tendative_dates)*float(section_cost))
+						else:
+							section = EvaluationBookSection.objects.create(evaluation_book=service_form_save,section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_cost=section_cost,section_cleanings=1,section_net_cost=section_cost)
+
+						#to save keynotes
+						try:
+							no_of_keynotes = int(request.POST.get('form'+str(form_count)+'_section'+str(i)+'-keynote_counter'))
+						except:
+							no_of_keynotes = None
+							
+						keynote_array = []
+						if no_of_keynotes:
+							for j in range(no_of_keynotes):
+								keynote = request.POST.get('form'+str(form_count)+'_section'+str(i)+'_keynote'+str(j))
+								quantity= request.POST.get('form'+str(form_count)+'_section'+str(i)+'_quantity'+str(j))
+								if keynote and quantity:
+									keynote_array.append(EvaluationSectionKeynote(evaluation_section=section,sub_area=keynote,quantity=quantity))
+							#bulk_create keynote
+							EvaluationSectionKeynote.objects.bulk_create(keynote_array)
+
+				form_count = form_count+1
+			#bulk_create order schedules
+			now = timezone.now()
+			OrderScheduler.objects.bulk_create(order_schedule_array)	
+
+			messages.success(request,"Services Succesfully Added")
+
+		else:
+			if not service_formset.is_valid():
+				messages.error(request,"An Error Occured")
+
+			try:
+				service_types = ServiceType.objects.filter(is_active=True)
+			except:	
+				service_types = None
+
+			try:
+				area_types = AreaType.objects.filter(is_active=True)
+			except:
+				area_types = None
+			
+			if request.user.user_type == 'EVALUATOR':
+				return render(request,'common/enquiry/phase2quatation.html',{'service_formset':service_formset,'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,})	
+			if request.user.user_type == 'AGENT':
+				return render(request,'common/enquiry/phase2quatation.html',{'service_formset':service_formset,'evaluation_details':evaluation_details,'area_types':area_types,'service_types':service_types,})
+			if request.user.user_type == 'BOOKINGOFFICER':
+				return render(request,'common/enquiry/phase2quatation.html',{'service_formset':service_formset,'evaluation_details':evaluation_details,'area_types':area_types,'service_types':service_types,})
+	
+		
+		return redirect('common_items:makequatation1',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)
+
+
+class MakeQuatationPhase1Edit(IsAuthenticated,View):
+
+	def get(self,request,enquiry_id,evaluation_id):
+		enquiry_user    	  = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(id=enquiry_id)
+		
+		try:
+			evaluation = Evaluation.objects.get(id=evaluation_id)
+		except:
+			evaluation = None
+			
+		try:
+			evaluation_details = EvaluationDetails.objects.filter(is_active=True,evaluation=evaluation).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True,cleaning_policy='SUBSCRIPTION'),to_attr='evaluationbooks'))
+		except:
+			evaluation_details = None
+
+		#allow submition	
+		evaluation_details_count          = evaluation_details.count()
+		evaluation_details_completed_count= evaluation_details.filter(status='EVALUATED').count()
+		if evaluation_details_count==evaluation_details_completed_count:
+			allow_submit = True
+		else:
+			allow_submit = False				
+
+		return render(request,'common/enquiry/phase1quatationedit.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,"allow_submit":allow_submit})	
+
+	def post(self,request,enquiry_id,evaluation_id):
+		
+		payment_method = request.POST.get('payment_method')
+		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0)
+		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0)
+
+		#update payment method
+		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
+
+		#sms integration
+		evaluation = Evaluation.objects.filter(id=evaluation_id,is_active=True).first()
+		evaluationdetails = EvaluationDetails.objects.filter(evaluation=evaluation).first()
+		evaluationbook = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).first()
+		language = evaluation.customer.sms_preference
+
+		messages.success(request,"Quotation Edited Succesfully")
+
+		address = evaluationdetails.address
+
+		#address check for floor,avenue None
+		if address.floor == None and address.avenue == None:
+			address_list = [address.apartment, address.street, address.building, address.block, address.area.name, address.governorate.name]
+		
+		elif address.floor == None:
+			address_list = [address.apartment, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
+		
+		elif address.avenue == None:
+			address_list = [address.apartment, address.floor, address.street, address.building, address.block, address.area.name, address.governorate.name]
+		
+		else:
+			address_list = [address.apartment, address.floor, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
+
+		separator = ", "	
+
+		if evaluation.customer.is_sms == True:
+
+			url = "https://smsapi.future-club.com/fccsms.aspx"
+
+			if evaluation.payment_method == 'SUBSCRIPTION':
+				smsurl = "https://my.bleachkw.com/customer/subscription/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+""
+			else:
+				smsurl = "https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+""
+
+			if evaluation.customer.sms_preference == 'ENGLISH':
+
+				message = "Dear Customer, Please find the Revised Quotation against the order number "+str(evaluation.evaluation_id)+"  here "+smsurl+" . Order Number : "+ str(evaluation.evaluation_id) +". Service Type(s) : "+ evaluationbook.service_type.name +", Address(s) : "+separator.join(address_list)+", Cost : "+ str(evaluation.total_cost) +", Due Date : "+ str(evaluation.quatation_expiry_date) +". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait"
+				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
+
+			else:
+				message = "عزيزنا العميل نرجوا الاطلاع على عرض السعر المعدّل للطلب رقم "+str(evaluation.evaluation_id)+" في هذا الرابط "+smsurl+" .رقم الطلب: "+ str(evaluation.evaluation_id) +"الخدمة: "+ evaluationbook.service_type.name +"العنوان: "+separator.join(address_list)+"السعر: "+ str(evaluation.total_cost) +" KDتاريخ الخدمة: "+ str(evaluation.quatation_expiry_date) +"لأي استفسارات يمكنكم التواصل معنا على . 9651882707+  شكراً لاختياركم بليتش لخدمات التنظيف"
+				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
+
+			headers = {
+				'cache-control': "no-cache"
+			}
+			
+			response = requests.request("GET", url, headers=headers, params=querystring)
+
+			print(response.text,"respo")
+		else:
+			pass
+
+		if request.user.user_type == 'EVALUATOR':
+			return redirect('evaluator:evaluatordash-board')
+		if request.user.user_type == 'AGENT':
+			return redirect('agent:agentdash-board')
+		if request.user.user_type == 'BOOKINGOFFICER':
+			return redirect('booking-officer:bookingofficerdash-board')
+
+
+class MakeQuatationPhase2Edit(IsAuthenticated,View):
+	service_formset_define    = formset_factory(QuatationServiceForm)
+	service_formset_store     = modelformset_factory(EvaluationBook,QuatationServiceForm)
+	def get(self,request,evaluation_detail_id):
+
+		evaluation_details = EvaluationDetails.objects.select_related('evaluation__customer','address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr='evaluationbookmedias'),Prefetch('order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'),Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='booksections')),to_attr='evaluationbooks')).get(is_active=True,id=evaluation_detail_id)
+		
+		try:
+			service_types = ServiceType.objects.filter(is_active=True)
+		except:	
+			service_types = None
+
+		try:
+			area_types = AreaType.objects.filter(is_active=True)
+		except:
+			area_types = None
+
+		try:
+			cleaning_sections = CleaningSection.objects.filter(is_active=True)
+		except:
+			cleaning_sections = None
+
+		return render(request,'common/enquiry/phase2quatationedit.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,'cleaning_sections':cleaning_sections,})
+
+	def post(self,request,evaluation_detail_id):
+		
+		evaluation_details 	  = EvaluationDetails.objects.select_related('evaluation__customer','address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr='evaluationbookmedias'),Prefetch('order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'),Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='booksections')),to_attr='evaluationbooks')).get(is_active=True,id=evaluation_detail_id)		
+		service_formset       = self.service_formset_store(request.POST)
+		
+		if service_formset.is_valid() : 
+			form_count = 0
+			#old order update					
+			old_order = Order.objects.get(evaluation=evaluation_details.evaluation)	
+				
+			order_schedule_array          = []
+			#Save Service Form
+			for service_form in service_formset:
+				if service_form.is_valid():
+
+					old_form_id                                 = request.POST.get('editform'+str(form_count))
+					if old_form_id:
+						old_form_id								= int(old_form_id)
+						very_old_book                           = EvaluationBook.objects.get(id=old_form_id)		                   
+						
+						#update book
+						EvaluationBook.objects.filter(id=service_form['id'].value()).update(cleaning_policy=service_form['cleaning_policy'].value(),service_type=service_form['service_type'].value(),area_type=service_form['area_type'].value(),cleaning_method=service_form['cleaning_method'].value(),location_type=service_form['location_type'].value(),number_of_cleaners=service_form['number_of_cleaners'].value(),estimated_cost=service_form['estimated_cost'].value(),discount=service_form['discount'].value(),total_cost=service_form['total_cost'].value(),cleaning_hours=service_form['cleaning_hours'].value(),evaluator_note=service_form['evaluator_note'].value())
+						
+						#To Save Media
+						medias = request.FILES.getlist('newform-'+str(form_count)+'-media')
+						if not medias==['']:
+							for media in medias:
+								EvaluationMedia.objects.create(
+								        evaluation_book_id=old_form_id,
+								        media=media,
+								        media_type='PHOTO',
+								        taken_status='AGENT_TAKEN'
+								        )
+
+						#for updating cost details in evaluation details and evaluation
+						cost     = float(request.POST.get('form-'+str(form_count)+'-estimated_cost')) 
+						discount = float(request.POST.get('form-'+str(form_count)+'-discount'))
+						total    = float(request.POST.get('form-'+str(form_count)+'-total_cost'))
+
+						#for creating cleaning schedules and corresponding cleanings
+						cleaning_policy = request.POST.get('form-'+str(form_count)+'-cleaning_policy')
+						start_time      = request.POST.get('form-'+str(form_count)+'-tendative_time')
+						cleaning_hours  = request.POST.get('form-'+str(form_count)+'-cleaning_hours')
+
+						old_book      =  EvaluationBook.objects.get(id=old_form_id)
+
+						if cleaning_policy == 'SUBSCRIPTION':
+							tendative_dates = request.POST.get('form-'+str(form_count)+'-tendative_dates').split(',')
+							for date in tendative_dates:
+								start_date_time = datetime.strptime(date+' '+start_time,'%d-%m-%Y %I:%M %p')
+								end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours)) 
+								order_schedule_array.append(OrderScheduler(order=old_order,status='CONFIRMED',evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=old_book))	
+								
+
+							updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')-very_old_book.estimated_cost+cost,discount=F('discount')-very_old_book.discount+discount,total_cost=F('total_cost')-very_old_book.total_cost+total,status='EVALUATED')
+							updated_evaluation         = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')-very_old_book.estimated_cost+cost,discount=F('discount')-very_old_book.discount+discount,total_cost=F('total_cost')-very_old_book.total_cost+total)
+							update_order               = Order.objects.filter(is_active=True,evaluation__id=evaluation_details.evaluation.id).update(total_amount=F('total_amount')-very_old_book.total_cost+total,remining_amount=F('remining_amount')-very_old_book.total_cost+total)	
+						else:
+							tendative_dates = request.POST.get('form-'+str(form_count)+'-tendative_date').split(',')
+							for date in tendative_dates:
+								start_date_time = datetime.strptime(date+' '+start_time,'%d-%m-%Y %I:%M %p')
+								end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours)) 
+
+								order_schedule_array.append(OrderScheduler(order=old_order,status='CONFIRMED',evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,customer_address=evaluation_details.address,order_scheduler_book=old_book))
+
+							updated_evaluation_details = EvaluationDetails.objects.filter(is_active=True,id=evaluation_detail_id).update(estimated_cost=F('estimated_cost')-very_old_book.estimated_cost+cost,discount=F('discount')-very_old_book.discount+discount,total_cost=F('total_cost')-very_old_book.total_cost+total,status='EVALUATED')
+							updated_evaluation 		   = Evaluation.objects.filter(is_active=True,id=evaluation_details.evaluation.id).update(estimated_cost=F('estimated_cost')-very_old_book.estimated_cost+cost,discount=F('discount')-very_old_book.discount+discount,total_cost=F('total_cost')-very_old_book.total_cost+total)
+							update_order               = Order.objects.filter(is_active=True,evaluation__id=evaluation_details.evaluation.id).update(total_amount=F('total_amount')-very_old_book.total_cost+total,remining_amount=F('remining_amount')-very_old_book.total_cost+total)
+						#to save and update sections
+						no_of_sections         = int(request.POST.get('form-'+str(form_count)+'-section_counter'))		
+						section_array          = []
+						for i in range(no_of_sections):
+							section_name  = request.POST.get('form'+str(form_count)+'_section'+str(i))
+							category      = request.POST.get('form'+str(form_count)+'_category'+str(i))
+							dirt_level    = request.POST.get('form'+str(form_count)+'_dirt_level'+str(i))
+							quantity      = request.POST.get('form'+str(form_count)+'_quantity'+str(i))
+							size          = request.POST.get('form'+str(form_count)+'_size'+str(i))
+							unit          = request.POST.get('form'+str(form_count)+'_unit'+str(i))
+							age           = request.POST.get('form'+str(form_count)+'_age'+str(i))
+							floor         = request.POST.get('form'+str(form_count)+'_floor'+str(i))
+							apartment     = request.POST.get('form'+str(form_count)+'_apartment'+str(i))
+							room          = request.POST.get('form'+str(form_count)+'_room'+str(i))
+							wall_type     = request.POST.get('form'+str(form_count)+'_walltype'+str(i))
+							ceiling_type  = request.POST.get('form'+str(form_count)+'_ceilingtype'+str(i))
+							floor_type    = request.POST.get('form'+str(form_count)+'_floortype'+str(i))
+							material      = request.POST.get('form'+str(form_count)+'_material'+str(i))
+							colour        = request.POST.get('form'+str(form_count)+'_colour'+str(i))
+							cause_of_stain=request.POST.get('form'+str(form_count)+'_staincause'+str(i))
+							section_cost  = request.POST.get('form'+str(form_count)+'_sectioncost'+str(i))
+							
+							old_section_id=request.POST.get('editform'+str(form_count)+'_section'+str(i)) 
+							
+							try:
+								section_name_arabic =Translator().translate(section_name,src='en', dest='ar').text
+							except:
+								section_name_arabic = section_name
+							
+							if old_section_id:
+								#edit section
+								if cleaning_policy == 'SUBSCRIPTION':
+									section = EvaluationBookSection.objects.filter(id=old_section_id).update(section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_cost=section_cost,section_cleanings=len(tendative_dates),section_net_cost=len(tendative_dates)*float(section_cost))
+								else:
+									section = EvaluationBookSection.objects.filter(id=old_section_id).update(section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_cost=section_cost,section_cleanings=1,section_net_cost=section_cost)
+							else:
+								#save section
+								if cleaning_policy == 'SUBSCRIPTION':
+									section = EvaluationBookSection.objects.create(evaluation_book=old_book,section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_cost=section_cost,section_cleanings=len(tendative_dates),section_net_cost=len(tendative_dates)*float(section_cost))
+								else:
+									section = EvaluationBookSection.objects.create(evaluation_book=old_book,section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_cost=section_cost,section_cleanings=1,section_net_cost=section_cost)
+
+							#to save and update keynotes
+							try:
+								no_of_keynotes = int(request.POST.get('form'+str(form_count)+'_section'+str(i)+'-keynote_counter'))
+							except:
+								no_of_keynotes = None
+
+							keynote_array = []
+							if no_of_keynotes:
+								for j in range(no_of_keynotes):
+									old_keynote_id=request.POST.get('editform'+str(form_count)+'_section'+str(i)+'_keynote'+str(j))
+
+									keynote = request.POST.get('form'+str(form_count)+'_section'+str(i)+'_keynote'+str(j))
+									quantity= request.POST.get('form'+str(form_count)+'_section'+str(i)+'_quantity'+str(j))
+
+									if old_keynote_id:
+										if keynote and quantity:
+											EvaluationSectionKeynote.objects.filter(id=old_keynote_id).update(id=old_keynote_id,sub_area=keynote,quantity=quantity)
+									else:	
+										if old_section_id and keynote and quantity:
+											old_section = EvaluationBookSection.objects.get(id=old_section_id)
+											keynote_array.append(EvaluationSectionKeynote(evaluation_section=old_section,sub_area=keynote,quantity=quantity))
+										elif keynote and quantity:
+											keynote_array.append(EvaluationSectionKeynote(evaluation_section=section,sub_area=keynote,quantity=quantity))
+								#bulk_create keynote
+								EvaluationSectionKeynote.objects.bulk_create(keynote_array)	
+						
+						#delete old order schedules
+						OrderScheduler.objects.filter(order_scheduler_book_id=old_form_id).delete()
+
+				form_count = form_count+1
+
+			#bulk_create order schedules
+			OrderScheduler.objects.bulk_create(order_schedule_array)
+
+			messages.success(request,"Services Succesfully Updated")
+
+		else:
+			if not service_formset.is_valid():
+				messages.error(request,"An Error Occured")
+
+			try:
+				service_types = ServiceType.objects.filter(is_active=True)
+			except:	
+				service_types = None
+
+			try:
+				area_types = AreaType.objects.filter(is_active=True)
+			except:
+				area_types = None
+
+			try:
+				cleaning_sections = CleaningSection.objects.filter(is_active=True)
+			except:
+				cleaning_sections = None
+
+			if request.user.user_type == 'EVALUATOR':
+				return render(request,'evaluator/enquiry/phase2quatationedit.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,'cleaning_sections':cleaning_sections,})	
+			if request.user.user_type == 'AGENT':
+				return render(request,'agent/enquiry/phase2quatationedit.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,'cleaning_sections':cleaning_sections,})
+			if request.user.user_type == 'BOOKINGOFFICER':
+				return render(request,'common/enquiry/phase2quatationedit.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,'cleaning_sections':cleaning_sections,})
+			if request.user.user_type == 'SALESADMIN':
+				return render(request,'salesadmin/enquiry/phase2quatationedit.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,'cleaning_sections':cleaning_sections,})
+
+		return redirect('common_items:makequatation1edit',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)
