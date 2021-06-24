@@ -4708,9 +4708,10 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 		for service_detail in services.keys():
 			service_save_serializer                    = EvaluationBookSerializer(data=services[service_detail])
 			if service_save_serializer.is_valid():
-				saved_service                              = service_save_serializer.save(evaluation_details=evaluation_details,cleaning_policy=services[service_detail]['cleaning_policy'],service_type__id=services[service_detail]['service_type'],cleaning_method='Method1')	
+				saved_service                              = service_save_serializer.save(evaluation_details=evaluation_details,cleaning_policy=services[service_detail]['cleaning_policy'],cleaning_method='Method1')	
 				response_dict['service_success']           = True
 			else:
+				print(service_save_serializer,"service_save_serializer")
 				errors= service_save_serializer.errors   
 				key=tuple(errors.keys())[0] 
 				error=errors[key]

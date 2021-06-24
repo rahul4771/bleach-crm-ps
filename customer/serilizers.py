@@ -36,7 +36,7 @@ class EvaluationBookSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = EvaluationBook
 		fields = ('id','service_type','cleaning_policy','area_type','location_type','total_cost','evaluator_note','number_of_cleaners','cleaning_hours','evaluationsection_book')
-		# read_only_fields = ('id',)
+		read_only_fields = ('id',)
 
 ##for data showing
 class GovernorateSerializer(serializers.ModelSerializer):
