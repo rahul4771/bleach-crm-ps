@@ -2035,7 +2035,9 @@ class GetMultipleServiceCleaningSlotes(APIView):
 			for slote_duration in slote_durations:
 				slote_starttime 			  = cleaning_date.replace(hour=slote,minute=0,second=0,microsecond=0)
 				slote_endtime                 = slote_starttime+timedelta(hours=slote_duration)
-
+				print(slote_starttime,"slote_starttime")
+				print(slote_duration)
+				print(slote_endtime,"slote_endtime")
 				#included shift cleaners
 				shift_cleaners  = ShiftSchedule.objects.select_related('staff').filter(shift_date=cleaning_date).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=slote_starttime.time())&Q(shift1_end_at__gte=slote_starttime.time()))&Q(Q(shift1_start_at__lte=slote_endtime.time())&Q(shift1_end_at__gte=slote_endtime.time()))) | Q(Q(Q(shift2_start_at__lte=slote_starttime.time())&Q(shift2_end_at__gte=slote_starttime.time()))&Q(Q(shift2_start_at__lte=slote_endtime.time())&Q(shift2_end_at__gte=slote_endtime.time())))).values_list('staff',flat=True)
 				shift_leaders   = ShiftSchedule.objects.select_related('staff').filter(shift_date=cleaning_date).filter(staff__user_type='TEAMINCHARGE').filter(Q(Q(Q(shift1_start_at__lte=slote_starttime.time())&Q(shift1_end_at__gte=slote_starttime.time()))&Q(Q(shift1_start_at__lte=slote_endtime.time())&Q(shift1_end_at__gte=slote_endtime.time()))) | Q(Q(Q(shift2_start_at__lte=slote_starttime.time())&Q(shift2_end_at__gte=slote_starttime.time()))&Q(Q(shift2_start_at__lte=slote_endtime.time())&Q(shift2_end_at__gte=slote_endtime.time())))).values_list('staff',flat=True)
@@ -4706,7 +4708,7 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 		for service_detail in services.keys():
 			service_save_serializer                    = EvaluationBookSerializer(data=services[service_detail])
 			if service_save_serializer.is_valid():
-				saved_service                              = service_save_serializer.save(evaluation_details=evaluation_details,cleaning_policy=services[service_detail]['cleaning_policy'],cleaning_method='Method1')	
+				saved_service                              = service_save_serializer.save(service_type_id=services[service_detail]['service_type'],evaluation_details=evaluation_details,cleaning_policy=services[service_detail]['cleaning_policy'],cleaning_method='Method1')	
 				response_dict['service_success']           = True
 			else:
 				errors= service_save_serializer.errors   
@@ -4838,7 +4840,7 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 
 							return Response(response_dict,HTTP_200_OK)
 
-			service_dict[saved_service.id] = saved_service				
+			service_dict[saved_service.id] = services[service_detail]['service_type']				
 		
 		response_dict['evaluation_book_ids'] = service_dict
 		response_dict['success']             = True
