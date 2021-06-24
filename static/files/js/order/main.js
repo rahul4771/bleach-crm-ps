@@ -65,7 +65,8 @@ const app = new Vue({
     paymentType:"",
     key: "",
     breakDownFlag:false,
-    amount:""
+    amount:"",
+    contacts:[]
   },
   methods:{
     onChange(event) {
@@ -83,6 +84,9 @@ const app = new Vue({
       todaysDate = new Date(d).toDateString().split(" ");
       this.year = todaysDate[3]
       this.day = todaysDate[0]+", "+todaysDate[1]+" "+todaysDate[2]
+    },
+    resetContacts(){
+      this.contacts=[]
     }
   }
  
