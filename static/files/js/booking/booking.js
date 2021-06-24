@@ -701,7 +701,7 @@ scheduleStatus:false
               this.multiServicesBill[this.schedule_serviceTypes_selected[j]].schedule_details[count+1]={
                 
                 "date":date,
-               "time":this.slotFormat[min_slot].start_time,
+               "time":this.parsedTimeSlots[parseInt(min_slot)-1].start_time,
               "no_of_cleaners":this.selectedDuration.cleaners,
                "cleaning_hours":this.selectedDuration.hours
               }
@@ -896,6 +896,13 @@ scheduleStatus:false
           var max=Math.max(...slots)
           console.log("aray:"+slots+"min is"+min+"max is"+max)
           var combined = this.slotFormat[String(min)].start_time+' - '+this.slotFormat[String(max)].end_time
+          return combined
+        },
+        getCombinedOnetimeSlot(slots){
+          var min=Math.min(...slots)
+          var max=Math.max(...slots)
+          console.log("aray:"+slots+"min is"+min+"max is"+max)
+          var combined = this.parsedTimeSlots[parseInt(min)-1].start_time+' - '+this.parsedTimeSlots[parseInt(max)-1].end_time
           return combined
         },
         findCustomVisits(){
@@ -1830,6 +1837,13 @@ console.log(response)
   },
   addOneTimeSlot(start,end,slot){
    this.onetimerender=false
+  /* var currSlot=''
+   for(var i in this.slotFormat){
+     if(this.slotFormat[i].start_time==start){
+      currSlot=i
+      break;
+     }
+   }*/
     this.one_time_slots[this.oneTimeDateSelected].slots.push(slot)
     this.onetimerender=true
 },
