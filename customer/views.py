@@ -4742,8 +4742,8 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 		if action_type == 'together':
 			###testing availability ####
 			for service_detail in services.keys():
-				service        		= ServiceType.objects.get(id=services[service_detail]['id'])
-				service_type   		= service.name
+				service_book        		= EvaluationBook.objects.get(id=services[service_detail]['id'])
+				service_type   		        = service_book.service_type.name
 
 				if service_type == 'General Cleaning':
 					total_cleaners 	= total_cleaners.filter(is_general_skill=True)
@@ -4810,8 +4810,8 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 				active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=start_date_time)&Q(start_at__lte=end_date_time))|Q(Q(end_at__gte=start_date_time)&Q(end_at__lte=end_date_time))|Q(Q(start_at__lte=start_date_time)&Q(end_at__gte=start_date_time)&Q(start_at__lte=end_date_time)&Q(end_at__gte=end_date_time))|Q(Q(start_at__gte=start_date_time)&Q(end_at__gte=start_date_time)&Q(start_at__lte=end_date_time)&Q(end_at__lte=end_date_time))))
 				
 				for service_detail in services.keys():
-					service        		= ServiceType.objects.get(id=services[service_detail]['id'])
-					service_type   		= service.name
+					service_book        		= EvaluationBook.objects.get(id=services[service_detail]['id'])
+					service_type   		        = service_book.service_type.name
 
 					if service_type == 'General Cleaning':
 						active_cleaners1 	= active_cleaners1.filter(member__is_general_skill=True)
@@ -4918,8 +4918,8 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 						cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_cleaners))).filter(id__in=shift_cleaners)
 
 						for service_detail in services.keys():
-							service        		= ServiceType.objects.get(id=services[service_detail]['id'])
-							service_type   		= service.name 			
+							service_book        		= EvaluationBook.objects.get(id=services[service_detail]['id'])
+							service_type   		        = service_book.service_type.name 			
 						
 							if service_type == 'General Cleaning':
 								leaders = leaders.filter(is_general_skill=True)
