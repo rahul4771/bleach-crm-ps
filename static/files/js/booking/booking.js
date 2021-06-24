@@ -2042,10 +2042,13 @@ removeOneTimeSlot(slot){
     this.total_size = 0
     this.sofa_size=0
     this.chair_size=0
+    console.log("called me & "+this.schedule_serviceTypes_selected)
     for(var j=0;j<this.schedule_serviceTypes_selected.length;j++)
     {
+      console.log("i m inside loop")
         var serIndex=this.schedule_serviceTypes_selected[j]
        if(this.multiServicesBill[serIndex].service=='Upholstery Cleaning'){
+        console.log("i m inside upholsdtery")
          for (var i=0;i < this.multiServicesBill[serIndex].bill.length; i++) {
                 if(this.multiServicesBill[serIndex].bill[i].section.type=='SOFA'){
                   this.sofa_size=this.sofa_size+ parseInt(this.multiServicesBill[serIndex].bill[i].section.size.max_size)
@@ -2056,6 +2059,7 @@ removeOneTimeSlot(slot){
           }
        }
        else if(this.multiServicesBill[serIndex].service=='Kitchen Cleaning'){
+        console.log("i m inside kitchen")
          for (var i=0;i < this.multiServicesBill[serIndex].bill.length; i++) {
                 if(this.multiServicesBill[serIndex].bill[i].section.type=='old'){
                   this.old_kitchen_size=this.old_kitchen_size+ parseInt(this.multiServicesBill[serIndex].bill[i].section.size.max_size)
@@ -2067,10 +2071,11 @@ removeOneTimeSlot(slot){
        }
        else{
 
-       
+       console.log("i m inside")
     for (var i=0;i < this.multiServicesBill[serIndex].bill.length; i++) {
-     
+     console.log("section sixze is"+this.multiServicesBill[serIndex].bill[i].section.size.max_size)
       this.total_size=this.total_size + parseInt(this.multiServicesBill[serIndex].bill[i].section.size.max_size);
+      console.log("section total sixze is"+this.total_size)
     }
     }
     }
@@ -2997,14 +3002,16 @@ try {
     if(!this.editScheduleStat){
       this.resetScheduler()
     }
-    this.findSelectedTotalSize()
+    
       this.activeTab='Schedule'
       this.currentPageTitle='Schedule'
       if(this.scheduleStat){
         this.addAllServiceTypes()
       }
+      this.findSelectedTotalSize()
       this.calcSelectedServices()
       this.newdurationcalculation();
+
   },
   goToBilling(){
       this.activeTab='Payment Method'
