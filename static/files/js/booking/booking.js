@@ -701,7 +701,7 @@ scheduleStatus:false
               this.multiServicesBill[this.schedule_serviceTypes_selected[j]].schedule_details[count+1]={
                 
                 "date":date,
-               "time":this.slotFormat[min_slot].start_time,
+               "time":this.parsedTimeSlots[parseInt(min_slot)-1].start_time,
               "no_of_cleaners":this.selectedDuration.cleaners,
                "cleaning_hours":this.selectedDuration.hours
               }
@@ -896,6 +896,13 @@ scheduleStatus:false
           var max=Math.max(...slots)
           console.log("aray:"+slots+"min is"+min+"max is"+max)
           var combined = this.slotFormat[String(min)].start_time+' - '+this.slotFormat[String(max)].end_time
+          return combined
+        },
+        getCombinedOnetimeSlot(slots){
+          var min=Math.min(...slots)
+          var max=Math.max(...slots)
+          console.log("aray:"+slots+"min is"+min+"max is"+max)
+          var combined = this.parsedTimeSlots[parseInt(min)-1].start_time+' - '+this.parsedTimeSlots[parseInt(max)-1].end_time
           return combined
         },
         findCustomVisits(){
@@ -1830,6 +1837,13 @@ console.log(response)
   },
   addOneTimeSlot(start,end,slot){
    this.onetimerender=false
+  /* var currSlot=''
+   for(var i in this.slotFormat){
+     if(this.slotFormat[i].start_time==start){
+      currSlot=i
+      break;
+     }
+   }*/
     this.one_time_slots[this.oneTimeDateSelected].slots.push(slot)
     this.onetimerender=true
 },
@@ -2042,10 +2056,13 @@ removeOneTimeSlot(slot){
     this.total_size = 0
     this.sofa_size=0
     this.chair_size=0
+    console.log("called me & "+this.schedule_serviceTypes_selected)
     for(var j=0;j<this.schedule_serviceTypes_selected.length;j++)
     {
+      console.log("i m inside loop")
         var serIndex=this.schedule_serviceTypes_selected[j]
        if(this.multiServicesBill[serIndex].service=='Upholstery Cleaning'){
+        console.log("i m inside upholsdtery")
          for (var i=0;i < this.multiServicesBill[serIndex].bill.length; i++) {
                 if(this.multiServicesBill[serIndex].bill[i].section.type=='SOFA'){
                   this.sofa_size=this.sofa_size+ parseInt(this.multiServicesBill[serIndex].bill[i].section.size.max_size)
@@ -2056,6 +2073,7 @@ removeOneTimeSlot(slot){
           }
        }
        else if(this.multiServicesBill[serIndex].service=='Kitchen Cleaning'){
+        console.log("i m inside kitchen")
          for (var i=0;i < this.multiServicesBill[serIndex].bill.length; i++) {
                 if(this.multiServicesBill[serIndex].bill[i].section.type=='old'){
                   this.old_kitchen_size=this.old_kitchen_size+ parseInt(this.multiServicesBill[serIndex].bill[i].section.size.max_size)
@@ -2067,10 +2085,11 @@ removeOneTimeSlot(slot){
        }
        else{
 
-       
+       console.log("i m inside")
     for (var i=0;i < this.multiServicesBill[serIndex].bill.length; i++) {
-     
+     console.log("section sixze is"+this.multiServicesBill[serIndex].bill[i].section.size.max_size)
       this.total_size=this.total_size + parseInt(this.multiServicesBill[serIndex].bill[i].section.size.max_size);
+      console.log("section total sixze is"+this.total_size)
     }
     }
     }
@@ -2997,14 +3016,16 @@ try {
     if(!this.editScheduleStat){
       this.resetScheduler()
     }
-    this.findSelectedTotalSize()
+    
       this.activeTab='Schedule'
       this.currentPageTitle='Schedule'
       if(this.scheduleStat){
         this.addAllServiceTypes()
       }
+      this.findSelectedTotalSize()
       this.calcSelectedServices()
       this.newdurationcalculation();
+
   },
   goToBilling(){
       this.activeTab='Payment Method'

@@ -235,6 +235,9 @@ const app=  new Vue({
         editCleaningTeam(slot){
           window.location.href='/stl/editcleaning/team/'+slot
         },
+        addCleaningTeam(slot){
+          window.location.href='/stl/assigncleaning/team/'+slot
+        },
         selectEditSlot(slot){
          
 
@@ -709,6 +712,7 @@ const app=  new Vue({
             this.cleaningFollowupDialog=false
           },
           openCleaningModal(item){
+            
             this.cleaningAgentDialog=false
             this.dataCompleted=false
             this.cleaningFollowupDialog=false

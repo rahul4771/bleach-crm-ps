@@ -577,7 +577,7 @@ $(document).ready(function(){
     gotData:false,
     bookingServicesBill:[],
     bookingonetimeslots:[],
-    multiAddress:true
+    multiAddress:false
         },
      
 /* header data */
@@ -4156,6 +4156,9 @@ getBookedServices(){
   this.multiServicesBill=[]
   axios.get(this.url+'/customer/evaluatorbookingmultiplephase3/customer/'+this.custId).then(response=>{
     this.bookedServiceDetails=response.data.evaluation_details
+    if(this.bookedServiceDetails.length>0){
+      this.multiAddress=true
+    }
     console.log("booked service is"+JSON.stringify(this.bookedServiceDetails))
     var serviceBookedDetails=this.bookedServiceDetails[0].evaluation_book_evaluation_details
     for(var i=0;i<serviceBookedDetails.length;i++)

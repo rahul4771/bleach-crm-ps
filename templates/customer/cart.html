@@ -1100,61 +1100,39 @@ width="1000"
                   <div v-if="activeTab=='Cart'">
                     
 
-                  <div class="page-main-title">
+                  
+                  <div class="row m-0" v-if="multiAddress">
+                    <div class="col-md-4 h-100" v-for="(item,index) in bookedServiceDetails" v-bind:key="index">
+                      <div class="address-card" >
+                          <div>
+                           <% item.address.apartment +', '+item.address.building+', '+item.address.block+', '+item.address.area.name+', '+item.address.governorate.name%>
+                          </div>
+                          <div class="text-center mt-2 mb-1">
+                          <!--  <v-alert
+                            dense
+                            text
+                            type="success"
+                            color="primary"
+                            style="margin-bottom:0px"
+                          >
+                           scheduled
+                          </v-alert>-->
+                          <v-btn color="primary" outlined>
+                            Schedule
+                          </v-btn>
+                          </div>
+                      </div>
+                    </div>
+                   
+                   
+                  </div>
+                    <div class="page-main-title">
                       Cart
                   </div>
-                   
-                    
                     <div class="mt-4">
                       You can update your cleaning or add more services in the below section. To continue, click Proceed.
                     </div>
-                    <div class="row m-0" v-if="multiAddress">
-                      <div class="col-md-4 h-100">
-                        <div class="address-card">
-                            <div>
-                              1, 1 Floor 1,1 Block, 1 Street,1 Avenue
-                              Abu Halifa, Ahmadi
-                            </div>
-                            <div class="text-center mt-2 mb-1">
-                              <v-alert
-                              dense
-                              text
-                              type="success"
-                              color="primary"
-                              style="margin-bottom:0px"
-                            >
-                             scheduled
-                            </v-alert>
-                            </div>
-                        </div>
-                      </div>
-                      <div class="col-md-4 h-100">
-                        <div class="address-card">
-                            <div>
-                              1, 1 Floor 1,1 Block, 1 Street,1 Avenue
-                              Abu Halifa, Ahmadi
-                            </div>
-                            <div class="text-center mt-2 mb-2">
-                              <v-btn color="primary" outlined>
-                                Schedule
-                              </v-btn>
-                            </div>
-                        </div>
-                      </div>
-                      <div class="col-md-4 h-100">
-                        <div class="address-card">
-                            <div>
-                              1, 1 Floor 1,1 Block, 1 Street,1 Avenue
-                              Abu Halifa, Ahmadi
-                            </div>
-                            <div class="text-center mt-2 mb-2">
-                              <v-btn color="primary" outlined>
-                                Schedule
-                              </v-btn>
-                            </div>
-                        </div>
-                      </div>
-                    </div>
+                   
                     <div class="mt-4">
                       <div class="ev-booking-title">
                         Services

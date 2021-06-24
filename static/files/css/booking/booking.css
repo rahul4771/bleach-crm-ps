@@ -633,7 +633,8 @@ padding:10px;
 .address-card{
     border:1px solid #289bac;
     border-radius:5px;
-    padding:10px
+    padding:10px;
+    min-height:112px;
 }
 /*.owl-prev {
   
