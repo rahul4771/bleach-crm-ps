@@ -2,7 +2,57 @@
 {% block content %}
 {% load static %}
 <div class="wrapper"><!--wrapper-->
-{% include "bookingofficer/common/header.html" %}
+
+ <!-- notes modal begins here-->
+<!-- Modal -->
+
+<div class="modal fade " id="notesModalCenter" tabindex="-1" role="dialog" aria-labelledby="notesModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered primary-modal" role="document">
+    <div class="modal-content primary-modal-border">
+      <div class="d-flex">
+        <h5 class="modal-title" id="exampleModalLongTitle">Notes</h5>
+        <button type="button" class="close ml-auto" data-dismiss="modal" aria-label="Close" style="margin-left:auto">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form method="POST" action="" >{% csrf_token %}
+      <input type="hidden" name="callback_orderid" id="order_id" />
+      <div class="modal-body">
+        <div class="form-group">
+          <!--<label for="exampleInputEmail1">Notes</label>-->
+          <input type="text" class="form-control" id="note" name="payment_note"  placeholder="Notes" maxlength="50">
+          <small id="noteHelp" class="form-text text-muted">Maximum 50 letters</small>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn primary-btn" >Save changes</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+ <!-- notes modal ends here-->
+
+{% if request.user.user_type == 'SALESADMIN' %}
+  {% include "salesadmin/common/header.html" %}
+{% elif request.user.user_type == 'AGENT' %}
+  {% include "agent/common/header.html" %}
+{% elif request.user.user_type == 'ADMIN' %}
+  {% include "admin/common/header.html" %}
+{% elif request.user.user_type == 'BOOKINGOFFICER' %}
+  {% include "bookingofficer/common/header.html" %} 
+{% elif request.user.user_type == 'EVALUATOR' %}
+  {% include "evaluator/common/header.html" %}
+{% elif request.user.user_type == 'SENIORTEAMLEADER' %}
+  {% include "stl/common/header.html" %}
+{% elif request.user.user_type == 'OPERATIONSUPERVISOR' %}
+  {% include "operationsupervisor/common/header.html" %}
+{% elif request.user.user_type == 'TECHNICALSUPERVISOR' %}
+  {% include "technicalsupervisor/common/header.html" %}
+{% elif request.user.user_type == 'ACCOUNTANT' %}
+  {% include "accountant/common/header.html" %}
+{% endif %}
     
     <section class="content"><!--content-->
         <div class="container-fluid space topspace"><!--container-fluid space-->
@@ -76,6 +126,18 @@
             
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Callback List</h2>
+
+<div class="col-md-6">
+<label for="favcity" style="width:20%;"> 
+<select name="no_of_entries" id="no_of_entries" onchange="set_params_go();"> 
+<option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
+<option value="50" {% if no_of_entries == '50' %}selected{% endif %}>50 Entries</option>
+<option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
+</select>
+</label>
+</div>
+<div class="col-md-6">
+
 <div class="page-entries">Show {{entry_per_page}} entries</div>
 <h5>Order Status</h5>
 <label for="favcity" style="width:20%;"> 
@@ -98,13 +160,8 @@
 </select>
 </label>
 <br>
-<label for="favcity" style="width:20%;"> 
-<select name="no_of_entries" id="no_of_entries" onchange="set_params_go();"> 
-<option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
-<option value="50" {% if no_of_entries == '50' %}selected{% endif %}>50 Entries</option>
-<option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
-</select>
-</label>
+
+</div>
 
 <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
  
@@ -116,15 +173,15 @@
 <th data-hide="phone">Customer Mobile</th>
 <th data-hide="phone">Service Type</th>
 <th data-hide="phone,tablet">Status</th>
-<th class="align-center" data-hide="phone,tablet">Actions</th>
-<th class="align-center" data-hide="phone,tablet">Shortcuts</th>
+{% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}<th class="align-center" data-hide="phone,tablet">Actions</th>{% endif %}
+<th data-hide="phone,tablet">Shortcuts</th>
 </tr>
 </thead>
 <tbody>
 
     {% for evaluation in evaluations %}
     <tr>
-    <td {% if evaluation.quatation_status == 'REJECTED' %}class="red-line clickable-row"{% elif evaluation.quatation_status == 'PENDING' %}class="yellow-line clickable-row"{% elif evaluation.quatation_status == 'EXPIRED' %}class="orange-line clickable-row"{%else%}class="approved-not-paid-line"{%endif%} {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' order.id %}"{% endfor %}{% endif %}>{{evaluation.evaluation_id}}</td>    
+    <td {% if evaluation.quatation_status == 'REJECTED' %}class="red-line"{% elif evaluation.quatation_status == 'PENDING' %}class="yellow-line"{% elif evaluation.quatation_status == 'EXPIRED' %}class="orange-line"{%else%}class="approved-not-paid-line"{%endif%} {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'common_items:client-orderdetails' order.id %}"{% endfor %}{% endif %}>{{evaluation.evaluation_id}}</td>    
     <td>{{evaluation.customer.name|default_if_none:''}}</td>
     <td>{{evaluation.customer.mobile_number|default_if_none:''}}</td>
 
@@ -137,14 +194,15 @@
 
     {% comment %} <td>{% for evaluation_detail in evaluation.details_evaluation %}{% if evaluation_detail.evaluator %}{{evaluation_detail.evaluator.name}}<br>{% else %}{{evaluation_detail.evaluation.call_attender.name}}{% endif %}{% endfor %}</td> {% endcomment %}
     
-    <td>{% if evaluation.quatation_status == 'REJECTED' %}<div {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="d-flex "><div class="round-marker red-bg"></div><span>REJECTED</span></div>
-        {% elif evaluation.quatation_status == 'PENDING' %}<div {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="d-flex "><div class="round-marker yellow-bg"></div><span>PENDING</span></div>
-        {% elif evaluation.quatation_status == 'EXPIRED' %}<div {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'booking-officer:bookingofficer-client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="d-flex "><div class="round-marker orange-bg"></div><span>EXPIRED</span></div>
+    <td>{% if evaluation.quatation_status == 'REJECTED' %}<div {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'common_items:client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="d-flex "><div class="round-marker red-bg"></div><span>REJECTED</span></div>
+        {% elif evaluation.quatation_status == 'PENDING' %}<div {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'common_items:client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="d-flex "><div class="round-marker yellow-bg"></div><span>PENDING</span></div>
+        {% elif evaluation.quatation_status == 'EXPIRED' %}<div {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'common_items:client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="d-flex "><div class="round-marker orange-bg"></div><span>EXPIRED</span></div>
         {% else %}
         <div  class="d-flex "><div class="round-marker approved-not-paid-status-bg"></div><span>Approved-Not Paid</span></div>
         {%endif%}
     </td>
 
+    {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}
     <td class="align-center">
     
     <label for="favcity" style="width:80%;"> 
@@ -157,9 +215,10 @@
     </label> 
     
     </td>
+    {% endif %}
 
     <td class="align-center">
-      <a class="d-flex dropdown-orders" {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}href="{% url 'common_items:client-orderdetails' order.id %}"{% endfor %}{% else %}href="#"{% endif %} target="_blank"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></div>
+      <div class="d-flex"><a class="d-flex dropdown-orders" {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}href="{% url 'common_items:client-orderdetails' order.id %}" target="_blank"{% endfor %}{% else %}href="#"{% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}<div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="{% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}<div>{{order.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{order.payment_note_by|default_if_none:""}}</div>{% endfor %}{% endif %}"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-note="{{order.payment_notes|default_if_none:""}}" data-orderid="{{order.id}}"{% endfor %}{% endif %} data-style="cursor:pointer"/> </div>{% endif %} </div>
      </td>
 
     </tr>    
@@ -283,6 +342,18 @@ $("#close_export_popup").click(function () {
     $('#export_popup').css({'visibility':'hidden','opacity':0,});
 });
 
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+
+//payment note popup data fill
+  $('.paymentnote').click(function(){
+    $('#note').val($(this).data('note'));
+    $('#order_id').val($(this).data('orderid'));
+
+  })
+
+
 //EXPORT EXCEL
 $(".export_payment").click(function () {
   console.log("poi")
@@ -366,7 +437,7 @@ function callbacklist(status,order_id){
 
 function set_params_go(args)
 {
-var url='{% url 'booking-officer:bookingofficer-callback-list' %}';
+var url='{% url 'common_items:callback-list' %}';
 var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),order_status:$('#order_status').val(),callback_status:$('#callback_status').val()
 };
 for(key in args) 

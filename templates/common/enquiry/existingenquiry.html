@@ -1,0 +1,897 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% block css_links %}
+<link rel="stylesheet" href="https://semantic-ui.com/dist/semantic.min.css">
+{% endblock %}
+<div class="wrapper"><!--wrapper-->
+{% if request.user.user_type == 'AGENT' %}
+  {% include "agent/common/header.html" %}
+{% elif request.user.user_type == 'BOOKINGOFFICER' %}
+  {% include "bookingofficer/common/header.html" %} 
+{% elif request.user.user_type == 'EVALUATOR' %}
+  {% include "evaluator/common/header.html" %}
+{% endif %}
+
+<section class="content"><!--content-->
+<div class="container-fluid space topspace"><!--container-fluid space topspace-->
+    <div class="welcome-wrapper"><!--welcome-wrapper-->
+        <h1 class="dashboard-head">Enquiry Form</h1>
+        <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p>
+    </div><!--welcome-wrapper-->
+            
+        
+<div class="order-top-wrapper"><!--order-top-wrapper-->
+	<div class="cleaning-Order-wrapper"><!--cleaning-Order-wrapper-->
+    	<div class="cleaning--left-stretch"><!--cleaning--left-stretch-->
+         <div class="center-formDiv"><!--center-formDiv-->	    
+        
+<br><br>
+
+ 				<div class="order-Number bold-text"> <label>Existing Clients</label></div>
+        
+        <div id="search_box">
+        <input name="time" type="text" id="search_box" class="textBox auto-complete-input" placeholder="Search here existing clients..." data-min-size="2" data-pattern="[a-zA-Z0-9\s]" data-result-onclick="select_existing_enquiry" data-auto-suggest-url="{% url 'agent:get-customerInfo' %}">
+        </div>    
+
+                <hr class="div">
+	<div class="common-sub-head align-left">Existing Enquiry</div> 
+    <br>
+<form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
+<input type="hidden" name="action_type" value="update_customer_details">
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label required-field"> <label>Name</label></div>
+                <input name="name" id="id_name" type="text" class="textBox OnlyText" placeholder=" " required value="{{enquiry_user.name}}">
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+      <div class=" bold-text common-label "> <label>Name (Arabic)</label></div>
+      <input name="name_arabic" id="id_name_arabic" type="text" class="textBox" placeholder=" " value="{{enquiry_user.name_arabic|default_if_none:""}}" style="text-align:right;">
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<hr class="hr-dashedpad"> 
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  <div class=" bold-text common-label required-field"> <label>Gender</label></div>
+                <label for="favcity">
+                <select id="favcity" name="gender" required>
+                <option value="">Choose your Gender</option>
+                <option value="MALE" {% if enquiry_user.gender == 'MALE' %}selected{% endif %}>Male</option>
+                <option value="FEMALE" {% if enquiry_user.gender == 'FEMALE' %}selected{% endif %}>Female</option>
+                <option value="OTHERS" {% if enquiry_user.gender == 'OTHERS' %}selected{% endif %}>Others</option>
+                </select>
+                </label>
+  </div><!--ticket-form-left-->
+
+  <div class="ticket-form-right"><!--ticket-form-right-->
+    <div class=" bold-text common-label required-field"> <label>Date of Birth</label></div>
+          <input name="date_day" id="id_date_day" type="text" class="dateBox OnlyNumber" minlength="2" value="{{enquiry_user.date_day|default_if_none:''}}" placeholder="DD" onkeyup="daterange();" required>
+          <input name="date_month" id="id_date_month" type="text" class="dateBox OnlyNumber" minlength="2" value="{{enquiry_user.date_month|default_if_none:''}}" placeholder="MM" onkeyup="monthrange();" required>
+          <input name="date_year" id="id_date_year" type="text" class="dateBox OnlyNumber" minlength="4" value="{{enquiry_user.date_year|default_if_none:''}}" placeholder="YYYY" onkeyup="yearrange();">
+  </div>
+
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<hr class="hr-dashedpad"> 
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label required-field"> <label>Email</label></div>
+                <input name="email" id="id_email" type="text" class="textBox" placeholder=" " value="{{enquiry_user.email}}" oninput="ValidateEmail(this);" required>
+                <p class="email_alert" style="color:Red;"></p>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+  				<div class=" bold-text common-label required-field"> <label>Phone</label></div>
+				<input name="mobile_number" id="id_mobile_number" type="text" class="textBox OnlyNumber" placeholder=" " value="{{enquiry_user.mobile_number}}" oninput="phonenumber(this);remove_duplicate_mobile(this);" maxlength="8" required>
+        <p class="phone_alert" style="color:Red;"></p>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<hr class="hr-dashedpad"> 
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label required-field"> <label>Nationality</label></div>
+                <label for="favcity">   
+                {% load countries %}
+                {% get_countries as countries %} 
+                <select id="favcity" name="nationality" required>
+                <option value="">Choose Country</option> 
+                {% for country in countries %}
+                <option value="{{country.code}}" {% if country.code == enquiry_user.nationality %}selected{% endif %}>{{country.name}}</option>
+                {% endfor %}
+                </select>
+                </label>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+  				<div class=" bold-text common-label required-field"> <label>Customer Type</label></div>
+                <label for="favcity">
+                <select id="id_customer_type" name="customer_type" required>
+                <option value="">Choose Customer Type</option>
+                <option value="INDIVIDUAL" {% if enquiry_user.customer_type == 'INDIVIDUAL' %}selected{% endif %}>INDIVIDUAL</option>
+                <option value="RETAIL" {% if enquiry_user.customer_type == 'RETAIL' %}selected{% endif %}>RETAIL</option>
+                <option value="CORPORATE" {% if enquiry_user.customer_type == 'CORPORATE' %}selected{% endif %}>CORPORATE</option>
+                </select>
+                </label>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<div id="id_customer_type_expand">
+<hr class="hr-dashedpad"> 
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label"> <label>Company</label></div>
+                <input name="company" id="id_company" type="text" class="textBox" placeholder=" " value="{{enquiry_user.company|default_if_none:''}}">
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+  				<div class=" bold-text common-label"> <label>Job Title</label></div>
+				<input name="job_title" id="id_job_title" type="text" class="textBox" placeholder=" " value="{{enquiry_user.job_title|default_if_none:''}}">
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+</div>
+
+<hr class="hr-dashedpad"> 
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  			<div class=" bold-text common-label"> <label>Other Mobile</label></div>
+        <input name="phone_number" id="id_phone_number" class="textBox OnlyNumber" placeholder=" " value="{{enquiry_user.phone_number|default_if_none:''}}" oninput="mobilenumber(this);" maxlength="8" >
+        <p class="mobile_alert" style="color:Red;"></p>	
+
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right--> 
+  </div><!--ticket-form-right-->
+  
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<hr class="hr-dashedpad">
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label required-field"> <label>SMS Language</label></div>
+                <label for="favcity">
+                <select name="sms_preference" required>
+                <option value="">Choose Language</option>
+                <option value="ENGLISH" {% if enquiry_user.sms_preference == 'ENGLISH' %}selected{% endif %}>ENGLISH</option>
+                <option value="ARABIC" {% if enquiry_user.sms_preference == 'ARABIC' %}selected{% endif %}>ARABIC</option>
+                </select>
+                </label>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          <div class=" bold-text common-label required-field"> <label>Contact Platform</label></div>
+                <div class="ui fluid multiple search selection dropdown"><input type="hidden" name="contact_platform" value="{% if enquiry_user.is_sms %}SMS{% endif %}{% if enquiry_user.is_email%},Email{% endif %}{% if enquiry_user.is_whatsapp%},Whatsapp{% endif %}" id="contact_platform_id"><i class="dropdown icon"></i><input class="search" tabindex="0" ><div class="default text">Select Platform</div><div class="menu" tabindex="-1"><div class="item" data-value="SMS">SMS</div><div class="item" data-value="Whatsapp">Whatsapp</div><div class="item" data-value="Email">Email</div></div>
+                </div>
+                <p class="contact_platform_alert" style="color:Red;"></p>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+{% comment %} <hr class="hr-dashedpad">
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  <div class=" bold-text common-label"> <label>Notes</label></div>
+  <textarea name="agent_notes" id="id_agent_notes" class="textBox" placeholder="Recommended to add any notes if necessary"  ></textarea>
+  </div>
+  </div> {% endcomment %}
+
+<hr class="hr-dashedpad"> 
+
+{% for address in addresses %}
+{%  if forloop.counter|divisibleby:2 %}
+<div class="address-form-right"><!--address-form-right-->
+        <div class=" bold-text common-label"> <label>&nbsp;</label></div>
+        <div class="address-wrapper"><!--address-wrapper-->
+        <div class="address-col-left"><!--address-col-left-->
+        <div class="check-box"><input type="checkbox" name="active_addresses" class="active_address" id="fruit4" value="{{address.id}}" {% if address.currently_active %}checked{% endif %}></div>
+        </div><!--address-col-left-->
+        
+        <div class="address-col-middle"><!--address-col-middle-->
+        <p class="bold-text">Address {{forloop.counter}}</p>
+        <p>{{address.street}}, {{address.building}}, {{address.apartment}}, {{address.floor}}, {{address.block}}, {{address.avenue}}, {{address.area.name}}, {{address.governorate.name}}</p>
+        <br>
+        </div><!--address-col-middle-->
+        <div class="address-col-right"><!--address-col-right-->
+        <div class="delete-icon"><span class="edit-address clickable-cursor" data-id="{{address.id}}" data-street="{{address.street|default_if_none:''}}" data-building="{{address.building|default_if_none:''}}" data-gps="{{address.gps_location|default_if_none:''}}" data-apartment="{{address.apartment|default_if_none:''}}" data-floor="{{address.floor|default_if_none:''}}" data-block="{{address.block|default_if_none:''}}" data-avenue="{{address.avenue|default_if_none:''}}" data-area="{{address.area.id}}" data-location="{{address.location}}" data-governorate="{{address.governorate.id}}"><i class="fa fa-1x fa-pencil-square-o" aria-hidden="true"></i></span></div>
+    </div><!--address-col-right-->
+      
+    </div><!--address-wrapper-->
+    </div><!--address-form-right-->    
+</div><!--address-wrapper-row address-forms-boxes-->
+
+{% else %}
+<div class="address-wrapper-row address-forms-boxes"><!--address-wrapper-row address-forms-boxes-->
+  <div class="address-form-left"><!--address-form-left-->
+    
+    {% if forloop.first %}
+    <div class=" bold-text common-label"> <label>Customer Address</label></div>
+    {% else %}
+    <div class=" bold-text common-label"> <label>&nbsp;</label></div>
+    {% endif %}
+    <div class="address-wrapper"><!--address-wrapper-->
+    <div class="address-col-left"><!--address-col-left-->
+    <div class="check-box"><input type="checkbox" name="active_addresses" class="active_address" value="{{address.id}}" {% if address.currently_active %}checked{% endif %}></div>
+    </div><!--address-col-left-->
+    
+    <div class="address-col-middle"><!--address-col-middle-->
+    <p class="bold-text">Address {{forloop.counter}}</p>
+    <p>{{address.apartment}}, {% if address.floor %}{{address.floor}},{% else %}{% endif %} {{address.building}}, {{address.block}}, {% if address.avenue %}{{address.avenue}},{% else %}{% endif %} {{address.area.name}} {{address.governorate.name}}</p>
+    <br>
+    </div><!--address-col-middle-->
+    <div class="address-col-right"><!--address-col-right-->
+        <div class="delete-icon"><span class="edit-address clickable-cursor" data-id="{{address.id}}" data-street="{{address.street|default_if_none:''}}" data-building="{{address.building|default_if_none:''}}" data-gps="{{address.gps_location|default_if_none:''}}" data-apartment="{{address.apartment|default_if_none:''}}" data-floor="{{address.floor|default_if_none:''}}" data-block="{{address.block|default_if_none:''}}" data-avenue="{{address.avenue|default_if_none:''}}" data-area="{{address.area.id}}" data-location="{{address.location}}" data-governorate="{{address.governorate.id}}"><i class="fa fa-1x fa-pencil-square-o" aria-hidden="true"></i></span></div>
+    </div><!--address-col-right-->
+</div><!--address-wrapper-->
+</div><!--address-form-left-->
+{% if forloop.last %}
+</div><!--address-wrapper-row address-forms-boxes-->
+{% endif %}
+{% endif %}
+{% endfor %}
+
+<div class="add-address clickable-cursor"><a>Add New Address</a></div>
+
+<br>
+<div align="center"><input class="cancel-Button" name="addevaluator" type="button" value="Update" onclick="SubmitNewEnquiry(this);" > <a href="{% url 'common_items:makeevaluation' enquiryid %}"> <input class="assignButton" name="addevaluator" type="button" value="Add Evaluator" ></a> <a href="{% url 'common_items:makequatation' enquiryid %}"><input class="assignButton" name="addevaluator" type="button" value="Make Quatation"></a>
+</div>    
+<br><br>
+        
+        </div> <!--center-formDiv-->
+		</div><!--cleaning--left-stretch-->  
+</form>
+
+        <div class="cleaning--right-fixed"><!--cleaning--right-fixed-->
+        	<div class="order-card-column whitebg red-border"><!--order-card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-orders-icon.png' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Orders</h1>
+            	<h2 class="red-text"><label>Active<span>{{active_orders_count|default_if_none:'0'}}</span></label> </h2>
+            	<p><label>Total<span>{{total_orders_count|default_if_none:'0'}}</span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--order-card-column-->
+        <div class="right-bgwrapper"><!--right-bgwrapper-->    
+            <div class="profile-pic"><img src="{% static 'files/order-client-page/images/profile-pic.png' %}"></div>
+            <div class="client-name">{{enquiry_user.name}}</div>
+            <div class="common-gray-text">{{enquiry_user.mobile_number}}</div>
+            <div class="common-gray-text">{{enquiry_user.email}}</div>
+            <br>
+            <hr class="hr">
+            {% if enquiry_user.company %}
+            <div class="common-gray-text">Company Name : <span class="bold-text">{{enquiry_user.company}}</span></div>
+            {% endif %}
+            {% if enquiry_user.nationality.name %}
+            <div class="common-gray-text">Nationality : <span class="bold-text">{{enquiry_user.nationality.name|default_if_none:''}}</span></div>
+            {% endif %}
+            {% if enquiry_user.phone_number %}
+            <div class="common-gray-text">Other Contact : <span class="bold-text">{{enquiry_user.phone_number}}</span></div>
+            {% endif %}
+            <hr class="hr">
+            <br>
+            {% for address in addresses %}
+            <div class="address-bold"><i class="fa fa-lg fa-home green-text" aria-hidden="true"></i> Address {{forloop.counter}}: <b>{{address.apartment}}</b></div>
+            <div class="address">{% if address.floor %}{{address.floor}}, {% else %}{% endif %} {{address.building}}, {{address.block}}, {{address.street}}, {% if address.avenue %}{{address.avenue}}, {% else %}{% endif %} {{address.area.name}}, {{address.governorate.name}}</div>
+            <br>
+            {% endfor %} 
+        </div><!--right-bgwrapper-->     
+        </div><!--cleaning--right-fixed-->  
+	</div><!--cleaning-Order-wrapper-->
+</div><!--order-top-wrapper-->  
+            
+            
+            
+            
+                 
+</div><!--container-fluid space topspace-->
+</section><!--content-->
+    
+ <!-- new address popup -->
+<div id="addnewaddress_popup" class="overlay"><!--overlay-->
+    <div class="popup-assign-eval"><!--popup-assign-eval-->
+        <a class="close" id="closenewaddress">&times;</a>
+            <div class="content"><!--content-->
+            
+<form method="post" enctype= "multipart/form-data">{% csrf_token %}                      
+<input type="hidden" name="action_type" value="add_address">
+            <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->      
+
+<div class="address3-wrapper-row address3-forms-boxes"><!--address3-wrapper-row address3-forms-boxes-->
+  <div class="address3-form-left"><!--address3-form-left-->
+          <div class=" bold-text common-label required-field"> <label>Location</label></div>
+                <label for="favcity">
+                <select name="location" class="governorate" required>
+                <option value="">Choose Location</option>
+                {% for location in locations %}
+                <option value="{{location.name}}">{{location.name}}</option>
+                {% endfor %}
+                </select>
+                </label>
+    </div><!--address3-form-left-->
+    </div><!--address3-wrapper-row address3-forms-boxes-->
+
+<hr class="hr-dashedpad"> 
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				
+       <div class=" bold-text common-label"> <label>GPS Location</label></div>
+				<textarea name="gps_location" class="textBox" placeholder=" " maxlength="500" ></textarea>        
+  
+  </div><!--ticket-form-left-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<hr class="hr-dashedpad">
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label required-field"> <label>Governorate</label></div>
+        <label for="favcity">
+                <select id="favcity" name="governorate" class="governorate" required>
+                <option value="">Choose Governorate</option>
+                {% for governorate in governorates %}
+                <option value="{{governorate.id}}">{{governorate.name}}</option>
+                {% endfor %}
+                </select>
+        </label>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          <div class=" bold-text common-label required-field"> <label>Area</label></div>
+          <label for="favcity">
+                <select class="id_area" name="area" required>
+                </select>
+          </label>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+ <hr class="hr-dashedpad">
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label required-field"> <label>Address Title</label></div>
+        <input type="text" name="apartment" class="textBox" required>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          <div class=" bold-text common-label"> <label>Floor/Flat/House</label></div>
+                <input type="text" name="floor" class="textBox" >
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+<hr class="hr-dashedpad">
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label required-field"> <label>Building</label></div>
+        <input type="text" name="building" class="textBox" required>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          <div class=" bold-text common-label required-field"> <label>Block</label></div>
+                <input type="text" name="block" class="textBox" required>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+<hr class="hr-dashedpad">
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label required-field"> <label>Street</label></div>
+        <input type="text" name="street" class="textBox" required>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          <div class=" bold-text common-label"> <label>Avenue</label></div>
+                <input type="text" name="avenue" class="textBox" >
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+<hr class="hr-dashedpad">     
+  
+<div align="center"> <input class="assignButton" name="assing" type="button" value="Add" onclick="SubmitNewEnquiry(this);"></div> 
+
+</div><!--ticket-wrapper-full-->             
+</form>
+            </div><!--content-->
+    </div><!--popup-assign-eval-->
+</div><!--overlay-->
+<!-- new address popup -->   
+
+
+<!-- edit address popup -->
+<div id="editaddress_popup" class="overlay"><!--overlay-->
+    <div class="popup-assign-eval"><!--popup-assign-eval-->
+        <a class="close" id="closeeditaddress">&times;</a>
+            <div class="content"><!--content-->
+            
+<form method="post" enctype= "multipart/form-data">{% csrf_token %}                      
+<input type="hidden" name="action_type" value="edit_address">
+<input type="hidden" id="address_id" name="address" value="edit_address">
+            <div class="ticket-wrapper-full ltyellow-border"><!--ticket-wrapper-full-->      
+
+<div class="address3-wrapper-row address3-forms-boxes"><!--address3-wrapper-row address3-forms-boxes-->
+  <div class="address3-form-left"><!--address3-form-left-->
+          <div class=" bold-text common-label required-field"> <label>Location</label></div>
+                <label for="favcity">
+                <select id="edit_location" name="location" class="governorate" required>
+                <option value="">Choose Location</option>
+                {% for location in locations %}
+                <option value="{{location.name}}">{{location.name}}</option>
+                {% endfor %}
+                </select>
+                </label>
+    </div><!--address3-form-left-->
+    </div><!--address3-wrapper-row address3-forms-boxes-->
+
+<hr class="hr-dashedpad"> 
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				
+       <div class=" bold-text common-label"> <label>GPS Location</label></div>
+				<textarea name="gps_location" id="edit_gps" class="textBox" placeholder=" " maxlength="500" ></textarea>        
+  
+  </div><!--ticket-form-left-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<hr class="hr-dashedpad">
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label required-field"> <label>Governorate</label></div>
+        <label for="favcity">
+                <select id="edit_governorate" name="governorate" class="governorate" required>
+                <option value="">Choose Governorate</option>
+                {% for governorate in governorates %}
+                <option value="{{governorate.id}}">{{governorate.name}}</option>
+                {% endfor %}
+                </select>
+        </label>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          <div class=" bold-text common-label required-field"> <label>Area</label></div>
+          <label for="favcity">
+                <select id="edit_area" class="id_area" name="area" required>
+                </select>
+          </label>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+ <hr class="hr-dashedpad">
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label required-field"> <label>Address Title</label></div>
+        <input type="text" id="edit_apartment" name="apartment" class="textBox" required>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          <div class=" bold-text common-label"> <label>Floor/Flat/House</label></div>
+                <input type="text" id="edit_floor" name="floor" class="textBox" >
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+<hr class="hr-dashedpad">
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label required-field"> <label>Building</label></div>
+        <input type="text" id="edit_building" name="building" class="textBox" required>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          <div class=" bold-text common-label required-field"> <label>Block</label></div>
+                <input type="text" id="edit_block" name="block" class="textBox" required>
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+<hr class="hr-dashedpad">
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+          <div class=" bold-text common-label required-field"> <label>Street</label></div>
+        <input type="text" id="edit_street" name="street" class="textBox" required>
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+          <div class=" bold-text common-label"> <label>Avenue</label></div>
+                <input type="text" id="edit_avenue" name="avenue" class="textBox" >
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+<hr class="hr-dashedpad">     
+  
+<div align="center"> <input class="assignButton" name="assing" type="button" value="update" onclick="SubmitNewEnquiry(this);"></div> 
+
+</div><!--ticket-wrapper-full-->             
+</form>
+            </div><!--content-->
+    </div><!--popup-assign-eval-->
+</div><!--overlay-->
+<!-- edit_address popup -->
+{% include 'agent/common/footer.html' %}
+</div><!--wrapper-->
+{% endblock %}
+
+{% block javascript %}
+<script>
+
+function daterange(){
+
+  var date = $('#id_date_day').val();
+  if (date > 31){
+    $('#id_date_day').val('');
+  }else{
+    console.log("all good")
+  }
+};
+
+function monthrange(){
+  var month = $('#id_date_month').val();
+  if (month > 12){
+    $('#id_date_month').val('');
+  }else{
+    console.log("all good")
+  }
+};
+
+function yearrange(){
+  var year = $('#id_date_year').val();
+  if (year > new Date().getFullYear()){
+    $('#id_date_year').val('');
+  }
+  else{
+    console.log("all good")
+  }
+};
+
+$('document').ready(function(){
+  
+$('.ui.multiple.dropdown').dropdown({
+  onChange: function() {
+  contact_platforms = $('#contact_platform_id').val();
+  if(contact_platforms)
+  {
+    $('.contact_platform_alert').text("");
+  }
+  else
+  {
+    $('.contact_platform_alert').text("Please Select atleast one Contact Platform");
+  }
+  
+}
+  });
+
+//initial hiding
+customer_type = "{{enquiry_user.customer_type}}"
+if(customer_type=='CORPORATE')
+{
+$("#id_customer_type_expand").css('display','block');  
+$("#id_company").attr('required',true);
+$("#id_job_title").attr('required',true);
+}
+else
+{
+$("#id_customer_type_expand").css('display','none');
+$("#id_company").val('');
+$("#id_job_title").val('');
+$("#id_company").attr('required',false);
+$("#id_job_title").attr('required',false);
+}
+
+
+  //HIDE AND SHOW WITH CUSTOMER TYPE
+$("#id_customer_type").change(function(){
+customer_type=this.value;
+
+if(customer_type=='CORPORATE')
+{
+$("#id_customer_type_expand").css('display','block');  
+$("#id_company").attr('required',true);
+$("#id_job_title").attr('required',true);
+}
+else
+{
+$("#id_customer_type_expand").css('display','none');
+$("#id_company").val('');
+$("#id_job_title").val('');
+$("#id_company").attr('required',false);
+$("#id_job_title").attr('required',false);
+}
+    });
+
+//Add New Address
+$(".add-address").click(function () {     
+    $('#addnewaddress_popup').css({'visibility':'visible','opacity':1,});      
+      });
+
+$("#closenewaddress").click(function () {
+    $('#addnewaddress_popup').css({'visibility':'hidden','opacity':0,});
+});
+
+//edit Address
+$(".edit-address").click(function () {
+    $('#address_id').val($(this).data('id'));
+    $('#edit_governorate').val($(this).data('governorate'));
+    $('#edit_location').val($(this).data('location'));
+    $('#edit_gps').val($(this).data('gps'));
+
+    selected_area = $(this).data('area');
+    $.ajax({
+        url: "{% url 'agent:ajax-getarea' %}",
+        data: {'governorate_id':$(this).data('governorate')}, 
+        dataType: 'json',
+        
+        success: function (data) { 
+          ajax_ret_areas = data;     
+          $(".id_area").empty();
+          console.log($(this).data());
+          $(".id_area").append($('<option>', {
+          value: "", 
+         text: "Choose Area"
+                                       })); 
+        $.each( ajax_ret_areas, function( key, values ) {
+              if(selected_area == key )
+              {
+                  $(".id_area").append($('<option>', {        
+                          value: key, 
+                          text: values,
+                          selected:true
+                  }));
+              }
+              else
+              {
+                  $(".id_area").append($('<option>', {        
+                          value: key, 
+                          text: values
+                  }));
+              }
+
+            });
+
+            }
+      })                         
+    $('#edit_apartment').val($(this).data('apartment'));
+    $('#edit_avenue').val($(this).data('avenue'));
+    $('#edit_block').val($(this).data('block'));
+    $('#edit_floor').val($(this).data('floor'));
+    $('#edit_block').val($(this).data('block'));
+    $('#edit_floor').val($(this).data('floor'));
+    $('#edit_building').val($(this).data('building'));
+    $('#edit_street').val($(this).data('street'));
+
+    $('#editaddress_popup').css({'visibility':'visible','opacity':1,});      
+      });
+
+$("#closeeditaddress").click(function () {
+    $('#editaddress_popup').css({'visibility':'hidden','opacity':0,});
+});
+
+})
+
+//Append area for governorate change
+
+$(".governorate").change(function(){ 
+
+  id=this.id.match(/\d+/); 
+
+
+  $.ajax({
+
+        url: "{% url 'agent:ajax-getarea' %}",
+
+        data: {'governorate_id':this.value}, 
+
+        dataType: 'json',
+
+        success: function (data) { 
+
+          ajax_ret_areas = data;     
+
+   $(".id_area").empty();
+
+  
+
+          $(".id_area").append($('<option>', {
+
+          value: "", 
+
+         text: "Choose Area"
+
+      })); 
+
+        $.each( ajax_ret_areas, function( key, values ) {
+
+              $(".id_area").append($('<option>', {        
+
+    value: key, 
+
+    text: values   
+
+  }));   
+
+      });
+
+
+        }  
+
+      }); 
+
+});
+
+
+//update address status
+$(".active_address").change(function(){
+
+  $.ajax({
+
+        url: "{% url 'agent:ajax-updateaddress' %}",
+
+        data: {'address_id':this.value,'status':this.checked}, 
+
+        dataType: 'json',
+
+        success: function (data) { 
+
+          console.log(data);
+
+                                }
+          });                       
+
+ })
+
+
+</script>    
+
+<script>
+  //  auto complete search
+
+$(window).ready(function(){
+
+  $('.auto-complete-input').attr('autocomplete','off').keyup(search_live).focusout(autoSuggestionOnFocusOut
+      ).after($('<div/>',{class:'auto-complete-results'})).parent().css('position','relative',);
+      
+      //Initial case
+      $(".auto-complete-results").css('display','none');
+
+    
+});
+
+//Dont Know
+$(window).ready(function(){
+    $('.goto-url').click(function(){window.location.href=$(this).data('url');});
+}); 
+
+
+
+function autoSuggestionOnFocusOut(event)
+{
+  
+    setTimeout(function(){
+
+      $(event.target).siblings('.auto-complete-results').first().hide();
+      },1000);
+
+}
+
+
+function select_existing_enquiry(event,src){
+          var client_id=$(src).attr('data-id');
+          if(client_id!=0)
+          {
+              window.location="{% url 'common_items:existingenquiry' enquiry_id=123 %}".replace(/123/,client_id.toString());
+          }
+          
+}
+
+
+
+
+function autoSuggestionOnSelect(event){
+    eval($(this).data('select-result'))(event,$(this));
+    $(this).parents('.auto-complete-results').first().hide().siblings('.auto-complete-input').val('');
+}
+
+
+//Keyup condition
+function search_live(event){
+    var src=$(this);
+    var min_size=src.data('min-size');
+
+    var test_pattern=src.data('pattern');
+    if(test_pattern)
+        {
+        test_pattern=RegExp(test_pattern);
+        var inp = String.fromCharCode(event.keyCode);
+        if (! test_pattern.test(inp)) return;
+        }
+        var val=src.val();
+    if(min_size)
+        {
+        if(val.length<min_size) return;
+        }
+    var fetch_params_fn_name=eval(src.data('fetch-params'));
+    var data={};
+    if(fetch_params_fn_name)
+        data=fetch_params_fn_name();
+    data['keyword']=val;//typed key words
+    var url=src.data('auto-suggest-url');//list fetching url
+    var on_result_click=src.data('result-onclick');//after result url
+
+
+    var ajax={type:'get',url:url,data:data,
+  
+    success:function (data){
+      var listOfObjects = [];
+        if( data['customer_details'])
+            {
+
+            $res=src.siblings('.auto-complete-results').first();
+            $res.contents().remove();
+            
+
+
+            $.each( data['customer_details'],(i,v)=>{
+              $('<div/>',{class:'auto-complete-result-item','data-id':i,
+                text:v}).appendTo($res).
+                on('click',autoSuggestionOnSelect).
+                data('select-result',on_result_click).
+                attr('tabindex',-1);
+            });
+            $res.css('position','absolute');
+            $res.outerWidth(src.outerWidth());
+            $res.css('top',(src.position().top+src.outerHeight()).toString()+'px');
+          
+                $res.show();
+            }
+          if(data['status'] == 'false'){
+            $res=src.siblings('.auto-complete-results').first();
+            $res.contents().remove();
+          
+            $('<div/>',{class:'auto-complete-result-item','data-id':0,
+                text:"No result Found"}).appendTo($res).
+                on('click',autoSuggestionOnSelect).
+                data('select-result',on_result_click).
+                attr('tabindex',-1);
+            $res.outerWidth(src.outerWidth());
+            $res.css('top',(src.position().top+src.outerHeight()).toString()+'px');
+          
+                $res.show();
+          }
+          }
+        };
+        $.ajax(ajax);
+}
+
+//Remove registration using same mobile number
+function remove_duplicate_mobile(input_mobile)
+{
+  var mobileno_validator = /^\d{8}$/;
+
+  if((input_mobile.value.match(mobileno_validator)) || (input_mobile.value == ""))
+    {
+
+        $.ajax({
+
+                url: "{% url 'agent:mobilenumber-validate' %}",
+
+                data: {'mobile_number':input_mobile.value,}, 
+
+                dataType: 'json',
+
+                success: function (data) { 
+
+                  if(data['validation'] == false)
+                    { 
+                        $('.phone_alert').text("Mobile Number Allready Register...");
+                        $('#id_mobile').val('');
+                    }
+                }  
+
+              });
+            
+            }
+}
+//form validate and submit
+function SubmitNewEnquiry(params)
+{
+contact_platforms = $('#contact_platform_id').val(); 
+if(contact_platforms)
+{
+  submitAnyForm(params);
+}
+else
+{
+  $('.contact_platform_alert').text("Please Select atleast one Contact Platform")
+}
+
+}
+</script>
+{% endblock %}
