@@ -99,7 +99,12 @@ PAYBACKDISCOUNT_CHOICES =(
 CALLBACK_CHOICES =(
 	('CALLBACK_LATER','CALLBACK_LATER'),
 	('WAITING','WAITING'),
-	('COMPLETED','COMPLETED')
+	('COMPLETED','COMPLETED'),
+	('WILL_PAY','WILL_PAY'),
+	('FOLLOW_UP','FOLLOW_UP'),
+	('WILL_AGREE','WILL_AGREE'),
+	('REJECTED','REJECTED'),
+	('LEGAL_ACTION','LEGAL_ACTION')
 	)
 #Store the Order Details.DownPayment,Subscription and Direct Cleaning Comes Under a Single Order
 

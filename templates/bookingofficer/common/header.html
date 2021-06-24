@@ -57,11 +57,8 @@
                 <li class="lhs-callbacks"><a href="{% url 'common_items:callback-list' %}" title="Callback List"><span>Callback List</span></a></li>
                 <li class="lhs_subscription"><a href="{% url 'common_items:active-subscriptions' %}" title="Active Subscriptions"><span>Subscriptions</span></a></li>
                 <li class="lhs_sales"><a href="{% url 'common_items:daily-sales' %}" title="Daily Sales"><span>Daily Sales</span></a></li>
-                {% comment %}
-                <li class="lhs-payments"><a href="{% url 'booking-officer:bookingofficer-payments' %}" title="Payments"><span>Payments</span></a></li>
-                {% endcomment %}
                 <li class="lhs-resources border"><a href="{% url 'common_items:resource-management' %}" title="Resources"><span>Resources</span></a></li>
-                <li class="lhs-promocodes border"><a href="{% url 'common_items:promocode' %}" title="Resources"><span>Promocodes</span></a></li>
+                {% comment %} <li class="lhs-promocodes border"><a href="{% url 'common_items:promocode' %}" title="Resources"><span>Promocodes</span></a></li> {% endcomment %}
                 <br> <br>
                 <li class="lhs-new-enquiry cap"><a href="{% url 'common_items:newenquiry' %}" title="New Enquiry"><span>New Enquiry</span></a></li>
                 <li class="lhs-collection cap"><a href="{% url 'booking-officer:bookingofficer-cashcollect' %}" title="New Enquiry"><span>Collection</span></a></li>
