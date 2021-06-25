@@ -178,10 +178,11 @@
     <div class="btn-group" id="actionDropdown">
         <div class="order-dropdown " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
           Action
+         
           <i class="fa fa-chevron-down action-icon" aria-hidden="true" ></i>
         </div>
         <div class="dropdown-menu" id="dropdown-menu-orders">
-          <div class="d-flex dropdown-orders" onclick="callbacklist('CALLBACK_LATER',{% for order in evaluation.evaluationorder %}{{order.id}}{% endfor %})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">CALLBACK LATER</div></div>
+          <div class="d-flex dropdown-orders " onclick="callbacklist('CALLBACK_LATER',{% for order in evaluation.evaluationorder %}{{order.id}}{% endfor %})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">CALLBACK LATER</div></div>
           <div class="d-flex dropdown-orders" onclick="callbacklist('WAITING',{% for order in evaluation.evaluationorder %}{{order.id}}{% endfor %})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">WAITING</div></div>
           <div class="d-flex dropdown-orders" onclick="callbacklist('WILL_AGREE',{% for order in evaluation.evaluationorder %}{{order.id}}{% endfor %})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">WILL AGREE</div></div>
           <div class="d-flex dropdown-orders" onclick="callbacklist('REJECTED',{% for order in evaluation.evaluationorder %}{{order.id}}{% endfor %})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">REJECTED</div></div>
