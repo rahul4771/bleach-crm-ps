@@ -357,15 +357,15 @@
 
           <div class="btn-group" id="actionDropdown">
             <div class="order-dropdown " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
-              {% for order in evaluation.evaluationorder %}{% if order.callback_status == 'CALLBACK_LATER' %}CALLBACK LATER{% elif order.callback_status == 'WAITING' %}WAITING{% elif order.callback_status == 'WILL_PAY' %}WILL PAY{% elif order.callback_status == 'FOLLOW_UP' %}FOLLOW UP{% elif order.callback_status == 'LEGAL_ACTION' %}LEGAL ACTION{% else %}Select Action{% endif %}{% endfor %}
+              {% if invoice.callback_status == 'CALLBACK_LATER' %}CALLBACK LATER{% elif invoice.callback_status == 'WAITING' %}WAITING{% elif invoice.callback_status == 'WILL_PAY' %}WILL PAY{% elif invoice.callback_status == 'FOLLOW_UP' %}FOLLOW UP{% elif invoice.callback_status == 'LEGAL_ACTION' %}LEGAL ACTION{% else %}Select Action{% endif %}
               <i class="fa fa-chevron-down action-icon" aria-hidden="true" ></i>
             </div>
             <div class="dropdown-menu" id="dropdown-menu-orders">
-              <div class="d-flex dropdown-orders {% for order in evaluation.evaluationorder %}{% if order.callback_status == 'CALLBACK_LATER' %}dropdown-selected{% endif %}{% endfor %}" onclick="callbacklist('CALLBACK_LATER',{% for order in evaluation.evaluationorder %}{{order.id}}{% endfor %})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">CALLBACK LATER</div></div>
-              <div class="d-flex dropdown-orders {% for order in evaluation.evaluationorder %}{% if order.callback_status == 'WAITING' %}dropdown-selected{% endif %}{% endfor %}" onclick="callbacklist('WAITING',{% for order in evaluation.evaluationorder %}{{order.id}}{% endfor %})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">WAITING</div></div>
-              <div class="d-flex dropdown-orders {% for order in evaluation.evaluationorder %}{% if order.callback_status == 'WILL_PAY' %}dropdown-selected{% endif %}{% endfor %}" onclick="callbacklist('WILL_PAY',{% for order in evaluation.evaluationorder %}{{order.id}}{% endfor %})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">WILL PAY</div></div>
-              <div class="d-flex dropdown-orders {% for order in evaluation.evaluationorder %}{% if order.callback_status == 'FOLLOW_UP' %}dropdown-selected{% endif %}{% endfor %}" onclick="callbacklist('FOLLOW_UP',{% for order in evaluation.evaluationorder %}{{order.id}}{% endfor %})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">FOLLOW UP</div></div>
-              <div class="d-flex dropdown-orders {% for order in evaluation.evaluationorder %}{% if order.callback_status == 'LEGAL_ACTION' %}dropdown-selected{% endif %}{% endfor %}" onclick="callbacklist('LEGAL_ACTION',{% for order in evaluation.evaluationorder %}{{order.id}}{% endfor %})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">LEGAL ACTION</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'CALLBACK_LATER' %}dropdown-selected{% endif %}" onclick="callbacklist('CALLBACK_LATER',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">CALLBACK LATER</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'WAITING' %}dropdown-selected{% endif %}" onclick="callbacklist('WAITING',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">WAITING</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'WILL_PAY' %}dropdown-selected{% endif %}" onclick="callbacklist('WILL_PAY',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">WILL PAY</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'FOLLOW_UP' %}dropdown-selected{% endif %}" onclick="callbacklist('FOLLOW_UP',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">FOLLOW UP</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'LEGAL_ACTION' %}dropdown-selected{% endif %}" onclick="callbacklist('LEGAL_ACTION',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">LEGAL ACTION</div></div>
               
 
             </div>
@@ -401,15 +401,15 @@
 
           <div class="btn-group" id="actionDropdown">
             <div class="order-dropdown " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
-              Action
+              {% if invoice.callback_status == 'CALLBACK_LATER' %}CALLBACK LATER{% elif invoice.callback_status == 'WAITING' %}WAITING{% elif invoice.callback_status == 'WILL_PAY' %}WILL PAY{% elif invoice.callback_status == 'FOLLOW_UP' %}FOLLOW UP{% elif invoice.callback_status == 'LEGAL_ACTION' %}LEGAL ACTION{% else %}Select Action{% endif %}
               <i class="fa fa-chevron-down action-icon" aria-hidden="true" ></i>
             </div>
             <div class="dropdown-menu" id="dropdown-menu-orders">
-              <div class="d-flex dropdown-orders" onclick="callbacklist('CALLBACK_LATER',{% for order in evaluation.evaluationorder %}{{order.id}}{% endfor %})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">CALLBACK LATER</div></div>
-              <div class="d-flex dropdown-orders" onclick="callbacklist('WAITING',{% for order in evaluation.evaluationorder %}{{order.id}}{% endfor %})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">WAITING</div></div>
-              <div class="d-flex dropdown-orders" onclick="callbacklist('WILL_PAY',{% for order in evaluation.evaluationorder %}{{order.id}}{% endfor %})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">WILL PAY</div></div>
-              <div class="d-flex dropdown-orders" onclick="callbacklist('FOLLOW_UP',{% for order in evaluation.evaluationorder %}{{order.id}}{% endfor %})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">FOLLOW UP</div></div>
-              <div class="d-flex dropdown-orders" onclick="callbacklist('LEGAL_ACTION',{% for order in evaluation.evaluationorder %}{{order.id}}{% endfor %})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">LEGAL ACTION</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'CALLBACK_LATER' %}dropdown-selected{% endif %}" onclick="callbacklist('CALLBACK_LATER',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">CALLBACK LATER</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'WAITING' %}dropdown-selected{% endif %}" onclick="callbacklist('WAITING',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">WAITING</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'WILL_PAY' %}dropdown-selected{% endif %}" onclick="callbacklist('WILL_PAY',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">WILL PAY</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'FOLLOW_UP' %}dropdown-selected{% endif %}" onclick="callbacklist('FOLLOW_UP',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">FOLLOW UP</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'LEGAL_ACTION' %}dropdown-selected{% endif %}" onclick="callbacklist('LEGAL_ACTION',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">LEGAL ACTION</div></div>
               
 
             </div>
@@ -440,15 +440,15 @@
 
           <div class="btn-group" id="actionDropdown">
             <div class="order-dropdown " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
-              Action
+              {% if invoice.callback_status == 'CALLBACK_LATER' %}CALLBACK LATER{% elif invoice.callback_status == 'WAITING' %}WAITING{% elif invoice.callback_status == 'WILL_PAY' %}WILL PAY{% elif invoice.callback_status == 'FOLLOW_UP' %}FOLLOW UP{% elif invoice.callback_status == 'LEGAL_ACTION' %}LEGAL ACTION{% else %}Select Action{% endif %}
               <i class="fa fa-chevron-down action-icon" aria-hidden="true" ></i>
             </div>
             <div class="dropdown-menu" id="dropdown-menu-orders">
-              <div class="d-flex dropdown-orders" onclick="callbacklist('CALLBACK_LATER',{% for order in evaluation.evaluationorder %}{{order.id}}{% endfor %})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">CALLBACK LATER</div></div>
-              <div class="d-flex dropdown-orders" onclick="callbacklist('WAITING',{% for order in evaluation.evaluationorder %}{{order.id}}{% endfor %})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">WAITING</div></div>
-              <div class="d-flex dropdown-orders" onclick="callbacklist('WILL_PAY',{% for order in evaluation.evaluationorder %}{{order.id}}{% endfor %})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">WILL PAY</div></div>
-              <div class="d-flex dropdown-orders" onclick="callbacklist('FOLLOW_UP',{% for order in evaluation.evaluationorder %}{{order.id}}{% endfor %})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">FOLLOW UP</div></div>
-              <div class="d-flex dropdown-orders" onclick="callbacklist('LEGAL_ACTION',{% for order in evaluation.evaluationorder %}{{order.id}}{% endfor %})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">LEGAL ACTION</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'CALLBACK_LATER' %}dropdown-selected{% endif %}" onclick="callbacklist('CALLBACK_LATER',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">CALLBACK LATER</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'WAITING' %}dropdown-selected{% endif %}" onclick="callbacklist('WAITING',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">WAITING</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'WILL_PAY' %}dropdown-selected{% endif %}" onclick="callbacklist('WILL_PAY',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">WILL PAY</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'FOLLOW_UP' %}dropdown-selected{% endif %}" onclick="callbacklist('FOLLOW_UP',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">FOLLOW UP</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'LEGAL_ACTION' %}dropdown-selected{% endif %}" onclick="callbacklist('LEGAL_ACTION',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">LEGAL ACTION</div></div>
               
 
             </div>
@@ -482,15 +482,15 @@
 
           <div class="btn-group" id="actionDropdown">
             <div class="order-dropdown " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
-              Action
+              {% if invoice.callback_status == 'CALLBACK_LATER' %}CALLBACK LATER{% elif invoice.callback_status == 'WAITING' %}WAITING{% elif invoice.callback_status == 'WILL_PAY' %}WILL PAY{% elif invoice.callback_status == 'FOLLOW_UP' %}FOLLOW UP{% elif invoice.callback_status == 'LEGAL_ACTION' %}LEGAL ACTION{% else %}Select Action{% endif %}
               <i class="fa fa-chevron-down action-icon" aria-hidden="true" ></i>
             </div>
             <div class="dropdown-menu" id="dropdown-menu-orders">
-              <div class="d-flex dropdown-orders" onclick="callbacklist('CALLBACK_LATER',{% for order in evaluation.evaluationorder %}{{order.id}}{% endfor %})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">CALLBACK LATER</div></div>
-              <div class="d-flex dropdown-orders" onclick="callbacklist('WAITING',{% for order in evaluation.evaluationorder %}{{order.id}}{% endfor %})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">WAITING</div></div>
-              <div class="d-flex dropdown-orders" onclick="callbacklist('WILL_PAY',{% for order in evaluation.evaluationorder %}{{order.id}}{% endfor %})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">WILL PAY</div></div>
-              <div class="d-flex dropdown-orders" onclick="callbacklist('FOLLOW_UP',{% for order in evaluation.evaluationorder %}{{order.id}}{% endfor %})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">FOLLOW UP</div></div>
-              <div class="d-flex dropdown-orders" onclick="callbacklist('LEGAL_ACTION',{% for order in evaluation.evaluationorder %}{{order.id}}{% endfor %})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">LEGAL ACTION</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'CALLBACK_LATER' %}dropdown-selected{% endif %}" onclick="callbacklist('CALLBACK_LATER',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">CALLBACK LATER</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'WAITING' %}dropdown-selected{% endif %}" onclick="callbacklist('WAITING',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">WAITING</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'WILL_PAY' %}dropdown-selected{% endif %}" onclick="callbacklist('WILL_PAY',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">WILL PAY</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'FOLLOW_UP' %}dropdown-selected{% endif %}" onclick="callbacklist('FOLLOW_UP',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">FOLLOW UP</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'LEGAL_ACTION' %}dropdown-selected{% endif %}" onclick="callbacklist('LEGAL_ACTION',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">LEGAL ACTION</div></div>
               
 
             </div>
