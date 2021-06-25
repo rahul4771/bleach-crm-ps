@@ -1344,6 +1344,11 @@ console.log(response)
                    "cleaning_hours":parseInt(this.selectedDuration.hours),
                    sections:{}
               }
+              if(this.serviceDetails.service_details[i].cleaning_policy=='SUBSCRIPTION'){
+                var visits=Object.keys(this.multiServicesBill[i].schedule_details).length
+                this.serviceDetails.service_details[i].total_cost=parseInt(this.serviceDetails.service_details[i].total_cost)*parseInt(visits)
+                this.serviceDetails.service_details[i].estimated_cost=parseInt(this.serviceDetails.service_details[i].total_cost)*parseInt(visits)
+              }
             for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
               
            if(this.multiServicesBill[i].bill[j].section.wall_type && this.multiServicesBill[i].bill[j].section.ceiling_type)
@@ -1399,9 +1404,13 @@ console.log(response)
            }
             }
           }
-       
-          this.serviceDetails.total_cost=this.totalCost
-          this.serviceDetails.estimated_cost=this.totalCost
+          var tc=0
+        for(var sr in this.serviceDetails.service_details )
+        {
+          tc=tc+parseInt(this.serviceDetails.service_details[sr].total_cost)
+        }
+          this.serviceDetails.total_cost=tc
+          this.serviceDetails.estimated_cost=this.tc
         
           this.bookMultipleService()
     },

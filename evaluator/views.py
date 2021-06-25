@@ -3214,4 +3214,7 @@ class Booking(IsEvaluator,View):
 		return render(request,"booking/booking.html")
 class ClientDetails(IsEvaluator,View):
 	def get(self,request):
-		return render(request,"evaluator/client/client-details.html")		 		
+		return render(request,"evaluator/client/client-details.html")
+class Reorder(IsEvaluator,View):
+	def get(self,request):
+		return render(request,"common/client/reorder.html")					 		

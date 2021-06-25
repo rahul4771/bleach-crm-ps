@@ -44,4 +44,5 @@ urlpatterns = [
 	url(r'^payment-policy/edit/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.EvaluatorPaymentEdit.as_view(),name='evaluator-payment-edit'),
     url(r'^booking/(?P<evaluation_detail_id>[-\w]+)/$',views.Booking.as_view(),name='evaluator-booking'),
 	url(r'^client-details/$',views.ClientDetails.as_view(),name='client-details'),
+	url(r'^reorder$',views.Reorder.as_view(),name='reorder'),
 ]
