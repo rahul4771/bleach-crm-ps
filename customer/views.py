@@ -3839,7 +3839,7 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 		if action_type == 'together':
 			###testing availability ####
 			for service_detail in services.keys():
-				service_book        		= EvaluationBook.objects.get(id=services[key]['id'])
+				service_book        		= EvaluationBook.objects.get(id=services[service_detail]['id'])
 				service_type   		        = service_book.service_type.name
 
 				if service_type == 'General Cleaning':
@@ -3912,7 +3912,7 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 				active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=start_date_time)&Q(start_at__lte=end_date_time))|Q(Q(end_at__gte=start_date_time)&Q(end_at__lte=end_date_time))|Q(Q(start_at__lte=start_date_time)&Q(end_at__gte=start_date_time)&Q(start_at__lte=end_date_time)&Q(end_at__gte=end_date_time))|Q(Q(start_at__gte=start_date_time)&Q(end_at__gte=start_date_time)&Q(start_at__lte=end_date_time)&Q(end_at__lte=end_date_time))))
 				
 				for service_detail in services.keys():
-					service_book        		= EvaluationBook.objects.get(id=services[key]['id'])
+					service_book        		= EvaluationBook.objects.get(id=services[service_detail]['id'])
 					service_type   		        = service_book.service_type.name
 
 					if service_type == 'General Cleaning':
@@ -3992,7 +3992,7 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 				#saving
 				for service_detail in services.keys():
 					schedules_dict     = list(request.data.get("service_details").values())[0]['schedule_details']
-					evaluation_details = EvaluationDetails.objects.get(id=services[key]['evaluation_details_id'])
+					evaluation_details = EvaluationDetails.objects.get(id=services[service_detail]['evaluation_details_id'])
 					for key in schedules_dict.keys():
 						schedule_date           =  schedules_dict[key]['date']
 						schedule_time           =  schedules_dict[key]['time']
@@ -4025,7 +4025,7 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 						cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_cleaners))).filter(Q(id__in=shift_cleaners)|Q(id__in=super_shift_cleaners))
 
 						for service_detail in services.keys():
-							service_book        		= EvaluationBook.objects.get(id=services[key]['id'])
+							service_book        		= EvaluationBook.objects.get(id=services[service_detail]['id'])
 							service_type   		        = service_book.service_type.name 			
 						
 							if service_type == 'General Cleaning':
