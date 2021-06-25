@@ -3838,8 +3838,9 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 
 		if action_type == 'together':
 			###testing availability ####
+			total_cleaners 	= UserProfile.objects.filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
+			total_leaders   = UserProfile.objects.filter(is_general_skill=True,user_type='TEAMINCHARGE')
 			for service_detail in services.keys():
-				print(services[service_detail]['id'],"boooooook id")
 				service_book        		= EvaluationBook.objects.get(id=services[service_detail]['id'])
 				service_type   		        = service_book.service_type.name
 
