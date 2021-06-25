@@ -2059,7 +2059,7 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
 	def post(self,request):
 		dropdown_slotes  = {}
 		number_of_cleaners  = int(request.data.get('number_of_cleaners'))-1
-		cleaning_hours       = float(request.data.get('cleaning_hours'))
+		cleaning_hours      = float(request.data.get('cleaning_hours'))
 		service_types       = request.data.get('service_types')
 		     
 
@@ -2120,6 +2120,10 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
 			slote_end_time                    = slote_end_datetime.time()
 			start_at_date                     = slote_start_datetime.date()
 			end_at_date                       = slote_end_datetime.date()
+
+			#absent cleaners and leaders	
+			absent_cleaners = LeaveSchedule.objects.select_related('staff').filter(Q(leave_date=start_at_date)|Q(leave_date=end_at_date)).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
+			absent_leaders  = LeaveSchedule.objects.select_related('staff').filter(Q(leave_date=start_at_date)|Q(leave_date=end_at_date)).filter(staff__user_type='TEAMINCHARGE').values_list('staff',flat=True)
 
 			#included shift cleaners
 			shift_cleaners      = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_at_date)|Q(shift_date=end_at_date))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=slote_start_time)&Q(shift1_end_at__gte=slote_start_time))&Q(Q(shift1_start_at__lte=slote_end_time)&Q(shift1_end_at__gte=slote_end_time))) | Q(Q(Q(shift2_start_at__lte=slote_start_time)&Q(shift2_end_at__gte=slote_start_time))&Q(Q(shift2_start_at__lte=slote_end_time)&Q(shift2_end_at__gte=slote_end_time)))).values_list('staff',flat=True)
@@ -2219,7 +2223,7 @@ class GetMultipleServiceDateCleaningSlotesAutofix(APIView):
 	def post(self,request):
 		dropdown_slotes  = {}
 		number_of_cleaners  = int(request.data.get('number_of_cleaners'))-1
-		cleaing_hours       = float(request.data.get('cleaning_hours'))
+		cleaning_hours       = float(request.data.get('cleaning_hours'))
 		service_types       = request.data.get('service_types')
 		     
 
@@ -2276,12 +2280,6 @@ class GetMultipleServiceDateCleaningSlotesAutofix(APIView):
 			for slote_checking in slote_checkings:
 				team_leaders_scheduled      = []
 				team_members_scheduled      = []
-				
-				# start_at = datetime.strptime(cleaning_datetime,'%d-%m-%Y %I:%M %p')+timedelta(hours=slote_checking)
-				# end_at   = start_at+timedelta(hours=cleaing_hours)
-		
-				# start_at_date = start_at.date()
-				# end_at_date   = end_at.date()
 
 				slote_start_datetime 			  = datetime.strptime(cleaning_datetime,'%d-%m-%Y %I:%M %p')+timedelta(hours=slote_checking)
 				slote_end_datetime                = slote_start_datetime+timedelta(hours=cleaning_hours)
@@ -3841,6 +3839,7 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 		if action_type == 'together':
 			###testing availability ####
 			for service_detail in services.keys():
+				print(services[service_detail]['id'],"boooooook id")
 				service_book        		= EvaluationBook.objects.get(id=services[service_detail]['id'])
 				service_type   		        = service_book.service_type.name
 
@@ -3994,7 +3993,7 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 				#saving
 				for service_detail in services.keys():
 					schedules_dict     = list(request.data.get("service_details").values())[0]['schedule_details']
-					evaluation_details = EvaluationDetails.objects.get(id=services[key]['evaluation_details_id'])
+					evaluation_details = EvaluationDetails.objects.get(id=services[service_detail]['evaluation_details_id'])
 					for key in schedules_dict.keys():
 						schedule_date           =  schedules_dict[key]['date']
 						schedule_time           =  schedules_dict[key]['time']
