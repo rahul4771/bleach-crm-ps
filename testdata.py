@@ -351,8 +351,6 @@ GET
          "upholstery_type":"CHAIR",
          "estimated_cost":150,
          "total_cost":150,
-         "number_of_cleaners":5,
-         "cleaning_hours":4,
          "sections":{
             "1":{
                "section_name":"Building1Floor1Apartment1",
