@@ -2059,7 +2059,7 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
 	def post(self,request):
 		dropdown_slotes  = {}
 		number_of_cleaners  = int(request.data.get('number_of_cleaners'))-1
-		cleaning_hours       = float(request.data.get('cleaning_hours'))
+		cleaning_hours      = float(request.data.get('cleaning_hours'))
 		service_types       = request.data.get('service_types')
 		     
 
@@ -2120,6 +2120,10 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
 			slote_end_time                    = slote_end_datetime.time()
 			start_at_date                     = slote_start_datetime.date()
 			end_at_date                       = slote_end_datetime.date()
+
+			#absent cleaners and leaders	
+			absent_cleaners = LeaveSchedule.objects.select_related('staff').filter(Q(leave_date=start_at_date)|Q(leave_date=end_at_date)).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
+			absent_leaders  = LeaveSchedule.objects.select_related('staff').filter(Q(leave_date=start_at_date)|Q(leave_date=end_at_date)).filter(staff__user_type='TEAMINCHARGE').values_list('staff',flat=True)
 
 			#included shift cleaners
 			shift_cleaners      = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_at_date)|Q(shift_date=end_at_date))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=slote_start_time)&Q(shift1_end_at__gte=slote_start_time))&Q(Q(shift1_start_at__lte=slote_end_time)&Q(shift1_end_at__gte=slote_end_time))) | Q(Q(Q(shift2_start_at__lte=slote_start_time)&Q(shift2_end_at__gte=slote_start_time))&Q(Q(shift2_start_at__lte=slote_end_time)&Q(shift2_end_at__gte=slote_end_time)))).values_list('staff',flat=True)
@@ -3841,7 +3845,7 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 		if action_type == 'together':
 			###testing availability ####
 			for service_detail in services.keys():
-				service_book        		= EvaluationBook.objects.get(id=services[service_detail]['id'])
+				service_book        		= EvaluationBook.objects.get(id=services[key]['id'])
 				service_type   		        = service_book.service_type.name
 
 				if service_type == 'General Cleaning':
@@ -3914,7 +3918,7 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 				active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=start_date_time)&Q(start_at__lte=end_date_time))|Q(Q(end_at__gte=start_date_time)&Q(end_at__lte=end_date_time))|Q(Q(start_at__lte=start_date_time)&Q(end_at__gte=start_date_time)&Q(start_at__lte=end_date_time)&Q(end_at__gte=end_date_time))|Q(Q(start_at__gte=start_date_time)&Q(end_at__gte=start_date_time)&Q(start_at__lte=end_date_time)&Q(end_at__lte=end_date_time))))
 				
 				for service_detail in services.keys():
-					service_book        		= EvaluationBook.objects.get(id=services[service_detail]['id'])
+					service_book        		= EvaluationBook.objects.get(id=services[key]['id'])
 					service_type   		        = service_book.service_type.name
 
 					if service_type == 'General Cleaning':
@@ -4027,7 +4031,7 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 						cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_cleaners))).filter(Q(id__in=shift_cleaners)|Q(id__in=super_shift_cleaners))
 
 						for service_detail in services.keys():
-							service_book        		= EvaluationBook.objects.get(id=services[service_detail]['id'])
+							service_book        		= EvaluationBook.objects.get(id=services[key]['id'])
 							service_type   		        = service_book.service_type.name 			
 						
 							if service_type == 'General Cleaning':
