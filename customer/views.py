@@ -3839,6 +3839,7 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 		if action_type == 'together':
 			###testing availability ####
 			for service_detail in services.keys():
+				print(services[service_detail]['id'],"boooooook id")
 				service_book        		= EvaluationBook.objects.get(id=services[service_detail]['id'])
 				service_type   		        = service_book.service_type.name
 
