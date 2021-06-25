@@ -60,59 +60,6 @@
                 <h1 class="dashboard-head">Callback List</h1>
                 <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p>    
             </div><!--welcome-wrapper-->
-       
-     {% comment %} <div class="clients-top-card-wrapper"><!--clients-top-card-wrapper-->
-     	<div class="clients-card-wrapper"><!--clients-card-wrapper-->
-       	<div class="clients-card-column clients-column-left"><!--clients-card-column clients-column-left-->
-    
-        
-            <div class="card-column whitebg green-border"><!--card-column-->
-            	<div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/card-pending-icon.png' %}"></div>
-                <div class="column-right"><!--column-right-->
-            	<h2 class="green-text"><label>Pending<span>{{pending_orders_count}}</span></label>  </h2>
-            	</div><!--column-right-->
-            	</div><!--card-innerwrapper-->
-            </div><!--card-column-->
-
-        </div><!--clients-card-column clients-column-left-->
-
-        <div class="clients-card-column clients-column-right whitebg hover ltyellow-border"><!--clients-card-column clients-column-right-->
-                 
-		<div class="chart_boxDiv"><!--chart_boxDiv-->
-  			<div class="chart_box_Right"><!--chart_box_Right-->
- 				<!-- <button type="button" id="mnt_btn" class="set2" >Update</button> -->
-            	<div id="chart_div" ></div>
-  			</div><!--chart_box_Right-->
-		</div><!--chart_boxDiv-->   
-            
-        <div class="chart_boxDiv"><!--chart_boxDiv-->    
-        
-         <div class="chart_box_Left"><!--chart_box_Left-->
-         <div class="legend-wrapper"><!--legend-wrapper--> 
-            <div class="legend-result count_div"><label class="legend-label">Submitted </label> <b class="legend-result-blue" id="total_submitted">0</b></div>
-            <div class="legend-result count_div"><label class="legend-label">Approved </label> <b class="legend-result-red" id="total_approved">0</b></div>
-         </div><!--legend-wrapper-->
-  		</div><!--chart_box_Left-->
-        <div class="chart_box_Left"><!--chart_box_Left-->        
-        <div class="Button_wrapperChart">
-            <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="daymonthtoggle"><div class="slider round"><span class="on">MONTH</span><span class="off">DATE</span></div></label></div>
-            <input type="text" id="ord_fromdate" class="date_pick_chart_from date_pick2 date-picker set1 date-pick-left" >
-            <input type="text" id="ord_todate" class="date_pick_chart_to date_pick2 date-picker set1 date-pick-right" >
-            <input type="text" id="month1" class="month_pick set2 date-pick-left" hidden>
-            <input type="text" id="month2" class="month_pick set2 date-pick-right" hidden>
-            <div><button id="reset_orders" class="green-button-chart">Reset</button></div>
-            </div>
-                         
-        </div><!--chart_box_Left-->
-            
-        </div><!--chart_boxDiv--> 
-            
-        </div><!--lients-card-column clients-column-right-->
-
-        </div><!--clients-card-wrapper-->
-
-</div><!--clients-top-card-wrapper-->        {% endcomment %}
             
      <div class="main-content-holder"><!--main-content-holder-->            
      
@@ -127,47 +74,70 @@
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Callback List</h2>
 
-<div class="col-md-6">
-<label for="favcity" style="width:20%;"> 
+<ul class="nav nav-tabs" id="paymentTab" role="tablist" style="margin-top:20px">
+  <li class="nav-item" id="orders_tab" role="presentation">
+    <a class="nav-link active primary-text" id="orders-tab" data-toggle="tab" href="#orders" role="tab" aria-controls="all" aria-selected="true">Orders</a>
+  </li>
+  <li class="nav-item" id="payments_tab" role="presentation">
+    <a class="nav-link primary-text" id="payments-tab" data-toggle="tab" href="#payments" role="tab" aria-controls="paid" aria-selected="false">Payments</a>
+  </li>
+</ul>
+
+<div class="tab-content" id="paymentTabContent"  style="margin-top:20px">
+  <!-- All Tab begins here-->
+  <div class="tab-pane" id="orders" role="tabpanel" aria-labelledby="all-tab">
+
+<div class="col-md-8 pl-0 pr-0">
+<label for="favcity" style="width:20%;" class="m-width-100"> 
 <select name="no_of_entries" id="no_of_entries" onchange="set_params_go();"> 
 <option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
 <option value="50" {% if no_of_entries == '50' %}selected{% endif %}>50 Entries</option>
 <option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
 </select>
 </label>
-</div>
-<div class="col-md-6">
 
-<div class="page-entries">Show {{entry_per_page}} entries</div>
-<h5>Order Status</h5>
-<label for="favcity" style="width:20%;"> 
-<select name="order_status" id="order_status" onchange="set_params_go();"> 
-<option value="" >ALL</option>
-<option value="PENDING" {% if order_status == 'PENDING' %}selected{% endif %}>PENDING</option>
-<option value="REJECTED" {% if order_status == 'REJECTED' %}selected{% endif %}>REJECTED</option>
-<option value="EXPIRED" {% if order_status == 'EXPIRED' %}selected{% endif %}>EXPIRED</option>
-<option value="APPROVED_NOT_PAID" {% if order_status == 'APPROVED_NOT_PAID' %}selected{% endif %}>APPROVED-NOT PAID</option>
-</select>
-</label>
-
-<h5>Callback Status</h5>
-<label for="favcity" style="width:20%;"> 
-<select name="callback_status" id="callback_status" onchange="set_params_go();"> 
-<option value="" >ALL</option>
-<option value="CALLBACK_LATER" {% if callback_status == 'CALLBACK_LATER' %}selected{% endif %}>CALLBACK LATER</option>
-<option value="WAITING" {% if callback_status == 'WAITING' %}selected{% endif %}>WAITING</option>
-<option value="COMPLETED" {% if callback_status == 'COMPLETED' %}selected{% endif %}>COMPLETED</option>
-</select>
-</label>
 <br>
-
+  
+<div style="color: #666;">Show {{entry_per_page}} entries</div>
+<br>
 </div>
+<div>
+  <div class="col-md-2 pr-0 m-pl-0">
+
+    <h5>Order Status</h5>
+    <label for="favcity" style="width:100%;"> 
+    <select name="order_status" id="order_status" onchange="set_params_go();"> 
+    <option value="" >ALL</option>
+    <option value="PENDING" {% if order_status == 'PENDING' %}selected{% endif %}>PENDING</option>
+    <option value="REJECTED" {% if order_status == 'REJECTED' %}selected{% endif %}>REJECTED</option>
+    <option value="EXPIRED" {% if order_status == 'EXPIRED' %}selected{% endif %}>EXPIRED</option>
+    <option value="APPROVED_NOT_PAID" {% if order_status == 'APPROVED_NOT_PAID' %}selected{% endif %}>APPROVED-NOT PAID</option>
+    </select>
+    </label>
+    </div>
+    <div class="col-md-2 pr-0 m-pl-0">
+    
+    <h5>Callback Status</h5>
+    <label for="favcity" style="width:100%;"> 
+    <select name="callback_status" id="callback_status" onchange="set_params_go();"> 
+    {% comment %} <option value="" >ALL</option> {% endcomment %}
+    <option value="WAITING" {% if callback_status == 'WAITING' %}selected{% endif %}>WAITING</option>
+    <option value="WILL_AGREE" {% if callback_status == 'WILL_AGREE' %}selected{% endif %}>WILL AGRREE</option>
+    <option value="CALLBACK_LATER" {% if callback_status == 'CALLBACK_LATER' %}selected{% endif %}>CALLBACK LATER</option>
+    <option value="REJECTED" {% if callback_status == 'REJECTED' %}selected{% endif %}>REJECTED</option>
+    </select>
+    </label>
+    <br>
+    
+    </div>
+</div>
+
 
 <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
  
 <thead>
 <tr>
-<th class="align-center">Order Number</th>
+<th class="text-left">Order Number</th>
 <th data-hide="phone,tablet">Customer Name</th>
 {% comment %} <th data-hide="phone,tablet">Service Type</th> {% endcomment %}
 <th data-hide="phone">Customer Mobile</th>
@@ -204,15 +174,21 @@
 
     {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}
     <td class="align-center">
-    
-    <label for="favcity" style="width:80%;"> 
-    <select class="callback" onchange="callbacklist(this.value,{% for order in evaluation.evaluationorder %}{{order.id}}{% endfor %})">
-    <option value="">--SELECT OPTION--</option>
-    <option value="CALLBACK_LATER" {% for order in evaluation.evaluationorder %}{% if order.callback_status == 'CALLBACK_LATER' %}selected{% endif %}{% endfor %}>CALLBACK LATER</option>
-    <option value="WAITING" {% for order in evaluation.evaluationorder %}{% if order.callback_status == 'WAITING' %}selected{% endif %}{% endfor %}>WAITING</option>
-    <option value="COMPLETED" {% for order in evaluation.evaluationorder %}{% if order.callback_status == 'COMPLETED' %}selected{% endif %}{% endfor %}>COMPLETED</option>
-    </select>
-    </label> 
+
+    <div class="btn-group" id="actionDropdown">
+        <div class="order-dropdown " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+          {% for order in evaluation.evaluationorder %}{% if order.callback_status == 'CALLBACK_LATER' %}CALLBACK LATER{% elif order.callback_status == 'WAITING' %}WAITING{% elif order.callback_status == 'WILL_AGREE' %}WILL AGREE{% elif order.callback_status == 'REJECTED' %}REJECTED{% else %}Select Action{% endif %}{% endfor %}
+          <i class="fa fa-chevron-down action-icon" aria-hidden="true" ></i>
+        </div>
+        <div class="dropdown-menu" id="dropdown-menu-orders">
+          <div class="d-flex dropdown-orders {% for order in evaluation.evaluationorder %}{% if order.callback_status == 'CALLBACK_LATER' %}dropdown-selected{% endif %}{% endfor %}" onclick="callbacklist('CALLBACK_LATER',{% for order in evaluation.evaluationorder %}{{order.id}}{% endfor %})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">CALLBACK LATER</div></div>
+          <div class="d-flex dropdown-orders {% for order in evaluation.evaluationorder %}{% if order.callback_status == 'WAITING' %}dropdown-selected{% endif %}{% endfor %}" onclick="callbacklist('WAITING',{% for order in evaluation.evaluationorder %}{{order.id}}{% endfor %})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">WAITING</div></div>
+          <div class="d-flex dropdown-orders {% for order in evaluation.evaluationorder %}{% if order.callback_status == 'WILL_AGREE' %}dropdown-selected{% endif %}{% endfor %}" onclick="callbacklist('WILL_AGREE',{% for order in evaluation.evaluationorder %}{{order.id}}{% endfor %})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">WILL AGREE</div></div>
+          <div class="d-flex dropdown-orders {% for order in evaluation.evaluationorder %}{% if order.callback_status == 'REJECTED' %}dropdown-selected{% endif %}{% endfor %}" onclick="callbacklist('REJECTED',{% for order in evaluation.evaluationorder %}{{order.id}}{% endfor %})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">REJECTED</div></div>
+          
+
+        </div>
+      </div>
     
     </td>
     {% endif %}
@@ -285,6 +261,314 @@
         </div><!--pagination-column pagination-column-right-->
     </div><!--pagination-containter-->         
 </div><!--white-wrapper-pagination--> 
+
+</div>
+
+
+<!-- Payments Tab begins here-->
+  <div class="tab-pane" id="payments" role="tabpanel" aria-labelledby="all-tab">
+
+<div class="col-md-8 pl-0 pr-0">
+<label for="favcity" style="width:20%;" class="m-width-100"> 
+<select name="no_of_entries" id="no_of_entries" onchange="set_params_go();"> 
+<option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
+<option value="50" {% if no_of_entries == '50' %}selected{% endif %}>50 Entries</option>
+<option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
+</select>
+</label>
+
+<br>
+  
+<div style="color: #666;">Show {{entry_per_page}} entries</div>
+</div>
+<div class="col-md-2 pr-0 m-pl-0">
+
+<h5>Payment Type</h5>
+<label for="favcity" style="width:100%;"> 
+<select name="payment_type" id="payment_type" onchange="set_params_go();"> 
+{% comment %} <option value="" >ALL</option> {% endcomment %}
+<option value="PENDING" {% if payment_type == 'PENDING' %}selected{% endif %}>PENDING</option>
+<option value="DUE" {% if payment_type == 'DUE' %}selected{% endif %}>DUE</option>
+</select>
+</label>
+</div>
+<div class="col-md-2 pr-0 m-pl-0">
+
+<h5>Callback Status</h5>
+<label for="favcity" style="width:100%;"> 
+<select name="callback_status" id="callback_status" onchange="set_params_go();"> 
+<option value="" >ALL</option>
+<option value="WAITING" {% if callback_status == 'WAITING' %}selected{% endif %}>WAITING</option>
+<option value="CALLBACK_LATER" {% if callback_status == 'CALLBACK_LATER' %}selected{% endif %}>CALLBACK LATER</option>
+<option value="WILL_PAY" {% if callback_status == 'WILL_PAY' %}selected{% endif %}>WILL PAY</option>
+<option value="FOLLOW_UP" {% if callback_status == 'FOLLOW_UP' %}selected{% endif %}>FOLLOW UP</option>
+<option value="LEGAL_ACTION" {% if callback_status == 'LEGAL_ACTION' %}selected{% endif %}>LEGAL_ACTION</option>
+</select>
+</label>
+<br>
+
+</div>
+
+<table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
+ 
+      <thead>
+      <tr>
+      <th class="text-left">Order Number</th>
+      <th class="text-left" data-hide="phone,tablet">Customer</th>
+      <th class="text-left" data-hide="phone,tablet">Mobile</th>
+      <th class="text-left" data-hide="phone,tablet">Amount</th>
+      <th class="text-left" data-hide="phone,tablet">Payment Policy</th>
+      {% if payment_type == 'PENDING' %}<th data-hide="phone">Status</th>{% endif %}
+      {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}<th class="align-center" data-hide="phone,tablet">Actions</th>{% endif %}
+      <th class="text-left" data-hide="phone">Shortcuts</th>
+      </tr>
+      </thead>
+
+      <tbody>
+        {% for invoice in payments %}
+        
+        {% if invoice.evaluation.payment_method == 'PREPAID' or invoice.evaluation.payment_method == 'POSTPAID' %}
+        <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
+        <td data-label="BLC Number" {% if invoice.evaluation.payment_method == 'PREPAID' %}class="prepaid-line"{% else %}class="postpaid-line"{% endif %}>{{invoice.evaluation.evaluation_id}}</td>
+        <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
+        
+        <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
+        <td data-label="Total Amount">{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}KD</td>
+        <td data-label="Payment Method">
+        <div class="text-center d-flex "><div class="round-marker {% if invoice.evaluation.payment_method == 'PREPAID' %}prepaid-bg{% else %}postpaid-bg{% endif %}"></div><span>{{invoice.evaluation.payment_method}}</span></div>
+        </td>
+
+        {% if payment_type == 'PENDING' %}
+        <td data-label="" class="bold-text">
+        {% if invoice.evaluation.payment_method == 'PREPAID' %}
+        {% if invoice.reminigdays < 0 %}
+        <h3 class="red-text-h3">Exp</h3>
+        {% else %}
+        <h3 class="{% if invoice.reminigdays == 0 %}red-text-h3{% elif invoice.reminigdays >= 1 and invoice.reminigdays <= 3 %}orange-text-h3{% elif invoice.reminigdays >= 4 and invoice.reminigdays <= 7 %}yellow-text-h3{% elif invoice.reminigdays >= 8 %}green-text-h3{% endif %}">{{invoice.reminigdays}}</h3> Days&#11015;
+        {% endif %}
+
+        {% elif invoice.evaluation.payment_method == 'POSTPAID' %}
+        <h3 class="{% if invoice.delaydays >= 14 %}red-text-h3{% elif invoice.delaydays >= 8 and invoice.delaydays <= 13 %}orange-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 7 %}yellow-text-h3{% elif invoice.delaydays >= 0 and invoice.delaydays <= 3 %}green-text-h3{% endif %}">{{invoice.delaydays}}</h3> Days&#11014;
+        {% endif %}
+        </td>
+        {% endif %}
+
+        <td class="text-center">
+
+          <div class="btn-group" id="actionDropdown">
+            <div class="order-dropdown " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+              {% if invoice.callback_status == 'CALLBACK_LATER' %}CALLBACK LATER{% elif invoice.callback_status == 'WAITING' %}WAITING{% elif invoice.callback_status == 'WILL_PAY' %}WILL PAY{% elif invoice.callback_status == 'FOLLOW_UP' %}FOLLOW UP{% elif invoice.callback_status == 'LEGAL_ACTION' %}LEGAL ACTION{% else %}Select Action{% endif %}
+              <i class="fa fa-chevron-down action-icon" aria-hidden="true" ></i>
+            </div>
+            <div class="dropdown-menu" id="dropdown-menu-orders">
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'CALLBACK_LATER' %}dropdown-selected{% endif %}" onclick="callbacklist('CALLBACK_LATER',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">CALLBACK LATER</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'WAITING' %}dropdown-selected{% endif %}" onclick="callbacklist('WAITING',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">WAITING</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'WILL_PAY' %}dropdown-selected{% endif %}" onclick="callbacklist('WILL_PAY',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">WILL PAY</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'FOLLOW_UP' %}dropdown-selected{% endif %}" onclick="callbacklist('FOLLOW_UP',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">FOLLOW UP</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'LEGAL_ACTION' %}dropdown-selected{% endif %}" onclick="callbacklist('LEGAL_ACTION',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">LEGAL ACTION</div></div>
+              
+
+            </div>
+          </div>
+
+         </td>
+
+        <td class="align-center" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> </div></td>
+        </tr>
+
+        {% elif invoice.evaluation.payment_method == 'BREAKDOWN' %}
+        
+        {% if invoice.preamount_paid != invoice.evaluation.before_cleaning_amount %}
+        <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
+        <td data-label="BLC Number" class="breakdown-line">{{invoice.evaluation.evaluation_id}}</td>
+        <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
+        
+        <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
+        <td data-label="Total Amount">{{invoice.evaluation.before_cleaning_amount|default_if_none:'0.000'|floatformat:'3'}}KD</td>
+        <td data-label="Payment Method">
+        <div class="text-center d-flex "><div class="round-marker breakdown-bg"></div><span>{{invoice.evaluation.payment_method}}</span></div>
+        </td>
+
+        {% if payment_type == 'PENDING' %}
+        <td data-label="" class="bold-text">{% if invoice.reminigdays <= 0 %}
+        <h3 class="red-text-h3">Exp</h3>
+        {% else %}
+        <h3 class="{% if invoice.reminigdays == 0 %}red-text-h3{% elif invoice.reminigdays >= 1 and invoice.reminigdays <= 3 %}orange-text-h3{% elif invoice.reminigdays >= 4 and invoice.reminigdays <= 7 %}yellow-text-h3{% elif invoice.reminigdays >= 8 %}green-text-h3{% endif %}">{{invoice.reminigdays}}</h3> Days&#11015;
+        {% endif %}</td>
+        {% endif %}
+        
+        <td class="text-center">
+
+          <div class="btn-group" id="actionDropdown">
+            <div class="order-dropdown " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+              {% if invoice.callback_status == 'CALLBACK_LATER' %}CALLBACK LATER{% elif invoice.callback_status == 'WAITING' %}WAITING{% elif invoice.callback_status == 'WILL_PAY' %}WILL PAY{% elif invoice.callback_status == 'FOLLOW_UP' %}FOLLOW UP{% elif invoice.callback_status == 'LEGAL_ACTION' %}LEGAL ACTION{% else %}Select Action{% endif %}
+              <i class="fa fa-chevron-down action-icon" aria-hidden="true" ></i>
+            </div>
+            <div class="dropdown-menu" id="dropdown-menu-orders">
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'CALLBACK_LATER' %}dropdown-selected{% endif %}" onclick="callbacklist('CALLBACK_LATER',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">CALLBACK LATER</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'WAITING' %}dropdown-selected{% endif %}" onclick="callbacklist('WAITING',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">WAITING</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'WILL_PAY' %}dropdown-selected{% endif %}" onclick="callbacklist('WILL_PAY',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">WILL PAY</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'FOLLOW_UP' %}dropdown-selected{% endif %}" onclick="callbacklist('FOLLOW_UP',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">FOLLOW UP</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'LEGAL_ACTION' %}dropdown-selected{% endif %}" onclick="callbacklist('LEGAL_ACTION',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">LEGAL ACTION</div></div>
+              
+
+            </div>
+          </div>
+
+         </td>
+
+        <td class="align-center" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> </div></td>
+        </tr>
+        {% endif %}
+
+        {% if invoice.last_completed and invoice.postamount_paid != invoice.evaluation.after_cleaning_amount %}
+        <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
+        <td data-label="BLC Number" >{{invoice.evaluation.evaluation_id}}</td>
+        <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
+        
+        <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
+        <td data-label="Total Amount">{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}KD</td>
+        <td data-label="Payment Method">
+        <div class="text-center d-flex "><div class="round-marker prepaid-bg"></div><span>{{invoice.evaluation.payment_method}}</span></div>
+        </td>
+
+        {% if payment_type == 'PENDING' %}
+        <td data-label="" class="bold-text"><h3 class="{% if invoice.delaydays >= 14 %}green-text-h3{% elif invoice.delaydays >= 8 and invoice.delaydays <= 13 %}yellow-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 6 %}orange-text-h3{% elif invoice.delaydays >= 0 and invoice.delaydays <= 3 %}red-text-h3{% endif %}">{{invoice.delaydays}}</h3> Days&#11014;</td>
+        {% endif %}
+
+        <td class="text-center">
+
+          <div class="btn-group" id="actionDropdown">
+            <div class="order-dropdown " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+              {% if invoice.callback_status == 'CALLBACK_LATER' %}CALLBACK LATER{% elif invoice.callback_status == 'WAITING' %}WAITING{% elif invoice.callback_status == 'WILL_PAY' %}WILL PAY{% elif invoice.callback_status == 'FOLLOW_UP' %}FOLLOW UP{% elif invoice.callback_status == 'LEGAL_ACTION' %}LEGAL ACTION{% else %}Select Action{% endif %}
+              <i class="fa fa-chevron-down action-icon" aria-hidden="true" ></i>
+            </div>
+            <div class="dropdown-menu" id="dropdown-menu-orders">
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'CALLBACK_LATER' %}dropdown-selected{% endif %}" onclick="callbacklist('CALLBACK_LATER',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">CALLBACK LATER</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'WAITING' %}dropdown-selected{% endif %}" onclick="callbacklist('WAITING',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">WAITING</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'WILL_PAY' %}dropdown-selected{% endif %}" onclick="callbacklist('WILL_PAY',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">WILL PAY</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'FOLLOW_UP' %}dropdown-selected{% endif %}" onclick="callbacklist('FOLLOW_UP',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">FOLLOW UP</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'LEGAL_ACTION' %}dropdown-selected{% endif %}" onclick="callbacklist('LEGAL_ACTION',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">LEGAL ACTION</div></div>
+              
+
+            </div>
+          </div>
+
+         </td>
+        
+        <td class="align-center" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> </div></td>
+        </tr>
+        {% endif %}
+
+
+        {% elif invoice.evaluation.payment_method == 'SUBSCRIPTION' %}
+        {% if invoice.subscription_topay != 0 %}
+        <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
+        <td data-label="BLC Number" class="subscription-line">{{invoice.evaluation.evaluation_id}}</td>
+        <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
+        
+        <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
+        <td data-label="Total Amount">{{invoice.subscription_topay|default_if_none:'0.000'|floatformat:'3'}}KD</td>
+        <td data-label="Payment Method">
+        <div class="text-center d-flex "><div class="round-marker subscription-bg"></div><span>{{invoice.evaluation.payment_method}}</span></div>
+        </td>
+
+        {% if payment_type == 'PENDING' %}
+        <td data-label="" class="bold-text">
+        <h3 class="{% if invoice.delaydays == 0 %}green-text-h3{% elif invoice.delaydays >= 1 and invoice.delaydays <= 3 %}yellow-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 7 %}orange-text-h3{% elif invoice.delaydays >= 8 %}red-text-h3{% endif %}">{{invoice.delaydays}}</h3> Days&#11014;</td>
+        {% endif %}
+
+        <td class="text-center">
+
+          <div class="btn-group" id="actionDropdown">
+            <div class="order-dropdown " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+              {% if invoice.callback_status == 'CALLBACK_LATER' %}CALLBACK LATER{% elif invoice.callback_status == 'WAITING' %}WAITING{% elif invoice.callback_status == 'WILL_PAY' %}WILL PAY{% elif invoice.callback_status == 'FOLLOW_UP' %}FOLLOW UP{% elif invoice.callback_status == 'LEGAL_ACTION' %}LEGAL ACTION{% else %}Select Action{% endif %}
+              <i class="fa fa-chevron-down action-icon" aria-hidden="true" ></i>
+            </div>
+            <div class="dropdown-menu" id="dropdown-menu-orders">
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'CALLBACK_LATER' %}dropdown-selected{% endif %}" onclick="callbacklist('CALLBACK_LATER',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">CALLBACK LATER</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'WAITING' %}dropdown-selected{% endif %}" onclick="callbacklist('WAITING',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">WAITING</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'WILL_PAY' %}dropdown-selected{% endif %}" onclick="callbacklist('WILL_PAY',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">WILL PAY</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'FOLLOW_UP' %}dropdown-selected{% endif %}" onclick="callbacklist('FOLLOW_UP',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">FOLLOW UP</div></div>
+              <div class="d-flex dropdown-orders {% if invoice.callback_status == 'LEGAL_ACTION' %}dropdown-selected{% endif %}" onclick="callbacklist('LEGAL_ACTION',{{invoice.id}})"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">LEGAL ACTION</div></div>
+              
+
+            </div>
+          </div>
+
+         </td>
+
+        <td class="text-left" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> </div></td>
+        </tr>
+        {% endif %}
+        
+        {% endif %}
+        
+        {% endfor %}
+      </tbody>
+      <tfoot>
+      </tfoot>
+      </table>
+<div class="white-wrapper-pagination"><!--white-wrapper-pagination-->   
+    <div class="pagination-containter"><!--pagination-containter-->
+    	<div class="pagination-column pagination-column-left"><!--pagination-column pagination-column-left-->
+        Showing {{evaluations.start_index}} to {{evaluations.end_index}} of {{evaluations.paginator.count}} entries
+        </div><!--pagination-column pagination-column-left-->
+        
+        <div class="pagination-column pagination-column-right"><!--pagination-column pagination-column-right-->
+        <!--paginated-->
+   {% if evaluations.has_other_pages %}
+   <nav aria-label="Page navigation example">
+  <ul class="pagination">
+     {% if evaluations.has_previous %}
+    <li class="page-item">
+      <a class="page-link" href="?page={{ evaluations.previous_page_number }}&search={{request.GET.search}}&order_status={{request.GET.order_status}}&callback_status={{request.GET.callback_status}}&no_of_entries={{request.GET.no_of_entries}}" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+        <span class="sr-only">Previous</span>
+      </a>
+    </li>
+    {% else %}
+    <li class="page-item">
+      <a class="page-link" href="#" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+        <span class="sr-only">Previous</span>
+      </a>
+    </li>
+    {% endif %}
+    {% for pg in page_range %}
+    {% if vus.number == pg %}
+            <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}&order_status={{request.GET.order_status}}&callback_status={{request.GET.callback_status}}&no_of_entries={{request.GET.no_of_entries}}">{{pg}}</a></li>
+    {% else %}
+            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&order_status={{request.GET.order_status}}&callback_status={{request.GET.callback_status}}&no_of_entries={{request.GET.no_of_entries}}">{{pg}}</a></li>
+    {% endif %}
+    {% endfor %}
+    {% if evaluations.has_next %}        
+    <li class="page-item">
+      <a class="page-link" href="?page={{ evaluations.next_page_number}}&search={{request.GET.search}}&order_status={{request.GET.order_status}}&callback_status={{request.GET.callback_status}}&no_of_entries={{request.GET.no_of_entries}}" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+        <span class="sr-only">Next</span>
+      </a>
+    </li>
+    {% else %}
+    <li class="page-item">
+      <a class="page-link disabled" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+        <span class="sr-only">Next</span>
+      </a>
+    </li>
+    {% endif %}
+  </ul>
+</nav>
+    {% endif %}
+    <!--paginated-->
+        </div><!--pagination-column pagination-column-right-->
+    </div><!--pagination-containter-->         
+</div><!--white-wrapper-pagination--> 
+
+</div>
+
+
+</div>
 </div><!--white-wrapper-->      
                          
             
@@ -297,17 +581,15 @@
 
 {% block javascript %}
 
-<script id="rendered-js">
-$('.footable').footable({
-  calculateWidthOverride: function () {
-    return { width: $(window).width() };
-  } });
+<script>
+  $(document).ready(function(){
+    $('.footable').trigger('footable_resize');
+  })
+  $("#payments_tab").click(function(){
+  setTimeout(function(){ $('.footable').trigger('footable_resize'); }, 1000);
+});
 
-
-// See:
-// http://www.sitepoint.com/responsive-data-tables-comprehensive-list-solutions
-//# sourceURL=pen.js
-    </script>
+</script>
 <script>
 
 function appendLeadingZeroes(n){
@@ -345,6 +627,16 @@ $("#close_export_popup").click(function () {
 $(function () {
   $('[data-toggle="tooltip"]').tooltip()
 })
+
+
+//keep selected tab on page reload
+    {% if tab == 'orders' %}
+      $('#orders-tab').click()
+    {% else %}
+      $('#payments-tab').click()
+    {% endif %}
+
+
 
 //payment note popup data fill
   $('.paymentnote').click(function(){
@@ -430,6 +722,7 @@ function callbacklist(status,order_id){
     axios.get(url+'/api/callback-status-update/',{ params: { 'order_id':order_id, 'callback_status': status } })
     .then(function (response) {
       if (response.data.success == true){
+        console.log("RES")
         window.location.reload();
       }
     })
@@ -438,7 +731,7 @@ function callbacklist(status,order_id){
 function set_params_go(args)
 {
 var url='{% url 'common_items:callback-list' %}';
-var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),order_status:$('#order_status').val(),callback_status:$('#callback_status').val()
+var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),order_status:$('#order_status').val(),callback_status:$('#callback_status').val(),payment_type:$('#payment_type').val()
 };
 for(key in args) 
     params[key]=args[key];

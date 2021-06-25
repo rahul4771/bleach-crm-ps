@@ -33,24 +33,38 @@
      <div class="clients-top-card-wrapper"><!--clients-top-card-wrapper-->
       <div class="clients-card-wrapper"><!--clients-card-wrapper-->
         <div class="clients-card-column clients-column-left"><!--clients-card-column clients-column-left-->
-        <div class="card-column whitebg blue-border"><!--card-column-->
-              <div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/card-open-tickets-icon.png' %}"></div>
+
+            <div class="card-column whitebg green-border"><!--card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/monthly-loss-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
-                <!--  <h1>Evaluations</h1>-->
-              <h2 class="blue-text"><label>Monthly Loss<span>{{thismonth_loss|floatformat:'2'}}</span></label> </h2>
-              <p><label>Last <span>{{lastmonth_loss|floatformat:'2'}}</span></label></p>
-              </div><!--column-right-->
-              </div><!--card-innerwrapper-->
+                <h1>Monthly Loss (in KD)</h1>
+            	<h2 class="green-text"><label>Month<span>{{thismonth_loss|floatformat:'2'}}</span></label> </h2>
+            	<p><label>Last Month <span>{{lastmonth_loss|floatformat:'2'}}</span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
             </div><!--card-column-->
-        
+
             <div class="card-column whitebg yellow-border"><!--card-column-->
-              <div class="card-innerwrapper"><!--card-innerwrapper-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-followp-cleaning-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
-              <h2 class="yellow-text"><label>Follow up <br>Cleaning <span>{{follow_up_cleaning_count|default_if_none:''}}</span></label>  </h2>
-              </div><!--column-right-->
-              </div><!--card-innerwrapper-->
+                <h1>Follow Up Cleaning</h1>
+            	<h2 class="yellow-text"><label>Month<span>{{this_month_followup_count|default_if_none:'0'}}</span></label> </h2>
+            	<p><label>Last Month <span>{{last_month_followup_count|default_if_none:'0'}}</span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
+            </div><!--card-column-->
+
+            <div class="card-column whitebg blue-border"><!--card-column-->
+            	<div class="card-innerwrapper"><!--card-innerwrapper-->
+                <div class="column-left"><img src="{% static 'files/images/card-open-tickets-icon.png' %}"></div>
+                <div class="column-right"><!--column-right-->
+                <h1>Open Tickets</h1>
+            	<h2 class="blue-text"><label>Month<span>{{this_month_open_tickets|default_if_none:'0'}}</span></label> </h2>
+            	<p><label>Last Month <span>{{last_month_open_tickets|default_if_none:'0'}}</span></label></p>
+            	</div><!--column-right-->
+            	</div><!--card-innerwrapper-->
             </div><!--card-column-->
         </div><!--clients-card-column clients-column-left-->
 
@@ -167,7 +181,7 @@
 <h2 class="h2">Tickets List</h2>
 <div class="page-entries">Show {{entry_per_page}} entries</div>
 
-<label for="favcity" style="width:20%;"> 
+<label for="favcity" style="width:20%;" class="m-width-100"> 
 <select name="no_of_entries" id="no_of_entries" onchange="set_params_go();"> 
 <option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
 <option value="50" {% if no_of_entries == '50' %}selected{% endif %}>50 Entries</option>

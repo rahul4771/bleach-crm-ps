@@ -227,7 +227,7 @@
 <h2 class="h2">Order List</h2>
 <div class="page-entries">Show {{entry_per_page}} entries</div>
 
-<label for="favcity" style="width:20%;"> 
+<label for="favcity" class="m-width-100" style="width:20%;" > 
 <select name="no_of_entries" id="no_of_entries" onchange="set_params_go();"> 
 <option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
 <option value="50" {% if no_of_entries == '50' %}selected{% endif %}>50 Entries</option>
@@ -745,7 +745,16 @@
 {% endblock %}
 
 {% block javascript %}
+
 <script src="{% static 'files/js/charts/order-chart.js' %}"></script> 
+<script>
+  $(document).ready(function(){
+    $('.footable').trigger('footable_resize');
+  })
+  $("#bookings-tab").click(function(){
+  setTimeout(function(){ $('.footable').trigger('footable_resize'); }, 1000);
+});
+</script>
 <script id="rendered-js">
 $('.footable').footable({
   calculateWidthOverride: function () {

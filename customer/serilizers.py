@@ -12,7 +12,7 @@ class ServiceTypeSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
 	class Meta:
 		model  = UserProfile
-		fields = ('id','name','gender','email','nationality','mobile_number','date_day','date_month','date_year','sms_preference')	
+		fields = ('id','name','gender','email','mobile_number','date_day','date_month','date_year','sms_preference')	
 		read_only_fields =('id',)
 
 class AddressSaveSerializer(serializers.ModelSerializer): 
@@ -35,7 +35,7 @@ class EvaluationBookSerializer(serializers.ModelSerializer):
 	service_type           = ServiceTypeSerializer(read_only=True)
 	class Meta:
 		model = EvaluationBook
-		fields = ('id','service_type','cleaning_policy','area_type','location_type','total_cost','evaluator_note','number_of_cleaners','cleaning_hours','evaluationsection_book')
+		fields = ('id','service_type','cleaning_policy','area_type','location_type','total_cost','evaluator_note','evaluationsection_book')
 		read_only_fields = ('id',)
 
 ##for data showing

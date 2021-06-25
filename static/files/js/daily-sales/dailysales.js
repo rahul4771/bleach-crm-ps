@@ -3,7 +3,7 @@ var url = 'https://my.bleachkw.com';
 //var url = 'http://127.0.0.1:8000';
 
 $('document').ready(function(){
-    
+    $('.footable').trigger('footable_resize'); 
     if($('#salestoggle').is(':checked')){
         datatype = 'evaluator';
     }else{
@@ -38,6 +38,7 @@ function monthlysales(){
             $("#salesheaders").empty();
             $('#salesheaders').append('<th>Date</th><th data-hide="phone,tablet">Day</th><th data-hide="phone,tablet" class="align-right">General Cleaning</th><th data-hide="phone,tablet" class="align-right">Upholstery Cleaning</th><th data-hide="phone,tablet" class="align-right">Deep Cleaning</th><th data-hide="phone,tablet" class="align-right">Carpet Cleaning</th><th data-hide="phone,tablet" class="align-right">Kitchen Cleaning</th><th data-hide="phone,tablet" class="align-right">Sterilization</th><th data-hide="phone,tablet" class="align-right">Total Amount</th><th data-hide="phone,tablet" class="align-right">Sales Status</th>')
         }
+       
 
         //monthly evaluator total amount calculation
         var evaluator1 = 0 ;
@@ -139,9 +140,14 @@ function monthlysales(){
         }else{
             console.log("zero")
         }
+
+       
     })
+    
+  
 
 }
+
 
 $('#salestoggle').click(function(){
     if($(this).is(':checked')){

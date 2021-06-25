@@ -299,7 +299,7 @@
                         <span>:</span>
 
                         <div class="left">
-                            <b>Mr. Sasikuttan</b>
+                            <b>{{evaluation.customer.name}}</b>
                         </div>
                     </div>
                     <div class="info-section-item">
@@ -322,7 +322,7 @@
                         <span>:</span>
 
                         <div class="left text-right">
-                            00000000
+                            {{evaluation.customer.mobile_number}}
                         </div>
                     </div>
                     <div class="info-section-item">
@@ -332,7 +332,7 @@
                         <span>:</span>
 
                         <div class="left text-right">
-                            email@example.com
+                            {{evaluation.customer.email}}
                         </div>
                     </div>
                 </div>
@@ -346,7 +346,7 @@
                             <span>:</span>
 
                             <div class="left">
-                                <b>156521211</b>
+                                <b>{{evaluation.evaluation_id}}</b>
                             </div>
                         </div>
                         <div class="info-section-item">
@@ -386,33 +386,38 @@
                             <span>:</span>
 
                             <div class="left text-right">
-                                BREAKDOWN
+                                {{evaluation.payment_method}}
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
+            {% for book in evaluationbooks %}
             <!-- item-->
             <div class="order-items">
                 <div class="order-item-in">
                     <div id="item-left">
-                        <b>General Cleaning</b>
-                        <p style="font-size: 16px; margin-top: 10px; line-height: 2;">Size : <b>750 Square meter</b>
-                            &nbsp; Quantity : <b>1</b> &nbsp; Unit Price : <b>375.000</b></p>
+                        <b>{{book.service_type.name}}</b>
+                        {% for section in book.evaluationbooksection.set__all %}
+                        <p style="font-size: 16px; margin-top: 10px; line-height: 2;">Size : <b>{{section.size}}{{section.unit}}</b>
+                            &nbsp; Quantity : <b>{{section.section_cleanings}}</b> &nbsp; Unit Price : <b>{{section.section_net_cost}}}</b></p>
+                        {% endfor %}
                     </div>
                     <div style="flex-grow: 1;" class="m-mt-10 left">
                         <b>NET PRICE</b>
                         <p style="font-size: 16px; margin-top: 10px; line-height: 2;" class="amount-text m-mt-10">
-                            <b>375.000</b> KD
+                            <b>{{book.total_cost|floatformat:3}}</b> KD
                         </p>
                     </div>
                 </div>
             </div>
             <!-- item-->
+            {% endfor %}
 
             <div class="info-section">
                 <div class="info-section-left">
+                {% if evaluation.payment_method == 'PREPAID' or evaluation.payment_method == 'BREAKDOWN' %}
                     <div class="info-section-item">
                         <div style="font-size: 14px;" class="info-section-item-left-3">
                             <b>Payment Before Cleaning</b>
@@ -421,7 +426,7 @@
                             <b>340.000</b>&nbsp;KD
                         </div>
                     </div>
-
+                {% elif evaluation.payment_method == 'POSTPAID' or evaluation.payment_method == 'BREAKDOWN' %}
                     <div class="info-section-item">
                         <div style="font-size: 14px;" class="info-section-item-left-3">
                             <b>Payment After Cleaning</b>
@@ -430,7 +435,7 @@
                             <b>35.000</b> &nbsp; KD
                         </div>
                     </div>
-
+                {% endif %}
                 </div>
 
                 <div class="left m-mt-20">
@@ -440,7 +445,7 @@
                                 Sub Total
                             </div>
                             <div class="left">
-                                000 &nbsp;KD
+                                {{evaluation.estimated_cost|floatformat:3}} &nbsp;KD
                             </div>
                         </div>
                         <div class="info-section-item">
@@ -448,7 +453,7 @@
                                 Discount
                             </div>
                             <div class="left text-right">
-                                000 &nbsp;KD
+                                {{evaluation.discount|floatformat:3}} &nbsp;KD
                             </div>
                         </div>
                         <div class="info-section-item">
@@ -457,7 +462,7 @@
                             </div>
                             <div style="font-size: 30px;" class="left text-right">
                                 <br>
-                                <b>375.000</b>&nbsp;KD
+                                <b>{{evaluation.total_cost|floatformat:3}}</b>&nbsp;KD
                             </div>
                         </div>
 
@@ -468,7 +473,16 @@
 
         </div>
         <div class="button-section">
-            <div class="btn">
+            <div class="btn" style=" margin: 0 auto;
+            background: #2A8EA2 0% 0% no-repeat padding-box;
+            border: 1px solid #707070;
+            border-radius: 8px;
+            opacity: 1;
+            padding: 10px 20px 10px 20px;
+            color: #fff;
+            font-weight: bold;
+            width: 200px;
+            font-size: 22px;">
                 <b> <a href="" class="button-a">Approve</a> or <a class="button-a" href="" class="">Reject</a> </b>
             </div>
         </div>
