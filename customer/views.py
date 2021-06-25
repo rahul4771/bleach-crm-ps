@@ -3833,7 +3833,8 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 		evaluation_id_encrypted = evaluation_id
 		evaluation_id 			= 'BLC'+evaluation_id_encrypted[3:14]
 
-		order    				= Order.objects.get(evaluation__evaluation_id=evaluation_id)
+		evaluation             = Evaluation.objects.get(evaluation_id=evaluation_id)
+		order    				= Order.objects.get(evaluation=evaluation)
 		services 				= request.data.get('service_details')
 
 		if action_type == 'together':
