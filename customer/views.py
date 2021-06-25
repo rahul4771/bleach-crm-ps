@@ -707,54 +707,8 @@ from django.template.loader import render_to_string
 
 from weasyprint import HTML,CSS
 
-def get_page_body(boxes):
-    for box in boxes:
-        if box.element_tag == 'body':
-            return box
-
-        return get_page_body(box.all_children())
-
 
 def quatation_html_to_pdf_view(request,evaluation_id):
-
-	#evaluation id decryption
-	evaluation_id_encrypted = evaluation_id
-	evaluation_id = 'BLC'+evaluation_id_encrypted[0:11]
-	user_name     =  evaluation_id_encrypted[11:]
-
-
-	order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(is_active=True,order_no=evaluation_id,evaluation__customer__username=user_name)
-
-	nonduplicate_schedules = []
-	#Remove duplicates for subscription
-	duplicate_schedules    = []
-	for orderschedule in order.orderschedules:
-		if orderschedule.order_scheduler_book in duplicate_schedules:
-			pass
-		else:	
-			nonduplicate_schedules.append(orderschedule)	
-
-		duplicate_schedules.append(orderschedule.order_scheduler_book)
-    
-	#Main Content
-	if order.evaluation.payment_method == 'SUBSCRIPTION':
-		html_string = render_to_string('customer/subscriptionquatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
-	else:
-		html_string = render_to_string('customer/newquatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
-	html     = HTML(string=html_string,base_url=request.build_absolute_uri())
-	main_doc = html.render()
-
-	main_doc.write_pdf(target='/home/pdf/tmp/quatation/quatation.pdf');
-
-	fs = FileSystemStorage('/home/pdf/tmp/quatation/')
-	with fs.open('quatation.pdf') as pdf:
-		response = HttpResponse(pdf, content_type='application/pdf')
-		response['Content-Disposition'] = 'attachment; filename="'+evaluation_id+'_quatation.pdf"'
-		return response
-	return response
-
-
-def testquatation_html_to_pdf_view(request,evaluation_id):
 
 	#evaluation id decryption
 	evaluation_id_encrypted = evaluation_id
@@ -783,10 +737,8 @@ def testquatation_html_to_pdf_view(request,evaluation_id):
 			for section in orderschedule.order_scheduler_book.evaluationbooksection:
 				per_job_cost += section.section_cost
 
-		# return render(request,'customer/downloads/quatation.html',{"order":order,"nonduplicate_schedules":nonduplicate_schedules,"per_job_cost":per_job_cost})
 		html_string = render_to_string("customer/downloads/quatation.html",{"order":order,"nonduplicate_schedules":nonduplicate_schedules,"per_job_cost":per_job_cost})
 	else:
-		#return render(request,'customer/downloads/quatation.html',{"order":order,"nonduplicate_schedules":nonduplicate_schedules})
 		html_string = render_to_string('customer/downloads/quatation.html',{"order":order,"nonduplicate_schedules":nonduplicate_schedules})
 	
 	html     = HTML(string=html_string,base_url=request.build_absolute_uri())
@@ -827,44 +779,11 @@ def termsandconditions_to_pdf(request):
 		response = HttpResponse(pdf, content_type='application/pdf')
 		response['Content-Disposition'] = 'attachment; filename="termsandconditions.pdf"'
 		return response
-	return response	
+	return response			
+
 
 
 def invoice_html_to_pdf_view(request,evaluation_id):
-
-	#evaluation id decryption
-	evaluation_id_encrypted = evaluation_id
-	evaluation_id = 'BLC'+evaluation_id_encrypted[0:11]
-	user_name     =  evaluation_id_encrypted[11:]
-
-	order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
-
-	nonduplicate_schedules = []
-	#Remove duplicates for subscription
-	duplicate_schedules    = []
-	for orderschedule in order.orderschedules:
-		if orderschedule.order_scheduler_book in duplicate_schedules:
-			pass
-		else:	
-			nonduplicate_schedules.append(orderschedule)	
-
-		duplicate_schedules.append(orderschedule.order_scheduler_book)
-    
-
-	html_string = render_to_string('customer/newquatation.html', {"order":order,"nonduplicate_schedules":nonduplicate_schedules})
-
-	html = HTML(string=html_string,base_url=request.build_absolute_uri())
-	html.write_pdf(target='/home/pdf/tmp/invoice/invoice.pdf');
-
-	fs = FileSystemStorage('/home/pdf/tmp/invoice/')
-	with fs.open('invoice.pdf') as pdf:
-		response = HttpResponse(pdf, content_type='application/pdf')
-		response['Content-Disposition'] = 'attachment; filename="'+evaluation_id+'_invoice.pdf"'
-		return response
-	return response		
-
-
-def testinvoice_html_to_pdf_view(request,evaluation_id):
 
 	#evaluation id decryption
 	evaluation_id_encrypted = evaluation_id
@@ -2140,7 +2059,7 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
 	def post(self,request):
 		dropdown_slotes  = {}
 		number_of_cleaners  = int(request.data.get('number_of_cleaners'))-1
-		cleaing_hours       = float(request.data.get('cleaning_hours'))
+		cleaning_hours      = float(request.data.get('cleaning_hours'))
 		service_types       = request.data.get('service_types')
 		     
 
@@ -2201,6 +2120,10 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
 			slote_end_time                    = slote_end_datetime.time()
 			start_at_date                     = slote_start_datetime.date()
 			end_at_date                       = slote_end_datetime.date()
+
+			#absent cleaners and leaders	
+			absent_cleaners = LeaveSchedule.objects.select_related('staff').filter(Q(leave_date=start_at_date)|Q(leave_date=end_at_date)).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
+			absent_leaders  = LeaveSchedule.objects.select_related('staff').filter(Q(leave_date=start_at_date)|Q(leave_date=end_at_date)).filter(staff__user_type='TEAMINCHARGE').values_list('staff',flat=True)
 
 			#included shift cleaners
 			shift_cleaners      = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_at_date)|Q(shift_date=end_at_date))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=slote_start_time)&Q(shift1_end_at__gte=slote_start_time))&Q(Q(shift1_start_at__lte=slote_end_time)&Q(shift1_end_at__gte=slote_end_time))) | Q(Q(Q(shift2_start_at__lte=slote_start_time)&Q(shift2_end_at__gte=slote_start_time))&Q(Q(shift2_start_at__lte=slote_end_time)&Q(shift2_end_at__gte=slote_end_time)))).values_list('staff',flat=True)
@@ -2300,7 +2223,7 @@ class GetMultipleServiceDateCleaningSlotesAutofix(APIView):
 	def post(self,request):
 		dropdown_slotes  = {}
 		number_of_cleaners  = int(request.data.get('number_of_cleaners'))-1
-		cleaing_hours       = float(request.data.get('cleaning_hours'))
+		cleaning_hours       = float(request.data.get('cleaning_hours'))
 		service_types       = request.data.get('service_types')
 		     
 
@@ -2357,12 +2280,6 @@ class GetMultipleServiceDateCleaningSlotesAutofix(APIView):
 			for slote_checking in slote_checkings:
 				team_leaders_scheduled      = []
 				team_members_scheduled      = []
-				
-				# start_at = datetime.strptime(cleaning_datetime,'%d-%m-%Y %I:%M %p')+timedelta(hours=slote_checking)
-				# end_at   = start_at+timedelta(hours=cleaing_hours)
-		
-				# start_at_date = start_at.date()
-				# end_at_date   = end_at.date()
 
 				slote_start_datetime 			  = datetime.strptime(cleaning_datetime,'%d-%m-%Y %I:%M %p')+timedelta(hours=slote_checking)
 				slote_end_datetime                = slote_start_datetime+timedelta(hours=cleaning_hours)
@@ -3916,11 +3833,14 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 		evaluation_id_encrypted = evaluation_id
 		evaluation_id 			= 'BLC'+evaluation_id_encrypted[3:14]
 
-		order    				= Order.objects.get(evaluation__evaluation_id=evaluation_id)
+		evaluation             = Evaluation.objects.get(evaluation_id=evaluation_id)
+		order    				= Order.objects.get(evaluation=evaluation)
 		services 				= request.data.get('service_details')
 
 		if action_type == 'together':
 			###testing availability ####
+			total_cleaners 	= UserProfile.objects.filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
+			total_leaders   = UserProfile.objects.filter(is_general_skill=True,user_type='TEAMINCHARGE')
 			for service_detail in services.keys():
 				service_book        		= EvaluationBook.objects.get(id=services[service_detail]['id'])
 				service_type   		        = service_book.service_type.name
@@ -4075,7 +3995,7 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 				#saving
 				for service_detail in services.keys():
 					schedules_dict     = list(request.data.get("service_details").values())[0]['schedule_details']
-					evaluation_details = EvaluationDetails.objects.get(id=services[key]['evaluation_details_id'])
+					evaluation_details = EvaluationDetails.objects.get(id=services[service_detail]['evaluation_details_id'])
 					for key in schedules_dict.keys():
 						schedule_date           =  schedules_dict[key]['date']
 						schedule_time           =  schedules_dict[key]['time']
@@ -4085,7 +4005,7 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 						end_time                =  start_date_time.time()
 
 						#schedule
-						order_schedule = OrderScheduler.objects.create(order=order,status='CONFIRMED',customer_address=evaluation_details.address,evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,order_scheduler_book__id=services[key]['id'],no_of_cleaners=schedules_dict[key]['no_of_cleaners'],cleaning_hours=schedules_dict[key]['cleaning_hours'])
+						order_schedule = OrderScheduler.objects.create(order=order,status='CONFIRMED',customer_address=evaluation_details.address,evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,order_scheduler_book_id=services[service_detail]['id'],no_of_cleaners=schedules_dict[key]['no_of_cleaners'],cleaning_hours=schedules_dict[key]['cleaning_hours'])
 
 						absent_cleaners = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=start_date_time.date())|Q(leave_date=end_date_time.date()))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
 						absent_leaders  = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=start_date_time.date())|Q(leave_date=end_date_time.date()))).filter(staff__user_type='TEAMINCHARGE').values_list('staff',flat=True)						

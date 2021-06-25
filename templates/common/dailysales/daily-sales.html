@@ -147,17 +147,15 @@
 {% block javascript %}
 <script src="{% static 'files/js/charts/dailysalesdatachart.js' %}"></script>
 <script src="{% static 'files/js/daily-sales/dailysales.js' %}"></script>
-{% comment %} <script id="rendered-js">
-$('.footable').footable({
-  calculateWidthOverride: function () {
-    return { width: $(window).width() };
-  } });
+<!-- <script>
+  $(document).ready(function(){
+    $('.footable').trigger('footable_resize');
+  })
+  $("#payments_tab").click(function(){
+  setTimeout(function(){ $('.footable').trigger('footable_resize'); }, 1000);
+});
 
-
-// See:
-// http://www.sitepoint.com/responsive-data-tables-comprehensive-list-solutions
-//# sourceURL=pen.js
-    </script> {% endcomment %}
+</script> -->
 <script>
 
 $('document').ready(function(){

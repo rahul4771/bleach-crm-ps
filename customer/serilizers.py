@@ -12,7 +12,7 @@ class ServiceTypeSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
 	class Meta:
 		model  = UserProfile
-		fields = ('id','name','gender','email','nationality','mobile_number','date_day','date_month','date_year','sms_preference')	
+		fields = ('id','name','gender','email','mobile_number','date_day','date_month','date_year','sms_preference')	
 		read_only_fields =('id',)
 
 class AddressSaveSerializer(serializers.ModelSerializer): 
