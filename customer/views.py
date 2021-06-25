@@ -3805,10 +3805,6 @@ class DuplicateBookingPhase2(APIView):
 							new_duplicate_book = EvaluationBook.objects.get_or_create(evaluation_details=new_duplicate_evaluation_details,cleaning_policy=duplicate_book.cleaning_policy,service_type=duplicate_book.service_type,area_type=duplicate_book.area_type,cleaning_method=duplicate_book.cleaning_method,location_type=duplicate_book.location_type,evaluator_note=duplicate_book.evaluator_note,estimated_cost=duplicate_book.estimated_cost,total_cost=duplicate_book.estimated_cost)
 						book_totalcost += new_duplicate_book.estimated_cost						
 
-				new_duplicate_evaluation_details.total_cost     = book_totalcost		
-				new_duplicate_evaluation_details.estimated_cost = book_totalcost
-				new_duplicate_evaluation_details.save()
-				evaluation_details_totalcost += book_totalcost
 
 
 						#new booksection
@@ -3822,6 +3818,11 @@ class DuplicateBookingPhase2(APIView):
 									for duplicate_keynote in duplicate_book_section.sectionkeynotes:	
 										new_duplicate_keynote = EvaluationSectionKeynote.objects.create(evaluation_section=new_duplicate_section,sub_area=duplicate_keynote.sub_area,quantity=duplicate_keynote.quantity,)
 			
+				new_duplicate_evaluation_details.total_cost     = book_totalcost		
+				new_duplicate_evaluation_details.estimated_cost = book_totalcost
+				new_duplicate_evaluation_details.save()
+				evaluation_details_totalcost += book_totalcost
+
 		new_order.estimated_cost= evaluation_details_totalcost
 		new_order.total_cost    = evaluation_details_totalcost
 		new_order.save()
