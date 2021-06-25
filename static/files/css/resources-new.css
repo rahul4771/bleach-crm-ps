@@ -493,3 +493,12 @@
     height: 350px;
   }
 }
+
+@media only screen and (max-width: 500px) {
+  .m-width-100{
+    width: 100% !important;
+  }
+  .m-pl-0{
+    padding-left: 0px !important;
+  }
+}

@@ -86,7 +86,13 @@
 <body class="sidebar-collapsed">
      {% block content %}
      {% endblock %}
-
+     <script src="{% static 'files/js/footable.js' %}"></script>
+     <script id="rendered-js">
+     $('.footable').footable({
+       calculateWidthOverride: function () {
+         return { width: $(window).width() };
+       } });
+     </script>
 <!--Bootstrap -->
 <script src="{% static 'files/plugins/bootstrap-3.3.7/js/bootstrap.min.js'%}"></script>
 <script src="{% static 'files/js/toggle-menu.js' %}"></script>
@@ -140,13 +146,7 @@
 <script src="{% static 'files/js/evaluation-tableScroll.js' %}"></script>
 <script src="{% static 'files/js/presentation.js' %}"></script>
 <script src="{% static 'files/js/sort.js' %}"></script>   
-<script src="{% static 'files/js/footable.js' %}"></script>
-<script id="rendered-js">
-$('.footable').footable({
-  calculateWidthOverride: function () {
-    return { width: $(window).width() };
-  } });
-</script>
+
 {% block javascript %}
 {% endblock %}
 {% include 'common_messages.html' %}

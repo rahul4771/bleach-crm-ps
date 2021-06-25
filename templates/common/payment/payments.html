@@ -210,7 +210,7 @@
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Payment List</h2>
 <div class="page-entries">Show {{entry_per_page}} entries</div>
-<label for="favcity" style="width:20%;"> 
+<label for="favcity" style="width:20%;" class="m-width-100"> 
 <select name="no_of_entries" id="no_of_entries" onchange="set_params_go();"> 
 <option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
 <option value="50" {% if no_of_entries == '50' %}selected{% endif %}>50 Entries</option>
@@ -235,7 +235,7 @@
  
       <thead>
       <tr>
-      <th class="text-left" data-hide="phone,tablet">Date of Payment</th>
+      <th class="text-left" data-hide="">Date of Payment</th>
       <th class="text-left">BLC Number</th>
       <th class="text-center" data-hide="phone,tablet">Customer</th>
       <th class="text-right" data-hide="phone,tablet">Paid Amount (in KD)</th>
@@ -344,7 +344,8 @@
    </div>
     <!-- Paid tab begins here-->
   <div class="tab-pane fade" id="paid" role="tabpanel" aria-labelledby="paid-tab">
-    <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
+   
+<table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
  
       <thead>
       <tr>
@@ -828,16 +829,19 @@
 {% endblock %}
 
 {% block javascript %} 
-<script src='js/footable.js'></script> 
+
 <script src="{% static 'files/js/charts/payment-chart.js' %}"></script>  
-<script id="rendered-js">
-$('.footable').footable({
-  calculateWidthOverride: function () {
-    return { width: $(window).width() };
-  } });
-// See:
-// http://www.sitepoint.com/responsive-data-tables-comprehensive-list-solutions
-//# sourceURL=pen.js
+
+    <script>
+      $(document).ready(function(){
+        $('.footable').trigger('footable_resize');
+      })
+      $("#paid-tab").click(function(){
+      setTimeout(function(){ $('.footable').trigger('footable_resize'); }, 1000);
+    });
+    $("#due_tab").click(function(){
+      setTimeout(function(){ $('.footable').trigger('footable_resize'); }, 1000);
+    });
     </script>
     <script>
     //for tabs
