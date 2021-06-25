@@ -630,8 +630,14 @@ padding:10px;
 .schedule-heading{
     font-size:24px;
 }
-.address-card{
+.address-card-active{
     border:1px solid #289bac;
+    border-radius:5px;
+    padding:10px;
+    min-height:112px;
+}
+.address-card{
+    border:1px solid #707070;
     border-radius:5px;
     padding:10px;
     min-height:112px;

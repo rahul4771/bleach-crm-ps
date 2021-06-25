@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.template.loader import render_to_string
 from .models import Order,OrderScheduler,EvaluationBook
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook
 from datetime import datetime,date,timedelta,timezone
@@ -9,7 +10,7 @@ from django.db.models import Count
 # from django.db.models.functions import Extract
 from dateutil.relativedelta import relativedelta
 import requests
-
+from django.core.mail import send_mail,EmailMultiAlternatives
 from accountant.models import PaymentHistory
 # Create your views here.
 
@@ -182,6 +183,17 @@ def sendinvoice(request):
         data=True
     else:
         data = False
+
+    if evaluation.customer.is_email == True:
+        #send mail
+        msg_html = render_to_string('email/invoice.html',{})
+        msg = EmailMultiAlternatives('Bleach Invoice', '', 'notification@bleach-kw.com', [''+evaluation.customer.email+''])
+        msg.attach_alternative(msg_html, "text/html")
+        msg.send(fail_silently=False)
+        data=True
+    else:
+        data = False
+
     return JsonResponse(data,safe=False)
 
 def sendquotation(request):
@@ -196,7 +208,8 @@ def sendquotation(request):
     
     address = evaluationdetails.address
 
-    evaluationbook = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).first()
+    evaluationbooks = EvaluationBook.objects.filter(evaluation_details=evaluationdetails)
+    evaluationbook = evaluationbooks.first()
 
     if address.floor == None and address.avenue == None:
         address_list = [address.apartment, address.street, address.building, address.block, address.area.name, address.governorate.name]
@@ -240,6 +253,18 @@ def sendquotation(request):
 
     else:
         data = False
+
+    if evaluation.customer.is_email == True:
+        #send mail
+        msg_html = render_to_string('email/quatation.html',{"evaluation":evaluation,"evaluationbooks":evaluationbooks})
+        msg = EmailMultiAlternatives('Bleach Quotation', '', 'notification@bleach-kw.com', [evaluation.customer.email])
+        msg.attach_alternative(msg_html, "text/html")
+        msg.send(fail_silently=False)
+        print(msg,"msg")
+        data=True
+    else:
+        data = False
+
     return JsonResponse(data,safe=False)
 
 def sendreceipt(request):

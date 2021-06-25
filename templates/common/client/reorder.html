@@ -13,7 +13,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
     <link href="{% static 'files/css/website.css' %}" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
   integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
@@ -26,451 +25,31 @@
 <link rel="stylesheet"
   href="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/assets/owl.theme.default.min.css' %}">
 <link rel="stylesheet" href="{% static 'files/css/booking/booking.css' %}">
-<link rel="stylesheet" href="{% static 'files/css/customer/main.css' %}">
+
 <link rel="stylesheet" href="{% static 'files/css/colors.css' %}">
 
 <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
     <title>Bleach Cleaning Services</title>
   </head>
   <body>
-<div  id="app" style="min-height:0px">
+<div  id="app" >
   <!--wrapper-->
-  <!--header begins-->
-  <div id="mobSidenav" class="sidenav">
-    <div class="sidenav-content">
-    <a href="javascript:void(0)" class="closebtn mob-menu bb-none" onclick="closeNav()">&times;</a>
-    <a href="#" class="mob-menu" onclick="window.location.href=''">Home </a>
-    <a href="#" class="mob-menu" @click="selectTab('Services')" v-if="selectedTab!='Services'">Services <span style="float: right;" >+</span></a>
-    <a href="#" class="mob-menu-active bb-none" @click="selectTab('')"  v-if="selectedTab=='Services'">Services <span style="float: right;">-</span></a>
-    <div v-if="selectedTab=='Services'" class="mob-sub-menu-container">
-    <!---->  <transition-group  name="list" tag="div">
-        <a href="#" class="mob-sub-menu-active bb-none list-item" key="link1" @click="subItemSelected=''" v-if="subItemSelected=='Detailed Cleaning'">Detailed Cleaning <span style="float: right;">-</span></a>
-        <a href="#" class="mob-sub-menu bb-none list-item" key="link1" @click="subItemSelected='Detailed Cleaning'" v-else>Detailed Cleaning <span style="float: right;">+</span></a>
-        <div class="list-item sub-list" key="sublink1" v-if="subItemSelected=='Detailed Cleaning'" >
-            <a href="#" class="sub-item" @click="goTo('/services/detailed-cleaning/general-cleaning/?lang=en')"> General Cleaning</a>
-            <a href="#" class="sub-item" @click="goTo('/services/detailed-cleaning/deep-cleaning/?lang=en')"> Deep Cleaning</a>
-            <a href="#" class="sub-item" @click="goTo('/services/detailed-cleaning/facade-cleaning/?lang=en')"> Facade Cleaning</a>
-            <a href="#" class="sub-item" @click="goTo('/services/detailed-cleaning/storage-area-cleaning/?lang=en')"> Storage Area</a>
-            <a href="#" class="sub-item" @click="goTo('/services/detailed-cleaning/car-parking-umbrella/?lang=en')"> Car Parking umbrella</a>
-            <a href="#" class="sub-item" @click="goTo('/services/detailed-cleaning/window-cleaning/?lang=en')"> Window Cleaning</a>
-            <a href="#" class="sub-item" @click="goTo('/services/detailed-cleaning/outdoor-cleaning/?lang=en')"> Outdoor Cleaning</a>
-            <a href="#" class="sub-item" > Car Manicure & Body Care</a>
-            <a href="#" class="sub-item"> AC Duct Cleaning</a>
-        </div>
-       <a href="#" class="mob-sub-menu bb-none list-item" key="link2" @click="subItemSelected='Special Care'" v-if="subItemSelected!='Special Care'">Special Care <span style="float: right;">+</span></a>
-       <a href="#" class="mob-sub-menu-active bb-none list-item" key="link2" @click="subItemSelected=''" v-if="subItemSelected=='Special Care'">Special Care <span style="float: right;">-</span></a>
-        <!-- SPECIAL CARE SRVICES-->
-        <div class="list-item sub-list" key="sublink2" v-if="subItemSelected=='Special Care'" >
-            <a href="#" class="sub-item" @click="goTo('/services/special-care/upholstery-cleaning/?lang=en')"> Upholstery Cleaning</a>
-            <a href="#" class="sub-item" @click="goTo('/services/special-care/mattress-cleaning/?lang=en')"> Mattress Cleaning</a>
-            <a href="#" class="sub-item" @click="goTo('/services/special-care/carpet-cleaning/?lang=en')"> Carpet Cleaning</a>
-            <a href="#" class="sub-item"> Curtains Cleaning & sanitizing</a>
-            <a href="#" class="sub-item"> Stone & Marble Restoration</a>
-            
-        </div>
-        <!-- SPECIAL CARE SERVICES ENDS HERE-->
-       <a href="#" class="mob-sub-menu bb-none list-item" key="link3" @click="subItemSelected='Kitchen Cleaning'" v-if="subItemSelected!='Kitchen Cleaning'">Kitchen Cleaning <span style="float: right;">+</span></a>
-       <a href="#" class="mob-sub-menu-active bb-none list-item" key="link3" @click="subItemSelected=''" v-if="subItemSelected=='Kitchen Cleaning'">Kitchen Cleaning <span style="float: right;">-</span></a>
+  {% include "evaluator/common/header.html" %}
+  <v-app>
+    <section class="content">
+        <!--content-->
   
-       <!-- Kitchen Cleaning SRVICES-->
-        <div class="list-item sub-list" key="sublink2" v-if="subItemSelected=='Kitchen Cleaning'" >
-            <a href="#" class="sub-item" @click="goTo('/services/kitchen-cleaning/kitchen-cleaning/?lang=en')"> Kitchen Cleaning</a>
-            <a href="#" class="sub-item"> Kitchen Duct Cleaning</a>
-          
-            
-        </div>
-        <!-- Kitchen cleaning services ENDS HERE-->
-       <a href="#" class="mob-sub-menu list-item bb-none" key="link4" @click="subItemSelected='Infection Control'" v-if="subItemSelected!='Infection Control'">Infection Control <span style="float: right;">+</span></a>
-       <a href="#" class="mob-sub-menu-active list-item bb-none" key="link4" @click="subItemSelected=''" v-if="subItemSelected=='Infection Control'">Infection Control <span style="float: right;">-</span></a>
-  
-       <!-- Infection Control SRVICES-->
-        <div class="list-item sub-list" key="sublink2" v-if="subItemSelected=='Infection Control'" >
-            <a href="#" class="sub-item" @click="goTo('/services/infection-control/sanitization-disinfection/?lang=en')"> Sanitization & Disinfection</a>
-            <a href="#" class="sub-item"> Transportation Sanitization & Disinfection</a>
-            <a href="#" class="sub-item"> Pest Control</a>
-            
-        </div>
-        <!-- Infection Control services ENDS HERE-->
-    </transition-group>
-    </div>
-    <a href="#" class="mob-menu" onclick="" >Shop </a>
-    <a href="#" class="mob-menu" onclick="">Blog </a>
-    <a href="#" class="mob-menu" onclick="">About Us </a>
-    <a href="#" class="mob-menu" @click="selectTab('Help')" v-if="selectedTab!='Help'">Help<span style="float: right;">+</span></a>
-    <a href="#" class="mob-menu-active bb-none" @click="selectTab(' ')" v-if="selectedTab=='Help'">Help<span style="float: right;">-</span></a>
-    <div v-if="selectedTab=='Help'" class="mob-sub-menu-container">
-    <transition-group  name="list" tag="div">
-        <a href="/terms-and-conditions/?lang=en" class="mob-sub-menu bb-none list-item" key="link1" @click="subItemSelected=''" >Terms and Conditions </a>
-        {% comment %} <a href="/privacy-policy/?lang=en" class="mob-sub-menu bb-none list-item" key="link1" @click="subItemSelected=''" >Privacy Policy </a> {% endcomment %}
-        <a href="/faq/?lang=en" class="mob-sub-menu bb-none list-item" key="link1" @click="subItemSelected=''" >FAQ </a>
-        <a href="/career/?lang=en" class="mob-sub-menu bb-none list-item" key="link1" @click="subItemSelected=''" >Career</a>
-    </transition-group> 
-  </div>   
-  </div>
-  <!--- SIDENAV FOOTER BEGINS HERE-->
-  <div class="sidenav-footer">
-    <div class="sidenav-footer-icons" >
-        <a href="https://www.facebook.com/BleachKw/" target="_blank" class="bb-none p-0"><i class="fab fa-facebook-f social"></i></a>
-        <a href="https://twitter.com/bleachkw?lang=en" target="_blank" class="bb-none p-0"><i class="fab fa-twitter social"></i></a>
-        <a href="https://www.instagram.com/bleachkw/?hl=en" target="_blank" class="bb-none p-0"><i class="fab fa-instagram social"></i></a>
-        <a href="https://www.youtube.com/channel/UC_XhgxfirQrft_kAFRZPAOw" target="_blank" class="bb-none p-0"><i class="fab fa-youtube social"></i></a>
-        <a href="https://www.linkedin.com/company/bleachkw" target="_blank" class="bb-none p-0"><i class="fab fa-linkedin-in social"></i></a>
-    </div>
-  </div>
-  <!--- SIDENAV FOOTER ENDS HERE-->
-  </div>
-  
-  <!-- Use any element to open the sidenav -->
-  <div  class="d-flex"><i class="fas fa-bars nav-menu-bar" onclick="openNav()"></i><div class="mob-logo">
-    <img src="{% static 'files/web-images/images/logo.png' %}" class="logo" onclick=""/>
-        
-  </div>
-  <!--<div class="inv-mob-translator " data-html2canvas-ignore="true">
-    <div class="form-check form-switch inv-form-switch select-language">
-      <input type="checkbox"  id="lang-selector" @change="changeLang()" v-model="arabic"/>
-    
-    </div>
-   
-    
-    <div id="google_translate_element" style="display: none;"></div>
-  </div>-->
- 
-  
-  </div>
-  
-  
-  
-  <div class="mega-menu"  >
-      <div class="container pt-0 ">
-          <div class="row">
-              <div class="col-md-2 pt-0 pb-0">
-                <div class="menu-logo">
-                    <img src="{% static 'files/web-images/images/logo.png' %}" class="logo" />
-  
-                </div>
-              </div>
-              <div class="col-md-9 pt-0 pb-0" style="position: relative;">
-                <div class="d-flex ">
-                   <!-- <div class="active-menu " @mouseover="selectNav('SERVICES')" v-if="activeItem=='SERVICES'">
-                        SERVICES
-                    </div>-->
-                    <div class="menu-item" @mouseover="selectNav('HOME')" >
-                        HOME
-                    </div>
-                    <div class="menu-item" @mouseover="selectNav('SERVICES')" >
-                        SERVICES
-                    </div>
-                    <div class="menu-item" @mouseover="selectNav('SHOP')" >
-                      SHOP
-                    </div>
-                    <div class="menu-item" @mouseover="selectNav('BLOG')" >
-                        BLOG
-                      </div>
-                      <div class="menu-item" @mouseover="selectNav('ABOUT US')" >
-                        ABOUT US
-                      </div>
-                      <div class="menu-item" @mouseover="selectNav('HELP')">
-                       HELP
-                      </div>
-                </div>
-                <div class="menu-content mt-2" v-if="activeWebTab && activeItem!='HOME' && activeItem!='SHOP' && activeItem!='ABOUT US'&& activeItem!='HELP'" v-on:mouseleave="mouseleave">
-  
-                    <!--    Services Menu-->
-                   <div class="service-menu mt-4" v-if="activeItem=='SERVICES'">
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-md-3 ">
-                                   <div class="mt-4 p-2 menu-heading active-tab" @mouseover="selectWebCategory('Detailed Cleaning')" v-if="category=='Detailed Cleaning'" onclick="location.href='/services?category=Detailed Cleaning&lang=en'">
-                                       Detailed Cleaning
-                                   </div>
-                                   <div class="mt-4 p-2 menu-heading" @mouseover="selectWebCategory('Detailed Cleaning')" v-else onclick="location.href='/services?category=Detailed Cleaning&lang=en'">
-                                    Detailed Cleaning
-                                </div>
-                                <div class="mt-4 p-2 menu-heading active-tab" @mouseover="selectWebCategory('Special Care')"  v-if="category=='Special Care'" onclick="location.href='/services?category=Special Care&lang=en'">
-                                    Special Care
-                                </div>
-                                   <div class="mt-4 p-2 menu-heading" @mouseover="selectWebCategory('Special Care')" v-else onclick="location.href='/services?category=Special Care&lang=en'">
-                                    Special Care
-                                </div>
-                                <div class="mt-4 p-2 menu-heading active-tab" @mouseover="selectWebCategory('Kitchen Cleaning')" v-if="category=='Kitchen Cleaning'" onclick="location.href='/services?category=Kitchen Cleaning&lang=en'">
-                                    Kitchen Cleaning
-                                  </div>
-                                <div class="mt-4 p-2 menu-heading" @mouseover="selectWebCategory('Kitchen Cleaning')" v-else onclick="location.href='/services?category=Kitchen Cleaning&lang=en'">
-                                  Kitchen Cleaning
-                                </div>
-                                <div class="mt-4 p-2 mb-2 menu-heading active-tab" @mouseover="selectWebCategory('Infection Control')" v-if="category=='Infection Control'" >
-                                  Infection Control
-                                  </div>
-                                  <div class="mt-4 p-2 mb-2 menu-heading" @mouseover="selectWebCategory('Infection Control')" v-else >
-                                    Infection Control
-                                    </div>
-                                </div>
-                                <div class="col-md-3" >
-                                    <div v-if="category=='Detailed Cleaning'">
-                                        <div class="mt-4 p-2 submenu active-tab" @mouseover="selectService('General Cleaning')" v-if="serviceType=='General Cleaning'">
-                                            General Cleaning
-                                        </div>
-                                        <div class="mt-4 p-2 submenu" @mouseover="selectService('General Cleaning')"  v-else>
-                                            General Cleaning
-                                        </div>
-                                        <div class=" p-2 submenu " @mouseover="selectService('Deep Cleaning')"  >
-                                            Deep Cleaning
-                                        </div>    
-                                    
-                                    
-                                    
-                                    
-  
-                                    <div class="p-2  submenu" @mouseover="selectService('Facade Cleaning')" >
-                                        Facade Cleaning
-                                    </div>
-                                    <div class="p-2  submenu" @mouseover="selectService('Storage Area')" >
-                                       Storage Area
-                                    </div>
-                                    <div class="p-2  submenu" @mouseover="selectService('Car Parking Umbrella')" >
-                                        Car Parking Umbrella
-                                     </div>
-                                     <div class="p-2  submenu" @mouseover="selectService('Window Cleaning')" >
-                                       Window Cleaning
-                                     </div>
-                                     <div class="p-2  submenu" @mouseover="selectService('Outdoor Cleaning')" >
-                                        Outdoor Cleaning
-                                      </div>
-                                      <div class="p-2  submenu" @mouseover="selectService('Car Manicure and Bodycare')">
-                                       Car Manicure and Bodycare 
-                                      </div>
-                                      <div class="p-2  submenu" @mouseover="selectService('AC Duct Cleaning')">
-                                       AC Duct Cleaning 
-                                       </div>
-                                    </div>
-  
-                                    <!-- Special Care -->
-                                    <div v-if="category=='Special Care'">
-                                        <div class="mt-4 p-2 submenu active-tab" @mouseover="selectService('Upholstery Cleaning')"  v-if="serviceType=='Upholstery Cleaning'">
-                                            Upholstery Cleaning
-                                        </div>
-                                        <div class="mt-4 p-2 submenu" @mouseover="selectService('Upholstery Cleaning')"  v-else>
-                                          Upholstery Cleaning
-                                        </div>
-                                        <div class=" p-2 submenu" @mouseover="selectService('Carpet Cleaning')" >
-                                            Carpet Cleaning
-                                          </div>
-                                          <div class="p-2 submenu" @mouseover="selectService('Mattress Cleaning')" >
-                                            Mattress Cleaning
-                                          </div>
-                                          <div class="p-2 submenu" @mouseover="selectService('Curtains Cleaning & Sanitizing')">
-                                            Curtains Cleaning & Sanitizing 
-                                          </div>
-                                          <div class="p-2 submenu" @mouseover="selectService('Stone & Marble Restoration')">
-                                            Stone & Marble Restoration 
-                                          </div>
-                                          
-                                        </div>
-                                     <!-- Special Care Ends Here-->  
-                                     
-                                     <!-- Infection Control Cleaning -->
-                                     <div v-if="category=='Infection Control'">
-                                        <div class="mt-4 p-2 submenu active-tab" @mouseover="selectService('Sanitization & Disinfection')"  v-if="serviceType=='Sanitization & Disinfection'">
-                                            Sanitization & Disinfection
-                                        </div>
-                                        <div class="mt-4 p-2 submenu" @mouseover="selectService('Sanitization & Disinfection')"  v-else>
-                                            Sanitization & Disinfection
-                                        </div>
-                                        <div class="p-2 submenu" @mouseover="selectService('Transportation Sanitization & Disinfection')">
-                                          Transportation Sanitization & Disinfection 
-                                        </div>
-                                        <div class="p-2 submenu" @mouseover="selectService('Pest Control')">
-                                          Pest Control 
-                                        </div>
-                                        </div>
-                                         <!-- Infection Control ends here-->
-                                         <!-- Kitchen Cleaning -->
-                                     <div v-if="category=='Kitchen Cleaning'">
-                                        <div class="mt-4 p-2 submenu active-tab" @mouseover="selectService('Kitchen Cleaning')"  v-if="serviceType=='Kitchen Cleaning'">
-                                            Kitchen Cleaning
-                                        </div>
-                                        <div class="mt-4 p-2 submenu" @mouseover="selectService('Kitchen Cleaning')"  v-else>
-                                          Kitchen Cleaning
-                                        </div>
-                                        <div class="p-2 submenu" @mouseover="selectService('Kitchen Duct Cleaning')">
-                                          Kitchen Duct Cleaning 
-                                        </div>
-                                        </div>
-                                         <!-- Kitchen Cleaning ends here-->
-  
-                                </div>
-                                <div class="col-md-6">
-                                    <!-- Detailed Cleaning Mega-menu Images -->
-                                    <img src="{% static 'files/web-images/images/Mega_menu/General_Cleaning.png' %}" class="cleaning-img" v-if="serviceType=='General Cleaning'"/>
-                                    <img src="{% static 'files/web-images/images/Mega_menu/Deep_Cleaning.png' %}" class="cleaning-img" v-if="serviceType=='Deep Cleaning'"/>
-                                    <img src="{% static 'files/web-images/images/Mega_menu/Facade_Cleaning.png' %}" class="cleaning-img" v-if="serviceType=='Facade Cleaning'"/>
-                                    <img src="{% static 'files/web-images/images/Mega_menu/Storage_area_Cleaning.png' %}" class="cleaning-img" v-if="serviceType=='Storage Area'"/>
-                                    <img src="{% static 'files/web-images/images/Mega_menu/Car_Parking_Umbrella.png' %}" class="cleaning-img" v-if="serviceType=='Car Parking Umbrella'"/>
-                                    <img src="{% static 'files/web-images/images/Mega_menu/Window_Cleaning.png' %}" class="cleaning-img" v-if="serviceType=='Window Cleaning'"/>
-                                    <img src="{% static 'files/web-images/images/Mega_menu/Outdoor_Cleaning.png' %}" class="cleaning-img" v-if="serviceType=='Outdoor Cleaning'"/>
-                                    <img src="{% static 'files/web-images/images/Mega_menu/Car_Manicure_Bodycare.png' %}" class="cleaning-img" v-if="serviceType=='Car Manicure and Bodycare'"/>
-                                    <img src="{% static 'files/web-images/images/Mega_menu/AC_Duct_Cleaning.png' %}" class="cleaning-img" v-if="serviceType=='AC Duct Cleaning'"/>
-                                    <!-- Special Care Mega-menu Images -->
-                                    <img src="{% static 'files/web-images/images/Mega_menu/Upholstery_Cleaning.png' %}" class="cleaning-img" v-if="serviceType=='Upholstery Cleaning'"/>
-                                    <img src="{% static 'files/web-images/images/Mega_menu/Carpet_Cleaning.png' %}" class="cleaning-img" v-if="serviceType=='Carpet Cleaning'"/>
-                                    <img src="{% static 'files/web-images/images/Mega_menu/Mattress_Cleaning.png' %}" class="cleaning-img" v-if="serviceType=='Mattress Cleaning'"/>
-                                    <img src="{% static 'files/web-images/images/Mega_menu/Curtains_Cleaning_Sanitizing.png' %}" class="cleaning-img" v-if="serviceType=='Curtains Cleaning & Sanitizing'"/>
-                                    <img src="{% static 'files/web-images/images/Mega_menu/Stone_Marble_Restoration.png' %}" class="cleaning-img" v-if="serviceType=='Stone & Marble Restoration'"/>
-                                    <!-- Kitchen Cleaning Mega-menu Images -->
-                                    <img src="{% static 'files/web-images/images/Mega_menu/Kitchen_Cleaning.png' %}" class="cleaning-img" v-if="serviceType=='Kitchen Cleaning'"/>
-                                    <img src="{% static 'files/web-images/images/Mega_menu/Kitchen_Cleaning_Duct.png' %}" class="cleaning-img" v-if="serviceType=='Kitchen Duct Cleaning'"/>
-                                    <!-- Sanitization & Disinfection Mega-menu Images -->
-                                    <img src="{% static 'files/web-images/images/Mega_menu/Sanitization_Disinfection.png' %}" class="cleaning-img" v-if="serviceType=='Sanitization & Disinfection'"/>
-                                    <img src="{% static 'files/web-images/images/Mega_menu/Sanitization_Transportation.png' %}" class="cleaning-img" v-if="serviceType=='Transportation Sanitization & Disinfection'"/>
-                                    <img src="{% static 'files/web-images/images/Mega_menu/Pest_Control.png' %}" class="cleaning-img" v-if="serviceType=='Pest Control'"/>
-                                </div>
-                            </div>
-                        </div>
-                   </div>
-                   <!-- Services Menu ends here-->
-  
-                   <!-- Blog menu begins-->
-                  
-                   <div class="service-menu mt-4" v-if="activeItem=='BLOG'">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="blog">
-                                    <img src="{% static 'files/web-images/images/Mega_menu/training_menu.png' %}" class="blog-image"/>
-                                    <div class="blog-title pt-2">
-                                        Training & Development during COVID era
-                                    </div>
-                                    <div class="blog-content pt-2 pb-2">
-                                        Cleaning services have moved into the limelight due to the COVID-19 pandemic accelerates and people are looking at CLEANING FOR HEALTH rather than cleaning for appearance.<br><br>
-                                    </div>
-                                    <div class="card-link text-right" >
-                                        Know more
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="blog">
-                                    <img src="{% static 'files/web-images/images/Mega_menu/covid_safety_menu.png' %}" class="blog-image"/>
-                                    <div class="blog-title pt-2">
-                                        Safety during Covid
-                                    </div>
-                                    <div class="blog-content pt-2 pb-2">
-                                        <b><i>We were prepared!</i></b><br>
-                                        One could still remember the day the first case of Covid-19 was recorded in Kuwait. Luckily, we were prepared and ready!<br><br>
-                                    </div>
-                                    <div class="card-link text-right">
-                                        Know more
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="blog">
-                                    <img src="{% static 'files/web-images/images/Mega_menu/technology.png' %}" class="blog-image"/>
-                                    <div class="blog-title pt-2">
-                                        4 Ways Cleaning Services Can Adapt to the COVID-19 Pandemic
-                                    </div>
-                                    <div class="blog-content pt-2 pb-2">
-                                        As restrictions were at full force at the onset of the COVID-19 pandemic, business owners
-                                        had no choice but to quickly adapt to the new reality of online sales and cashless
-                                        transactions.<br><br>
-                                    </div>
-                                    <div class="card-link text-right" >
-                                        Know more
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="all-blog mt-4 mb-4"  >
-                                    View All Blogs <i class="fas fa-arrow-right blog-arrow" ></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-              
-                   <!-- Blog menu ends here -->
-  
-               
-                <!--    Services Menu-->
-              
-                <!-- Help ends-->
-                </div>
-  
-  <!-- Help begins-->
-                <div class="menu-content mt-2" v-if="activeTab && activeItem=='HELP'" v-on:mouseleave="mouseleave" style="min-height:100px">
-                    <div class="mt-4 service-menu" v-if="activeItem=='HELP'">
-                        <div class="container p-4">
-                            <div class="row">
-                                
-                                <div class="col-md-3">
-                                <img src="{% static 'files/web-images/images/Mega_menu/Help.jpeg' %}" class="help-image"/>
-                                </div> 
-  
-                                <div class="col-md-3 offset-md-1">
-                                    <div class="menu-links" onclick="location.href='/terms-and-conditions/?lang=en'">Terms & Conditions</div>
-                                    <br>
-                                    {% comment %} <div class="menu-links"  onclick="location.href='/privacy-policy/?lang=en'">Privacy Policy</div> 
-                                    <br>{% endcomment %}
-                                    <div class="menu-links"  onclick="location.href='/faq/?lang=en'">FAQ</div>
-                                    <br>
-                                    <div class="menu-links"  onclick="location.href='/career/?lang=en'">Career</div>
-                                </div>    
-                                <div class="col-md-4">
-                         
-                                  <div class="d-flex ">
-                                      <div><img src="{% static 'files/web-images/icons/contact.png' %}" class="icon"></div>
-                                      <div class="sub-text">Need Our Help or Have Questions?<br><span class="large-text"> Call Us +965 1882701</span></div>
-      
-      
-                                  </div>
-                              </div>
-                          
-                      
-                      </div>
-                         </div>
-    
-    
-                    </div>
-                    </div>
-              </div>
-             <!-- <div class="col-md-1 ">
-                <div class="d-flex">
-                    <div class="menu-icons">
-                        <img src="{% static 'icons/shopping-cart.png' %}" class="item-icon"/>
-  
-                    </div>
-                    <div class="menu-icons">
-                        <img src="{% static 'icons/heart.png' %}" class="item-icon"/>
-                        
-                    </div>
-                    <div class="menu-icons">
-                        <img src="{% static 'icons/user.png' %}" class="item-icon"/>
-                        
-                    </div>
-                </div>
-            </div>-->
-            <div class="col-md-1 pt-0 pb-0">
-               <!-- <div class="inv-translator " data-html2canvas-ignore="true">
-                    <div class="form-check form-switch inv-form-switch select-language">
-                      <input type="checkbox"  id="lang-selector" @change="changeLang()" v-model="arabic"/>
-                    
-                    </div>
-                   
-                    
-                    <div id="google_translate_element" style="display: none;"></div>
-                  </div>-->
-                 
-            </div>
+        <div class="container-fluid space topspace">
+          <!--container-fluid space-->
+          <div class="welcome-wrapper">
+            <!--welcome-wrapper-->
+            <h1 class="dashboard-head">Re Order </h1>
   
           </div>
-      </div>
-  </div>
-
-<!-- header ends here-->
-  <v-app>
-    
+          <!--welcome-wrapper-->
+        </div>
       
-    <section class="content">
+   
     
 
 
@@ -1088,24 +667,27 @@ width="1000"
 
 
         <!--white-wrapper-->
-
-        <div class="booking-container" style="padding:0px !important">
+        <div class="booking-container ">
+          
+            <div class=" white-wrapper booking-card">
+      
           
           <div class=" booking-card bg-white m-0">
             <div class="container">
               <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-12" >
               
                   <!-- Cart Begins here -->
-                  <div v-if="activeTab=='Cart'">
+                  <div  v-if="activeTab=='Cart'">
                     
 
                   
                 
-                    <div class="page-main-title">
-                      Cart
+                    <div class="page-main-title mt-4" style="font-size:24px">
+                    Address
                   </div>
-                  <div class="row m-0" v-if="multiAddress">
+                  <div v-if="activeTab=='Cart'">
+                  <div class="row m-0" v-if="multiAddress" >
                     <div class="col-md-4 h-100" v-for="(item,index) in bookedServiceDetails" v-bind:key="index">
                       <div class="address-card-active"  v-if="selectedAddress==item">
                         <v-radio-group   v-model="selectedAddress" style="margin-top:0px;height:30px"  @change="reCalcAddressData()"  v-if="!completedAddress.includes(index)">
@@ -1288,6 +870,7 @@ width="1000"
                      
                    
                     </div>
+                   
                     <div class="row m-0">
                       <!-- One time cleaning selected slots-->
                       <div class="col-md-12" v-if="cleaningPolicy=='One Time'">
@@ -1316,10 +899,10 @@ width="1000"
                          </div>
                      
 
-                       </div>
+                      
                      </div>
                     </div>
-                    <div v-if="schedule_warning">
+                    <div v-if="schedule_warning" class="col-md-12">
                         <v-alert
                      outlined
                         prominent
@@ -1337,7 +920,7 @@ width="1000"
                        </div>
                       </v-alert>
                     </div>
-                    <div class="text-center mt-4 mb-4 d-flex justify-center"  v-if="!schedule_warning">
+                    <div class="text-center mt-4 mb-4 d-flex justify-center col-md-12"  v-if="!schedule_warning">
                       <v-btn
       class="ma-2 "
       outlined
@@ -1373,7 +956,8 @@ width="1000"
     >
       Next
     </v-btn>
-
+</div>
+                    </div>
                     </div>
                     
                    <!--<div class="mt-4">
@@ -1390,10 +974,13 @@ width="1000"
 
 
                   <!-- Cart ends here-->
-                  <div v-if="activeTab=='Schedule'">
-                    <div class="row m-0" v-if="!this.scheduleDateSat">
+                  <div v-if="activeTab=='Schedule'" style="width:100%">
+                    <div class="page-main-title mt-4" style="font-size:24px">
+                       Schedule
+                     </div>
+                    <div class="row m-0 mt-4 w-100" v-if="!this.scheduleDateSat">
                       <div class="col-md-3">
-                        <div>
+                      
                           <v-select
           :items="['Subscription','One Time']"
           label="Cleaning Policy"
@@ -1401,7 +988,7 @@ width="1000"
           v-model="cleaningPolicy"
          
         ></v-select>
-                        </div>
+                       
                       </div>
                       <div class="col-md-3" v-if="cleaningPolicy=='Subscription'">
                         <div >
@@ -1756,100 +1343,18 @@ width="1000"
                 </div>
                 </div>
                 </div>
+                </div>
+            </section>
+
+        </v-app>
+        {% include 'evaluator/common/footer.html' %}
               </div>
 
 
-            </div>
-          </div>
-        </div>
+           
 
 
 
-
-      </div>
-
-</div>
-</section>
-<!-- Footer begins here -->
-<div class="footer">
-  <div class="container pb-4">
-      <div class="row">
-          <div class="col-md-4">
-              <div class="menu-logo mt-4">
-                  <img src="{% static 'files/web-images/images/logo.png' %}" class="logo"/>
-
-              </div>
-              <div class="footer-description text-justify mt-2">
-                  Bleach was established in 2013 for the express purpose of providing professional cleaning services with first class customer care. We at Bleach always strive to meet our customers need for exceptional housecleaning and housekeeping services in their homes, apartments and offices. These services are executed by our own highly trained and qualified Bleach cleaning teams that only use premium quality products and equipment.
-              </div>
-          </div>
-          <div class="col-md-2">
-              <div class="footer-title mt-4 mb-4">
-                  Quick Links
-              </div>
-              <div><a class="link mt-4">About Us</a></div>
-              <div><a  class="link">Terms & Conditions</a></div>
-              {% comment %} <div><a class="link">Privacy Policy</a></div> {% endcomment %}
-              <div><a  class="link">FAQ</a></div>
-              <div><a  class="link">Career</a></div>
-          </div>
-          <div class="col-md-3">
-              <div class="footer-title mt-4 mb-4">
-                  Contact Us
-              </div>
-              <div class="d-flex mt-2">
-                  <div><img src="{% static 'files/web-images/icons/placeholder.png' %}" class="icon desktop-only"></div>
-                  <div class="footer-description w-100">Bleach Cleaning Services <br>
-                      Qibla area, Block 14 Usama Bin Mongith <br> 
-                      St. Al-Mashora Tower 8th Floor.
-                  </div>
-              </div>
-              <div class="d-flex mt-2">
-                  <div><img src="{% static 'files/web-images/icons/contact.png' %}" class="icon desktop-only"></div>
-                  <div class="footer-description w-100">Tel : +965 1882707 <br>Email: customercare@bleach-kw.com</div>
-              </div>
-          </div>
-          <div class="col-md-3">
-              <div class="footer-title mt-4 mb-4">
-                  Subscribe
-              </div>
-              <div class="footer-description mt-2">To Get our News letter and latest Updates</div>
-              <form method="POST" id="subscription-form">
-                  {% csrf_token %}
-              <div><input name="email" type="email" class="text-box w-100 mt-2" /></div>
-              <div class="sub-btn mt-2" onclick="SubscriptionSubmit();">Subscribe</div>
-              </form>            
-          </div>
-      </div>
-      <div class="row mt-4">
-          <div class="col-md-4">
-              <div class="footer-description">
-                  Follow us on
-              </div>
-              <div class="footer-title" >
-                  <a href="https://www.facebook.com/BleachKw/" target="_blank"><i class="fab fa-facebook-f social"></i></a>
-                  <a href="https://twitter.com/bleachkw?lang=en" target="_blank"><i class="fab fa-twitter social"></i></a>
-                  <a href="https://www.instagram.com/bleachkw/?hl=en" target="_blank"><i class="fab fa-instagram social"></i></a>
-                  <a href="https://www.youtube.com/channel/UC_XhgxfirQrft_kAFRZPAOw" target="_blank"><i class="fab fa-youtube social"></i></a>
-                  <a href="https://www.linkedin.com/company/bleachkw" target="_blank"><i class="fab fa-linkedin-in social"></i></a>
-              </div>
-          </div>
-          <div class="col-md-4">
-              <div class="d-flex mt-4 justify-center">
-              <div><img src="{% static 'files/web-images/icons/mastercard.png' %}" class="icon-image"></div>
-              <div><img src="{% static 'files/web-images/icons/visa.png' %}" class="icon-image"></div>
-              <div><img src="{% static 'files/web-images/icons/knet.png' %}" class="icon-image"></div>
-             
-          </div>
-          </div>
-          <div class="col-md-3 offset-md-1">
-              <div class="footer-description mt-4">Copyright © 2021 Bleach Cleaning Services <br> All rights reserved.</div>
-          </div>
-      </div>
-  </div>
-</div>
-<!-- Footer Ends Here -->
-</v-app>
 {% load static %} 
  
  <script>
@@ -1875,7 +1380,7 @@ form.submit();
   crossorigin="anonymous"></script>-->
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/browser-image-compression@1.0.13/dist/browser-image-compression.js"></script>
   <!--<script src="{% static 'files/js/customer/main.js' %}"></script>-->
-<script src="{% static 'files/js/customer/cart.js' %}"></script>
+<script src="{% static 'files/js/reorder.js' %}"></script>
 
 
 
