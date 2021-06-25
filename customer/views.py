@@ -2223,7 +2223,7 @@ class GetMultipleServiceDateCleaningSlotesAutofix(APIView):
 	def post(self,request):
 		dropdown_slotes  = {}
 		number_of_cleaners  = int(request.data.get('number_of_cleaners'))-1
-		cleaing_hours       = float(request.data.get('cleaning_hours'))
+		cleaning_hours       = float(request.data.get('cleaning_hours'))
 		service_types       = request.data.get('service_types')
 		     
 
@@ -2280,12 +2280,6 @@ class GetMultipleServiceDateCleaningSlotesAutofix(APIView):
 			for slote_checking in slote_checkings:
 				team_leaders_scheduled      = []
 				team_members_scheduled      = []
-				
-				# start_at = datetime.strptime(cleaning_datetime,'%d-%m-%Y %I:%M %p')+timedelta(hours=slote_checking)
-				# end_at   = start_at+timedelta(hours=cleaing_hours)
-		
-				# start_at_date = start_at.date()
-				# end_at_date   = end_at.date()
 
 				slote_start_datetime 			  = datetime.strptime(cleaning_datetime,'%d-%m-%Y %I:%M %p')+timedelta(hours=slote_checking)
 				slote_end_datetime                = slote_start_datetime+timedelta(hours=cleaning_hours)
