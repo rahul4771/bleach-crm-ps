@@ -3592,12 +3592,12 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 				schedule_date           =  schedules_dict[key]['date']
 				schedule_time           =  schedules_dict[key]['time']
 				start_date_time         =  datetime.strptime(schedule_date+' '+schedule_time,'%d-%m-%Y %I:%M %p')
-				end_date_time           =  start_date_time + timedelta(hours=int(saved_service.cleaning_hours)) 	
+				end_date_time           =  start_date_time + timedelta(hours=int(schedules_dict[key]['cleaning_hours'])) 	
 				start_time              =  start_date_time.time()
 				end_time                =  end_date_time.time()
 
 				#schedule
-				order_schedule = OrderScheduler.objects.create(order=order,status='CONFIRMED',customer_address=evaluation_details.address,evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,order_scheduler_book=saved_service)
+				order_schedule = OrderScheduler.objects.create(order=order,status='CONFIRMED',customer_address=evaluation_details.address,evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,order_scheduler_book=saved_service,no_of_cleaners=schedules_dict[key]['no_of_cleaners'],cleaning_hours=schedules_dict[key]['cleaning_hours'])
 
 				absent_cleaners = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=start_date_time.date())|Q(leave_date=end_date_time.date()))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
 				absent_leaders  = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=start_date_time.date())|Q(leave_date=end_date_time.date()))).filter(staff__user_type='TEAMINCHARGE').values_list('staff',flat=True)						
@@ -3663,7 +3663,7 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 				#cleaning team
 				cleaning_team  = CleaningTeam.objects.create(order_scheduler=order_schedule,team_leader=leaders.first(),start_at=start_date_time,end_at=end_date_time)
 				#cleaning team members
-				no_of_cleaners = int(saved_service.number_of_cleaners)-1
+				no_of_cleaners = int(schedules_dict[key]['no_of_cleaners'])-1
 				cleaning_team_member_array = []
 				for i in range(no_of_cleaners):
 					cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,member=cleaners[i],start_at=start_date_time,end_at=end_date_time,start_time=start_time,end_time=end_time))
@@ -4085,7 +4085,7 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 						end_time                =  start_date_time.time()
 
 						#schedule
-						order_schedule = OrderScheduler.objects.create(order=order,status='CONFIRMED',customer_address=evaluation_details.address,evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,order_scheduler_book__id=services[key]['id'])
+						order_schedule = OrderScheduler.objects.create(order=order,status='CONFIRMED',customer_address=evaluation_details.address,evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,order_scheduler_book__id=services[key]['id'],no_of_cleaners=schedules_dict[key]['no_of_cleaners'],cleaning_hours=schedules_dict[key]['cleaning_hours'])
 
 						absent_cleaners = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=start_date_time.date())|Q(leave_date=end_date_time.date()))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
 						absent_leaders  = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=start_date_time.date())|Q(leave_date=end_date_time.date()))).filter(staff__user_type='TEAMINCHARGE').values_list('staff',flat=True)						
