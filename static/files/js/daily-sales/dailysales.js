@@ -34,10 +34,14 @@ function monthlysales(){
         if (response.data.datatype == 'evaluator'){           
             $("#salesheaders").empty();
             $('#salesheaders').append('<th>Date</th><th data-hide="phone,tablet">Day</th><th data-hide="phone,tablet" class="align-right">'+evaluator_names[0]+'</th><th data-hide="phone,tablet" class="align-right">'+evaluator_names[1]+'</th><th data-hide="phone,tablet" class="align-right">'+evaluator_names[2]+'</th><th data-hide="phone,tablet" class="align-right">'+evaluator_names[3]+'</th><th data-hide="phone,tablet" class="align-right">'+evaluator_names[4]+'</th><th data-hide="phone,tablet" class="align-right">'+evaluator_names[5]+'</th><th data-hide="phone,tablet" class="align-right">Others</th><th data-hide="phone,tablet" class="align-right">Total Amount</th>')
+            
         }else{
             $("#salesheaders").empty();
             $('#salesheaders').append('<th>Date</th><th data-hide="phone,tablet">Day</th><th data-hide="phone,tablet" class="align-right">General Cleaning</th><th data-hide="phone,tablet" class="align-right">Upholstery Cleaning</th><th data-hide="phone,tablet" class="align-right">Deep Cleaning</th><th data-hide="phone,tablet" class="align-right">Carpet Cleaning</th><th data-hide="phone,tablet" class="align-right">Kitchen Cleaning</th><th data-hide="phone,tablet" class="align-right">Sterilization</th><th data-hide="phone,tablet" class="align-right">Total Amount</th><th data-hide="phone,tablet" class="align-right">Sales Status</th>')
+          
         }
+        $('.footable').trigger('footable_resize');
+        
        
 
         //monthly evaluator total amount calculation
@@ -141,7 +145,7 @@ function monthlysales(){
             console.log("zero")
         }
 
-       
+        $('.footable').trigger('footable_resize');
     })
     
   
