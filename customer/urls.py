@@ -22,10 +22,10 @@ urlpatterns = [
 		url(r'^order/details/(?P<order_id>[-\w]+)/(?P<service_id>[-\w]+)/(?P<section_id>[-\w]+)$',views.CustomerOrderDetails.as_view(),name='customer-order-details'),
 		url(r'^feedback-page/(?P<order_id>[-\w]+)$',views.CustomerFeedback.as_view(),name='customer-feedback'),
 
-		url(r'^quatation/download/(?P<evaluation_id>[-\w]+)$',views.testquatation_html_to_pdf_view,name='quatation-download'),
-		url(r'^test/quatation/download/(?P<evaluation_id>[-\w]+)$',views.quatation_html_to_pdf_view,name='testquatation-download'),
-		url(r'^invoice/download/(?P<evaluation_id>[-\w]+)$',views.testinvoice_html_to_pdf_view,name='invoice-download'),
-		url(r'^test/invoice/download/(?P<evaluation_id>[-\w]+)$',views.invoice_html_to_pdf_view,name='testinvoice-download'),
+		url(r'^quatation/download/(?P<evaluation_id>[-\w]+)$',views.quatation_html_to_pdf_view,name='quatation-download'),
+		url(r'^test/quatation/download/(?P<evaluation_id>[-\w]+)$',views.testquatation_html_to_pdf_view,name='testquatation-download'),
+		url(r'^invoice/download/(?P<evaluation_id>[-\w]+)$',views.invoice_html_to_pdf_view,name='invoice-download'),
+		url(r'^test/invoice/download/(?P<evaluation_id>[-\w]+)$',views.testinvoice_html_to_pdf_view,name='testinvoice-download'),
 		url(r'^payment/receipt/download/(?P<payment_id>[-\w]+)$',views.receipt_html_to_pdf_view,name='payment-receipt-download'),
 		url(r'^order-detail/download/(?P<order_id>[-\w]+)/(?P<service_id>[-\w]+)/(?P<section_id>[-\w]+)$',views.orderdetail_html_to_pdf_view,name='order-detail-download'),
 		url(r'^terms-and-conditions/download$',views.termsandconditions_to_pdf,name='terms-conditions-download'),
@@ -56,13 +56,12 @@ urlpatterns = [
 		url(r'^ajax/addressotpverify$',views.AddressOtpVerify,name='ajax-addressotpverify'),
 		
 		url(r'^bookingphase1$',views.ClientCleaningBookingPhase1.as_view(),name='clientcleaningbookingphase1'),
-		url(r'^bookingphase2$',views.ClientCleaningBookingPhase2.as_view(),name='clientcleaningbookingphase2'),#done not tested
-		url(r'^bookingmultiplephase2$',views.ClientMultipleCleaningBookingPhase2.as_view(),name='clientcleaningmultiplebookingphase2'),#done
-		url(r'^evaluatorbookingmultiplephase2/together/(?P<evaluation_details_id>[-\w]+)/$',views.EvaluatorMultipleCleaningBookingTogetherPhase2.as_view(),name='evaluatorclientcleaningmultiplebookingtogetherphase2'),#done
+		url(r'^bookingmultiplephase2$',views.ClientMultipleCleaningBookingPhase2.as_view(),name='clientcleaningmultiplebookingphase2'),#done not tested
+		url(r'^evaluatorbookingmultiplephase2/together/(?P<evaluation_details_id>[-\w]+)/$',views.EvaluatorMultipleCleaningBookingTogetherPhase2.as_view(),name='evaluatorclientcleaningmultiplebookingtogetherphase2'),#done not tested
 		url(r'^evaluatorbookingmultiplephase2/customer/(?P<evaluation_details_id>[-\w]+)/$',views.EvaluatorMultipleCleaningBookingLetCustomerPhase2.as_view(),name='evaluatorclientcleaningmultiplebookingcustomerphase2'),
 		url(r'^bookingphase3$',views.ClientCleaningBookingPhase3.as_view(),name='clientcleaningbookingphase3'),
 		url(r'^bookingmediasave$',views.ClientCleaningBookingMediaSave.as_view(),name='clientcleaningbookingmediasave'),
-		url(r'^evaluatorbookingmultiplephase3/customer/(?P<evaluation_id>[-\w]+)$',views.EvaluatorMultipleCleaningBookingLetCustomerPhase3.as_view(),name='evaluatorclientcleaningmultiplebookingcustomerphase3'),
+		url(r'^evaluatorbookingmultiplephase3/customer/(?P<evaluation_id>[-\w]+)$',views.EvaluatorMultipleCleaningBookingLetCustomerPhase3.as_view(),name='evaluatorclientcleaningmultiplebookingcustomerphase3'),#done not tested
 
 		url(r'^emailtest$',views.EmailTest.as_view(),name='email-test'),
 		url(r'^cart$',views.Cart.as_view(),name='cart'),

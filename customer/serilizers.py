@@ -35,7 +35,7 @@ class EvaluationBookSerializer(serializers.ModelSerializer):
 	service_type           = ServiceTypeSerializer(read_only=True)
 	class Meta:
 		model = EvaluationBook
-		fields = ('id','service_type','cleaning_policy','area_type','location_type','total_cost','evaluator_note','number_of_cleaners','cleaning_hours','evaluationsection_book')
+		fields = ('id','service_type','cleaning_policy','area_type','location_type','total_cost','evaluator_note','evaluationsection_book')
 		read_only_fields = ('id',)
 
 ##for data showing

@@ -61,6 +61,9 @@
 <!-- productivity-new -->
 <link href="{% static 'files/css/productivity.css' %}" rel="stylesheet" type="text/css" />
 <!-- productivity-new -->
+<!-- inventory -->
+<link href="{% static 'files/css/inventory.css' %}" rel="stylesheet" type="text/css" />
+<!-- inventory -->
 <!--Bootstrap Fontawesome --> 
 <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -83,7 +86,13 @@
 <body class="sidebar-collapsed">
      {% block content %}
      {% endblock %}
-
+     <script src="{% static 'files/js/footable.js' %}"></script>
+     <script id="rendered-js">
+     $('.footable').footable({
+       calculateWidthOverride: function () {
+         return { width: $(window).width() };
+       } });
+     </script>
 <!--Bootstrap -->
 <script src="{% static 'files/plugins/bootstrap-3.3.7/js/bootstrap.min.js'%}"></script>
 <script src="{% static 'files/js/toggle-menu.js' %}"></script>
@@ -137,13 +146,7 @@
 <script src="{% static 'files/js/evaluation-tableScroll.js' %}"></script>
 <script src="{% static 'files/js/presentation.js' %}"></script>
 <script src="{% static 'files/js/sort.js' %}"></script>   
-<script src="{% static 'files/js/footable.js' %}"></script>
-<script id="rendered-js">
-$('.footable').footable({
-  calculateWidthOverride: function () {
-    return { width: $(window).width() };
-  } });
-</script>
+
 {% block javascript %}
 {% endblock %}
 {% include 'common_messages.html' %}

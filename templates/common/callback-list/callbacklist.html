@@ -87,42 +87,51 @@
   <!-- All Tab begins here-->
   <div class="tab-pane" id="orders" role="tabpanel" aria-labelledby="all-tab">
 
-<div class="col-md-6">
-<label for="favcity" style="width:20%;"> 
+<div class="col-md-8 pl-0 pr-0">
+<label for="favcity" style="width:20%;" class="m-width-100"> 
 <select name="no_of_entries" id="no_of_entries" onchange="set_params_go();"> 
 <option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
 <option value="50" {% if no_of_entries == '50' %}selected{% endif %}>50 Entries</option>
 <option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
 </select>
 </label>
-</div>
-<div class="col-md-6">
 
-<div class="page-entries">Show {{entry_per_page}} entries</div>
-<h5>Order Status</h5>
-<label for="favcity" style="width:20%;"> 
-<select name="order_status" id="order_status" onchange="set_params_go();"> 
-<option value="" >ALL</option>
-<option value="PENDING" {% if order_status == 'PENDING' %}selected{% endif %}>PENDING</option>
-<option value="REJECTED" {% if order_status == 'REJECTED' %}selected{% endif %}>REJECTED</option>
-<option value="EXPIRED" {% if order_status == 'EXPIRED' %}selected{% endif %}>EXPIRED</option>
-<option value="APPROVED_NOT_PAID" {% if order_status == 'APPROVED_NOT_PAID' %}selected{% endif %}>APPROVED-NOT PAID</option>
-</select>
-</label>
-
-<h5>Callback Status</h5>
-<label for="favcity" style="width:20%;"> 
-<select name="callback_status" id="callback_status" onchange="set_params_go();"> 
-{% comment %} <option value="" >ALL</option> {% endcomment %}
-<option value="WAITING" {% if callback_status == 'WAITING' %}selected{% endif %}>WAITING</option>
-<option value="WILL_AGREE" {% if callback_status == 'WILL_AGREE' %}selected{% endif %}>WILL AGRREE</option>
-<option value="CALLBACK_LATER" {% if callback_status == 'CALLBACK_LATER' %}selected{% endif %}>CALLBACK LATER</option>
-<option value="REJECTED" {% if callback_status == 'REJECTED' %}selected{% endif %}>REJECTED</option>
-</select>
-</label>
 <br>
-
+  
+<div style="color: #666;">Show {{entry_per_page}} entries</div>
+<br>
 </div>
+<div>
+  <div class="col-md-2 pr-0 m-pl-0">
+
+    <h5>Order Status</h5>
+    <label for="favcity" style="width:100%;"> 
+    <select name="order_status" id="order_status" onchange="set_params_go();"> 
+    <option value="" >ALL</option>
+    <option value="PENDING" {% if order_status == 'PENDING' %}selected{% endif %}>PENDING</option>
+    <option value="REJECTED" {% if order_status == 'REJECTED' %}selected{% endif %}>REJECTED</option>
+    <option value="EXPIRED" {% if order_status == 'EXPIRED' %}selected{% endif %}>EXPIRED</option>
+    <option value="APPROVED_NOT_PAID" {% if order_status == 'APPROVED_NOT_PAID' %}selected{% endif %}>APPROVED-NOT PAID</option>
+    </select>
+    </label>
+    </div>
+    <div class="col-md-2 pr-0 m-pl-0">
+    
+    <h5>Callback Status</h5>
+    <label for="favcity" style="width:100%;"> 
+    <select name="callback_status" id="callback_status" onchange="set_params_go();"> 
+    {% comment %} <option value="" >ALL</option> {% endcomment %}
+    <option value="WAITING" {% if callback_status == 'WAITING' %}selected{% endif %}>WAITING</option>
+    <option value="WILL_AGREE" {% if callback_status == 'WILL_AGREE' %}selected{% endif %}>WILL AGRREE</option>
+    <option value="CALLBACK_LATER" {% if callback_status == 'CALLBACK_LATER' %}selected{% endif %}>CALLBACK LATER</option>
+    <option value="REJECTED" {% if callback_status == 'REJECTED' %}selected{% endif %}>REJECTED</option>
+    </select>
+    </label>
+    <br>
+    
+    </div>
+</div>
+
 
 <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
  
@@ -259,29 +268,34 @@
 <!-- Payments Tab begins here-->
   <div class="tab-pane" id="payments" role="tabpanel" aria-labelledby="all-tab">
 
-<div class="col-md-6">
-<label for="favcity" style="width:20%;"> 
+<div class="col-md-8 pl-0 pr-0">
+<label for="favcity" style="width:20%;" class="m-width-100"> 
 <select name="no_of_entries" id="no_of_entries" onchange="set_params_go();"> 
 <option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
 <option value="50" {% if no_of_entries == '50' %}selected{% endif %}>50 Entries</option>
 <option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
 </select>
 </label>
-</div>
-<div class="col-md-6">
 
-<div class="page-entries">Show {{entry_per_page}} entries</div>
+<br>
+  
+<div style="color: #666;">Show {{entry_per_page}} entries</div>
+</div>
+<div class="col-md-2 pr-0 m-pl-0">
+
 <h5>Payment Type</h5>
-<label for="favcity" style="width:20%;"> 
+<label for="favcity" style="width:100%;"> 
 <select name="payment_type" id="payment_type" onchange="set_params_go();"> 
 {% comment %} <option value="" >ALL</option> {% endcomment %}
 <option value="PENDING" {% if payment_type == 'PENDING' %}selected{% endif %}>PENDING</option>
 <option value="DUE" {% if payment_type == 'DUE' %}selected{% endif %}>DUE</option>
 </select>
 </label>
+</div>
+<div class="col-md-2 pr-0 m-pl-0">
 
 <h5>Callback Status</h5>
-<label for="favcity" style="width:20%;"> 
+<label for="favcity" style="width:100%;"> 
 <select name="callback_status" id="callback_status" onchange="set_params_go();"> 
 <option value="" >ALL</option>
 <option value="WAITING" {% if callback_status == 'WAITING' %}selected{% endif %}>WAITING</option>
@@ -567,17 +581,15 @@
 
 {% block javascript %}
 
-<script id="rendered-js">
-$('.footable').footable({
-  calculateWidthOverride: function () {
-    return { width: $(window).width() };
-  } });
+<script>
+  $(document).ready(function(){
+    $('.footable').trigger('footable_resize');
+  })
+  $("#payments_tab").click(function(){
+  setTimeout(function(){ $('.footable').trigger('footable_resize'); }, 1000);
+});
 
-
-// See:
-// http://www.sitepoint.com/responsive-data-tables-comprehensive-list-solutions
-//# sourceURL=pen.js
-    </script>
+</script>
 <script>
 
 function appendLeadingZeroes(n){
