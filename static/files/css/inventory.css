@@ -1,4 +1,15 @@
 /* inventory css */
+@font-face {
+  font-family: AvenirLTStd;
+  src: url(../font/AvenirLTStd-Book.otf);
+}
+@font-face {
+  font-family: FarCasablanca;
+  src: url(../font/Far_Casablanca.otf);
+}
+.av-font{
+  font-family: AvenirLTStd !important;
+}
 .p-10 {
   padding: 10px !important;
 }
@@ -261,4 +272,26 @@ color: #928f8f !important;
   bottom: 0;
   text-align: center;
   width: 100%;
+}
+.inv-dash-card-head{
+  color: #2C4C82;
+  font-size: 1.1vw;
+  font-family: AvenirLTStd !important;
+}
+.inv-sm-card{
+  background: #F6F6F6;
+  width: 100%;
+  padding: 10px;
+  text-align: center;
+}
+.inv-sm-card p{
+  margin-bottom: 2px !important;
+}
+.inv-sm-card h1{
+  margin: 0px !important;
+  padding: 0px !important;
+  color: #2C4C82;
+  font-family: AvenirLTStd !important;
+  font-size: 3vw;
+  font-weight: normal;
 }

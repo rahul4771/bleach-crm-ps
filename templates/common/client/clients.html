@@ -179,11 +179,12 @@
  
 <thead>
 <tr>
-<th>Customer ID</th>
-<th>Name</th>
+  <th>Name</th>
+<th data-hide="phone"> Customer ID</th>
+
 <th data-hide="phone,tablet">Area</th>
 <th data-hide="phone">Customer Type</th>
-<th>Contact</th>
+<th data-hide="phone">Contact</th>
 <th data-hide="phone">Status</th>
 <th data-hide="phone">Shortcuts</th>
 </tr>
@@ -191,8 +192,9 @@
 <tbody>
 {% for client in client_details %}
     <tr>
-    <td id="clientstatusline{{client.id}}" class="yellow-line">{{client.customer_id|default_if_none:'-'}}</td>
-    <td>{{client.name}}</td>
+      <td id="clientstatusline{{client.id}}" class="yellow-line">{{client.name}}</td>
+    <td >{{client.customer_id|default_if_none:'-'}}</td>
+
     <td>{% for address in client.customer_address %}
         {{address.area.name}}<br>
         {% endfor %}</td>

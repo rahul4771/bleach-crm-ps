@@ -534,7 +534,7 @@ function userSearch(key){
             return j;
         }
     }
-    alert("User search function");
+    // alert("User search function");
 }
 function leaveSearch(staffId){
     for (var k=0; k < leaveSheet.length; k++) {

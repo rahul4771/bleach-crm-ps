@@ -662,7 +662,7 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
             margin: 0px 0px -200px -70px !important;
             position: fixed;
             width: 1240px;
-            height: 120px;
+           
             padding-left: 25px;
             bottom: 0;
 
@@ -1007,7 +1007,7 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
   margin-top: 30px;
 }
 #soa-customer-detials{
-  width: 95% !important;
+  width: 100% !important;
   background: #EDF1F6;
   padding: 20px;
   color: #303030;
@@ -1059,7 +1059,7 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
   margin-top: 20px;
   background: #EDF1F6;
   color: #4A4A4B;
-  width: 26%;
+  width: 30%;
   padding: 15px;
 }
 #soa_balance{
