@@ -659,11 +659,10 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
         }
 
         footer {
-            margin: 0px 0px -200px -50px !important;
+            margin: 0px 0px -200px -70px !important;
             position: fixed;
             width: 1240px;
-            background: #616161;
-            height: 150px;
+            height: 120px;
             padding-left: 25px;
             bottom: 0;
 

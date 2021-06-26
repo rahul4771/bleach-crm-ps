@@ -257,7 +257,14 @@
 
         table th {
             color: #303030;
-            font-size: 16px;
+            font-size: 15px;
+            font-weight: 400 !important;
+            padding: 5px;
+            background: #EDF1F6;
+        }
+        table td {
+            color: #303030;
+            font-size: 15px;
             font-weight: 400 !important;
             padding: 5px;
         }
@@ -355,7 +362,7 @@
                     <thead>
                         <tr>
                             <th style="text-align: center;">Date</th>
-                            <th style="width: 14%; text-align: center;">Reference</th>
+                            <th style="text-align: center;">Reference</th>
                             <th style="text-align: center;">Details</th>
                             <th style="text-align: center;">Order Amount</th>
                             <th style="text-align: center;">Credit</th>
@@ -363,12 +370,71 @@
                             <th style="text-align: center;">Balance</th>
                         </tr>
                     </thead>
+                    <tbody>
+                        <tr>
+                            <td>30-05-21</td>
+                            <td>BLC2006270</td>
+                            <td>Sterilization</td>
+                            <td>100.000</td>
+                            <td>100.000</td>
+                            <td>100.000</td>
+                            <td>--</td>
+                        </tr>
+                        <tr>
+                            <td>30-05-21</td>
+                            <td>BLC2006270</td>
+                            <td>Sterilization</td>
+                            <td>100.000</td>
+                            <td>100.000</td>
+                            <td>100.000</td>
+                            <td>--</td>
+                        </tr><tr>
+                            <td>30-05-21</td>
+                            <td>BLC2006270</td>
+                            <td>Sterilization</td>
+                            <td>100.000</td>
+                            <td>100.000</td>
+                            <td>100.000</td>
+                            <td>--</td>
+                        </tr>
+                        <tr style="background: #EDF1F6;">
+                            <td colspan="3">
+                              Total
+                            </td>
+                            <td style="text-align: right;"></td>
+                            <td style="text-align: right;" id="total_credit">0.000</td>
+                            <td style="text-align: right;" id="total_debit">0.000</td>
+                            <td style="text-align: right;" id="total_balance">0.000</td>
+                          </tr>
+                    </tbody>
 
 
 
                 </table>
             </div>
-
+            <div class="soa_section3">
+                <div style=" 
+                    margin-left: auto;
+                    margin-top: 20px;
+                    background: #EDF1F6;
+                    color: #4A4A4B;
+                    width: 26%;
+                    padding: 15px;
+                ">
+                  <div style="font-size: 16px;
+                  color: #4A4A4B;
+                  text-align: left;">
+                    Balance Due
+                  </div>
+                  <h1 style="  
+                   text-align: center;
+                  font-size: 20px;
+                  font-weight: bold;
+                 
+                  margin-top: 30px;
+                  color: #26A8E0;">0.000</h1>
+                </div>
+              </div>
 
 
 
