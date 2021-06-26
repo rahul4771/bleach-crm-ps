@@ -39,42 +39,44 @@
                 <div class="col-md-4 text-center">
                     <div class="contact-card-active text-center" v-if="contacts.includes('EMAIL')">
                         <div style="text-align: left;">
-                            <input type="checkbox" class="contact-checkbox cc-checkmark" v-model="contacts" value="EMAIL">
+                            <input type="checkbox" class="contact-checkbox cc-checkmark" v-model="contacts" value="EMAIL" {% if order.evaluation.customer.is_email == True %}checked="True"{% endif %}>
                         </div>
                         <img src="{% static 'files/icons/email.png'%}" class="contact-card-icon"/>
 
                         <div class="contact-card-text">
-                           mail@x.com
+                           {{order.evaluation.customer.email}}
                         </div>
                     </div>
+                
                     <div class="contact-card text-center" v-else>
                         <div style="text-align: left;">
-                            <input type="checkbox" class="contact-checkbox cc-checkmark" v-model="contacts" value="EMAIL">
+                            <input type="checkbox" class="contact-checkbox cc-checkmark" v-model="contacts" value="EMAIL" {% if order.evaluation.customer.is_sms == True %}checked="True"{% endif %}>
                         </div>
                         <img src="{% static 'files/icons/email.png'%}" class="contact-card-icon"/>
 
                         <div class="contact-card-text">
-                           mail@x.com
+                           {{order.evaluation.customer.email}}
                         </div>
                     </div>
+                
                 </div>
                 <div class="col-md-4">
                     <div class="contact-card-active text-center" v-if="contacts.includes('SMS')">
                         <div style="text-align: left;">
-                            <input type="checkbox" class="contact-checkbox cc-checkmark" id="exampleCheck1" v-model="contacts" value="SMS">
+                            <input type="checkbox" class="contact-checkbox cc-checkmark" id="exampleCheck1" v-model="contacts" value="SMS" >
                         </div>
                         <img src="{% static 'files/icons/sms.png'%}" class="contact-card-icon"/>
                         <div class="contact-card-text">
-                           +965 000 000
+                           {{order.evaluation.customer.mobile_number}}
                         </div>
                     </div>
                     <div class="contact-card text-center" v-else>
                         <div style="text-align: left;">
-                            <input type="checkbox" class="contact-checkbox cc-checkmark" id="exampleCheck1" v-model="contacts" value="SMS">
+                            <input type="checkbox" class="contact-checkbox cc-checkmark" id="exampleCheck1" v-model="contacts" value="SMS" >
                         </div>
                         <img src="{% static 'files/icons/sms.png'%}" class="contact-card-icon"/>
                         <div class="contact-card-text">
-                           +965 000 000
+                           {{order.evaluation.customer.mobile_number}}
                         </div>
                     </div>
                 </div>
@@ -94,7 +96,7 @@
         </div>
         <div class="modal-footer text-center">
           
-          <button type="submit" class="btn primary-btn" >Send</button>
+          <button type="submit" onclick="send_items()" class="btn primary-btn" data-dismiss="modal">Send</button>
           <button type="button" class="btn primary-btn-bordered" data-dismiss="modal" @click="resetContacts">Cancel</button>
         </div>
        
@@ -1081,8 +1083,8 @@
                                                     </form>
                                                 </div>
                                                 <div class="payment-section-button text-center">
-                                                    <button class="sent-button" onclick="send_items()" data-toggle="modal" data-target="#invoiceModalCenter">Send</button>
-                                                    <button class="view-button" onclick="view_page()">View</button>
+                                                    <button class="sent-button send-btn2" data-toggle="modal" data-target="#invoiceModalCenter" disabled="true">Send</button>
+                                                    <button class="view-button view-btn" onclick="view_page()" disabled>View</button>
                                                 </div>
 
                                             </div>
@@ -1623,7 +1625,13 @@
 <script>
 
 $(document).ready(function () {
-    
+    {% if order.evaluation.customer.is_email == True %}
+        app.contacts.push('EMAIL');
+    {% endif %}
+
+    {% if order.evaluation.customer.is_sms == True %}
+        app.contacts.push('SMS');
+    {% endif %}
 })
 
 
@@ -1712,6 +1720,15 @@ function load_cleaning_team(visitcount,scheduleid){
                     }; 
                 })
 }
+
+
+$('input[name="radio"]').click(function(){
+            
+        $('.send-btn2').attr("disabled",false);
+        $('.view-btn').attr("disabled",false);
+               
+        });
+
 </script>
 
 
@@ -2106,6 +2123,7 @@ $(".pn-prev").click();
 </script>
    
 <script id="rendered-js">
+
 // dateconfirm_completed_count = 0    
 teamassign_completed_count  = 0
 cleaning_completed_count    = 0
