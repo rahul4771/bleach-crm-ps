@@ -3760,6 +3760,80 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase2(APIView):
 
 		return Response(response_dict,HTTP_200_OK)
 
+class DuplicateBookingPhase2(APIView):
+	def get(self,request,evaluation_id):
+		response_dict = {}
+		
+		duplicate_evaluation         = Evaluation.objects.get(id=evaluation_id)		
+		duplicate_evaluation_details = EvaluationDetails.objects.filter(is_active=True,evaluation=duplicate_evaluation).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='schedules'),Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='booksections')),to_attr='evaluationbooks'))
+
+		#blc calculation
+		tracking_no  = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
+		current_blc_starting = int(str(timezone.now().year)+str(timezone.now().month).zfill(2))		
+		if current_blc_starting == int(str(tracking_no)[:6]):
+			new_tracking_no = int(tracking_no)+1
+			evaluation_no   = 'BLC'+str(new_tracking_no)
+		else:
+			evaluation_no = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10001'
+			tracking_no   = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
+
+		#duplicate evaluation
+		new_evaluation = Evaluation.objects.get_or_create(tracking_no=int(tracking_no)+1,evaluation_id=evaluation_no,customer=duplicate_evaluation.customer,call_attender=request.user,quatation_expiry_date=timezone.now()+timedelta(7))
+		
+		#duplicate the order
+		new_order      = Order.objects.get_or_create(evaluation=new_evaluation,order_no=new_evaluation.evaluation_id)
+
+		evaluation_details_totalcost = 0
+		if duplicate_evaluation_details:
+
+
+
+			#new evaluation details
+			for duplicate_evaluation in duplicate_evaluation_details:
+				new_duplicate_evaluation_details = EvaluationDetails.objects.get_or_create(evaluation=new_evaluation,address=duplicate_evaluation.address,status=duplicate_evaluation.status)
+				
+
+
+				book_totalcost = 0
+				if duplicate_evaluation.evaluationbooks:
+					#new book
+					for duplicate_book in duplicate_evaluation.evaluationbooks:
+						if duplicate_book.cleaning_policy == 'SUBSCRIPTION':
+							book_cleanings = duplicate_evaluation.evaluationbooks.schedules.count()
+							new_duplicate_book = EvaluationBook.objects.get_or_create(evaluation_details=new_duplicate_evaluation_details,cleaning_policy=duplicate_book.cleaning_policy,service_type=duplicate_book.service_type,area_type=duplicate_book.area_type,cleaning_method=duplicate_book.cleaning_method,location_type=duplicate_book.location_type,evaluator_note=duplicate_book.evaluator_note,estimated_cost=duplicate_book.estimated_cost/book_cleanings,total_cost=duplicate_book.estimated_cost/book_cleanings)
+						else:
+							new_duplicate_book = EvaluationBook.objects.get_or_create(evaluation_details=new_duplicate_evaluation_details,cleaning_policy=duplicate_book.cleaning_policy,service_type=duplicate_book.service_type,area_type=duplicate_book.area_type,cleaning_method=duplicate_book.cleaning_method,location_type=duplicate_book.location_type,evaluator_note=duplicate_book.evaluator_note,estimated_cost=duplicate_book.estimated_cost,total_cost=duplicate_book.estimated_cost)
+						book_totalcost += new_duplicate_book.estimated_cost						
+
+
+
+						#new booksection
+						if duplicate_book.booksections:
+							for duplicate_book_section in duplicate_book.booksections:
+								new_duplicate_section = EvaluationBookSection.objects.create(evaluation_book=new_duplicate_book,section_name=duplicate_book_section.section_name,section_name_arabic=duplicate_book_section.section_name_arabic,category=duplicate_book_section.category,dirt_level=duplicate_book_section.dirt_level,quantity=duplicate_book_section.quantity,size=duplicate_book_section.size,unit=duplicate_book_section.unit,age=duplicate_book_section.age,floor=duplicate_book_section.floor,apartment=duplicate_book_section.apartment,room=duplicate_book_section.room,wall_type=duplicate_book_section.wall_type,ceiling_type=duplicate_book_section.ceiling_type,floor_type=duplicate_book_section.floor_type,material=duplicate_book_section.material,colour=duplicate_book_section.colour,cause_of_stain=duplicate_book_section.cause_of_stain,section_cost=duplicate_book_section.section_cost)
+						
+							
+								#new keynotes
+								if duplicate_book_section.sectionkeynotes:
+									for duplicate_keynote in duplicate_book_section.sectionkeynotes:	
+										new_duplicate_keynote = EvaluationSectionKeynote.objects.create(evaluation_section=new_duplicate_section,sub_area=duplicate_keynote.sub_area,quantity=duplicate_keynote.quantity,)
+			
+				new_duplicate_evaluation_details.total_cost     = book_totalcost		
+				new_duplicate_evaluation_details.estimated_cost = book_totalcost
+				new_duplicate_evaluation_details.save()
+				evaluation_details_totalcost += book_totalcost
+
+		new_order.estimated_cost= evaluation_details_totalcost
+		new_order.total_cost    = evaluation_details_totalcost
+		new_order.save()
+
+		new_evaluation.estimated_cost= evaluation_details_totalcost
+		new_evaluation.total_cost    = evaluation_details_totalcost
+		new_evaluation.save()
+
+		response_dict['success'] = True
+
+		return Response(response_dict,HTTP_200_OK)
 
 class ClientCleaningBookingPhase3(APIView):
 	def get(self,request):
@@ -4081,6 +4155,7 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 			response_dict['success'] = True
 
 		return Response(response_dict,HTTP_200_OK)
+
 
 from django.core.mail import send_mail,EmailMultiAlternatives
 class EmailTest(APIView):

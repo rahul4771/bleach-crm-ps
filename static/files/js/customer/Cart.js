@@ -577,7 +577,13 @@ $(document).ready(function(){
     gotData:false,
     bookingServicesBill:[],
     bookingonetimeslots:[],
-    multiAddress:false
+    multiAddress:false,
+    selectedAddress:'',
+    bookedServiceDetails:[],
+    custServiceScheduled:{},
+    currentAddressIndex:null,
+    completedAddress:[],
+    scheduleGroup:{}
         },
      
 /* header data */
@@ -789,6 +795,19 @@ $(document).ready(function(){
                 count=count+1
               }
             }
+            for(var k=0;k<this.schedule_serviceTypes_selected;k++)
+            {
+              for(var sch in this.scheduleGroup){
+                
+               if(this.scheduleGroup[sch].includes(this.schedule_serviceTypes_selected[k])){
+                 var index=this.scheduleGroup[sch].indexOf(this.schedule_serviceTypes_selected[k])
+                 console.log("index is"+index)
+                 this.scheduleGroup[sch].splice(index,1)
+               }
+               }
+              }
+              var groundid=Object.keys(this.scheduleGroup).length
+              this.scheduleGroup[groundid]=[ ...this.schedule_serviceTypes_selected ]
             this.selected_onetime_slots={}
             this.onetime_scheduled={}
             this.oneTimeSelectionStat=false
@@ -2340,9 +2359,14 @@ $(document).ready(function(){
         });
     },
     getMultipleSlots(){
+      var yr=this.oneTimeDateSelected.split('-')[0]
+      var month=this.oneTimeDateSelected.split('-')[1]
+      var day=this.oneTimeDateSelected.split('-')[2]
+      var full_date=day+'-'+month+'-'+yr
+      this.bookingonetimeslots=[]
       axios
         .post(
-           this.url+"/customer/ajax/getmultipleservicecleaningslotes",{service_types:this.schedule_serviceTypes,cleaning_date:this.oneTimeDateSelected,number_of_cleaners:this.selectedDuration.cleaners}
+           this.url+"/customer/ajax/getmultipleservicecleaningslotes",{service_types:this.schedule_serviceTypes,cleaning_date:full_date,number_of_cleaners:this.selectedDuration.cleaners}
          
         )
         .then((response) => {
@@ -4159,13 +4183,17 @@ getBookedServices(){
     if(this.bookedServiceDetails.length>0){
       this.multiAddress=true
     }
-    console.log("booked service is"+JSON.stringify(this.bookedServiceDetails))
-    var serviceBookedDetails=this.bookedServiceDetails[0].evaluation_book_evaluation_details
+    this.selectedAddress=this.bookedServiceDetails[0]
+    var currentAddress=this.bookedServiceDetails[0]
+   
+      this.currentAddressIndex=0
+    console.log("booked service is"+JSON.stringify(currentAddress))
+    var serviceBookedDetails=currentAddress.evaluation_book_evaluation_details
     for(var i=0;i<serviceBookedDetails.length;i++)
     {
       var scheduleDetails={
-        id:this.bookedServiceDetails[0].id,
-        evaluation_details_id:serviceBookedDetails[i].id,
+        id:serviceBookedDetails[i].id ,
+        evaluation_details_id:this.selectedAddress.id,
         area_type:serviceBookedDetails[i].area_type,
         bill:[],
         evaluator_note:serviceBookedDetails[i].evaluator_note,
@@ -4184,45 +4212,110 @@ getBookedServices(){
     console.log(e)
   })
 },
+reCalcAddressData(){
+  console.log("called me")
+  this.multiServicesBill=[]
+  currentAddress=''
+  for(var j=0;j<this.bookedServiceDetails.length;j++){
+    if(this.bookedServiceDetails[j].id==this.selectedAddress.id){
+      currentAddress=this.bookedServiceDetails[j]
+      break
+    }
+  }
+  console.log("booked service is"+JSON.stringify(currentAddress))
+//  console.log("booked service is"+JSON.stringify(this.bookedServiceDetails[this.selectedAddress]))
+
+  var serviceBookedDetails=currentAddress.evaluation_book_evaluation_details
+  for(var i=0;i<serviceBookedDetails.length;i++)
+  {
+    var scheduleDetails={
+      id:serviceBookedDetails[i].id,
+      evaluation_details_id:this.bookedServiceDetails[this.currentAddressIndex].id,
+      area_type:serviceBookedDetails[i].area_type,
+      bill:[],
+      evaluator_note:serviceBookedDetails[i].evaluator_note,
+      location_type:serviceBookedDetails[i].location_type,
+      schedule_details:{},
+      service:serviceBookedDetails[i].service_type.name,
+      total_cost:serviceBookedDetails[i].total_cost
+    }
+    for(var j=0;j<serviceBookedDetails[i].evaluationsection_book.length;j++) {
+      scheduleDetails.bill.push(serviceBookedDetails[i].evaluationsection_book[j])
+    }
+    this.multiServicesBill.push(scheduleDetails)
+  }
+  this.gotData=true
+
+},
 bookLetCustService(){
-  var serviceScheduled={
-    "booking_type":"",
-    "service_details":{}
-   /* "service_details":{
-       "1":{
-          "id":67,
-          "evaluation_details_id":6,
-           "schedule_details":{
-             "1":{
-                   "date":"02-06-2022",
-                   "time":"08:00 pm",
-                    "no_of_cleaners":7,
-                   "cleaning_hours":3
-              }
-           },
-          }
-      }*/
-  }
-  if(this.scheduleStat){
-    serviceScheduled.booking_type='together'
-  }
-  else{
-    serviceScheduled.booking_type='seperate'
+  if(this.currentAddressIndex==0){
+    this.custServiceScheduled={
+      "booking_type":"",
+      "service_details":{}
+    },
+    this.custServiceScheduled.booking_type='together'
   }
   for(var i=0;i<this.multiServicesBill.length;i++){
-    serviceScheduled.service_details[i+1]={
+    this.custServiceScheduled.service_details[i+1]={
       "id":this.multiServicesBill[i].id,
       "evaluation_details_id":this.multiServicesBill[i].evaluation_details_id,
       "schedule_details":this.multiServicesBill[i].schedule_details
     }
   }
+  this.completedAddress.push(this.currentAddressIndex)
+  this.currentAddressIndex=this.currentAddressIndex+1
   
-  axios.post(this.url+'/evaluatorbookingmultiplephase3/customer/',serviceScheduled).then(response=>{
-    this.goToPaymentDialog()
-  })
+  this.selectedAddress=this.bookedServiceDetails[this.currentAddressIndex]
+ console.log("service details length is"+this.bookedServiceDetails.length+"address index is"+this.currentAddressIndex)
+
+    
+  
+  this.sendLetCustScheduled()
+  if(this.currentAddressIndex!=this.bookedServiceDetails.length){
+    this.reCalcAddressData()
+  }
+  
+  
+},
+sendLetCustScheduled(){
+  if(!this.scheduleStat){
+    for(var ch in this.scheduleGroup){
+      if(this.scheduleGroup[ch].length>0){
+        var serviceDetails={
+          "booking_type":"together",
+          "service_details":{}
+        }
+        for(var j=0;j<this.scheduleGroup[ch].length;j++){
+          var service=this.scheduleGroup[ch]
+          serviceDetails.service_details[j+1]={
+            "id":this.multiServicesBill[service[j]].id,
+            "evaluation_details_id":this.multiServicesBill[service[j]].evaluation_details_id,
+            "schedule_details":this.multiServicesBill[service[j]].schedule_details
+          }
+        }
+        axios.post(this.url+'/customer/evaluatorbookingmultiplephase3/customer/'+this.custId,serviceDetails).then(response=>{
+          
+          this.goToPaymentDialog()
+        
+        })
+      }
+     
+      
+    }
+   
+
+  }
+  else{
+    axios.post(this.url+'/customer/evaluatorbookingmultiplephase3/customer/'+this.custId,this.custServiceScheduled).then(response=>{
+      this.goToPaymentDialog()
+    })
+  }
+  
+ 
 }
     
   },
+
   mounted() {
     const urlSearchParams = new URLSearchParams(window.location.search);
     const params = Object.fromEntries(urlSearchParams.entries());
