@@ -1050,9 +1050,8 @@
                                             <div class="order-payment-section-card">
                                                 <div>
                                                     <form>
+                                                    {% if order.evaluation.quatation_status == 'APPROVED' %}
                                                         <label class="cc-container">Invoice
-                                                        
-                                                        {% if order.evaluation.quatation_status == 'APPROVED' %}
                                                             {% if order.evaluation.payment_method == 'SUBSCRIPTION' %}
                                                                 {% if invoice.balance <= 0 or invoice.balance >= 0 %}
                                                                     <input type="radio"  name="radio" value="invoice">
@@ -1060,10 +1059,11 @@
                                                             {% else %}
                                                                 <input type="radio"  name="radio" value="subscription_invoice">
                                                             {% endif %}
-                                                        {% endif %}
 
                                                             <span class="cc-checkmark"></span>
                                                           </label>
+                                                    {% endif %}
+                                                    
                                                           <label class="cc-container">Quotation
                                                             <input type="radio" name="radio" value="quotation">
                                                             <span class="cc-checkmark"></span>

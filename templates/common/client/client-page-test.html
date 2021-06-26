@@ -70,7 +70,7 @@
                         </div>
                         <div class="text-center">
                             <div class="cd-card-content"> Language : {{client_details.sms_preference}}</div>
-                            <div class="cd-card-content"> Platform : {% if client_details.is_sms %}SMS,{% elif client_details.is_email %}Email,{% elif client_details.is_whatsapp %}Whatsapp,{% endif %}</div>
+                            <div class="cd-card-content"> Platform : {% if client_details.is_sms %}SMS,{% else %}{% endif %}{% if client_details.is_email %}Email,{% else %}{% endif %}{% if client_details.is_whatsapp %}Whatsapp,{% else %}{% endif %}</div>
                             <div class="cd-card-content"> Credit : {% if client_details.is_credit %}Active{% else %}Inactive{% endif %}</div>
                         </div>
                         
@@ -358,7 +358,7 @@
             <div class="col-md-3">
                 <div style="padding-left: 0px !important;" class="main-content-holder ">
                     <div class="row white-wrapper cd-card-border m-0" >
-                        <p class="client-address-text" >Address</p>
+                        <p class="client-address-text" style="text-align: left;">Address</p>
 
                         {% for address in client_details.customer_addresses %}
                         <div class="client-address-items">

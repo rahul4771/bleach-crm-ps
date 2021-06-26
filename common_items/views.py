@@ -449,20 +449,22 @@ class ClientOrders(IsAuthenticated,View):
 				enquiry_form_save            = enquiry_form.save(commit=False)
 
 				#To Save Contact Platform
-				contact_platforms 			 = request.POST.get('contact_platform')
-				contact_platform_list 		 = contact_platforms.split(",")
+				is_sms 			 = request.POST.get('is_sms')
+				is_email 			 = request.POST.get('is_email')
+				is_whatsapp 			 = request.POST.get('is_whatsapp')
+				print(is_sms,is_email,"pfp")
 
-				if 'Whatsapp' in contact_platform_list:
+				if is_whatsapp == 'WHATSAPP':
 					enquiry_form_save.is_whatsapp = True
 				else:
 					enquiry_form_save.is_whatsapp = False
 
-				if 'Email' in contact_platform_list:
+				if is_email == 'EMAIL':
 					enquiry_form_save.is_email    = True
 				else:
 					enquiry_form_save.is_email    = False
 
-				if 'SMS' in contact_platform_list:
+				if is_sms == 'SMS':
 					enquiry_form_save.is_sms      = True
 				else:
 					enquiry_form_save.is_sms      = False
@@ -2091,8 +2093,8 @@ class CallBackList(IsAuthenticated,View):
 		
 		order_status = request.GET.get('order_status')
 		callback_status = request.GET.get('callback_status')
-		# if not callback_status :
-		# 	callback_status = 'WAITING'
+		if not callback_status :
+			callback_status = 'WAITING'
 
 		if search:
 			evaluations = Evaluation.objects.filter(is_active=True).filter(Q( Q(Q(quatation_status='APPROVED') & Q(Q(payment_method='PREPAID')&~Q(evaluation_order__payment_status='COMPLETED'))|Q(Q(payment_method='BREAKDOWN')&Q(evaluation_order__preamount_paid=0))) | Q(quatation_status='PENDING')|Q(quatation_status='REJECTED')|Q(quatation_status='EXPIRED') )).select_related('customer').filter(Q(Q(customer__name__icontains=search)|Q(customer__mobile_number__icontains=search)|Q(evaluation_id__icontains=search))).order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_book')),to_attr='details_evaluation'))
@@ -2213,8 +2215,18 @@ class CallBackList(IsAuthenticated,View):
 		except EmptyPage:
 			evaluations = paginator.page(paginator.num_pages) 
 
+		page = request.GET.get('page2',1) 
+		paginator=Paginator(payments,no_of_entries)
+		try: 
+			payments=paginator.page(page) 
+		except PageNotAnInteger:
+			payments=paginator.page(1)
+		except EmptyPage:
+			payments = paginator.page(paginator.num_pages) 
+
 		# Get the index of the current page
 		index = evaluations.number - 1  # edited to something easier without index
+		index = payments.number - 1  # edited to something easier without index
 		# This value is maximum index of your pages, so the last page - 1
 		max_index = len(paginator.page_range)
 		# You want a range of 7, so lets calculate where to slice the list
@@ -2224,6 +2236,7 @@ class CallBackList(IsAuthenticated,View):
 		# an iterator. Thus pass it to list, to make our slice possible again.
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(evaluations.end_index())-(evaluations.start_index())+1
+		entry_per_page=(payments.end_index())-(payments.start_index())+1
 
 		return render(request,"common/callback-list/callbacklist.html",{"tab":tab,"order_status":order_status,"payment_type":payment_type,"payments":payments,"callback_status":callback_status,"evaluations":evaluations,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries})
 
