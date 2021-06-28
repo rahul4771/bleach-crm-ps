@@ -318,7 +318,7 @@
                         </div>
                         <span>:&nbsp;</span>
                         <div class="">
-                            {{customer.customer_id}}
+                            {{customer.customer_id|default_if_none:'-'}}
                         </div>
                     </div>
                     <div class="info-section-item">
@@ -340,7 +340,7 @@
                         <span>:&nbsp;</span>
 
                         <div class="">
-                            {{customer.name}}
+                            +965 {{customer.mobile_number}}
                         </div>
                     </div>
                     <div class="info-section-item">
@@ -381,7 +381,7 @@
                         <td style="text-align: right;" class="ordercredit">{% if order.credit %}{{order.credit|floatformat:3|default_if_none:'-'}}{% else %}-{% endif %}</td>
 
                         <td style="text-align: right;" class="orderdebit">{% if order.debit %}{{order.debit|floatformat:3}}{% else %}-{% endif %}</td>
-                        <td style="text-align: right;" class="orderbalance">{{order.balanceamount|floatformat:3}}</td>
+                        <td style="text-align: right;" class="orderbalance">{{order.balance_amount|floatformat:3}}</td>
                         </tr>
                         {% endfor %}
 

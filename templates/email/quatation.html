@@ -397,17 +397,19 @@
                 <div class="order-item-in">
                     <div id="item-left">
                         <b>{{book.service_type.name}}</b>
-                        {% for section in book.evaluationsection_book %}
-                        <p style="font-size: 16px; margin-top: 10px; line-height: 2;">Size : <b>{{section.size}}{{section.unit}}</b>
-                            &nbsp; Quantity : <b>{{section.section_cleanings}}</b> &nbsp; Unit Price : <b>{{section.section_net_cost}}}</b></p>
+                        {% for section in book.sections %}
+                        <p style="font-size: 16px; margin-top: 10px; line-height: 2;">Size : <b>{{section.size}} {{section.unit}}</b>
+                            &nbsp; Quantity : <b>{{section.section_cleanings|default_if_none:'1'}}</b> &nbsp; Unit Price : <b>{{section.section_cost|default_if_none:'0.000'}}</b></p>
                         {% endfor %}
                     </div>
+                    {% for section in book.sections %}
                     <div style="flex-grow: 1;" class="m-mt-10 left">
                         <b>NET PRICE</b>
                         <p style="font-size: 16px; margin-top: 10px; line-height: 2;" class="amount-text m-mt-10">
-                            <b>{{book.total_cost|floatformat:3}}</b> KD
+                            <b>{{section.section_net_cost|default_if_none:'0.000'}}</b> KD
                         </p>
                     </div>
+                    {% endfor %}
                 </div>
             </div>
             <!-- item-->
