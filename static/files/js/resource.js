@@ -172,7 +172,7 @@ const appCard = new Vue({
       }else{
         userData.append('is_window_skill','False')
       }
-      axios.post(this.url+"common/resources-new/",userData).then((response) => {
+      axios.post(this.url+"common/resources/",userData).then((response) => {
         // editDone(id)
         location.reload();
               })
