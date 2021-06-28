@@ -1622,7 +1622,9 @@
 
 
 <script>
-
+function duplicate(id){
+    window.location.href='/evaluator/reorder?id='+id
+} 
 $(document).ready(function () {
     {% if order.evaluation.customer.is_email == True %}
         app.contacts.push('EMAIL');
