@@ -1166,7 +1166,8 @@
                                         {% for schedule in order.orderschedules|slice:"1" %}
                                         {% if forloop.first and schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' or order.order_status == 'ORDER_CLOSED'%}
                                         <div class="row">
-                                            <button style="width: 153px !important;" class="view-button">Reorder</button>
+                                            <button style="width: 153px !important;" class="view-button"
+                                            onclick='window.location.href="{% url "customer:duplicatebookingphase2"  order.evaluation.id %}"'                                            >Reorder</button>
                                         </div>
                                         {% endif %}
                                         {% endfor %}
