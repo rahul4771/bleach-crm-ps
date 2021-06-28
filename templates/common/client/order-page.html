@@ -1426,7 +1426,7 @@
             <div class="row">
                 <div class="col-md-12 text-center">
                     <div class="cancel-model-content">
-                        <button class="sent-button" type="submit" onclick='window.location.href="{% "customer:duplicatebookingphase2" order.evaluation.id %}"'>Yes</button>
+                        <button class="sent-button" type="submit" onclick="duplicate({{order.evaluation.id}});">Yes</button>
                         <button data-dismiss="modal" class="view-button">Cancel</button>
                         
                     </div>
