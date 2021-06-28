@@ -501,3 +501,24 @@ GET
          }
                     }
 }
+
+
+
+
+#re order
+{
+   "service_details":{
+      "1":{"cleaning_policy":'ONE TIME SERVICE' | 'SUBSCRIPTION'
+         "id":67,
+         "evaluation_details_id":6,
+          "schedule_details":{
+            "1":{
+                  "date":"02-06-2022",
+                  "time":"08:00 pm",
+                   "no_of_cleaners":7,
+                  "cleaning_hours":3
+             }
+          },
+         }
+                    }
+}
