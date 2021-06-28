@@ -3821,6 +3821,7 @@ class DuplicateBookingPhase2(APIView):
 		total_cleaners 	= UserProfile.objects.filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
 		total_leaders   = UserProfile.objects.filter(is_general_skill=True,user_type='TEAMINCHARGE')
 		for service_detail in services.keys():
+			print(services[service_detail]['id'],"boooookk iddddddddddddddd")
 			service_book        		= EvaluationBook.objects.get(id=services[service_detail]['id'])
 			service_type   		        = service_book.service_type.name
 
