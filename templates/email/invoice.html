@@ -381,7 +381,7 @@
                 <div class="order-item-in">
                     <div id="item-left">
                         <b>{{book.service_type.name}}</b>
-                        {% for section in book.evaluationsection_book %}
+                        {% for section in book.sections %}
                         <p style="font-size: 16px; margin-top: 10px; line-height: 2;">Size : <b>{{section.size}}{{section.unit}}</b>
                             &nbsp; Quantity : <b>{{section.section_cleanings}}</b> &nbsp; Unit Price : <b>{{section.section_net_cost}}}</b></p>
                         {% endfor %}
@@ -400,20 +400,20 @@
             
             <div class="info-section">
                 <div class="info-section-left">
-                    {% if invoice.evaluation.payment_method == 'PREPAID' or evaluation.payment_method == 'BREAKDOWN' %}
+                    {% if invoice.evaluation.payment_method == 'PREPAID' or invoice.evaluation.payment_method == 'BREAKDOWN' %}
                     <div class="info-section-item">
                         <div style="font-size: 14px;" class="info-section-item-left-3">
                             <b>Payment Before Cleaning</b>
                         </div>
                         <div style="font-size: 14px;" class="left">
                         {% if invoice.evaluation.payment_method == 'PREPAID' %}
-                            <b>{{invoice.evaluation.before_cleaning_amount|floatformat:3}}</b>&nbsp;KD
+                            <b>{{invoice.total_amount|floatformat:3}}</b>&nbsp;KD
                         {% else %}
-                            <b>{{invoice.preamount_paid|floatformat:3}}</b>&nbsp;KD
+                            <b>{{invoice.evaluation.before_cleaning_amount|floatformat:3}}</b>&nbsp;KD
                         {% endif %}
                         </div>
                     </div>
-                {% elif invoice.evaluation.payment_method == 'POSTPAID' or evaluation.payment_method == 'BREAKDOWN' %}
+                {% elif invoice.evaluation.payment_method == 'POSTPAID' or invoice.evaluation.payment_method == 'BREAKDOWN' %}
                     <div class="info-section-item">
                         <div style="font-size: 14px;" class="info-section-item-left-3">
                             <b>Payment After Cleaning</b>

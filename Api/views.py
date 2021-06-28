@@ -1132,6 +1132,7 @@ class SOAMailAPI(APIView):
 			
 			if order.evaluation.payment_method != 'SUBSCRIPTION' and order.order_status == 'ORDER_CLOSED':
 				total_balance += float(order.amount_paid)
+				balanceamount = total_balance
 				accounts_list.append({
 							"date":order.created.date(),
 							"invoice_no":order.order_no,
@@ -1139,7 +1140,7 @@ class SOAMailAPI(APIView):
 							"amount":order.total_amount,
 							"credit":order.amount_paid,
 							"debit":"",
-							"balance_amount":total_balance
+							"balance_amount":balanceamount
 						})
 				total_credit += float(order.amount_paid)
 
@@ -1155,6 +1156,7 @@ class SOAMailAPI(APIView):
 							details = payment.payment_gateway
 
 						total_balance -= float(payment.amount_paid)
+						balanceamount = total_balance
 						accounts_list.append({
 								"date":payment.created.date(),
 								"invoice_no":payment.payment_mode,
@@ -1162,7 +1164,7 @@ class SOAMailAPI(APIView):
 								"amount":"",
 								"credit":"",
 								"debit":payment.amount_paid,
-								"balance_amount":total_balance
+								"balance_amount":balanceamount
 							})
 						total_debit += float(payment.amount_paid)
 
@@ -1195,6 +1197,7 @@ class SOAMailAPI(APIView):
 						job_completed -= float(order.evaluation.promocode_amount/cleanings_count)
 				
 				total_balance += float(job_completed)
+				balanceamount = total_balance
 				accounts_list.append({
 							"date":order.created.date(),
 							"invoice_no":order.order_no,
@@ -1202,10 +1205,11 @@ class SOAMailAPI(APIView):
 							"amount":order.total_amount,
 							"credit":job_completed,
 							"debit":"",
-							"balance_amount":total_balance
-						})
-				total_credit += float(job_completed)
+							"balance_amount":balanceamount
+				})
 
+				total_credit += float(job_completed)
+				
 				for payment in order.paymenthistory:
 					if payment:
 						if payment.payment_mode == 'CASH':
@@ -1218,6 +1222,7 @@ class SOAMailAPI(APIView):
 							details = payment.payment_gateway
 
 						total_balance -= float(payment.amount_paid)
+						balanceamount = total_balance
 						accounts_list.append({
 								"date":payment.created.date(),
 								"invoice_no":payment.payment_mode,
@@ -1225,7 +1230,7 @@ class SOAMailAPI(APIView):
 								"amount":"",
 								"credit":"",
 								"debit":payment.amount_paid,
-								"balance_amount":total_balance
+								"balance_amount":balanceamount
 							})
 						total_debit += float(order.amount_paid)			
 			
@@ -1270,7 +1275,7 @@ class SOAMailAPI(APIView):
 		if customer.is_email == True or 'EMAIL' in options:
 			#send mail
 			msg_html = render_to_string('email/soa.html',{"customer":customer,"address":address,"orders":accounts_list,"total_balance":total_balance,"total_credit":total_credit,"total_debit":total_debit})
-			msg = EmailMultiAlternatives('Bleach Quotation', '', 'notification@bleach-kw.com', [customer.email])
+			msg = EmailMultiAlternatives('Bleach Statement of Account', '', 'notification@bleach-kw.com', [customer.email])
 			msg.attach_alternative(msg_html, "text/html")
 			msg.send(fail_silently=False)
 			print(msg,"msg")

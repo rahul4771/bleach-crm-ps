@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from .models import Order,OrderScheduler,EvaluationBook
-from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook
+from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationBookSection
 from datetime import datetime,date,timedelta,timezone
 from django.http import JsonResponse
 import pandas as pd
@@ -12,6 +12,7 @@ from dateutil.relativedelta import relativedelta
 import requests
 from django.core.mail import send_mail,EmailMultiAlternatives
 from accountant.models import PaymentHistory
+from django.db.models import Prefetch
 # Create your views here.
 
 def quotation_data(request):
@@ -153,7 +154,7 @@ def sendinvoice(request):
     
     address = evaluationdetails.address
 
-    evaluationbooks = EvaluationBook.objects.filter(evaluation_details=evaluationdetails)
+    evaluationbooks = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='sections'))
     evaluationbook = evaluationbooks.first()
 
     if address.floor == None and address.avenue == None:
@@ -211,7 +212,7 @@ def sendinvoice(request):
 
     if evaluation.customer.is_email == True or 'EMAIL' in options:
         #send mail
-        msg_html = render_to_string('email/invoice.html',{"invoice":order,"address_list":separator.join(address_list)})
+        msg_html = render_to_string('email/invoice.html',{"invoice":order,"address_list":separator.join(address_list),"evaluationbooks":evaluationbooks})
         msg = EmailMultiAlternatives('Bleach Invoice', '', 'notification@bleach-kw.com', [evaluation.customer.email])
         msg.attach_alternative(msg_html, "text/html")
         msg.send(fail_silently=False)
@@ -244,7 +245,8 @@ def sendquotation(request):
     else:
         evaluator = evaluation.call_attender.name
 
-    evaluationbooks = EvaluationBook.objects.filter(evaluation_details=evaluationdetails)
+    evaluationbooks = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='sections'))
+
     evaluationbook = evaluationbooks.first()
 
     if address.floor == None and address.avenue == None:
