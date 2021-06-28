@@ -1129,6 +1129,27 @@ class ActiveSubscriptions(IsAuthenticated,View):
 
 		evaluaation = order.evaluation
 
+		evaluationdetails = EvaluationDetails.objects.filter(evaluation=evaluaation).first()
+    
+		address = evaluationdetails.address
+
+		evaluationbooks = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='sections'))
+		evaluationbook = evaluationbooks.first()
+
+		if address.floor == None and address.avenue == None:
+			address_list = [address.apartment, address.street, address.building, address.block, address.area.name, address.governorate.name]
+		
+		elif address.floor == None:
+			address_list = [address.apartment, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
+		
+		elif address.avenue == None:
+			address_list = [address.apartment, address.floor, address.street, address.building, address.block, address.area.name, address.governorate.name]
+		
+		else:
+			address_list = [address.apartment, address.floor, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
+
+		separator = ", "
+
 		if evaluaation.customer.is_sms == True and invoice_type == "invoice" :
 			print("sms")
 
@@ -1153,6 +1174,13 @@ class ActiveSubscriptions(IsAuthenticated,View):
 			response = requests.request("GET", url, headers=headers, params=querystring)
 
 			print(message,response.text,"respo")
+
+		if evaluaation.customer.is_email == True and invoice_type == "invoice" :
+			#Email Send
+			msg_html = render_to_string('email/invoice.html',{"invoice":order,"address_list":separator.join(address_list),"evaluationbooks":evaluationbooks})
+			msg = EmailMultiAlternatives('Bleach Invoice', '', 'notification@bleach-kw.com', [evaluaation.customer.email])
+			msg.attach_alternative(msg_html, "text/html")
+			msg.send(fail_silently=False)
 
 		messages.success(request,"Invoice has been Sent !")
 
