@@ -4178,7 +4178,7 @@ function openNav() {
   },
   getBookedServices(){
     this.multiServicesBill=[]
-    axios.get(this.url+'/customer/evaluatorbookingmultiplephase3/customer/'+this.custId).then(response=>{
+    axios.get(this.url+'/customer/duplicatebookingphase2/'+this.custId).then(response=>{
       this.bookedServiceDetails=response.data.evaluation_details
       if(this.bookedServiceDetails.length>0){
         this.multiAddress=true
