@@ -1426,8 +1426,7 @@
             <div class="row">
                 <div class="col-md-12 text-center">
                     <div class="cancel-model-content">
-                        
-                        <a href="{% url 'agent:agent-makequatation1duplicate' order.evaluation.id%}"><button class="sent-button" type="submit">Yes</button></a>
+                        <button class="sent-button" type="submit" onclick="duplicate({{order.evaluation.id}});">Yes</button>
                         <button data-dismiss="modal" class="view-button">Cancel</button>
                         
                     </div>
@@ -1623,7 +1622,9 @@
 
 
 <script>
-
+function duplicate(id){
+    window.location.href='/evaluator/reorder?id='+id
+} 
 $(document).ready(function () {
     {% if order.evaluation.customer.is_email == True %}
         app.contacts.push('EMAIL');
@@ -2125,8 +2126,8 @@ $(".pn-prev").click();
 <script id="rendered-js">
 
 // dateconfirm_completed_count = 0    
-teamassign_completed_count  = 0
-cleaning_completed_count    = 0
+teamassign_completed_count     = 0
+cleaning_completed_count       = 0
 total_schedules = parseInt("{{order.orderschedules|length}}")
 
 {% for orderschedule in order.orderschedules %}

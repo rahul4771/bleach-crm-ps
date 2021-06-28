@@ -285,355 +285,358 @@
 
 
                     <div class="row mb-40"  id="refresh">
-
-                        {% for worker in workers %}
-                        <div class="col-md-3 pr-0  m-pl-0 m-mlr-0" style="margin-bottom: 10px;">
-                            <div class="flip-container">
-                                <div class="flipper">
-                                    <div class="front">
-                                        <div class="resource-card" id="front_id_{{worker.id}}">
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="row">
-                                                        <div class="col-xs-5 pr-0">
-                                                            <div class="resource-card-profile">
-                                                                <img class="resource-user-pic"
-                                                                    {% if worker.profile_image %}
-                                                                    src="{{worker.profile_image.url}}"
-                                                                    {% else %}
-                                                                    src="{% static 'files/icons/profile.png' %}"
-                                                                    {% endif %}
-                                                                    >
-                                                                <span {% if worker.leave == 1 %}class="dot-red"{% else %}class="dot-gray"{% endif %} id="attendance_{{worker.id}}"></span>
+                        <div id="vueCard">
+                            {% for worker in workers %}
+                            <div class="col-md-3 pr-0  m-pl-0 m-mlr-0" style="margin-bottom: 10px;">
+                                <div class="flip-container">
+                                    <div class="flipper">
+                                        <div class="front">
+                                            <div class="resource-card" id="front_id_{{worker.id}}">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="row">
+                                                            <div class="col-xs-5 pr-0">
+                                                                <div class="resource-card-profile">
+                                                                    <img class="resource-user-pic"
+                                                                        {% if worker.profile_image %}
+                                                                        src="{{worker.profile_image.url}}"
+                                                                        {% else %}
+                                                                        src="{% static 'files/icons/profile.png' %}"
+                                                                        {% endif %}
+                                                                        >
+                                                                    <span {% if worker.leave == 1 %}class="dot-red"{% else %}class="dot-gray"{% endif %} id="attendance_{{worker.id}}"></span>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        <div class="col-xs-7">
-                                                            <div class="resource-user-details text-left">
-                                                                <h2>{{worker.name}}</h2>
-                                                                <h6>{% if worker.user_type == 'TEAMINCHARGE' %}
-                                                                    Team Leader
-                                                                    {% elif worker.user_type == 'CLEANER' %}
-                                                                    Cleaner
-                                                                    {% endif %}
-                                                                </h6>
-                                                                <div class="resource-user-rating">
-                                                                    <!--rating section-->
-                                                                    {% if worker.rating >= 4.5 %}
-                                                                    <i class="fas fa-star yellow-icon"></i>
-                                                                    <i class="fas fa-star yellow-icon"></i>
-                                                                    <i class="fas fa-star yellow-icon"></i>
-                                                                    <i class="fas fa-star yellow-icon"></i>
-                                                                    <i class="fas fa-star yellow-icon"></i>
-                                                                    {% elif worker.rating < 4.5 and worker.rating >= 3.5 %}
-                                                                    <i class="fas fa-star yellow-icon"></i>
-                                                                    <i class="fas fa-star yellow-icon"></i>
-                                                                    <i class="fas fa-star yellow-icon"></i>
-                                                                    <i class="fas fa-star yellow-icon"></i>
-                                                                    <i class="fas fa-star "></i>
-                                                                    {% elif worker.rating < 3.5 and worker.rating >= 2.5 %}
-                                                                    <i class="fas fa-star yellow-icon"></i>
-                                                                    <i class="fas fa-star yellow-icon"></i>
-                                                                    <i class="fas fa-star yellow-icon"></i>
-                                                                    <i class="fas fa-star "></i>
-                                                                    <i class="fas fa-star "></i>
-                                                                    {% elif worker.rating < 2.5 and worker.rating >= 1.5 %}
-                                                                    <i class="fas fa-star yellow-icon"></i>
-                                                                    <i class="fas fa-star yellow-icon"></i>
-                                                                    <i class="fas fa-star"></i>
-                                                                    <i class="fas fa-star"></i>
-                                                                    <i class="fas fa-star "></i>
-                                                                    {% elif worker.rating < 1.5 and worker.rating >= .5 %}
-                                                                    <i class="fas fa-star yellow-icon"></i>
-                                                                    <i class="fas fa-star "></i>
-                                                                    <i class="fas fa-star "></i>
-                                                                    <i class="fas fa-star "></i>
-                                                                    <i class="fas fa-star "></i>
-                                                                    {% endif %}
-                                                                    <i class="fas fa-star "></i>
-                                                                    <i class="fas fa-star "></i>
-                                                                    <i class="fas fa-star "></i>
-                                                                    <i class="fas fa-star "></i>
-                                                                    <i class="fas fa-star "></i>
-                                                                    <!--rating section-->
+                                                            <div class="col-xs-7">
+                                                                <div class="resource-user-details text-left">
+                                                                    <h2>{{worker.name}}</h2>
+                                                                    <h6>{% if worker.user_type == 'TEAMINCHARGE' %}
+                                                                        Team Leader
+                                                                        {% elif worker.user_type == 'CLEANER' %}
+                                                                        Cleaner
+                                                                        {% endif %}
+                                                                    </h6>
+                                                                    <div class="resource-user-rating">
+                                                                        <!--rating section-->
+                                                                        {% if worker.rating >= 4.5 %}
+                                                                        <i class="fas fa-star yellow-icon"></i>
+                                                                        <i class="fas fa-star yellow-icon"></i>
+                                                                        <i class="fas fa-star yellow-icon"></i>
+                                                                        <i class="fas fa-star yellow-icon"></i>
+                                                                        <i class="fas fa-star yellow-icon"></i>
+                                                                        {% elif worker.rating < 4.5 and worker.rating >= 3.5 %}
+                                                                        <i class="fas fa-star yellow-icon"></i>
+                                                                        <i class="fas fa-star yellow-icon"></i>
+                                                                        <i class="fas fa-star yellow-icon"></i>
+                                                                        <i class="fas fa-star yellow-icon"></i>
+                                                                        <i class="fas fa-star "></i>
+                                                                        {% elif worker.rating < 3.5 and worker.rating >= 2.5 %}
+                                                                        <i class="fas fa-star yellow-icon"></i>
+                                                                        <i class="fas fa-star yellow-icon"></i>
+                                                                        <i class="fas fa-star yellow-icon"></i>
+                                                                        <i class="fas fa-star "></i>
+                                                                        <i class="fas fa-star "></i>
+                                                                        {% elif worker.rating < 2.5 and worker.rating >= 1.5 %}
+                                                                        <i class="fas fa-star yellow-icon"></i>
+                                                                        <i class="fas fa-star yellow-icon"></i>
+                                                                        <i class="fas fa-star"></i>
+                                                                        <i class="fas fa-star"></i>
+                                                                        <i class="fas fa-star "></i>
+                                                                        {% elif worker.rating < 1.5 and worker.rating >= .5 %}
+                                                                        <i class="fas fa-star yellow-icon"></i>
+                                                                        <i class="fas fa-star "></i>
+                                                                        <i class="fas fa-star "></i>
+                                                                        <i class="fas fa-star "></i>
+                                                                        <i class="fas fa-star "></i>
+                                                                        {% endif %}
+                                                                        <i class="fas fa-star "></i>
+                                                                        <i class="fas fa-star "></i>
+                                                                        <i class="fas fa-star "></i>
+                                                                        <i class="fas fa-star "></i>
+                                                                        <i class="fas fa-star "></i>
+                                                                        <!--rating section-->
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="col-md-6 ">
-                                                    <div class="woking-details">
-                                                        <h2>
-                                                            {{workers_date|date:'M Y'}}
-                                                        </h2>
-                                                        <div class="row ">
-                                                            <div class="col-xs-8  pr-0">Worked Days</div>
-                                                            <div class="col-xs-4 pl-0 pr-0">: <span
-                                                                    class="c-text">{{worker.worked_days}}</span></div>
+                                                    <div class="col-md-6 ">
+                                                        <div class="woking-details">
+                                                            <h2>
+                                                                {{workers_date|date:'M Y'}}
+                                                            </h2>
+                                                            <div class="row ">
+                                                                <div class="col-xs-8  pr-0">Worked Days</div>
+                                                                <div class="col-xs-4 pl-0 pr-0">: <span
+                                                                        class="c-text">{{worker.worked_days}}</span></div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-xs-8  pr-0">Worked Hours</div>
+                                                                <div class="col-xs-4 pl-0 pr-0">: <span
+                                                                        class="c-text">{{worker.total_hours|floatformat:'2'}}</span></div>
+                                                            </div>
+    
+                                                            <div class="row ">
+                                                                <div class="col-xs-8  pr-0">Average Work Hours</div>
+                                                                <div class="col-xs-4 pl-0 pr-0">: <span
+                                                                        class="c-text">{{worker.average_hours|floatformat:'2'}}</span></div>
+                                                            </div>
+    
                                                         </div>
-                                                        <div class="row">
-                                                            <div class="col-xs-8  pr-0">Worked Hours</div>
-                                                            <div class="col-xs-4 pl-0 pr-0">: <span
-                                                                    class="c-text">{{worker.total_hours|floatformat:'2'}}</span></div>
+    
+                                                    </div>
+                                                </div>
+                                                <a onclick="flip(this)" data-id="{{worker.id}}">View Skills</a>
+                                                <p class="resource-card-text">Daily Occupancy {{workers_date}}</p>
+                                                <div class="row ml-5 m-pr-0" id="slote_details{{worker.id}}">
+                                                    <div class="col-xs-2 mb-10 pl-0 pr-0">
+                                                        <div class="resource-card-solt-1">
+                                                            1
                                                         </div>
-
-                                                        <div class="row ">
-                                                            <div class="col-xs-8  pr-0">Average Work Hours</div>
-                                                            <div class="col-xs-4 pl-0 pr-0">: <span
-                                                                    class="c-text">{{worker.average_hours|floatformat:'2'}}</span></div>
+                                                    </div>
+                                                    <div class="col-xs-2 mb-10 pl-0 pr-0">
+                                                        <div class="resource-card-solt-1">
+                                                            2
                                                         </div>
-
                                                     </div>
-
-                                                </div>
-                                            </div>
-                                            <a onclick="flip(this)" data-id="{{worker.id}}">View Skills</a>
-                                            <p class="resource-card-text">Daily Occupancy {{workers_date}}</p>
-                                            <div class="row ml-5 m-pr-0" id="slote_details{{worker.id}}">
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-1">
-                                                        1
+                                                    <div class="col-xs-2 mb-10 pl-0 pr-0">
+                                                        <div class="resource-card-solt-1">
+                                                            3
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-1">
-                                                        2
+                                                    <div class="col-xs-2  mb-10 pl-0 pr-0">
+                                                        <div class="resource-card-solt-1">
+                                                            4
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-1">
-                                                        3
+                                                    <div class="col-xs-2 mb-10 pl-0 pr-0">
+                                                        <div class="resource-card-solt-1">
+                                                            5
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="col-xs-2  mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-1">
-                                                        4
+                                                    <div class="col-xs-2 mb-10 pl-0 pr-0">
+                                                        <div class="resource-card-solt-1">
+                                                            6
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-1">
-                                                        5
+                                                    <div class="col-xs-2 mb-10 pl-0 pr-0">
+                                                        <div class="resource-card-solt-1">
+                                                            7
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-1">
-                                                        6
+                                                    <div class="col-xs-2 mb-10 pl-0 pr-0">
+                                                        <div class="resource-card-solt-1">
+                                                            8
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-1">
-                                                        7
+                                                    <div class="col-xs-2 mb-10 pl-0 pr-0">
+                                                        <div class="resource-card-solt-1">
+                                                            9
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-1">
-                                                        8
+                                                    <div class="col-xs-2  mb-10 pl-0 pr-0">
+                                                        <div class="resource-card-solt-1">
+                                                            10
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-1">
-                                                        9
+                                                    <div class="col-xs-2 mb-10 pl-0 pr-0">
+                                                        <div class="resource-card-solt-1">
+                                                            11
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="col-xs-2  mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-1">
-                                                        10
+                                                    <div class="col-xs-2 mb-10 pl-0 pr-0">
+                                                        <div class="resource-card-solt-1">
+                                                            12
+                                                        </div>
                                                     </div>
+    
+    
+    
+    
                                                 </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-1">
-                                                        11
-                                                    </div>
-                                                </div>
-                                                <div class="col-xs-2 mb-10 pl-0 pr-0">
-                                                    <div class="resource-card-solt-1">
-                                                        12
-                                                    </div>
-                                                </div>
-
-
-
-
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="back">
-                                        <div class="resource-card" id="back_id_{{worker.id}}">
-                                            <div class="resource-user-details">
-                                                <h2>Skill Of {{worker.name}}</h2>
-                                                <div onclick="editShow(this)" data-id="{{worker.id}}" class="skill-edit" id="edit_id_{{worker.id}}">
-                                                    <img src="{% static 'files/icons/edit.png' %}">
+                                        <div class="back">
+                                            <div class="resource-card" id="back_id_{{worker.id}}">
+                                                <div class="resource-user-details">
+                                                    <h2>Skill Of {{worker.name}}</h2>
+                                                    <div onclick="editShow(this)" data-id="{{worker.id}}" class="skill-edit" id="edit_id_{{worker.id}}">
+                                                        <img src="{% static 'files/icons/edit.png' %}">
+                                                    </div>
+                                                    <div   @click="saveEdit({{worker.id}})" data-id="{{worker.id}}" id="id_done_{{worker.id}}" class="skill-edit-done">
+                                                        <button class="resource-card-button">Done</button>
+                                                    </div>
                                                 </div>
-                                                <div   @click="saveEdit({{worker.id}})" data-id="{{worker.id}}" id="id_done_{{worker.id}}" class="skill-edit-done">
-                                                    <button class="resource-card-button">Done</button>
+                                                <div id="id_skill_list_{{worker.id}}" class="skil-list">
+                                                    <div class="row mt-10">
+    
+                                                        {% if worker.is_general_skill %}
+                                                        <div class="col-xs-6 mb-5">
+                                                            General Cleaning
+                                                        </div>
+                                                        {% endif %}
+    
+                                                        {% if worker.is_deep_skill %}
+                                                        <div class="col-xs-6 mb-5">
+                                                            Deep Cleaning
+                                                        </div>
+                                                        {% endif %}
+    
+                                                        {% if worker.is_upholstery_skill %}
+                                                        <div class="col-xs-6 mb-5">
+                                                            Upholstery Cleaning
+                                                        </div>
+                                                        {% endif %}
+    
+                                                        {% if worker.is_kitchen_skill %}
+                                                        <div class="col-xs-6 mb-5">
+                                                            Kitchen Cleaning
+                                                        </div>
+                                                        {% endif %}
+    
+                                                        {% if worker.is_sterilization_skill %}
+                                                        <div class="col-xs-6 mb-5">
+                                                            Sterilization Cleaning
+                                                        </div>
+                                                        {% endif %}
+    
+                                                        {% if worker.is_carpet_skill %}
+                                                        <div class="col-xs-6 mb-5">
+                                                            Carpet Cleaning
+                                                        </div>
+                                                        {% endif %}
+    
+                                                        {% if worker.is_mattress_skill %}
+                                                        <div class="col-xs-6 mb-5">
+                                                            Mattress Cleaning
+                                                        </div>
+                                                        {% endif %}
+    
+                                                        {% if worker.is_facade_skill %}
+                                                        <div class="col-xs-6 mb-5">
+                                                            Facade Cleaning
+                                                        </div>
+                                                        {% endif %}
+    
+                                                        {% if worker.is_storagearea_skill %}
+                                                        <div class="col-xs-6 mb-5">
+                                                            Storage Area Cleaning
+                                                        </div>
+                                                        {% endif %}
+    
+                                                        {% if worker.is_carparkingumbrella_skill %}
+                                                        <div class="col-xs-6 mb-5">
+                                                            Car Parking Umbrella
+                                                        </div>
+                                                        {% endif %}
+    
+                                                        {% if worker.is_outdoor_skill %}
+                                                        <div class="col-xs-6 mb-5">
+                                                            Outdoor Cleaning
+                                                        </div>
+                                                        {% endif %}
+    
+                                                        {% if worker.is_window_skill %}
+                                                        <div class="col-xs-6 mb-5">
+                                                            Window Cleaning
+                                                        </div>
+                                                        {% endif %}
+    
+    
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div id="id_skill_list_{{worker.id}}" class="skil-list">
-                                                <div class="row mt-10">
-
-                                                    {% if worker.is_general_skill %}
-                                                    <div class="col-xs-6 mb-5">
-                                                        General Cleaning
+                                                <div id="id_skill_edit_list_{{worker.id}}" class="skil-list-edit">
+                                                    <div class="row mt-10">
+                                                        <input type="hidden" id="{{worker.id}}" name="user_id"  value="{{worker.id}}">
+                                                        {% csrf_token %}
+                                                        <div class="col-xs-6 mb-5">
+                                                            <label class="c-container">General Cleaning
+                                                                <input type="checkbox" id="is_general_skill_{{worker.id}}"  {% if worker.is_general_skill %}checked{% endif %} name="is_general_skill">
+                                                                <span class="c-checkmark"></span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-xs-6 mb-5">
+                                                            <label class="c-container">Deep Cleaning
+                                                                <input type="checkbox" id="is_deep_skill_{{worker.id}}" {% if worker.is_deep_skill %}checked{% endif %} name="is_deep_skill">
+                                                                <span class="c-checkmark"></span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-xs-6 mb-5">
+                                                            <label class="c-container">Upholstery Cleaning
+                                                                <input type="checkbox" id="is_upholstery_skill_{{worker.id}}" {% if worker.is_upholstery_skill %}checked{% endif %} name="is_upholstery_skill">
+                                                                <span class="c-checkmark"></span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-xs-6 mb-5">
+                                                            <label class="c-container">Kitchen Cleaning
+                                                                <input type="checkbox" id="is_kitchen_skill_{{worker.id}}" {% if worker.is_kitchen_skill %}checked{% endif %} name="is_kitchen_skill">
+                                                                <span class="c-checkmark"></span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-xs-6 mb-5">
+                                                            <label class="c-container">Sterilization Cleaning
+                                                                <input type="checkbox" id="is_sterilization_skill_{{worker.id}}" {% if worker.is_sterilization_skill %}checked{% endif %} name="is_sterilization_skill">
+                                                                <span class="c-checkmark"></span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-xs-6 mb-5">
+                                                            <label class="c-container">Carpet Cleaning
+                                                                <input type="checkbox"  id="is_carpet_skill_{{worker.id}}"  {% if worker.is_carpet_skill %}checked{% endif %} name="is_carpet_skill">
+                                                                <span class="c-checkmark"></span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-xs-6 mb-5">
+                                                            <label class="c-container">Mattress Cleaning
+                                                                <input type="checkbox" id="is_mattress_skill_{{worker.id}}" {% if worker.is_mattress_skill %}checked{% endif %} name="is_mattress_skill">
+                                                                <span class="c-checkmark"></span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-xs-6 mb-5">
+                                                            <label class="c-container">Facade Cleaning
+                                                                <input type="checkbox" id="is_facade_skill_{{worker.id}}" {% if worker.is_facade_skill %}checked{% endif %} name="is_facade_skill">
+                                                                <span class="c-checkmark"></span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-xs-6 mb-5">
+                                                            <label class="c-container">Storage Area Cleaning
+                                                                <input type="checkbox" id="is_storagearea_skill_{{worker.id}}" {% if worker.is_storagearea_skill %}checked{% endif %} name="is_storagearea_skill">
+                                                                <span class="c-checkmark"></span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-xs-6 mb-5">
+                                                            <label class="c-container">Car Parking Umbrella
+                                                                <input type="checkbox" id="is_carparkingumbrella_skill_{{worker.id}}" {% if worker.is_carparkingumbrella_skill %}checked{% endif %} name="is_carparkingumbrella_skill">
+                                                                <span class="c-checkmark"></span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-xs-6 mb-5">
+                                                            <label class="c-container">Outdoor Cleaning
+                                                                <input type="checkbox" id="is_outdoor_skill_{{worker.id}}" {% if worker.is_outdoor_skill %}checked{% endif %} name="is_outdoor_skill">
+                                                                <span class="c-checkmark"></span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="col-xs-6 mb-5">
+                                                            <label class="c-container">Window Cleaning
+                                                                <input type="checkbox" id="is_window_skill_{{worker.id}}" {% if worker.is_window_skill %}checked{% endif %} name="is_window_skill">
+                                                                <span class="c-checkmark"></span>
+                                                            </label>
+                                                        </div>
+    
                                                     </div>
-                                                    {% endif %}
-
-                                                    {% if worker.is_deep_skill %}
-                                                    <div class="col-xs-6 mb-5">
-                                                        Deep Cleaning
-                                                    </div>
-                                                    {% endif %}
-
-                                                    {% if worker.is_upholstery_skill %}
-                                                    <div class="col-xs-6 mb-5">
-                                                        Upholstery Cleaning
-                                                    </div>
-                                                    {% endif %}
-
-                                                    {% if worker.is_kitchen_skill %}
-                                                    <div class="col-xs-6 mb-5">
-                                                        Kitchen Cleaning
-                                                    </div>
-                                                    {% endif %}
-
-                                                    {% if worker.is_sterilization_skill %}
-                                                    <div class="col-xs-6 mb-5">
-                                                        Sterilization Cleaning
-                                                    </div>
-                                                    {% endif %}
-
-                                                    {% if worker.is_carpet_skill %}
-                                                    <div class="col-xs-6 mb-5">
-                                                        Carpet Cleaning
-                                                    </div>
-                                                    {% endif %}
-
-                                                    {% if worker.is_mattress_skill %}
-                                                    <div class="col-xs-6 mb-5">
-                                                        Mattress Cleaning
-                                                    </div>
-                                                    {% endif %}
-
-                                                    {% if worker.is_facade_skill %}
-                                                    <div class="col-xs-6 mb-5">
-                                                        Facade Cleaning
-                                                    </div>
-                                                    {% endif %}
-
-                                                    {% if worker.is_storagearea_skill %}
-                                                    <div class="col-xs-6 mb-5">
-                                                        Storage Area Cleaning
-                                                    </div>
-                                                    {% endif %}
-
-                                                    {% if worker.is_carparkingumbrella_skill %}
-                                                    <div class="col-xs-6 mb-5">
-                                                        Car Parking Umbrella
-                                                    </div>
-                                                    {% endif %}
-
-                                                    {% if worker.is_outdoor_skill %}
-                                                    <div class="col-xs-6 mb-5">
-                                                        Outdoor Cleaning
-                                                    </div>
-                                                    {% endif %}
-
-                                                    {% if worker.is_window_skill %}
-                                                    <div class="col-xs-6 mb-5">
-                                                        Window Cleaning
-                                                    </div>
-                                                    {% endif %}
-
-
                                                 </div>
-                                            </div>
-                                            <div id="id_skill_edit_list_{{worker.id}}" class="skil-list-edit">
-                                                <div class="row mt-10">
-                                                    <input type="hidden" id="{{worker.id}}" name="user_id"  value="{{worker.id}}">
-                                                    {% csrf_token %}
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">General Cleaning
-                                                            <input type="checkbox" id="is_general_skill_{{worker.id}}"  {% if worker.is_general_skill %}checked{% endif %} name="is_general_skill">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">Deep Cleaning
-                                                            <input type="checkbox" id="is_deep_skill_{{worker.id}}" {% if worker.is_deep_skill %}checked{% endif %} name="is_deep_skill">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">Upholstery Cleaning
-                                                            <input type="checkbox" id="is_upholstery_skill_{{worker.id}}" {% if worker.is_upholstery_skill %}checked{% endif %} name="is_upholstery_skill">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">Kitchen Cleaning
-                                                            <input type="checkbox" id="is_kitchen_skill_{{worker.id}}" {% if worker.is_kitchen_skill %}checked{% endif %} name="is_kitchen_skill">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">Sterilization Cleaning
-                                                            <input type="checkbox" id="is_sterilization_skill_{{worker.id}}" {% if worker.is_sterilization_skill %}checked{% endif %} name="is_sterilization_skill">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">Carpet Cleaning
-                                                            <input type="checkbox"  id="is_carpet_skill_{{worker.id}}"  {% if worker.is_carpet_skill %}checked{% endif %} name="is_carpet_skill">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">Mattress Cleaning
-                                                            <input type="checkbox" id="is_mattress_skill_{{worker.id}}" {% if worker.is_mattress_skill %}checked{% endif %} name="is_mattress_skill">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">Facade Cleaning
-                                                            <input type="checkbox" id="is_facade_skill_{{worker.id}}" {% if worker.is_facade_skill %}checked{% endif %} name="is_facade_skill">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">Storage Area Cleaning
-                                                            <input type="checkbox" id="is_storagearea_skill_{{worker.id}}" {% if worker.is_storagearea_skill %}checked{% endif %} name="is_storagearea_skill">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">Car Parking Umbrella
-                                                            <input type="checkbox" id="is_carparkingumbrella_skill_{{worker.id}}" {% if worker.is_carparkingumbrella_skill %}checked{% endif %} name="is_carparkingumbrella_skill">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">Outdoor Cleaning
-                                                            <input type="checkbox" id="is_outdoor_skill_{{worker.id}}" {% if worker.is_outdoor_skill %}checked{% endif %} name="is_outdoor_skill">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-                                                    <div class="col-xs-6 mb-5">
-                                                        <label class="c-container">Window Cleaning
-                                                            <input type="checkbox" id="is_window_skill_{{worker.id}}" {% if worker.is_window_skill %}checked{% endif %} name="is_window_skill">
-                                                            <span class="c-checkmark"></span>
-                                                        </label>
-                                                    </div>
-
+    
+                                                <div class="back-button" >
+                                                    <button onclick="flipBack(this)" data-id="{{worker.id}}" class="resource-card-button">Back</button>
                                                 </div>
-                                            </div>
-
-                                            <div class="back-button" >
-                                                <button onclick="flipBack(this)" data-id="{{worker.id}}" class="resource-card-button">Back</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            {% endfor %}
                         </div>
-                        {% endfor %}
+
+                      
                       
                     </div>
 

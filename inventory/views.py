@@ -22,3 +22,6 @@ class InventoryValue(View):
 class InventoryBundle(View):
     def get(self,request):
         return render(request,'inventory/bundle.html',{})
+class InventoryItme(View):
+    def get(self,request):
+        return render(request,'inventory/item.html',{})

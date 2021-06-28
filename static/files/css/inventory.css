@@ -357,3 +357,46 @@
   color: #0D87C5;
   font-size: 16px;
 }
+.inv-item-head{
+  color: #333333;
+  font-family:  AvenirLTStd !important;
+  font-size: 28px;
+}
+.inv-item-head-sub{
+  color: #333333;
+  font-family:  AvenirLTStd !important;
+  font-size: 24px;
+}
+.inv-item-head-sub-2{
+  color: #333333;
+  font-family:  AvenirLTStd !important;
+  font-size: 20px;
+}
+.f-gray{
+  color: #333333;
+}
+.h-min-160{
+  max-height: 160px !important;
+}
+.inv-item-card{
+  padding-top: 20px;
+  background: #E6E6E6;
+ font-size: 20px;
+ min-height: 160px;
+ font-weight: 500;
+
+}
+.inv-item-card-content{
+  font-size: 36px;
+}
+.inv-item-card-content span{
+  font-size: 20px;
+}
+.inv-item-amount{
+  text-align: left;
+  font:  Avenir LT Std;
+  font-size: 36px;
+  letter-spacing: 0px;
+  color: #0085C9;
+  opacity: 1;
+}

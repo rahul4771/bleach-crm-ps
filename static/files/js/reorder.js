@@ -4176,9 +4176,14 @@ function openNav() {
   prevService(){
   
   },
-  getBookedServices(){
+  getDuplicate(){
+    axios.get(this.url+'/customer/duplicatebookingphase2/'+this.custId).then(response=>{
+      this.getBookedServices(response.data.duplicate_id)
+    })
+  },
+  getBookedServices(id){
     this.multiServicesBill=[]
-    axios.get(this.url+'/customer/evaluatorbookingmultiplephase3/customer/'+this.custId).then(response=>{
+    axios.get(this.url+'/customer/evaluatorbookingmultiplephase3/customer/'+id).then(response=>{
       this.bookedServiceDetails=response.data.evaluation_details
       if(this.bookedServiceDetails.length>0){
         this.multiAddress=true
@@ -4320,7 +4325,8 @@ function openNav() {
       const urlSearchParams = new URLSearchParams(window.location.search);
       const params = Object.fromEntries(urlSearchParams.entries());
       this.custId=params.id
-      this.getBookedServices()
+      this.getDuplicate()
+      //this.getBookedServices()
      // this.getServices()
      // this.getAreaTypes()
       this.getIp()
