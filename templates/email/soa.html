@@ -318,7 +318,7 @@
                         </div>
                         <span>:&nbsp;</span>
                         <div class="">
-                            {{client.customer_id}}
+                            {{customer.customer_id}}
                         </div>
                     </div>
                     <div class="info-section-item">
@@ -328,7 +328,7 @@
                         <span>:&nbsp;</span>
 
                         <div class="">
-                            {{client.name}}
+                            {{customer.name}}
 
                         </div>
                     </div>
@@ -340,7 +340,7 @@
                         <span>:&nbsp;</span>
 
                         <div class="">
-                            {{client.name}}
+                            {{customer.name}}
                         </div>
                     </div>
                     <div class="info-section-item">
@@ -390,7 +390,7 @@
                             <td colspan="3">
                               Total
                             </td>
-                            <td style="text-align: right;"></td>
+                            {% comment %} <td style="text-align: right;"></td> {% endcomment %}
                             <td style="text-align: right;" id="total_credit">{{total_credit|floatformat:3}}</td>
                             <td style="text-align: right;" id="total_debit">{{total_debit|floatformat:3}}</td>
                             <td style="text-align: right;" id="total_balance">{{total_balance|floatformat:3}}</td>

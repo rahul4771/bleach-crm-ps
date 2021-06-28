@@ -239,6 +239,11 @@ def sendquotation(request):
     
     address = evaluationdetails.address
 
+    if evaluationdetails.evaluator:
+        evaluator = evaluationdetails.evaluator.name
+    else:
+        evaluator = evaluation.call_attender.name
+
     evaluationbooks = EvaluationBook.objects.filter(evaluation_details=evaluationdetails)
     evaluationbook = evaluationbooks.first()
 
@@ -287,7 +292,7 @@ def sendquotation(request):
 
     if evaluation.customer.is_email == True or 'EMAIL' in options:
         #send mail
-        msg_html = render_to_string('email/quatation.html',{"evaluation":evaluation,"evaluationbooks":evaluationbooks,"address_list":separator.join(address_list)})
+        msg_html = render_to_string('email/quatation.html',{"evaluator":evaluator,"evaluation":evaluation,"evaluationbooks":evaluationbooks,"address_list":separator.join(address_list)})
         msg = EmailMultiAlternatives('Bleach Quotation', '', 'notification@bleach-kw.com', [evaluation.customer.email])
         msg.attach_alternative(msg_html, "text/html")
         msg.send(fail_silently=False)

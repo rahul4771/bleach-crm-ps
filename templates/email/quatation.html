@@ -369,12 +369,12 @@
                         </div>
                         <div class="info-section-item">
                             <div class="info-section-item-left-2">
-                                Evaluater
+                                Evaluator
                             </div>
                             <span>:</span>
 
                             <div class="left text-right">
-                                Subash
+                                {{evaluator}}
                             </div>
                         </div>
                         <div class="info-section-item">
@@ -397,7 +397,7 @@
                 <div class="order-item-in">
                     <div id="item-left">
                         <b>{{book.service_type.name}}</b>
-                        {% for section in book.evaluationbooksection.set__all %}
+                        {% for section in book.evaluationsection_book %}
                         <p style="font-size: 16px; margin-top: 10px; line-height: 2;">Size : <b>{{section.size}}{{section.unit}}</b>
                             &nbsp; Quantity : <b>{{section.section_cleanings}}</b> &nbsp; Unit Price : <b>{{section.section_net_cost}}}</b></p>
                         {% endfor %}
