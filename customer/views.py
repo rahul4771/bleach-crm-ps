@@ -3804,7 +3804,8 @@ class DuplicateBookingPhase2(APIView):
 									for duplicate_keynote in duplicate_book_section.sectionkeynotes:	
 										new_duplicate_keynote = EvaluationSectionKeynote.objects.create(evaluation_section=new_duplicate_section,sub_area=duplicate_keynote.sub_area,quantity=duplicate_keynote.quantity,)
 
-		response_dict['success'] = True
+		response_dict['duplicate_id']= 'paw'+str(new_evaluation.evaluation.tracking_no)
+		response_dict['success']     = True
 
 		return Response(response_dict,HTTP_200_OK)
 
