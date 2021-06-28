@@ -17,7 +17,26 @@
     </style>
 <div class="wrapper" id="app">
     <!--wrapper-->
-    {% include "admin/common/header.html" %}
+    {% if request.user.user_type == 'SALESADMIN' %}
+  {% include "salesadmin/common/header.html" %}
+{% elif request.user.user_type == 'AGENT' %}
+  {% include "agent/common/header.html" %}
+{% elif request.user.user_type == 'ADMIN' %}
+  {% include "admin/common/header.html" %}
+{% elif request.user.user_type == 'BOOKINGOFFICER' %}
+  {% include "bookingofficer/common/header.html" %} 
+{% elif request.user.user_type == 'EVALUATOR' %}
+  {% include "evaluator/common/header.html" %}
+{% elif request.user.user_type == 'SENIORTEAMLEADER' %}
+  {% include "stl/common/header.html" %}
+{% elif request.user.user_type == 'OPERATIONSUPERVISOR' %}
+  {% include "operationsupervisor/common/header.html" %}
+{% elif request.user.user_type == 'TECHNICALSUPERVISOR' %}
+  {% include "technicalsupervisor/common/header.html" %}
+{% elif request.user.user_type == 'ACCOUNTANT' %}
+  {% include "accountant/common/header.html" %}
+{% endif %}
+
     <section class="content">
         <!--content-->
         <div class="container-fluid space topspace">

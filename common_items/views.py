@@ -859,7 +859,7 @@ class PaymentDetails(IsAuthenticated,View):
 		tab = request.GET.get('tab')
 		print(tab,"tabber")
 		if not tab:
-			tab = 'all'
+			tab = 'ALL'
 
 		#Evaluation Details
 		search                  = request.GET.get('search')
@@ -885,10 +885,10 @@ class PaymentDetails(IsAuthenticated,View):
 		
 		
 		#Pending Payments
-		# try:
-		pending_payments = invoices.filter(Q( Q(Q(Q(evaluation__payment_method='PREPAID')&~Q(payment_status='COMPLETED'))|Q(Q(evaluation__payment_method='BREAKDOWN')&Q(preamount_paid=0))) | Q(Q(evaluation__payment_method='PREPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))) | Q(Q(evaluation__payment_method='POSTPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(preamount_paid=0)) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) | Q(Q(evaluation__payment_method='SUBSCRIPTION')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&~Q(subscription_topay=0)) ))
-		# except:
-		# 	pending_payments = None
+		try:
+			pending_payments = invoices.filter(Q( Q(Q(Q(evaluation__payment_method='PREPAID')&~Q(payment_status='COMPLETED'))|Q(Q(evaluation__payment_method='BREAKDOWN')&Q(preamount_paid=0))) | Q(Q(evaluation__payment_method='PREPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))) | Q(Q(evaluation__payment_method='POSTPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(preamount_paid=0)) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) | Q(Q(evaluation__payment_method='SUBSCRIPTION')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&~Q(subscription_topay=0)) ))
+		except:
+		 	pending_payments = None
 
 		#due Payments
 		try:
@@ -1047,6 +1047,8 @@ class PaymentDetails(IsAuthenticated,View):
 
 	def post(self,request):
 		order_id = request.POST.get('orderid')
+		tab = request.POST.get('tab_id')
+		
 		notes = request.POST.get('payment_note')
 
 		order = Order.objects.filter(is_active=True,id=int(order_id)).first()
@@ -1055,7 +1057,7 @@ class PaymentDetails(IsAuthenticated,View):
 		order.save()
 
 		messages.success(request,"Payment note updated !!")
-		return redirect('common_items:payments')
+		return redirect('/common/payments/?tab='+tab+'')
 
 class ActiveSubscriptions(IsAuthenticated,View):
 	def get(self,request):
@@ -2080,7 +2082,7 @@ class CallBackList(IsAuthenticated,View):
 
 		tab = request.GET.get('tab')
 		if not tab:
-			tab = 'orders'
+			tab = 'ORDERS'
 		print(tab,"tabber")
 
 		payment_type = request.GET.get('payment_type')
@@ -2092,10 +2094,14 @@ class CallBackList(IsAuthenticated,View):
 		#for order filtering
 		
 		order_status = request.GET.get('order_status')
-		callback_status = request.GET.get('callback_status')
-		if not callback_status :
-			callback_status = 'WAITING'
+		order_status2 = request.GET.get('order_status')
 
+		if tab == 'ORDERS':
+			callback_status = request.GET.get('callback_status')
+		else:
+			callback_status = request.GET.get('callback_status_payments')
+
+		print(callback_status,"tabber2")
 		if search:
 			evaluations = Evaluation.objects.filter(is_active=True).filter(Q( Q(Q(quatation_status='APPROVED') & Q(Q(payment_method='PREPAID')&~Q(evaluation_order__payment_status='COMPLETED'))|Q(Q(payment_method='BREAKDOWN')&Q(evaluation_order__preamount_paid=0))) | Q(quatation_status='PENDING')|Q(quatation_status='REJECTED')|Q(quatation_status='EXPIRED') )).select_related('customer').filter(Q(Q(customer__name__icontains=search)|Q(customer__mobile_number__icontains=search)|Q(evaluation_id__icontains=search))).order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_book')),to_attr='details_evaluation'))
 		else:
@@ -2114,92 +2120,83 @@ class CallBackList(IsAuthenticated,View):
 			except:
 				invoices         	 = None
 						
-		#Pending Payments
-		try:
-			pending_payments = invoices.filter(Q( Q(Q(Q(evaluation__payment_method='PREPAID')&~Q(payment_status='COMPLETED'))|Q(Q(evaluation__payment_method='BREAKDOWN')&Q(preamount_paid=0))) | Q(Q(evaluation__payment_method='PREPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))) | Q(Q(evaluation__payment_method='POSTPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(preamount_paid=0)) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) | Q(Q(evaluation__payment_method='SUBSCRIPTION')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&~Q(subscription_topay=0)) ))
-		except:
-			pending_payments = None
+		
+		if payment_type != 'DUE':
 
-		#due Payments
-		try:
-			due_payments = invoices.filter(Q( Q( Q(Q(evaluation__payment_method='POSTPAID')|Q(evaluation__payment_method='BREAKDOWN')) & Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD')) & Q(completed_cleaning_count=F('cleaning_count')) ) | Q(Q(evaluation__payment_method='SUBSCRIPTION')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&~Q(subscription_topay=0)) ))
-		except:
-			due_payments = None
+			#Pending Payments
+			try:
+				payments_list = invoices.filter(Q( Q(Q(Q(evaluation__payment_method='PREPAID')&~Q(payment_status='COMPLETED'))|Q(Q(evaluation__payment_method='BREAKDOWN')&Q(preamount_paid=0))) | Q(Q(evaluation__payment_method='PREPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))) | Q(Q(evaluation__payment_method='POSTPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(preamount_paid=0)) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) | Q(Q(evaluation__payment_method='SUBSCRIPTION')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&~Q(subscription_topay=0)) ))
+			except:
+				payments_list = None
 
-		#remove object in postpaid if not last cleaning fulfilled	
-		#remove if subscription to pay date
-		if pending_payments:
-			for payment in pending_payments:
-				if payment.evaluation.payment_method == 'POSTPAID' and payment.cleaning_count :
-					very_latest_cleaning=payment.orderschedules[payment.cleaning_count-1]
-					if very_latest_cleaning.work_status != 'CLEANING_FULFILLED':
-						pending_payments = pending_payments.exclude(id=payment.id)
-				if payment.evaluation.payment_method == 'SUBSCRIPTION' and not payment.subscription_topay_date:
-					pending_payments = pending_payments.exclude(id=payment.id)	
+			
+			#remove object in postpaid if not last cleaning fulfilled	
+			#remove if subscription to pay date
+			if payments_list:
+				for payment in payments_list:
+					if payment.evaluation.payment_method == 'POSTPAID' and payment.cleaning_count :
+						very_latest_cleaning=payment.orderschedules[payment.cleaning_count-1]
+						if very_latest_cleaning.work_status != 'CLEANING_FULFILLED':
+							pending_payments = pending_payments.exclude(id=payment.id)
+					if payment.evaluation.payment_method == 'SUBSCRIPTION' and not payment.subscription_topay_date:
+						pending_payments = pending_payments.exclude(id=payment.id)	
 
-		#to find days
-		if pending_payments:
-			for payment in pending_payments:
-				if payment.evaluation.payment_method == 'PREPAID' and payment.orderschedules:
-					very_old_cleaning   = payment.orderschedules[0]
-					payment.reminigdays = (very_old_cleaning.start_at-timezone.now()).days
-				elif payment.evaluation.payment_method == 'POSTPAID' and payment.orderschedules:
-					very_latest_cleaning=payment.orderschedules[payment.cleaning_count-1]
-					payment.delaydays   = (timezone.now()-very_latest_cleaning.start_at).days	
-				elif payment.evaluation.payment_method == 'BREAKDOWN' and payment.orderschedules:
-				
-					very_old_cleaning   = payment.orderschedules[0]
-					very_latest_cleaning=payment.orderschedules[payment.cleaning_count-1]
-					payment.reminigdays = (very_old_cleaning.start_at-timezone.now()).days
-					payment.delaydays   = (timezone.now()-very_latest_cleaning.start_at).days	
+			#to find days
+			if payments_list:
+				for payment in payments_list:
+					if payment.evaluation.payment_method == 'PREPAID' and payment.orderschedules:
+						very_old_cleaning   = payment.orderschedules[0]
+						payment.reminigdays = (very_old_cleaning.start_at-timezone.now()).days
+					elif payment.evaluation.payment_method == 'POSTPAID' and payment.orderschedules:
+						very_latest_cleaning=payment.orderschedules[payment.cleaning_count-1]
+						payment.delaydays   = (timezone.now()-very_latest_cleaning.start_at).days	
+					elif payment.evaluation.payment_method == 'BREAKDOWN' and payment.orderschedules:
+					
+						very_old_cleaning   = payment.orderschedules[0]
+						very_latest_cleaning=payment.orderschedules[payment.cleaning_count-1]
+						payment.reminigdays = (very_old_cleaning.start_at-timezone.now()).days
+						payment.delaydays   = (timezone.now()-very_latest_cleaning.start_at).days	
 
-					#to check last cleaning completed for break down after payment
-					if very_latest_cleaning.work_status == 'CLEANING_FULFILLED':
-						payment.last_completed = True	
+						#to check last cleaning completed for break down after payment
+						if very_latest_cleaning.work_status == 'CLEANING_FULFILLED':
+							payment.last_completed = True	
 
-				elif payment.evaluation.payment_method == 'SUBSCRIPTION':				
-					payment.delaydays= (timezone.now()-payment.subscription_topay_date).days	
+					elif payment.evaluation.payment_method == 'SUBSCRIPTION':				
+						payment.delaydays= (timezone.now()-payment.subscription_topay_date).days
+
+		else:
+
+			#due Payments
+			try:
+				payments_list = invoices.filter(Q( Q( Q(Q(evaluation__payment_method='POSTPAID')|Q(evaluation__payment_method='BREAKDOWN')) & Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD')) & Q(completed_cleaning_count=F('cleaning_count')) ) | Q(Q(evaluation__payment_method='SUBSCRIPTION')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&~Q(subscription_topay=0)) ))
+			except:
+				payments_list = None
 
 		
 		# callback and order status filters
 		order_callback_status_filter       = []
+		payment_callback_status_filter       = []
+
 		if order_status:
 			if order_status == 'APPROVED_NOT_PAID':
 				case1       = Q(quatation_status='APPROVED') & Q(Q(Q(payment_method='PREPAID')&~Q(evaluation_order__payment_status='COMPLETED'))|Q(Q(payment_method='BREAKDOWN')&Q(evaluation_order__preamount_paid=0)))
 			else:
 				case1       = Q(quatation_status=order_status)
 			order_callback_status_filter.append(case1)	
+			payment_callback_status_filter.append(case1)	
 
 		if callback_status:
 			case2 		= Q(evaluation_order__callback_status=callback_status)
+			case3 		= Q(callback_status=callback_status)
 			order_callback_status_filter.append(case2)
+			payment_callback_status_filter.append(case3)
 
 		if order_status or callback_status:
 			order_callback_status_filter     = functools.reduce(operator.and_,order_callback_status_filter)
+			payment_callback_status_filter     = functools.reduce(operator.and_,payment_callback_status_filter)
 			evaluations = evaluations.filter(order_callback_status_filter)
+			payments_list = payments_list.filter(payment_callback_status_filter)
 
-		# payment filters
-		payment_callback_status_filter       = []
-		if payment_type == 'due':
-			payments = due_payments
-		else:
-			payments = pending_payments
-
-		# if order_status:
-		# 	if order_status == 'APPROVED_NOT_PAID':
-		# 		case1       = Q(quatation_status='APPROVED') & Q(Q(Q(payment_method='PREPAID')&~Q(evaluation_order__payment_status='COMPLETED'))|Q(Q(payment_method='BREAKDOWN')&Q(evaluation_order__preamount_paid=0)))
-		# 	else:
-		# 		case1       = Q(quatation_status=order_status)
-		# 	payment_callback_status_filter.append(case1)	
-
-		# if callback_status:
-		# 	case2 		= Q(evaluation_order__callback_status=callback_status)
-		# 	payment_callback_status_filter.append(case2)
-
-		# if order_status or callback_status:
-		# 	payment_callback_status_filter     = functools.reduce(operator.and_,payment_callback_status_filter)
-		# 	payments = payments.filter(payment_callback_status_filter)
-		
 
 		#PAGINATION ORDERS		
 		no_of_entries = request.GET.get('no_of_entries')		
@@ -2216,17 +2213,17 @@ class CallBackList(IsAuthenticated,View):
 			evaluations = paginator.page(paginator.num_pages) 
 
 		page = request.GET.get('page2',1) 
-		paginator=Paginator(payments,no_of_entries)
+		paginator=Paginator(payments_list,no_of_entries)
 		try: 
-			payments=paginator.page(page) 
+			payments_list=paginator.page(page) 
 		except PageNotAnInteger:
-			payments=paginator.page(1)
+			payments_list=paginator.page(1)
 		except EmptyPage:
-			payments = paginator.page(paginator.num_pages) 
+			payments_list = paginator.page(paginator.num_pages)
 
 		# Get the index of the current page
 		index = evaluations.number - 1  # edited to something easier without index
-		index = payments.number - 1  # edited to something easier without index
+		index = payments_list.number - 1
 		# This value is maximum index of your pages, so the last page - 1
 		max_index = len(paginator.page_range)
 		# You want a range of 7, so lets calculate where to slice the list
@@ -2236,9 +2233,9 @@ class CallBackList(IsAuthenticated,View):
 		# an iterator. Thus pass it to list, to make our slice possible again.
 		page_range = list(paginator.page_range)[start_index:end_index]	
 		entry_per_page=(evaluations.end_index())-(evaluations.start_index())+1
-		entry_per_page=(payments.end_index())-(payments.start_index())+1
+		entry_per_page=(payments_list.end_index())-(payments_list.start_index())+1
 
-		return render(request,"common/callback-list/callbacklist.html",{"tab":tab,"order_status":order_status,"payment_type":payment_type,"payments":payments,"callback_status":callback_status,"evaluations":evaluations,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries})
+		return render(request,"common/callback-list/callbacklist.html",{"tab":tab,"order_status":order_status,"payment_type":payment_type,"payments":payments_list,"callback_status":callback_status,"evaluations":evaluations,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries})
 
 	def post(self,request):
 		order_id = request.POST.get('callback_orderid')
