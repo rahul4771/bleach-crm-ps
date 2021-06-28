@@ -3778,7 +3778,7 @@ class DuplicateBookingPhase2(APIView):
 			tracking_no   = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
 
 		#duplicate the evaluation
-		new_evaluation = Evaluation.objects.create(tracking_no=int(tracking_no)+1,evaluation_id=evaluation_no,customer=duplicate_evaluation.customer,call_attender=request.user,quatation_expiry_date=timezone.now()+timedelta(7))
+		new_evaluation = Evaluation.objects.create(tracking_no=int(tracking_no)+1,evaluation_id=evaluation_no,customer=duplicate_evaluation.customer,call_attender=duplicate_evaluation.call_attender,quatation_expiry_date=timezone.now()+timedelta(7))
 		
 		#duplicate the order
 		new_order      = Order.objects.create(evaluation=new_evaluation,order_no=new_evaluation.evaluation_id)
@@ -3804,7 +3804,7 @@ class DuplicateBookingPhase2(APIView):
 									for duplicate_keynote in duplicate_book_section.sectionkeynotes:	
 										new_duplicate_keynote = EvaluationSectionKeynote.objects.create(evaluation_section=new_duplicate_section,sub_area=duplicate_keynote.sub_area,quantity=duplicate_keynote.quantity,)
 
-		response_dict['duplicate_id']= 'paw'+str(new_evaluation.evaluation.tracking_no)
+		response_dict['duplicate_id']= 'paw'+str(new_evaluation.tracking_no)
 		response_dict['success']     = True
 
 		return Response(response_dict,HTTP_200_OK)
