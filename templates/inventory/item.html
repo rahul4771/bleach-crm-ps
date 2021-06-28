@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+<div class="wrapper"><!--wrapper-->
+    {% include "inventory/common/header.html" %}
+    <section class="content">
+        <div class="container-fluid space topspace">
+            <div class="welcome-wrapper">
+                <!--welcome-wrapper-->
+                <h1 class="dashboard-head">Item</h1>
+                <!-- <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p> -->
+            </div>
+        </div>
+
+        <div class="main-content-holder"><!--main-content-holder-->   
+            <div class="white-wrapper f-gray" style="height: 85vh; overflow: auto;">
+              
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <img style="width: 100%;" src="{% static 'files/images/dummy-profile-pic.jpg' %}"  alt="">
+                            </div>
+                            <div class="col-md-9">
+                                <div class="inv-item-head">
+                                    Item Name
+                                </div>
+                                <div class="inv-item-head-sub mt-20">
+                                    865655
+                                </div>
+                                
+                               <div class="row" style="margin-left: 0px; margin-top: 10%;">
+                                <div class="col-md-4 pl-0">
+                                    <div class="inv-item-head-sub-2">Category</div>
+                                    <div class="inv-item-head-sub mt-20">
+                                        Category 1
+                                    </div>
+                                </div>
+                                <div class="col-md-4 pl-0">
+                                    <div class="inv-item-head-sub-2">Segment</div>
+                                    <div class="inv-item-head-sub mt-20">
+                                        Segment 1
+                                    </div>
+                                </div> <div class="col-md-4 pl-0">
+                                    <div class="inv-item-head-sub-2">Line</div>
+                                    <div class="inv-item-head-sub mt-20">
+                                        Line 1
+                                    </div>
+                                </div>
+                                
+                               </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 inv-item-card h-100">
+                        <div class="row">
+                           <div class="col-md-5 text-center">
+                            Inventory
+                            <div class="inv-item-card-content text-right mt-40">
+                                135 <span>Unit</span>
+                            </div>
+                           </div>
+                           <div class="col-md-7">
+                            Reserve
+                            <div class="inv-item-card-content ml-10 mt-40">
+                                10 <span>Unit</span>
+                            </div>
+                           </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-20">
+                <div class="col-md-10" style="font-size: 18px;">
+                    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero
+                </div>
+                </div>
+                <div class="row mt-20">
+                   <div class="col-md-12">
+                    <div class="inv-item-head-sub-2">Quantity</div>
+                    <br>
+                    <br>
+                   </div>
+                </div>
+                <div class="row mt-20">
+                   <div class="col-md-12">
+                    <div class="inv-item-head-sub-2">Unit Price</div>
+                    <div class="mt-10">
+                        <span class="inv-item-amount">45.000KD</span>
+                    </div>
+                   </div>
+                    
+                </div>
+
+            </div>
+        </div>
+
+      
+    </section>
+</div>
+
+
+{% endblock %}
