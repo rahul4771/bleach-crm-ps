@@ -1,5 +1,5 @@
 from django.shortcuts import render
-
+from django.template.loader import render_to_string
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule,Shift
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question
@@ -7,7 +7,7 @@ from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMemb
 from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
 from bleachadmin.models import ServicePriceRange
-
+from django.core.mail import send_mail,EmailMultiAlternatives
 from Api.serializers import UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, LeaveUsersSerializer,ShiftScheduleSerializer
 from agent.views import generate_random_username
 
@@ -1103,3 +1103,174 @@ class CheckOutAPI(APIView):
 		response_dict['success'] = True
 		response_dict['cleaning_date'] = cleaning_team_detail.start_at.date().strftime('%d-%m-%Y')
 		return Response(response_dict,HTTP_200_OK)
+
+class SOAMailAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+		client_id = request.GET.get('client_id')
+		customer = UserProfile.objects.get(is_active=True,id=int(client_id))
+		address = Address.objects.filter(customer__id=int(client_id)).first()
+
+		selected_options = request.GET.get('selected_options')
+		print(selected_options,"opr")
+		options = selected_options.split(",")
+
+		orders = Order.objects.filter(is_active=True,evaluation__customer__id=client_id).order_by('created').prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'))
+		print(orders,"ods")
+		customer_orders = Order.objects.filter(is_active=True).order_by('evaluation__quatation_approved_date').filter(evaluation__customer__id=int(client_id),evaluation__quatation_status='APPROVED',order_status__isnull=False).prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='evaluationdetails'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules')).annotate(cleaning_count=Count('order_scheduler_order'),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())),cleaning_in_progress_count=Sum(Case(When(Q(Q(order_scheduler_order__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler_order__work_status='CLEANING_IN_PROGRESS')),then=1),default=0,output_field=IntegerField())))
+		
+		accounts_list = []
+
+			
+		total_credit = 0
+		total_debit = 0
+		total_balance = 0
+
+		for order in customer_orders:
+			balanceamount = float(total_credit-total_debit)
+			if order.evaluation.payment_method != 'SUBSCRIPTION' and order.order_status == 'ORDER_CLOSED':
+				accounts_list.append({
+							"date":order.created.date(),
+							"invoice_no":order.order_no,
+							"details":"Cleaning Services",
+							"amount":order.total_amount,
+							"credit":order.amount_paid,
+							"debit":"",
+							"balance_amount":balanceamount
+						})
+				total_credit += float(order.amount_paid)
+
+				for payment in order.paymenthistory:
+					if payment:
+						if payment.payment_mode == 'CASH':
+							details = 'CASH'
+						elif payment.payment_mode == 'CHEQUE':
+							details = payment.check_no
+						elif payment.payment_mode == 'BANK':
+							details = payment.bank_name
+						else:
+							details = payment.payment_gateway
+
+						accounts_list.append({
+								"date":payment.created.date(),
+								"invoice_no":payment.payment_mode,
+								"details":details,
+								"amount":"",
+								"credit":"",
+								"debit":payment.amount_paid,
+								"balance_amount":balanceamount
+							})
+						total_debit += float(payment.amount_paid)
+
+			elif order.evaluation.payment_method == 'SUBSCRIPTION' and order.order_status == 'ORDER_IN_PROGRESS' or order.order_status == 'ORDER_CLOSED':
+				
+				evaluationbooks = EvaluationBook.objects.filter(is_active=True,evaluation_details__evaluation__id=order.evaluation.id)
+				evaluationbooks_count = evaluationbooks.count()
+
+				job_completed = 0
+				job_remaining = 0
+
+				for book in evaluationbooks:
+					cleanings_count = OrderScheduler.objects.filter(is_active=True,order__id=order.id,order_scheduler_book__id=book.id).count()
+					completed_cleanings = OrderScheduler.objects.filter(is_active=True,order__id=order.id,order_scheduler_book__id=book.id,work_status='CLEANING_FULFILLED')
+					completed_cleanings_count = completed_cleanings.count()
+
+					total_cost = book.total_cost
+
+					per_cleaning_amount = float(book.total_cost/cleanings_count)
+					job_completed += float(per_cleaning_amount*completed_cleanings_count)
+					# job_remaining += float(book.total_cost - job_completed)	
+
+					if order.evaluation.fine_amount:
+						job_completed -= float(order.evaluation.fine_amount/cleanings_count)
+
+					if order.evaluation.writeback_amount:
+						job_completed -= float(order.evaluation.writeback_amount/cleanings_count)
+
+					if order.evaluation.promocode_amount:
+						job_completed -= float(order.evaluation.promocode_amount/cleanings_count)
+				
+				accounts_list.append({
+							"date":order.created.date(),
+							"invoice_no":order.order_no,
+							"details":"Cleaning Services",
+							"amount":order.total_amount,
+							"credit":job_completed,
+							"debit":"",
+							"balance_amount":balanceamount
+						})
+				total_credit += float(job_completed)
+
+				for payment in order.paymenthistory:
+					if payment:
+						if payment.payment_mode == 'CASH':
+							details = 'CASH'
+						elif payment.payment_mode == 'CHEQUE':
+							details = payment.check_no
+						elif payment.payment_mode == 'BANK':
+							details = payment.bank_name
+						else:
+							details = payment.payment_gateway
+
+						accounts_list.append({
+								"date":payment.created.date(),
+								"invoice_no":payment.payment_mode,
+								"details":details,
+								"amount":"",
+								"credit":"",
+								"debit":payment.amount_paid,
+								"balance_amount":balanceamount
+							})
+						total_debit += float(order.amount_paid)			
+			
+			else:
+				pass
+
+		total_balance = float(total_credit-total_debit)
+
+		print(total_balance,total_credit,total_debit,"cost")
+		
+		# if client.is_sms == True or 'SMS' in options:
+		
+		# 	url = "https://smsapi.future-club.com/fccsms.aspx"
+
+		# 	language = client.sms_preference
+
+		# 	if language == 'ENGLISH':
+		# 		# print(str(evaluation.id),str(evaluation.evaluation_id),str(evaluation.total_cost),str(evaluation.quatation_expiry_date),str(evaluation.customer.username),str(evaluation.tracking_no),"trerr")
+
+		# 		message = "Dear Customer, Please find the Quotation against the cleaning at "+separator.join(address_list)+" here https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait"
+
+		# 		querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
+			
+		# 	else:
+		# 		message = "عزيزنا العميل نرجوا الاطلاع على عرض سعر خدمات التنظيف المطلوبة في "+separator.join(address_list)+" https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+"  لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
+
+		# 		querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
+
+		# 	headers = {
+		# 		'cache-control': "no-cache"
+		# 	}
+			
+		# 	response = requests.request("GET", url, headers=headers, params=querystring)
+
+		# 	print(message,"respo")
+		# 	print(order_no)
+		# 	data=True
+
+		# else:
+		# 	data = False
+
+		if customer.is_email == True or 'EMAIL' in options:
+			#send mail
+			msg_html = render_to_string('email/soa.html',{"customer":customer,"address":address,"orders":accounts_list,"total_balance":total_balance,"total_credit":total_credit,"total_debit":total_debit})
+			msg = EmailMultiAlternatives('Bleach Quotation', '', 'notification@bleach-kw.com', [customer.email])
+			msg.attach_alternative(msg_html, "text/html")
+			msg.send(fail_silently=False)
+			print(msg,"msg")
+			data=True
+		else:
+			data = False
+		return Response(data,HTTP_200_OK)

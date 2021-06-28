@@ -318,7 +318,7 @@
                         </div>
                         <span>:&nbsp;</span>
                         <div class="">
-                            0000000
+                            {{client.customer_id}}
                         </div>
                     </div>
                     <div class="info-section-item">
@@ -328,7 +328,7 @@
                         <span>:&nbsp;</span>
 
                         <div class="">
-                            TABCO
+                            {{client.name}}
 
                         </div>
                     </div>
@@ -340,7 +340,7 @@
                         <span>:&nbsp;</span>
 
                         <div class="">
-                            000000000
+                            {{client.name}}
                         </div>
                     </div>
                     <div class="info-section-item">
@@ -350,7 +350,7 @@
                         <span>:&nbsp;</span>
 
                         <div class="">
-                            0 Floor, 0,0 Block,0 Street,0 Avenue,Sharq, Al Asimah
+                            <b>{{address.apartment}}</b>: {% if address.floor %}{{address.floor}}, {% else %}{% endif %} {{address.building}}, {{address.block}}, {{address.street}}, {% if address.avenue %}{{address.avenue}}, {% else %}{% endif %} {{address.area.name}}, {{address.governorate.name}}
                         </div>
                     </div>
                 </div>
@@ -363,7 +363,7 @@
                         <tr>
                             <th style="text-align: center;">Date</th>
                             <th style="text-align: center;">Reference</th>
-                            <th style="text-align: center;">Details</th>
+                            {% comment %} <th style="text-align: center;">Details</th> {% endcomment %}
                             <th style="text-align: center;">Order Amount</th>
                             <th style="text-align: center;">Credit</th>
                             <th style="text-align: center;">Debit</th>
@@ -371,40 +371,29 @@
                         </tr>
                     </thead>
                     <tbody>
+                        
+                        {% for order in orders %}
                         <tr>
-                            <td>30-05-21</td>
-                            <td>BLC2006270</td>
-                            <td>Sterilization</td>
-                            <td>100.000</td>
-                            <td>100.000</td>
-                            <td>100.000</td>
-                            <td>--</td>
+                        <td>{{order.date|date:'d-m-Y'}}</td>
+                        <td>{{order.invoice_no}}</td>
+                        <!-- <td>{{order.details}}</td> -->
+                        <td style="text-align: right;" class="orderamount">{% if order.amount %}{{order.amount|floatformat:3|default_if_none:'-'}}{% else %}-{% endif %}</td>
+                        <td style="text-align: right;" class="ordercredit">{% if order.credit %}{{order.credit|floatformat:3|default_if_none:'-'}}{% else %}-{% endif %}</td>
+
+                        <td style="text-align: right;" class="orderdebit">{% if order.debit %}{{order.debit|floatformat:3}}{% else %}-{% endif %}</td>
+                        <td style="text-align: right;" class="orderbalance">{{order.balanceamount|floatformat:3}}</td>
                         </tr>
-                        <tr>
-                            <td>30-05-21</td>
-                            <td>BLC2006270</td>
-                            <td>Sterilization</td>
-                            <td>100.000</td>
-                            <td>100.000</td>
-                            <td>100.000</td>
-                            <td>--</td>
-                        </tr><tr>
-                            <td>30-05-21</td>
-                            <td>BLC2006270</td>
-                            <td>Sterilization</td>
-                            <td>100.000</td>
-                            <td>100.000</td>
-                            <td>100.000</td>
-                            <td>--</td>
-                        </tr>
+                        {% endfor %}
+
+
                         <tr style="background: #EDF1F6;">
                             <td colspan="3">
                               Total
                             </td>
                             <td style="text-align: right;"></td>
-                            <td style="text-align: right;" id="total_credit">0.000</td>
-                            <td style="text-align: right;" id="total_debit">0.000</td>
-                            <td style="text-align: right;" id="total_balance">0.000</td>
+                            <td style="text-align: right;" id="total_credit">{{total_credit|floatformat:3}}</td>
+                            <td style="text-align: right;" id="total_debit">{{total_debit|floatformat:3}}</td>
+                            <td style="text-align: right;" id="total_balance">{{total_balance|floatformat:3}}</td>
                           </tr>
                     </tbody>
 
@@ -432,7 +421,7 @@
                   font-weight: bold;
                  
                   margin-top: 30px;
-                  color: #26A8E0;">0.000</h1>
+                  color: #26A8E0;">{{total_balance|floatformat:3}}</h1>
                 </div>
               </div>
 

@@ -87,7 +87,7 @@
                         </div>
                         <img src="{% static 'files/icons/whatsapp.png'%}" class="contact-card-icon"/>
                         <div class="contact-card-text">
-                            +965 000 000
+                            {{order.evaluation.customer.mobile_number}}
                         </div>
                     </div>
                 </div>
@@ -1722,7 +1722,7 @@ function load_cleaning_team(visitcount,scheduleid){
                 })
 }
 
-
+//enable dend anf view buttons if any radio button is clicked only
 $('input[name="radio"]').click(function(){
             
         $('.send-btn2').attr("disabled",false);
@@ -1939,6 +1939,15 @@ function CheckForm(){
 
 //send invoice,receipt,quotation,feedbackform
 function send_items(){
+
+    
+    var checkedVals = $('.contact-checkbox:checkbox:checked').map(function() {
+        return this.value;
+    }).get();
+    //alert(checkedVals.join(","));
+    var selectedoptions = checkedVals.join(",");
+    console.log(selectedoptions,"ops");
+
     var send_item = document.querySelector('input[name="radio"]:checked').value;
     console.log(send_item,"itm")
 
@@ -1946,7 +1955,8 @@ function send_items(){
         $.ajax({
         url: "/order-data/send-invoice",
         data: {
-        'order_no': "{{order.evaluation.evaluation_id}}"
+        'order_no': "{{order.evaluation.evaluation_id}}",
+        'selected_options':selectedoptions
         },
         dataType: "json",
         type: "GET",
@@ -1968,7 +1978,8 @@ function send_items(){
         $.ajax({
           url: "/order-data/send-quotation",
           data: {
-          'order_no': "{{order.evaluation.evaluation_id}}"
+          'order_no': "{{order.evaluation.evaluation_id}}",
+          'selected_options':selectedoptions
           },
           dataType: "json",
           type: "GET",
@@ -1978,7 +1989,7 @@ function send_items(){
               if (data == true){
               alert("Quotation Sent!")
               }else{
-                alert("Customer not opted for SMS!")  
+                alert("Failed!")  
               }
           }
       
