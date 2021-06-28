@@ -2,8 +2,9 @@
 var url = 'https://my.bleachkw.com';
 //var url = 'http://127.0.0.1:8000';
 
+  
+
 $('document').ready(function(){
-    $('.footable').trigger('footable_resize'); 
     if($('#salestoggle').is(':checked')){
         datatype = 'evaluator';
     }else{
@@ -13,6 +14,7 @@ $('document').ready(function(){
 })
 
 function monthlysales(){
+    
     var sales_month = $('#calendar_month').val();
 
     axios.get(url+'/api/daily-sales-list/',{ params: { 'sales_month': sales_month, 'datatype':datatype } })
@@ -34,11 +36,14 @@ function monthlysales(){
         if (response.data.datatype == 'evaluator'){           
             $("#salesheaders").empty();
             $('#salesheaders').append('<th>Date</th><th data-hide="phone,tablet">Day</th><th data-hide="phone,tablet" class="align-right">'+evaluator_names[0]+'</th><th data-hide="phone,tablet" class="align-right">'+evaluator_names[1]+'</th><th data-hide="phone,tablet" class="align-right">'+evaluator_names[2]+'</th><th data-hide="phone,tablet" class="align-right">'+evaluator_names[3]+'</th><th data-hide="phone,tablet" class="align-right">'+evaluator_names[4]+'</th><th data-hide="phone,tablet" class="align-right">'+evaluator_names[5]+'</th><th data-hide="phone,tablet" class="align-right">Others</th><th data-hide="phone,tablet" class="align-right">Total Amount</th>')
+            
         }else{
             $("#salesheaders").empty();
-            $('#salesheaders').append('<th>Date</th><th data-hide="phone,tablet">Day</th><th data-hide="phone,tablet" class="align-right">General Cleaning</th><th data-hide="phone,tablet" class="align-right">Upholstery Cleaning</th><th data-hide="phone,tablet" class="align-right">Deep Cleaning</th><th data-hide="phone,tablet" class="align-right">Carpet Cleaning</th><th data-hide="phone,tablet" class="align-right">Kitchen Cleaning</th><th data-hide="phone,tablet" class="align-right">Sterilization</th><th data-hide="phone,tablet" class="align-right">Total Amount</th><th data-hide="phone,tablet" class="align-right">Sales Status</th>')
+            $('#salesheaders').append('<th >Date</th><th data-hide="phone,tablet">Day</th><th data-hide="phone,tablet" class="align-right">General Cleaning</th><th data-hide="phone,tablet" class="align-right">Upholstery Cleaning</th><th data-hide="phone,tablet" class="align-right">Deep Cleaning</th><th data-hide="phone,tablet" class="align-right">Carpet Cleaning</th><th data-hide="phone,tablet" class="align-right">Kitchen Cleaning</th><th data-hide="phone,tablet" class="align-right">Sterilization</th><th data-hide="phone,tablet" class="align-right">Total Amount</th><th data-hide="phone,tablet" class="align-right">Sales Status</th>')
+           
         }
        
+        $('.footable').trigger('footable_resize');
 
         //monthly evaluator total amount calculation
         var evaluator1 = 0 ;
@@ -98,13 +103,14 @@ function monthlysales(){
                 }
             }
         })
-
+       
+      
         //update table total row at bottom
-        if (response.data.datatype == 'service'){
-            $('#dailysaleslist').append('<tr bgcolor="#ececec"><td><b>Total</b></td><td></td><td class="align-right">'+parseFloat(response.data.generalcleaning_month).toFixed(3)+'</td><td id="upholsterysum" class="align-right">'+parseFloat(response.data.upholsterycleaning_month).toFixed(3)+'</td><td id="deepsum" class="align-right">'+parseFloat(response.data.deepcleaning_month).toFixed(3)+'</td><td id="carpetsum" class="align-right">'+parseFloat(response.data.carpetcleaning_month).toFixed(3)+'</td><td id="kitchensum" class="align-right">'+parseFloat(response.data.kitchencleaning_month).toFixed(3)+'</td><td id="sterilizationsum" class="align-right">'+parseFloat(response.data.sterilization_month).toFixed(3)+'</td><td id="totalsum" class="align-right">'+parseFloat(response.data.cleaning_amount_month).toFixed(3)+'</td><td id="totalsales" class="align-right">'+parseFloat(response.data.cleaning_amount_month - 52000).toFixed(3)+'</td></tr>');
-        }else{
-            $('#dailysaleslist').append('<tr bgcolor="#ececec"><td><b>Total</b></td><td></td><td class="align-right">'+parseFloat(evaluator1).toFixed(3)+'</td><td id="upholsterysum" class="align-right">'+parseFloat(evaluator2).toFixed(3)+'</td><td id="deepsum" class="align-right">'+parseFloat(evaluator3).toFixed(3)+'</td><td id="carpetsum" class="align-right">'+parseFloat(evaluator4).toFixed(3)+'</td><td id="kitchensum" class="align-right">'+parseFloat(evaluator5).toFixed(3)+'</td><td id="sterilizationsum" class="align-right">'+parseFloat(evaluator6).toFixed(3)+'</td><td id="sterilizationsum" class="align-right">'+parseFloat(others).toFixed(3)+'</td><td id="totalsum" class="align-right">'+parseFloat(response.data.cleaning_amount_month).toFixed(3)+'</td></tr>');
-        }
+        // if (response.data.datatype == 'service'){
+        //     $('#dailysaleslist').append('<tr bgcolor="#ececec"><td><b>Total</b></td><td></td><td class="align-right">'+parseFloat(response.data.generalcleaning_month).toFixed(3)+'</td><td id="upholsterysum" class="align-right">'+parseFloat(response.data.upholsterycleaning_month).toFixed(3)+'</td><td id="deepsum" class="align-right">'+parseFloat(response.data.deepcleaning_month).toFixed(3)+'</td><td id="carpetsum" class="align-right">'+parseFloat(response.data.carpetcleaning_month).toFixed(3)+'</td><td id="kitchensum" class="align-right">'+parseFloat(response.data.kitchencleaning_month).toFixed(3)+'</td><td id="sterilizationsum" class="align-right">'+parseFloat(response.data.sterilization_month).toFixed(3)+'</td><td id="totalsum" class="align-right">'+parseFloat(response.data.cleaning_amount_month).toFixed(3)+'</td><td id="totalsales" class="align-right">'+parseFloat(response.data.cleaning_amount_month - 52000).toFixed(3)+'</td></tr>');
+        // }else{
+        //     $('#dailysaleslist').append('<tr bgcolor="#ececec"><td><b>Total</b></td><td></td><td class="align-right">'+parseFloat(evaluator1).toFixed(3)+'</td><td id="upholsterysum" class="align-right">'+parseFloat(evaluator2).toFixed(3)+'</td><td id="deepsum" class="align-right">'+parseFloat(evaluator3).toFixed(3)+'</td><td id="carpetsum" class="align-right">'+parseFloat(evaluator4).toFixed(3)+'</td><td id="kitchensum" class="align-right">'+parseFloat(evaluator5).toFixed(3)+'</td><td id="sterilizationsum" class="align-right">'+parseFloat(evaluator6).toFixed(3)+'</td><td id="sterilizationsum" class="align-right">'+parseFloat(others).toFixed(3)+'</td><td id="totalsum" class="align-right">'+parseFloat(response.data.cleaning_amount_month).toFixed(3)+'</td></tr>');
+        // }
 
         //adding up and down arrows in sales list table and amount color change
         $('.salestatus').each(function(){
@@ -140,9 +146,14 @@ function monthlysales(){
         }else{
             console.log("zero")
         }
+        
 
-       
+         
+      
+
+        
     })
+   
     
   
 

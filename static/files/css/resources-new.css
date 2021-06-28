@@ -486,11 +486,11 @@
   .front,
   .back {
     width: 100%;
-    height: 300px;
+    height: 300px !important;
   }
 
   .resource-card {
-    height: 350px;
+    height: 300px !important;
   }
 }
 

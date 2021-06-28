@@ -1,4 +1,15 @@
 /* inventory css */
+@font-face {
+  font-family: AvenirLTStd;
+  src: url(../font/AvenirLTStd-Book.otf);
+}
+@font-face {
+  font-family: FarCasablanca;
+  src: url(../font/Far_Casablanca.otf);
+}
+.av-font {
+  font-family: AvenirLTStd !important;
+}
 .p-10 {
   padding: 10px !important;
 }
@@ -20,7 +31,7 @@
 .mr-10 {
   margin-right: 10px !important;
 }
-.w-p-70{
+.w-p-70 {
   width: 60% !important;
 }
 .w-250 {
@@ -29,13 +40,13 @@
 .w-p-100 {
   width: 100% !important;
 }
-.inv-in{
-  border: 1px solid #4B4B4B !important;
-border-radius: 7px;
-opacity: 1;
-opacity: 1;
-padding: 5px 10px 5px 10px;
-color: #928f8f !important;
+.inv-in {
+  border: 1px solid #4b4b4b !important;
+  border-radius: 7px;
+  opacity: 1;
+  opacity: 1;
+  padding: 5px 10px 5px 10px;
+  color: #928f8f !important;
 }
 .h-30 {
   height: 30px !important;
@@ -169,9 +180,9 @@ color: #928f8f !important;
   opacity: 1;
   color: #2e4e85;
 }
-.inv-plan-img-btn img{
-    width: 23px;
-    height: 28px;
+.inv-plan-img-btn img {
+  width: 23px;
+  height: 28px;
 }
 .inv-blue-btn:hover {
   background: #2e4e85 0% 0% no-repeat padding-box;
@@ -180,29 +191,38 @@ color: #928f8f !important;
 .inv-table {
   width: 100%;
   border: 1px solid #c4c4c4;
+  font-family: AvenirLTStd !important;
 }
 
 .inv-table tr {
   border-bottom: 1px solid #c4c4c4;
+  font-family: AvenirLTStd !important;
 }
 
 .inv-table th {
   color: #333333;
   background-color: #ebebeb;
   padding: 10px;
+  font-family: AvenirLTStd !important;
 }
 .inv-table td {
   /* font-weight: 700; */
   color: #333333;
   padding: 10px;
+  font-family: AvenirLTStd !important;
 }
 
 .inv-green-border {
   border-left: 5px solid #10a82f;
-
 }
 .inv-gray-border {
   border-left: 5px solid #c4c4c4;
+}
+.inv-about-finish-border{
+  border-left: 5px solid #dba03a;
+}
+.inv-out-of-order-border{
+  border-left: 5px solid #C91212;
 }
 .inv-active-btn {
   background: #10a82f 0% 0% no-repeat padding-box;
@@ -214,51 +234,126 @@ color: #928f8f !important;
   width: auto;
 }
 .inv-active-btn:hover {
-    background: #10a82f 0% 0% no-repeat padding-box;
-    color: #fff;
-  }
+  background: #10a82f 0% 0% no-repeat padding-box;
+  color: #fff;
+}
+.inv-about-finish-btn {
+  background: #dba03a 0% 0% no-repeat padding-box;
+  border-radius: 6px;
+  opacity: 1;
+  border: none;
+  padding: 7px 15px 7px 15px;
+  color: #fff;
+  width: auto;
+}
+.inv-about-finish-btn:hover {
+  background: #dba03a 0% 0% no-repeat padding-box;
+  color: #fff;
+}
+.inv-out-of-order-btn {
+  background: #C91212 0% 0% no-repeat padding-box;
+  border-radius: 6px;
+  opacity: 1;
+  border: none;
+  padding: 7px 15px 7px 15px;
+  color: #fff;
+  width: auto;
+}
+.inv-out-of-order-btn:hover {
+  background: #C91212 0% 0% no-repeat padding-box;
+  color: #fff;
+}
 .inv-inactive-btn {
-    background: #c4c4c4 0% 0% no-repeat padding-box;
-    border-radius: 6px;
-    opacity: 1;
-    border: none;
-    padding: 7px 15px 7px 15px;
-    color: #fff;
-    width: auto;
+  background: #c4c4c4 0% 0% no-repeat padding-box;
+  border-radius: 6px;
+  opacity: 1;
+  border: none;
+  padding: 7px 15px 7px 15px;
+  color: #fff;
+  width: auto;
 }
 .inv-inactive-btn:hover {
-    background: #c4c4c4 0% 0% no-repeat padding-box;
-    color: #fff;
+  background: #c4c4c4 0% 0% no-repeat padding-box;
+  color: #fff;
 }
 .btn-img {
   width: 14px;
   height: 14px;
 }
-.model-head{
-  color: #5A5A5A;
+.model-head {
+  color: #5a5a5a;
   font-size: 20px;
 }
-.model-input-name{
+.model-input-name {
   font-size: 16px;
   margin-bottom: 10px;
-  color: #5A5A5A;
+  color: #5a5a5a;
   text-align: left;
 }
-.attribute-table{
+.attribute-table {
   height: 58vh;
   overflow: auto;
 }
-.attribute-table-2{
+.attribute-table-2 {
   height: 65vh;
   border: 1px solid #c4c4c4;
   position: relative;
 }
+.h-180-min{
+  max-height: 180px !important;
+}
 
-.attribute-footer{
+.attribute-footer {
   border: 1px solid #c4c4c4;
-  background: #EBEBEB;
+  background: #ebebeb;
   position: absolute;
   bottom: 0;
   text-align: center;
   width: 100%;
+}
+.inv-dash-card-head {
+  color: #2c4c82;
+  font-size: 1.1vw;
+  font-family: AvenirLTStd !important;
+}
+.inv-sm-card {
+  background: #f6f6f6;
+  width: 100%;
+  padding: 10px;
+  text-align: center;
+}
+.inv-sm-card p {
+  margin-bottom: 2px !important;
+}
+.inv-sm-card h1 {
+  margin: 0px !important;
+  padding: 0px !important;
+  color: #2c4c82;
+  font-family: AvenirLTStd !important;
+  font-size: 3vw;
+  font-weight: normal;
+}
+.inv-card2{
+  border: 1px solid #C4C4C4;
+  width: 100%;
+  font-family: AvenirLTStd !important;
+  font-size: 14px !important;
+  color: #333333;
+
+}
+.inv-card2-time{
+  font-family: AvenirLTStd !important;
+  color: #FF0000;
+}
+.inv-item-card-head{
+  font-weight: 600;
+  font-size: 1.1vw;
+  color: #333333;
+  margin: 0px !important;
+  padding: 0px !important;
+}
+.inv-item-am{
+  margin-top: 32px;
+  color: #0D87C5;
+  font-size: 16px;
 }

@@ -1,9 +1,352 @@
 {% extends "base.html" %}
 {% block content %}
 {% load static %}
-<div class="wrapper"><!--wrapper-->
+<div class="wrapper" ><!--wrapper-->
     {% include "inventory/common/header.html" %}
-    </div>
+    <section class="content" style="font-family: AvenirLTStd !important;">
+        <div class="container-fluid space topspace">
+            <div class="welcome-wrapper">
+                <!--welcome-wrapper-->
+                <h1 class="dashboard-head">Dashboard</h1>
+                <!-- <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p> -->
+            </div>
+        </div>
+        <div class="main-content-holder">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="white-wrapper m-0"  style="margin-bottom: 10px !important;">
+                        <div class="inv-dash-card-head">
+                            Insights
+                        </div>
+                        <div class="row mt-10">
+                            <div class="col-md-4 mb-5">
+                                <div class="inv-sm-card">
+                                    <p class="inv-dash-card-head">
+                                        Total Assets
+                                    </p>
+                                    <h1>2300</h1>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-5 ">
+                                <div class="inv-sm-card">
+                                    <p class="inv-dash-card-head">
+                                        Todays Order
+                                    </p>
+                                    <h1>2</h1>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-5">
+                                <div class="inv-sm-card">
+                                    <p class="inv-dash-card-head">
+                                        Purchase Remainder
+                                    </p>
+                                    <h1>3</h1>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 h-100">
+                    <div class="white-wrapper m-0" style="margin-bottom: 10px !important;">
+                        <div class="inv-dash-card-head">
+                            Recently added item
+                        </div>
+                        <div class="mt-10 row">
+                            <div class="col-md-6">
+                                <div class="row inv-card2 ml-0 mb-10">
+                                    <div class="col-xs-7 av-font p-10">
+                                       <p class="inv-item-card-head">Product Name</p>
+                                        25665665
+                                        <div class="mt-10">
+                                        J&J Electricals
+                                        </div>
+                                        
+                                        
+                                    </div>
+                                    <div class="col-xs-5 p-10">
+                                        Machine
+                                        <div class="inv-item-am ">
+                                            25.00KD
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="row inv-card2 ml-0 mb-10">
+                                    <div class="col-xs-7 av-font p-10">
+                                       <p class="inv-item-card-head">Product Name</p>
+                                        25665665
+                                        <div class="mt-10">
+                                        J&J Electricals
+                                        </div>
+                                        
+                                        
+                                    </div>
+                                    <div class="col-xs-5 p-10">
+                                        Machine
+                                        <div class="inv-item-am ">
+                                            25.00KD
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" >
+                <div class="col-md-9" style="font-family: AvenirLTStd !important;">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="white-wrapper m-0" style="margin-bottom: 0px !important;">
+                                <div class="inv-dash-card-head">
+                                    Todays Order
+                                </div>
+                                <div class="mt-10">
+                                    <table class="inv-table"> 
+                                        <tr>
+                                            <th style="width: %;">
+                                                Blc number
+                                            </th>
+                                            <th style="width: %; text-align: center;">
+                                                Team lead
+                                            </th>
+                                            <th style="width: %;" class="text-center">
+                                                Time
+                                            </th>
+                                            <th style="width: %;" class="text-center">
+                                                Service
+                                            </th>
+                                            <th>
+                                                Time
+                                            </th>
+                                            <th>
+                                                Check in/out
+                                            </th>
+                                            <th style="width:%;">Action</th>
+                                        </tr>
+                                        <tr>
+                                            <td class="inv-green-border">
+                                                
+                                                BLC6464544957
+                                            </td>
+                                            <td class="text-center">
+                                                Name
+                                            </td>
+                                            <td class="text-center">
+                                                8.00 AM
+                                            </td>
+                                            <td class="text-center">
+                                                General
+                                            </td>
+                                            <td class="text-center">
+                                                Area 1
+                                            </td>
+                                            <td>
+                                              Out
+                                            </td>
+                                            <td>
+                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                                
+                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="inv-green-border">
+                                                
+                                                BLC6464544957
+                                            </td>
+                                            <td class="text-center">
+                                                Name
+                                            </td>
+                                            <td class="text-center">
+                                                8.00 AM
+                                            </td>
+                                            <td class="text-center">
+                                                General
+                                            </td>
+                                            <td class="text-center">
+                                                Area 1
+                                            </td>
+                                            <td>
+                                              Out
+                                            </td>
+                                            <td>
+                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                                
+                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                
+                                            </td>
+                                        </tr>
+                                      
+                                        
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-10">
+                        <div class="col-md-12">
+                            <div class="white-wrapper m-0" >
+                                <div class="inv-dash-card-head">
+                                    Purchase Remainder
+                                </div>
+                                <div class="mt-10">
+                                    <table class="inv-table"> 
+                                        <tr>
+                                            <th style="width: %;">
+                                                Product Id
+                                            </th>
+                                            <th style="width: %; text-align: center;">
+                                                Category
+                                            </th>
+                                            <th style="width: %;" class="text-center">
+                                                Unit Price
+                                            </th>
+                                            <th style="width: %;" class="text-center">
+                                                Seller
+                                            </th>
+                                            <th>
+                                                Status
+                                            </th>
+                                            
+                                            <th style="width:%;">Action</th>
+                                        </tr>
+                                        <tr>
+                                            <td class="inv-about-finish-border">
+                                                
+                                                BLC6464544957
+                                            </td>
+                                            <td class="text-center">
+                                                General
+                                            </td>
+                                            <td class="text-center">
+                                                20.00KD
+                                            </td>
+                                            <td class="text-center">
+                                                Name
+                                            </td>
+                                            <td class="text-center">
+                                                <button class="inv-about-finish-btn"> About to finish</button>
+                                            </td>
+                                            <td>
+                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                                
+                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="inv-out-of-order-border">
+                                                
+                                                BLC6464544957
+                                            </td>
+                                            <td class="text-center">
+                                                General
+                                            </td>
+                                            <td class="text-center">
+                                                20.00KD
+                                            </td>
+                                            <td class="text-center">
+                                                Name
+                                            </td>
+                                            <td class="text-center">
+                                                <button class="inv-out-of-order-btn"> Out of Order</button>
+                                            </td>
+                                            <td>
+                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                                
+                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                
+                                            </td>
+                                        </tr>
+                                        
+                                        
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 pl-0">
+                    <div class="white-wrapper m-0" >
+                        <div class="inv-dash-card-head">
+                            Non check-in Orders
+                        </div>
+                        <div class="mt-10">
+                            <div class="row inv-card2 ml-0 mb-10">
+                                <div class="col-xs-8 av-font p-10">
+                                    BLC6464544957
+                                    <div class="mt-10">
+                                        Name
+                                    </div>
+                                    
+                                </div>
+                                <div class="col-xs-4 inv-card2-time p-10">
+                                    3 Hour
+                                </div>
+                            </div>
+                            <div class="row inv-card2 ml-0 mb-10">
+                                <div class="col-xs-8 av-font p-10">
+                                    BLC6464544957
+                                    <div class="mt-10">
+                                        Name
+                                    </div>
+                                    
+                                </div>
+                                <div class="col-xs-4 inv-card2-time p-10">
+                                    3 Hour
+                                </div>
+                            </div> 
+                             <div class="row inv-card2 ml-0 mb-10">
+                                <div class="col-xs-8 av-font p-10">
+                                    BLC6464544957
+                                    <div class="mt-10">
+                                        Name
+                                    </div>
+                                    
+                                </div>
+                                <div class="col-xs-4 inv-card2-time p-10">
+                                    3 Hour
+                                </div>
+                            </div> 
+                             <div class="row inv-card2 ml-0 mb-10">
+                                <div class="col-xs-8 av-font p-10">
+                                    BLC6464544957
+                                    <div class="mt-10">
+                                        Name
+                                    </div>
+                                    
+                                </div>
+                                <div class="col-xs-4 inv-card2-time p-10">
+                                    3 Hour
+                                </div>
+                            </div>
+                            <div class="row inv-card2 ml-0 mb-10">
+                                <div class="col-xs-8 av-font p-10">
+                                    BLC6464544957
+                                    <div class="mt-10">
+                                        Name
+                                    </div>
+                                    
+                                </div>
+                                <div class="col-xs-4 inv-card2-time p-10">
+                                    3 Hour
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
 
 
 
