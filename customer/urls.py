@@ -65,6 +65,8 @@ urlpatterns = [
 		url(r'^bookingmediasave$',views.ClientCleaningBookingMediaSave.as_view(),name='clientcleaningbookingmediasave'),
 		url(r'^evaluatorbookingmultiplephase3/customer/(?P<evaluation_id>[-\w]+)$',views.EvaluatorMultipleCleaningBookingLetCustomerPhase3.as_view(),name='evaluatorclientcleaningmultiplebookingcustomerphase3'),#done not tested
 
+		#edit order
+		url(r'^editorder$',views.EditOrderDetails.as_view(),name='edit-order'), 
 
 
 		url(r'^emailtest$',views.EmailTest.as_view(),name='email-test'),
