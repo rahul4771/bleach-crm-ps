@@ -69,7 +69,7 @@ const app = new Vue({
   delimiters: ["<%", "%>"],
   
   mounted() {
-    
+    this.getOrderId()
   },
   components: { Multiselect: window.VueMultiselect.default },
 
@@ -151,11 +151,26 @@ const app = new Vue({
               category:null,
               age:null
              },
-             section_cost:0
+             section_cost:0,
+             orderId:'',
+             sections:[]
   },
   methods:{
     resetSection(){
       
+    },
+    getOrderId(){
+      var orderId=window.location.href.split('/')[7]
+      this.orderId=orderId
+      console.log("orderid is"+orderId)
+     
+    },
+    getSection(id){
+        axios.get('customer/editorder/'+this.orderId+'?evaluation_book_id='+id).then(response=>{
+          this.sections=response.data
+        }).catch(err=>{
+          console.log(err)
+        })
     },
     onChange(event) {
       if(event.target.value == "BREAKDOWN"){

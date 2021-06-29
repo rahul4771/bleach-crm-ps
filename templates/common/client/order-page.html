@@ -5,7 +5,7 @@
 <link href="{% static 'files/css/client-details.css' %}" rel="stylesheet" />
 <link href="{% static 'files/css/orders.css' %}" rel="stylesheet" />
 <link href="{% static 'files/css/colors.css' %}" rel="stylesheet" />
-<link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -16,12 +16,11 @@
 <!--Bootstrap 3.3.7 -->
 <link href="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/assets/owl.carousel.css' %}" rel="stylesheet">
 <link href="{% static 'files/css/colors.css' %}" rel="stylesheet">
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.standalone.min.css" integrity="sha512-TQQ3J4WkE/rwojNFo6OJdyu6G8Xe9z8rMrlF9y7xpFbQfW5g8aSWcygCQ4vqRiJqFsDsE1T6MoAOMJkFXlrI9A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-<div class="wrapper" id="app" style="width:100%"><!--wrapper-->
-
-   <div data-toggle="modal" data-target="#editSectionDialog" id="edit-dialog-tigger"></div> 
+<div class="wrapper" id="app"><!--wrapper-->
+    <!-- send invoice modal begins here-->
+    <div data-toggle="modal" data-target="#editSectionDialog" id="edit-dialog-tigger"></div> 
 <!-- edit section dialog begins here-->
 <div class="modal fade " id="editSectionDialog" tabindex="-1" role="dialog" aria-labelledby="editSectionDialogTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered primary-modal" role="document">
@@ -178,10 +177,6 @@
       </div>
       </div>
  </div>     
-
-<!-- edit section dialog ends here-->
-
-    <!-- send invoice modal begins here-->
 <!-- Modal -->
 
 <div class="modal fade " id="invoiceModalCenter" tabindex="-1" role="dialog" aria-labelledby="invoiceModalCenterTitle" aria-hidden="true">
@@ -685,18 +680,18 @@
                                     </div>
                                 </div>
                                 <br>
-                                <div class="moreless-button" id="show{{orderschedule.id}}">Show More</div>
+                                <div class="moreless-button" id="show{{orderschedule.id}}" @click="getSection({{orderschedule.order_scheduler_book.id}})">Show More</div>
                                 <hr class="bar">
                             </div>
                             
 
-                            <div id="showmore{{orderschedule.id}}" class="showmore">
+                            <div id="showmore{{orderschedule.id}}" class="showmore" >
                             
                                 {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
                                 <div id="showmore1{{orderschedule.id}}" style="display: none;"
                                     class="order-container-main order-clean-section">
-                                    <div v-if="edit" class="order-clean-edit" data-room="{{section.room}}" data-wall_type="{{section.wall_type}}" data-ceiling_type="{{section.ceiling_type}}" data-floor_type="{{section.floor_type}}" data-material="{{section.material}}" data-section_cost="{{section.section_cost}}" data-section_name="{{section.section_name}}" data-section_category="{{section.category}}" data-age="{{section.age}}" data-size="{{section.size}}" data-floor="{{section.floor}}" data-apartment="{{section.apartment}}" data-dirt_level="{{section.dirt_level}}"  onclick="editSection(this);">
-                                        <img class="pointer" src="{% static 'files/icons/edit.png' %}">
+                                    <div v-if="edit" class="order-clean-edit"  >
+                                        <img class="pointer" src="{% static 'files/icons/edit.png' %}" >
                                     </div>
                                     <div class="order-clean-section-header c-mb-10">
                                         <h2>Section {{forloop.counter}} : {{section.section_name}}</h2>
