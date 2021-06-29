@@ -522,3 +522,24 @@ GET
          }
                     }
 }
+
+#edit order
+#customer/editorder
+##add section
+{
+   "action_type":'add_section',
+   "evaluation_book__id":4,
+   "section_details":{}
+}
+##edit section
+{
+   "action_type":'edit_section',
+   "evaluation_book__id":4,
+   "section_id":4,
+   "section_details":{}
+}
+##delete section
+{
+   "action_type":'delete_section',
+   "section_id":4
+}
