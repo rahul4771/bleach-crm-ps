@@ -53,6 +53,14 @@ function editSection(section){
   console.log("section is "+JSON.stringify(sectiondata))
   app.sectionData=sectiondata
   $('#edit-dialog-tigger').click()
+  app.editSectionData.section_cost=sectiondata.section_cost
+  app.editSectionData.section_name=sectiondata.section_name
+  
+}
+function editService(service){
+  app.service_type=$(service).data('service')
+  app.edit=true
+  app.getProductivity()
   
 }
 const app = new Vue({
@@ -80,6 +88,13 @@ const app = new Vue({
     contacts:[],
     sectionData:{},
     value: [],
+    floor_type:'',
+    wall_type:'',
+    ceiling_type:'',
+    service_type:'',
+    currentServiceType:'',
+    service_productivity:[],
+    selected_size:{},
     walltypes:["BRICKS","GLASS","CONCRETE","CERAMIC","GYPSUM","FABRIC","RUBBER","STONE","TERRAZO","STAINLESS","VINYL","WOODEN","OTHERS"],
   ceilingtypes:["WOODEN","GLASS","CONCRETE","CERAMIC","GYPSUM","FOAM","PLASTIC","FABRIC","RUBBER","STAINLESS","VENYL","OTHERS"],
   floortypes:["MARBLE","GLASS","STONE","CERAMIC","CONCRETE","BRICKS","WOODEN","TERRAZO","OTHERS"],
@@ -122,9 +137,26 @@ const app = new Vue({
                  "province": "Córdoba",
                  "timezone": "America/Argentina/Cordoba"
                }
-             ]
+             ],
+             productivity:{},
+             editSectionData:{
+              size:{},
+              area_type:[],
+              section_cost:0,
+              section_name:'',
+              floor_type:[],
+              ceiling_type:[],
+              floor_type:[],
+              material:[],
+              category:null,
+              age:null
+             },
+             section_cost:0
   },
   methods:{
+    resetSection(){
+      
+    },
     onChange(event) {
       if(event.target.value == "BREAKDOWN"){
         this.breakDownFlag= true
@@ -132,6 +164,10 @@ const app = new Vue({
         this.breakDownFlag =false
       }
       console.log(this.amount)
+  },
+  calcSectionCost(){
+   
+    this.editSectionData.section_cost=this.editSectionData.size.cost
   },
     setDate(d){
     
@@ -143,6 +179,14 @@ const app = new Vue({
     },
     resetContacts(){
       this.contacts=[]
+    },
+    getProductivity(){
+      axios.get('https://test.bleach-kw.com/customer/ajax/getservicesizeprice?service_type='+this.service_type).then(response=>{
+          this.productivity=response.data
+          for(var i in this.productivity){
+            this.service_productivity.push(this.productivity[i])
+          }
+      })
     }
   }
  

@@ -36,32 +36,52 @@
             <div >
                 <!-- use app.contacts to get the array of selected contact  methods -->
               <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-6 mt-10">
                                 <div class=" bold-text common-label required-field"> <label>Section Name</label></div>
                               <input  id="id_name" type="text" class="textBox OnlyText" placeholder="Section Name" required="" v-model="sectionData.section_name" >
                 </div>
-                <div class="col-md-6">
-                    <div class=" bold-text common-label required-field"> <label>Category</label></div>
-                  <input   type="text" class="textBox OnlyText" placeholder="Section Name" required="" v-model="sectionData.section_category" >
-                </div>
-                <div class="col-md-6 mt-10" v-if="sectionData.age">
+               
+                <div class="col-md-6 mt-10" v-if="service_type!='General Cleaning'">
                     <div class=" bold-text common-label required-field"> <label>Age</label></div>
                   <input   type="text" class="textBox OnlyText" placeholder="Age" required="" v-model="sectionData.age">
                 </div>
-                <div class="col-md-6 mt-10">
+                <div class="col-md-6 mt-10"  v-if="service_type=='General Cleaning'">
                     
-                        <div class=" bold-text common-label required-field"> <label>Size</label></div>
-                                      <label for="favcity">
-                                      <select name="gender" required="" v-model="sectionData.size">
-                                      <option value="Small">Small</option>
-                                      <option value="Medium" selected="">Medium</option>
-                                      <option value="Large">Large</option>
-                                      
-                                      </select>
-                                      </label>
+                    <div class=" bold-text common-label required-field"> <label>Category</label></div>
+                    <multiselect
+                   
+                      v-model="sectionData.category"
+                      placeholder="Select Category"
+                      
+                      :options="['Floor','Apartment','Kitchen']"
+                      :multiple="false"
+                      :taggable="false"
+                      :show-labels="false"
+                      
+                    ></multiselect>
+                  
                         
                  </div>
-                 <div class="col-md-6">
+                <div class="col-md-6 mt-10">
+                    
+                    <div class=" bold-text common-label required-field"> <label>Size</label></div>
+                    <multiselect
+                      v-model="editSectionData.size"
+                      placeholder="Size"
+                      
+                      :options="service_productivity"
+
+                      :multiple="false"
+                      :taggable="false"
+                      :show-labels="false"
+                      track-by="name"
+                      label="name"
+                      @input="calcSectionCost()"
+                    ></multiselect>
+                  
+                        
+                 </div>
+                 <div class="col-md-6 mt-10">
                   <!--  <multiselect
                     v-model="value"
                     placeholder="Material"
@@ -70,23 +90,61 @@
                     :multiple="true"
                     :taggable="true"
                   ></multiselect>-->
+                  <div class=" bold-text common-label required-field"> <label>Material</label></div>
                   <multiselect
                     v-model="value"
                     placeholder="Materials"
                     
                     :options="materials"
                     :multiple="true"
-                    :taggable="true"
-                   
+                    :taggable="false"
+                    :show-labels="false"
                     
                   ></multiselect>
                  </div>
                
-                <div class="col-md-6 mt-10" v-if="sectionData.material">
-                    <div class=" bold-text common-label required-field"> <label>Material</label></div>
-                  <input  type="text" class="textBox OnlyText" placeholder="Material" required="" v-model="sectionData.material">
+                <div class="col-md-6 mt-10" >
+                    <div class=" bold-text common-label required-field"> <label>Wall type</label></div>
+                  <multiselect
+                    v-model="wall_type"
+                    placeholder="Wall type"
+                    
+                    :options="walltypes"
+                    :multiple="true"
+                    :taggable="false"
+                    :show-labels="false"
+                    
+                  ></multiselect>
                 </div>
-                <div class="col-md-6 mt-10" v-if="sectionData.dirt_level">
+                <div class="col-md-6 mt-10" >
+                    <div class=" bold-text common-label required-field"> <label>Floor type</label></div>
+                  <multiselect
+                    v-model="floor_type"
+                    placeholder="Floor type"
+                    
+                    :options="floortypes"
+                    :multiple="true"
+                    :taggable="false"
+                    :show-labels="false"
+                   
+                    
+                  ></multiselect>
+                </div>
+                <div class="col-md-6 mt-10" >
+                    <div class=" bold-text common-label required-field"> <label>Ceiling type</label></div>
+                  <multiselect
+                    v-model="ceiling_type"
+                    placeholder="Ceiling type"
+                    :show-labels="false"
+                    
+                    :options="ceilingtypes"
+                    :multiple="true"
+                    :taggable="false"
+                   
+                    
+                  ></multiselect>
+                </div>
+               <!-- <div class="col-md-6 mt-10" v-if="sectionData.dirt_level">
                     <div class=" bold-text common-label required-field"> <label>Dirt Level</label></div>
                   <input  type="text" class="textBox OnlyText" placeholder="Dirt Level" required="" v-model="sectionData.dirt_level">
                 </div>
@@ -97,28 +155,26 @@
                 <div class="col-md-6 mt-10" v-if="sectionData.floor">
                     <div class=" bold-text common-label required-field"> <label>Floor</label></div>
                   <input  type="text" class="textBox OnlyText" placeholder="Dirt Level" required="" v-model="sectionData.floor">
-                </div>
-                <div class="col-md-6 mt-10" v-if="sectionData.floor_type">
-                    <div class=" bold-text common-label required-field"> <label>Floor type</label></div>
-                  <input  type="text" class="textBox OnlyText" placeholder="Dirt Level" required="" v-model="sectionData.floor_type">
-                </div>
-                <div class="col-md-6 mt-10" v-if="sectionData.wall_type">
-                    <div class=" bold-text common-label required-field"> <label>Wall type</label></div>
-                  <input  type="text" class="textBox OnlyText" placeholder="Dirt Level" required="" v-model="sectionData.wall_type">
-                </div>
-                <div class="col-md-6 mt-10" v-if="sectionData.ceiling_type">
-                    <div class=" bold-text common-label required-field"> <label>Ceiling Type</label></div>
-                  <input  type="text" class="textBox OnlyText" placeholder="Dirt Level" required="" v-model="sectionData.ceiling_type">
-                </div>
-               
+                </div>-->
+              
+               <div class="col-md-12">
+                <div class="section-cost">
+                    Section Cost
+                    <div class="text-center section-cost-price">
+                       <% editSectionData.section_cost +' KD'%>
+                    </div>
+                 </div>
+               </div>
               </div>
             </div>
           </div>
           <div class="modal-footer text-center">
           
+          
             <button type="submit" onclick="send_items()" class="btn primary-btn" data-dismiss="modal">Save Changes</button>
-            <button type="button" class="btn primary-btn-bordered" data-dismiss="modal" @click="resetContacts">Cancel</button>
-          </div>
+            <button type="button" class="btn primary-btn-bordered" data-dismiss="modal" @click="resetSection">Cancel</button>
+         
+        </div>
       </div>
       </div>
  </div>     
@@ -447,7 +503,8 @@
                         <div class="order-details-left-wrapper "><!--order details start-->
                             
                             <div class="order-edit">
-                                <img class="pointer" v-if="!edit" @click="edit = true"
+                                <img class="pointer" v-if="!edit" 
+                                  data-service="{{orderschedule.order_scheduler_book.service_type.name}}" onclick="editService(this)"
                                     src="{% static 'files/icons/edit.png' %}">
                             </div>
                             <div class="order-edit" v-if="edit">
@@ -540,7 +597,7 @@
                                         </div>
                                         <div class="col-md-2 m-mt30">
                                             <div class="agent-content-section1 c-mt-022">
-                                                <div v-if="edit" class="order-agent-edit">
+                                                <div v-if="edit" class="order-agent-edit" >
                                                     <img class="pointer" src="{% static 'files/icons/edit.png' %}">
                                                 </div>
                                                 <ul>
@@ -1723,6 +1780,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha512-T/tUfKSV1bihCnd+MxKD0Hm1uBBroVYBOYSk1knyvQ9VyZJpc/ALb4P0r6ubwVPSGB2GvjeoMAJJImBG12TiaQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.en-AU.min.js" integrity="sha512-ghvIK/3dPoQzHCrGQxvxAeTtLGNHobiKoLA8tdztoqiiINxSre6RiloNaN6uVLg1ESyBiZh7rnmRBa+psz85Zw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="https://unpkg.com/vue-multiselect@2.1.0"></script>
 
 <script src="{% static '/files/externalfiles/plugins/OwlCarousel2/dist/owl.carousel.js'%}"></script>
