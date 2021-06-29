@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from .models import Order,OrderScheduler,EvaluationBook
-from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook
+from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationBookSection
 from datetime import datetime,date,timedelta,timezone
 from django.http import JsonResponse
 import pandas as pd
@@ -12,6 +12,7 @@ from dateutil.relativedelta import relativedelta
 import requests
 from django.core.mail import send_mail,EmailMultiAlternatives
 from accountant.models import PaymentHistory
+from django.db.models import Prefetch
 # Create your views here.
 
 def quotation_data(request):
@@ -141,11 +142,36 @@ def sendinvoice(request):
     order_no = request.GET.get('order_no')
     order = Order.objects.filter(order_no=order_no).first()
 
+    selected_options = request.GET.get('selected_options')
+    print(selected_options,"opr")
+    options = selected_options.split(",")
+
     language = order.evaluation.customer.sms_preference
 
     evaluation = order.evaluation
 
-    if evaluation.customer.is_sms == True:
+    evaluationdetails = EvaluationDetails.objects.filter(evaluation=evaluation).first()
+    
+    address = evaluationdetails.address
+
+    evaluationbooks = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='sections'))
+    evaluationbook = evaluationbooks.first()
+
+    if address.floor == None and address.avenue == None:
+        address_list = [address.apartment, address.street, address.building, address.block, address.area.name, address.governorate.name]
+    
+    elif address.floor == None:
+        address_list = [address.apartment, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
+    
+    elif address.avenue == None:
+        address_list = [address.apartment, address.floor, address.street, address.building, address.block, address.area.name, address.governorate.name]
+    
+    else:
+        address_list = [address.apartment, address.floor, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
+
+    separator = ", "
+
+    if evaluation.customer.is_sms == True or 'SMS' in options:
 
         url = "https://smsapi.future-club.com/fccsms.aspx"
 
@@ -184,10 +210,10 @@ def sendinvoice(request):
     else:
         data = False
 
-    if evaluation.customer.is_email == True:
+    if evaluation.customer.is_email == True or 'EMAIL' in options:
         #send mail
-        msg_html = render_to_string('email/invoice.html',{})
-        msg = EmailMultiAlternatives('Bleach Invoice', '', 'notification@bleach-kw.com', [''+evaluation.customer.email+''])
+        msg_html = render_to_string('email/invoice.html',{"invoice":order,"address_list":separator.join(address_list),"evaluationbooks":evaluationbooks})
+        msg = EmailMultiAlternatives('Bleach Invoice', '', 'notification@bleach-kw.com', [evaluation.customer.email])
         msg.attach_alternative(msg_html, "text/html")
         msg.send(fail_silently=False)
         data=True
@@ -200,6 +226,12 @@ def sendquotation(request):
     order_no = request.GET.get('order_no')
     order = Order.objects.filter(order_no=order_no).first()
 
+    selected_options = request.GET.get('selected_options')
+    print(selected_options,"opr")
+    options = selected_options.split(",")
+
+    print(options,"op")
+
     language = order.evaluation.customer.sms_preference
 
     evaluation = order.evaluation
@@ -208,7 +240,13 @@ def sendquotation(request):
     
     address = evaluationdetails.address
 
-    evaluationbooks = EvaluationBook.objects.filter(evaluation_details=evaluationdetails)
+    if evaluationdetails.evaluator:
+        evaluator = evaluationdetails.evaluator.name
+    else:
+        evaluator = evaluation.call_attender.name
+
+    evaluationbooks = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='sections'))
+
     evaluationbook = evaluationbooks.first()
 
     if address.floor == None and address.avenue == None:
@@ -225,7 +263,7 @@ def sendquotation(request):
 
     separator = ", "
 
-    if evaluation.customer.is_sms == True:
+    if evaluation.customer.is_sms == True or 'SMS' in options:
     
         url = "https://smsapi.future-club.com/fccsms.aspx"
 
@@ -254,9 +292,9 @@ def sendquotation(request):
     else:
         data = False
 
-    if evaluation.customer.is_email == True:
+    if evaluation.customer.is_email == True or 'EMAIL' in options:
         #send mail
-        msg_html = render_to_string('email/quatation.html',{"evaluation":evaluation,"evaluationbooks":evaluationbooks})
+        msg_html = render_to_string('email/quatation.html',{"evaluator":evaluator,"evaluation":evaluation,"evaluationbooks":evaluationbooks,"address_list":separator.join(address_list)})
         msg = EmailMultiAlternatives('Bleach Quotation', '', 'notification@bleach-kw.com', [evaluation.customer.email])
         msg.attach_alternative(msg_html, "text/html")
         msg.send(fail_silently=False)

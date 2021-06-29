@@ -292,7 +292,7 @@
                         </div>
                         <span>:</span>
                         <div class="left">
-                            <b>Mr. Sasikuttan</b>
+                            <b>{{invoice.evaluation.customer.name}}</b>
                         </div>
                     </div>
                     <div class="info-section-item">
@@ -302,9 +302,7 @@
                         <span>:</span>
 
                         <div style="width: 200px;" class="left text-right">
-                            address
-                            address
-                            address
+                            {{address_list}}
                            
                         </div>
                     </div>
@@ -315,7 +313,7 @@
                         <span>:</span>
 
                         <div class="left text-right">
-                            00000000
+                            {{invoice.evaluation.customer.mobile_number}}
                         </div>
                     </div>
                     <div class="info-section-item">
@@ -325,7 +323,7 @@
                         <span>:</span>
 
                         <div class="left text-right">
-                            email@example.com
+                            {{invoice.evaluation.customer.email}}
                         </div>
                     </div>
                 </div>
@@ -339,7 +337,7 @@
                         <span>:</span>
 
                             <div class="left">
-                                <b>156521211</b>
+                                <b>INV{{invoice.invoice_no}}</b>
                             </div>
                         </div>
                         <div class="info-section-item">
@@ -349,7 +347,7 @@
                         <span>:</span>
 
                             <div class="left text-right">
-                                01-06-2021
+                                {{invoice.evaluation.created|date:'d-m-Y'}}
                             </div>
                         </div>
                         <div class="info-section-item">
@@ -359,7 +357,7 @@
                         <span>:</span>
 
                             <div class="left text-right">
-                                Breakdown
+                                {{invoice.evaluation.payment_method}}
                             </div>
                         </div>
                         <div class="info-section-item">
@@ -369,7 +367,7 @@
                         <span>:</span>
 
                             <div class="left text-right">
-                                BLC20202020200
+                                {{invoice.order_no}}
                             </div>
                         </div>
                         
@@ -377,40 +375,60 @@
                 </div>
             </div>
 
+            {% for book in evaluationbooks %}
             <!-- item-->
             <div class="order-items">
                 <div class="order-item-in">
                     <div id="item-left">
-                        <b>General Cleaning</b>
-                        <p style="font-size: 16px; margin-top: 10px; line-height: 2;">Size : <b>750 Square meter</b> &nbsp; Quantity : <b>1</b> &nbsp; Unit Price : <b>375.000</b></p>
+                        <b>{{book.service_type.name}}</b>
+                        {% for section in book.sections %}
+                        <p style="font-size: 16px; margin-top: 10px; line-height: 2;">Size : <b>{{section.size}} {{section.unit}}</b>
+                            &nbsp; Quantity : <b>{{section.section_cleanings|default_if_none:'1'}}</b> &nbsp; Unit Price : <b>{{section.section_cost|default_if_none:'0.000'}}</b></p>
+                        {% endfor %}
                     </div>
+                    {% for section in book.sections %}
                     <div style="flex-grow: 1;" class="m-mt-10 left">
                         <b>NET PRICE</b>
-                        <p style="font-size: 16px; margin-top: 10px; line-height: 2;" class="amount-text m-mt-10"><b>375.000</b> KD</p>
+                        <p style="font-size: 16px; margin-top: 10px; line-height: 2;" class="amount-text m-mt-10">
+                            <b>{{section.section_net_cost|default_if_none:'0.000'}}</b> KD
+                        </p>
                     </div>
+                    {% endfor %}
                 </div>
             </div>
+            <!-- item-->
+            {% endfor %}
           
             
             <div class="info-section">
                 <div class="info-section-left">
+                    {% if invoice.evaluation.payment_method == 'PREPAID' or invoice.evaluation.payment_method == 'BREAKDOWN' %}
                     <div class="info-section-item">
                         <div style="font-size: 14px;" class="info-section-item-left-3">
                             <b>Payment Before Cleaning</b>
                         </div>
-                        <div  style="font-size: 14px;" class="left">
-                            <b>340.000</b>&nbsp;KD
+                        <div style="font-size: 14px;" class="left">
+                        {% if invoice.evaluation.payment_method == 'PREPAID' %}
+                            <b>{{invoice.total_amount|floatformat:3}}</b>&nbsp;KD
+                        {% else %}
+                            <b>{{invoice.evaluation.before_cleaning_amount|floatformat:3}}</b>&nbsp;KD
+                        {% endif %}
                         </div>
                     </div>
-                  
+                {% elif invoice.evaluation.payment_method == 'POSTPAID' or invoice.evaluation.payment_method == 'BREAKDOWN' %}
                     <div class="info-section-item">
                         <div style="font-size: 14px;" class="info-section-item-left-3">
                             <b>Payment After Cleaning</b>
                         </div>
                         <div style="font-size: 14px;" class="left text-right">
-                            <b>35.000</b> &nbsp;  KD
+                            {% if invoice.evaluation.payment_method == 'POSTPAID' %}
+                                <b>{{invoice.total_amount|floatformat:3}}</b>&nbsp;KD
+                            {% else %}
+                                <b>{{invoice.evaluation.after_cleaning_amount|floatformat:3}}</b>&nbsp;KD
+                            {% endif %}
                         </div>
                     </div>
+                {% endif %}
                   
                 </div>
 
@@ -421,7 +439,7 @@
                                 Sub Total
                             </div>
                             <div class="left">
-                                000  &nbsp;KD
+                                {{invoice.evaluation.estimated_cost|floatformat:3}} &nbsp;KD
                             </div>
                         </div>
                         <div class="info-section-item">
@@ -429,7 +447,7 @@
                                Discount
                             </div>
                             <div class="left text-right">
-                                000  &nbsp;KD
+                                {{invoice.evaluation.discount|floatformat:3}} &nbsp;KD
                             </div>
                         </div>
                         <div class="info-section-item">
@@ -437,7 +455,7 @@
                                 Grand Total
                             </div>
                             <div class="left text-right">
-                               <b> 000  &nbsp;KD</b>
+                               <b>{{invoice.evaluation.total_cost|floatformat:3}}</b>&nbsp;KD
                             </div>
                         </div>
                         <!-- <div class="info-section-item">
@@ -462,7 +480,7 @@
                         </div>
                         <span>:</span>
                         <div  style="font-size: 14px;" class="left">
-                            0
+                            {{invoice.amount_paid|floatformat:'3'}}
                         </div>
                     </div>
                   
@@ -472,7 +490,7 @@
                         </div>
                         <span>:</span>
                         <div style="font-size: 14px;" class="left text-right">
-                            0
+                            {{invoice.remining_amount|floatformat:'3'}}
                         </div>
                     </div>
                     <div class="info-section-item">
@@ -481,7 +499,19 @@
                         </div>
                     </div>
                     <div id="inovice_amount">
-                        375.000 &nbsp;KD
+
+
+                    {% if invoice.evaluation.payment_method == 'BREAKDOWN' %}
+                  {% if invoice.evaluation.before_cleaning_amount != invoice.preamount_paid %}
+                    {{invoice.evaluation.before_cleaning_amount|floatformat:'3'}} &nbsp;KD
+                  {% elif invoice.evaluation.after_cleaning_amount != invoice.postamount_paid %}
+                    {{invoice.remining_amount|floatformat:'3'}} &nbsp;KD
+                  {% endif %}
+
+                  {% else %}
+                  {{invoice.remining_amount|floatformat:'3'}} &nbsp;KD
+                  {% endif %}
+
                     </div>
                 </div>
 

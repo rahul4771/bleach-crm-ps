@@ -744,9 +744,9 @@ def quatation_html_to_pdf_view(request,evaluation_id):
 	html     = HTML(string=html_string,base_url=request.build_absolute_uri())
 	main_doc = html.render()
 
-	main_doc.write_pdf(target='/home/sonu/pdf/tmp/quatation/quatation.pdf');
+	main_doc.write_pdf(target='/home/pdf/tmp/quatation/quatation.pdf');
 
-	fs = FileSystemStorage('/home/sonu/pdf/tmp/quatation/')
+	fs = FileSystemStorage('/home/pdf/tmp/quatation/')
 	with fs.open('quatation.pdf') as pdf:
 		response = HttpResponse(pdf, content_type='application/pdf')
 		response['Content-Disposition'] = 'attachment; filename="'+evaluation_id+'_quatation.pdf"'
@@ -816,9 +816,9 @@ def invoice_html_to_pdf_view(request,evaluation_id):
 	html_string = render_to_string("customer/downloads/invoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'completed_jobs_count':completed_jobs_count})
 
 	html = HTML(string=html_string,base_url=request.build_absolute_uri())
-	html.write_pdf(target='/home/sonu/pdf/tmp/invoice/invoice.pdf');
+	html.write_pdf(target='/home/pdf/tmp/invoice/invoice.pdf');
 
-	fs = FileSystemStorage('/home/sonu/pdf/tmp/invoice/')
+	fs = FileSystemStorage('/home/pdf/tmp/invoice/')
 	with fs.open('invoice.pdf') as pdf:
 		response = HttpResponse(pdf, content_type='application/pdf')
 		response['Content-Disposition'] = 'attachment; filename="'+evaluation_id+'_invoice.pdf"'
@@ -2896,8 +2896,7 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 				for key in sections_dict.keys():
 					section_save_serializer                    = EvaluationBookSectionSerializer(data=sections_dict[key])
 					if section_save_serializer.is_valid():
-						saved_section                          = section_save_serializer.save(evaluation_book=saved_service,section_cleanings=1)
-						
+						saved_section                          = section_save_serializer.save(evaluation_book=saved_service,section_cleanings=len(schedules_dict))
 						response_dict['section_success']       = True
 					else:
 						errors= section_save_serializer.errors   
@@ -3244,7 +3243,7 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 				for key in sections_dict.keys():
 					section_save_serializer                    = EvaluationBookSectionSerializer(data=sections_dict[key])
 					if section_save_serializer.is_valid():
-						saved_section                          = section_save_serializer.save(evaluation_book=saved_service,section_cleanings=1)
+						saved_section                          = section_save_serializer.save(evaluation_book=saved_service,section_cleanings=len(schedules_dict))
 						
 						response_dict['section_success']       = True
 					else:
@@ -3593,7 +3592,7 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 			for key in sections_dict.keys():
 				section_save_serializer                    = EvaluationBookSectionSerializer(data=sections_dict[key])
 				if section_save_serializer.is_valid():
-					saved_section                          = section_save_serializer.save(evaluation_book=saved_service,section_cleanings=1)
+					saved_section                          = section_save_serializer.save(evaluation_book=saved_service,section_cleanings=len(schedules_dict))
 					
 					response_dict['section_success']       = True
 				else:
@@ -3821,6 +3820,7 @@ class DuplicateBookingPhase2(APIView):
 		total_cleaners 	= UserProfile.objects.filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
 		total_leaders   = UserProfile.objects.filter(is_general_skill=True,user_type='TEAMINCHARGE')
 		for service_detail in services.keys():
+			print(services[service_detail]['id'],"boooookk iddddddddddddddd")
 			service_book        		= EvaluationBook.objects.get(id=services[service_detail]['id'])
 			service_type   		        = service_book.service_type.name
 
@@ -4334,7 +4334,7 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 				schedules_dict     = list(request.data.get("service_details").values())[0]['schedule_details']
 				evaluation_details = EvaluationDetails.objects.get(id=services[service_detail]['evaluation_details_id'])
 
-				sections       = EvaluationBookSection.objects.filter(evaluation_book_id=services[service_detail]['id']).update(section_cleanings=len(schedules_dict))
+				sections           = EvaluationBookSection.objects.filter(evaluation_book_id=services[service_detail]['id']).update(section_cleanings=len(schedules_dict),section_net_cost=len(schedules_dict))
 				
 				for key in schedules_dict.keys():
 					schedule_date           =  schedules_dict[key]['date']
@@ -4421,6 +4421,135 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 		response_dict['success'] = True
 
 		return Response(response_dict,HTTP_200_OK)
+
+
+#edit order apis
+class EditOrderDetails(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+	def post(self,request,order_id):
+		response_dict = {}
+		response_dict['success'] = False
+		action = request.data.get('action_type')
+
+		order = Order.objects.select_related('evaluation').get(id=order_id)
+
+		if action == 'add_section':                       
+			section_save_serializer                    = EvaluationBookSectionSerializer(data=request.data.get('section_details'))
+			if section_save_serializer.is_valid():
+				evaluation_book__id                    = request.data.get('evaluation_book__id')
+				evaluation_book                        = EvaluationBook.objects.select_related('evaluation_details').get(id=evaluation_book__id).prefetch_related(Prefetch('order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
+				total_cleanings                        = evaluation_book.orderschedules.count()
+
+				if evaluation_book.cleaning_policy == 'SUBSCRIPTION':
+					saved_section                          = section_save_serializer.save(evaluation_book_id=evaluation_book__id,section_cleanings=total_cleanings,section_net_cost=section_save_serializer.section_cost*total_cleanings)
+				else:
+					saved_section                          = section_save_serializer.save(evaluation_book_id=evaluation_book__id,section_cleanings=total_cleanings,section_net_cost=section_save_serializer.section_cost)
+
+				evaluation_book.estimated_cost     				  += saved_section.section_net_cost
+				evaluation_book.total_cost         				  += saved_section.section_net_cost
+				evaluation_book.total_cost.save()
+
+				evaluation_book.evaluation_details.estimated_cost += saved_section.section_net_cost
+				evaluation_book.evaluation_details.total_cost     += saved_section.section_net_cost
+				evaluation_book.evaluation_details.total_cost.save()
+
+				order.remining_amount += saved_section.section_net_cost
+				order.total_amount    += saved_section.section_net_cost
+				order.save()
+
+				order.evaluation.total_cost   += saved_section.section_net_cost
+				order.evaluation.estimated    += saved_section.section_net_cost
+				order.evaluation.save()
+
+				response_dict['section_success']       = True
+				response_dict['success']  = True
+
+			else:
+				errors= section_save_serializer.errors   
+				key=tuple(errors.keys())[0] 
+				error=errors[key]
+				response_dict['section_Error']=key +':'+ error[0]
+				response_dict['section_Error_List'] = section_save_serializer.errors
+
+				response_dict['section_add_success']  = False
+
+				return Response(response_dict,HTTP_200_OK)
+
+		elif action == 'edit_section':
+			section_id        = request.data.get('section_id')
+			old_section_cost  = EvaluationBookSection.objects.select_related('evaluation_book__evaluation_details').get(id=section_id).section_net_cost
+			
+			section_save_serializer        = EvaluationBookSectionSerializer(data=request.data.get('section_details'),instance=saved_section)
+			if section_save_serializer.is_valid():
+				evaluation_book__id                    = request.data.get('evaluation_book__id')
+				evaluation_book                        = EvaluationBook.objects.select_related('evaluation_details').get(id=evaluation_book__id).prefetch_related(Prefetch('order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
+				total_cleanings                        = evaluation_book.orderschedules.count()
+
+				if evaluation_book.cleaning_policy == 'SUBSCRIPTION':
+					saved_section                          = section_save_serializer.save(evaluation_book_id=evaluation_book__id,section_cleanings=total_cleanings,section_net_cost=section_save_serializer.section_cost*total_cleanings)
+				else:
+					saved_section                          = section_save_serializer.save(evaluation_book_id=evaluation_book__id,section_cleanings=total_cleanings,section_net_cost=section_save_serializer.section_cost)
+
+				evaluation_book.estimated_cost     				  += (old_section_cost-saved_section.section_net_cost)
+				evaluation_book.total_cost         				  += (old_section_cost-saved_section.section_net_cost)
+				evaluation_book.total_cost.save()
+
+				evaluation_book.evaluation_details.estimated_cost += (old_section_cost-saved_section.section_net_cost)
+				evaluation_book.evaluation_details.total_cost     += (old_section_cost-saved_section.section_net_cost)
+				evaluation_book.evaluation_details.total_cost.save()
+
+				order.remining_amount += (old_section_cost-saved_section.section_net_cost)
+				order.total_amount    += (old_section_cost-saved_section.section_net_cost)
+				order.save()
+
+				order.evaluation.total_cost   += (old_section_cost-saved_section.section_net_cost)
+				order.evaluation.estimated    += (old_section_cost-saved_section.section_net_cost)
+				order.evaluation.save()
+
+				response_dict['edit_success']       = True
+				response_dict['success']  = True
+
+			else:
+				errors= section_save_serializer.errors   
+				key=tuple(errors.keys())[0] 
+				error=errors[key]
+				response_dict['section_Error']=key +':'+ error[0]
+				response_dict['section_Error_List'] = section_save_serializer.errors
+
+				response_dict['section_add_success']  = False
+
+				return Response(response_dict,HTTP_200_OK)
+
+		elif action == 'delete_section':
+			section_id = request.data.get('section_id')
+			saved_section    = EvaluationBookSection.objects.select_related('evaluation_book__evaluation_details').get(id=section_id)
+			
+			saved_section.evaluation_book.estimated_cost     				  += saved_section.section_net_cost
+			saved_section.evaluation_book.total_cost         				  += saved_section.section_net_cost
+			saved_section.evaluation_book.total_cost.save()
+
+			saved_section.evaluation_book.evaluation_details.estimated_cost += saved_section.section_net_cost
+			saved_section.evaluation_book.evaluation_details.total_cost     += saved_section.section_net_cost
+			saved_section.evaluation_book.evaluation_details.total_cost.save()
+
+			order.remining_amount += saved_section.section_net_cost
+			order.total_amount    += saved_section.section_net_cost
+			order.save()
+
+			order.evaluation.total_cost   += saved_section.section_net_cost
+			order.evaluation.estimated    += saved_section.section_net_cost
+			order.evaluation.save()
+
+			saved_section.delete()
+
+			response_dict['section_delete_success']  = True
+			response_dict['success']  = True
+
+			return Response(response_dict,HTTP_200_OK)	
+		
+		return Response(response_dict,HTTP_200_OK)
+
 
 
 from django.core.mail import send_mail,EmailMultiAlternatives

@@ -4266,7 +4266,7 @@ class TicketRegistration(IsAgent,View):
 						
 			#Email Send
 			msg_html = render_to_string('email/rise_ticket_request.html',{'investigation_form_save':investigation_form_save})
-			msg      = EmailMultiAlternatives('Ticket Rised', '', 'notification@bleach-kw.com', [investigation_form_save.investigator.email])
+			msg      = EmailMultiAlternatives('Ticket Raised', '', 'notification@bleach-kw.com', [investigation_form_save.investigator.email])
 			msg.attach_alternative(msg_html, "text/html")
 			msg.send(fail_silently=False)
 
@@ -4358,7 +4358,7 @@ class OrderTicketRegistration(IsAgent,View):
 
 			#Email Send
 			msg_html = render_to_string('email/rise_ticket_request.html',{'investigation_form_save':investigation_form_save})
-			msg      = EmailMultiAlternatives('Ticket Rised', '', 'notification@bleach-kw.com', [investigation_form_save.investigator.email])
+			msg      = EmailMultiAlternatives('Ticket Raised', '', 'notification@bleach-kw.com', [investigation_form_save.investigator.email])
 			msg.attach_alternative(msg_html, "text/html")
 			msg.send(fail_silently=False)
 									

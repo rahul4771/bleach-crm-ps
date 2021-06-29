@@ -550,9 +550,9 @@
                 
 
                 <div class="inv-payment-box">
-                  <div class="inv-payment-card mt-4 text-center inv-click-disable" id="inv-credit" onclick="selectPayment('credit')"><!-- to disable click add class inv-click-disable -->
-                    <img src="{% static 'files/icons/debit-card.png' %}" class="inv-card-icon inv-payment-disabled" id="inv-credit-img"  /> <!-- to disable  add class inv-payment-disabled -->
-                    <div class="inv-payment-text inv-payment-disabled"> <!-- to disable  add class inv-payment-disabled -->
+                  <div class="inv-payment-card mt-4 text-center {% if order.evaluation.customer.is_credit == False %}inv-click-disable{% endif %}" id="inv-credit" onclick="selectPayment('credit')"><!-- to disable click add class inv-click-disable -->
+                    <img src="{% static 'files/icons/debit-card.png' %}" class="inv-card-icon {% if order.evaluation.customer.is_credit == False %}inv-payment-disabled{% endif %}" id="inv-credit-img"  /> <!-- to disable  add class inv-payment-disabled -->
+                    <div class="inv-payment-text {% if order.evaluation.customer.is_credit == False %}inv-payment-disabled{% endif %}"> <!-- to disable  add class inv-payment-disabled -->
                       Credit Card
                     </div>
                     <div class="inv-check-box mt-2 mb-2 mx-auto" id="inv-credit-check-box">
