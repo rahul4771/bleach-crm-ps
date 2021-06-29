@@ -4486,9 +4486,10 @@ class EditOrderDetails(APIView):
 
 		elif action == 'edit_section':
 			section_id        = request.data.get('section_id')
-			old_section_cost  = EvaluationBookSection.objects.select_related('evaluation_book__evaluation_details').get(id=section_id).section_net_cost
-			
-			section_save_serializer        = EvaluationBookSectionSerializer(data=request.data.get('section_details'),instance=saved_section)
+			old_section       = EvaluationBookSection.objects.select_related('evaluation_book__evaluation_details').get(id=section_id)
+			old_section_cost  = old_section.section_net_cost
+
+			section_save_serializer        = EvaluationBookSectionSerializer(data=request.data.get('section_details'),instance=old_section)
 			if section_save_serializer.is_valid():
 				evaluation_book__id                    = request.data.get('evaluation_book__id')
 				evaluation_book                        = EvaluationBook.objects.select_related('evaluation_details').prefetch_related(Prefetch('order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules')).get(id=evaluation_book__id)
