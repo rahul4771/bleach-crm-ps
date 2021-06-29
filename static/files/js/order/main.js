@@ -217,7 +217,8 @@ const app = new Vue({
          "is_highprice_window":false,
       }
       if(this.editSectionData.wall_type.length>0){
-        this.sectionData.wall_type=this.editSectionData.wall_type.join()   
+        this.sectionData.wall_type=this.editSectionData.wall_type.join() 
+        console.log("in wall type : "+this.editSectionData.wall_type)  
       }
       if(this.editSectionData.floor_type.length>0){
         this.sectionData.wall_type=this.editSectionData.floor_type.join()   
