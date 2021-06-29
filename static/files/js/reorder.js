@@ -583,7 +583,8 @@ function openNav() {
       custServiceScheduled:{},
       currentAddressIndex:null,
       completedAddress:[],
-      scheduleGroup:{}
+      scheduleGroup:{},
+      orderId:''
           },
        
   /* header data */
@@ -4197,8 +4198,8 @@ function openNav() {
       for(var i=0;i<serviceBookedDetails.length;i++)
       {
         var scheduleDetails={
-          id:this.selectedAddress.id,
-          evaluation_details_id:serviceBookedDetails[i].id,
+          id:serviceBookedDetails[i].id,
+          evaluation_details_id:this.selectedAddress.id,
           area_type:serviceBookedDetails[i].area_type,
           bill:[],
           evaluator_note:serviceBookedDetails[i].evaluator_note,
@@ -4255,16 +4256,17 @@ function openNav() {
   bookLetCustService(){
     if(this.currentAddressIndex==0){
       this.custServiceScheduled={
-        "booking_type":"",
+       
         "service_details":{}
-      },
-      this.custServiceScheduled.booking_type='together'
+      }
+     
     }
     for(var i=0;i<this.multiServicesBill.length;i++){
       this.custServiceScheduled.service_details[i+1]={
         "id":this.multiServicesBill[i].id,
         "evaluation_details_id":this.multiServicesBill[i].evaluation_details_id,
-        "schedule_details":this.multiServicesBill[i].schedule_details
+        "schedule_details":this.multiServicesBill[i].schedule_details,
+        "cleaning_policy":this.multiServicesBill[i].cleaning_policy
       }
     }
     this.completedAddress.push(this.currentAddressIndex)
@@ -4287,18 +4289,19 @@ function openNav() {
       for(var ch in this.scheduleGroup){
         if(this.scheduleGroup[ch].length>0){
           var serviceDetails={
-            "booking_type":"together",
+           
             "service_details":{}
           }
           for(var j=0;j<this.scheduleGroup[ch].length;j++){
             var service=this.scheduleGroup[ch]
             serviceDetails.service_details[j+1]={
               "id":this.multiServicesBill[service[j]].id,
+              "cleaning_policy":this.multiServicesBill[service[j]].cleaning_policy,
               "evaluation_details_id":this.multiServicesBill[service[j]].evaluation_details_id,
               "schedule_details":this.multiServicesBill[service[j]].schedule_details
             }
           }
-          axios.post(this.url+'/customer/evaluatorbookingmultiplephase3/customer/'+this.custId,serviceDetails).then(response=>{
+          axios.post(this.url+'/customer/duplicatebookingphase2/'+this.orderId+'/',serviceDetails).then(response=>{
             
             this.goToPaymentDialog()
           
@@ -4311,7 +4314,7 @@ function openNav() {
   
     }
     else{
-      axios.post(this.url+'/customer/evaluatorbookingmultiplephase3/customer/'+this.custId,this.custServiceScheduled).then(response=>{
+      axios.post(this.url+'/customer/duplicatebookingphase2/'+this.orderId+'/',this.custServiceScheduled).then(response=>{
         this.goToPaymentDialog()
       })
     }
@@ -4325,6 +4328,8 @@ function openNav() {
       const urlSearchParams = new URLSearchParams(window.location.search);
       const params = Object.fromEntries(urlSearchParams.entries());
       this.custId=params.id
+      this.orderId=params.id
+
       this.getDuplicate()
       //this.getBookedServices()
      // this.getServices()
