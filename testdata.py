@@ -545,7 +545,7 @@ GET
 }
 
 
-#payment policy
+##payment policy and discount
 {
 payment_policy: PREPAID,POSTPAID,BREAKDOWN
 #BREAKDOWN => before_cleaning_amount,after_cleaning_amount
@@ -554,4 +554,13 @@ payment_policy: PREPAID,POSTPAID,BREAKDOWN
 #amount
 
 
+}
+
+##add_cleaning
+{
+   "action_type":'add_cleaning',
+   "evaluation_book_id":4,
+   "cleaning_date":'',
+   "cleaning_time":'',
+   "cleaning_hours":'',
 }
