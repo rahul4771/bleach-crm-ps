@@ -148,26 +148,123 @@ const app = new Vue({
               ceiling_type:[],
               floor_type:[],
               material:[],
-              category:null,
-              age:null
+              category:'Floor',
+              age:null,
+              is_newkitchen:false
              },
              section_cost:0,
              orderId:'',
-             sections:[]
+             sections:[],
+             currentSection:[],
+             gotSection:false,
+             url:'http://localhost:8000',
+             eval_book_id:'',
+             action_type:''
   },
   methods:{
-    resetSection(){
+    editSection(index,sid){
+      this.action_type="Edit"
+      console.log("index is"+index)
+     // var sectiondata=$(section).data()
+     this.editSectionData.section_id=sid
+      console.log("section is "+JSON.stringify(this.sections[index-1]))
+      this.sectionData=this.sections[index-1]
+      $('#edit-dialog-tigger').click()
+      this.editSectionData.section_cost=this.sectionData.section_cost
+      this.editSectionData.section_name=this.sectionData.section_name
       
+    },
+    addSection(index){
+      this.action_type="Add"
+      $('#edit-dialog-tigger').click()
+    },
+    changeCategory(){
+      this.service_productivity=[]
+      this.editSectionData.size={}
+      if(this.editSectionData.category=='Kitchen'){
+        var service='Kitchen Cleaning'
+        axios.get('https://test.bleach-kw.com/customer/ajax/getservicesizeprice?service_type='+service).then(response=>{
+          this.productivity=response.data
+          for(var i in this.productivity){
+            if(!this.editSectionData.is_newkitchen && !this.productivity[i].is_newkitchen){
+              this.service_productivity.push(this.productivity[i])
+            }
+            else if(this.editSectionData.is_newkitchen && this.productivity[i].is_newkitchen){
+              this.service_productivity.push(this.productivity[i])
+            }
+           
+          }
+      })
+      }
+      else {
+        this.getProductivity()
+      }
+    },
+    updateSection(){
+      var sectionData={}
+      sectionData=
+        {
+          "section_name":this.editSectionData.section_name,
+          "size":this.editSectionData.size.name,
+          "wall_type":this.editSectionData.wall_type.join(),
+          "ceiling_type":this.editSectionData.ceiling_type.join(),
+          "floor_type":this.editSectionData.floor_type.join(),
+          "cement_residue":false,
+          "section_cost":this.editSectionData.section_cost,
+          "section_net_cost":this.editSectionData.section_cost,
+          "is_newkitchen":this.editSectionData.is_newkitchen,
+         "is_highprice_facade":false,
+         "is_highprice_window":false,
+      }
+      axios.post(this.url+'/customer/editorder/'+this.orderId,{
+        "action_type":'add_section',
+        "evaluation_book__id":this.eval_book_id,
+        "section_details":sectionData,
+        "section_id":this.editSectionData.section_id,
+      }).then(response=>{
+        console.log(response)
+        $('#edit-section-close').click()
+        this.resetSection()
+      })
+    },
+    
+    resetSection(){
+      this.productivity={},
+      this.service_productivity=[],
+             this.editSectionData={
+              size:{},
+              area_type:[],
+              section_cost:0,
+              section_name:'',
+              floor_type:[],
+              ceiling_type:[],
+              floor_type:[],
+              material:[],
+              category:'Floor',
+              age:null,
+              is_newkitchen:false
+             },
+             this.section_cost=0
+             
     },
     getOrderId(){
       var orderId=window.location.href.split('/')[7]
       this.orderId=orderId
       console.log("orderid is"+orderId)
+
      
     },
+    getSections(id){
+      console.log("sectionid is"+id)
+      console.log("data is"+JSON.stringify(this.sections[id]))
+      this.currentSection=this.sections[id]
+      this.gotSection=true
+      return this.currentSection
+    },
     getSection(id){
-        axios.get('customer/editorder/'+this.orderId+'?evaluation_book_id='+id).then(response=>{
-          this.sections=response.data
+      this.eval_book_id=id
+        axios.get('http://localhost:8000/customer/editorder/'+this.orderId+'?evaluation_book_id='+id).then(response=>{
+          this.sections=response.data.section_details.evaluationsection_book
         }).catch(err=>{
           console.log(err)
         })
@@ -196,6 +293,7 @@ const app = new Vue({
       this.contacts=[]
     },
     getProductivity(){
+      this.service_productivity=[]
       axios.get('https://test.bleach-kw.com/customer/ajax/getservicesizeprice?service_type='+this.service_type).then(response=>{
           this.productivity=response.data
           for(var i in this.productivity){
