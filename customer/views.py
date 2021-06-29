@@ -4606,7 +4606,18 @@ class EditOrderDetails(APIView):
 				response_dict['success']  = True
 
 		elif action == 'add_cleaning':
-			pass
+			evaluation_book_id = request.data.get('evaluation_book_id')
+			evaluation_book    = EvaluationBook.objects.select_related('evaluation_details').get(id=evaluation_book_id) 
+			
+			cleaning_date 	   = request.data.get('cleaning_date')
+			cleaning_time      = request.data.get('cleaning_time')
+			cleaning_hours 	   = float(request.data.get('cleaning_hours'))
+			start_at           = datetime.strptime(cleaning_date+' '+cleaning_time,'%d-%m-%Y %I:%M %p')
+			end_at             = start_at + timedelta(hours=cleaning_hours)
+
+			OrderScheduler.objects.create(order=order,evaluation_details=evaluation_book.evaluation_details,order_scheduler_book__id=evaluation_book_id,start_at=start_at,end_at=end_at,customer_address=evaluation_book.evaluation_details.address,status='CONFIRMED')
+			
+			response_dict['success']  = True
 
 		return Response(response_dict,HTTP_200_OK)
 
