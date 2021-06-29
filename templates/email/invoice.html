@@ -129,7 +129,7 @@
             margin-top: 20px;
             display: flex;
             color: #707070;
-            font-size: 18px;
+            font-size: 15px;
         }
 
         .info-section-left {
@@ -382,14 +382,14 @@
                     <div id="item-left">
                         <b>{{book.service_type.name}}</b>
                         {% for section in book.sections %}
-                        <p style="font-size: 16px; margin-top: 10px; line-height: 2;">Size : <b>{{section.size}} {{section.unit}}</b>
+                        <p style="font-size: 15px; margin-top: 10px; line-height: 2;">Size : <b>{{section.size}} {{section.unit}}</b>
                             &nbsp; Quantity : <b>{{section.section_cleanings|default_if_none:'1'}}</b> &nbsp; Unit Price : <b>{{section.section_cost|default_if_none:'0.000'}}</b></p>
                         {% endfor %}
                     </div>
                     {% for section in book.sections %}
                     <div style="flex-grow: 1;" class="m-mt-10 left">
                         <b>NET PRICE</b>
-                        <p style="font-size: 16px; margin-top: 10px; line-height: 2;" class="amount-text m-mt-10">
+                        <p style="font-size: 15px; margin-top: 10px; line-height: 2;" class="amount-text m-mt-10">
                             <b>{{section.section_net_cost|default_if_none:'0.000'}}</b> KD
                         </p>
                     </div>
@@ -404,7 +404,7 @@
                 <div class="info-section-left">
                     {% if invoice.evaluation.payment_method == 'PREPAID' or invoice.evaluation.payment_method == 'BREAKDOWN' %}
                     <div class="info-section-item">
-                        <div style="font-size: 14px;" class="info-section-item-left-3">
+                        <div style="font-size: 15px;" class="info-section-item-left-3">
                             <b>Payment Before Cleaning</b>
                         </div>
                         <div style="font-size: 14px;" class="left">
@@ -417,10 +417,10 @@
                     </div>
                 {% elif invoice.evaluation.payment_method == 'POSTPAID' or invoice.evaluation.payment_method == 'BREAKDOWN' %}
                     <div class="info-section-item">
-                        <div style="font-size: 14px;" class="info-section-item-left-3">
+                        <div style="font-size: 15px;" class="info-section-item-left-3">
                             <b>Payment After Cleaning</b>
                         </div>
-                        <div style="font-size: 14px;" class="left text-right">
+                        <div style="font-size: 15px;" class="left text-right">
                             {% if invoice.evaluation.payment_method == 'POSTPAID' %}
                                 <b>{{invoice.total_amount|floatformat:3}}</b>&nbsp;KD
                             {% else %}
@@ -475,26 +475,26 @@
                 <div class="info-section-left">
                     <h2 style="font-size: 24px; font-weight: 400;" class="mb-10">Payment</h2>
                     <div class="info-section-item">
-                        <div style="font-size: 14px;" class="info-section-item-left-3">
+                        <div style="font-size: 15px;" class="info-section-item-left-3">
                            Paid till date
                         </div>
                         <span>:</span>
-                        <div  style="font-size: 14px;" class="left">
+                        <div  style="font-size: 15px;" class="left">
                             {{invoice.amount_paid|floatformat:'3'}}
                         </div>
                     </div>
                   
                     <div class="info-section-item">
-                        <div style="font-size: 14px;" class="info-section-item-left-3">
+                        <div style="font-size: 15px;" class="info-section-item-left-3">
                             Balance till date
                         </div>
                         <span>:</span>
-                        <div style="font-size: 14px;" class="left text-right">
+                        <div style="font-size: 15px;" class="left text-right">
                             {{invoice.remining_amount|floatformat:'3'}}
                         </div>
                     </div>
                     <div class="info-section-item">
-                        <div style="font-size: 14px;" class="info-section-item-left-3">
+                        <div style="font-size: 15px;" class="info-section-item-left-3">
                             Payable amount
                         </div>
                     </div>
@@ -531,14 +531,18 @@
             font-weight: bold;
             width: 200px;
             font-size: 22px;">
-                <b> <a href="" class="button-a">Pay</a> </b>
+            {% if invoice.evaluation.payment_method == 'SUBSCRIPTION' %}
+                <b> <a href="/customer/subscription/invoice/prw{{invoice.evaluation.evaluation_id|slice:'3:'}}{{invoice.evaluation.customer.username}}" class="button-a">Pay</a> </b>
+            {% else %}
+                <b> <a href="/customer/invoice/prw{{invoice.evaluation.evaluation_id|slice:'3:'}}{{invoice.evaluation.customer.username}}" class="button-a">Pay</a> </b>
+            {% endif %}
             </div>
         </div>
     </div>
     <div style=" width: auto;
     color: #707070; text-align: center; background: #EEEEEE; padding: 2%;">
         <div id="footer-content">
-            <p style="font-weight: 600; font-size: 14px;">This is an automatically generated email form CRM system of
+            <p style="font-weight: 600; font-size: 12px;">This is an automatically generated email form CRM system of
                 Bleach. Please do not reply directly to this email.</p>
             <p style="margin-top: 10px; font-size: 12px;">Visit us on <a style="text-decoration: none; color: #2A8EA2;"
                     href="https://www.bleach-kw.com/">Bleach-kw.com</a></p>
@@ -579,11 +583,13 @@
                 </li>
             </ul>
             <div style="display: flex;">
-                <div style="text-align: left; font-size: 14px;">
-                    Terms
+            <a href="https://web-dev.bleach-kw.com/terms-and-conditions/?lang=en">
+                <div style="text-align: left; font-size: 12px;">
+                    Terms & Conditions
 
                 </div>
-                <div style="margin-left: auto; text-align: right; font-size: 14px;">
+                </a>
+                <div style="margin-left: auto; text-align: right; font-size: 12px;">
                     Copyrights © 2021Bleach Cleaning services
                 </div>
             </div>
