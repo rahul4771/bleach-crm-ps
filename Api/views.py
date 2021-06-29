@@ -1280,3 +1280,98 @@ class SOAMailAPI(APIView):
 		else:
 			data = False
 		return Response(data,HTTP_200_OK)
+
+
+class InvoiceSMSMailAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+		response_dict = {}
+		client_id = request.GET.get('client_id')
+		customer = UserProfile.objects.filter(is_active=True,id=int(client_id))
+		response_dict['customer'] = customer
+		return Response(response_dict,HTTP_200_OK)
+
+	def post(self,request):
+		order_no = request.GET.get('order_no')
+		order = Order.objects.filter(order_no=order_no).first()
+
+		selected_options = request.GET.get('selected_options')
+		print(selected_options,"opr")
+		options = selected_options.split(",")
+
+		language = order.evaluation.customer.sms_preference
+
+		evaluation = order.evaluation
+
+		evaluationdetails = EvaluationDetails.objects.filter(evaluation=evaluation).first()
+		
+		address = evaluationdetails.address
+
+		evaluationbooks = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='sections'))
+		evaluationbook = evaluationbooks.first()
+
+		if address.floor == None and address.avenue == None:
+			address_list = [address.apartment, address.street, address.building, address.block, address.area.name, address.governorate.name]
+		
+		elif address.floor == None:
+			address_list = [address.apartment, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
+		
+		elif address.avenue == None:
+			address_list = [address.apartment, address.floor, address.street, address.building, address.block, address.area.name, address.governorate.name]
+		
+		else:
+			address_list = [address.apartment, address.floor, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
+
+		separator = ", "
+
+		if evaluation.customer.is_sms == True or 'SMS' in options:
+
+			url = "https://smsapi.future-club.com/fccsms.aspx"
+
+			if language == 'ENGLISH':
+
+				if evaluation.payment_method == 'SUBSCRIPTION':
+
+					message = "Dear Customer, Please find the Invoice against the order number "+str(evaluation.evaluation_id)+"  here https://my.bleachkw.com/customer/subscription/invoice/prw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+". For any assistance please contact us on [Customer Service Number]. Thank you for choosing Bleach Kuwait."
+
+				else:
+
+					message = "Dear Customer, Please find the Invoice against the order number "+str(evaluation.evaluation_id)+"  here https://my.bleachkw.com/customer/invoice/prw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+". For any assistance please contact us on [Customer Service Number]. Thank you for choosing Bleach Kuwait."
+
+				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
+			
+			else:
+				if evaluation.payment_method == 'SUBSCRIPTION':
+
+					message = "عزيزينا العميل نرجوا الاطلاع على الفاتورة الخاصة بالطلب رقم "+str(evaluation.evaluation_id)+" في هذا الرابط https://my.bleachkw.com/customer/subscription/invoice/prw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+" لأي استفسارات يمكنكم التواصل معنا على (Customer Service Number).  شكراً لاختياركم بليتش لخدمات التنظيف"
+
+				else:
+
+					message = "عزيزينا العميل نرجوا الاطلاع على الفاتورة الخاصة بالطلب رقم "+str(evaluation.evaluation_id)+" في هذا الرابط https://my.bleachkw.com/customer/invoice/prw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+" لأي استفسارات يمكنكم التواصل معنا على (Customer Service Number).  شكراً لاختياركم بليتش لخدمات التنظيف"
+
+				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
+			
+			headers = {
+				'cache-control': "no-cache"
+			}
+
+			response = requests.request("GET", url, headers=headers, params=querystring)
+
+			print(message,response.text,"respo")
+			print(order_no)
+			data=True
+		else:
+			data = False
+
+		if evaluation.customer.is_email == True or 'EMAIL' in options:
+			#send mail
+			msg_html = render_to_string('email/invoice.html',{"invoice":order,"address_list":separator.join(address_list),"evaluationbooks":evaluationbooks})
+			msg = EmailMultiAlternatives('Bleach Invoice', '', 'notification@bleach-kw.com', [evaluation.customer.email])
+			msg.attach_alternative(msg_html, "text/html")
+			msg.send(fail_silently=False)
+			data=True
+		else:
+			data = False
+		return Response(data,HTTP_200_OK)

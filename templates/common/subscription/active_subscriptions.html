@@ -3,6 +3,92 @@
 {% load static %}
 <div class="wrapper"><!--wrapper-->
 
+    <!-- send invoice modal begins here-->
+<!-- Modal -->
+
+<div class="modal fade " id="invoiceModalCenter" tabindex="-1" role="dialog" aria-labelledby="invoiceModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered primary-modal" role="document">
+      <div class="modal-content primary-modal-border">
+        <div class="d-flex">
+          <div class="popup-title text-center w-100 mt-10 mb-10" id="exampleModalLongTitle">Please Select the Communication Method</div>
+          <button type="button" class="close ml-auto" data-dismiss="modal" aria-label="Close" style="margin-left:auto">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+       
+        <div class="modal-body">
+          <div class="cotainer">
+              <!-- use app.contacts to get the array of selected contact  methods -->
+            <div class="row contact-margin">
+                <div class="col-md-4 text-center">
+                    <div class="contact-card-active text-center" v-if="contacts.includes('EMAIL')">
+                        <div style="text-align: left;">
+                            <input type="checkbox" class="contact-checkbox cc-checkmark" v-model="contacts" value="EMAIL" {% if order.evaluation.customer.is_email == True %}checked="True"{% endif %}>
+                        </div>
+                        <img src="{% static 'files/icons/email.png'%}" class="contact-card-icon"/>
+
+                        <div class="contact-card-text">
+                           {{order.evaluation.customer.email}}
+                        </div>
+                    </div>
+                
+                    <div class="contact-card text-center" v-else>
+                        <div style="text-align: left;">
+                            <input type="checkbox" class="contact-checkbox cc-checkmark" v-model="contacts" value="EMAIL" {% if order.evaluation.customer.is_sms == True %}checked="True"{% endif %}>
+                        </div>
+                        <img src="{% static 'files/icons/email.png'%}" class="contact-card-icon"/>
+
+                        <div class="contact-card-text">
+                           {{order.evaluation.customer.email}}
+                        </div>
+                    </div>
+                
+                </div>
+                <div class="col-md-4">
+                    <div class="contact-card-active text-center" v-if="contacts.includes('SMS')">
+                        <div style="text-align: left;">
+                            <input type="checkbox" class="contact-checkbox cc-checkmark" id="exampleCheck1" v-model="contacts" value="SMS" >
+                        </div>
+                        <img src="{% static 'files/icons/sms.png'%}" class="contact-card-icon"/>
+                        <div class="contact-card-text">
+                           {{order.evaluation.customer.mobile_number}}
+                        </div>
+                    </div>
+                    <div class="contact-card text-center" v-else>
+                        <div style="text-align: left;">
+                            <input type="checkbox" class="contact-checkbox cc-checkmark" id="exampleCheck1" v-model="contacts" value="SMS" >
+                        </div>
+                        <img src="{% static 'files/icons/sms.png'%}" class="contact-card-icon"/>
+                        <div class="contact-card-text">
+                           {{order.evaluation.customer.mobile_number}}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="contact-card-disabled text-center">
+                        <div style="text-align: left;">
+                            <input type="checkbox" class="contact-checkbox cc-checkmark" id="exampleCheck1" v-model="contacts" value="WHATSAPP">
+                        </div>
+                        <img src="{% static 'files/icons/whatsapp.png'%}" class="contact-card-icon"/>
+                        <div class="contact-card-text">
+                            {{order.evaluation.customer.mobile_number}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer text-center">
+          
+          <button type="submit" onclick="send_items()" class="btn primary-btn" data-dismiss="modal">Send</button>
+          <button type="button" class="btn primary-btn-bordered" data-dismiss="modal" @click="resetContacts">Cancel</button>
+        </div>
+       
+      </div>
+    </div>
+  </div>
+   <!-- send invoice modal ends here-->
+
 {% if request.user.user_type == 'SALESADMIN' %}
   {% include "salesadmin/common/header.html" %}
 {% elif request.user.user_type == 'AGENT' %}

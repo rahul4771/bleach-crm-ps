@@ -41,7 +41,7 @@
 </head>
 
 <body style="background: #F2F2F2;">
-
+<div id="app">
   <div id="container">
     <div class="right-statement">
 
@@ -262,7 +262,7 @@
       <br>
       <div style="text-align: center;">
         <button class="soa-button" onclick="exportTableToExcel()"> <i class="fa fa-file-excel mr-5" aria-hidden="true"></i> Export to excel</button>
-        <button class="soa-button" onclick="send_items()" data-toggle="modal" data-target="#invoiceModalCenter"> <i class="fa fa-paper-plane mr-5" aria-hidden="true"></i>Send to customer</button>
+        <button class="soa-button" data-toggle="modal" data-target="#invoiceModalCenter"> <i class="fa fa-paper-plane mr-5" aria-hidden="true"></i>Send to customer</button>
       </div>
 
      
@@ -318,9 +318,16 @@
       </div>
     </div>
   </div>
+
+
+</div><!--app close-->
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+<script src="{% static 'files/js/order/main.js' %}"></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
 <script src="{% static 'files/js/table2excel.js' %}"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script> <!-- Axios -->
+
 <script>
 
     $(document).ready(function(){
