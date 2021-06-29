@@ -20,6 +20,163 @@
 
 <div class="wrapper" id="app"><!--wrapper-->
     <!-- send invoice modal begins here-->
+    <div data-toggle="modal" data-target="#editSectionDialog" id="edit-dialog-tigger"></div> 
+<!-- edit section dialog begins here-->
+<div class="modal fade " id="editSectionDialog" tabindex="-1" role="dialog" aria-labelledby="editSectionDialogTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered primary-modal" role="document">
+      <div class="modal-content primary-modal-border">
+        <div class="d-flex">
+            <div class="popup-title  w-100 mt-10 mb-10" id="exampleModalLongTitle">Edit Section</div>
+            <button type="button" class="close ml-auto" data-dismiss="modal" aria-label="Close" style="margin-left:auto">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div >
+                <!-- use app.contacts to get the array of selected contact  methods -->
+              <div class="row">
+                <div class="col-md-6 mt-10">
+                                <div class=" bold-text common-label required-field"> <label>Section Name</label></div>
+                              <input  id="id_name" type="text" class="textBox OnlyText" placeholder="Section Name" required="" v-model="sectionData.section_name" >
+                </div>
+               
+                <div class="col-md-6 mt-10" v-if="service_type!='General Cleaning'">
+                    <div class=" bold-text common-label required-field"> <label>Age</label></div>
+                  <input   type="text" class="textBox OnlyText" placeholder="Age" required="" v-model="sectionData.age">
+                </div>
+                <div class="col-md-6 mt-10"  v-if="service_type=='General Cleaning'">
+                    
+                    <div class=" bold-text common-label required-field"> <label>Category</label></div>
+                    <multiselect
+                   
+                      v-model="sectionData.category"
+                      placeholder="Select Category"
+                      
+                      :options="['Floor','Apartment','Kitchen']"
+                      :multiple="false"
+                      :taggable="false"
+                      :show-labels="false"
+                      
+                    ></multiselect>
+                  
+                        
+                 </div>
+                <div class="col-md-6 mt-10">
+                    
+                    <div class=" bold-text common-label required-field"> <label>Size</label></div>
+                    <multiselect
+                      v-model="editSectionData.size"
+                      placeholder="Size"
+                      
+                      :options="service_productivity"
+
+                      :multiple="false"
+                      :taggable="false"
+                      :show-labels="false"
+                      track-by="name"
+                      label="name"
+                      @input="calcSectionCost()"
+                    ></multiselect>
+                  
+                        
+                 </div>
+                 <div class="col-md-6 mt-10">
+                  <!--  <multiselect
+                    v-model="value"
+                    placeholder="Material"
+                    label="city" track-by="city_ascii"
+                    :options="options"
+                    :multiple="true"
+                    :taggable="true"
+                  ></multiselect>-->
+                  <div class=" bold-text common-label required-field"> <label>Material</label></div>
+                  <multiselect
+                    v-model="value"
+                    placeholder="Materials"
+                    
+                    :options="materials"
+                    :multiple="true"
+                    :taggable="false"
+                    :show-labels="false"
+                    
+                  ></multiselect>
+                 </div>
+               
+                <div class="col-md-6 mt-10" >
+                    <div class=" bold-text common-label required-field"> <label>Wall type</label></div>
+                  <multiselect
+                    v-model="wall_type"
+                    placeholder="Wall type"
+                    
+                    :options="walltypes"
+                    :multiple="true"
+                    :taggable="false"
+                    :show-labels="false"
+                    
+                  ></multiselect>
+                </div>
+                <div class="col-md-6 mt-10" >
+                    <div class=" bold-text common-label required-field"> <label>Floor type</label></div>
+                  <multiselect
+                    v-model="floor_type"
+                    placeholder="Floor type"
+                    
+                    :options="floortypes"
+                    :multiple="true"
+                    :taggable="false"
+                    :show-labels="false"
+                   
+                    
+                  ></multiselect>
+                </div>
+                <div class="col-md-6 mt-10" >
+                    <div class=" bold-text common-label required-field"> <label>Ceiling type</label></div>
+                  <multiselect
+                    v-model="ceiling_type"
+                    placeholder="Ceiling type"
+                    :show-labels="false"
+                    
+                    :options="ceilingtypes"
+                    :multiple="true"
+                    :taggable="false"
+                   
+                    
+                  ></multiselect>
+                </div>
+               <!-- <div class="col-md-6 mt-10" v-if="sectionData.dirt_level">
+                    <div class=" bold-text common-label required-field"> <label>Dirt Level</label></div>
+                  <input  type="text" class="textBox OnlyText" placeholder="Dirt Level" required="" v-model="sectionData.dirt_level">
+                </div>
+                <div class="col-md-6 mt-10" v-if="sectionData.apartment">
+                    <div class=" bold-text common-label required-field"> <label>Apartment</label></div>
+                  <input  type="text" class="textBox OnlyText" placeholder="Dirt Level" required="" v-model="sectionData.apartment">
+                </div>
+                <div class="col-md-6 mt-10" v-if="sectionData.floor">
+                    <div class=" bold-text common-label required-field"> <label>Floor</label></div>
+                  <input  type="text" class="textBox OnlyText" placeholder="Dirt Level" required="" v-model="sectionData.floor">
+                </div>-->
+              
+               <div class="col-md-12">
+                <div class="section-cost">
+                    Section Cost
+                    <div class="text-center section-cost-price">
+                       <% editSectionData.section_cost +' KD'%>
+                    </div>
+                 </div>
+               </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer text-center">
+          
+          
+            <button type="submit" onclick="send_items()" class="btn primary-btn" data-dismiss="modal">Save Changes</button>
+            <button type="button" class="btn primary-btn-bordered" data-dismiss="modal" @click="resetSection">Cancel</button>
+         
+        </div>
+      </div>
+      </div>
+ </div>     
 <!-- Modal -->
 
 <div class="modal fade " id="invoiceModalCenter" tabindex="-1" role="dialog" aria-labelledby="invoiceModalCenterTitle" aria-hidden="true">
@@ -341,7 +498,8 @@
                         <div class="order-details-left-wrapper "><!--order details start-->
                             
                             <div class="order-edit">
-                                <img class="pointer" v-if="!edit" @click="edit = true"
+                                <img class="pointer" v-if="!edit" 
+                                  data-service="{{orderschedule.order_scheduler_book.service_type.name}}" onclick="editService(this)"
                                     src="{% static 'files/icons/edit.png' %}">
                             </div>
                             <div class="order-edit" v-if="edit">
@@ -434,7 +592,7 @@
                                         </div>
                                         <div class="col-md-2 m-mt30">
                                             <div class="agent-content-section1 c-mt-022">
-                                                <div v-if="edit" class="order-agent-edit">
+                                                <div v-if="edit" class="order-agent-edit" >
                                                     <img class="pointer" src="{% static 'files/icons/edit.png' %}">
                                                 </div>
                                                 <ul>
@@ -522,18 +680,18 @@
                                     </div>
                                 </div>
                                 <br>
-                                <div class="moreless-button" id="show{{orderschedule.id}}">Show More</div>
+                                <div class="moreless-button" id="show{{orderschedule.id}}" @click="getSection({{orderschedule.order_scheduler_book.id}})">Show More</div>
                                 <hr class="bar">
                             </div>
                             
 
-                            <div id="showmore{{orderschedule.id}}" class="showmore">
+                            <div id="showmore{{orderschedule.id}}" class="showmore" >
                             
                                 {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
                                 <div id="showmore1{{orderschedule.id}}" style="display: none;"
                                     class="order-container-main order-clean-section">
-                                    <div v-if="edit" class="order-clean-edit">
-                                        <img class="pointer" src="{% static 'files/icons/edit.png' %}">
+                                    <div v-if="edit" class="order-clean-edit"  >
+                                        <img class="pointer" src="{% static 'files/icons/edit.png' %}" >
                                     </div>
                                     <div class="order-clean-section-header c-mb-10">
                                         <h2>Section {{forloop.counter}} : {{section.section_name}}</h2>
@@ -1617,6 +1775,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha512-T/tUfKSV1bihCnd+MxKD0Hm1uBBroVYBOYSk1knyvQ9VyZJpc/ALb4P0r6ubwVPSGB2GvjeoMAJJImBG12TiaQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.en-AU.min.js" integrity="sha512-ghvIK/3dPoQzHCrGQxvxAeTtLGNHobiKoLA8tdztoqiiINxSre6RiloNaN6uVLg1ESyBiZh7rnmRBa+psz85Zw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://unpkg.com/vue-multiselect@2.1.0"></script>
+
 <script src="{% static '/files/externalfiles/plugins/OwlCarousel2/dist/owl.carousel.js'%}"></script>
 <script src="{% static 'files/js/order/main.js' %}"></script>
 

@@ -1359,3 +1359,29 @@ padding-top:10px;
 .multiselect__option--highlight {
   background:#2f4e85 !important; 
 }
+.multiselect__tag-icon:after {
+  color:#ffffff !important;
+}
+.multiselect__tag-icon:hover{
+  background:#2f4e85 !important;
+}
+.section-cost{
+  background: #eeeeee;
+    color: #2f4e85;
+    border-left: 6px solid #2f4e85;
+    font-size: 14px;
+    padding: 5px;
+    text-align: left;
+    min-width: 200px;
+    max-width: 400px;
+    margin-top: 22px;
+}
+.section-cost-price{
+  font-weight:500;
+  font-size:28px;
+  color: #2f4e85;
+  padding: 7px;
+}
+.mx-auto{
+  margin: auto;
+}

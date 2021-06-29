@@ -543,3 +543,15 @@ GET
    "action_type":'delete_section',
    "section_id":4
 }
+
+
+#payment policy
+{
+payment_policy: PREPAID,POSTPAID,BREAKDOWN
+#BREAKDOWN => before_cleaning_amount,after_cleaning_amount
+#DISCOUNT => discount
+#action_type => edit_discount
+#amount
+
+
+}
