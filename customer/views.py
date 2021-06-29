@@ -4427,6 +4427,14 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 class EditOrderDetails(APIView):
 	permission_classes        = (AllowAny,)
 	authentication_classes    = ()
+	
+	def get(self,request,order_id):
+		response_dict = {}
+		section_id                       = request.GET.get('section_id')
+		section                          = EvaluationBookSection.objects.get(id=section_id)
+		response_dict['section_details'] = EvaluationBookSectionSerializer(section).data
+		return Response(response_dict,HTTP_200_OK)
+
 	def post(self,request,order_id):
 		response_dict = {}
 		response_dict['success'] = False
@@ -4548,6 +4556,13 @@ class EditOrderDetails(APIView):
 
 			return Response(response_dict,HTTP_200_OK)	
 		
+		elif action == 'edit_discount':
+			discount_amount = request.data.get('discount_amount')
+			payment_policy  = request.data.get('payment_policy')
+
+		elif action == 'add_cleaning':
+			pass
+
 		return Response(response_dict,HTTP_200_OK)
 
 
