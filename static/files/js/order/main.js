@@ -141,12 +141,12 @@ const app = new Vue({
              productivity:{},
              editSectionData:{
               size:{},
-              area_type:[],
+             
               section_cost:0,
               section_name:'',
               floor_type:[],
               ceiling_type:[],
-              floor_type:[],
+              wall_type:[],
               material:[],
               category:'Floor',
               age:null,
