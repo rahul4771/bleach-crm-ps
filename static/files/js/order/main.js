@@ -206,9 +206,9 @@ const app = new Vue({
         {
           "section_name":this.editSectionData.section_name,
           "size":this.editSectionData.size.name,
-          "wall_type":this.editSectionData.wall_type.join(),
-          "ceiling_type":this.editSectionData.ceiling_type.join(),
-          "floor_type":this.editSectionData.floor_type.join(),
+          "wall_type":"",
+          "ceiling_type":"",
+          "floor_type":"",
           "cement_residue":false,
           "section_cost":this.editSectionData.section_cost,
           "section_net_cost":this.editSectionData.section_cost,
@@ -216,11 +216,56 @@ const app = new Vue({
          "is_highprice_facade":false,
          "is_highprice_window":false,
       }
+      if(this.editSectionData.wall_type.length>0){
+        this.sectionData.wall_type=this.editSectionData.wall_type.join()   
+      }
+      if(this.editSectionData.floor_type.length>0){
+        this.sectionData.wall_type=this.editSectionData.floor_type.join()   
+      }
+      if(this.editSectionData.ceiling_type.length>0){
+        this.sectionData.wall_type=this.editSectionData.ceiling_type.join()   
+      }
+      axios.post(this.url+'/customer/editorder/'+this.orderId,{
+        "action_type":'edit_section',
+        "evaluation_book__id":this.eval_book_id,
+        "section_details":sectionData,
+        "section_id":this.editSectionData.section_id,
+      }).then(response=>{
+        console.log(response)
+        $('#edit-section-close').click()
+        this.resetSection()
+      })
+    },
+    addSection(){
+      var sectionData={}
+      sectionData=
+        {
+          "section_name":this.editSectionData.section_name,
+          "size":this.editSectionData.size.name,
+          "wall_type":"",
+          "ceiling_type":"",
+          "floor_type":"",
+          "cement_residue":false,
+          "section_cost":this.editSectionData.section_cost,
+          "section_net_cost":this.editSectionData.section_cost,
+          "is_newkitchen":this.editSectionData.is_newkitchen,
+         "is_highprice_facade":false,
+         "is_highprice_window":false,
+      }
+      if(this.editSectionData.wall_type.length>0){
+        this.sectionData.wall_type=this.editSectionData.wall_type.join()   
+      }
+      if(this.editSectionData.floor_type.length>0){
+        this.sectionData.wall_type=this.editSectionData.floor_type.join()   
+      }
+      if(this.editSectionData.ceiling_type.length>0){
+        this.sectionData.wall_type=this.editSectionData.ceiling_type.join()   
+      }
       axios.post(this.url+'/customer/editorder/'+this.orderId,{
         "action_type":'add_section',
         "evaluation_book__id":this.eval_book_id,
         "section_details":sectionData,
-        "section_id":this.editSectionData.section_id,
+       
       }).then(response=>{
         console.log(response)
         $('#edit-section-close').click()
