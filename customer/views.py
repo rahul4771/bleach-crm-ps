@@ -4513,7 +4513,7 @@ class EditOrderDetails(APIView):
 				order.save()
 
 				order.evaluation.total_cost   += (old_section_cost-saved_section.section_net_cost)
-				order.evaluation.estimated    += (old_section_cost-saved_section.section_net_cost)
+				order.evaluation.estimated_cost    += (old_section_cost-saved_section.section_net_cost)
 				order.evaluation.save()
 
 				response_dict['edit_success']       = True
