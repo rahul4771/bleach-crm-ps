@@ -4491,7 +4491,7 @@ class EditOrderDetails(APIView):
 			section_save_serializer        = EvaluationBookSectionSerializer(data=request.data.get('section_details'),instance=saved_section)
 			if section_save_serializer.is_valid():
 				evaluation_book__id                    = request.data.get('evaluation_book__id')
-				evaluation_book                        = EvaluationBook.objects.select_related('evaluation_details').get(id=evaluation_book__id).prefetch_related(Prefetch('order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
+				evaluation_book                        = EvaluationBook.objects.select_related('evaluation_details').prefetch_related(Prefetch('order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules')).get(id=evaluation_book__id)
 				total_cleanings                        = evaluation_book.orderschedules.count()
 
 				if evaluation_book.cleaning_policy == 'SUBSCRIPTION':
