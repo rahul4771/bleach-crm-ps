@@ -1337,3 +1337,25 @@ padding-top:10px;
 .contact-card-icon{
   height: 70px;
 }
+#edit-dialog-tigger{
+  display: none;
+}
+.mt-10{
+  margin-top:10px;
+}
+.mt-20{
+  margin-top:20px;
+}
+
+.multiselect__tag {
+  background:#2f4e85 !important;
+}
+.multiselect__tag-icon:after {
+ color:#ffffff;
+}
+.multiselect__option--highlight {
+  background:#2f4e85 !important;
+}
+.multiselect__option--highlight {
+  background:#2f4e85 !important; 
+}
