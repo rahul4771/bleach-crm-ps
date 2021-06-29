@@ -4456,11 +4456,11 @@ class EditOrderDetails(APIView):
 
 				evaluation_book.estimated_cost     				  += saved_section.section_net_cost
 				evaluation_book.total_cost         				  += saved_section.section_net_cost
-				evaluation_book.total_cost.save()
+				evaluation_book.save()
 
 				evaluation_book.evaluation_details.estimated_cost += saved_section.section_net_cost
 				evaluation_book.evaluation_details.total_cost     += saved_section.section_net_cost
-				evaluation_book.evaluation_details.total_cost.save()
+				evaluation_book.evaluation_details.save()
 
 				order.remining_amount += saved_section.section_net_cost
 				order.total_amount    += saved_section.section_net_cost
@@ -4502,11 +4502,11 @@ class EditOrderDetails(APIView):
 
 				evaluation_book.estimated_cost     				  += (old_section_cost-saved_section.section_net_cost)
 				evaluation_book.total_cost         				  += (old_section_cost-saved_section.section_net_cost)
-				evaluation_book.total_cost.save()
+				evaluation_book.save()
 
 				evaluation_book.evaluation_details.estimated_cost += (old_section_cost-saved_section.section_net_cost)
 				evaluation_book.evaluation_details.total_cost     += (old_section_cost-saved_section.section_net_cost)
-				evaluation_book.evaluation_details.total_cost.save()
+				evaluation_book.evaluation_details.save()
 
 				order.remining_amount += (old_section_cost-saved_section.section_net_cost)
 				order.total_amount    += (old_section_cost-saved_section.section_net_cost)
