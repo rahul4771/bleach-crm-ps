@@ -217,14 +217,14 @@ const app = new Vue({
          "is_highprice_window":false,
       }
       if(this.editSectionData.wall_type.length>0){
-        this.sectionData.wall_type=this.editSectionData.wall_type.join() 
+        sectionData.wall_type=this.editSectionData.wall_type.join() 
         console.log("in wall type : "+this.editSectionData.wall_type)  
       }
       if(this.editSectionData.floor_type.length>0){
-        this.sectionData.wall_type=this.editSectionData.floor_type.join()   
+        sectionData.wall_type=this.editSectionData.floor_type.join()   
       }
       if(this.editSectionData.ceiling_type.length>0){
-        this.sectionData.wall_type=this.editSectionData.ceiling_type.join()   
+        sectionData.wall_type=this.editSectionData.ceiling_type.join()   
       }
       axios.post(this.url+'/customer/editorder/'+this.orderId,{
         "action_type":'edit_section',
@@ -254,13 +254,13 @@ const app = new Vue({
          "is_highprice_window":false,
       }
       if(this.editSectionData.wall_type.length>0){
-        this.sectionData.wall_type=this.editSectionData.wall_type.join()   
+        sectionData.wall_type=this.editSectionData.wall_type.join()   
       }
       if(this.editSectionData.floor_type.length>0){
-        this.sectionData.wall_type=this.editSectionData.floor_type.join()   
+        sectionData.wall_type=this.editSectionData.floor_type.join()   
       }
       if(this.editSectionData.ceiling_type.length>0){
-        this.sectionData.wall_type=this.editSectionData.ceiling_type.join()   
+        sectionData.wall_type=this.editSectionData.ceiling_type.join()   
       }
       axios.post(this.url+'/customer/editorder/'+this.orderId,{
         "action_type":'add_section',
