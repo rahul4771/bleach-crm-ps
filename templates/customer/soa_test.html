@@ -41,6 +41,7 @@
 </head>
 
 <body style="background: #F2F2F2;">
+<div id="app">
   <div id="container">
     <div class="right-statement">
 
@@ -159,6 +160,95 @@
     </div> -->
    
   </div>
+
+
+  <!-- send invoice modal begins here-->
+<!-- Modal -->
+
+<div class="modal fade " id="invoiceModalCenter" tabindex="-1" role="dialog" aria-labelledby="invoiceModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered primary-modal" role="document">
+      <div class="modal-content primary-modal-border">
+        <div class="d-flex">
+          <div class="popup-title text-center w-100 mt-10 mb-10" id="exampleModalLongTitle">Please Select the Communication Method</div>
+          <button type="button" class="close ml-auto" data-dismiss="modal" aria-label="Close" style="margin-left:auto">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+       
+        <div class="modal-body">
+          <div class="cotainer">
+              <!-- use app.contacts to get the array of selected contact  methods -->
+            <div class="row contact-margin">
+                <div class="col-md-4 text-center">
+                    <div class="contact-card-active text-center" v-if="contacts.includes('EMAIL')">
+                        <div style="text-align: left;">
+                            <input type="checkbox" class="contact-checkbox cc-checkmark" v-model="contacts" value="EMAIL" {% if customer.is_email == True %}checked="True"{% endif %}>
+                        </div>
+                        <img src="{% static 'files/icons/email.png'%}" class="contact-card-icon"/>
+
+                        <div class="contact-card-text">
+                           {{customer.email}}
+                        </div>
+                    </div>
+                
+                    <div class="contact-card text-center" v-else>
+                        <div style="text-align: left;">
+                            <input type="checkbox" class="contact-checkbox cc-checkmark" v-model="contacts" value="EMAIL" {% if customer.is_sms == True %}checked="True"{% endif %}>
+                        </div>
+                        <img src="{% static 'files/icons/email.png'%}" class="contact-card-icon"/>
+
+                        <div class="contact-card-text">
+                           {{customer.email}}
+                        </div>
+                    </div>
+                
+                </div>
+                <div class="col-md-4">
+                    <div class="contact-card-active text-center" v-if="contacts.includes('SMS')">
+                        <div style="text-align: left;">
+                            <input type="checkbox" class="contact-checkbox cc-checkmark" id="exampleCheck1" v-model="contacts" value="SMS" >
+                        </div>
+                        <img src="{% static 'files/icons/sms.png'%}" class="contact-card-icon"/>
+                        <div class="contact-card-text">
+                           {{customer.mobile_number}}
+                        </div>
+                    </div>
+                    <div class="contact-card text-center" v-else>
+                        <div style="text-align: left;">
+                            <input type="checkbox" class="contact-checkbox cc-checkmark" id="exampleCheck1" v-model="contacts" value="SMS" >
+                        </div>
+                        <img src="{% static 'files/icons/sms.png'%}" class="contact-card-icon"/>
+                        <div class="contact-card-text">
+                           {{customer.mobile_number}}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="contact-card-disabled text-center">
+                        <div style="text-align: left;">
+                            <input type="checkbox" class="contact-checkbox cc-checkmark" id="exampleCheck1" v-model="contacts" value="WHATSAPP">
+                        </div>
+                        <img src="{% static 'files/icons/whatsapp.png'%}" class="contact-card-icon"/>
+                        <div class="contact-card-text">
+                            {{customer.mobile_number}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer text-center">
+          
+          <button type="submit" onclick="send_items()" class="btn primary-btn" data-dismiss="modal">Send</button>
+          <button type="button" class="btn primary-btn-bordered" data-dismiss="modal" @click="resetContacts">Cancel</button>
+        </div>
+       
+      </div>
+    </div>
+  </div>
+   <!-- send invoice modal ends here-->
+
+
   <div style="background: none !important; box-shadow: none !important;" id="container">
 
     <div class="right-statement">
@@ -172,7 +262,7 @@
       <br>
       <div style="text-align: center;">
         <button class="soa-button" onclick="exportTableToExcel()"> <i class="fa fa-file-excel mr-5" aria-hidden="true"></i> Export to excel</button>
-        <button class="soa-button"> <i class="fa fa-paper-plane mr-5" aria-hidden="true"></i>Sent to customer</button>
+        <button class="soa-button" data-toggle="modal" data-target="#invoiceModalCenter"> <i class="fa fa-paper-plane mr-5" aria-hidden="true"></i>Send to customer</button>
       </div>
 
      
@@ -228,8 +318,16 @@
       </div>
     </div>
   </div>
+
+
+</div><!--app close-->
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+<script src="{% static 'files/js/order/main.js' %}"></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
 <script src="{% static 'files/js/table2excel.js' %}"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script> <!-- Axios -->
+
 <script>
 
     $(document).ready(function(){
@@ -285,6 +383,30 @@ function exportTableToExcel(){
                 }); 
 }
 
+//send soa mail
+function send_items(){
+ 
+    var url='https://test.bleach-kw.com';
+    //var url = 'https://my.bleachkw.com';
+    //var url = 'http://127.0.0.1:8000';
+    //var url='http://localhost:8000';
+
+    var checkedVals = $('.contact-checkbox:checkbox:checked').map(function() {
+        return this.value;
+    }).get();
+    //alert(checkedVals.join(","));
+    var selectedoptions = checkedVals.join(",");
+    console.log(selectedoptions,"ops");
+
+    axios.get(url+'/api/soa-mail/',{ params: { 'client_id':{{customer.id}}, 'selected_options': selectedoptions } })
+                .then(function (response) {
+                  if (response.data == true){
+                  alert("Invoice Sent!")
+                  }else{
+                    alert("Customer not opted for SMS!")  
+                  }
+                })
+}
 
 </script>
 

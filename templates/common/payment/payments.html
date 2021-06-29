@@ -17,6 +17,8 @@
       </div>
       <form method="POST" action="" >{% csrf_token %}
       <input type="hidden" name="orderid" id="order_id" />
+      <input type="hidden" name="tab_id" id="tab_id" />
+
       <div class="modal-body">
         <div class="form-group">
           <!--<label for="exampleInputEmail1">Notes</label>-->
@@ -298,7 +300,7 @@
           <ul class="pagination">
             {% if transactions.has_previous %}
             <li class="page-item">
-              <a class="page-link" href="?page={{ transactions.previous_page_number }}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}&tab=all" aria-label="Previous">
+              <a class="page-link" href="?page={{ transactions.previous_page_number }}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}&tab=ALL" aria-label="Previous">
                 <span aria-hidden="true">&laquo;</span>
                 <span class="sr-only">Previous</span>
               </a>
@@ -313,14 +315,14 @@
             {% endif %}
             {% for pg in page_range %}
             {% if vus.number == pg %}
-                    <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}&tab=all">{{pg}}</a></li>
+                    <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}&tab=ALL">{{pg}}</a></li>
             {% else %}
-                    <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}&tab=all">{{pg}}</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}&tab=ALL">{{pg}}</a></li>
             {% endif %}
             {% endfor %}
             {% if transactions.has_next %}        
             <li class="page-item">
-              <a class="page-link" href="?page={{ transactions.next_page_number}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}&tab=all" aria-label="Next">
+              <a class="page-link" href="?page={{ transactions.next_page_number}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}&tab=ALL" aria-label="Next">
                 <span aria-hidden="true">&raquo;</span>
                 <span class="sr-only">Next</span>
               </a>
@@ -350,10 +352,10 @@
       <thead>
       <tr>
       <th class="text-left">Order Number</th>
-      <th class="text-left" data-hide="phone,tablet">Customer</th>
+      <th class="text-center" data-hide="phone,tablet">Customer</th>
       <th class="text-left" data-hide="phone,tablet">Service Type</th>
-      <th class="text-left" data-hide="phone,tablet">Mobile</th>
-      <th class="text-left" data-hide="phone,tablet">Amount</th>
+      <th class="text-center" data-hide="phone,tablet">Mobile</th>
+      <th class="text-right" data-hide="phone,tablet">Amount</th>
       <th class="text-left" data-hide="phone,tablet">Payment Policy</th>
       <th data-hide="phone">Status</th>
       <th class="text-left" data-hide="phone">Shortcuts</th>
@@ -366,7 +368,7 @@
         {% if invoice.evaluation.payment_method == 'PREPAID' or invoice.evaluation.payment_method == 'POSTPAID' %}
         <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
         <td data-label="BLC Number" {% if invoice.evaluation.payment_method == 'PREPAID' %}class="prepaid-line"{% else %}class="postpaid-line"{% endif %}>{{invoice.evaluation.evaluation_id}}</td>
-        <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
+        <td data-label="Customer" class="text-center">{{invoice.evaluation.customer.name}}</td>
         <td data-label="Service Type(s)">
         {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
         {% for book in evaluation_details.evaluation_books %}
@@ -374,8 +376,8 @@
         {% endfor %}
         {% endfor %}
         </td>
-        <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
-        <td data-label="Total Amount">{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}KD</td>
+        <td data-label="Contact Number" class="text-center">{{invoice.evaluation.customer.mobile_number}}</td>
+        <td data-label="Total Amount" class="text-right">{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}KD</td>
         <td data-label="Payment Method">
         <div class="text-center d-flex "><div class="round-marker {% if invoice.evaluation.payment_method == 'PREPAID' %}prepaid-bg{% else %}postpaid-bg{% endif %}"></div><span>{{invoice.evaluation.payment_method}}</span></div>
         </td>
@@ -391,7 +393,7 @@
         <h3 class="{% if invoice.delaydays >= 14 %}red-text-h3{% elif invoice.delaydays >= 8 and invoice.delaydays <= 13 %}orange-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 7 %}yellow-text-h3{% elif invoice.delaydays >= 0 and invoice.delaydays <= 3 %}green-text-h3{% endif %}">{{invoice.delaydays}}</h3> Days&#11014;
         {% endif %}
         </td>
-        <td class="align-center" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> </div></td>
+        <td class="align-center" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> {% if request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'BOOKINGOFFICER' %}<div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" data-note="{{invoice.payment_notes|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div>{% endif %} </div></td>
         </tr>
 
         {% elif invoice.evaluation.payment_method == 'BREAKDOWN' %}
@@ -399,7 +401,7 @@
         {% if invoice.preamount_paid != invoice.evaluation.before_cleaning_amount %}
         <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
         <td data-label="BLC Number" class="breakdown-line">{{invoice.evaluation.evaluation_id}}</td>
-        <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
+        <td data-label="Customer"class="text-center">{{invoice.evaluation.customer.name}}</td>
         <td data-label="Service Type(s)">
         {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
         {% for book in evaluation_details.evaluation_books %}
@@ -407,8 +409,8 @@
         {% endfor %}
         {% endfor %}
         </td>
-        <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
-        <td data-label="Total Amount">{{invoice.evaluation.before_cleaning_amount|default_if_none:'0.000'|floatformat:'3'}}KD</td>
+        <td data-label="Contact Number" class="text-center">{{invoice.evaluation.customer.mobile_number}}</td>
+        <td data-label="Total Amount" class="text-right">{{invoice.evaluation.before_cleaning_amount|default_if_none:'0.000'|floatformat:'3'}}KD</td>
         <td data-label="Payment Method">
         <div class="text-center d-flex "><div class="round-marker breakdown-bg"></div><span>{{invoice.evaluation.payment_method}}</span></div>
         </td>
@@ -417,14 +419,14 @@
         {% else %}
         <h3 class="{% if invoice.reminigdays == 0 %}red-text-h3{% elif invoice.reminigdays >= 1 and invoice.reminigdays <= 3 %}orange-text-h3{% elif invoice.reminigdays >= 4 and invoice.reminigdays <= 7 %}yellow-text-h3{% elif invoice.reminigdays >= 8 %}green-text-h3{% endif %}">{{invoice.reminigdays}}</h3> Days&#11015;
         {% endif %}</td>
-        <td class="align-center" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> </div></td>
+        <td class="align-center" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> {% if request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'BOOKINGOFFICER' %}<div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" data-note="{{invoice.payment_notes|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div>{% endif %} </div></td>
         </tr>
         {% endif %}
 
         {% if invoice.last_completed and invoice.postamount_paid != invoice.evaluation.after_cleaning_amount %}
         <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
         <td data-label="BLC Number" >{{invoice.evaluation.evaluation_id}}</td>
-        <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
+        <td data-label="Customer" class="text-center">{{invoice.evaluation.customer.name}}</td>
         <td data-label="Service Type(s)">
         {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
         {% for book in evaluation_details.evaluation_books %}
@@ -432,13 +434,13 @@
         {% endfor %}
         {% endfor %}
         </td>
-        <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
-        <td data-label="Total Amount">{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}KD</td>
+        <td data-label="Contact Number" class="text-center">{{invoice.evaluation.customer.mobile_number}}</td>
+        <td data-label="Total Amount" class="text-right">{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}KD</td>
         <td data-label="Payment Method">
         <div class="text-center d-flex "><div class="round-marker prepaid-bg"></div><span>{{invoice.evaluation.payment_method}}</span></div>
         </td>
         <td data-label="" class="bold-text"><h3 class="{% if invoice.delaydays >= 14 %}green-text-h3{% elif invoice.delaydays >= 8 and invoice.delaydays <= 13 %}yellow-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 6 %}orange-text-h3{% elif invoice.delaydays >= 0 and invoice.delaydays <= 3 %}red-text-h3{% endif %}">{{invoice.delaydays}}</h3> Days&#11014;</td>
-        <td class="align-center" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> </div></td>
+        <td class="align-center" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> {% if request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'BOOKINGOFFICER' %}<div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" data-note="{{invoice.payment_notes|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div>{% endif %} </div></td>
         </tr>
         {% endif %}
 
@@ -447,7 +449,7 @@
         {% if invoice.subscription_topay != 0 %}
         <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
         <td data-label="BLC Number" class="subscription-line">{{invoice.evaluation.evaluation_id}}</td>
-        <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
+        <td data-label="Customer" class="text-center">{{invoice.evaluation.customer.name}}</td>
         <td data-label="Service Type(s)">
         {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
         {% for book in evaluation_details.evaluation_books %}
@@ -455,14 +457,14 @@
         {% endfor %}
         {% endfor %}
         </td>
-        <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
-        <td data-label="Total Amount">{{invoice.subscription_topay|default_if_none:'0.000'|floatformat:'3'}}KD</td>
+        <td data-label="Contact Number" class="text-center">{{invoice.evaluation.customer.mobile_number}}</td>
+        <td data-label="Total Amount" class="text-right">{{invoice.subscription_topay|default_if_none:'0.000'|floatformat:'3'}}KD</td>
         <td data-label="Payment Method">
         <div class="text-center d-flex "><div class="round-marker subscription-bg"></div><span>{{invoice.evaluation.payment_method}}</span></div>
         </td>
         <td data-label="" class="bold-text">
         <h3 class="{% if invoice.delaydays == 0 %}green-text-h3{% elif invoice.delaydays >= 1 and invoice.delaydays <= 3 %}yellow-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 7 %}orange-text-h3{% elif invoice.delaydays >= 8 %}red-text-h3{% endif %}">{{invoice.delaydays}}</h3> Days&#11014;</td>
-        <td class="text-left" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> </div></td>
+        <td class="text-left" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> {% if request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'BOOKINGOFFICER' %}<div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" data-note="{{invoice.payment_notes|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div>{% endif %} </div></td>
         </tr>
         {% endif %}
         
@@ -487,7 +489,7 @@
           <ul class="pagination">
             {% if pending_payments.has_previous %}
             <li class="page-item">
-              <a class="page-link" href="?page2={{ pending_payments.previous_page_number }}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}&tab=pending" aria-label="Previous">
+              <a class="page-link" href="?page2={{ pending_payments.previous_page_number }}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}&tab=PENDING" aria-label="Previous">
                 <span aria-hidden="true">&laquo;</span>
                 <span class="sr-only">Previous</span>
               </a>
@@ -502,14 +504,14 @@
             {% endif %}
             {% for pg in page_range %}
             {% if vus.number == pg %}
-                    <li class="page-item"><a class="page-link active" href="?page2={{pg}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}&tab=pending">{{pg}}</a></li>
+                    <li class="page-item"><a class="page-link active" href="?page2={{pg}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}&tab=PENDING">{{pg}}</a></li>
             {% else %}
-                    <li class="page-item"><a class="page-link" href="?page2={{pg}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}&tab=pending">{{pg}}</a></li>
+                    <li class="page-item"><a class="page-link" href="?page2={{pg}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}&tab=PENDING">{{pg}}</a></li>
             {% endif %}
             {% endfor %}
             {% if pending_payments.has_next %}        
             <li class="page-item">
-              <a class="page-link" href="?page2={{ pending_payments.next_page_number}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}&tab=pending" aria-label="Next">
+              <a class="page-link" href="?page2={{ pending_payments.next_page_number}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}&tab=PENDING" aria-label="Next">
                 <span aria-hidden="true">&raquo;</span>
                 <span class="sr-only">Next</span>
               </a>
@@ -538,10 +540,10 @@
         <thead>
         <tr>
         <th class="text-left">Order Number</th>
-        <th class="text-left" data-hide="phone,tablet">Customer</th>
+        <th class="text-center" data-hide="phone,tablet">Customer</th>
         <th class="text-left" data-hide="phone,tablet">Service Type</th>
-        <th class="text-left" data-hide="phone,tablet">Mobile</th>
-        <th class="text-left" data-hide="phone,tablet">Amount</th>
+        <th class="text-center" data-hide="phone,tablet">Mobile</th>
+        <th class="text-right" data-hide="phone,tablet">Amount</th>
         <th class="text-left" data-hide="phone,tablet">Payment Policy</th>
         <th class="text-left" data-hide="phone">Shortcuts</th>
         </tr>
@@ -552,7 +554,7 @@
         {% if invoice.evaluation.payment_method == 'PREPAID' or invoice.evaluation.payment_method == 'POSTPAID' %}
         <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
         <td data-label="BLC Number" {% if invoice.evaluation.payment_method == 'PREPAID' %}class="prepaid-line"{% else %}class="postpaid-line"{% endif %}>{{invoice.evaluation.evaluation_id}}</td>
-        <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
+        <td data-label="Customer" class="text-center">{{invoice.evaluation.customer.name}}</td>
         <td data-label="Service Type(s)">
         {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
         {% for book in evaluation_details.evaluation_books %}
@@ -560,8 +562,8 @@
         {% endfor %}
         {% endfor %}
         </td>
-        <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
-        <td data-label="Total Amount">{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}KD</td>
+        <td data-label="Contact Number" class="text-center">{{invoice.evaluation.customer.mobile_number}}</td>
+        <td data-label="Total Amount" class="text-right">{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}KD</td>
         <td data-label="Payment Method">
         <div class="text-center d-flex "><div class="round-marker {% if invoice.evaluation.payment_method == 'PREPAID' %}prepaid-bg{% else %}postpaid-bg{% endif %}"></div><span>{{invoice.evaluation.payment_method}}</span></div>
         </td>
@@ -582,8 +584,8 @@
         {% endfor %}
         {% endfor %}
         </td>
-        <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
-        <td data-label="Total Amount">{{invoice.evaluation.before_cleaning_amount|default_if_none:'0.000'|floatformat:'3'}}KD</td>
+        <td data-label="Contact Number" class="text-center">{{invoice.evaluation.customer.mobile_number}}</td>
+        <td data-label="Total Amount" class="text-right">{{invoice.evaluation.before_cleaning_amount|default_if_none:'0.000'|floatformat:'3'}}KD</td>
         <td data-label="Payment Method">
         <div class="text-center d-flex "><div class="round-marker breakdown-bg"></div><span>{{invoice.evaluation.payment_method}}</span></div>
         </td>
@@ -602,8 +604,8 @@
         {% endfor %}
         {% endfor %}
         </td>
-        <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
-        <td data-label="Total Amount">{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}KD</td>
+        <td data-label="Contact Number" class="text-center">{{invoice.evaluation.customer.mobile_number}}</td>
+        <td data-label="Total Amount" class="text-right">{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}KD</td>
         <td data-label="Payment Method">
         <div class="text-center d-flex "><div class="round-marker prepaid-bg"></div><span>{{invoice.evaluation.payment_method}}</span></div>
         </td>
@@ -624,8 +626,8 @@
         {% endfor %}
         {% endfor %}
         </td>
-        <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
-        <td data-label="Total Amount">{{invoice.subscription_topay|default_if_none:'0.000'|floatformat:'3'}}KD</td>
+        <td data-label="Contact Number" class="text-center">{{invoice.evaluation.customer.mobile_number}}</td>
+        <td data-label="Total Amount" class="text-right">{{invoice.subscription_topay|default_if_none:'0.000'|floatformat:'3'}}KD</td>
         <td data-label="Payment Method">
         <div class="text-center d-flex "><div class="round-marker subscription-bg"></div><span>{{invoice.evaluation.payment_method}}</span></div>
         </td>
@@ -642,19 +644,19 @@
         </table>
 
         <div class="white-wrapper-pagination"><!--white-wrapper-pagination-->   
-            <div class="pagination-containter"><!--pagination-containter-->
-              <div class="pagination-column pagination-column-left"><!--pagination-column pagination-column-left-->
-                Showing {{due_payments.start_index}} to {{due_payments.end_index}} of {{due_payments.paginator.count}} entries
-                </div><!--pagination-column pagination-column-left-->
-                
-                <div class="pagination-column pagination-column-right"><!--pagination-column pagination-column-right-->
+    <div class="pagination-containter"><!--pagination-containter-->
+    	<div class="pagination-column pagination-column-left"><!--pagination-column pagination-column-left-->
+        Showing {{pending_payments.start_index}} to {{pending_payments.end_index}} of {{pending_payments.paginator.count}} entries
+        </div><!--pagination-column pagination-column-left-->
+        
+        <div class="pagination-column pagination-column-right"><!--pagination-column pagination-column-right-->
                 <!--paginated-->
-          {% if due_payments.has_other_pages %}
+          {% if pending_payments.has_other_pages %}
           <nav aria-label="Page navigation example">
           <ul class="pagination">
-            {% if due_payments.has_previous %}
+            {% if pending_payments.has_previous %}
             <li class="page-item">
-              <a class="page-link" href="?page3={{ due_payments.previous_page_number }}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}" aria-label="Previous">
+              <a class="page-link" href="?page2={{ pending_payments.previous_page_number }}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}&tab=DUE" aria-label="Previous">
                 <span aria-hidden="true">&laquo;</span>
                 <span class="sr-only">Previous</span>
               </a>
@@ -669,14 +671,14 @@
             {% endif %}
             {% for pg in page_range %}
             {% if vus.number == pg %}
-                    <li class="page-item"><a class="page-link active" href="?page3={{pg}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}">{{pg}}</a></li>
+                    <li class="page-item"><a class="page-link active" href="?page2={{pg}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}&tab=DUE">{{pg}}</a></li>
             {% else %}
-                    <li class="page-item"><a class="page-link" href="?page3={{pg}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}">{{pg}}</a></li>
+                    <li class="page-item"><a class="page-link" href="?page2={{pg}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}&tab=DUE">{{pg}}</a></li>
             {% endif %}
             {% endfor %}
-            {% if due_payments.has_next %}        
+            {% if pending_payments.has_next %}        
             <li class="page-item">
-              <a class="page-link" href="?page3={{ due_payments.next_page_number}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}" aria-label="Next">
+              <a class="page-link" href="?page2={{ pending_payments.next_page_number}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}&tab=DUE" aria-label="Next">
                 <span aria-hidden="true">&raquo;</span>
                 <span class="sr-only">Next</span>
               </a>
@@ -695,7 +697,7 @@
             <!--paginated-->
                 </div><!--pagination-column pagination-column-right-->
             </div><!--pagination-containter-->         
-        </div><!--white-wrapper-pagination-->
+        </div><!--white-wrapper-pagination--> 
 
     </div>
 </div>
@@ -861,9 +863,23 @@
       $('.filter-box').hide();
     });
 
+    $('#all-tab').click(function(){
+      $('#tab_id').val('ALL');
+    });
+
+    $('#paid-tab').click(function(){
+      $('#tab_id').val('PENDING');
+    });
+
+    $('#due-tab').click(function(){
+      $('#tab_id').val('DUE');
+    })
+
     //keep selected tab on page reload
-    {% if tab == 'all' %}
+    {% if tab == 'ALL' %}
       $('#all-tab').click()  
+    {% elif tab == 'DUE' %}
+      $('#due-tab').click()  
     {% else %}
       $('#paid-tab').click()
     {% endif %}
@@ -971,7 +987,7 @@ function paymentfromtodatecheck() {
 function set_params_go(args)
 {
 var url='{% url 'common_items:payments' %}';
-var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),status:$('#status_filter_id').val(),payment_policy:$('#payment_policy_id').val(),payment_status:$('#payment_status_filter_id').val()
+var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),status:$('#status_filter_id').val(),payment_policy:$('#payment_policy_id').val(),payment_status:$('#payment_status_filter_id').val(),tab:$('#tab_id').val()
 };
 for(key in args) 
     params[key]=args[key];

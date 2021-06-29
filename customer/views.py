@@ -744,9 +744,9 @@ def quatation_html_to_pdf_view(request,evaluation_id):
 	html     = HTML(string=html_string,base_url=request.build_absolute_uri())
 	main_doc = html.render()
 
-	main_doc.write_pdf(target='/home/sonu/pdf/tmp/quatation/quatation.pdf');
+	main_doc.write_pdf(target='/home/pdf/tmp/quatation/quatation.pdf');
 
-	fs = FileSystemStorage('/home/sonu/pdf/tmp/quatation/')
+	fs = FileSystemStorage('/home/pdf/tmp/quatation/')
 	with fs.open('quatation.pdf') as pdf:
 		response = HttpResponse(pdf, content_type='application/pdf')
 		response['Content-Disposition'] = 'attachment; filename="'+evaluation_id+'_quatation.pdf"'
@@ -816,9 +816,9 @@ def invoice_html_to_pdf_view(request,evaluation_id):
 	html_string = render_to_string("customer/downloads/invoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'completed_jobs_count':completed_jobs_count})
 
 	html = HTML(string=html_string,base_url=request.build_absolute_uri())
-	html.write_pdf(target='/home/sonu/pdf/tmp/invoice/invoice.pdf');
+	html.write_pdf(target='/home/pdf/tmp/invoice/invoice.pdf');
 
-	fs = FileSystemStorage('/home/sonu/pdf/tmp/invoice/')
+	fs = FileSystemStorage('/home/pdf/tmp/invoice/')
 	with fs.open('invoice.pdf') as pdf:
 		response = HttpResponse(pdf, content_type='application/pdf')
 		response['Content-Disposition'] = 'attachment; filename="'+evaluation_id+'_invoice.pdf"'

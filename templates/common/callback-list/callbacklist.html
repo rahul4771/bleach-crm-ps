@@ -17,6 +17,7 @@
       </div>
       <form method="POST" action="" >{% csrf_token %}
       <input type="hidden" name="callback_orderid" id="order_id" />
+      <input type="hidden" name="tab_id" id="tab_id" />
       <div class="modal-body">
         <div class="form-group">
           <!--<label for="exampleInputEmail1">Notes</label>-->
@@ -54,7 +55,7 @@
   {% include "accountant/common/header.html" %}
 {% endif %}
     
-    <section class="content"><!--content-->
+    <section class="content" ><!--content-->
         <div class="container-fluid space topspace"><!--container-fluid space-->
             <div class="welcome-wrapper"><!--welcome-wrapper-->
                 <h1 class="dashboard-head">Callback List</h1>
@@ -71,7 +72,7 @@
      </div><!--white-wrapper-search-->
      
             
-<div class="white-wrapper"><!--white-wrapper-->
+<div class="white-wrapper" ><!--white-wrapper-->
 <h2 class="h2">Callback List</h2>
 
 <ul class="nav nav-tabs" id="paymentTab" role="tablist" style="margin-top:20px">
@@ -219,7 +220,7 @@
   <ul class="pagination">
      {% if evaluations.has_previous %}
     <li class="page-item">
-      <a class="page-link" href="?page={{ evaluations.previous_page_number }}&search={{request.GET.search}}&order_status={{request.GET.order_status}}&callback_status={{request.GET.callback_status}}&no_of_entries={{request.GET.no_of_entries}}" aria-label="Previous">
+      <a class="page-link" href="?page={{ evaluations.previous_page_number }}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&tab=ORDERS" aria-label="Previous">
         <span aria-hidden="true">&laquo;</span>
         <span class="sr-only">Previous</span>
       </a>
@@ -234,14 +235,14 @@
     {% endif %}
     {% for pg in page_range %}
     {% if vus.number == pg %}
-            <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}&order_status={{request.GET.order_status}}&callback_status={{request.GET.callback_status}}&no_of_entries={{request.GET.no_of_entries}}">{{pg}}</a></li>
+            <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}&tab=ORDERS">{{pg}}</a></li>
     {% else %}
-            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&order_status={{request.GET.order_status}}&callback_status={{request.GET.callback_status}}&no_of_entries={{request.GET.no_of_entries}}">{{pg}}</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}&tab=ORDERS">{{pg}}</a></li>
     {% endif %}
     {% endfor %}
     {% if evaluations.has_next %}        
     <li class="page-item">
-      <a class="page-link" href="?page={{ evaluations.next_page_number}}&search={{request.GET.search}}&order_status={{request.GET.order_status}}&callback_status={{request.GET.callback_status}}&no_of_entries={{request.GET.no_of_entries}}" aria-label="Next">
+      <a class="page-link" href="?page={{ evaluations.next_page_number}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}&tab=ORDERS" aria-label="Next">
         <span aria-hidden="true">&raquo;</span>
         <span class="sr-only">Next</span>
       </a>
@@ -296,7 +297,7 @@
 
 <h5>Callback Status</h5>
 <label for="favcity" style="width:100%;"> 
-<select name="callback_status" id="callback_status" onchange="set_params_go();"> 
+<select name="callback_status" id="callback_status_payments" onchange="set_params_go();"> 
 <option value="" >ALL</option>
 <option value="WAITING" {% if callback_status == 'WAITING' %}selected{% endif %}>WAITING</option>
 <option value="CALLBACK_LATER" {% if callback_status == 'CALLBACK_LATER' %}selected{% endif %}>CALLBACK LATER</option>
@@ -509,7 +510,7 @@
       <tfoot>
       </tfoot>
       </table>
-{% comment %} <div class="white-wrapper-pagination"><!--white-wrapper-pagination-->   
+<div class="white-wrapper-pagination"><!--white-wrapper-pagination-->   
     <div class="pagination-containter"><!--pagination-containter-->
     	<div class="pagination-column pagination-column-left"><!--pagination-column pagination-column-left-->
         Showing {{payments.start_index}} to {{payments.end_index}} of {{payments.paginator.count}} entries
@@ -522,7 +523,7 @@
   <ul class="pagination">
      {% if payments.has_previous %}
     <li class="page-item">
-      <a class="page-link" href="?page2={{ payments.previous_page_number }}&search={{request.GET.search}}&order_status={{request.GET.order_status}}&callback_status={{request.GET.callback_status}}&no_of_entries={{request.GET.no_of_entries}}" aria-label="Previous">
+      <a class="page-link" href="?page2={{ payments.previous_page_number }}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&tab=PAYMENTS" aria-label="Previous">
         <span aria-hidden="true">&laquo;</span>
         <span class="sr-only">Previous</span>
       </a>
@@ -537,14 +538,14 @@
     {% endif %}
     {% for pg in page_range %}
     {% if vus.number == pg %}
-            <li class="page-item"><a class="page-link active" href="?page2={{pg}}&search={{request.GET.search}}&order_status={{request.GET.order_status}}&callback_status={{request.GET.callback_status}}&no_of_entries={{request.GET.no_of_entries}}">{{pg}}</a></li>
+            <li class="page-item"><a class="page-link active" href="?page2={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}&tab=PAYMENTS">{{pg}}</a></li>
     {% else %}
-            <li class="page-item"><a class="page-link" href="?page2={{pg}}&search={{request.GET.search}}&order_status={{request.GET.order_status}}&callback_status={{request.GET.callback_status}}&no_of_entries={{request.GET.no_of_entries}}">{{pg}}</a></li>
+            <li class="page-item"><a class="page-link" href="?page2={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}&tab=PAYMENTS">{{pg}}</a></li>
     {% endif %}
     {% endfor %}
     {% if payments.has_next %}        
     <li class="page-item">
-      <a class="page-link" href="?page2={{ payments.next_page_number}}&search={{request.GET.search}}&order_status={{request.GET.order_status}}&callback_status={{request.GET.callback_status}}&no_of_entries={{request.GET.no_of_entries}}" aria-label="Next">
+      <a class="page-link" href="?page2={{ payments.next_page_number}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}&tab=PAYMENTS" aria-label="Next">
         <span aria-hidden="true">&raquo;</span>
         <span class="sr-only">Next</span>
       </a>
@@ -563,7 +564,7 @@
     <!--paginated-->
         </div><!--pagination-column pagination-column-right-->
     </div><!--pagination-containter-->         
-</div><!--white-wrapper-pagination-->  {% endcomment %}
+</div><!--white-wrapper-pagination-->
 
 </div>
 
@@ -628,9 +629,16 @@ $(function () {
   $('[data-toggle="tooltip"]').tooltip()
 })
 
+    $('#orders-tab').click(function(){
+      $('#tab_id').val('ORDERS');
+    });
+
+    $('#payments-tab').click(function(){
+      $('#tab_id').val('PAYMENTS');
+    });
 
 //keep selected tab on page reload
-    {% if tab == 'orders' %}
+    {% if tab == 'ORDERS' %}
       $('#orders-tab').click()
     {% else %}
       $('#payments-tab').click()
@@ -723,7 +731,7 @@ function callbacklist(status,order_id){
     .then(function (response) {
       if (response.data.success == true){
         console.log("RES")
-        window.location.reload();
+        window.location.href='/common/callback-list/?tab='+$('#tab_id').val()+'';
       }
     })
 }
@@ -731,7 +739,7 @@ function callbacklist(status,order_id){
 function set_params_go(args)
 {
 var url='{% url 'common_items:callback-list' %}';
-var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),order_status:$('#order_status').val(),callback_status:$('#callback_status').val(),payment_type:$('#payment_type').val()
+var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),order_status:$('#order_status').val(),callback_status:$('#callback_status').val(),callback_status_payments:$('#callback_status_payments').val(),payment_type:$('#payment_type').val(),tab:$('#tab_id').val()
 };
 for(key in args) 
     params[key]=args[key];

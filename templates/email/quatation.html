@@ -131,7 +131,7 @@
             margin-top: 20px;
             display: flex;
             color: #707070;
-            font-size: 18px;
+            font-size: 15px;
         }
 
         .info-section-left {
@@ -272,7 +272,7 @@
 
         <div style="background: #EEEEEE;">
             <div style="background: #FFFFFF; border-left: 1px solid #707070; border-top: 1px solid #707070; border-right: 1px solid #707070; margin-left: 3%; margin-right: 3%; padding-top: 3%;">
-                <h1>Quatation</h1>
+                <h1>Quotation</h1>
             </div>
         </div>
 
@@ -309,9 +309,7 @@
                         <span>:</span>
 
                         <div class="left text-right">
-                            address
-                            address
-                            address
+                        {{address_list}}
 
                         </div>
                     </div>
@@ -356,7 +354,7 @@
                             <span>:</span>
 
                             <div class="left text-right">
-                                01-06-2021
+                                {{evaluation.created|date:'d-m-Y'}}
                             </div>
                         </div>
                         <div class="info-section-item">
@@ -366,17 +364,17 @@
                             <span>:</span>
 
                             <div class="left text-right">
-                                01-06-2021
+                                {{evaluation.quatation_expiry_date|date:'d-m-Y'}}
                             </div>
                         </div>
                         <div class="info-section-item">
                             <div class="info-section-item-left-2">
-                                Evaluater
+                                Evaluator
                             </div>
                             <span>:</span>
 
                             <div class="left text-right">
-                                Subash
+                                {{evaluator}}
                             </div>
                         </div>
                         <div class="info-section-item">
@@ -399,17 +397,19 @@
                 <div class="order-item-in">
                     <div id="item-left">
                         <b>{{book.service_type.name}}</b>
-                        {% for section in book.evaluationbooksection.set__all %}
-                        <p style="font-size: 16px; margin-top: 10px; line-height: 2;">Size : <b>{{section.size}}{{section.unit}}</b>
-                            &nbsp; Quantity : <b>{{section.section_cleanings}}</b> &nbsp; Unit Price : <b>{{section.section_net_cost}}}</b></p>
+                        {% for section in book.sections %}
+                        <p style="font-size: 15px; margin-top: 10px; line-height: 2;">Size : <b>{{section.size}} {{section.unit}}</b>
+                            &nbsp; Quantity : <b>{{section.section_cleanings|default_if_none:'1'}}</b> &nbsp; Unit Price : <b>{{section.section_cost|default_if_none:'0.000'}}</b></p>
                         {% endfor %}
                     </div>
+                    {% for section in book.sections %}
                     <div style="flex-grow: 1;" class="m-mt-10 left">
                         <b>NET PRICE</b>
-                        <p style="font-size: 16px; margin-top: 10px; line-height: 2;" class="amount-text m-mt-10">
-                            <b>{{book.total_cost|floatformat:3}}</b> KD
+                        <p style="font-size: 15px; margin-top: 10px; line-height: 2;" class="amount-text m-mt-10">
+                            <b>{{section.section_net_cost|default_if_none:'0.000'}}</b> KD
                         </p>
                     </div>
+                    {% endfor %}
                 </div>
             </div>
             <!-- item-->
@@ -419,19 +419,19 @@
                 <div class="info-section-left">
                 {% if evaluation.payment_method == 'PREPAID' or evaluation.payment_method == 'BREAKDOWN' %}
                     <div class="info-section-item">
-                        <div style="font-size: 14px;" class="info-section-item-left-3">
+                        <div style="font-size: 15px;" class="info-section-item-left-3">
                             <b>Payment Before Cleaning</b>
                         </div>
-                        <div style="font-size: 14px;" class="left">
+                        <div style="font-size: 15px;" class="left">
                             <b>340.000</b>&nbsp;KD
                         </div>
                     </div>
                 {% elif evaluation.payment_method == 'POSTPAID' or evaluation.payment_method == 'BREAKDOWN' %}
                     <div class="info-section-item">
-                        <div style="font-size: 14px;" class="info-section-item-left-3">
+                        <div style="font-size: 15px;" class="info-section-item-left-3">
                             <b>Payment After Cleaning</b>
                         </div>
-                        <div style="font-size: 14px;" class="left text-right">
+                        <div style="font-size: 15px;" class="left text-right">
                             <b>35.000</b> &nbsp; KD
                         </div>
                     </div>
@@ -483,14 +483,14 @@
             font-weight: bold;
             width: 200px;
             font-size: 22px;">
-                <b> <a href="" class="button-a">Approve</a> or <a class="button-a" href="" class="">Reject</a> </b>
+                <b> <a href="/customer/quatation/paw{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}" class="button-a">Approve</a> or <a class="button-a" href="" class="">Reject</a> </b>
             </div>
         </div>
     </div>
     <div style=" width: auto;
     color: #707070; text-align: center; background: #EEEEEE; padding: 2%;">
         <div id="footer-content">
-            <p style="font-weight: 600; font-size: 14px;">This is an automatically generated email form CRM system of
+            <p style="font-weight: 600; font-size: 12px;">This is an automatically generated email form CRM system of
                 Bleach. Please do not reply directly to this email.</p>
             <p style="margin-top: 10px; font-size: 12px;">Visit us on <a style="text-decoration: none; color: #2A8EA2;"
                     href="https://www.bleach-kw.com/">Bleach-kw.com</a></p>
@@ -531,11 +531,13 @@
                 </li>
             </ul>
             <div style="display: flex;">
-                <div style="text-align: left; font-size: 14px;">
-                    Terms
+            <a href="https://web-dev.bleach-kw.com/terms-and-conditions/?lang=en">
+                <div style="text-align: left; font-size: 12px;">
+                    Terms & Conditions
 
                 </div>
-                <div style="margin-left: auto; text-align: right; font-size: 14px;">
+                </a>
+                <div style="margin-left: auto; text-align: right; font-size: 12px;">
                     Copyrights © 2021Bleach Cleaning services
                 </div>
             </div>

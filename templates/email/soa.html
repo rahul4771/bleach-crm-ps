@@ -130,7 +130,7 @@
             margin-top: 20px;
             display: flex;
             color: #707070;
-            font-size: 16px;
+            font-size: 15px;
         }
 
         .info-section-left {
@@ -257,14 +257,14 @@
 
         table th {
             color: #303030;
-            font-size: 15px;
+            font-size: 12px;
             font-weight: 400 !important;
             padding: 5px;
             background: #EDF1F6;
         }
         table td {
             color: #303030;
-            font-size: 15px;
+            font-size: 12px;
             font-weight: 400 !important;
             padding: 5px;
         }
@@ -318,7 +318,7 @@
                         </div>
                         <span>:&nbsp;</span>
                         <div class="">
-                            0000000
+                            {{customer.customer_id|default_if_none:'-'}}
                         </div>
                     </div>
                     <div class="info-section-item">
@@ -328,7 +328,7 @@
                         <span>:&nbsp;</span>
 
                         <div class="">
-                            TABCO
+                            {{customer.name}}
 
                         </div>
                     </div>
@@ -340,7 +340,7 @@
                         <span>:&nbsp;</span>
 
                         <div class="">
-                            000000000
+                            +965 {{customer.mobile_number}}
                         </div>
                     </div>
                     <div class="info-section-item">
@@ -350,7 +350,7 @@
                         <span>:&nbsp;</span>
 
                         <div class="">
-                            0 Floor, 0,0 Block,0 Street,0 Avenue,Sharq, Al Asimah
+                            <b>{{address.apartment}}</b>: {% if address.floor %}{{address.floor}}, {% else %}{% endif %} {{address.building}}, {{address.block}}, {{address.street}}, {% if address.avenue %}{{address.avenue}}, {% else %}{% endif %} {{address.area.name}}, {{address.governorate.name}}
                         </div>
                     </div>
                 </div>
@@ -363,7 +363,7 @@
                         <tr>
                             <th style="text-align: center;">Date</th>
                             <th style="text-align: center;">Reference</th>
-                            <th style="text-align: center;">Details</th>
+                            {% comment %} <th style="text-align: center;">Details</th> {% endcomment %}
                             <th style="text-align: center;">Order Amount</th>
                             <th style="text-align: center;">Credit</th>
                             <th style="text-align: center;">Debit</th>
@@ -371,40 +371,29 @@
                         </tr>
                     </thead>
                     <tbody>
+                        
+                        {% for order in orders %}
                         <tr>
-                            <td>30-05-21</td>
-                            <td>BLC2006270</td>
-                            <td>Sterilization</td>
-                            <td>100.000</td>
-                            <td>100.000</td>
-                            <td>100.000</td>
-                            <td>--</td>
+                        <td>{{order.date|date:'d-m-Y'}}</td>
+                        <td>{{order.invoice_no}}</td>
+                        <!-- <td>{{order.details}}</td> -->
+                        <td style="text-align: right;" class="orderamount">{% if order.amount %}{{order.amount|floatformat:3|default_if_none:'-'}}{% else %}-{% endif %}</td>
+                        <td style="text-align: right;" class="ordercredit">{% if order.credit %}{{order.credit|floatformat:3|default_if_none:'-'}}{% else %}-{% endif %}</td>
+
+                        <td style="text-align: right;" class="orderdebit">{% if order.debit %}{{order.debit|floatformat:3}}{% else %}-{% endif %}</td>
+                        <td style="text-align: right;" class="orderbalance">{{order.balance_amount|floatformat:3}}</td>
                         </tr>
-                        <tr>
-                            <td>30-05-21</td>
-                            <td>BLC2006270</td>
-                            <td>Sterilization</td>
-                            <td>100.000</td>
-                            <td>100.000</td>
-                            <td>100.000</td>
-                            <td>--</td>
-                        </tr><tr>
-                            <td>30-05-21</td>
-                            <td>BLC2006270</td>
-                            <td>Sterilization</td>
-                            <td>100.000</td>
-                            <td>100.000</td>
-                            <td>100.000</td>
-                            <td>--</td>
-                        </tr>
+                        {% endfor %}
+
+
                         <tr style="background: #EDF1F6;">
                             <td colspan="3">
                               Total
                             </td>
-                            <td style="text-align: right;"></td>
-                            <td style="text-align: right;" id="total_credit">0.000</td>
-                            <td style="text-align: right;" id="total_debit">0.000</td>
-                            <td style="text-align: right;" id="total_balance">0.000</td>
+                            {% comment %} <td style="text-align: right;"></td> {% endcomment %}
+                            <td style="text-align: right;" id="total_credit">{{total_credit|floatformat:3}}</td>
+                            <td style="text-align: right;" id="total_debit">{{total_debit|floatformat:3}}</td>
+                            <td style="text-align: right;" id="total_balance">{{total_balance|floatformat:3}}</td>
                           </tr>
                     </tbody>
 
@@ -421,7 +410,7 @@
                     width: 26%;
                     padding: 15px;
                 ">
-                  <div style="font-size: 16px;
+                  <div style="font-size: 14px;
                   color: #4A4A4B;
                   text-align: left;">
                     Balance Due
@@ -432,7 +421,7 @@
                   font-weight: bold;
                  
                   margin-top: 30px;
-                  color: #26A8E0;">0.000</h1>
+                  color: #26A8E0;">{{total_balance|floatformat:3}}</h1>
                 </div>
               </div>
 
@@ -445,7 +434,7 @@
     <div style=" width: auto;
     color: #707070; text-align: center; background: #EEEEEE; padding: 2%;">
         <div id="footer-content">
-            <p style="font-weight: 600; font-size: 14px;">This is an automatically generated email form CRM system of
+            <p style="font-weight: 600; font-size: 12px;">This is an automatically generated email form CRM system of
                 Bleach. Please do not reply directly to this email.</p>
             <p style="margin-top: 10px; font-size: 12px;">Visit us on <a style="text-decoration: none; color: #2A8EA2;"
                     href="https://www.bleach-kw.com/">Bleach-kw.com</a></p>
@@ -486,11 +475,13 @@
                 </li>
             </ul>
             <div style="display: flex;">
-                <div style="text-align: left; font-size: 14px;">
-                    Terms
+                <a href="https://web-dev.bleach-kw.com/terms-and-conditions/?lang=en">
+                <div style="text-align: left; font-size: 12px;">
+                    Terms & Conditions
 
                 </div>
-                <div style="margin-left: auto; text-align: right; font-size: 14px;">
+                </a>
+                <div style="margin-left: auto; text-align: right; font-size: 12px;">
                     Copyrights © 2021Bleach Cleaning services
                 </div>
             </div>
