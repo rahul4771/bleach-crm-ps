@@ -4430,9 +4430,9 @@ class EditOrderDetails(APIView):
 	
 	def get(self,request,order_id):
 		response_dict = {}
-		section_id                       = request.GET.get('section_id')
-		section                          = EvaluationBookSection.objects.get(id=section_id)
-		response_dict['section_details'] = EvaluationBookSectionSerializer(section).data
+		evaluation_book_id               = request.GET.get('evaluation_book_id')
+		evaluation_book                  = EvaluationBook.objects.get(id=evaluation_book_id).prefetch_related(Preftech('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='sections'))
+		response_dict['section_details'] = EvaluationBookSerializer(evaluation_book).data
 		return Response(response_dict,HTTP_200_OK)
 
 	def post(self,request,order_id):
