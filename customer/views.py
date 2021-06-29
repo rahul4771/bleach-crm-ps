@@ -4431,7 +4431,7 @@ class EditOrderDetails(APIView):
 	def get(self,request,order_id):
 		response_dict = {}
 		evaluation_book_id               = request.GET.get('evaluation_book_id')
-		evaluation_book                  = EvaluationBook.objects.get(id=evaluation_book_id).prefetch_related(Preftech('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='sections'))
+		evaluation_book                  = EvaluationBook.objects.prefetch_related(Preftech('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='sections')).get(id=evaluation_book_id)
 		response_dict['section_details'] = EvaluationBookSerializer(evaluation_book).data
 		return Response(response_dict,HTTP_200_OK)
 
