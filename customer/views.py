@@ -4557,8 +4557,53 @@ class EditOrderDetails(APIView):
 			return Response(response_dict,HTTP_200_OK)	
 		
 		elif action == 'edit_discount':
-			discount_amount = request.data.get('discount_amount')
-			payment_policy  = request.data.get('payment_policy')
+			#update payment policy and discount
+			payment_policy      = request.data.get('payment_policy')
+			discount_amount     = request.data.get('discount_amount')
+			old_discount_amount = evaluation.discount 
+			if order.amount_paid == 0:
+				if payment_policy == 'PREPAID':
+					order.evaluation.before_cleaning_amount = 0
+					order.evaluation.after_cleaning_amount  = 0
+					order.evaluation.payment_policy         = 'PREPAID'
+
+					order.evaluation.discount                 = discount_amount
+					order.evaluation.total_cost              -= (old_discount_amount-discount_amount)
+					order.total_amount                       -= (old_discount_amount-discount_amount)
+					order.remining_amount                    -= (old_discount_amount-discount_amount)
+				
+				elif payment_policy == 'BREAKDOWN':
+					before_cleaning_amount                  = request.data.get('before_cleaning_amount')
+					after_cleaning_amount                   = request.data.get('after_cleaning_amount')
+					order.evaluation.before_cleaning_amount = before_cleaning_amount
+					order.evaluation.after_cleaning_amount  = after_cleaning_amount
+					order.evaluation.payment_policy         = 'BREAKDOWN'
+
+					order.evaluation.discount                = discount_amount
+					order.evaluation.total_cost              -= (old_discount_amount-discount_amount)
+					order.evaluation.total_cost              -= (old_discount_amount-discount_amount)
+					order.total_amount                       -= (old_discount_amount-discount_amount)
+					order.remining_amount                    -= (old_discount_amount-discount_amount)
+
+				elif payment_policy == 'POSTPAID':
+					order.evaluation.before_cleaning_amount = 0
+					order.evaluation.after_cleaning_amount  = 0
+					order.evaluation.payment_policy         = 'POSTPAID'
+
+					order.evaluation.discount                = discount_amount
+					order.evaluation.total_cost              -= (old_discount_amount-discount_amount)
+					order.evaluation.total_cost              -= (old_discount_amount-discount_amount)
+					order.total_amount                       -= (old_discount_amount-discount_amount)
+					order.remining_amount                    -= (old_discount_amount-discount_amount)
+				
+				#to check payment completed
+				if order.remining_amount == 0:
+					order.payment_status = 'COMPLETED'
+				
+				order.evaluation.save()
+				order.save()
+
+				response_dict['success']  = True
 
 		elif action == 'add_cleaning':
 			pass
