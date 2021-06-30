@@ -1,9 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
 {% load static %}
-<div class="wrapper"><!--wrapper-->
+<div class="wrapper" id="app"><!--wrapper-->
+<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+<link href="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/assets/owl.carousel.css' %}" rel="stylesheet">
 {% include "technicalsupervisor/common/header.html" %}
-    
+<v-app>   
     <section class="content"><!--content-->
         <div class="container-fluid space topspace"><!--container-fluid space-->
             <div class="welcome-wrapper"><!--welcome-wrapper-->
@@ -107,51 +111,9 @@
 </table>
 </div><!--white-wrapper-->   
 
-<div class="white-wrapper"><!--white-wrapper-->
-
-<div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
-
-<div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->
-<h2 class="h2">Cleaning Calendar</h2>
-</div>
-
-<div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
-<div class="date-wrapper"><!--date-wrapper-->
-            <div class="date-wrapper-inner"><!--date-wrapper-inner-->
-            <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
-            <input type="text" id="cleaning_calendar" value="{{schedule_date|date:"d-m-Y"}}" onchange="set_params_go();" class="date-box date_pick">
-            <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
-            <button class='today-date current-date'>Today</button>
-            </div><!--date-wrapper-inner-->
-</div><!--date-wrapper-->
-</div>
-
-</div>
-
-<div class="cleaning-container"><!--cleaning-container-->
-<div class="scrollable"><!--scrollable-->
-<div>
-  <table id="cleaning_table" cellpadding="1" cellspacing="1" class="cleaning-table">
-  <tr>
-  <th width="4.166%" colspan="2"> </th>
-    <th width="8.333%" colspan="2">2 AM</th>
-    <th width="8.333%" colspan="2">4 AM</th>
-    <th width="8.333%" colspan="2">6 AM</th>
-    <th width="8.333%" colspan="2">8 AM</th>
-    <th width="8.333%" colspan="2">10 AM</th>
-    <th width="8.333%" colspan="2">12 PM</th>
-    <th width="8.333%" colspan="2">2 PM</th>
-    <th width="8.333%" colspan="2">4 PM</th>
-    <th width="8.333%" colspan="2">6 PM</th>
-    <th width="8.333%" colspan="2">8 PM</th>
-    <th width="8.333%" colspan="2">10 PM</th>
-    <th width="4.166%" colspan="2"></th>
-  </tr>  
-  </table>
-</div>
-</div><!--scrollable-->
-</div><!--cleaning-container-->
-</div><!--white-wrapper-->
+<!--new cleaning calendar-->
+{% include 'common/cleaning_calendar/cleaning_calendar.html' %} 
+<!--new cleaning calendar-->
 
 <!-- edit_cleaning_popup -->
 <div class="modal-popup-wrapper1"><!--modal-popup-wrapper-->
@@ -277,6 +239,17 @@
 {% endblock %}
 
 {% block javascript %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/v-owl-carousel@1.0.8/dist/v-owl-carousel.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+  <!-- calendar-->
+  <script src="{% static '/files/externalfiles/plugins/OwlCarousel2/dist/owl.carousel.js'%}"></script>
+<script src="{% static 'files/js/calendar/main.js' %}"></script>
+<!--calender-->
+
 <script type="text/javascript">
 
 $('document').ready(function(){

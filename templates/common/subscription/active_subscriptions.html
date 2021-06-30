@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
 {% load static %}
-<div class="wrapper"><!--wrapper-->
+
+
+<link href="{% static 'files/css/orders.css' %}" rel="stylesheet" />
+
+<div class="wrapper" id="app"><!--wrapper-->
 
     <!-- send invoice modal begins here-->
 <!-- Modal -->
@@ -21,48 +25,30 @@
               <!-- use app.contacts to get the array of selected contact  methods -->
             <div class="row contact-margin">
                 <div class="col-md-4 text-center">
-                    <div class="contact-card-active text-center" v-if="contacts.includes('EMAIL')">
+                    <div class="contact-card-active text-center">
                         <div style="text-align: left;">
                             <input type="checkbox" class="contact-checkbox cc-checkmark" v-model="contacts" value="EMAIL" {% if order.evaluation.customer.is_email == True %}checked="True"{% endif %}>
                         </div>
                         <img src="{% static 'files/icons/email.png'%}" class="contact-card-icon"/>
 
-                        <div class="contact-card-text">
-                           {{order.evaluation.customer.email}}
+                        <div class="contact-card-text customer_email">
+                           
                         </div>
                     </div>
                 
-                    <div class="contact-card text-center" v-else>
-                        <div style="text-align: left;">
-                            <input type="checkbox" class="contact-checkbox cc-checkmark" v-model="contacts" value="EMAIL" {% if order.evaluation.customer.is_sms == True %}checked="True"{% endif %}>
-                        </div>
-                        <img src="{% static 'files/icons/email.png'%}" class="contact-card-icon"/>
-
-                        <div class="contact-card-text">
-                           {{order.evaluation.customer.email}}
-                        </div>
-                    </div>
                 
                 </div>
                 <div class="col-md-4">
-                    <div class="contact-card-active text-center" v-if="contacts.includes('SMS')">
+                    <div class="contact-card-active text-center" >
                         <div style="text-align: left;">
                             <input type="checkbox" class="contact-checkbox cc-checkmark" id="exampleCheck1" v-model="contacts" value="SMS" >
                         </div>
                         <img src="{% static 'files/icons/sms.png'%}" class="contact-card-icon"/>
-                        <div class="contact-card-text">
-                           {{order.evaluation.customer.mobile_number}}
+                        <div class="contact-card-text customer_mobile">
+                           
                         </div>
                     </div>
-                    <div class="contact-card text-center" v-else>
-                        <div style="text-align: left;">
-                            <input type="checkbox" class="contact-checkbox cc-checkmark" id="exampleCheck1" v-model="contacts" value="SMS" >
-                        </div>
-                        <img src="{% static 'files/icons/sms.png'%}" class="contact-card-icon"/>
-                        <div class="contact-card-text">
-                           {{order.evaluation.customer.mobile_number}}
-                        </div>
-                    </div>
+                    
                 </div>
                 <div class="col-md-4">
                     <div class="contact-card-disabled text-center">
@@ -70,8 +56,8 @@
                             <input type="checkbox" class="contact-checkbox cc-checkmark" id="exampleCheck1" v-model="contacts" value="WHATSAPP">
                         </div>
                         <img src="{% static 'files/icons/whatsapp.png'%}" class="contact-card-icon"/>
-                        <div class="contact-card-text">
-                            {{order.evaluation.customer.mobile_number}}
+                        <div class="contact-card-text customer_mobile">
+                            
                         </div>
                     </div>
                 </div>
@@ -79,7 +65,6 @@
           </div>
         </div>
         <div class="modal-footer text-center">
-          
           <button type="submit" onclick="send_items()" class="btn primary-btn" data-dismiss="modal">Send</button>
           <button type="button" class="btn primary-btn-bordered" data-dismiss="modal" @click="resetContacts">Cancel</button>
         </div>
@@ -477,7 +462,9 @@
       </div><!--ticket-form-left-->   
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
-<div align="right"> <input class="assignButton dateconfirm" name="assing" type="button" value="Send Invoice" onclick="submitAnyForm(this);" ></div>  
+<div align="right"> <input class="assignButton dateconfirm" name="assing" type="button" value="Send Invoice" onclick="options_popup()" >
+<input type="hidden" data-toggle="modal" data-target="#invoiceModalCenter" id="invoice_modal" />
+</div>  
 
 </div><!--ticket-wrapper-full-->             
 </form>
@@ -492,7 +479,8 @@
 
 {% block javascript %}
 <script src='js/footable.js'></script> 
-<script src="{% static 'files/js/charts/order-chart.js' %}"></script> 
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+<script src="{% static 'files/js/order/main.js' %}"></script>
 <script id="rendered-js">
 
 $('.footable').footable({
@@ -580,6 +568,54 @@ $("#governorate_filter_id").change(function(){
 $('#close_send_invoice_popup').click(function(){
       $('#send_invoice_popup').css({'visibility':'hidden','opacity':0,});
   });
+
+//send soa mail
+function options_popup(){
+
+    if ($('#subscription_topay_id').val() == ''){
+      alert('Please enter Invoice amount !')
+    }else{
+ 
+    console.log($('#order_id').val(),"val")
+    axios.get(url+'/api/invoice-mail-sms/',{ params: { 'order_id':$('#order_id').val() } })
+                .then(function (response) {
+                  console.log(response,"res")
+                  if (response.data.success == true){
+                    $('.customer_mobile').text(response.data.customer_mobile);
+                    $('.customer_email').text(response.data.customer_email);
+                    
+                    $('#close_send_invoice_popup').click();
+                    $('#invoice_modal').click();
+                  }else{
+                    alert("Error!")  
+                  }
+                })
+    }
+}
+
+//send soa mail
+function send_items(){
+ 
+    var checkedVals = $('.contact-checkbox:checkbox:checked').map(function() {
+        return this.value;
+    }).get();
+    //alert(checkedVals.join(","));
+    var selectedoptions = checkedVals.join(",");
+    console.log($('#subscription_topay_id').val(),$('#order_id').val(),"ops");
+
+    var form_items = new FormData()
+    form_items.append('orderid',$('#order_id').val())
+    form_items.append('selectedoptions',selectedoptions)
+    form_items.append('subscription_topay',$('#subscription_topay_id').val())
+    axios.post(url+'/api/invoice-mail-sms/', form_items)
+                .then(function (response) {
+                  if (response.data == true){
+                  alert("Invoice Sent!")
+                  }else{
+                    alert("Failed !")  
+                  }
+                })
+}
 
 function set_params_go(args)
 {
