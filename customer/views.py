@@ -3446,13 +3446,13 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 				return Response(response_dict,HTTP_200_OK) 
 
 		#Evaluation cost updation
-		evaluation.total_cost     += request.data.get('total_cost')
-		evaluation.estimated_cost += request.data.get('estimated_cost')
+		evaluation.total_cost     = request.data.get('total_cost')
+		evaluation.estimated_cost = request.data.get('estimated_cost')
 		evaluation.save()
 
 		#order cost updation
-		order.total_amount       += request.data.get('total_cost')
-		order.remining_amount    += request.data.get('total_cost')
+		order.total_amount       = request.data.get('total_cost')
+		order.remining_amount    = request.data.get('total_cost')
 		order.save()
 		
 		#evaluation details cost updation
