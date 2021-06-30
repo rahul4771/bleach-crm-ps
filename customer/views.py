@@ -4559,26 +4559,26 @@ class EditOrderDetails(APIView):
 		
 		elif action == 'edit_discount':
 			#update payment policy and discount
-			payment_policy      = request.data.get('payment_policy')
+			payment_method      = request.data.get('payment_method')
 			discount_amount     = request.data.get('discount_amount')
 			old_discount_amount = evaluation.discount 
 			if order.amount_paid == 0:
-				if payment_policy == 'PREPAID':
+				if payment_method == 'PREPAID':
 					order.evaluation.before_cleaning_amount = 0
 					order.evaluation.after_cleaning_amount  = 0
-					order.evaluation.payment_policy         = 'PREPAID'
+					order.evaluation.payment_method         = 'PREPAID'
 
 					order.evaluation.discount                 = discount_amount
 					order.evaluation.total_cost              -= (old_discount_amount-discount_amount)
 					order.total_amount                       -= (old_discount_amount-discount_amount)
 					order.remining_amount                    -= (old_discount_amount-discount_amount)
 				
-				elif payment_policy == 'BREAKDOWN':
+				elif payment_method == 'BREAKDOWN':
 					before_cleaning_amount                  = request.data.get('before_cleaning_amount')
 					after_cleaning_amount                   = request.data.get('after_cleaning_amount')
 					order.evaluation.before_cleaning_amount = before_cleaning_amount
 					order.evaluation.after_cleaning_amount  = after_cleaning_amount
-					order.evaluation.payment_policy         = 'BREAKDOWN'
+					order.evaluation.payment_method         = 'BREAKDOWN'
 
 					order.evaluation.discount                = discount_amount
 					order.evaluation.total_cost              -= (old_discount_amount-discount_amount)
@@ -4586,10 +4586,10 @@ class EditOrderDetails(APIView):
 					order.total_amount                       -= (old_discount_amount-discount_amount)
 					order.remining_amount                    -= (old_discount_amount-discount_amount)
 
-				elif payment_policy == 'POSTPAID':
+				elif payment_method == 'POSTPAID':
 					order.evaluation.before_cleaning_amount = 0
 					order.evaluation.after_cleaning_amount  = 0
-					order.evaluation.payment_policy         = 'POSTPAID'
+					order.evaluation.payment_method         = 'POSTPAID'
 
 					order.evaluation.discount                = discount_amount
 					order.evaluation.total_cost              -= (old_discount_amount-discount_amount)
