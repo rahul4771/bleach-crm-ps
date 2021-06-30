@@ -4545,10 +4545,10 @@ class EditOrderDetails(APIView):
 					order.evaluation.after_cleaning_amount  = 0
 					order.evaluation.payment_method         = 'PREPAID'
 
-					order.evaluation.discount                 = discount_amount
-					order.evaluation.total_cost              -= (old_discount_amount-discount_amount)
-					order.total_amount                       -= (old_discount_amount-discount_amount)
-					order.remining_amount                    -= (old_discount_amount-discount_amount)
+					order.evaluation.discount               = discount_amount
+					order.evaluation.total_cost             = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
+					order.total_amount                      = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
+					order.remining_amount                   = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
 				
 				elif payment_method == 'BREAKDOWN':
 					before_cleaning_amount                  = request.data.get('before_cleaning_amount')
@@ -4558,10 +4558,10 @@ class EditOrderDetails(APIView):
 					order.evaluation.payment_method         = 'BREAKDOWN'
 
 					order.evaluation.discount                = discount_amount
-					order.evaluation.total_cost              -= (old_discount_amount-discount_amount)
-					order.evaluation.total_cost              -= (old_discount_amount-discount_amount)
-					order.total_amount                       -= (old_discount_amount-discount_amount)
-					order.remining_amount                    -= (old_discount_amount-discount_amount)
+					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
+					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
+					order.total_amount                       = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
+					order.remining_amount                    = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
 
 				elif payment_method == 'POSTPAID':
 					order.evaluation.before_cleaning_amount = 0
@@ -4569,10 +4569,10 @@ class EditOrderDetails(APIView):
 					order.evaluation.payment_method         = 'POSTPAID'
 
 					order.evaluation.discount                = discount_amount
-					order.evaluation.total_cost              -= (old_discount_amount-discount_amount)
-					order.evaluation.total_cost              -= (old_discount_amount-discount_amount)
-					order.total_amount                       -= (old_discount_amount-discount_amount)
-					order.remining_amount                    -= (old_discount_amount-discount_amount)
+					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
+					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
+					order.total_amount                       = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
+					order.remining_amount                    = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
 				
 				#to check payment completed
 				if order.remining_amount == 0:
