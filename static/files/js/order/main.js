@@ -209,12 +209,28 @@ const app = new Vue({
       }
     },
     updateDiscount(){
-      if(this.paymentData.cleaning_method!='BREAKDOWN')
+      if(this.paymentData.payment_method=='BREAKDOWN')
+      {
+        console.log("yes i worked")
+      axios.post(this.url+'/customer/editorder/'+this.orderId,{
+        "action_type":'edit_discount',
+       "payment_method":this.paymentData.payment_method,
+       "discount_amount":parseInt(this.paymentData.discount),
+       "before_cleaning_amount":parseInt(this.paymentData.amount_before_cleaning),
+       "after_cleaning_amount":parseInt(this.paymentData.amount_after_cleaning),
+       
+      }).then(response=>{
+        console.log(response)
+        $('#edit-payment-close').click()
+        
+      })
+    }
+      else
       {
       axios.post(this.url+'/customer/editorder/'+this.orderId,{
         "action_type":'edit_discount',
        "payment_method":this.paymentData.payment_method,
-       "discount":this.paymentData.discount,
+       "discount_amount":parseInt(this.paymentData.discount),
        
        
       }).then(response=>{
@@ -223,21 +239,7 @@ const app = new Vue({
         
       })
       }
-      else if(this.paymentData.cleaning_method=='BREAKDOWN')
-      {
-      axios.post(this.url+'/customer/editorder/'+this.orderId,{
-        "action_type":'edit_discount',
-       "payment_method":this.paymentData.payment_method,
-       "discount":this.paymentData.discount,
-       "before_cleaning_amount":this.paymentData.amount_before_cleaning,
-       "after_cleaning_amount":this.paymentData.amount_after_cleaning,
-       
-      }).then(response=>{
-        console.log(response)
-        $('#edit-payment-close').click()
-        
-      })
-    }
+      
     },
     updateSection(){
       var sectionData={}
