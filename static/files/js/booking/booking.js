@@ -1410,7 +1410,7 @@ console.log(response)
           tc=tc+parseInt(this.serviceDetails.service_details[sr].total_cost)
         }
           this.serviceDetails.total_cost=tc
-          this.serviceDetails.estimated_cost=this.tc
+          this.serviceDetails.estimated_cost=tc
         
           this.bookMultipleService()
     },

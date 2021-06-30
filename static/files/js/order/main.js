@@ -63,6 +63,14 @@ function editService(service){
   app.getProductivity()
   
 }
+function openPaymentEdit(payment){
+ var paymentDetails=$(payment).data()
+ app.paymentData.payment_method=paymentDetails.payment_method
+ app.paymentData.total_amount=paymentDetails.total_amount
+ app.total_amount=paymentDetails.total_amount
+ app.paymentData.discount=paymentDetails.discount
+ app.openPayment()
+}
 const app = new Vue({
   el: "#app",
   
@@ -100,44 +108,7 @@ const app = new Vue({
   floortypes:["MARBLE","GLASS","STONE","CERAMIC","CONCRETE","BRICKS","WOODEN","TERRAZO","OTHERS"],
   materials:["POLYESTER","NATURAL FIBER","SYNTHETIC","LEATHER","OLEFIN","POLYPROPYLENE","NYLON"],
   colors:["GREEN","SILVER","VIOLET","WHITE","BLACK","BEIGE","BLUE","GREY","RED","CREAM","MULTI","OFF WHITE","MEROON","ORANGE","PINK","GOLD","BROWN","YELLOW","ROYAL BLUE","LILAC","OTHERS"],
-    options: [
-               {
-                 "city": "San Martin",
-                 "city_ascii": "San Martin",
-                 "lat": -33.06998533,
-                 "lng": -68.49001612,
-                 "pop": 99974,
-                 "country": "Argentina",
-                 "iso2": "AR",
-                 "iso3": "ARG",
-                 "province": "Mendoza",
-                 "timezone": "America/Argentina/Mendoza"
-               },
-               {
-                 "city": "San Nicolas",
-                 "city_ascii": "San Nicolas",
-                 "lat": -33.33002114,
-                 "lng": -60.24000289,
-                 "pop": 117123.5,
-                 "country": "Argentina",
-                 "iso2": "AR",
-                 "iso3": "ARG",
-                 "province": "Ciudad de Buenos Aires",
-                 "timezone": "America/Argentina/Buenos_Aires"
-               },
-               {
-                 "city": "San Francisco",
-                 "city_ascii": "San Francisco",
-                 "lat": -31.43003375,
-                 "lng": -62.08996749,
-                 "pop": 43231,
-                 "country": "Argentina",
-                 "iso2": "AR",
-                 "iso3": "ARG",
-                 "province": "Córdoba",
-                 "timezone": "America/Argentina/Cordoba"
-               }
-             ],
+    
              productivity:{},
              editSectionData:{
               size:{},
@@ -165,11 +136,23 @@ const app = new Vue({
                amount_before_cleaning:'',
                amount_after_cleaning:'',
                amount:'',
-               payment_policy:''
-             }
+               payment_method:''
+             },
+             total_amount:0
 
   },
   methods:{
+    calDiscount(){
+      this.paymentData.total_amount=this.total_amount-this.paymentData.discount
+      this.paymentData.amount_after_cleaning=''
+      this.paymentData.amount_before_cleaning=''
+    },
+    calcBreakdownBefore(){
+      this.paymentData.amount_after_cleaning=this.paymentData.total_amount-this.paymentData.amount_before_cleaning
+    },
+    calcBreakdownAfter(){
+      this.paymentData.amount_before_cleaning=this.paymentData.total_amount-this.paymentData.amount_after_cleaning
+    },
     openPayment(){
       $('#edit-payment-tigger').click()
     },
@@ -224,6 +207,37 @@ const app = new Vue({
       else {
         this.getProductivity()
       }
+    },
+    updateDiscount(){
+      if(this.paymentData.cleaning_method!='BREAKDOWN')
+      {
+      axios.post(this.url+'/customer/editorder/'+this.orderId,{
+        "action_type":'edit_discount',
+       "payment_method":this.paymentData.payment_method,
+       "discount":this.paymentData.discount,
+       
+       
+      }).then(response=>{
+        console.log(response)
+        $('#edit-payment-close').click()
+        
+      })
+      }
+      else if(this.paymentData.cleaning_method=='BREAKDOWN')
+      {
+      axios.post(this.url+'/customer/editorder/'+this.orderId,{
+        "action_type":'edit_discount',
+       "payment_method":this.paymentData.payment_method,
+       "discount":this.paymentData.discount,
+       "before_cleaning_amount":this.paymentData.amount_before_cleaning,
+       "after_cleaning_amount":this.paymentData.amount_after_cleaning,
+       
+      }).then(response=>{
+        console.log(response)
+        $('#edit-payment-close').click()
+        
+      })
+    }
     },
     updateSection(){
       var sectionData={}
@@ -328,14 +342,17 @@ const app = new Vue({
     getSections(id){
       console.log("sectionid is"+id)
       console.log("data is"+JSON.stringify(this.sections[id]))
+      
       this.currentSection=this.sections[id]
       this.gotSection=true
       return this.currentSection
     },
     getSection(id){
       this.eval_book_id=id
+     
         axios.get('http://localhost:8000/customer/editorder/'+this.orderId+'?evaluation_book_id='+id).then(response=>{
           this.sections=response.data.section_details.evaluationsection_book
+          this.service_type=response.data.section_details.service_type.name
         }).catch(err=>{
           console.log(err)
         })
