@@ -159,9 +159,20 @@ const app = new Vue({
              gotSection:false,
              url:'http://localhost:8000',
              eval_book_id:'',
-             action_type:''
+             action_type:'',
+             paymentData:{
+               discount:'',
+               amount_before_cleaning:'',
+               amount_after_cleaning:'',
+               amount:'',
+               payment_policy:''
+             }
+
   },
   methods:{
+    openPayment(){
+      $('#edit-payment-tigger').click()
+    },
     editSection(index,sid){
       this.action_type="Edit"
       console.log("index is"+index)
@@ -175,6 +186,20 @@ const app = new Vue({
       
     },
     addSection(index){
+      this.editSectionData=
+        {
+          "section_name":"",
+          "size":"",
+          "wall_type":[],
+          "ceiling_type":[],
+          "floor_type":[],
+          "cement_residue":false,
+          "section_cost":"",
+          "section_net_cost":"",
+          "is_newkitchen":false,
+         "is_highprice_facade":false,
+         "is_highprice_window":false,
+      }
       this.action_type="Add"
       $('#edit-dialog-tigger').click()
     },
@@ -237,7 +262,7 @@ const app = new Vue({
         this.resetSection()
       })
     },
-    addSection(){
+    addSectionData(){
       var sectionData={}
       sectionData=
         {
@@ -257,10 +282,10 @@ const app = new Vue({
         sectionData.wall_type=this.editSectionData.wall_type.join()   
       }
       if(this.editSectionData.floor_type.length>0){
-        sectionData.wall_type=this.editSectionData.floor_type.join()   
+        sectionData.floor_type=this.editSectionData.floor_type.join()   
       }
       if(this.editSectionData.ceiling_type.length>0){
-        sectionData.wall_type=this.editSectionData.ceiling_type.join()   
+        sectionData.ceiling_type=this.editSectionData.ceiling_type.join()   
       }
       axios.post(this.url+'/customer/editorder/'+this.orderId,{
         "action_type":'add_section',

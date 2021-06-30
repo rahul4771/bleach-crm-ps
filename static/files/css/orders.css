@@ -1340,6 +1340,9 @@ padding-top:10px;
 #edit-dialog-tigger{
   display: none;
 }
+#edit-payment-tigger{
+  display:none;
+}
 .mt-10{
   margin-top:10px;
 }
