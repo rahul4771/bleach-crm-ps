@@ -543,3 +543,24 @@ GET
    "action_type":'delete_section',
    "section_id":4
 }
+
+
+##payment method and discount
+{
+payment_method: PREPAID,POSTPAID,BREAKDOWN
+#BREAKDOWN => before_cleaning_amount,after_cleaning_amount
+#DISCOUNT => discount
+#action_type => edit_discount
+#amount
+
+
+}
+
+##add_cleaning
+{
+   "action_type":'add_cleaning',
+   "evaluation_book_id":4,
+   "cleaning_date":'',
+   "cleaning_time":'',
+   "cleaning_hours":'',
+}

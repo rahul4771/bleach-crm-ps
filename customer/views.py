@@ -2731,20 +2731,7 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 				evaluation_no       = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10001'
 				tracking_no         = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
 				
-			#check credit amount and update Evaluation
-			if savedupdated_customer.credit_amount != 0:
-				if request.data.get('total_cost')-savedupdated_customer.credit_amount >= 0:
-					evaluation                            = Evaluation.objects.create(tracking_no=int(tracking_no)+1,evaluation_id=evaluation_no,customer=savedupdated_customer,total_cost=request.data.get('total_cost')-savedupdated_customer.credit_amount,estimated_cost=request.data.get('estimated_cost'),quatation_status='APPROVED',quatation_approved_date=timezone.now(),payment_method='PREPAID',payment_way='ONLINE',quatation_expiry_date=timezone.now()+timedelta(14),credit_amount=savedupdated_customer.credit_amount)
-					
-					savedupdated_customer.credit_amount   = 0
-					savedupdated_customer.save()
-				else:
-					evaluation                            = Evaluation.objects.create(tracking_no=int(tracking_no)+1,evaluation_id=evaluation_no,customer=savedupdated_customer,total_cost=0,estimated_cost=request.data.get('estimated_cost'),quatation_status='APPROVED',quatation_approved_date=timezone.now(),payment_method='PREPAID',payment_way='ONLINE',quatation_expiry_date=timezone.now()+timedelta(14),credit_amount=request.data.get('total_cost'))
-					
-					savedupdated_customer.credit_amount  -= evaluation.total_cost 
-					savedupdated_customer.save()
-			else:
-				evaluation = Evaluation.objects.create(tracking_no=int(tracking_no)+1,evaluation_id=evaluation_no,customer=savedupdated_customer,total_cost=request.data.get('total_cost'),estimated_cost=request.data.get('estimated_cost'),quatation_status='APPROVED',quatation_approved_date=timezone.now(),payment_method='PREPAID',payment_way='ONLINE',quatation_expiry_date=timezone.now()+timedelta(14))
+			evaluation = Evaluation.objects.create(tracking_no=int(tracking_no)+1,evaluation_id=evaluation_no,customer=savedupdated_customer,total_cost=request.data.get('total_cost'),estimated_cost=request.data.get('estimated_cost'),quatation_status='APPROVED',quatation_approved_date=timezone.now(),payment_method='PREPAID',payment_way='ONLINE',quatation_expiry_date=timezone.now()+timedelta(14))
 			
 			#create order
 			last_invoice_no  		 = Order.objects.filter(is_active=True).aggregate(t=Max('invoice_no'))['t']
@@ -2760,11 +2747,6 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 			
 
 			order      = Order.objects.create(evaluation=evaluation,order_no=evaluation.evaluation_id,payment_status='PENDING',invoice_no=new_invoice_no,order_status='APPROVED_BY_CLIENT',total_amount=evaluation.total_cost,remining_amount=evaluation.total_cost)
-			
-			#To check credit fullfill the total amount 
-			if order.remining_amount == 0: 
-				order.payment_status = 'COMPLETED'
-				order.save()
 
 			#create booking
 			booking_id               = CustomerBooking.objects.filter(is_active=True).aggregate(t=Max('booking_id'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
@@ -2776,11 +2758,6 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 				new_booking_id = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10001')
 			
 			customerbooking = CustomerBooking.objects.create(booking_id=new_booking_id,booking_type='CLEANINGBOOKING',booking_date=timezone.now(),evaluation=evaluation)
-
-			#To check credit fullfill the total amount
-			if order.remining_amount == 0:
-				customerbooking.is_bookingcompleted = True
-				customerbooking.save()
 
 			#create evaluation details
 			evaluation_details = EvaluationDetails.objects.create(evaluation=evaluation,address=savedupdated_address,status='EVALUATED',total_cost=evaluation.total_cost,estimated_cost=evaluation.total_cost)			
@@ -4427,6 +4404,14 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 class EditOrderDetails(APIView):
 	permission_classes        = (AllowAny,)
 	authentication_classes    = ()
+	
+	def get(self,request,order_id):
+		response_dict = {}
+		evaluation_book_id               = request.GET.get('evaluation_book_id')
+		evaluation_book                  = EvaluationBook.objects.prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='sections')).get(id=evaluation_book_id)
+		response_dict['section_details'] = EvaluationBookSerializer(evaluation_book).data
+		return Response(response_dict,HTTP_200_OK)
+
 	def post(self,request,order_id):
 		response_dict = {}
 		response_dict['success'] = False
@@ -4438,28 +4423,28 @@ class EditOrderDetails(APIView):
 			section_save_serializer                    = EvaluationBookSectionSerializer(data=request.data.get('section_details'))
 			if section_save_serializer.is_valid():
 				evaluation_book__id                    = request.data.get('evaluation_book__id')
-				evaluation_book                        = EvaluationBook.objects.select_related('evaluation_details').get(id=evaluation_book__id).prefetch_related(Prefetch('order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
-				total_cleanings                        = evaluation_book.orderschedules.count()
+				evaluation_book                        = EvaluationBook.objects.select_related('evaluation_details').prefetch_related(Prefetch('order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules')).get(id=evaluation_book__id)
+				total_cleanings                        = evaluation_book.order_scheduler_book_details.count()
 
 				if evaluation_book.cleaning_policy == 'SUBSCRIPTION':
-					saved_section                          = section_save_serializer.save(evaluation_book_id=evaluation_book__id,section_cleanings=total_cleanings,section_net_cost=section_save_serializer.section_cost*total_cleanings)
+					saved_section                          = section_save_serializer.save(evaluation_book_id=evaluation_book__id,section_cleanings=total_cleanings,section_net_cost=section_save_serializer.validated_data['section_cost']*total_cleanings)
 				else:
-					saved_section                          = section_save_serializer.save(evaluation_book_id=evaluation_book__id,section_cleanings=total_cleanings,section_net_cost=section_save_serializer.section_cost)
+					saved_section                          = section_save_serializer.save(evaluation_book_id=evaluation_book__id,section_cleanings=total_cleanings,section_net_cost=section_save_serializer.validated_data['section_cost'])
 
 				evaluation_book.estimated_cost     				  += saved_section.section_net_cost
 				evaluation_book.total_cost         				  += saved_section.section_net_cost
-				evaluation_book.total_cost.save()
+				evaluation_book.save()
 
 				evaluation_book.evaluation_details.estimated_cost += saved_section.section_net_cost
 				evaluation_book.evaluation_details.total_cost     += saved_section.section_net_cost
-				evaluation_book.evaluation_details.total_cost.save()
+				evaluation_book.evaluation_details.save()
 
 				order.remining_amount += saved_section.section_net_cost
 				order.total_amount    += saved_section.section_net_cost
 				order.save()
 
-				order.evaluation.total_cost   += saved_section.section_net_cost
-				order.evaluation.estimated    += saved_section.section_net_cost
+				order.evaluation.total_cost        += saved_section.section_net_cost
+				order.evaluation.estimated_cost    += saved_section.section_net_cost
 				order.evaluation.save()
 
 				response_dict['section_success']       = True
@@ -4478,33 +4463,34 @@ class EditOrderDetails(APIView):
 
 		elif action == 'edit_section':
 			section_id        = request.data.get('section_id')
-			old_section_cost  = EvaluationBookSection.objects.select_related('evaluation_book__evaluation_details').get(id=section_id).section_net_cost
-			
-			section_save_serializer        = EvaluationBookSectionSerializer(data=request.data.get('section_details'),instance=saved_section)
+			old_section       = EvaluationBookSection.objects.select_related('evaluation_book__evaluation_details').get(id=section_id)
+			old_section_cost  = old_section.section_net_cost
+
+			section_save_serializer        = EvaluationBookSectionSerializer(data=request.data.get('section_details'),instance=old_section)
 			if section_save_serializer.is_valid():
 				evaluation_book__id                    = request.data.get('evaluation_book__id')
-				evaluation_book                        = EvaluationBook.objects.select_related('evaluation_details').get(id=evaluation_book__id).prefetch_related(Prefetch('order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules'))
-				total_cleanings                        = evaluation_book.orderschedules.count()
+				evaluation_book                        = EvaluationBook.objects.select_related('evaluation_details').prefetch_related(Prefetch('order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules')).get(id=evaluation_book__id)
+				total_cleanings                        = evaluation_book.order_scheduler_book_details.count()
 
 				if evaluation_book.cleaning_policy == 'SUBSCRIPTION':
-					saved_section                          = section_save_serializer.save(evaluation_book_id=evaluation_book__id,section_cleanings=total_cleanings,section_net_cost=section_save_serializer.section_cost*total_cleanings)
+					saved_section                          = section_save_serializer.save(evaluation_book_id=evaluation_book__id,section_cleanings=total_cleanings,section_net_cost=section_save_serializer.validated_data['section_cost']*total_cleanings)
 				else:
-					saved_section                          = section_save_serializer.save(evaluation_book_id=evaluation_book__id,section_cleanings=total_cleanings,section_net_cost=section_save_serializer.section_cost)
+					saved_section                          = section_save_serializer.save(evaluation_book_id=evaluation_book__id,section_cleanings=total_cleanings,section_net_cost=section_save_serializer.validated_data['section_cost'])
 
 				evaluation_book.estimated_cost     				  += (old_section_cost-saved_section.section_net_cost)
 				evaluation_book.total_cost         				  += (old_section_cost-saved_section.section_net_cost)
-				evaluation_book.total_cost.save()
+				evaluation_book.save()
 
 				evaluation_book.evaluation_details.estimated_cost += (old_section_cost-saved_section.section_net_cost)
 				evaluation_book.evaluation_details.total_cost     += (old_section_cost-saved_section.section_net_cost)
-				evaluation_book.evaluation_details.total_cost.save()
+				evaluation_book.evaluation_details.save()
 
 				order.remining_amount += (old_section_cost-saved_section.section_net_cost)
 				order.total_amount    += (old_section_cost-saved_section.section_net_cost)
 				order.save()
 
 				order.evaluation.total_cost   += (old_section_cost-saved_section.section_net_cost)
-				order.evaluation.estimated    += (old_section_cost-saved_section.section_net_cost)
+				order.evaluation.estimated_cost    += (old_section_cost-saved_section.section_net_cost)
 				order.evaluation.save()
 
 				response_dict['edit_success']       = True
@@ -4548,6 +4534,69 @@ class EditOrderDetails(APIView):
 
 			return Response(response_dict,HTTP_200_OK)	
 		
+		elif action == 'edit_discount':
+			#update payment policy and discount
+			payment_method      = request.data.get('payment_method')
+			discount_amount     = request.data.get('discount_amount')
+			old_discount_amount = order.evaluation.discount 
+			if order.amount_paid == 0:
+				if payment_method == 'PREPAID':
+					order.evaluation.before_cleaning_amount = 0
+					order.evaluation.after_cleaning_amount  = 0
+					order.evaluation.payment_method         = 'PREPAID'
+
+					order.evaluation.discount               = discount_amount
+					order.evaluation.total_cost             = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
+					order.total_amount                      = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
+					order.remining_amount                   = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
+				
+				elif payment_method == 'BREAKDOWN':
+					before_cleaning_amount                  = request.data.get('before_cleaning_amount')
+					after_cleaning_amount                   = request.data.get('after_cleaning_amount')
+					order.evaluation.before_cleaning_amount = before_cleaning_amount
+					order.evaluation.after_cleaning_amount  = after_cleaning_amount
+					order.evaluation.payment_method         = 'BREAKDOWN'
+
+					order.evaluation.discount                = discount_amount
+					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
+					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
+					order.total_amount                       = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
+					order.remining_amount                    = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
+
+				elif payment_method == 'POSTPAID':
+					order.evaluation.before_cleaning_amount = 0
+					order.evaluation.after_cleaning_amount  = 0
+					order.evaluation.payment_method         = 'POSTPAID'
+
+					order.evaluation.discount                = discount_amount
+					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
+					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
+					order.total_amount                       = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
+					order.remining_amount                    = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
+				
+				#to check payment completed
+				if order.remining_amount == 0:
+					order.payment_status = 'COMPLETED'
+				
+				order.evaluation.save()
+				order.save()
+
+				response_dict['success']  = True
+
+		elif action == 'add_cleaning':
+			evaluation_book_id = request.data.get('evaluation_book_id')
+			evaluation_book    = EvaluationBook.objects.select_related('evaluation_details').get(id=evaluation_book_id) 
+			
+			cleaning_date 	   = request.data.get('cleaning_date')
+			cleaning_time      = request.data.get('cleaning_time')
+			cleaning_hours 	   = float(request.data.get('cleaning_hours'))
+			start_at           = datetime.strptime(cleaning_date+' '+cleaning_time,'%d-%m-%Y %I:%M %p')
+			end_at             = start_at + timedelta(hours=cleaning_hours)
+
+			OrderScheduler.objects.create(order=order,evaluation_details=evaluation_book.evaluation_details,order_scheduler_book__id=evaluation_book_id,start_at=start_at,end_at=end_at,customer_address=evaluation_book.evaluation_details.address,status='CONFIRMED')
+			
+			response_dict['success']  = True
+
 		return Response(response_dict,HTTP_200_OK)
 
 

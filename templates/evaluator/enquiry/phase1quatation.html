@@ -64,8 +64,7 @@
         <br>
       </div><!--checkin-form-left-->
       <div class="checkin-form-right align-left"><!--checkin-form-right-->
-        <div class="total-Amount">{{evaluation.total_cost}} KD</div>
-        <input type="hidden" name='total_amount' id="total_amount_id" value="{{evaluation.total_cost|floatformat:'3'}}">
+        <div class="total-Amount" id="total_amount">{{evaluation.total_cost}} KD</div>
         <br>
       </div><!--checkin-form-right-->               
 </div><!--checkin-wrapper-row checkin-forms-boxes-->         
@@ -100,7 +99,12 @@
           <div class=" bold-text common-label"> <label>After Cleaning Amount</label></div>
                 <input name="after_cleaning_amount" id="after_cleaning_amount_id" type="number" step="0.001" class="textBox" placeholder=" "  >
   </div><!--ticket-form-right-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+    <div class=" bold-text common-label"> <label>Discount</label></div>
+          <input name="discount" id="discount_id" type="number" step="0.001" class="textBox" placeholder=" "  >
+</div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
+<input type="hidden" name='total_amount' id="total_amount_id" value="{{evaluation.total_cost|floatformat:'3'}}">
 <br>
 <div align="center" onclick="CheckForm(this);"><input class="assignButton" name="submit" type="button" value="Submit">
 <br><br>
@@ -191,6 +195,15 @@ $("#before_cleaning_amount_id").keyup(function(){
     $("#before_cleaning_amount_id").val("0");
     $("#after_cleaning_amount_id").val("0");
   }
+})
+
+$("#discount_id").keyup(function(){
+  discount   = $("#discount_id").val();
+  total_cost = parseFloat("{{evaluation.total_cost|floatformat:'3'}}")-discount
+  $("#total_amount").html(total_cost+' KD');
+  $("#total_amount_id").val(total_cost);
+  $("#before_cleaning_amount_id").val('');
+  $("#after_cleaning_amount_id").val('');
 })
 
 //Check Breakdown Amounts
