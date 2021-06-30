@@ -545,9 +545,9 @@ GET
 }
 
 
-##payment policy and discount
+##payment method and discount
 {
-payment_policy: PREPAID,POSTPAID,BREAKDOWN
+payment_method: PREPAID,POSTPAID,BREAKDOWN
 #BREAKDOWN => before_cleaning_amount,after_cleaning_amount
 #DISCOUNT => discount
 #action_type => edit_discount

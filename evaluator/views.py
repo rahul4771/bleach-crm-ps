@@ -1489,15 +1489,12 @@ class MakeQuatationPhase1(IsEvaluator,View):
 
 	def post(self,request,enquiry_id,evaluation_id):
 		
-		payment_method = request.POST.get('payment_method')
+		payment_method          = request.POST.get('payment_method')
 		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0.000)
 		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0.000)
 
 		#for backbutton safety delete subscription
 		evaluation      = Evaluation.objects.get(id=evaluation_id)
-		if evaluation.payment_method == 'POSTPAIDSUBSCRIPTION' or evaluation.payment_method == 'PREPAIDSUBSCRIPTION':
-			OrderScheduler.objects.filter(order__evaluation__id=evaluation_id).update(payment_subscription=None)
-			PaymentSubscriptionDetails.objects.filter(order__evaluation__id=evaluation_id).delete()
 
 		#update payment method
 		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
