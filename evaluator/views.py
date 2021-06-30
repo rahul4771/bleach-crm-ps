@@ -1492,12 +1492,12 @@ class MakeQuatationPhase1(IsEvaluator,View):
 		payment_method          = request.POST.get('payment_method')
 		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0.000)
 		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0.000)
-
-		#for backbutton safety delete subscription
-		evaluation      = Evaluation.objects.get(id=evaluation_id)
+		discount                = float(request.POST.get('discount')or 0.000)
+		total_cost              = float(request.POST.get('total_amount')or 0.000)
 
 		#update payment method
-		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
+		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount,total_cost=total_cost,discount=discount)
+		Order.objects.filter(evaluation__id=evaluation_id,is_active=True).update(total_amount=total_cost,remining_amount=total_cost)
 
 		#sms integration
 		evaluation = Evaluation.objects.filter(id=evaluation_id,is_active=True).first()
