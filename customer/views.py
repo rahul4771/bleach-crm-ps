@@ -3446,13 +3446,13 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 				return Response(response_dict,HTTP_200_OK) 
 
 		#Evaluation cost updation
-		evaluation.total_cost     = request.data.get('total_cost')
-		evaluation.estimated_cost = request.data.get('estimated_cost')
+		evaluation.total_cost     += request.data.get('total_cost')
+		evaluation.estimated_cost += request.data.get('estimated_cost')
 		evaluation.save()
 
 		#order cost updation
-		order.total_amount       = request.data.get('total_cost')
-		order.remining_amount    = request.data.get('total_cost')
+		order.total_amount       += request.data.get('total_cost')
+		order.remining_amount    += request.data.get('total_cost')
 		order.save()
 		
 		#evaluation details cost updation
@@ -4538,7 +4538,7 @@ class EditOrderDetails(APIView):
 			#update payment policy and discount
 			payment_method      = request.data.get('payment_method')
 			discount_amount     = request.data.get('discount_amount')
-			old_discount_amount = evaluation.discount 
+			old_discount_amount = order.evaluation.discount 
 			if order.amount_paid == 0:
 				if payment_method == 'PREPAID':
 					order.evaluation.before_cleaning_amount = 0
