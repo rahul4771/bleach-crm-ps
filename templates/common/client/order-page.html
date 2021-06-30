@@ -54,11 +54,11 @@
                      </div>
                      <div class="col-md-12 mt-10"  v-if="paymentData.payment_method=='BREAKDOWN'">
                         <div class=" bold-text common-label required-field "> <label>Amount Before Cleaning</label></div>
-                      <input  id="id_name" type="text" class="textBox OnlyNumber" placeholder="Amount" required=""  v-model="paymentData.amount_before_cleaning" @input="calcBreakdownBefore()">
+                      <input   type="text" class="textBox OnlyNumber" placeholder="Amount" required=""  v-model="paymentData.amount_before_cleaning" @input="calcBreakdownBefore()">
                     </div>
                     <div class="col-md-12 mt-10"  v-if="paymentData.payment_method=='BREAKDOWN'">
                         <div class=" bold-text common-label required-field "> <label>Amount After Cleaning</label></div>
-                      <input  id="id_name" type="text" class="textBox OnlyNumber" placeholder="Amount" required="" v-model="paymentData.amount_after_cleaning" @input="calcBreakdownAfter()">
+                      <input  type="text" class="textBox OnlyNumber" placeholder="Amount" required="" v-model="paymentData.amount_after_cleaning" @input="calcBreakdownAfter()">
                     </div>
                 </div>
                 </div>
