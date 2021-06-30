@@ -19,7 +19,71 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.standalone.min.css" integrity="sha512-TQQ3J4WkE/rwojNFo6OJdyu6G8Xe9z8rMrlF9y7xpFbQfW5g8aSWcygCQ4vqRiJqFsDsE1T6MoAOMJkFXlrI9A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
 <div class="wrapper" id="app"><!--wrapper-->
-    <!-- send invoice modal begins here-->
+    <!-- CHANGE PAYMENT MODAL BEGINS HERE-->
+    <div class="modal fade " id="editPaymentModal" tabindex="-1" role="dialog" aria-labelledby="editPaymentModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered primary-modal" role="document">
+          <div class="modal-content primary-modal-border">
+            
+           
+            <div class="modal-body">
+              <div class="cotainer">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="row">
+                    <div class="col-md-12 mt-10">
+                        <div class=" bold-text common-label required-field"> <label>Discount</label></div>
+                      <input  id="id_name" type="text" class="textBox OnlyNumber" placeholder="Discount" required="" v-model="paymentData.discount" @input="calDiscount()" >
+                    </div>
+                    <div class="col-md-12 mt-10"  >
+                    
+                        <div class=" bold-text common-label required-field"> <label>Payment Policy</label></div>
+                        <multiselect
+                       
+                         v-model="paymentData.payment_method"
+                          placeholder="Payment Policy"
+                          
+                          :options="['PREPAID','POSTPAID','BREAKDOWN']"
+                          :multiple="false"
+                          :taggable="false"
+                          :show-labels="false"
+                          @input="changeCategory()"
+                          
+                        ></multiselect>
+                      
+                            
+                     </div>
+                     <div class="col-md-12 mt-10"  v-if="paymentData.payment_method=='BREAKDOWN'">
+                        <div class=" bold-text common-label required-field "> <label>Amount Before Cleaning</label></div>
+                      <input  id="id_name" type="text" class="textBox OnlyNumber" placeholder="Amount" required=""  v-model="paymentData.amount_before_cleaning" @input="calcBreakdownBefore()">
+                    </div>
+                    <div class="col-md-12 mt-10"  v-if="paymentData.payment_method=='BREAKDOWN'">
+                        <div class=" bold-text common-label required-field "> <label>Amount After Cleaning</label></div>
+                      <input  id="id_name" type="text" class="textBox OnlyNumber" placeholder="Amount" required="" v-model="paymentData.amount_after_cleaning" @input="calcBreakdownAfter()">
+                    </div>
+                </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="amount-card">
+                        <h2>Total Amount</h2>
+                        <div class="text-center amount-text"> <span id="id_amount"><% paymentData.total_amount %></span> KD</div>
+                    </div>
+                </div>
+                 
+
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer text-center">
+              
+              <button type="submit"  class="btn primary-btn"  @click="updateDiscount()">Submit</button>
+              <button type="button" class="btn primary-btn-bordered" data-dismiss="modal"  id="edit-payment-close">Cancel</button>
+            </div>
+           
+          </div>
+        </div>
+      </div>
+    <!-- EDIT PAYMENT MODAL ENDS HERE-->
+    <div data-toggle="modal" data-target="#editPaymentModal" id="edit-payment-tigger"></div> 
     <div data-toggle="modal" data-target="#editSectionDialog" id="edit-dialog-tigger"></div> 
 <!-- edit section dialog begins here-->
 <div class="modal fade " id="editSectionDialog" tabindex="-1" role="dialog" aria-labelledby="editSectionDialogTitle" aria-hidden="true">
@@ -37,12 +101,12 @@
               <div class="row">
                 <div class="col-md-6 mt-10">
                                 <div class=" bold-text common-label required-field"> <label>Section Name</label></div>
-                              <input  id="id_name" type="text" class="textBox OnlyText" placeholder="Section Name" required="" v-model="sectionData.section_name" >
+                              <input  id="id_name" type="text" class="textBox " placeholder="Section Name" required="" v-model="editSectionData.section_name" >
                 </div>
                
                 <div class="col-md-6 mt-10" v-if="service_type!='General Cleaning'">
                     <div class=" bold-text common-label required-field"> <label>Age</label></div>
-                  <input   type="text" class="textBox OnlyText" placeholder="Age" required="" v-model="sectionData.age">
+                  <input   type="text" class="textBox OnlyNumber" placeholder="Age" required="" v-model="editSectionData.age">
                 </div>
                 <div class="col-md-6 mt-10"  v-if="service_type=='General Cleaning'">
                     
@@ -191,7 +255,7 @@
           
           
             <button type="submit" @click="updateSection()" class="btn primary-btn"  v-if="action_type=='Edit'">Save Changes</button>
-            <button type="submit" @click="addSection()" class="btn primary-btn" v-if="action_type=='Add'">Add Section</button>
+            <button type="submit" @click="addSectionData()" class="btn primary-btn" v-if="action_type=='Add'">Add Section</button>
             <button type="button" class="btn primary-btn-bordered" data-dismiss="modal" @click="resetSection" id="edit-section-close">Cancel</button>
          
         </div>
@@ -701,7 +765,7 @@
                                     </div>
                                 </div>
                                 <br>
-                                <div class="moreless-button" id="show{{orderschedule.id}}" @click="getSection({{orderschedule.order_scheduler_book.id}})">Show More</div>
+                                <div class="moreless-button" id="show{{orderschedule.id}}" @click="getSection({{orderschedule.order_scheduler_book.id}})" data-service="{{orderschedule.order_scheduler_book.service_type.name}}">Show More</div>
                                 <hr class="bar">
                             </div>
                             
@@ -1163,11 +1227,14 @@
                                                 </div>
                                                 
                                                 <div class="row c-mb-3">
-                                                    <div class="col-xs-6">Payment Policy</div>
+                                                    <div class="col-xs-6">Payment Method</div>
                                                     <div class="col-xs-6">: <span class="c-text">{{order.evaluation.payment_method|default_if_none:''}}</span>
                                                         {% if order.amount_paid == 0.000 and order.evaluation.is_promocode_applied == False and order.evaluation.payment_method != 'SUBSCRIPTION' %}
-                                                        <button class="model-close ml-10" data-toggle="modal" data-target="#paymentModel">
+                                                        <!--<button class="model-close ml-10" data-toggle="modal" data-target="#paymentModel">
                                                             <img  class="policy-time-edit pointer" src="{% static 'files/icons/edit.png' %}">
+                                                        </button>-->
+                                                        <button class="model-close ml-10" >
+                                                            <img  class="policy-time-edit pointer" src="{% static 'files/icons/edit.png' %}"  data-discount="{{order.evaluation.discount}}" data-payment_method="{{order.evaluation.payment_method}}" data-total_amount="{{order.evaluation.estimated_cost}}" onclick="openPaymentEdit(this)">
                                                         </button>
                                                         {% else %}
                                                         {% endif %}
