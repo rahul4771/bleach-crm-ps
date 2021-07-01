@@ -4658,6 +4658,11 @@ class EditOrderDetails(APIView):
 			response_dict['success']  = True
 
 		elif action == 'edit_cleaning':
+			schedule_id        = request.data.get('schedule_id')
+			old_schedule       = OrderScheduler.objects.get(id=schedule_id)
+			old_start_at       = old_schedule.start_at+timedelta(hours=3) 
+			old_end_at         = old_schedule.end_at+timedelta(hours=3)
+
 			cleaning_date 	   = request.data.get('cleaning_date')
 			cleaning_time      = request.data.get('cleaning_time')
 			cleaning_hours 	   = float(request.data.get('cleaning_hours'))
@@ -4665,7 +4670,7 @@ class EditOrderDetails(APIView):
 			end_at             = start_at + timedelta(hours=cleaning_hours)
 			no_of_cleaners     = request.data.get('no_of_cleaners')
 
-			cleaning_schedules = OrderScheduler.objects.filter(start_at=start_at,end_at=end_at,evaluation_details__evaluation=order.evaluation).select_related('evaluation_details__evaluation')
+			cleaning_schedules = OrderScheduler.objects.filter(start_at=old_start_at,end_at=old_end_at,evaluation_details__evaluation=order.evaluation).select_related('evaluation_details__evaluation')
 			 
 			for cleaning_schedule in cleaning_schedules:	
 				#update cleaning schedule

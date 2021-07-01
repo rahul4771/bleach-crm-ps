@@ -565,3 +565,13 @@ payment_method: PREPAID,POSTPAID,BREAKDOWN
    "cleaning_hours":'',
    "no_of_cleaners":3,
 }
+
+##edit_cleaning
+{
+   "action_type":'add_cleaning',
+   "schedule_id":2,
+   "cleaning_date":'',
+   "cleaning_time":'',
+   "cleaning_hours":'',
+   "no_of_cleaners":3,
+}
