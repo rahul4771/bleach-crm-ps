@@ -1079,11 +1079,7 @@ class CleaningPopupMultipleServiceCleaningSlotes(APIView):
 
 				#slote appending
 				if((total_newcleaners-busy_cleaners)>=number_of_cleaners and (total_newleaders-busy_leaders)>=1):
-					available_durations.append(slote_duration)	
-				else:
-					dropdown_slotes['success'] = False
-					dropdown_slotes['Error'] = 'Cleaners are not available'
-					return Response(dropdown_slotes,HTTP_200_OK)			
+					available_durations.append(slote_duration)				
 			
 			available_slotes[slote] = available_durations
 
