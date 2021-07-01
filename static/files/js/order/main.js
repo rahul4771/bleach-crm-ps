@@ -25,7 +25,7 @@ $(document).ready(function () {
     var month=date.split('/')[0]
     var year=date.split('/')[2]
     var newdate=day+'-'+month+'-'+year
-    
+    app.selected_date=newdate
     //console.log($('#date_hidden').val().replace(/\//g, '-'))
     app.setDate($('#date_hidden').val())
     
@@ -87,8 +87,9 @@ function openCleaningDate(service){
   var data=$(service).data()
   app.no_of_cleaners=data.no_of_cleaners
   app.service_type=data.service
-  app.cleaning_hours=data.cleaning_hours
+  app.cleaning_hours=parseInt(data.cleaning_hours)
   app.no_of_slots=Math.ceil(data.cleaning_hours/2)
+  app.evaluation_book_id=data.evaluation_book_id
   app.getSlotes(moment().format('DD-MM-YYYY'))
   
 }
@@ -100,6 +101,7 @@ const app = new Vue({
   mounted() {
     this.getOrderId()
     this.setDate(moment().format('MM/DD/YYYY'))
+    this.selected_date=moment().format('DD-MM-YYYY')
     $('#date_hidden').val(moment().format('MM/DD/YYYY'))
   },
   components: { Multiselect: window.VueMultiselect.default },
@@ -171,6 +173,9 @@ const app = new Vue({
              selectedSlots:[],
              cleaning_hours:null,
              no_of_cleaners:null,
+             no_of_slots:0,
+             selected_date:'',
+             evaluation_book_id:'',
              slotFormat:{
               "1":{
                 start_time:'12:00 AM',
@@ -224,6 +229,28 @@ const app = new Vue({
             parsedTimeSlots:[]
   },
   methods:{
+    checkSlot(index){
+      if(this.selectedSlots.length>0){
+        if(this.selectedSlots.length==this.no_of_slots){
+          return false
+        }
+        else{
+
+        
+          var prevSlot=index-1
+          var nextSlot=index+1
+          if(this.selectedSlots.includes(prevSlot)||this.selectedSlots.includes(nextSlot)){
+            return true
+          }
+          else{
+            return false
+          }
+        }
+      }
+      else{
+        return true
+      }
+    },
     selectSlot(index){
       this.selectedSlots.push(index)
     },
@@ -245,6 +272,7 @@ const app = new Vue({
     },
     getSlotes(date){
       this.schedule_serviceTypes=[]
+      this.selectedSlots=[]
       this.schedule_serviceTypes.push(this.service_type)
       axios
       .post(
@@ -260,18 +288,29 @@ const app = new Vue({
          else{
            this.errMsg=''
          }
-        if (!this.time_slot.hasOwnProperty(this.slotDate)) {
-          this.time_slot[this.slotDate] = {
-            selectedSlot: [],
-          };
-        }
+      
 
-        this.parseSize();
       })
        .catch((error) => {
         console.log(error);
       });
   
+    },
+    resetVisit(){
+      this.selectedSlots=[]
+      
+    },
+    addVisit(){
+      var minhour=Math.min(...this.selectedSlots)
+      axios.post(this.url+'/customer/editorder/'+this.orderId,{
+        action_type:'add_cleaning',
+        evaluation_book_id:this.evaluation_book_id,
+        cleaning_date:this.selected_date,
+       cleaning_time:this.parsedTimeSlots[minhour].start_time,
+       cleaning_hours:this.cleaning_hours,
+      }).then(response=>{
+        console.log(response)
+      })
     },
     calDiscount(){
       this.paymentData.total_amount=this.total_amount-this.paymentData.discount

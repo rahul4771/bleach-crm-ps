@@ -930,7 +930,7 @@
                                     <div class="order-clean-section-header c-mb-10 d-flex">
                                         <h2>Cleaning Visit(s)</h2>
                                         <div  class="order-clean-edit"  >
-                                            <button type="submit" class="btn primary-btn" onclick="openCleaningDate(this)" data-service="{{orderschedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{orderschedule.order_scheduler_book.number_of_cleaners}}" >Add Visits</button>
+                                            <button type="submit" class="btn primary-btn" onclick="openCleaningDate(this)" data-evaluation_book_id="{{orderschedule.order_scheduler_book.id}}" data-service="{{orderschedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{orderschedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{orderschedule.order_scheduler_book.cleaning_hours}}">Add Visits</button>
                                         </div>
                                     </div>
 
@@ -1801,11 +1801,13 @@
                 </div>
                 <div class="col-md-8">
                     <div class="model-cleaning-solt">
-                        Slots for Cleaning  :
+                        Select <% no_of_slots %> slots
                     </div>
                     <div class="row model-time-solt">
                         <div v-for="(slot,index) in parsedTimeSlots" v-bind:key="index" class="col-md-4">
-                            <button class="time-slot-button" v-if="!selectedSlots.includes(index)" @click="selectSlot(index)"><% slot.start_time +' - ' + slot.end_time %></button>
+                            <button class="time-slot-button" v-if="!selectedSlots.includes(index) && checkSlot(index)" @click="selectSlot(index)"><% slot.start_time +' - ' + slot.end_time %></button>
+                            <button class="time-slot-button-disabled" v-if="!selectedSlots.includes(index) && !checkSlot(index)" @click="selectSlot(index)"><% slot.start_time +' - ' + slot.end_time %></button>
+
                             <button class="time-slot-button-active" v-if="selectedSlots.includes(index)" @click="removeSlot(index)"><% slot.start_time +' - ' + slot.end_time %></button>
                         </div>
                         
@@ -1818,8 +1820,8 @@
             <div class="row">
                 <div class="col-md-12 text-center">
                     <div class="cancel-model-content">
-                        <button class="sent-button">Submit</button>
-                        <button data-dismiss="modal" class="view-button">Cancel</button>
+                        <button class="sent-button" @click="addVisit()">Submit</button>
+                        <button data-dismiss="modal" class="view-button" @click="resetVisit()">Cancel</button>
                     </div>
                 </div>
 
@@ -1927,7 +1929,6 @@
 function duplicate(id){
     window.location.href='/evaluator/reorder?id='+id
 } 
-
 $(document).ready(function () {
     {% if order.evaluation.customer.is_email == True %}
         app.contacts.push('EMAIL');
