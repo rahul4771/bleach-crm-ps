@@ -776,7 +776,8 @@
                                 
                             
                                {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
-                                <div id="showmore1{{orderschedule.id}}" style="display: none;"
+                               
+                                <div class="showmore1{{orderschedule.id}}" style="display: none;"
                                     class="order-container-main order-clean-section">
                                     <div v-if="edit" class="order-clean-edit"  >
                                         <img class="pointer" src="{% static 'files/icons/edit.png' %}" @click="editSection({{forloop.counter}},{{section.id}})" >
@@ -925,7 +926,7 @@
                                 <div>
                                 <button class="sent-button send-btn2 cp"   @click="addSection({{forloop.counter}})">Add Section</button>
                             </div>
-                                <div id="showmore2{{orderschedule.id}}" style="display: none;"
+                                <div class="showmore2{{orderschedule.id}}" style="display: none;"
                                     class="order-container-main order-clean-section">
                                     <div class="order-clean-section-header c-mb-10 d-flex">
                                         <h2>Cleaning Visit(s)</h2>
@@ -2149,21 +2150,21 @@ $('input[name="radio"]').click(function(){
             if ($("#show{{orderschedule.id}}").text() == "Show More") {
                 $("#show{{orderschedule.id}}").text("Show Less");
                 $("#showmore{{orderschedule.id}}").fadeIn();
-                $("#showmore1{{orderschedule.id}}").fadeIn();
-                $("#showmore2{{orderschedule.id}}").fadeIn();
+                $(".showmore1{{orderschedule.id}}").fadeIn();
+                $(".showmore2{{orderschedule.id}}").fadeIn();
             } else {
                 $("#show{{orderschedule.id}}").text("Show More");
                 $("#showmore1{{orderschedule.id}}").fadeOut();
-                $("#showmore2{{orderschedule.id}}").fadeOut();
-                $("#showmore{{orderschedule.id}}").fadeOut();
+                $(".showmore2{{orderschedule.id}}").fadeOut();
+                $(".showmore{{orderschedule.id}}").fadeOut();
             }
 
         });
         $("#showless{{orderschedule.id}}").click(function () {
 
             $("#show{{orderschedule.id}}").text("Show More");
-            $("#showmore1{{orderschedule.id}}").fadeOut();
-            $("#showmore2{{orderschedule.id}}").fadeOut();
+            $(".showmore1{{orderschedule.id}}").fadeOut();
+            $(".showmore2{{orderschedule.id}}").fadeOut();
             $("#showmore{{orderschedule.id}}").fadeOut();
 
 
