@@ -83,6 +83,36 @@ class Quatation(View):
 
 			duplicate_schedules.append(orderschedule.order_scheduler_book)
 
+		#update order & evaluation if credit exist
+		if order.evaluation.customer.credit_amount > 0 and order.evaluation.credit_amount == 0 and order.order_status == None:
+			total_amount                = order.evaluation.total_cost-order.evaluation.customer.credit_amount
+			if total_amount > 0:
+				order.evaluation.credit_amount          = order.evaluation.customer.credit_amount
+				order.evaluation.total_cost             = total_amount
+				
+				order.total_amount                      = total_amount
+				order.remining_amount                   = total_amount
+
+				order.evaluation.customer.credit_amount = 0
+
+				order.evaluation.customer.save()
+				order.evaluation.save()
+				order.save()
+			else:
+				order.evaluation.credit_amount          = order.evaluation.total_cost
+				order.evaluation.total_cost             = 0
+
+				order.total_amount                      = 0
+				order.remining_amount                   = 0
+				order.payment_status                    = 'COMPLETED'
+
+				order.evaluation.customer.credit_amount = abs(total_amount)
+				
+				order.evaluation.customer.save()
+				order.evaluation.save()
+				order.save()
+
+
 		return render(request,"customer/quotation.html",{"order":order,"nonduplicate_schedules":nonduplicate_schedules})
 
 	def post(self,request,evaluation_id):
@@ -240,6 +270,35 @@ class SubscriptionQuatation(View):
 			for section in orderschedule.order_scheduler_book.evaluationbooksection:
 				per_job_cost += section.section_cost
 		
+		#update order & evaluation if credit exist
+		if order.evaluation.customer.credit_amount > 0 and order.evaluation.credit_amount == 0 and order.order_status == None:
+			total_amount                = order.evaluation.total_cost-order.evaluation.customer.credit_amount
+			if total_amount > 0:
+				order.evaluation.credit_amount          = order.evaluation.customer.credit_amount
+				order.evaluation.total_cost             = total_amount
+				
+				order.total_amount                      = total_amount
+				order.remining_amount                   = total_amount
+
+				order.evaluation.customer.credit_amount = 0
+
+				order.evaluation.customer.save()
+				order.evaluation.save()
+				order.save()
+			else:
+				order.evaluation.credit_amount          = order.evaluation.total_cost
+				order.evaluation.total_cost             = 0
+
+				order.total_amount                      = 0
+				order.remining_amount                   = 0
+				order.payment_status                    = 'COMPLETED'
+
+				order.evaluation.customer.credit_amount = abs(total_amount)
+				
+				order.evaluation.customer.save()
+				order.evaluation.save()
+				order.save()
+				
 		return render(request,"customer/quotation.html",{"order":order,"nonduplicate_schedules":nonduplicate_schedules,"per_job_cost":per_job_cost})
  
 	def post(self,request,evaluation_id):
@@ -4513,11 +4572,11 @@ class EditOrderDetails(APIView):
 			
 			saved_section.evaluation_book.estimated_cost     				  += saved_section.section_net_cost
 			saved_section.evaluation_book.total_cost         				  += saved_section.section_net_cost
-			saved_section.evaluation_book.total_cost.save()
+			saved_section.evaluation_book.save()
 
 			saved_section.evaluation_book.evaluation_details.estimated_cost += saved_section.section_net_cost
 			saved_section.evaluation_book.evaluation_details.total_cost     += saved_section.section_net_cost
-			saved_section.evaluation_book.evaluation_details.total_cost.save()
+			saved_section.evaluation_book.evaluation_details.save()
 
 			order.remining_amount += saved_section.section_net_cost
 			order.total_amount    += saved_section.section_net_cost

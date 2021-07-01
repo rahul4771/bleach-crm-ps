@@ -181,6 +181,7 @@ const app=  new Vue({
          
         },
         url:'https://test.bleach-kw.com',
+        //url: 'http://127.0.0.1:8000',
         cleaningData:{
           cleaning_datetime_start:'',
           cleaning_datetime_end:'',
@@ -233,10 +234,18 @@ const app=  new Vue({
       },
       methods:{
         editCleaningTeam(slot){
+          {% if request.user.user_type == 'SENIORTEAMLEADER' %}
           window.location.href='/stl/editcleaning/team/'+slot
+          {% else %}
+          window.location.href='/operation-supervisor/editcleaning/team/'+slot
+          {% endif %}"
         },
         addCleaningTeam(slot){
+          {% if request.user.user_type == 'SENIORTEAMLEADER' %}
           window.location.href='/stl/assigncleaning/team/'+slot
+          {% else %}
+          window.location.href='/operation-supervisor/assigncleaning/team/'+slot
+          {% endif %}
         },
         selectEditSlot(slot){
          

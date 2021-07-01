@@ -1288,18 +1288,32 @@ class InvoiceSMSMailAPI(APIView):
 
 	def get(self,request):
 		response_dict = {}
-		client_id = request.GET.get('client_id')
-		customer = UserProfile.objects.filter(is_active=True,id=int(client_id))
-		response_dict['customer'] = customer
+		order_id = request.GET.get('order_id')
+		
+		order = Order.objects.get(is_active=True,id=int(order_id))
+		customer = order.evaluation.customer
+		print(order,customer,"orid")
+		if customer:
+			response_dict['customer_mobile'] = customer.mobile_number
+			response_dict['customer_email'] = customer.email
+			response_dict['success'] = True
+		else:
+			response_dict['data'] = False
 		return Response(response_dict,HTTP_200_OK)
 
 	def post(self,request):
-		order_no = request.GET.get('order_no')
-		order = Order.objects.filter(order_no=order_no).first()
-
-		selected_options = request.GET.get('selected_options')
-		print(selected_options,"opr")
+		order_id = request.data.get('orderid')
+		subscription_topay = request.data.get('subscription_topay',None)
+		selected_options = request.data.get('selectedoptions')
+		print(order_id,selected_options,subscription_topay,"opr")
 		options = selected_options.split(",")
+
+		print(options,"oid")
+
+		if subscription_topay:
+			Order.objects.filter(id=int(order_id)).update(subscription_topay=int(subscription_topay),subscription_topay_date=timezone.now())
+
+		order = Order.objects.filter(id=int(order_id)).first()
 
 		language = order.evaluation.customer.sms_preference
 
@@ -1360,7 +1374,7 @@ class InvoiceSMSMailAPI(APIView):
 			response = requests.request("GET", url, headers=headers, params=querystring)
 
 			print(message,response.text,"respo")
-			print(order_no)
+			
 			data=True
 		else:
 			data = False

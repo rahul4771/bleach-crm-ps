@@ -20,7 +20,7 @@ urlpatterns = [
 	url(r'^check-out/$',views.CheckOutAPI.as_view(),name='api-check-out'),
 
 	url(r'^soa-mail/$',views.SOAMailAPI.as_view(),name='api-soa-mail'),
-	url(r'^soa-mail/$',views.SOAMailAPI.as_view(),name='api-soa-mail'),
+	url(r'^invoice-mail-sms/$',views.InvoiceSMSMailAPI.as_view(),name='api-invoice-mail'),
 
 	url(r'^shift-scheduler/$',views.ShiftScheduleAPI.as_view(),name='api-shiftschedule'),
 	url(r'^shift-scheduler-delete/(?P<shift_id>\d+)/$',views.DeleteShiftSchedule.as_view(),name='api-shiftschedule-delete'),
