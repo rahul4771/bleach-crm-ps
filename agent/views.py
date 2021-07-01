@@ -728,6 +728,8 @@ def CleaningExistingDates(request):
 
 
 class AvailabilityCleaningCallendar(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
 	def post(self,request):
 		response_dict            = {}
 		response_dict['success'] = False
