@@ -3264,7 +3264,7 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 							cleaners= cleaners.filter(is_facade_skill=True).order_by('user_type')						
 		
 					#cleaning team
-					cleaning_team  = CleaningTeam.objects.create(order_scheduler=order_schedule,team_leader=leaders.first(),start_at=start_date_time,end_at=end_date_time,no_of_cleaners=int(schedules_dict[key]['no_of_cleaners'])
+					cleaning_team  = CleaningTeam.objects.create(order_scheduler=order_schedule,team_leader=leaders.first(),start_at=start_date_time,end_at=end_date_time,no_of_cleaners=int(schedules_dict[key]['no_of_cleaners']))
 					#cleaning team members
 					no_of_cleaners = int(schedules_dict[key]['no_of_cleaners'])-1
 					cleaning_team_member_array = []
@@ -3613,7 +3613,7 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 						cleaners= cleaners.filter(is_facade_skill=True).order_by('user_type')						
 	
 				#cleaning team
-				cleaning_team  = CleaningTeam.objects.create(order_scheduler=order_schedule,team_leader=leaders.first(),start_at=start_date_time,end_at=end_date_time,no_of_cleaners=int(schedules_dict[key]['no_of_cleaners'])
+				cleaning_team  = CleaningTeam.objects.create(order_scheduler=order_schedule,team_leader=leaders.first(),start_at=start_date_time,end_at=end_date_time,no_of_cleaners=int(schedules_dict[key]['no_of_cleaners']))
 				#cleaning team members
 				no_of_cleaners = int(schedules_dict[key]['no_of_cleaners'])-1
 				cleaning_team_member_array = []
