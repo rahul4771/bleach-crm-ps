@@ -2917,9 +2917,9 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 							cleaners= cleaners.filter(is_facade_skill=True).order_by('user_type')
 					
 					#cleaning team
-					cleaning_team  = CleaningTeam.objects.create(order_scheduler=order_schedule,team_leader=leaders.first(),start_at=start_date_time,end_at=end_date_time)
+					cleaning_team  = CleaningTeam.objects.create(order_scheduler=order_schedule,team_leader=leaders.first(),start_at=start_date_time,end_at=end_date_time,no_of_cleaners=int(schedules_dict[key]['no_of_cleaners']))
 					#cleaning team members
-					no_of_cleaners = int(schedules_dict[key]['cleaning_hours'])-1
+					no_of_cleaners = int(schedules_dict[key]['no_of_cleaners'])-1
 					cleaning_team_member_array = []
 					for i in range(no_of_cleaners):
 						cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,member=cleaners[i],start_at=start_date_time,end_at=end_date_time,start_time=start_time,end_time=end_time))
@@ -3264,7 +3264,7 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 							cleaners= cleaners.filter(is_facade_skill=True).order_by('user_type')						
 		
 					#cleaning team
-					cleaning_team  = CleaningTeam.objects.create(order_scheduler=order_schedule,team_leader=leaders.first(),start_at=start_date_time,end_at=end_date_time)
+					cleaning_team  = CleaningTeam.objects.create(order_scheduler=order_schedule,team_leader=leaders.first(),start_at=start_date_time,end_at=end_date_time,no_of_cleaners=int(schedules_dict[key]['no_of_cleaners'])
 					#cleaning team members
 					no_of_cleaners = int(schedules_dict[key]['no_of_cleaners'])-1
 					cleaning_team_member_array = []
@@ -3613,7 +3613,7 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 						cleaners= cleaners.filter(is_facade_skill=True).order_by('user_type')						
 	
 				#cleaning team
-				cleaning_team  = CleaningTeam.objects.create(order_scheduler=order_schedule,team_leader=leaders.first(),start_at=start_date_time,end_at=end_date_time)
+				cleaning_team  = CleaningTeam.objects.create(order_scheduler=order_schedule,team_leader=leaders.first(),start_at=start_date_time,end_at=end_date_time,no_of_cleaners=int(schedules_dict[key]['no_of_cleaners'])
 				#cleaning team members
 				no_of_cleaners = int(schedules_dict[key]['no_of_cleaners'])-1
 				cleaning_team_member_array = []
@@ -4652,7 +4652,7 @@ class EditOrderDetails(APIView):
 			start_at           = datetime.strptime(cleaning_date+' '+cleaning_time,'%d-%m-%Y %I:%M %p')
 			end_at             = start_at + timedelta(hours=cleaning_hours)
 
-			OrderScheduler.objects.create(order=order,evaluation_details=evaluation_book.evaluation_details,order_scheduler_book__id=evaluation_book_id,start_at=start_at,end_at=end_at,customer_address=evaluation_book.evaluation_details.address,status='CONFIRMED')
+			OrderScheduler.objects.create(order=order,evaluation_details=evaluation_book.evaluation_details,order_scheduler_book=evaluation_book,start_at=start_at,end_at=end_at,customer_address=evaluation_book.evaluation_details.address,status='CONFIRMED')
 			
 			response_dict['success']  = True
 
