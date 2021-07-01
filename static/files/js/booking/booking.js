@@ -1347,7 +1347,7 @@ console.log(response)
               if(this.serviceDetails.service_details[i].cleaning_policy=='SUBSCRIPTION'){
                 var visits=Object.keys(this.multiServicesBill[i].schedule_details).length
                 this.serviceDetails.service_details[i].total_cost=parseInt(this.serviceDetails.service_details[i].total_cost)*parseInt(visits)
-                this.serviceDetails.service_details[i].estimated_cost=parseInt(this.serviceDetails.service_details[i].total_cost)*parseInt(visits)
+                this.serviceDetails.service_details[i].estimated_cost=parseInt(this.serviceDetails.service_details[i].total_cost)
               }
             for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
               

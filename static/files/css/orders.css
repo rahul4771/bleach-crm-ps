@@ -27,7 +27,9 @@
   color: blue;
 }
 
-
+.text-right{
+  text-align: right !important;
+}
 .gray-icon {
   color: gray;
 }
@@ -240,10 +242,7 @@
   position: relative;
 }
 .order-clean-edit {
-  padding: 0;
-  position: absolute;
-  right: 0;
-  top: 20px;
+  text-align: right;
   cursor: pointer;
 }
 .order-clean-edit img {

@@ -3516,8 +3516,8 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 		
 		#evaluation details cost updation
 		evaluation_details.status         = 'EVALUATED'
-		evaluation_details.total_cost     = request.data.get('total_cost')
-		evaluation_details.estimated_cost = request.data.get('estimated_cost')			
+		evaluation_details.total_cost     += request.data.get('total_cost')
+		evaluation_details.estimated_cost += request.data.get('estimated_cost')			
 		evaluation_details.save()
 
 		#evaluation book
@@ -4651,9 +4651,41 @@ class EditOrderDetails(APIView):
 			cleaning_hours 	   = float(request.data.get('cleaning_hours'))
 			start_at           = datetime.strptime(cleaning_date+' '+cleaning_time,'%d-%m-%Y %I:%M %p')
 			end_at             = start_at + timedelta(hours=cleaning_hours)
+			no_of_cleaners     = request.data.get('no_of_cleaners')
 
-			OrderScheduler.objects.create(order=order,evaluation_details=evaluation_book.evaluation_details,order_scheduler_book=evaluation_book,start_at=start_at,end_at=end_at,customer_address=evaluation_book.evaluation_details.address,status='CONFIRMED')
+			OrderScheduler.objects.create(order=order,evaluation_details=evaluation_book.evaluation_details,order_scheduler_book=evaluation_book,start_at=start_at,end_at=end_at,customer_address=evaluation_book.evaluation_details.address,status='CONFIRMED',no_of_cleaners=no_of_cleaners)
 			
+			response_dict['success']  = True
+
+		elif action == 'edit_cleaning':
+			schedule_id        = request.data.get('schedule_id')
+			old_schedule       = OrderScheduler.objects.get(id=schedule_id)
+			old_start_at       = old_schedule.start_at+timedelta(hours=3) 
+			old_end_at         = old_schedule.end_at+timedelta(hours=3)
+
+			cleaning_date 	   = request.data.get('cleaning_date')
+			cleaning_time      = request.data.get('cleaning_time')
+			cleaning_hours 	   = float(request.data.get('cleaning_hours'))
+			start_at           = datetime.strptime(cleaning_date+' '+cleaning_time,'%d-%m-%Y %I:%M %p')
+			end_at             = start_at + timedelta(hours=cleaning_hours)
+			no_of_cleaners     = request.data.get('no_of_cleaners')
+
+			cleaning_schedules = OrderScheduler.objects.filter(start_at=old_start_at,end_at=old_end_at,evaluation_details__evaluation=order.evaluation).select_related('evaluation_details__evaluation')
+			 
+			for cleaning_schedule in cleaning_schedules:	
+				#update cleaning schedule
+				cleaning_schedule.start_at 							= start_at
+				cleaning_schedule.end_at   							= end_at
+				cleaning_schedule.no_of_cleaners                    = no_of_cleaners
+				cleaning_schedule.cleaning_hours                    = cleaning_hours
+				cleaning_schedule.save()
+
+				#delete cleaning team
+				CleaningTeam.objects.filter(order_scheduler=cleaning_schedule).delete()
+
+				#delete team member
+				CleaningTeamMember.objects.filter(team__order_scheduler=cleaning_schedule).delete()
+				
 			response_dict['success']  = True
 
 		return Response(response_dict,HTTP_200_OK)
