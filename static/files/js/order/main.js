@@ -80,6 +80,8 @@ function openPaymentEdit(payment){
  app.paymentData.total_amount=paymentDetails.total_amount
  app.total_amount=paymentDetails.total_amount
  app.paymentData.discount=paymentDetails.discount
+ app.paymentData.amount_before_cleaning=paymentDetails.amount_before_cleaning
+ app.paymentData.amount_after_cleaning=paymentDetails.amount_after_cleaning
  app.openPayment()
 }
 function openCleaningDate(service){
