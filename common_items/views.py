@@ -28,7 +28,7 @@ from django.db.models.functions import Cast,TruncDate,ExtractMonth,ExtractYear,C
 from django.db.models import Prefetch
 from django.contrib import messages
 
-from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule
+from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType
 from order.models import Promocode,OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,Reporting,ReportingMedia
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
@@ -39,7 +39,7 @@ from evaluator.forms import EvaluationDetailsForm,QuatationServiceForm
 from order.forms import InvestigationForm,PromocodeForm
 from bleachadmin.models import ServiceProductivity,ServicePriceRange
 from bleachadmin.forms import ServicePriceRangeForm
-
+from senior_team_leader.forms import CleaningTeamAssignForm,FollowupTeamAssignForm
 from django.db.models import Count
 
 from dateutil.relativedelta import relativedelta
