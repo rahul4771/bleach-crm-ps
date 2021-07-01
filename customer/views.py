@@ -4572,11 +4572,11 @@ class EditOrderDetails(APIView):
 			
 			saved_section.evaluation_book.estimated_cost     				  += saved_section.section_net_cost
 			saved_section.evaluation_book.total_cost         				  += saved_section.section_net_cost
-			saved_section.evaluation_book.total_cost.save()
+			saved_section.evaluation_book.save()
 
 			saved_section.evaluation_book.evaluation_details.estimated_cost += saved_section.section_net_cost
 			saved_section.evaluation_book.evaluation_details.total_cost     += saved_section.section_net_cost
-			saved_section.evaluation_book.evaluation_details.total_cost.save()
+			saved_section.evaluation_book.evaluation_details.save()
 
 			order.remining_amount += saved_section.section_net_cost
 			order.total_amount    += saved_section.section_net_cost

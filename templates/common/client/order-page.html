@@ -84,7 +84,9 @@
       </div>
     <!-- EDIT PAYMENT MODAL ENDS HERE-->
     <div data-toggle="modal" data-target="#editPaymentModal" id="edit-payment-tigger"></div> 
-    <div data-toggle="modal" data-target="#editSectionDialog" id="edit-dialog-tigger"></div> 
+    <div data-toggle="modal" data-target="#editSectionDialog" id="edit-dialog-tigger"></div>
+    <div data-toggle="modal" data-target="#cleaningDateModel" id="cleaning-date-tigger"></div> 
+    <div data-toggle="modal" data-target="#deleteSectionModel" id="delete-section-tigger"></div> 
 <!-- edit section dialog begins here-->
 <div class="modal fade " id="editSectionDialog" tabindex="-1" role="dialog" aria-labelledby="editSectionDialogTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered primary-modal" role="document">
@@ -776,9 +778,12 @@
                                {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
                                 <div id="showmore1{{orderschedule.id}}" style="display: none;"
                                     class="order-container-main order-clean-section">
-                                    <div v-if="edit" class="order-clean-edit" @click="editSection({{forloop.counter}},{{section.id}})"  >
-                                        <img class="pointer" src="{% static 'files/icons/edit.png' %}" >
+                                    <div v-if="edit" class="order-clean-edit"  >
+                                        <img class="pointer" src="{% static 'files/icons/edit.png' %}" @click="editSection({{forloop.counter}},{{section.id}})" >
+                                        <img class="pointer" src="{% static 'files/icons/delete.png' %}" @click="deleteSection({{forloop.counter}},{{section.id}})">
+                                       
                                     </div>
+                                   
                                     <div class="order-clean-section-header c-mb-10">
                                         <h2>Section {{forloop.counter}} : {{section.section_name}}</h2>
                                     </div>
@@ -922,9 +927,13 @@
                             </div>
                                 <div id="showmore2{{orderschedule.id}}" style="display: none;"
                                     class="order-container-main order-clean-section">
-                                    <div class="order-clean-section-header c-mb-10">
+                                    <div class="order-clean-section-header c-mb-10 d-flex">
                                         <h2>Cleaning Visit(s)</h2>
+                                        <div  class="order-clean-edit"  >
+                                            <button type="submit" class="btn primary-btn" onclick="openCleaningDate(this)" data-service="{{orderschedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{orderschedule.order_scheduler_book.number_of_cleaners}}" >Add Visits</button>
+                                        </div>
                                     </div>
+
                                     <div class="testimonial-group">
                                         <div class="row">
 
@@ -1570,6 +1579,47 @@
            
         </div>
         <!--order-top-wrapper-->
+<!-- section delete-->
+<!-- Modal Cancel -->
+<div class="modal fade bd-example-modal-lg" id="deleteSectionModel" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog cancel-model cancel-order-border" role="document">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="d-flex cl-modal-icons">
+                        <button data-dismiss="modal" class="model-close">
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="cancel-model-content">
+                        <h1>Do you want to delete this section?</h1>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <div class="cancel-model-content">
+                        
+                        <button class="sent-button" type="submit" @click="deleteTheSection()">Yes</button>
+                        <button data-dismiss="modal" class="view-button">Cancel</button>
+                      
+                        
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- section delete-->
 <!-- Modal Cancel -->
 <div class="modal fade bd-example-modal-lg" id="cancelModel" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -1754,14 +1804,11 @@
                         Slots for Cleaning  :
                     </div>
                     <div class="row model-time-solt">
-                        <button class="time-solt-button" >12:00 AM - 3:00 AM</button>
-                        <button class="time-solt-button" >12:00 AM - 3:00 AM</button>
-                        <button class="time-solt-button" >12:00 AM - 3:00 AM</button>
-                        <button class="time-solt-button" >12:00 AM - 3:00 AM</button>
-                        <button class="time-solt-button" >12:00 AM - 3:00 AM</button>
-                        <button class="time-solt-button" >12:00 AM - 3:00 AM</button>
-                        <button class="time-solt-button" >12:00 AM - 3:00 AM</button>
-                        <button class="time-solt-button" >12:00 AM - 3:00 AM</button>
+                        <div v-for="(slot,index) in parsedTimeSlots" v-bind:key="index" class="col-md-4">
+                            <button class="time-slot-button" v-if="!selectedSlots.includes(index)" @click="selectSlot(index)"><% slot.start_time +' - ' + slot.end_time %></button>
+                            <button class="time-slot-button-active" v-if="selectedSlots.includes(index)" @click="removeSlot(index)"><% slot.start_time +' - ' + slot.end_time %></button>
+                        </div>
+                        
 
                         
                     </div>
@@ -1861,6 +1908,8 @@
 {% block javascript %}
 
 {% comment %} <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> {% endcomment %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 <script src="{% static 'files/js/jquery.formset.js' %}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha512-T/tUfKSV1bihCnd+MxKD0Hm1uBBroVYBOYSk1knyvQ9VyZJpc/ALb4P0r6ubwVPSGB2GvjeoMAJJImBG12TiaQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.en-AU.min.js" integrity="sha512-ghvIK/3dPoQzHCrGQxvxAeTtLGNHobiKoLA8tdztoqiiINxSre6RiloNaN6uVLg1ESyBiZh7rnmRBa+psz85Zw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
