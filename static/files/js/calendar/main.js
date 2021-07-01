@@ -205,15 +205,17 @@ const app=  new Vue({
           bg:'',
           color:'',
           type:''
-        }
+        },
+        cleaning_duration:[],
+            selected_cleaning_duration:{}
 
       },
-      /*watch: {
+      watch: {
         services: function (val) {
          
-          this.getSlotDetails()
+          this.getslotAgain()
         } 
-      },*/
+      },
       mounted(){
         moment.locale('fr');
         this.currentTime=moment().format().split("T")[1];
@@ -413,7 +415,8 @@ const app=  new Vue({
             },
             "12":{
               slots:[]
-            }
+            },
+            
           }
             axios.get(this.url+"/agent/cleaningcallendar?cleaning_callendar_date="+this.cleaningDate).then((response) => {
                 this.slots = response.data;
@@ -443,6 +446,7 @@ const app=  new Vue({
               this.selectedCleaningSlot=[]
               this.selectedCleaningSlot.push(String(slot))
             }
+            
             var max=Math.max(...this.selectedCleaningSlot)
             var min=Math.min(...this.selectedCleaningSlot)
             if(this.slotFormat[min].start_time){
@@ -473,8 +477,19 @@ const app=  new Vue({
             })
             
           },
+          getslotAgain(){
+            if(this.services.length>0){
+
+            
+            this.cleaningData.service_types=this.services
+            axios.post(this.url+"/agent/cleaningcallendar/availability/",this.cleaningData).then((response) => {
+              this.cleaningDetails=response.data
+            })
+          }
+          },
           checkslot(index){
-            if(this.selectedEditSlot.length<this.no_of_slots)
+            var no_of_slots=this.selected_cleaning_duration.cleaning_hours/2
+            if(this.selectedEditSlot.length<no_of_slots)
             {
             if(this.selectedEditSlot.length>0)
             {
@@ -516,8 +531,62 @@ const app=  new Vue({
           return false
         }
           },
-          editCleaning(){
+          durationCalculator(){
+            this.cleaning_duration=[]
+            this.selected_cleaning_duration={}
+            if(this.currentSlotDetails.cleaning_hours)
+            {
             
+            var cleaning_hours=this.currentSlotDetails.cleaning_hours
+            var no_of_cleaners=this.currentSlotDetails.no_of_cleaners
+            var prod=cleaning_hours/no_of_cleaners
+            if(cleaning_hours>2){
+              var cleaning_hour1=cleaning_hours-2
+              var cleaning_hour3=cleaning_hours+2
+            }
+            else{
+              var cleaning_hour1=cleaning_hours+2
+              var cleaning_hour3=cleaning_hours+4
+            }
+              var cleaner_1=Math.round(prod/cleaning_hour1)
+              var cleaner_3=Math.round(prod/cleaning_hour3)
+              if(cleaner_1<=0){
+                cleaner_1=1
+              }
+              if(cleaner_3<=0){
+                cleaner_3=1
+              }
+              this.cleaning_duration.push({
+                cleaning_hours:cleaning_hour1,
+                no_of_cleaners:cleaner_1,
+
+              })
+              this.cleaning_duration.push({
+                cleaning_hours:cleaning_hours,
+                no_of_cleaners:no_of_cleaners, 
+              })
+              this.cleaning_duration.push({
+                cleaning_hours:cleaning_hour3,
+                no_of_cleaners:cleaner_3,
+              })
+              this.selected_cleaning_duration={
+                cleaning_hours:cleaning_hours,
+                no_of_cleaners:no_of_cleaners
+              }
+            }
+            else{
+              this.currentSlotDetails.cleaning_hours=0
+              this.currentSlotDetails.no_of_cleaners=0
+            }
+              
+            
+          },
+          selectDuration(duration){
+            this.selected_cleaning_duration=duration
+          },
+          editCleaning(){
+            var service_type=[]
+            service_type.push(this.currentSlotDetails.order_scheduler_book.service_type.name)
             var temparray=this.selectedDate.split("-")
             var selectedDate=temparray.reverse().join("-")
             this.convertedDate=selectedDate
@@ -532,8 +601,8 @@ const app=  new Vue({
              
 
              cleaning_date:selectedDate,
-              number_of_cleaners:this.currentSlotDetails.no_of_cleaners,
-              service_types:this.currentSlotDetails.order_scheduler_book.service_type.name,
+              number_of_cleaners:this.selected_cleaning_duration.no_of_cleaners,
+              service_types:service_type,
               evaluation_id:this.currentSlotDetails.order.order_no
             }).then((response) => {
               this.cleaningEditSlots=response.data.slotes
@@ -586,8 +655,8 @@ const app=  new Vue({
 
             cleaning_start:selectedDate+' '+moment(min).format('hh:mm A'),
             cleaning_end:selectedDate+' '+moment(end).format('hh:mm A'),
-            no_of_cleaners:this.currentSlotDetails.no_of_cleaners,
-            cleaning_hours:this.currentSlotDetails.cleaning_hours,
+            no_of_cleaners:this.selected_cleaning_duration.no_of_cleaners,
+            cleaning_hours:this.selected_cleaning_duration.cleaning_hours,
             schedules : [this.currentSlotDetails.id],
             evaluation_id:this.currentSlotDetails.order.order_no,
             service_types:['General Cleaning'],
@@ -628,8 +697,8 @@ const app=  new Vue({
 
             cleaning_start_at:selectedDate+' '+moment(min).format('hh:mm A'),
             cleaning_end_at:selectedDate+' '+moment(end).format('hh:mm A'),
-            no_of_cleaners:this.currentSlotDetails.follow_up.no_of_cleaners,
-            cleaning_hours:this.currentSlotDetails.follow_up.cleaning_hours,
+            no_of_cleaners:this.selected_cleaning_duration.no_of_cleaners,
+            cleaning_hours:this.selected_cleaning_duration.cleaning_hours,
             followup_id:this.currentSlotDetails.id
             }).then((response) => {
               console.log(response)
@@ -759,6 +828,7 @@ const app=  new Vue({
               this.no_of_slots=parseInt(this.currentSlotDetails.cleaning_hours)/2
               this.cleaningAgentDialog=true
               this.dataCompleted=true
+              this.durationCalculator()
              // $('#cleanAgentModal').modal('show');
               
             })
@@ -772,7 +842,7 @@ const app=  new Vue({
               this.no_of_slots=parseInt(this.currentSlotDetails.follow_up.cleaning_hours)/3   
               this.cleaningFollowupDialog=true
               this.followupStat=true
-              
+              this.durationCalculator()
              
                
             
