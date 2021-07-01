@@ -780,7 +780,7 @@
                                 <div class="showmore1{{orderschedule.id}}" style="display: none;"
                                     class="order-container-main order-clean-section">
                                     <div v-if="edit" class="order-clean-edit"  >
-                                        <img class="pointer" src="{% static 'files/icons/edit.png' %}" @click="editSection({{forloop.counter}},{{section.id}})" >
+                                        <img class="pointer" src="{% static 'files/icons/edit.png' %}" onclick="editSection(this)" data-section_id="{{section.id}}" data-index="{{forloop.counter}}" data-service="{{orderschedule.order_scheduler_book.service_type.name}}" data-eval_book_id="{{orderschedule.order_scheduler_book.id}}">
                                         <img class="pointer" src="{% static 'files/icons/delete.png' %}" @click="deleteSection({{forloop.counter}},{{section.id}})">
                                        
                                     </div>
@@ -924,15 +924,13 @@
                                 </div>
                                 {% endfor %}
                                 <div>
-                                <button class="sent-button send-btn2 cp"   @click="addSection({{forloop.counter}})">Add Section</button>
+                                <button class="sent-button send-btn2 cp"   onclick="addSection(this)"  data-service="{{orderschedule.order_scheduler_book.service_type.name}}">Add Section</button>
                             </div>
                                 <div class="showmore2{{orderschedule.id}}" style="display: none;"
                                     class="order-container-main order-clean-section">
                                     <div class="order-clean-section-header c-mb-10 d-flex">
                                         <h2>Cleaning Visit(s)</h2>
-                                        <div  class="order-clean-edit"  >
-                                            <button type="submit" class="btn primary-btn" onclick="openCleaningDate(this)" data-evaluation_book_id="{{orderschedule.order_scheduler_book.id}}" data-service="{{orderschedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{orderschedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{orderschedule.order_scheduler_book.cleaning_hours}}">Add Visits</button>
-                                        </div>
+                                        
                                     </div>
 
                                     <div class="testimonial-group">
@@ -957,8 +955,14 @@
                                             </div>
                                         {% endif %}
                                         {% endfor %} 
-
+                                      
                                         </div>
+                                       
+                                            <div class="text-right">
+                                                <button type="submit" class="btn primary-btn"  onclick="openCleaningDate(this)" data-evaluation_book_id="{{orderschedule.order_scheduler_book.id}}" data-service="{{orderschedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{orderschedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{orderschedule.order_scheduler_book.cleaning_hours}}">Add Visits</button>
+                                            </div>
+                                        
+                                        
                                     </div>
 
                                     <!--cleaningteam start-->

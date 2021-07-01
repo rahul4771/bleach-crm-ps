@@ -57,7 +57,7 @@ function onClick(element) {
   document.getElementById("img01").src = element.src;
   document.getElementById("modal01").style.display = "block";
 }
-function editSection(section){
+/*function editSection(section){
   console.log("i m here")
   var sectiondata=$(section).data()
   console.log("section is "+JSON.stringify(sectiondata))
@@ -65,6 +65,47 @@ function editSection(section){
   $('#edit-dialog-tigger').click()
   app.editSectionData.section_cost=sectiondata.section_cost
   app.editSectionData.section_name=sectiondata.section_name
+  
+}*/
+function editSection(service){
+  
+  
+  var index=$(service).data('index')
+  var sid=$(service).data('section_id')
+  var eval_book_id=$(service).data('eval_book_id')
+  app.action_type="Edit"
+
+  app.service_type=$(service).data('service')
+  console.log("index is"+index)
+ // var sectiondata=$(section).data()
+ app.getSection(eval_book_id)
+ app.editSectionData.section_id=sid
+  console.log("section is "+JSON.stringify(app.sections[index-1]))
+  app.sectionData=app.sections[index-1]
+  $('#edit-dialog-tigger').click()
+  app.editSectionData.section_cost=app.sectionData.section_cost
+  app.editSectionData.section_name=app.sectionData.section_name
+  if(app.sectionData.wall_type!="")
+  {
+    app.editSectionData.wall_type=app.sectionData.wall_type.split(',')
+  }
+  if(app.sectionData.floor_type!="")
+  {
+    app.editSectionData.floor_type=app.sectionData.floor_type.split(',')
+  }
+  if(app.sectionData.ceiling_type!="")
+  {
+    app.editSectionData.ceiling_type=app.sectionData.ceiling_type.split(',')
+  }
+  if(app.sectionData.materials!="")
+  {
+    app.editSectionData.materials=app.sectionData.materials.split(',')
+  }
+  
+  
+  
+  
+  app.findSize()
   
 }
 
@@ -94,6 +135,27 @@ function openCleaningDate(service){
   app.evaluation_book_id=data.evaluation_book_id
   app.getSlotes(moment().format('DD-MM-YYYY'))
   
+}
+function addSection(service){
+  app.service_type=$(service).data('service')
+  app.editSectionData=
+    {
+      "section_name":"",
+      "size":"",
+      "wall_type":[],
+      "ceiling_type":[],
+      "floor_type":[],
+      "cement_residue":false,
+      "section_cost":"",
+      "section_net_cost":"",
+      "is_newkitchen":false,
+     "is_highprice_facade":false,
+     "is_highprice_window":false,
+  }
+ 
+  app.action_type="Add"
+  app.getProductivity()
+  $('#edit-dialog-tigger').click()
 }
 const app = new Vue({
   el: "#app",
@@ -231,6 +293,7 @@ const app = new Vue({
             parsedTimeSlots:[]
   },
   methods:{
+    
     checkSlot(index){
       if(this.selectedSlots.length>0){
         if(this.selectedSlots.length==this.no_of_slots){
@@ -330,8 +393,9 @@ const app = new Vue({
     openPayment(){
       $('#edit-payment-tigger').click()
     },
-    editSection(index,sid){
+    editSection(index,sid,service){
       this.action_type="Edit"
+      this.service_type=$(service).data('service')
       console.log("index is"+index)
      // var sectiondata=$(section).data()
      this.editSectionData.section_id=sid
@@ -363,24 +427,7 @@ const app = new Vue({
       })
     },
 
-    addSection(index){
-      this.editSectionData=
-        {
-          "section_name":"",
-          "size":"",
-          "wall_type":[],
-          "ceiling_type":[],
-          "floor_type":[],
-          "cement_residue":false,
-          "section_cost":"",
-          "section_net_cost":"",
-          "is_newkitchen":false,
-         "is_highprice_facade":false,
-         "is_highprice_window":false,
-      }
-      this.action_type="Add"
-      $('#edit-dialog-tigger').click()
-    },
+    
     changeCategory(){
       this.service_productivity=[]
       this.editSectionData.size={}
@@ -457,10 +504,10 @@ const app = new Vue({
         console.log("in wall type : "+this.editSectionData.wall_type)  
       }
       if(this.editSectionData.floor_type.length>0){
-        sectionData.wall_type=this.editSectionData.floor_type.join()   
+        sectionData.floor_type=this.editSectionData.floor_type.join()   
       }
       if(this.editSectionData.ceiling_type.length>0){
-        sectionData.wall_type=this.editSectionData.ceiling_type.join()   
+        sectionData.ceiling_type=this.editSectionData.ceiling_type.join()   
       }
       axios.post(this.url+'/customer/editorder/'+this.orderId,{
         "action_type":'edit_section',
