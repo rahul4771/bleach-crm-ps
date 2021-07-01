@@ -90,6 +90,10 @@
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Daily Sales List</h2>
 
+<div class="filter-column-boxes filter-columns-left">
+<div class="filter-button" onclick="exportTableToExcel()"><span class="add_promocode">Export to excel</span></div>
+</div>
+
 <div class="filter-column-boxes filter-columns-right">
   <!-- datepicker -->
   <div class="date-wrapper"><!--date-wrapper-->
@@ -135,10 +139,8 @@
     </tfoot>
     </table>
 
-
-
 </div><!--white-wrapper-->                   
-            
+
       </div><!--main-content-holder-->
         </div><!--container-fluid space-->
     </section><!--content-->
@@ -158,6 +160,7 @@ $('.footable').footable({
 
 <script src="{% static 'files/js/charts/dailysalesdatachart.js' %}"></script>
 <script src="{% static 'files/js/daily-sales/dailysales.js' %}"></script>
+<script src="{% static 'files/js/table2excel.js' %}"></script>
 <!-- <script>
   $(document).ready(function(){
     $('.footable').trigger('footable_resize');
@@ -210,6 +213,12 @@ $('#calendar_month').val(datestring);
 monthlysales();
 
 })
+
+function exportTableToExcel(){
+    $("#salesTable").table2excel({    
+                    filename: "DailySales.xls"    
+                }); 
+}
 
 function set_params_go(args)
 {
