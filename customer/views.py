@@ -3516,8 +3516,8 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 		
 		#evaluation details cost updation
 		evaluation_details.status         = 'EVALUATED'
-		evaluation_details.total_cost     = request.data.get('total_cost')
-		evaluation_details.estimated_cost = request.data.get('estimated_cost')			
+		evaluation_details.total_cost     += request.data.get('total_cost')
+		evaluation_details.estimated_cost += request.data.get('estimated_cost')			
 		evaluation_details.save()
 
 		#evaluation book
