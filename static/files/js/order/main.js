@@ -311,7 +311,9 @@ const app = new Vue({
        cleaning_time:this.parsedTimeSlots[minhour].start_time,
        cleaning_hours:this.cleaning_hours,
       }).then(response=>{
-        console.log(response)
+        $('#visit-close').click()
+        location.reload()
+       
       })
     },
     calDiscount(){
