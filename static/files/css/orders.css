@@ -918,15 +918,35 @@
   background-color: #ffffff;
   border-radius: 50%;
 }
-.time-solt-button {
+.time-slot-button {
   border: 1px solid #efebeb;
   border-radius: 5px;
   color: #4e4e4e;
   padding: 10px 20px 10px 20px;
-  margin: 20px;
+  width: 100%;
+    margin-top: 20px;
   background: #ffffff;
 }
-.time-solt-button:hover {
+.time-slot-button-active {
+  border: 1px solid #2c4c82 ;
+  border-radius: 5px;
+  color: #4e4e4e;
+  padding: 10px 20px 10px 20px;
+  width: 100%;
+  margin-top: 20px;
+  background: #ffffff;
+}
+.time-slot-button-disabled{
+  border: 1px solid #efebeb ;
+  border-radius: 5px;
+  color: #4e4e4e;
+  padding: 10px 20px 10px 20px;
+  width: 100%;
+  margin-top: 20px;
+  background: #cccccc;
+  pointer-events: none;
+}
+.time-slot-button:hover {
   background: #ffffff;
 }
 
