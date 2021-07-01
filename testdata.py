@@ -563,4 +563,5 @@ payment_method: PREPAID,POSTPAID,BREAKDOWN
    "cleaning_date":'',
    "cleaning_time":'',
    "cleaning_hours":'',
+   "no_of_cleaners":3,
 }
