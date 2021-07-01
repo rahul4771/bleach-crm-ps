@@ -233,19 +233,17 @@ const app=  new Vue({
         this.getEvaluationSlots()
       },
       methods:{
-        editCleaningTeam(slot){
-          {% if request.user.user_type == 'SENIORTEAMLEADER' %}
-          window.location.href='/stl/editcleaning/team/'+slot
-          {% else %}
-          window.location.href='/operation-supervisor/editcleaning/team/'+slot
-          {% endif %}"
+        editCleaningTeam(slot){          
+          window.location.href='/stl/editcleaning/team/'+slot         
         },
-        addCleaningTeam(slot){
-          {% if request.user.user_type == 'SENIORTEAMLEADER' %}
+        editCleaningTeamOpSupervisor(slot){
+          window.location.href='/operation-supervisor/editcleaning/team/'+slot  
+        },
+        addCleaningTeam(slot){          
           window.location.href='/stl/assigncleaning/team/'+slot
-          {% else %}
+        },
+        addCleaningTeamOpSupervisor(slot){
           window.location.href='/operation-supervisor/assigncleaning/team/'+slot
-          {% endif %}
         },
         selectEditSlot(slot){
          
