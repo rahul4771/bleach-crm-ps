@@ -234,18 +234,18 @@ const app=  new Vue({
       },
       methods:{
         editCleaningTeam(slot){
-          "{% if request.user.user_type == 'SENIORTEAMLEADER' %}"
+          {% if request.user.user_type == 'SENIORTEAMLEADER' %}
           window.location.href='/stl/editcleaning/team/'+slot
-          "{% else %}"
+          {% else %}
           window.location.href='/operation-supervisor/editcleaning/team/'+slot
-          "{% endif %}"
+          {% endif %}"
         },
         addCleaningTeam(slot){
-          "{% if request.user.user_type == 'SENIORTEAMLEADER' %}"
+          {% if request.user.user_type == 'SENIORTEAMLEADER' %}
           window.location.href='/stl/assigncleaning/team/'+slot
-          "{% else %}"
+          {% else %}
           window.location.href='/operation-supervisor/assigncleaning/team/'+slot
-          "{% endif %}"
+          {% endif %}
         },
         selectEditSlot(slot){
          
