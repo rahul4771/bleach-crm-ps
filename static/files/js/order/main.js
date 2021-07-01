@@ -469,6 +469,7 @@ const app = new Vue({
         console.log(response)
         $('#edit-section-close').click()
         this.resetSection()
+        location.reload()
       })
     },
     addSectionData(){
