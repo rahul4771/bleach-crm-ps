@@ -589,9 +589,9 @@
                 <div class="d-flex">
                 <v-checkbox
                 v-model="selectedCleaningSlot"
-                 value="8"
+                 value="9"
                  :color="primary"
-                 @change="getSlotDetails(8)"
+                 @change="getSlotDetails(9)"
               ></v-checkbox>
               <div class="mt-4 mx-auto">
               <div class="cl-slot-card-title text-center mt-1">Slot 9</div> 
@@ -635,9 +635,9 @@
                 <div class="d-flex">
                 <v-checkbox
                 v-model="selectedCleaningSlot"
-                 value="8"
+                 value="10"
                  :color="primary"
-                 @change="getSlotDetails(8)"
+                 @change="getSlotDetails(10)"
               ></v-checkbox>
               <div class="mt-4 mx-auto">
               <div class="cl-slot-card-title text-center mt-1">Slot 10</div> 
@@ -681,9 +681,9 @@
                 <div class="d-flex">
                 <v-checkbox
                 v-model="selectedCleaningSlot"
-                 value="8"
+                 value="11"
                  :color="primary"
-                 @change="getSlotDetails(8)"
+                 @change="getSlotDetails(11)"
               ></v-checkbox>
               <div class="mt-4 mx-auto">
               <div class="cl-slot-card-title text-center mt-1">Slot 11</div> 
@@ -727,9 +727,9 @@
                 <div class="d-flex">
                 <v-checkbox
                 v-model="selectedCleaningSlot"
-                 value="8"
+                 value="12"
                  :color="primary"
-                 @change="getSlotDetails(8)"
+                 @change="getSlotDetails(12)"
               ></v-checkbox>
               <div class="mt-4 mx-auto">
               <div class="cl-slot-card-title text-center mt-1">Slot 12</div> 
@@ -1041,15 +1041,58 @@ class="cl-service-list"
           <div class="cl-modal-text-title">
              Edit Cleaning
           </div>
+          <div class="col-md-12">
+          <div class="row  m-0">
+            
+           
+            <div class="col-md-2 mt-2 col-12" v-if="cleaning_duration.length>0">
+              <div>Choose a duration</div>
+              <div class="text-center p-2">In Hours</div>
+            </div>
+            <div class="col-md-12 mt-2 danger" v-else>
+                Cleaners not available for the selected service
+            </div>
+            <div
+              class="col-md-2 mt-2 col-6"
+              v-for="(item, durindex) in cleaning_duration"
+              v-bind:key="durindex"
+            >
+              <div
+                class="duration-active text-center p-2"
+                v-on:click="selectDuration(item)"
+                v-if="selected_cleaning_duration.cleaning_hours == item.cleaning_hours"
+              >
+                <b> <% item.cleaning_hours %></b>
+              </div>
+              <div
+                class="duration text-center p-2"
+                v-on:click="selectDuration(item)"
+                v-else
+              >
+                <b> <% item.cleaning_hours %> </b>
+              </div>
+              <div
+                v-if="selected_cleaning_duration.cleaning_hours == item.cleaning_hours"
+                class="text-center sub-content"
+              >
+                <% item.cleaning_hours / 2 %> slots
+              </div>
+            </div>
+          </div>
+        </div>
           <div class="mt-2 col-md-4">
          
              <v-date-picker v-model="selectedDate" :color="popup.color" class="cl-datecalendar w-100" @change="editCleaning()" :min="today"></v-date-picker>
           
           </div>
+          
           <div class="col-md-7 offset-md-1">
-        
-     Slots : <% no_of_slots %>
-     <div>
+        <div class="d-flex" v-if="cleaning_duration.length>0">
+          <div>Slots : <% selected_cleaning_duration.cleaning_hours/2 %></div>
+          <div class="ml-2">Cleaners : <% selected_cleaning_duration.no_of_cleaners %></div>
+        </div>
+     
+     <div class="mt-4">
        <b>Time Slots Available</b>
      </div>
     <div class="time-slots row mt-2" >

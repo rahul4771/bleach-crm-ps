@@ -103,7 +103,10 @@ const appCard = new Vue({
 
   data: {
     userid:[],
-    url:"http://localhost:8000/"
+    //url:"http://localhost:8000/"
+    url:"https://test.bleach-kw.com"
+    //url : 'http://127.0.0.1:8000'
+
   },
   methods: {
     saveEdit(id){
@@ -172,7 +175,9 @@ const appCard = new Vue({
       }else{
         userData.append('is_window_skill','False')
       }
-      axios.post(this.url+"common/resources/",userData).then((response) => {
+
+      console.log(id,"udt")
+      axios.post(this.url+"/api/resource-skills/",userData).then((response) => {
         // editDone(id)
         location.reload();
               })

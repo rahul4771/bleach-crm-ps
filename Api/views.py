@@ -547,6 +547,7 @@ class DailySalesAPI(APIView):
 	authentication_classes  = ()
 
 	def get(self,request):
+		print("heers")
 		response_dict = {'success':False}
 
 		today = datetime.now()
@@ -606,10 +607,12 @@ class DailySalesAPI(APIView):
 			print(list_item,"elist")
 			
 			if date < todate:
-				orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',start_at__range=(start_date_day,end_date_day)).filter(Q(Q(work_status = 'CLEANING_TEAM_ASSIGNED') | Q(work_status = 'CLEANING_IN_PROGRESS') | Q(work_status='CLEANING_FULFILLED'))).values_list('order__order_no','order_scheduler_book__total_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id','order_scheduler_book__evaluation_details__evaluation__id','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount','order_scheduler_book__evaluation_details__evaluator__id').order_by('end_at')
+				orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q(Q(work_status = 'CLEANING_TEAM_ASSIGNED') | Q(work_status = 'CLEANING_IN_PROGRESS') | Q(work_status='CLEANING_FULFILLED'))).values_list('order__order_no','order_scheduler_book__total_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id','order_scheduler_book__evaluation_details__evaluation__id','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount','order_scheduler_book__evaluation_details__evaluator__id').order_by('end_at')
 			else:
-				orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',start_at__range=(start_date_day,end_date_day)).values_list('order__order_no','order_scheduler_book__total_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id','order_scheduler_book__evaluation_details__evaluation__id','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount','order_scheduler_book__evaluation_details__evaluator__id').order_by('end_at')
+				orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).values_list('order__order_no','order_scheduler_book__total_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id','order_scheduler_book__evaluation_details__evaluation__id','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount','order_scheduler_book__evaluation_details__evaluator__id').order_by('end_at')
 
+			print(orderschedules.count(),"countt")
+			
 			found = set()
 			schedules_list = []
 
@@ -1388,4 +1391,83 @@ class InvoiceSMSMailAPI(APIView):
 			data=True
 		else:
 			data = False
+		return Response(data,HTTP_200_OK)
+
+
+class ResourceSkillsAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def post(self,request):
+		print("got")
+		user_id = request.data.get('user_id')
+		user = UserProfile.objects.get(is_active=True,id=int(user_id))
+		print(user,request.data.get('is_general_skill'),"ko")
+
+		if request.data.get('is_general_skill') == 'True':
+			print("yes")
+			user.is_general_skill = True
+		else:
+			print("no")
+			user.is_general_skill = False
+
+		if request.data.get('is_deep_skill') == 'True':
+			user.is_deep_skill = True
+		else:
+			user.is_deep_skill = False
+
+		if request.data.get('is_upholstery_skill') == 'True':
+			user.is_upholstery_skill = True
+		else:
+			user.is_upholstery_skill = False
+
+		if request.data.get('is_kitchen_skill') == 'True':
+			user.is_kitchen_skill = True
+		else:
+			user.is_kitchen_skill = False
+
+		if request.data.get('is_sterilization_skill') == 'True':
+			user.is_sterilization_skill = True
+		else:
+			user.is_sterilization_skill = False
+
+		if request.data.get('is_carpet_skill') == 'True':
+			user.is_carpet_skill = True
+		else:
+			user.is_carpet_skill = False
+
+		if request.data.get('is_mattress_skill') == 'True':
+			user.is_mattress_skill = True
+		else:
+			user.is_mattress_skill = False
+
+		if request.data.get('is_facade_skill') == 'True':
+			user.is_facade_skill = True
+		else:
+			user.is_facade_skill = False
+
+		if request.data.get('is_storagearea_skill') == 'True':
+			user.is_storagearea_skill = True
+		else:
+			user.is_storagearea_skill = False
+
+		if request.data.get('is_carparkingumbrella_skill') == 'True':
+			user.is_carparkingumbrella_skill = True
+		else:
+			user.is_carparkingumbrella_skill = False
+
+		if request.data.get('is_outdoor_skill') == 'True':
+			user.is_outdoor_skill = True
+		else:
+			user.is_outdoor_skill = False
+
+		if request.data.get('is_window_skill') == 'True':
+			user.is_window_skill = True
+		else:
+			user.is_window_skill = False
+
+		user.save()
+
+		data=True
+
 		return Response(data,HTTP_200_OK)

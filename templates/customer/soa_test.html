@@ -377,7 +377,7 @@
 
 function exportTableToExcel(){
     $("#soa_table").table2excel({    
-                    filename: "Your_File_Name.xls"    
+                    filename: "Statement_of_account_"+"{{customer.name}}"+".xls"    
                 }); 
 }
 

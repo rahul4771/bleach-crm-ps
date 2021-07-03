@@ -18,6 +18,7 @@ urlpatterns = [
 	url(r'^section-verification-updation/$',views.SectionVerificationUpdationAPI.as_view(),name='api-section-verification-updation'),
 	url(r'^check-in/$',views.CheckInAPI.as_view(),name='api-check-in'),
 	url(r'^check-out/$',views.CheckOutAPI.as_view(),name='api-check-out'),
+	url(r'^resource-skills/$',views.ResourceSkillsAPI.as_view(),name='api-resource-skills'),
 
 	url(r'^soa-mail/$',views.SOAMailAPI.as_view(),name='api-soa-mail'),
 	url(r'^invoice-mail-sms/$',views.InvoiceSMSMailAPI.as_view(),name='api-invoice-mail'),

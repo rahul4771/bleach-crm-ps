@@ -508,7 +508,18 @@ width:100% !important;
     height:42px;
    
 }
-
+.duration-active{
+    border: 1px solid #2e4e85;
+    border-radius: 5px;
+    cursor:pointer;
+    padding:5px;
+}
+.duration{
+    border:1px solid #dee2e6;
+    border-radius:5px;
+    padding:5px;
+    cursor:pointer;
+}
 /** Carousel**/
 #cleaningCalendar-carousel .owl-prev {
   
@@ -526,6 +537,9 @@ width:100% !important;
 }
  .service-control{
     font-size:22px;
+}
+.danger{
+    color:red;
 }
 .owl-prev i, .owl-next i {transform: scale(1,1.5);
     color: #dee2e6;
