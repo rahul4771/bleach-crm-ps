@@ -3715,13 +3715,15 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase2(APIView):
 		services        = request.data.get("service_details")
 
 		#Evaluation cost updation
-		evaluation.total_cost     += request.data.get('total_cost')
-		evaluation.estimated_cost += request.data.get('estimated_cost')
+		evaluation.total_cost      += request.data.get('total_cost')
+		evaluation.estimated_cost  += request.data.get('estimated_cost')
+		evaluation.quatation_status = 'APPROVED'
 		evaluation.save()
 
 		#order cost updation
-		order.total_amount       += request.data.get('total_cost')
-		order.remining_amount    += request.data.get('total_cost')
+		order.total_amount         += request.data.get('total_cost')
+		order.remining_amount      += request.data.get('total_cost')
+		order.order_status          = 'APPROVED_BY_CLIENT'
 		order.save()
 		
 		#evaluation details cost updation
@@ -4456,12 +4458,6 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 					CleaningTeamMember.objects.bulk_create(cleaning_team_member_array)
 		response_dict['success'] = True
 
-		#approve quatation
-		evaluation.quatation_status = 'APPROVED'
-		order.order_status          = 'APPROVED_BY_CLIENT'
-		evaluation.save()
-		order.save()
-		
 		return Response(response_dict,HTTP_200_OK)
 
 
