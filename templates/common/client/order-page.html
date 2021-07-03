@@ -1805,10 +1805,12 @@
                     </div>
                 </div>
                 <div class="col-md-8">
-                    <div class="model-cleaning-solt">
-                        Select <% no_of_slots %> slots
-                    </div>
-                    <div class="row model-time-solt">
+                    <div class="d-flex mt-10">
+                        <div class="p-10"> <b>Number of Cleaners</b></div>
+                    <input  type="text" class="textBox model-text-border w-auto" placeholder="No of Cleaners"  required="required" v-model="selected_no_of_cleaners">
+                </div>
+                <div class="mt-20">Select Slots</div>
+                    <div class="row model-time-solt .mt-20">
                         <div v-for="(slot,index) in parsedTimeSlots" v-bind:key="index" class="col-md-4">
                             <button class="time-slot-button" v-if="!selectedSlots.includes(index) && checkSlot(index)" @click="selectSlot(index)"><% slot.start_time +' - ' + slot.end_time %></button>
                             <button class="time-slot-button-disabled" v-if="!selectedSlots.includes(index) && !checkSlot(index)" @click="selectSlot(index)"><% slot.start_time +' - ' + slot.end_time %></button>

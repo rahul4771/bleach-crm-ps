@@ -519,6 +519,17 @@ GET
                   "cleaning_hours":3
              }
           },
+          "keynotes":[
+             {
+                "name":"",
+               "value":""
+             },
+             {
+                "name":"",
+               "value":""
+             }
+             
+          ]
          }
                     }
 }
@@ -568,7 +579,7 @@ payment_method: PREPAID,POSTPAID,BREAKDOWN
 
 ##edit_cleaning
 {
-   "action_type":'add_cleaning',
+   "action_type":'edit_cleaning',
    "schedule_id":2,
    "cleaning_date":'',
    "cleaning_time":'',

@@ -245,6 +245,10 @@
   text-align: right;
   cursor: pointer;
 }
+.w-auto{
+  width:auto !important;
+}
+
 .order-clean-edit img {
   width: 22px;
 }

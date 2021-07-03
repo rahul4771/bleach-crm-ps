@@ -2,6 +2,9 @@
 {% block content %}
 {% load static %}
 {% load mathfilters %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"
+integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w=="
+crossorigin="anonymous" />
 <div class="wrapper"><!--wrapper-->
 
 {% if request.user.user_type == 'SALESADMIN' %}
@@ -88,32 +91,40 @@
      <div class="main-content-holder"><!--main-content-holder-->                
             
 <div class="white-wrapper"><!--white-wrapper-->
-<h2 class="h2">Daily Sales List</h2>
+  <h2 class="h2">Daily Sales List</h2>
+<!-- <div class="page-entries"> <button  onclick="exportTableToExcel()" class="export-excel-btn"> <i class="fa fa-file-excel mr-5" aria-hidden="true"></i> Export to excel</button> </div> -->
+<!-- <h2 class="h2">Daily Sales List</h2> -->
 
-<div class="filter-column-boxes filter-columns-left">
-<div class="filter-button" onclick="exportTableToExcel()"><span class="add_promocode">Export to excel</span></div>
+
+
+<div class="filter-columns-wrapper">
+  <div class="filter-column-boxes filter-columns-left">
+    <button  onclick="exportTableToExcel()" class="export-excel-btn"> <i class="fa fa-file-excel mr-5" aria-hidden="true"></i> Export to excel</button>
 </div>
 
-<div class="filter-column-boxes filter-columns-right">
-  <!-- datepicker -->
-  <div class="date-wrapper"><!--date-wrapper-->
-    <div class="date-wrapper-inner-resource"><!--date-wrapper-inner-->
-      <div id="working_calendar2" >
-        <button class="prev-month-resource previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
-        <input type='text' id='calendar_month'  name='monthpicker' class="date-box month_pick_resource" onchange="monthlysales();">
-        <button class='next-month-resource next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
-        <button class='this-month-resource current-date'>Month</button>
+  <div class="filter-column-boxes filter-columns-right">
+  
+    <!-- datepicker -->
+    <div class="date-wrapper"><!--date-wrapper-->
+      <div class="date-wrapper-inner-resource"><!--date-wrapper-inner-->
+        <div id="working_calendar2" >
+          <button class="prev-month-resource previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
+          <input type='text' id='calendar_month'  name='monthpicker' class="date-box month_pick_resource" onchange="monthlysales();">
+          <button class='next-month-resource next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
+          <button class='this-month-resource current-date'>Month</button>
+        </div>
       </div>
+  
+      {% comment %} <div class="date-togglewrapper"><!--date-togglewrapper-->
+              <div class="Button_wrapperChart">
+              <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="salestoggle"><div class="slider round"><span class="on">EVALUATOR</span><span class="off">SERVICE</span></div></label></div>
+      
+              </div>
+              </div><!--date-togglewrapper--> {% endcomment %}
     </div>
+  </div><!--filter-column-boxes filter-columns-right-->  
+</div>
 
-    {% comment %} <div class="date-togglewrapper"><!--date-togglewrapper-->
-            <div class="Button_wrapperChart">
-            <div class="blue-sliderbutton"><label class="switch"><input type="checkbox" id="salestoggle"><div class="slider round"><span class="on">EVALUATOR</span><span class="off">SERVICE</span></div></label></div>
-    
-            </div>
-            </div><!--date-togglewrapper--> {% endcomment %}
-  </div>
-</div><!--filter-column-boxes filter-columns-right-->  
 
   <table id="salesTable"  cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable  common-table">
  

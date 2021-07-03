@@ -1419,3 +1419,16 @@ select.minimal:focus {
 }
 
 
+.export-excel-btn{
+  margin-right: 10px;
+  padding: 7px 15px 7px 15px;
+  background: #fff;
+  color: #000000DE;
+  border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+.export-excel-btn:hover{
+  background: #fff;
+  color: #000;
+}
