@@ -29,6 +29,7 @@ from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,Evaluat
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,Reporting,ReportingMedia
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
+from customer.models import CustomerBooking
 
 from agent.forms import UserProfileForm,AddressForm
 from evaluator.forms import MyEvaluationDetailsForm,QuatationServiceForm
@@ -1467,11 +1468,8 @@ class MakeQuatationPhase1(IsEvaluator,View):
 	def get(self,request,enquiry_id,evaluation_id):
 		enquiry_user    	  = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(id=enquiry_id)
 		
-		try:
-			evaluation = Evaluation.objects.get(id=evaluation_id)
-		except:
-			evaluation = None		
-	
+		evaluation = Evaluation.objects.prefetch_related(Prefetch('booking_evaluation',queryset=CustomerBooking.objects.filter(is_active=True),to_attr='bookings')).get(id=evaluation_id)
+					
 		try:
 			evaluation_details = EvaluationDetails.objects.filter(is_active=True,evaluation=evaluation).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True,cleaning_policy='SUBSCRIPTION'),to_attr='evaluationbooks'))
 		except:

@@ -89,6 +89,8 @@
                 {% for evaluationdetail in evaluation_details %}
                 {% if evaluationdetail.evaluationbooks %}
                 <option value="SUBSCRIPTION">Subscription</option>
+                {% elif evaluation.bookings %}
+                <option value="PREPAID">Prepaid</option>
                 {% else %}
                 <option value="PREPAID">Prepaid</option>
                 <option value="POSTPAID">Post Paid</option>

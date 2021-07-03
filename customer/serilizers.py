@@ -26,9 +26,10 @@ class EvaluationSectionKeynoteSerializer(serializers.ModelSerializer):
 		fields = ('sub_area','quantity')
 
 class EvaluationBookSectionSerializer(serializers.ModelSerializer):
+	keynotesections = EvaluationSectionKeynoteSerializer(many=True,read_only=True)
 	class Meta:
 		model  = EvaluationBookSection
-		fields = ('section_name','size','age','wall_type','ceiling_type','floor_type','material','colour','cause_of_stain','cement_residue','oil_residue','hall_size','window_side','new_kitchen','vacuuming','section_cost','section_net_cost')
+		fields = ('section_name','size','age','wall_type','ceiling_type','floor_type','material','colour','cause_of_stain','cement_residue','oil_residue','hall_size','window_side','new_kitchen','vacuuming','section_cost','section_net_cost','keynotesections')
 
 class EvaluationBookSerializer(serializers.ModelSerializer):
 	evaluationsection_book = EvaluationBookSectionSerializer(many=True,read_only=True)

@@ -3715,13 +3715,15 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase2(APIView):
 		services        = request.data.get("service_details")
 
 		#Evaluation cost updation
-		evaluation.total_cost     += request.data.get('total_cost')
-		evaluation.estimated_cost += request.data.get('estimated_cost')
+		evaluation.total_cost      += request.data.get('total_cost')
+		evaluation.estimated_cost  += request.data.get('estimated_cost')
+		evaluation.quatation_status = 'APPROVED'
 		evaluation.save()
 
 		#order cost updation
-		order.total_amount       += request.data.get('total_cost')
-		order.remining_amount    += request.data.get('total_cost')
+		order.total_amount         += request.data.get('total_cost')
+		order.remining_amount      += request.data.get('total_cost')
+		order.order_status          = 'APPROVED_BY_CLIENT'
 		order.save()
 		
 		#evaluation details cost updation
@@ -4467,7 +4469,7 @@ class EditOrderDetails(APIView):
 	def get(self,request,order_id):
 		response_dict = {}
 		evaluation_book_id               = request.GET.get('evaluation_book_id')
-		evaluation_book                  = EvaluationBook.objects.prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='sections')).get(id=evaluation_book_id)
+		evaluation_book                  = EvaluationBook.objects.prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes')),to_attr='sections')).get(id=evaluation_book_id)
 		response_dict['section_details'] = EvaluationBookSerializer(evaluation_book).data
 		return Response(response_dict,HTTP_200_OK)
 
@@ -4668,8 +4670,8 @@ class EditOrderDetails(APIView):
 		elif action == 'edit_cleaning':
 			schedule_id        = request.data.get('schedule_id')
 			old_schedule       = OrderScheduler.objects.get(id=schedule_id)
-			old_start_at       = old_schedule.start_at+timedelta(hours=3) 
-			old_end_at         = old_schedule.end_at+timedelta(hours=3)
+			old_start_at       = old_schedule.start_at 
+			old_end_at         = old_schedule.end_at
 
 			cleaning_date 	   = request.data.get('cleaning_date')
 			cleaning_time      = request.data.get('cleaning_time')
