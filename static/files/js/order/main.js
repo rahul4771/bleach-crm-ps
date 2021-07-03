@@ -296,10 +296,8 @@ const app = new Vue({
     
     checkSlot(index){
       if(this.selectedSlots.length>0){
-        if(this.selectedSlots.length==this.no_of_slots){
-          return false
-        }
-        else{
+       
+       
 
         
           var prevSlot=index-1
@@ -310,7 +308,7 @@ const app = new Vue({
           else{
             return false
           }
-        }
+        
       }
       else{
         return true
