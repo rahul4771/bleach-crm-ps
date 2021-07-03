@@ -3029,50 +3029,48 @@ class MakeQuatationPhase1(IsAuthenticated,View):
 
 	def get(self,request,enquiry_id,evaluation_id):
 		enquiry_user    	  = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(id=enquiry_id)
-
+		
 		try:
 			evaluation = Evaluation.objects.get(id=evaluation_id)
 		except:
-			evaluation = None
-
+			evaluation = None		
+	
 		try:
 			evaluation_details = EvaluationDetails.objects.filter(is_active=True,evaluation=evaluation).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True,cleaning_policy='SUBSCRIPTION'),to_attr='evaluationbooks'))
 		except:
 			evaluation_details = None
 
-		#allow submition
-		evaluation_details_count         = evaluation_details.count()
+		#allow submition	
+		evaluation_details_count          = evaluation_details.count()
 		evaluation_details_completed_count= evaluation_details.filter(status='EVALUATED').count()
 		if evaluation_details_count==evaluation_details_completed_count:
 			allow_submit = True
 		else:
-			allow_submit = False
+			allow_submit = False				
 
-		#orders count
-		orders 				= Order.objects.filter(is_active=True,evaluation__customer_id=enquiry_id)
-		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
-		total_orders_count  = orders.count()
-
-		return render(request,'common/enquiry/phase1quatation.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,"allow_submit":allow_submit,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,})
+		return render(request,'common/enquiry/phase1quatation.html',{'enquiry_user':enquiry_user,'evaluation':evaluation,'evaluation_details':evaluation_details,"allow_submit":allow_submit})	
 
 	def post(self,request,enquiry_id,evaluation_id):
-
-		payment_method 			= request.POST.get('payment_method')
-		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0)
-		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0)
+		
+		payment_method          = request.POST.get('payment_method')
+		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0.000)
+		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0.000)
+		discount                = float(request.POST.get('discount')or 0.000)
+		total_cost              = float(request.POST.get('total_amount')or 0.000)
 
 		#update payment method
-		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount)
+		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount,total_cost=total_cost,discount=discount)
+		Order.objects.filter(evaluation__id=evaluation_id,is_active=True).update(total_amount=total_cost,remining_amount=total_cost)
 
-	
 		#sms integration
-		evaluation        = Evaluation.objects.filter(id=evaluation_id,is_active=True).first()
+		evaluation = Evaluation.objects.filter(id=evaluation_id,is_active=True).first()
 		evaluationdetails = EvaluationDetails.objects.filter(evaluation=evaluation).first()
-		evaluationbook    = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).first()
+		evaluationbook = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).first()
 		language = evaluation.customer.sms_preference
-		address = evaluationdetails.address
 
-		messages.success(request,"Quotation Submitted Succesfully")
+		messages.success(request,"Quotation Submitted Succesfully")	
+		
+		address = evaluationdetails.address
 
 		#address check for floor,avenue None
 		if address.floor == None and address.avenue == None:
@@ -3090,9 +3088,9 @@ class MakeQuatationPhase1(IsAuthenticated,View):
 		separator = ", "
 
 		if evaluation.customer.is_sms == True:
-		
+
 			url = "https://smsapi.future-club.com/fccsms.aspx"
-			
+
 			if evaluation.payment_method == 'SUBSCRIPTION':
 				smsurl = "https://my.bleachkw.com/customer/subscription/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+""
 			else:
@@ -3100,7 +3098,7 @@ class MakeQuatationPhase1(IsAuthenticated,View):
 
 			if language == 'ENGLISH':
 				print(str(evaluation.id),str(evaluation.evaluation_id),str(evaluation.total_cost),str(evaluation.quatation_expiry_date),str(evaluation.customer.username),str(evaluation.tracking_no),"trerr")
-				
+
 				message = "Dear Customer, Please find the Quotation against the cleaning at "+separator.join(address_list)+" here "+smsurl+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait"
 
 				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
@@ -3116,8 +3114,7 @@ class MakeQuatationPhase1(IsAuthenticated,View):
 			
 			response = requests.request("GET", url, headers=headers, params=querystring)
 
-			print(message,response.text,"respondd")
-		
+			print(response.text,"respo")
 		else:
 			pass
 		
@@ -3592,3 +3589,7 @@ class MakeQuatationPhase2Edit(IsAuthenticated,View):
 				return render(request,'salesadmin/enquiry/phase2quatationedit.html',{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_types':service_types,'area_types':area_types,'cleaning_sections':cleaning_sections,})
 
 		return redirect('common_items:makequatation1edit',evaluation_details.evaluation.customer.id,evaluation_details.evaluation.id)
+
+class Booking(IsAuthenticated,View):
+	def get(self,request,evaluation_detail_id):
+		return render(request,"booking/booking.html")

@@ -2371,7 +2371,7 @@ responsive:{
         this.getBookingDetails(response.data.booking_id)
      
     this.uploadImages()
-    window.location.href='/evaluator/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
+    window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
         }
         else{
           this.responseText=response.data.Error
@@ -2426,7 +2426,7 @@ responsive:{
       //  this.getBookingDetails(response.data.booking_id)
      
     this.uploadImages()
-    window.location.href='/evaluator/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
+    window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
         }
         else{
           this.responseText=response.data.Error
@@ -2463,7 +2463,7 @@ responsive:{
          this.getBookingDetails(response.data.booking_id)
       
      this.uploadImages()
-     window.location.href='/evaluator/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
+     window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
          }
        })
         .catch((error) => {
