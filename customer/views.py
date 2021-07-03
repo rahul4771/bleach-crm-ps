@@ -4456,6 +4456,12 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 					CleaningTeamMember.objects.bulk_create(cleaning_team_member_array)
 		response_dict['success'] = True
 
+		#approve quatation
+		evaluation.quatation_status = 'APPROVED'
+		order.order_status          = 'APPROVED_BY_CLIENT'
+		evaluation.save()
+		order.save()
+		
 		return Response(response_dict,HTTP_200_OK)
 
 
