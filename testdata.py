@@ -521,8 +521,11 @@ GET
           },
           "keynotes":[
              {
-                "name":"",
-               "value":""
+                "name":"kitchen",
+               "value":{
+                  "Size":180,
+   
+               }
              },
              {
                 "name":"",
