@@ -1890,214 +1890,292 @@ def export_users_xls(request):
 	if report_type == 'salesdetails' or report_type == 'allsalesdetails':
 		response = HttpResponse(content_type='application/ms-excel')
 
+		wb = xlwt.Workbook(encoding='utf-8')
+
 		if report_type == 'allsalesdetails':
 			response['Content-Disposition'] = 'attachment; filename="SALES_DETAILS_ALL_'+from_date+'_'+to_date+'.xls"'
-			orderschedules = OrderScheduler.objects.filter(Q(is_active=True)&Q(Q(work_status='CLEANING_FULFILLED')|Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS'))&Q(end_at__range=(prev_date_start,todate_date_end))).values_list('order__order_no','end_at','end_at','id','evaluation_details__address__customer__name','evaluation_details__evaluation__payment_method','order_scheduler_book__total_cost','order__amount_paid','evaluation_details__evaluation__payment_way','order_scheduler_book__id','order__remining_amount','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__cleaning_hours','order_scheduler_book__number_of_cleaners','evaluation_details__evaluator__name').order_by('end_at')
+			orderschedules = OrderScheduler.objects.filter(Q(is_active=True)&Q(order__evaluation__quatation_status='APPROVED')&Q(Q(work_status='CLEANING_FULFILLED')|Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS'))&Q(end_at__range=(prev_date_start,todate_date_end))).values_list('order__order_no','end_at','end_at','id','evaluation_details__address__customer__name','evaluation_details__evaluation__payment_method','order_scheduler_book__total_cost','order__amount_paid','evaluation_details__evaluation__payment_way','order_scheduler_book__id','order__remining_amount','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__cleaning_hours','order_scheduler_book__number_of_cleaners','evaluation_details__evaluator__name','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount').order_by('end_at')
+			print(orderschedules.count(),"count")
+		
+			
+			rows = []
+
+			for schedule in orderschedules:
+				schedule_list = list(schedule)
+				schedule_list[3] = schedule_list[1].strftime("%A")
+				schedule = tuple(schedule_list)
+				rows.append(schedule)
+				
+			rows = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows ]
+
+
+			#sales report
+			ws2 = wb.add_sheet('SALES REPORT',cell_overwrite_ok = True)
+		
+			columns2 = ['Date','Day','General Cleaning','Deep Cleaning','Sanitization','Carpet Cleaning','Upholstery Cleaning','Kitchen Cleaning','Grand Total']
+			
+			for col_num in range(len(columns2)):
+				ws2.write(row_num2, col_num, columns2[col_num], font_style)
+
+			#creating date list
+			found = set()
+
+			dates = []
+
+			for cln_date in rows:
+				ro = list(cln_date)
+
+				if ro[1] not in found:
+					dates.append(ro[1])
+					found.add(ro[1])
+
+				print(dates,"dts")
+
+			#appending data to list
+			rows2 = []
+
+			for d in dates:
+
+				grand_total = 0
+
+				general = 0
+				upholstery = 0
+				deep = 0
+				sterilization = 0
+				carpet = 0
+				kitchen = 0
+				
+				test_elem = d
+
+				#filtering rows list using date
+				res = [item for item in rows if item[1] == d ]
+
+				#calculating service totals and grand total
+				for r in res:
+
+					calc_orderschedules = OrderScheduler.objects.filter( order__order_no = r[0] , order_scheduler_book__id = r[9] )
+				
+					orderschedules_count = calc_orderschedules.count()
+
+					print(r[0],r[6],orderschedules_count,"orc")
+
+					day_name = r[3]
+
+					if r[11] == 'General Cleaning':
+						general += float(r[6]/orderschedules_count)
+
+						if r[16] != None:
+							general -= float(r[16]/orderschedules_count)
+						if r[17] != None:
+							general -= float(r[17]/orderschedules_count)
+						if r[18] != None:
+							general += float(r[18]/orderschedules_count)	
+
+					if r[11] == 'Deep Cleaning':
+						deep += float(r[6]/orderschedules_count)
+
+						if r[16] != None:
+							deep -= float(r[16]/orderschedules_count)
+						if r[17] != None:
+							deep -= float(r[17]/orderschedules_count)
+						if r[18] != None:
+							deep += float(r[18]/orderschedules_count)	
+
+					if r[11] == 'Sterilization':
+						sterilization += float(r[6]/orderschedules_count)
+
+						if r[16] != None:
+							sterilization -= float(r[16]/orderschedules_count)
+						if r[17] != None:
+							sterilization -= float(r[17]/orderschedules_count)
+						if r[18] != None:
+							sterilization += float(r[18]/orderschedules_count)
+						
+
+					if r[11] == 'Carpet Cleaning':
+						carpet += float(r[6]/orderschedules_count)
+
+						if r[16] != None:
+							carpet -= float(r[16]/orderschedules_count)
+						if r[17] != None:
+							carpet -= float(r[17]/orderschedules_count)
+						if r[18] != None:
+							carpet += float(r[18]/orderschedules_count)
+
+					if r[11] == 'Upholstery Cleaning':
+						upholstery += float(r[6]/orderschedules_count)
+
+						if r[16] != None:
+							upholstery -= float(r[16]/orderschedules_count)
+						if r[17] != None:
+							upholstery -= float(r[17]/orderschedules_count)
+						if r[18] != None:
+							upholstery += float(r[18]/orderschedules_count)
+
+					if r[11] == 'Kitchen Cleaning':
+						kitchen += float(r[6]/orderschedules_count)
+
+						if r[16] != None:
+							kitchen -= float(r[16]/orderschedules_count)
+						if r[17] != None:
+							kitchen -= float(r[17]/orderschedules_count)
+						if r[18] != None:
+							kitchen += float(r[18]/orderschedules_count)
+
+					grand_total += float(r[6]/orderschedules_count)
+
+					#fine,promocode, write off calc
+					if r[16] != None:
+						grand_total -= float(r[16]/orderschedules_count)
+					if r[17] != None:
+						grand_total -= float(r[17]/orderschedules_count)
+					if r[18] != None:
+						grand_total += float(r[18]/orderschedules_count)
+
+				print(general,"gen")
+				daily_report = (d, day_name, round(general,3), round(deep,3), round(sterilization,3), round(carpet,3), round(upholstery,3), round(kitchen,3), round(grand_total,3))
+
+				rows2.append(daily_report)
+
+			for row in rows2:
+				row_num2 += 1
+				for col_num in range(len(row)):
+					ws2.write(row_num2, col_num, row[col_num], font_style)
+		
+		
+		
 		else:
 			response['Content-Disposition'] = 'attachment; filename="SALES_DETAILS_COMPLETED_'+from_date+'_'+to_date+'.xls"'
-			orderschedules = OrderScheduler.objects.filter(is_active=True,work_status='CLEANING_FULFILLED',end_at__range=(prev_date_start,todate_date_end)).values_list('order__order_no','end_at','end_at','id','evaluation_details__address__customer__name','evaluation_details__evaluation__payment_method','order_scheduler_book__total_cost','order__amount_paid','evaluation_details__evaluation__payment_way','order_scheduler_book__id','order__remining_amount','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__cleaning_hours','order_scheduler_book__number_of_cleaners','evaluation_details__evaluator__name').order_by('end_at')
+			orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',work_status='CLEANING_FULFILLED',end_at__range=(prev_date_start,todate_date_end)).values_list('order__order_no','end_at','end_at','id','evaluation_details__address__customer__name','evaluation_details__evaluation__payment_method','order_scheduler_book__total_cost','order__amount_paid','evaluation_details__evaluation__payment_way','order_scheduler_book__id','order__remining_amount','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__cleaning_hours','order_scheduler_book__number_of_cleaners','evaluation_details__evaluator__name','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount').order_by('end_at')
 
-		wb = xlwt.Workbook(encoding='utf-8')
-		
-		#sales details
-		ws = wb.add_sheet('SALES DETAILS',cell_overwrite_ok = True)
-	
-		columns = ['Order No.','Cleaning Date','Final Cleaning of service','Day','Customer','Payment Policy','Net Amount','Paid Amount','Payment Type','Payment Date','Balance Amount','Service Type','Cleaning Policy','Hours','Staff','Salesman']
-		
-		for col_num in range(len(columns)):
-			ws.write(row_num, col_num, columns[col_num], font_style)
-
-		rows = []
-
-		for schedule in orderschedules:
-
-			schedule_list = list(schedule)
-
-			calc_orderschedules = OrderScheduler.objects.filter( order__order_no = schedule_list[0]  )
 			
-			multi_service = calc_orderschedules.filter(order_scheduler_book__id=schedule_list[9])
-			multi_service_count = multi_service.count()
-			multi_service_last = multi_service.last()
-
-			orderschedules_count = calc_orderschedules.count()
-			last_orderschedule = calc_orderschedules.last()
-
-			print(orderschedules_count,last_orderschedule,"osh")
-
-			orderschedule = OrderScheduler.objects.get(id=int(schedule_list[3]))
-
-			if multi_service_count > 0:
-				if multi_service_last.order_scheduler_book.id == orderschedule.order_scheduler_book.id:
-					schedule_list[2] = multi_service_last.end_at
-			else:
-				schedule_list[2] = last_orderschedule.end_at
+			#sales details
+			ws = wb.add_sheet('SALES DETAILS',cell_overwrite_ok = True)
+		
+			columns = ['Order No.','Cleaning Date','Final Cleaning of service','Day','Customer','Payment Policy','Net Amount','Paid Amount','Payment Type','Payment Date','Balance Amount','Service Type','Cleaning Policy','Hours','Staff','Salesman']
 			
+			for col_num in range(len(columns)):
+				ws.write(row_num, col_num, columns[col_num], font_style)
 
-			#splitting paid amount and balance
-			if orderschedules_count > 0:
-				#splitting service cost for multi cleaning and subscription
+			rows = []
+
+			for schedule in orderschedules:
+
+				schedule_list = list(schedule)
+
+				calc_orderschedules = OrderScheduler.objects.filter( order__order_no = schedule_list[0]  )
+				
+				multi_service = calc_orderschedules.filter(order_scheduler_book__id=schedule_list[9])
+				multi_service_count = multi_service.count()
+				multi_service_last = multi_service.last()
+
+				orderschedules_count = calc_orderschedules.count()
+				last_orderschedule = calc_orderschedules.last()
+
+				print(orderschedules_count,last_orderschedule,"osh")
+
+				orderschedule = OrderScheduler.objects.get(id=int(schedule_list[3]))
+
 				if multi_service_count > 0:
-					
-					if multi_service_last.id == orderschedule.id:
-					
-						schedule_list[6] = int(schedule_list[6] / multi_service_count) + float( schedule_list[6] % multi_service_count )
-
-					else:
-
-						schedule_list[6] = int(schedule_list[6] / multi_service_count)
+					if multi_service_last.order_scheduler_book.id == orderschedule.order_scheduler_book.id:
+						schedule_list[2] = multi_service_last.end_at
 				else:
-					pass
+					schedule_list[2] = last_orderschedule.end_at
+				
 
-				if schedule_list[5] == 'BREAKDOWN':
-					if last_orderschedule.id == orderschedule.id:
-						schedule_list[7] = int(schedule_list[7] / orderschedules_count) + float( schedule_list[7] % orderschedules_count )
-						
-						if schedule_list[10] > 0:
-							schedule_list[10] = int(schedule_list[10] / orderschedules_count) + float( schedule_list[10] % orderschedules_count )
-
-					else:
-						schedule_list[7] = int(schedule_list[7] / orderschedules_count)
-
-						if schedule_list[10] > 0:
-							schedule_list[10] = int(schedule_list[10] / orderschedules_count)
-
-					#multiple cleaning and subscription paid amount and balance split
+				#splitting paid amount and balance
+				if orderschedules_count > 0:
+					#splitting service cost for multi cleaning and subscription
 					if multi_service_count > 0:
-					
-						if multi_service_last.id == orderschedule.id:
-							schedule_list[7] = int(schedule_list[7] / multi_service_count) + float( schedule_list[7] % multi_service_count )
 						
-							if schedule_list[10] > 0:
-								schedule_list[10] = int(schedule_list[10] / multi_service_count) + float( schedule_list[10] % multi_service_count )
+						if multi_service_last.id == orderschedule.id:
+						
+							schedule_list[6] = int(schedule_list[6] / multi_service_count) + float( schedule_list[6] % multi_service_count )
 
 						else:
-							schedule_list[7] = int(schedule_list[7] / multi_service_count)
 
-							if schedule_list[10] > 0:
-								schedule_list[10] = int(schedule_list[10] / multi_service_count)
+							schedule_list[6] = int(schedule_list[6] / multi_service_count)
 					else:
 						pass
 
+					if schedule_list[5] == 'BREAKDOWN':
+						if last_orderschedule.id == orderschedule.id:
+							schedule_list[7] = int(schedule_list[7] / orderschedules_count) + float( schedule_list[7] % orderschedules_count )
+							
+							if schedule_list[10] > 0:
+								schedule_list[10] = int(schedule_list[10] / orderschedules_count) + float( schedule_list[10] % orderschedules_count )
 
-				elif schedule_list[5] == 'PREPAID' or schedule_list[5] == 'PREPAIDUBSCRIPTION':
-					if schedule_list[10] == 0.00 :
-						schedule_list[7] = schedule_list[6]
-					else:
-						schedule_list[10] = schedule_list[6]
+						else:
+							schedule_list[7] = int(schedule_list[7] / orderschedules_count)
 
-				elif schedule_list[5] == 'POSTPAID' or schedule_list[5] == 'POSTPAIDUBSCRIPTION':
-					if schedule_list[7] == 0.00 :
-						schedule_list[10] = schedule_list[6]
+							if schedule_list[10] > 0:
+								schedule_list[10] = int(schedule_list[10] / orderschedules_count)
+
+						#multiple cleaning and subscription paid amount and balance split
+						if multi_service_count > 0:
+						
+							if multi_service_last.id == orderschedule.id:
+								schedule_list[7] = int(schedule_list[7] / multi_service_count) + float( schedule_list[7] % multi_service_count )
+							
+								if schedule_list[10] > 0:
+									schedule_list[10] = int(schedule_list[10] / multi_service_count) + float( schedule_list[10] % multi_service_count )
+
+							else:
+								schedule_list[7] = int(schedule_list[7] / multi_service_count)
+
+								if schedule_list[10] > 0:
+									schedule_list[10] = int(schedule_list[10] / multi_service_count)
+						else:
+							pass
+
+
+					elif schedule_list[5] == 'PREPAID' or schedule_list[5] == 'PREPAIDUBSCRIPTION':
+						if schedule_list[10] == 0.00 :
+							schedule_list[7] = schedule_list[6]
+						else:
+							schedule_list[10] = schedule_list[6]
+
+					elif schedule_list[5] == 'POSTPAID' or schedule_list[5] == 'POSTPAIDUBSCRIPTION':
+						if schedule_list[7] == 0.00 :
+							schedule_list[10] = schedule_list[6]
+						else:
+							schedule_list[7] = schedule_list[6]
+						
 					else:
-						schedule_list[7] = schedule_list[6]
-					
+						pass
+
 				else:
 					pass
 
-			else:
-				pass
+				paymenthistory = PaymentHistory.objects.filter(order__order_no=schedule_list[0]).last()
 
-			paymenthistory = PaymentHistory.objects.filter(order__order_no=schedule_list[0]).last()
+				#adding payment date and payment mode
+				if orderschedule.evaluation_details.evaluator == None :
+					schedule_list[15] = orderschedule.evaluation_details.evaluation.call_attender.name
 
-			#adding payment date and payment mode
-			if orderschedule.evaluation_details.evaluator == None :
-				schedule_list[15] = orderschedule.evaluation_details.evaluation.call_attender.name
+				if paymenthistory:
+					if paymenthistory.payment_mode == 'ONLINECREDIT':
+						schedule_list[8] = paymenthistory.payment_gateway
+					else:
+						schedule_list[8] = paymenthistory.payment_mode
 
-			if paymenthistory:
-				if paymenthistory.payment_mode == 'ONLINECREDIT':
-					schedule_list[8] = paymenthistory.payment_gateway
+					schedule_list[9] = paymenthistory.paid_date
 				else:
-					schedule_list[8] = paymenthistory.payment_mode
+					schedule_list[8] = '-'
+					schedule_list[9] = '-'
 
-				schedule_list[9] = paymenthistory.paid_date
-			else:
-				schedule_list[8] = '-'
-				schedule_list[9] = '-'
-
-			schedule_list[3] = schedule_list[1].strftime("%A")
-			schedule = tuple(schedule_list)
-			rows.append(schedule)
-		
-		rows = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows ]
-
-		for row in rows:
-			row_num += 1
-			for col_num in range(len(row)):
-				ws.write(row_num, col_num, row[col_num], font_style)
-
-		#sales report
-		ws2 = wb.add_sheet('SALES REPORT',cell_overwrite_ok = True)
-	
-		columns2 = ['Date','Day','General Cleaning','Deep Cleaning','Sanitization','Carpet Cleaning','Upholstery Cleaning','Kitchen Cleaning','Grand Total']
-		
-		for col_num in range(len(columns2)):
-			ws2.write(row_num2, col_num, columns2[col_num], font_style)
-
-		#creating date list
-		found = set()
-
-		dates = []
-
-		for cln_date in rows:
-			ro = list(cln_date)
-
-			if ro[1] not in found:
-				dates.append(ro[1])
-				found.add(ro[1])
-
-			print(dates,"dts")
-
-		#appending data to list
-		rows2 = []
-
-		for d in dates:
-
-			grand_total = 0
-
-			general = 0
-			upholstery = 0
-			deep = 0
-			sterilization = 0
-			carpet = 0
-			kitchen = 0
+				schedule_list[3] = schedule_list[1].strftime("%A")
+				schedule = tuple(schedule_list)
+				rows.append(schedule)
 			
-			test_elem = d
+			rows = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows ]
 
-			#filtering rows list using date
-			res = [item for item in rows if item[1] == d ]
+			for row in rows:
+				row_num += 1
+				for col_num in range(len(row)):
+					ws.write(row_num, col_num, row[col_num], font_style)
 
-			#calculating service totals and grand total
-			for r in res:
-				day_name = r[3]
-
-				if r[11] == 'General Cleaning':
-					general += float(r[6])
-
-				if r[11] == 'Deep Cleaning':
-					deep += float(r[6]) 
-
-				if r[11] == 'Sterilization':
-					sterilization += float(r[6]) 
-
-				if r[11] == 'Carpet Cleaning':
-					carpet += float(r[6]) 
-
-				if r[11] == 'Upholstery Cleaning':
-					upholstery += float(r[6]) 
-
-				if r[11] == 'Kitchen Cleaning':
-					kitchen += float(r[6])
-
-				grand_total += r[6]
-
-			daily_report = (d, day_name, general, deep, sterilization, carpet, upholstery, kitchen, grand_total)
-
-			rows2.append(daily_report)
-
-		for row in rows2:
-			row_num2 += 1
-			for col_num in range(len(row)):
-				ws2.write(row_num2, col_num, row[col_num], font_style)
+		
 
 	if report_type == 'orderhistory':
 		response = HttpResponse(content_type='application/ms-excel')
