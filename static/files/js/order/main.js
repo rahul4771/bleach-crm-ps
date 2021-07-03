@@ -290,7 +290,8 @@ const app = new Vue({
                 end_time:'12:00 AM'
               }
             },
-            parsedTimeSlots:[]
+            parsedTimeSlots:[],
+            selected_no_of_cleaners:null
   },
   methods:{
     
@@ -370,10 +371,11 @@ const app = new Vue({
         evaluation_book_id:this.evaluation_book_id,
         cleaning_date:this.selected_date,
        cleaning_time:this.parsedTimeSlots[minhour].start_time,
-       cleaning_hours:this.cleaning_hours,
+       cleaning_hours:this.selectedSlots.length*2,
+       no_of_cleaners:parseInt(this.selected_no_of_cleaners)
       }).then(response=>{
         $('#visit-close').click()
-        location.reload()
+       // location.reload()
        
       })
     },
