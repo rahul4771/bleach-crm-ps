@@ -17,6 +17,7 @@ urlpatterns = [
 		url(r'^daily-sales/$',views.DailySales.as_view(),name='daily-sales'),
 		url(r'^makequatation/phase1/edit/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.MakeQuatationPhase1Edit.as_view(),name='makequatation1edit'),
 		url(r'^resources/$',views.ResourceManagement.as_view(),name='resource-management'),
+		url(r'^booking/(?P<evaluation_detail_id>[-\w]+)/$',views.Booking.as_view(),name='booking'),
 
 		url(r'^newenquiry/$',views.NewEnquiry.as_view(),name='newenquiry'),
 		url(r'^existingenquiry/(?P<enquiry_id>[-\w]+)$',views.ExistingEnquiry.as_view(),name='existingenquiry'),

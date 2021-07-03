@@ -1823,8 +1823,8 @@ class GetCleaningSlotes(APIView):
 			total_cleaners 	= UserProfile.objects.filter(is_deep_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
 			total_leaders 	= UserProfile.objects.filter(is_deep_skill=True,user_type='TEAMINCHARGE')
 		elif service_type == 'Upholstery Cleaning':
-			total_cleaners 	= UserProfile.objects.filter(is_upholster_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
-			total_leaders 	= UserProfile.objects.filter(is_upholster_skill=True,user_type='TEAMINCHARGE')
+			total_cleaners 	= UserProfile.objects.filter(is_upholstery_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
+			total_leaders 	= UserProfile.objects.filter(is_upholstery_skill=True,user_type='TEAMINCHARGE')
 		elif service_type == 'Kitchen Cleaning':
 			total_cleaners 	= UserProfile.objects.filter(is_kitchen_skill=True).filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
 			total_leaders 	= UserProfile.objects.filter(is_kitchen_skill=True,user_type='TEAMINCHARGE')
@@ -2547,8 +2547,8 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 				total_cleaners 	= total_cleaners.filter(is_deep_skill=True)
 				total_leaders 	= total_leaders.filter(is_deep_skill=True)
 			elif service_type == 'Upholstery Cleaning':
-				total_cleaners 	= total_cleaners.filter(is_upholster_skill=True)
-				total_leaders 	= total_leaders.filter(is_upholster_skill=True)
+				total_cleaners 	= total_cleaners.filter(is_upholstery_skill=True)
+				total_leaders 	= total_leaders.filter(is_upholstery_skill=True)
 			elif service_type == 'Kitchen Cleaning':
 				total_cleaners 	= total_cleaners.filter(is_kitchen_skill=True)
 				total_leaders 	= total_leaders.filter(is_kitchen_skill=True)
@@ -3345,8 +3345,8 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 				total_cleaners 	= total_cleaners.filter(is_deep_skill=True)
 				total_leaders 	= total_leaders.filter(is_deep_skill=True)
 			elif service_type == 'Upholstery Cleaning':
-				total_cleaners 	= total_cleaners.filter(is_upholster_skill=True)
-				total_leaders 	= total_leaders.filter(is_upholster_skill=True)
+				total_cleaners 	= total_cleaners.filter(is_upholstery_skill=True)
+				total_leaders 	= total_leaders.filter(is_upholstery_skill=True)
 			elif service_type == 'Kitchen Cleaning':
 				total_cleaners 	= total_cleaners.filter(is_kitchen_skill=True)
 				total_leaders 	= total_leaders.filter(is_kitchen_skill=True)
@@ -3715,13 +3715,15 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase2(APIView):
 		services        = request.data.get("service_details")
 
 		#Evaluation cost updation
-		evaluation.total_cost     += request.data.get('total_cost')
-		evaluation.estimated_cost += request.data.get('estimated_cost')
+		evaluation.total_cost      += request.data.get('total_cost')
+		evaluation.estimated_cost  += request.data.get('estimated_cost')
+		evaluation.quatation_status = 'APPROVED'
 		evaluation.save()
 
 		#order cost updation
-		order.total_amount       += request.data.get('total_cost')
-		order.remining_amount    += request.data.get('total_cost')
+		order.total_amount         += request.data.get('total_cost')
+		order.remining_amount      += request.data.get('total_cost')
+		order.order_status          = 'APPROVED_BY_CLIENT'
 		order.save()
 		
 		#evaluation details cost updation
@@ -3867,8 +3869,8 @@ class DuplicateBookingPhase2(APIView):
 				total_cleaners 	= total_cleaners.filter(is_deep_skill=True)
 				total_leaders 	= total_leaders.filter(is_deep_skill=True)
 			elif service_type == 'Upholstery Cleaning':
-				total_cleaners 	= total_cleaners.filter(is_upholster_skill=True)
-				total_leaders 	= total_leaders.filter(is_upholster_skill=True)
+				total_cleaners 	= total_cleaners.filter(is_upholstery_skill=True)
+				total_leaders 	= total_leaders.filter(is_upholstery_skill=True)
 			elif service_type == 'Kitchen Cleaning':
 				total_cleaners 	= total_cleaners.filter(is_kitchen_skill=True)
 				total_leaders 	= total_leaders.filter(is_kitchen_skill=True)
@@ -4207,7 +4209,7 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 		evaluation_id_encrypted = evaluation_id
 		evaluation_id 			= 'BLC'+evaluation_id_encrypted[3:14]
 
-		evaluation             = Evaluation.objects.get(evaluation_id=evaluation_id)
+		evaluation              = Evaluation.objects.get(evaluation_id=evaluation_id)
 		order    				= Order.objects.get(evaluation=evaluation)
 		services 				= request.data.get('service_details')
 
@@ -4225,8 +4227,8 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 				total_cleaners 	= total_cleaners.filter(is_deep_skill=True)
 				total_leaders 	= total_leaders.filter(is_deep_skill=True)
 			elif service_type == 'Upholstery Cleaning':
-				total_cleaners 	= total_cleaners.filter(is_upholster_skill=True)
-				total_leaders 	= total_leaders.filter(is_upholster_skill=True)
+				total_cleaners 	= total_cleaners.filter(is_upholstery_skill=True)
+				total_leaders 	= total_leaders.filter(is_upholstery_skill=True)
 			elif service_type == 'Kitchen Cleaning':
 				total_cleaners 	= total_cleaners.filter(is_kitchen_skill=True)
 				total_leaders 	= total_leaders.filter(is_kitchen_skill=True)
@@ -4378,7 +4380,7 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 					start_date_time         =  datetime.strptime(schedule_date+' '+schedule_time,'%d-%m-%Y %I:%M %p')
 					end_date_time           =  start_date_time + timedelta(hours=schedules_dict[key]['cleaning_hours']) 	
 					start_time              =  start_date_time.time()
-					end_time                =  start_date_time.time()
+					end_time                =  end_date_time.time()
 
 					#schedule
 					order_schedule = OrderScheduler.objects.create(order=order,status='CONFIRMED',customer_address=evaluation_details.address,evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,order_scheduler_book_id=services[service_detail]['id'],no_of_cleaners=schedules_dict[key]['no_of_cleaners'],cleaning_hours=schedules_dict[key]['cleaning_hours'])
@@ -4551,6 +4553,14 @@ class EditOrderDetails(APIView):
 				order.evaluation.total_cost   += (old_section_cost-saved_section.section_net_cost)
 				order.evaluation.estimated_cost    += (old_section_cost-saved_section.section_net_cost)
 				order.evaluation.save()
+
+				#delete and add keynotes
+				keynotes     = request.data.get('keynotes')
+				new_keynotes = []
+				EvaluationSectionKeynote.objects.filter(evaluation_section=saved_section).delete()
+				for keynote in keynotes:
+					new_keynotes.append(EvaluationSectionKeynote(evaluation_section=saved_section,sub_area=keynote['keynote'],quantity=keynote['quantity']))
+				EvaluationSectionKeynote.objects.bulk_create(new_keynotes)
 
 				response_dict['edit_success']       = True
 				response_dict['success']  = True
