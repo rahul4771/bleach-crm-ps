@@ -126,6 +126,7 @@ function openPaymentEdit(payment){
  app.openPayment()
 }
 function openCleaningDate(service){
+  app.cleaning_action='add_cleaning'
   $('#cleaning-date-tigger').click()
   var data=$(service).data()
   app.no_of_cleaners=data.no_of_cleaners
@@ -134,6 +135,24 @@ function openCleaningDate(service){
   app.no_of_slots=Math.ceil(data.cleaning_hours/2)
   app.evaluation_book_id=data.evaluation_book_id
   app.getSlotes(moment().format('DD-MM-YYYY'))
+  
+}
+function editCleaningDate(service){
+  app.cleaning_action='edit_cleaning'
+  $('#cleaning-date-tigger').click()
+  var data=$(service).data()
+  app.no_of_cleaners=data.no_of_cleaners
+  app.selected_no_of_cleaners=data.no_of_cleaners
+  app.service_type=data.service
+  app.cleaning_hours=parseInt(data.cleaning_hours)
+  app.no_of_slots=Math.ceil(data.cleaning_hours/2)
+  app.evaluation_book_id=data.evaluation_book_id
+  app.schedule_id=data.id
+  
+  app.cleaning_start_date=data.cleaning_start_date
+  app.getSlotes(app.cleaning_start_date)
+  $('#date_hidden').val((moment(app.cleaning_start_date,'DD-MM-YYYY').format('MM/DD/YYYY')))
+  app.setDate(moment(app.cleaning_start_date,'DD-MM-YYYY').format('MM/DD/YYYY'))
   
 }
 function addSection(service){
@@ -291,7 +310,11 @@ const app = new Vue({
               }
             },
             parsedTimeSlots:[],
-            selected_no_of_cleaners:null
+            selected_no_of_cleaners:null,
+            visit_err:'',
+            cleaning_action:'',
+            cleaning_start_date:'',
+            schedule_id:''
   },
   methods:{
     
@@ -362,9 +385,27 @@ const app = new Vue({
     },
     resetVisit(){
       this.selectedSlots=[]
-      
+      this.schedule_id="",
+      this.cleaning_date="",
+       this.cleaning_time="",
+       this.cleaning_hours="",
+       this.no_of_cleaners="",
+       this.selectedSlots=[]
+      this.setDate(moment().format('MM/DD/YYYY'))
+    this.selected_date=moment().format('DD-MM-YYYY')
+    $('#date_hidden').val(moment().format('MM/DD/YYYY'))
     },
+   
     addVisit(){
+      if(this.selectedSlots.length<1){
+        this.visit_err='Please select atleast one slot'
+      }
+      else if(!this.selected_no_of_cleaners){
+        this.visit_err='Please select the number of cleaners'
+      }
+      else{
+
+      
       var minhour=Math.min(...this.selectedSlots)
       axios.post(this.url+'/customer/editorder/'+this.orderId,{
         action_type:'add_cleaning',
@@ -375,10 +416,38 @@ const app = new Vue({
        no_of_cleaners:parseInt(this.selected_no_of_cleaners)
       }).then(response=>{
         $('#visit-close').click()
+        location.reload()
+       
+      })
+    }
+    },
+    editVisit(){
+      if(this.selectedSlots.length<1){
+        this.visit_err='Please select atleast one slot'
+      }
+      else if(!this.selected_no_of_cleaners){
+        this.visit_err='Please select the number of cleaners'
+      }
+      else{
+
+      
+      var minhour=Math.min(...this.selectedSlots)
+      axios.post(this.url+'/customer/editorder/'+this.orderId,{
+        action_type:'edit_cleaning',
+        evaluation_book_id:this.evaluation_book_id,
+        schedule_id:this.schedule_id,
+        cleaning_date:this.selected_date,
+       cleaning_time:this.parsedTimeSlots[minhour].start_time,
+       cleaning_hours:this.selectedSlots.length*2,
+       no_of_cleaners:parseInt(this.selected_no_of_cleaners)
+      }).then(response=>{
+        $('#visit-close').click()
        // location.reload()
        
       })
+    }
     },
+   
     calDiscount(){
       this.paymentData.total_amount=this.total_amount-this.paymentData.discount
       this.paymentData.amount_after_cleaning=''

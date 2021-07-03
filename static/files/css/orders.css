@@ -1375,6 +1375,9 @@ padding-top:10px;
 .mt-20{
   margin-top:20px;
 }
+.error-text{
+  color:red;
+}
 
 .multiselect__tag {
   background:#2f4e85 !important;

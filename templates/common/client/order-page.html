@@ -706,7 +706,7 @@
                                                 {% if multi_order_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
                                                     <div class="col-md-6  time-text"><i
                                                             class="fa test-color  fa-calendar  c-mr-5"></i>{{multi_order_schedule.start_at}} <img v-if="edit" class="order-time-edit pointer"
-                                                            src="{% static 'files/icons/edit.png' %}">
+                                                            src="{% static 'files/icons/edit.png' %}" onclick="editCleaningDate(this)" data-cleaning_start_date="{{multi_order_schedule.start_at|date:'d-m-Y'}}" data-evaluation_book_id="{{multi_order_schedule.order_scheduler_book.id}}" data-id="{{multi_order_schedule.id}}" data-service="{{multi_order_schedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{multi_order_schedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{multi_order_schedule.order_scheduler_book.cleaning_hours}}">
                                                     </div>
 
                                                 {% endif %}
@@ -716,7 +716,7 @@
                                                 {% if subscription_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
                                                     <div class="col-md-6  time-text"><i
                                                             class="fa test-color  fa-calendar  c-mr-5"></i>{{subscription_schedule.start_at}} <img v-if="edit" class="order-time-edit pointer"
-                                                            src="{% static 'files/icons/edit.png' %}">
+                                                            src="{% static 'files/icons/edit.png' %}" onclick="editCleaningDate(this)" data-cleaning_start_date="{{subscription_schedule.start_at|date:'d-m-Y'}}" data-evaluation_book_id="{{subscription_schedule.order_scheduler_book.id}}" data-id="{{subscription_schedule.id}}" data-service="{{subscription_schedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{subscription_schedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{subscription_schedule.order_scheduler_book.cleaning_hours}}">
                                                     </div>
                                                 {% endif %}
                                                 {% endfor %}
@@ -737,7 +737,7 @@
                                                         {% if multi_order_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
                                                             <div class="col-md-6  time-text"><i
                                                                     class="fa test-color  fa-calendar  c-mr-5"></i>{{multi_order_schedule.start_at}} <img v-if="edit" class="order-time-edit pointer"
-                                                                    src="{% static 'files/icons/edit.png' %}">
+                                                                    src="{% static 'files/icons/edit.png' %}" onclick="editCleaningDate(this)" data-cleaning_start_date="{{multi_order_schedule.start_at|date:'d-m-Y'}}" data-evaluation_book_id="{{multi_order_schedule.order_scheduler_book.id}}" data-id="{{multi_order_schedule.id}}" data-service="{{multi_order_schedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{multi_order_schedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{multi_order_schedule.order_scheduler_book.cleaning_hours}}">
                                                             </div>
 
                                                         {% endif %}
@@ -747,7 +747,7 @@
                                                         {% if subscription_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
                                                             <div class="col-md-6  time-text"><i
                                                                     class="fa test-color  fa-calendar  c-mr-5"></i>{{subscription_schedule.start_at}} <img v-if="edit" class="order-time-edit pointer"
-                                                                    src="{% static 'files/icons/edit.png' %}">
+                                                                    src="{% static 'files/icons/edit.png' %}" data-cleaning_start_date="{{subscription_schedule.start_at|date:'d-m-Y'}}" data-evaluation_book_id="{{subscription_schedule.order_scheduler_book.id}}" data-id="{{subscription_schedule.id}}" data-service="{{subscription_schedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{subscription_schedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{subscription_schedule.order_scheduler_book.cleaning_hours}}" >
                                                             </div>
                                                         {% endif %}
                                                         {% endfor %}
@@ -1775,7 +1775,7 @@
         </div>
     </div>
 </div>
-<!-- Modal Cleaning Date -->
+<!-- Add visit popup begins here-->
 <div class="modal fade bd-example-modal-lg" id="cleaningDateModel" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog cancel-model cancel-order-border" role="document">
@@ -1785,7 +1785,7 @@
                     <p>Cleaning Date</p>
                     <div class="c-close-icon">
                         <button data-dismiss="modal" class="model-close">
-                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" @click="resetVisit()"/>
                         </button>
 
                     </div>
@@ -1807,7 +1807,7 @@
                 <div class="col-md-8">
                     <div class="d-flex mt-10">
                         <div class="p-10"> <b>Number of Cleaners</b></div>
-                    <input  type="text" class="textBox model-text-border w-auto" placeholder="No of Cleaners"  required="required" v-model="selected_no_of_cleaners">
+                    <input  type="number" class="textBox model-text-border w-auto" placeholder="No of Cleaners"  required="required" v-model="selected_no_of_cleaners">
                 </div>
                 <div class="mt-20">Select Slots</div>
                     <div class="row model-time-solt .mt-20">
@@ -1825,9 +1825,13 @@
 
             </div>
             <div class="row">
+                <div class="col-md-12 text-center error-text" v-if="visit_err" >
+                    <% visit_err %>
+                </div>
                 <div class="col-md-12 text-center">
                     <div class="cancel-model-content">
-                        <button class="sent-button" @click="addVisit()">Submit</button>
+                        <button class="sent-button" @click="addVisit()" v-if="cleaning_action=='add_cleaning'"> Submit</button>
+                        <button class="sent-button" @click="editVisit()" v-if="cleaning_action=='edit_cleaning'"> Submit</button>
                         <button data-dismiss="modal" class="view-button" @click="resetVisit()" id="visit-close">Cancel</button>
                     </div>
                 </div>
@@ -1836,6 +1840,7 @@
         </div>
     </div>
 </div>
+<!-- Add visit popup ends here-->
 <!-- Modal Payment Policy -->
 <div class="modal fade bd-example-modal-lg" id="paymentModel" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
