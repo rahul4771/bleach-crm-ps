@@ -4670,8 +4670,8 @@ class EditOrderDetails(APIView):
 		elif action == 'edit_cleaning':
 			schedule_id        = request.data.get('schedule_id')
 			old_schedule       = OrderScheduler.objects.get(id=schedule_id)
-			old_start_at       = old_schedule.start_at+timedelta(hours=3) 
-			old_end_at         = old_schedule.end_at+timedelta(hours=3)
+			old_start_at       = old_schedule.start_at 
+			old_end_at         = old_schedule.end_at
 
 			cleaning_date 	   = request.data.get('cleaning_date')
 			cleaning_time      = request.data.get('cleaning_time')
