@@ -3031,7 +3031,7 @@ class MakeQuatationPhase1(IsAuthenticated,View):
 		enquiry_user    	  = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(id=enquiry_id)
 		
 		try:
-			evaluation = Evaluation.objects.get(id=evaluation_id).prefetch_related(Prefetch('booking_evaluation',queryset=CustomerBooking.objects.filter(is_active=True),to_attr='bookings'))
+			evaluation = Evaluation.objects.prefetch_related(Prefetch('booking_evaluation',queryset=CustomerBooking.objects.filter(is_active=True),to_attr='bookings')).get(id=evaluation_id)
 		except:
 			evaluation = None		
 	
