@@ -522,10 +522,7 @@ GET
           "keynotes":[
              {
                 "name":"kitchen",
-               "value":{
-                  "Size":180,
-   
-               }
+               "value":"{}"
              },
              {
                 "name":"",

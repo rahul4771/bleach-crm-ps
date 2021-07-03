@@ -241,6 +241,21 @@
                     <div class=" bold-text common-label required-field"> <label>Floor</label></div>
                   <input  type="text" class="textBox OnlyText" placeholder="Dirt Level" required="" v-model="sectionData.floor">
                 </div>-->
+                <div class="col-md-12 mt-20">
+                   <b>Key Notes</b> 
+                    <div class="row mt-10">
+                        <div class="col-md-4 mt-10" v-for="(keynote,kindex) in editSectionData.keynotes" v-bind:key="kindex">
+                            <div class="keynote-chip d-flex">
+                                <input type="text" v-model="keynote.sub_area" class="keynote-input"/>
+                                <input type="text" v-model="keynote.quantity" class="keynote-input"/>
+                               <!-- <div><%keynote.sub_area%> - <%keynote.quantity%></div>-->
+                                <div class="keynote-delicon cp"><i class="far fa-trash-alt"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
               
                <div class="col-md-12">
                 <div class="section-cost">
@@ -924,7 +939,7 @@
                                 </div>
                                 {% endfor %}
                                 <div>
-                                <button class="sent-button send-btn2 cp"   onclick="addSection(this)"  data-service="{{orderschedule.order_scheduler_book.service_type.name}}">Add Section</button>
+                                <button class="view-button view-btn cp"   onclick="addSection(this)"  data-service="{{orderschedule.order_scheduler_book.service_type.name}}">Add Section</button>
                             </div>
                                 <div class="showmore2{{orderschedule.id}}" style="display: none;"
                                     class="order-container-main order-clean-section">
@@ -959,7 +974,7 @@
                                         </div>
                                        
                                             <div class="text-right">
-                                                <button type="submit" class="btn primary-btn"  onclick="openCleaningDate(this)" data-evaluation_book_id="{{orderschedule.order_scheduler_book.id}}" data-service="{{orderschedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{orderschedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{orderschedule.order_scheduler_book.cleaning_hours}}">Add Visits</button>
+                                                <button type="submit" class="view-button view-btn"  onclick="openCleaningDate(this)" data-evaluation_book_id="{{orderschedule.order_scheduler_book.id}}" data-service="{{orderschedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{orderschedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{orderschedule.order_scheduler_book.cleaning_hours}}">Add Visits</button>
                                             </div>
                                         
                                         
