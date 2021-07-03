@@ -2,6 +2,7 @@
 {% block content %}
 {% load static %}
 <div class="wrapper"><!--wrapper-->
+
 {% if request.user.user_type == 'AGENT' %}
   {% include "agent/common/header.html" %}
 {% elif request.user.user_type == 'BOOKINGOFFICER' %}
@@ -57,8 +58,9 @@
         {% if detail.status == 'EVALUATED' %}
         <a href="{% url 'common_items:makequatation2edit' detail.id %}"><div><input name="view" type="button" value="Edit" class="checkonButton"></div></a>
         {% else %}
-        <a href="{% url 'common_items:makequatation2' detail.id %}"><div><input name="view" type="button" value="Check-in" class="checkonButton"></div></a>
+        <a href="{% url 'common_items:booking' detail.id %}?enquiry_id={{detail.evaluation.customer.id}}&evaluation_id={{detail.evaluation.id}}"><div><input name="view" type="button" value="Check-in" class="checkonButton"></div></a>
         {% endif %}
+      
       </div><!--checkin-form-right-->               
 </div><!--checkin-wrapper-row checkin-forms-boxes-->
 {% endfor %}        
@@ -69,8 +71,7 @@
         <br>
       </div><!--checkin-form-left-->
       <div class="checkin-form-right align-left"><!--checkin-form-right-->
-        <div class="total-Amount">{{evaluation.total_cost|floatformat:"3"}} KD</div>
-        <input type="hidden" name='total_amount' id="total_amount_id" value="{{evaluation.total_cost}}">
+        <div class="total-Amount" id="total_amount">{{evaluation.total_cost}} KD</div>
         <br>
       </div><!--checkin-form-right-->               
 </div><!--checkin-wrapper-row checkin-forms-boxes-->         
@@ -83,7 +84,7 @@
   <div class="ticket-form-left"><!--ticket-form-left-->
           <div class=" bold-text common-label"> <label>Payment Policy</label></div>
                 <label for="favcity">
-                <select id="payment_method_id" name="payment_method" class="payment_method" required>
+                <select id="favcity" name="payment_method" class="payment_method" required>
                 <option value="">Choose Payment Method</option>
                 {% for evaluationdetail in evaluation_details %}
                 {% if evaluationdetail.evaluationbooks %}
@@ -99,16 +100,20 @@
   </div><!--ticket-form-left-->
   <div class="ticket-form-right payment_track"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Before Cleaning Amount</label></div>
-                <input name="before_cleaning_amount" id="before_cleaning_amount_id" type="number" step="0.001" class="textBox" placeholder=" ">
+                <input name="before_cleaning_amount" id="before_cleaning_amount_id" type="number" step="0.001" class="textBox" placeholder=" "  >
   </div><!--ticket-form-right-->
     <div class="ticket-form-right payment_track"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>After Cleaning Amount</label></div>
-                <input name="after_cleaning_amount" id="after_cleaning_amount_id" type="number" step="0.001" class="textBox" placeholder=" ">
+                <input name="after_cleaning_amount" id="after_cleaning_amount_id" type="number" step="0.001" class="textBox" placeholder=" "  >
   </div><!--ticket-form-right-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+    <div class=" bold-text common-label"> <label>Discount</label></div>
+          <input name="discount" id="discount_id" type="number" step="0.001" class="textBox" placeholder=" "  >
+</div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
+<input type="hidden" name='total_amount' id="total_amount_id" value="{{evaluation.total_cost|floatformat:'3'}}">
 <br>
-<div align="center"><input class="assignButton" name="submitquatation" type="button" value="Submit" onclick="CheckForm(this);">
-</div>
+<div align="center" onclick="CheckForm(this);"><input class="assignButton" name="submit" type="button" value="Submit">
 <br><br>
 </form>
 {% endif %}
@@ -126,7 +131,7 @@
 </div><!--container-fluid space topspace-->
 </section><!--content-->
     
-{% include 'agent/common/footer.html' %}
+{% include 'evaluator/common/footer.html' %}
 </div><!--wrapper-->
 {% endblock %}
 
@@ -165,14 +170,12 @@ $('.payment_method').change(function(){
   else
   {
     $('.payment_track').hide();
-    $("#after_cleaning_amount_id").val('');
-    $("#before_cleaning_amount_id").val('');
   }
 
   });
 
 //total adjustment
-total_cost = parseFloat("{{evaluation.total_cost}}")
+total_cost = parseFloat("{{evaluation.total_cost|floatformat:'3'}}")
 $("#after_cleaning_amount_id").keyup(function(){
   after_amount  =  $("#after_cleaning_amount_id").val();
   before_amount =  $("#before_cleaning_amount_id").val();
@@ -201,6 +204,15 @@ $("#before_cleaning_amount_id").keyup(function(){
   }
 })
 
+$("#discount_id").keyup(function(){
+  discount   = $("#discount_id").val();
+  total_cost = parseFloat("{{evaluation.total_cost|floatformat:'3'}}")-discount
+  $("#total_amount").html(total_cost+' KD');
+  $("#total_amount_id").val(total_cost);
+  $("#before_cleaning_amount_id").val('');
+  $("#after_cleaning_amount_id").val('');
+})
+
 //Check Breakdown Amounts
 function CheckForm(params1){
   params = params1;
@@ -210,6 +222,7 @@ function CheckForm(params1){
         after_cleaning_amount  = $("#after_cleaning_amount_id").val();
         manual_total           = parseFloat(before_cleaning_amount)+parseFloat(after_cleaning_amount)
         total                  = $("#total_amount_id").val();
+        
         if(total == manual_total)
         {
           submitAnyForm(params);
@@ -220,7 +233,7 @@ function CheckForm(params1){
         }
   }
   else
-    {
+  {
     submitAnyForm(params);
   }
 }
