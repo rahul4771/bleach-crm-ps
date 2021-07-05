@@ -3852,7 +3852,7 @@ class DuplicateBookingPhase2(APIView):
 		response_dict            = {}
 		response_dict['success'] = False
 
-		evaluation             = Evaluation.objects.get(id=evaluation_id)
+		evaluation              = Evaluation.objects.get(id=evaluation_id)
 		order    				= Order.objects.get(evaluation=evaluation)
 		services 				= request.data.get('service_details')
 
@@ -3913,8 +3913,8 @@ class DuplicateBookingPhase2(APIView):
 			number_of_cleaners      = test_schedules_dict[key]['no_of_cleaners']-1
 
 			#included shift cleaners
-			shift_cleaners  = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_date_time.date())|Q(shift_date=end_date_time.date()))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=start_time)&Q(shift1_end_at__gte=start_time))&Q(Q(shift1_start_at__lte=end_time)&Q(shift1_end_at__gte=end_time))) | Q(Q(Q(shift2_start_at__lte=start_time)&Q(shift2_end_at__gte=start_time))&Q(Q(shift2_start_at__lte=end_time)&Q(shift2_end_at__gte=end_time)))).values_list('staff',flat=True)
-			shift_leaders   = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_date_time.date())|Q(shift_date=end_date_time.date()))).filter(staff__user_type='TEAMINCHARGE').filter(Q(Q(Q(shift1_start_at__lte=start_time)&Q(shift1_end_at__gte=start_time))&Q(Q(shift1_start_at__lte=end_time)&Q(shift1_end_at__gte=end_time))) | Q(Q(Q(shift2_start_at__lte=start_time)&Q(shift2_end_at__gte=start_time))&Q(Q(shift2_start_at__lte=end_time)&Q(shift2_end_at__gte=end_time)))).values_list('staff',flat=True)
+			shift_cleaners      = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_date_time.date())|Q(shift_date=end_date_time.date()))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=start_time)&Q(shift1_end_at__gte=start_time))&Q(Q(shift1_start_at__lte=end_time)&Q(shift1_end_at__gte=end_time))) | Q(Q(Q(shift2_start_at__lte=start_time)&Q(shift2_end_at__gte=start_time))&Q(Q(shift2_start_at__lte=end_time)&Q(shift2_end_at__gte=end_time)))).values_list('staff',flat=True)
+			shift_leaders       = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_date_time.date())|Q(shift_date=end_date_time.date()))).filter(staff__user_type='TEAMINCHARGE').filter(Q(Q(Q(shift1_start_at__lte=start_time)&Q(shift1_end_at__gte=start_time))&Q(Q(shift1_start_at__lte=end_time)&Q(shift1_end_at__gte=end_time))) | Q(Q(Q(shift2_start_at__lte=start_time)&Q(shift2_end_at__gte=start_time))&Q(Q(shift2_start_at__lte=end_time)&Q(shift2_end_at__gte=end_time)))).values_list('staff',flat=True)
 			today_shifts        = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_date_time.date())|Q(shift_date=end_date_time.date()))).values_list('staff',flat=True)
 			super_shift_cleaners= UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(id__in=today_shifts).filter( Q(Q(universal_shift_start__lte=start_time)&Q(universal_shift_end__gte=start_time))&Q(Q(universal_shift_start__lte=end_time)&Q(universal_shift_end__gte=end_time)) ).values_list('id',flat=True)
 			super_shift_leaders = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(id__in=today_shifts).filter(Q(Q(universal_shift_start__lte=start_time)&Q(universal_shift_end__gte=start_time))&Q(Q(universal_shift_start__lte=end_time)&Q(universal_shift_end__gte=end_time))).values_list('id',flat=True)
@@ -4003,6 +4003,10 @@ class DuplicateBookingPhase2(APIView):
 			busy_cleaners = len(set(team_members_scheduled))
 
 			#slote appending
+			print(total_newcleaners,"total_newcleaners")
+			print(busy_cleaners,"busy_cleaners")
+			print(total_newleaders,"total_newleaders")
+			print(busy_leaders,"busy_leaders")
 			if((total_newcleaners-busy_cleaners)>=number_of_cleaners and (total_newleaders-busy_leaders)>=1):
 				pass
 			else:
