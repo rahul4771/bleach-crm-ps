@@ -1386,6 +1386,7 @@ function openNav() {
                      "total_cost":this.multiServicesBill[i].total_cost,
                      "number_of_cleaners":this.selectedDuration.cleaners,
                        "cleaning_hours":parseInt(this.selectedDuration.hours),
+
                        sections:{}
                   }
                 for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
@@ -2360,6 +2361,7 @@ function openNav() {
           });
       },
       getMultipleSlots(){
+        this.bookingonetimeslots=[]
         var yr=this.oneTimeDateSelected.split('-')[0]
         var month=this.oneTimeDateSelected.split('-')[1]
         var day=this.oneTimeDateSelected.split('-')[2]
@@ -4206,7 +4208,9 @@ function openNav() {
           location_type:serviceBookedDetails[i].location_type,
           schedule_details:{},
           service:serviceBookedDetails[i].service_type.name,
-          total_cost:serviceBookedDetails[i].total_cost
+          total_cost:serviceBookedDetails[i].total_cost,
+          estimated_cost:serviceBookedDetails[i].estimated_cost
+
         }
         for(var j=0;j<serviceBookedDetails[i].evaluationsection_book.length;j++) {
           scheduleDetails.bill.push(serviceBookedDetails[i].evaluationsection_book[j])
