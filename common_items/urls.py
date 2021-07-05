@@ -18,6 +18,9 @@ urlpatterns = [
 		url(r'^makequatation/phase1/edit/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.MakeQuatationPhase1Edit.as_view(),name='makequatation1edit'),
 		url(r'^resources/$',views.ResourceManagement.as_view(),name='resource-management'),
 		url(r'^booking/(?P<evaluation_detail_id>[-\w]+)/$',views.Booking.as_view(),name='booking'),
+		url(r'^newfeedback/order/(?P<orderid>[-\w]+)/$',views.AddFeedBackOrder.as_view(),name='new-feedback-order'),
+
+		url(r'^editcleaning/team/(?P<scheduler_id>[-\w]+)/$',views.EditcleaningTeam.as_view(),name='edit-cleaningteam'),
 
 		url(r'^newenquiry/$',views.NewEnquiry.as_view(),name='newenquiry'),
 		url(r'^existingenquiry/(?P<enquiry_id>[-\w]+)$',views.ExistingEnquiry.as_view(),name='existingenquiry'),
@@ -36,6 +39,7 @@ urlpatterns = [
 	
 		url(r'^feedbacks/$',views.FeedbackDetails.as_view(),name='feedbacks'),
 		url(r'^feedback/details/(?P<client_id>[-\w]+)/(?P<order_id>[-\w]+)/$',views.FeedbackAdvanced.as_view(),name='feedbackadvanced'),
+		url(r'^newfeedback/order/(?P<orderid>[-\w]+)/$',views.AddFeedBackOrder.as_view(),name='new-feedback-order'),
 
 		url(r'^leave-scheduler/$',views.LeaveScheduler.as_view(),name='leave-scheduler'),	
 
