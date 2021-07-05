@@ -67,6 +67,10 @@
                         <h2>Total Amount</h2>
                         <div class="text-center amount-text"> <span id="id_amount"><% paymentData.total_amount %></span> KD</div>
                     </div>
+                    <div class="amount-card mt-20">
+                        <h2>Final Amount</h2>
+                        <div class="text-center amount-text"> <span id="id_amount"><% paymentData.final_amount %></span> KD</div>
+                    </div>
                 </div>
                  
 
@@ -243,16 +247,25 @@
                 </div>-->
                 <div class="col-md-12 mt-20">
                    <b>Key Notes</b> 
-                    <div class="row mt-10">
+                    <div class="row mt-10" v-if="keynote_update">
                         <div class="col-md-4 mt-10" v-for="(keynote,kindex) in editSectionData.keynotes" v-bind:key="kindex">
                             <div class="keynote-chip d-flex">
                                 <input type="text" v-model="keynote.sub_area" class="keynote-input"/>
                                 <input type="text" v-model="keynote.quantity" class="keynote-input"/>
                                <!-- <div><%keynote.sub_area%> - <%keynote.quantity%></div>-->
-                                <div class="keynote-delicon cp"><i class="far fa-trash-alt"></i>
+                                <div class="keynote-delicon cp" @click="delKeynote(kindex)"><i class="far fa-trash-alt"></i>
                                 </div>
                             </div>
                         </div>
+                        <div class="col-md-4 mt-10" >
+                            <div class="keynote-chip d-flex">
+                                <input type="text" v-model="newkeynote.sub_area" class="keynote-input" placeholder="Name"/>
+                                <input type="text" v-model="newkeynote.quantity" class="keynote-input" placeholder="Value"/>
+                               <!-- <div><%keynote.sub_area%> - <%keynote.quantity%></div>-->
+                               <div class="keynote-delicon cp" @click="addToKeynote()"><i class="far fa-plus-square"></i>
+                               </div>
+                                </div>
+                            </div>
                     </div>
                 </div>
 
@@ -1263,7 +1276,7 @@
                                                             <img  class="policy-time-edit pointer" src="{% static 'files/icons/edit.png' %}">
                                                         </button>-->
                                                         <button class="model-close ml-10" >
-                                                            <img  class="policy-time-edit pointer" src="{% static 'files/icons/edit.png' %}" data-amount_before_cleaning="{{order.evaluation.before_cleaning_amount}}" data-amount_after_cleaning="{{order.evaluation.after_cleaning_amount}}" data-discount="{{order.evaluation.discount}}" data-payment_method="{{order.evaluation.payment_method}}" data-total_amount="{{order.evaluation.estimated_cost}}" onclick="openPaymentEdit(this)">
+                                                            <img  class="policy-time-edit pointer" src="{% static 'files/icons/edit.png' %}" data-amount_before_cleaning="{{order.evaluation.before_cleaning_amount}}" data-amount_after_cleaning="{{order.evaluation.after_cleaning_amount}}" data-discount="{{order.evaluation.discount}}" data-payment_method="{{order.evaluation.payment_method}}" data-total_amount="{{order.evaluation.estimated_cost}}" data-final_amount="{{order.evaluation.total_cost}}" onclick="openPaymentEdit(this)">
                                                         </button>
                                                         {% else %}
                                                         {% endif %}

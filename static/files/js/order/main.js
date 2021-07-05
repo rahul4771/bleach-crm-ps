@@ -120,6 +120,7 @@ function openPaymentEdit(payment){
  var paymentDetails=$(payment).data()
  app.paymentData.payment_method=paymentDetails.payment_method
  app.paymentData.total_amount=paymentDetails.total_amount
+ app.paymentData.final_amount=paymentDetails.final_amount
  app.total_amount=paymentDetails.total_amount
  app.paymentData.discount=paymentDetails.discount
  app.paymentData.amount_before_cleaning=paymentDetails.amount_before_cleaning
@@ -168,6 +169,7 @@ function addSection(service){
       "cement_residue":false,
       "section_cost":"",
       "section_net_cost":"",
+      "keynotes":[],
       "is_newkitchen":false,
      "is_highprice_facade":false,
      "is_highprice_window":false,
@@ -221,7 +223,7 @@ const app = new Vue({
              productivity:{},
              editSectionData:{
               size:{},
-             
+             keynotes:[],
               section_cost:0,
               section_name:'',
               floor_type:[],
@@ -315,10 +317,28 @@ const app = new Vue({
             visit_err:'',
             cleaning_action:'',
             cleaning_start_date:'',
-            schedule_id:''
+            schedule_id:'',
+            newkeynote:{
+              sub_area:'',
+              quantity:''
+            },
+            keynote_update:true
   },
   methods:{
-    
+    addToKeynote(){
+      this.keynote_update=false
+      this.editSectionData.keynotes.push(this.newkeynote)
+      this.keynote_update=true
+      this.newkeynote={
+        sub_area:'',
+        quantity:''
+      }
+    },
+    delKeynote(index){
+      this.keynote_update=false
+      this.editSectionData.keynotes.splice(index,1)
+      this.keynote_update=true
+    },
     checkSlot(index){
       if(this.selectedSlots.length>0){
        
@@ -450,7 +470,7 @@ const app = new Vue({
     },
    
     calDiscount(){
-      this.paymentData.total_amount=this.total_amount-this.paymentData.discount
+      this.paymentData.final_amount=this.total_amount-this.paymentData.discount
       this.paymentData.amount_after_cleaning=''
       this.paymentData.amount_before_cleaning=''
     },
