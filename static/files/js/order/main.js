@@ -666,7 +666,7 @@ const app = new Vue({
               is_newkitchen:false
              },
              this.section_cost=0
-             
+              location.reload()   
     },
     getOrderId(){
       var orderId=window.location.href.split('/')[7]
