@@ -2186,16 +2186,31 @@ $('input[name="radio"]').click(function(){
         //order details tab expand and hide
         {% for orderschedule in order.orderschedules %}
         $("#show{{orderschedule.id}}").click(function () {
+            
+            
             if ($("#show{{orderschedule.id}}").text() == "Show More") {
-                $("#show{{orderschedule.id}}").text("Show Less");
-                $("#showmore{{orderschedule.id}}").fadeIn();
-                $(".showmore1{{orderschedule.id}}").fadeIn();
-                $(".showmore2{{orderschedule.id}}").fadeIn();
+
+                {% for orderschedule2 in order.orderschedules %}
+                console.log("{{orderschedule.id}}")
+                if("{{orderschedule.id}}" == "{{orderschedule2.id}}"){
+                    $("#show{{orderschedule.id}}").text("Show Less");
+                    $("#showmore{{orderschedule.id}}").fadeIn();
+                    $(".showmore1{{orderschedule.id}}").fadeIn();
+                    $(".showmore2{{orderschedule.id}}").fadeIn();
+                }else{
+                    $("#show{{orderschedule2.id}}").text("Show More");
+                    $(".showmore1{{orderschedule2.id}}").fadeOut();
+                    $(".showmore2{{orderschedule2.id}}").fadeOut();
+                    $("#showmore{{orderschedule2.id}}").fadeOut();
+                }
+                {% endfor %}
+
+               
             } else {
                 $("#show{{orderschedule.id}}").text("Show More");
-                $("#showmore1{{orderschedule.id}}").fadeOut();
-                $(".showmore2{{orderschedule.id}}").fadeOut();
-                $(".showmore{{orderschedule.id}}").fadeOut();
+            $(".showmore1{{orderschedule.id}}").fadeOut();
+            $(".showmore2{{orderschedule.id}}").fadeOut();
+            $("#showmore{{orderschedule.id}}").fadeOut();
             }
 
         });
