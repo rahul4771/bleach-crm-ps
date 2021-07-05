@@ -252,11 +252,11 @@
   <div style="background: none !important; box-shadow: none !important;" id="container">
 
     <div class="right-statement">
-      <div class="download_button_id">
+      {% comment %} <div class="download_button_id">
         <i class="fa fa-download mr-5" ></i> Download
-      </div>
+      </div> {% endcomment %}
       <br>
-      <div class="download_button_id">
+      <div class="download_button_id" onclick="printDiv()">
         <i class="fa fa-print mr-5" ></i> Print
       </div>
       <br>
@@ -327,6 +327,13 @@
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script> <!-- Axios -->
 
 <script>
+
+function printDiv() {
+  
+
+    window.print();
+
+}
 
     $(document).ready(function(){
       add_console();

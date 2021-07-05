@@ -888,7 +888,7 @@ class="cl-service-list"
         <div class="col-md-8">
         
          <div :class="'cl-modal-text-title cl-mt-10 customer-booked-text '+popup.text">
-          <% currentSlotDetails.order.order_no %>
+          <a :href="'/common/client/order/details/'+currentSlotDetails.order__id"><% currentSlotDetails.order.order_no %></a>
          </div>
          <div class="d-flex" v-if="currentSlotDetails.work_status=='CLEANING_FULFILLED'">
           <div class="cl-completed-mark"></div>
