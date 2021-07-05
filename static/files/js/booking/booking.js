@@ -138,7 +138,7 @@ const app=new Vue({
   rules: {
     required: v => !!v || 'this field is required',
   },
-    url:'https://test.bleach-kw.com',
+    url:'http://localhost:8000',
     kitchenData:{
         wall_type:'',
         floor_type:'',
@@ -1410,7 +1410,12 @@ console.log(response)
             for(var k=0;k<this.multiServicesBill[i].bill[j].section.kitchens.length;k++){
              this.serviceDetails.service_details[i].sections[j].keynotes[kitchencounter]={
                "sub_area":'kitchen',
-               "quantity":JSON.stringify(this.multiServicesBill[i].bill[j].section.kitchens[k])
+               "quantity":JSON.stringify({
+                 size:this.multiServicesBill[i].bill[j].section.kitchens[k].size.name,
+                 max_size:this.multiServicesBill[i].bill[j].section.kitchens[k].size.max_size,
+                 type:this.multiServicesBill[i].bill[j].section.kitchens[k].type,
+                 residue:this.multiServicesBill[i].bill[j].section.kitchens[k].residue
+               })
              
              }
              kitchencounter=kitchencounter+1
@@ -1495,19 +1500,24 @@ console.log(response)
          }
          }
        }
-       if(this.multiServicesBill[i].bill[j].section.kitchen){
-        var newindex=Object.keys(this.serviceDetails.service_details[i].sections[j].keynotes).length
-        var kitchencounter=newindex
-        for(var k=0;k<this.multiServicesBill[i].bill[j].section.kitchens.length;i++){
-         this.serviceDetails.service_details[i].sections[j].keynotes[kitchencounter]={
-           "sub_area":'kitchen',
-           "quantity":JSON.stringify(this.multiServicesBill[i].bill[j].section.kitchens[k])
-         
-         }
-         kitchencounter=kitchencounter+1
-        }
-       
-      }
+         if(this.multiServicesBill[i].bill[j].section.kitchen){
+            var newindex=Object.keys(this.serviceDetails.service_details[i].sections[j].keynotes).length
+            var kitchencounter=newindex
+            for(var k=0;k<this.multiServicesBill[i].bill[j].section.kitchens.length;k++){
+             this.serviceDetails.service_details[i].sections[j].keynotes[kitchencounter]={
+               "sub_area":'kitchen',
+               "quantity":JSON.stringify({
+                 size:this.multiServicesBill[i].bill[j].section.kitchens[k].size.name,
+                 max_size:this.multiServicesBill[i].bill[j].section.kitchens[k].size.max_size,
+                 type:this.multiServicesBill[i].bill[j].section.kitchens[k].type,
+                 residue:this.multiServicesBill[i].bill[j].section.kitchens[k].residue
+               })
+             
+             }
+             kitchencounter=kitchencounter+1
+            }
+           
+          }
         }
       }
    
