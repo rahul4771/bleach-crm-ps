@@ -239,7 +239,8 @@ const app = new Vue({
              sections:[],
              currentSection:[],
              gotSection:false,
-             url:'http://localhost:8000',
+             //url:'http://localhost:8000',
+             url:'https://test.bleach-kw.com',
              eval_book_id:'',
              action_type:'',
              paymentData:{
@@ -665,7 +666,7 @@ const app = new Vue({
               is_newkitchen:false
              },
              this.section_cost=0
-             
+              location.reload()   
     },
     getOrderId(){
       var orderId=window.location.href.split('/')[7]
