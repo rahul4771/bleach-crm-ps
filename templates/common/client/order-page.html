@@ -713,7 +713,7 @@
                                                 <ul>
 
                                                     {% if orderschedule.customer_address.gps_location %}<li><i class="fas  test-color fa-map-marker c-mr-10"></i><a href="{{orderschedule.customer_address.gps_location}}">GPS</a></li>{% endif %}
-                                                    {% comment %} <li><i class="fas test-color fa-users c-mr-10"></i> {{orderschedule.order_scheduler_book.number_of_cleaners|floatformat:-1}} cleaners</li> {% endcomment %}
+                                                    <li><i class="fas test-color fa-users c-mr-10"></i> <span id="total_cleaners{{orderschedule.order_scheduler_book.id}}"></span> cleaners</li>
                                                     <li><i class="fas test-color fa-clock-o c-mr-10"></i> <span id="total_hours{{orderschedule.order_scheduler_book.id}}"></span> Hours</li>
                                                     <li><i class="fas  test-color fa-money c-mr-10"></i> {{orderschedule.order_scheduler_book.total_cost|floatformat:3}} KD</li>
                                                     <li><i class="fas test-color fa-address-card c-mr-10"></i><b>{{orderschedule.customer_address.apartment}}</b>: {% if orderschedule.customer_address.floor %}{{orderschedule.customer_address.floor}}, {% else %}{% endif %} {{orderschedule.customer_address.building}},<br> {{orderschedule.customer_address.block}}, {{orderschedule.customer_address.street}},<br> {% if orderschedule.customer_address.avenue %}{{orderschedule.customer_address.avenue}}, {% else %}{% endif %} {{orderschedule.customer_address.area.name}},<br> {{orderschedule.customer_address.governorate.name}}</li>
@@ -2448,14 +2448,31 @@ $(".pn-prev").click();
             var visitcount = 0;
             var ticketcount = 0;
             var cleaning_hours = 0;
+            var cleaners_count = 0;
+
             var book_id = parseInt(evaluationbook_ids[i].value);
             
             {% for schedule in order.orderschedules %}
             
             if ({{schedule.order_scheduler_book.id}} == book_id ){
                 visitcount += 1
-                cleaning_hours += parseInt({{schedule.cleaning_hours|default:'0'}})
+                
+                if ("{{schedule.order_scheduler_book.cleaning_policy}}" == 'ONE TIME SERVICE'){
+                    cleaning_hours += parseInt({{schedule.cleaning_hours|default:'0'}})
+                    {% if forloop.first %}
+                    cleaners_count += parseInt({{schedule.no_of_cleaners|default_if_none:'0'}}) 
+                    {% endif %}
+                }
+
+                if ("{{schedule.order_scheduler_book.cleaning_policy}}" == 'SUBSCRIPTION'){
+                    {% if forloop.first %}
+                    cleaning_hours += parseInt({{schedule.cleaning_hours|default_if_none:'0'}})
+                    cleaners_count += parseInt({{schedule.no_of_cleaners|default_if_none:'0'}})
+                    {% endif %}
+                }
             }
+
+            
 
             //ticket count
             {% for investigation in schedule.investigations %}{% for followup in investigation.followups %}
@@ -2470,6 +2487,8 @@ $(".pn-prev").click();
             $('.visitcount'+book_id+'').text(visitcount);
 
             $('#total_hours'+book_id+'').text(cleaning_hours);
+
+            $('#total_cleaners'+book_id+'').text(cleaners_count);
 
             if (ticketcount > 0){
                 $('.ticket-btn'+book_id+'').show();

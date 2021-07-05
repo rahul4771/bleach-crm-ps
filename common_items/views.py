@@ -989,61 +989,75 @@ class PaymentDetails(IsAuthenticated,View):
 		if not no_of_entries:
 			no_of_entries = 20
 		
-		page = request.GET.get('page',1) 
+		#page1
+		page1 = request.GET.get('page1',1) 
 
-		paginator=Paginator(transactions,no_of_entries)
+		paginator1=Paginator(transactions,no_of_entries)
 			
 		try: 
-			transactions=paginator.page(page) 
+			transactions=paginator1.page(page1) 
 		except PageNotAnInteger:
-			transactions=paginator.page(1) 
+			transactions=paginator1.page(1) 
 		except EmptyPage:
-			transactions=paginator.page(paginator.num_pages) 
+			transactions=paginator1.page(paginator1.num_pages) 
 
-		page = request.GET.get('page2',1) 
+		#page2
+		page2 = request.GET.get('page2',1) 
 
-		paginator=Paginator(pending_payments,no_of_entries)
+		paginator2=Paginator(pending_payments,no_of_entries)
 			
 		try: 
-			pending_payments=paginator.page(page) 
+			pending_payments=paginator2.page(page2) 
 		except PageNotAnInteger:
-			pending_payments=paginator.page(1) 
+			pending_payments=paginator2.page(1) 
 		except EmptyPage:
-			pending_payments=paginator.page(paginator.num_pages) 
+			pending_payments=paginator2.page(paginator2.num_pages) 
 
-		page = request.GET.get('page3',1) 
+		#page3
+		page3 = request.GET.get('page3',1) 
 
-		paginator=Paginator(due_payments,no_of_entries)
+		paginator3=Paginator(due_payments,no_of_entries)
 			
 		try: 
-			due_payments=paginator.page(page) 
+			due_payments=paginator3.page(page3) 
 		except PageNotAnInteger:
-			due_payments=paginator.page(1) 
+			due_payments=paginator3.page(1) 
 		except EmptyPage:
-			due_payments=paginator.page(paginator.num_pages) 
+			due_payments=paginator3.page(paginator3.num_pages) 
 
 		# Get the index of the current page
-		index = transactions.number - 1
-		index = pending_payments.number - 1
-		index = due_payments.number - 1
+		index1 = transactions.number - 1
+		index2 = pending_payments.number - 1
+		index3 = due_payments.number - 1
 		# edited to something easier without index
 		# This value is maximum index of your pages, so the last page - 1
-		max_index = len(paginator.page_range)
+		max_index1 = len(paginator1.page_range)
+		max_index2 = len(paginator2.page_range)
+		max_index3 = len(paginator3.page_range)
 		
 		# You want a range of 7, so lets calculate where to slice the list
-		start_index = index - 3 if index >= 3 else 0
-		end_index = index + 3 if index <= max_index - 3 else max_index
+		start_index1 = index1 - 3 if index1 >= 3 else 0
+		end_index1 = index1 + 3 if index1 <= max_index1 - 3 else max_index1
+
+		start_index2 = index2 - 3 if index2 >= 3 else 0
+		end_index2 = index2 + 3 if index2 <= max_index2 - 3 else max_index2
+
+		start_index3 = index3 - 3 if index3 >= 3 else 0
+		end_index3 = index3 + 3 if index3 <= max_index3 - 3 else max_index3
 
 		# Get our new page range. In the latest versions of Django page_range returns 
 		# an iterator. Thus pass it to list, to make our slice possible again.
-		page_range = list(paginator.page_range)[start_index:end_index]	
-		entry_per_page=(transactions.end_index())-(transactions.start_index())+1
-		entry_per_page=(pending_payments.end_index())-(pending_payments.start_index())+1
-		entry_per_page=(due_payments.end_index())-(due_payments.start_index())+1
+		page_range1 = list(paginator1.page_range)[start_index1:end_index1]
+		page_range2 = list(paginator2.page_range)[start_index2:end_index2]
+		page_range3 = list(paginator3.page_range)[start_index3:end_index3]
 
-		print(page_range,tab,"tab")
+		entry_per_page1=(transactions.end_index())-(transactions.start_index())+1
+		entry_per_page2=(pending_payments.end_index())-(pending_payments.start_index())+1
+		entry_per_page3=(due_payments.end_index())-(due_payments.start_index())+1
 
-		return render(request,'common/payment/payments.html',{'transactions':transactions,'total_due_amount':total_due_amount,'total_due_orders':total_due_orders,'tab':tab,'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"service_types":service_types,"fil_payment_policy":fil_payment_policy,"fil_payment_status":fil_payment_status,"fil_order_status":fil_order_status,"pending_payments":pending_payments,"due_payments":due_payments})
+		print(page_range1,tab,"tab")
+
+		return render(request,'common/payment/payments.html',{'transactions':transactions,'total_due_amount':total_due_amount,'total_due_orders':total_due_orders,'tab':tab,'invoices':invoices,'total_pending_amount':total_pending_amount,'total_pending_orders':total_pending_orders,"search_query":search,"page_range1":page_range1,"page_range2":page_range2,"page_range3":page_range3,"entry_per_page1":entry_per_page1,"entry_per_page2":entry_per_page2,"entry_per_page3":entry_per_page3,"no_of_entries":no_of_entries,"service_types":service_types,"fil_payment_policy":fil_payment_policy,"fil_payment_status":fil_payment_status,"fil_order_status":fil_order_status,"pending_payments":pending_payments,"due_payments":due_payments})
 
 	def post(self,request):
 		order_id = request.POST.get('orderid')
