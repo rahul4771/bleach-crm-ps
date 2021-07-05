@@ -239,7 +239,8 @@ const app = new Vue({
              sections:[],
              currentSection:[],
              gotSection:false,
-             url:'http://localhost:8000',
+             //url:'http://localhost:8000',
+             url:'https://test.bleach-kw.com',
              eval_book_id:'',
              action_type:'',
              paymentData:{
