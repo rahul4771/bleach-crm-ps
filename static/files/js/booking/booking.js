@@ -1354,6 +1354,7 @@ console.log(response)
            if(this.multiServicesBill[i].bill[j].section.wall_type && this.multiServicesBill[i].bill[j].section.ceiling_type)
            {
              this.serviceDetails.service_details[i].sections[j]={
+
                "section_name":this.multiServicesBill[i].bill[j].name,
              "size":this.multiServicesBill[i].bill[j].section.size.name,
              "wall_type":this.multiServicesBill[i].bill[j].section.wall_type.join(),
@@ -1376,6 +1377,7 @@ console.log(response)
                 }
              }
              }
+           
            }
            else{
              this.serviceDetails.service_details[i].sections[j]={
@@ -1402,6 +1404,19 @@ console.log(response)
              }
              }
            }
+           if(this.multiServicesBill[i].bill[j].section.kitchen){
+            var newindex=Object.keys(this.serviceDetails.service_details[i].sections[j].keynotes).length
+            var kitchencounter=newindex
+            for(var k=0;k<this.multiServicesBill[i].bill[j].section.kitchens.length;k++){
+             this.serviceDetails.service_details[i].sections[j].keynotes[kitchencounter]={
+               "sub_area":'kitchen',
+               "quantity":JSON.stringify(this.multiServicesBill[i].bill[j].section.kitchens[k])
+             
+             }
+             kitchencounter=kitchencounter+1
+            }
+           
+          }
             }
           }
           var tc=0
@@ -1480,6 +1495,19 @@ console.log(response)
          }
          }
        }
+       if(this.multiServicesBill[i].bill[j].section.kitchen){
+        var newindex=Object.keys(this.serviceDetails.service_details[i].sections[j].keynotes).length
+        var kitchencounter=newindex
+        for(var k=0;k<this.multiServicesBill[i].bill[j].section.kitchens.length;i++){
+         this.serviceDetails.service_details[i].sections[j].keynotes[kitchencounter]={
+           "sub_area":'kitchen',
+           "quantity":JSON.stringify(this.multiServicesBill[i].bill[j].section.kitchens[k])
+         
+         }
+         kitchencounter=kitchencounter+1
+        }
+       
+      }
         }
       }
    
