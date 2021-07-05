@@ -936,9 +936,11 @@
                                             {% for keynote in section.sectionkeynotes %}
                                             {% if forloop.counter|divisibleby:2 %}
                                             {% else %}
+                                            {% if keynote.sub_area != 'kitchen' %}
                                                 <div class="clean-section-card">
                                                     <p>{{keynote.sub_area}}<span class="c-text2">{{keynote.quantity}}</span></p>
                                                 </div>
+                                             {% endif %}   
                                             {% endif %}
                                             {% endfor %}
 
@@ -947,9 +949,11 @@
                                             <div class="col-md-3 ml-0 ">
                                             {% for keynote in section.sectionkeynotes %}
                                             {% if forloop.counter|divisibleby:2 %}
+                                            {% if keynote.sub_area != 'kitchen' %}
                                             <div class="clean-section-card">
                                                 <p>{{keynote.sub_area}}<span class="c-text2">{{keynote.quantity}}</span></p>
                                             </div>
+                                            {% endif %}
                                             {% else %}
                                             {% endif %}
                                             {% endfor %}
@@ -1078,7 +1082,12 @@
                                             <div class="col-md-2 m-mt20 .c-mb-10 mr-0 ml-0">
                                                 <div class="row">
                                                     <div class="col-xs-4 pr-0">
+                                                        {% if team_member.member.profile_image %}
                                                         <img class="clean-team-profile-pic" src="{{team_member.member.profile_image.url}}">
+                                                        {% else %}
+                                                        <img class="clean-team-profile-pic" src="{% static 'files/icons/profile.png' %}">
+                                                        {% endif %}
+
                                                     </div>
                                                     <div class="col-xs-8">
                                                         <div class="order-agent-content text-left">
@@ -1123,7 +1132,11 @@
                                             <div class="col-md-2 mr-0 ml-0">
                                                 <div class="row">
                                                     <div class="col-xs-4 pr-0">
+                                                        {% if cleaning_team.team_leader.profile_image %}
                                                         <img class="clean-team-profile-pic id_team_leader_img" src="{{cleaning_team.team_leader.profile_image.url}}">
+                                                        {% else %}
+                                                        <img class="clean-team-profile-pic" src="{% static 'files/icons/profile.png' %}">
+                                                        {% endif %}
                                                     </div>
                                                     <div class="col-xs-8">
                                                         <div class="order-agent-content text-left">
