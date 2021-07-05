@@ -2475,6 +2475,7 @@ $(".pn-prev").click();
                 if ("{{schedule.order_scheduler_book.cleaning_policy}}" == 'ONE TIME SERVICE'){
                     cleaning_hours += parseInt({{schedule.cleaning_hours|default:'0'}})
                     {% if forloop.first %}
+                    console.log("")
                     cleaners_count += parseInt({{schedule.no_of_cleaners|default_if_none:'0'}}) 
                     {% endif %}
                 }
