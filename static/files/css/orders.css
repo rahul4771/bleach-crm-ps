@@ -26,7 +26,16 @@
 .see-more{
   color: blue;
 }
-
+.cp{
+  cursor:pointer;
+}
+.keynote-input{
+  border: none;
+    border-bottom: 1px dotted #2f4e85;
+    border-radius: 0px;
+    max-width: 100px;
+    margin-right: 15px;
+}
 .text-right{
   text-align: right !important;
 }
@@ -1378,7 +1387,14 @@ padding-top:10px;
 .error-text{
   color:red;
 }
-
+.keynote-chip{
+  border: 1px solid #2f4e85;
+    padding: 6px;
+    border-radius: 10px;
+}
+.keynote-delicon{
+  margin-left: auto;
+}
 .multiselect__tag {
   background:#2f4e85 !important;
 }
