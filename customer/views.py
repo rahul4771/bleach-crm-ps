@@ -4465,6 +4465,27 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 
 		return Response(response_dict,HTTP_200_OK)
 
+#resubmit order apis
+class ReSubmitOrder(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+	
+	def get(self,request,order_id):
+		order = Order.objects.select_related('evaluation').filter(Q(evaluation__quatation_status='REJECTED')|Q(evaluation__quatation_status='EXPIRED')).get(id=order_id)
+		if order:
+			order.order_status = None
+			order.evaluation.quatation_status = 'PENDING'
+			order.evaluation.quatation_approved_date     = None
+			order.evaluation.quatation_rejected_date     = None
+			order.evaluation.created                     = timezone.now()
+			order.evaluation.quatation_expiry_date       = timezone.now()+timedelta(14)
+
+			order.evaluation.save()
+			order.save()
+		
+			messages.success(request,"You have Succesfully Re-submitted the Order")
+
+		return redirect('common_items:client-orderdetails',order_id)
 
 #edit order apis
 class EditOrderDetails(APIView):

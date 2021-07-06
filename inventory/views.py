@@ -22,6 +22,18 @@ class InventoryValue(View):
 class InventoryBundle(View):
     def get(self,request):
         return render(request,'inventory/bundle.html',{})
-class InventoryItme(View):
+class InventoryItem(View):
     def get(self,request):
         return render(request,'inventory/item.html',{})
+class InventorySupplier(View):
+    def get(self,request):
+        return render(request,'inventory/supplier.html',{})
+class InventoryStore(View):
+    def get(self,request):
+        return render(request,'inventory/store.html',{})
+class InventoryInv(View):
+    def get(self,request):
+        return render(request,'inventory/inventory.html',{})
+class InventoryOrder(View):
+    def get(self,request):
+        return render(request,'inventory/order.html',{})

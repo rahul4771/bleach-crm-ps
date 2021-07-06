@@ -268,7 +268,7 @@
                             </div>
                     </div>
                 </div>
-                <div class="col-md-12 mt-20">
+                <div class="col-md-12 mt-20" v-if="service_type=='General Cleaning' || service_type=='Deep Cleaning'">
                     <b>Kitchen (s)</b> 
                      <div class="row mt-10" v-if="keynote_update">
                          <div class="col-md-4 mt-10" v-for="(kitchenkeynote,kindex) in kitchen_keynotes" v-bind:key="kindex">
@@ -771,9 +771,9 @@
                                                 </div>
                                                 <div class="col-md-9 pl-0">
                                                     <div class="order-agent-content">
-                                                        <div v-if="edit" class="order-agent-edit">
+                                                        <!-- <div v-if="edit" class="order-agent-edit">
                                                             <img class="pointer"src="{% static 'files/icons/edit.png' %}">
-                                                        </div>
+                                                        </div> -->
 
                                                         {% if orderschedule.evaluation_details.evaluator %}
                                                         <h2>{{orderschedule.evaluation_details.evaluator.name}}</h2>
@@ -797,9 +797,9 @@
                                         </div>
                                         <div class="col-md-2 m-mt30">
                                             <div class="agent-content-section1 c-mt-022">
-                                                <div v-if="edit" class="order-agent-edit">
+                                                <!-- <div v-if="edit" class="order-agent-edit">
                                                     <img class="pointer" src="{% static 'files/icons/edit.png' %}">
-                                                </div>
+                                                </div> -->
                                                 <ul>
                                                 {% if orderschedule.order_scheduler_book.cleaning_method %}
                                                     <li><i class="fas fa-check-circle yellow-tick "></i> {{orderschedule.order_scheduler_book.cleaning_method}} Method
@@ -824,9 +824,9 @@
                                         </div>
                                         <div class="col-md-2 m-mt30">
                                             <div class="agent-content-section1 c-mt-022">
-                                                <div v-if="edit" class="order-agent-edit" >
+                                                <!-- <div v-if="edit" class="order-agent-edit" >
                                                     <img class="pointer" src="{% static 'files/icons/edit.png' %}">
-                                                </div>
+                                                </div> -->
                                                 <ul>
 
                                                     {% if orderschedule.customer_address.gps_location %}<li><i class="fas  test-color fa-map-marker c-mr-10"></i><a href="{{orderschedule.customer_address.gps_location}}">GPS</a></li>{% endif %}
@@ -945,15 +945,7 @@
                                     <div class="row section-detials-text">
                                         <div class="col-md-6 c-right-border" style="padding-left: 1px;">
                                             <div class="col-md-6">
-                                                <div class="row c-mb-3">
-                                                    <div class="col-xs-5">Category</div>
-                                                    <div class="col-xs-7">: <span class="c-text ">{{section.category}}</span></div>
-                                                </div>
-                                                <div class="row c-mb-3">
-                                                    <div class="col-xs-5">Dirt level</div>
-                                                    <div class="col-xs-7">: <span class="c-text  ">{{section.dirt_level}}</span>
-                                                    </div>
-                                                </div>
+                                               
 
                                                 {% if section.age %}
                                                 <div class="row c-mb-3">
@@ -1084,14 +1076,14 @@
 
                                 {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION' %}
                                 {% else %}
-                                <div>
-                                <button class="view-button view-btn cp"   onclick="addSection(this)"  data-service="{{orderschedule.order_scheduler_book.service_type.name}}">Add Section</button>
+                                <div v-if="edit">
+                                <button style="box-shadow: none !important;" class="view-button view-btn cp"   onclick="addSection(this)"  data-service="{{orderschedule.order_scheduler_book.service_type.name}}">  <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="">  Add Section</button>
                                 </div>
                                 {% endif %}
 
                                 {% if order.evaluation.quatation_status == 'PENDING' %}
-                                <div>
-                                <button class="view-button view-btn cp"   onclick="addSection(this)"  data-service="{{orderschedule.order_scheduler_book.service_type.name}}">Add Section</button>
+                                <div v-if="edit">
+                                <button style="box-shadow: none !important;" class="view-button view-btn cp"   onclick="addSection(this)"  data-service="{{orderschedule.order_scheduler_book.service_type.name}}">  <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="">  Add Section</button>
                                 </div>
                                 {% endif %}
 
@@ -1108,9 +1100,9 @@
 
                                         {% for multi_order_schedule in order.orderschedules %}
                                         {% if multi_order_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
-                                            <div class="col-md-4  c-pr5 visit-list" id="id_select_visit{{multi_order_schedule.id}}" onclick="load_cleaning_team({{forloop.counter}},{{multi_order_schedule.id}})">
+                                            <div style="margin-bottom: 10px;" class="col-md-4  c-pr5 visit-list" id="id_select_visit{{multi_order_schedule.id}}" onclick="load_cleaning_team({{forloop.counter}},{{multi_order_schedule.id}})">
                                                 <div class="cleaning-status-container  pointer ">
-                                                    <div class="row cleaning-status-row  cleaning-status-card">
+                                                    <div  id="id_select_visit_inner{{multi_order_schedule.id}}" class="row cleaning-status-row  cleaning-status-card">
                                                         <div class="vist-card-item-first">
                                                             Visit {{forloop.counter}}
                                                         </div>
@@ -1129,8 +1121,8 @@
                                         </div>
                                        
                                             {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR' or request.user.user_type == 'SALESADMIN' or request.user.user_type == 'SENIORTEAMLEADER' %}
-                                            <div class="text-right">
-                                                <button type="submit" class="view-button view-btn"  onclick="openCleaningDate(this)" data-evaluation_book_id="{{orderschedule.order_scheduler_book.id}}" data-service="{{orderschedule.order_scheduler_book.service_type.name}}" {% for schedule in order.orderschedules %}{% if forloop.first %} data-no_of_cleaners="{{ schedule.no_of_cleaners|default_if_none:'0' }}" {% endif %} {% endfor %} data-cleaning_hours="{{orderschedule.order_scheduler_book.cleaning_hours}}">Add Visit(s)</button>
+                                            <div class="text-right" style="margin-bottom: 10px;" v-if="edit">
+                                                <button style="box-shadow: none !important;" type="submit" class="view-button view-btn"  onclick="openCleaningDate(this)" data-evaluation_book_id="{{orderschedule.order_scheduler_book.id}}" data-service="{{orderschedule.order_scheduler_book.service_type.name}}" {% for schedule in order.orderschedules %}{% if forloop.first %} data-no_of_cleaners="{{ schedule.no_of_cleaners|default_if_none:'0' }}" {% endif %} {% endfor %} data-cleaning_hours="{{orderschedule.order_scheduler_book.cleaning_hours}}"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="">  Add Visit(s)</button>
                                             </div>
                                             {% endif %}
                                         
@@ -1749,6 +1741,21 @@
                             {% endif %}
                             {% endfor %}
 
+                            {% if order.evaluation.quatation_status == 'EXPIRED' or order.evaluation.quatation_status == 'REJECTED' %}
+                            <div class="c-button-div">
+                                <button class="side-buttons" data-toggle="modal" data-target="#resubmitModel">
+                                    <div class="row">
+                                        <div class="col-xs-4 text-right">
+                                            <img class="button-icons" src="{% static 'files/icons/reorder.png' %}">
+                                        </div>
+                                        <div class="col-xs-6 text-left mpl-0">
+                                            Re-Submit
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+                            {% endif %}
+
                             {% if order.order_status == 'APPROVED_BY_CLIENT' or order.order_status == 'ORDER_IN_PROGRESS'  %}
                             <div class="c-button-div">
                                 <button data-toggle="modal" data-target="#cancelModel" class="side-buttons">
@@ -1918,6 +1925,7 @@
         </div>
     </div>
 </div>
+
 <!-- Modal Add Reorder -->
 <div class="modal fade bd-example-modal-lg" id="reorderModel" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -1956,6 +1964,47 @@
     </div>
 </div>
 <!-- Modal Add Reorder -->
+
+<!-- Modal Add Resubmit-->
+<div class="modal fade bd-example-modal-lg" id="resubmitModel" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog cancel-model cancel-order-border" role="document">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="d-flex cl-modal-icons">
+                        <button data-dismiss="modal" class="model-close">
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="cancel-model-content">
+                        <h1>Do you want to Resubmit?</h1>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <div class="cancel-model-content">
+                        <button class="sent-button" type="submit" onclick="resubmit({{order.id}});">Yes</button>
+                        <button data-dismiss="modal" class="view-button">Cancel</button>
+                        
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Add Resubmit -->
+
+<!--Rise Ticket-->
 <div class="modal fade bd-example-modal-lg" id="raiseTicketModel" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog cancel-model cancel-order-border" role="document">
@@ -1991,6 +2040,9 @@
         </div>
     </div>
 </div>
+<!--Rise Ticket-->
+
+
 <!-- Add visit popup begins here-->
 <div class="modal fade bd-example-modal-lg" id="cleaningDateModel" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -2157,6 +2209,11 @@
 function duplicate(id){
     window.location.href='/evaluator/reorder?id='+id
 } 
+
+function resubmit(id){
+    window.location.href='/customer/resubmitorder/'+id
+}
+
 $(document).ready(function () {
     {% if order.evaluation.customer.is_email == True %}
         app.contacts.push('EMAIL');
@@ -2251,9 +2308,12 @@ function load_cleaning_team(visitcount,scheduleid){
                             $('.id_view_ticket').attr('href','/common/ticket/details/'+response.data.customer_id+'/'+response.data.followup_id+'')
                         }
 
-                        //mark selected visit
-                        $('.visit-list').removeClass('visit-border');
-                        $('#id_select_visit'+response.data.schedule_id+'').addClass('visit-border');
+                        // //mark selected visit
+                        // $('.visit-list').removeClass('visit-border');
+                        // $('#id_select_visit'+response.data.schedule_id+'').addClass('visit-border');
+                          //mark selected visit
+                        $('.cleaning-status-row').removeClass('visit-border');
+                        $('#id_select_visit_inner'+response.data.schedule_id+'').addClass('visit-border');
 
                     }else{
                         console.log("no data")
