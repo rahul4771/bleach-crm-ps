@@ -49,7 +49,7 @@
         <div class="white-wrapper" style="overflow:auto">
           <!--white-wrapper-->
 
-          <div id="leaveModal" class="lv-modal">
+          <div id="leaveModal" class="lv-modal" style="border: none !important; background: none !important;">
             <div class="modal-dialog">
 
 
@@ -77,6 +77,36 @@
 
             </div>
           </div> 
+
+          <!--  Shift Modal  -->
+          <div id="ShiftModal" class="lv-modal" style="border: none !important; background: none !important;">
+            <div class="modal-dialog">
+
+
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" onclick="closeShiftModal()">&times;</button>
+                  <h4 class="modal-title"></h4>
+                </div>
+                <div class="modal-body">
+                  <div class="modal-date"></div>
+                  <div class="modal-resource"></div>
+
+                </div>
+                <div class="modal-footer ">
+                  <div class="text-left lv-conf">
+                    Are you sure to cancel the shift ?
+                    <button type="button" class="btn btn-default" onclick="cancelShift()">Yes</button>
+                    <button type="button" class="btn btn-default" onclick="closeConf()">No</button>
+
+                  </div>
+                  <button type="button" class="btn btn-danger" onclick="openConf()" id="lv-cancel-btn">Cancel
+                    Shift</button>
+                </div>
+              </div>
+
+            </div>
+          </div>  
 
 
           {% if request.user.user_type == 'OPERATIONSUPERVISOR' or request.user.user_type == 'SENIORTEAMLEADER' %}
