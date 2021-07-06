@@ -3497,6 +3497,13 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 			busy_leaders  = len(set(team_leaders_scheduled))
 			busy_cleaners = len(set(team_members_scheduled))
 
+			print(total_newleaders,"total_newleaders")
+			print(team_leaders_scheduled,"team_leaders_scheduled")
+			print(busy_leaders,"busy_leaders")
+			print(total_newcleaners,"total_newcleaners")
+			print(team_members_scheduled,"team_members_scheduled")
+			print(busy_cleaners,"busy_cleaners")
+
 			#slote appending
 			if((total_newcleaners-busy_cleaners)>=number_of_cleaners and (total_newleaders-busy_leaders)>=1):
 				pass
