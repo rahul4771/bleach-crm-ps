@@ -1100,9 +1100,9 @@
 
                                         {% for multi_order_schedule in order.orderschedules %}
                                         {% if multi_order_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
-                                            <div class="col-md-4  c-pr5 visit-list" id="id_select_visit{{multi_order_schedule.id}}" onclick="load_cleaning_team({{forloop.counter}},{{multi_order_schedule.id}})">
+                                            <div style="margin-bottom: 10px;" class="col-md-4  c-pr5 visit-list" id="id_select_visit{{multi_order_schedule.id}}" onclick="load_cleaning_team({{forloop.counter}},{{multi_order_schedule.id}})">
                                                 <div class="cleaning-status-container  pointer ">
-                                                    <div class="row cleaning-status-row  cleaning-status-card">
+                                                    <div  id="id_select_visit_inner{{multi_order_schedule.id}}" class="row cleaning-status-row  cleaning-status-card">
                                                         <div class="vist-card-item-first">
                                                             Visit {{forloop.counter}}
                                                         </div>
@@ -2306,9 +2306,12 @@ function load_cleaning_team(visitcount,scheduleid){
                             $('.id_view_ticket').attr('href','/common/ticket/details/'+response.data.customer_id+'/'+response.data.followup_id+'')
                         }
 
-                        //mark selected visit
-                        $('.visit-list').removeClass('visit-border');
-                        $('#id_select_visit'+response.data.schedule_id+'').addClass('visit-border');
+                        // //mark selected visit
+                        // $('.visit-list').removeClass('visit-border');
+                        // $('#id_select_visit'+response.data.schedule_id+'').addClass('visit-border');
+                          //mark selected visit
+                        $('.cleaning-status-row').removeClass('visit-border');
+                        $('#id_select_visit_inner'+response.data.schedule_id+'').addClass('visit-border');
 
                     }else{
                         console.log("no data")
