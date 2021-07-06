@@ -771,9 +771,9 @@
                                                 </div>
                                                 <div class="col-md-9 pl-0">
                                                     <div class="order-agent-content">
-                                                        <div v-if="edit" class="order-agent-edit">
+                                                        <!-- <div v-if="edit" class="order-agent-edit">
                                                             <img class="pointer"src="{% static 'files/icons/edit.png' %}">
-                                                        </div>
+                                                        </div> -->
 
                                                         {% if orderschedule.evaluation_details.evaluator %}
                                                         <h2>{{orderschedule.evaluation_details.evaluator.name}}</h2>
@@ -797,9 +797,9 @@
                                         </div>
                                         <div class="col-md-2 m-mt30">
                                             <div class="agent-content-section1 c-mt-022">
-                                                <div v-if="edit" class="order-agent-edit">
+                                                <!-- <div v-if="edit" class="order-agent-edit">
                                                     <img class="pointer" src="{% static 'files/icons/edit.png' %}">
-                                                </div>
+                                                </div> -->
                                                 <ul>
                                                 {% if orderschedule.order_scheduler_book.cleaning_method %}
                                                     <li><i class="fas fa-check-circle yellow-tick "></i> {{orderschedule.order_scheduler_book.cleaning_method}} Method
@@ -824,9 +824,9 @@
                                         </div>
                                         <div class="col-md-2 m-mt30">
                                             <div class="agent-content-section1 c-mt-022">
-                                                <div v-if="edit" class="order-agent-edit" >
+                                                <!-- <div v-if="edit" class="order-agent-edit" >
                                                     <img class="pointer" src="{% static 'files/icons/edit.png' %}">
-                                                </div>
+                                                </div> -->
                                                 <ul>
 
                                                     {% if orderschedule.customer_address.gps_location %}<li><i class="fas  test-color fa-map-marker c-mr-10"></i><a href="{{orderschedule.customer_address.gps_location}}">GPS</a></li>{% endif %}
@@ -1076,14 +1076,14 @@
 
                                 {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION' %}
                                 {% else %}
-                                <div>
-                                <button class="view-button view-btn cp"   onclick="addSection(this)"  data-service="{{orderschedule.order_scheduler_book.service_type.name}}">Add Section</button>
+                                <div v-if="edit">
+                                <button style="box-shadow: none !important;" class="view-button view-btn cp"   onclick="addSection(this)"  data-service="{{orderschedule.order_scheduler_book.service_type.name}}">Add Section</button>
                                 </div>
                                 {% endif %}
 
                                 {% if order.evaluation.quatation_status == 'PENDING' %}
-                                <div>
-                                <button class="view-button view-btn cp"   onclick="addSection(this)"  data-service="{{orderschedule.order_scheduler_book.service_type.name}}">Add Section</button>
+                                <div v-if="edit">
+                                <button style="box-shadow: none !important;" class="view-button view-btn cp"   onclick="addSection(this)"  data-service="{{orderschedule.order_scheduler_book.service_type.name}}">Add Section</button>
                                 </div>
                                 {% endif %}
 
@@ -1121,8 +1121,8 @@
                                         </div>
                                        
                                             {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR' or request.user.user_type == 'SALESADMIN' or request.user.user_type == 'SENIORTEAMLEADER' %}
-                                            <div class="text-right">
-                                                <button type="submit" class="view-button view-btn"  onclick="openCleaningDate(this)" data-evaluation_book_id="{{orderschedule.order_scheduler_book.id}}" data-service="{{orderschedule.order_scheduler_book.service_type.name}}" {% for schedule in order.orderschedules %}{% if forloop.first %} data-no_of_cleaners="{{ schedule.no_of_cleaners|default_if_none:'0' }}" {% endif %} {% endfor %} data-cleaning_hours="{{orderschedule.order_scheduler_book.cleaning_hours}}">Add Visit(s)</button>
+                                            <div class="text-right" style="margin-bottom: 10px;" v-if="edit">
+                                                <button style="box-shadow: none !important;" type="submit" class="view-button view-btn"  onclick="openCleaningDate(this)" data-evaluation_book_id="{{orderschedule.order_scheduler_book.id}}" data-service="{{orderschedule.order_scheduler_book.service_type.name}}" {% for schedule in order.orderschedules %}{% if forloop.first %} data-no_of_cleaners="{{ schedule.no_of_cleaners|default_if_none:'0' }}" {% endif %} {% endfor %} data-cleaning_hours="{{orderschedule.order_scheduler_book.cleaning_hours}}">Add Visit(s)</button>
                                             </div>
                                             {% endif %}
                                         
