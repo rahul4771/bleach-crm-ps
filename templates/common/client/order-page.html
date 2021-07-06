@@ -1746,7 +1746,7 @@
                                 <button class="side-buttons" data-toggle="modal" data-target="#resubmitModel">
                                     <div class="row">
                                         <div class="col-xs-4 text-right">
-                                            <img class="button-icons" src="{% static 'files/icons/reorder.png' %}">
+                                            <img class="button-icons" src="{% static 'files/icons/resubmit.png' %}">
                                         </div>
                                         <div class="col-xs-6 text-left mpl-0">
                                             Re-Submit
@@ -2207,7 +2207,7 @@
 <script>
    
 function duplicate(id){
-    window.location.href='/evaluator/reorder?id='+id
+    window.location.href='/common/reorder?id='+id
 } 
 
 function resubmit(id){

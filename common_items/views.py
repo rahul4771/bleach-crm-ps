@@ -3650,6 +3650,9 @@ class Booking(IsAuthenticated,View):
 	def get(self,request,evaluation_detail_id):
 		return render(request,"booking/booking.html")
 
+class Reorder(IsAuthenticated,View):
+	def get(self,request):
+		return render(request,"common/client/reorder.html")	
 
 class EditcleaningTeam(IsAuthenticated,View):
 	def get(self,request,scheduler_id):
