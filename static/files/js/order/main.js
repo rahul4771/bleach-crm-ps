@@ -77,13 +77,19 @@ function editSection(service){
   app.action_type="Edit"
 
   app.service_type=$(service).data('service')
+  app.getProductivity()
   console.log("index is"+index)
  // var sectiondata=$(section).data()
  app.getSection(eval_book_id)
  app.editSectionData.section_id=sid
+
  app.editSectionData.keynotes=app.sections[index-1].keynotesections
   console.log("section is "+JSON.stringify(app.sections[index-1]))
   app.sectionData=app.sections[index-1]
+  app.editSectionData.size=app.sections[index-1].size
+  if(app.sections[index-1].upholstery_type){
+    app.editSectionData.upholstery_type=app.sections[index-1].upholstery_type
+  }
   app.getOtherKeynotes()
       app.getTheKitchens()
      
@@ -350,6 +356,10 @@ const app = new Vue({
             kitchen_keynotes:[],
             other_keynotes:[],
             final_keynotes:[],
+            service_size:[],
+            chair_size:[],
+            sofa_size:[],
+
             //url:'https://test.bleach-kw.com'
             url:'http://localhost:8000'
   },
@@ -715,7 +725,7 @@ const app = new Vue({
     
     changeCategory(){
       this.service_productivity=[]
-      this.editSectionData.size={}
+     // this.editSectionData.size={}
       if(this.editSectionData.category=='Kitchen'){
         var service='Kitchen Cleaning'
         axios.get(this.url+'/customer/ajax/getservicesizeprice?service_type='+service).then(response=>{
@@ -807,6 +817,12 @@ const app = new Vue({
          "is_highprice_facade":false,
          "is_highprice_window":false,
       }
+      if(this.service_type=='Upholstery Cleaning'){
+        if(this.editSectionData.size.upholstery_type=='SOFA'){
+          sectionData.size=sectionData.size+" Seater"
+        }
+      }
+      
       if(this.editSectionData.wall_type.length>0){
         sectionData.wall_type=this.editSectionData.wall_type.join() 
         console.log("in wall type : "+this.editSectionData.wall_type)  
@@ -903,23 +919,92 @@ const app = new Vue({
       this.gotSection=true
       return this.currentSection
     },
-    getSection(id){
+    calcSofaSize(){
+     var found =false
+     var sofa={}
+      for(var i=0;i<this.sofa_size.length;i++){
+        if(this.editSectionData.size<=this.sofa_size[i].max_size){
+          found=true
+          sofa=this.sofa_size[i]
+          break;
+        }
+      }
+      if(found){
+        this.editSectionData.section_cost=sofa.cost
+      }
+      if(!found){
+          var temp = this.sofa_size[this.sofa_size.length-1].cost
+          var rem=parseInt(this.editSectionData.size)-this.sofa_size[this.sofa_size.length-1].max_size
+          this.editSectionData.section_cost=temp+(rem*this.sofa_size[0].unit_price)
+      }
+      
+    },
+     getSection(id){
       this.eval_book_id=id
      
         axios.get(this.url+'/customer/editorder/'+this.orderId+'?evaluation_book_id='+id).then(response=>{
           this.sections=response.data.section_details.evaluationsection_book
           this.service_type=response.data.section_details.service_type.name
-          console.log("productivy is"+JSON.stringify(this.service_productivity))
+           this.service_size=[]
+           this.chair_size=[]
+           this.sofa_size=[]
+           axios.get(this.url+'/customer/ajax/getservicesizeprice?service_type='+this.service_type).then(response=>{
+            var size=response.data
+            for(var i in size){
+              this.service_size.push(size[i])
+              if(size[i].upholstery_type=='CHAIR'){
+                this.chair_size.push(size[i])
+              }
+              else if(size[i].upholstery_type=='SOFA')
+              {
+                this.sofa_size.push(size[i])
+              }
+            }
+            console.log("size is"+JSON.stringify(this.service_size))
+
+           /* General cleaning  size conversion */ 
           if(this.service_type=='General Cleaning'){
             for(var j=0;j<this.sections.length;j++){
-              for(var i=0;i<this.service_productivity.length;i++){
-                if(this.service_productivity[i].size.name==this.sections[j].size){
-                  this.service_productivity[i].size=this.service_productivity[i].size
+              for(var i=0;i<this.service_size.length;i++){
+                if(this.service_size[i].name==this.sections[j].size){
+                  this.sections[j].size=this.service_size[i]
+                 
                 }
               }
             }
               
           }
+          /* Upholstery cleaning  size conversion */ 
+          if(this.service_type=='Upholstery Cleaning'){
+           var type=""
+            for(var j=0;j<this.sections.length;j++){
+              if(this.sections[j].size.includes('Seater')){
+                type="SOFA"
+                //this.sections[j].size=this.this.sections[j].size.split(" ")[0]
+                this.sections[j].size=this.sections[j].size.split(" ")[0]
+                console.log("section size is "+this.sections[j].size.split(" ")[0])
+                this.sections[j].upholstery_type="SOFA"
+              }
+              else{
+                type="CHAIR"
+                this.sections[j].upholstery_type="CHAIR"
+              }
+              console.log("type is"+type)
+              if(type=="CHAIR"){
+                for(var i=0;i<this.service_size.length;i++){
+                  if(this.service_size[i].upholstery_type=="SOFA" && this.sections[j].size==this.service_size[i].name){
+                    
+                    this.sections[j].size=this.service_size[i]
+                   
+                  }
+                }
+              }
+             
+            }
+              
+          } 
+        })
+          
         }).catch(err=>{
           console.log(err)
         })
@@ -958,6 +1043,20 @@ const app = new Vue({
           }
          
       })
+    },
+    async getServiceSize(){
+    
+      this.service_size=[]
+      await axios.get(this.url+'/customer/ajax/getservicesizeprice?service_type='+this.service_type).then(response=>{
+          var size=response.data
+          for(var i in size){
+            this.service_size.push(size[i])
+          }
+         
+         
+      }
+      )
+      return this.service_size
     },
     parseUpholstery(){
       if(this.editSectionData){}
