@@ -2023,6 +2023,12 @@ class GetMultipleServiceCleaningSlotes(APIView):
 				slote_start_time 			      = slote_start_datetime.time()
 				slote_end_time                    = slote_end_datetime.time()
 
+				if slote == 10 and slote_durations == 6:
+					print(slote_start_datetime,"slote_start_datetime")
+					print(slote_end_datetime,"slote_end_datetime")
+					print(slote_start_time,"slote_start_time")
+					print(slote_end_time,"slote_end_time")
+
 				#included shift cleaners
 				shift_cleaners      = ShiftSchedule.objects.select_related('staff').filter(shift_date=cleaning_date).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=slote_start_time)&Q(shift1_end_at__gte=slote_start_time))&Q(Q(shift1_start_at__lte=slote_end_time)&Q(shift1_end_at__gte=slote_end_time))) | Q(Q(Q(shift2_start_at__lte=slote_start_time)&Q(shift2_end_at__gte=slote_start_time))&Q(Q(shift2_start_at__lte=slote_end_time)&Q(shift2_end_at__gte=slote_end_time)))).values_list('staff',flat=True)
 				shift_leaders       = ShiftSchedule.objects.select_related('staff').filter(shift_date=cleaning_date).filter(staff__user_type='TEAMINCHARGE').filter(Q(Q(Q(shift1_start_at__lte=slote_start_time)&Q(shift1_end_at__gte=slote_start_time))&Q(Q(shift1_start_at__lte=slote_end_time)&Q(shift1_end_at__gte=slote_end_time))) | Q(Q(Q(shift2_start_at__lte=slote_start_time)&Q(shift2_end_at__gte=slote_start_time))&Q(Q(shift2_start_at__lte=slote_end_time)&Q(shift2_end_at__gte=slote_end_time)))).values_list('staff',flat=True)
