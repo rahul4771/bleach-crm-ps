@@ -19,7 +19,8 @@ urlpatterns = [
 		url(r'^resources/$',views.ResourceManagement.as_view(),name='resource-management'),
 		url(r'^booking/(?P<evaluation_detail_id>[-\w]+)/$',views.Booking.as_view(),name='booking'),
 		url(r'^newfeedback/order/(?P<orderid>[-\w]+)/$',views.AddFeedBackOrder.as_view(),name='new-feedback-order'),
-
+		url(r'^reorder$',views.Reorder.as_view(),name='reorder'),
+		
 		url(r'^editcleaning/team/(?P<scheduler_id>[-\w]+)/$',views.EditcleaningTeam.as_view(),name='edit-cleaningteam'),
 
 		url(r'^newenquiry/$',views.NewEnquiry.as_view(),name='newenquiry'),
