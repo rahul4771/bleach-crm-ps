@@ -138,7 +138,7 @@ const app=new Vue({
   rules: {
     required: v => !!v || 'this field is required',
   },
-    url:'https://test.bleach-kw.com',
+    url:'http://localhost:8000',
     kitchenData:{
         wall_type:'',
         floor_type:'',
