@@ -400,3 +400,37 @@
   color: #0085C9;
   opacity: 1;
 }
+.inv-sidedrawer{
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 9999;
+  top: 0;
+  right: 0;
+  background-color: #FFFFFF;
+  overflow-x: hidden;
+  transition: 0.5s;
+  border: 1px solid #707070;
+  border-radius: 10px;
+}
+.inv-sidedrawer-inner{
+  padding: 20px;
+  font:  Avenir LT Std;
+  color: #5A5A5A;
+  position: relative;
+}
+.inv-drawer-head{
+  font-size: 20px;
+  margin-top: 5px;
+}
+.inv-sidedrawer hr{
+  border-top: 1px solid #C4C4C4;
+}
+
+.inv-drawer-footer{
+  position: absolute;
+  bottom: 0;
+  text-align: center;
+  width: 100%;
+  margin-bottom: 20px;
+}

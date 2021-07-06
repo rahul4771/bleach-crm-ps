@@ -65,6 +65,10 @@ urlpatterns = [
 		url(r'^bookingmediasave$',views.ClientCleaningBookingMediaSave.as_view(),name='clientcleaningbookingmediasave'),
 		url(r'^evaluatorbookingmultiplephase3/customer/(?P<evaluation_id>[-\w]+)$',views.EvaluatorMultipleCleaningBookingLetCustomerPhase3.as_view(),name='evaluatorclientcleaningmultiplebookingcustomerphase3'),#done not tested
 
+		#order resubmit
+		url(r'^editorder/(?P<order_id>[-\w]+)$',views.EditOrderDetails.as_view(),name='edit-order'),
+		url(r'^resubmitorder/(?P<order_id>[-\w]+)$',views.ReSubmitOrder.as_view(),name='resubmit-order'),
+
 		#edit order
 		url(r'^editorder/(?P<order_id>[-\w]+)$',views.EditOrderDetails.as_view(),name='edit-order'), 
 
