@@ -2297,6 +2297,16 @@ function load_cleaning_team(visitcount,scheduleid){
 
                             $('.id_cleaning_after_images').append('<div><img class="slider-img pointer" onclick="onClick(this)" src="'+value.after_cleaning_url+'" alt=""></div>');
                         })  
+                        $('.owl-carousel').trigger('destroy.owl.carousel');
+                        $(".owl-carousel").owlCarousel({
+                            items: 2,
+                            nav: true,
+                            margin: 10,
+                            navText: [
+                            `<i class='fa fa-chevron-left service-control' @click='prevService()'></i>`,
+                            `<i class='fa fa-chevron-right service-control'></i>`,
+                            ],
+                        });
                         
                         //view ticket
                         if (response.data.followup_id === null){
