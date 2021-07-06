@@ -1182,13 +1182,18 @@
 
                                                 <h3 class="ml-10">Cleaning Team</h3>
                                                 {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR' or request.user.user_type == 'SALESADMIN' or request.user.user_type == 'ACCOUNTANT' %}
-                                                {% if orderschedule.work_status != 'CLEANING_IN_PROGRESS' or orderschedule.work_status != 'CLEANING_FULFILLED' %}
-                                                <a class="team_edit_url" href="{% url 'common_items:edit-cleaningteam' orderschedule.id %}" target="_blank">
+                                                {% if orderschedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}
+                                                <a href="{% url 'common_items:edit-cleaningteam' orderschedule.id %}" target="_blank">
                                                 <div v-if="edit" class="clean-team-edit">
                                                     <img src="{% static 'files/icons/edit.png' %}">
                                                 </div></a>
                                                 {% endif %}
                                                 {% endif %}
+
+                                                <a class="team_edit_url" href="#" target="_blank" hidden>
+                                                <div v-if="edit" class="clean-team-edit">
+                                                    <img src="{% static 'files/icons/edit.png' %}">
+                                                </div></a>
                                             </div>
                                         </div>
 
@@ -2165,24 +2170,28 @@ $(document).ready(function () {
 
 //load cleaning team data
 function load_cleaning_team(visitcount,scheduleid){
-
+    console.log(scheduleid,"sched")
     axios.get(url+'/api/cleaning-team-data/',{ params: { 'visit_count':visitcount, 'schedule_id': scheduleid } })
                 .then(function (response) {
-                    console.log(response.data.before_cleaning_media,"respdata")
+                    console.log(response.data.followup_id,"respdata")
                     if (response.data.success == true){  
                         
                         $('.visit_count').text(response.data.visit_count);
 
                         if (response.data.cleaning_status == 'CLEANING_TEAM_ASSIGNED'){    
                             $('.check_in_out').hide();
-                            $('.team_edit_url').attr("href","/common/editcleaning/team/"+scheduleid+"");
+                            $('.team_edit_url').attr('hidden',false);
+                            $('.team_edit_url').attr('href','/common/editcleaning/team/'+scheduleid+'');
+                            console.log($('.team_edit_url2').attr('hidden'),$('.team_edit_url2').attr('href'),"attr")
                         }else if(response.data.cleaning_status == 'CLEANING_IN_PROGRESS'){
                             $('.check_in_out').show();
                             $('.check_out').hide();
+                            $('.team_edit_url').attr('hidden',true);
                         }else{
                             $('.check_in_out').show();
                             $('.id_check_in').text(response.data.start_at);
                             $('.id_check_out').text(response.data.end_at);
+                            $('.team_edit_url').attr('hidden',true);
                         }
                         
                         $('.id_team_members_div').empty();
@@ -2201,19 +2210,19 @@ function load_cleaning_team(visitcount,scheduleid){
                         $('.id_cleaning_after_images').empty();
 
                         //hiding and showing image divs if images exist
-                        if (response.data.before_cleaning_media == '' && response.data.after_cleaning_media == ''){
+                        if (response.data.before_cleaning_media.length == 0 && response.data.after_cleaning_media.length == 0){
                             $('.id_cleaning_images').hide();
                         }else{
                             $('.id_cleaning_images').show();
                         }
 
-                        if (response.data.before_cleaning_media == ''){
+                        if (response.data.before_cleaning_media.length == 0){
                             $('.id_cleaning_before_div').hide();
                         } else{
                             $('.id_cleaning_before_div').show();
                         }
 
-                        if (response.data.after_cleaning_media == ''){
+                        if (response.data.after_cleaning_media.length == 0){
                             $('.id_cleaning_after_div').hide();
                         } else{
                             $('.id_cleaning_after_div').show();
