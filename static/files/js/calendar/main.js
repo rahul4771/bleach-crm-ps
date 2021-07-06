@@ -212,7 +212,7 @@ const app=  new Vue({
       },
       watch: {
         services: function (val) {
-         
+          
           this.getslotAgain()
         } 
       },
@@ -478,14 +478,14 @@ const app=  new Vue({
             
           },
           getslotAgain(){
-            if(this.services.length>0){
-
+            
+            console.log("i m hee")
             
             this.cleaningData.service_types=this.services
             axios.post(this.url+"/agent/cleaningcallendar/availability/",this.cleaningData).then((response) => {
               this.cleaningDetails=response.data
             })
-          }
+          
           },
           checkslot(index){
             var no_of_slots=this.selected_cleaning_duration.cleaning_hours/2
