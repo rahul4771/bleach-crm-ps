@@ -2019,8 +2019,8 @@ class GetMultipleServiceCleaningSlotes(APIView):
 			for slote_duration in slote_durations:
 				slote_start_datetime 			  = cleaning_date.replace(hour=slote,minute=0,second=0,microsecond=0)
 				slote_end_datetime                = slote_start_datetime+timedelta(hours=slote_duration)
-				slote_start_time 			      = (slote_start_datetime+timedelta(hours=3)).time()
-				slote_end_time                    = (slote_end_datetime+timedelta(hours=3)).time()
+				slote_start_time 			      = slote_start_datetime.time()
+				slote_end_time                    = slote_end_datetime.time()
 
 				#included shift cleaners
 				shift_cleaners      = ShiftSchedule.objects.select_related('staff').filter(shift_date=cleaning_date).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=slote_start_time)&Q(shift1_end_at__gte=slote_start_time))&Q(Q(shift1_start_at__lte=slote_end_time)&Q(shift1_end_at__gte=slote_end_time))) | Q(Q(Q(shift2_start_at__lte=slote_start_time)&Q(shift2_end_at__gte=slote_start_time))&Q(Q(shift2_start_at__lte=slote_end_time)&Q(shift2_end_at__gte=slote_end_time)))).values_list('staff',flat=True)
@@ -2035,9 +2035,12 @@ class GetMultipleServiceCleaningSlotes(APIView):
 				active_cleaners1 	= CleaningTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime))|Q(Q(end_at__gte=slote_start_datetime)&Q(end_at__lte=slote_end_datetime))|Q(Q(start_at__lte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__gte=slote_end_datetime))|Q(Q(start_at__gte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__lte=slote_end_datetime))))
 				active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime))|Q(Q(end_at__gte=slote_start_datetime)&Q(end_at__lte=slote_end_datetime))|Q(Q(start_at__lte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__gte=slote_end_datetime))|Q(Q(start_at__gte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__lte=slote_end_datetime))))
 				if slote == 10 and slote_duration == 2:
-
+					
 					print(active_cleaners1,"active_cleaners1")
 					print(active_cleaners2,"active_cleaners2")
+					print(super_shift_cleaners,"super_shift_cleaners")
+					print(total_newcleaners,"total_newcleaners")
+					print(total_newleaders)
 
 				for service_type in service_types:
 					if service_type == 'General Cleaning':
