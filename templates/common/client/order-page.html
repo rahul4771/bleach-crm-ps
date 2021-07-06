@@ -2052,7 +2052,7 @@ function load_cleaning_team(visitcount,scheduleid){
 
     axios.get(url+'/api/cleaning-team-data/',{ params: { 'visit_count':visitcount, 'schedule_id': scheduleid } })
                 .then(function (response) {
-                    console.log(response.data,"respdata")
+                    console.log(response.data.before_cleaning_media,"respdata")
                     if (response.data.success == true){  
                         
                         $('.visit_count').text(response.data.visit_count);
