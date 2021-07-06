@@ -4597,7 +4597,7 @@ class EditOrderDetails(APIView):
 				new_keynotes = []
 				EvaluationSectionKeynote.objects.filter(evaluation_section=saved_section).delete()
 				for keynote in keynotes:
-					new_keynotes.append(EvaluationSectionKeynote(evaluation_section=saved_section,sub_area=keynote['keynote'],quantity=keynote['quantity']))
+					new_keynotes.append(EvaluationSectionKeynote(evaluation_section=saved_section,sub_area=keynote['sub_area'],quantity=keynote['quantity']))
 				EvaluationSectionKeynote.objects.bulk_create(new_keynotes)
 
 				response_dict['edit_success']       = True
