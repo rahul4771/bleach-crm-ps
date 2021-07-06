@@ -1292,7 +1292,7 @@
                                                     <div class="owl-carousel c-mt-10 id_cleaning_before_images">
                                                     {% for cleaning_team in orderschedule.cleaning_team %}{% for media in cleaning_team.cleaning_team_medias %}{% if media.taken_status == 'BEFORE_CLEANING' %}
                                                         <div >
-                                                            <img class="slider-img pointer" onclick="onClick(this)" src="{{media.media.url}}" alt="">
+                                                            <img class="slider-img pointer before_image{{orderschedule.order_scheduler_book.id}}" onclick="onClick(this)" src="{{media.media.url}}" alt="">
                                                         </div>
                                                     {% endif %}{% endfor %}{% endfor %}
                                                     </div>
@@ -1307,7 +1307,7 @@
                                                     <div class="owl-carousel c-mt-10 id_cleaning_after_images">
                                                         {% for cleaning_team in orderschedule.cleaning_team %}{% for media in cleaning_team.cleaning_team_medias %}{% if media.taken_status == 'AFTER_CLEANING' %}
                                                         <div>
-                                                            <img class="slider-img pointer" onclick="onClick(this)" src="{{media.media.url}}" alt="">
+                                                            <img class="slider-img pointer after_image{{orderschedule.order_scheduler_book.id}}" onclick="onClick(this)" src="{{media.media.url}}" alt="">
                                                         </div>
                                                         {% endif %}{% endfor %}{% endfor %}
                                                     </div>
@@ -2165,6 +2165,8 @@ $(document).ready(function () {
     {% if order.evaluation.customer.is_sms == True %}
         app.contacts.push('SMS');
     {% endif %}
+
+    
 })
 
 
@@ -2695,6 +2697,23 @@ $(".pn-prev").click();
                 $('.ticket-btn'+book_id+'').hide();
             }
             }    
+
+            var before_images_count = document.getElementsByClassName("before_image"+book_id+"").length ; 
+            var after_images_count = document.getElementsByClassName("after_image"+book_id+"").length ;
+
+            console.log(before_images_count,after_images_count,"imgcount")
+
+            if (before_images_count > 0){
+                $('.id_cleaning_before_div').show();
+            }else{
+                $('.id_cleaning_before_div').hide();
+            }
+
+            if (after_images_count > 0){
+                $('.id_cleaning_after_div').show();
+            }else{
+                $('.id_cleaning_after_div').hide();
+            }
 
     })
 </script>
