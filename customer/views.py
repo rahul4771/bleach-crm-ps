@@ -2018,7 +2018,7 @@ class GetMultipleServiceCleaningSlotes(APIView):
 		for slote in slotes:
 			available_durations = []
 			for slote_duration in slote_durations:
-				slote_start_datetime 			  = cleaning_date.replace(hour=slote,minute=0,second=0,microsecond=0)+timedelta(hours=3)
+				slote_start_datetime 			  = cleaning_date.replace(hour=slote,minute=0,second=0,microsecond=0)
 				slote_end_datetime                = slote_start_datetime+timedelta(hours=slote_duration)
 				slote_start_time 			      = slote_start_datetime.time()
 				slote_end_time                    = slote_end_datetime.time()
@@ -2035,7 +2035,10 @@ class GetMultipleServiceCleaningSlotes(APIView):
 				
 				active_cleaners1 	= CleaningTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime))|Q(Q(end_at__gte=slote_start_datetime)&Q(end_at__lte=slote_end_datetime))|Q(Q(start_at__lte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__gte=slote_end_datetime))|Q(Q(start_at__gte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__lte=slote_end_datetime))))
 				active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime))|Q(Q(end_at__gte=slote_start_datetime)&Q(end_at__lte=slote_end_datetime))|Q(Q(start_at__lte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__gte=slote_end_datetime))|Q(Q(start_at__gte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__lte=slote_end_datetime))))
-				
+				if slote == 10 and slote_duration == 2:
+					print(active_cleaners1,"active_cleaners1")
+					print(active_cleaners2,"active_cleaners2")
+					
 				for service_type in service_types:
 					if service_type == 'General Cleaning':
 						active_cleaners1 	= active_cleaners1.filter(member__is_general_skill=True)
