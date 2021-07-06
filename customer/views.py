@@ -2023,7 +2023,7 @@ class GetMultipleServiceCleaningSlotes(APIView):
 				slote_start_time 			      = slote_start_datetime.time()
 				slote_end_time                    = slote_end_datetime.time()
 
-				if slote == 10 and slote_durations == 6:
+				if slote == 10 and slote_duration == 6:
 					print(slote_start_datetime,"slote_start_datetime")
 					print(slote_end_datetime,"slote_end_datetime")
 					print(slote_start_time,"slote_start_time")
