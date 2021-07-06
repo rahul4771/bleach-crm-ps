@@ -1130,7 +1130,7 @@
                                        
                                             {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR' or request.user.user_type == 'SALESADMIN' or request.user.user_type == 'SENIORTEAMLEADER' %}
                                             <div class="text-right">
-                                                <button type="submit" class="view-button view-btn"  onclick="openCleaningDate(this)" data-evaluation_book_id="{{orderschedule.order_scheduler_book.id}}" data-service="{{orderschedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{orderschedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{orderschedule.order_scheduler_book.cleaning_hours}}">Add Visit(s)</button>
+                                                <button type="submit" class="view-button view-btn"  onclick="openCleaningDate(this)" data-evaluation_book_id="{{orderschedule.order_scheduler_book.id}}" data-service="{{orderschedule.order_scheduler_book.service_type.name}}" {% for schedule in order.orderschedules %}{% if forloop.first %} data-no_of_cleaners="{{ schedule.no_of_cleaners|default_if_none:'0' }}" {% endif %} {% endfor %} data-cleaning_hours="{{orderschedule.order_scheduler_book.cleaning_hours}}">Add Visit(s)</button>
                                             </div>
                                             {% endif %}
                                         

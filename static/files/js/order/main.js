@@ -30,6 +30,7 @@ $(document).ready(function () {
     app.setDate($('#date_hidden').val())
     
     app.getSlotes(moment(date,'MM/DD/YYYY').format('DD-MM-YYYY'))
+    app.getVisitSlotes(moment(date,'MM/DD/YYYY').format('DD-MM-YYYY'))
 });
 
   $(".owl-carousel").owlCarousel({
@@ -137,6 +138,8 @@ function openCleaningDate(service){
   $('#cleaning-date-tigger').click()
   var data=$(service).data()
   app.no_of_cleaners=data.no_of_cleaners
+  console.log("cleaners:"+data.no_of_cleaners)
+  app.selected_no_of_cleaners=data.no_of_cleaners
   app.service_type=data.service
   app.cleaning_hours=parseInt(data.cleaning_hours)
   app.no_of_slots=Math.ceil(data.cleaning_hours/2)
@@ -179,7 +182,8 @@ function addSection(service){
      "is_highprice_facade":false,
      "is_highprice_window":false,
   }
- 
+ app.kitchen_keynotes=[]
+ app.other_keynotes=[]
   app.action_type="Add"
   app.getProductivity()
   $('#edit-dialog-tigger').click()
@@ -509,6 +513,32 @@ const app = new Vue({
       });
   
     },
+    getVisitSlotes(date){
+      this.schedule_serviceTypes=[]
+      this.selectedSlots=[]
+      this.schedule_serviceTypes.push(this.service_type)
+      axios
+      .post(
+         this.url+"/customer/ajax/getmultipleservicecleaningslotes",{service_types:this.schedule_serviceTypes,cleaning_date:date,number_of_cleaners:this.selected_no_of_cleaners}
+       
+      )
+      .then((response) => {
+         this.timeSlots = response.data.slotes;
+         this.parseOneTimeSlots()
+         if(response.data.Error){
+           this.errMsg=response.data['Error']
+         }
+         else{
+           this.errMsg=''
+         }
+      
+
+      })
+       .catch((error) => {
+        console.log(error);
+      });
+  
+    },
     resetVisit(){
       this.selectedSlots=[]
       this.schedule_id="",
@@ -516,6 +546,7 @@ const app = new Vue({
        this.cleaning_time="",
        this.cleaning_hours="",
        this.no_of_cleaners="",
+       this.selected_no_of_cleaners="",
        this.selectedSlots=[]
       this.setDate(moment().format('MM/DD/YYYY'))
     this.selected_date=moment().format('DD-MM-YYYY')
@@ -890,7 +921,7 @@ const app = new Vue({
   calcSectionCost(){
    
     this.editSectionData.section_cost=this.editSectionData.size.cost
-    this.section_fi
+    this.section_fixed
     this.recalcKeynoteCost()
   },
     setDate(d){
