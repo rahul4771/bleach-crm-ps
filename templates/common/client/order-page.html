@@ -166,11 +166,14 @@
                       track-by="name"
                       label="name"
                       @input="calcSectionCost()"
+
+
+
                     ></multiselect>
                   
                         
                  </div>
-                 <div class="col-md-6 mt-10">
+                 <div class="col-md-6 mt-10" v-if="service_type=='Upholstery Cleaning' || service_type=='Mattress Cleaning' || service_type=='Carpet Cleaning'">
                   <!--  <multiselect
                     v-model="value"
                     placeholder="Material"
@@ -192,7 +195,7 @@
                   ></multiselect>
                  </div>
                
-                <div class="col-md-6 mt-10" >
+                <div class="col-md-6 mt-10" v-if="service_type=='General Cleaning' || service_type=='Deep Cleaning' || service_type=='Storage Area' || service_type=='Facade Cleaning' || service_type=='Kitchen Cleaning'|| service_type=='Sterilization'" >
                     <div class=" bold-text common-label required-field"> <label>Wall type</label></div>
                   <multiselect
                     v-model="editSectionData.wall_type"
@@ -205,7 +208,7 @@
                     
                   ></multiselect>
                 </div>
-                <div class="col-md-6 mt-10" >
+                <div class="col-md-6 mt-10"  v-if="service_type=='General Cleaning' || service_type=='Deep Cleaning' || service_type=='Storage Area' || service_type=='Kitchen Cleaning'|| service_type=='Sterilization'||service_type=='Car Parking Umbrella'" >
                     <div class=" bold-text common-label required-field"> <label>Floor type</label></div>
                   <multiselect
                     v-model="editSectionData.floor_type"
@@ -219,7 +222,7 @@
                     
                   ></multiselect>
                 </div>
-                <div class="col-md-6 mt-10" >
+                <div class="col-md-6 mt-10" v-if="service_type=='General Cleaning' || service_type=='Deep Cleaning' || service_type=='Storage Area' || service_type=='Kitchen Cleaning'|| service_type=='Sterilization' || service_type=='Car Parking Umbrella'"  >
                     <div class=" bold-text common-label required-field"> <label>Ceiling type</label></div>
                   <multiselect
                     v-model="editSectionData.ceiling_type"
@@ -233,18 +236,7 @@
                     
                   ></multiselect>
                 </div>
-               <!-- <div class="col-md-6 mt-10" v-if="sectionData.dirt_level">
-                    <div class=" bold-text common-label required-field"> <label>Dirt Level</label></div>
-                  <input  type="text" class="textBox OnlyText" placeholder="Dirt Level" required="" v-model="sectionData.dirt_level">
-                </div>
-                <div class="col-md-6 mt-10" v-if="sectionData.apartment">
-                    <div class=" bold-text common-label required-field"> <label>Apartment</label></div>
-                  <input  type="text" class="textBox OnlyText" placeholder="Dirt Level" required="" v-model="sectionData.apartment">
-                </div>
-                <div class="col-md-6 mt-10" v-if="sectionData.floor">
-                    <div class=" bold-text common-label required-field"> <label>Floor</label></div>
-                  <input  type="text" class="textBox OnlyText" placeholder="Dirt Level" required="" v-model="sectionData.floor">
-                </div>-->
+              
                 <div class="col-md-12 mt-20">
                    <b>Key Notes</b> 
                     <div class="row mt-10" v-if="keynote_update">
@@ -2299,6 +2291,16 @@ function load_cleaning_team(visitcount,scheduleid){
 
                             $('.id_cleaning_after_images').append('<div><img class="slider-img pointer" onclick="onClick(this)" src="'+value.after_cleaning_url+'" alt=""></div>');
                         })  
+                        $('.owl-carousel').trigger('destroy.owl.carousel');
+                        $(".owl-carousel").owlCarousel({
+                            items: 2,
+                            nav: true,
+                            margin: 10,
+                            navText: [
+                            `<i class='fa fa-chevron-left service-control' @click='prevService()'></i>`,
+                            `<i class='fa fa-chevron-right service-control'></i>`,
+                            ],
+                        });
                         
                         //view ticket
                         if (response.data.followup_id === null){
