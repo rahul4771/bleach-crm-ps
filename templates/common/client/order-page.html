@@ -1744,6 +1744,21 @@
                             {% endif %}
                             {% endfor %}
 
+                            {% if order.evaluation.quatation_status == 'EXPIRED' or order.evaluation.quatation_status == 'REJECTED' %}
+                            <div class="c-button-div">
+                                <button class="side-buttons" data-toggle="modal" data-target="#reorderModel">
+                                    <div class="row">
+                                        <div class="col-xs-4 text-right">
+                                            <img class="button-icons" src="{% static 'files/icons/reorder.png' %}">
+                                        </div>
+                                        <div class="col-xs-6 text-left mpl-0">
+                                            Re-Submit
+                                        </div>
+                                    </div>
+                                </button>
+                            </div>
+                            {% endif %}
+
                             {% if order.order_status == 'APPROVED_BY_CLIENT' or order.order_status == 'ORDER_IN_PROGRESS'  %}
                             <div class="c-button-div">
                                 <button data-toggle="modal" data-target="#cancelModel" class="side-buttons">
@@ -1913,6 +1928,7 @@
         </div>
     </div>
 </div>
+
 <!-- Modal Add Reorder -->
 <div class="modal fade bd-example-modal-lg" id="reorderModel" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -1951,6 +1967,47 @@
     </div>
 </div>
 <!-- Modal Add Reorder -->
+
+<!-- Modal Add Resubmit-->
+<div class="modal fade bd-example-modal-lg" id="resubmitModel" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog cancel-model cancel-order-border" role="document">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="d-flex cl-modal-icons">
+                        <button data-dismiss="modal" class="model-close">
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="cancel-model-content">
+                        <h1>Do you want to Resubmit?</h1>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <div class="cancel-model-content">
+                        <button class="sent-button" type="submit" onclick="resubmit({{order.id}});">Yes</button>
+                        <button data-dismiss="modal" class="view-button">Cancel</button>
+                        
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Add Resubmit -->
+
+<!--Rise Ticket-->
 <div class="modal fade bd-example-modal-lg" id="raiseTicketModel" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog cancel-model cancel-order-border" role="document">
@@ -1986,6 +2043,9 @@
         </div>
     </div>
 </div>
+<!--Rise Ticket-->
+
+
 <!-- Add visit popup begins here-->
 <div class="modal fade bd-example-modal-lg" id="cleaningDateModel" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -2152,6 +2212,11 @@
 function duplicate(id){
     window.location.href='/evaluator/reorder?id='+id
 } 
+
+function resubmit(id){
+    window.location.href='/customer/resubmitorder?id='+id
+}
+
 $(document).ready(function () {
     {% if order.evaluation.customer.is_email == True %}
         app.contacts.push('EMAIL');
