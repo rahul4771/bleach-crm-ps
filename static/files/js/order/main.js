@@ -349,13 +349,15 @@ const app = new Vue({
             old_kitchen_size:[],
             kitchen_keynotes:[],
             other_keynotes:[],
-            final_keynotes:[]
+            final_keynotes:[],
+            //url:'https://test.bleach-kw.com'
+            url:'http://localhost:8000'
   },
   methods:{
    
     getTheSize(service){
       var service_productivity=[]
-      axios.get('https://test.bleach-kw.com/customer/ajax/getservicesizeprice?service_type='+service).then(response=>{
+      axios.get(this.url+'/customer/ajax/getservicesizeprice?service_type='+service).then(response=>{
           this.productivity=response.data
           for(var i in this.productivity){
             service_productivity.push(this.productivity[i])
@@ -716,7 +718,7 @@ const app = new Vue({
       this.editSectionData.size={}
       if(this.editSectionData.category=='Kitchen'){
         var service='Kitchen Cleaning'
-        axios.get('https://test.bleach-kw.com/customer/ajax/getservicesizeprice?service_type='+service).then(response=>{
+        axios.get(this.url+'/customer/ajax/getservicesizeprice?service_type='+service).then(response=>{
           this.productivity=response.data
           for(var i in this.productivity){
             if(!this.editSectionData.is_newkitchen && !this.productivity[i].is_newkitchen){
@@ -904,9 +906,20 @@ const app = new Vue({
     getSection(id){
       this.eval_book_id=id
      
-        axios.get('http://localhost:8000/customer/editorder/'+this.orderId+'?evaluation_book_id='+id).then(response=>{
+        axios.get(this.url+'/customer/editorder/'+this.orderId+'?evaluation_book_id='+id).then(response=>{
           this.sections=response.data.section_details.evaluationsection_book
           this.service_type=response.data.section_details.service_type.name
+          console.log("productivy is"+JSON.stringify(this.service_productivity))
+          if(this.service_type=='General Cleaning'){
+            for(var j=0;j<this.sections.length;j++){
+              for(var i=0;i<this.service_productivity.length;i++){
+                if(this.service_productivity[i].size.name==this.sections[j].size){
+                  this.service_productivity[i].size=this.service_productivity[i].size
+                }
+              }
+            }
+              
+          }
         }).catch(err=>{
           console.log(err)
         })
@@ -938,12 +951,16 @@ const app = new Vue({
     },
     getProductivity(){
       this.service_productivity=[]
-      axios.get('https://test.bleach-kw.com/customer/ajax/getservicesizeprice?service_type='+this.service_type).then(response=>{
+      axios.get(this.url+'/customer/ajax/getservicesizeprice?service_type='+this.service_type).then(response=>{
           this.productivity=response.data
           for(var i in this.productivity){
             this.service_productivity.push(this.productivity[i])
           }
+         
       })
+    },
+    parseUpholstery(){
+      if(this.editSectionData){}
     }
   }
  
