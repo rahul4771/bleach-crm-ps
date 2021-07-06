@@ -4471,7 +4471,7 @@ class ReSubmitOrder(APIView):
 	authentication_classes    = ()
 	
 	def get(self,request,order_id):
-		order = order.objects.select_related('evaluation').filter(Q(evaluation__quatation_status='REJECTED')|Q(evaluation__quatation_status='EXPIRED')).get(id=order_id)
+		order = Order.objects.select_related('evaluation').filter(Q(evaluation__quatation_status='REJECTED')|Q(evaluation__quatation_status='EXPIRED')).get(id=order_id)
 		if order:
 			order.order_status = None
 			order.evaluation.quatation_status = 'PENDING'
@@ -4484,7 +4484,7 @@ class ReSubmitOrder(APIView):
 			order.save()
 		
 			messages.success(request,"You have Succesfully Re-submitted the Order")
-			
+
 		return redirect('common_items:client-orderdetails',order_id)
 
 #edit order apis
