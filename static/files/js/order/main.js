@@ -145,7 +145,7 @@ function openCleaningDate(service){
   app.no_of_slots=Math.ceil(data.cleaning_hours/2)
   app.evaluation_book_id=data.evaluation_book_id
   app.getSlotes(moment().format('DD-MM-YYYY'))
-  
+  $("#calendar").datepicker("update", (moment().format('MM/DD/YYYY')));
 }
 function editCleaningDate(service){
   app.cleaning_action='edit_cleaning'
@@ -162,6 +162,7 @@ function editCleaningDate(service){
   app.cleaning_start_date=data.cleaning_start_date
   app.getSlotes(app.cleaning_start_date)
   $('#date_hidden').val((moment(app.cleaning_start_date,'DD-MM-YYYY').format('MM/DD/YYYY')))
+  $("#calendar").datepicker("update", moment(app.cleaning_start_date,'DD-MM-YYYY').format('MM/DD/YYYY'));
   app.setDate(moment(app.cleaning_start_date,'DD-MM-YYYY').format('MM/DD/YYYY'))
   
 }

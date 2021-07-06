@@ -268,7 +268,7 @@
                             </div>
                     </div>
                 </div>
-                <div class="col-md-12 mt-20">
+                <div class="col-md-12 mt-20" v-if="service_type=='General Cleaning' || service_type=='Deep Cleaning'">
                     <b>Kitchen (s)</b> 
                      <div class="row mt-10" v-if="keynote_update">
                          <div class="col-md-4 mt-10" v-for="(kitchenkeynote,kindex) in kitchen_keynotes" v-bind:key="kindex">
@@ -945,15 +945,7 @@
                                     <div class="row section-detials-text">
                                         <div class="col-md-6 c-right-border" style="padding-left: 1px;">
                                             <div class="col-md-6">
-                                                <div class="row c-mb-3">
-                                                    <div class="col-xs-5">Category</div>
-                                                    <div class="col-xs-7">: <span class="c-text ">{{section.category}}</span></div>
-                                                </div>
-                                                <div class="row c-mb-3">
-                                                    <div class="col-xs-5">Dirt level</div>
-                                                    <div class="col-xs-7">: <span class="c-text  ">{{section.dirt_level}}</span>
-                                                    </div>
-                                                </div>
+                                               
 
                                                 {% if section.age %}
                                                 <div class="row c-mb-3">
