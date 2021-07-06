@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+<div class="wrapper">
+    <!--wrapper-->
+    {% include "inventory/common/header.html" %}
+    <section class="content">
+        <div class="container-fluid space topspace">
+            <div class="welcome-wrapper">
+                <!--welcome-wrapper-->
+                <h1 class="dashboard-head">Orders</h1>
+                <!-- <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p> -->
+            </div>
+        </div>
+
+        <div class="main-content-holder">
+            <!--main-content-holder-->
+            <div class="white-wrapper">
+                <div class="d-flex">
+                    <div>
+
+                        <div class="inv-input-container h-30">
+                            <i class="fa fa-search inv-icon-input" aria-hidden="true"></i>
+                            <input type="text" placeholder="Search order" class="inv-input w-250" name="attributes">
+                        </div>
+
+
+                    </div>
+                    <div class="right-pos">
+                        <button class="inv-plan-btn">
+                            <i class="fa fa-filter mr-5" aria-hidden="true"></i>
+                            Filter
+                        </button>
+                        <!-- <button class="inv-blue-btn" data-toggle="modal" data-target="#addModel" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Store </button> -->
+                    </div>
+                </div>
+                <div class="mt-20">
+                    <table class="inv-table">
+                        <tr>
+                            <th style="width: %;">
+                                Order Number
+                            </th>
+                            <th style="width: %;">
+                                Team Leader
+                            </th>
+                            <th style="width: %;">
+                                Service Type
+                            </th>
+                            <th style="width: %;">
+                                Check Out/IN
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th style="width: %;" class="text-center">Action</th>
+                        </tr>
+                        <tr>
+                            <td>
+                                0000000
+                            </td>
+                            <td>
+                                Name
+                            </td>
+                            <td>
+                                Name
+                            <td>
+                                Out
+                            </td>
+
+                            <td>
+                                <button class="inv-active-btn">
+                                    Active
+                                </button>
+                            </td>
+                            <td style="float: right;">
+
+                                <button class="inv-plan-img-btn" onclick="openNav()"> <img
+                                        src="{% static 'files/inventory/icons/edit.png' %}" alt=""> </button>
+                                <button class="inv-plan-img-btn"> <img
+                                        src="{% static 'files/inventory/icons/delete.png' %}" alt=""> </button>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                0000000
+                            </td>
+                            <td>
+                                Name
+                            </td>
+                            <td>
+                                Name
+                            <td>
+                                Out
+                            </td>
+
+                            <td>
+                                <button class="inv-active-btn">
+                                    Active
+                                </button>
+                            </td>
+                            <td style="float: right;">
+
+                                <button class="inv-plan-img-btn" onclick="openNav()"> <img
+                                        src="{% static 'files/inventory/icons/edit.png' %}" alt=""> </button>
+                                <button class="inv-plan-img-btn"> <img
+                                        src="{% static 'files/inventory/icons/delete.png' %}" alt=""> </button>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                0000000
+                            </td>
+                            <td>
+                                Name
+                            </td>
+                            <td>
+                                Name
+                            <td>
+                                Out
+                            </td>
+
+                            <td>
+                                <button class="inv-active-btn">
+                                    Active
+                                </button>
+                            </td>
+                            <td style="float: right;">
+
+                                <button class="inv-plan-img-btn" onclick="openNav()"> <img
+                                        src="{% static 'files/inventory/icons/edit.png' %}" alt=""> </button>
+                                <button class="inv-plan-img-btn"> <img
+                                        src="{% static 'files/inventory/icons/delete.png' %}" alt=""> </button>
+
+                            </td>
+                        </tr>
+
+
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="orderEdit" class="inv-sidedrawer">
+
+        <div class="inv-sidedrawer-inner">
+            <div class="d-flex">
+                <div class="inv-drawer-head">
+                    Edit
+                </div>
+                <div class="right-pos">
+
+                    <button onclick="closeNav()" class="img-button">
+                        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                    </button>
+                </div>
+            </div>
+            <hr>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Team Leader</div>
+
+                    <select id="id_payment" class="minimal">
+                        <option  ></option>
+                        <option  >Active</option>
+                        <option value="Post Paid">Inactive</option>
+
+                    </select>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Service Type</div>
+
+                    <select id="id_payment" class="minimal">
+                        <option  ></option>
+                        <option  >Active</option>
+                        <option value="Post Paid">Inactive</option>
+
+                    </select>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-6 ">
+                    <div class="model-input-name">Check In/Out </div>
+
+                    <select id="id_payment" class="minimal">
+                        <option  ></option>
+                        <option  >Active</option>
+                        <option value="Post Paid">Inactive</option>
+
+                    </select>
+                </div>
+                <div class="col-md-6 ">
+                    <div class="model-input-name">Status</div>
+
+                    <select id="id_payment" class="minimal">
+                        <option  ></option>
+                        <option  >Active</option>
+                        <option value="Post Paid">Inactive</option>
+
+                    </select>
+                </div>
+
+            </div>
+
+
+
+          
+        </div>
+        <div class="inv-drawer-footer">
+            <button class="sent-button" >Submit</button>
+                        <button data-dismiss="modal" onclick="closeNav()" class="view-button">Cancel</button>
+        </div>
+    </div>
+
+
+
+    {% endblock %}
+
+
+    {% block javascript %}
+
+    <script>
+        function openNav() {
+            
+            if(screen.width<= 600){
+                document.getElementById("orderEdit").style.width = "100%";
+            }else if(screen.width<= 720){
+                document.getElementById("orderEdit").style.width = "50%";
+            }
+            else{
+                document.getElementById("orderEdit").style.width = "30%";
+            }
+           
+        }
+
+        function closeNav() {
+            document.getElementById("orderEdit").style.width = "0";
+        }
+    </script>
+
+    {% endblock %}

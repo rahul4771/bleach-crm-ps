@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+<div class="wrapper"><!--wrapper-->
+    {% include "inventory/common/header.html" %}
+    <section class="content">
+        <div class="container-fluid space topspace">
+            <div class="welcome-wrapper">
+                <!--welcome-wrapper-->
+                <h1 class="dashboard-head">Store</h1>
+                <!-- <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p> -->
+            </div>
+        </div>
+
+        <div class="main-content-holder"><!--main-content-holder-->   
+            <div class="white-wrapper">
+                <div class="d-flex">
+                    <div>
+                     
+                        <div class="inv-input-container h-30">
+                            <i class="fa fa-search inv-icon-input" aria-hidden="true"></i>
+                            <input type="text" placeholder="Search Store" class="inv-input w-250" name="attributes">
+                          </div>
+                    
+                    
+                    </div>
+                    <div class="right-pos">
+                        <button class="inv-blue-btn" data-toggle="modal" data-target="#addModel" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Store </button>
+                    </div>
+                </div>
+                <div class="mt-20">
+                    <table class="inv-table"> 
+                        <tr>
+                            <th style="width: %;">
+                                Store Name
+                            </th>
+                            <th style="width: %; text-align: center;">
+                                Store Code
+                            </th>
+                            <th style="width: %;" class="text-center">
+                                Address
+                            </th>
+                            <th style="width: %;" class="text-center">
+                                Contact
+                            </th>
+                            <th>
+                                Status
+                            </th>
+                            <th style="width: %;" class="text-center">Action</th>
+                        </tr>
+                        <tr>
+                            <td>
+                                
+                                Supplier 1
+                            </td>
+                            <td class="text-center">
+                                3
+                            </td>
+                            <td class="text-center">
+                                Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod 
+                            <td class="text-center">
+                                00000000
+                            </td>
+                            <td>
+                                <button class="inv-active-btn">
+                                    Active
+                                </button>
+                            </td>
+                            <td style="float: right;">
+                              
+                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                
+                                Supplier 1
+                            </td>
+                            <td class="text-center">
+                                3
+                            </td>
+                            <td class="text-center">
+                                Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod 
+                            <td class="text-center">
+                                00000000
+                            </td>
+                            <td>
+                                <button class="inv-active-btn">
+                                    Active
+                                </button>
+                            </td>
+                            <td style="float: right;">
+                              
+                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+
+                            </td>
+                        </tr>
+                     
+                        
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="modal fade" id="addModel" role="dialog">
+        <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12 mt-20">
+
+                        
+                        <div class="d-flex ">
+                            <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Add Category</p></div>
+                            <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                                <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                            </button>
+    
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-40" >
+                    <div class="col-md-5 pr-0">
+                        <div class="model-input-name">Category Name</div>
+                        <div class="inv-input-container h-30"> 
+                            <input type="text" class="w-p-100 inv-in" name="attributes">
+                          </div>
+                    </div>
+    
+                    <div class="col-md-4 pr-0">
+                        <div class="model-input-name">Category Code</div>
+                        <div class="inv-input-container h-30"> 
+                            <input type="text"  class="w-p-100 inv-in" name="attributes">
+                          </div>
+                    </div>
+                    <div class="col-md-3 ">
+                        <div class="model-input-name">Status</div>
+
+                        <select id="id_payment" class="minimal">
+                            <option style="background: #fff;" value="Prepaid">Active</option>
+                            <option value="Post Paid">Inactive</option>
+                            
+                          </select>
+                    </div>
+    
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <div class="cancel-model-content">
+                            <button class="sent-button" >Submit</button>
+                            <button data-dismiss="modal" class="view-button">Cancel</button>
+                          
+                        </div>
+                    </div>
+    
+                </div>
+            </div>
+        </div>
+      </div>
+</div>
+
+
+
+{% endblock %}
