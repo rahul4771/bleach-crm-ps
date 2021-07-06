@@ -2102,7 +2102,7 @@ class GetMultipleServiceCleaningSlotes(APIView):
 				busy_cleaners = len(set(team_members_scheduled))
 
 				print(slote,"slote")
-				print(duration,"duration")
+				print(slote_duration,"duration")
 				print(total_newcleaners,"total_newcleaners")
 				print(busy_cleaners,"busy_cleaners")
 				print(total_newleaders,"total_newleaders")
