@@ -36,6 +36,17 @@
     max-width: 100px;
     margin-right: 15px;
 }
+.justify-center{
+  justify-content: center;
+}
+#kitchen-select{
+  width:100%;
+  max-width:100%;
+}
+.kitchen-details{
+  margin-top: 10px;
+    margin-bottom: 15px;
+}
 .text-right{
   text-align: right !important;
 }
@@ -69,6 +80,9 @@
 }
 .p-10 {
   padding: 10px;
+}
+.pl-10 {
+  padding-left: 10px;
 }
 .pl-25 {
   padding-left: 25px !important;
