@@ -922,7 +922,7 @@ const app = new Vue({
   calcSectionCost(){
    
     this.editSectionData.section_cost=this.editSectionData.size.cost
-    this.section_fixed
+    this.fixed_section_cost=this.editSectionData.section_cost
     this.recalcKeynoteCost()
   },
     setDate(d){
