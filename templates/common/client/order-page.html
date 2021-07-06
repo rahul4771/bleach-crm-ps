@@ -151,7 +151,7 @@
                     </div>
                 </div>
                  </div>
-                <div class="col-md-6 mt-10">
+                <div class="col-md-6 mt-10" v-if="service_type!='Upholstery Cleaning'">
                     
                     <div class=" bold-text common-label required-field"> <label>Size</label></div>
                     <multiselect
@@ -159,6 +159,35 @@
                       placeholder="Select a Size"
                       
                       :options="service_productivity"
+
+                      :multiple="false"
+                      :taggable="false"
+                      :show-labels="false"
+                      track-by="name"
+                      label="name"
+                      @input="calcSectionCost()"
+
+
+
+                    ></multiselect>
+                  
+                        
+                 </div>
+                 <div class="col-md-6 mt-10" v-if="service_type=='Upholstery Cleaning' && editSectionData.upholstery_type=='SOFA'">
+                    
+                    <div class=" bold-text common-label required-field"> <label>Size</label></div>
+                    <input   type="text" class="textBox OnlyNumber" placeholder="Seaters" required="" v-model="editSectionData.size" @input="calcSofaSize()">
+                  
+                        
+                 </div>
+                 <div class="col-md-6 mt-10" v-if="service_type=='Upholstery Cleaning' && editSectionData.upholstery_type=='CHAIR' ">
+                    
+                    <div class=" bold-text common-label required-field"> <label>Size</label></div>
+                    <multiselect
+                      v-model="editSectionData.size"
+                      placeholder="Select a Size"
+                      
+                      :options="chair_size"
 
                       :multiple="false"
                       :taggable="false"
