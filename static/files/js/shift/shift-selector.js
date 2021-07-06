@@ -3,7 +3,7 @@
 // //var url = 'https://my.bleachkw.com';
 // //var url = 'https://test.bleach-kw.com';
 // //var url='http://localhost:8000';
-
+var shiftId = ''
  //var resourceList=[];
 // var cleanerList=[];
 // var teamLeaderList=[];
@@ -244,14 +244,14 @@ function selectDayShift(el){
     }
     if($('#'+dayId).find('.lv-shift-date').hasClass('lv-annual')){
       
-        $('.modal-title').text('Annual Leave');
+        $('.modal-title').text('Shift 1');
         $('.modal-title').removeClass('lv-sick-text');
         $('.modal-title').removeClass('lv-maternity-text');
         $('.modal-title').removeClass('lv-weekly-text');
         $('.modal-title').addClass('lv-annual-text');
         $('.modal-date').text($('#'+dayId).find('.lv-shift-date').text().toString()+'-'+currentMonth.toString()+'-'+currentYear.toString());
         $('.modal-resource').text(user);
-        $('.lv-modal').show();
+        $('#ShiftModal').show();
         
     }
     if($('#'+dayId).find('.lv-shift-date').hasClass('lv-sick')){
@@ -263,7 +263,7 @@ function selectDayShift(el){
         $('.modal-title').addClass('lv-sick-text');
         $('.modal-date').text($('#'+dayId).find('.lv-shift-date').text().toString()+'-'+currentMonth.toString()+'-'+currentYear.toString());
         $('.modal-resource').text(user);
-        $('.lv-modal').show();
+        $('#ShiftModal').show();
     }
     if($('#'+dayId).find('.lv-shift-date').hasClass('lv-maternity')){
         
@@ -274,19 +274,19 @@ function selectDayShift(el){
         $('.modal-title').addClass('lv-maternity-text');
         $('.modal-date').text($('#'+dayId).find('.lv-shift-date').text().toString()+'-'+currentMonth.toString()+'-'+currentYear.toString());
         $('.modal-resource').text(user);
-        $('.lv-modal').show();
+        $('#ShiftModal').show();
     }
     if($('#'+dayId).find('.lv-shift-date').hasClass('lv-weekly')){
        
        
-        $('.modal-title').text('Weekly Off');
+        $('.modal-title').text('Shift 2');
         $('.modal-title').removeClass('lv-sick-text');
         $('.modal-title').removeClass('lv-annual-text');
         $('.modal-title').removeClass('lv-maternity-text');
         $('.modal-title').addClass('lv-weekly-text');
         $('.modal-date').text($('#'+dayId).find('.lv-shift-date').text().toString()+'-'+currentMonth.toString()+'-'+currentYear.toString());
         $('.modal-resource').text(user);
-        $('.lv-modal').show();
+        $('#ShiftModal').show();
         dateCounter=dateCounter-1;
     }
     else{
@@ -609,35 +609,41 @@ function closeLeaveModal(){
     closeConf();
 
 }
+function closeShiftModal(){
+    $('#ShiftModal').hide();
+    closeConf();
+
+}
  /*function closeCancelModal(){
      $('#cancelModal').hide();
      closeConf();
 
  }*/
 
-// function cancelLeave(){
-    
-//       axios.get(url+'/api/leave-scheduler-delete/'+leaveId)
-//       .then(function (response) {
-//         // handle success
-//         resourceLeave=[];
-//         selectedDates=[];
-//         resourceList=[];
-//         reinitVal();
-//         getUsersShift();
+function cancelShift(){
+    console.log(shiftId)
+      axios.get(url+'/api/shift-scheduler-delete/'+shiftId)
+      .then(function (response) {
+          console.log(response)
+        // handle success
+        resourceLeave=[];
+        selectedDates=[];
+        resourceList=[];
+        reinitVal();
+        getUsersShift();
        
        
-//       leaveId='';
-//       $('.lv-modal').hide();
-//       dateCounter=0;
-//       $('#select-counter').text(dateCounter);
-//       })
-//       .catch(function (error) {
-//         // handle error
-//         console.log(error);
-//       })
-//       closeConf();
-//   }
+        shiftId='';
+      $('#ShiftModal').hide();
+      dateCounter=0;
+      $('#select-counter').text(dateCounter);
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error);
+      })
+      closeConf();
+  }
 
 function getShiftId(ldate,staffid){
     console.log("resourceList is "+JSON.stringify(resourceList))
