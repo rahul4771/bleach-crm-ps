@@ -2019,8 +2019,8 @@ class GetMultipleServiceCleaningSlotes(APIView):
 			for slote_duration in slote_durations:
 				slote_start_datetime 			  = cleaning_date.replace(hour=slote,minute=0,second=0,microsecond=0)
 				slote_end_datetime                = slote_start_datetime+timedelta(hours=slote_duration)
-				slote_start_time 			      = slote_start_datetime.time()+timedelta(hours=3)
-				slote_end_time                    = slote_end_datetime.time()+timedelta(hours=3)
+				slote_start_time 			      = (slote_start_datetime+timedelta(hours=3)).time()
+				slote_end_time                    = (slote_end_datetime+timedelta(hours=3)).time()
 
 				#included shift cleaners
 				shift_cleaners      = ShiftSchedule.objects.select_related('staff').filter(shift_date=cleaning_date).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=slote_start_time)&Q(shift1_end_at__gte=slote_start_time))&Q(Q(shift1_start_at__lte=slote_end_time)&Q(shift1_end_at__gte=slote_end_time))) | Q(Q(Q(shift2_start_at__lte=slote_start_time)&Q(shift2_end_at__gte=slote_start_time))&Q(Q(shift2_start_at__lte=slote_end_time)&Q(shift2_end_at__gte=slote_end_time)))).values_list('staff',flat=True)
