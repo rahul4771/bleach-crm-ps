@@ -83,9 +83,14 @@ function editSection(service){
  app.editSectionData.keynotes=app.sections[index-1].keynotesections
   console.log("section is "+JSON.stringify(app.sections[index-1]))
   app.sectionData=app.sections[index-1]
+  app.getOtherKeynotes()
+      app.getTheKitchens()
+     
+      app.recalcKeynoteCost()
   $('#edit-dialog-tigger').click()
   app.editSectionData.section_cost=app.sectionData.section_cost
   app.editSectionData.section_name=app.sectionData.section_name
+  app.removeInitialKitchenCost()
   if(app.sectionData.wall_type!="")
   {
     app.editSectionData.wall_type=app.sectionData.wall_type.split(',')
@@ -189,10 +194,14 @@ const app = new Vue({
     this.setDate(moment().format('MM/DD/YYYY'))
     this.selected_date=moment().format('DD-MM-YYYY')
     $('#date_hidden').val(moment().format('MM/DD/YYYY'))
+    this.getTheSize('Kitchen Cleaning')
+   
+    
   },
   components: { Multiselect: window.VueMultiselect.default },
 
   data: {
+    fixed_section_cost:null,
     soltdate: null, 
     edit: false,
     cancelDialog:false,
@@ -323,12 +332,107 @@ const app = new Vue({
               sub_area:'',
               quantity:''
             },
-            keynote_update:true
+            newkitchenkeynote:{
+              
+              size:'',
+              type:'old',
+              residue:false
+            },
+            keynote_update:true,
+            kitchen_size:[],
+            new_kitchen_size:[],
+            old_kitchen_size:[],
+            kitchen_keynotes:[],
+            other_keynotes:[],
+            final_keynotes:[]
   },
   methods:{
+   
+    getTheSize(service){
+      var service_productivity=[]
+      axios.get('https://test.bleach-kw.com/customer/ajax/getservicesizeprice?service_type='+service).then(response=>{
+          this.productivity=response.data
+          for(var i in this.productivity){
+            service_productivity.push(this.productivity[i])
+          }
+          if(service=='Kitchen Cleaning'){
+            this.kitchen_size=service_productivity
+            this.formatKitchenSize()
+          }
+          
+          
+      })
+    },
+    removeInitialKitchenCost(){
+      var totalKitchenCost=0
+      for(var i=0;i<this.editSectionData.keynotes.length;i++){
+        if(this.editSectionData.keynotes[i].sub_area=='kitchen'){
+          var qty=JSON.parse(this.editSectionData.keynotes[i].quantity)
+          totalKitchenCost=totalKitchenCost+qty.cost
+          console.log("cost is"+qty.cost)
+        }
+      }
+      this.fixed_section_cost=this.editSectionData.section_cost-totalKitchenCost
+      console.log("fuixed cost is"+this.fixed_section_cost)
+    },
+    recalcKeynoteCost(){
+      this.editSectionData.section_cost=this.fixed_section_cost
+      console.log("called me"+JSON.stringify(this.kitchen_keynotes))
+      for(var j=0;j<this.kitchen_keynotes.length;j++){
+        this.editSectionData.section_cost=this.editSectionData.section_cost+this.kitchen_keynotes[j].quantity.size.cost
+      }
+    },
+    addKitchenToKeynote(){
+     
+      this.kitchen_keynotes.push({
+        sub_area:"kitchen",
+        quantity:{
+          size:this.newkitchenkeynote.size,
+          max_size:this.newkitchenkeynote.size.max_size,
+          type:this.newkitchenkeynote.type,
+          residue:this.newkitchenkeynote.residue,
+          cost:this.newkitchenkeynote.size.cost
+        }
+      })
+      this.newkitchenkeynote={
+        sub_area:'',
+        quantity:{
+          size:{},
+          
+          type:'old',
+          residue:false,
+
+
+        }
+      }
+      this.recalcKeynoteCost()
+      
+      
+    },
+    removeKitchen(index){
+      this.kitchen_keynotes.splice(index,1)
+      this.recalcKeynoteCost()
+    },
+    formatKitchenSize(){
+      
+      this.new_kitchen_size=[]
+      this.old_kitchen_size=[]
+      
+        for(var i=0;i<this.kitchen_size.length;i++){
+         
+          if(this.kitchen_size[i].is_newkitchen){
+            this.new_kitchen_size.push(this.kitchen_size[i])
+          }
+          else{
+            this.old_kitchen_size.push(this.kitchen_size[i])
+          }
+        }
+        
+      
+    },
     addToKeynote(){
       this.keynote_update=false
-      this.editSectionData.keynotes.push(this.newkeynote)
+      this.other_keynotes.push(this.newkeynote)
       this.keynote_update=true
       this.newkeynote={
         sub_area:'',
@@ -337,7 +441,7 @@ const app = new Vue({
     },
     delKeynote(index){
       this.keynote_update=false
-      this.editSectionData.keynotes.splice(index,1)
+      this.other_keynotes.splice(index,1)
       this.keynote_update=true
     },
     checkSlot(index){
@@ -469,7 +573,62 @@ const app = new Vue({
       })
     }
     },
-   
+    /*getOtherKeynotes(keynotes){
+      var otherKeynotes
+      for(var i=0;i<keynotes;i++){
+
+      }
+      if(keynote.sub_area=='kitchen')
+    },*/
+    getTheKitchens(){
+      this.kitchen_keynotes=[]
+      var kitchens=[]
+      console.log("val is"+JSON.stringify(this.editSectionData))
+      for(var i=0;i<this.editSectionData.keynotes.length;i++){
+        if(this.editSectionData.keynotes[i].sub_area=='kitchen'){
+          var keynote={
+            sub_area:this.editSectionData.keynotes[i].sub_area,
+            quantity:JSON.parse(this.editSectionData.keynotes[i].quantity)
+          }
+          if(keynote.quantity.type=='new'){
+            for(var sz=0;sz<this.new_kitchen_size.length;sz++){
+              if(this.new_kitchen_size[sz].name==keynote.quantity.size){
+                keynote.quantity.size=this.new_kitchen_size[sz]
+              }
+            }
+          }
+          else if(keynote.quantity.type=='old'){
+            for(var sz=0;sz<this.old_kitchen_size.length;sz++){
+              if(this.old_kitchen_size[sz].name==keynote.quantity.size){
+                keynote.quantity.size=this.old_kitchen_size[sz]
+              }
+            }
+          }
+          kitchens.push(keynote)
+        }
+       
+      }
+      console.log("quantity is"+JSON.stringify(kitchens))
+      this.kitchen_keynotes=kitchens
+      
+    },
+    getOtherKeynotes(){
+      var others=[]
+      this.other_keynotes=[]
+      console.log("val is"+JSON.stringify(this.editSectionData))
+      for(var i=0;i<this.editSectionData.keynotes.length;i++){
+        if(this.editSectionData.keynotes[i].sub_area!='kitchen'){
+          var keynote={
+            sub_area:this.editSectionData.keynotes[i].sub_area,
+            quantity:this.editSectionData.keynotes[i].quantity
+          }
+          others.push(keynote)
+        }
+       
+      }
+     
+      this.other_keynotes= others
+    },
     calDiscount(){
       this.paymentData.final_amount=this.total_amount-this.paymentData.discount
       this.paymentData.amount_after_cleaning=''
@@ -495,6 +654,7 @@ const app = new Vue({
       $('#edit-dialog-tigger').click()
       this.editSectionData.section_cost=this.sectionData.section_cost
       this.editSectionData.section_name=this.sectionData.section_name
+      
       
     },
     deleteSection(index,sid){
@@ -574,7 +734,30 @@ const app = new Vue({
       }
       
     },
+    parseKeynotes(){
+      this.final_keynotes=[]
+      for(var i=0;i<this.kitchen_keynotes.length;i++){
+        this.final_keynotes.push({
+          sub_area:'kitchen',
+          quantity:JSON.stringify({
+            cost:this.kitchen_keynotes[i].quantity.size.cost,
+            max_size:this.kitchen_keynotes[i].quantity.size.max_size,
+            residue:this.kitchen_keynotes[i].quantity.residue,
+            type:this.kitchen_keynotes[i].quantity.type,
+            size:this.kitchen_keynotes[i].quantity.size.name
+          })
+        })
+      }
+      for(var i=0;i<this.other_keynotes.length;i++){
+        this.final_keynotes.push({
+          sub_area:this.other_keynotes[i].sub_area,
+          quantity:this.other_keynotes[i].quantity
+        })
+      }
+
+    },
     updateSection(){
+      this.parseKeynotes()
       var sectionData={}
       sectionData=
         {
@@ -604,6 +787,7 @@ const app = new Vue({
         "action_type":'edit_section',
         "evaluation_book__id":this.eval_book_id,
         "section_details":sectionData,
+        "keynotes":this.final_keynotes,
         "section_id":this.editSectionData.section_id,
       }).then(response=>{
         console.log(response)
@@ -614,6 +798,8 @@ const app = new Vue({
     },
     addSectionData(){
       var sectionData={}
+      this.other_keynotes=[]
+      this.kitchen_keynotes=[]
       sectionData=
         {
           "section_name":this.editSectionData.section_name,
@@ -704,6 +890,8 @@ const app = new Vue({
   calcSectionCost(){
    
     this.editSectionData.section_cost=this.editSectionData.size.cost
+    this.section_fi
+    this.recalcKeynoteCost()
   },
     setDate(d){
     
