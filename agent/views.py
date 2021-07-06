@@ -748,13 +748,15 @@ class AvailabilityCleaningCallendar(APIView):
 		absent_leaders  = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=cleaning_date1)|Q(leave_date=cleaning_date2))).filter(staff__user_type='TEAMINCHARGE').values_list('staff',flat=True)
 
 		#included shift cleaners
-		shift_cleaners  = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=cleaning_date1)|Q(shift_date=cleaning_date2))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=cleaning_datetime_start.time())&Q(shift1_end_at__gte=cleaning_datetime_start.time()))&Q(Q(shift1_start_at__lte=cleaning_datetime_end.time())&Q(shift1_end_at__gte=cleaning_datetime_end.time()))) | Q(Q(Q(shift2_start_at__lte=cleaning_datetime_start.time())&Q(shift2_end_at__gte=cleaning_datetime_start.time()))&Q(Q(shift2_start_at__lte=cleaning_datetime_end.time())&Q(shift2_end_at__gte=cleaning_datetime_end.time())))).values_list('staff',flat=True)
-		shift_leaders   = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=cleaning_date1)|Q(shift_date=cleaning_date2))).filter(staff__user_type='TEAMINCHARGE').filter(Q(Q(Q(shift1_start_at__lte=cleaning_datetime_start.time())&Q(shift1_end_at__gte=cleaning_datetime_start.time()))&Q(Q(shift1_start_at__lte=cleaning_datetime_end.time())&Q(shift1_end_at__gte=cleaning_datetime_end.time()))) | Q(Q(Q(shift2_start_at__lte=cleaning_datetime_start.time())&Q(shift2_end_at__gte=cleaning_datetime_start.time()))&Q(Q(shift2_start_at__lte=cleaning_datetime_end.time())&Q(shift2_end_at__gte=cleaning_datetime_end.time())))).values_list('staff',flat=True)
+		shift_cleaners      = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=cleaning_date1)|Q(shift_date=cleaning_date2))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=cleaning_datetime_start.time())&Q(shift1_end_at__gte=cleaning_datetime_start.time()))&Q(Q(shift1_start_at__lte=cleaning_datetime_end.time())&Q(shift1_end_at__gte=cleaning_datetime_end.time()))) | Q(Q(Q(shift2_start_at__lte=cleaning_datetime_start.time())&Q(shift2_end_at__gte=cleaning_datetime_start.time()))&Q(Q(shift2_start_at__lte=cleaning_datetime_end.time())&Q(shift2_end_at__gte=cleaning_datetime_end.time())))).values_list('staff',flat=True)
+		shift_leaders       = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=cleaning_date1)|Q(shift_date=cleaning_date2))).filter(staff__user_type='TEAMINCHARGE').filter(Q(Q(Q(shift1_start_at__lte=cleaning_datetime_start.time())&Q(shift1_end_at__gte=cleaning_datetime_start.time()))&Q(Q(shift1_start_at__lte=cleaning_datetime_end.time())&Q(shift1_end_at__gte=cleaning_datetime_end.time()))) | Q(Q(Q(shift2_start_at__lte=cleaning_datetime_start.time())&Q(shift2_end_at__gte=cleaning_datetime_start.time()))&Q(Q(shift2_start_at__lte=cleaning_datetime_end.time())&Q(shift2_end_at__gte=cleaning_datetime_end.time())))).values_list('staff',flat=True)
+		today_shifts        = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=cleaning_date1)|Q(shift_date=cleaning_date2))).values_list('staff',flat=True)
+		super_shift_cleaners= UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(id__in=today_shifts).filter( Q(Q(universal_shift_start__lte=cleaning_datetime_start.time())&Q(universal_shift_end__gte=cleaning_datetime_start.time()))&Q(Q(universal_shift_start__lte=cleaning_datetime_end.time())&Q(universal_shift_end__gte=cleaning_datetime_end.time())) ).values_list('id',flat=True)
+		super_shift_leaders = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(id__in=today_shifts).filter(Q(Q(universal_shift_start__lte=cleaning_datetime_start.time())&Q(universal_shift_end__gte=cleaning_datetime_start.time()))&Q(Q(universal_shift_start__lte=cleaning_datetime_end.time())&Q(universal_shift_end__gte=cleaning_datetime_end.time()))).values_list('id',flat=True)
 
 		#Active cleaners
 		active_cleaners1 	= CleaningTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=cleaning_datetime_start)&Q(start_at__lte=cleaning_datetime_end))|Q(Q(end_at__gte=cleaning_datetime_start)&Q(end_at__lte=cleaning_datetime_end))|Q(Q(start_at__lte=cleaning_datetime_start)&Q(end_at__gte=cleaning_datetime_start)&Q(start_at__lte=cleaning_datetime_end)&Q(end_at__gte=cleaning_datetime_end))|Q(Q(start_at__gte=cleaning_datetime_start)&Q(end_at__gte=cleaning_datetime_start)&Q(start_at__lte=cleaning_datetime_end)&Q(end_at__lte=cleaning_datetime_end))))
-		active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=cleaning_datetime_start)&Q(start_at__lte=cleaning_datetime_end))|Q(Q(end_at__gte=cleaning_datetime_start)&Q(end_at__lte=cleaning_datetime_end))|Q(Q(start_at__lte=cleaning_datetime_start)&Q(end_at__gte=cleaning_datetime_start)&Q(start_at__lte=cleaning_datetime_end)&Q(end_at__gte=cleaning_datetime_end))|Q(Q(start_at__gte=cleaning_datetime_start)&Q(end_at__gte=cleaning_datetime_start)&Q(start_at__lte=cleaning_datetime_end)&Q(end_at__lte=cleaning_datetime_end))))
-				
+		active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=cleaning_datetime_start)&Q(start_at__lte=cleaning_datetime_end))|Q(Q(end_at__gte=cleaning_datetime_start)&Q(end_at__lte=cleaning_datetime_end))|Q(Q(start_at__lte=cleaning_datetime_start)&Q(end_at__gte=cleaning_datetime_start)&Q(start_at__lte=cleaning_datetime_end)&Q(end_at__gte=cleaning_datetime_end))|Q(Q(start_at__gte=cleaning_datetime_start)&Q(end_at__gte=cleaning_datetime_start)&Q(start_at__lte=cleaning_datetime_end)&Q(end_at__lte=cleaning_datetime_end))))		
 		
 		for service_type in service_types:
 			if service_type == 'General Cleaning':
@@ -794,23 +796,23 @@ class AvailabilityCleaningCallendar(APIView):
 				active_cleaners1 	= active_cleaners1.filter(member__is_outdoor_skill=True)
 				active_cleaners2 	= active_cleaners2.filter(member__is_outdoor_skill=True)
 
-			cleaning_active_team_leaders = active_cleaners1.filter(member__user_type='TEAMINCHARGE').values_list('member',flat=True)
-			cleaning_active_cleaners     = active_cleaners1.filter(Q(Q(member__user_type='TEAMINCHARGE')|Q(member__user_type='CLEANER'))).values_list('member',flat=True)
+		cleaning_active_team_leaders = active_cleaners1.filter(member__user_type='TEAMINCHARGE').values_list('member',flat=True)
+		cleaning_active_cleaners     = active_cleaners1.filter(Q(Q(member__user_type='TEAMINCHARGE')|Q(member__user_type='CLEANER'))).values_list('member',flat=True)
 
-			followup_active_team_leaders = active_cleaners2.filter(member__user_type='TEAMINCHARGE').values_list('member',flat=True)
-			followup_active_cleaners     = active_cleaners2.filter(Q(Q(member__user_type='TEAMINCHARGE')|Q(member__user_type='CLEANER'))).values_list('member',flat=True)
+		followup_active_team_leaders = active_cleaners2.filter(member__user_type='TEAMINCHARGE').values_list('member',flat=True)
+		followup_active_cleaners     = active_cleaners2.filter(Q(Q(member__user_type='TEAMINCHARGE')|Q(member__user_type='CLEANER'))).values_list('member',flat=True)
 
-			#merging
 
-			for active_team_leaders in cleaning_active_team_leaders:
-				team_leaders_scheduled.append(active_team_leaders)
-			for active_team_leaders in followup_active_team_leaders:
-				team_leaders_scheduled.append(active_team_leaders)
+		#merging
+		for active_team_leaders in cleaning_active_team_leaders:
+			team_leaders_scheduled.append(active_team_leaders)
+		for active_team_leaders in followup_active_team_leaders:
+			team_leaders_scheduled.append(active_team_leaders)
 
-			for active_team_member in cleaning_active_cleaners:
-				team_members_scheduled.append(active_team_member)
-			for active_team_member in followup_active_cleaners:
-				team_members_scheduled.append(active_team_member)
+		for active_team_member in cleaning_active_cleaners:
+			team_members_scheduled.append(active_team_member)
+		for active_team_member in followup_active_cleaners:
+			team_members_scheduled.append(active_team_member)
 
 		for absent_cleaner in absent_cleaners:
 			team_members_scheduled.append(absent_cleaner)
@@ -859,8 +861,8 @@ class AvailabilityCleaningCallendar(APIView):
 				total_leaders 	= total_leaders.filter(is_outdoor_skill=True)
 
 
-		available_cleaners = total_cleaners.exclude(id__in=team_members_scheduled).filter(id__in=shift_cleaners)
-		available_leaders  = total_leaders.exclude(id__in=team_leaders_scheduled).filter(id__in=shift_leaders)
+		available_cleaners = total_cleaners.exclude(id__in=team_members_scheduled).filter(Q(id__in=shift_cleaners)|Q(id__in=super_shift_cleaners))
+		available_leaders  = total_leaders.exclude(id__in=team_leaders_scheduled).filter(Q(id__in=shift_leaders)|Q(id__in=super_shift_leaders))
 
 		response_dict['available_cleaners_count'] = available_cleaners.count()
 		response_dict['available_leaders_count']  = available_leaders.count()
