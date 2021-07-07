@@ -151,6 +151,8 @@
 
         <hr class="hr-dashedpad"> 
 
+        <input type="text" name="cleaning_hours" id="id_cleaning_hours" />
+
         <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
             <div class="enquiry-form-left"><!--enquiry-form-left-->
             <div class=" bold-text common-label"> <label>Final Cost</label></div>
@@ -163,11 +165,11 @@
  		<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
             	<div class="enquiry-form-left"><!--enquiry-form-left-->
                 <div class=" bold-text common-label"> <label>Tentative Time</label></div>
-                <input name="tendative_time" id='id_tendative_time' type="text" class="textBox readonly" placeholder=" " autocomplete="off" required> 
+                <input name="tendative_time" id='id_tendative_time' type="text" class="textBox readonly" placeholder=" " autocomplete="off" readonly> 
                 </div><!--enquiry-form-left-->
                 <div class="enquiry-form-right"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Tentative Date</label></div>
-                <input name="tendative_date" id='id_tendative_date' type="text" class="textBox readonly" placeholder="Please select no. of cleaners, duration and time." autocomplete="off"> 
+                <input name="tendative_date" id='id_tendative_date' type="text" class="textBox readonly" placeholder=" " autocomplete="off" readonly> 
                 </div><!--enquiry-form-right-->
             	{% comment %} <div class="enquiry-form-right"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Tentative Date(S)</label></div>
@@ -230,94 +232,6 @@
 
   <script src="{% static 'files/js/followup.js' %}"></script>
 <script>
-
-
-function datetimecheck(ftime,fdate,x){
-        var today = new Date();
-        
-        
-        var sub_dates = fdate.split(','); //splitting subscription dates
-
-        dates = [];
-
-        //converting subscription dates to date objects and adding to list
-        for (i = 0; i < sub_dates.length; i++) {
-            console.log(i,"i")
-            var vals = sub_dates[i].split('-');
-            console.log(vals,i,"i")
-            var day = parseInt(vals[0]);
-            var month = parseInt (vals[1]);
-            var year = parseInt (vals[2]);
-            var sub_date = new Date(year,month,day);
-            
-            dates.push(sub_date);
-        }
-
-        var minimumDate=new Date(Math.min.apply(null, dates)); 
-        
-        var tentativedate = minimumDate.getDate()+"-"+minimumDate.getMonth()+"-"+minimumDate.getFullYear();
-        console.log(tentativedate,"dts")
-        
-
-        if (tentativedate != ''){
-            console.log(tentativedate,today,"dte")
-            var vals = tentativedate.split('-');
-            var day = parseInt(vals[0]);
-            var month = parseInt (vals[1]);
-            var year = parseInt (vals[2]);
-
-            var start_time = ftime;
-            start_time = start_time.split(" ");
-            time_AM_PM = start_time[1];
-            var time = start_time[0].split(":");
-
-            //splitting 0 in hour
-            if (time[0] < 10){
-                var hour_split = time[0].split('');
-                var time_hour = hour_split[1];
-                console.log(time_hour,"werry")    
-            }else{
-                time_hour = time[0];
-            }
-
-            //converting to 24 hr
-            if (time_AM_PM == 'PM'){
-            if (time_hour < 12){
-                newhour = parseInt(time_hour) + 12 ;
-            }else{
-                newhour = time_hour;
-            }
-            }else{
-            if (time_hour == 12){
-                newhour = 00 ;
-            }else{
-                newhour = time[0];
-            }
-            }
-
-            //creating datetime element
-            selecteddatetime = new Date(year,month,day,newhour,time[1]);
-            selecteddatetime.setMonth(selecteddatetime.getMonth()-1);
-            console.log(newhour,selecteddatetime,"sel")
-
-            if (selecteddatetime < today){
-            //$('#time_alert').attr("hidden",false);
-            $('.assignButton').attr("disabled",true);
-            console.log("success")
-            }else{
-            //$('#time_alert').attr("hidden",true);
-            $('.assignButton').attr("disabled",false);
-            console.log("fail")
-            }
-        }
-        
-        //else{
-        //$("#id_form-"+x+"-tendative_time").val('');
-        //$("#id_form-"+x+"-tendative_time").attr("placeholder","Select Date !!");
-
-        //}
-
-    };
 
 // add new section
 function addSectionNew(form_identifier){
@@ -613,67 +527,17 @@ $('document').ready(function(){
     });
 
 //initial time
-$("#id_tendative_time").datetimepicker({
-    pickDate:false,
-    format: 'hh:mm A',
+//$("#id_tendative_time").datetimepicker({
+//    pickDate:false,
+//    format: 'hh:mm A',
     //minDate: moment({h:7}),
     //maxDate: moment({h:17}),
-});
+//});
 
 
-
-$("#id_tendative_time, #id_number_of_cleaners , #id_cleaning_hours").change(function(){
-    
-    datetimecheck($("#id_tendative_time").val(),$("#id_tendative_date").val(),x);
-
-    $("#id_tendative_date").datepicker('remove');
-
-    $.ajax({
-            url: "{% url 'agent:scheduled-dates' %}",
-            data: {
-            'booking_time': $("#id_tendative_time").val(),
-            'number_of_cleaners':$("#id_number_of_cleaners").val(),
-            'cleaning_duration':$("#id_cleaning_hours").val()
-            },
-            dataType: "json",
-            type: "GET",
-            contentType: "application/json;charset=utf-8",
-            
-            success: function(data_dates) {
-                console.log(data_dates,"dates2")
-                
-                disableSpecificDates = Object.keys(data_dates['cleaners_busy_dates']).concat(Object.keys(data_dates['leaders_busy_dates']))
-
-                //one time date
-                $(function () {
-                $("#id_tendative_date").datepicker({ 
-                    multidate: true,
-                    closeOnDateSelect: true,
-                    format: "dd-mm-yyyy", 
-
-                    beforeShowDay: function(date){
-                    dmy = date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
-                    if(disableSpecificDates.indexOf(dmy) != -1){
-                    return false;
-                    }
-                    else{
-                    return true;
-                    }
-                    },
-
-                    startDate:new Date(),
-                    minDate:new Date()
-                });
-                });
-                
-            }
-            
-        });
-});
-
-$("#id_tendative_date").change(function(){
-    datetimecheck($("#id_tendative_time").val(),$("#id_tendative_date").val(),x);
-});
+//$("#id_tendative_date").change(function(){
+//    datetimecheck($("#id_tendative_time").val(),$("#id_tendative_date").val(),x);
+//});
 
 });
 

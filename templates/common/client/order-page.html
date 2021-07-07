@@ -1147,7 +1147,7 @@
                                                         <p>{{keynote.sub_area}}<span class="c-text2">{{keynote.quantity}}</span></p>
                                                     </div>
                                                 {% else %}
-                                                {% if forloop.first %}
+                                                {% if forloop.last %}
                                                 <div class="clean-section-card">
                                                     <p>Kitchen<span class="c-text2">{{forloop.counter0|add:forloop.counter}}</span></p>
                                                 </div>
@@ -1168,7 +1168,7 @@
                                                     <p>{{keynote.sub_area}}<span class="c-text2">{{keynote.quantity}}</span></p>
                                                 </div>
                                                 {% else %}
-                                                {% if forloop.first %}
+                                                {% if forloop.last %}
                                                 <div class="clean-section-card">
                                                     <p>Kitchen<span class="c-text2">{{forloop.counter0|add:forloop.counter}}</span></p>
                                                 </div>
