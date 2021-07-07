@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="https://semantic-ui.com/dist/semantic.min.css">
 {% endblock %}
 <div class="wrapper"><!--wrapper-->
-{% if request.user.user_type == 'EVALUATOR' %}
+{% if request.user.user_type == 'ADMIN' %}
 {% include "evaluator/common/header.html" %}
 {% elif request.user.user_type == 'AGENT' %}
 {% include "agent/common/header.html" %}

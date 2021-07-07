@@ -924,9 +924,9 @@
                                                 <ul>
 
                                                     {% if orderschedule.customer_address.gps_location %}<li><i class="fas  test-color fa-map-marker c-mr-10"></i><a href="{{orderschedule.customer_address.gps_location}}">GPS</a></li>{% endif %}
-                                                    <li><i class="fas test-color fa-users c-mr-10"></i> {% for schedule in order.orderschedules %}{% if forloop.first %}<span id="total_cleaners{{orderschedule.order_scheduler_book.id}}">{{schedule.no_of_cleaners|default_if_none:0}}</span>{% endif %}{% endfor %} cleaners</li>
-                                                    <li><i class="fas test-color fa-clock-o c-mr-10"></i> {% for schedule in order.orderschedules %}{% if forloop.first %}<span id="total_hours{{orderschedule.order_scheduler_book.id}}">{{schedule.cleaning_hours|default_if_none:0}}</span>{% endif %}{% endfor %} Hours</li>
-                                                    <li><i class="fas  test-color fa-money c-mr-10"></i> {{orderschedule.order_scheduler_book.total_cost|floatformat:3}} KD</li>
+                                                    <li><i class="fas test-color fa-users c-mr-10"></i> {% for schedule in order.orderschedules %}{% if forloop.first %}<span id="total_cleaners{{orderschedule.order_scheduler_book.id}}"></span>{% endif %}{% endfor %} cleaners</li>
+                                                    <li><i class="fas test-color fa-clock-o c-mr-10"></i> {% for schedule in order.orderschedules %}{% if forloop.first %}<span id="total_hours{{orderschedule.order_scheduler_book.id}}"></span>{% endif %}{% endfor %} Hours</li>
+                                                    {% if request.user.user_type != 'SENIORTEAMLEADER' %}<li><i class="fas  test-color fa-money c-mr-10"></i> {{orderschedule.order_scheduler_book.total_cost|floatformat:3}} KD</li>{% endif %}
                                                     <li><i class="fas test-color fa-address-card c-mr-10"></i><b>{{orderschedule.customer_address.apartment}}</b>: {% if orderschedule.customer_address.floor %}{{orderschedule.customer_address.floor}}, {% else %}{% endif %} {{orderschedule.customer_address.building}},<br> {{orderschedule.customer_address.block}}, {{orderschedule.customer_address.street}},<br> {% if orderschedule.customer_address.avenue %}{{orderschedule.customer_address.avenue}}, {% else %}{% endif %} {{orderschedule.customer_address.area.name}},<br> {{orderschedule.customer_address.governorate.name}}</li>
 
                                                 </ul>
@@ -1122,11 +1122,13 @@
                                                 </div>
                                                 {% endif %}
 
+                                                {% if request.user.user_type != 'SENIORTEAMLEADER' %}
                                                 <div class="row c-mb-3">
                                                     <div class="col-xs-5">Cost</div>
                                                     <div class="col-xs-7">: <span class="c-text  ">{{section.section_cost|floatformat:'3'}} KD</span>
                                                     </div>
                                                 </div>
+                                                {% endif %}
                                             </div>
                                         </div>
                                         <div class="col-md-6 m-mt30 pl-0">
@@ -1138,11 +1140,11 @@
                                             {% for keynote in section.sectionkeynotes %}
                                             {% if forloop.counter|divisibleby:2 %}
                                             {% else %}
-                                            {% if keynote.sub_area != 'kitchen' %}
+                                            {% comment %} {% if keynote.sub_area != 'kitchen' %} {% endcomment %}
                                                 <div class="clean-section-card">
                                                     <p>{{keynote.sub_area}}<span class="c-text2">{{keynote.quantity}}</span></p>
                                                 </div>
-                                             {% endif %}   
+                                             {% comment %} {% endif %}    {% endcomment %}
                                             {% endif %}
                                             {% endfor %}
 
@@ -1151,11 +1153,11 @@
                                             <div class="col-md-3 ml-0 ">
                                             {% for keynote in section.sectionkeynotes %}
                                             {% if forloop.counter|divisibleby:2 %}
-                                            {% if keynote.sub_area != 'kitchen' %}
+                                            {% comment %} {% if keynote.sub_area != 'kitchen' %} {% endcomment %}
                                             <div class="clean-section-card">
                                                 <p>{{keynote.sub_area}}<span class="c-text2">{{keynote.quantity}}</span></p>
                                             </div>
-                                            {% endif %}
+                                            {% comment %} {% endif %} {% endcomment %}
                                             {% else %}
                                             {% endif %}
                                             {% endfor %}
@@ -1168,18 +1170,22 @@
                                 </div>
                                 {% endfor %}
 
-                                {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION' %}
-                                {% else %}
-                                <div v-if="edit">
-                                <button style="box-shadow: none !important;" class="view-button view-btn cp"   onclick="addSection(this)"  data-service="{{orderschedule.order_scheduler_book.service_type.name}}">  <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="">  Add Section</button>
-                                </div>
+                                {% if order.evaluation.quatation_status == 'APPROVED' %}
+                                    {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION' %}
+                                    
+                                    {% else %}
+                                    <div v-if="edit">
+                                    <button style="box-shadow: none !important;" class="view-button view-btn cp"   onclick="addSection(this)"  data-service="{{orderschedule.order_scheduler_book.service_type.name}}">  <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="">  Add Section</button>
+                                    </div>
+                                    {% endif %}
+
+                                {% elif order.evaluation.quatation_status == 'PENDING' %}
+                                    <div v-if="edit">
+                                    <button style="box-shadow: none !important;" class="view-button view-btn cp"   onclick="addSection(this)"  data-service="{{orderschedule.order_scheduler_book.service_type.name}}">  <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="">  Add Section</button>
+                                    </div>
                                 {% endif %}
 
-                                {% if order.evaluation.quatation_status == 'PENDING' %}
-                                <div v-if="edit">
-                                <button style="box-shadow: none !important;" class="view-button view-btn cp"   onclick="addSection(this)"  data-service="{{orderschedule.order_scheduler_book.service_type.name}}">  <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="">  Add Section</button>
-                                </div>
-                                {% endif %}
+                                
 
 
                                 <div class="showmore2{{orderschedule.id}}" style="display: none;"
@@ -1378,7 +1384,7 @@
                                                     <div class="owl-carousel c-mt-10 id_cleaning_before_images">
                                                     {% for cleaning_team in orderschedule.cleaning_team %}{% for media in cleaning_team.cleaning_team_medias %}{% if media.taken_status == 'BEFORE_CLEANING' %}
                                                         <div >
-                                                            <img class="slider-img pointer before_image{{orderschedule.order_scheduler_book.id}}" onclick="onClick(this)" src="{{media.media.url}}" alt="">
+                                                            <img class="slider-img pointer before_image{{orderschedule.id}}" onclick="onClick(this)" src="{{media.media.url}}" alt="">
                                                         </div>
                                                     {% endif %}{% endfor %}{% endfor %}
                                                     </div>
@@ -1393,7 +1399,7 @@
                                                     <div class="owl-carousel c-mt-10 id_cleaning_after_images">
                                                         {% for cleaning_team in orderschedule.cleaning_team %}{% for media in cleaning_team.cleaning_team_medias %}{% if media.taken_status == 'AFTER_CLEANING' %}
                                                         <div>
-                                                            <img class="slider-img pointer after_image{{orderschedule.order_scheduler_book.id}}" onclick="onClick(this)" src="{{media.media.url}}" alt="">
+                                                            <img class="slider-img pointer after_image{{orderschedule.id}}" onclick="onClick(this)" src="{{media.media.url}}" alt="">
                                                         </div>
                                                         {% endif %}{% endfor %}{% endfor %}
                                                     </div>
@@ -1460,6 +1466,7 @@
                     </div>
                     {% endfor %}
 
+                    {% if request.user.user_type != 'SENIORTEAMLEADER' %}
                     <div class="row c-mt-20">
                         <div class="order-details-left-wrapper ">
                             <div class="order-payment-section">
@@ -1637,7 +1644,7 @@
 
                         </div>
                     </div>
-
+                    {% endif %}
 
 
 
@@ -1660,7 +1667,7 @@
                         <div class="col-md-3 pl-0">
                             <div class="order-right-fixed">
                                 <div class="order-right-fixed"><!--order-right-fixed-->
-                                    <a href="{% url 'common_items:client-orders' client_details.id %}" target="_blank"><div class="order-card-column whitebg red-border"><!--order-card-column-->
+                                    <a {% if request.user.user_type == 'SENIORTEAMLEADER' %}{% else %}href="{% url 'common_items:client-orders' client_details.id %}" target="_blank"{% endif %}><div class="order-card-column whitebg red-border"><!--order-card-column-->
                                         <div class="card-innerwrapper"><!--card-innerwrapper-->
                                         <div class="column-left"><img src="{% static 'files/images/card-orders-icon.png' %}"></div>
                                         <div class="column-right"><!--column-right-->
@@ -1711,22 +1718,29 @@
                                         {% for schedule in order.orderschedules|slice:"1" %}
                                         {% if forloop.first and schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' or order.order_status == 'ORDER_CLOSED'%}
                                         <div class="row">
-                                            <button style="width: 153px !important;" class="view-button">Re-order</button>
+                                            <button style="width: 153px !important;" data-toggle="modal" data-target="#reorderModel" class="view-button">Re-order</button>
                                         </div>
                                         {% endif %}
                                         {% endfor %}
 
-                                        {% if order.order_status == 'APPROVED_BY_CLIENT' or order.order_status == 'ORDER_IN_PROGRESS'  %}
+
+                                        {% if order.evaluation.quatation_status == 'EXPIRED' or order.evaluation.quatation_status == 'REJECTED' %}
                                         <div class="row">
-                                            <button style="width: 153px !important;" class="view-button">Order Cancel</button>
+                                            <button style="width: 153px !important;" data-toggle="modal" data-target="#resubmitModel" class="view-button">Re-Submit</button>
                                         </div>
                                         {% endif %}
 
-                                        {% if request.user.user_type == 'AGENT' %}
+
+                                        {% if order.order_status == 'APPROVED_BY_CLIENT' or order.order_status == 'ORDER_IN_PROGRESS'  %}
                                         <div class="row">
-                                            <button style="width: 153px !important;" class="view-button">Raise Ticket</button>
+                                            <button style="width: 153px !important;" data-toggle="modal" data-target="#cancelModel" class="view-button">Order Cancel</button>
                                         </div>
                                         {% endif %}
+
+                                        <div class="row">
+                                            <button style="width: 153px !important;" data-toggle="modal" data-target="#raiseTicketModel" class="view-button">Raise Ticket</button>
+                                        </div>
+                                        
                                     </div>
                                     {% endif %}
                                 </div>
@@ -1762,7 +1776,7 @@
                         <!--order-left-stretch-->
                         <div class="order-right-fixed">
                             <div class="order-right-fixed"><!--order-right-fixed-->
-                                <a href="{% url 'common_items:client-orders' client_details.id %}" target="_blank"><div class="order-card-column whitebg red-border"><!--order-card-column-->
+                                <a {% if request.user.user_type == 'SENIORTEAMLEADER' %}{% else %}href="{% url 'common_items:client-orders' client_details.id %}" target="_blank"{% endif %}><div class="order-card-column whitebg red-border"><!--order-card-column-->
                                     <div class="card-innerwrapper"><!--card-innerwrapper-->
                                     <div class="column-left"><img src="{% static 'files/images/card-orders-icon.png' %}"></div>
                                     <div class="column-right"><!--column-right-->
@@ -1866,7 +1880,6 @@
                             </div>
                             {% endif %}
 
-                            {% if request.user.user_type == 'AGENT' %}
                             <div class="c-button-div">
                                 <button class="side-buttons" data-toggle="modal" data-target="#raiseTicketModel"
                                     class="side-buttons">
@@ -1881,7 +1894,6 @@
                                     </div>
                                 </button>
                             </div>
-                            {% endif %}
 
                             {% endif %}
                             <!--right-bgwrapper-->
@@ -2802,8 +2814,10 @@ $(".pn-prev").click();
         
         //Remove Duplicate details
         duplicates_array = []
+
         {% for orderschedule in order.orderschedules %}
         book_id = "{{orderschedule.order_scheduler_book.id}}"
+        schedule_id = "{{orderschedule.id}}"
         
         if(duplicates_array.includes(book_id))
         {
@@ -2815,32 +2829,54 @@ $(".pn-prev").click();
         }
         {% endfor %}
 
-        //visit count and ticket count calculation
+        
+
+        //visit count, no of cleaners, hours and ticket count calculation
         var evaluationbook_ids = document.getElementsByClassName("book_id");
-        console.log(evaluationbook_ids.length,"idss")
+        
         for (var i = 0; i < evaluationbook_ids.length; i++) {
             
             var visitcount = 0;
             var ticketcount = 0;
-            //var cleaning_hours = 0;
-            //var cleaners_count = 0;
+
+            var cleaning_hours = 0;
+            var cleaners_count = 0;           
 
             var book_id = parseInt(evaluationbook_ids[i].value);
             console.log(i,book_id,"icount")
             {% for schedule in order.orderschedules %}
             
             if ("{{schedule.order_scheduler_book.id}}" == book_id ){
-                console.log("tet1")
-                visitcount += 1
                 
-                
+                visitcount += 1     
+
+                {% if schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' %}
+                //if subscription, cleaner count and hours from first schedule only
+                    
+                    cleaning_hours = parseInt("{{schedule.cleaning_hours|default_if_none:0}}");
+                    cleaners_count = parseInt("{{schedule.no_of_cleaners|default_if_none:0}}");
+                     
+                {% else %}
+                    //if one time service with multiple dates, add cleaner count from first schedule and hours from all schedules
+                    {% if forloop.counter > 1 %}
+                        cleaning_hours += parseInt("{{schedule.cleaning_hours|default_if_none:0}}");
+                        cleaners_count = parseInt("{{schedule.no_of_cleaners|default_if_none:0}}");
+                        
+                    {% else %}
+                    //if one time service with single date, cleaner count and hours from first schedule only
+                        
+                        cleaning_hours = parseInt("{{schedule.cleaning_hours|default_if_none:0}}");
+                        cleaners_count = parseInt("{{schedule.no_of_cleaners|default_if_none:0}}");
+                        
+                    {% endif %}
+                {% endif %}
             }
 
             
 
             //ticket count
             {% for investigation in schedule.investigations %}{% for followup in investigation.followups %}
-            console.log({{followup.id}},"tcnt")
+            
             if ({{followup.investigation.order_schedule.order_scheduler_book.id}} == book_id ){
                 ticketcount += 1
             }
@@ -2850,9 +2886,9 @@ $(".pn-prev").click();
             
             $('.visitcount'+book_id+'').text(visitcount);
 
-            //$('#total_hours'+book_id+'').text(cleaning_hours);
+            $('#total_hours'+book_id+'').text(cleaning_hours);
 
-            //$('#total_cleaners'+book_id+'').text(cleaners_count);
+            $('#total_cleaners'+book_id+'').text(cleaners_count);
 
             if (ticketcount > 0){
                 $('.ticket-btn'+book_id+'').show();
@@ -2862,8 +2898,8 @@ $(".pn-prev").click();
             }
             }    
 
-            var before_images_count = document.getElementsByClassName("before_image"+book_id+"").length ; 
-            var after_images_count = document.getElementsByClassName("after_image"+book_id+"").length ;
+            var before_images_count = document.getElementsByClassName("before_image"+schedule_id+"").length ; 
+            var after_images_count = document.getElementsByClassName("after_image"+schedule_id+"").length ;
 
             console.log(before_images_count,after_images_count,"imgcount")
 
