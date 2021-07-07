@@ -17,8 +17,13 @@
 
 <div class="wrapper" id="app">
   <!--wrapper-->
-  {% include "evaluator/common/header.html" %}
-
+  {% if request.user.user_type == 'ADMIN' %}
+{% include "evaluator/common/header.html" %}
+{% elif request.user.user_type == 'AGENT' %}
+{% include "agent/common/header.html" %}
+{% elif request.user.user_type == 'BOOKINGOFFICER' %}
+{% include "bookingofficer/common/header.html" %}
+{% endif %} 
   <v-app v-cloak>
     <section class="content">
       <!--content-->

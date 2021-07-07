@@ -151,7 +151,7 @@
 
             {% for order in orders %}
             
-            <a href="{% url 'common_items:client-orderdetails' order.id %}" target="_blank">
+            
             
 
                 <div class="main-content-holder clickable-cursor">
@@ -159,7 +159,7 @@
 
                     <div class="row white-wrapper cd-card-border m-0" >
                         <div class="col-md-8 cd-mt-4">
-                            <div class="cd-card-title" style="font-size:22px; !important">{{order.evaluation.evaluation_id}}</div>
+                        <a href="{% url 'common_items:client-orderdetails' order.id %}" target="_blank"><div class="cd-card-title" style="font-size:22px; !important">{{order.evaluation.evaluation_id}}</div></a>
                             <div class="d-flex cd-mt-4">
                                 {% for evaluation_detail in order.evaluation.evaluationdetails %}
                                 {% for evaluation_book in evaluation_detail.evaluationbooks %}
@@ -278,7 +278,7 @@
         
                             {% for evaluation_detail in order.evaluation.evaluationdetails %}
                             <div class="cd-card-content2 cd-mt-4">
-                               <b> {{evaluation_detail.address.area.name}}</b>
+                               <i class="fas fa-check-circle yellow-tick"></i> <b> {{evaluation_detail.address.area.name}}</b>
                             </div>
                             {% for evaluation_book in evaluation_detail.evaluationbooks %}
                             <div class="cd-card-content cd-mt-4">
@@ -329,16 +329,14 @@
                             </div>
                             <div class="d-flex cd-mt-50 justify-center">
                                 {% if order.order_status == 'ORDER_CLOSED' %}
-                                {% if request.user.user_type == 'AGENT' %}
-                                <a href="{% url 'agent:agent-makequatation1duplicate' order.evaluation.id %}">
-                                {% elif request.user.user_type == 'EVALUATOR' %}
-                                <a href="{% url 'evaluator:evaluator-makequatation1duplicate' order.evaluation.id %}">          {% endif %}
+                                <a href="/common/reorder?id={{order.evaluation.id}}" target="_blank">
                                 <div class="primary-btn ">
                                     <i class="fas fa-retweet white-icon"></i>
                                     Reorder
                                 </div>
-                                {% endif %}
                                 </a>
+                                {% endif %}
+
                                 <a {% if evaluation.payment_method == 'SUBSCRIPTION' %}href="/customer/subscription/quatation/paw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}"{% else %}href="/customer/quatation/paw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}"{% endif %} target="_blank">
                                 <div class="secondary-btn cd-ml-4">
                                     <i class="far fa-file-alt primary-icon"></i>
@@ -350,7 +348,7 @@
                     </div>
                     
                 </div>
-            </a>
+            
             {% endfor %}
    
             </div>
@@ -371,6 +369,7 @@
                     </div>
                 <BR>
 
+                {% if request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'ADMIN' %}
                 <a style="text-decoration: none; color: #434343;" href="{% url 'customer:statement-of-account' client_details.id %}" target="_blank">
                 <div class="text-center">
                     <div  class="secondary-btn cd-ml-4">
@@ -379,7 +378,8 @@
                     </div>
                 </div>
                 </a>
-                
+                {% endif %}
+
                 </div>
 
                 
