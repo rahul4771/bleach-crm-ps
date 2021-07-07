@@ -1981,7 +1981,6 @@ class GetMultipleServiceCleaningSlotes(APIView):
 			elif service_type == 'Kitchen Cleaning':
 				total_cleaners 	= total_cleaners.filter(is_kitchen_skill=True)
 				total_leaders 	= total_leaders.filter(is_kitchen_skill=True)
-				print("kitchen cleaning")
 			elif service_type == 'Carpet Cleaning':
 				total_cleaners 	= total_cleaners.filter(is_carpet_skill=True)
 				total_leaders 	= total_leaders.filter(is_carpet_skill=True)
@@ -2035,7 +2034,7 @@ class GetMultipleServiceCleaningSlotes(APIView):
 				
 				active_cleaners1 	= CleaningTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime))|Q(Q(end_at__gte=slote_start_datetime)&Q(end_at__lte=slote_end_datetime))|Q(Q(start_at__lte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__gte=slote_end_datetime))|Q(Q(start_at__gte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__lte=slote_end_datetime))))
 				active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime))|Q(Q(end_at__gte=slote_start_datetime)&Q(end_at__lte=slote_end_datetime))|Q(Q(start_at__lte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__gte=slote_end_datetime))|Q(Q(start_at__gte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__lte=slote_end_datetime))))
-				
+
 				for service_type in service_types:
 					if service_type == 'General Cleaning':
 						active_cleaners1 	= active_cleaners1.filter(member__is_general_skill=True)
@@ -2102,9 +2101,14 @@ class GetMultipleServiceCleaningSlotes(APIView):
 				busy_leaders  = len(set(team_leaders_scheduled))
 				busy_cleaners = len(set(team_members_scheduled))
 
-				if slote == 6 and slote_duration == 6:
-					print(slote,"slote")
-					print(slote_duration,"duration")
+				if slote == 10 and slote_duration == 2:
+					print(slote)
+					print(total_newcleaners,"total_newcleaners")
+					print(busy_cleaners,"busy_cleaners")
+					print(total_newleaders,"total_newleaders")
+					print(busy_leaders,"busy_leaders")
+				if slote == 8 and slote_duration == 2:
+					print(slote)
 					print(total_newcleaners,"total_newcleaners")
 					print(busy_cleaners,"busy_cleaners")
 					print(total_newleaders,"total_newleaders")
