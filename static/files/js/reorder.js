@@ -85,6 +85,7 @@ function openNav() {
             themes: {
               light: {
                 primary: '#289bac', // #E53935
+                //primary: '#2e4e85',
                 secondary: '#FFCDD2', // #FFCDD2
                 accent: '#3F51B5', // #3F51B5
               },
@@ -584,7 +585,8 @@ function openNav() {
       currentAddressIndex:null,
       completedAddress:[],
       scheduleGroup:{},
-      orderId:''
+      orderId:'',
+      success_msg:false
           },
        
   /* header data */
@@ -4372,8 +4374,11 @@ function openNav() {
             }
           }
           axios.post(this.url+'/customer/duplicatebookingphase2/'+this.orderId+'/',serviceDetails).then(response=>{
-            
-            this.goToPaymentDialog()
+            this.success_msg=true
+            setTimeout(function(){
+              window.location.reload(); // you can pass true to reload function to ignore the client cache and reload from the server
+          },1000);
+           
           
           })
         }
@@ -4385,7 +4390,10 @@ function openNav() {
     }
     else{
       axios.post(this.url+'/customer/duplicatebookingphase2/'+this.orderId+'/',this.custServiceScheduled).then(response=>{
-        this.goToPaymentDialog()
+        this.success_msg=true
+        setTimeout(function(){
+          window.location.reload(); // you can pass true to reload function to ignore the client cache and reload from the server
+      },1000);
       })
     }
     
