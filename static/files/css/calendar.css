@@ -520,6 +520,15 @@ width:100% !important;
     padding:5px;
     cursor:pointer;
 }
+
+.duration-inactive {
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    background:#c7c7c7;
+    padding: 5px;
+    pointer-events: none;
+
+}
 /** Carousel**/
 #cleaningCalendar-carousel .owl-prev {
   

@@ -3,10 +3,73 @@
 {% load static %}
 {% block css_links %}
 <link rel="stylesheet" href="https://semantic-ui.com/dist/semantic.min.css">
+<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
 {% endblock %}
-<div class="wrapper"><!--wrapper-->
+<div class="wrapper" id="app"><!--wrapper-->
+   
 {% include "operationsupervisor/common/header.html" %}
-    
+<v-app>
+    <!-- slot selection dialog begins here-->
+    <!-- One time cleaning dialog-->
+<v-dialog v-model="slot_dialog" width="1000">
+    <v-card style="min-height:500px">
+
+  <div class="row m-0" style="margin:0 !important" v-if="render">
+    <div class="col-md-4">
+      <div >
+        Choose Cleaning Slots
+      </div>
+      <v-date-picker  v-model="dateSelected" full-width elevation="5" color="primary"
+      v-on:change="dateChange()" class="mt-2" :min="today" ></v-date-picker>
+    </div>
+    <div class="col-md-8 "  >
+      <div class="mt-4">
+        Select  Slots
+      </div>
+  <div class="row mt-2" style="margin:0 !important">
+    <div class="col-md-4" v-for="(slot,sindex) in time_slots" v-bind:key="sindex">
+        <div class="time-slot duration text-center p-2" 
+        @click="addSlot(slot.start_time,slot.end_time,(sindex+1))" v-if='!selected_slots[dateSelected].slots.includes((sindex+1)) && checkSlotStat((sindex+1))'>
+          <% slot.start_time+' - '+ slot.end_time %>
+         </div>
+     
+         <div class="time-slot duration-active text-center p-2"  v-if='selected_slots[dateSelected].slots.includes((sindex+1))' @click="removeSlot((sindex+1))">
+           <% slot.start_time+' - '+ slot.end_time %>
+         </div>
+         <div class="time-slot duration-inactive text-center p-2"  v-if='!checkSlotStat((sindex+1)) && !selected_slots[dateSelected].slots.includes((sindex+1))'>
+           <% slot.start_time+' - '+ slot.end_time %>
+         </div>
+    </div>
+  
+    <div class="col-md-12 ">
+      <div v-if="slotCounter()<1">
+      <v-alert
+      dense
+      outlined
+      type="error"
+      v-if="schedule_err_msg"
+    >
+      Please fill the required fields
+    </v-alert>
+  </div>
+      <div class="d-flex justify-center">
+      <v-btn color="primary" @click="confirmSlot()">
+        Proceed
+      </v-btn>
+      <v-btn color="primary" outlined class="ml-2" @click="resetSlots()">
+        Cancel
+      </v-btn>
+      </div>
+    </div>
+    </div>
+  
+    </div>
+  </div>
+  </v-card>
+  </v-dialog>
+    <!-- slot selection dialog ends here-->
 <section class="content"><!--content-->
 <div class="container-fluid space topspace"><!--container-fluid space topspace-->
     <div class="welcome-wrapper"><!--welcome-wrapper-->
@@ -78,8 +141,10 @@
                 <input name="number_of_cleaners" id="id_number_of_cleaners" type="text" class="textBox OnlyNumber" maxlength="2" placeholder=" " required> 
                 </div><!--enquiry-form-left-->
                 <div class="enquiry-form-right"><!--enquiry-form-right-->
-                <div class=" bold-text common-label"> <label>Cleaning Hours</label></div>
-                <input name="cleaning_hours" id="id_cleaning_hours" type="text" class="textBox OnlyNumber" maxlength="2" placeholder=" " required> 
+                <div class=" bold-text common-label" > <label>Select Slots</label></div>
+                <v-btn color="primary" @click="slot_dialog=true"><v-icon left>
+                    date_range
+                  </v-icon>Select Slots</v-btn>
                 </div><!--enquiry-form-right-->
             	
 		</div> <!--enquiry-form-Wrapper enquiry-boxes--> 
@@ -152,14 +217,266 @@
                  
 </div><!--container-fluid space topspace-->
 </section><!--content-->
-    
+</v-app>
     
 {% include 'agent/common/footer.html' %}    
 </div><!--wrapper-->
 {% endblock %}
 
 {% block javascript %}
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script>
+  let app=  new Vue({
+      el: '#app',
+      delimiters: ['<%', '%>'],
+      vuetify: new Vuetify({theme: {
+          themes: {
+            light: {
+              primary: '#2f4e85', // #E53935
+              secondary: '#FFCDD2', // #FFCDD2
+              accent: '#3F51B5', // #3F51B5
+            },
+          },
+        }}),
+        mounted(){
+            this.today = moment().format().split("T")[0];
+    this.dateSelected=moment().format().split("T")[0];
+    console.log("today us"+this.dateSelected)
+    this.selected_slots[this.dateSelected]={
+      slots:[]
+    }
+        },
+        data:{
+            time_slots_selected:[],
+            schedule_err_msg:"",
+            dateSelected:'',
+            today:'',
+            slot_dialog:false,
+            render:true,
+            time_slots:[
+            {
+      start_time:'12:00 AM',
+      end_time:'02:00 AM'
+    },{
+      start_time:'02:00 AM',
+      end_time:'04:00 AM'
+    },
+    {
+      start_time:'04:00 AM',
+      end_time:'06:00 AM'
+    },
+    {
+      start_time:'06:00 AM',
+      end_time:'08:00 AM'
+    },
+    {
+      start_time:'08:00 AM',
+      end_time:'10:00 AM'
+    },
+    {
+      start_time:'10:00 AM',
+      end_time:'12:00 PM'
+    },
+    {
+      start_time:'12:00 PM',
+      end_time:'02:00 PM'
+    },
+    {
+      start_time:'02:00 PM',
+      end_time:'04:00 PM'
+    },
+    {
+      start_time:'04:00 PM',
+      end_time:'06:00 PM'
+    },
+    {
+      start_time:'06:00 PM',
+      end_time:'08:00 PM'
+    },
+    {
+      start_time:'08:00 PM',
+      end_time:'10:00 PM'
+    },
+    {
+      start_time:'10:00 PM',
+      end_time:'12:00 AM'
+    }
+            ],
+            slotFormat:{
+    "1":{
+      start_time:'12:00 AM',
+      end_time:'02:00 AM'
+    },
+    "2":{
+      start_time:'02:00 AM',
+      end_time:'04:00 AM'
+    },
+    "3":{
+      start_time:'04:00 AM',
+      end_time:'06:00 AM'
+    },
+    "4":{
+      start_time:'06:00 AM',
+      end_time:'08:00 AM'
+    },
+    "5":{
+      start_time:'08:00 AM',
+      end_time:'10:00 AM'
+    },
+    "6":{
+      start_time:'10:00 AM',
+      end_time:'12:00 PM'
+    },
+    "7":{
+      start_time:'12:00 PM',
+      end_time:'02:00 PM'
+    },
+    "8":{
+      start_time:'02:00 PM',
+      end_time:'04:00 PM'
+    },
+    "9":{
+      start_time:'04:00 PM',
+      end_time:'06:00 PM'
+    },
+    "10":{
+      start_time:'06:00 PM',
+      end_time:'08:00 PM'
+    },
+    "11":{
+      start_time:'08:00 PM',
+      end_time:'10:00 PM'
+    },
+    "12":{
+      start_time:'10:00 PM',
+      end_time:'12:00 AM'
+    },
+    
+  },
+  selected_slots:{}
+        },
+        methods:{
+            confirmSlot(){
+                this.time_slots_selected=[]
+                var counter=1
+                for(var i in this.selected_slots){
+                    var min=Math.min( ...this.selected_slots[i].slots )
+                    var max=Math.max( ...this.selected_slots[i].slots )
+                    var year=i.split('-')[0]
+                    var month=i.split('-')[1]
+                    var day=i.split('-')[2]
+                    var date=day+'-'+month+'-'+year
+                    this.time_slots_selected.push({
+                        date:date,
+                        cleaning_hours:this.selected_slots[i].slots.length*2,
+                        starting_time:this.slotFormat[min].start_time
+                    })
+                   
+                }
+                this.slot_dialog=false
+                this.selected_slots={}
+                this.dateSelected=this.today
+                this.selected_slots[this.today]={
+                         slots:[]
+                    }
+            },
+            resetSlots(){
+                this.slot_dialog=false
+                this.selected_slots={}
+                this.dateSelected=this.today
+                this.selected_slots[this.today]={
+                         slots:[]
+                    }
+            },
+            dateChange(){
+                if(!this.selected_slots[this.dateSelected]){
+              this.selected_slots[this.dateSelected]={
+                slots:[]
+              }
+            }
+            },
+            addSlot(start,end,slot){
+    this.render=false
+      this.selected_slots[this.dateSelected].slots.push(slot)
+      this.render=true
+  },
+  removeSlot(slot){
+    this.render=false
+    var prevSlot=parseInt(slot)-1
+    var nextSlot=parseInt(slot)+1
+    var index=this.selected_slots[this.dateSelected].slots.indexOf(slot)
+    this.selected_slots[this.dateSelected].slots.splice(index,1)
+    if(this.selected_slots[this.dateSelected].slots.includes(nextSlot)&&this.selected_slots[this.dateSelected].slots.includes(prevSlot))
+    {
+      var tempSlots=[...this.selected_slots[this.dateSelected].slots]
+      for(var i=0;i<this.selected_slots[this.dateSelected].slots.length;i++){
+        if(this.selected_slots[this.dateSelected].slots[i]>slot){
+          var slotindex=tempSlots.indexOf(this.selected_slots[this.dateSelected].slots[i])
+          tempSlots.splice(slotindex,1)
+        }
+      }
+    //  console.log("duble slot is "+this.selected_double_slots+"tempslot:"+tempSlots)
+      this.selected_slots[this.dateSelected].slots=[...tempSlots]
+  
+    }
+    this.render=true
+  },
+  checkSlotStat(slot){
+      var prevSlot=parseInt(slot)-1
+      var nextSlot=parseInt(slot)+1
+      var counter=0
+      for(var i in this.selected_slots){
+        counter=counter+this.selected_slots[i].slots.length
+      }
+      
+      if(this.selected_slots[this.dateSelected].slots.length>0)
+      {
+      if(slot==1){
+        if(this.selected_slots[this.dateSelected].slots.includes(nextSlot)){
+          return true
+        }
+        else {
+          return false
+        }
+      }
+      else if(slot==12){
+        if(this.selected_slots[this.dateSelected].slots.includes(prevSlot)){
+          return true
+        }
+        else {
+          return false
+        }
+      }
+      else{
+        if(this.selected_slots[this.dateSelected].slots.includes(prevSlot)||this.selected_slots[this.dateSelected].slots.includes(nextSlot))
+        {
+          return true
+        }
+        else{
+          return false
+        }
+      }
+      }
+      else{
+        return true
+      }
+    
+    },
+    slotCounter(){
+      var counter=0
+      for(var i in this.selected_slots){
+        counter=counter+this.selected_slots[i].slots.length
+      }
+      return counter
+    },
+        }
+    })
+  </script>
 <script>
+
 
 function datetimecheck(ftime,fdate,x){
         var today = new Date();
