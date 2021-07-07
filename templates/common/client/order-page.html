@@ -1140,11 +1140,11 @@
                                             {% for keynote in section.sectionkeynotes %}
                                             {% if forloop.counter|divisibleby:2 %}
                                             {% else %}
-                                            {% if keynote.sub_area != 'kitchen' %}
+                                            {% comment %} {% if keynote.sub_area != 'kitchen' %} {% endcomment %}
                                                 <div class="clean-section-card">
                                                     <p>{{keynote.sub_area}}<span class="c-text2">{{keynote.quantity}}</span></p>
                                                 </div>
-                                             {% endif %}   
+                                             {% comment %} {% endif %}    {% endcomment %}
                                             {% endif %}
                                             {% endfor %}
 
@@ -1153,11 +1153,11 @@
                                             <div class="col-md-3 ml-0 ">
                                             {% for keynote in section.sectionkeynotes %}
                                             {% if forloop.counter|divisibleby:2 %}
-                                            {% if keynote.sub_area != 'kitchen' %}
+                                            {% comment %} {% if keynote.sub_area != 'kitchen' %} {% endcomment %}
                                             <div class="clean-section-card">
                                                 <p>{{keynote.sub_area}}<span class="c-text2">{{keynote.quantity}}</span></p>
                                             </div>
-                                            {% endif %}
+                                            {% comment %} {% endif %} {% endcomment %}
                                             {% else %}
                                             {% endif %}
                                             {% endfor %}
@@ -1171,17 +1171,17 @@
                                 {% endfor %}
 
                                 {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION' %}
+                                {% elif order.evaluation.quatation_status == 'PENDING' %}
+                                <div v-if="edit">
+                                <button style="box-shadow: none !important;" class="view-button view-btn cp"   onclick="addSection(this)"  data-service="{{orderschedule.order_scheduler_book.service_type.name}}">  <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="">  Add Section</button>
+                                </div>
                                 {% else %}
                                 <div v-if="edit">
                                 <button style="box-shadow: none !important;" class="view-button view-btn cp"   onclick="addSection(this)"  data-service="{{orderschedule.order_scheduler_book.service_type.name}}">  <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="">  Add Section</button>
                                 </div>
                                 {% endif %}
 
-                                {% if order.evaluation.quatation_status == 'PENDING' %}
-                                <div v-if="edit">
-                                <button style="box-shadow: none !important;" class="view-button view-btn cp"   onclick="addSection(this)"  data-service="{{orderschedule.order_scheduler_book.service_type.name}}">  <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="">  Add Section</button>
-                                </div>
-                                {% endif %}
+                                
 
 
                                 <div class="showmore2{{orderschedule.id}}" style="display: none;"
