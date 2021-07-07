@@ -4538,6 +4538,13 @@ class EditOrderDetails(APIView):
 				order.evaluation.estimated_cost    += saved_section.section_net_cost
 				order.evaluation.save()
 
+				#keynotes
+				keynotes     = request.data.get('keynotes')
+				new_keynotes = []
+				for keynote in keynotes:
+					new_keynotes.append(EvaluationSectionKeynote(evaluation_section=saved_section,sub_area=keynote['sub_area'],quantity=keynote['quantity']))
+				EvaluationSectionKeynote.objects.bulk_create(new_keynotes)
+
 				response_dict['section_success']       = True
 				response_dict['success']  = True
 
