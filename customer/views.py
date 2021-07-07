@@ -2035,6 +2035,8 @@ class GetMultipleServiceCleaningSlotes(APIView):
 					print(slote)
 					print(total_newcleaners,"total_newcleaners")
 					print(total_newleaders,"total_newleaders")
+					print(total_cleaners,"total_cleaners")
+					print(total_leaders,"total_leaders")
 				if slote == 8 and slote_duration == 2:
 					print(slote)
 					print(total_newcleaners,"total_newcleaners")
