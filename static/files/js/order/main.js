@@ -82,7 +82,10 @@ function editSection(service){
  // var sectiondata=$(section).data()
  app.getSection(eval_book_id)
  app.editSectionData.section_id=sid
-
+if(app.service_type=='Kitchen Cleaning'){
+  app.editSectionData.new_kitchen=app.sections[index-1].new_kitchen
+  app.editSectionData.oil_residue=app.sections[index-1].oil_residue
+}
  app.editSectionData.keynotes=app.sections[index-1].keynotesections
   console.log("section is "+JSON.stringify(app.sections[index-1]))
   app.sectionData=app.sections[index-1]
@@ -185,7 +188,7 @@ function addSection(service){
       "section_cost":"",
       "section_net_cost":"",
       "keynotes":[],
-      "is_newkitchen":false,
+      "new_kitchen":false,
      "is_highprice_facade":false,
      "is_highprice_window":false,
   }
@@ -252,7 +255,7 @@ const app = new Vue({
               material:[],
               category:'Floor',
               age:null,
-              is_newkitchen:false
+              new_kitchen:false
              },
              section_cost:0,
              orderId:'',
@@ -360,8 +363,9 @@ const app = new Vue({
             chair_size:[],
             sofa_size:[],
 
-            //url:'https://test.bleach-kw.com'
-            url:'http://localhost:8000'
+            url:'https://test.bleach-kw.com'
+            //url:'http://localhost:8000'
+            //url:'http://127.0.0.1:8000'
   },
   methods:{
    
@@ -800,6 +804,9 @@ const app = new Vue({
       }
 
     },
+    resetKitchenSize(){
+      this.editSectionData.size={}
+    },
     updateSection(){
       this.parseKeynotes()
       var sectionData={}
@@ -813,13 +820,14 @@ const app = new Vue({
           "cement_residue":false,
           "section_cost":this.editSectionData.section_cost,
           "section_net_cost":this.editSectionData.section_cost,
-          "is_newkitchen":this.editSectionData.is_newkitchen,
+          "new_kitchen":this.editSectionData.new_kitchen,
+          "oil_residue":this.editSectionData.oil_residue,
          "is_highprice_facade":false,
          "is_highprice_window":false,
       }
       if(this.service_type=='Upholstery Cleaning'){
-        if(this.editSectionData.size.upholstery_type=='SOFA'){
-          sectionData.size=sectionData.size+" Seater"
+        if(!this.editSectionData.size.name){
+          sectionData.size=this.editSectionData.size+" Seater"
         }
       }
       
@@ -860,7 +868,7 @@ const app = new Vue({
           "cement_residue":false,
           "section_cost":this.editSectionData.section_cost,
           "section_net_cost":this.editSectionData.section_cost,
-          "is_newkitchen":this.editSectionData.is_newkitchen,
+          "new_kitchen":this.editSectionData.is_newkitchen,
          "is_highprice_facade":false,
          "is_highprice_window":false,
       }
@@ -899,7 +907,7 @@ const app = new Vue({
               material:[],
               category:'Floor',
               age:null,
-              is_newkitchen:false
+              newkitchen:false
              },
              this.section_cost=0
               location.reload()   
@@ -963,7 +971,7 @@ const app = new Vue({
             console.log("size is"+JSON.stringify(this.service_size))
 
            /* General cleaning  size conversion */ 
-          if(this.service_type=='General Cleaning'){
+          if(this.service_type=='General Cleaning' || this.service_type=='Deep Cleaning' || this.service_type=='Sterilization' || this.service_type=='Sterilization'|| this.service_type=='Carpet Cleaning'|| this.service_type=='Car Parking Umbrella'){
             for(var j=0;j<this.sections.length;j++){
               for(var i=0;i<this.service_size.length;i++){
                 if(this.service_size[i].name==this.sections[j].size){
@@ -1003,6 +1011,36 @@ const app = new Vue({
             }
               
           } 
+         /* kitchen cleaning */
+         if(this.service_type=='Kitchen Cleaning'){
+        
+           for(var j=0;j<this.sections.length;j++){
+            
+             
+            
+             if(this.sections[j].new_kitchen){
+               for(var i=0;i<this.service_size.length;i++){
+                 if(this.service_size[i].is_newkitchen && this.sections[j].size==this.service_size[i].name){
+                   
+                   this.sections[j].size=this.service_size[i]
+                  
+                 }
+               }
+             }
+             else{
+              for(var i=0;i<this.service_size.length;i++){
+                if(!this.service_size[i].is_newkitchen && this.sections[j].size==this.service_size[i].name){
+                  
+                  this.sections[j].size=this.service_size[i]
+                 
+                }
+              }
+             }
+            
+           }
+             
+         } 
+
         })
           
         }).catch(err=>{
@@ -1040,6 +1078,9 @@ const app = new Vue({
           this.productivity=response.data
           for(var i in this.productivity){
             this.service_productivity.push(this.productivity[i])
+          }
+          if(this.service_type=='Kitchen Cleaning'){
+            this.formatKitchenSize()
           }
          
       })
