@@ -479,7 +479,7 @@ const app=  new Vue({
           },
           getslotAgain(){
             
-
+            console.log("i m hee")
             
             this.cleaningData.service_types=this.services
             axios.post(this.url+"/agent/cleaningcallendar/availability/",this.cleaningData).then((response) => {

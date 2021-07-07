@@ -1148,6 +1148,10 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 		check_tl            = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(id=assigned_leader)
 
 		for order_schedule in order_schedules:
+			print(cleaning_team_assign_form)
+			print(check_cleaners.count())
+			print(len(assigned_cleaners))
+			print(check_tl)
 			if	cleaning_team_assign_form.is_valid() and check_cleaners.count() >= len(assigned_cleaners) and check_tl:
 				cleaning_team_assign_form_save                   = cleaning_team_assign_form.save(commit=False)
 				cleaning_team_assign_form_save.order_scheduler   = order_schedule

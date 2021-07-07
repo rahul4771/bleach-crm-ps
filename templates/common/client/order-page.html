@@ -109,10 +109,61 @@
                                 <div class=" bold-text common-label required-field"> <label>Section Name</label></div>
                               <input  id="id_name" type="text" class="textBox " placeholder="Section Name" required="" v-model="editSectionData.section_name" >
                 </div>
-               
-                <div class="col-md-6 mt-10" v-if="service_type!='General Cleaning'">
+                <div class="col-md-6 mt-10" v-if="service_type=='Upholstery Cleaning'">
                     <div class=" bold-text common-label required-field"> <label>Age</label></div>
                   <input   type="text" class="textBox OnlyNumber" placeholder="Age" required="" v-model="editSectionData.age">
+                </div>
+                <div class="col-md-6 mt-10" v-if="service_type=='Upholstery Cleaning' && action_type=='Add'">
+                    <div class=" bold-text common-label required-field"> <label>Upholstery Type</label></div>
+                    <multiselect
+                    v-model="editSectionData.upholstery_type"
+                    placeholder="Select a Size"
+                    
+                    :options="['SOFA','CHAIR']"
+
+                    :multiple="false"
+                    :taggable="false"
+                    :show-labels="false"
+                    
+                   
+
+
+
+                  ></multiselect>
+                </div>
+                <div class="col-md-6 mt-10" v-if="service_type=='Kitchen Cleaning'">
+                    <div class=" bold-text common-label required-field"> <label>Is it a new Kitchen</label></div>
+                    <div class="d-flex">
+                    <div>
+                <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" :value="true"  v-model="editSectionData.new_kitchen" @change="resetKitchenSize" >
+                    <label class="form-check-label" for="exampleRadios1">
+                        Yes
+                    </label>
+                </div>
+                <div>
+                    <input class="form-check-input ml-10" type="radio" name="exampleRadios" id="exampleRadios1" :value="false" checked v-model="editSectionData.new_kitchen" @change="resetKitchenSize" >
+                        <label class="form-check-label" for="exampleRadios1">
+                            No
+                        </label>
+                    </div>
+                </div>
+                </div>
+                <div class="col-md-12 mt-10 mb-10" v-if="service_type=='Kitchen Cleaning'">
+                    <div class=" bold-text common-label required-field"> <label>Is there any oil residue ? </label></div>
+                    <div class="d-flex">
+                    <div>
+                <input class="form-check-input" type="radio" name="residueRadios" id="residueRadios1" :value="true"  v-model="editSectionData.oil_residue" >
+                    <label class="form-check-label" for="exampleRadios1">
+                        Yes
+                    </label>
+                </div>
+                <div>
+                    <input class="form-check-input ml-10" type="radio" name="residueRadios" id="residueRadios1" :value="false" checked v-model="editSectionData.oil_residue">
+                        <label class="form-check-label" for="exampleRadios1">
+                            No
+                        </label>
+                    </div>
+                </div>
                 </div>
                <!-- <div class="col-md-6 mt-10"  v-if="service_type=='General Cleaning'">
                     
@@ -132,26 +183,8 @@
                   
                         
                  </div>-->
-                 <div v-if="editSectionData.category=='Kitchen'" class="col-md-6 mt-10">
-                    <div >
-                        <div class=" bold-text common-label required-field"> <label>Is it a new Kitchen</label></div>
-                        <div class="d-flex">
-                        <div>
-                    <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" :value="true"  v-model="editSectionData.is_newkitchen" @change='changeCategory()'>
-                        <label class="form-check-label" for="exampleRadios1">
-                            Yes
-                        </label>
-                    </div>
-                    <div>
-                        <input class="form-check-input ml-10" type="radio" name="exampleRadios" id="exampleRadios1" :value="false" checked v-model="editSectionData.is_newkitchen" @change='changeCategory()'>
-                            <label class="form-check-label" for="exampleRadios1">
-                                No
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                 </div>
-                <div class="col-md-6 mt-10">
+                
+                <div class="col-md-6 mt-10" v-if="service_type!='Upholstery Cleaning' && service_type!='Kitchen Cleaning'">
                     
                     <div class=" bold-text common-label required-field"> <label>Size</label></div>
                     <multiselect
@@ -159,6 +192,75 @@
                       placeholder="Select a Size"
                       
                       :options="service_productivity"
+
+                      :multiple="false"
+                      :taggable="false"
+                      :show-labels="false"
+                      track-by="name"
+                      label="name"
+                      @input="calcSectionCost()"
+
+
+
+                    ></multiselect>
+                  
+                        
+                 </div>
+                 <div class="col-md-6 mt-10" v-if="service_type=='Kitchen Cleaning'">
+                    
+                    <div class=" bold-text common-label required-field"> <label>Size</label></div>
+                    <multiselect
+                    v-if="editSectionData.new_kitchen"
+                      v-model="editSectionData.size"
+                      placeholder="Select a Size"
+                      
+                      :options="new_kitchen_size"
+
+                      :multiple="false"
+                      :taggable="false"
+                      :show-labels="false"
+                      track-by="name"
+                      label="name"
+                      @input="calcSectionCost()"
+
+
+
+                    ></multiselect>
+                    <multiselect
+                    v-else
+                      v-model="editSectionData.size"
+                      placeholder="Select a Size"
+                      
+                      :options="old_kitchen_size"
+
+                      :multiple="false"
+                      :taggable="false"
+                      :show-labels="false"
+                      track-by="name"
+                      label="name"
+                      @input="calcSectionCost()"
+
+
+
+                    ></multiselect>
+                  
+                        
+                 </div>
+                 <div class="col-md-6 mt-10" v-if="service_type=='Upholstery Cleaning' && editSectionData.upholstery_type=='SOFA'">
+                    
+                    <div class=" bold-text common-label required-field"> <label>Size</label></div>
+                    <input   type="text" class="textBox OnlyNumber" placeholder="Seaters" required="" v-model="editSectionData.size" @input="calcSofaSize()">
+                  
+                        
+                 </div>
+                 <div class="col-md-6 mt-10" v-if="service_type=='Upholstery Cleaning' && editSectionData.upholstery_type=='CHAIR' ">
+                    
+                    <div class=" bold-text common-label required-field"> <label>Size</label></div>
+                    <multiselect
+                      v-model="editSectionData.size"
+                      placeholder="Select a Size"
+                      
+                      :options="chair_size"
 
                       :multiple="false"
                       :taggable="false"

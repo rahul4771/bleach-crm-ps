@@ -3468,7 +3468,7 @@ function openNav() {
             var total_estimated_size =0
               for(var i=0;i<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;i++)
               {
-                total_estimated_size = total_estimated_size+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[i].size;
+                total_estimated_size = total_estimated_size+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[i].size.max_size;
               }
              
               var productivity = data["perhour_cleaning"];
@@ -4218,9 +4218,41 @@ function openNav() {
         this.multiServicesBill.push(scheduleDetails)
       }
       this.gotData=true
+      this.rearrangeSize()
     }).catch(e=>{
       console.log(e)
     })
+  },
+
+  async rearrangeSize(){
+    console.log("just called me")
+    for(var i=0;i<this.multiServicesBill.length;i++){
+    
+      var productivity= await this.getTheProd(this.multiServicesBill[i].service)
+      console.log("productivity is"+JSON.stringify(productivity))
+      for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
+        for(var p in productivity){
+          
+          if(productivity[p].name==this.multiServicesBill[i].bill[j].size){
+            this.multiServicesBill[i].bill[j].size=productivity[p]
+          }
+        }
+      }
+    }
+    
+             
+    
+  },
+  async getTheProd(service){
+    var res={}
+    await axios.get(this.url+'/customer/ajax/getservicesizeprice?service_type='+service).then( response =>{
+      console.log("dat is "+JSON.stringify(response.data))
+      res= response.data
+    })
+    return res
+    
+  
+    
   },
   reCalcAddressData(){
     console.log("called me")
