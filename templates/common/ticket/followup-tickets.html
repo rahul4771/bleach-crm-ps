@@ -8,7 +8,41 @@
 <link rel='stylesheet' href="{% static 'files/plugins/bootstrap-3.3.7/css/bootstrap-theme.min.css'%}">
 <!--Bootstrap 3.3.7 -->
 <link href="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/assets/owl.carousel.css' %}" rel="stylesheet">
-
+<style>
+    .owl-theme .owl-nav {
+    margin-top: 10px;
+    text-align: center;
+    -webkit-tap-highlight-color: transparent;
+}
+.owl-prev {
+    position: absolute;
+    top: 100px;
+    left: 6px;
+    
+    display: block !important;
+    border: 0px solid black;
+    height: 30px;
+    width: 30px;
+    border-radius: 40px;
+    background: #fff !important;
+    
+    box-shadow: 0px 3px 6px #00000029;
+}
+.owl-next {
+    position: absolute;
+    top: 100px;
+    right: 6px;
+   
+    display: block !important;
+    border: 0px solid black;
+    height: 30px;
+    width: 30px;
+    border-radius: 40px;
+    background: #fff !important;
+    
+    box-shadow: 0px 3px 6px #00000029;
+}
+</style>
 
 <div class="wrapper"><!--wrapper-->
 {% if request.user.user_type == 'SALESADMIN' %}
@@ -156,7 +190,7 @@
 
                                                 <div class="owl-carousel c-mt-10 id_cleaning_before_images">
                                                 {% for investigationmedia in followup_details.investigation.investigationmedias %}{% if investigationmedia.taken_status == 'CUSTOMER_SEND' %}
-                                                    <div >
+                                                    <div style="margin-left:25px; margin-right:10px;">
                                                         <img class="slider-img pointer before_image{{orderschedule.id}}" onclick="onClick(this)" src="{{investigationmedia.media.url}}" alt="">
                                                     </div>
                                                 {% endif %}{% endfor %}
@@ -376,34 +410,30 @@
                                             </div>
                                             
                                          {% endif %}
-                                         {% endfor %}
-                                         {% endfor %}
-                                         
-                                         <div class="col-md-12">
-                                             <div class="tk-subtitle tk-mt-5">Cleaning</div>
-                                             <div class="row mt-10">
-                                                 <div class="col-md-3">
-                                                     <div class="dummy-card">
 
-                                                     </div>
-                                                 </div>
-                                                 <div class="col-md-3">
-                                                     <div class="dummy-card">
-                                                         
-                                                     </div>
-                                                 </div>
-                                                 <div class="col-md-3">
-                                                     <div class="dummy-card">
-                                                         
-                                                     </div>
-                                                 </div>
-                                                 <div class="col-md-3">
-                                                     <div class="dummy-card">
-                                                         
-                                                     </div>
-                                                 </div>
-                                             </div>
-                                         </div>
+                                         {% endfor %}
+                                         {% endfor %}
+
+                                         {% if followup_details.investigation.investigationmedias %}
+                                            <div class="col-md-12">
+                                                <div class="tk-subtitle tk-mt-5">Cleaning</div>
+                                                <div class="row mt-10">
+
+                                                <div class="owl-carousel c-mt-10 id_cleaning_before_images">
+                                                {% for investigationmedia in followup_details.investigation.investigationmedias %}{% if investigationmedia.taken_status == 'CUSTOMER_SEND' %}
+                                                    <div style="margin-left:25px; margin-right:10px;">
+                                                        <img class="slider-img pointer before_image{{orderschedule.id}}" onclick="onClick(this)" src="{{investigationmedia.media.url}}" alt="">
+                                                    </div>
+                                                {% endif %}{% endfor %}
+                                                </div>
+                                                    
+                                                    
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                         
+                                         
+
                                      </div>
                                  </div>
                              </div>
@@ -515,32 +545,22 @@
                                         {% endfor %}
 
                                         
-
+                                        {% for paybackdiscount in followup_details.investigation.paybackdiscounts %}
+                                        {% if paybackdiscount.paybackdiscountmedias %}
                                          <div class="col-md-12">
                                             <div class="tk-subtitle tk-mt-5">Media</div>
                                             <div class="row mt-10">
-                                                <div class="col-md-3">
-                                                    <div class="dummy-card">
-
+                                                <div class="owl-carousel c-mt-10 id_cleaning_before_images">
+                                                {% for paybackdiscountmedia in paybackdiscount.paybackdiscountmedias %}
+                                                    <div style="margin-left:25px; margin-right:10px;">
+                                                        <img class="slider-img pointer" onclick="onClick(this)" src="{{paybackdiscountmedia.media.url}}" alt="">
                                                     </div>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <div class="dummy-card">
-                                                        
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <div class="dummy-card">
-                                                        
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <div class="dummy-card">
-                                                        
-                                                    </div>
+                                                {% endfor %}
                                                 </div>
                                             </div>
                                         </div>
+                                        {% endif %}
+                                        {% endfor %}
                                         
                                      </div>
                                  </div>
@@ -695,33 +715,25 @@
                                         {% endfor %}
                                         </div>
                                         
-
-                                         <div class="col-md-12">
-                                            <div class="tk-subtitle tk-mt-5">Media</div>
-                                            <div class="row mt-10">
-                                                <div class="col-md-3">
-                                                    <div class="dummy-card">
-
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <div class="dummy-card">
-                                                        
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <div class="dummy-card">
-                                                        
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3">
-                                                    <div class="dummy-card">
-                                                        
+                                        {% for buybackpromogift in followup_details.investigation.buybackpromogifts %}
+                                        {% if buybackpromogift.buybackpromogiftmedias %} 
+                                                
+                                            <div class="col-md-12">
+                                                <div class="tk-subtitle tk-mt-5">Media</div>
+                                                <div class="row mt-10">
+                                                    <div class="owl-carousel c-mt-10 id_cleaning_before_images">
+                                                    {% for buybackpromogiftmedia in buybackpromogift.buybackpromogiftmedias %}
+                                                        <div style="margin-left:25px; margin-right:10px;">
+                                                            <img class="slider-img pointer" onclick="onClick(this)" src="{{buybackpromogiftmedia.media.url}}" alt="">
+                                                        </div>
+                                                    {% endfor %}
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        
+                                                    
+                                        {% endif %}
+                                        {% endfor %}
+
                                      </div>
                                  </div>
                              </div>
@@ -921,8 +933,8 @@
         nav: true,
         margin: 10,
         navText: [
-        `<i class='fa fa-chevron-left service-control' @click='prevService()'></i>`,
-        `<i class='fa fa-chevron-right service-control'></i>`,
+        `<i style="color:black;" class='fa fa-chevron-left service-control' @click='prevService()'></i>`,
+        `<i style="color:black;" class='fa fa-chevron-right service-control'></i>`,
         ],
     });
 
