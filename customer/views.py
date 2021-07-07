@@ -2032,17 +2032,14 @@ class GetMultipleServiceCleaningSlotes(APIView):
 				total_newcleaners = total_cleaners.filter(Q(Q(id__in=shift_cleaners)|Q(id__in=super_shift_cleaners))).exclude(id__in=absent_cleaners).count()-1
 				total_newleaders  = total_leaders.filter(Q(Q(id__in=shift_leaders)|Q(id__in=super_shift_leaders))).exclude(id__in=absent_leaders).count()
 				if slote == 10 and slote_duration == 2:
-					print(slote)
+					print(total_cleaners.count(),"total_cleaners")
+					print(total_leaders.count(),"total_leaders")
 					print(total_newcleaners,"total_newcleaners")
 					print(total_newleaders,"total_newleaders")
-					print(total_cleaners,"total_cleaners")
-					print(total_leaders,"total_leaders")
-				if slote == 8 and slote_duration == 2:
-					print(slote)
-					print(total_newcleaners,"total_newcleaners")
-					print(total_newleaders,"total_newleaders")
+
 				if slote == 6 and slote_duration == 2:
-					print(slote)
+					print(total_cleaners.count(),"total_cleaners")
+					print(total_leaders.count(),"total_leaders")
 					print(total_newcleaners,"total_newcleaners")
 					print(total_newleaders,"total_newleaders")
 
