@@ -363,8 +363,8 @@ const app = new Vue({
             chair_size:[],
             sofa_size:[],
 
-            //url:'https://test.bleach-kw.com'
-            url:'http://localhost:8000'
+            url:'https://test.bleach-kw.com'
+            //url:'http://localhost:8000'
   },
   methods:{
    
