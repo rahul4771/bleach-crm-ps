@@ -2032,16 +2032,12 @@ class GetMultipleServiceCleaningSlotes(APIView):
 				total_newcleaners = total_cleaners.filter(Q(Q(id__in=shift_cleaners)|Q(id__in=super_shift_cleaners))).exclude(id__in=absent_cleaners).count()-1
 				total_newleaders  = total_leaders.filter(Q(Q(id__in=shift_leaders)|Q(id__in=super_shift_leaders))).exclude(id__in=absent_leaders).count()
 				if slote == 10 and slote_duration == 2:
-					print(total_cleaners.count(),"total_cleaners")
-					print(total_leaders.count(),"total_leaders")
-					print(total_newcleaners,"total_newcleaners")
-					print(total_newleaders,"total_newleaders")
-
+					print(shift_cleaners.count(),"shift_cleaners")
+					print(shift_leaders.count(),"shift_leaders")
 				if slote == 6 and slote_duration == 2:
-					print(total_cleaners.count(),"total_cleaners")
-					print(total_leaders.count(),"total_leaders")
-					print(total_newcleaners,"total_newcleaners")
-					print(total_newleaders,"total_newleaders")
+					print(shift_cleaners.count(),"shift_cleaners")
+					print(shift_leaders.count(),"shift_leaders")
+
 
 				active_cleaners1 	= CleaningTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime))|Q(Q(end_at__gte=slote_start_datetime)&Q(end_at__lte=slote_end_datetime))|Q(Q(start_at__lte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__gte=slote_end_datetime))|Q(Q(start_at__gte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__lte=slote_end_datetime))))
 				active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime))|Q(Q(end_at__gte=slote_start_datetime)&Q(end_at__lte=slote_end_datetime))|Q(Q(start_at__lte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__gte=slote_end_datetime))|Q(Q(start_at__gte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__lte=slote_end_datetime))))
