@@ -2,6 +2,14 @@
 {% block content %}
 {% load static %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" />
+
+<!--Bootstrap 3.3.7 -->
+<link rel='stylesheet' href="{% static 'files/plugins/bootstrap-3.3.7/css/bootstrap.min.css'%}">
+<link rel='stylesheet' href="{% static 'files/plugins/bootstrap-3.3.7/css/bootstrap-theme.min.css'%}">
+<!--Bootstrap 3.3.7 -->
+<link href="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/assets/owl.carousel.css' %}" rel="stylesheet">
+
+
 <div class="wrapper"><!--wrapper-->
 {% if request.user.user_type == 'SALESADMIN' %}
   {% include "salesadmin/common/header.html" %}
@@ -140,31 +148,24 @@
                                                 <div class="tk-desc tk-secondary-text"> {{followup_details.investigation.notes|default_if_none:""}}</div>
                                             {% endif %}
                                             </div>
+
+                                            {% if followup_details.investigation.investigationmedias %}
                                             <div class="col-md-12">
                                                 <div class="tk-subtitle tk-mt-5">Cleaning</div>
                                                 <div class="row mt-10">
-                                                    <div class="col-md-3">
-                                                        <div class="dummy-card">
 
-                                                        </div>
+                                                <div class="owl-carousel c-mt-10 id_cleaning_before_images">
+                                                {% for investigationmedia in followup_details.investigation.investigationmedias %}{% if investigationmedia.taken_status == 'CUSTOMER_SEND' %}
+                                                    <div >
+                                                        <img class="slider-img pointer before_image{{orderschedule.id}}" onclick="onClick(this)" src="{{investigationmedia.media.url}}" alt="">
                                                     </div>
-                                                    <div class="col-md-3">
-                                                        <div class="dummy-card">
-                                                            
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <div class="dummy-card">
-                                                            
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-3">
-                                                        <div class="dummy-card">
-                                                            
-                                                        </div>
-                                                    </div>
+                                                {% endif %}{% endfor %}
+                                                </div>
+                                                    
+                                                    
                                                 </div>
                                             </div>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>
@@ -902,6 +903,7 @@
 </div><!--wrapper-->
 {% endblock %}
 {% block javascript %}
+<script src="{% static '/files/externalfiles/plugins/OwlCarousel2/dist/owl.carousel.js'%}"></script>
 <script>
  $('document').ready(function(){
     
@@ -913,6 +915,16 @@
     paybackdiscount_img = $('#data-pn-5').data('src');
     buybackpromogift_img= $('#data-pn-6').data('src');
     reporting_img       = $('#data-pn-7').data('src');
+
+    $(".owl-carousel").owlCarousel({
+        items: 2,
+        nav: true,
+        margin: 10,
+        navText: [
+        `<i class='fa fa-chevron-left service-control' @click='prevService()'></i>`,
+        `<i class='fa fa-chevron-right service-control'></i>`,
+        ],
+    });
 
 
     if(invest_cust_img == '' || invest_cust_img == undefined)
