@@ -17,7 +17,7 @@
 
 <div class="wrapper" id="app">
   <!--wrapper-->
-  {% if request.user.user_type == 'ADMIN' %}
+  {% if request.user.user_type == 'EVALUATOR' %}
 {% include "evaluator/common/header.html" %}
 {% elif request.user.user_type == 'AGENT' %}
 {% include "agent/common/header.html" %}
