@@ -28,29 +28,32 @@
                     
                     </div>
                     <div class="right-pos">
-                        <button class="inv-blue-btn" data-toggle="modal" data-target="#addModel" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Category </button>
+                        <button class="inv-blue-btn" onclick="openNavAddCategory()" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Category </button>
                     </div>
                 </div>
                 <div class="mt-20">
-                    <table class="inv-table"> 
+                    <table class="inv-table footable"> 
+                        <thead>
                         <tr>
-                            <th style="width: 15%;">
+                            <th style="width: %;">
                                 Category Name
                             </th>
-                            <th style="width: 15%; text-align: center;">
+                            <th data-hide="phone,tablet"  style="width: %; text-align: center;">
                                 Category Code
                             </th>
-                            <th style="width: 10%;" class="text-center">
+                            <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                 Segments
                             </th>
-                            <th style="width: 10%;" class="text-center">
+                            <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                 Lines
                             </th>
                             <th>
                                 Status
                             </th>
-                            <th style="width: 23%;">Action</th>
+                            <th data-hide="phone,tablet"  style="width: %;">Action</th>
                         </tr>
+                    </thead>
+                    <tbody>
                         <tr>
                             <td class="inv-green-border">
                                 
@@ -103,7 +106,7 @@
 
                             </td>
                         </tr>
-                        
+                    </tbody>
                     </table>
                 </div>
             </div>
@@ -164,8 +167,88 @@
             </div>
         </div>
       </div>
+
+      <div id="addCategory" class="inv-sidedrawer">
+
+        <div class="inv-sidedrawer-inner">
+            <div class="d-flex">
+                <div class="inv-drawer-head">
+                    Add Category
+                </div>
+                <div class="right-pos">
+
+                    <button onclick="closeNavAddCategory()" class="img-button">
+                        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                    </button>
+                </div>
+            </div>
+            <hr>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Category  Name</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Category  Code</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Status</div>
+
+                    <select id="id_payment" class="minimal">
+                        <option  ></option>
+                        <option  >Active</option>
+                        <option value="Post Paid">Inactive</option>
+
+                    </select>
+                </div>
+
+            </div>
+            
+
+
+          
+        </div>
+        <div class="inv-drawer-footer">
+            <button class="sent-button" >Submit</button>
+                        <button data-dismiss="modal" onclick="closeNavAddCategory()" class="view-button">Cancel</button>
+        </div>
+    </div>
 </div>
 
 
+
+{% endblock %}
+
+{% block javascript %}
+
+<script>
+    function openNavAddCategory() {
+        if(screen.width<= 600){
+            document.getElementById("addCategory").style.width = "100%";
+        }else if(screen.width<= 720){
+            document.getElementById("addCategory").style.width = "50%";
+        }
+        else{
+            document.getElementById("addCategory").style.width = "30%";
+        }  
+    }
+    function closeNavAddCategory() {
+        document.getElementById("addCategory").style.width = "0";
+    }
+   
+</script>
 
 {% endblock %}

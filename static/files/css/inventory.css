@@ -454,6 +454,12 @@
 }
 
 @media only screen and (max-width: 600px) {
+  .m-mt-10{
+    margin-top: 10px !important;
+  }
+  .d-grid{
+    display: grid !important;
+  }
 
   .inv-dash-card-head{
     font-size: 3vw;
