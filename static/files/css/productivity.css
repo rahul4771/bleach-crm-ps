@@ -11,6 +11,8 @@
   border: 2px solid #bed0e8;
   border-radius: 8px;
   padding: 0px 3px 10px 10px;
+  height: 50vh ;
+  overflow: auto;
 }
 .productivity-name {
   text-align: left;
