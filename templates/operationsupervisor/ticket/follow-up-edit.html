@@ -3,10 +3,72 @@
 {% load static %}
 {% block css_links %}
 <link rel="stylesheet" href="https://semantic-ui.com/dist/semantic.min.css">
+<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
 {% endblock %}
-<div class="wrapper"><!--wrapper-->
+<div class="wrapper" id="app"><!--wrapper-->
 {% include "operationsupervisor/common/header.html" %}
-    
+<v-app>    
+    <!-- slot selection dialog begins here-->
+   
+<v-dialog v-model="slot_dialog" width="1000">
+    <v-card style="min-height:500px">
+
+  <div class="row m-0" style="margin:0 !important" v-if="render">
+    <div class="col-md-4">
+      <div >
+        Choose Cleaning Slots
+      </div>
+      <v-date-picker  v-model="dateSelected" full-width elevation="5" color="primary"
+      v-on:change="dateChange()" class="mt-2" :min="today" ></v-date-picker>
+    </div>
+    <div class="col-md-8 "  >
+      <div class="mt-4">
+        Select  Slots
+      </div>
+  <div class="row mt-2" style="margin:0 !important">
+    <div class="col-md-4" v-for="(slot,sindex) in time_slots" v-bind:key="sindex">
+        <div class="time-slot duration text-center p-2" 
+        @click="addSlot(slot.start_time,slot.end_time,(sindex+1))" v-if='!selected_slots[dateSelected].slots.includes((sindex+1)) && checkSlotStat((sindex+1))'>
+          <% slot.start_time+' - '+ slot.end_time %>
+         </div>
+     
+         <div class="time-slot duration-active text-center p-2"  v-if='selected_slots[dateSelected].slots.includes((sindex+1))' @click="removeSlot((sindex+1))">
+           <% slot.start_time+' - '+ slot.end_time %>
+         </div>
+         <div class="time-slot duration-inactive text-center p-2"  v-if='!checkSlotStat((sindex+1)) && !selected_slots[dateSelected].slots.includes((sindex+1))'>
+           <% slot.start_time+' - '+ slot.end_time %>
+         </div>
+    </div>
+  
+    <div class="col-md-12 ">
+      <div v-if="slotCounter()<1">
+      <v-alert
+      dense
+      outlined
+      type="error"
+      v-if="schedule_err_msg"
+    >
+      Please fill the required fields
+    </v-alert>
+  </div>
+      <div class="d-flex justify-center">
+      <v-btn color="primary" @click="confirmSlot()">
+        Proceed
+      </v-btn>
+      <v-btn color="primary" outlined class="ml-2" @click="resetSlots()">
+        Cancel
+      </v-btn>
+      </div>
+    </div>
+    </div>
+  
+    </div>
+  </div>
+  </v-card>
+  </v-dialog>
+    <!-- slot selection dialog ends here-->
 <section class="content"><!--content-->
 <div class="container-fluid space topspace"><!--container-fluid space topspace-->
     <div class="welcome-wrapper"><!--welcome-wrapper-->
@@ -78,9 +140,11 @@
                 <input name="number_of_cleaners" id="id_number_of_cleaners" type="text" class="textBox OnlyNumber" maxlength="2" placeholder=" " value="{% for schedule in followupscheduler %}{% if forloop.first %}{{schedule.follow_up.no_of_cleaners}}{% endif %}{% endfor %}" required> 
                 </div><!--enquiry-form-left-->
                 <div class="enquiry-form-right"><!--enquiry-form-right-->
-                <div class=" bold-text common-label"> <label>Cleaning Hours</label></div>
-                <input name="cleaning_hours" id="id_cleaning_hours" type="text" class="textBox OnlyNumber" maxlength="2" placeholder=" " value="{% for schedule in followupscheduler %}{% if forloop.first %}{{schedule.follow_up.cleaning_hours}}{% endif %}{% endfor %}" required> 
-                </div><!--enquiry-form-right-->
+                    <div class=" bold-text common-label" > <label>Select Slots</label></div>
+                    <v-btn color="primary" @click="slot_dialog=true"><v-icon left>
+                        date_range
+                      </v-icon>Select Slots</v-btn>
+                    </div><!--enquiry-form-right-->
             	
 		</div> <!--enquiry-form-Wrapper enquiry-boxes--> 
 
@@ -147,6 +211,7 @@
                  
 </div><!--container-fluid space topspace-->
 </section><!--content-->
+</v-app>
     
     
 {% include 'agent/common/footer.html' %}    
@@ -154,6 +219,11 @@
 {% endblock %}
 
 {% block javascript %}
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="{% static 'files/js/followup.js' %}"></script>
 <script>
 
 function datetimecheck(ftime,fdate,x){
