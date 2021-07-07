@@ -2031,16 +2031,6 @@ class GetMultipleServiceCleaningSlotes(APIView):
 
 				total_newcleaners = total_cleaners.filter(Q(Q(id__in=shift_cleaners)|Q(id__in=super_shift_cleaners))).exclude(id__in=absent_cleaners).count()-1
 				total_newleaders  = total_leaders.filter(Q(Q(id__in=shift_leaders)|Q(id__in=super_shift_leaders))).exclude(id__in=absent_leaders).count()
-				if slote == 10 and slote_duration == 2:
-					print(super_shift_cleaners.count(),"shift_cleaners10")
-					print(super_shift_leaders.count(),"shift_leaders10")
-					print(slote_start_time)
-					print(slote_end_time)
-				if slote == 6 and slote_duration == 2:
-					print(super_shift_cleaners.count(),"shift_cleaners6")
-					print(super_shift_leaders.count(),"shift_leaders6")
-					print(slote_start_time)
-					print(slote_end_time)
 
 				active_cleaners1 	= CleaningTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime))|Q(Q(end_at__gte=slote_start_datetime)&Q(end_at__lte=slote_end_datetime))|Q(Q(start_at__lte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__gte=slote_end_datetime))|Q(Q(start_at__gte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__lte=slote_end_datetime))))
 				active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime))|Q(Q(end_at__gte=slote_start_datetime)&Q(end_at__lte=slote_end_datetime))|Q(Q(start_at__lte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__gte=slote_end_datetime))|Q(Q(start_at__gte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__lte=slote_end_datetime))))
@@ -4547,6 +4537,13 @@ class EditOrderDetails(APIView):
 				order.evaluation.total_cost        += saved_section.section_net_cost
 				order.evaluation.estimated_cost    += saved_section.section_net_cost
 				order.evaluation.save()
+
+				#keynotes
+				keynotes     = request.data.get('keynotes')
+				new_keynotes = []
+				for keynote in keynotes:
+					new_keynotes.append(EvaluationSectionKeynote(evaluation_section=saved_section,sub_area=keynote['sub_area'],quantity=keynote['quantity']))
+				EvaluationSectionKeynote.objects.bulk_create(new_keynotes)
 
 				response_dict['section_success']       = True
 				response_dict['success']  = True
