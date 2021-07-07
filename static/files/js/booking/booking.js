@@ -2410,10 +2410,11 @@ responsive:{
         {
         this.responseText='Booking Successful'
         this.snackbar=true
-        this.getBookingDetails(response.data.booking_id)
+       // this.getBookingDetails(response.data.booking_id)
      
     this.uploadImages()
-    window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
+    //window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
+
         }
         else{
           this.responseText=response.data.Error
@@ -2468,7 +2469,7 @@ responsive:{
       //  this.getBookingDetails(response.data.booking_id)
      
     this.uploadImages()
-    window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
+    //window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
         }
         else{
           this.responseText=response.data.Error
@@ -2502,10 +2503,10 @@ responsive:{
          {
          this.responseText='Booking Successful'
          this.snackbar=true
-         this.getBookingDetails(response.data.booking_id)
+        // this.getBookingDetails(response.data.booking_id)
       
      this.uploadImages()
-     window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
+    // window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
          }
        })
         .catch((error) => {
@@ -2514,6 +2515,8 @@ responsive:{
        });
   },
   uploadImages(){
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const params = Object.fromEntries(urlSearchParams.entries());
    for(var i=0;i<this.multiServiceImages.length;i++){
      var image=new FormData()
       image.append('evaluation_book_id',Object.keys(this.phase2Result.evaluation_book_ids)[i])
@@ -2528,12 +2531,12 @@ responsive:{
       .then((response) => {
         
         console.log(response)
-      
+        window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
        
       })
        .catch((error) => {
         console.log(error);
-      
+        window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
       });
 
    }
