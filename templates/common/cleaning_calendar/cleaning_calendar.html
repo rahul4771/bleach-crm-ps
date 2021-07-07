@@ -1154,10 +1154,10 @@ class="cl-service-list"
           <div class="text-right cl-mt-20">
           {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}   
             {% if request.user.user_type == 'SENIORTEAMLEADER' %}   
-              <a class="cl-link" v-if="currentSlotDetails.followupteam_followupschedule[0]" @click="editCleaningTeam(currentSlotDetails.id)">Edit Cleaning Team</a>
+              <a class="cl-link" v-if="currentSlotDetails.followupteam_followupschedule[0]" @click="editFollowupTeam(currentSlotDetails.id)">Edit Cleaning Team</a>
               <a class="cl-link" v-else @click="addFollowupTeam(currentSlotDetails.id)">Add Cleaning Team</a>
             {% elif request.user.user_type == 'OPERATIONSUPERVISOR' %}
-              <a class="cl-link" v-if="currentSlotDetails.followupteam_followupschedule[0]" @click="editCleaningTeamOpSupervisor(currentSlotDetails.id)">Edit Cleaning Team</a>
+              <a class="cl-link" v-if="currentSlotDetails.followupteam_followupschedule[0]" @click="editFollowupTeamOpSupervisor(currentSlotDetails.id)">Edit Cleaning Team</a>
               <a class="cl-link" v-else @click="addFollowupTeamOpSupervisor(currentSlotDetails.id)">Add Cleaning Team</a>
             {% endif %}
           {% endif %}

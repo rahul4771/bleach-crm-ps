@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 {% load static %}
+{% load mathfilters %}
 
 <link href="{% static 'files/css/client-details.css' %}" rel="stylesheet" />
 <link href="{% static 'files/css/orders.css' %}" rel="stylesheet" />
@@ -1140,11 +1141,19 @@
                                             {% for keynote in section.sectionkeynotes %}
                                             {% if forloop.counter|divisibleby:2 %}
                                             {% else %}
-                                            {% comment %} {% if keynote.sub_area != 'kitchen' %} {% endcomment %}
+
+                                                {% if keynote.sub_area != 'kitchen' %}
+                                                    <div class="clean-section-card">
+                                                        <p>{{keynote.sub_area}}<span class="c-text2">{{keynote.quantity}}</span></p>
+                                                    </div>
+                                                {% else %}
+                                                {% if forloop.first %}
                                                 <div class="clean-section-card">
-                                                    <p>{{keynote.sub_area}}<span class="c-text2">{{keynote.quantity}}</span></p>
+                                                    <p>Kitchen<span class="c-text2">{{forloop.counter0|add:forloop.counter}}</span></p>
                                                 </div>
-                                             {% comment %} {% endif %}    {% endcomment %}
+                                                {% endif %}
+                                                {% endif %}
+
                                             {% endif %}
                                             {% endfor %}
 
@@ -1153,11 +1162,19 @@
                                             <div class="col-md-3 ml-0 ">
                                             {% for keynote in section.sectionkeynotes %}
                                             {% if forloop.counter|divisibleby:2 %}
-                                            {% comment %} {% if keynote.sub_area != 'kitchen' %} {% endcomment %}
-                                            <div class="clean-section-card">
-                                                <p>{{keynote.sub_area}}<span class="c-text2">{{keynote.quantity}}</span></p>
-                                            </div>
-                                            {% comment %} {% endif %} {% endcomment %}
+
+                                                {% if keynote.sub_area != 'kitchen' %} 
+                                                <div class="clean-section-card">
+                                                    <p>{{keynote.sub_area}}<span class="c-text2">{{keynote.quantity}}</span></p>
+                                                </div>
+                                                {% else %}
+                                                {% if forloop.first %}
+                                                <div class="clean-section-card">
+                                                    <p>Kitchen<span class="c-text2">{{forloop.counter0|add:forloop.counter}}</span></p>
+                                                </div>
+                                                {% endif %}
+                                                {% endif %} 
+
                                             {% else %}
                                             {% endif %}
                                             {% endfor %}
