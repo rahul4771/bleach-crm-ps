@@ -28,7 +28,7 @@
                     
                     </div>
                     <div class="right-pos">
-                        <button class="inv-blue-btn" data-toggle="modal" data-target="#addModel" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Attribute </button>
+                        <button class="inv-blue-btn" onclick="openNavAddAttribute()" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Attribute </button>
                     </div>
                 </div>
 
@@ -334,7 +334,76 @@
             </div>
           </div>
     </section>
+
+    <div id="addAttribute" class="inv-sidedrawer">
+
+        <div class="inv-sidedrawer-inner">
+            <div class="d-flex">
+                <div class="inv-drawer-head">
+                    Add Atribute
+                </div>
+                <div class="right-pos">
+
+                    <button onclick="closeNavAddAttribute()" class="img-button">
+                        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                    </button>
+                </div>
+            </div>
+            <hr>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Attribute Name</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Status</div>
+
+                    <select id="id_payment" class="minimal">
+                        <option  ></option>
+                        <option  >Active</option>
+                        <option value="Post Paid">Inactive</option>
+
+                    </select>
+                </div>
+
+            </div>
+            
+
+
+          
+        </div>
+        <div class="inv-drawer-footer">
+            <button class="sent-button" >Submit</button>
+                        <button data-dismiss="modal" onclick="closeNav()" class="view-button">Cancel</button>
+        </div>
+    </div>
 </div>
 
+
+{% endblock %}
+
+{% block javascript %}
+
+<script>
+    function openNavAddAttribute() {
+        if(screen.width<= 600){
+            document.getElementById("addAttribute").style.width = "100%";
+        }else if(screen.width<= 720){
+            document.getElementById("addAttribute").style.width = "50%";
+        }
+        else{
+            document.getElementById("addAttribute").style.width = "30%";
+        }  
+    }
+    function closeNavAddAttribute() {
+        document.getElementById("addAttribute").style.width = "0";
+    }
+</script>
 
 {% endblock %}
