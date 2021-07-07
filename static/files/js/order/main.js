@@ -364,7 +364,7 @@ const app = new Vue({
             sofa_size:[],
 
             url:'https://test.bleach-kw.com'
-            //url:'http://localhost:8000'
+          //  url:'http://localhost:8000'
             //url:'http://127.0.0.1:8000'
   },
   methods:{
@@ -616,7 +616,7 @@ const app = new Vue({
        no_of_cleaners:parseInt(this.selected_no_of_cleaners)
       }).then(response=>{
         $('#visit-close').click()
-       // location.reload()
+        location.reload()
        
       })
     }
@@ -856,8 +856,9 @@ const app = new Vue({
     },
     addSectionData(){
       var sectionData={}
-      this.other_keynotes=[]
-      this.kitchen_keynotes=[]
+     // this.other_keynotes=[]
+     // this.kitchen_keynotes=[]
+     this.parseKeynotes()
       sectionData=
         {
           "section_name":this.editSectionData.section_name,
@@ -885,6 +886,7 @@ const app = new Vue({
         "action_type":'add_section',
         "evaluation_book__id":this.eval_book_id,
         "section_details":sectionData,
+        "keynotes":this.final_keynotes
        
       }).then(response=>{
         console.log(response)
@@ -910,6 +912,9 @@ const app = new Vue({
               newkitchen:false
              },
              this.section_cost=0
+             this.final_keynotes=[]
+             this.other_keynotes=[]
+             this.kitchen_keynotes=[]
               location.reload()   
     },
     getOrderId(){

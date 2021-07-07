@@ -180,8 +180,8 @@ const app=  new Vue({
           },
          
         },
-        url:'https://test.bleach-kw.com',
-        //url: 'http://127.0.0.1:8000',
+        //url:'https://test.bleach-kw.com',
+        url: 'http://127.0.0.1:8000',
         cleaningData:{
           cleaning_datetime_start:'',
           cleaning_datetime_end:'',
@@ -246,6 +246,18 @@ const app=  new Vue({
         },
         addCleaningTeamOpSupervisor(slot){
           window.location.href='/operation-supervisor/assigncleaning/team/'+slot
+        },
+        editFollowupTeam(slot){          
+          window.location.href='/stl/editfollowup/team/'+slot         
+        },
+        editFollowupTeamOpSupervisor(slot){
+          window.location.href='/operation-supervisor/editfollowup/team/'+slot  
+        },
+        addFollowupTeam(slot){          
+          window.location.href='/stl/assignfollowup/team/'+slot
+        },
+        addFollowupTeamOpSupervisor(slot){
+          window.location.href='/operation-supervisor/assignfollowup/team/'+slot
         },
         selectEditSlot(slot){
          
