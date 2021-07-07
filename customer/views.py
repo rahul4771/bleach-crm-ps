@@ -2034,13 +2034,6 @@ class GetMultipleServiceCleaningSlotes(APIView):
 				
 				active_cleaners1 	= CleaningTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime))|Q(Q(end_at__gte=slote_start_datetime)&Q(end_at__lte=slote_end_datetime))|Q(Q(start_at__lte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__gte=slote_end_datetime))|Q(Q(start_at__gte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__lte=slote_end_datetime))))
 				active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime))|Q(Q(end_at__gte=slote_start_datetime)&Q(end_at__lte=slote_end_datetime))|Q(Q(start_at__lte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__gte=slote_end_datetime))|Q(Q(start_at__gte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__lte=slote_end_datetime))))
-				if slote == 10 and slote_duration == 2:
-					
-					print(active_cleaners1,"active_cleaners1")
-					print(active_cleaners2,"active_cleaners2")
-					print(super_shift_cleaners,"super_shift_cleaners")
-					print(total_newcleaners,"total_newcleaners")
-					print(total_newleaders)
 
 				for service_type in service_types:
 					if service_type == 'General Cleaning':
@@ -2108,6 +2101,18 @@ class GetMultipleServiceCleaningSlotes(APIView):
 				busy_leaders  = len(set(team_leaders_scheduled))
 				busy_cleaners = len(set(team_members_scheduled))
 
+				if slote == 10 and slote_duration == 2:
+					print(slote)
+					print(total_newcleaners,"total_newcleaners")
+					print(busy_cleaners,"busy_cleaners")
+					print(total_newleaders,"total_newleaders")
+					print(busy_leaders,"busy_leaders")
+				if slote == 8 and slote_duration == 2:
+					print(slote)
+					print(total_newcleaners,"total_newcleaners")
+					print(busy_cleaners,"busy_cleaners")
+					print(total_newleaders,"total_newleaders")
+					print(busy_leaders,"busy_leaders")
 				#slote appending
 				if((total_newcleaners-busy_cleaners)>=number_of_cleaners and (total_newleaders-busy_leaders)>=1):
 					available_durations.append(slote_duration)				
