@@ -1318,14 +1318,14 @@ width="1000"
                                         </v-select>
                                       </div>
                                       <div class="col-md-6">
-                                        <v-text-field v-model="
+                                        <v-text-field type="number" v-model="
                                         building[index - 1].floors[floor - 1]
                                           .no_of_rooms
                                       " :rules="[v => !!v || 'No of Rooms is required']" label="No of Rooms" required>
                                         </v-text-field>
                                       </div>
                                       <div class="col-md-6">
-                                        <v-text-field v-model="
+                                        <v-text-field type="number" v-model="
                                         building[index - 1].floors[floor - 1]
                                           .no_of_bathrooms
                                       " :rules="[v => !!v || 'No of Bathrooms is required']" label="No of Bathrooms"
@@ -1333,7 +1333,7 @@ width="1000"
                                         </v-text-field>
                                       </div>
                                       <div class="col-md-6">
-                                        <v-text-field v-model="
+                                        <v-text-field type="number" v-model="
                                         building[index - 1].floors[floor - 1]
                                           .no_of_windows
                                       " :rules="[v => !!v || 'No of windows is required']" label="No of Windows"
@@ -1613,19 +1613,19 @@ width="1000"
                                                   </v-select>
                                                 </div>
                                                 <div class="col-md-6">
-                                                  <v-text-field v-model="apartment.no_of_rooms" label="No of Rooms"
+                                                  <v-text-field type="number" v-model="apartment.no_of_rooms" label="No of Rooms"
                                                     :rules="[v => !!v || 'No of rooms is required']" required>
                                                   </v-text-field>
                                                 </div>
                                                 <div class="col-md-6">
-                                                  <v-text-field v-model="
+                                                  <v-text-field type="number" v-model="
                                                 apartment.no_of_bathrooms
                                               " label="No of Bathrooms"
                                                     :rules="[v => !!v || 'No of bathrooms is required']" required>
                                                   </v-text-field>
                                                 </div>
                                                 <div class="col-md-6">
-                                                  <v-text-field v-model="apartment.no_of_windows" label="No of Windows"
+                                                  <v-text-field type="number" v-model="apartment.no_of_windows" label="No of Windows"
                                                     required :rules="[v => !!v || 'No of windows is required']">
                                                   </v-text-field>
                                                 </div>
@@ -1875,7 +1875,17 @@ width="1000"
                           serviceType == 'Storage Area' ||
                           serviceType == 'Sterilization'
                         ">
+                       
                           <div v-if="building[index - 1].completed && floorCompleted" class="text-center">
+                            <v-alert
+                            v-if="floor_msg"
+                            class="mt-4"
+          dense
+          text
+          type="error"
+        >
+          Fill all the details of the floor  to proceed
+        </v-alert>
                             <v-btn color="primary" :id="'btn-' + index" @click="nextTab(index)" class="mb-2"
                               v-if="!buildingsCompleted">
                               Continue

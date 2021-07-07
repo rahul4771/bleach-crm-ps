@@ -138,7 +138,7 @@ const app=new Vue({
   rules: {
     required: v => !!v || 'this field is required',
   },
-   // url:'http://localhost:8000',
+  // url:'http://localhost:8000',
     url:'https://test.bleach-kw.com',
     kitchenData:{
         wall_type:'',
@@ -533,7 +533,8 @@ userid:'',
 snackbar:false,
 responseText:'',
 parsedTimeSlots:[],
-scheduleStatus:false
+scheduleStatus:false,
+floor_msg:false
 
       },
       methods: {
@@ -3230,6 +3231,7 @@ try {
         completed: false,
         paint_residue: false,
         upholsteries: ["Sofa", ""],
+        
       });
       this.e.building[building - 1].floors.push({
         floors: [],
@@ -3291,9 +3293,29 @@ try {
      this.getMultipleSlots()
     }
   },
+  floorCompleteChecker(building){
+   
+    var stat=false
+    for(var i=0;i<this.building[building].floors.length;i++){
+      if(this.building[building].floors[i].completed){
+        stat=true
+      }
+      else{
+        stat=false
+        break
+      }
+    }
+    return stat
+  },
   nextTab(build) {
+    this.floor_msg=false
     console.log("building tab is "+build)
     console.log("building tab no is "+this.no_of_building)
+    
+    if(!this.floorCompleteChecker(build-1)){
+      this.floor_msg=true
+    }
+    else{
    this.cat_counter=this.cat_counter+1
     if (build == this.no_of_building) {
       this.buildingsCompleted = true;
@@ -3303,6 +3325,7 @@ try {
       console.log("id is " + build);
       document.querySelector("#tab" + (build + 1)).click();
     }
+  }
   },
 
   changeDuration(index) {
@@ -3495,7 +3518,17 @@ try {
         this.tempCost=this.tempCost+this.billingData[i].section.section_cost
     }
   },
+  checkBuildingStats(index){
+    if(index>0){
+    
+      if(!this.floorCompleteChecker(index-1)){
+        console.log("i clicked tab"+index)
+        document.querySelector("#tab" + (index-1)).click();
+      }
+    }
+  },
   nextFloor(building, floor) {
+    this.floor_msg=false
       console.log('validate is '+this.$refs.form)
      if(this.$refs['building-'+building+'floor-'+(floor-1)][0].validate())
      { 

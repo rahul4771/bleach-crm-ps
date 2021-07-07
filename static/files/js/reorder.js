@@ -3470,9 +3470,21 @@ function openNav() {
               {
                 total_estimated_size = total_estimated_size+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[i].size.max_size;
               }
-             
-              var productivity = data["perhour_cleaning"];
+              if(selected_service=='Kitchen Cleaning'){
+                if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].new_kitchen){
+                  var productivity = data["newkitchen_perhour_cleaning"];
+                }
+                else{
+                  var productivity = data["oldkitchen_perhour_cleaning"];
+                }
+                
+              }
+              else{
+                var productivity = data["perhour_cleaning"];
+              }
+            
               console.log("productivity is "+productivity)
+              console.log("total size is "+total_estimated_size)
               var manhour = parseInt(total_estimated_size / productivity);
             
          
@@ -4231,12 +4243,34 @@ function openNav() {
       var productivity= await this.getTheProd(this.multiServicesBill[i].service)
       console.log("productivity is"+JSON.stringify(productivity))
       for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
-        for(var p in productivity){
-          
-          if(productivity[p].name==this.multiServicesBill[i].bill[j].size){
+        if(this.multiServicesBill[i].service=='Kitchen Cleaning'){
+          if(this.multiServicesBill[i].new_kitchen)
+          {
+            for(var p in productivity){
+          if(productivity[p].name==this.multiServicesBill[i].bill[j].size && productivity[p].is_newkitchen){
             this.multiServicesBill[i].bill[j].size=productivity[p]
           }
         }
+        }
+        else {
+          for(var p in productivity){
+          if(productivity[p].name==this.multiServicesBill[i].bill[j].size && !productivity[p].is_newkitchen){
+            this.multiServicesBill[i].bill[j].size=productivity[p]
+          }
+        }
+        }
+        }
+        else{
+        for(var p in productivity){
+          
+        
+            if(productivity[p].name==this.multiServicesBill[i].bill[j].size){
+              this.multiServicesBill[i].bill[j].size=productivity[p]
+            }
+          
+          
+        }
+      }
       }
     }
     
