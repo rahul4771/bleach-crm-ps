@@ -1399,7 +1399,7 @@ class Followup(IsOperationSupervisor,View):
 
 		tendative_time = request.POST.get('tendative_time')
 		
-		follow_up = FollowUp.objects.select_related('investigation__order__evaluator__customer').get(investigation_id=investigation_id,is_active=True)
+		follow_up = FollowUp.objects.select_related('investigation__order__evaluation__customer').get(investigation_id=investigation_id,is_active=True)
 		follow_up.status         = 'FOLLOWUP_IN_PROGRESS'
 		follow_up.followup_notes = request.POST.get('investigator_notes')
 		follow_up.no_of_cleaners = no_of_cleaners
