@@ -17,7 +17,7 @@
 
         <div class="main-content-holder"><!--main-content-holder-->   
             <div class="white-wrapper">
-                <div class="d-flex">
+                <div class="d-flex d-grid">
                     <div>
                      
                         <div class="inv-input-container h-30">
@@ -27,7 +27,7 @@
                     
                     
                     </div>
-                    <div class="right-pos">
+                    <div class="right-pos m-mt-10">
                         <button class="inv-blue-btn" onclick="openNavAddAttribute()" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Attribute </button>
                     </div>
                 </div>
@@ -54,20 +54,23 @@
 
                     <div class="col-md-7 mt-10">
                         <div class="attribute-table">
-                            <table class="inv-table"> 
+                            <table class="inv-table footable "> 
+                                <thead>
                                 <tr>
-                                    <th style="width: 25%;">
+                                    <th style="width: %;">
                                         Attribute Name
                                     </th>
-                                    <th style="width: 25%; text-align: center;">
+                                    <th data-hide="phone,tablet" style="width: %; text-align: center;">
                                         Total Values
                                     </th>
-                                    <th style="width: %;" >
+                                    <th  style="width: %;" >
                                         Status
                                     </th>
                                  
-                                    <th style="width: 18%;">Action</th>
+                                    <th data-hide="phone,tablet" style="width: 18%;">Action</th>
                                 </tr>
+                            </thead>
+                            <tbody>
                                 <tr>
                                     <td class="inv-green-border">
                                 
@@ -208,7 +211,7 @@
         
                                     </td>
                                 </tr>
-                                
+                            </tbody>
                             </table>
                         </div>
                         <div class="text-right">
@@ -237,10 +240,10 @@
                         <div class="attribute-table-2">
                             <table class="inv-table"> 
                                 <tr>
-                                    <th style="width: 70%;">
+                                    <th style="width: %;">
                                         Value Name
                                     </th>
-                                    <th style="width: 30%;">
+                                    <th style="width: %;">
                                         Action
                                     </th>
                                 </tr>
@@ -269,7 +272,7 @@
                                
                             </table>
                             <div class="attribute-footer p-5">
-                                <button class="inv-plan-btn"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Value</button>
+                                <button class="inv-plan-btn" onclick="openNavAddValue()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Value</button>
 
                             </div>
                         </div>
@@ -283,56 +286,7 @@
             </div>
         </div>
 
-        <div class="modal fade" id="addModel" role="dialog">
-            <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-12 mt-20">
-    
-                            
-                            <div class="d-flex ">
-                                <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Add Attribute</p></div>
-                                <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
-    
-                                    <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
-                                </button>
-        
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row mt-40" >
-                        <div class="col-md-9 pr-0">
-                            <div class="model-input-name">Attribute Name</div>
-                            <div class="inv-input-container h-30"> 
-                                <input type="text"  class="w-p-100 inv-in" name="attributes">
-                              </div>
-                        </div>
-        
-                      
-                        <div class="col-md-3 ">
-                            <div class="model-input-name">Status</div>
-    
-                            <select id="id_payment" class="minimal">
-                                <option style="background: #fff;" value="Prepaid">Active</option>
-                                <option value="Post Paid">Inactive</option>
-                                
-                              </select>
-                        </div>
-        
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12 text-center">
-                            <div class="cancel-model-content">
-                                <button class="sent-button" >Submit</button>
-                                <button data-dismiss="modal" class="view-button">Cancel</button>
-                              
-                            </div>
-                        </div>
-        
-                    </div>
-                </div>
-            </div>
-          </div>
+       
     </section>
 
     <div id="addAttribute" class="inv-sidedrawer">
@@ -380,7 +334,55 @@
         </div>
         <div class="inv-drawer-footer">
             <button class="sent-button" >Submit</button>
-                        <button data-dismiss="modal" onclick="closeNav()" class="view-button">Cancel</button>
+                        <button data-dismiss="modal" onclick="closeNavAddAttribute()" class="view-button">Cancel</button>
+        </div>
+    </div>
+    <div id="addValue" class="inv-sidedrawer">
+
+        <div class="inv-sidedrawer-inner">
+            <div class="d-flex">
+                <div class="inv-drawer-head">
+                    Add Value
+                </div>
+                <div class="right-pos">
+
+                    <button onclick="closeNavAddValue()" class="img-button">
+                        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                    </button>
+                </div>
+            </div>
+            <hr>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Value Name</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Status</div>
+
+                    <select id="id_payment" class="minimal">
+                        <option  ></option>
+                        <option  >Active</option>
+                        <option value="Post Paid">Inactive</option>
+
+                    </select>
+                </div>
+
+            </div>
+            
+
+
+          
+        </div>
+        <div class="inv-drawer-footer">
+            <button class="sent-button" >Submit</button>
+                        <button data-dismiss="modal" onclick="closeNavAddValue()" class="view-button">Cancel</button>
         </div>
     </div>
 </div>
@@ -403,6 +405,19 @@
     }
     function closeNavAddAttribute() {
         document.getElementById("addAttribute").style.width = "0";
+    }
+    function openNavAddValue() {
+        if(screen.width<= 600){
+            document.getElementById("addValue").style.width = "100%";
+        }else if(screen.width<= 720){
+            document.getElementById("addValue").style.width = "50%";
+        }
+        else{
+            document.getElementById("addValue").style.width = "30%";
+        }  
+    }
+    function closeNavAddValue() {
+        document.getElementById("addValue").style.width = "0";
     }
 </script>
 
