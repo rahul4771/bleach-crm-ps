@@ -803,10 +803,8 @@ class="cl-service-list"
         <div class="col-md-12">
           <div class="d-flex cl-modal-icons">
             {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' or request.user.user_type == 'BOOKINGOFFICER' %}
-            <img src="{% static 'files/icons/edit.png'%}" class="cl-modal-icon" @click="editCleaning()"/>
+            <img src="{% static 'files/icons/edit.png'%}" class="cl-modal-icon" v-if="currentSlotDetails.work_status!='CLEANING_CANCELLED' && currentSlotDetails.work_status!='CLEANING_FULFILLED'" @click="editCleaning()"/>        
             {% endif %}
-            
-            {% comment %} <img src="{% static 'files/icons/delete.png'%}" class="cl-modal-icon" @click="delAlert=!delAlert"/> {% endcomment %}
             <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" @click="closeCleaningModal()"/>
           </div>
 
@@ -1000,8 +998,10 @@ class="cl-service-list"
     <div class="row" style="margin:0">
       <div class="col-md-12">
         <div class="d-flex cl-modal-icons">
-          <img src="{% static 'files/icons/edit.png'%}" class="cl-modal-icon" @click="editFollowupCleaning()"/>
+          {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
+          <img src="{% static 'files/icons/edit.png'%}" class="cl-modal-icon" v-if="currentSlotDetails.work_status!='FOLLOW_UP_CLEANING_FULFILLED'" @click="editFollowupCleaning()"/>
           <img src="{% static 'files/icons/delete.png'%}" class="cl-modal-icon" @click="delAlert=!delAlert"/>
+          {% endif %}
           <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" @click="closeCleaningModal()"/>
         </div>
 
@@ -1100,18 +1100,10 @@ class="cl-service-list"
             </span>
           </div>
           <div v-else class="cl-highlight cl-modal-text-title "> Not Assigned </div>
-          <div class="text-right cl-mt-20">
-          {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}   
-              {% if request.user.user_type == 'SENIORTEAMLEADER' %}
-              <a class="cl-link" v-if="currentSlotDetails.followupteam_followupschedule[0]" @click="editFollowupTeam(currentSlotDetails.id)">Edit Cleaning Team</a>
-              <a class="cl-link" v-else @click="addFollowupTeam(currentSlotDetails.id)">Add Cleaning Team</a>
-              {% else %}
-              <a class="cl-link" v-if="currentSlotDetails.followupteam_followupschedule[0]" @click="editFollowupTeam(currentSlotDetails.id)"></a>
-              <a class="cl-link" v-else @click="addFollowupTeam(currentSlotDetails.id)">Add Cleaning Team</a>
-              {% endif %}
-              {% comment %} <a class="cl-link" v-if="currentSlotDetails.followupteam_followupschedule[0]" @click="editFollowupTeamOpSupervisor(currentSlotDetails.id)">Edit Cleaning Team</a> {% endcomment %}
-              {% comment %} <a class="cl-link" v-else @click="addFollowupTeamOpSupervisor(currentSlotDetails.id)">Add Cleaning Team</a> {% endcomment %}
-            
+          <div class="text-right cl-mt-20">   
+          {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
+              <a class="cl-link" v-if="currentSlotDetails.followupteam_followupschedule[0] && currentSlotDetails.work_status!='FOLLOW_UP_CLEANING_FULFILLED'" @click="editFollowupTeam(currentSlotDetails.id)">Edit Cleaning Team</a>
+              <a class="cl-link" v-else-if="currentSlotDetails.work_status!='FOLLOW_UP_CLEANING_FULFILLED'" @click="addFollowupTeam(currentSlotDetails.id)">Add Cleaning Team</a>
           {% endif %}
           </div>
         </div>
