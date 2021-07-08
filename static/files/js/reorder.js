@@ -586,14 +586,31 @@ function openNav() {
       completedAddress:[],
       scheduleGroup:{},
       orderId:'',
-      success_msg:false
+      success_msg:false,
+      editScheduleData:{},
+      editScheduleStat:false,
+      onetimeslots:[],
+      duplicate_id:''
           },
+          
        
   /* header data */
   
   
           methods: {
-            
+            reschedule(){
+              this.resetScheduler()
+              this.goToSchedule()
+             
+            },
+            viewEditSchedule(service,index){
+              this.schedule_serviceTypes_selected=[]
+              this.editScheduleData=service
+              this.editScheduleStat=true
+              this.schedule_serviceTypes_selected.push(index)
+             
+              this.goToSchedule()
+            },
              getCustBookings(){
   
              },
@@ -703,6 +720,8 @@ function openNav() {
               this.getMultipleSlots()
             },
             resetScheduler(){
+              this.oneTimeSelectionStat=false
+              this.editScheduleStat=false
               this.cleaningPolicy='',
               this.subStat='',
               this.visits=[],
@@ -2364,6 +2383,7 @@ function openNav() {
       },
       getMultipleSlots(){
         this.bookingonetimeslots=[]
+        this.onetimeslots=[]
         var yr=this.oneTimeDateSelected.split('-')[0]
         var month=this.oneTimeDateSelected.split('-')[1]
         var day=this.oneTimeDateSelected.split('-')[2]
@@ -2380,6 +2400,7 @@ function openNav() {
                 var slotNo=(parseInt(i)+2)/2
       
                 this.bookingonetimeslots.push(this.slotFormat[String(slotNo)])
+                this.onetimeslots.push(slotNo)
                 
                 
               }
@@ -2872,7 +2893,7 @@ function openNav() {
           this.schedule_confirmation_dialog=false
           this.onetime_dialog=false
           this.schedule_warning=false
-          if(this.scheduleStat){
+          if(this.scheduleStat && !this.editScheduleStat){
               for(var i=0;i<this.multiServicesBill.length;i++){
                   this.multiServicesBill[i].schedule_details={}
               }
@@ -3516,6 +3537,7 @@ function openNav() {
        });
      },
       newdurationcalculation(){
+        this.totalmanhour=0
          this.duration=[]
       let promises = [];
       var count=0;
@@ -4195,6 +4217,7 @@ function openNav() {
   },
   getDuplicate(){
     axios.get(this.url+'/customer/duplicatebookingphase2/'+this.custId).then(response=>{
+      this.duplicate_id=response.data.duplicate_id
       this.getBookedServices(response.data.duplicate_id)
     })
   },
@@ -4373,7 +4396,7 @@ function openNav() {
               "schedule_details":this.multiServicesBill[service[j]].schedule_details
             }
           }
-          axios.post(this.url+'/customer/duplicatebookingphase2/'+this.orderId+'/',serviceDetails).then(response=>{
+          axios.post(this.url+'/customer/duplicatebookingphase2/'+this.duplicate_id+'/',serviceDetails).then(response=>{
             this.success_msg=true
            /* setTimeout(function(){
               window.location.reload(); // you can pass true to reload function to ignore the client cache and reload from the server
@@ -4389,7 +4412,7 @@ function openNav() {
   
     }
     else{
-      axios.post(this.url+'/customer/duplicatebookingphase2/'+this.orderId+'/',this.custServiceScheduled).then(response=>{
+      axios.post(this.url+'/customer/duplicatebookingphase2/'+this.duplicate_id+'/',this.custServiceScheduled).then(response=>{
         this.success_msg=true
        /* setTimeout(function(){
           window.location.reload(); // you can pass true to reload function to ignore the client cache and reload from the server

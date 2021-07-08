@@ -638,6 +638,9 @@ others_keynotes:[]
             this.editScheduleStat=false
             this.editScheduleData.schedule_details={}
           }
+          else{
+            this.editScheduleData={}
+          }
            this.oneTimeDateSelected=moment().format().split("T")[0];
             this.one_time_slots[this.oneTimeDateSelected]={
                 slots:[]
@@ -3025,6 +3028,7 @@ try {
       age: "",
       stain: false,
       stain_reason: "",
+      keynote_data:[],
       wall_type: "",
       floor_type: "",
       ceiling_type: "",
@@ -3151,13 +3155,27 @@ try {
     
       this.activeTab='Schedule'
       this.currentPageTitle='Schedule'
-      if(this.scheduleStat){
+      if(this.scheduleStat && !this.editScheduleStat){
         this.addAllServiceTypes()
       }
       this.findSelectedTotalSize()
       this.calcSelectedServices()
       this.newdurationcalculation();
 
+  },
+  checkEditSchedule(){
+    if(Object.keys(this.editScheduleData).length>0){
+      if(Object.keys(this.editScheduleData.schedule_details).length>0){
+        return false
+      }
+      else{
+        return true
+      }
+    }
+    else {
+      return true
+    }
+    
   },
   goToBilling(){
       this.activeTab='Payment Method'
@@ -3220,7 +3238,8 @@ try {
     hallway_size: "",
     sides: "",
     stain_age: "",
-    height:""
+    height:"",
+    keynote_data:[]
   },
       this.building=[]
       this.no_of_apartments = [];
@@ -3891,6 +3910,7 @@ try {
  },
   newdurationcalculation(){
      this.duration=[]
+     this.totalmanhour=0
   let promises = [];
   var count=0;
      for(var k=0;k<this.schedule_serviceTypes.length;k++){
