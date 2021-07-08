@@ -238,27 +238,27 @@ const app=  new Vue({
         editCleaningTeam(slot){          
           window.location.href='/stl/editcleaning/team/'+slot         
         },
-        editCleaningTeamOpSupervisor(slot){
-          window.location.href='/operation-supervisor/editcleaning/team/'+slot  
-        },
+        // editCleaningTeamOpSupervisor(slot){
+        //   window.location.href='/operation-supervisor/editcleaning/team/'+slot  
+        // },
         addCleaningTeam(slot){          
-          window.location.href='/stl/assigncleaning/team/'+slot
+          window.location.href='/common/assigncleaning/team/'+slot
         },
-        addCleaningTeamOpSupervisor(slot){
-          window.location.href='/operation-supervisor/assigncleaning/team/'+slot
-        },
+        // addCleaningTeamOpSupervisor(slot){
+        //   window.location.href='/operation-supervisor/assigncleaning/team/'+slot
+        // },
         editFollowupTeam(slot){          
           window.location.href='/stl/editfollowup/team/'+slot         
         },
-        editFollowupTeamOpSupervisor(slot){
-          window.location.href='/operation-supervisor/editfollowup/team/'+slot  
-        },
+        // editFollowupTeamOpSupervisor(slot){
+        //   window.location.href='/operation-supervisor/editfollowup/team/'+slot  
+        // },
         addFollowupTeam(slot){          
-          window.location.href='/stl/assignfollowup/team/'+slot
+          window.location.href='/common/assignfollowup/team/'+slot
         },
-        addFollowupTeamOpSupervisor(slot){
-          window.location.href='/operation-supervisor/assignfollowup/team/'+slot
-        },
+        // addFollowupTeamOpSupervisor(slot){
+        //   window.location.href='/operation-supervisor/assignfollowup/team/'+slot
+        // },
         selectEditSlot(slot){
          
 
@@ -890,42 +890,32 @@ const app=  new Vue({
                   var beginningTime=moment(date_start,'DD-MM-YYYY HH:mm A')
                   var endTime=moment(date_end,'DD-MM-YYYY HH:mm A')
                   console.log("beg time is :"+beginningTime+'end time :'+endTime)
-                  if(this.combineSlots[i].type!='followup')
-                  {
-                  if(this.combineSlots[i].slots.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE'){
-                    color='onetime-cleaning-status-bg'
-                  }
-                  else if(this.combineSlots[i].slots.order_scheduler_book.cleaning_policy=='SUBSCRIPTION'){
-                    color='subscription-cleaning-status-bg'
-                  }
-                
-                  if(this.combineSlots[i].slots.work_status=='CLEANING_CANCELLED')
-                  {
-                    color='rejected-status-bg'
-                  }
-                }
+
                   if(this.combineSlots[i].type=='followup')
                   {
                     color='followup-cleaning-status-bg'
                   }
                   else if(this.combineSlots[i].type=='not approved'){
-                    if(!this.combineSlots[i].slots.order.order_status)
-                    {
-                      color='not-approved-not-paid-status-bg'
-                    }
-                    else{
-                      color='not-approved-status-bg'
-                    }
-                  }
-                  else if(this.combineSlots[i].type=='approved'){
-                    if(!this.combineSlots[i].slots.order.order_status)
+                    if(this.combineSlots[i].slots.order.payment_status == 'PENDING' && this.combineSlots[i].slots.order.order_status == 'APPROVED_BY_CLIENT')
                     {
                       color='approved-not-paid-status-bg'
                     }
-                   /* else
+                    else
                     {
-                      color='approved-bg'
-                    }*/
+                      color='not-approved-status-bg'
+                    }  
+                  }
+                  else if(this.combineSlots[i].type=='approved'){
+                    if(this.combineSlots[i].slots.work_status=='CLEANING_CANCELLED')
+                        {
+                          color='rejected-status-bg'
+                        }
+                    else if(this.combineSlots[i].slots.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE'){
+                          color='onetime-cleaning-status-bg'
+                        }
+                    else if(this.combineSlots[i].slots.order_scheduler_book.cleaning_policy=='SUBSCRIPTION'){
+                          color='subscription-cleaning-status-bg'
+                        }
                   }
                   
                   while(slot.isBefore(limit)){
