@@ -1373,7 +1373,7 @@ width="1000"
                                         <v-radio-group v-model="
                                         building[index - 1].floors[floor - 1]
                                           .kitchen
-                                      " class="p-2" v-if="serviceType != 'Storage Area'" row>
+                                      " class="p-2" v-if="serviceType != 'Storage Area'" row @change="changeFloorKitchenStat(index-1,floor-1)">
                                           <template v-slot:label>
                                             <div>
                                               Do you want to clean your Kitchen ?
@@ -1663,7 +1663,7 @@ width="1000"
                                                   <v-radio-group v-model="
                                         apartment
                                           .kitchen
-                                      " class="p-2" v-if="serviceType != 'Storage Area'" row>
+                                      " class="p-2" v-if="serviceType != 'Storage Area'" row @change="changeApartmentKitchenStat(index-1,floor-1,apindex)">
                                                     <template v-slot:label>
                                                       <div>
                                                         Do you want to clean your Kitchen ?
@@ -1850,6 +1850,15 @@ width="1000"
                                   </div>
                                 </v-form>
                               </v-card>
+                              <v-alert
+                              v-if="apartment_stat_err"
+                              class="mt-4"
+            dense
+            text
+            type="error"
+          >
+            Fill all the details of the Apartment  to proceed
+          </v-alert>
                               <v-btn color="primary" v-on:click="nextFloor(index - 1, floor)" class="mb-2"
                                 v-if="!building[index - 1].completed && !building[index-1].floors[floor-1].apartment">
                                 Continue
@@ -1886,6 +1895,15 @@ width="1000"
         >
           Fill all the details of the floor  to proceed
         </v-alert>
+        <v-alert
+        v-if="building_msg"
+        class="mt-4"
+dense
+text
+type="error"
+>
+Fill all the details of the Buildings  to proceed
+</v-alert>
                             <v-btn color="primary" :id="'btn-' + index" @click="nextTab(index)" class="mb-2"
                               v-if="!buildingsCompleted">
                               Continue
