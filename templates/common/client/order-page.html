@@ -1147,11 +1147,11 @@
                                                         <p>{{keynote.sub_area}}<span class="c-text2">{{keynote.quantity}}</span></p>
                                                     </div>
                                                 {% else %}
-                                                {% if forloop.last %}
+                                                
                                                 <div class="clean-section-card">
-                                                    <p>Kitchen<span class="c-text2">{{forloop.counter}}</span></p>
+                                                    <p>Kitchen<span class="c-text2">{% ifchanged keynote.sub_area %}{{forloop.counter}}{% endif %}</span></p>
                                                 </div>
-                                                {% endif %}
+                                                
                                                 {% endif %}
 
                                             {% endif %}
@@ -1168,11 +1168,11 @@
                                                     <p>{{keynote.sub_area}}<span class="c-text2">{{keynote.quantity}}</span></p>
                                                 </div>
                                                 {% else %}
-                                                {% if forloop.last %}
+                                                
                                                 <div class="clean-section-card">
-                                                    <p>Kitchen<span class="c-text2">{{forloop.counter}}</span></p>
+                                                    <p>Kitchen<span class="c-text2">{% ifchanged keynote.sub_area %}{{forloop.counter}}{% endif %}</span></p>
                                                 </div>
-                                                {% endif %}
+                                                
                                                 {% endif %} 
 
                                             {% else %}
