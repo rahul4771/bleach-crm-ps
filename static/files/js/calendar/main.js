@@ -72,6 +72,7 @@ const app=  new Vue({
         selectedSlot:'1',
         evaluators:[],
         currentSlot:{},
+        approved_not_paid:false,
         currentSlotDetails:null,
         openedit:false,
         currentTime:'',
@@ -836,6 +837,7 @@ const app=  new Vue({
           }
            
             axios.get(this.url+"/agent/cleaningcallendar/cleaning/popup/?cleaning_start="+item.slots.start_at+'&cleaning_end='+item.slots.end_at+'&evaluation_id='+item.slots.order.order_no).then((response) => {
+              this.approved_not_paid =response.data.approved_not_paid
               this.currentSlotDetails=response.data.cleaning_details[0]
               this.no_of_slots=parseInt(this.currentSlotDetails.cleaning_hours)/2
               this.cleaningAgentDialog=true
