@@ -238,27 +238,27 @@ const app=  new Vue({
         editCleaningTeam(slot){          
           window.location.href='/stl/editcleaning/team/'+slot         
         },
-        editCleaningTeamOpSupervisor(slot){
-          window.location.href='/operation-supervisor/editcleaning/team/'+slot  
-        },
+        // editCleaningTeamOpSupervisor(slot){
+        //   window.location.href='/operation-supervisor/editcleaning/team/'+slot  
+        // },
         addCleaningTeam(slot){          
-          window.location.href='/stl/assigncleaning/team/'+slot
+          window.location.href='/common/assigncleaning/team/'+slot
         },
-        addCleaningTeamOpSupervisor(slot){
-          window.location.href='/operation-supervisor/assigncleaning/team/'+slot
-        },
+        // addCleaningTeamOpSupervisor(slot){
+        //   window.location.href='/operation-supervisor/assigncleaning/team/'+slot
+        // },
         editFollowupTeam(slot){          
           window.location.href='/stl/editfollowup/team/'+slot         
         },
-        editFollowupTeamOpSupervisor(slot){
-          window.location.href='/operation-supervisor/editfollowup/team/'+slot  
-        },
+        // editFollowupTeamOpSupervisor(slot){
+        //   window.location.href='/operation-supervisor/editfollowup/team/'+slot  
+        // },
         addFollowupTeam(slot){          
-          window.location.href='/stl/assignfollowup/team/'+slot
+          window.location.href='/common/assignfollowup/team/'+slot
         },
-        addFollowupTeamOpSupervisor(slot){
-          window.location.href='/operation-supervisor/assignfollowup/team/'+slot
-        },
+        // addFollowupTeamOpSupervisor(slot){
+        //   window.location.href='/operation-supervisor/assignfollowup/team/'+slot
+        // },
         selectEditSlot(slot){
          
 
