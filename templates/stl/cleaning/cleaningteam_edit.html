@@ -103,9 +103,16 @@
 <div class="evaluation-card-wrapper"><!--evaluation-card-wrapper-->
 {% if section.keynotes %}
 {% for keynote in section.keynotes %}
-		<div class="evaluation-card"><!--evaluation-card-->
-        <div class="evaluation-section"><label>{{keynote.sub_area}}</label>{{keynote.quantity}}</div> 
-        </div><!--evaluation-card-->        
+    {% if keynote.sub_area != 'kitchen' %}
+        <div class="evaluation-card"><!--evaluation-card-->
+            <div class="evaluation-section"><label>{{keynote.sub_area}}</label>{{keynote.quantity}}</div> 
+            </div><!--evaluation-card-->  
+    {% endif %}
+    {% if keynote.sub_area == 'kitchen' and forloop.last %}
+    <div class="evaluation-card"><!--evaluation-card-->
+            <div class="evaluation-section"><label>Kitchen</label>{{section.kitchen_keynote}}</div> 
+            </div><!--evaluation-card-->  
+    {% endif %}
 {% endfor %}
 {% endif %}
 </div><!--evaluation-card-wrapper-->

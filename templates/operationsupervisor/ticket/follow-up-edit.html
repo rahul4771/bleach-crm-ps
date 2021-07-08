@@ -150,6 +150,8 @@
 
         <hr class="hr-dashedpad"> 
 
+        <input type="hidden" name="cleaning_hours" id="id_cleaning_hours" value="{% for schedule in followupscheduler %}{% if forloop.first %}{{schedule.follow_up.cleaning_hours}}{% endif %}{% endfor %}" />
+
         <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
             <div class="enquiry-form-left"><!--enquiry-form-left-->
             <div class=" bold-text common-label"> <label>Final Cost</label></div>
@@ -162,11 +164,11 @@
  		<div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
             	<div class="enquiry-form-left"><!--enquiry-form-left-->
                 <div class=" bold-text common-label"> <label>Tentative Time</label></div>
-                <input name="tendative_time" id='id_tendative_time' type="text" class="textBox readonly" placeholder=" " value="{% for schedule in followupscheduler %}{% if forloop.first %}{{schedule.start_at|date:'h:i A'}}{% endif %}{% endfor %}" autocomplete="off" required> 
+                <input name="tendative_time" id='id_tendative_time' type="text" class="textBox readonly" placeholder=" " value="{% for schedule in followupscheduler %}{% if forloop.first %}{{schedule.start_at|date:'h:i A'}}{% endif %}{% endfor %}" autocomplete="off" readonly> 
                 </div><!--enquiry-form-left-->
                 <div class="enquiry-form-right"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Tentative Date</label></div>
-                <input name="tendative_date" id='id_tendative_date' type="text" class="textBox readonly" placeholder="Please select no. of cleaners, duration and time." value="{% for schedule in followupscheduler %}{{schedule.start_at|date:'d-m-Y'}}{% if not forloop.last %},{% endif %}{% endfor %}" autocomplete="off"> 
+                <input name="tendative_date" id='id_tendative_date' type="text" class="textBox readonly" placeholder="Please select no. of cleaners, duration and time." value="{% for schedule in followupscheduler %}{{schedule.start_at|date:'d-m-Y'}}{% if not forloop.last %},{% endif %}{% endfor %}" autocomplete="off" readonly> 
                 </div><!--enquiry-form-right-->
             	{% comment %} <div class="enquiry-form-right"><!--enquiry-form-right-->
                 <div class=" bold-text common-label"> <label>Tentative Date(S)</label></div>
@@ -637,14 +639,6 @@ $('document').ready(function(){
         $('#id_sectioncontainer .close-div').attr("hidden",true);
         $('#id_sectioncontainer .form_section:first .close-div').attr("hidden",false);
     });
-
-//initial time
-$("#id_tendative_time").datetimepicker({
-    pickDate:false,
-    format: 'hh:mm A',
-    //minDate: moment({h:7}),
-    //maxDate: moment({h:17}),
-});
 
 
 

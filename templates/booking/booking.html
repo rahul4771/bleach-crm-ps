@@ -3116,7 +3116,7 @@ Fill all the details of the Buildings  to proceed
 
                       <!-- One time cleaning begins here-->
                         
-                      <div class="row m-0"  v-if="cleaningPolicy=='One Time'">
+                      <div class="row m-0"  v-if="cleaningPolicy=='One Time' && checkEditSchedule()">
                         <div class="col-md-12 " v-if="!oneTimeSelectionStat">
                           <v-btn
                           tile

@@ -151,7 +151,7 @@
 
         <hr class="hr-dashedpad"> 
 
-        <input type="text" name="cleaning_hours" id="id_cleaning_hours" />
+        <input type="hidden" name="cleaning_hours" id="id_cleaning_hours" />
 
         <div class="enquiry-form-Wrapper enquiry-boxes"><!--enquiry-form-Wrapper enquiry-boxes-->
             <div class="enquiry-form-left"><!--enquiry-form-left-->
@@ -526,23 +526,11 @@ $('document').ready(function(){
         $('#id_sectioncontainer .form_section:first .close-div').attr("hidden",false);
     });
 
-//initial time
-//$("#id_tendative_time").datetimepicker({
-//    pickDate:false,
-//    format: 'hh:mm A',
-    //minDate: moment({h:7}),
-    //maxDate: moment({h:17}),
-//});
-
-
-//$("#id_tendative_date").change(function(){
-//    datetimecheck($("#id_tendative_time").val(),$("#id_tendative_date").val(),x);
-//});
-
 });
 
 function findsectiontotal(event)
 {
+    console.log("war"+$('#id_tendative_time').val(),"vol")
     var sectioncount = $('#id_section_counter').val();
     console.log(sectioncount,"sco")
     total_estimated_cost = 0

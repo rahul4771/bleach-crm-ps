@@ -586,14 +586,30 @@ function openNav() {
       completedAddress:[],
       scheduleGroup:{},
       orderId:'',
-      success_msg:false
+      success_msg:false,
+      editScheduleData:{},
+      editScheduleStat:false,
+      onetimeslots:[]
           },
+          
        
   /* header data */
   
   
           methods: {
-            
+            reschedule(){
+              this.resetScheduler()
+              this.goToSchedule()
+             
+            },
+            viewEditSchedule(service,index){
+              this.schedule_serviceTypes_selected=[]
+              this.editScheduleData=service
+              this.editScheduleStat=true
+              this.schedule_serviceTypes_selected.push(index)
+             
+              this.goToSchedule()
+            },
              getCustBookings(){
   
              },
@@ -703,6 +719,8 @@ function openNav() {
               this.getMultipleSlots()
             },
             resetScheduler(){
+              this.oneTimeSelectionStat=false
+              this.editScheduleStat=false
               this.cleaningPolicy='',
               this.subStat='',
               this.visits=[],
@@ -2364,6 +2382,7 @@ function openNav() {
       },
       getMultipleSlots(){
         this.bookingonetimeslots=[]
+        this.onetimeslots=[]
         var yr=this.oneTimeDateSelected.split('-')[0]
         var month=this.oneTimeDateSelected.split('-')[1]
         var day=this.oneTimeDateSelected.split('-')[2]
@@ -2380,6 +2399,7 @@ function openNav() {
                 var slotNo=(parseInt(i)+2)/2
       
                 this.bookingonetimeslots.push(this.slotFormat[String(slotNo)])
+                this.onetimeslots.push(slotNo)
                 
                 
               }
@@ -2872,7 +2892,7 @@ function openNav() {
           this.schedule_confirmation_dialog=false
           this.onetime_dialog=false
           this.schedule_warning=false
-          if(this.scheduleStat){
+          if(this.scheduleStat && !this.editScheduleStat){
               for(var i=0;i<this.multiServicesBill.length;i++){
                   this.multiServicesBill[i].schedule_details={}
               }
@@ -3516,6 +3536,7 @@ function openNav() {
        });
      },
       newdurationcalculation(){
+        this.totalmanhour=0
          this.duration=[]
       let promises = [];
       var count=0;
