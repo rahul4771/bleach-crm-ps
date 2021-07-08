@@ -930,9 +930,9 @@ class CleaningCallendarCleaningPopup(APIView):
 		#for approved not paid
 		first_schedule = cleaning_schedules.first()
 		if (first_schedule.order.evaluation.quatation_status=='APPROVED' and first_schedule.order.evaluation.payment_method=='BREAKDOWN' and first_schedule.order.preamount_paid==0) or (first_schedule.order.evaluation.quatation_status=='APPROVED' and first_schedule.order.evaluation.payment_method=='PREPAID' and first_schedule.order.amount_paid==0):
-			response_dict['cleaning_details']['approved_not_paid'] = True
+			response_dict['approved_not_paid'] = True
 		else:
-			response_dict['cleaning_details']['approved_not_paid'] = False
+			response_dict['approved_not_paid'] = False
 
 		response_dict['success'] = True
 
