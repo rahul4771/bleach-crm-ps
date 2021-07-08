@@ -1783,6 +1783,7 @@ console.log(response)
     
 
     this.sizeFilteredData = [];
+    this.otherService.size=""
     if (this.otherService.type == "new") {
       console.log("type test passed new");
       for (var i = 0; i < this.sizeData.length; i++) {
@@ -2261,6 +2262,12 @@ removeOneTimeSlot(slot){
     this.buildingsCompleted=false
     this.getSize();
     this.serviceChange=true
+    
+    if(this.selectedService.name=='Kitchen Cleaning'){
+     
+      this.otherService.type="old"
+    }
+   
    
   
     
@@ -2815,6 +2822,10 @@ try {
       height:"",
       keynote_data:[]
     };
+    if(this.selectedService.name=='Kitchen Cleaning'){
+      this.otherService.type="old"
+      this.changeKitchen()
+    }
     this.dialog = true;
     this.dialogmsg = "Add New";
     this.dialogStat = true;
