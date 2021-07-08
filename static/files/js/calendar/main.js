@@ -896,7 +896,7 @@ const app=  new Vue({
                     color='followup-cleaning-status-bg'
                   }
                   else if(this.combineSlots[i].type=='not approved'){
-                    if(this.combineSlots[i].slots.order.payment_status == 'PENDING')
+                    if(this.combineSlots[i].slots.order.payment_status == 'PENDING' && this.combineSlots[i].slots.order.order_status == 'APPROVED_BY_CLIENT')
                     {
                       color='approved-not-paid-status-bg'
                     }
