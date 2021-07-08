@@ -909,16 +909,10 @@ const app=  new Vue({
                     color='followup-cleaning-status-bg'
                   }
                   else if(this.combineSlots[i].type=='not approved'){
-                    if(!this.combineSlots[i].slots.order.order_status)
-                    {
-                      color='not-approved-not-paid-status-bg'
-                    }
-                    else{
                       color='not-approved-status-bg'
-                    }
                   }
                   else if(this.combineSlots[i].type=='approved'){
-                    if(!this.combineSlots[i].slots.order.order_status)
+                    if(!this.combineSlots[i].slots.order.payment_status)
                     {
                       color='approved-not-paid-status-bg'
                     }
