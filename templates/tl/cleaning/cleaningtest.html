@@ -205,9 +205,19 @@
 <div class="evaluation-card-wrapper"><!--evaluation-card-wrapper-->
 {% if section.sectionkeynotes %}
 {% for keynote in section.sectionkeynotes %}
+
+  {% if keynote.sub_area != 'kitchen' %}
 		<div class="evaluation-card"><!--evaluation-card-->
         <div class="evaluation-section"><label>{{keynote.sub_area}}</label>{{keynote.quantity}}</div> 
-        </div><!--evaluation-card-->        
+        </div><!--evaluation-card-->  
+  {% endif %}
+
+  {% if keynote.sub_area == 'kitchen' %}{% if forloop.last %}
+    <div class="evaluation-card"><!--evaluation-card-->
+        <div class="evaluation-section"><label>Kitchen</label>{{section.kitchen_keynote}}</div> 
+        </div><!--evaluation-card-->  
+  {% endif %}{% endif %}
+
 {% endfor %}
 {% endif %}
 </div><!--evaluation-card-wrapper-->
@@ -267,15 +277,24 @@
         <div class="ticket-wrapper-row ticket-forms-boxes cleaningkeynotes"><!--ticket-wrapper-row ticket-forms-boxes-->
           <div class="ticket-form-left"><!--ticket-form-left-->
           {% for keynote in section.sectionkeynotes %}  
-          {% if not forloop.counter|divisibleby:2 %}
-          <div class="narrow-label"><input class="keynote" name="keynote{{keynote.id}}" type="checkbox" value="{{keynote.id}}" {% if cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_policy == 'ONE TIME CLEANING' %}{% if keynote.completion_status %}checked{% endif %}{% endif %}> {{keynote.sub_area}} {{keynote.quantity}}</div>
+          {% if not forloop.counter|divisibleby:2 and keynote.sub_area != 'kitchen' %}
+          <div class="narrow-label"><input class="keynote" name="keynote{{keynote.id}}" type="checkbox" value="{{keynote.id}}" {% if cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}{% if keynote.completion_status %}checked{% endif %}{% endif %}> {{keynote.sub_area}} {{keynote.quantity}}</div>
+          {% endif %}
+          <!-- hidden kitchen checkboxes -->
+          {% if keynote.sub_area == 'kitchen' %}
+          <div hidden><input class="keynote_kitchen" name="keynote{{keynote.id}}" type="checkbox" value="{{keynote.id}}" {% if cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}{% if keynote.completion_status %}checked{% endif %}{% endif %} > </div>
+          {% if forloop.last %}<div class="narrow-label"><input class="keynote" type="checkbox" data-subarea="Kitchen" value="{{keynote.id}}" {% if cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}{% if keynote.completion_status %}checked{% endif %}{% endif %}> Kitchen {{section.kitchen_keynote}}</div>{% endif %}
           {% endif %}
           {% endfor %}
+   
+
+          
           </div><!--ticket-form-left-->
+
           <div class="ticket-form-right"><!--ticket-form-right-->
           {% for keynote in section.sectionkeynotes %}  
-          {% if forloop.counter|divisibleby:2 %}
-          <div class="narrow-label"><input class="keynote" name="keynote{{keynote.id}}" type="checkbox" value="{{keynote.id}}" {% if cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_policy == 'ONE TIME CLEANING' %}{% if keynote.completion_status %}checked{% endif %}{% endif %}> {{keynote.sub_area}} {{keynote.quantity}}</div>
+          {% if forloop.counter|divisibleby:2 and keynote.sub_area != 'kitchen' %}
+          <div class="narrow-label"><input class="keynote" name="keynote{{keynote.id}}" type="checkbox" value="{{keynote.id}}" {% if cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}{% if keynote.completion_status %}checked{% endif %}{% endif %}> {{keynote.sub_area}} {{keynote.quantity}}</div>
           {% endif %}
           {% endfor %}
           </div><!--ticket-form-right-->
@@ -408,6 +427,15 @@ function sectionupdate(section_id,action_type){
     })
 }
 
+$('.keynote').click(function(){
+  console.log("lo")
+  cosole.log($(this).val(),$(this).attr('checked').value,"kno")
+  if ($(this).attr('checked').value == true){
+    console.log("checked")
+  }else{
+    console.log("not checked")
+  }
+})
 
 function submitform(){
   var testarray = $('.itemfileselected_before').val();
@@ -468,9 +496,40 @@ $(document).ready(function(){
   //});
 
   //update address status
+
 $(".keynote").change(function(){
 
-  $.ajax({
+//checking kitchen keynotes by looping
+  if ($(this).data('subarea') == 'Kitchen'){
+    var kitchen_keynotes = document.getElementsByClassName("keynote_kitchen");
+    for (var i = 0; i < kitchen_keynotes.length; i++) {
+
+      kitchen_keynotes.item(i).click();
+
+      $.ajax({
+
+        url: "{% url 'tl:ajax-updatekeynote' %}",
+
+        data: {'keynote_id':kitchen_keynotes.item(i).value,'status':kitchen_keynotes.item(i).checked,'keynote_type':"cleaning"}, 
+
+        dataType: 'json',
+
+        success: function (data) { 
+
+          console.log(data);
+
+                                }
+          }); 
+
+
+    }
+    console.log("checked")
+
+//updating other keynotes
+  }else{
+    console.log("not checked")
+
+    $.ajax({
 
         url: "{% url 'tl:ajax-updatekeynote' %}",
 
@@ -483,9 +542,13 @@ $(".keynote").change(function(){
           console.log(data);
 
                                 }
-          });                       
+          }); 
 
-    })
+  }
+
+                        
+
+  })
 
 
 })
