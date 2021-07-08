@@ -211,12 +211,12 @@
         <div class="evaluation-section"><label>{{keynote.sub_area}}</label>{{keynote.quantity}}</div> 
         </div><!--evaluation-card-->  
   {% endif %}
-
-  {% if keynote.sub_area == 'kitchen' %}{% if forloop.last %}
+  
+  {% if keynote.sub_area == 'kitchen' %}{% ifchanged keynote.sub_area %}
     <div class="evaluation-card"><!--evaluation-card-->
         <div class="evaluation-section"><label>Kitchen</label>{{section.kitchen_keynote}}</div> 
-        </div><!--evaluation-card-->  
-  {% endif %}{% endif %}
+        </div><!--evaluation-card-->  {% endifchanged %}
+  {% endif %}
 
 {% endfor %}
 {% endif %}
@@ -283,7 +283,7 @@
           <!-- hidden kitchen checkboxes -->
           {% if keynote.sub_area == 'kitchen' %}
           <div hidden><input class="keynote_kitchen" name="keynote{{keynote.id}}" type="checkbox" value="{{keynote.id}}" {% if cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}{% if keynote.completion_status %}checked{% endif %}{% endif %} > </div>
-          {% if forloop.last %}<div class="narrow-label"><input class="keynote" type="checkbox" data-subarea="Kitchen" value="{{keynote.id}}" {% if cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}{% if keynote.completion_status %}checked{% endif %}{% endif %}> Kitchen {{section.kitchen_keynote}}</div>{% endif %}
+          {% ifchanged keynote.sub_area %}<div class="narrow-label"><input class="keynote" type="checkbox" data-subarea="Kitchen" value="{{keynote.id}}" {% if cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}{% if keynote.completion_status %}checked{% endif %}{% endif %}> Kitchen {{section.kitchen_keynote}}</div>{% endifchanged %}
           {% endif %}
           {% endfor %}
    

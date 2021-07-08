@@ -109,11 +109,11 @@
         <div class="evaluation-section"><label>{{keynote.sub_area}}</label>{{keynote.quantity}}</div> 
         </div><!--evaluation-card-->   
 {% endif %}
-{% if keynote.sub_area == 'kitchen' and forloop.last %}
+{% if keynote.sub_area == 'kitchen' %}{% ifchanged keynote.sub_area %}
 <div class="evaluation-card"><!--evaluation-card-->
         <div class="evaluation-section"><label>Kitchen</label>{{section.kitchen_keynote}}</div> 
         </div><!--evaluation-card-->  
-{% endif %}
+{% endifchanged %}{% endif %}
 {% endfor %}
 {% endif %}
 </div><!--evaluation-card-wrapper-->

@@ -264,6 +264,7 @@ const app = new Vue({
              gotSection:false,
              //url:'http://localhost:8000',
              url:'https://test.bleach-kw.com',
+             //url:'http://127.0.0.1:8000',
              eval_book_id:'',
              action_type:'',
              paymentData:{
