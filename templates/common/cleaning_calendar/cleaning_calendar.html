@@ -64,11 +64,9 @@
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'" >
                   <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
-                  {% if request.user.user_type == 'SENIORTEAMLEADER' %}
+                  
                       <span  v-else @click="addCleaningTeam(item.slots.id)">+</span>
-                    {% elif request.user.user_type == 'OPERATIONSUPERVISOR' %}
-                      <span  v-else @click="addCleaningTeamOpSupervisor(item.slots.id)">+</span>
-                    {% endif %}
+                    
                   {% else %}
                   <span  v-else @click="" disabled>+</span>
                   {% endif %}
@@ -122,11 +120,7 @@
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
-                  {% if request.user.user_type == 'SENIORTEAMLEADER' %}
-                      <span  v-else @click="addCleaningTeam(item.slots.id)">+</span>
-                    {% elif request.user.user_type == 'OPERATIONSUPERVISOR' %}
-                      <span  v-else @click="addCleaningTeamOpSupervisor(item.slots.id)">+</span>
-                    {% endif %}
+                  <span  v-else @click="addCleaningTeam(item.slots.id)">+</span>
                   {% else %}
                   <span  v-else @click="" disabled>+</span>
                   {% endif %}
@@ -177,11 +171,7 @@
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
-                  {% if request.user.user_type == 'SENIORTEAMLEADER' %}
-                      <span  v-else @click="addCleaningTeam(item.slots.id)">+</span>
-                    {% elif request.user.user_type == 'OPERATIONSUPERVISOR' %}
-                      <span  v-else @click="addCleaningTeamOpSupervisor(item.slots.id)">+</span>
-                    {% endif %}
+                  <span  v-else @click="addCleaningTeam(item.slots.id)">+</span>
                   {% else %}
                   <span  v-else @click="" disabled>+</span>
                   {% endif %}
@@ -232,11 +222,7 @@
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
-                  {% if request.user.user_type == 'SENIORTEAMLEADER' %}
-                      <span  v-else @click="addCleaningTeam(item.slots.id)">+</span>
-                    {% elif request.user.user_type == 'OPERATIONSUPERVISOR' %}
-                      <span  v-else @click="addCleaningTeamOpSupervisor(item.slots.id)">+</span>
-                    {% endif %}
+                  <span  v-else @click="addCleaningTeam(item.slots.id)">+</span>
                   {% else %}
                   <span  v-else @click="" disabled>+</span>
                   {% endif %}
@@ -285,11 +271,7 @@
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
-                  {% if request.user.user_type == 'SENIORTEAMLEADER' %}
-                      <span  v-else @click="addCleaningTeam(item.slots.id)">+</span>
-                    {% elif request.user.user_type == 'OPERATIONSUPERVISOR' %}
-                      <span  v-else @click="addCleaningTeamOpSupervisor(item.slots.id)">+</span>
-                    {% endif %}
+                  <span  v-else @click="addCleaningTeam(item.slots.id)">+</span>
                   {% else %}
                   <span  v-else @click="" disabled>+</span>
                   {% endif %}
@@ -341,11 +323,7 @@
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
-                  {% if request.user.user_type == 'SENIORTEAMLEADER' %}
-                      <span  v-else @click="addCleaningTeam(item.slots.id)">+</span>
-                    {% elif request.user.user_type == 'OPERATIONSUPERVISOR' %}
-                      <span  v-else @click="addCleaningTeamOpSupervisor(item.slots.id)">+</span>
-                    {% endif %}
+                  <span  v-else @click="addCleaningTeam(item.slots.id)">+</span>
                   {% else %}
                   <span  v-else @click="" disabled>+</span>
                   {% endif %}
@@ -395,11 +373,7 @@
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
-                  {% if request.user.user_type == 'SENIORTEAMLEADER' %}
-                      <span  v-else @click="addCleaningTeam(item.slots.id)">+</span>
-                    {% elif request.user.user_type == 'OPERATIONSUPERVISOR' %}
-                      <span  v-else @click="addCleaningTeamOpSupervisor(item.slots.id)">+</span>
-                    {% endif %}
+                  <span  v-else @click="addCleaningTeam(item.slots.id)">+</span>
                   {% else %}
                   <span  v-else @click="" disabled>+</span>
                   {% endif %}
@@ -448,11 +422,7 @@
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
-                  {% if request.user.user_type == 'SENIORTEAMLEADER' %}
-                      <span  v-else @click="addCleaningTeam(item.slots.id)">+</span>
-                    {% elif request.user.user_type == 'OPERATIONSUPERVISOR' %}
-                      <span  v-else @click="addCleaningTeamOpSupervisor(item.slots.id)">+</span>
-                    {% endif %}
+                  <span  v-else @click="addCleaningTeam(item.slots.id)">+</span>
                   {% else %}
                   <span  v-else @click="" disabled>+</span>
                   {% endif %}
@@ -502,11 +472,7 @@
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
-                  {% if request.user.user_type == 'SENIORTEAMLEADER' %}
-                      <span  v-else @click="addCleaningTeam(item.slots.id)">+</span>
-                    {% elif request.user.user_type == 'OPERATIONSUPERVISOR' %}
-                      <span  v-else @click="addCleaningTeamOpSupervisor(item.slots.id)">+</span>
-                    {% endif %}
+                  <span  v-else @click="addCleaningTeam(item.slots.id)">+</span>
                   {% else %}
                   <span  v-else @click="" disabled>+</span>
                   {% endif %}
@@ -556,11 +522,7 @@
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
-                  {% if request.user.user_type == 'SENIORTEAMLEADER' %}
-                      <span  v-else @click="addCleaningTeam(item.slots.id)">+</span>
-                    {% elif request.user.user_type == 'OPERATIONSUPERVISOR' %}
-                      <span  v-else @click="addCleaningTeamOpSupervisor(item.slots.id)">+</span>
-                    {% endif %}
+                  <span  v-else @click="addCleaningTeam(item.slots.id)">+</span>
                   {% else %}
                   <span  v-else @click="" disabled>+</span>
                   {% endif %}
@@ -610,11 +572,7 @@
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
-                  {% if request.user.user_type == 'SENIORTEAMLEADER' %}
-                      <span  v-else @click="addCleaningTeam(item.slots.id)">+</span>
-                    {% elif request.user.user_type == 'OPERATIONSUPERVISOR' %}
-                      <span  v-else @click="addCleaningTeamOpSupervisor(item.slots.id)">+</span>
-                    {% endif %}
+                  <span  v-else @click="addCleaningTeam(item.slots.id)">+</span>
                   {% else %}
                   <span  v-else @click="" disabled>+</span>
                   {% endif %}
@@ -664,11 +622,7 @@
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
-                    {% if request.user.user_type == 'SENIORTEAMLEADER' %}
-                      <span  v-else @click="addCleaningTeam(item.slots.id)">+</span>
-                    {% elif request.user.user_type == 'OPERATIONSUPERVISOR' %}
-                      <span  v-else @click="addCleaningTeamOpSupervisor(item.slots.id)">+</span>
-                    {% endif %}
+                    <span  v-else @click="addCleaningTeam(item.slots.id)">+</span>
                   {% else %}
                   <span  v-else @click="" disabled>+</span>
                   {% endif %}

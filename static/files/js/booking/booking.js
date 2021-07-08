@@ -264,6 +264,7 @@ const app=new Vue({
 
     color: "",
     size: {},
+    keynote_data:[],
     type: "",
     age: "",
     stain: false,
@@ -536,7 +537,8 @@ parsedTimeSlots:[],
 scheduleStatus:false,
 floor_msg:false,
 apartment_stat_err:false,
-building_msg:false
+building_msg:false,
+others_keynotes:[]
 
       },
       methods: {
@@ -650,6 +652,17 @@ building_msg:false
           this.keynote_name=''
           this.keynote_value=''
         },
+        addOthersKeynote(){
+          this.otherService.keynote_data.push({
+            name:this.keynote_name,
+            value:this.keynote_value
+          })
+          this.keynote_name=''
+          this.keynote_value=''
+        },
+        removeOthersKeynote(keynote){
+          this.otherService.keynote_data.splice(keynote,1)
+      },
         removeKeynote(building,floor,keynote){
             this.building[building].floors[floor].keynote_data.splice(keynote,1)
         },
@@ -1367,18 +1380,6 @@ console.log(response)
              "section_cost":this.multiServicesBill[i].bill[j].section.section_cost,
              "section_net_cost":this.multiServicesBill[i].bill[j].section.section_cost,
              "keynotes":{
-                "1":{
-                   "sub_area":"bathroom",
-                   "quantity":this.multiServicesBill[i].bill[j].section.no_of_bathrooms
-                },
-                "2":{
-                   "sub_area":"rooms",
-                   "quantity":this.multiServicesBill[i].bill[j].section.no_of_rooms
-                },
-                "3":{
-                   "sub_area":"windows",
-                   "quantity":this.multiServicesBill[i].bill[j].section.no_of_windows
-                }
              }
              }
            
@@ -1392,22 +1393,46 @@ console.log(response)
              "cement_residue":this.multiServicesBill[i].bill[j].section.cement_residue,
              "section_cost":this.multiServicesBill[i].bill[j].section.section_cost,
              "section_net_cost":this.multiServicesBill[i].bill[j].section.section_cost,
-             "keynotes":{
-                "1":{
-                   "sub_area":"bathroom",
-                   "quantity":this.multiServicesBill[i].bill[j].section.no_of_bathrooms
-                },
-                "2":{
-                   "sub_area":"rooms",
-                   "quantity":this.multiServicesBill[i].bill[j].section.no_of_rooms
-                },
-                "3":{
-                   "sub_area":"windows",
-                   "quantity":this.multiServicesBill[i].bill[j].section.no_of_windows
-                }
-             }
+             "keynotes":{}
              }
            }
+           var keynotecounter=1
+           if(this.multiServicesBill[i].bill[j].section.no_of_bathrooms){
+            this.serviceDetails.service_details[i].sections[j].keynotes[keynotecounter]={
+              "sub_area":"bathroom",
+              "quantity":this.multiServicesBill[i].bill[j].section.no_of_bathrooms
+
+            }
+            keynotecounter=keynotecounter+1
+           }
+           if(this.multiServicesBill[i].bill[j].section.no_of_rooms){
+            this.serviceDetails.service_details[i].sections[j].keynotes[keynotecounter]={
+              "sub_area":"rooms",
+              "quantity":this.multiServicesBill[i].bill[j].section.no_of_rooms
+
+            }
+            keynotecounter=keynotecounter+1
+           }
+           if(this.multiServicesBill[i].bill[j].section.no_of_windows){
+            this.serviceDetails.service_details[i].sections[j].keynotes[keynotecounter]={
+              "sub_area":"windows",
+              "quantity":this.multiServicesBill[i].bill[j].section.no_of_windows
+
+            }
+            keynotecounter=keynotecounter+1
+           }
+           if(this.multiServicesBill[i].bill[j].section.keynote_data.length>0){
+             for(var ky=0;ky<this.multiServicesBill[i].bill[j].section.keynote_data.length;ky++){
+              this.serviceDetails.service_details[i].sections[j].keynotes[keynotecounter]={
+                "sub_area":this.multiServicesBill[i].bill[j].section.keynote_data[ky].name,
+                "quantity":this.multiServicesBill[i].bill[j].section.keynote_data[ky].value
+  
+              }
+              keynotecounter=keynotecounter+1
+             }
+
+           }
+           
            if(this.multiServicesBill[i].bill[j].section.kitchen){
             var newindex=Object.keys(this.serviceDetails.service_details[i].sections[j].keynotes).length
             var kitchencounter=newindex
@@ -1421,9 +1446,11 @@ console.log(response)
                  residue:this.multiServicesBill[i].bill[j].section.kitchens[k].residue,
                  cost:this.multiServicesBill[i].bill[j].section.kitchens[k].size.cost
                })
+               
              
              }
              kitchencounter=kitchencounter+1
+             keynotecounter=keynotecounter+1
             }
            
           }
@@ -1756,6 +1783,7 @@ console.log(response)
     
 
     this.sizeFilteredData = [];
+    this.otherService.size=""
     if (this.otherService.type == "new") {
       console.log("type test passed new");
       for (var i = 0; i < this.sizeData.length; i++) {
@@ -2234,6 +2262,12 @@ removeOneTimeSlot(slot){
     this.buildingsCompleted=false
     this.getSize();
     this.serviceChange=true
+    
+    if(this.selectedService.name=='Kitchen Cleaning'){
+     
+      this.otherService.type="old"
+    }
+   
    
   
     
@@ -2785,8 +2819,13 @@ try {
       hallway_size: "",
       sides: "",
       stain_age: "",
-      height:""
+      height:"",
+      keynote_data:[]
     };
+    if(this.selectedService.name=='Kitchen Cleaning'){
+      this.otherService.type="old"
+      this.changeKitchen()
+    }
     this.dialog = true;
     this.dialogmsg = "Add New";
     this.dialogStat = true;
@@ -2817,6 +2856,7 @@ try {
     this.dialogStat = false;
     (this.otherService = {
       material: a.material,
+      keynote_data:a.keynote_data,
       color: a.color,
       size: a.size,
       type: a.type,
@@ -3036,7 +3076,8 @@ try {
       hallway_size: "",
       sides: "",
       stain_age: "",
-      section_cost:null
+      section_cost:null,
+      keynote_data:[]
     };
     this.dialog = false;
      }
@@ -3222,7 +3263,7 @@ try {
       floor_type: "",
       ceiling_type: "",
       residue: false,
-
+      keynote_data:[],
       hallway_size: "",
       sides: "",
     };
