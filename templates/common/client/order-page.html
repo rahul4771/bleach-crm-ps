@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
 {% load static %}
-{% load mathfilters %}
 
 <link href="{% static 'files/css/client-details.css' %}" rel="stylesheet" />
 <link href="{% static 'files/css/orders.css' %}" rel="stylesheet" />
@@ -1146,15 +1145,18 @@
                                                     <div class="clean-section-card">
                                                         <p>{{keynote.sub_area}}<span class="c-text2">{{keynote.quantity}}</span></p>
                                                     </div>
-                                                {% else %}
-                                                
-                                                <div class="clean-section-card">
-                                                    <p>Kitchen<span class="c-text2">{% ifchanged keynote.sub_area %}{{forloop.counter}}{% endifchanged %}</span></p>
-                                                </div>
-                                                
                                                 {% endif %}
 
                                             {% endif %}
+
+                                            {% if keynote.sub_area == 'kitchen' %}
+                                            {% if forloop.last %}
+                                                <div class="clean-section-card">
+                                                    <p>Kitchen<span class="c-text2">{{section.kitchen_keynote}}</span></p>
+                                                </div>
+                                            {% endif %}
+                                            {% endif %}
+
                                             {% endfor %}
 
                                             </div>
@@ -1167,12 +1169,6 @@
                                                 <div class="clean-section-card">
                                                     <p>{{keynote.sub_area}}<span class="c-text2">{{keynote.quantity}}</span></p>
                                                 </div>
-                                                {% else %}
-                                                
-                                                <div class="clean-section-card">
-                                                    <p>Kitchen<span class="c-text2">{% ifchanged keynote.sub_area %}{{forloop.counter}}{% {% endifchanged %} %}</span></p>
-                                                </div>
-                                                
                                                 {% endif %} 
 
                                             {% else %}
