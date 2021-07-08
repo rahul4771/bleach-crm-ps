@@ -949,16 +949,8 @@ class="cl-service-list"
             <div v-else class="cl-highlight cl-modal-text-title "> Not Assigned </div>
             <div class="text-right cl-mt-20">
             {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
-              {% if request.user.user_type == 'SENIORTEAMLEADER' %}
-                <a class="cl-link" @click="editCleaningTeam(currentSlotDetails.id)"  v-if="currentSlotDetails.cleaning_team_order_scheduler[0]" @click="editCleaningTeam(currentSlotDetails.id)">Edit Cleaning Team</a>
-                <a class="cl-link" @click="addCleaningTeam(currentSlotDetails.id)"  v-else @click="addCleaningTeam(currentSlotDetails.id)">Add Cleaning Team</a>
-              {% else %}
-              <a class="cl-link" @click="editCleaningTeam(currentSlotDetails.id)"  v-if="currentSlotDetails.cleaning_team_order_scheduler[0]" @click="editCleaningTeam(currentSlotDetails.id)"></a>
-                <a class="cl-link" @click="addCleaningTeam(currentSlotDetails.id)"  v-else @click="addCleaningTeam(currentSlotDetails.id)">Add Cleaning Team</a>
-              {% endif %}
-                {% comment %} <a class="cl-link" @click="editCleaningTeamOpSupervisor(currentSlotDetails.id)"  v-if="currentSlotDetails.cleaning_team_order_scheduler[0]" @click="editCleaningTeamOpSupervisor(currentSlotDetails.id)">Edit Cleaning Team</a>
-                <a class="cl-link" @click="addCleaningTeamOpSupervisor(currentSlotDetails.id)"  v-else @click="addCleaningTeamOpSupervisor(currentSlotDetails.id)">Add Cleaning Team</a> {% endcomment %}
-              
+                <a class="cl-link" @click="editCleaningTeam(currentSlotDetails.id)"  v-if="currentSlotDetails.cleaning_team_order_scheduler[0] && currentSlotDetails.order.order_status!=null" @click="editCleaningTeam(currentSlotDetails.id)">Edit Cleaning Team</a>
+                <a class="cl-link" @click="addCleaningTeam(currentSlotDetails.id)"  v-else-if="currentSlotDetails.order.order_status!=null" @click="addCleaningTeam(currentSlotDetails.id)">Add Cleaning Team</a>              
             {% endif %}
             </div>
           </div>

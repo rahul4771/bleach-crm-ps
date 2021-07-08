@@ -841,7 +841,6 @@ const app=  new Vue({
               this.cleaningAgentDialog=true
               this.dataCompleted=true
               this.durationCalculator()
-             // $('#cleanAgentModal').modal('show');
               
             })
           }
@@ -978,7 +977,6 @@ const app=  new Vue({
                           endDate:enddate,
                           row:'',
                           slots:this.combineSlots[i].slots
-
                         }
 
                       }
