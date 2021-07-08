@@ -557,20 +557,30 @@ $(document).ready(function(){
     gotData:false,
     bookingServicesBill:[],
     bookingonetimeslots:[],
+    onetimeslots:[],
     multiAddress:false,
     selectedAddress:'',
     bookedServiceDetails:[],
     custServiceScheduled:{},
     currentAddressIndex:null,
     completedAddress:[],
-    scheduleGroup:{}
+    scheduleGroup:{},
+    editScheduleData:{},
+    editScheduleStat:false
         },
      
 /* header data */
 
 
         methods: {
-          
+          viewEditSchedule(service,index){
+            this.schedule_serviceTypes_selected=[]
+            this.editScheduleData=service
+            this.editScheduleStat=true
+            this.schedule_serviceTypes_selected.push(index)
+           
+            this.goToSchedule()
+          },
            getCustBookings(){
 
            },
@@ -680,6 +690,8 @@ $(document).ready(function(){
             this.getMultipleSlots()
           },
           resetScheduler(){
+            this.oneTimeSelectionStat=false
+              this.editScheduleStat=false
             this.cleaningPolicy='',
             this.subStat='',
             this.visits=[],
@@ -2356,7 +2368,7 @@ $(document).ready(function(){
               var slotNo=(parseInt(i)+2)/2
     
               this.bookingonetimeslots.push(this.slotFormat[String(slotNo)])
-              
+              this.onetimeslots.push(slotNo)
               
             }
           }
@@ -3490,6 +3502,7 @@ $(document).ready(function(){
      });
    },
     newdurationcalculation(){
+      this.totalmanhour=0
        this.duration=[]
     let promises = [];
     var count=0;
