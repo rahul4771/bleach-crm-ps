@@ -927,6 +927,12 @@ class CleaningCallendarCleaningPopup(APIView):
 		cleaning_schedules                  = OrderScheduler.objects.filter(evaluation_details__evaluation__evaluation_id=evaluation_id,start_at=schedule_start_at,end_at=schedule_end_at).select_related('evaluation_details__evaluator','order_scheduler_book').prefetch_related('cleaning_team_order_scheduler__team_leader')
 		response_dict['cleaning_details']   = CleaningScheduleSerializer(instance=cleaning_schedules,many=True).data
 
+		#for approved not paid
+		first_schedule = cleaning_schedules.first()
+		if (first_schedule.order.evaluation.quatation_status=='APPROVED' and first_schedule.order.evaluation.payment_method=='BREAKDOWN' and first_schedule.order.preamount_paid==0) or (first_schedule.order.evaluation.quatation_status=='APPROVED' and first_schedule.order.evaluation.payment_method=='PREPAID' and first_schedule.order.amount_paid==0):
+			response_dict['cleaning_details']['approved_not_paid'] = True
+		else:
+			response_dict['cleaning_details']['approved_not_paid'] = False
 
 		response_dict['success'] = True
 

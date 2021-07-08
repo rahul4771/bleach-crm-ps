@@ -903,8 +903,8 @@ class="cl-service-list"
             <div v-else class="cl-highlight cl-modal-text-title "> Not Assigned </div>
             <div class="text-right cl-mt-20">
             {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
-                <a class="cl-link" @click="editCleaningTeam(currentSlotDetails.id)"  v-if="currentSlotDetails.cleaning_team_order_scheduler[0] && currentSlotDetails.order.order_status!=null" @click="editCleaningTeam(currentSlotDetails.id)">Edit Cleaning Team</a>
-                <a class="cl-link" @click="addCleaningTeam(currentSlotDetails.id)"  v-else-if="currentSlotDetails.order.order_status!=null" @click="addCleaningTeam(currentSlotDetails.id)">Add Cleaning Team</a>              
+                <a class="cl-link" @click="editCleaningTeam(currentSlotDetails.id)"  v-if="currentSlotDetails.cleaning_team_order_scheduler[0] && currentSlotDetails.order.order_status!=null && currentSlotDetails.work_status!='CLEANING_CANCELLED' && currentSlotDetails.work_status!='CLEANING_FULFILLED'" @click="editCleaningTeam(currentSlotDetails.id)">Edit Cleaning Team</a>
+                <a class="cl-link" @click="addCleaningTeam(currentSlotDetails.id)"  v-else-if="currentSlotDetails.order.order_status!=null && currentSlotDetails.work_status!='CLEANING_CANCELLED' && currentSlotDetails.work_status!='CLEANING_FULFILLED'" @click="addCleaningTeam(currentSlotDetails.id)">Add Cleaning Team</a>              
             {% endif %}
             </div>
           </div>
