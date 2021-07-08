@@ -133,6 +133,8 @@ selected_slots:{}
             this.time_slots_selected=[]
             var counter=1
             for(var i in this.selected_slots){
+              if(this.selected_slots[i].slots.length>0)
+              {
                 var min=Math.min( ...this.selected_slots[i].slots )
                 var max=Math.max( ...this.selected_slots[i].slots )
                 var year=i.split('-')[0]
@@ -144,7 +146,7 @@ selected_slots:{}
                     cleaning_hours:this.selected_slots[i].slots.length*2,
                     starting_time:this.slotFormat[min].start_time
                 })
-                
+              }
             }
             this.slot_dialog=false
             this.selected_slots={}
