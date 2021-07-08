@@ -166,7 +166,8 @@ selected_slots:{}
                 cleaningtime = value.starting_time;
                 }
               })
-            console.log(cleaningdates,cleaninghours,cleaningtime,"slotts") ;
+            cleaningdates = cleaningdates.replace(/,\s*$/, "");
+            
             $('#id_cleaning_hours').val(cleaninghours);
             $('#id_tendative_date').val(cleaningdates);
             $('#id_tendative_time').val(cleaningtime);

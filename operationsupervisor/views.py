@@ -1398,6 +1398,8 @@ class Followup(IsOperationSupervisor,View):
 		tendative_date = request.POST.get('tendative_date').split(',')
 
 		tendative_time = request.POST.get('tendative_time')
+
+		print(tendative_time,"tendative")
 		
 		follow_up = FollowUp.objects.select_related('investigation__order__evaluation__customer').get(investigation_id=investigation_id,is_active=True)
 		follow_up.status         = 'FOLLOWUP_IN_PROGRESS'
@@ -1522,7 +1524,7 @@ class FollowupEdit(IsOperationSupervisor,View):
 		follow_up.save()
 		
 		for date in tendative_date:
-			print(date,"dt")
+			print(date+' '+tendative_time,"dt")
 			start_date_time = datetime.strptime(date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
 			end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))
 			followup_schedule_array.append(FollowUpScheduler(follow_up=follow_up,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address))
