@@ -414,6 +414,7 @@ function sectionupdate(section_id,action_type){
     $('#modal_close').click();
     document.getElementById("id_verify").style.display = "none";
     document.getElementById("id_verified").style.display = "block";
+    document.getElementById("id_update").style.display = "none";
   }
   axios.post(url+'/api/section-verification-updation/',{ params: { 'section_id': section_id, 'action_type':action_type, 'price_id':price_id,'cleaning_team_id':{{cleaning_team_detail.id}} } })
     .then(function (response) {
@@ -427,15 +428,6 @@ function sectionupdate(section_id,action_type){
     })
 }
 
-$('.keynote').click(function(){
-  console.log("lo")
-  cosole.log($(this).val(),$(this).attr('checked').value,"kno")
-  if ($(this).attr('checked').value == true){
-    console.log("checked")
-  }else{
-    console.log("not checked")
-  }
-})
 
 function submitform(){
   var testarray = $('.itemfileselected_before').val();
@@ -544,9 +536,7 @@ $(".keynote").change(function(){
                                 }
           }); 
 
-  }
-
-                        
+  }                      
 
   })
 
