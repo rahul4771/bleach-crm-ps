@@ -2342,7 +2342,10 @@ $(document).ready(function () {
         app.contacts.push('SMS');
     {% endif %}
 
-    
+    {% for schedule in order.orderschedules %}
+    {% if forloop.first %}
+    load_cleaning_team(1,"{{schedule.id}}")
+    {% endif %}{% endfor %}
 })
 
 
