@@ -534,7 +534,9 @@ snackbar:false,
 responseText:'',
 parsedTimeSlots:[],
 scheduleStatus:false,
-floor_msg:false
+floor_msg:false,
+apartment_stat_err:false,
+building_msg:false
 
       },
       methods: {
@@ -1582,7 +1584,8 @@ console.log(response)
         if(this.$refs['KitchenForm-building-'+building+'floor'-floor].validate())
      { 
         console.log("kitchen data is  "+JSON.stringify(this.kitchenData))
-        this.building[building].floors[floor].kitchens.push(this.kitchenData)
+        var temp = { ...this.kitchenData }
+        this.building[building].floors[floor].kitchens.push(temp)
           this.forceRerender();
           this.kitchenData={
         wall_type:'',
@@ -1598,11 +1601,24 @@ console.log(response)
        
     }
       },
+      changeFloorKitchenStat(building,floor){
+        if(!this.building[building].floors[floor].kitchen){
+          this.building[building].floors[floor].kitchens=[]
+        }
+        this.recalcPrice(building,floor)
+      },
+      changeApartmentKitchenStat(building,floor,apartment){
+        if(!this.building[building].floors[floor].apartments[apartment].kitchen){
+          this.building[building].floors[floor].apartments[apartment].kitchens=[]
+        }
+        this.recalcApartmentPrice(building,floor,apartment)
+      },
     addMoreKitchenApartment(building,floor,apartment){
       
        
         console.log("kitchen data is  "+JSON.stringify(this.kitchenData))
-        this.building[building].floors[floor].apartments[apartment].kitchens.push(this.kitchenData)
+        var temp = { ...this.kitchenData }
+        this.building[building].floors[floor].apartments[apartment].kitchens.push(temp)
           this.forceRerender();
           this.kitchenData={
         wall_type:'',
@@ -1610,6 +1626,7 @@ console.log(response)
         size:'',
         ceiling_type:'',
         condition:'',
+        residue:false,
         type:'old'
     }
     this.kitchendialog=false
@@ -1623,6 +1640,16 @@ console.log(response)
        this.currentFloor=floor
         this.kitchendialog=true
         this.kitchendialogStat=true
+        this.kitchenData={
+          wall_type:'',
+          floor_type:'',
+          size:'',
+          ceiling_type:'',
+          condition:'',
+          type:'old',
+          residue:false
+      }
+        
        
        
     },
@@ -1634,6 +1661,15 @@ console.log(response)
        this.currentApartment=apartment
         this.kitchendialog=true
         this.kitchendialogStat=true
+        this.kitchenData={
+          wall_type:'',
+          floor_type:'',
+          size:'',
+          ceiling_type:'',
+          condition:'',
+          type:'old',
+          residue:false
+      }
        
     },
      editNewKitchen(building,floor,serv){
@@ -1650,6 +1686,7 @@ console.log(response)
            this.kitchenData.ceiling_type=this.building[building].floors[floor].kitchens[serv].ceiling_type
         this.kitchenData.condition=this.building[building].floors[floor].kitchens[serv].condition
         this.kitchenData.type=this.building[building].floors[floor].kitchens[serv].type
+        this.kitchenData.residue=this.building[building].floors[floor].kitchens[serv].residue
 
       
        
@@ -1669,7 +1706,7 @@ console.log(response)
            this.kitchenData.ceiling_type=this.building[building].floors[floor].apartments[apartment].kitchens[serv].ceiling_type
         this.kitchenData.condition=this.building[building].floors[floor].apartments[apartment].kitchens[serv].condition
         this.kitchenData.type=this.building[building].floors[floor].apartments[apartment].kitchens[serv].type
-
+        this.kitchenData.residue=this.building[building].floors[floor].apartments[apartment].kitchens[serv].residue
       
        
     },
@@ -3201,6 +3238,7 @@ try {
   },
 
   setBuilding() {
+    this.valid=[]
     for (var i = 0; i < this.no_of_building; i++) {
       this.building.push({
         floors: [],
@@ -3210,10 +3248,13 @@ try {
         floors: [],
         e: 1,
       });
+      this.no_of_floors.push("")
+      this.valid.push({floors:[]})
     }
   },
   setFloors(building) {
     this.building[building - 1].floors = [];
+    this.valid[building-1].floors=[];
     this.e.building[building - 1].e = 1;
     for (var i = 0; i < this.no_of_floors[building - 1]; i++) {
       this.building[building - 1].floors.push({
@@ -3235,14 +3276,13 @@ try {
         paint_residue: false,
         upholsteries: ["Sofa", ""],
         
+        
       });
       this.e.building[building - 1].floors.push({
         floors: [],
         e: 1,
       });
-      this.valid.push({
-        floors:[]
-      })
+      this.valid[building-1].floors.push(false)
     }
   },
   setApartments(building, floor) {
@@ -3296,6 +3336,20 @@ try {
      this.getMultipleSlots()
     }
   },
+  buildingCompleteChecker(){
+   
+    var stat=false
+    for(var i=0;i<this.building.length;i++){
+      if(this.building[i].completed){
+        stat=true
+      }
+      else{
+        stat=false
+        break
+      }
+    }
+    return stat
+  },
   floorCompleteChecker(building){
    
     var stat=false
@@ -3310,8 +3364,22 @@ try {
     }
     return stat
   },
+  apartmentCompleteChecker(building,floor){
+    var stat=false
+    for(var i=0;i<this.building[building].floors[floor].apartments.length;i++){
+      if(this.building[building].floors[floor].apartments[i].completed){
+        stat=true
+      }
+      else{
+        stat=false
+        break
+      }
+    }
+    return stat
+  },
   nextTab(build) {
     this.floor_msg=false
+    this.building_msg=false
     console.log("building tab is "+build)
     console.log("building tab no is "+this.no_of_building)
     
@@ -3320,8 +3388,15 @@ try {
     }
     else{
    this.cat_counter=this.cat_counter+1
-    if (build == this.no_of_building) {
-      this.buildingsCompleted = true;
+  //  if (build == this.no_of_building ) {
+    if (build == this.no_of_building ) {
+      if(this.buildingCompleteChecker()){
+        this.buildingsCompleted = true;
+      }
+      else{
+        this.building_msg=true
+      }
+     
      
     
     } else {
@@ -3531,6 +3606,12 @@ try {
     }
   },
   nextFloor(building, floor) {
+    this.apartment_stat_err=false
+    this.building_msg=false
+    if(this.building[building].floors[floor-1].apartment && !this.apartmentCompleteChecker(building,floor-1)){
+      this.apartment_stat_err=true
+    }
+    else{
     this.floor_msg=false
       console.log('validate is '+this.$refs.form)
      if(this.$refs['building-'+building+'floor-'+(floor-1)][0].validate())
@@ -3596,6 +3677,7 @@ try {
     this.recalcPrice(building,floor-1);
      }
       this.findTempcost()
+    }
   },
   recalcPrice(building,floor) {
     
