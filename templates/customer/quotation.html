@@ -497,7 +497,7 @@
         
               <div class="col-md-5 offset-md-7 no-print">
 
-                  {% if request.user.user_type != 'ADMIN' and request.user.user_type != 'EVALUATOR' %} {% if order.evaluation.quatation_status != 'APPROVED' and order.evaluation.quatation_status != 'REJECTED' %}
+                  {% if order.evaluation.quatation_status != 'APPROVED' and order.evaluation.quatation_status != 'REJECTED' %}
                   <div class="d-flex mt-4 mb-4">
                     <div class="inv-btn text-center text-white"  id="bk-approve" onclick="openModal()">
                        Approve
@@ -515,7 +515,7 @@
                     Invoice
                    </div>
                   {% endif %}
-                  {% endif %}
+                  
                   
               </div>
           </div>

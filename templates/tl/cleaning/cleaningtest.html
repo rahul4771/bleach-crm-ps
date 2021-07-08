@@ -38,13 +38,13 @@
         <div class="email"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{cleaning_team_detail.order_scheduler.order_scheduler_book.location_type}}</div>
   	</div><!--ticket-form-left-->
 	<div class="ticket-form-right"><!--ticket-form-right-->
-        <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> {{cleaning_team_detail.order_scheduler.start_at}}</div>
+        <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> {{cleaning_team_detail.order_scheduler.start_at|date:'d-m-Y'}}</div>
         <br>
         <div class="common-gray-text align-left"><i class="fa fa-lg fa-clock-o orange-text" aria-hidden="true"></i> {{cleaning_team_detail.order_scheduler.start_at|date:'h:i A'}}</div>
         <br>
-        <div class="common-gray-text align-left"><i class="fa fa-lg fa-hourglass-o yellow-text" aria-hidden="true"></i> {{cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_hours}} Hours</div>
+        <div class="common-gray-text align-left"><i class="fa fa-lg fa-hourglass yellow-text" aria-hidden="true"></i> {% if cleaning_team_detail.order_scheduler.cleaning_hours %}{{cleaning_team_detail.order_scheduler.cleaning_hours}}{% else %}{{cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_hours}}{% endif %} Hours</div>
 	      <br> 
-         <div class="common-gray-text align-left"><i class="fa fa-lg fa-building-o green-text" aria-hidden="true"></i> <b>{{cleaning_team_detail.order_scheduler.customer_address.apartment}}</b>: {% if cleaning_team_detail.order_scheduler.customer_address.floor %}{{cleaning_team_detail.order_scheduler.customer_address.floor}}, {% else %}{% endif %} {{cleaning_team_detail.order_scheduler.customer_address.building}}, {{cleaning_team_detail.order_scheduler.customer_address.block}}, {{cleaning_team_detail.order_scheduler.customer_address.street}}, {% if cleaning_team_detail.order_scheduler.customer_address.avenue %}{{cleaning_team_detail.order_scheduler.customer_address.avenue}}, {% else %}{% endif %} {{cleaning_team_detail.order_scheduler.customer_address.area.name}}, {{cleaning_team_detail.order_scheduler.customer_address.governorate.name}}</div>
+         <div class="common-gray-text align-left"><i class="fa fa-lg fa-building green-text" aria-hidden="true"></i> <b>{{cleaning_team_detail.order_scheduler.customer_address.apartment}}</b>: {% if cleaning_team_detail.order_scheduler.customer_address.floor %}{{cleaning_team_detail.order_scheduler.customer_address.floor}}, {% else %}{% endif %} {{cleaning_team_detail.order_scheduler.customer_address.building}}, {{cleaning_team_detail.order_scheduler.customer_address.block}}, {{cleaning_team_detail.order_scheduler.customer_address.street}}, {% if cleaning_team_detail.order_scheduler.customer_address.avenue %}{{cleaning_team_detail.order_scheduler.customer_address.avenue}}, {% else %}{% endif %} {{cleaning_team_detail.order_scheduler.customer_address.area.name}}, {{cleaning_team_detail.order_scheduler.customer_address.governorate.name}}</div>
         <br>
 
         {% if cleaning_team_detail.order_scheduler.customer_address.gps_location %}
@@ -52,7 +52,7 @@
         <br>
         {% endif %}
 
-        <div class="common-gray-text align-left"><i class="fa fa-lg fa-users blue-text" aria-hidden="true"></i> {{cleaning_team_detail.order_scheduler.order_scheduler_book.number_of_cleaners}} Cleaners</div>
+        <div class="common-gray-text align-left"><i class="fa fa-lg fa-users blue-text" aria-hidden="true"></i> {% if cleaning_team_detail.order_scheduler.no_of cleaners %}{{cleaning_team_detail.order_scheduler.no_of cleaners}}{% else %}{{cleaning_team_detail.order_scheduler.order_scheduler_book.number_of_cleaners}}{% endif %} Cleaners</div>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
