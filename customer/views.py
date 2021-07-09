@@ -3852,7 +3852,7 @@ class DuplicateBookingPhase2(APIView):
 										new_duplicate_keynote = EvaluationSectionKeynote.objects.create(evaluation_section=new_duplicate_section,sub_area=duplicate_keynote.sub_area,quantity=duplicate_keynote.quantity,)
 
 		response_dict['duplicate_id']  = new_order.id
-		response_dict['evaluation_id'] = 'paw'+new_order.evaluation.evaluation_id
+		response_dict['evaluation_id'] = 'paw'+new_order.evaluation.evaluation_id[3:14]
 		response_dict['success']       = True
 
 		return Response(response_dict,HTTP_200_OK)
