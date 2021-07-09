@@ -281,8 +281,17 @@
         average_week_hours = total_week_hours/parseInt('{{week_total_team_mens}}')
         
 
-        $("#today_man_hour").html(total_today_hours.toFixed(2));
-        $("#week_man_hour").html(total_week_hours.toFixed(2));
+        if (Number.isNaN(average_today_hours)){
+            $("#today_man_hour").html('0.0');
+        }else{
+            $("#today_man_hour").html(total_today_hours.toFixed(2));
+        }
+
+        if (Number.isNaN(total_week_hours)){
+            $("#week_man_hour").html('0.0');
+        }else{
+            $("#week_man_hour").html(total_week_hours.toFixed(2));
+        }
         
         if (Number.isNaN(average_today_hours))
         {

@@ -1150,11 +1150,11 @@
                                             {% endif %}
 
                                             {% if keynote.sub_area == 'kitchen' %}
-                                            {% if forloop.last %}
+                                            {% ifchanged keynote.sub_area %}
                                                 <div class="clean-section-card">
                                                     <p>Kitchen<span class="c-text2">{{section.kitchen_keynote}}</span></p>
                                                 </div>
-                                            {% endif %}
+                                            {% endifchanged %}
                                             {% endif %}
 
                                             {% endfor %}
@@ -2342,7 +2342,10 @@ $(document).ready(function () {
         app.contacts.push('SMS');
     {% endif %}
 
-    
+    {% for schedule in order.orderschedules %}
+    {% if forloop.first %}
+    load_cleaning_team(1,"{{schedule.id}}")
+    {% endif %}{% endfor %}
 })
 
 
