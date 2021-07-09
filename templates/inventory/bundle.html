@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
-<div class="wrapper"><!--wrapper-->
+<div class="wrapper" id="bundle"><!--wrapper-->
     {% include "inventory/common/header.html" %}
     <section class="content">
         <div class="container-fluid space topspace">
@@ -17,7 +17,7 @@
 
         <div class="main-content-holder"><!--main-content-holder-->   
             <div class="white-wrapper">
-                <div class="d-flex">
+                <div class="d-flex d-grid">
                     <div>
                      
                         <div class="inv-input-container h-30">
@@ -54,46 +54,53 @@
 
                     <div class="col-md-7 mt-10">
                         <div class="attribute-table">
-                            <table class="inv-table"> 
-                                <tr>
-                                    <th style="width: %;">
-                                        Bundle Name
-                                    </th>
-                                    <th style="width: %; text-align: center;">
-                                        Items
-                                    </th>
-                                    <th style="width: %; text-align: center;">
-                                        Price
-                                    </th>
-                                    <th style="width: %;" >
-                                        Status
-                                    </th>
-                                 
-                                    <th style="width: 18%;">Action</th>
-                                </tr>
-                                <tr>
-                                    <td class="r">
-                                
-                                        Bundle 1
-                                    </td>
-                                    <td class="text-center">
-                                        3
-                                    </td>
-                                    <td class="text-center">
-                                        3
-                                    </td>
-                                    <td>
-                                        <button class="inv-active-btn">
-                                            Active
-                                        </button>
-                                    </td>
-                                    <td>
-                                  
-                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-        
-                                    </td>
-                                </tr>
+                            <table class="inv-table footable" id="table1"> 
+                                <thead>
+                                    <tr >
+                                        <th  style="width: %;">
+                                            Bundle Name
+                                        </th>
+                                        <th data-hide="phone,tablet"  style="width: %; text-align: center;">
+                                            Items
+                                        </th>
+                                        <th data-hide="phone,tablet"  style="width: %; text-align: center;">
+                                            Price
+                                        </th>
+                                        <th style="width: %;" >
+                                            Status
+                                        </th>
+                                     
+                                        <th data-hide="phone,tablet"  style="width: 18%;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="item,key in tableData" :key="key" onclick="tableShow(this)" :id="item.id" >
+                                        <td class="r">
+                                    
+                                           Nmame
+                                        </td>
+                                        <td class="text-center">
+                                            3
+                                        </td>
+                                        <td class="text-center">
+                                            3
+                                        </td>
+                                        <td>
+                                            <button class="inv-active-btn">
+                                                Active
+                                            </button>
+                                        </td>
+                                        <td>
+                                      
+                                            <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                            <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+            
+                                        </td>
+                                         
+                                    </tr>
+                                   
+                                </tbody>
+                               
                                
                                 
                             </table>
@@ -122,47 +129,52 @@
                     </div>
                     <div class="col-md-5 mt-10">
                         <div class="attribute-table-2">
-                            <table class="inv-table"> 
-                                <tr>
-                                    <th style="width: %;">
-                                        Item Name
-                                    </th>
-                                    <th style="width: %;">
-                                        Count
-                                    </th>
-                                    <th style="width: %;">
-                                        Price
-                                    </th>
-                                    <th style="width: %;">
-                                        Action
-                                    </th>
-                                </tr>
-                                <tr>
-                                    <td>
+                            <table class="inv-table footable"> 
+                                <thead>
+                                    <tr>
+                                        <th style="width: %;">
+                                            Item Name
+                                        </th>
+                                        <th  style="width: %;">
+                                            Count
+                                        </th>
+                                        <th data-hide="phone,tablet"  style="width: %;">
+                                            Price
+                                        </th>
+                                        <th data-hide="phone,tablet"  style="width: %;">
+                                            Action
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                    
+                                            Item 1
+                                        </td>
+                                        <td>1</td>
+                                        <td>1</td>
+                                        <td>
+                                            <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                            <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+            
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                    
+                                            Item 1
+                                        </td>
+                                        <td>1</td>
+                                        <td>1</td>
+                                        <td>
+                                            <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                            <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+            
+                                        </td>
+                                    </tr>
+                                </tbody>
                                 
-                                        Item 1
-                                    </td>
-                                    <td>1</td>
-                                    <td>1</td>
-                                    <td>
-                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-        
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                
-                                        Item 1
-                                    </td>
-                                    <td>1</td>
-                                    <td>1</td>
-                                    <td>
-                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-        
-                                    </td>
-                                </tr>
 
                                
                                
@@ -236,4 +248,55 @@
 </div>
 
 
+{% endblock %}
+
+{% block javascript %}
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+<script>
+    const app = new Vue({
+  el: "#bundle",
+  delimiters: ["<%", "%>"],
+  mounted() {
+    console.log("vue app");
+  },
+  data:{
+      tableData:[
+          {
+              id:1,
+              name:"test",
+              items:"test",
+              price:"12",
+              status:"active",
+          },
+           {
+               id:2,
+              name:"test 2",
+              items:"test",
+              price:"12",
+              status:"active",
+          },
+      ]
+  },
+  methods:{
+      rowclick(id){
+        var footable = $('#table1').data('footable');
+        console.log(footable)
+        //   console.log(id)
+        //   var a =  document.getElementById(id);
+        //   console.log(a)
+        //   a.expand();
+      }
+  }
+})
+
+   
+</script>
+<script>
+    function tableShow(key){
+        // document.getElementById("testid").style.display = "block"
+        $('table').trigger('footable_expand_all');
+        
+    }
+</script>
 {% endblock %}

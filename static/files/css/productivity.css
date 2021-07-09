@@ -241,6 +241,9 @@ select.minimal {
   }
 
 @media only screen and (max-width: 950px) {
+  .productivity-card{
+    height: auto;
+  }
   .addNewPrice {
     text-align: center;
   }
