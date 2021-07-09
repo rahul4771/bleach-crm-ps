@@ -4206,9 +4206,6 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 		#evaluation books,sections,and keynotes
 		evaluation_details                  = EvaluationDetails.objects.select_related('evaluation').prefetch_related('evaluation_book_evaluation_details__evaluationsection_book__keynotesections').filter(evaluation__evaluation_id=evaluation_id)
 		response_dict['evaluation_details'] = EvaluationDetailsSerializer(instance=evaluation_details,many=True).data
-		
-		evaluation_details_first            = evaluation_details.first()
-		response_dict['secret_code']        = str(evaluation_details_first.evaluation.evaluation_id[4:14])+str(evaluation_details_first.evaluation.customer.username)
 
 		response_dict['success'] = True
 		return Response(response_dict,HTTP_200_OK)
@@ -4468,6 +4465,8 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 					cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,member=leaders.first(),start_at=start_date_time,end_at=end_date_time,start_time=start_time,end_time=end_time))
 
 					CleaningTeamMember.objects.bulk_create(cleaning_team_member_array)
+		
+		response_dict['secret_code']        = str(evaluation.evaluation_id[4:14])+str(evaluation.customer.username)
 		response_dict['success'] = True
 
 		return Response(response_dict,HTTP_200_OK)
