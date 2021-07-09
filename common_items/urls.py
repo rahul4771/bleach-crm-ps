@@ -34,8 +34,9 @@ urlpatterns = [
 		url(r'^makequatation/phase1/edit/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.MakeQuatationPhase1Edit.as_view(),name='makequatation1edit'),
 
 		url(r'^assigncleaning/team/(?P<scheduler_id>[-\w]+)/$',views.AssigncleaningTeam.as_view(),name='assign-cleaningteam'),#done and tested
+		url(r'^editcleaning/team/(?P<scheduler_id>[-\w]+)/$',views.EditcleaningTeam.as_view(),name='edit-cleaningteam'),#done and tested
 		url(r'^assignfollowup/team/(?P<scheduler_id>[-\w]+)/$',views.AssignFollowupTeam.as_view(),name='assign-followupteam'),#not done
-		
+		url(r'^editfollowup/team/(?P<scheduler_id>[-\w]+)/$',views.EditFollowupTeam.as_view(),name='edit-followupteam'),#not done	
 
 		url(r'^callback-list/$',views.CallBackList.as_view(),name='callback-list'),
 

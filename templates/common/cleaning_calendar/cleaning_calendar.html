@@ -842,10 +842,38 @@ class="cl-service-list"
          <div :class="'cl-modal-text-title cl-mt-10 customer-booked-text '+popup.text">
           <a :href="'/common/client/order/details/'+currentSlotDetails.order.id" target="_blank"><% currentSlotDetails.order.order_no %></a>
          </div>
-         <div class="d-flex" v-if="currentSlotDetails.work_status=='CLEANING_FULFILLED'">
-          <div class="cl-completed-mark"></div>
+         <div class="d-flex" v-if="currentSlotDetails.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE' && currentSlotDetails.evaluation_details.evaluation.quatation_status=='APPROVED' && currentSlotDetails.evaluation_details.evaluation.payment_method=='PREPAID' && currentSlotDetails.order.payment_status=='COMPLETED'" >
+          <div class="cl-onetime-mark"></div>
           <div class="cl-subtext" >
-            Completed
+            One Time
+           </div>
+         </div>
+
+         <div class="d-flex" v-else-if="currentSlotDetails.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE' && currentSlotDetails.evaluation_details.evaluation.quatation_status=='APPROVED' && currentSlotDetails.evaluation_details.evaluation.payment_method=='POSTPAID'" >
+          <div class="cl-onetime-mark"></div>
+          <div class="cl-subtext" >
+            One Time
+           </div>
+         </div>
+
+         <div class="d-flex" v-else-if="currentSlotDetails.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE' && currentSlotDetails.evaluation_details.evaluation.quatation_status=='APPROVED' && currentSlotDetails.evaluation_details.evaluation.payment_method=='BREAKDOWN'" >
+          <div class="cl-onetime-mark"></div>
+          <div class="cl-subtext" >
+            One Time
+           </div>
+         </div>
+
+         <div class="d-flex" v-else-if="currentSlotDetails.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE' && currentSlotDetails.evaluation_details.evaluation.quatation_status=='APPROVED' && currentSlotDetails.order.payment_status=='PENDING' && currentSlotDetails.evaluation_details.evaluation.payment_method!='POSTPAID'" >
+          <div class="cl-approved-not-paid-mark"></div>
+          <div class="cl-subtext" >
+            Approved Not Paid
+           </div>
+         </div>
+
+         <div class="d-flex" v-else="currentSlotDetails.order_scheduler_book.cleaning_policy=='SUBSCRIPTION' && currentSlotDetails.evaluation_details.evaluation.quatation_status=='APPROVED'" >
+          <div class="cl-subscription-mark"></div>
+          <div class="cl-subtext" >
+            Subscription
            </div>
          </div>
          
@@ -1037,12 +1065,13 @@ class="cl-service-list"
        <div class="cl-modal-text-title cl-mt-10 followup-text" v-if="currentSlotDetails.follow_up.ticket_no">
         <% currentSlotDetails.follow_up.ticket_no %>
        </div>
-       <div class="d-flex" v-if="currentSlotDetails.work_status=='FOLLOW_UP_CLEANING_FULFILLED'">
-        <div class="cl-completed-mark"></div>
-        <div class="cl-subtext" >
-          Completed
+       {% comment %} <div class="d-flex" v-if="currentSlotDetails.work_status=='FOLLOW_UP_CLEANING_FULFILLED'"> {% endcomment %}
+        <div class="d-flex" >
+          <div class="cl-followup-mark"></div>
+          <div class="cl-subtext" >
+            Follow Up
+           </div>
          </div>
-       </div>
        
        <div class="cl-modal-text-title cl-mt-20 ">
         <% currentSlotDetails.customer_address.customer.name %>
