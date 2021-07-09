@@ -28,7 +28,7 @@
                     
                     </div>
                     <div class="right-pos m-mt-10">
-                        <button class="inv-blue-btn" onclick="openNavAddAttribute()" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Attribute </button>
+                        <button class="inv-blue-btn" onclick="showDrawer('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Attribute </button>
                     </div>
                 </div>
 
@@ -86,8 +86,8 @@
                                     </td>
                                     <td>
                                   
-                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                                        <button class="inv-plan-img-btn" onclick="showDrawer('edit')" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                        <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
         
                                     </td>
                                 </tr>
@@ -293,7 +293,7 @@
 
         <div class="inv-sidedrawer-inner">
             <div class="d-flex">
-                <div class="inv-drawer-head">
+                <div class="inv-drawer-head  inv-drawer-head-common">
                     Add Atribute
                 </div>
                 <div class="right-pos">
@@ -385,6 +385,37 @@
                         <button data-dismiss="modal" onclick="closeNavAddValue()" class="view-button">Cancel</button>
         </div>
     </div>
+    <div class="modal fade" id="deleteModel" role="dialog">
+        <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12 mt-20">
+
+                        
+                        <div class="d-flex ">
+                            <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to delete Attribute</p></div>
+                            <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                                <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                            </button>
+    
+                        </div>
+                    </div>
+                </div>
+               
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <div class="cancel-model-content">
+                            <button class="sent-button" >Delete</button>
+                            <button data-dismiss="modal" class="view-button">Cancel</button>
+                          
+                        </div>
+                    </div>
+    
+                </div>
+            </div>
+        </div>
+      </div>
 </div>
 
 
@@ -393,6 +424,16 @@
 {% block javascript %}
 
 <script>
+    function showDrawer(d){
+        console.log(d)
+        if(d == 'add'){
+            $(".inv-drawer-head-common").text("Add Attribute");
+        }
+        if(d == 'edit'){
+            $(".inv-drawer-head-common").text("Edit Attribute");
+        }
+        openNavAddAttribute()
+    }
     function openNavAddAttribute() {
         if(screen.width<= 600){
             document.getElementById("addAttribute").style.width = "100%";

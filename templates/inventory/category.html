@@ -17,7 +17,7 @@
 
         <div class="main-content-holder"><!--main-content-holder-->   
             <div class="white-wrapper">
-                <div class="d-flex">
+                <div class="d-flex d-grid">
                     <div>
                      
                         <div class="inv-input-container h-30">
@@ -74,9 +74,9 @@
                                 </button>
                             </td>
                             <td>
-                                <button class="inv-plan-btn"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Segment</button>
+                                <button class="inv-plan-btn" onclick="openNavaddSegment2()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="" > Add Segment</button>
                                 <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                                <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
 
                             </td>
                         </tr>
@@ -100,7 +100,7 @@
                                 </button>
                             </td>
                             <td>
-                                <button class="inv-plan-btn"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Segment</button>
+                                <button class="inv-plan-btn" onclick="openNavaddSegment2()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="" > Add Segment</button>
                                 <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
                                 <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
 
@@ -112,7 +112,7 @@
             </div>
         </div>
     </section>
-    <div class="modal fade" id="addModel" role="dialog">
+    <div class="modal fade" id="deleteModel" role="dialog">
         <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
             <div class="container-fluid">
                 <div class="row">
@@ -120,7 +120,7 @@
 
                         
                         <div class="d-flex ">
-                            <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Add Category</p></div>
+                            <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to delete Category</p></div>
                             <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
 
                                 <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
@@ -129,35 +129,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="row mt-40" >
-                    <div class="col-md-5 pr-0">
-                        <div class="model-input-name">Category Name</div>
-                        <div class="inv-input-container h-30"> 
-                            <input type="text" class="w-p-100 inv-in" name="attributes">
-                          </div>
-                    </div>
-    
-                    <div class="col-md-4 pr-0">
-                        <div class="model-input-name">Category Code</div>
-                        <div class="inv-input-container h-30"> 
-                            <input type="text"  class="w-p-100 inv-in" name="attributes">
-                          </div>
-                    </div>
-                    <div class="col-md-3 ">
-                        <div class="model-input-name">Status</div>
-
-                        <select id="id_payment" class="minimal">
-                            <option style="background: #fff;" value="Prepaid">Active</option>
-                            <option value="Post Paid">Inactive</option>
-                            
-                          </select>
-                    </div>
-    
-                </div>
+               
                 <div class="row">
                     <div class="col-md-12 text-center">
                         <div class="cancel-model-content">
-                            <button class="sent-button" >Submit</button>
+                            <button class="sent-button" >Delete</button>
                             <button data-dismiss="modal" class="view-button">Cancel</button>
                           
                         </div>
@@ -226,6 +202,64 @@
                         <button data-dismiss="modal" onclick="closeNavAddCategory()" class="view-button">Cancel</button>
         </div>
     </div>
+    <div id="addSegment2" class="inv-sidedrawer">
+
+        <div class="inv-sidedrawer-inner">
+            <div class="d-flex">
+                <div class="inv-drawer-head">
+                    Add Segment
+                </div>
+                <div class="right-pos">
+
+                    <button onclick="closeNavaddSegment2()" class="img-button">
+                        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                    </button>
+                </div>
+            </div>
+            <hr>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Category  Name</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Category  Code</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Status</div>
+
+                    <select id="id_payment" class="minimal">
+                        <option  ></option>
+                        <option  >Active</option>
+                        <option value="Post Paid">Inactive</option>
+
+                    </select>
+                </div>
+
+            </div>
+            
+
+
+          
+        </div>
+        <div class="inv-drawer-footer">
+            <button class="sent-button" >Submit</button>
+                        <button data-dismiss="modal" onclick="closeNavaddSegment2()" class="view-button">Cancel</button>
+        </div>
+    </div>
 </div>
 
 
@@ -247,6 +281,20 @@
     }
     function closeNavAddCategory() {
         document.getElementById("addCategory").style.width = "0";
+    }
+    function openNavaddSegment2() {
+        console.log("clied")
+        if(screen.width<= 600){
+            document.getElementById("addSegment2").style.width = "100%";
+        }else if(screen.width<= 720){
+            document.getElementById("addSegment2").style.width = "50%";
+        }
+        else{
+            document.getElementById("addSegment2").style.width = "30%";
+        }  
+    }
+    function closeNavaddSegment2() {
+        document.getElementById("addSegment2").style.width = "0";
     }
    
 </script>
