@@ -490,7 +490,8 @@
       <form style="display: none;" action="https://testpay.bleach-kw.com/SendPerformREQuest.php" method="POST">
         <input type="text" value="PREPAID" name="payment_mode"/>
         <input type="text" value="APPROVED_BY_CLIENT" name="order_status"/>
-        <input type="text" value="1" name="qty"/>
+        <input type="number" value="1" name="qty"/>
+        <input type="number" value="10" name="price"/>
         <input type="text"  name="evaluation_id" v-model="evaluation_id" />
         <input type="submit" id="payment_submit"/>
       </form>
