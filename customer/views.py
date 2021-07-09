@@ -3860,7 +3860,7 @@ class DuplicateBookingPhase2(APIView):
 		response_dict            = {}
 		response_dict['success'] = False
 
-		evaluation              = Evaluation.objects.get(id=evaluation_id)
+		evaluation              = Evaluation.objects.get(evaluation_id=evaluation_id)
 		order    				= Order.objects.get(evaluation=evaluation)
 		services 				= request.data.get('service_details')
 
