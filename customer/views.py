@@ -3851,8 +3851,7 @@ class DuplicateBookingPhase2(APIView):
 									for duplicate_keynote in duplicate_book_section.sectionkeynotes:	
 										new_duplicate_keynote = EvaluationSectionKeynote.objects.create(evaluation_section=new_duplicate_section,sub_area=duplicate_keynote.sub_area,quantity=duplicate_keynote.quantity,)
 
-		response_dict['duplicate_id']  = new_order.id
-		response_dict['evaluation_id'] = 'paw'+new_order.evaluation.evaluation_id[3:14]
+		response_dict['evaluation_id'] = new_order.evaluation.evaluation_id[3:14]
 		response_dict['success']       = True
 
 		return Response(response_dict,HTTP_200_OK)
@@ -4041,15 +4040,13 @@ class DuplicateBookingPhase2(APIView):
 				##cost updation
 				evaluation_details.estimated_cost     += service_book.estimated_cost
 				evaluation_details.total_cost         += service_book.total_cost
-				evaluation_details.save()
 
 				evaluation.estimated_cost     		  += service_book.estimated_cost
 				evaluation.total_cost         		  += service_book.total_cost
-				evaluation.save()
+				evaluation.quatation_status            = 'PENDING'
 
 				order.total_amount                    += service_book.total_cost
 				order.remining_amount                 += service_book.total_cost
-				order.save()
 
 				##cost updation
 				try:
@@ -4071,6 +4068,10 @@ class DuplicateBookingPhase2(APIView):
 
 					#schedule
 					order_schedule = OrderScheduler.objects.create(order=order,status='CONFIRMED',customer_address=evaluation_details.address,evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,order_scheduler_book_id=services[service_detail]['id'],no_of_cleaners=schedules_dict[key]['no_of_cleaners'],cleaning_hours=schedules_dict[key]['cleaning_hours'])
+
+					evaluation_details.save()
+					evaluation.save()
+					order.save()
 
 					# absent_cleaners = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=start_date_time.date())|Q(leave_date=end_date_time.date()))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
 					# absent_leaders  = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=start_date_time.date())|Q(leave_date=end_date_time.date()))).filter(staff__user_type='TEAMINCHARGE').values_list('staff',flat=True)						
