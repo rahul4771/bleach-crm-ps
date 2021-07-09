@@ -845,25 +845,25 @@ class="cl-service-list"
          <div class="d-flex" v-if="currentSlotDetails.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE' && currentSlotDetails.evaluation_details.evaluation.quatation_status=='APPROVED' && currentSlotDetails.evaluation_details.evaluation.payment_method=='PREPAID' && currentSlotDetails.order.payment_status=='COMPLETED'" >
           <div class="cl-onetime-mark"></div>
           <div class="cl-subtext" >
-            One Time
+            One Time Service
            </div>
          </div>
 
          <div class="d-flex" v-else-if="currentSlotDetails.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE' && currentSlotDetails.evaluation_details.evaluation.quatation_status=='APPROVED' && currentSlotDetails.evaluation_details.evaluation.payment_method=='POSTPAID'" >
           <div class="cl-onetime-mark"></div>
           <div class="cl-subtext" >
-            One Time
+            One Time Service
            </div>
          </div>
 
          <div class="d-flex" v-else-if="currentSlotDetails.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE' && currentSlotDetails.evaluation_details.evaluation.quatation_status=='APPROVED' && currentSlotDetails.evaluation_details.evaluation.payment_method=='BREAKDOWN'" >
           <div class="cl-onetime-mark"></div>
           <div class="cl-subtext" >
-            One Time
+            One Time Service
            </div>
          </div>
 
-         <div class="d-flex" v-else-if="currentSlotDetails.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE' && currentSlotDetails.evaluation_details.evaluation.quatation_status=='APPROVED' && currentSlotDetails.order.payment_status=='PENDING' && currentSlotDetails.evaluation_details.evaluation.payment_method!='POSTPAID'" >
+         <div class="d-flex" v-else-if="currentSlotDetails.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE' && currentSlotDetails.order.payment_status=='PENDING' && currentSlotDetails.order.order_status=='APPROVED_BY_CLIENT'" >
           <div class="cl-approved-not-paid-mark"></div>
           <div class="cl-subtext" >
             Approved Not Paid

@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from django.template.loader import render_to_string
 from django.http import HttpResponse,JsonResponse
 from django_countries import countries
-
+from django.core.mail import send_mail,EmailMultiAlternatives
 from django.views import View
 
 from bleach_crm_ps.utils import get_error
@@ -182,6 +182,7 @@ class Quatation(View):
 					order.save() 	
 
 				#sms and email
+				print("checkp1")
 				evaluaation = Evaluation.objects.get(evaluation_id=evaluation_id,customer__username=user_name)
 
 				evaluationdetails = EvaluationDetails.objects.filter(evaluation=evaluaation).first()
@@ -209,6 +210,7 @@ class Quatation(View):
 					messages.success(request,"Quatation Approved Succesfully")
 
 					if evaluaation.customer.is_sms == True:
+						print("smsp")
 
 						url = "https://smsapi.future-club.com/fccsms.aspx"
 
@@ -240,6 +242,7 @@ class Quatation(View):
 						pass
 
 					if evaluaation.customer.is_email == True :
+						print("emailp")
 						#send mail
 						msg_html = render_to_string('email/invoice.html',{"invoice":order,"address_list":separator.join(address_list),"evaluationbooks":evaluationbooks})
 						msg = EmailMultiAlternatives('Bleach Invoice', '', 'notification@bleach-kw.com', [evaluaation.customer.email])
@@ -4841,9 +4844,6 @@ class EditOrderDetails(APIView):
 
 		return Response(response_dict,HTTP_200_OK)
 
-
-
-from django.core.mail import send_mail,EmailMultiAlternatives
 class EmailTest(APIView):
 	def get(self,request):
 		response_dict = {}
