@@ -8,13 +8,16 @@
 
 
 .approved-status-bg{
-    background: #00BDA3 !important;
+    background: #31AA4A !important;
 }
 .not-approved-status-bg{
     background:#8B8B8B !important;
 }
 .approved-not-paid-status-bg{
-    background: #31AA4A !important;
+    background: #00BDA3 !important;
+}
+.approved-notpaid-status-bg{
+    background: #779F39 !important;
 }
 .not-approved-not-paid-status-bg{
     background:#699189 !important;

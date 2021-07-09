@@ -12,7 +12,7 @@
     <section class="content"><!--content-->
         <div class="container-fluid space topspace"><!--container-fluid space-->
             <div class="welcome-wrapper"><!--welcome-wrapper-->
-        <h1 class="dashboard-head">Edit Cleaning Team</h1>
+        <h1 class="dashboard-head">Edit Followup Team</h1>
         <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p>   
             </div><!--welcome-wrapper-->
        
@@ -24,38 +24,36 @@
             
 <div class="white-wrapper"><!--white-wrapper-->
 <div class="center-formDiv"><!--center-formDiv-->
-
-<div class="common-sub-head align-left">Details</div> 
+            <div class="common-sub-head align-left">Details</div> 
     <div class="commnDiv-border ltyellow-border"><!--commnDiv-border-->          
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
     <div class="ticket-form-left"><!--ticket-form-left-->
-    <div class="blc-number-big">{{order_schedule.evaluation_details.evaluation.evaluation_id}}</div>
-    <br>        
-        <div class="green-bg-lg">{% if order_schedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}One-Time{% else %}Subscription{% endif %}</div><div class="blue-bg-lg">{% if order_schedule.order.payment_status == 'COMPLETED' %}Paid{% elif order_schedule.order.payment_status == 'ON_HOLD' %}ON HOLD<{% else %}Pending{% endif %}</div>
+    <div class="blc-number-big">TKT{{followup_schedule.follow_up.ticket_no}}</div>
+    
+    <div class="common-gray-text align-left">{{followup_schedule.follow_up.investigation.order}}</div>
+    <br>
+        <div class="green-bg-lg">{% if followup_schedule.follow_up.investigation.order_schedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}One-Time{% else %}Subscription{% endif %}</div><div class="blue-bg-lg">{% if followup_schedule.follow_up.investigation.order_schedule.order.payment_status == 'COMPLETED' %}Paid{% elif followup_schedule.follow_up.investigation.order_schedule.order.payment_status == 'ON_HOLD' %}ON HOLD<{% else %}Pending{% endif %}</div>
+        <div class="customer-name"> {{followup_schedule.follow_up.investigation.order_schedule.order_scheduler_book.service_type.name}}</div>
+
+        <div class="email"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{followup_schedule.follow_up.investigation.order_schedule.order_scheduler_book.cleaning_method}}</div>
+        <div class="email"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{followup_schedule.follow_up.investigation.order_schedule.order_scheduler_book.area_type}}</div>
+        <div class="email"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{followup_schedule.follow_up.investigation.order_schedule.order_scheduler_book.location_type}}</div>
     </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
-        <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> {{order_schedule.start_at}}</div>
+        <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> {{followup_schedule.start_at|date:'d-m-Y'}}</div>
         <br>
-        <div class="common-gray-text align-left"><i class="fa fa-lg fa-clock-o orange-text" aria-hidden="true"></i> {{order_schedule.start_at|date:'h:i A'}}</div>
+        <div class="common-gray-text align-left"><i class="fa fa-lg fa-clock-o orange-text" aria-hidden="true"></i> {{followup_schedule.start_at|date:'h:i A'}}</div>
         <br>
-        <div class="common-gray-text align-left"><i class="fa fa-lg fa-hourglass-o yellow-text" aria-hidden="true"></i> {% if order_schedule.cleaning_hours %}{{order_schedule.cleaning_hours}}{% else %}{{order_schedule.order_scheduler_book.cleaning_hours}}{% endif %} Hours</div>
-        <br> 
-         <div class="common-gray-text align-left"><i class="fa fa-lg fa-building-o green-text" aria-hidden="true"></i> <b>{{order_schedule.customer_address.apartment}}</b>: {% if order_schedule.customer_address.floor %}{{order_schedule.customer_address.floor}}, {% else %}{% endif %} {{order_schedule.customer_address.building}}, {{order_schedule.customer_address.block}}, {{order_schedule.customer_address.street}}, {% if order_schedule.customer_address.avenue %}{{order_schedule.customer_address.avenue}}, {% else %}{% endif %} {{order_schedule.customer_address.area.name}}, {{order_schedule.customer_address.governorate.name}}</div>
+        <div class="common-gray-text align-left"><i class="fa fa-lg fa-hourglass-o yellow-text" aria-hidden="true"></i> {{followup_schedule.follow_up.cleaning_hours}} Hours</div>  
         <br>
-        <div class="common-gray-text align-left"><i class="fa fa-lg fa-users blue-text" aria-hidden="true"></i> {% if order_schedule.no_of_cleaners %}{{order_schedule.no_of_cleaners}}{% else %}{{order_schedule.order_scheduler_book.number_of_cleaners}}{% endif %} Cleaners</div>
+        <div class="common-gray-text align-left"><i class="fa fa-lg fa-building-o green-text" aria-hidden="true"></i> <b>{{followup_schedule.follow_up.investigation.order_schedule.customer_address.apartment}}</b>: {% if followup_schedule.follow_up.investigation.order_schedule.customer_address.floor %}{{followup_schedule.follow_up.investigation.order_schedule.customer_address.floor}}, {% else %}{% endif %} {{followup_schedule.follow_up.investigation.order_schedule.customer_address.building}}, {{followup_schedule.follow_up.investigation.order_schedule.customer_address.block}}, {{followup_schedule.follow_up.investigation.order_schedule.customer_address.street}}, {% if followup_schedule.follow_up.investigation.order_schedule.customer_address.avenue %}{{followup_schedule.follow_up.investigation.order_schedule.customer_address.avenue}}, {% else %}{% endif %} {{followup_schedule.follow_up.investigation.order_schedule.customer_address.area.name}}, {{followup_schedule.follow_up.investigation.order_schedule.customer_address.governorate.name}}</div>
+        <br>
+        <div class="common-gray-text align-left"><i class="fa fa-lg fa-users blue-text" aria-hidden="true"></i> {{followup_schedule.follow_up.no_of_cleaners}} Cleaners</div>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
-
-
-
-{% for order_schedule in order_schedules %}
 <hr class="hr-dashedpad">
-<div class="customer-name">{{forloop.counter}}){{order_schedule.order_scheduler_book.service_type.name}}</div>
-        <div class="email"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{order_schedule.order_scheduler_book.cleaning_method}}</div>
-        <div class="email"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{order_schedule.order_scheduler_book.area_type}}</div>
-        <div class="email"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{order_schedule.order_scheduler_book.location_type}}</div>
-<br>        
-{% for section in  order_schedule.order_scheduler_book.sections %}
+{% for section in sections %}
+{% if section %}
 <div class="narrow-head align-left">Section {{forloop.counter}} : {{section.section_name}}</div>
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
 
@@ -82,7 +80,7 @@
   <div class="common-gray-text align-left"><label class="common-labels">Wall Type</label> : <strong>{{section.wall_type}}</strong></div>
   {% endif %}
   {% if section.ceiling_type %}
-    <div class="common-gray-text align-left"><label class="common-labels">Ceiling Type</label> : <strong>{{section.ceiling_type}}</strong></div>
+    <div class="common-gray-text align-left"><label class="common-labels">Celing Type</label> : <strong>{{section.ceiling_type}}</strong></div>
   {% endif %}
   {% if section.floor_type %}  
     <div class="common-gray-text align-left"><label class="common-labels">Floor Type</label> : <strong>{{section.floor_type}}</strong></div>
@@ -106,78 +104,68 @@
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <br>
 <div class="evaluation-card-wrapper"><!--evaluation-card-wrapper-->
-{% if section.keynotes %}
-{% for keynote in section.keynotes %}
-    {% if keynote.sub_area != 'kitchen' %}
-        <div class="evaluation-card"><!--evaluation-card-->
-            <div class="evaluation-section"><label>{{keynote.sub_area}}</label>{{keynote.quantity}}</div> 
-            </div><!--evaluation-card-->  
-    {% endif %}
-    {% if keynote.sub_area == 'kitchen' %} {% ifchanged keynote.sub_area %}
-    <div class="evaluation-card"><!--evaluation-card-->
-            <div class="evaluation-section"><label>Kitchen</label>{{section.kitchen_keynote}}</div> 
-            </div><!--evaluation-card-->  
-    {% endifchanged %}{% endif %}
-{% endfor %}
+
+{% for keynote in keynotes %}
+{% if keynote %}
+		<div class="evaluation-card"><!--evaluation-card-->
+        <div class="evaluation-section"><label>{{keynote.sub_area}}</label>{{keynote.quantity}}</div> 
+        </div><!--evaluation-card-->      
 {% endif %}
+{% endfor %}
+
 </div><!--evaluation-card-wrapper-->
 
+
 <hr class="hr-dashedpad">
+{% endif %}
 {% endfor %}
-
-{% endfor %}
-
-
-
-
 
 <div class="eval-note-columns border"><!--eval-note-columns-->
       <div class="eval-note-columns-left"><!--eval-note-columns-left-->
       <div class="profile-pic">
-        {% if order_schedule.evaluation_details.evaluator.profile_image %}
-        <img src="{{order_schedule.evaluation_details.evaluator.profile_image.url}}" title="{{order_schedule.evaluation_details.evaluator.name}}"></div>
-        <div class="client-name">{{order_schedule.evaluation_details.evaluator.name}}<div class="common-gray-text">Evaluator</div></div>
-        {% elif order_schedule.evaluation_details.evaluation.call_attender.profile_image %}
-        <img src="{{order_schedule.evaluation_details.evaluation.call_attender.profile_image.url}}" title="{{order_schedule.evaluation_details.evaluation.call_attender.name}}"></div>
-        <div class="client-name">{{order_schedule.evaluation_details.evaluation.call_attender.name}}<div class="common-gray-text">Evaluator</div></div>
-        {% else %}
+      {% if followup_schedule.follow_up.investigation.investigator.profile_image %}
+      <img src="{{followup_schedule.follow_up.investigation.investigator.profile_image.url}}" title="{{followup_schedule.follow_up.investigation.investigator.name}}"></div>
+      {% else %}
         <img src="{% static 'files/images/profile-pic.png' %}"></div>
-        <div class="client-name"><div class="common-gray-text">Evaluator</div></div>
-        {% endif %}    
+      {% endif %}
+
+            <div class="client-name"><div class="common-gray-text">{{followup_schedule.follow_up.investigation.investigator.name}}</div>Investigator</div>
       </div><!--eval-note-columns-left-->
 
         <div class="eval-note-columns-middle"><!--eval-note-columns-middle-->
-            <div class="notes">Evaluation Notes</div>
-            <p>{{order_schedule.order_scheduler_book.evaluator_note|default_if_none:''}}</p>
+            <div class="notes">Investigation Notes</div>
+            <p>{{followup_schedule.follow_up.investigation.notes|default_if_none:'-'}}</p>
         </div><!--eval-note-columns-middle-->
 </div><!--eval-note-columns-->
 
-{% if order_schedule.order_scheduler_book.evaluationmedias %}
+{% if followup_schedule.follow_up.investigation.investigationmedias %}
 <div class="details-sub-head align-left">Media</div>
 <div class="order-clean-outer-wrapper"><!--order-clean-outer-wrapper-->
 <div class="gallery-wrapper"><!--gallery-wrapper-->
   <div class="gallery-widget-column-column1"><!--gallery-widget-column-column1-->
-    <div class="media-heading align-left">Evaluation</div>
+    <div class="media-heading align-left">Investigation</div>
         <section>
-        <div id="data-pn-1" data-pn="1" data-src="{% for media in  order_schedule.order_scheduler_book.evaluationmedias %}{{media.media.url}},{% endfor %}"></div>
+        <div id="data-pn-1" data-pn="1" data-src="{% for media in followup_schedule.follow_up.investigation.investigationmedias %}{{media.media.url}},{% endfor %}"></div>
     </section>
     
     </div><!--gallery-widget-column-column1-->    
 </div><!--gallery-wrapper-->
 {% endif %}
-</div><!--commnDiv-border-->
+
+</div>
 <br><br>
  
+ 
 <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
- <input type="hidden" name="cleaningschedule_id" value="{{order_schedule.id}}">
+ <input type="hidden" name="followupschedule_id" value="{{followup_schedule.id}}">
 
- <div class="common-sub-head align-left">Assign Cleaning Team</div> 
+ <div class="common-sub-head align-left">Assign Followup Team</div> 
     <div class="commnDiv-border ltyellow-border"><!--commnDiv-border-->          
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
   				<div class=" bold-text common-label"> <label>Team Incharge</label></div>
                 <label for="favcity">
-                <select id="favcity" name="team_leader" class="assign_leader" required>
+                <select id="favcity" name="team_leader" class="assign_leader" required=>
                 <option value="">Choose Leader</option>  
                 {% for leader in leaders %}  
                 <option value="{{leader.id}}" {% if current_leader == leader %}selected{% endif %}>{{leader.name}}</option>
@@ -195,15 +183,60 @@
 <div class="details-notes align-left">Team Members</div> 
 
 <br>
+
 <div class="team_members">
 </div>
 <input name="add" type="button" class="add-button1" value="Add Cleaner" id="add_cleaner_id">
 <input name="remove" type="button" class="add-button-2" value="Remove Cleaner" id="remove_cleaner_id">
 
+{% comment %}
+<div class="details-notes align-left">Transportation</div>
+<br>  
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label"> <label>Driver Pick-up</label></div>
+                <label for="favcity">
+                <select id="favcity" name="pick_up_driver">
+                <option value="">Choose Driver</option>
+                {% for driver in drivers %}
+                <option value="{{driver.id}}">{{driver.name}}</option>
+                {% endfor %}
+                </select>
+                </label> 
+  </div><!--ticket-form-left-->
+  <div class="ticket-form-right"><!--ticket-form-right-->
+  				<div class=" bold-text common-label hide-m"> <label>Vehicle Number pick-up</label></div>
+                <input name="vehicle_number_pick_up" type="text" class="textBox" placeholder="">
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<hr class="hr-dashedpad">  
+
+<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+  <div class="ticket-form-left"><!--ticket-form-left-->
+  				<div class=" bold-text common-label"> <label>Driver Drop-off</label></div>
+                <label for="favcity">
+                <select id="favcity" name="drop_off_driver">
+                <option value="">Choose Driver</option>
+                {% for driver in drivers %}
+                <option value="{{driver.id}}">{{driver.name}}</option>
+                {% endfor %}
+                </select>
+                </label> 
+  </div><!--ticket-form-left-->
+
+  <div class="ticket-form-right"><!--ticket-form-right-->
+  				<div class=" bold-text common-label hide-m"><label>Vehicle Number Drop-off</label></div>
+                <input name="vehicle_number_drop_off" type="text" class="textBox" placeholder="">
+  </div><!--ticket-form-right-->
+</div><!--ticket-wrapper-row ticket-forms-boxes-->
+{% endcomment %}
+
 </div><!--commnDiv-border--> 
 
 <br> 
- <div align="center"><input class="assignButton" name="addevaluator" type="button" value="Update" onclick="submitAnyForm(this);">     	
+ <div align="center"><input class="assignButton" name="addevaluator" type="button" value="Update" onclick="submitAnyForm(this);"></div>     	
 <br> <br>
 </form>      
         
@@ -223,23 +256,19 @@
 <script>
   $('document').ready(function(){
     //Append cleaners by default select cleaners in order    
-    {% if order_schedule.no_of_cleaners %}
-    no_of_cleaners = {{order_schedule.no_of_cleaners}};
-    {% else %}
-    no_of_cleaners = {{order_schedule.order_scheduler_book.number_of_cleaners}};
-    {% endif %}
+    no_of_cleaners = {{followup_schedule.follow_up.no_of_cleaners}};
 
     for(i=1;i<=(no_of_cleaners-1);i++)
     {
 
     if(i%2 == 1)  
     {
-        $('.team_members').append('<div class="ticket-wrapper-row ticket-forms-boxes box'+i+'"><!--ticket-wrapper-row ticket-forms-boxes--><div class="ticket-form-left"><!--ticket-form-left--><div class=" bold-text common-label"> <label>Cleaner '+i+'</label></div><label for="favcity"><select name="assigned_cleaner" id="assigned_cleaner'+i+'" class="assign_cleaner" required>{% for cleaner in cleaners %}<option value="{{cleaner.id}}">{{cleaner.name}}</option>{% endfor %}</select></label> </div><!--ticket-form-left--></div><!--ticket-wrapper-row ticket-forms-boxes--><hr class="hr-dashedpad">');
+        $('.team_members').append('<div class="ticket-wrapper-row ticket-forms-boxes box'+i+'"><!--ticket-wrapper-row ticket-forms-boxes--><div class="ticket-form-left"><!--ticket-form-left--><div class=" bold-text common-label"> <label>Cleaner '+i+'</label></div><label for="favcity"><select name="assigned_cleaner" id="assigned_cleaner'+i+'" class="assign_cleaner">{% for cleaner in cleaners %}<option value="{{cleaner.id}}">{{cleaner.name}}</option>{% endfor %}</select></label> </div><!--ticket-form-left--></div><!--ticket-wrapper-row ticket-forms-boxes--><hr class="hr-dashedpad">');
 
     }
     else
     {
-        $('.box'+(i-1)+'').append('<div class="ticket-form-right"><!--ticket-form-right--><div class=" bold-text common-label"> <label>Cleaner '+i+'</label></div><label for="favcity"><select name="assigned_cleaner" id="assigned_cleaner'+i+'" class="assign_cleaner" required>{% for cleaner in cleaners %}<option value="{{cleaner.id}}">{{cleaner.name}}</option>{% endfor %}</select></label></div><!--ticket-form-right-->');
+        $('.box'+(i-1)+'').append('<div class="ticket-form-right"><!--ticket-form-right--><div class=" bold-text common-label"> <label>Cleaner '+i+'</label></div><label for="favcity"><select name="assigned_cleaner" id="assigned_cleaner'+i+'" class="assign_cleaner">{% for cleaner in cleaners %}<option value="{{cleaner.id}}">{{cleaner.name}}</option>{% endfor %}</select></label></div><!--ticket-form-right-->');
 
     }
 
@@ -247,13 +276,11 @@
     $('#assigned_cleaner'+i+' :nth-child('+i+')').prop('selected',true);
     }
 
-
     {% for current_cleaner in current_cleaners %}
         $('#assigned_cleaner{{forloop.counter}}').val('{{current_cleaner.member.id}}');
     {% endfor %}
 
-
-    //to remove repeated selection if no cleaners available
+    //to remove repeated selection
   $('.assign_cleaner').each(function(){
     cross_check_selected_option = this.value;
     cross_check_id          = this.id;
@@ -262,7 +289,7 @@
       {
         if(cross_check_selected_option == this.value)
         {
-          $('option:selected',this).remove();  
+          $('option:selected',this).remove();   
         }
       }
     });
@@ -290,7 +317,6 @@
     }
     //random selection
     $('#assigned_cleaner'+i+' :nth-child('+i+')').prop('selected',true);
-
     
     i++;
     
@@ -320,7 +346,7 @@
         $('.box'+(i-1)+'').children('.ticket-form-right').remove();
     }
     
-  })
+  })  
 
 
   });
@@ -379,7 +405,6 @@ $(".assign_cleaner").change(function(){
       }
     }
   });
-  
   //cross checking
   $('.assign_cleaner').each(function(){
     cross_check_selected_option = this.value;
@@ -397,8 +422,8 @@ $(".assign_cleaner").change(function(){
   }); 
 
 });
-})
 
+})
 
 
 //Add Cleaner Duplicate Removal

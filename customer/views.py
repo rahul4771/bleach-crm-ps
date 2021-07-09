@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from django.template.loader import render_to_string
 from django.http import HttpResponse,JsonResponse
 from django_countries import countries
-
+from django.core.mail import send_mail,EmailMultiAlternatives
 from django.views import View
 
 from bleach_crm_ps.utils import get_error
@@ -70,7 +70,7 @@ class Quatation(View):
 		user_name     =  evaluation_id_encrypted[14:]
 
 
-		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(is_active=True,order_no=evaluation_id,evaluation__customer__username=user_name)
+		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__booking_evaluation',queryset=CustomerBooking.objects.filter(is_active=True,booking_type='CLEANINGBOOKING'),to_attr='cleaning_booking'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(is_active=True,order_no=evaluation_id,evaluation__customer__username=user_name)
 
 		nonduplicate_schedules = []
 		#Remove duplicates for subscription
@@ -152,7 +152,7 @@ class Quatation(View):
 				order_update      = Order.objects.filter(order_no=evaluation_id,evaluation__customer__username=user_name).update(order_status='APPROVED_BY_CLIENT',invoice_no=new_invoice_no)
 				
 				 
-				order = Order.objects.select_related('evaluation__customer').get(order_no=evaluation_id)
+				order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__booking_evaluation',queryset=CustomerBooking.objects.filter(is_active=True,booking_type='CLEANINGBOOKING'),to_attr='cleaning_booking')).get(order_no=evaluation_id)
 				#check credit
 				if order.evaluation.customer.credit_amount != 0:
 					if order.evaluation.total_cost-order.evaluation.customer.credit_amount >= 0:
@@ -181,15 +181,36 @@ class Quatation(View):
 					order.payment_status         = 'COMPLETED'
 					order.save() 	
 
-				#sms
+				#sms and email
+				print("checkp1")
 				evaluaation = Evaluation.objects.get(evaluation_id=evaluation_id,customer__username=user_name)
 
+				evaluationdetails = EvaluationDetails.objects.filter(evaluation=evaluaation).first()
+				address = evaluationdetails.address
+
+				evaluationbooks = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='sections'))
+
+				if address.floor == None and address.avenue == None:
+					address_list = [address.apartment, address.street, address.building, address.block, address.area.name, address.governorate.name]
+				
+				elif address.floor == None:
+					address_list = [address.apartment, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
+				
+				elif address.avenue == None:
+					address_list = [address.apartment, address.floor, address.street, address.building, address.block, address.area.name, address.governorate.name]
+				
+				else:
+					address_list = [address.apartment, address.floor, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
+
+				separator = ", "
+				
 				language = evaluaation.customer.sms_preference
 				
 				if evaluaation.payment_method == 'PREPAID' or evaluaation.payment_method == 'BREAKDOWN':
 					messages.success(request,"Quatation Approved Succesfully")
 
 					if evaluaation.customer.is_sms == True:
+						print("smsp")
 
 						url = "https://smsapi.future-club.com/fccsms.aspx"
 
@@ -219,6 +240,14 @@ class Quatation(View):
 						print(response.text,"respo")
 					else:
 						pass
+
+					if evaluaation.customer.is_email == True :
+						print("emailp")
+						#send mail
+						msg_html = render_to_string('email/invoice.html',{"invoice":order,"address_list":separator.join(address_list),"evaluationbooks":evaluationbooks})
+						msg = EmailMultiAlternatives('Bleach Invoice', '', 'notification@bleach-kw.com', [evaluaation.customer.email])
+						msg.attach_alternative(msg_html, "text/html")
+						msg.send(fail_silently=False)
 
 					new_evaluation_id_encrypted = 'prw'+evaluation_id_encrypted[3:]
 					
@@ -3682,6 +3711,72 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 
 			service_dict[saved_service.id] = services[service_detail]['service_type']				
 		
+
+		language = order.evaluation.customer.sms_preference
+
+		evaluation = order.evaluation
+
+		evaluationdetails = EvaluationDetails.objects.filter(evaluation=evaluation).first()
+		
+		address = evaluationdetails.address
+
+		if evaluationdetails.evaluator:
+			evaluator = evaluationdetails.evaluator.name
+		else:
+			evaluator = evaluation.call_attender.name
+
+		evaluationbooks = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='sections'))
+
+		evaluationbook = evaluationbooks.first()
+
+		if address.floor == None and address.avenue == None:
+			address_list = [address.apartment, address.street, address.building, address.block, address.area.name, address.governorate.name]
+		
+		elif address.floor == None:
+			address_list = [address.apartment, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
+		
+		elif address.avenue == None:
+			address_list = [address.apartment, address.floor, address.street, address.building, address.block, address.area.name, address.governorate.name]
+		
+		else:
+			address_list = [address.apartment, address.floor, address.street, address.building, address.avenue, address.block, address.area.name, address.governorate.name]
+
+		separator = ", "
+
+		if evaluation.customer.is_sms == True :
+		
+			url = "https://smsapi.future-club.com/fccsms.aspx"
+
+			if language == 'ENGLISH':
+				# print(str(evaluation.id),str(evaluation.evaluation_id),str(evaluation.total_cost),str(evaluation.quatation_expiry_date),str(evaluation.customer.username),str(evaluation.tracking_no),"trerr")
+
+				message = "Dear Customer, Please find the Quotation against the cleaning at "+separator.join(address_list)+" here https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait"
+
+				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
+			
+			else:
+				message = "عزيزنا العميل نرجوا الاطلاع على عرض سعر خدمات التنظيف المطلوبة في "+separator.join(address_list)+" https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+"  لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
+
+				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
+
+			headers = {
+				'cache-control': "no-cache"
+			}
+			
+			response = requests.request("GET", url, headers=headers, params=querystring)
+
+			print(message,"respo")
+			print(order.order_no,"ordern")
+
+		if evaluation.customer.is_email == True :
+			#send mail
+			msg_html = render_to_string('email/quatation.html',{"evaluator":evaluator,"evaluation":evaluation,"evaluationbooks":evaluationbooks,"address_list":separator.join(address_list)})
+			msg = EmailMultiAlternatives('Bleach Quotation', '', 'notification@bleach-kw.com', [evaluation.customer.email])
+			msg.attach_alternative(msg_html, "text/html")
+			msg.send(fail_silently=False)
+			print(msg,"msg")
+
+
 		response_dict['evaluation_book_ids'] = service_dict
 		response_dict['success']             = True
 
@@ -4749,9 +4844,6 @@ class EditOrderDetails(APIView):
 
 		return Response(response_dict,HTTP_200_OK)
 
-
-
-from django.core.mail import send_mail,EmailMultiAlternatives
 class EmailTest(APIView):
 	def get(self,request):
 		response_dict = {}
