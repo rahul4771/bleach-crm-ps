@@ -13,6 +13,8 @@ url(r'^supplier/$',views.InventorySupplier.as_view(),name='inventory-supppler'),
 url(r'^store/$',views.InventoryStore.as_view(),name='inventory-store'),
 url(r'^inventory/$',views.InventoryInv.as_view(),name='inventory-inv'),
 url(r'^order/$',views.InventoryOrder.as_view(),name='inventory-order'),
+url(r'^users/$',views.InventoryUsers.as_view(),name='inventory-users'),
+
 
 
 

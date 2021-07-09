@@ -566,13 +566,17 @@ $(document).ready(function(){
     completedAddress:[],
     scheduleGroup:{},
     editScheduleData:{},
-    editScheduleStat:false
+    editScheduleStat:false,
+    evaluation_id:''
         },
      
 /* header data */
 
 
         methods: {
+          paymentSubmit(){
+            $('#payment_submit').click()
+          },
           viewEditSchedule(service,index){
             this.schedule_serviceTypes_selected=[]
             this.editScheduleData=service
@@ -4349,7 +4353,7 @@ sendLetCustScheduled(){
           }
         }
         axios.post(this.url+'/customer/evaluatorbookingmultiplephase3/customer/'+this.custId,serviceDetails).then(response=>{
-          
+          this.evaluation_id=response.data.secret_code
           this.goToPaymentDialog()
         
         })
@@ -4362,6 +4366,7 @@ sendLetCustScheduled(){
   }
   else{
     axios.post(this.url+'/customer/evaluatorbookingmultiplephase3/customer/'+this.custId,this.custServiceScheduled).then(response=>{
+      this.evaluation_id=response.data.secret_code
       this.goToPaymentDialog()
     })
   }

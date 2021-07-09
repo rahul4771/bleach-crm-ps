@@ -621,7 +621,12 @@ class PaymentResponseDebit(View):
 			except:
 				booking_completed = None
 				
-			return redirect('customer:payment-receipt','pvw'+str(evaluation_id_encrypted[0:11])+str(payment_history.id))
+			#pay and book &&& others
+			pay_and_book = request.POST.get('udf4')
+			if pay_and_book:
+				return(pay_and_book)
+			else:
+				return redirect('customer:payment-receipt','pvw'+str(evaluation_id_encrypted[0:11])+str(payment_history.id))
 
 		elif order and payment_result == 'CAPTURED' and not payment_history_check and order_status == 'CANCEL_IN_PROGRESS':
 			#Receipt Number
@@ -640,7 +645,12 @@ class PaymentResponseDebit(View):
 			order.amount_paid     += amount_paid
 			order.save()
 			
-			return redirect('customer:payment-receipt','pvw'+str(evaluation_id_encrypted[0:11])+str(payment_history.id))
+			#pay and book &&& others
+			pay_and_book = request.POST.get('udf4')
+			if pay_and_book:
+				return(pay_and_book)
+			else:
+				return redirect('customer:payment-receipt','pvw'+str(evaluation_id_encrypted[0:11])+str(payment_history.id))
 
 		else:
 
@@ -3817,13 +3827,11 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase2(APIView):
 		#Evaluation cost updation
 		evaluation.total_cost      += request.data.get('total_cost')
 		evaluation.estimated_cost  += request.data.get('estimated_cost')
-		evaluation.quatation_status = 'APPROVED'
 		evaluation.save()
 
 		#order cost updation
 		order.total_amount         += request.data.get('total_cost')
 		order.remining_amount      += request.data.get('total_cost')
-		order.order_status          = 'APPROVED_BY_CLIENT'
 		order.save()
 		
 		#evaluation details cost updation
@@ -3943,8 +3951,8 @@ class DuplicateBookingPhase2(APIView):
 									for duplicate_keynote in duplicate_book_section.sectionkeynotes:	
 										new_duplicate_keynote = EvaluationSectionKeynote.objects.create(evaluation_section=new_duplicate_section,sub_area=duplicate_keynote.sub_area,quantity=duplicate_keynote.quantity,)
 
-		response_dict['duplicate_id']= new_order.id
-		response_dict['success']     = True
+		response_dict['evaluation_id'] = new_order.evaluation.evaluation_id[3:14]
+		response_dict['success']       = True
 
 		return Response(response_dict,HTTP_200_OK)
 
@@ -3952,7 +3960,7 @@ class DuplicateBookingPhase2(APIView):
 		response_dict            = {}
 		response_dict['success'] = False
 
-		evaluation              = Evaluation.objects.get(id=evaluation_id)
+		evaluation              = Evaluation.objects.get(evaluation_id=evaluation_id)
 		order    				= Order.objects.get(evaluation=evaluation)
 		services 				= request.data.get('service_details')
 
@@ -4132,15 +4140,13 @@ class DuplicateBookingPhase2(APIView):
 				##cost updation
 				evaluation_details.estimated_cost     += service_book.estimated_cost
 				evaluation_details.total_cost         += service_book.total_cost
-				evaluation_details.save()
 
 				evaluation.estimated_cost     		  += service_book.estimated_cost
 				evaluation.total_cost         		  += service_book.total_cost
-				evaluation.save()
+				evaluation.quatation_status            = 'PENDING'
 
 				order.total_amount                    += service_book.total_cost
 				order.remining_amount                 += service_book.total_cost
-				order.save()
 
 				##cost updation
 				try:
@@ -4162,6 +4168,10 @@ class DuplicateBookingPhase2(APIView):
 
 					#schedule
 					order_schedule = OrderScheduler.objects.create(order=order,status='CONFIRMED',customer_address=evaluation_details.address,evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,order_scheduler_book_id=services[service_detail]['id'],no_of_cleaners=schedules_dict[key]['no_of_cleaners'],cleaning_hours=schedules_dict[key]['cleaning_hours'])
+
+					evaluation_details.save()
+					evaluation.save()
+					order.save()
 
 					# absent_cleaners = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=start_date_time.date())|Q(leave_date=end_date_time.date()))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
 					# absent_leaders  = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=start_date_time.date())|Q(leave_date=end_date_time.date()))).filter(staff__user_type='TEAMINCHARGE').values_list('staff',flat=True)						
@@ -4557,6 +4567,8 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 					cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,member=leaders.first(),start_at=start_date_time,end_at=end_date_time,start_time=start_time,end_time=end_time))
 
 					CleaningTeamMember.objects.bulk_create(cleaning_team_member_array)
+		
+		response_dict['secret_code']        = str(evaluation.evaluation_id[3:14])+str(evaluation.customer.username)
 		response_dict['success'] = True
 
 		return Response(response_dict,HTTP_200_OK)

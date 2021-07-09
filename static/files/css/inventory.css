@@ -460,6 +460,9 @@
   .d-grid{
     display: grid !important;
   }
+  .d-grid div{
+    margin-top: 10px;
+  }
 
   .inv-dash-card-head{
     font-size: 3vw;

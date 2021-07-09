@@ -17,7 +17,7 @@
 
         <div class="main-content-holder"><!--main-content-holder-->   
             <div class="white-wrapper">
-                <div class="d-flex">
+                <div class="d-flex d-grid">
                     <div>
                      
                         <div class="inv-input-container h-30">
@@ -28,7 +28,7 @@
                     
                     </div>
                     <div class="right-pos">
-                        <button class="inv-blue-btn" data-toggle="modal" data-target="#addModel" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Segment </button>
+                        <button class="inv-blue-btn" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Value </button>
                     </div>
                 </div>
 
@@ -54,61 +54,24 @@
 
                     <div class="col-md-7 mt-10">
                         <div class="attribute-table">
-                            <table class="inv-table"> 
+                            <table class="inv-table footable"> 
+                                <thead>
+                                    <tr>
+                                        <th style="width: %;">
+                                            Segment Name
+                                        </th>
+                                        <th data-hide="phone,tablet"  style="width: %; text-align: center;">
+                                            Line
+                                        </th>
+                                        <th style="width: %;" >
+                                            Status
+                                        </th>
+                                     
+                                        <th data-hide="phone,tablet"  style="width: %;">Action</th>
+                                    </tr>
+                                </thead>
+                               <tbody>
                                 <tr>
-                                    <th style="width: 25%;">
-                                        Segment Name
-                                    </th>
-                                    <th style="width: 25%; text-align: center;">
-                                        Line
-                                    </th>
-                                    <th style="width: %;" >
-                                        Status
-                                    </th>
-                                 
-                                    <th style="width: 18%;">Action</th>
-                                </tr>
-                                <tr>
-                                    <td class="inv-green-border">
-                                
-                                        Colour
-                                    </td>
-                                    <td class="text-center">
-                                        3
-                                    </td>
-                                    <td>
-                                        <button class="inv-active-btn">
-                                            Active
-                                        </button>
-                                    </td>
-                                    <td>
-                                  
-                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-        
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="inv-green-border">
-                                
-                                        Colour
-                                    </td>
-                                    <td class="text-center">
-                                        3
-                                    </td>
-                                    <td>
-                                        <button class="inv-active-btn">
-                                            Active
-                                        </button>
-                                    </td>
-                                    <td>
-                                  
-                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-        
-                                    </td>
-                                </tr>
-                                 <tr>
                                     <td class="inv-green-border">
                                 
                                         Colour
@@ -208,6 +171,48 @@
         
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td class="inv-green-border">
+                                
+                                        Colour
+                                    </td>
+                                    <td class="text-center">
+                                        3
+                                    </td>
+                                    <td>
+                                        <button class="inv-active-btn">
+                                            Active
+                                        </button>
+                                    </td>
+                                    <td>
+                                  
+                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+        
+                                    </td>
+                                </tr>
+                                 <tr>
+                                    <td class="inv-green-border">
+                                
+                                        Colour
+                                    </td>
+                                    <td class="text-center">
+                                        3
+                                    </td>
+                                    <td>
+                                        <button class="inv-active-btn">
+                                            Active
+                                        </button>
+                                    </td>
+                                    <td>
+                                  
+                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+        
+                                    </td>
+                                </tr>
+                               </tbody>
+                                
                                 
                             </table>
                         </div>
@@ -237,10 +242,10 @@
                         <div class="attribute-table-2">
                             <table class="inv-table"> 
                                 <tr>
-                                    <th style="width: 70%;">
+                                    <th style="width: %;">
                                         Line Name
                                     </th>
-                                    <th style="width: 30%;">
+                                    <th style="width: %;">
                                         Action
                                     </th>
                                 </tr>
@@ -269,7 +274,7 @@
                                
                             </table>
                             <div class="attribute-footer p-5">
-                                <button class="inv-plan-btn" data-toggle="modal" data-target="#addLine"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Line</button>
+                                <button class="inv-plan-btn" onclick="openNavAddLine()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Line</button>
 
                             </div>
                         </div>
@@ -283,7 +288,7 @@
             </div>
         </div>
 
-        <div class="modal fade" id="addLine" role="dialog">
+        <div class="modal fade" id="addLine2" role="dialog">
             <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
                 <div class="container-fluid">
                     <div class="row">
@@ -368,8 +373,66 @@
                 </div>
             </div>
           </div>
+
+          <div id="addLine" class="inv-sidedrawer">
+
+            <div class="inv-sidedrawer-inner">
+                <div class="d-flex">
+                    <div class="inv-drawer-head">
+                        Add Line
+                    </div>
+                    <div class="right-pos">
+    
+                        <button onclick="closeNavAddLine()" class="img-button">
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                        </button>
+                    </div>
+                </div>
+                <hr>
+                <div class="row mt-20">
+                    <div class="col-md-12 ">
+                        <div class="model-input-name">Line  Name</div>
+    
+                        <div class="inv-input-container h-30"> 
+                            <input type="text"  class="w-p-100 inv-in" name="attributes">
+                          </div>
+                    </div>
+    
+                </div>
+            
+                
+    
+    
+              
+            </div>
+            <div class="inv-drawer-footer">
+                <button class="sent-button" >Submit</button>
+                            <button data-dismiss="modal" onclick="closeNavAddLine()" class="view-button">Cancel</button>
+            </div>
+        </div>
     </section>
 </div>
 
+
+{% endblock %}
+
+{% block javascript %}
+
+<script>
+    function openNavAddLine() {
+        if(screen.width<= 600){
+            document.getElementById("addLine").style.width = "100%";
+        }else if(screen.width<= 720){
+            document.getElementById("addLine").style.width = "50%";
+        }
+        else{
+            document.getElementById("addLine").style.width = "30%";
+        }  
+    }
+    function closeNavAddLine() {
+        document.getElementById("addLine").style.width = "0";
+    }
+   
+</script>
 
 {% endblock %}

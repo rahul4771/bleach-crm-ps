@@ -466,7 +466,18 @@
 
                 </div>
               </div>
-              
+              <form method="post" action="https://testpay.bleach-kw.com/SendPerformREQuest.php" style="display: none;">
+                {% csrf_token %}
+                <input type="hidden" name="order_status" value="{{order.order_status}}">
+                <input type="hidden" name="price" value="{{order.evaluation.total_cost|floatformat:'3'}}">
+                <input type="hidden" name="payment_mode" value="prepaid">
+                <input type="hidden" name="qty" value="1">
+                <input type="hidden" name="evaluation_id" value="{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}">
+                <input type="hidden" id="book_and_pay_url_id" name="book_and_pay_url" value="">
+                {% if order.evaluation.quatation_status == 'APPROVED' %}
+                <input  id="debitpay" name="debitpay" type="submit">
+                {% endif %}
+              </form>
               
             
               

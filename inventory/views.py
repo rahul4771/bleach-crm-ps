@@ -37,3 +37,6 @@ class InventoryInv(View):
 class InventoryOrder(View):
     def get(self,request):
         return render(request,'inventory/order.html',{})
+class InventoryUsers(View):
+    def get(self,request):
+        return render(request,'inventory/users.html',{})
