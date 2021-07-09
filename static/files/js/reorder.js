@@ -4217,8 +4217,8 @@ function openNav() {
   },
   getDuplicate(){
     axios.get(this.url+'/customer/duplicatebookingphase2/'+this.custId).then(response=>{
-      this.duplicate_id=response.data.duplicate_id
-      this.getBookedServices(response.data.evaluation_id)
+      this.duplicate_id='BLC'+response.data.evaluation_id
+      this.getBookedServices('paw'+response.data.evaluation_id)
     })
   },
   getBookedServices(id){
