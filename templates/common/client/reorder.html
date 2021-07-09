@@ -867,9 +867,12 @@ width="1000"
                           <div v-for="(bill,bindex) in service.bill" v-bind:key="bindex">
                             <div><b><% bill.section_name %></b></div>
                             <div class="d-flex mt-1">
-                              <div >
-                               <% bill.size.name %>
+                              <div  v-if="bill.upholstery_type=='SOFA'">
+                               <% bill.size %>
                               </div>
+                              <div  v-else>
+                                <% bill.size.name %>
+                               </div>
                               <div class="ml-auto primary-green-text" >
                                 KD <% bill.section_cost %>
                               </div>

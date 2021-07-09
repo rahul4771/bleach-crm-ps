@@ -3502,6 +3502,15 @@ function openNav() {
                 }
                 
               }
+             /* else if(selected_service=='Upholstry Cleaning'){
+                if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].new_kitchen){
+                  var productivity = data["newkitchen_perhour_cleaning"];
+                }
+                else{
+                  var productivity = data["oldkitchen_perhour_cleaning"];
+                }
+                
+              }*/
               else{
                 var productivity = data["perhour_cleaning"];
               }
@@ -4285,6 +4294,37 @@ function openNav() {
         }
         }
         }
+        else if(this.multiServicesBill[i].service=='Upholstery Cleaning'){
+          var type=""
+           for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
+             if(this.multiServicesBill[i].bill[j].size.includes('Seater')){
+               type="SOFA"
+               //this.sections[j].size=this.this.sections[j].size.split(" ")[0]
+               this.multiServicesBill[i].bill[j].size=this.multiServicesBill[i].bill[j].size.split(" ")[0]
+               console.log("section size is "+this.multiServicesBill[i].bill[j].size.split(" ")[0])
+               this.multiServicesBill[i].bill[j].upholstery_type="SOFA"
+             }
+             else{
+               type="CHAIR"
+               this.multiServicesBill[i].bill[j].upholstery_type="CHAIR"
+             }
+             console.log("type is"+type)
+             if(type=="CHAIR"){
+              for(var p in productivity){
+          
+        
+                if(productivity[p].name==this.multiServicesBill[i].bill[j].size){
+                  this.multiServicesBill[i].bill[j].size=productivity[p]
+                }
+              
+              
+            }
+              
+             }
+            
+           }
+             
+         } 
         else{
         for(var p in productivity){
           
