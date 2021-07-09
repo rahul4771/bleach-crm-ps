@@ -3725,13 +3725,11 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase2(APIView):
 		#Evaluation cost updation
 		evaluation.total_cost      += request.data.get('total_cost')
 		evaluation.estimated_cost  += request.data.get('estimated_cost')
-		evaluation.quatation_status = 'APPROVED'
 		evaluation.save()
 
 		#order cost updation
 		order.total_amount         += request.data.get('total_cost')
 		order.remining_amount      += request.data.get('total_cost')
-		order.order_status          = 'APPROVED_BY_CLIENT'
 		order.save()
 		
 		#evaluation details cost updation
@@ -4208,6 +4206,9 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 		#evaluation books,sections,and keynotes
 		evaluation_details                  = EvaluationDetails.objects.select_related('evaluation').prefetch_related('evaluation_book_evaluation_details__evaluationsection_book__keynotesections').filter(evaluation__evaluation_id=evaluation_id)
 		response_dict['evaluation_details'] = EvaluationDetailsSerializer(instance=evaluation_details,many=True).data
+		
+		evaluation_details_first            = evaluation_details.first()
+		response_dict['secret_code']        = str(evaluation_details_first.evaluation.evaluation_id[4:14])+str(evaluation_details_first.evaluation.customer.username)
 
 		response_dict['success'] = True
 		return Response(response_dict,HTTP_200_OK)
