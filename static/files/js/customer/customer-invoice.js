@@ -1,4 +1,5 @@
 $(".inv-coupon").hide();
+var selectedPayment='';
 //$(".inv-coupon-error").hide();
 selectPayment('pay');
 var cashcounter=false;
@@ -77,7 +78,7 @@ function proceedInvoice(){
 }
 function proceedBookingInvoice(){
   var custId=window.location.href.split('/')[6]
-  if(pay=='paynbook')
+  if(selectedPayment=='paynbook')
   {
     $('#book_and_pay_url_id').val("https://test.bleach-kw.com/customer/cart?id="+custId);
     $('#debitpay').click();
@@ -93,6 +94,7 @@ function nextStepCash(){
   $('#cash-step-1').show();
 }
 function selectPayment(pay){
+  selectedPayment=pay
    if(pay=='pay')
    {
     $("#inv-debit").removeClass('inv-payment-card')
