@@ -483,7 +483,12 @@
             font-weight: bold;
             width: 200px;
             font-size: 22px;">
-                <b> <a href="/customer/quatation/paw{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}" class="button-a">Approve</a> or <a class="button-a" href="" class="">Reject</a> </b>
+
+            {% if evaluation.payment_method == 'SUBSCRIPTION' %}
+                <b> <a href="https://test.bleach-kw.com/customer/subscription/quatation/paw{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}" class="button-a">Approve</a> or <a class="button-a" href="" class="">Reject</a> </b>
+            {% else %}
+                <b> <a href="https://test.bleach-kw.com/customer/quatation/paw{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}" class="button-a">Approve</a> or <a class="button-a" href="" class="">Reject</a> </b>
+            {% endif %}
             </div>
         </div>
     </div>

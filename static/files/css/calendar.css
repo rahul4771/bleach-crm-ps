@@ -119,6 +119,51 @@ width:100% !important;
     border-radius: 17px;
 
 }
+.cl-subscription-mark{
+    background: #139275 0% 0% no-repeat padding-box;
+    height:17px;
+    width:17px;
+    margin-top: 2px;
+    margin-right: 8px;
+    border-radius: 17px;
+
+}
+.cl-onetime-mark{
+    background: #0D87C5 0% 0% no-repeat padding-box;
+    height:17px;
+    width:17px;
+    margin-top: 2px;
+    margin-right: 8px;
+    border-radius: 17px;
+
+}
+.cl-followup-mark{
+    background: #DBA03A 0% 0% no-repeat padding-box;
+    height:17px;
+    width:17px;
+    margin-top: 2px;
+    margin-right: 8px;
+    border-radius: 17px;
+
+}
+.cl-approved-not-paid-mark{
+    background: #779F39 0% 0% no-repeat padding-box;
+    height:17px;
+    width:17px;
+    margin-top: 2px;
+    margin-right: 8px;
+    border-radius: 17px;
+
+}
+.cl-pending-mark{
+    background: #779F39 0% 0% no-repeat padding-box;
+    height:17px;
+    width:17px;
+    margin-top: 2px;
+    margin-right: 8px;
+    border-radius: 17px;
+
+}
 .right-popup-box{
     background: #EDF1F6 ;
     height:100%;

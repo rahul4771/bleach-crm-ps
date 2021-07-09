@@ -237,7 +237,7 @@ const app=  new Vue({
       },
       methods:{
         editCleaningTeam(slot){          
-          window.location.href='/stl/editcleaning/team/'+slot         
+          window.location.href='/common/editcleaning/team/'+slot         
         },
         // editCleaningTeamOpSupervisor(slot){
         //   window.location.href='/operation-supervisor/editcleaning/team/'+slot  
@@ -249,7 +249,7 @@ const app=  new Vue({
         //   window.location.href='/operation-supervisor/assigncleaning/team/'+slot
         // },
         editFollowupTeam(slot){          
-          window.location.href='/stl/editfollowup/team/'+slot         
+          window.location.href='/common/editfollowup/team/'+slot         
         },
         // editFollowupTeamOpSupervisor(slot){
         //   window.location.href='/operation-supervisor/editfollowup/team/'+slot  
@@ -828,12 +828,12 @@ const app=  new Vue({
             this.popup.text='onetime-text',
             this.popup.bg='onetime-cleaning-status-bg'
           }
-          else if(item.color=='not-approved-status-bg'){
-            this.popup.color='#8B8B8B'
+          else if(item.color=='approved-notpaid-status-bg'){
+            this.popup.color='#779F39'
             this.popup.border='not-approved-border'
             this.popup.type='not-approved-popup'
             this.popup.text='not-approved-text',
-            this.popup.bg='not-approved-status-bg'
+            this.popup.bg='approved-notpaid-status-bg'
           }
            
             axios.get(this.url+"/agent/cleaningcallendar/cleaning/popup/?cleaning_start="+item.slots.start_at+'&cleaning_end='+item.slots.end_at+'&evaluation_id='+item.slots.order.order_no).then((response) => {
@@ -899,11 +899,11 @@ const app=  new Vue({
                   else if(this.combineSlots[i].type=='not approved'){
                     if(this.combineSlots[i].slots.order.payment_status == 'PENDING' && this.combineSlots[i].slots.order.order_status == 'APPROVED_BY_CLIENT')
                     {
-                      color='approved-not-paid-status-bg'
+                      color='approved-notpaid-status-bg'
                     }
                     else
                     {
-                      color='not-approved-status-bg'
+                      color='approved-notpaid-status-bg'
                     }  
                   }
                   else if(this.combineSlots[i].type=='approved'){
@@ -1079,16 +1079,16 @@ const app=  new Vue({
                   else if(this.combineSlots[i].type=='not approved'){
                     if(!this.combineSlots[i].slots.order.order_status)
                     {
-                      color='not-approved-not-paid-status-bg'
+                      color='not-approved-notpaid-status-bg'
                     }
                     else{
-                      color='not-approved-status-bg'
+                      color='approved-notpaid-status-bg'
                     }
                   }
                   else if(this.combineSlots[i].type=='approved'){
                     if(!this.combineSlots[i].slots.order.order_status)
                     {
-                      color='approved-not-paid-status-bg'
+                      color='approved-notpaid-status-bg'
                     }
                    
                   }

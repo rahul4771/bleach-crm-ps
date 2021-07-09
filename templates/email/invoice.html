@@ -531,10 +531,14 @@
             font-weight: bold;
             width: 200px;
             font-size: 22px;">
-            {% if invoice.evaluation.payment_method == 'SUBSCRIPTION' %}
-                <b> <a href="/customer/subscription/invoice/prw{{invoice.evaluation.evaluation_id|slice:'3:'}}{{invoice.evaluation.customer.username}}" class="button-a">Pay</a> </b>
+            {% if invoice.cleaning_booking %}
+                <b> <a href="https://test.bleach-kw.com/customer/booking/invoice/prw{{invoice.evaluation.evaluation_id|slice:'3:'}}{{invoice.evaluation.customer.username}}" class="button-a">Pay</a> </b>
             {% else %}
-                <b> <a href="/customer/invoice/prw{{invoice.evaluation.evaluation_id|slice:'3:'}}{{invoice.evaluation.customer.username}}" class="button-a">Pay</a> </b>
+                {% if invoice.evaluation.payment_method == 'SUBSCRIPTION' %}
+                    <b> <a href="https://test.bleach-kw.com/customer/subscription/invoice/prw{{invoice.evaluation.evaluation_id|slice:'3:'}}{{invoice.evaluation.customer.username}}" class="button-a">Pay</a> </b>
+                {% else %}
+                    <b> <a href="https://test.bleach-kw.com/customer/invoice/prw{{invoice.evaluation.evaluation_id|slice:'3:'}}{{invoice.evaluation.customer.username}}" class="button-a">Pay</a> </b>
+                {% endif %}
             {% endif %}
             </div>
         </div>
