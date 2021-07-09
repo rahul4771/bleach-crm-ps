@@ -36,7 +36,7 @@
         <br>
         <div class="common-gray-text align-left"><i class="fa fa-lg fa-clock-o orange-text" aria-hidden="true"></i> {{order_schedule.start_at|date:'h:i A'}}</div>
         <br>
-        <div class="common-gray-text align-left"><i class="fa fa-lg fa-hourglass-o yellow-text" aria-hidden="true"></i> {% if orderschedule.cleaning_hours %}{{orderschedule.cleaning_hours}}{% else %}{{order_schedule.order_scheduler_book.cleaning_hours}}{% endif %} Hours</div>
+        <div class="common-gray-text align-left"><i class="fa fa-lg fa-hourglass-o yellow-text" aria-hidden="true"></i> {% if order_schedule.cleaning_hours %}{{order_schedule.cleaning_hours}}{% else %}{{order_schedule.order_scheduler_book.cleaning_hours}}{% endif %} Hours</div>
         <br> 
          <div class="common-gray-text align-left"><i class="fa fa-lg fa-building-o green-text" aria-hidden="true"></i> <b>{{order_schedule.customer_address.apartment}}</b>: {% if order_schedule.customer_address.floor %}{{order_schedule.customer_address.floor}}, {% else %}{% endif %} {{order_schedule.customer_address.building}}, {{order_schedule.customer_address.block}}, {{order_schedule.customer_address.street}}, {% if order_schedule.customer_address.avenue %}{{order_schedule.customer_address.avenue}}, {% else %}{% endif %} {{order_schedule.customer_address.area.name}}, {{order_schedule.customer_address.governorate.name}}</div>
         <br>
@@ -109,11 +109,11 @@
         <div class="evaluation-section"><label>{{keynote.sub_area}}</label>{{keynote.quantity}}</div> 
         </div><!--evaluation-card-->   
 {% endif %}
-{% if keynote.sub_area == 'kitchen' and forloop.last %}
+{% if keynote.sub_area == 'kitchen' %}{% ifchanged keynote.sub_area %}
 <div class="evaluation-card"><!--evaluation-card-->
         <div class="evaluation-section"><label>Kitchen</label>{{section.kitchen_keynote}}</div> 
         </div><!--evaluation-card-->  
-{% endif %}
+{% endifchanged %}{% endif %}
 {% endfor %}
 {% endif %}
 </div><!--evaluation-card-wrapper-->
