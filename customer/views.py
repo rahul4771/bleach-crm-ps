@@ -595,7 +595,12 @@ class PaymentResponseDebit(View):
 			except:
 				booking_completed = None
 				
-			return redirect('customer:payment-receipt','pvw'+str(evaluation_id_encrypted[0:11])+str(payment_history.id))
+			#pay and book &&& others
+			pay_and_book = request.POST.get('udf4')
+			if pay_and_book:
+				return(pay_and_book)
+			else:
+				return redirect('customer:payment-receipt','pvw'+str(evaluation_id_encrypted[0:11])+str(payment_history.id))
 
 		elif order and payment_result == 'CAPTURED' and not payment_history_check and order_status == 'CANCEL_IN_PROGRESS':
 			#Receipt Number
@@ -614,7 +619,12 @@ class PaymentResponseDebit(View):
 			order.amount_paid     += amount_paid
 			order.save()
 			
-			return redirect('customer:payment-receipt','pvw'+str(evaluation_id_encrypted[0:11])+str(payment_history.id))
+			#pay and book &&& others
+			pay_and_book = request.POST.get('udf4')
+			if pay_and_book:
+				return(pay_and_book)
+			else:
+				return redirect('customer:payment-receipt','pvw'+str(evaluation_id_encrypted[0:11])+str(payment_history.id))
 
 		else:
 
@@ -4206,9 +4216,6 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 		#evaluation books,sections,and keynotes
 		evaluation_details                  = EvaluationDetails.objects.select_related('evaluation').prefetch_related('evaluation_book_evaluation_details__evaluationsection_book__keynotesections').filter(evaluation__evaluation_id=evaluation_id)
 		response_dict['evaluation_details'] = EvaluationDetailsSerializer(instance=evaluation_details,many=True).data
-		
-		evaluation_details_first            = evaluation_details.first()
-		response_dict['secret_code']        = str(evaluation_details_first.evaluation.evaluation_id[4:14])+str(evaluation_details_first.evaluation.customer.username)
 
 		response_dict['success'] = True
 		return Response(response_dict,HTTP_200_OK)
@@ -4468,6 +4475,8 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 					cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,member=leaders.first(),start_at=start_date_time,end_at=end_date_time,start_time=start_time,end_time=end_time))
 
 					CleaningTeamMember.objects.bulk_create(cleaning_team_member_array)
+		
+		response_dict['secret_code']        = str(evaluation.evaluation_id[3:14])+str(evaluation.customer.username)
 		response_dict['success'] = True
 
 		return Response(response_dict,HTTP_200_OK)
