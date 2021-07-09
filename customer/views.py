@@ -4466,7 +4466,7 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 
 					CleaningTeamMember.objects.bulk_create(cleaning_team_member_array)
 		
-		response_dict['secret_code']        = str(evaluation.evaluation_id[4:14])+str(evaluation.customer.username)
+		response_dict['secret_code']        = str(evaluation.evaluation_id[3:14])+str(evaluation.customer.username)
 		response_dict['success'] = True
 
 		return Response(response_dict,HTTP_200_OK)
