@@ -54,17 +54,17 @@
 	else{
 				
 		echo "result failure";
-		echo "<br>"
+		echo "<br>";
 		echo $ResErrorNo;
-		echo "<br>"
+		echo "<br>";
 		echo $ResErrorText;
-		echo "<br>"
+		echo "<br>";
 		echo $ResTrackID;
-		echo "<br>"
+		echo "<br>";
 		echo $ResAmount;
-		echo "<br>"
+		echo "<br>";
 		echo $ResPaymentId;
-		echo "<br>"
+		echo "<br>";
 		echo $Resudf1;
 				//  header("Location: https://my.bleachkw.com/customer/payment/failed/?"."Error=".$ResErrorNo."&ErrorText=".$ResErrorText."&trackid=".$ResTrackID."&amt=".$ResAmount."&paymentid="+$ResPaymentId."&udf1="+$Resudf1);
 				header("Location: https://test.bleach-kw.com/customer/payment/failed/?"."Error=".$ResErrorNo."&ErrorText=".$ResErrorText."&trackid=".$ResTrackID."&amt=".$ResAmount."&paymentid="+$ResPaymentId."&udf1="+$Resudf1);
