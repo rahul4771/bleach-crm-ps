@@ -466,7 +466,8 @@
 
                 </div>
               </div>
-              <form method="post" action="" style="display: none;">
+              <form method="post" action="https://testpay.bleach-kw.com/SendPerformREQuest.php" style="display: none;">
+                {% csrf_token %}
                 <input type="hidden" name="order_status" value="{{order.order_status}}">
                 <input type="hidden" name="price" value="{{order.evaluation.total_cost|floatformat:'3'}}">
                 <input type="hidden" name="payment_mode" value="prepaid">
