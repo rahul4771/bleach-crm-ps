@@ -487,7 +487,13 @@
         Payment
     </div>
      <div class="row">
-        
+      <form style="display: none;" action="https://testpay.bleach-kw.com/SendPerformREQuest.php" method="POST">
+        <input type="text" value="PREPAID" name="payment_mode"/>
+        <input type="text" value="APPROVED_BY_CLIENT" name="order_status"/>
+        <input type="text" value="1" name="qty"/>
+        <input type="text"  name="evaluation_id" v-model="evaluation_id" />
+        <input type="submit" id="payment_submit"/>
+      </form>
         <div class="col-md-6">
             <div class="inv-payment-card mt-4 text-center" id="inv-debit" onclick="selectPayment('debit')"><!-- to disable click add class inv-click-disable -->
                 <img src="{% static 'files/icons/knet-icon.png' %}" class="inv-card-icon" id="inv-debit-img"  /> <!-- to disable  add class inv-payment-disabled -->
@@ -511,7 +517,7 @@
               </div>
         </div>
         <div class="d-flex justify-center mt-4">
-            <v-btn color="primary">
+            <v-btn color="primary" @click="paymentSubmit()">
                 Proceed
             </v-btn>
             <v-btn color="primary" outlined class="ml-2" @click="payment_dialog=false">
