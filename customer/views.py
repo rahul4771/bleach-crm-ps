@@ -595,7 +595,12 @@ class PaymentResponseDebit(View):
 			except:
 				booking_completed = None
 				
-			return redirect('customer:payment-receipt','pvw'+str(evaluation_id_encrypted[0:11])+str(payment_history.id))
+			#pay and book &&& others
+			pay_and_book = request.POST.get('udf4')
+			if pay_and_book:
+				return(pay_and_book)
+			else:
+				return redirect('customer:payment-receipt','pvw'+str(evaluation_id_encrypted[0:11])+str(payment_history.id))
 
 		elif order and payment_result == 'CAPTURED' and not payment_history_check and order_status == 'CANCEL_IN_PROGRESS':
 			#Receipt Number
@@ -614,7 +619,12 @@ class PaymentResponseDebit(View):
 			order.amount_paid     += amount_paid
 			order.save()
 			
-			return redirect('customer:payment-receipt','pvw'+str(evaluation_id_encrypted[0:11])+str(payment_history.id))
+			#pay and book &&& others
+			pay_and_book = request.POST.get('udf4')
+			if pay_and_book:
+				return(pay_and_book)
+			else:
+				return redirect('customer:payment-receipt','pvw'+str(evaluation_id_encrypted[0:11])+str(payment_history.id))
 
 		else:
 
