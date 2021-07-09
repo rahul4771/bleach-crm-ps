@@ -512,8 +512,7 @@
                   </div>
                   {% else %}
                   <div class="inv-btn text-center text-white mt-4 mb-4"  id="bk-invoice-btn" 
-                  {% if order.cleaning_booking%}
-                  onclick="location.href='/customer/booking/invoice/prw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}';"
+                  {% if order.customerbooking > 0 %} onclick="location.href='/customer/booking/invoice/prw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}';"
                   {% else %}
                   {% if order.evaluation.payment_method == 'SUBSCRIPTION' %}onclick="location.href='/customer/subscription/invoice/prw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}';"{% else %}onclick="location.href='/customer/invoice/prw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}';"{% endif %}
                   {% endif %}>
