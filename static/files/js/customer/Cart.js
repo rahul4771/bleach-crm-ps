@@ -4353,7 +4353,7 @@ sendLetCustScheduled(){
           }
         }
         axios.post(this.url+'/customer/evaluatorbookingmultiplephase3/customer/'+this.custId,serviceDetails).then(response=>{
-          this.evaluation_id=this.multiServicesBill[service[j]].evaluation_details_id
+          this.evaluation_id=response.data.secret_code
           this.goToPaymentDialog()
         
         })
@@ -4366,7 +4366,7 @@ sendLetCustScheduled(){
   }
   else{
     axios.post(this.url+'/customer/evaluatorbookingmultiplephase3/customer/'+this.custId,this.custServiceScheduled).then(response=>{
-      this.evaluation_id=this.multiServicesBill[service[j]].evaluation_details_id
+      this.evaluation_id=response.data.secret_code
       this.goToPaymentDialog()
     })
   }
