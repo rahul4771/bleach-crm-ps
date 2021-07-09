@@ -4218,7 +4218,7 @@ function openNav() {
   getDuplicate(){
     axios.get(this.url+'/customer/duplicatebookingphase2/'+this.custId).then(response=>{
       this.duplicate_id=response.data.duplicate_id
-      this.getBookedServices(this.custId)
+      this.getBookedServices(response.data.evaluation_id)
     })
   },
   getBookedServices(id){
