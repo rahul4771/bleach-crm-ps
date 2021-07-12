@@ -28,7 +28,7 @@
                     
                     </div>
                     <div class="right-pos">
-                        <button class="inv-blue-btn" data-toggle="modal" data-target="#addModel" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Supplier</button>
+                        <button class="inv-blue-btn" onclick="openNavAddBundle('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Supplier</button>
                     </div>
                 </div>
 
@@ -92,8 +92,8 @@
                                         </td>
                                         <td style="float: right;">
                                             <button class="inv-plan-btn"> Purchase History</button>
-                                            <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                            <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                                            <button class="inv-plan-img-btn" onclick="openNavAddBundle('edit')"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                            <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
             
                                         </td>
                                     </tr>
@@ -176,8 +176,8 @@
                                     <td>1</td>
                                     <td>1</td>
                                     <td>
-                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                                        <button class="inv-plan-img-btn" onclick="openNavAddItem('edit')"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                        <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel2"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
         
                                     </td>
                                 </tr>
@@ -201,7 +201,7 @@
                                
                             </table>
                             <div class="attribute-footer p-5">
-                                <button class="inv-plan-btn"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Value</button>
+                                <button class="inv-plan-btn" onclick="openNavAddItem('add')"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Value</button>
 
                             </div>
                         </div>
@@ -266,7 +266,242 @@
             </div>
           </div>
     </section>
+
+    <div id="addBundle" class="inv-sidedrawer">
+
+        <div class="inv-sidedrawer-inner">
+            <div class="d-flex">
+                <div class="inv-drawer-head" id="supHead">
+                    Add Supplier
+                </div>
+                <div class="right-pos">
+
+                    <button onclick="closeNavAddBundle()" class="img-button">
+                        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                    </button>
+                </div>
+            </div>
+            <hr>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Supplier Name</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Id number</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Contact</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Status</div>
+
+                    <select id="id_payment" class="minimal">
+                        <option  ></option>
+                        <option  >Active</option>
+                        <option value="Post Paid">Inactive</option>
+
+                    </select>
+                </div>
+
+            </div>
+            
+
+
+          
+        </div>
+        <div class="inv-drawer-footer">
+            <button class="sent-button" >Submit</button>
+                        <button data-dismiss="modal" onclick="closeNavAddBundle()" class="view-button">Cancel</button>
+        </div>
+    </div>
+    <div id="addItem" class="inv-sidedrawer">
+
+        <div class="inv-sidedrawer-inner">
+            <div class="d-flex">
+                <div class="inv-drawer-head" id="itemHead">
+                    Add Item
+                </div>
+                <div class="right-pos">
+
+                    <button onclick="closeNavAddItem()" class="img-button">
+                        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                    </button>
+                </div>
+            </div>
+            <hr>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Item Name</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Count</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Price</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+           
+    
+            
+
+
+          
+        </div>
+        <div class="inv-drawer-footer">
+            <button class="sent-button" >Submit</button>
+                        <button data-dismiss="modal" onclick="closeNavAddItem()" class="view-button">Cancel</button>
+        </div>
+    </div>
+    <div class="modal fade" id="deleteModel" role="dialog">
+        <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12 mt-20">
+
+                        
+                        <div class="d-flex ">
+                            <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to delete supplier</p></div>
+                            <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                                <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                            </button>
+    
+                        </div>
+                    </div>
+                </div>
+               
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <div class="cancel-model-content">
+                            <button class="sent-button" >Delete</button>
+                            <button data-dismiss="modal" class="view-button">Cancel</button>
+                          
+                        </div>
+                    </div>
+    
+                </div>
+            </div>
+        </div>
+      </div>
+      <div class="modal fade" id="deleteModel2" role="dialog">
+        <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12 mt-20">
+
+                        
+                        <div class="d-flex ">
+                            <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to delete Item</p></div>
+                            <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                                <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                            </button>
+    
+                        </div>
+                    </div>
+                </div>
+               
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <div class="cancel-model-content">
+                            <button class="sent-button" >Delete</button>
+                            <button data-dismiss="modal" class="view-button">Cancel</button>
+                          
+                        </div>
+                    </div>
+    
+                </div>
+            </div>
+        </div>
+      </div>
 </div>
 
 
+{% endblock %}
+
+{% block javascript %}
+
+<script>
+function openNavAddBundle(d) {
+    if(d == 'add'){
+            $("#supHead").text("Add Supplier");
+        }
+        if(d == 'edit'){
+            $("#supHead").text("Edit Supplier");
+        }
+        if(screen.width<= 600){
+            document.getElementById("addBundle").style.width = "100%";
+        }else if(screen.width<= 720){
+            document.getElementById("addBundle").style.width = "50%";
+        }
+        else{
+            document.getElementById("addBundle").style.width = "30%";
+        }  
+    }
+    function closeNavAddBundle() {
+        document.getElementById("addBundle").style.width = "0";
+    }
+
+
+
+    function openNavAddItem(d) {
+    if(d == 'add'){
+            $("#itemHead").text("Add Item");
+        }
+        if(d == 'edit'){
+            $("#itemHead").text("Edit Item");
+        }
+        if(screen.width<= 600){
+            document.getElementById("addItem").style.width = "100%";
+        }else if(screen.width<= 720){
+            document.getElementById("addItem").style.width = "50%";
+        }
+        else{
+            document.getElementById("addItem").style.width = "30%";
+        }  
+    }
+    function closeNavAddItem() {
+        document.getElementById("addItem").style.width = "0";
+    }
+</script>
 {% endblock %}

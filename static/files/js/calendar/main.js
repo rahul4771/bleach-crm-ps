@@ -434,13 +434,15 @@ const app=  new Vue({
             axios.get(this.url+"/agent/cleaningcallendar?cleaning_callendar_date="+this.cleaningDate).then((response) => {
                 this.slots = response.data;
                 for(var i=0;i<this.slots.notapproved_cleanings.length;i++){
-                   
+
                     this.combineSlots.push({type:'not approved',class:'subscription-cleaning-bg',slots:this.slots.notapproved_cleanings[i]})
-                }
+
+                  }
                 for(var j=0;j<this.slots.appoved_cleanings.length;j++){
-                   
-                    this.combineSlots.push({type:'approved',class:'onetime-cleaning-bg',slots:this.slots.appoved_cleanings[j]})
-                }
+
+                  this.combineSlots.push({type:'approved',class:'onetime-cleaning-status-bg',slots:this.slots.appoved_cleanings[j]})
+                  
+                  }
                 for(var k=0;k<this.slots.followup_cleanings.length;k++){
                     var slot=this.slots.followup_cleanings[k]
                     //this.slots.followup_cleanings[k]['cleaning_hours']=this.slots.followup_cleanings[k].follow_up.cleaning_hours
@@ -829,11 +831,18 @@ const app=  new Vue({
             this.popup.bg='onetime-cleaning-status-bg'
           }
           else if(item.color=='approved-notpaid-status-bg'){
-            this.popup.color='#779F39'
+            this.popup.color='#699189'
+            this.popup.border='approved-notpaid-border'
+            this.popup.type='approved-notpaid-popup'
+            this.popup.text='approved-notpaid-text',
+            this.popup.bg='approved-notpaid-status-bg'
+          }
+          else if(item.color=='not-approved-status-bg'){
+            this.popup.color='#8B8B8B'
             this.popup.border='not-approved-border'
             this.popup.type='not-approved-popup'
             this.popup.text='not-approved-text',
-            this.popup.bg='approved-notpaid-status-bg'
+            this.popup.bg='not-approved-status-bg'
           }
            
             axios.get(this.url+"/agent/cleaningcallendar/cleaning/popup/?cleaning_start="+item.slots.start_at+'&cleaning_end='+item.slots.end_at+'&evaluation_id='+item.slots.order.order_no).then((response) => {
@@ -897,14 +906,16 @@ const app=  new Vue({
                     color='followup-cleaning-status-bg'
                   }
                   else if(this.combineSlots[i].type=='not approved'){
-                    if(this.combineSlots[i].slots.order.payment_status == 'PENDING' && this.combineSlots[i].slots.order.order_status == 'APPROVED_BY_CLIENT')
+                    if(this.combineSlots[i].slots.order.payment_status == 'PENDING' && this.combineSlots[i].slots.order.order_status == 'None')
                     {
-                      color='approved-notpaid-status-bg'
+                      color='not-approved-status-bg'
                     }
-                    else
+                    else if(this.combineSlots[i].slots.order.payment_status == 'PENDING' && this.combineSlots[i].slots.order.order_status == 'APPROVED_BY_CLIENT')
                     {
                       color='approved-notpaid-status-bg'
-                    }  
+                    }else{
+                      color='not-approved-status-bg'
+                    }
                   }
                   else if(this.combineSlots[i].type=='approved'){
                     if(this.combineSlots[i].slots.work_status=='CLEANING_CANCELLED')

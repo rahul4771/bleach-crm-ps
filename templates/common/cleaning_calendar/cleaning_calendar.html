@@ -843,44 +843,42 @@ class="cl-service-list"
           <a :href="'/common/client/order/details/'+currentSlotDetails.order.id" target="_blank"><% currentSlotDetails.order.order_no %></a>
          </div>
          <div class="d-flex" v-if="currentSlotDetails.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE' && currentSlotDetails.evaluation_details.evaluation.quatation_status=='APPROVED' && currentSlotDetails.evaluation_details.evaluation.payment_method=='PREPAID' && currentSlotDetails.order.payment_status=='COMPLETED'" >
-          <div class="cl-onetime-mark"></div>
-          <div class="cl-subtext" >
+          <div class="cl-rejected-mark" v-if="currentSlotDetails.work_status=='CLEANING_CANCELLED'" ></div>
+          <div class="cl-onetime-mark" v-if="currentSlotDetails.work_status!='CLEANING_CANCELLED'" ></div>
+          <div class="cl-subtext" v-if="currentSlotDetails.work_status=='CLEANING_CANCELLED'" >
+            Cancelled
+           </div>
+           <div class="cl-subtext" v-else="currentSlotDetails.work_status!='CLEANING_CANCELLED'" >
             One Time Service
            </div>
          </div>
 
          <div class="d-flex" v-else-if="currentSlotDetails.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE' && currentSlotDetails.evaluation_details.evaluation.quatation_status=='APPROVED' && currentSlotDetails.evaluation_details.evaluation.payment_method=='POSTPAID'" >
-          <div class="cl-onetime-mark"></div>
-          <div class="cl-subtext" >
+          <div class="cl-rejected-mark" v-if="currentSlotDetails.work_status=='CLEANING_CANCELLED'" ></div>
+          <div class="cl-onetime-mark" v-if="currentSlotDetails.work_status!='CLEANING_CANCELLED'" ></div>
+          <div class="cl-subtext" v-if="currentSlotDetails.work_status=='CLEANING_CANCELLED'" >
+            Cancelled
+           </div>
+           <div class="cl-subtext" v-else="currentSlotDetails.work_status!='CLEANING_CANCELLED'" >
             One Time Service
            </div>
          </div>
 
-         <div class="d-flex" v-else-if="currentSlotDetails.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE' && currentSlotDetails.evaluation_details.evaluation.quatation_status=='APPROVED' && currentSlotDetails.evaluation_details.evaluation.payment_method=='BREAKDOWN'" >
-          <div class="cl-onetime-mark"></div>
-          <div class="cl-subtext" >
+         <div class="d-flex" v-else-if="currentSlotDetails.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE' && currentSlotDetails.evaluation_details.evaluation.quatation_status=='APPROVED' && currentSlotDetails.evaluation_details.evaluation.payment_method=='BREAKDOWN' && currentSlotDetails.order.preamount_paid!=0" >
+          <div class="cl-rejected-mark" v-if="currentSlotDetails.work_status=='CLEANING_CANCELLED'" ></div>
+          <div class="cl-onetime-mark" v-if="currentSlotDetails.work_status!='CLEANING_CANCELLED'" ></div>
+          <div class="cl-subtext" v-if="currentSlotDetails.work_status=='CLEANING_CANCELLED'" >
+            Cancelled
+           </div>
+           <div class="cl-subtext" v-else="currentSlotDetails.work_status!='CLEANING_CANCELLED'" >
             One Time Service
            </div>
          </div>
 
-         <div class="d-flex" v-else-if="currentSlotDetails.evaluation_details.evaluation.quatation_status=='PENDING' && currentSlotDetails.order.order_status==None" >
+         <div class="d-flex" v-else-if="currentSlotDetails.evaluation_details.evaluation.quatation_status=='PENDING' && currentSlotDetails.order.payment_status=='PENDING' && currentSlotDetails.order.order_status==None" >
           <div class="cl-pending-mark"></div>
           <div class="cl-subtext" >
             Not Approved
-           </div>
-         </div>
-
-         <div class="d-flex" v-else-if="currentSlotDetails.evaluation_details.evaluation.quatation_status=='REJECTED'" >
-          <div class="cl-rejected-mark"></div>
-          <div class="cl-subtext" >
-            Rejected
-           </div>
-         </div>
-
-         <div class="d-flex" v-else-if="currentSlotDetails.order.order_status=='ORDER_CANCELLED'" >
-          <div class="cl-cancelled-mark"></div>
-          <div class="cl-subtext" >
-            Cancelled
            </div>
          </div>
 
@@ -892,8 +890,12 @@ class="cl-service-list"
          </div>
 
          <div class="d-flex" v-else="currentSlotDetails.order_scheduler_book.cleaning_policy=='SUBSCRIPTION' && currentSlotDetails.evaluation_details.evaluation.quatation_status=='APPROVED'" >
-          <div class="cl-subscription-mark"></div>
-          <div class="cl-subtext" >
+          <div class="cl-rejected-mark" v-if="currentSlotDetails.work_status=='CLEANING_CANCELLED'" ></div>
+          <div class="cl-subscription-mark" v-if="currentSlotDetails.work_status!='CLEANING_CANCELLED'" ></div>
+          <div class="cl-subtext" v-if="currentSlotDetails.work_status=='CLEANING_CANCELLED'" >
+            Cancelled
+           </div>
+           <div class="cl-subtext" v-else="currentSlotDetails.work_status!='CLEANING_CANCELLED'" >
             Subscription
            </div>
          </div>

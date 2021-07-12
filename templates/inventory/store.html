@@ -17,7 +17,7 @@
 
         <div class="main-content-holder"><!--main-content-holder-->   
             <div class="white-wrapper">
-                <div class="d-flex">
+                <div class="d-flex d-grid">
                     <div>
                      
                         <div class="inv-input-container h-30">
@@ -28,29 +28,32 @@
                     
                     </div>
                     <div class="right-pos">
-                        <button class="inv-blue-btn" data-toggle="modal" data-target="#addModel" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Store </button>
+                        <button class="inv-blue-btn" onclick="openNavAddStore('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Store </button>
                     </div>
                 </div>
                 <div class="mt-20">
-                    <table class="inv-table"> 
-                        <tr>
-                            <th style="width: %;">
-                                Store Name
-                            </th>
-                            <th style="width: %; text-align: center;">
-                                Store Code
-                            </th>
-                            <th style="width: %;" class="text-center">
-                                Address
-                            </th>
-                            <th style="width: %;" class="text-center">
-                                Contact
-                            </th>
-                            <th>
-                                Status
-                            </th>
-                            <th style="width: %;" class="text-center">Action</th>
-                        </tr>
+                    <table class="inv-table footable"> 
+                        <thead>
+                            <tr>
+                                <th style="width: %;">
+                                    Store Name
+                                </th>
+                                <th data-hide="phone,tablet"  style="width: %; text-align: center;">
+                                    Store Code
+                                </th>
+                                <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                    Address
+                                </th>
+                                <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                    Contact
+                                </th>
+                                <th>
+                                    Status
+                                </th>
+                                <th data-hide="phone,tablet"  style="width: %;" class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                       <tbody>
                         <tr>
                             <td>
                                 
@@ -71,8 +74,8 @@
                             </td>
                             <td style="float: right;">
                               
-                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                                <button class="inv-plan-img-btn" onclick="openNavAddStore('edit')"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
 
                             </td>
                         </tr>
@@ -101,6 +104,8 @@
 
                             </td>
                         </tr>
+                       </tbody>
+                      
                      
                         
                     </table>
@@ -108,7 +113,87 @@
             </div>
         </div>
     </section>
-    <div class="modal fade" id="addModel" role="dialog">
+    <div id="addStore" class="inv-sidedrawer">
+
+        <div class="inv-sidedrawer-inner">
+            <div class="d-flex">
+                <div class="inv-drawer-head" id="itemHead">
+                    Add Store
+                </div>
+                <div class="right-pos">
+
+                    <button onclick="closeNavAddStore()" class="img-button">
+                        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                    </button>
+                </div>
+            </div>
+            <hr>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Store Name</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Store code</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Address</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Contact</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Status</div>
+
+                    <select id="id_payment" class="minimal">
+                        <option  ></option>
+                        <option  >Active</option>
+                        <option value="Post Paid">Inactive</option>
+
+                    </select>
+                </div>
+
+            </div>
+            
+    
+            
+
+
+          
+        </div>
+        <div class="inv-drawer-footer">
+            <button class="sent-button" >Submit</button>
+                        <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
+        </div>
+    </div>
+    <div class="modal fade" id="deleteModel" role="dialog">
         <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
             <div class="container-fluid">
                 <div class="row">
@@ -116,7 +201,7 @@
 
                         
                         <div class="d-flex ">
-                            <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Add Category</p></div>
+                            <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to delete store</p></div>
                             <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
 
                                 <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
@@ -125,35 +210,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="row mt-40" >
-                    <div class="col-md-5 pr-0">
-                        <div class="model-input-name">Category Name</div>
-                        <div class="inv-input-container h-30"> 
-                            <input type="text" class="w-p-100 inv-in" name="attributes">
-                          </div>
-                    </div>
-    
-                    <div class="col-md-4 pr-0">
-                        <div class="model-input-name">Category Code</div>
-                        <div class="inv-input-container h-30"> 
-                            <input type="text"  class="w-p-100 inv-in" name="attributes">
-                          </div>
-                    </div>
-                    <div class="col-md-3 ">
-                        <div class="model-input-name">Status</div>
-
-                        <select id="id_payment" class="minimal">
-                            <option style="background: #fff;" value="Prepaid">Active</option>
-                            <option value="Post Paid">Inactive</option>
-                            
-                          </select>
-                    </div>
-    
-                </div>
+               
                 <div class="row">
                     <div class="col-md-12 text-center">
                         <div class="cancel-model-content">
-                            <button class="sent-button" >Submit</button>
+                            <button class="sent-button" >Delete</button>
                             <button data-dismiss="modal" class="view-button">Cancel</button>
                           
                         </div>
@@ -167,4 +228,32 @@
 
 
 
+{% endblock %}
+
+{% block javascript %}
+
+<script>
+
+
+
+    function openNavAddStore(d) {
+    if(d == 'add'){
+            $("#itemHead").text("Add Store");
+        }
+        if(d == 'edit'){
+            $("#itemHead").text("Edit Store");
+        }
+        if(screen.width<= 600){
+            document.getElementById("addStore").style.width = "100%";
+        }else if(screen.width<= 720){
+            document.getElementById("addStore").style.width = "50%";
+        }
+        else{
+            document.getElementById("addStore").style.width = "30%";
+        }  
+    }
+    function closeNavAddStore() {
+        document.getElementById("addStore").style.width = "0";
+    }
+</script>
 {% endblock %}

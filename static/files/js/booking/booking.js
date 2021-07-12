@@ -1371,35 +1371,34 @@ console.log(response)
                 this.serviceDetails.service_details[i].estimated_cost=parseInt(this.serviceDetails.service_details[i].total_cost)
               }
             for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
+              this.serviceDetails.service_details[i].sections[j]={
+                "section_name":this.multiServicesBill[i].bill[j].name,
+              "size":this.multiServicesBill[i].bill[j].section.size.name,
+              "wall_type":"",
+              "floor_type":'',
+              "ceiling_type":'',
+              "cement_residue":this.multiServicesBill[i].bill[j].section.cement_residue,
+              "section_cost":this.multiServicesBill[i].bill[j].section.section_cost,
+              "section_net_cost":this.multiServicesBill[i].bill[j].section.section_cost,
+              "keynotes":{}
+              }
               
-           if(this.multiServicesBill[i].bill[j].section.wall_type && this.multiServicesBill[i].bill[j].section.ceiling_type)
+           if(this.multiServicesBill[i].bill[j].section.wall_type)
            {
-             this.serviceDetails.service_details[i].sections[j]={
-
-               "section_name":this.multiServicesBill[i].bill[j].name,
-             "size":this.multiServicesBill[i].bill[j].section.size.name,
-             "wall_type":this.multiServicesBill[i].bill[j].section.wall_type.join(),
-             "ceiling_type":this.multiServicesBill[i].bill[j].section.ceiling_type.join(),
-             "cement_residue":this.multiServicesBill[i].bill[j].section.cement_residue,
-             "section_cost":this.multiServicesBill[i].bill[j].section.section_cost,
-             "section_net_cost":this.multiServicesBill[i].bill[j].section.section_cost,
-             "keynotes":{
-             }
-             }
+             this.serviceDetails.service_details[i].sections[j].wall_type=this.multiServicesBill[i].bill[j].section.wall_type.join()
            
            }
-           else{
-             this.serviceDetails.service_details[i].sections[j]={
-               "section_name":this.multiServicesBill[i].bill[j].name,
-             "size":this.multiServicesBill[i].bill[j].section.size.name,
-             "wall_type":this.multiServicesBill[i].bill[j].section.wall_type,
-             "ceiling_type":this.multiServicesBill[i].bill[j].section.ceiling_type,
-             "cement_residue":this.multiServicesBill[i].bill[j].section.cement_residue,
-             "section_cost":this.multiServicesBill[i].bill[j].section.section_cost,
-             "section_net_cost":this.multiServicesBill[i].bill[j].section.section_cost,
-             "keynotes":{}
-             }
+           if(this.multiServicesBill[i].bill[j].section.ceiling_type)
+           {
+             this.serviceDetails.service_details[i].sections[j].ceiling_type=this.multiServicesBill[i].bill[j].section.ceiling_type.join()
+           
            }
+           if(this.multiServicesBill[i].bill[j].section.floor_type)
+           {
+             this.serviceDetails.service_details[i].sections[j].floor_type=this.multiServicesBill[i].bill[j].section.floor_type.join()
+           
+           }
+          
            var keynotecounter=1
            if(this.multiServicesBill[i].bill[j].section.no_of_bathrooms){
             this.serviceDetails.service_details[i].sections[j].keynotes[keynotecounter]={
@@ -3820,7 +3819,10 @@ try {
           this.schedule_serviceTypes[k]
       )
       .then((response) => {
-          
+        var total_highpricewindow_size = 0;
+        var total_lowpricewindow_size = 0;
+        var total_highpricefacade_size = 0;
+          var total_lowpricefacade_size = 0;
            var selected_service=this.schedule_serviceTypes[k]
           console.log(response.data)
           this.durationData[this.schedule_serviceTypes[k]]=response.data
@@ -3841,8 +3843,14 @@ try {
             parseInt(total_chair_size / data["chair_perhour_cleaning"]);
             console.log("up manhour is "+manhour)
         } else if (selected_service == "Facade Cleaning") {
-          var total_highpricefacade_size = 400;
-          var total_lowpricefacade_size = 400;
+          for(var b=0;b<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;b++){
+            if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.size.is_highprice_facade){
+              total_highpricefacade_size=total_highpricefacade_size+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.size.max_size
+            }
+            else{
+              total_lowpricefacade_size=total_lowpricefacade_size+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.size.max_size
+            }
+          }
           var manhour =
             parseInt(
               total_highpricefacade_size /
@@ -3863,8 +3871,15 @@ try {
               total_oldkitchen_size / data["oldkitchen_perhour_cleaning"]
             );
         } else if (selected_service == "Window Cleaning") {
-          var total_highpricewindow_size = 400;
-          var total_lowpricewindow_size = 400;
+          for(var b=0;b<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;b++){
+            if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.size.is_highprice_window){
+              total_highpricewindow_size=total_highpricewindow_size+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.size.max_size
+            }
+            else{
+              total_lowpricewindow_size=total_lowpricewindow_size+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.size.max_size
+            }
+          }
+          
           var manhour =
             parseInt(
               total_highpricewindow_size /
@@ -4085,7 +4100,7 @@ try {
           //3rd
           if (
             Math.round(manhour / (middle_hours + 4)) > 0 &&
-            Math.round(manhour / (middle_hours + 2)) <= max_cleaners
+            Math.round(manhour / (middle_hours + 2)) <= highest_cleaner
           ) {
             duration_list.push([
               Math.round(manhour / (middle_hours + 4)),
