@@ -900,7 +900,7 @@ width="1000"
              <v-select
                 
                   :items="sizeData"
-                  item-text="combinedSize"
+                  item-text="name"
                   return-object
                   label="Size"
                   :rules="[v => !!v || 'Size is required']"
@@ -2069,7 +2069,7 @@ Fill all the details of the Buildings  to proceed
                               :attach="true"></v-select>
                           </div>
                           <div v-if="serviceType == 'Mattress Cleaning'">
-                            <v-select :items="sizeData" item-text="combinedSize" return-object label="Size"
+                            <v-select :items="sizeData" item-text="name" return-object label="Size"
                               :rules="[v => !!v || 'Size is required']" required v-model="otherService.size"
                               :attach="true"></v-select>
                           </div>

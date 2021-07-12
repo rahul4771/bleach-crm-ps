@@ -131,6 +131,23 @@
 
                   ></multiselect>
                 </div>
+                <div class="col-md-6 mt-10" v-if="service_type=='Facade Cleaning'">
+                    <div class=" bold-text common-label required-field"> <label>Is Hallway size greater than 5 sqm ?</label></div>
+                    <div class="d-flex">
+                    <div>
+                <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" :value="true"  v-model="editSectionData.new_kitchen" @change="resetKitchenSize" >
+                    <label class="form-check-label" for="exampleRadios1">
+                        Yes
+                    </label>
+                </div>
+                <div>
+                    <input class="form-check-input ml-10" type="radio" name="exampleRadios" id="exampleRadios1" :value="false" checked v-model="editSectionData.new_kitchen" @change="resetKitchenSize" >
+                        <label class="form-check-label" for="exampleRadios1">
+                            No
+                        </label>
+                    </div>
+                </div>
+                </div>
                 <div class="col-md-6 mt-10" v-if="service_type=='Kitchen Cleaning'">
                     <div class=" bold-text common-label required-field"> <label>Is it a new Kitchen</label></div>
                     <div class="d-flex">
