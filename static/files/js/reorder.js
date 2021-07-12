@@ -3495,32 +3495,61 @@ function openNav() {
             var sofa_productivity=0
             var chair_productivity=0
             var chair_size=0
+            var new_kitchen_size=0
+            var old_kitchen_size=0
+            var new_kitchen_productivity=0
+            var old_kitchen_productivity=0
+            var old_kitchen_manhour=0
+            var new_kitchen_manhour=0
               for(var i=0;i<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;i++)
               {
                 total_estimated_size = total_estimated_size+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[i].size.max_size;
               }
+             
               if(selected_service=='Kitchen Cleaning'){
-                if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].new_kitchen){
-                  var productivity = data["newkitchen_perhour_cleaning"];
+                console.log("inside kitchen")
+                var new_kitchen_productivity = data["newkitchen_perhour_cleaning"];
+                var old_kitchen_productivity = data["oldkitchen_perhour_cleaning"];
+
+                for(var b=0;b<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;b++){
+                  
+                  if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].new_kitchen){
+                    console.log("inside new kitchen")
+                    
+                    new_kitchen_size=new_kitchen_size+parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].size.max_size)   
+                                    
+                  }
+                  else if(!this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].new_kitchen){
+                    console.log("inside old kitchen")
+                   
+                    old_kitchen_size= old_kitchen_size+parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].size.max_size)   
+                                    
+                  }
+
                 }
-                else{
-                  var productivity = data["oldkitchen_perhour_cleaning"];
-                }
+                old_kitchen_manhour=old_kitchen_manhour+ parseInt( old_kitchen_size/ old_kitchen_productivity); 
+                new_kitchen_manhour=new_kitchen_manhour+ parseInt(new_kitchen_size / new_kitchen_productivity);
+                console.log("new kitchen prod cal"+parseInt(new_kitchen_size / new_kitchen_productivity))
+                console.log("new kitchen size"+new_kitchen_size+' new kicthen prod: '+new_kitchen_productivity) 
+                console.log("old kitchen"+old_kitchen_manhour+' new kicthen : '+new_kitchen_manhour)
+                var manhour= old_kitchen_manhour+new_kitchen_manhour
+                console.log("kicthen amhr is"+manhour)
                 
               }
-              if(selected_service=='Upholstery Cleaning'){
-                
+              else if(selected_service=='Upholstery Cleaning'){
+                  var sofa_productivity = data["sofa_perhour_cleaning"];
+                  var chair_productivity = data["chair_perhour_cleaning"];
                 for(var b=0;b<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;b++){
                   
                   if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].upholstery_type=='SOFA'){
                   
-                    var sofa_productivity = data["sofa_perhour_cleaning"];
+                  
                     sofa_size=sofa_size+parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].size)   
                                     
                   }
                   else  if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].upholstery_type=='CHAIR'){
                    
-                    var chair_productivity = data["chair_perhour_cleaning"];
+                    
                     chair_size=chair_size+parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].size.max_size)   
                                     
                   }
@@ -4467,6 +4496,7 @@ function openNav() {
           }
           axios.post(this.url+'/customer/duplicatebookingphase2/'+this.duplicate_id+'/',serviceDetails).then(response=>{
             this.success_msg=true
+           // window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
            /* setTimeout(function(){
               window.location.reload(); // you can pass true to reload function to ignore the client cache and reload from the server
           },1000);*/
@@ -4483,6 +4513,7 @@ function openNav() {
     else{
       axios.post(this.url+'/customer/duplicatebookingphase2/'+this.duplicate_id+'/',this.custServiceScheduled).then(response=>{
         this.success_msg=true
+         // window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
        /* setTimeout(function(){
           window.location.reload(); // you can pass true to reload function to ignore the client cache and reload from the server
       },1000);*/
