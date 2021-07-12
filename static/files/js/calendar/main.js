@@ -435,11 +435,11 @@ const app=  new Vue({
                 this.slots = response.data;
                 for(var i=0;i<this.slots.notapproved_cleanings.length;i++){
 
-                  if(this.slots.appoved_cleanings[i].order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' ){
-                    this.combineSlots.push({type:'approved not paid',class:'approved-notpaid-status-bg',slots:this.slots.appoved_cleanings[j]})
-                  }else{
+                  //if(this.slots.appoved_cleanings[i].order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' ){
+                  //  this.combineSlots.push({type:'approved not paid',class:'approved-notpaid-status-bg',slots:this.slots.appoved_cleanings[j]})
+                  //}else{
                     this.combineSlots.push({type:'not approved',class:'subscription-cleaning-bg',slots:this.slots.notapproved_cleanings[i]})
-                  }
+                  //}
 
                   }
                 for(var j=0;j<this.slots.appoved_cleanings.length;j++){
@@ -916,7 +916,7 @@ const app=  new Vue({
                     }
                     else
                     {
-                      color='not-approved-status-bg'
+                      color='approved-notpaid-status-bg'
                     }  
                   }
                   else if(this.combineSlots[i].type=='approved not paid'){
