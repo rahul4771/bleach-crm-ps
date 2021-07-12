@@ -361,6 +361,10 @@ const app = new Vue({
             service_size:[],
             chair_size:[],
             sofa_size:[],
+            highprice_facade:[],
+            lowprice_facade:[],
+            highprice_window:[],
+            lowprice_window:[],
 
             url:'https://test.bleach-kw.com'
           // url:'http://localhost:8000'
@@ -450,6 +454,40 @@ const app = new Vue({
         
       
     },
+   /* formatFacadeSize(){
+      
+      this.highprice_facade=[]
+      this.lowprice_facade=[]
+      
+        for(var i=0;i<this.service_productivity.length;i++){
+         
+          if(this.service_productivity[i].is_highprice_facade){
+            this.highprice_facade.push(this.service_productivity[i])
+          }
+          else{
+            this.lowprice_facade.push(this.service_productivity[i])
+          }
+        }
+        
+      
+    },*/
+   /* formatWindowSize(){
+      
+      this.new_kitchen_size=[]
+      this.old_kitchen_size=[]
+      
+        for(var i=0;i<this.kitchen_size.length;i++){
+         
+          if(this.kitchen_size[i].is_newkitchen){
+            this.new_kitchen_size.push(this.kitchen_size[i])
+          }
+          else{
+            this.old_kitchen_size.push(this.kitchen_size[i])
+          }
+        }
+        
+      
+    },*/
     addToKeynote(){
       this.keynote_update=false
       this.other_keynotes.push(this.newkeynote)
@@ -806,6 +844,9 @@ const app = new Vue({
     resetKitchenSize(){
       this.editSectionData.size={}
     },
+    resetFacadeSize(){
+      this.editSectionData.size={}
+    },
     updateSection(){
       this.parseKeynotes()
       var sectionData={}
@@ -1043,8 +1084,81 @@ const app = new Vue({
             
            }
              
-         } 
-
+         }
+         
+         /** Facade Cleaning */
+         if(this.service_type=='Facade Cleaning'){
+        
+          for(var j=0;j<this.sections.length;j++){
+           
+            
+           
+            if(this.sections[j].is_highprice_facade){
+              this.highprice_facade=[]
+              this.lowprice_facade=[]
+              for(var i=0;i<this.service_size.length;i++){
+                if(this.service_size[i].is_highprice_facade && this.sections[j].size==this.service_size[i].name){
+                  
+                  this.sections[j].size=this.service_size[i]
+                 
+                }
+                if(this.service_size.is_highprice_facade){
+                  this.highprice_facade.push(this.service_size[i])
+                }
+                
+              }
+            }
+            else{
+             for(var i=0;i<this.service_size.length;i++){
+               if(!this.service_size[i].is_highprice_facade && this.sections[j].size==this.service_size[i].name){
+                 
+                 this.sections[j].size=this.service_size[i]
+                
+               }
+               if(!this.service_size.is_highprice_facade){
+                this.lowprice_facade.push(this.service_size[i])
+              }
+             }
+            }
+           
+          }
+            
+        }
+        /** window cleaning */
+        if(this.service_type=='Window Cleaning'){
+        
+          for(var j=0;j<this.sections.length;j++){
+           
+            
+           
+            if(this.sections[j].is_highprice_window){
+              for(var i=0;i<this.service_size.length;i++){
+                if(this.service_size[i].is_highprice_window && this.sections[j].size==this.service_size[i].name){
+                  
+                  this.sections[j].size=this.service_size[i]
+                 
+                }
+                if(this.service_size.is_highprice_window){
+                  this.highprice_window.push(this.service_size[i])
+                }
+                else{
+                  this.lowprice_window.push(this.service_size[i])
+                }
+              }
+            }
+            else{
+             for(var i=0;i<this.service_size.length;i++){
+               if(!this.service_size[i].is_highprice_window && this.sections[j].size==this.service_size[i].name){
+                 
+                 this.sections[j].size=this.service_size[i]
+                
+               }
+             }
+            }
+           
+          }
+            
+        }
         })
           
         }).catch(err=>{
