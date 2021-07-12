@@ -87,6 +87,7 @@
                 <select id="favcity" name="payment_method" class="payment_method" required>
                 <option value="">Choose Payment Method</option>
                 {% for evaluationdetail in evaluation_details %}
+                
                 {% if evaluationdetail.evaluationbooks %}
                 <option value="SUBSCRIPTION">Subscription</option>
                 {% elif evaluation.bookings %}
@@ -96,6 +97,7 @@
                 <option value="POSTPAID">Post Paid</option>
                 <option value="BREAKDOWN">Break-Down</option>
                 {% endif %}
+                
                 {% endfor %}
                 </select>
                 </label>
