@@ -6,7 +6,7 @@ $(document).ready(function(){
     responsive:{
         0:{
             items:1,
-            nav:true
+            nav:false
         },
         600:{
             items:4,
@@ -33,7 +33,7 @@ $('#service-carousel').owlCarousel({
         },
         600:{
             items:4,
-            nav:true
+            nav:false
         },
         1000:{
             items:5,
@@ -2467,7 +2467,7 @@ responsive:{
     },
     600:{
         items:4,
-        nav:true
+        nav:false
     },
     1000:{
         items:5,
