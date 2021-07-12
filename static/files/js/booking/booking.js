@@ -23,6 +23,8 @@ $('#service-carousel').owlCarousel({
     loop:false,
     
     responsiveClass:true,
+    navText:["<i class='fa fa-chevron-left service-control' @click='prevService()'></i>",
+    "<i class='fa fa-chevron-right service-control'></i>"],
     responsive:{
         0:{
             items:1,
@@ -31,11 +33,11 @@ $('#service-carousel').owlCarousel({
         },
         600:{
             items:4,
-            nav:false
+            nav:true
         },
         1000:{
             items:5,
-            nav:false,
+            nav:true,
             loop:false
         }
     }
@@ -138,7 +140,7 @@ const app=new Vue({
   rules: {
     required: v => !!v || 'this field is required',
   },
-  // url:'http://localhost:8000',
+  //url:'http://localhost:8000',
     url:'https://test.bleach-kw.com',
     //url:'http://127.0.0.1:8000',
     kitchenData:{
@@ -323,7 +325,8 @@ const app=new Vue({
   selectTest: "",
   selectedDuration: "8",
   size: ["SMALL", "MEDIUM", "LARGE"],
-
+  cause_of_stain:['INK MARK', 'HARD DUST', 'COFFEE & TEA SPILL', 'OIL',
+  'GREASE', 'PAINT', 'URINE', 'MILK SPILL', 'NO STAIN', 'OTHERS'],
   walltypes:["BRICKS","GLASS","CONCRETE","CERAMIC","GYPSUM","FABRIC","RUBBER","STONE","TERRAZO","STAINLESS","VINYL","WOODEN","OTHERS"],
   ceilingtypes:["WOODEN","GLASS","CONCRETE","CERAMIC","GYPSUM","FOAM","PLASTIC","FABRIC","RUBBER","STAINLESS","VENYL","OTHERS"],
   floortypes:["MARBLE","GLASS","STONE","CERAMIC","CONCRETE","BRICKS","WOODEN","TERRAZO","OTHERS"],
@@ -2453,7 +2456,8 @@ this.infectionControlServices=[]
  carousel.owlCarousel(
   {
     loop:false,
-
+    navText:["<i class='fa fa-chevron-left service-control' @click='prevService()'></i>",
+    "<i class='fa fa-chevron-right service-control'></i>"],
 responsiveClass:true,
 responsive:{
     0:{
@@ -2463,11 +2467,11 @@ responsive:{
     },
     600:{
         items:4,
-        nav:false
+        nav:true
     },
     1000:{
         items:5,
-        nav:false,
+        nav:true,
         loop:false
     }
 }
