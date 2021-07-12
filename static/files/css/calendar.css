@@ -147,7 +147,7 @@ width:100% !important;
 
 }
 .cl-approved-not-paid-mark{
-    background: #779F39 0% 0% no-repeat padding-box;
+    background: #699189 0% 0% no-repeat padding-box;
     height:17px;
     width:17px;
     margin-top: 2px;
@@ -156,7 +156,7 @@ width:100% !important;
 
 }
 .cl-pending-mark{
-    background: #FFA400 0% 0% no-repeat padding-box;
+    background: #8B8B8B 0% 0% no-repeat padding-box;
     height:17px;
     width:17px;
     margin-top: 2px;

@@ -2605,13 +2605,13 @@ responsive:{
       )
       .then((response) => {
         
-        console.log(response)
+        console.log(response,"pok")
       window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
        
       })
        .catch((error) => {
         console.log(error);
-      //  window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
+        window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
       });
 
    }
