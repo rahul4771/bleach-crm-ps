@@ -358,7 +358,6 @@ class EvaluationBookSection(models.Model):
 	cement_residue   = models.BooleanField(null=False,blank=True,default=False)
 	oil_residue      = models.BooleanField(null=False,blank=True,default=False)
 	hall_size        = models.CharField(max_length=100,blank=True,null=True)
-	hall_size_unit   = models.CharField(max_length=100,blank=True,null=True)
 	window_side      = models.CharField(max_length=100,blank=True,null=True)
 	new_kitchen      = models.BooleanField(null=False,blank=True,default=False)
 	is_highprice_facade = models.BooleanField(null=False,blank=True,default=False)

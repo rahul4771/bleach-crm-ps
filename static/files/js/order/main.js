@@ -86,6 +86,10 @@ if(app.service_type=='Kitchen Cleaning'){
   app.editSectionData.new_kitchen=app.sections[index-1].new_kitchen
   app.editSectionData.oil_residue=app.sections[index-1].oil_residue
 }
+if(app.service_type=='Facade Cleaning'){
+  app.editSectionData.is_highprice_facade=app.sections[index-1].is_highprice_facade
+  
+}
  app.editSectionData.keynotes=app.sections[index-1].keynotesections
   console.log("section is "+JSON.stringify(app.sections[index-1]))
   app.sectionData=app.sections[index-1]
@@ -101,19 +105,19 @@ if(app.service_type=='Kitchen Cleaning'){
   app.editSectionData.section_cost=app.sectionData.section_cost
   app.editSectionData.section_name=app.sectionData.section_name
   app.removeInitialKitchenCost()
-  if(app.sectionData.wall_type!="")
+  if(app.sectionData.wall_type!="" && app.sectionData.wall_type!=null)
   {
     app.editSectionData.wall_type=app.sectionData.wall_type.split(',')
   }
-  if(app.sectionData.floor_type!="")
+  if(app.sectionData.floor_type!="" && app.sectionData.floor_type!=null)
   {
     app.editSectionData.floor_type=app.sectionData.floor_type.split(',')
   }
-  if(app.sectionData.ceiling_type!="")
+  if(app.sectionData.ceiling_type!="" && app.sectionData.ceiling_type!=null)
   {
     app.editSectionData.ceiling_type=app.sectionData.ceiling_type.split(',')
   }
-  if(app.sectionData.materials!="")
+  if(app.sectionData.materials!="" && app.sectionData.materials!=null )
   {
     app.editSectionData.materials=app.sectionData.materials.split(',')
   }
@@ -121,7 +125,7 @@ if(app.service_type=='Kitchen Cleaning'){
   
   
   
-  app.findSize()
+  //app.findSize()
   
 }
 
@@ -737,6 +741,10 @@ const app = new Vue({
      this.editSectionData.section_id=sid
       console.log("section is "+JSON.stringify(this.sections[index-1]))
       this.sectionData=this.sections[index-1]
+      if(this.service_type=='Facade Cleaning'){
+        this.editSectionData.is_highprice_facade=this.sections[index-1].is_highprice_facade
+        
+      }
       $('#edit-dialog-tigger').click()
       this.editSectionData.section_cost=this.sectionData.section_cost
       this.editSectionData.section_name=this.sectionData.section_name
@@ -1089,23 +1097,32 @@ const app = new Vue({
          
          /** Facade Cleaning */
          if(this.service_type=='Facade Cleaning'){
+           this.highprice_facade=[]
+           this.lowprice_facade=[]
+          for(var i=0;i<this.service_size.length;i++){
+            
+            if(this.service_size[i].is_highprice_facade){
+              this.highprice_facade.push(this.service_size[i])
+            }
+            else{
+              this.lowprice_facade.push(this.service_size[i])
+            }
+            
+          }
         
           for(var j=0;j<this.sections.length;j++){
            
             
            
             if(this.sections[j].is_highprice_facade){
-              this.highprice_facade=[]
-              this.lowprice_facade=[]
+             
               for(var i=0;i<this.service_size.length;i++){
                 if(this.service_size[i].is_highprice_facade && this.sections[j].size==this.service_size[i].name){
                   
                   this.sections[j].size=this.service_size[i]
                  
                 }
-                if(this.service_size.is_highprice_facade){
-                  this.highprice_facade.push(this.service_size[i])
-                }
+                
                 
               }
             }
@@ -1116,9 +1133,7 @@ const app = new Vue({
                  this.sections[j].size=this.service_size[i]
                 
                }
-               if(!this.service_size.is_highprice_facade){
-                this.lowprice_facade.push(this.service_size[i])
-              }
+               
              }
             }
            

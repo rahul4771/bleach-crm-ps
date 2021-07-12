@@ -23,6 +23,8 @@ $('#service-carousel').owlCarousel({
     loop:false,
     
     responsiveClass:true,
+    navText:["<i class='fa fa-chevron-left service-control' @click='prevService()'></i>",
+    "<i class='fa fa-chevron-right service-control'></i>"],
     responsive:{
         0:{
             items:1,
@@ -31,11 +33,11 @@ $('#service-carousel').owlCarousel({
         },
         600:{
             items:4,
-            nav:false
+            nav:true
         },
         1000:{
             items:5,
-            nav:false,
+            nav:true,
             loop:false
         }
     }
@@ -138,8 +140,8 @@ const app=new Vue({
   rules: {
     required: v => !!v || 'this field is required',
   },
-  url:'http://localhost:8000',
-   // url:'https://test.bleach-kw.com',
+  //url:'http://localhost:8000',
+    url:'https://test.bleach-kw.com',
     //url:'http://127.0.0.1:8000',
     kitchenData:{
         wall_type:'',
@@ -2454,7 +2456,8 @@ this.infectionControlServices=[]
  carousel.owlCarousel(
   {
     loop:false,
-
+    navText:["<i class='fa fa-chevron-left service-control' @click='prevService()'></i>",
+    "<i class='fa fa-chevron-right service-control'></i>"],
 responsiveClass:true,
 responsive:{
     0:{
@@ -2464,11 +2467,11 @@ responsive:{
     },
     600:{
         items:4,
-        nav:false
+        nav:true
     },
     1000:{
         items:5,
-        nav:false,
+        nav:true,
         loop:false
     }
 }
