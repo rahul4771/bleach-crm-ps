@@ -138,8 +138,8 @@ const app=new Vue({
   rules: {
     required: v => !!v || 'this field is required',
   },
-  // url:'http://localhost:8000',
-    url:'https://test.bleach-kw.com',
+  url:'http://localhost:8000',
+   // url:'https://test.bleach-kw.com',
     //url:'http://127.0.0.1:8000',
     kitchenData:{
         wall_type:'',
@@ -323,7 +323,8 @@ const app=new Vue({
   selectTest: "",
   selectedDuration: "8",
   size: ["SMALL", "MEDIUM", "LARGE"],
-
+  cause_of_stain:['INK MARK', 'HARD DUST', 'COFFEE & TEA SPILL', 'OIL',
+  'GREASE', 'PAINT', 'URINE', 'MILK SPILL', 'NO STAIN', 'OTHERS'],
   walltypes:["BRICKS","GLASS","CONCRETE","CERAMIC","GYPSUM","FABRIC","RUBBER","STONE","TERRAZO","STAINLESS","VINYL","WOODEN","OTHERS"],
   ceilingtypes:["WOODEN","GLASS","CONCRETE","CERAMIC","GYPSUM","FOAM","PLASTIC","FABRIC","RUBBER","STAINLESS","VENYL","OTHERS"],
   floortypes:["MARBLE","GLASS","STONE","CERAMIC","CONCRETE","BRICKS","WOODEN","TERRAZO","OTHERS"],
