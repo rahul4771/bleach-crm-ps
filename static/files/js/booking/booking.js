@@ -1380,7 +1380,19 @@ console.log(response)
               "cement_residue":this.multiServicesBill[i].bill[j].section.cement_residue,
               "section_cost":this.multiServicesBill[i].bill[j].section.section_cost,
               "section_net_cost":this.multiServicesBill[i].bill[j].section.section_cost,
-              "keynotes":{}
+              "keynotes":{},
+              "is_newkitchen":false,
+              "is_highprice_facade":false,
+              "is_highprice_window":false,
+              }
+              if(this.multiServicesBill[i].bill[j].section.size.is_highprice_facade){
+                this.serviceDetails.service_details[i].sections[j].is_highprice_facade=true
+              }
+              if(this.multiServicesBill[i].bill[j].section.size.is_highprice_window){
+                this.serviceDetails.service_details[i].sections[j].is_highprice_window=true
+              }
+              if(this.multiServicesBill[i].bill[j].section.size.is_newkitchen){
+                this.serviceDetails.service_details[i].sections[j].is_newkitchen=true
               }
               
            if(this.multiServicesBill[i].bill[j].section.wall_type)
