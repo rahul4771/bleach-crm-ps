@@ -533,7 +533,7 @@
             font-weight: bold;
             width: 200px;
             font-size: 22px;">
-            {% if invoice.customerbooking > 1 %}
+            {% if invoice.customerbooking > 0 %}
                 <b> <a href="https://test.bleach-kw.com/customer/booking/invoice/prw{{invoice.evaluation.evaluation_id|slice:'3:'}}{{invoice.evaluation.customer.username}}" class="button-a">Pay</a> </b>
             {% else %}
                 {% if invoice.evaluation.payment_method == 'SUBSCRIPTION' %}
