@@ -423,7 +423,11 @@
                             <b>Payment Before Cleaning</b>
                         </div>
                         <div style="font-size: 15px;" class="left">
-                            <b>340.000</b>&nbsp;KD
+                            {% if evaluation.payment_method == 'BREAKDOWN' %}
+                                <b>{{evaluation.before_cleaning_amount|floatformat:3}}</b> &nbsp; KD
+                            {% elif evaluation.payment_method == 'PREPAID' %}
+                                <b>{{evaluation.total_cost|floatformat:3}}</b> &nbsp; KD
+                            {% endif %}
                         </div>
                     </div>
                 {% elif evaluation.payment_method == 'POSTPAID' or evaluation.payment_method == 'BREAKDOWN' %}
@@ -432,7 +436,11 @@
                             <b>Payment After Cleaning</b>
                         </div>
                         <div style="font-size: 15px;" class="left text-right">
-                            <b>35.000</b> &nbsp; KD
+                        {% if evaluation.payment_method == 'BREAKDOWN' %}
+                            <b>{{evaluation.after_cleaning_amount|floatformat:3}}</b> &nbsp; KD
+                        {% elif evaluation.payment_method == 'POSTPAID' %}
+                            <b>{{evaluation.total_cost|floatformat:3}}</b> &nbsp; KD
+                        {% endif %}
                         </div>
                     </div>
                 {% endif %}
