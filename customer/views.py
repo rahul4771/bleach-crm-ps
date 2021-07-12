@@ -4733,8 +4733,8 @@ class EditOrderDetails(APIView):
 			order.total_amount    += saved_section.section_net_cost
 			order.save()
 
-			order.evaluation.total_cost   += saved_section.section_net_cost
-			order.evaluation.estimated    += saved_section.section_net_cost
+			order.evaluation.total_cost        += saved_section.section_net_cost
+			order.evaluation.estimated_cost    += saved_section.section_net_cost
 			order.evaluation.save()
 
 			saved_section.delete()
