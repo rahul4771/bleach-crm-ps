@@ -95,6 +95,7 @@ function openNav() {
             
           },
         data: {
+          main_eval_id:null,
           customDateSelected:[],
           customDialog:false,
           cleaningPolicy:'One Time',
@@ -4292,6 +4293,7 @@ function openNav() {
     this.multiServicesBill=[]
     axios.get(this.url+'/customer/evaluatorbookingmultiplephase3/customer/'+id).then(response=>{
       this.bookedServiceDetails=response.data.evaluation_details
+      this.main_eval_id=response.data.evaluation_id
       if(this.bookedServiceDetails.length>0){
         this.multiAddress=true
       }
@@ -4479,6 +4481,7 @@ function openNav() {
   },
   sendLetCustScheduled(){
     if(!this.scheduleStat){
+      var ch_count=0
       for(var ch in this.scheduleGroup){
         if(this.scheduleGroup[ch].length>0){
           var serviceDetails={
@@ -4496,6 +4499,12 @@ function openNav() {
           }
           axios.post(this.url+'/customer/duplicatebookingphase2/'+this.duplicate_id+'/',serviceDetails).then(response=>{
             this.success_msg=true
+            ch_count=ch_count+1
+            
+            if(ch_count==(Object.keys(this.scheduleGroup).length)){
+              window.location.href='/common/makequatation/phase1/'+this.bookedServiceDetails[0].address.customer.id+'/'+this.main_eval_id
+
+            }
            // window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
            /* setTimeout(function(){
               window.location.reload(); // you can pass true to reload function to ignore the client cache and reload from the server
@@ -4513,6 +4522,7 @@ function openNav() {
     else{
       axios.post(this.url+'/customer/duplicatebookingphase2/'+this.duplicate_id+'/',this.custServiceScheduled).then(response=>{
         this.success_msg=true
+        window.location.href='/common/makequatation/phase1/'+this.bookedServiceDetails[0].address.customer.id+'/'+this.main_eval_id
          // window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
        /* setTimeout(function(){
           window.location.reload(); // you can pass true to reload function to ignore the client cache and reload from the server
