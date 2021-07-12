@@ -3489,6 +3489,12 @@ function openNav() {
               var data = response.data;
             console.log(data);
             var total_estimated_size =0
+            var sofa_size=0
+            var sofa_manhour=0
+            var chair_manhour=0
+            var sofa_productivity=0
+            var chair_productivity=0
+            var chair_size=0
               for(var i=0;i<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;i++)
               {
                 total_estimated_size = total_estimated_size+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[i].size.max_size;
@@ -3502,6 +3508,28 @@ function openNav() {
                 }
                 
               }
+              if(selected_service=='Upholstery Cleaning'){
+                
+                for(var b=0;b<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;b++){
+                  
+                  if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].upholstery_type=='SOFA'){
+                  
+                    var sofa_productivity = data["sofa_perhour_cleaning"];
+                    sofa_size=sofa_size+parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].size)   
+                                    
+                  }
+                  else  if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].upholstery_type=='CHAIR'){
+                   
+                    var chair_productivity = data["chair_perhour_cleaning"];
+                    chair_size=chair_size+parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].size.max_size)   
+                                    
+                  }
+
+                }
+                sofa_manhour=sofa_manhour+ parseInt(sofa_size / sofa_productivity); 
+                chair_manhour=chair_manhour+ parseInt(chair_size / chair_productivity); 
+                var manhour=sofa_manhour+chair_manhour
+              }
              /* else if(selected_service=='Upholstry Cleaning'){
                 if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].new_kitchen){
                   var productivity = data["newkitchen_perhour_cleaning"];
@@ -3513,11 +3541,12 @@ function openNav() {
               }*/
               else{
                 var productivity = data["perhour_cleaning"];
+                console.log("productivity is "+productivity)
+                console.log("total size is "+total_estimated_size)
+                var manhour = parseInt(total_estimated_size / productivity);
               }
             
-              console.log("productivity is "+productivity)
-              console.log("total size is "+total_estimated_size)
-              var manhour = parseInt(total_estimated_size / productivity);
+             
             
          
             //optimal finding
