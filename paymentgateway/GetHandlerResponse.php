@@ -36,14 +36,12 @@
 /* NOTE - MERCHANT MUST LOG THE RESPONSE RECEIVED IN LOGS AS PER BEST PRACTICE */	
 	if($ResErrorText==null && $ResErrorNo==null)
 	{
-	echo "result success";
 	/*IMPORTANT NOTE - MERCHANT SHOULD UPDATE 
 					TRANACTION PAYMENT STATUS IN MERCHANT DATABASE AT THIS POSITION 
 					AND THEN REDIRECT CUSTOMER ON RESULT PAGE*/
 		$ResTranData= $_REQUEST['trandata'];
 		if($ResTranData !=null)
 		{
-			echo "result success extreme";
 		//Decryption logice starts
 		$decrytedData=decrypt($ResTranData,$termResourceKey);
 		//  header("Location: https://my.bleachkw.com/customer/payment/response/?".$decrytedData);
@@ -52,23 +50,9 @@
 		}
 	}
 	else{
-				
-		echo "result failure";
-		echo "<br>";
-		echo $ResErrorNo;
-		echo "<br>";
-		echo $ResErrorText;
-		echo "<br>";
-		echo $ResTrackID;
-		echo "<br>";
-		echo $ResAmount;
-		echo "<br>";
-		echo $ResPaymentId;
-		echo "<br>";
-		echo $Resudf1;
-				//  header("Location: https://my.bleachkw.com/customer/payment/failed/?"."Error=".$ResErrorNo."&ErrorText=".$ResErrorText."&trackid=".$ResTrackID."&amt=".$ResAmount."&paymentid="+$ResPaymentId."&udf1="+$Resudf1);
-				header("Location: https://test.bleach-kw.com/customer/payment/failed/?"."Error=".$ResErrorNo."&ErrorText=".$ResErrorText."&trackid=".$ResTrackID."&amt=".$ResAmount."&paymentid="+$ResPaymentId."&udf1="+$Resudf1);
-                exit();
+			//  header("Location: https://my.bleachkw.com/customer/payment/failed/?"."Error=".$ResErrorNo."&ErrorText=".$ResErrorText."&trackid=".$ResTrackID."&amt=".$ResAmount."&paymentid="+$ResPaymentId."&udf1="+$Resudf1);
+			header("Location: https://test.bleach-kw.com/customer/payment/failed/?"."Error=".$ResErrorNo."&ErrorText=".$ResErrorText."&trackid=".$ResTrackID."&amt=".$ResAmount."&paymentid="+$ResPaymentId."&udf1="+$Resudf1);
+			exit();
 	}
 	  
 	

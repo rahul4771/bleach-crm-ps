@@ -19,7 +19,7 @@
         <div class="main-content-holder">
             <!--main-content-holder-->
             <div class="white-wrapper">
-                <div class="d-flex">
+                <div class="d-flex d-grid">
                     <div>
 
                         <div class="inv-input-container h-30">
@@ -38,26 +38,57 @@
                     </div>
                 </div>
                 <div class="mt-20">
-                    <table class="inv-table">
+                    <table class="inv-table footable">
+
+                        <thead>
+                            <tr>
+                                <th style="width: %;">
+                                    Order Number
+                                </th>
+                                <th data-hide="phone,tablet"  style="width: %;">
+                                    Team Leader
+                                </th>
+                                <th data-hide="phone,tablet"  style="width: %;">
+                                    Service Type
+                                </th>
+                                <th data-hide="phone,tablet"  style="width: %;">
+                                    Check Out/IN
+                                </th>
+    
+                                <th>
+                                    Status
+                                </th>
+    
+                                <th data-hide="phone,tablet"  style="width: %;" class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                      <tbody>
                         <tr>
-                            <th style="width: %;">
-                                Order Number
-                            </th>
-                            <th style="width: %;">
-                                Team Leader
-                            </th>
-                            <th style="width: %;">
-                                Service Type
-                            </th>
-                            <th style="width: %;">
-                                Check Out/IN
-                            </th>
+                            <td>
+                                0000000
+                            </td>
+                            <td>
+                                Name
+                            </td>
+                            <td>
+                                Name
+                            <td>
+                                Out
+                            </td>
 
-                            <th>
-                                Status
-                            </th>
+                            <td>
+                                <button class="inv-active-btn">
+                                    Active
+                                </button>
+                            </td>
+                            <td style="float: right;">
 
-                            <th style="width: %;" class="text-center">Action</th>
+                                <button class="inv-plan-img-btn" onclick="openNav()"> <img
+                                        src="{% static 'files/inventory/icons/edit.png' %}" alt=""> </button>
+                                <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel"> <img
+                                        src="{% static 'files/inventory/icons/delete.png' %}" alt=""> </button>
+
+                            </td>
                         </tr>
                         <tr>
                             <td>
@@ -81,7 +112,7 @@
 
                                 <button class="inv-plan-img-btn" onclick="openNav()"> <img
                                         src="{% static 'files/inventory/icons/edit.png' %}" alt=""> </button>
-                                <button class="inv-plan-img-btn"> <img
+                                <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel"> <img
                                         src="{% static 'files/inventory/icons/delete.png' %}" alt=""> </button>
 
                             </td>
@@ -113,34 +144,9 @@
 
                             </td>
                         </tr>
-                        <tr>
-                            <td>
-                                0000000
-                            </td>
-                            <td>
-                                Name
-                            </td>
-                            <td>
-                                Name
-                            <td>
-                                Out
-                            </td>
 
-                            <td>
-                                <button class="inv-active-btn">
-                                    Active
-                                </button>
-                            </td>
-                            <td style="float: right;">
-
-                                <button class="inv-plan-img-btn" onclick="openNav()"> <img
-                                        src="{% static 'files/inventory/icons/edit.png' %}" alt=""> </button>
-                                <button class="inv-plan-img-btn"> <img
-                                        src="{% static 'files/inventory/icons/delete.png' %}" alt=""> </button>
-
-                            </td>
-                        </tr>
-
+                      </tbody>
+                      
 
 
                     </table>
@@ -223,6 +229,38 @@
                         <button data-dismiss="modal" onclick="closeNav()" class="view-button">Cancel</button>
         </div>
     </div>
+
+    <div class="modal fade" id="deleteModel" role="dialog">
+        <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12 mt-20">
+
+                        
+                        <div class="d-flex ">
+                            <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to delete order</p></div>
+                            <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                                <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                            </button>
+    
+                        </div>
+                    </div>
+                </div>
+               
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <div class="cancel-model-content">
+                            <button class="sent-button" >Delete</button>
+                            <button data-dismiss="modal" class="view-button">Cancel</button>
+                          
+                        </div>
+                    </div>
+    
+                </div>
+            </div>
+        </div>
+      </div>
 
 
 

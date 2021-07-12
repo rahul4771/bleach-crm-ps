@@ -4659,20 +4659,20 @@ class EditOrderDetails(APIView):
 			section_id = request.data.get('section_id')
 			saved_section    = EvaluationBookSection.objects.select_related('evaluation_book__evaluation_details').get(id=section_id)
 			
-			saved_section.evaluation_book.estimated_cost     				  += saved_section.section_net_cost
-			saved_section.evaluation_book.total_cost         				  += saved_section.section_net_cost
+			saved_section.evaluation_book.estimated_cost     				  -= saved_section.section_net_cost
+			saved_section.evaluation_book.total_cost         				  -= saved_section.section_net_cost
 			saved_section.evaluation_book.save()
 
-			saved_section.evaluation_book.evaluation_details.estimated_cost += saved_section.section_net_cost
-			saved_section.evaluation_book.evaluation_details.total_cost     += saved_section.section_net_cost
+			saved_section.evaluation_book.evaluation_details.estimated_cost -= saved_section.section_net_cost
+			saved_section.evaluation_book.evaluation_details.total_cost     -= saved_section.section_net_cost
 			saved_section.evaluation_book.evaluation_details.save()
 
-			order.remining_amount += saved_section.section_net_cost
-			order.total_amount    += saved_section.section_net_cost
+			order.remining_amount -= saved_section.section_net_cost
+			order.total_amount    -= saved_section.section_net_cost
 			order.save()
 
-			order.evaluation.total_cost   += saved_section.section_net_cost
-			order.evaluation.estimated    += saved_section.section_net_cost
+			order.evaluation.total_cost        -= saved_section.section_net_cost
+			order.evaluation.estimated_cost    -= saved_section.section_net_cost
 			order.evaluation.save()
 
 			saved_section.delete()

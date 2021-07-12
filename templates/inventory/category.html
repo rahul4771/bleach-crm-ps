@@ -75,7 +75,7 @@
                             </td>
                             <td>
                                 <button class="inv-plan-btn" onclick="openNavaddSegment2()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="" > Add Segment</button>
-                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                <button class="inv-plan-img-btn" onclick="openNavEditCategory()"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
                                 <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
 
                             </td>
@@ -202,6 +202,64 @@
                         <button data-dismiss="modal" onclick="closeNavAddCategory()" class="view-button">Cancel</button>
         </div>
     </div>
+    <div id="editCategory" class="inv-sidedrawer">
+
+        <div class="inv-sidedrawer-inner">
+            <div class="d-flex">
+                <div class="inv-drawer-head">
+                    Edit Category
+                </div>
+                <div class="right-pos">
+
+                    <button onclick="closeNavEditCategory()" class="img-button">
+                        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                    </button>
+                </div>
+            </div>
+            <hr>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Category  Name</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Category  Code</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Status</div>
+
+                    <select id="id_payment" class="minimal">
+                        <option  ></option>
+                        <option  >Active</option>
+                        <option value="Post Paid">Inactive</option>
+
+                    </select>
+                </div>
+
+            </div>
+            
+
+
+          
+        </div>
+        <div class="inv-drawer-footer">
+            <button class="sent-button" >Submit</button>
+                        <button data-dismiss="modal" onclick="closeNavEditCategory()" class="view-button">Cancel</button>
+        </div>
+    </div>
     <div id="addSegment2" class="inv-sidedrawer">
 
         <div class="inv-sidedrawer-inner">
@@ -281,6 +339,19 @@
     }
     function closeNavAddCategory() {
         document.getElementById("addCategory").style.width = "0";
+    }
+    function openNavEditCategory() {
+        if(screen.width<= 600){
+            document.getElementById("editCategory").style.width = "100%";
+        }else if(screen.width<= 720){
+            document.getElementById("editCategory").style.width = "50%";
+        }
+        else{
+            document.getElementById("editCategory").style.width = "30%";
+        }  
+    }
+    function closeNavEditCategory() {
+        document.getElementById("editCategory").style.width = "0";
     }
     function openNavaddSegment2() {
         console.log("clied")
