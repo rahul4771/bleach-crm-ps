@@ -910,7 +910,7 @@ const app=  new Vue({
                     color='followup-cleaning-status-bg'
                   }
                   else if(this.combineSlots[i].type=='not approved'){
-                    if(this.combineSlots[i].slots.order.payment_status == 'PENDING' && this.combineSlots[i].slots.order.order_status == None)
+                    if(this.combineSlots[i].slots.order.payment_status == 'PENDING' && this.combineSlots[i].slots.order.order_status == 'None')
                     {
                       color='not-approved-status-bg'
                     }
