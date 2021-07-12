@@ -13,6 +13,7 @@ import requests
 from django.core.mail import send_mail,EmailMultiAlternatives
 from accountant.models import PaymentHistory
 from django.db.models import Prefetch
+from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,Max,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField,CharField
 # Create your views here.
 
 def quotation_data(request):
@@ -140,7 +141,7 @@ def quotation_data_policy(request):
 
 def sendinvoice(request):
     order_no = request.GET.get('order_no')
-    order = Order.objects.filter(order_no=order_no).first()
+    order = Order.objects.filter(order_no=order_no).annotate(customerbooking=Sum(Case(When(evaluation__booking_evaluation__booking_type='CLEANINGBOOKING',then=1),default=0,output_field=IntegerField()))).first()
 
     selected_options = request.GET.get('selected_options')
     print(selected_options,"opr")

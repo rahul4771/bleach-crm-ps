@@ -3124,9 +3124,17 @@ class MakeQuatationPhase1(IsAuthenticated,View):
 		Order.objects.filter(evaluation__id=evaluation_id,is_active=True).update(total_amount=total_cost,remining_amount=total_cost)
 
 		#sms integration
-		evaluation = Evaluation.objects.filter(id=evaluation_id,is_active=True).first()
+		order = Order.objects.filter(evaluation__id=evaluation_id,is_active=True).first()
+		evaluation = order.evaluation
 		evaluationdetails = EvaluationDetails.objects.filter(evaluation=evaluation).first()
-		evaluationbook = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).first()
+		
+		if evaluationdetails.evaluator:
+			evaluator = evaluationdetails.evaluator.name
+		else:
+			evaluator = evaluation.call_attender.name
+
+		evaluationbooks = EvaluationBook.objects.filter(evaluation_details=evaluationdetails)
+		evaluationbook = evaluationbooks.first()
 		language = evaluation.customer.sms_preference
 
 		messages.success(request,"Quotation Submitted Succesfully")	
@@ -3178,6 +3186,14 @@ class MakeQuatationPhase1(IsAuthenticated,View):
 			print(response.text,"respo")
 		else:
 			pass
+
+		if evaluation.customer.is_email == True :
+			#send mail
+			msg_html = render_to_string('email/quatation.html',{"evaluator":evaluator,"evaluation":evaluation,"evaluationbooks":evaluationbooks,"address_list":separator.join(address_list)})
+			msg = EmailMultiAlternatives('Bleach Quotation', '', 'notification@bleach-kw.com', [evaluation.customer.email])
+			msg.attach_alternative(msg_html, "text/html")
+			msg.send(fail_silently=False)
+			print(msg,"msg")
 		
 		if request.user.user_type == 'AGENT':
 			return redirect('agent:agentdash-board')

@@ -382,7 +382,7 @@
                     <div id="item-left">
                         <b>{{book.service_type.name}}</b>
                         {% for section in book.sections %}
-                        <p style="font-size: 15px; margin-top: 10px; line-height: 2;">Size : <b>{{section.size}} {{section.unit}}</b>
+                        <p style="font-size: 15px; margin-top: 10px; line-height: 2;">Size : <b>{{section.size}}</b>
                             &nbsp; Quantity : <b>{{section.section_cleanings|default_if_none:'1'}}</b> &nbsp; Unit Price : <b>{{section.section_cost|default_if_none:'0.000'}}</b></p>
                         {% endfor %}
                     </div>
@@ -502,15 +502,17 @@
 
 
                     {% if invoice.evaluation.payment_method == 'BREAKDOWN' %}
-                  {% if invoice.evaluation.before_cleaning_amount != invoice.preamount_paid %}
-                    {{invoice.evaluation.before_cleaning_amount|floatformat:'3'}} &nbsp;KD
-                  {% elif invoice.evaluation.after_cleaning_amount != invoice.postamount_paid %}
-                    {{invoice.remining_amount|floatformat:'3'}} &nbsp;KD
-                  {% endif %}
+                        {% if invoice.evaluation.before_cleaning_amount != invoice.preamount_paid %}
+                            {{invoice.evaluation.before_cleaning_amount|floatformat:'3'}} &nbsp;KD
+                        {% elif invoice.evaluation.after_cleaning_amount != invoice.postamount_paid %}
+                            {{invoice.remining_amount|floatformat:'3'}} &nbsp;KD
+                        {% endif %}
 
-                  {% else %}
-                  {{invoice.remining_amount|floatformat:'3'}} &nbsp;KD
-                  {% endif %}
+                    {% elif invoice.evaluation.payment_method == 'SUBSCRIPTION' %}
+                        {{invoice.subscription_to_pay|floatformat:'3'}} &nbsp;KD
+                    {% else %}
+                        {{invoice.remining_amount|floatformat:'3'}} &nbsp;KD
+                    {% endif %}
 
                     </div>
                 </div>
@@ -531,7 +533,7 @@
             font-weight: bold;
             width: 200px;
             font-size: 22px;">
-            {% if invoice.cleaning_booking %}
+            {% if invoice.customerbooking > 1 %}
                 <b> <a href="https://test.bleach-kw.com/customer/booking/invoice/prw{{invoice.evaluation.evaluation_id|slice:'3:'}}{{invoice.evaluation.customer.username}}" class="button-a">Pay</a> </b>
             {% else %}
                 {% if invoice.evaluation.payment_method == 'SUBSCRIPTION' %}

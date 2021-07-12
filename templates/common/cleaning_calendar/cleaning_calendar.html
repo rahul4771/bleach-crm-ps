@@ -62,7 +62,7 @@
 
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'"><span v-if="item.slots.order.order_no"> <% item.slots.order.order_no %></span>   </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'" >
-                  <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
+                  <span  v-if="item.slots.cleaning_team_order_scheduler.length>0"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
                   
                       <span  v-else @click="addCleaningTeam(item.slots.id)">+</span>
@@ -118,7 +118,7 @@
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
-                  <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
+                  <span  v-if="item.slots.cleaning_team_order_scheduler.length>0"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
                   <span  v-else @click="addCleaningTeam(item.slots.id)">+</span>
                   {% else %}
@@ -169,7 +169,7 @@
                 
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
-                  <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
+                  <span  v-if="item.slots.cleaning_team_order_scheduler.length>0"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
                   <span  v-else @click="addCleaningTeam(item.slots.id)">+</span>
                   {% else %}
@@ -220,7 +220,7 @@
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
-                  <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
+                  <span  v-if="item.slots.cleaning_team_order_scheduler.length>0"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
                   <span  v-else @click="addCleaningTeam(item.slots.id)">+</span>
                   {% else %}
@@ -269,7 +269,7 @@
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
-                  <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
+                  <span  v-if="item.slots.cleaning_team_order_scheduler.length>0"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
                   <span  v-else @click="addCleaningTeam(item.slots.id)">+</span>
                   {% else %}
@@ -321,7 +321,7 @@
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
-                  <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
+                  <span  v-if="item.slots.cleaning_team_order_scheduler.length>0"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
                   <span  v-else @click="addCleaningTeam(item.slots.id)">+</span>
                   {% else %}
@@ -371,7 +371,7 @@
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
-                  <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
+                  <span  v-if="item.slots.cleaning_team_order_scheduler.length>0"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
                   <span  v-else @click="addCleaningTeam(item.slots.id)">+</span>
                   {% else %}
@@ -420,7 +420,7 @@
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
-                  <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
+                  <span  v-if="item.slots.cleaning_team_order_scheduler.length>0"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
                   <span  v-else @click="addCleaningTeam(item.slots.id)">+</span>
                   {% else %}
@@ -470,7 +470,7 @@
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
-                  <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
+                  <span  v-if="item.slots.cleaning_team_order_scheduler.length>0"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
                   <span  v-else @click="addCleaningTeam(item.slots.id)">+</span>
                   {% else %}
@@ -520,7 +520,7 @@
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
-                  <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
+                  <span  v-if="item.slots.cleaning_team_order_scheduler.length>0"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
                   <span  v-else @click="addCleaningTeam(item.slots.id)">+</span>
                   {% else %}
@@ -570,7 +570,7 @@
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
-                  <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
+                  <span  v-if="item.slots.cleaning_team_order_scheduler.length>0"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
                   <span  v-else @click="addCleaningTeam(item.slots.id)">+</span>
                   {% else %}
@@ -620,7 +620,7 @@
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
-                  <span  v-if="item.slots.no_of_cleaners"><% item.slots.no_of_cleaners %></span>
+                  <span  v-if="item.slots.cleaning_team_order_scheduler.length>0"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
                     <span  v-else @click="addCleaningTeam(item.slots.id)">+</span>
                   {% else %}
@@ -845,25 +845,46 @@ class="cl-service-list"
          <div class="d-flex" v-if="currentSlotDetails.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE' && currentSlotDetails.evaluation_details.evaluation.quatation_status=='APPROVED' && currentSlotDetails.evaluation_details.evaluation.payment_method=='PREPAID' && currentSlotDetails.order.payment_status=='COMPLETED'" >
           <div class="cl-onetime-mark"></div>
           <div class="cl-subtext" >
-            One Time
+            One Time Service
            </div>
          </div>
 
          <div class="d-flex" v-else-if="currentSlotDetails.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE' && currentSlotDetails.evaluation_details.evaluation.quatation_status=='APPROVED' && currentSlotDetails.evaluation_details.evaluation.payment_method=='POSTPAID'" >
           <div class="cl-onetime-mark"></div>
           <div class="cl-subtext" >
-            One Time
+            One Time Service
            </div>
          </div>
 
          <div class="d-flex" v-else-if="currentSlotDetails.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE' && currentSlotDetails.evaluation_details.evaluation.quatation_status=='APPROVED' && currentSlotDetails.evaluation_details.evaluation.payment_method=='BREAKDOWN'" >
           <div class="cl-onetime-mark"></div>
           <div class="cl-subtext" >
-            One Time
+            One Time Service
            </div>
          </div>
 
-         <div class="d-flex" v-else-if="currentSlotDetails.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE' && currentSlotDetails.evaluation_details.evaluation.quatation_status=='APPROVED' && currentSlotDetails.order.payment_status=='PENDING' && currentSlotDetails.evaluation_details.evaluation.payment_method!='POSTPAID'" >
+         <div class="d-flex" v-else-if="currentSlotDetails.evaluation_details.evaluation.quatation_status=='PENDING' && currentSlotDetails.order.order_status==None" >
+          <div class="cl-pending-mark"></div>
+          <div class="cl-subtext" >
+            Not Approved
+           </div>
+         </div>
+
+         <div class="d-flex" v-else-if="currentSlotDetails.evaluation_details.evaluation.quatation_status=='REJECTED'" >
+          <div class="cl-rejected-mark"></div>
+          <div class="cl-subtext" >
+            Rejected
+           </div>
+         </div>
+
+         <div class="d-flex" v-else-if="currentSlotDetails.order.order_status=='ORDER_CANCELLED'" >
+          <div class="cl-cancelled-mark"></div>
+          <div class="cl-subtext" >
+            Cancelled
+           </div>
+         </div>
+
+         <div class="d-flex" v-else-if="currentSlotDetails.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE' && currentSlotDetails.order.payment_status=='PENDING' && currentSlotDetails.order.order_status=='APPROVED_BY_CLIENT'" >
           <div class="cl-approved-not-paid-mark"></div>
           <div class="cl-subtext" >
             Approved Not Paid
