@@ -215,6 +215,10 @@ const app = new Vue({
   components: { Multiselect: window.VueMultiselect.default },
 
   data: {
+    highprice_facade:[],
+    lowprice_facade:[],
+    highprice_window:[],
+    lowprice_window:[],
     fixed_section_cost:null,
     soltdate: null, 
     edit: false,
@@ -361,10 +365,7 @@ const app = new Vue({
             service_size:[],
             chair_size:[],
             sofa_size:[],
-            highprice_facade:[],
-            lowprice_facade:[],
-            highprice_window:[],
-            lowprice_window:[],
+           
 
             url:'https://test.bleach-kw.com'
           // url:'http://localhost:8000'
