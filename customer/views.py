@@ -252,7 +252,14 @@ class Quatation(View):
 
 					new_evaluation_id_encrypted = 'prw'+evaluation_id_encrypted[3:]
 					
-					return redirect('customer:invoice',new_evaluation_id_encrypted)
+					if order.customerbooking:
+						return redirect('customer:bookinginvoice',new_evaluation_id_encrypted)
+					else:
+						if evaluaation.payment_method == 'SUBSCRIPTION':
+							return redirect('customer:subscriptioninvoice',new_evaluation_id_encrypted)
+						else:
+							return redirect('customer:invoice',new_evaluation_id_encrypted)
+
 				else:
 					messages.success(request,"Quatation Approved Succesfully")
 
@@ -262,7 +269,14 @@ class Quatation(View):
 
 				Order.objects.filter(order_no=evaluation_id,evaluation__customer__username=user_name).update(order_status='APPROVED_BY_CLIENT')
 				
-				return redirect('customer:invoice',evaluation_id_encrypted)
+				if order.customerbooking:
+					return redirect('customer:bookinginvoice',evaluation_id_encrypted)
+				else:
+					if evaluaation.payment_method == 'SUBSCRIPTION':
+						return redirect('customer:subscriptioninvoice',evaluation_id_encrypted)
+					else:
+						return redirect('customer:invoice',evaluation_id_encrypted)
+
 			
 			else:
 				messages.error(request,"Please Read Terms & Conditions and Agree")
