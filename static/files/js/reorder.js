@@ -2385,6 +2385,10 @@ function openNav() {
       getMultipleSlots(){
         this.bookingonetimeslots=[]
         this.onetimeslots=[]
+        this.timeSlots={}
+        this.time_slot[this.oneTimeDateSelected] = {
+          selectedSlot: [],
+        };
         var yr=this.oneTimeDateSelected.split('-')[0]
         var month=this.oneTimeDateSelected.split('-')[1]
         var day=this.oneTimeDateSelected.split('-')[2]
