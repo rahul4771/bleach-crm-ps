@@ -3820,7 +3820,8 @@ try {
           this.schedule_serviceTypes[k]
       )
       .then((response) => {
-          
+        var total_highpricewindow_size = 0;
+        var total_lowpricewindow_size = 0;
            var selected_service=this.schedule_serviceTypes[k]
           console.log(response.data)
           this.durationData[this.schedule_serviceTypes[k]]=response.data
@@ -3863,8 +3864,15 @@ try {
               total_oldkitchen_size / data["oldkitchen_perhour_cleaning"]
             );
         } else if (selected_service == "Window Cleaning") {
-          var total_highpricewindow_size = 400;
-          var total_lowpricewindow_size = 400;
+          for(var b=0;b<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;b++){
+            if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.size.is_highprice_window){
+              total_highpricewindow_size=total_highpricewindow_size+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.size.max_size
+            }
+            else{
+              total_lowpricewindow_size=total_lowpricewindow_size+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.size.max_size
+            }
+          }
+          
           var manhour =
             parseInt(
               total_highpricewindow_size /
@@ -4085,7 +4093,7 @@ try {
           //3rd
           if (
             Math.round(manhour / (middle_hours + 4)) > 0 &&
-            Math.round(manhour / (middle_hours + 2)) <= max_cleaners
+            Math.round(manhour / (middle_hours + 2)) <= highest_cleaner
           ) {
             duration_list.push([
               Math.round(manhour / (middle_hours + 4)),
