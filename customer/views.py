@@ -4261,6 +4261,7 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 		evaluation_details                  = EvaluationDetails.objects.select_related('evaluation').prefetch_related('evaluation_book_evaluation_details__evaluationsection_book__keynotesections').filter(evaluation__evaluation_id=evaluation_id)
 		response_dict['evaluation_details'] = EvaluationDetailsSerializer(instance=evaluation_details,many=True).data
 
+		response_dict['evaluation_id']      = evaluation_details.evaluation.id
 		response_dict['success'] = True
 		return Response(response_dict,HTTP_200_OK)
 
