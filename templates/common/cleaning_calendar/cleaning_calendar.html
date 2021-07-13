@@ -973,63 +973,106 @@ class="cl-service-list"
           <div class="cl-modal-text-title">
              Edit Cleaning
           </div>
-          <div class="mt-2 col-md-4">
-         
-             <v-date-picker v-model="selectedDate" :color="popup.color" class="cl-datecalendar w-100" @change="editCleaning()" :min="today"></v-date-picker>
-          
+          <div class="col-md-12">
+            <div class="row  m-0">
+              
+             
+              <div class="col-md-2 mt-2 col-12" v-if="cleaning_duration.length>0">
+                <div>Choose a duration</div>
+                <div class="text-center p-2">In Hours</div>
+              </div>
+              <div class="col-md-12 mt-2 danger" v-else>
+                  Cleaners not available for the selected service
+              </div>
+              <div
+                class="col-md-2 mt-2 col-6"
+                v-for="(item, durindex) in cleaning_duration"
+                v-bind:key="durindex"
+              >
+                <div
+                  class="duration-active text-center p-2"
+                  v-on:click="selectDuration(item)"
+                  v-if="selected_cleaning_duration.cleaning_hours == item.cleaning_hours"
+                >
+                  <b> <% item.cleaning_hours %></b>
+                </div>
+                <div
+                  class="duration text-center p-2"
+                  v-on:click="selectDuration(item)"
+                  v-else
+                >
+                  <b> <% item.cleaning_hours %> </b>
+                </div>
+                <div
+                  v-if="selected_cleaning_duration.cleaning_hours == item.cleaning_hours"
+                  class="text-center sub-content"
+                >
+                  <% item.cleaning_hours / 2 %> slots
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="col-md-7 offset-md-1">
-        
-     Slots : <% no_of_slots %>
-     <div>
-       <b>Time Slots Available</b>
-     </div>
-    <div class="time-slots row mt-2" >
-     <div class="col-md-4" v-for="(slot,index) in availableSlots" v-bind:key="index">
-       <div class="time-slot" @click="selectEditSlot(slot.split(' ')[0]+' '+slot.split(' ')[1])"  v-if="!selectedEditSlot.includes((slot.split(' ')[0]+' '+slot.split(' ')[1])) && checkslot(index)">
-        <% slot %>
-       </div>
-       <div class="time-slot-active" v-if="selectedEditSlot.includes((slot.split(' ')[0]+' '+slot.split(' ')[1]))" @click="removeEditSlot(slot.split(' ')[0]+' '+slot.split(' ')[1])">
-        <% slot %>
-       </div>
-       <div class="time-slot-inactive" v-if="!checkslot(index) && !selectedEditSlot.includes((slot.split(' ')[0]+' '+slot.split(' ')[1]))" @click="removeEditSlot(slot.split(' ')[0]+' '+slot.split(' ')[1])">
-        <% slot %>
-       </div>
-     </div>
-     <div class="col-md-12"  v-if="availableSlots.length<1">
-      <div class=" cl-modal-text-title text-center cl-highlight" >
-      Slots not available. 
-      </div>
-    </div>
-     
-    
-    </div>
-    <div class="mt-10 cl-modal-text-title" v-if="selectedEditSlot.length>0">
-      Do you want to automatically assign team members ? 
-    </div>
-    <v-radio-group
-          v-model="action_type"
-          row
-          class="cl-radio-row"
-          v-if="selectedEditSlot.length>0"
-         
-        >
-          <v-radio
-            label="Yes"
+            <div class="mt-2 col-md-4">
            
-            value="edit_cleaning_withautofix"
-            class="cl-radio"
-            :color="popup.color"
-          ></v-radio>
-          <v-radio
-            label="No"
-            value="edit_cleaning_withoutautofix"
-            class="cl-radio"
-            :color="popup.color"
-          ></v-radio>
-        </v-radio-group>
-     
+               <v-date-picker v-model="selectedDate" :color="popup.color" class="cl-datecalendar w-100" @change="editCleaning()" :min="today"></v-date-picker>
+            
+            </div>
+            
+            <div class="col-md-7 offset-md-1">
+          <div class="d-flex" v-if="cleaning_duration.length>0">
+            <div>Slots : <% selected_cleaning_duration.cleaning_hours/2 %></div>
+            <div class="ml-2">Cleaners : <% selected_cleaning_duration.no_of_cleaners %></div>
           </div>
+       
+       <div class="mt-4">
+         <b>Time Slots Available</b>
+       </div>
+      <div class="time-slots row mt-2" >
+       <div class="col-md-4" v-for="(slot,index) in availableSlots" v-bind:key="index">
+         <div class="time-slot" @click="selectEditSlot(slot.split(' ')[0]+' '+slot.split(' ')[1])"  v-if="!selectedEditSlot.includes((slot.split(' ')[0]+' '+slot.split(' ')[1])) && checkslot(index)">
+          <% slot %>
+         </div>
+         <div class="time-slot-active" v-if="selectedEditSlot.includes((slot.split(' ')[0]+' '+slot.split(' ')[1]))" @click="removeEditSlot(slot.split(' ')[0]+' '+slot.split(' ')[1])">
+          <% slot %>
+         </div>
+         <div class="time-slot-inactive" v-if="!checkslot(index) && !selectedEditSlot.includes((slot.split(' ')[0]+' '+slot.split(' ')[1]))" @click="removeEditSlot(slot.split(' ')[0]+' '+slot.split(' ')[1])">
+          <% slot %>
+         </div>
+       </div>
+       <div class="col-md-12"  v-if="availableSlots.length<1">
+        <div class=" cl-modal-text-title text-center cl-highlight" >
+        Slots not available. 
+        </div>
+      </div>
+       
+      
+      </div>
+      <div class="mt-10 cl-modal-text-title" v-if="selectedEditSlot.length>0">
+        Do you want to automatically assign team members ? 
+      </div>
+      <v-radio-group
+            v-model="action_type"
+            row
+            class="cl-radio-row"
+            v-if="selectedEditSlot.length>0"
+           
+          >
+            <v-radio
+              label="Yes"
+             
+              value="edit_cleaning_withautofix"
+              class="cl-radio"
+              :color="popup.color"
+            ></v-radio>
+            <v-radio
+              label="No"
+              value="edit_cleaning_withoutautofix"
+              class="cl-radio"
+              :color="popup.color"
+            ></v-radio>
+          </v-radio-group>
+       
+            </div>
          
         <div class="cl-btns d-flex justify-center col-md-12">
          <div :class="'proceed-btn '+popup.bg" @click="saveEdit()" data-dismiss="modal" aria-label="Close">
