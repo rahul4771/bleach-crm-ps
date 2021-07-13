@@ -451,6 +451,33 @@ const app=  new Vue({
                     this.combineSlots.push({type:'followup',class:'followup-cleaning-status-bg',slots:slot})
                 }
                 this.parseSlots()
+                $(".cl-slot-card").css('min-height',600);
+                setTimeout(function(){ 
+                  var a = [];
+                  console.log("here", $("#div_8").height()) 
+                  a.push($("#div_1").height())
+                  a.push($("#div_2").height())
+                  a.push($("#div_3").height())
+                  a.push($("#div_4").height())
+                  a.push($("#slot-start").height())
+                  a.push($("#div_6").height())
+                  a.push($("#div_7").height())
+                  a.push($("#div_8").height())
+                  a.push($("#div_9").height())
+                  a.push($("#div_10").height())
+                  a.push($("#div_11").height())
+                  a.push($("#div_12").height())
+                  var m = a[0];
+                  for(var q=0;q<a.length;q++){
+                    if(a[q]>=m){
+                      m = a[q]
+                    }
+                  }
+                  
+                  $(".cl-slot-card").css('min-height',m);
+              
+                }, 500);
+                
               })
           },
           getSlotDetails(slot){
@@ -1063,10 +1090,10 @@ const app=  new Vue({
                     }
                    
                   }
-                 
+                  
                   
                 }
-
+                
                 /*    continous slot */
              /*   else{
                   if(this.combineSlots[i].type!='followup')
@@ -1107,7 +1134,10 @@ const app=  new Vue({
 
 
                 }*/
+               
             }
+
+           
           },
           setRow(slots){
            /* var max=this.slot[slots[0]].slots.length

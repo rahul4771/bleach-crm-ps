@@ -306,7 +306,7 @@
      <br> 
      {% endfor %}</td>
 
-    <td>{% for evaluation_detail in evaluation.details_evaluation %}{% if evaluation_detail.evaluator %}{{evaluation_detail.evaluator.name}}<br>{% else %}{{evaluation_detail.evaluation.call_attender.name}}{% endif %}{% endfor %}</td>
+    <td>{% for evaluation_detail in evaluation.details_evaluation %}{% if evaluation_detail.evaluator %}{% if forloop.last %}{{evaluation_detail.evaluator.name}}{% else %}{{evaluation_detail.evaluator.name}},{% endif %}<br>{% else %}{{evaluation_detail.evaluation.call_attender.name}}{% endif %}{% endfor %}</td>
     
     <td>{% if evaluation.quatation_status == 'APPROVED' %}
 
