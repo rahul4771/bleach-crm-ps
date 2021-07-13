@@ -4375,10 +4375,12 @@ function openNav() {
           location_type:serviceBookedDetails[i].location_type,
           schedule_details:{},
           service:serviceBookedDetails[i].service_type.name,
+          estimated_cost:serviceBookedDetails[i].estimated_cost,
           total_cost:serviceBookedDetails[i].total_cost,
-          estimated_cost:serviceBookedDetails[i].estimated_cost
+         
 
         }
+     //   console.log("estimated cost is "+scheduleDetails.estimated_cost)
         for(var j=0;j<serviceBookedDetails[i].evaluationsection_book.length;j++) {
           scheduleDetails.bill.push(serviceBookedDetails[i].evaluationsection_book[j])
         }
@@ -4541,6 +4543,7 @@ function openNav() {
         location_type:serviceBookedDetails[i].location_type,
         schedule_details:{},
         service:serviceBookedDetails[i].service_type.name,
+        estimated_cost:serviceBookedDetails[i].estimated_cost,
         total_cost:serviceBookedDetails[i].total_cost
       }
       for(var j=0;j<serviceBookedDetails[i].evaluationsection_book.length;j++) {
@@ -4608,7 +4611,7 @@ function openNav() {
             ch_count=ch_count+1
             
             if(ch_count==(Object.keys(this.scheduleGroup).length) && this.currentAddressIndex==this.bookedServiceDetails.length){
-             // window.location.href='/common/makequatation/phase1/'+this.bookedServiceDetails[0].address.customer.id+'/'+this.main_eval_id
+              window.location.href='/common/makequatation/phase1/'+this.bookedServiceDetails[0].address.customer.id+'/'+this.main_eval_id
 
             }
            // window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
@@ -4635,6 +4638,9 @@ function openNav() {
         if(response.data.success){
         this.success_msg=true
         this.error_msg_stat=false
+        if(this.currentAddressIndex==this.bookedServiceDetails.length){
+          window.location.href='/common/makequatation/phase1/'+this.bookedServiceDetails[0].address.customer.id+'/'+this.main_eval_id
+        }
        // window.location.href='/common/makequatation/phase1/'+this.bookedServiceDetails[0].address.customer.id+'/'+this.main_eval_id
          // window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
        /* setTimeout(function(){
