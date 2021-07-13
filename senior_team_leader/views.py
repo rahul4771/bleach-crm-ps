@@ -1146,18 +1146,18 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 		check_cleaners      = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(id__in=assigned_cleaners)
 		check_tl            = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(id=assigned_leader)
 
-		for order_schedule in order_schedules:
+		for order_scheduler in order_schedules:
 			cleaning_team_assign_form = CleaningTeamAssignForm(request.POST)
 			if	cleaning_team_assign_form.is_valid() and check_cleaners.count() >= len(assigned_cleaners) and check_tl:
 				cleaning_team_assign_form_save                   = cleaning_team_assign_form.save(commit=False)
-				cleaning_team_assign_form_save.order_scheduler   = order_schedule
+				cleaning_team_assign_form_save.order_scheduler   = order_scheduler
 				cleaning_team_assign_form_save.start_at          = start_at_datetime
 				cleaning_team_assign_form_save.end_at            = end_at_datetime
 				cleaning_team_assign_form_save.created_by        = request.user
 				cleaning_team_assign_form_save.save()
 
 				#update cleaners count
-				order_schedule.no_of_cleaners = len(assigned_cleaners)+1
+				order_schedule.no_of_cleaners                = len(assigned_cleaners)+1
 				order_schedule.work_status                   = 'CLEANING_TEAM_ASSIGNED'
 				order_schedule.save()
 				
