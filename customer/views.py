@@ -3895,8 +3895,10 @@ class DuplicateBookingPhase2(APIView):
 				#new book
 				if duplicate_evaluation.evaluationbooks:
 					for duplicate_book in duplicate_evaluation.evaluationbooks:
-						new_duplicate_book = EvaluationBook.objects.create(evaluation_details=new_duplicate_evaluation_details,cleaning_policy=duplicate_book.cleaning_policy,service_type=duplicate_book.service_type,area_type=duplicate_book.area_type,cleaning_method=duplicate_book.cleaning_method,location_type=duplicate_book.location_type,evaluator_note=duplicate_book.evaluator_note,estimated_cost=duplicate_book.estimated_cost)						
-
+						if duplicate_book.cleaning_policy == 'SUBSCRIPTION':
+							new_duplicate_book = EvaluationBook.objects.create(evaluation_details=new_duplicate_evaluation_details,cleaning_policy=duplicate_book.cleaning_policy,service_type=duplicate_book.service_type,area_type=duplicate_book.area_type,cleaning_method=duplicate_book.cleaning_method,location_type=duplicate_book.location_type,evaluator_note=duplicate_book.evaluator_note,estimated_cost=duplicate_book.estimated_cost/duplicate_book.schedules.count())						
+						else:
+							new_duplicate_book = EvaluationBook.objects.create(evaluation_details=new_duplicate_evaluation_details,cleaning_policy=duplicate_book.cleaning_policy,service_type=duplicate_book.service_type,area_type=duplicate_book.area_type,cleaning_method=duplicate_book.cleaning_method,location_type=duplicate_book.location_type,evaluator_note=duplicate_book.evaluator_note,estimated_cost=duplicate_book.estimated_cost)
 						#new booksection
 						if duplicate_book.booksections:
 							for duplicate_book_section in duplicate_book.booksections:
@@ -4086,8 +4088,8 @@ class DuplicateBookingPhase2(APIView):
 
 				##cost updation
 				if service_book.cleaning_policy == 'SUBSCRIPTION':
-					service_book.total_cost               = service_book.estimated_cost/len(schedules_dict)
-					service_book.estimated_cost           = service_book.estimated_cost/len(schedules_dict)
+					service_book.total_cost               = service_book.estimated_cost*len(schedules_dict)
+					service_book.estimated_cost           = service_book.estimated_cost*len(schedules_dict)
 				else:
 					service_book.total_cost            = service_book.estimated_cost
 					service_book.estimated_cost        = service_book.estimated_cost
