@@ -900,7 +900,13 @@ class CleaningCallendar(APIView):
 		calendar_order_schedules        = OrderScheduler.objects.filter(id__in=calendar_order_schedules_list).select_related('evaluation_details__evaluator','order_scheduler_book').prefetch_related('cleaning_team_order_scheduler__team_leader')
 		
 		#not approved & approved not paid schedules
-		calendar_notapprovedorder_schedules_list 	= OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end))|Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end))|Q(Q(end_at__gt=schedule_date_start)&Q(end_at__lte=schedule_date_end)&Q(start_at__lt=schedule_date_start)))).order_by('start_at').select_related('order__evaluation__customer','customer_address','order_scheduler_book').filter(Q( Q(order__evaluation__quatation_status='PENDING')|Q(Q(order__evaluation__quatation_status='APPROVED')&Q(order__evaluation__payment_method='BREAKDOWN')&Q(order__preamount_paid=0)) | Q(Q(order__evaluation__quatation_status='APPROVED')&Q(order__evaluation__payment_method='PREPAID')&Q(order__amount_paid=0)) )).values('id','start_at','end_at','order').distinct().values_list('id') 
+		calendar_notapprovedorder_schedules_list       = []
+		calendar_notapprovedorder_schedules_duplicates = []
+		calendar_notapprovedorder_schedules_alls 	= OrderScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end))|Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end))|Q(Q(end_at__gt=schedule_date_start)&Q(end_at__lte=schedule_date_end)&Q(start_at__lt=schedule_date_start)))).order_by('start_at').select_related('order__evaluation__customer','customer_address','order_scheduler_book').filter(Q( Q(order__evaluation__quatation_status='PENDING')|Q(Q(order__evaluation__quatation_status='APPROVED')&Q(order__evaluation__payment_method='BREAKDOWN')&Q(order__preamount_paid=0)) | Q(Q(order__evaluation__quatation_status='APPROVED')&Q(order__evaluation__payment_method='PREPAID')&Q(order__amount_paid=0)) )).annotate(duplicate=Concat('start_at','end_at','order__id',output_field=CharField())) 
+		for calendar_notapprovedorder_schedules_all in calendar_notapprovedorder_schedules_alls:
+			if not calendar_notapprovedorder_schedules_all.duplicate in calendar_notapprovedorder_schedules_duplicates:
+				calendar_notapprovedorder_schedules_list.append(calendar_notapprovedorder_schedules_all.id)
+				calendar_notapprovedorder_schedules_duplicates.append(calendar_notapprovedorder_schedules_all.duplicate)
 		calendar_notapprovedorder_schedules 	    = OrderScheduler.objects.filter(id__in=calendar_notapprovedorder_schedules_list).select_related('evaluation_details__evaluator','order_scheduler_book').prefetch_related('cleaning_team_order_scheduler__team_leader')
 		
 		#followup schedules
