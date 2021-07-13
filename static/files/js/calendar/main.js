@@ -451,6 +451,7 @@ const app=  new Vue({
                     this.combineSlots.push({type:'followup',class:'followup-cleaning-status-bg',slots:slot})
                 }
                 this.parseSlots()
+                $(".cl-slot-card").css('min-height',600);
                 setTimeout(function(){ 
                   var a = [];
                   console.log("here", $("#div_8").height()) 
@@ -473,9 +474,9 @@ const app=  new Vue({
                     }
                   }
                   
-                  $(".cl-slot-card").css('height',m);
+                  $(".cl-slot-card").css('min-height',m);
               
-                }, 2000);
+                }, 500);
                 
               })
           },
