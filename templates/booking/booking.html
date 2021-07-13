@@ -317,7 +317,7 @@ width="1000"
     <v-btn color="primary" @click="changeVisitDate()">
       Proceed
     </v-btn>
-    <v-btn color="primary" outlined class="ml-2" @click="scheduleDialog=false">
+    <v-btn color="primary" outlined class="ml-2" @click="reselectDialog=false">
       Cancel
     </v-btn>
     </div>
@@ -1420,10 +1420,13 @@ width="1000"
                                       </div>
                                       </div>
                                       <div class="col-md-4">
-                                        <v-text-field v-model="keynote_name"
-                                         label="Field Name"
-                                          >
-                                        </v-text-field>
+                                        <v-combobox
+                                          v-model="keynote_name"
+                                          :items="keynote_content"
+                                          label="Field Name"
+                                        
+                                         ></v-combobox>
+                                      
                                       </div>
                                       <div class="col-md-4">
                                         <v-text-field v-model="keynote_value"
@@ -1806,10 +1809,12 @@ width="1000"
                                                 </div>
                                                 </div>
                                                 <div class="col-md-4">
-                                                  <v-text-field v-model="keynote_name"
-                                                   label="Field Name"
-                                                    >
-                                                  </v-text-field>
+                                                  <v-combobox
+                                                  v-model="keynote_name"
+                                                  :items="keynote_content"
+                                                  label="Field Name"
+                                                
+                                                 ></v-combobox>
                                                 </div>
                                                 <div class="col-md-4">
                                                   <v-text-field v-model="keynote_value"
@@ -2189,10 +2194,12 @@ Fill all the details of the Buildings  to proceed
                         </div>
                         </div>
                         <div class="col-md-4">
-                          <v-text-field v-model="keynote_name"
-                           label="Field Name"
-                            >
-                          </v-text-field>
+                          <v-combobox
+                          v-model="keynote_name"
+                          :items="keynote_content"
+                          label="Field Name"
+                         
+                         ></v-combobox>
                         </div>
                         <div class="col-md-4">
                           <v-text-field v-model="keynote_value"
