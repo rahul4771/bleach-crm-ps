@@ -19,6 +19,7 @@ from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,Evaluat
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowUp,Investigation,InvestigationMedia,FollowUpSection,FollowUpSectionKeynote,PaybackDiscount,BuybackPromocodeGift,Reporting
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from bleachadmin.models import ServicePriceRange
+from customer.models import CustomerBooking
 
 import requests
 
@@ -262,11 +263,21 @@ class Cleaning(IsTeamLeader,View):
 		cleaning_team_detail = CleaningTeam.objects.select_related('team_leader','drop_off_driver','pick_up_driver','order_scheduler__evaluation_details','order_scheduler__order_scheduler_book__service_type','order_scheduler__customer_address','order_scheduler__order__evaluation').prefetch_related(Prefetch('order_scheduler__order_scheduler_book__evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr="evaluationmedias"),Prefetch('order_scheduler__order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')).annotate(kitchen_keynote=Sum( Case( When(keynotesections__sub_area='kitchen',then=1),default=0,output_field=IntegerField()))),to_attr='sections')).get(is_active=True,id=team_id)
 		cleaning_team_members = CleaningTeamMember.objects.filter(team=team_id,is_active=True)
 		
+		try:
+			customerbooking = CustomerBooking.objects.get(evaluation__id=cleaning_team_detail.order_scheduler.order.evaluation.id,is_active=True,booking_type='CLEANINGBOOKING',is_bookingcompleted=True)
+		except:
+			customerbooking = None
+
+		if customerbooking:
+			is_customer_booking = True
+		else:
+			is_customer_booking = False
+
 		price_ranges = ServicePriceRange.objects.filter(is_active=True,service_type__id=cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.id)
 		#checkin save	
 		
 		
-		return render(request,'tl/cleaning/cleaningtest.html',{"price_ranges":price_ranges,"cleaning_team_detail":cleaning_team_detail,"cleaning_team_members":cleaning_team_members})
+		return render(request,'tl/cleaning/cleaningtest.html',{"price_ranges":price_ranges,"cleaning_team_detail":cleaning_team_detail,"cleaning_team_members":cleaning_team_members,"is_customer_booking":is_customer_booking})
 	def post(self,request,team_id):
 		print("checkk")
 		#checkout save
