@@ -33,7 +33,7 @@
     <title>Bleach Cleaning Services</title>
   </head>
   <body>
-<div  id="app" style="min-height:0px">
+<div  id="app" style="min-height:0px" v-cloak>
   <!--wrapper-->
   <!--header begins-->
   <div id="mobSidenav" class="sidenav">
@@ -491,29 +491,47 @@
         <input type="text" value="PREPAID" name="payment_mode"/>
         <input type="text" value="APPROVED_BY_CLIENT" name="order_status"/>
         <input type="number" value="1" name="qty"/>
-        <input type="number" value="10" name="price"/>
+        <input type="number"  name="price" v-model="payment_total_cost"/>
         <input type="text"  name="evaluation_id" v-model="evaluation_id" />
         <input type="submit" id="payment_submit"/>
       </form>
         <div class="col-md-6">
-            <div class="inv-payment-card mt-4 text-center" id="inv-debit" onclick="selectPayment('debit')"><!-- to disable click add class inv-click-disable -->
+            <div class="inv-payment-card mt-4 text-center" id="inv-debit" @click="selectPayment('debit')" v-if="activePayment!='debit'"><!-- to disable click add class inv-click-disable -->
                 <img src="{% static 'files/icons/knet-icon.png' %}" class="inv-card-icon" id="inv-debit-img"  /> <!-- to disable  add class inv-payment-disabled -->
                 <div class="inv-payment-text"> <!-- to disable  add class inv-payment-disabled -->
                  Debit
                 </div>
-                <div class="inv-check-box mt-2 mb-2 mx-auto" id="inv-debit-check-box">
-                  <i class="fa fa-check inv-check-icon " id="inv-check-debit"></i>
+                <div class=" mt-2 mb-2 mx-auto" >
+                  <i class="far fa-circle not-check-icon"></i>
+                </div>
+              </div>
+              <div class="inv-payment-card-active mt-4 text-center" id="inv-debit" @click="selectPayment('debit')" v-if="activePayment=='debit'"><!-- to disable click add class inv-click-disable -->
+                <img src="{% static 'files/icons/knet-icon.png' %}" class="inv-card-icon" id="inv-debit-img"  /> <!-- to disable  add class inv-payment-disabled -->
+                <div class="inv-payment-text"> <!-- to disable  add class inv-payment-disabled -->
+                 Debit
+                </div>
+                <div class="mt-2 mb-2 mx-auto" >
+                  <i class="fas fa-check-circle check-icon"></i>
                 </div>
               </div>
         </div>
         <div class="col-md-6">
-            <div class="inv-payment-card mt-4 text-center" id="inv-credit" onclick="selectPayment('credit')"><!-- to disable click add class inv-click-disable -->
+            <div class="inv-payment-card mt-4 text-center" id="inv-credit" @click="selectPayment('credit')" v-if="activePayment!='credit'"><!-- to disable click add class inv-click-disable -->
                 <img src="{% static 'files/icons/debit-card.png' %}" class="inv-card-icon" id="inv-credit-img"  /> <!-- to disable  add class inv-payment-disabled -->
                 <div class="inv-payment-text"> <!-- to disable  add class inv-payment-disabled -->
                 Credit
                 </div>
-                <div class="inv-check-box mt-2 mb-2 mx-auto" id="inv-credit-check-box">
-                  <i class="fa fa-check inv-check-icon " id="inv-check-credit"></i>
+                <div class="mt-2 mb-2 mx-auto" >
+                  <i class="far fa-circle not-check-icon"></i>
+                </div>
+              </div>
+              <div class="inv-payment-card-active mt-4 text-center" id="inv-credit" @click="selectPayment('credit')" v-if="activePayment=='credit'"><!-- to disable click add class inv-click-disable -->
+                <img src="{% static 'files/icons/debit-card.png' %}" class="inv-card-icon" id="inv-credit-img"  /> <!-- to disable  add class inv-payment-disabled -->
+                <div class="inv-payment-text"> <!-- to disable  add class inv-payment-disabled -->
+                Credit
+                </div>
+                <div class=" mt-2 mb-2 mx-auto" >
+                  <i class="fas fa-check-circle check-icon"></i>
                 </div>
               </div>
         </div>
@@ -521,9 +539,9 @@
             <v-btn color="primary" @click="paymentSubmit()">
                 Proceed
             </v-btn>
-            <v-btn color="primary" outlined class="ml-2" @click="payment_dialog=false">
+          <!-- <v-btn color="primary" outlined class="ml-2" @click="payment_dialog=false">
                 Cancel
-            </v-btn>
+            </v-btn>-->
         </div>
      </div>
  </v-card>

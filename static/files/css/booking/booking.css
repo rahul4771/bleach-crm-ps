@@ -665,6 +665,14 @@ padding:10px;
 .service-control{
    /* font-size:22px;*/
 }
+.check-icon{
+    color:#2f4e85;
+    font-size:18px;
+}
+.not-check-icon{
+    color:#a7a7a7;
+    font-size:18px;
+}
 .owl-prev i, .owl-next i { color: #dee2e6;}
 
 
