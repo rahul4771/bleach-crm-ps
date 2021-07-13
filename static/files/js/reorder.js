@@ -95,6 +95,8 @@ function openNav() {
             
           },
         data: {
+          error_msg_stat:false,
+          error_msg:'',
           main_eval_id:null,
           customDateSelected:[],
           customDialog:false,
@@ -3506,6 +3508,14 @@ function openNav() {
             var old_kitchen_productivity=0
             var old_kitchen_manhour=0
             var new_kitchen_manhour=0
+            var highprice_facade_size=0
+            var highprice_facade_manhour=0
+            var lowprice_facade_size=0
+            var lowprice_facade_manhour=0
+            var highprice_window_size=0
+            var highprice_window_manhour=0
+            var lowprice_window_size=0
+            var lowprice_window_manhour=0
               for(var i=0;i<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;i++)
               {
                 total_estimated_size = total_estimated_size+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[i].size.max_size;
@@ -3541,29 +3551,52 @@ function openNav() {
                 console.log("kicthen amhr is"+manhour)
                 
               }
-              else if(selected_service=='Upholstery Cleaning'){
-                  var sofa_productivity = data["sofa_perhour_cleaning"];
-                  var chair_productivity = data["chair_perhour_cleaning"];
+              else if(selected_service=='Facade Cleaning'){
+                  var highprice_facade_productivity = data["highpricefacade_perhour_cleaning"];
+                  var lowprice_facade_productivity = data["lowpricefacade_perhour_cleaning"];
                 for(var b=0;b<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;b++){
                   
-                  if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].upholstery_type=='SOFA'){
+                  if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].is_highprice_facade){
                   
                   
-                    sofa_size=sofa_size+parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].size)   
+                    highprice_facade_size=highprice_facade_size+parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].size.max_size)   
                                     
                   }
-                  else  if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].upholstery_type=='CHAIR'){
+                  else  if(!this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].is_highprice_facade){
                    
                     
-                    chair_size=chair_size+parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].size.max_size)   
+                    lowprice_facade_size=lowprice_facade_size+parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].size.max_size)   
                                     
                   }
 
                 }
-                sofa_manhour=sofa_manhour+ parseInt(sofa_size / sofa_productivity); 
-                chair_manhour=chair_manhour+ parseInt(chair_size / chair_productivity); 
-                var manhour=sofa_manhour+chair_manhour
+                highprice_facade_manhour=highprice_facade_manhour+ parseInt(highprice_facade_size / highprice_facade_productivity); 
+                lowprice_facade_manhour=lowprice_facade_manhour+ parseInt(lowprice_facade_size / lowprice_facade_productivity); 
+                var manhour=highprice_facade_manhour+lowprice_facade_manhour
               }
+              else if(selected_service=='Window Cleaning'){
+                var highprice_window_productivity = data["highpricewindow_perhour_cleaning"];
+                var lowprice_window_productivity = data["lowpricewindow_perhour_cleaning"];
+              for(var b=0;b<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;b++){
+                
+                if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].is_highprice_window){
+                
+                
+                  highprice_window_size=highprice_window_size+parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].size.max_size)   
+                                  
+                }
+                else  if(!this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].is_highprice_window){
+                 
+                  
+                  lowprice_window_size=lowprice_window_size+parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].size.max_size)   
+                                  
+                }
+
+              }
+              highprice_window_manhour=highprice_window_manhour+ parseInt(highprice_window_size / highprice_window_productivity); 
+              lowprice_window_manhour=lowprice_window_manhour+ parseInt(lowprice_window_size / lowprice_window_productivity); 
+              var manhour=highprice_window_manhour+lowprice_window_manhour
+            }
              /* else if(selected_service=='Upholstry Cleaning'){
                 if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].new_kitchen){
                   var productivity = data["newkitchen_perhour_cleaning"];
@@ -4388,7 +4421,48 @@ function openNav() {
             
            }
              
-         } 
+         }
+         else if(this.multiServicesBill[i].service=='Facade Cleaning'){
+          for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
+          for(var p in productivity){
+          if(this.multiServicesBill[i].bill[j].is_highprice_facade){
+            if(productivity[p].name==this.multiServicesBill[i].bill[j].size && productivity[p].is_highprice_facade ){
+              this.multiServicesBill[i].bill[j].size=productivity[p]
+            }
+            
+          }
+          else{
+            if(productivity[p].name==this.multiServicesBill[i].bill[j].size && !productivity[p].is_highprice_facade){
+              this.multiServicesBill[i].bill[j].size=productivity[p]
+            }
+          }
+        
+            
+          
+          
+        }
+      }
+         }
+         else if(this.multiServicesBill[i].service=='Window Cleaning'){
+          for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
+          for(var p in productivity){
+          if(this.multiServicesBill[i].bill[j].is_highprice_window){
+            if(productivity[p].name==this.multiServicesBill[i].bill[j].size && productivity[p].is_highprice_window ){
+              this.multiServicesBill[i].bill[j].size=productivity[p]
+            }
+            
+          }
+          else{
+            if(productivity[p].name==this.multiServicesBill[i].bill[j].size && !productivity[p].is_highprice_window){
+              this.multiServicesBill[i].bill[j].size=productivity[p]
+            }
+          }
+        
+            
+        }
+          
+        }
+         }  
         else{
         for(var p in productivity){
           
@@ -4502,11 +4576,13 @@ function openNav() {
             }
           }
           axios.post(this.url+'/customer/duplicatebookingphase2/'+this.duplicate_id+'/',serviceDetails).then(response=>{
+            if(response.data.success){
             this.success_msg=true
+            this.error_msg_stat=false
             ch_count=ch_count+1
             
             if(ch_count==(Object.keys(this.scheduleGroup).length)){
-              window.location.href='/common/makequatation/phase1/'+this.bookedServiceDetails[0].address.customer.id+'/'+this.main_eval_id
+             // window.location.href='/common/makequatation/phase1/'+this.bookedServiceDetails[0].address.customer.id+'/'+this.main_eval_id
 
             }
            // window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
@@ -4514,7 +4590,12 @@ function openNav() {
               window.location.reload(); // you can pass true to reload function to ignore the client cache and reload from the server
           },1000);*/
            
-          
+        }
+        else{
+          this.error_msg_stat=true
+          this.success_msg=false
+          this.error_msg=response.data.Error
+        }
           })
         }
        
@@ -4525,12 +4606,20 @@ function openNav() {
     }
     else{
       axios.post(this.url+'/customer/duplicatebookingphase2/'+this.duplicate_id+'/',this.custServiceScheduled).then(response=>{
+        if(response.data.success){
         this.success_msg=true
-        window.location.href='/common/makequatation/phase1/'+this.bookedServiceDetails[0].address.customer.id+'/'+this.main_eval_id
+        this.error_msg_stat=false
+       // window.location.href='/common/makequatation/phase1/'+this.bookedServiceDetails[0].address.customer.id+'/'+this.main_eval_id
          // window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
        /* setTimeout(function(){
           window.location.reload(); // you can pass true to reload function to ignore the client cache and reload from the server
       },1000);*/
+    }
+    else{
+      this.success_msg=false
+      this.error_msg=response.data.Error
+      this.error_msg_stat=true
+    }
       })
     }
     
