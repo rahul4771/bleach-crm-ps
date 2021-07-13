@@ -4230,6 +4230,8 @@ class ClientCleaningBookingPhase3(APIView):
 		return Response(response_dict,HTTP_200_OK)
 
 class ClientCleaningBookingMediaSave(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
 	def post(self,request):
 		
 		response_dict = {}
