@@ -3690,8 +3690,12 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 			for key in sections_dict.keys():
 				section_save_serializer                    = EvaluationBookSectionSerializer(data=sections_dict[key])
 				if section_save_serializer.is_valid():
-					saved_section                          = section_save_serializer.save(evaluation_book=saved_service,section_cleanings=len(schedules_dict))
 					
+					if services[service_detail]['cleaning_policy'] == 'SUBSCRIPTION':
+						saved_section                          = section_save_serializer.save(evaluation_book=saved_service,section_cleanings=len(schedules_dict),section_net_cost=section_save_serializer.validated_data['section_cost']*len(schedules_dict))
+					else:
+						saved_section                          = section_save_serializer.save(evaluation_book=saved_service,section_cleanings=len(schedules_dict))
+
 					response_dict['section_success']       = True
 				else:
 					errors= section_save_serializer.errors   
