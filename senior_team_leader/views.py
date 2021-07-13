@@ -1148,6 +1148,7 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 
 		for order_scheduler in order_schedules:
 			cleaning_team_assign_form = CleaningTeamAssignForm(request.POST)
+			print(cleaning_team_assign_form)
 			if	cleaning_team_assign_form.is_valid() and check_cleaners.count() >= len(assigned_cleaners) and check_tl:
 				cleaning_team_assign_form_save                   = cleaning_team_assign_form.save(commit=False)
 				cleaning_team_assign_form_save.order_scheduler   = order_scheduler
@@ -1157,9 +1158,9 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 				cleaning_team_assign_form_save.save()
 
 				#update cleaners count
-				order_schedule.no_of_cleaners                = len(assigned_cleaners)+1
-				order_schedule.work_status                   = 'CLEANING_TEAM_ASSIGNED'
-				order_schedule.save()
+				order_scheduler.no_of_cleaners                = len(assigned_cleaners)+1
+				order_scheduler.work_status                   = 'CLEANING_TEAM_ASSIGNED'
+				order_scheduler.save()
 				
 				#cleaners
 				assigned_cleaners_list   = []
@@ -1168,12 +1169,12 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 				assigned_cleaners_list.append(CleaningTeamMember(team=cleaning_team_assign_form_save,member=cleaning_team_assign_form_save.team_leader,start_at=start_at_datetime,end_at=end_at_datetime,start_time=start_at_time,end_time=end_at_time))
 				#bulk create
 				CleaningTeamMember.objects.bulk_create(assigned_cleaners_list)	
-
-				messages.success(request,"Cleaning Team Succesfully Assigned")
 			else:	
 				messages.error(request,"Something Went Wrong !! Please Reupdate")
 
 				return redirect('stl:assign-cleaningteam',scheduler_id)	
+
+		messages.success(request,"Cleaning Team Succesfully Assigned")
 
 		cleaning_calendar_date = request.GET.get('cleaning_calendar_date') or ''
 		workers_calendar_date  = request.GET.get('workers_calendar_date') or ''
