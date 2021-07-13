@@ -4082,8 +4082,8 @@ class DuplicateBookingPhase2(APIView):
 
 				##cost updation
 				if service_book.cleaning_policy == 'SUBSCRIPTION':
-					service_book.total_cost               = service_book.estimated_cost*len(schedules_dict)
-					service_book.estimated_cost           = service_book.estimated_cost*len(schedules_dict)
+					service_book.total_cost               = service_book.estimated_cost/len(schedules_dict)
+					service_book.estimated_cost           = service_book.estimated_cost/len(schedules_dict)
 				else:
 					service_book.total_cost            = service_book.estimated_cost
 					service_book.estimated_cost        = service_book.estimated_cost
