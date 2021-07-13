@@ -4535,8 +4535,9 @@ function openNav() {
     for(var i=0;i<serviceBookedDetails.length;i++)
     {
       var scheduleDetails={
-        id:this.bookedServiceDetails[this.currentAddressIndex].id,
-        evaluation_details_id:serviceBookedDetails[i].id,
+        
+        id:serviceBookedDetails[i].id,
+        evaluation_details_id:this.bookedServiceDetails[this.currentAddressIndex].id,
         area_type:serviceBookedDetails[i].area_type,
         bill:[],
         evaluator_note:serviceBookedDetails[i].evaluator_note,
