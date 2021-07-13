@@ -74,6 +74,7 @@ $(document).ready(function(){
           
         },
       data: {
+        payment_total_cost:0,
         customDateSelected:[],
         customDialog:false,
         cleaningPolicy:'One Time',
@@ -575,7 +576,10 @@ $(document).ready(function(){
 
         methods: {
           paymentSubmit(){
-            $('#payment_submit').click()
+            if(this.activePayment=='debit'){
+              $('#payment_submit').click()
+            }
+           
           },
           viewEditSchedule(service,index){
             this.schedule_serviceTypes_selected=[]
@@ -2355,6 +2359,11 @@ $(document).ready(function(){
         });
     },
     getMultipleSlots(){
+      this.onetimeslots=[]
+      this.timeSlots={}
+      this.time_slot[this.slotDate] = {
+        selectedSlot: [],
+      };
       var yr=this.oneTimeDateSelected.split('-')[0]
       var month=this.oneTimeDateSelected.split('-')[1]
       var day=this.oneTimeDateSelected.split('-')[2]
@@ -3440,71 +3449,194 @@ $(document).ready(function(){
     },
    
     doSomethingAsync(k) {
-     return new Promise((resolve) => {
-         axios
-        .get(
-          this.url+"/customer/ajax/getserviceproductivity?service_type=" +
-            this.schedule_serviceTypes[k]
-        )
-        .then((response) => {
+      return new Promise((resolve) => {
+          axios
+         .get(
+           this.url+"/customer/ajax/getserviceproductivity?service_type=" +
+             this.schedule_serviceTypes[k]
+         )
+         .then((response) => {
+             
+              var selected_service=this.schedule_serviceTypes[k]
+             console.log(response.data)
+             this.durationData[this.schedule_serviceTypes[k]]=response.data
+   
+             /*   Calculation begins */
+            console.log("selected service is"+selected_service)
+         
+   
+             var data = response.data;
+           console.log(data);
+           var total_estimated_size =0
+           var sofa_size=0
+           var sofa_manhour=0
+           var chair_manhour=0
+           var sofa_productivity=0
+           var chair_productivity=0
+           var chair_size=0
+           var new_kitchen_size=0
+           var old_kitchen_size=0
+           var new_kitchen_productivity=0
+           var old_kitchen_productivity=0
+           var old_kitchen_manhour=0
+           var new_kitchen_manhour=0
+           var highprice_facade_size=0
+           var highprice_facade_manhour=0
+           var lowprice_facade_size=0
+           var lowprice_facade_manhour=0
+           var highprice_window_size=0
+           var highprice_window_manhour=0
+           var lowprice_window_size=0
+           var lowprice_window_manhour=0
+             for(var i=0;i<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;i++)
+             {
+               total_estimated_size = total_estimated_size+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[i].size.max_size;
+             }
             
-             var selected_service=this.schedule_serviceTypes[k]
-            console.log(response.data)
-            this.durationData[this.schedule_serviceTypes[k]]=response.data
-  
-            /*   Calculation begins */
-           console.log("selected service is"+selected_service)
+            
+             if(selected_service=='Kitchen Cleaning'){
+               console.log("inside kitchen")
+               var new_kitchen_productivity = data["newkitchen_perhour_cleaning"];
+               var old_kitchen_productivity = data["oldkitchen_perhour_cleaning"];
+
+               for(var b=0;b<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;b++){
+                 
+                 if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].new_kitchen){
+                   console.log("inside new kitchen")
+                   
+                   new_kitchen_size=new_kitchen_size+parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].size.max_size)   
+                                   
+                 }
+                 else if(!this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].new_kitchen){
+                   console.log("inside old kitchen")
+                  
+                   old_kitchen_size= old_kitchen_size+parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].size.max_size)   
+                                   
+                 }
+
+               }
+               old_kitchen_manhour=old_kitchen_manhour+ parseInt( old_kitchen_size/ old_kitchen_productivity); 
+               new_kitchen_manhour=new_kitchen_manhour+ parseInt(new_kitchen_size / new_kitchen_productivity);
+               console.log("new kitchen prod cal"+parseInt(new_kitchen_size / new_kitchen_productivity))
+               console.log("new kitchen size"+new_kitchen_size+' new kicthen prod: '+new_kitchen_productivity) 
+               console.log("old kitchen"+old_kitchen_manhour+' new kicthen : '+new_kitchen_manhour)
+               var manhour= old_kitchen_manhour+new_kitchen_manhour
+               console.log("kicthen amhr is"+manhour)
+               
+             }
+             else if(selected_service=='Upholstery Cleaning'){
+                sofa_productivity = data["chair_perhour_cleaning"];
+                chair_productivity = data["sofa_perhour_cleaning"];
+             for(var b=0;b<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;b++){
+               
+               if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].upholstery_type=='CHAIR'){
+               
+               
+                 chair_size=chair_size+parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].size.max_size)   
+                                 
+               }
+               else  if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].upholstery_type=='SOFA'){
+                
+                 
+                 sofa_size=sofa_size+parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].size)   
+                                 
+               }
+
+             }
+             sofa_manhour=sofa_manhour+ parseInt(sofa_size / sofa_productivity); 
+             chair_manhour=chair_manhour+ parseInt(chair_size / chair_productivity); 
+             var manhour=chair_manhour+sofa_manhour
+           }
+             else if(selected_service=='Facade Cleaning'){
+                 var highprice_facade_productivity = data["highpricefacade_perhour_cleaning"];
+                 var lowprice_facade_productivity = data["lowpricefacade_perhour_cleaning"];
+               for(var b=0;b<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;b++){
+                 
+                 if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].is_highprice_facade){
+                 
+                 
+                   highprice_facade_size=highprice_facade_size+parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].size.max_size)   
+                                   
+                 }
+                 else  if(!this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].is_highprice_facade){
+                  
+                   
+                   lowprice_facade_size=lowprice_facade_size+parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].size.max_size)   
+                                   
+                 }
+
+               }
+               highprice_facade_manhour=highprice_facade_manhour+ parseInt(highprice_facade_size / highprice_facade_productivity); 
+               lowprice_facade_manhour=lowprice_facade_manhour+ parseInt(lowprice_facade_size / lowprice_facade_productivity); 
+               var manhour=highprice_facade_manhour+lowprice_facade_manhour
+             }
+             else if(selected_service=='Window Cleaning'){
+               var highprice_window_productivity = data["highpricewindow_perhour_cleaning"];
+               var lowprice_window_productivity = data["lowpricewindow_perhour_cleaning"];
+             for(var b=0;b<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;b++){
+               
+               if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].is_highprice_window){
+               
+               
+                 highprice_window_size=highprice_window_size+parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].size.max_size)   
+                                 
+               }
+               else  if(!this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].is_highprice_window){
+                
+                 
+                 lowprice_window_size=lowprice_window_size+parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].size.max_size)   
+                                 
+               }
+
+             }
+             highprice_window_manhour=highprice_window_manhour+ parseInt(highprice_window_size / highprice_window_productivity); 
+             lowprice_window_manhour=lowprice_window_manhour+ parseInt(lowprice_window_size / lowprice_window_productivity); 
+             var manhour=highprice_window_manhour+lowprice_window_manhour
+           }
+            /* else if(selected_service=='Upholstry Cleaning'){
+               if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].new_kitchen){
+                 var productivity = data["newkitchen_perhour_cleaning"];
+               }
+               else{
+                 var productivity = data["oldkitchen_perhour_cleaning"];
+               }
+               
+             }*/
+             else{
+               var productivity = data["perhour_cleaning"];
+               console.log("productivity is "+productivity)
+               console.log("total size is "+total_estimated_size)
+               var manhour = parseInt(total_estimated_size / productivity);
+             }
+           
+            
+           
         
-  
-            var data = response.data;
-          console.log(data);
-          var total_estimated_size =0
-            for(var i=0;i<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;i++)
-            {
-              total_estimated_size = total_estimated_size+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[i].size.max_size;
-            }
-           
-            if(selected_service=='Kitchen Cleaning'){
-              if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].new_kitchen){
-                var productivity = data["newkitchen_perhour_cleaning"];
-              }
-              else{
-                var productivity = data["oldkitchen_perhour_cleaning"];
-              }
-              
-            }
-            else{
-              var productivity = data["perhour_cleaning"];
-            }
-            console.log("productivity is "+productivity)
-            var manhour = parseInt(total_estimated_size / productivity);
+           //optimal finding
+           this.totalmanhour=this.totalmanhour+manhour
+           console.log("total man hour is "+this.totalmanhour)
+           var r = 2 ** (this.totalmanhour.toString().length - 1);
+           var mod = this.totalmanhour % r;
+   
+           if (mod > parseInt(r / 2)) {
+               this.n = this.totalmanhour + (r - mod);
+           } else {
+              this.n = this.totalmanhour - mod;
+           }
+           console.log(manhour, "manhour");
+           console.log(r, "r");
+           console.log(mod, "mod");
+           console.log(this.n, "n");
+            
+           this.maxCleaners.push(response.data.max_cleaners)
+          resolve("done")
           
-       
-          //optimal finding
-          this.totalmanhour=this.totalmanhour+manhour
-          console.log("total man hour is "+this.totalmanhour)
-          var r = 2 ** (this.totalmanhour.toString().length - 1);
-          var mod = this.totalmanhour % r;
-  
-          if (mod > parseInt(r / 2)) {
-              this.n = this.totalmanhour + (r - mod);
-          } else {
-             this.n = this.totalmanhour - mod;
-          }
-          console.log(manhour, "manhour");
-          console.log(r, "r");
-          console.log(mod, "mod");
-          console.log(this.n, "n");
-           
-          this.maxCleaners.push(response.data.max_cleaners)
-         resolve("done")
-         
-         
-        }).catch((error) => {
-          console.log(error);
-        })
-     });
-   },
+          
+         }).catch((error) => {
+           console.log(error);
+         })
+      });
+    },
     newdurationcalculation(){
       this.totalmanhour=0
        this.duration=[]
@@ -4188,6 +4320,7 @@ getBookedServices(){
   this.multiServicesBill=[]
   axios.get(this.url+'/customer/evaluatorbookingmultiplephase3/customer/'+this.custId).then(response=>{
     this.bookedServiceDetails=response.data.evaluation_details
+    this.payment_total_cost=this.bookedServiceDetails[0].evaluation_book_evaluation_details[0].total_cost
     if(this.bookedServiceDetails.length>0){
       this.multiAddress=true
     }
@@ -4244,14 +4377,88 @@ async rearrangeSize(){
         }
       }
       }
-      }else{
-
+      }
+      else if(this.multiServicesBill[i].service=='Upholstery Cleaning'){
+        var type=""
+         for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
+           if(this.multiServicesBill[i].bill[j].size.includes('Seater')){
+             type="SOFA"
+             //this.sections[j].size=this.this.sections[j].size.split(" ")[0]
+             this.multiServicesBill[i].bill[j].size=this.multiServicesBill[i].bill[j].size.split(" ")[0]
+             console.log("section size is "+this.multiServicesBill[i].bill[j].size.split(" ")[0])
+             this.multiServicesBill[i].bill[j].upholstery_type="SOFA"
+           }
+           else{
+             type="CHAIR"
+             this.multiServicesBill[i].bill[j].upholstery_type="CHAIR"
+           }
+           console.log("type is"+type)
+           if(type=="CHAIR"){
+            for(var p in productivity){
+        
       
+              if(productivity[p].name==this.multiServicesBill[i].bill[j].size && productivity[p].upholstery_type=='CHAIR'){
+                this.multiServicesBill[i].bill[j].size=productivity[p]
+              }
+            
+            
+          }
+            
+           }
+          
+         }
+           
+       }
+       else if(this.multiServicesBill[i].service=='Facade Cleaning'){
+        for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
+        for(var p in productivity){
+        if(this.multiServicesBill[i].bill[j].is_highprice_facade){
+          if(productivity[p].name==this.multiServicesBill[i].bill[j].size && productivity[p].is_highprice_facade ){
+            this.multiServicesBill[i].bill[j].size=productivity[p]
+          }
+          
+        }
+        else{
+          if(productivity[p].name==this.multiServicesBill[i].bill[j].size && !productivity[p].is_highprice_facade){
+            this.multiServicesBill[i].bill[j].size=productivity[p]
+          }
+        }
+      
+          
+        
+        
+      }
+    }
+       }
+       else if(this.multiServicesBill[i].service=='Window Cleaning'){
+        for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
+        for(var p in productivity){
+        if(this.multiServicesBill[i].bill[j].is_highprice_window){
+          if(productivity[p].name==this.multiServicesBill[i].bill[j].size && productivity[p].is_highprice_window ){
+            this.multiServicesBill[i].bill[j].size=productivity[p]
+          }
+          
+        }
+        else{
+          if(productivity[p].name==this.multiServicesBill[i].bill[j].size && !productivity[p].is_highprice_window){
+            this.multiServicesBill[i].bill[j].size=productivity[p]
+          }
+        }
+      
+          
+      }
+        
+      }
+       }  
+      else{
       for(var p in productivity){
         
-        if(productivity[p].name==this.multiServicesBill[i].bill[j].size){
-          this.multiServicesBill[i].bill[j].size=productivity[p]
-        }
+      
+          if(productivity[p].name==this.multiServicesBill[i].bill[j].size){
+            this.multiServicesBill[i].bill[j].size=productivity[p]
+          }
+        
+        
       }
     }
     }

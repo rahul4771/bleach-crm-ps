@@ -3843,7 +3843,6 @@ class AssigncleaningTeam(IsAuthenticated,View):
 
 		for order_scheduler in order_schedules:
 			cleaning_team_assign_form = CleaningTeamAssignForm(request.POST)
-			print(cleaning_team_assign_form)
 			if	cleaning_team_assign_form.is_valid() and check_cleaners.count() >= len(assigned_cleaners) and check_tl:
 				cleaning_team_assign_form_save                   = cleaning_team_assign_form.save(commit=False)
 				cleaning_team_assign_form_save.order_scheduler   = order_scheduler
