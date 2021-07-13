@@ -935,19 +935,19 @@ const app=  new Vue({
                   else if(this.combineSlots[i].type=='not approved'){
                     if(this.combineSlots[i].slots.order.payment_status == 'PENDING' && this.combineSlots[i].slots.order.order_status == 'None')
                     {
-                      color='not-approved-status-bg'
+                      color='not-approved-status-bg' // + disable
                     }
                     else if(this.combineSlots[i].slots.order.payment_status == 'PENDING' && this.combineSlots[i].slots.order.order_status == 'APPROVED_BY_CLIENT')
                     {
-                      color='approved-notpaid-status-bg'
+                      color='approved-notpaid-status-bg' //+ disable
                     }else{
-                      color='not-approved-status-bg'
+                      color='not-approved-status-bg' //+ disable 
                     }
                   }
                   else if(this.combineSlots[i].type=='approved'){
                     if(this.combineSlots[i].slots.work_status=='CLEANING_CANCELLED')
                         {
-                          color='rejected-status-bg'
+                          color='rejected-status-bg' //+ disable, number disable
                         }
                     else if(this.combineSlots[i].slots.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE'){
                           color='onetime-cleaning-status-bg'
