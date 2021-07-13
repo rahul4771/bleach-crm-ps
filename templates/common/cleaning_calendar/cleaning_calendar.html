@@ -918,7 +918,8 @@ class="cl-service-list"
           <% currentSlotDetails.evaluation_details.evaluation.customer.mobile_number %>
          </div>
          <div class="cl-modal-text-title cl-mt-20 ">
-         <% currentSlotDetails.order_scheduler_book.service_type.name %>
+           <span v-for="(service,sindex) in currentServices" v-bind:key="sindex"><span v-if="sindex!=0">, </span><% service.order_scheduler_book.service_type.name %></span>
+         
         </div>
          <div class="cl-modal-text-content cl-mt-5">
            Apartment : <% currentSlotDetails.customer_address.apartment %>,

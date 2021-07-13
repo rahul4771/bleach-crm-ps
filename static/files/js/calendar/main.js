@@ -208,7 +208,8 @@ const app=  new Vue({
           type:''
         },
         cleaning_duration:[],
-            selected_cleaning_duration:{}
+            selected_cleaning_duration:{},
+            currentServices:[]
 
       },
       watch: {
@@ -628,7 +629,10 @@ const app=  new Vue({
           },
           editCleaning(){
             var service_type=[]
-            service_type.push(this.currentSlotDetails.order_scheduler_book.service_type.name)
+            for(var i=0;i<this.currentServices.length;i++){
+              service_type.push(this.currentServices[i].order_scheduler_book.service_type.name)
+            }
+            
             var temparray=this.selectedDate.split("-")
             var selectedDate=temparray.reverse().join("-")
             this.convertedDate=selectedDate
@@ -675,6 +679,12 @@ const app=  new Vue({
             this.parseEditSlots()
           },
           saveEdit(){
+            var schedules=[]
+            var serviceTypes=[]
+            for(var sh=0;sh<this.currentServices.length;sh++){
+              schedules.push(this.currentServices[sh].id)
+              serviceTypes.push(this.currentServices[sh].order_scheduler_book.service_type.name)
+            }
             var temparray=this.selectedDate.split("-")
             var selectedDate=temparray.reverse().join("-")
             var max=moment(this.selectedEditSlot[0], 'h:mma')
@@ -699,9 +709,9 @@ const app=  new Vue({
             cleaning_end:selectedDate+' '+moment(end).format('hh:mm A'),
             no_of_cleaners:this.selected_cleaning_duration.no_of_cleaners,
             cleaning_hours:this.selected_cleaning_duration.cleaning_hours,
-            schedules : [this.currentSlotDetails.id],
+            schedules : schedules,
             evaluation_id:this.currentSlotDetails.order.order_no,
-            service_types:['General Cleaning'],
+            service_types:serviceTypes,
             action_type:this.action_type
             }).then((response) => {
               console.log(response)
@@ -717,6 +727,7 @@ const app=  new Vue({
             })
           },
           saveEditFollowup(){
+           
             var temparray=this.selectedDate.split("-")
             var selectedDate=temparray.reverse().join("-")
             var max=moment(this.selectedEditSlot[0], 'h:mma')
@@ -875,6 +886,7 @@ const app=  new Vue({
             axios.get(this.url+"/agent/cleaningcallendar/cleaning/popup/?cleaning_start="+item.slots.start_at+'&cleaning_end='+item.slots.end_at+'&evaluation_id='+item.slots.order.order_no).then((response) => {
               this.approved_not_paid =response.data.approved_not_paid
               this.currentSlotDetails=response.data.cleaning_details[0]
+              this.currentServices=response.data.cleaning_details
               this.no_of_slots=parseInt(this.currentSlotDetails.cleaning_hours)/2
               this.cleaningAgentDialog=true
               this.dataCompleted=true
@@ -888,6 +900,7 @@ const app=  new Vue({
           
             axios.get(this.url+"/agent/cleaningcallendar/followupcleaning/popup/?followup_scheduler_id="+item.slots.id).then((response) => {
               this.currentSlotDetails=response.data.followup_cleanings[0]
+              this.currentServices=response.data.followup_cleanings
               this.no_of_slots=parseInt(this.currentSlotDetails.follow_up.cleaning_hours)/3   
               this.cleaningFollowupDialog=true
               this.followupStat=true
