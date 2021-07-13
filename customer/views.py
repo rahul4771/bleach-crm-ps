@@ -4090,15 +4090,15 @@ class DuplicateBookingPhase2(APIView):
 				service_book.save()
 
 				##cost updation
-				evaluation_details.estimated_cost     += service_book.estimated_cost
-				evaluation_details.total_cost         += service_book.total_cost
+				evaluation_details.estimated_cost     += int(service_book.estimated_cost)
+				evaluation_details.total_cost         += int(service_book.total_cost)
 
-				evaluation.estimated_cost     		  += service_book.estimated_cost
-				evaluation.total_cost         		  += service_book.total_cost
+				evaluation.estimated_cost     		  += int(service_book.estimated_cost)
+				evaluation.total_cost         		  += int(service_book.total_cost)
 				evaluation.quatation_status            = 'PENDING'
 
-				order.total_amount                    += service_book.total_cost
-				order.remining_amount                 += service_book.total_cost
+				order.total_amount                    += int(service_book.total_cost)
+				order.remining_amount                 += int(service_book.total_cost)
 
 				##cost updation
 				try:

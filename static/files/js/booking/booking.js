@@ -6,7 +6,7 @@ $(document).ready(function(){
     responsive:{
         0:{
             items:1,
-            nav:true
+            nav:false
         },
         600:{
             items:4,
@@ -33,7 +33,7 @@ $('#service-carousel').owlCarousel({
         },
         600:{
             items:4,
-            nav:true
+            nav:false
         },
         1000:{
             items:5,
@@ -87,6 +87,9 @@ const app=new Vue({
         
       },
     data: {
+      keynote_content:[
+       'BEDROOMS','BATHROOMS','MAID ROOM','STORAGE ROOM','LIVING ROOM','DRESSING ROOM','CABINETS (Inside)','CABINETS (Outside)','DRIVER ROOM','LAUNDRY ROOM','MECHANICAL ROOM','ELECTRICAL ROOM','ENTERTAINMENT ROOM','DINING ROOM','ENTRANCE AREA','STAIR CASE','HAND WASH AREA','WINDOWS','WALL GLASS','BALCONY','SWIMMING POOL','FAÇADE','DUSTING','GATES & FENCE','HALL WAY','AC VENTS','COVE LIGHTS','SWITCH BOARDS','CHANDELIERS','WALL LIGHTS','CEILING LIGHTS','DOOR','ROOF TOP','FENCE','PARKING AREA'
+      ],
       customDateSelected:[],
       customDialog:false,
       cleaningPolicy:'',
@@ -2467,7 +2470,7 @@ responsive:{
     },
     600:{
         items:4,
-        nav:true
+        nav:false
     },
     1000:{
         items:5,

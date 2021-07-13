@@ -56,7 +56,7 @@
       </div><!--checkin-form-left-->
       <div class="checkin-form-right align-right"><!--checkin-form-right-->
         {% if detail.status == 'EVALUATED' %}
-        <a href="{% url 'common_items:makequatation2edit' detail.id %}"><div><input name="view" type="button" value="Edit" class="checkonButton"></div></a>
+        <a href="#"><div><input name="view" type="button" value="Evaluated" class="checkonButton"></div></a>
         {% else %}
         <a href="{% url 'common_items:booking' detail.id %}?enquiry_id={{detail.evaluation.customer.id}}&evaluation_id={{detail.evaluation.id}}"><div><input name="view" type="button" value="Check-in" class="checkonButton"></div></a>
         {% endif %}
