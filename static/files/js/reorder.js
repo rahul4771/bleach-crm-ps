@@ -3521,6 +3521,7 @@ function openNav() {
                 total_estimated_size = total_estimated_size+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[i].size.max_size;
               }
              
+             
               if(selected_service=='Kitchen Cleaning'){
                 console.log("inside kitchen")
                 var new_kitchen_productivity = data["newkitchen_perhour_cleaning"];
@@ -3551,6 +3552,29 @@ function openNav() {
                 console.log("kicthen amhr is"+manhour)
                 
               }
+              else if(selected_service=='Upholstery Cleaning'){
+                 sofa_productivity = data["chair_perhour_cleaning"];
+                 chair_productivity = data["sofa_perhour_cleaning"];
+              for(var b=0;b<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;b++){
+                
+                if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].upholstery_type=='CHAIR'){
+                
+                
+                  chair_size=chair_size+parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].size.max_size)   
+                                  
+                }
+                else  if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].upholstery_type=='SOFA'){
+                 
+                  
+                  sofa_size=sofa_size+parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].size)   
+                                  
+                }
+
+              }
+              sofa_manhour=sofa_manhour+ parseInt(sofa_size / sofa_productivity); 
+              chair_manhour=chair_manhour+ parseInt(chair_size / chair_productivity); 
+              var manhour=chair_manhour+sofa_manhour
+            }
               else if(selected_service=='Facade Cleaning'){
                   var highprice_facade_productivity = data["highpricefacade_perhour_cleaning"];
                   var lowprice_facade_productivity = data["lowpricefacade_perhour_cleaning"];
@@ -4410,7 +4434,7 @@ function openNav() {
               for(var p in productivity){
           
         
-                if(productivity[p].name==this.multiServicesBill[i].bill[j].size){
+                if(productivity[p].name==this.multiServicesBill[i].bill[j].size && productivity[p].upholstery_type=='CHAIR'){
                   this.multiServicesBill[i].bill[j].size=productivity[p]
                 }
               
@@ -4493,6 +4517,7 @@ function openNav() {
   },
   reCalcAddressData(){
     console.log("called me")
+    this.oneTimeSelectionStat=false
     this.multiServicesBill=[]
     currentAddress=''
     for(var j=0;j<this.bookedServiceDetails.length;j++){
@@ -4524,6 +4549,7 @@ function openNav() {
       this.multiServicesBill.push(scheduleDetails)
     }
     this.gotData=true
+    this.rearrangeSize()
   
   },
   bookLetCustService(){
@@ -4581,7 +4607,7 @@ function openNav() {
             this.error_msg_stat=false
             ch_count=ch_count+1
             
-            if(ch_count==(Object.keys(this.scheduleGroup).length)){
+            if(ch_count==(Object.keys(this.scheduleGroup).length) && this.currentAddressIndex==this.bookedServiceDetails.length){
              // window.location.href='/common/makequatation/phase1/'+this.bookedServiceDetails[0].address.customer.id+'/'+this.main_eval_id
 
             }
