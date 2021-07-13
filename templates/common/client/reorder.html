@@ -44,6 +44,23 @@
 
       <template v-slot:action="{ attrs }">
         <v-btn
+          color="#ffffff"
+          text
+          v-bind="attrs"
+          @click="error_msg_stat = false"
+        >
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
+    <v-snackbar
+      v-model="error_msg_stat"
+      color="danger"
+    >
+    <% error_msg %>
+
+      <template v-slot:action="{ attrs }">
+        <v-btn
           color="#000000"
           text
           v-bind="attrs"
@@ -874,7 +891,7 @@ width="1000"
                                 <% bill.size.name %>
                                </div>
                               <div class="ml-auto primary-green-text" >
-                                KD <% bill.section_cost %>
+                                KD <% bill.section_cost %> <span v-if="service.schedule_details && service.cleaning_policy=='SUBSCRIPTION'">x <% Object.keys(service.schedule_details).length %></span>
                               </div>
                             </div>
                           </div>
@@ -888,7 +905,8 @@ width="1000"
                               <b>Total</b>  
                               </div>
                               <div class="ml-auto primary-green-text" >
-                                KD <% service.estimated_cost %>
+                                <span v-if="service.schedule_details && service.cleaning_policy=='SUBSCRIPTION'">KD <% (service.estimated_cost*Object.keys(service.schedule_details).length) %></span>
+                               <span v-else>KD <% service.estimated_cost %></span> 
                               </div>
                             </div>
                           </div>

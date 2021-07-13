@@ -2611,7 +2611,7 @@ Fill all the details of the Buildings  to proceed
                                <% bill.section.size.name %>
                               </div>
                               <div class="ml-auto primary-text" >
-                                KD <% bill.section.section_cost %>
+                                KD <% bill.section.section_cost %><span v-if="service.schedule_details && service.cleaning_policy=='SUBSCRIPTION'">x <% Object.keys(service.schedule_details).length %></span>
                               </div>
                             </div>
                           </div>
@@ -2625,7 +2625,9 @@ Fill all the details of the Buildings  to proceed
                               <b>Total</b>  
                               </div>
                               <div class="ml-auto primary-text" >
-                                KD <% service.total_cost %>
+                                <span v-if="service.schedule_details && service.cleaning_policy=='SUBSCRIPTION'">KD <% (service.total_cost*Object.keys(service.schedule_details).length) %></span>
+                                <span v-else>KD <% service.total_cost %></span>
+                                
                               </div>
                             </div>
                           </div>
