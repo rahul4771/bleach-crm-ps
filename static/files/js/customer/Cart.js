@@ -2375,6 +2375,8 @@ $(document).ready(function(){
          
         )
         .then((response) => {
+          this.bookingonetimeslots=[]
+        this.onetimeslots=[]
            this.timeSlots = response.data.slotes;
            for(var i in this.timeSlots){
             if(this.timeSlots[i].includes(2)){
@@ -4361,8 +4363,41 @@ async rearrangeSize(){
     var productivity= await this.getTheProd(this.multiServicesBill[i].service)
     console.log("productivity is"+JSON.stringify(productivity))
     for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
+      /* If old bookings */
+      if(parseInt(this.multiServicesBill[i].bill[j].size)){
+        
+        for(var p in productivity){
+           /** for kitchen Cleaning*/
+           if(this.multiServicesBill[i].service=='Kitchen Cleaning'){
+              if(multiServicesBill[i].bill[j].new_kitchen){
+                if(productivity[p].name==this.multiServicesBill[i].bill[j].size && productivity[p].is_newkitchen && parseInt(this.multiServicesBill[i].bill[j].size)>=productivity[p].min_size && parseInt(this.multiServicesBill[i].bill[j].size)<=productivity[p].max_size){
+                  this.multiServicesBill[i].bill[j].size=productivity[p]
+                }
+              }
+           }
+           
+        
+      /**  for general,deep,carparking,sterilization....... */
+      else{
+
+      
+          if((parseInt(this.multiServicesBill[i].bill[j].size)>=productivity[p].min_size) && (parseInt(this.multiServicesBill[i].bill[j].size)<=productivity[p].max_size)){
+            
+            this.multiServicesBill[i].bill[j].size=productivity[p]
+           
+          }
+         
+      }
+        
+        }
+      }
+
+      /* new bookings */
+      else{
+
+      
       if(this.multiServicesBill[i].service=='Kitchen Cleaning'){
-        if(this.multiServicesBill[i].new_kitchen)
+        if(this.multiServicesBill[i].bill[j].new_kitchen)
         {
           for(var p in productivity){
         if(productivity[p].name==this.multiServicesBill[i].bill[j].size && productivity[p].is_newkitchen){
@@ -4461,6 +4496,7 @@ async rearrangeSize(){
         
       }
     }
+  }
     }
   }
   
@@ -4511,6 +4547,7 @@ reCalcAddressData(){
     this.multiServicesBill.push(scheduleDetails)
   }
   this.gotData=true
+  this.rearrangeSize()
 
 },
 bookLetCustService(){
@@ -4545,6 +4582,7 @@ bookLetCustService(){
 },
 sendLetCustScheduled(){
   if(!this.scheduleStat){
+    var ch_count=0
     for(var ch in this.scheduleGroup){
       if(this.scheduleGroup[ch].length>0){
         var serviceDetails={
@@ -4561,7 +4599,11 @@ sendLetCustScheduled(){
         }
         axios.post(this.url+'/customer/evaluatorbookingmultiplephase3/customer/'+this.custId,serviceDetails).then(response=>{
           this.evaluation_id=response.data.secret_code
-          this.goToPaymentDialog()
+          ch_count=ch_count+1
+          if(ch_count==(Object.keys(this.scheduleGroup).length) && this.currentAddressIndex==this.bookedServiceDetails.length){
+            this.goToPaymentDialog()
+          }
+          
         
         })
       }
@@ -4574,7 +4616,10 @@ sendLetCustScheduled(){
   else{
     axios.post(this.url+'/customer/evaluatorbookingmultiplephase3/customer/'+this.custId,this.custServiceScheduled).then(response=>{
       this.evaluation_id=response.data.secret_code
-      this.goToPaymentDialog()
+      if(this.currentAddressIndex==this.bookedServiceDetails.length){
+        this.goToPaymentDialog()
+      }
+     
     })
   }
   

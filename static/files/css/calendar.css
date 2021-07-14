@@ -519,6 +519,9 @@ width:100% !important;
     border-radius: 4px;
     opacity: 1;
 }
+.disabled-plus{
+   color:#8b8b8b;
+}
 .cl-slot-card-title{
     font-size:16px;
     color: #434343;

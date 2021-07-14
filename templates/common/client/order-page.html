@@ -2679,7 +2679,7 @@ $('input[name="radio"]').click(function(){
                 {% for orderschedule2 in order.orderschedules %}
                 console.log("{{orderschedule.id}}")
                 if("{{orderschedule.id}}" == "{{orderschedule2.id}}"){
-                    $("#show{{orderschedule.id}}").text("Show Less");
+                    $("#show{{orderschedule.id}}").text("");
                     $("#showmore{{orderschedule.id}}").fadeIn();
                     $(".showmore1{{orderschedule.id}}").fadeIn();
                     $(".showmore2{{orderschedule.id}}").fadeIn();
