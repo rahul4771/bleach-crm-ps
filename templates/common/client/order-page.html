@@ -2900,12 +2900,10 @@ function view_page(){
     }
 
     if (view_item == 'invoice'){
-        {% if %}
         window.open("/customer/invoice/prw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}", "_blank");
     }
 
     if (view_item == 'booking_invoice'){
-        {% if %}
         window.open("/customer/booking/invoice/prw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}", "_blank");
     }
 
