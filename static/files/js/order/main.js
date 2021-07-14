@@ -1025,15 +1025,30 @@ const app = new Vue({
               }
             }
             console.log("size is"+JSON.stringify(this.service_size))
+          /* old order size conversion */
+              
 
+          /* new order size conversion begins here */
+        
            /* General cleaning  size conversion */ 
-          if(this.service_type=='General Cleaning' || this.service_type=='Deep Cleaning' || this.service_type=='Sterilization' || this.service_type=='Sterilization'|| this.service_type=='Carpet Cleaning'|| this.service_type=='Car Parking Umbrella'){
+          if(this.service_type=='General Cleaning' || this.service_type=='Deep Cleaning' || this.service_type=='Storage Area' || this.service_type=='Sterilization'|| this.service_type=='Carpet Cleaning'|| this.service_type=='Car Parking Umbrella'){
             for(var j=0;j<this.sections.length;j++){
+             
               for(var i=0;i<this.service_size.length;i++){
-                if(this.service_size[i].name==this.sections[j].size){
-                  this.sections[j].size=this.service_size[i]
-                 
+                if(parseInt(this.sections[j].size)){
+                  var section_size=parseInt(this.sections[j].size)
+                  if(section_size<=this.service_size[i].max_size && section_size>=this.service_size[i].min_size){
+                    this.sections[j].size=this.service_size[i]
+                   
+                  }
                 }
+                else{
+                  if(this.service_size[i].name==this.sections[j].size){
+                    this.sections[j].size=this.service_size[i]
+                   
+                  }
+                }
+                
               }
             }
               
@@ -1076,21 +1091,39 @@ const app = new Vue({
             
              if(this.sections[j].new_kitchen){
                for(var i=0;i<this.service_size.length;i++){
+                if(parseInt(this.sections[j].size)){
+                  var section_size=parseInt(this.sections[j].size)
+                  if(section_size<=this.service_size[i].max_size && section_size>=this.service_size[i].min_size && this.service_size[i].is_newkitchen){
+                    this.sections[j].size=this.service_size[i]
+                   
+                  }
+                }
+                else{
                  if(this.service_size[i].is_newkitchen && this.sections[j].size==this.service_size[i].name){
                    
                    this.sections[j].size=this.service_size[i]
                   
                  }
+                }
                }
              }
              else{
               for(var i=0;i<this.service_size.length;i++){
+                if(parseInt(this.sections[j].size)){
+                  var section_size=parseInt(this.sections[j].size)
+                  if(section_size<=this.service_size[i].max_size && section_size>=this.service_size[i].min_size && !this.service_size[i].is_newkitchen){
+                    this.sections[j].size=this.service_size[i]
+                   
+                  }
+                }
+                else{
                 if(!this.service_size[i].is_newkitchen && this.sections[j].size==this.service_size[i].name){
                   
                   this.sections[j].size=this.service_size[i]
                  
                 }
               }
+            }
              }
             
            }
