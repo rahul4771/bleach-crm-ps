@@ -9,8 +9,10 @@ $(document).ready(function () {
           speed:600,
          
   });*/
+  console.log("moment date is "+ moment().format('MM/DD/YYYY'))
   $('#calendar').datepicker({
     language: "en",
+    startDate:moment().format('MM/DD/YYYY')
     
   });
   
