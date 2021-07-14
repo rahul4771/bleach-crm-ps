@@ -712,7 +712,7 @@
             <!--container-fluid space topspace-->
             <div class="welcome-wrapper">
                 <!--welcome-wrapper-->
-                <h1 class="dashboard-head">{{order.evaluation.evaluation_id}} {% if order.customer_booking %}{% for booking in order.customer_booking %}({{booking.booking_id}}){% endfor %}{% endif %} </h1>
+                <h1 class="dashboard-head">{{order.evaluation.evaluation_id}} {% if booking_id %}({{booking_id}}){% endif %} </h1>
                 <div>
                     <!--rating section-->
 
@@ -1710,7 +1710,7 @@
                                                     <form>
                                                     {% if order.evaluation.quatation_status == 'APPROVED' %}
                                                         <label class="cc-container">Invoice
-                                                            {% if order.customer_booking %}
+                                                            {% if booking_id %}
                                                                 <input type="radio"  name="radio" value="booking_invoice">
                                                             {% else %}
                                                                 {% if order.evaluation.payment_method == 'SUBSCRIPTION' %}
