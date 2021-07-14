@@ -904,7 +904,7 @@ class="cl-service-list"
            </div>
          </div>
 
-         <div class="d-flex" v-else-if="currentSlotDetails.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE' && currentSlotDetails.order.payment_status=='PENDING' && currentSlotDetails.order.order_status=='APPROVED_BY_CLIENT'" >
+         <div class="d-flex" v-else-if="currentSlotDetails.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE' && currentSlotDetails.order.payment_status=='PENDING' && currentSlotDetails.order.order_status=='APPROVED_BY_CLIENT' || currentSlotDetails.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE' && currentSlotDetails.order.payment_status=='PENDING' && currentSlotDetails.order.order_status=='APPROVED_BY_CLIENT' && currentSlotDetails.order.preamount_paid == 0 " >
           <div class="cl-approved-not-paid-mark"></div>
           <div class="cl-subtext" >
             Approved Not Paid
