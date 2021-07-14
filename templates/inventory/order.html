@@ -77,16 +77,16 @@
                             </td>
 
                             <td>
-                                <button class="inv-active-btn">
-                                    Active
+                                <button class="inv-checkedout-btn">
+                                    Checked-out
                                 </button>
                             </td>
                             <td style="float: right;">
-
+                                <button class="inv-plan-img-btn" onclick="openNav()"> <img
+                                    src="{% static 'files/inventory/icons/edit.png' %}" alt=""> Create Check-out list </button>
                                 <button class="inv-plan-img-btn" onclick="openNav()"> <img
                                         src="{% static 'files/inventory/icons/edit.png' %}" alt=""> </button>
-                                <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel"> <img
-                                        src="{% static 'files/inventory/icons/delete.png' %}" alt=""> </button>
+                               
 
                             </td>
                         </tr>
@@ -104,16 +104,16 @@
                             </td>
 
                             <td>
-                                <button class="inv-active-btn">
-                                    Active
+                                <button class="inv-created-btn ">
+                                    List created
                                 </button>
                             </td>
                             <td style="float: right;">
-
+                                <button class="inv-plan-img-btn inv-btn-dis" onclick="openNav()"> <img
+                                    src="{% static 'files/inventory/icons/edit.png' %}" alt=""> Create Check-out list </button>
                                 <button class="inv-plan-img-btn" onclick="openNav()"> <img
                                         src="{% static 'files/inventory/icons/edit.png' %}" alt=""> </button>
-                                <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel"> <img
-                                        src="{% static 'files/inventory/icons/delete.png' %}" alt=""> </button>
+                                
 
                             </td>
                         </tr>
@@ -131,16 +131,43 @@
                             </td>
 
                             <td>
-                                <button class="inv-active-btn">
+                                <button class="inv-waiting-btn">
+                                    Waiting
+                                </button>
+                            </td>
+                            <td style="float: right;">
+                                <button class="inv-plan-img-btn inv-btn-dis" onclick="openNav()"> <img
+                                    src="{% static 'files/inventory/icons/edit.png' %}" alt=""> Create Check-out list </button>
+                                <button class="inv-plan-img-btn" onclick="openNav()"> <img
+                                        src="{% static 'files/inventory/icons/edit.png' %}" alt=""> </button>
+                                
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                0000000
+                            </td>
+                            <td>
+                                Name
+                            </td>
+                            <td>
+                                Name
+                            <td>
+                                Out
+                            </td>
+
+                            <td>
+                                <button class="inv-checkedin-btn">
                                     Active
                                 </button>
                             </td>
                             <td style="float: right;">
-
+                                <button class="inv-plan-img-btn inv-btn-dis" onclick="openNav()"> <img
+                                    src="{% static 'files/inventory/icons/edit.png' %}" alt=""> Create Check-out list </button>
                                 <button class="inv-plan-img-btn" onclick="openNav()"> <img
                                         src="{% static 'files/inventory/icons/edit.png' %}" alt=""> </button>
-                                <button class="inv-plan-img-btn"> <img
-                                        src="{% static 'files/inventory/icons/delete.png' %}" alt=""> </button>
+                                
 
                             </td>
                         </tr>
