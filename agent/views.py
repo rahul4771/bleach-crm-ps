@@ -1100,12 +1100,6 @@ class CleaningPopupMultipleServiceCleaningSlotes(APIView):
 				total_newcleaners   = total_cleaners.filter(Q(id__in=shift_cleaners)|Q(id__in=super_shift_cleaners)).count()-1
 				total_newleaders    = total_leaders.filter(Q(id__in=shift_leaders)|Q(id__in=super_shift_leaders)).count()-1
 
-				if slote == 6 and slote_duration == 2:
-					print(total_newcleaners,"total_newcleaners")
-					print(total_newleaders,"total_newleaders")
-					print(busy_cleaners,"busy_cleaners")
-					print(busy_leaders,"busy_leaders")
-					print(number_of_cleaners,"number_of_cleaners")
 				#slote appending		
 				if((total_newcleaners-busy_cleaners)>=number_of_cleaners and (total_newleaders-busy_leaders)>=1):
 					available_durations.append(slote_duration)				
@@ -1246,6 +1240,7 @@ class CleaningPopupSave(APIView):
 				cleaning_schedule.end_at   							= schedule_end_at
 				cleaning_schedule.no_of_cleaners                    = no_of_cleaners
 				cleaning_schedule.cleaning_hours                    = cleaning_hours
+				cleaning_schedule.work_status                       = None
 				cleaning_schedule.save()
 
 				#delete cleaning team
