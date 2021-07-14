@@ -14,6 +14,18 @@ url(r'^store/$',views.InventoryStore.as_view(),name='inventory-store'),
 url(r'^inventory/$',views.InventoryInv.as_view(),name='inventory-inv'),
 url(r'^order/$',views.InventoryOrder.as_view(),name='inventory-order'),
 url(r'^users/$',views.InventoryUsers.as_view(),name='inventory-users'),
+url(r'^checkout/$',views.InventoryCheckout.as_view(),name='inventory-checkout'),
+url(r'^createcheckout/$',views.InventoryCreateCheckout.as_view(),name='inventory-createcheckout'),
+url(r'^purchaseOrder/$',views.InventoryPurchaseOrder.as_view(),name='inventory-purchaseorder'),
+url(r'^createpo/$',views.InventoryCreatePurchaseOrder.as_view(),name='inventory-createpurchaseorder'),
+url(r'^editpo/$',views.InventoryEditPurchaseOrder.as_view(),name='inventory-editpurchaseorder'),
+url(r'^viewpo/$',views.InventoryViewPurchaseOrder.as_view(),name='inventory-viewpurchaseorder'),
+
+
+
+
+
+
 
 
 

@@ -1,0 +1,294 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+<div class="wrapper"><!--wrapper-->
+    {% include "inventory/common/header.html" %}
+    <section class="content">
+        <div class="container-fluid space topspace">
+            <div class="welcome-wrapper">
+                <!--welcome-wrapper-->
+                <h1 class="dashboard-head">Purchase Order</h1>
+                <!-- <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p> -->
+            </div>
+        </div>
+
+        <div class="main-content-holder"><!--main-content-holder-->   
+            <div class="white-wrapper">
+                <div class="d-flex d-grid">
+                    <div>
+                     
+                        <div class="inv-input-container h-30">
+                            <i class="fa fa-search inv-icon-input" aria-hidden="true"></i>
+                            <input type="text" placeholder="Search inventory" class="inv-input w-250" name="attributes">
+                          </div>
+                    
+                    
+                    </div>
+                    <div class="right-pos">
+                        <button class="inv-plan-btn">
+                            <i class="fa fa-filter mr-5" aria-hidden="true"></i>
+                            Filter
+                        </button>
+                        <button class="inv-blue-btn" onclick="showDrawer('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Create PO</button>
+
+                        <!-- <button class="inv-blue-btn" data-toggle="modal" data-target="#addModel" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Store </button> -->
+                    </div>
+                </div>
+                <div class="mt-20">
+                    <table class="inv-table footable"> 
+                        <thead>
+                            <tr>
+                                <th style="width: %;">
+                                    PO ID
+                                </th>
+                                <th data-hide="phone,tablet"  style="width: %; text-align: center;">
+                                    Initiated Date
+                                </th>
+                                <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                    Initiated by
+                                </th>
+                                <th  data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                    Seller/vender
+                                </th>
+                                <th data-hide="phone,tablet"  class="text-center">
+                                    Number Of units
+                                </th>
+                                <th data-hide="phone,tablet"  class="text-center">
+                                    Total cost
+                                </th>
+                                <th>
+                                    Status
+                                </th>
+    
+                                <th data-hide="phone,tablet"  style="width: %;" class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                     <tbody>
+                        <tr>
+                            <td>
+                                0000000
+                            </td>
+                            <td class="text-center">
+                                12/12/2021
+                            </td>
+                            <td class="text-center">
+                                Name
+                            <td class="text-center">
+                                Name
+                            </td>
+                            <td class="text-center">
+                                23
+                            </td>
+                            <td class="text-center">
+                               2300
+                            </td>
+                            <td>
+                                <button class="inv-active-btn">
+                                    Active
+                                </button>
+                            </td>
+                            <td style="float: right;">
+                              
+                                <button class="inv-plan-img-btn" onclick="openNavAddStore('edit')"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                <button class="inv-plan-img-btn"  data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                0000000
+                            </td>
+                            <td class="text-center">
+                                12/12/2021
+                            </td>
+                            <td class="text-center">
+                                Name
+                            <td class="text-center">
+                                Name
+                            </td>
+                            <td class="text-center">
+                                23
+                            </td>
+                            <td class="text-center">
+                               2300
+                            </td>
+                            <td>
+                                <button class="inv-active-btn">
+                                    Active
+                                </button>
+                            </td>
+                            <td style="float: right;">
+                              
+                                <button class="inv-plan-img-btn" onclick="openNavAddStore('edit')"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                <button class="inv-plan-img-btn"  data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+
+                            </td>
+                        </tr>
+                      
+                     </tbody>
+                       
+                      
+                     
+                        
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div id="addStore" class="inv-sidedrawer">
+
+        <div class="inv-sidedrawer-inner">
+            <div class="d-flex">
+                <div class="inv-drawer-head" id="itemHead">
+                    Add Store
+                </div>
+                <div class="right-pos">
+
+                    <button onclick="closeNavAddStore()" class="img-button">
+                        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                    </button>
+                </div>
+            </div>
+            <hr>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Item</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Item code</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Category</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Quantity</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Unit Price</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Status</div>
+
+                    <select id="id_payment" class="minimal">
+                        <option  ></option>
+                        <option  >Active</option>
+                        <option value="Post Paid">Inactive</option>
+
+                    </select>
+                </div>
+
+            </div>
+            
+    
+            
+
+
+          
+        </div>
+        <div class="inv-drawer-footer">
+            <button class="sent-button" >Submit</button>
+                        <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
+        </div>
+    </div>
+    <div class="modal fade" id="deleteModel" role="dialog">
+        <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12 mt-20">
+
+                        
+                        <div class="d-flex ">
+                            <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to delete inventory</p></div>
+                            <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                                <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                            </button>
+    
+                        </div>
+                    </div>
+                </div>
+               
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <div class="cancel-model-content">
+                            <button class="sent-button" >Delete</button>
+                            <button data-dismiss="modal" class="view-button">Cancel</button>
+                          
+                        </div>
+                    </div>
+    
+                </div>
+            </div>
+        </div>
+      </div>
+</div>
+
+
+
+{% endblock %}
+
+{% block javascript %}
+
+<script>
+
+
+
+    function openNavAddStore(d) {
+    if(d == 'add'){
+            $("#itemHead").text("Add Store");
+        }
+        if(d == 'edit'){
+            $("#itemHead").text("Edit Inventory");
+        }
+        if(screen.width<= 600){
+            document.getElementById("addStore").style.width = "100%";
+        }else if(screen.width<= 720){
+            document.getElementById("addStore").style.width = "50%";
+        }
+        else{
+            document.getElementById("addStore").style.width = "30%";
+        }  
+    }
+    function closeNavAddStore() {
+        document.getElementById("addStore").style.width = "0";
+    }
+</script>
+{% endblock %}

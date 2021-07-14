@@ -40,3 +40,21 @@ class InventoryOrder(View):
 class InventoryUsers(View):
     def get(self,request):
         return render(request,'inventory/users.html',{})
+class InventoryCheckout(View):
+    def get(self,request):
+        return render(request,'inventory/checkout.html',{})
+class InventoryCreateCheckout(View):
+    def get(self,request):
+        return render(request,'inventory/createCheckout.html',{})
+class InventoryPurchaseOrder(View):
+    def get(self,request):
+        return render(request,'inventory/purchaseOrder.html',{})
+class InventoryCreatePurchaseOrder(View):
+    def get(self,request):
+        return render(request,'inventory/createpo.html',{})
+class InventoryEditPurchaseOrder(View):
+    def get(self,request):
+        return render(request,'inventory/editpo.html',{})
+class InventoryViewPurchaseOrder(View):
+    def get(self,request):
+        return render(request,'inventory/viewpo.html',{})

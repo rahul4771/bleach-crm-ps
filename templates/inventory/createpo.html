@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+<div class="wrapper"><!--wrapper-->
+    {% include "inventory/common/header.html" %}
+    <section class="content">
+        <div class="container-fluid space topspace">
+            <div class="welcome-wrapper">
+                <!--welcome-wrapper-->
+                <h1 class="dashboard-head">Create Purchase Order</h1>
+                <!-- <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p> -->
+            </div>
+        </div>
+
+        <div class="main-content-holder"><!--main-content-holder-->   
+            <div class="white-wrapper">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="model-input-name">Select Seller</div>
+
+                    <select id="id_payment" class="minimal">
+                        <option  ></option>
+                        
+
+                    </select>
+                    </div>
+                </div>
+                <div class="row mt-20">
+                    <div class="col-md-12 inv-text-normal">
+                        Supplier Address
+                    </div>
+                </div>
+                <div class="row mt-10">
+                    <div class="col-md-12 inv-text-normal">
+                        Supplier contact
+                    </div>
+                </div>
+                <div class="row mt-10">
+                    <div class="col-md-12 ">
+                        <table class="inv-table footable"> 
+                            <thead>
+                              <tr>
+                                  <th style="width: %;">
+                                    Product
+                                  </th>
+                                  <th data-hide="phone,tablet"  style="width: %; ">
+                                      Unit Cost
+                                  </th>
+                                  <th data-hide="phone,tablet"  style="width: %;">
+                                    Number of units
+                                  </th>
+                                  <th data-hide="phone,tablet"  style="width: %;" >
+                                    Category
+                                  </th>
+                                 
+                                  <th data-hide="phone,tablet"  style="width: %;">Action</th>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              <tr>
+                                  <td>0000000</td>
+                                  <td>232</td>
+                                  <td>232</td>
+                                  <td>Category 1</td>
+                                  <td> <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td>
+                              </tr>
+                              <tr>
+                                  <td>
+                                    <button class="inv-plan-btn" onclick="openNavAddStore()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="" > Add Item</button>
+                                  </td>
+                              </tr>
+                          </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div id="addStore" class="inv-sidedrawer">
+
+        <div class="inv-sidedrawer-inner">
+            <div class="d-flex">
+                <div class="inv-drawer-head" id="itemHead">
+                    Add Item
+                </div>
+                <div class="right-pos">
+
+                    <button onclick="closeNavAddStore()" class="img-button">
+                        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                    </button>
+                </div>
+            </div>
+            <hr>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Product</div>
+
+                    <div class="inv-input-container inv-border h-30"> 
+                        <input type="text" style="border: none !important; width: 90%;"  class=" inv-in" name="attributes">
+                        <div class="inv-hr"></div>
+                        <div class="model-filter">
+                            <i class="fa fa-angle-down fa-lg " style="color: #707070;" aria-hidden="true"></i>
+                        </div>
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Unit</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+          
+    
+            
+
+
+          
+        </div>
+        <div class="inv-drawer-footer">
+            <button class="sent-button" >Submit</button>
+                        <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
+        </div>
+    </div>
+    <div class="modal fade" id="deleteModel" role="dialog">
+        <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12 mt-20">
+
+                        
+                        <div class="d-flex ">
+                            <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to delete inventory</p></div>
+                            <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                                <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                            </button>
+    
+                        </div>
+                    </div>
+                </div>
+               
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <div class="cancel-model-content">
+                            <button class="sent-button" >Delete</button>
+                            <button data-dismiss="modal" class="view-button">Cancel</button>
+                          
+                        </div>
+                    </div>
+    
+                </div>
+            </div>
+        </div>
+      </div>
+</div>
+
+
+
+{% endblock %}
+
+{% block javascript %}
+
+<script>
+
+
+
+    function openNavAddStore() {
+    
+        if(screen.width<= 600){
+            document.getElementById("addStore").style.width = "100%";
+        }else if(screen.width<= 720){
+            document.getElementById("addStore").style.width = "50%";
+        }
+        else{
+            document.getElementById("addStore").style.width = "30%";
+        }  
+    }
+    function closeNavAddStore() {
+        document.getElementById("addStore").style.width = "0";
+    }
+</script>
+{% endblock %}
