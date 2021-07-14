@@ -2401,6 +2401,8 @@ function openNav() {
            
           )
           .then((response) => {
+            this.bookingonetimeslots=[]
+        this.onetimeslots=[]
              this.timeSlots = response.data.slotes;
              for(var i in this.timeSlots){
               if(this.timeSlots[i].includes(2)){
