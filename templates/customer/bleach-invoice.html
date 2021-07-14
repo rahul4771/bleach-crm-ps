@@ -451,7 +451,7 @@
                   </div>
                 </div>
                 {% endif %}
-                {% if order.payment_status=='PENDING' %}
+                {% if order.payment_status == 'PENDING' %}
                 <div class="inv-payment-box">
                     <div class="inv-payment-card mt-4 text-center" id="inv-debit" onclick="selectPayment('pay')"><!-- to disable click add class inv-click-disable -->
                       <img src="{% static 'files/icons/pay.png' %}" class="inv-card-icon" id="inv-credit-img"  /> <!-- to disable  add class inv-payment-disabled -->
@@ -482,7 +482,7 @@
               </form>
               
             
-              {% if order.payment_status=='PENDING' or order.customer_booking %}
+              {% if order.payment_status == 'PENDING' or order.customer_booking %}
               <div class="col-12   text-center text-white mt-4">
                 <div class="inv-btn" onclick="proceedBookingInvoice()">
                 Proceed
