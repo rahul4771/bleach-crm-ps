@@ -1710,12 +1710,16 @@
                                                     <form>
                                                     {% if order.evaluation.quatation_status == 'APPROVED' %}
                                                         <label class="cc-container">Invoice
-                                                            {% if order.evaluation.payment_method == 'SUBSCRIPTION' %}
-                                                                {% if invoice.balance <= 0 or invoice.balance >= 0 %}
+                                                            {% if booking_id %}
+                                                                <input type="radio"  name="radio" value="booking_invoice">
+                                                            {% else %}
+                                                                {% if order.evaluation.payment_method == 'SUBSCRIPTION' %}
+                                                                    {% if invoice.balance <= 0 or invoice.balance >= 0 %}
+                                                                        <input type="radio"  name="radio" value="subscription_invoice">
+                                                                    {% endif %}
+                                                                {% else %}
                                                                     <input type="radio"  name="radio" value="invoice">
                                                                 {% endif %}
-                                                            {% else %}
-                                                                <input type="radio"  name="radio" value="subscription_invoice">
                                                             {% endif %}
 
                                                             <span class="cc-checkmark"></span>
@@ -2897,6 +2901,10 @@ function view_page(){
 
     if (view_item == 'invoice'){
         window.open("/customer/invoice/prw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}", "_blank");
+    }
+
+    if (view_item == 'booking_invoice'){
+        window.open("/customer/booking/invoice/prw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}", "_blank");
     }
 
     if (view_item == 'subscription_invoice'){

@@ -886,7 +886,7 @@ class="cl-service-list"
            </div>
          </div>
 
-         <div class="d-flex" v-else-if="currentSlotDetails.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE' && currentSlotDetails.evaluation_details.evaluation.quatation_status=='APPROVED' && currentSlotDetails.order.payment_status!='PENDING' && currentSlotDetails.evaluation_details.evaluation.payment_method=='BREAKDOWN'" >
+         <div class="d-flex" v-else-if="currentSlotDetails.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE' && currentSlotDetails.evaluation_details.evaluation.quatation_status=='APPROVED' && currentSlotDetails.order.preamount_paid!=0 && currentSlotDetails.evaluation_details.evaluation.payment_method=='BREAKDOWN'" >
           <div class="cl-rejected-mark" v-if="currentSlotDetails.work_status=='CLEANING_CANCELLED'" ></div>
           <div class="cl-onetime-mark" v-if="currentSlotDetails.work_status!='CLEANING_CANCELLED'" ></div>
           <div class="cl-subtext" v-if="currentSlotDetails.work_status=='CLEANING_CANCELLED'" >
@@ -904,7 +904,7 @@ class="cl-service-list"
            </div>
          </div>
 
-         <div class="d-flex" v-else-if="currentSlotDetails.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE' && currentSlotDetails.order.payment_status=='PENDING' && currentSlotDetails.order.order_status=='APPROVED_BY_CLIENT' || currentSlotDetails.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE' && currentSlotDetails.order.payment_status=='PENDING' && currentSlotDetails.order.order_status=='APPROVED_BY_CLIENT' && currentSlotDetails.order.preamount_paid == 0 " >
+         <div class="d-flex" v-else-if="currentSlotDetails.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE' && currentSlotDetails.order.payment_status=='PENDING' && currentSlotDetails.order.order_status=='APPROVED_BY_CLIENT' && currentSlotDetails.order.preamount_paid == 0 " >
           <div class="cl-approved-not-paid-mark"></div>
           <div class="cl-subtext" >
             Approved Not Paid
