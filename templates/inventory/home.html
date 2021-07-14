@@ -178,16 +178,11 @@
                                             <th style="width: %;" class="text-center">
                                                 Service
                                             </th>
-                                            <th>
-                                                Time
-                                            </th>
-                                            <th>
-                                                Check in/out
-                                            </th>
+                                            
                                             <th style="width:%;" class="text-center">Action</th>
                                         </tr>
                                         <tr>
-                                            <td class="inv-green-border">
+                                            <td class="inv-blue-border">
                                                 
                                                 BLC6464544957
                                             </td>
@@ -200,22 +195,15 @@
                                             <td class="text-center">
                                                 General
                                             </td>
-                                            <td class="text-center">
-                                                Area 1
-                                            </td>
-                                            <td>
-                                              Out
-                                            </td>
+                                            
                                             <td style="float: right;">
-                                                <button class="inv-plan-img-btn"> <img class="view-img"  src="{% static 'files/inventory/icons/view.png' %}"  alt=""> </button>
-                                                
-                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                                                <button class="btn-shadow inv-plan-img-btn "> <img class="view-img"  src="{% static 'files/inventory/icons/view.png' %}"  alt=""> Check out </button>
+
                 
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td class="inv-green-border">
+                                            <td class="inv-gray-border">
                                                 
                                                 BLC6464544957
                                             </td>
@@ -228,17 +216,11 @@
                                             <td class="text-center">
                                                 General
                                             </td>
-                                            <td class="text-center">
-                                                Area 1
-                                            </td>
-                                            <td>
-                                              Out
-                                            </td>
+                                           
                                             <td style="float: right;">
-                                                <button class="inv-plan-img-btn"> <img class="view-img"  src="{% static 'files/inventory/icons/view.png' %}"  alt=""> </button>
+                                                <button class=" inv-plan-img-btn inv-btn-dis"> <img class="view-img"  src="{% static 'files/inventory/icons/view.png' %}"  alt=""> Check out </button>
                                                 
-                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                                                
                 
                                             </td>
                                         </tr>
@@ -290,8 +272,10 @@
                                             <td class="text-center">
                                                 Name
                                             </td>
-                                            <td class="text-center">
-                                                <button class="inv-about-finish-btn"> About to finish</button>
+                                            <td class="">
+                                                <span class="inv-dot c-about-finish ml-5"></span>
+                                                About to finish
+                                                
                                             </td>
                                             <td style="float: right;">
                                                 <button class="inv-plan-img-btn"> <img class="view-img"  src="{% static 'files/inventory/icons/view.png' %}"  alt=""> </button>
@@ -315,8 +299,37 @@
                                             <td class="text-center">
                                                 Name
                                             </td>
+                                            <td class="">
+                                                <span class="inv-dot c-out-of-order ml-5"></span>
+                                                Out of Order
+                                                
+                                            </td>
+                                            <td style="float: right;">
+                                                <button class="inv-plan-img-btn" > <img class="view-img" src="{% static 'files/inventory/icons/view.png' %}"  alt=""> </button>
+                                                
+                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="inv-expired-border">
+                                                
+                                                BLC6464544957
+                                            </td>
                                             <td class="text-center">
-                                                <button class="inv-out-of-order-btn"> Out of Order</button>
+                                                Generale
+                                            </td>
+                                            <td class="text-center">
+                                                20.00KD
+                                            </td>
+                                            <td class="text-center">
+                                                Name
+                                            </td>
+                                            <td class="">
+                                                <span class="inv-dot c-expired ml-5"></span>
+                                                Expired
+                                               
                                             </td>
                                             <td style="float: right;">
                                                 <button class="inv-plan-img-btn" > <img class="view-img" src="{% static 'files/inventory/icons/view.png' %}"  alt=""> </button>
@@ -341,63 +354,84 @@
                         </div>
                         <div class="mt-10">
                             <div class="row inv-card2 ml-0 mb-10">
-                                <div class="col-xs-8 av-font p-10">
+                                <div class="col-xs-6 av-font p-10">
                                     BLC6464544957
                                     <div class="mt-10">
                                         Name
                                     </div>
                                     
                                 </div>
-                                <div class="col-xs-4 inv-card2-time p-10">
-                                    3 Hour
+                                <div class="col-xs-6 inv-green inv-card2-time p-10">
+                                 <div class="inv-left">
+                                    <i class="fa fa-arrow-up mr-10" aria-hidden="true"></i>  1 Hr 20 min &nbsp;
+                                    
+                                    <button class="btn-shadow inv-plan-img-btn mt-5"> <img class="view-img"  src="{% static 'files/inventory/icons/view.png' %}"  alt=""> Check-in </button>
+                                 </div>
+
                                 </div>
                             </div>
                             <div class="row inv-card2 ml-0 mb-10">
-                                <div class="col-xs-8 av-font p-10">
+                                <div class="col-xs-6 av-font p-10">
                                     BLC6464544957
                                     <div class="mt-10">
                                         Name
                                     </div>
                                     
                                 </div>
-                                <div class="col-xs-4 inv-card2-time p-10">
-                                    3 Hour
+                                <div class="col-xs-6 inv-yellow inv-card2-time p-10">
+                                      <div class="inv-left">
+                                    <i class="fa fa-arrow-up mr-10" aria-hidden="true"></i>  1 Hr 20 min &nbsp;
+                                    
+                                    <button class="btn-shadow inv-plan-img-btn mt-5"> <img class="view-img"  src="{% static 'files/inventory/icons/view.png' %}"  alt=""> Check-in </button>
+                                 </div>
                                 </div>
                             </div> 
                              <div class="row inv-card2 ml-0 mb-10">
-                                <div class="col-xs-8 av-font p-10">
+                                <div class="col-xs-6 av-font p-10">
                                     BLC6464544957
                                     <div class="mt-10">
                                         Name
                                     </div>
                                     
                                 </div>
-                                <div class="col-xs-4 inv-card2-time p-10">
-                                    3 Hour
+                                <div class="col-xs-6 inv-orange inv-card2-time p-10">
+                                    <div class="inv-left">
+                                        <i class="fa fa-arrow-up mr-10" aria-hidden="true"></i>  1 Hr 20 min &nbsp;
+                                        
+                                        <button class="btn-shadow inv-plan-img-btn mt-5"> <img class="view-img"  src="{% static 'files/inventory/icons/view.png' %}"  alt=""> Check-in </button>
+                                     </div>
                                 </div>
                             </div> 
                              <div class="row inv-card2 ml-0 mb-10">
-                                <div class="col-xs-8 av-font p-10">
+                                <div class="col-xs-6 av-font p-10">
                                     BLC6464544957
                                     <div class="mt-10">
                                         Name
                                     </div>
                                     
                                 </div>
-                                <div class="col-xs-4 inv-card2-time p-10">
-                                    3 Hour
+                                <div class="col-xs-6 inv-red inv-card2-time p-10">
+                                    <div class="inv-left">
+                                        <i class="fa fa-arrow-up mr-10" aria-hidden="true"></i>  1 Hr 20 min &nbsp;
+                                        
+                                        <button class="btn-shadow inv-plan-img-btn mt-5"> <img class="view-img"  src="{% static 'files/inventory/icons/view.png' %}"  alt=""> Check-in </button>
+                                     </div>
                                 </div>
                             </div>
                             <div class="row inv-card2 ml-0 mb-10">
-                                <div class="col-xs-8 av-font p-10">
+                                <div class="col-xs-6 av-font p-10">
                                     BLC6464544957
                                     <div class="mt-10">
                                         Name
                                     </div>
                                     
                                 </div>
-                                <div class="col-xs-4 inv-card2-time p-10">
-                                    3 Hour
+                                <div class="col-xs-6 inv-red inv-card2-time p-10">
+                                    <div class="inv-left">
+                                        <i class="fa fa-arrow-up mr-10" aria-hidden="true"></i>  1 Hr 20 min &nbsp;
+                                        
+                                        <button class="btn-shadow inv-plan-img-btn mt-5"> <img class="view-img"  src="{% static 'files/inventory/icons/view.png' %}"  alt=""> Check-in </button>
+                                     </div>
                                 </div>
                             </div>
                         </div>

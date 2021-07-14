@@ -8,8 +8,24 @@
   src: url(../font/Far_Casablanca.otf);
 }
 
+.mt-5{
+  margin-top: 5px !important;
+}
 
 /* inv colors */
+.inv-green{
+  color: #139275;
+}
+.inv-yellow{
+  color: #FFA400;
+}
+.inv-orange{
+  color: #FF5E00;
+}
+.inv-red{
+  color: #C91212;
+}
+
 .c-checked-out{
   background-color: #393983;
 }
@@ -25,24 +41,40 @@
 .c-active{
   background-color: #10A82F;
 }
+.c-about-finish{
+  background-color: #DBA03A;
+}
+.c-out-of-order{
+  background-color: #C91212;
+}
+.c-expired{
+  background-color: #FF5E00;
+}
 .inv-dot {
   vertical-align: middle;
   height: 18px;
   width: 18px;
-
   border-radius: 50%;
   display: inline-block;
 }
 
+.btn-p{
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.btn-img2{
+  height: 26px !important;
+  width: 26px !important;
+}
 
 
 
+.btn-shadow{box-shadow: 0px 3px 6px #0000003B;}
 
-
-
-
-
-
+.inv-left{
+  text-align: end;
+}
 
 .av-font {
   font-family: AvenirLTStd !important;
@@ -211,6 +243,7 @@
   color: #2e4e85;
 }
 .inv-plan-img-btn {
+  font-family: AvenirLTStd !important;
   background: #ffffff 0% 0% no-repeat padding-box;
   border: 2px solid #2e4e85;
   border-radius: 6px;
@@ -256,14 +289,20 @@
 .inv-green-border {
   border-left: 5px solid #10a82f;
 }
+.inv-blue-border {
+  border-left: 5px solid #0D87C5;
+}
 .inv-gray-border {
-  border-left: 5px solid #c4c4c4;
+  border-left: 5px solid #9A9A9A;
 }
 .inv-about-finish-border{
   border-left: 5px solid #dba03a;
 }
 .inv-out-of-order-border{
   border-left: 5px solid #C91212;
+}
+.inv-expired-border{
+  border-left: 5px solid #FF5E00;
 }
 .inv-active-btn {
   background: #10a82f 0% 0% no-repeat padding-box;
@@ -448,7 +487,7 @@
 }
 .inv-card2-time{
   font-family: AvenirLTStd !important;
-  color: #FF0000;
+  
 }
 .inv-item-card-head{
   font-weight: 600;
