@@ -2375,6 +2375,8 @@ $(document).ready(function(){
          
         )
         .then((response) => {
+          this.bookingonetimeslots=[]
+        this.onetimeslots=[]
            this.timeSlots = response.data.slotes;
            for(var i in this.timeSlots){
             if(this.timeSlots[i].includes(2)){
@@ -4361,8 +4363,41 @@ async rearrangeSize(){
     var productivity= await this.getTheProd(this.multiServicesBill[i].service)
     console.log("productivity is"+JSON.stringify(productivity))
     for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
+      /* If old bookings */
+      if(parseInt(this.multiServicesBill[i].bill[j].size)){
+        
+        for(var p in productivity){
+           /** for kitchen Cleaning*/
+           if(this.multiServicesBill[i].service=='Kitchen Cleaning'){
+              if(multiServicesBill[i].bill[j].new_kitchen){
+                if(productivity[p].name==this.multiServicesBill[i].bill[j].size && productivity[p].is_newkitchen && parseInt(this.multiServicesBill[i].bill[j].size)>=productivity[p].min_size && parseInt(this.multiServicesBill[i].bill[j].size)<=productivity[p].max_size){
+                  this.multiServicesBill[i].bill[j].size=productivity[p]
+                }
+              }
+           }
+           
+        
+      /**  for general,deep,carparking,sterilization....... */
+      else{
+
+      
+          if((parseInt(this.multiServicesBill[i].bill[j].size)>=productivity[p].min_size) && (parseInt(this.multiServicesBill[i].bill[j].size)<=productivity[p].max_size)){
+            
+            this.multiServicesBill[i].bill[j].size=productivity[p]
+           
+          }
+         
+      }
+        
+        }
+      }
+
+      /* new bookings */
+      else{
+
+      
       if(this.multiServicesBill[i].service=='Kitchen Cleaning'){
-        if(this.multiServicesBill[i].new_kitchen)
+        if(this.multiServicesBill[i].bill[j].new_kitchen)
         {
           for(var p in productivity){
         if(productivity[p].name==this.multiServicesBill[i].bill[j].size && productivity[p].is_newkitchen){
@@ -4461,6 +4496,7 @@ async rearrangeSize(){
         
       }
     }
+  }
     }
   }
   
