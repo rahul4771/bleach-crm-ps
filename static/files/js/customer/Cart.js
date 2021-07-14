@@ -4547,6 +4547,7 @@ reCalcAddressData(){
     this.multiServicesBill.push(scheduleDetails)
   }
   this.gotData=true
+  this.rearrangeSize()
 
 },
 bookLetCustService(){
@@ -4581,6 +4582,7 @@ bookLetCustService(){
 },
 sendLetCustScheduled(){
   if(!this.scheduleStat){
+    var ch_count=0
     for(var ch in this.scheduleGroup){
       if(this.scheduleGroup[ch].length>0){
         var serviceDetails={
@@ -4597,7 +4599,11 @@ sendLetCustScheduled(){
         }
         axios.post(this.url+'/customer/evaluatorbookingmultiplephase3/customer/'+this.custId,serviceDetails).then(response=>{
           this.evaluation_id=response.data.secret_code
-          this.goToPaymentDialog()
+          ch_count=ch_count+1
+          if(ch_count==(Object.keys(this.scheduleGroup).length) && this.currentAddressIndex==this.bookedServiceDetails.length){
+            this.goToPaymentDialog()
+          }
+          
         
         })
       }
@@ -4610,7 +4616,10 @@ sendLetCustScheduled(){
   else{
     axios.post(this.url+'/customer/evaluatorbookingmultiplephase3/customer/'+this.custId,this.custServiceScheduled).then(response=>{
       this.evaluation_id=response.data.secret_code
-      this.goToPaymentDialog()
+      if(this.currentAddressIndex==this.bookedServiceDetails.length){
+        this.goToPaymentDialog()
+      }
+     
     })
   }
   
