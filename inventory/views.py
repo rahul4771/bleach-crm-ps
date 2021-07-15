@@ -58,3 +58,9 @@ class InventoryEditPurchaseOrder(View):
 class InventoryViewPurchaseOrder(View):
     def get(self,request):
         return render(request,'inventory/viewpo.html',{})
+class InventoryCheckedIn(View):
+    def get(self,request):
+        return render(request,'inventory/checkin.html',{})
+class InventoryOrderDetails(View):
+    def get(self,request):
+        return render(request,'inventory/orderdetails.html',{})
