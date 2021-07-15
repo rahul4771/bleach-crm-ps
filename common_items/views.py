@@ -2271,14 +2271,19 @@ class CallBackList(IsAuthenticated,View):
 				case1       = Q(quatation_status='APPROVED') & Q(Q(Q(payment_method='PREPAID')&~Q(evaluation_order__payment_status='COMPLETED'))|Q(Q(payment_method='BREAKDOWN')&Q(evaluation_order__preamount_paid=0)))
 			else:
 				case1       = Q(quatation_status=order_status)
+
+			if order_status == 'APPROVED_NOT_PAID':
+				case2       = Q(evaluation__quatation_status='APPROVED') & Q(Q(Q(evaluation__payment_method='PREPAID')&~Q(payment_status='COMPLETED'))|Q(Q(evaluation__payment_method='BREAKDOWN')&Q(preamount_paid=0)))
+			else:
+				case2       = Q(evaluation__quatation_status=order_status)
 			order_callback_status_filter.append(case1)	
-			payment_callback_status_filter.append(case1)	
+			payment_callback_status_filter.append(case2)	
 
 		if callback_status:
-			case2 		= Q(evaluation_order__callback_status=callback_status)
-			case3 		= Q(callback_status=callback_status)
-			order_callback_status_filter.append(case2)
-			payment_callback_status_filter.append(case3)
+			case3 		= Q(evaluation_order__callback_status=callback_status)
+			case4 		= Q(callback_status=callback_status)
+			order_callback_status_filter.append(case3)
+			payment_callback_status_filter.append(case4)
 
 		if order_status or callback_status:
 			order_callback_status_filter     = functools.reduce(operator.and_,order_callback_status_filter)
