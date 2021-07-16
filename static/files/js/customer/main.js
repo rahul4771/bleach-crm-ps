@@ -64,13 +64,16 @@ function addCoupon(){
 }
 
 function proceedInvoice(){
+  console.log("proceed1")
   
   if($('#inv-debit').hasClass('inv-payment-card-active')){
    
     $('#debit-form').submit();
    
   }
-  else{
+
+  if($('#inv-cash').hasClass('inv-payment-card-active')){
+    console.log("cash")
     $('#cash-form').submit(); 
   }
 }

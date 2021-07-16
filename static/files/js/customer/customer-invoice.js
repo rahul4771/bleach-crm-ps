@@ -65,13 +65,16 @@ function addCoupon(){
 }
 
 function proceedInvoice(){
+  console.log("proceed2")
   
   if($('#inv-debit').hasClass('inv-payment-card-active')){
     $('#debit-form').submit();
    
   }
-  else{
-    $('#cash-form').submit();
+
+  if($('#inv-cash').hasClass('inv-payment-card-active')){
+    console.log("cash")
+    $('#cash-form').submit(); 
   }
 }
 function proceedBookingInvoice(){
