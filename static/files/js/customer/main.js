@@ -71,9 +71,7 @@ function proceedInvoice(){
    
   }
   else{
-  
-  
-    openCashModal();
+    $('#cash-form').submit(); 
   }
 }
 
