@@ -1332,7 +1332,7 @@
                                       
                                         </div>
                                        
-                                            {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR' or request.user.user_type == 'SALESADMIN' or request.user.user_type == 'SENIORTEAMLEADER' %}
+                                            {% if request.user.user_type == 'SALESADMIN' %}
                                             <div class="text-right" style="margin-bottom: 10px;" v-if="edit">
                                                 <button style="box-shadow: none !important;" type="submit" class="view-button view-btn"  onclick="openCleaningDate(this)" data-evaluation_book_id="{{orderschedule.order_scheduler_book.id}}" data-service="{{orderschedule.order_scheduler_book.service_type.name}}" {% for schedule in order.orderschedules %}{% if forloop.first %} data-no_of_cleaners="{{ schedule.no_of_cleaners|default_if_none:'0' }}" {% endif %} {% endfor %} data-cleaning_hours="{{orderschedule.order_scheduler_book.cleaning_hours}}"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="">  Add Visit(s)</button>
                                             </div>
