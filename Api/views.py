@@ -172,6 +172,11 @@ class EvaluationDetailsList(APIView):
 			evaluators = None
 			evaluation_details = None
 
+		try:
+			order = Order.objects.get(is_active=True,evaluation__id=evaluation_details.evaluation.id)
+		except:
+			order = None
+
 		print(evaluation_details.evaluation.evaluation_id,"evid")
 
 		try:
@@ -214,7 +219,12 @@ class EvaluationDetailsList(APIView):
 		
 		if evaluation_details.status == 'EVALUATED':
 			response_dict["blc_number"]=evaluation_details.evaluation.evaluation_id
-
+		
+		if order:
+			response_dict["order_id"]=order.id
+		else:
+			response_dict["order_id"]=0
+			
 		response_dict["agent_notes"]=evaluation_details.attender_note
 		response_dict["customer"]=evaluation_details.evaluation.customer.name 
 		response_dict["customer_mobile"]=evaluation_details.evaluation.customer.mobile_number 

@@ -773,6 +773,7 @@ function load_evaluation(evaluation_detail_id,item){
       $('#evaluation_evaluator_name').text(response.data.evaluator);
       $('#evaluation_agent_name').text(response.data.agent);
       $('#blc_number').text(response.data.blc_number);
+      $('#blc_number').attr('href','/common/client/order/details/'+response.data.order_id+'');
       $('#evaluation_customer_name').text(response.data.customer);
       $('#evaluation_customer_mobile').text(response.data.customer_mobile);
       $('#evaluation_proposed_date').text(response.data.evaluation_date);
