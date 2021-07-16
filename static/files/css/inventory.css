@@ -12,6 +12,12 @@
   margin-top: 5px !important;
 }
 
+
+.inv-team-head{
+  font-size: 16px !important;
+  font-weight: 600;
+  color: #434343;
+}
 /* inv colors */
 .inv-green{
   color: #139275;
@@ -241,6 +247,7 @@
   opacity: 1;
   padding: 7px 15px 7px 15px;
   color: #2e4e85;
+  font-family: AvenirLTStd !important;
 }
 .inv-plan-img-btn {
   font-family: AvenirLTStd !important;
@@ -620,7 +627,7 @@ overflow: auto;
 }
 
 .inv-check-section{
-  width: 98% !important;
+  width: 100% !important;
   border: 2px solid #C4C4C4;
   border-radius: 7px;
   padding: 10px;
@@ -811,7 +818,16 @@ border-radius: 7px;
 
 
 
+@media only screen and (max-width: 990px) {
 
+  .m-mt-10{
+    margin-top: 10px !important;
+  }
+
+ .m-pl0{
+   padding-left: 0px !important;
+ }
+}
 
 @media only screen and (max-width: 950px) {
 
