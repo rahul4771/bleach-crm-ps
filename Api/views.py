@@ -364,6 +364,7 @@ class PaymentResponseCredit(APIView):
 			order.remining_amount  = 0
 			order.amount_paid     += amount_paid
 			order.save()
+			
 		return Response(HTTP_200_OK)	
 
 #get list of staff for leave scheduler
