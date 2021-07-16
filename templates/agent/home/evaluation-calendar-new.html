@@ -1,5 +1,6 @@
 {% load static %}
 <!--- New Evaluation calendar begins here-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 <div class="white-wrapper" ><!--white-wrapper-->
 
@@ -10,6 +11,7 @@
   </div>
   
   <div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
+
   <div class="date-wrapper"><!--date-wrapper-->
               <div class="date-wrapper-inner"><!--date-wrapper-inner-->
               <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
@@ -17,6 +19,9 @@
               <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
               <button class='today-date current-date'>Today</button>
               </div><!--date-wrapper-inner-->
+              <div class="date-wrapper-inner2">
+                  <button data-toggle="modal" data-target="#deleteModel"  style="margin-top: 9px; color: #3968c6;"><i data-toggle="tooltip" title="Help" class="fa fa-question-circle fa-lg" aria-hidden="true"></i></button>
+              </div>
   </div><!--date-wrapper-->
   </div>
   
@@ -411,6 +416,94 @@
 </div>
 <!--modal-evaluation-wrapper-->
 
+<div class="modal fade" id="deleteModel" role="dialog">
+  <div style="border: none !important;" class="modal-dialog cancel-model cancel-order-border " role="document">
+      <div class="container-fluid">
+          <div class="row">
+              <div class="col-md-12 mt-20">
+
+                  
+                  <div class="d-flex ">
+                      <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Help</p></div>
+                      <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                          <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                      </button>
+
+                  </div>
+              </div>
+          </div>
+          <div class="row mt-20">
+            <!-- <div class="col-md-6">
+              <span class="inv-dot completed-status-bg ml-5"></span>
+              Completed 
+              
+            </div>
+            <div class="col-md-6">
+              <span class="inv-dot approved-status-bg ml-5"></span>
+              Approved 
+              
+            </div>
+            <div class="col-md-6">
+              <span class="inv-dot approved-not-paid-status-bg ml-5"></span>
+              Approved Not Paid 
+              
+            </div> -->
+            <div class="col-md-6">
+              <span class="inv-dot order-in-progress-status-bg ml-5"></span>
+              Booked by bleach
+              
+            </div>
+            <!-- <div class="col-md-6">
+              <span class="inv-dot evaluating-status-bg ml-5"></span>
+              Evaluating
+              
+            </div>
+            <div class="col-md-6">
+              <span class="inv-dot pending-status-bg ml-5"></span>
+              Pending
+            </div>
+            <div class="col-md-6">
+              <span class="inv-dot expired-status-bg ml-5"></span>
+              Expired
+            </div>
+            <div class="col-md-6">
+              <span class="inv-dot rejected-status-bg ml-5"></span>
+              Rejected
+            </div>
+            <div class="col-md-6">
+              <span class="inv-dot cancel-in-progress-status-bg ml-5"></span>
+              Cancel in Progress
+            </div>
+            <div class="col-md-6">
+              <span class="inv-dot cancelled-status-bg ml-5"></span>
+              Cancelled
+            </div>
+            <div class="col-md-6">
+              <span class="inv-dot subscription-cleaning-status-bg ml-5"></span>
+              Subscription
+            </div> -->
+            <div class="col-md-6">
+              <span class="inv-dot onetime-cleaning-status-bg ml-5"></span>
+             Booked by customer
+            </div>
+
+            <div class="col-md-6">
+              <span class="inv-dot onetime-cleaning-status-bg ml-5"></span>
+             Booked by customer
+            </div>
+
+
+
+            
+          </div>
+          <div class="row mt-10"></div>
+          
+         
+         
+      </div>
+  </div>
+</div>
 
 <!-- Cleaning cal popup-->
 <!-- evaluation_popup -->
@@ -460,7 +553,9 @@
 
 <!-- cleaning cal popups ends-->
 <script type="text/javascript">
-
+$(document).ready(function(){
+  $('[data-toggle="tooltip"]').tooltip();   
+});
 
 //new Evaluation Calendar script start
     function evaluationcalendar(){

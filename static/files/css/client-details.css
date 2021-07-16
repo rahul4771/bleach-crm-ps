@@ -217,12 +217,12 @@ hr.cd-hr{
     
     margin-top: 10px;
     color: #434343;
-    font-size: 26px;
+    font-size: 16px;
     text-align: center;
 }
 .cd-box-value{
     text-align: center;
-    font-size: 40px;
+    font-size: 34px;
 }
 
 .cd-head-text{
@@ -235,10 +235,10 @@ text-align: center;
 }
 .cd-card-title3 {
     color: #434343;
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 400;
 }
 
 .cd-f20{
-    font-size: 20px !important;
+    font-size: 16px !important;
 }
