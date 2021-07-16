@@ -469,6 +469,7 @@ class CustomerInvoice(View):
 		if action == 'CASH/CHEQUE':
 			Evaluation.objects.filter(evaluation_id=evaluation_id,customer__username=user_name).update(payment_way='CASH/CHEQUE')
 			messages.success(request,"Cash/Cheque payment method approved !")
+			print("Cash or check")
 		return redirect('customer:invoice',evaluation_id_encrypted)
 
 
