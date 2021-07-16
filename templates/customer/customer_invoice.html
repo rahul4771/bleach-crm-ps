@@ -44,7 +44,7 @@
        </div>
        <div class="d-flex mt-4 mb-4 mx-auto qt-reject-btn-container">
        <form method="post" id="cash-form" class="mx-auto" action="" enctype= "multipart/form-data">{% csrf_token %}
-        <input type="hidden" name="action_type" value="CASH/CHEQUE">
+        <input type="text" name="action_type" value="CASH/CHEQUE">
         <div class="inv-btn text-center  text-white" >
         <input class="assignButton clickable-cursor qt-input-btn" name="submit" type="submit" value="Send" >
          </div>      
