@@ -1113,10 +1113,11 @@ class CheckInAPI(APIView):
 			cleaning_team_detail.check_in                    = timezone.now()
 		if not cleaning_team_detail.check_out:
 			cleaning_team_detail.order_scheduler.work_status     = 'CLEANING_IN_PROGRESS'
-		cleaning_team_detail.save()	
-
+		
 		if check_in_notes:
 			cleaning_team_detail.check_in_notes = check_in_notes
+		
+		cleaning_team_detail.save()	
 
 		cleaning_team_detail.order_scheduler.save()
 

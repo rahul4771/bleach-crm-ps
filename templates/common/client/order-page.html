@@ -2096,7 +2096,7 @@
                         {% if request.user.user_type == 'BOOKINGOFFICER' %}
                         <a href="{% url 'booking-officer:cancell-order' order.id %}" target="_blank"><button class="sent-button" type="button">Yes</button></a>
                         {% elif request.user.user_type == 'SALESADMIN' %}
-                        <a href="{% url 'salesadmin:cancell-order' order.id %}" target="_blank"><button class="sent-button" type="button">Yes</button></a>
+                        <a href="{% url 'bleach_salesadmin:cancell-order' order.id %}" target="_blank"><button class="sent-button" type="button">Yes</button></a>
                         {% else %}
                         <button class="sent-button" type="submit">Yes</button>
                         {% endif %}
