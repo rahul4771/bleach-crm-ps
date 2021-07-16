@@ -572,8 +572,8 @@
                 </form>
 
                 {% if order.evaluation.payment_method == 'POSTPAID' or order.preamount_paid > 0 %}
-                <form method="post" id="cash-form" class="mx-auto" action="" enctype= "multipart/form-data">{% csrf_token %}
-                <input type="text" name="action_type" value="CASH/CHEQUE">
+                <form method="post" id="cash-form" action="" enctype= "multipart/form-data">{% csrf_token %}
+                <input type="hidden" name="action_type" value="CASH/CHEQUE">
                 </form>
                 <div class="inv-payment-box">
                   <div class="inv-payment-card mt-4 text-center" id="inv-cash" onclick="selectPayment('cash')">
