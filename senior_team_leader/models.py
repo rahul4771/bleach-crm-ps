@@ -26,6 +26,8 @@ class CleaningTeam(models.Model):
 	end_at 			= models.DateTimeField(blank=True,null=True)
 	check_in 		= models.DateTimeField(blank=True,null=True)
 	check_out 	    = models.DateTimeField(blank=True,null=True)
+	check_in_notes  = models.CharField(max_length=1000,blank=True,null=True)
+	check_out_notes = models.CharField(max_length=1000,blank=True,null=True)
 	no_of_cleaners  = models.IntegerField(blank=True,null=True)
 	drop_off_driver = models.ForeignKey(UserProfile,blank=True,null=True,related_name='cleaningteam_drop_off')
 	vehicle_number_drop_off = models.CharField(max_length=100,blank=True,null=True)

@@ -10,7 +10,7 @@
         <div class="container-fluid space topspace">
             <div class="welcome-wrapper">
                 <!--welcome-wrapper-->
-                <h1 class="dashboard-head">Inventory</h1>
+                <h1 class="dashboard-head">Checked-In</h1>
                 <!-- <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p> -->
             </div>
         </div>
@@ -22,13 +22,13 @@
                      
                         <div class="inv-input-container h-30">
                             <i class="fa fa-search inv-icon-input" aria-hidden="true"></i>
-                            <input type="text" placeholder="Search inventory" class="inv-input w-250" name="attributes">
+                            <input type="text" placeholder="Search Order" class="inv-input w-250" name="attributes">
                           </div>
                     
                     
                     </div>
                     <div class="right-pos">
-                        <button class="inv-plan-btn">
+                        <button class="inv-plan-btn" onclick="showNotification('Check-out list created','success')">
                             <i class="fa fa-filter mr-5" aria-hidden="true"></i>
                             Filter
                         </button>
@@ -40,23 +40,18 @@
                         <thead>
                             <tr>
                                 <th style="width: %;">
-                                    Item
+                                    Order Number
                                 </th>
                                 <th data-hide="phone,tablet"  style="width: %; text-align: center;">
-                                    Item code
+                                    Team Leader
                                 </th>
                                 <th data-hide="phone,tablet"  style="width: %;" class="text-center">
-                                    Category
+                                    Service Type
                                 </th>
                                 <th  data-hide="phone,tablet"  style="width: %;" class="text-center">
-                                    Quantity
+                                    Check Out/IN
                                 </th>
-                                <th data-hide="phone,tablet"  class="text-center">
-                                    Unit Price
-                                </th>
-                                <th data-hide="phone,tablet"  class="text-center">
-                                    Contact
-                                </th>
+                               
                                 <th>
                                     Status
                                 </th>
@@ -67,22 +62,17 @@
                      <tbody>
                         <tr>
                             <td>
-                                item 1
+                                0000000
                             </td>
                             <td class="text-center">
-                                3
+                                Name
                             </td>
                             <td class="text-center">
-                                Category 1 
+                                Name 
                             <td class="text-center">
-                                2
+                                out
                             </td>
-                            <td class="text-center">
-                                2
-                            </td>
-                            <td class="text-center">
-                                00000000
-                            </td>
+                          
                             <td>
                                 <span class="inv-dot c-active ml-5"></span>
                                         Active
@@ -96,33 +86,29 @@
                         </tr>
                         <tr>
                             <td>
-                                item 1
+                                0000000
                             </td>
                             <td class="text-center">
-                                3
+                                Name
                             </td>
                             <td class="text-center">
-                                Category 1 
+                                Name 
                             <td class="text-center">
-                                2
+                                out
                             </td>
-                            <td class="text-center">
-                                2
-                            </td>
-                            <td class="text-center">
-                                00000000
-                            </td>
+                          
                             <td>
                                 <span class="inv-dot c-active ml-5"></span>
                                         Active
                             </td>
                             <td style="float: right;">
                               
-                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                                <button class="inv-plan-img-btn" onclick="openNavAddStore('edit')"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                <button class="inv-plan-img-btn"  data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
 
                             </td>
                         </tr>
+                       
                      </tbody>
                        
                       

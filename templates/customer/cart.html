@@ -475,6 +475,22 @@
 
 
       <div>
+     <!-- succes message dialog--> 
+    <!-- <v-dialog
+   v-model="success_booking_dialog"
+   max-width="700"
+   class="primary-dialog" 
+ >
+ <v-card>
+  <div class="d-flex">
+
+    Booking Successful
+ </div>
+ </v-card>
+       
+ </v-dialog>-->
+
+     <!-- success message dialog ends here-->  
 <!-- Payment Dialog -->
 <v-dialog
    v-model="payment_dialog"
@@ -495,6 +511,7 @@
         <input type="text"  name="evaluation_id" v-model="evaluation_id" />
         <input type="submit" id="payment_submit"/>
       </form>
+      
         <div class="col-md-6">
             <div class="inv-payment-card mt-4 text-center" id="inv-debit" @click="selectPayment('debit')" v-if="activePayment!='debit'"><!-- to disable click add class inv-click-disable -->
                 <img src="{% static 'files/icons/knet-icon.png' %}" class="inv-card-icon" id="inv-debit-img"  /> <!-- to disable  add class inv-payment-disabled -->

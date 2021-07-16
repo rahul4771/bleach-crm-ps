@@ -74,6 +74,8 @@ $(document).ready(function(){
           
         },
       data: {
+       // success_booking_dialog:true,
+        
         payment_total_cost:0,
         customDateSelected:[],
         customDialog:false,
@@ -568,7 +570,8 @@ $(document).ready(function(){
     scheduleGroup:{},
     editScheduleData:{},
     editScheduleStat:false,
-    evaluation_id:''
+    evaluation_id:'',
+    eval_details:{}
         },
      
 /* header data */
@@ -578,6 +581,13 @@ $(document).ready(function(){
           paymentSubmit(){
             if(this.activePayment=='debit'){
               $('#payment_submit').click()
+            }
+            else{
+            /* window.location.href="https://testpay.bleach-kw.com/creditcard/payment_form.php?merchant_defined_data1={{order.order_no}}&reference_number={{order.order_no}}1&amount={{order.evaluation.before_cleaning_amount}}&merchant_defined_data2=prepaid&merchant_defined_data3={{order.order_status}}&currency=KWD&transaction_type=sale&bill_to_forename={{firstname}}&bill_to_surname={{lastname}}&bill_to_phone={{orderschedule.customer_address.customer.mobile_number}}&bill_to_email={{orderschedule.customer_address.customer.email}}&bill_to_address_country={{orderschedule.customer_address.customer.nationality.code}}&bill_to_address_city={{orderschedule.customer_address.area.name|default_if_none:''}}&bill_to_address_line1={{orderschedule.customer_address.governorate.name|default_if_none:''}}&merchant_defined_data4=
+
+             ONLINE
+             &merchant_defined_data5=NO&merchant_defined_data7=1&merchant_defined_data20=NO&customer_ip_address={{customer_ip_address}}"*/
+             window.location.href="https://testpay.bleach-kw.com/creditcard/payment_form.php?merchant_defined_data1="+this.eval_details.order_no+"&reference_number="+this.eval_details.order_no+"1&amount="+this.bookedServiceDetails[0].evaluation_book_evaluation_details[0].total_cost+"&merchant_defined_data2=prepaid&merchant_defined_data3="+this.eval_details.order_status+"currency=KWD&transaction_type=sale&bill_to_forename="+this.bookedServiceDetails[0].address.customer.name.split(" ")[1]+"&bill_to_surname="+this.bookedServiceDetails[0].address.customer.name.split(" ")[2]+"&bill_to_phone="+this.bookedServiceDetails[0].address.customer.mobile_number+"&bill_to_email="+this.bookedServiceDetails[0].address.customer.email+"&bill_to_address_country=KW"+"&bill_to_address_city="+this.bookedServiceDetails[0].address.area.name+"&bill_to_address_line1="+this.bookedServiceDetails[0].address.governorate.name+"&merchant_defined_data4=ONLINE&merchant_defined_data5=NO&merchant_defined_data7=1&merchant_defined_data20=NO&customer_ip_address="+this.ip_address
             }
            
           },
@@ -4599,9 +4609,17 @@ sendLetCustScheduled(){
         }
         axios.post(this.url+'/customer/evaluatorbookingmultiplephase3/customer/'+this.custId,serviceDetails).then(response=>{
           this.evaluation_id=response.data.secret_code
+          this.eval_details=response.data
           ch_count=ch_count+1
           if(ch_count==(Object.keys(this.scheduleGroup).length) && this.currentAddressIndex==this.bookedServiceDetails.length){
-            this.goToPaymentDialog()
+            if(this.eval_details.payment_status=='PENDING'){
+              this.goToPaymentDialog()
+            }
+            else{
+           //   this.success_booking_dialog=true
+            }
+           
+            
           }
           
         
@@ -4616,8 +4634,14 @@ sendLetCustScheduled(){
   else{
     axios.post(this.url+'/customer/evaluatorbookingmultiplephase3/customer/'+this.custId,this.custServiceScheduled).then(response=>{
       this.evaluation_id=response.data.secret_code
+      this.eval_details=response.data
       if(this.currentAddressIndex==this.bookedServiceDetails.length){
-        this.goToPaymentDialog()
+        if(this.eval_details.payment_status=='PENDING'){
+          this.goToPaymentDialog()
+        }
+        else{
+         // this.success_booking_dialog=true
+        }
       }
      
     })

@@ -10,7 +10,7 @@
         <div class="container-fluid space topspace">
             <div class="welcome-wrapper">
                 <!--welcome-wrapper-->
-                <h1 class="dashboard-head">Inventory</h1>
+                <h1 class="dashboard-head">Purchase Order</h1>
                 <!-- <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p> -->
             </div>
         </div>
@@ -32,6 +32,8 @@
                             <i class="fa fa-filter mr-5" aria-hidden="true"></i>
                             Filter
                         </button>
+                        <button class="inv-blue-btn" onclick="showDrawer('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Create PO</button>
+
                         <!-- <button class="inv-blue-btn" data-toggle="modal" data-target="#addModel" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Store </button> -->
                     </div>
                 </div>
@@ -40,22 +42,22 @@
                         <thead>
                             <tr>
                                 <th style="width: %;">
-                                    Item
+                                    PO ID
                                 </th>
                                 <th data-hide="phone,tablet"  style="width: %; text-align: center;">
-                                    Item code
+                                    Initiated Date
                                 </th>
                                 <th data-hide="phone,tablet"  style="width: %;" class="text-center">
-                                    Category
+                                    Initiated by
                                 </th>
                                 <th  data-hide="phone,tablet"  style="width: %;" class="text-center">
-                                    Quantity
+                                    Seller/vender
                                 </th>
                                 <th data-hide="phone,tablet"  class="text-center">
-                                    Unit Price
+                                    Number Of units
                                 </th>
                                 <th data-hide="phone,tablet"  class="text-center">
-                                    Contact
+                                    Total cost
                                 </th>
                                 <th>
                                     Status
@@ -67,25 +69,26 @@
                      <tbody>
                         <tr>
                             <td>
-                                item 1
+                                0000000
                             </td>
                             <td class="text-center">
-                                3
+                                12/12/2021
                             </td>
                             <td class="text-center">
-                                Category 1 
+                                Name
                             <td class="text-center">
-                                2
+                                Name
                             </td>
                             <td class="text-center">
-                                2
+                                23
                             </td>
                             <td class="text-center">
-                                00000000
+                               2300
                             </td>
                             <td>
-                                <span class="inv-dot c-active ml-5"></span>
-                                        Active
+                                <button class="inv-active-btn">
+                                    Active
+                                </button>
                             </td>
                             <td style="float: right;">
                               
@@ -96,33 +99,35 @@
                         </tr>
                         <tr>
                             <td>
-                                item 1
+                                0000000
                             </td>
                             <td class="text-center">
-                                3
+                                12/12/2021
                             </td>
                             <td class="text-center">
-                                Category 1 
+                                Name
                             <td class="text-center">
-                                2
+                                Name
                             </td>
                             <td class="text-center">
-                                2
+                                23
                             </td>
                             <td class="text-center">
-                                00000000
+                               2300
                             </td>
                             <td>
-                                <span class="inv-dot c-active ml-5"></span>
-                                        Active
+                                <button class="inv-active-btn">
+                                    Active
+                                </button>
                             </td>
                             <td style="float: right;">
                               
-                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                                <button class="inv-plan-img-btn" onclick="openNavAddStore('edit')"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                <button class="inv-plan-img-btn"  data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
 
                             </td>
                         </tr>
+                      
                      </tbody>
                        
                       

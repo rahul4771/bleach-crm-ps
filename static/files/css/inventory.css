@@ -7,6 +7,81 @@
   font-family: FarCasablanca;
   src: url(../font/Far_Casablanca.otf);
 }
+
+.mt-5{
+  margin-top: 5px !important;
+}
+
+
+.inv-team-head{
+  font-size: 16px !important;
+  font-weight: 600;
+  color: #434343;
+}
+/* inv colors */
+.inv-green{
+  color: #139275;
+}
+.inv-yellow{
+  color: #FFA400;
+}
+.inv-orange{
+  color: #FF5E00;
+}
+.inv-red{
+  color: #C91212;
+}
+
+.c-checked-out{
+  background-color: #393983;
+}
+.c-created-out{
+  background-color: #0D87C5;
+}
+.c-waiting-out{
+  background-color: #FF5E00;
+}
+.c-checked-in{
+  background-color: #10A82F;
+}
+.c-active{
+  background-color: #10A82F;
+}
+.c-about-finish{
+  background-color: #DBA03A;
+}
+.c-out-of-order{
+  background-color: #C91212;
+}
+.c-expired{
+  background-color: #FF5E00;
+}
+.inv-dot {
+  vertical-align: middle;
+  height: 18px;
+  width: 18px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.btn-p{
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+
+.btn-img2{
+  height: 26px !important;
+  width: 26px !important;
+}
+
+
+
+.btn-shadow{box-shadow: 0px 3px 6px #0000003B;}
+
+.inv-left{
+  text-align: end;
+}
+
 .av-font {
   font-family: AvenirLTStd !important;
 }
@@ -152,7 +227,7 @@
   border: 2px solid #2e4e85;
   border-radius: 6px;
   opacity: 1;
-  padding: 7px 25px 7px 25px;
+  padding: 8px 25px 8px 25px;
   color: #fff;
   border: none;
 }
@@ -172,8 +247,10 @@
   opacity: 1;
   padding: 7px 15px 7px 15px;
   color: #2e4e85;
+  font-family: AvenirLTStd !important;
 }
 .inv-plan-img-btn {
+  font-family: AvenirLTStd !important;
   background: #ffffff 0% 0% no-repeat padding-box;
   border: 2px solid #2e4e85;
   border-radius: 6px;
@@ -219,14 +296,20 @@
 .inv-green-border {
   border-left: 5px solid #10a82f;
 }
+.inv-blue-border {
+  border-left: 5px solid #0D87C5;
+}
 .inv-gray-border {
-  border-left: 5px solid #c4c4c4;
+  border-left: 5px solid #9A9A9A;
 }
 .inv-about-finish-border{
   border-left: 5px solid #dba03a;
 }
 .inv-out-of-order-border{
   border-left: 5px solid #C91212;
+}
+.inv-expired-border{
+  border-left: 5px solid #FF5E00;
 }
 .inv-active-btn {
   background: #10a82f 0% 0% no-repeat padding-box;
@@ -241,6 +324,70 @@
   background: #10a82f 0% 0% no-repeat padding-box;
   color: #fff;
 }
+.inv-checkedin-btn {
+  font-family: AvenirLTStd !important;
+  background: #10a82f 0% 0% no-repeat padding-box;
+  border-radius: 6px;
+  opacity: 1;
+  border: none;
+  padding: 7px 15px 7px 15px;
+  color: #fff;
+  width: 120px;
+}
+.inv-checkedin-btn:hover {
+  background: #10a82f 0% 0% no-repeat padding-box;
+  color: #fff;
+}
+.inv-checkedout-btn {
+  font-family: AvenirLTStd !important;
+  background: #393983 0% 0% no-repeat padding-box;
+  border-radius: 6px;
+  opacity: 1;
+  border: none;
+  padding: 7px 15px 7px 15px;
+  color: #fff;
+  width: 120px;
+}
+.inv-checkedout-btn:hover {
+  background: #393983 0% 0% no-repeat padding-box;
+  color: #fff;
+}
+.inv-created-btn {
+  font-family: AvenirLTStd !important;
+  background: #0D87C5 0% 0% no-repeat padding-box;
+  border-radius: 6px;
+  opacity: 1;
+  border: none;
+  padding: 7px 15px 7px 15px;
+  color: #fff;
+  width: 120px;
+}
+.inv-created-btn:hover {
+  background: #0D87C5 0% 0% no-repeat padding-box;
+  color: #fff;
+}
+.inv-btn-dis{
+  cursor: not-allowed !important;
+  opacity: .6 !important;
+}
+
+
+.inv-waiting-btn {
+  font-family: AvenirLTStd !important;
+  background: #FF5E00 0% 0% no-repeat padding-box;
+  border-radius: 6px;
+  opacity: 1;
+  border: none;
+  padding: 7px 15px 7px 15px;
+  color: #fff;
+  width: 120px;
+}
+.inv-waiting-btn:hover {
+  background: #FF5E00 0% 0% no-repeat padding-box;
+  color: #fff;
+}
+
+
 .inv-about-finish-btn {
   background: #dba03a 0% 0% no-repeat padding-box;
   border-radius: 6px;
@@ -347,7 +494,7 @@
 }
 .inv-card2-time{
   font-family: AvenirLTStd !important;
-  color: #FF0000;
+  
 }
 .inv-item-card-head{
   font-weight: 600;
@@ -441,6 +588,245 @@
 .view-img{
   width: 28px !important;
   height:  28px !important;
+
+}
+
+
+.inv-check-orderhead{
+  font-size: 18px;
+  font-weight: 600;
+  font-family:  AvenirLTStd !important;
+  color: #333333;
+}
+.inv-text-normal{
+  font-size: 14px;
+  color: #434343;
+  font-family:  AvenirLTStd !important;
+}
+.inv-evaluation-note{
+  font-size: 10px;
+color: #434343;
+text-align: left;
+line-height: 1.3;
+height: 50px;
+overflow: auto;
+}
+.yellow-tick{
+  color: #E3B600 !important;
+}
+.inv-ul{
+  list-style: none;
+  padding-left: 0px !important;
+  
+ 
+}
+.inv-ul li{
+  font-size: 14px;
+  font-family:  AvenirLTStd !important;
+  color: #434343;
+}
+
+.inv-check-section{
+  width: 100% !important;
+  border: 2px solid #C4C4C4;
+  border-radius: 7px;
+  padding: 10px;
+  
+  margin-left: 15px;
+  margin-right: 15px;
+}
+.inv-check-section-head{
+  font-size: 18px;
+  font-family:  AvenirLTStd !important;
+  color: #434343;
+}
+.inv-normal-btn{
+  border: none;
+  background: none;
+}
+.inv-normal-btn:hover{
+  border: none;
+  background: none;
+}
+.c-right-border {
+  border-right: 2px solid #e3e3e3;
+}
+.inv-section-in{
+  font-size: 14px;
+  font-family:  AvenirLTStd !important; 
+  color: #434343;
+}
+.inv-po-number{
+  font-size: 22px;
+  font-family:  AvenirLTStd !important; 
+  color: #333333;
+}
+.red2-text{
+  color: #C91212 !important;
+}
+.clean-section-card {
+  background: #e4e4e4 0% 0% no-repeat padding-box;
+  border-radius: 3px;
+  opacity: 1;
+  margin-bottom: 5px;
+}
+.c-text2 {
+  margin-left: auto;
+  float: right;
+}
+.clean-section-card p {
+  padding-left: 5px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-right: 5px;
+}
+
+.action-icon.down2{
+  -moz-transform:rotate(90deg);
+  -webkit-transform:rotate(90deg);
+  transform:rotate(90deg);
+}
+.qty .count {
+  margin-left: -5px;
+  color: #2E4E85;
+  display: inline-block;
+  vertical-align: top;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 30px;
+  height: 30px;
+  padding: 0 2px;
+  width: 50px;
+  text-align: center;
+  border: 1px solid #2E4E85;
+  font-family:  AvenirLTStd !important; 
+}
+.qty .plus {
+  margin-left: -5px;
+  border: 1px solid #2E4E85;
+  cursor: pointer;
+  display: inline-block;
+  vertical-align: top;
+  color: #2E4E85;
+  width: 30px;
+  height: 30px;
+  font: 30px/1 Arial,sans-serif;
+  text-align: center;
+  border-radius: 0px 5px 5px 0px;
+  }
+.qty .minus {
+  border-radius: 5px 0px 0px 5px;
+  border: 1px solid #2E4E85;
+  cursor: pointer;
+  display: inline-block;
+  vertical-align: top;
+  color: #2E4E85;
+  width: 30px;
+  height: 30px;
+  font: 30px/1 Arial,sans-serif;
+  text-align: center;
+ 
+  background-clip: padding-box;
+}
+
+.minus:hover{
+  background-color: #ffffff !important;
+}
+.plus:hover{
+  background-color: #ffffff !important;
+}
+.inv-border{
+  border: 1px solid #4B4B4B;
+border-radius: 7px;
+}
+
+
+.model-filter{
+  padding: 6px;
+ 
+  cursor: pointer;
+  margin: 0 auto;
+}
+
+.inv-center{
+  margin: 0 auto;
+}
+
+.inv-hr{
+  margin-top: 3px;
+  border-left: 1px solid #707070;
+  height: 20px;
+}
+.inv-search-result{
+  border-bottom: 1px solid #707070;
+  width: 100%;
+  padding-top: 7px;
+  padding-left: 5px;
+  padding-bottom: 7px;
+}
+.inv-search-result:hover{
+ background: #e2e2e2;
+}
+.inv-result-box{
+  background: #ffffff;
+  width: 100%;
+  z-index: 10;
+  position: absolute;
+  border: 1px solid #707070;
+  border-radius: 6px;
+  margin-right: 0px !important;
+  margin-left: 0px !important;
+  height: 150px;
+  overflow: auto;
+}
+
+
+
+
+.inv-noti-success{
+  border-left: 7px solid #31AA4A;
+}
+.inv-noti-error{
+  border-left: 7px solid #C91212;
+}
+.inv-noti-warning{
+  border-left: 7px solid #FFA400;
+}
+.inv-msg-div{
+  width: 250px;
+  word-wrap: break-word;
+}
+.inv-pointer{
+  cursor: pointer;
+}
+.inv-noti-container{
+  border-radius: 5px 0px 0px 5px;
+  width: 300px;
+  padding: 10px;
+  min-height: 44px;
+  position: absolute;
+  top: 40px;
+  right: 0;
+  background-color: #ffffff;
+  color: #2C4C82;
+  z-index: 1000000;
+}
+
+
+
+
+
+
+
+@media only screen and (max-width: 990px) {
+
+  .m-mt-10{
+    margin-top: 10px !important;
+  }
+
+ .m-pl0{
+   padding-left: 0px !important;
+ }
 }
 
 @media only screen and (max-width: 950px) {

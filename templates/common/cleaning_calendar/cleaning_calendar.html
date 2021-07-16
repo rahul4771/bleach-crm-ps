@@ -18,6 +18,9 @@
                 <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
                 <button class='today-date current-date'>Today</button>
                 </div><!--date-wrapper-inner-->
+                <div class="date-wrapper-inner2">
+                  <button data-toggle="modal" data-target="#deleteModel2"  style="margin-top: 9px; color: #3968c6;"><i data-toggle="tooltip" title="Help" class="fa fa-question-circle fa-lg" aria-hidden="true"></i></button>
+              </div>
     </div><!--date-wrapper-->
     </div>
     
@@ -886,7 +889,7 @@ class="cl-service-list"
            </div>
          </div>
 
-         <div class="d-flex" v-else-if="currentSlotDetails.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE' && currentSlotDetails.evaluation_details.evaluation.quatation_status=='APPROVED' && currentSlotDetails.order.payment_status!='PENDING' && currentSlotDetails.evaluation_details.evaluation.payment_method=='BREAKDOWN'" >
+         <div class="d-flex" v-else-if="currentSlotDetails.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE' && currentSlotDetails.evaluation_details.evaluation.quatation_status=='APPROVED' && currentSlotDetails.order.preamount_paid!=0 && currentSlotDetails.evaluation_details.evaluation.payment_method=='BREAKDOWN'" >
           <div class="cl-rejected-mark" v-if="currentSlotDetails.work_status=='CLEANING_CANCELLED'" ></div>
           <div class="cl-onetime-mark" v-if="currentSlotDetails.work_status!='CLEANING_CANCELLED'" ></div>
           <div class="cl-subtext" v-if="currentSlotDetails.work_status=='CLEANING_CANCELLED'" >
@@ -904,7 +907,7 @@ class="cl-service-list"
            </div>
          </div>
 
-         <div class="d-flex" v-else-if="currentSlotDetails.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE' && currentSlotDetails.order.payment_status=='PENDING' && currentSlotDetails.order.order_status=='APPROVED_BY_CLIENT'" >
+         <div class="d-flex" v-else-if="currentSlotDetails.order_scheduler_book.cleaning_policy=='ONE TIME SERVICE' && currentSlotDetails.order.payment_status=='PENDING' && currentSlotDetails.order.order_status=='APPROVED_BY_CLIENT' && currentSlotDetails.order.preamount_paid == 0 " >
           <div class="cl-approved-not-paid-mark"></div>
           <div class="cl-subtext" >
             Approved Not Paid
@@ -1283,3 +1286,108 @@ class="cl-service-list"
   </div>
   </v-card>
   </v-dialog>
+
+  <div class="modal fade" id="deleteModel2" role="dialog">
+    <div style="border: none !important;" class="modal-dialog cancel-model cancel-order-border " role="document">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 mt-20">
+  
+                    
+                    <div class="d-flex ">
+                        <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Help</p></div>
+                        <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+  
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                        </button>
+  
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-20">
+              <!-- <div class="col-md-6">
+                <span class="inv-dot completed-status-bg ml-5"></span>
+                Completed 
+                
+              </div>
+              <div class="col-md-6">
+                <span class="inv-dot approved-status-bg ml-5"></span>
+                Approved 
+                
+              </div>
+              <div class="col-md-6">
+                <span class="inv-dot approved-not-paid-status-bg ml-5"></span>
+                Approved Not Paid 
+                
+              </div>
+              <div class="col-md-6">
+                <span class="inv-dot order-in-progress-status-bg ml-5"></span>
+                Booked by bleach
+                
+              </div>
+              <div class="col-md-6">
+                <span class="inv-dot evaluating-status-bg ml-5"></span>
+                Evaluating
+                
+              </div>
+              <div class="col-md-6">
+                <span class="inv-dot pending-status-bg ml-5"></span>
+                Pending
+              </div>
+              <div class="col-md-6">
+                <span class="inv-dot expired-status-bg ml-5"></span>
+                Expired
+              </div>
+              <div class="col-md-6">
+                <span class="inv-dot rejected-status-bg ml-5"></span>
+                Rejected
+              </div>
+              <div class="col-md-6">
+                <span class="inv-dot cancel-in-progress-status-bg ml-5"></span>
+                Cancel in Progress
+              </div>
+              <div class="col-md-6">
+                <span class="inv-dot cancelled-status-bg ml-5"></span>
+                Cancelled
+              </div> -->
+              <div class="col-md-6">
+                <span class="inv-dot subscription-cleaning-status-bg ml-5"></span>
+                Subscription Service
+              </div>
+              <div class="col-md-6">
+                <span class="inv-dot onetime-cleaning-status-bg ml-5"></span>
+               One Time Service
+              </div>
+              <div class="col-md-6">
+                <span class="inv-dot pending-status-bg ml-5"></span>
+                Follow Up Service
+              </div>
+              <div class="col-md-6">
+                <span class="inv-dot rejected-status-bg ml-5"></span>
+                Cancelled Service
+              </div>
+
+              <div class="col-md-6">
+                <span class="inv-dot not-approved-not-paid-status-bg ml-5"></span>
+               Approved Not Paid Orders
+              </div>
+
+              <div class="col-md-6">
+                <span class="inv-dot not-approved-status-bg ml-5"></span>
+               Pending Orders
+              </div>
+              
+              
+             
+  
+  
+  
+              
+            </div>
+            <div class="row mt-10"></div>
+            
+           
+           
+        </div>
+    </div>
+  </div>

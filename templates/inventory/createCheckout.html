@@ -1,0 +1,371 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+  integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+  crossorigin="anonymous" referrerpolicy="no-referrer" />
+<div class="wrapper">
+  <!--wrapper-->
+  {% include "inventory/common/header.html" %}
+  <section class="content">
+    <div class="container-fluid space topspace">
+      <div class="welcome-wrapper">
+        <!--welcome-wrapper-->
+        <h1 class="dashboard-head">Create Check-Out List</h1>
+        <!-- <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p> -->
+      </div>
+    </div>
+
+    <div class="main-content-holder">
+      <!--main-content-holder-->
+      <div class="white-wrapper">
+        <div class="row av-font">
+          <div class="col-md-3">
+            <div class="inv-check-orderhead">
+              BLC6464544957
+            </div>
+            <div class="inv-text-normal">
+              General cleaning
+            </div>
+            <div class="mt-10 inv-text-normal">
+              Evaluation not' Walter Whites
+            </div>
+            <div class="inv-evaluation-note">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas convallis massa tincidunt dictum tempus.
+              accumsan tristique dui. Aenean luctus, leo ac euismod
+            </div>
+          </div>
+          <div class="col-md-2 m-mt30">
+
+            <ul class="inv-ul">
+              <li><i class="fas fa-check-circle yellow-tick "></i> Method</li>
+              <li><i class="fas fa-check-circle yellow-tick "></i> Outdoor Area</li>
+              <li><i class="fas fa-check-circle yellow-tick "></i> Post Cunstruction</li>
+              <li><i class="fas fa-check-circle yellow-tick "></i> Bayan</li>
+
+            </ul>
+          </div>
+          <div class="col-md-2 m-mt30">
+
+            <ul class="inv-ul">
+              
+              <li><i class="fas  test-color fa-users c-mr-10"></i> 3 cleaner</li>
+              <li><i class="fas  test-color fa-clock-o c-mr-10"></i> 3 Hours</li>
+              <li><i class="fas  test-color fa-calendar c-mr-10"></i> 12/12/2021</li>
+              <li><i class="fas  test-color fa-map-marker c-mr-10"></i>&nbsp;  Address </li>
+
+
+
+            </ul>
+          </div>
+          <div class="col-md-5 m-mt30">
+
+            <ul class="inv-ul">
+              <li>Team Leader <br></li>
+              <li class="mt-5 inv-team-head">Name</li>
+            
+              <li  class="mt-10">Cleaners</li>
+              <li class="mt-5 inv-team-head">Name , Name</li>
+
+
+
+
+            </ul>
+          </div>
+        </div>
+
+        <div class="row mt-20">
+          <div class="col-md-12 pl-0">
+           <div class="inv-check-section">
+             <div class="d-flex ">
+               <div class="inv-check-section-head">
+                 Section 1
+                 
+               </div>
+               <div id="id_sec_item_1" style="margin-left: 20px;">
+               <p class="inv-section-in">
+                 Size : <span class="red2-text inv-section-in">Divided area</span>
+               </p>
+               </div>
+               <div class="right-pos">
+                 <button class="inv-normal-btn" data-toggle="collapse" data-target="#demo" id="id_section_btn_1" onclick="showOf(1)">
+                   <i style="color: #000000 !important;" class="fa fa-chevron-right action-icon" aria-hidden="true"></i>
+                 </button>
+ 
+               </div>
+             </div>
+             <div id="demo" class="row mt-10 collapse ">
+               <div class="col-md-5 c-right-border">
+                 <div class="col-md-6 ">
+                   <div class="row c-mb-3 ">
+                     <div class="col-xs-5 pl-0 pr-0 inv-section-in">Category</div>
+                     <div class="col-xs-7 pl-0 pr-0  ">: <span class="red2-text inv-section-in">Divided area</span></div>
+                   </div>
+                 </div>
+                 <div class="col-md-6 ">
+                   <div class="row c-mb-3 ">
+                     <div class="col-xs-5 pl-0 pr-0 inv-section-in">Wall Type</div>
+                     <div class="col-xs-7 pl-0 pr-0">: <span class="red2-text inv-section-in">concreate, ceramic</span></div>
+                   </div>
+                 </div>
+                 <div class="col-md-6 ">
+                   <div class="row c-mb-3 ">
+                     <div class="col-xs-5 pl-0 pr-0 inv-section-in">Dirt level</div>
+                     <div class="col-xs-7 pl-0 pr-0">: <span class="red2-text inv-section-in">Random</span></div>
+                   </div>
+                 </div>
+                 <div class="col-md-6 ">
+                   <div class="row c-mb-3 ">
+                     <div class="col-xs-5 pl-0 pr-0 inv-section-in">Celling Type</div>
+                     <div class="col-xs-7 pl-0 pr-0">: <span class="red2-text inv-section-in">concreate, ceramic</span></div>
+                   </div>
+                 </div>
+                 <div class="col-md-6 ">
+                   <div class="row c-mb-3 ">
+                     <div class="col-xs-5 pl-0 pr-0 inv-section-in">Size</div>
+                     <div class="col-xs-7 pl-0 pr-0">: <span class="red2-text inv-section-in">230 square meter</span></div>
+                   </div>
+                 </div>
+                 <div class="col-md-6 ">
+                   <div class="row c-mb-3 ">
+                     <div class="col-xs-5 pl-0 pr-0 inv-section-in">Floor Type</div>
+                     <div class="col-xs-7 pl-0 pr-0">: <span class="red2-text inv-section-in">concreate, ceramic</span></div>
+                   </div>
+                 </div>
+                 <div class="col-md-6 ">
+                   <div class="row c-mb-3 ">
+                     <div class="col-xs-5 pl-0 pr-0 inv-section-in">Floor</div>
+                     <div class="col-xs-7 pl-0 pr-0">: <span class="red2-text inv-section-in">None</span></div>
+                   </div>
+                 </div>
+                 <div class="col-md-6 ">
+                   <div class="row c-mb-3 ">
+                     <div class="col-xs-5 pl-0 pr-0 inv-section-in">Rooms</div>
+                     <div class="col-xs-7 pl-0 pr-0">: <span class="red2-text inv-section-in">7</span></div>
+                   </div>
+                 </div>
+                 
+ 
+ 
+               </div>
+               <div class="col-md-7 m-mt-10">
+                 <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
+                 <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
+                 <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
+                 <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
+                 <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
+                 <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
+                 <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
+                 <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
+                 <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
+                 <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
+                 <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
+                 <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
+ 
+               </div>
+ 
+             </div>
+           </div>
+          </div>
+         </div>
+         <div class="row mt-20">
+           <div class="col-md-12 pl-0">
+            <div class="inv-check-section">
+              <div class="d-flex ">
+                <div class="inv-check-section-head">
+                  Section 2
+                  
+                </div>
+                <div id="id_sec_item_1" style="margin-left: 20px;">
+                <p class="inv-section-in">
+                  Size : <span class="red2-text inv-section-in">Divided area</span>
+                </p>
+                </div>
+                <div class="right-pos">
+                  <button class="inv-normal-btn" data-toggle="collapse" data-target="#demo" id="id_section_btn_1" onclick="showOf(1)">
+                    <i style="color: #000000 !important;" class="fa fa-chevron-right action-icon" aria-hidden="true"></i>
+                  </button>
+  
+                </div>
+              </div>
+              <div id="demo" class="row mt-10 collapse ">
+                <div class="col-md-5 c-right-border">
+                  <div class="col-md-6 ">
+                    <div class="row c-mb-3 ">
+                      <div class="col-xs-5 pl-0 pr-0 inv-section-in">Category</div>
+                      <div class="col-xs-7 pl-0 pr-0  ">: <span class="red2-text inv-section-in">Divided area</span></div>
+                    </div>
+                  </div>
+                  <div class="col-md-6 ">
+                    <div class="row c-mb-3 ">
+                      <div class="col-xs-5 pl-0 pr-0 inv-section-in">Wall Type</div>
+                      <div class="col-xs-7 pl-0 pr-0">: <span class="red2-text inv-section-in">concreate, ceramic</span></div>
+                    </div>
+                  </div>
+                  <div class="col-md-6 ">
+                    <div class="row c-mb-3 ">
+                      <div class="col-xs-5 pl-0 pr-0 inv-section-in">Dirt level</div>
+                      <div class="col-xs-7 pl-0 pr-0">: <span class="red2-text inv-section-in">Random</span></div>
+                    </div>
+                  </div>
+                  <div class="col-md-6 ">
+                    <div class="row c-mb-3 ">
+                      <div class="col-xs-5 pl-0 pr-0 inv-section-in">Celling Type</div>
+                      <div class="col-xs-7 pl-0 pr-0">: <span class="red2-text inv-section-in">concreate, ceramic</span></div>
+                    </div>
+                  </div>
+                  <div class="col-md-6 ">
+                    <div class="row c-mb-3 ">
+                      <div class="col-xs-5 pl-0 pr-0 inv-section-in">Size</div>
+                      <div class="col-xs-7 pl-0 pr-0">: <span class="red2-text inv-section-in">230 square meter</span></div>
+                    </div>
+                  </div>
+                  <div class="col-md-6 ">
+                    <div class="row c-mb-3 ">
+                      <div class="col-xs-5 pl-0 pr-0 inv-section-in">Floor Type</div>
+                      <div class="col-xs-7 pl-0 pr-0">: <span class="red2-text inv-section-in">concreate, ceramic</span></div>
+                    </div>
+                  </div>
+                  <div class="col-md-6 ">
+                    <div class="row c-mb-3 ">
+                      <div class="col-xs-5 pl-0 pr-0 inv-section-in">Floor</div>
+                      <div class="col-xs-7 pl-0 pr-0">: <span class="red2-text inv-section-in">None</span></div>
+                    </div>
+                  </div>
+                  <div class="col-md-6 ">
+                    <div class="row c-mb-3 ">
+                      <div class="col-xs-5 pl-0 pr-0 inv-section-in">Rooms</div>
+                      <div class="col-xs-7 pl-0 pr-0">: <span class="red2-text inv-section-in">7</span></div>
+                    </div>
+                  </div>
+                  
+  
+  
+                </div>
+                <div class="col-md-7 m-mt-10">
+                  <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
+                  <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
+                  <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
+                  <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
+                  <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
+                  <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
+                  <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
+                  <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
+                  <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
+                  <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
+                  <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
+                  <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
+  
+                </div>
+  
+              </div>
+            </div>
+           </div>
+          </div>
+        <div class="row mt-20">
+          <div class="col-md-12">
+            <div class="inv-check-orderhead">
+              Recommended List
+            </div>
+            <div class="mt-20">
+              <table class="inv-table footable"> 
+                <thead>
+                  <tr>
+                      <th style="width: %;">
+                        Item
+                      </th>
+                      <th data-hide="phone,tablet"  style="width: %; ">
+                          Item Code
+                      </th>
+                      <th data-hide="phone,tablet"  style="width: %;">
+                        Category
+                      </th>
+                      <th data-hide="phone,tablet"  style="width: %;" >
+                          Unit
+                      </th>
+                     
+                      <th data-hide="phone,tablet"  style="width: %;">Action</th>
+                  </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>0000000</td>
+                  <td>0000000</td>
+                  <td>Category 1</td>
+                  <td>
+
+                    <div class="qty ">
+                      <span class="minus bg-dark">-</span>
+                      <input type="number" class="count" name="qty" value="1">
+                      <span class="plus bg-dark">+</span>
+                  </div>
+                  </td>
+                  <td>
+                    <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                  </td>
+                </tr>
+                
+                <tr>
+                  <td>           <button class="inv-plan-btn" onclick="openNavaddSegment2()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="" > Add Item</button></td>
+                </tr>
+              </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-20 text-center">
+          <button class="sent-button" >Submit</button>
+                        <button data-dismiss="modal" onclick="closeNavEditCategory()" class="view-button">Cancel</button>
+        </div>
+      </div>
+
+
+    </div>
+</div>
+
+
+</section>
+
+
+
+
+</div>
+
+
+{% endblock %}
+
+{% block javascript %}
+
+<script>
+  	$(document).ready(function(){
+		    $('.count').prop('disabled', true);
+   			$(document).on('click','.plus',function(){
+				$('.count').val(parseInt($('.count').val()) + 1 );
+    		});
+        	$(document).on('click','.minus',function(){
+    			$('.count').val(parseInt($('.count').val()) - 1 );
+    				if ($('.count').val() == 0) {
+						$('.count').val(1);
+					}
+    	    	});
+ 		});
+  $(".action-icon").click(function(){
+    console.log("celd")
+ $(this).toggleClass("down2")  ; 
+})
+
+function showOf(id){
+  var a = document.getElementById("id_sec_item_"+id);
+  console.log(a.style.display)
+  if(a.style.display == 'none'){
+    a.style.display = 'block'
+  }else{
+    a.style.display = 'none'
+  }
+  //document.getElementById("id_sec_item_"+id).style.display = "none";
+}
+
+
+</script>
+
+{% endblock %}

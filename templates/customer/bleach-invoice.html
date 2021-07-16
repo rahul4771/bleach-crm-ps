@@ -438,8 +438,8 @@
 
                 
 
-             
-                <div class="inv-payment-box">
+                  {% if order.customerbooking > 0 %}
+                <div class="inv-payment-box"> 
                   <div class="inv-payment-card mt-4 text-center" id="inv-cash" onclick="selectPayment('paynbook')">
                     <img src="{% static 'files/icons/booknpay.png' %}" class="inv-card-icon "  id="inv-cash-img"/>
                     <div class="inv-payment-text">
@@ -450,7 +450,9 @@
                     </div>
                   </div>
                 </div>
-              
+                {% endif %}
+
+                {% if order.payment_status == 'PENDING' %}
                 <div class="inv-payment-box">
                     <div class="inv-payment-card mt-4 text-center" id="inv-debit" onclick="selectPayment('pay')"><!-- to disable click add class inv-click-disable -->
                       <img src="{% static 'files/icons/pay.png' %}" class="inv-card-icon" id="inv-credit-img"  /> <!-- to disable  add class inv-payment-disabled -->
@@ -462,6 +464,7 @@
                       </div>
                     </div>
                     </div>
+                    {% endif %}
                
 
                 </div>
@@ -480,12 +483,13 @@
               </form>
               
             
-              
+              {% if order.payment_status == 'PENDING' or order.customerbooking > 0 %}
               <div class="col-12   text-center text-white mt-4">
                 <div class="inv-btn" onclick="proceedBookingInvoice()">
                 Proceed
               </div>
               </div>
+              {% endif %}
               {% endif %}
 
               <div class="col-5 offset-1 inv-white-btn text-center  mt-4 mb-4 " style="text-decoration: none; color: #616161;" onclick="window.location.href=`/customer/test/invoice/download/paw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}`">

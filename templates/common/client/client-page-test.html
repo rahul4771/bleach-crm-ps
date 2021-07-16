@@ -47,7 +47,7 @@
                         <div class=" d-flex">
                          <img src="{% static 'files/icons/edit.png'%}" class="edit-icon ml-auto" data-toggle="modal" data-target="#editModal"/>
                         </div>
-                        <div class="cd-client-name mb-5">
+                        <div style="font-size:22px !important;" class="cd-client-name mb-5">
                             {{client_details.name}}
                         </div>
                         <div class="cd-client-data mb-5">
@@ -159,7 +159,7 @@
 
                     <div class="row white-wrapper cd-card-border m-0" >
                         <div class="col-md-8 cd-mt-4">
-                        <a href="{% url 'common_items:client-orderdetails' order.id %}" target="_blank"><div class="cd-card-title" style="font-size:22px; !important">{{order.evaluation.evaluation_id}}</div></a>
+                        <a href="{% url 'common_items:client-orderdetails' order.id %}" target="_blank"><div class="cd-card-title" style="font-size:22px !important;">{{order.evaluation.evaluation_id}}</div></a>
                             <div class="d-flex cd-mt-4">
                                 {% for evaluation_detail in order.evaluation.evaluationdetails %}
                                 {% for evaluation_book in evaluation_detail.evaluationbooks %}
@@ -360,7 +360,7 @@
 
                         {% for address in client_details.customer_addresses %}
                         <div class="client-address-items">
-                            <p style="text-align: center;">Address {{forloop.counter}}</p>
+                            <p style="font-weight: 600;">Address {{forloop.counter}}</p>
                             <p style="width: 100%;">{% if address.floor %}{{address.floor}}, {% else %}{% endif %} {{address.building}}, {{address.block}}, {{address.street}}, {% if address.avenue %}{{address.avenue}}, {% else %}{% endif %} {{address.area.name}}, {{address.governorate.name}}</p> 
 
                         </div>
