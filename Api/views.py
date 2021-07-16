@@ -1100,6 +1100,7 @@ class CheckInAPI(APIView):
 		response_dict['success'] = False
 
 		team_id = request.data.get('team_id')
+		check_in_notes = request.data.get('check_in_notes')
 	
 		print(team_id,"zack")
 		try:
@@ -1112,6 +1113,10 @@ class CheckInAPI(APIView):
 		if not cleaning_team_detail.check_out:
 			cleaning_team_detail.order_scheduler.work_status     = 'CLEANING_IN_PROGRESS'
 		cleaning_team_detail.save()	
+
+		if check_in_notes:
+			cleaning_team_detail.check_in_notes = check_in_notes
+
 		cleaning_team_detail.order_scheduler.save()
 
 		#To Save Media
@@ -1163,6 +1168,7 @@ class CheckOutAPI(APIView):
 		response_dict['success'] = False
 
 		team_id = request.data.get('team_id')
+		check_out_notes = request.data.get('check_out_notes')
 	
 		print(team_id,"zack")
 		try:
@@ -1195,6 +1201,9 @@ class CheckOutAPI(APIView):
 		cleaning_team_detail.check_out                    		= timezone.now()
 		
 		cleaning_team_detail.order_scheduler.order.order_status = 'ORDER_IN_PROGRESS'
+
+		if check_out_notes:
+			cleaning_team_detail.check_out_notes = check_out_notes
 		
 		cleaning_team_detail.save()
 		cleaning_team_detail.order_scheduler.save()
