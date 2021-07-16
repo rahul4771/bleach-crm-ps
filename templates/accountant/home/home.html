@@ -151,7 +151,7 @@
     
     {% if invoice.evaluation.payment_method == 'PREPAID' or invoice.evaluation.payment_method == 'POSTPAID' %}
     <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
-    <td data-label="BLC Number" class="bold-text clickable-row" {% if invoice %}data-href="{% url 'accountant:accountant-client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>{{invoice.evaluation.evaluation_id}}</td>
+    <td data-label="BLC Number" class="bold-text clickable-row" {% if invoice %}data-href="{% url 'common_items:client-orderdetails' invoice.id %}"{% else %}data-href="#"{% endif %}>{{invoice.evaluation.evaluation_id}}</td>
     <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
     <td data-label="Service Type(s)">
     {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
