@@ -302,6 +302,7 @@ const app=new Vue({
     building: [],
   },
   no_of_building: 0,
+  temp_no_of_building: 0,
   building: [],
   no_of_floors: [],
   buildings: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
@@ -555,6 +556,7 @@ building_warning:false
         resetAllData(){
           this.reset_building=false
           this.building_warning=false
+          this.no_of_building=this.temp_no_of_building
           this.valid=[]
     this.building=[]
     this.e.building=[]
@@ -576,6 +578,10 @@ building_warning:false
    
     this.reset_floor=true
     this.reset_building=true
+        },
+        cancelResetData(){
+          this.temp_no_of_building=this.no_of_building
+          this.building_warning=false
         },
         viewEditSchedule(service,index){
           this.schedule_serviceTypes_selected=[]
@@ -3347,12 +3353,12 @@ try {
 
   setBuilding() {
     
-  /* if(this.no_of_floors.length>0){
+   if(this.no_of_floors.length>0){
     
     this.building_warning=true
    }
-   else{*/
-
+   else{
+    this.no_of_building=this.temp_no_of_building
    
     this.valid=[]
     this.building=[]
@@ -3375,7 +3381,7 @@ try {
    
     this.reset_floor=true
     this.reset_building=true
- // }
+  }
   
   },
   setFloors(building) {

@@ -85,7 +85,7 @@
        <v-btn
          color="primary"
          text
-         @click="building_warning = false"
+         @click="cancelResetData()"
        >
          Cancel
        </v-btn>
@@ -1242,7 +1242,7 @@ width="1000"
                     serviceType == 'Sterilization' ||
                     serviceType == 'Storage Area'
                   ">
-                    <v-select :items="buildings" v-model="no_of_building" label="No of Building"
+                    <v-select :items="buildings" v-model="temp_no_of_building" label="No of Building"
                       v-on:change="setBuilding()" :attach="true">
                     </v-select>
                   </div>
