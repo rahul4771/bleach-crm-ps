@@ -1,7 +1,7 @@
 
-// var url='https://test.bleach-kw.com';
+// var url='https://my.bleachkw.com';
 // //var url = 'https://my.bleachkw.com';
-// //var url = 'https://test.bleach-kw.com';
+// //var url = 'https://my.bleachkw.com';
 // //var url='http://localhost:8000';
 var shiftId = ''
  //var resourceList=[];
@@ -356,7 +356,7 @@ function closeConf(){
 //get users 
 function getUsersShift(){
     
-      url ='https://test.bleach-kw.com';
+      url ='https://my.bleachkw.com';
       resourceList=[];
   
     axios.get(url+'/api/leave-users-list/')
@@ -556,7 +556,7 @@ function resetResourcesShift(category){
 //get shifts
 function getShift(){
     
-    url ='https://test.bleach-kw.com';
+    url ='https://my.bleachkw.com';
     axios.get(url+'/api/shift-scheduler/')
 .then(function (response) {
   // handle success
