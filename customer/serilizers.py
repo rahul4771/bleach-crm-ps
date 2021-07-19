@@ -59,12 +59,18 @@ class AddressSerializer(serializers.ModelSerializer):
 		fields = ('id','governorate','area','block','avenue','building','street','floor','apartment','customer')
 		read_only_fields =('id',)
 
+class CustomerBookingShowSerializer(serializers.ModelSerializer):
+	class Meta:
+		model  = CustomerBooking
+		fields = ('booking_id','booking_type','booking_date',)
+
 class EvaluationSerializer(serializers.ModelSerializer):
 	customer                = UserProfileSerializer(read_only=True) 
+	booking_evaluation      = CustomerBookingShowSerializer(many=True,read_only=True)
 	quatation_approved_date = serializers.DateTimeField(format="%d-%m-%Y %I:%M %p ")
 	class Meta:
 		model  = Evaluation
-		fields = ('customer','quatation_status','quatation_approved_date','payment_method')
+		fields = ('customer','quatation_status','quatation_approved_date','payment_method','booking_evaluation')
 
 class OrderSerializer(serializers.ModelSerializer):
 	class Meta:
