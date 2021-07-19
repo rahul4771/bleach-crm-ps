@@ -59,6 +59,40 @@
       </template>
     </v-snackbar>
         <!-- snackbar ends here-->
+     <!-- reset building dialog -->
+     <v-dialog
+   v-model="building_warning"
+   max-width="400"
+ >
+   <v-card>
+     <v-card-title >
+      Are you sure do you want to reset ? All added data will be lost
+     </v-card-title>
+
+    
+
+     <v-card-actions>
+       <v-spacer></v-spacer>
+
+       <v-btn
+         color="primary"
+         text
+         @click="resetAllData()"
+       >
+         Yes
+       </v-btn>
+
+       <v-btn
+         color="primary"
+         text
+         @click="building_warning = false"
+       >
+         Cancel
+       </v-btn>
+     </v-card-actions>
+   </v-card>
+ </v-dialog>
+     <!-- reset building dialog ends here-->
    <!-- service deletion Confirmation Dialog Begins -->
    <v-dialog
    v-model="del_confirmation_dialog"
@@ -1215,7 +1249,7 @@ width="1000"
                 </div>
 
                 <!--   Buildings, Floors and apartments    -->
-
+              <div v-if="reset_building">
                 <div class="row m-0" v-if="
                   serviceType == 'General Cleaning' ||
                   serviceType == 'Deep Cleaning' ||
@@ -1919,6 +1953,7 @@ Fill all the details of the Buildings  to proceed
                       </v-tab-item>
                     </v-tabs-items>
                   </div>
+                </div>
                 </div>
                 <!-- General, Deep, storage area, sanitization ends here-->
 

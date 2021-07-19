@@ -545,10 +545,18 @@ scheduleStatus:false,
 floor_msg:false,
 apartment_stat_err:false,
 building_msg:false,
-others_keynotes:[]
+others_keynotes:[],
+reset_building:false,
+reset_floor:false,
+building_warning:false
 
       },
       methods: {
+        resetAllData(){
+          this.building=[]
+          this.building_warning=false
+          this.setBuilding()
+        },
         viewEditSchedule(service,index){
           this.schedule_serviceTypes_selected=[]
           this.editScheduleData=service
@@ -3304,6 +3312,7 @@ try {
       keynote_data:[],
       hallway_size: "",
       sides: "",
+      
     };
     this.e = {
       building: [],
@@ -3317,7 +3326,19 @@ try {
   },
 
   setBuilding() {
+    
+   if(this.no_of_floors.length>0){
+    this.building_warning=true
+   }
+   else{
+
+   
     this.valid=[]
+    this.building=[]
+    this.e.building=[]
+    this.no_of_floors=[]
+    this.reset_floor=false
+    this.reset_building=false
     for (var i = 0; i < this.no_of_building; i++) {
       this.building.push({
         floors: [],
@@ -3330,6 +3351,11 @@ try {
       this.no_of_floors.push("")
       this.valid.push({floors:[]})
     }
+   
+    this.reset_floor=true
+    this.reset_building=true
+  }
+  
   },
   setFloors(building) {
     this.building[building - 1].floors = [];
