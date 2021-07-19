@@ -1424,6 +1424,7 @@ console.log(response)
               "is_newkitchen":false,
               "is_highprice_facade":false,
               "is_highprice_window":false,
+              
               }
               if(this.multiServicesBill[i].bill[j].section.size.is_highprice_facade){
                 this.serviceDetails.service_details[i].sections[j].is_highprice_facade=true
@@ -1546,6 +1547,7 @@ console.log(response)
          "cement_residue":this.multiServicesBill[i].bill[j].section.cement_residue,
          "section_cost":this.multiServicesBill[i].bill[j].section.section_cost,
          "section_net_cost":this.multiServicesBill[i].bill[j].section.section_cost,
+         
          "keynotes":{
             "1":{
                "sub_area":"bathroom",
