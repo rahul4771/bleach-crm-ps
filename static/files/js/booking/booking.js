@@ -553,9 +553,29 @@ building_warning:false
       },
       methods: {
         resetAllData(){
-          this.building=[]
+          this.reset_building=false
           this.building_warning=false
-          this.setBuilding()
+          this.valid=[]
+    this.building=[]
+    this.e.building=[]
+    this.no_of_floors=[]
+    this.reset_floor=false
+    this.reset_building=false
+    for (var i = 0; i < this.no_of_building; i++) {
+      this.building.push({
+        floors: [],
+        completed:false
+      });
+      this.e.building.push({
+        floors: [],
+        e: 1,
+      });
+      this.no_of_floors.push("")
+      this.valid.push({floors:[]})
+    }
+   
+    this.reset_floor=true
+    this.reset_building=true
         },
         viewEditSchedule(service,index){
           this.schedule_serviceTypes_selected=[]
@@ -3327,11 +3347,11 @@ try {
 
   setBuilding() {
     
-   /*if(this.no_of_floors.length>0){
-    this.reset_building=false
+  /* if(this.no_of_floors.length>0){
+    
     this.building_warning=true
-   }*/
-   //else{
+   }
+   else{*/
 
    
     this.valid=[]
@@ -3355,7 +3375,7 @@ try {
    
     this.reset_floor=true
     this.reset_building=true
-  //}
+ // }
   
   },
   setFloors(building) {
