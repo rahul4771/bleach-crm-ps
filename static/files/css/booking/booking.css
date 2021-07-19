@@ -551,6 +551,7 @@ margin: auto;
   .ev-day-active{
     padding:5px;
     border:1px solid #2e4e85;
+    background:#dbecfb;
     border-radius: 5px;
     text-align: center;
     cursor: pointer;

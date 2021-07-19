@@ -1396,49 +1396,6 @@ width="1000"
                                           </v-radio>
                                         </v-radio-group>
                                       </div>
-                                      <div class="col-md-12">
-                                        <div>Add Keynotes</div>
-                                        <div class="row keynote-chip m-0">
-                                        <div v-for="(keynote,kindex) in building[index-1].floors[floor-1].keynote_data" v-bind:key="kindex" class="col-md-3" >
-                                          <div class="keynote-item">
-                                            <v-chip
-     
-                                            class="ma-2 w-100"
-                                            color="primary"
-                                            id="keynote-chip"
-                                           close
-                                            label
-                                            outlined
-                                            @click:close="removeKeynote(index-1,floor-1,kindex)"
-                                          >
-                                          
-                                            <% keynote.name+' - '+keynote.value%>
-                                          </v-chip>
-                                          </div>
-               
-                                      </div>
-                                      </div>
-                                      </div>
-                                      <div class="col-md-4">
-                                        <v-combobox
-                                          v-model="keynote_name"
-                                          :items="keynote_content"
-                                          label="Field Name"
-                                        
-                                         ></v-combobox>
-                                      
-                                      </div>
-                                      <div class="col-md-4">
-                                        <v-text-field v-model="keynote_value"
-                                        label="Value"
-                                          >
-                                        </v-text-field>
-                                      </div>
-                                      <div class="col-md-4">
-                                        <v-btn color="primary" @click="addKeynote(index-1,floor-1)">
-                                          Add
-                                        </v-btn>
-                                      </div>
                                       <div class="col-md-12" v-if="building[index - 1].floors[floor - 1].kitchen">
                                         <h5>Kitchen Details</h5>
                                       </div>
@@ -1541,6 +1498,50 @@ width="1000"
                                           </div>
                                         </v-form>
                                       </div>
+                                      <div class="col-md-12 mt-2">
+                                        <div>Add Keynotes</div>
+                                        <div class="row keynote-chip m-0">
+                                        <div v-for="(keynote,kindex) in building[index-1].floors[floor-1].keynote_data" v-bind:key="kindex" class="col-md-3" >
+                                          <div class="keynote-item">
+                                            <v-chip
+     
+                                            class="ma-2 w-100"
+                                            color="primary"
+                                            id="keynote-chip"
+                                           close
+                                            label
+                                            outlined
+                                            @click:close="removeKeynote(index-1,floor-1,kindex)"
+                                          >
+                                          
+                                            <% keynote.name+' - '+keynote.value%>
+                                          </v-chip>
+                                          </div>
+               
+                                      </div>
+                                      </div>
+                                      </div>
+                                      <div class="col-md-4">
+                                        <v-combobox
+                                          v-model="keynote_name"
+                                          :items="keynote_content"
+                                          label="Field Name"
+                                        
+                                         ></v-combobox>
+                                      
+                                      </div>
+                                      <div class="col-md-4">
+                                        <v-text-field v-model="keynote_value"
+                                        label="Value"
+                                          >
+                                        </v-text-field>
+                                      </div>
+                                      <div class="col-md-4">
+                                        <v-btn color="primary" @click="addKeynote(index-1,floor-1)">
+                                          Add
+                                        </v-btn>
+                                      </div>
+                                     
                                     </div>
                                   </div>
 
@@ -1786,7 +1787,7 @@ width="1000"
 
                                                 <!-- Apartment kitchen ends here -->
 
-                                                <div class="col-md-12">
+                                                <div class="col-md-12 mt-2">
                                                   <div>Add Keynotes</div>
                                                   <div class="row keynote-chip">
                                                   <div v-for="(keynote,kindex) in apartment.keynote_data" v-bind:key="kindex" class="col-md-3" >
@@ -2120,7 +2121,7 @@ Fill all the details of the Buildings  to proceed
                           </v-radio-group>
                         </div>
                         <div class="col-md-6" v-if="otherService.stain">
-                          <v-select :items="upholsterySize1" label="Cause of stain"
+                          <v-select :items="cause_of_stain" label="Cause of stain"
                             :rules="[v => !!v || 'Cause of Stain is required']" required
                             v-model="otherService.stain_reason" :attach="true"></v-select>
                         </div>
@@ -2169,8 +2170,8 @@ Fill all the details of the Buildings  to proceed
                             </v-radio>
                           </v-radio-group>
                         </div>
-                        <!-- keynote begins here-->
-                        <div class="col-md-12">
+                        <!-- keynote for services other than detailed cleaning category begins here-->
+                    <!--    <div class="col-md-12">
                           <div>Add Keynotes</div>
                           <div class="row keynote-chip m-0">
                           <div v-for="(keynote,kindex) in otherService.keynote_data" v-bind:key="kindex" class="col-md-3" >
@@ -2211,7 +2212,7 @@ Fill all the details of the Buildings  to proceed
                           <v-btn color="primary" @click="addOthersKeynote()">
                             Add
                           </v-btn>
-                        </div>
+                        </div>-->
                         <!-- key note ends here-->
                         <div class="col-md-12 text-center">
                           <v-btn color="primary" class="mr-4 mx-auto" v-on:click="addOtherService()">
@@ -2773,7 +2774,7 @@ Fill all the details of the Buildings  to proceed
                     <div class="row m-0" v-if="subStat=='Weekly' && !this.scheduleDateSat && !editScheduleStat">
                       <div class="col-md-12">
                       <div> Preferred Days</div> </div>
-                      <div class="col-sm-2 col-md-1">
+                      <div class="col-6 col-md-1">
                         <div class="ev-day-active" @click="selectPrefDay('Sun')" v-if="prefDay.includes('Sun')">
                           Sun
                            </div>
@@ -2781,7 +2782,7 @@ Fill all the details of the Buildings  to proceed
                            Sun
                            </div>
                            </div>
-                      <div class="col-sm-2 col-md-1">
+                      <div class="col-6 col-md-1">
                         <div class="ev-day-active" @click="selectPrefDay('Mon')" v-if="prefDay.includes('Mon')">
                           Mon 
                         </div>
@@ -2789,7 +2790,7 @@ Fill all the details of the Buildings  to proceed
                           Mon 
                         </div>
                         </div>
-                        <div class="col-sm-2 col-md-1">
+                        <div class="col-6 col-md-1">
                         <div class="ev-day-active" @click="selectPrefDay('Tue')" v-if="prefDay.includes('Tue')">
                          Tue 
                         </div>
@@ -2797,7 +2798,7 @@ Fill all the details of the Buildings  to proceed
                           Tue
                         </div>
                         </div>
-                        <div class="col-sm-2 col-md-1">
+                        <div class="col-6 col-md-1">
                         <div class="ev-day-active" @click="selectPrefDay('Wed')" v-if="prefDay.includes('Wed')">
                           Wed
                          </div>
@@ -2805,7 +2806,7 @@ Fill all the details of the Buildings  to proceed
                           Wed
                          </div>
                          </div>
-                         <div class="col-sm-2 col-md-1">
+                         <div class="col-6 col-md-1">
                          <div class="ev-day-active" @click="selectPrefDay('Thu')" v-if="prefDay.includes('Thu')">
                           Thu
                          </div>
@@ -2813,7 +2814,7 @@ Fill all the details of the Buildings  to proceed
                           Thu
                          </div>
                          </div>
-                         <div class="col-sm-2 col-md-1">
+                         <div class="col-6 col-md-1">
                          <div class="ev-day-active" @click="selectPrefDay('Fri')" v-if="prefDay.includes('Fri')">
                          Fri
                          </div>
@@ -2821,7 +2822,7 @@ Fill all the details of the Buildings  to proceed
                          Fri
                          </div>
                          </div>
-                         <div class="col-sm-2 col-md-1">
+                         <div class="col-6 col-md-1">
                          <div class="ev-day-active" @click="selectPrefDay('Sat')" v-if="prefDay.includes('Sat')">
                          Sat
                           </div>
@@ -2935,11 +2936,14 @@ Fill all the details of the Buildings  to proceed
                                 <div v-if="subStat=='Custom'">
                                  <%  customDateSelected[0] %>
                                 </div>
-                                <div v-if="subStat!='Monthly' && subStat!='Custom'">
+                                <div v-if="subStat!='Monthly' && subStat!='Custom' && subStat!='Weekly'">
                                   <% slotDate %>
                                 </div>
                                 <div v-if="subStat=='Monthly'">
                                   <% monthly_starting_date %>
+                                </div>
+                                <div v-if="subStat=='Weekly'">
+                                  <% visits[0].date %>
                                 </div>
                               </div>
                               <div class="col-md-2 offset-md-2">
