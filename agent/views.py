@@ -897,7 +897,7 @@ class CleaningCallendar(APIView):
 			if not calendar_order_schedules_all.duplicate in calendar_order_schedules_duplicates:
 				calendar_order_schedules_list.append(calendar_order_schedules_all.id)
 				calendar_order_schedules_duplicates.append(calendar_order_schedules_all.duplicate)
-		calendar_order_schedules        = OrderScheduler.objects.filter(id__in=calendar_order_schedules_list).select_related('evaluation_details__evaluator','order_scheduler_book').prefetch_related('cleaning_team_order_scheduler__team_leader').annotate(customerbooking=Sum(Case(When(order__evaluation__booking_evaluation__booking_type='CLEANINGBOOKING',then=1),default=0,output_field=IntegerField())))
+		calendar_order_schedules        = OrderScheduler.objects.filter(id__in=calendar_order_schedules_list).select_related('evaluation_details__evaluator','order_scheduler_book').prefetch_related('cleaning_team_order_scheduler__team_leader','order__evaluation__booking_evaluation')   #.annotate(customerbooking=Sum(Case(When(order__evaluation__booking_evaluation__booking_type='CLEANINGBOOKING',then=1),default=0,output_field=IntegerField())))
 		
 		#not approved & approved not paid schedules
 		calendar_notapprovedorder_schedules_list       = []
@@ -914,7 +914,7 @@ class CleaningCallendar(APIView):
 			calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end))|Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end))|Q(Q(end_at__gt=schedule_date_start)&Q(end_at__lte=schedule_date_end)&Q(start_at__lt=schedule_date_start)))).order_by('start_at').select_related('follow_up','customer_address').prefetch_related('followupteam_followupschedule__team_leader')
 		except:
 			calendar_followup_schedules = None
-
+		
 		response_dict['appoved_cleanings']    = CleaningScheduleSerializer(instance=calendar_order_schedules,many=True).data
 		response_dict['notapproved_cleanings'] = CleaningScheduleSerializer(instance=calendar_notapprovedorder_schedules,many=True).data
 		response_dict['followup_cleanings']   = FollowupScheduleSerializer(instance=calendar_followup_schedules,many=True).data
