@@ -96,6 +96,7 @@ if(app.service_type=='Facade Cleaning'){
   console.log("section is "+JSON.stringify(app.sections[index-1]))
   app.sectionData=app.sections[index-1]
   app.editSectionData.size=app.sections[index-1].size
+  app.editSectionData.size['combined_size']=app.sections[index-1].size.name+' ('+app.sections[index-1].size.min_size+' sq.m - '+app.sections[index-1].size.max_size+' sq.m )'
   if(app.sections[index-1].upholstery_type){
     app.editSectionData.upholstery_type=app.sections[index-1].upholstery_type
   }
@@ -374,7 +375,7 @@ const app = new Vue({
            
 
             url:'https://test.bleach-kw.com'
-          // url:'http://localhost:8000'
+           //url:'http://localhost:8000'
             //url:'http://127.0.0.1:8000'
   },
   methods:{
@@ -384,6 +385,7 @@ const app = new Vue({
       axios.get(this.url+'/customer/ajax/getservicesizeprice?service_type='+service).then(response=>{
           this.productivity=response.data
           for(var i in this.productivity){
+            
             service_productivity.push(this.productivity[i])
           }
           if(service=='Kitchen Cleaning'){
@@ -450,8 +452,10 @@ const app = new Vue({
       this.old_kitchen_size=[]
       
         for(var i=0;i<this.kitchen_size.length;i++){
-         
+          this.kitchen_size[i].combined_size=this.kitchen_size[i].name+' ( '+this.kitchen_size[i].min_size+' sq.m - '+this.kitchen_size[i].max_size+' sq.m )'
+
           if(this.kitchen_size[i].is_newkitchen){
+
             this.new_kitchen_size.push(this.kitchen_size[i])
           }
           else{
@@ -1016,7 +1020,10 @@ const app = new Vue({
             var size=response.data
             for(var i in size){
               this.service_size.push(size[i])
+              size[i].combined_size=size[i].name+' ( '+size[i].min_size+' sq.m - '+size[i].max_size+' sq.m )'
               if(size[i].upholstery_type=='CHAIR'){
+                
+
                 this.chair_size.push(size[i])
               }
               else if(size[i].upholstery_type=='SOFA')
@@ -1137,9 +1144,11 @@ const app = new Vue({
           for(var i=0;i<this.service_size.length;i++){
             
             if(this.service_size[i].is_highprice_facade){
+              this.service_size[i].combined_size=this.service_size[i].name+' ( '+this.service_size[i].min_size+' sq.m - '+this.service_size[i].max_size+' sq.m )'
               this.highprice_facade.push(this.service_size[i])
             }
             else{
+              this.service_size[i].combined_size=this.service_size[i].name+' ( '+this.service_size[i].min_size+' sq.m - '+this.service_size[i].max_size+' sq.m )'
               this.lowprice_facade.push(this.service_size[i])
             }
             
@@ -1190,9 +1199,11 @@ const app = new Vue({
                  
                 }
                 if(this.service_size.is_highprice_window){
+                  this.service_size[i].combined_size=this.service_size[i].name+' ( '+this.service_size[i].min_size+' sq.m - '+this.service_size[i].max_size+' sq.m )'
                   this.highprice_window.push(this.service_size[i])
                 }
                 else{
+                  this.service_size[i].combined_size=this.service_size[i].name+' ( '+this.service_size[i].min_size+' sq.m - '+this.service_size[i].max_size+' sq.m )'
                   this.lowprice_window.push(this.service_size[i])
                 }
               }
@@ -1246,6 +1257,8 @@ const app = new Vue({
       axios.get(this.url+'/customer/ajax/getservicesizeprice?service_type='+this.service_type).then(response=>{
           this.productivity=response.data
           for(var i in this.productivity){
+            this.productivity[i].combined_size=this.productivity[i].name+' ( '+this.productivity[i].min_size+' sq.m - '+this.productivity[i].max_size+' sq.m )'
+
             this.service_productivity.push(this.productivity[i])
           }
           if(this.service_type=='Kitchen Cleaning'){

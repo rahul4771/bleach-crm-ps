@@ -117,13 +117,14 @@
                     <div class=" bold-text common-label required-field"> <label>Upholstery Type</label></div>
                     <multiselect
                     v-model="editSectionData.upholstery_type"
-                    placeholder="Select a Size"
+                    placeholder="Select Upholstery Type"
                     
                     :options="['SOFA','CHAIR']"
 
                     :multiple="false"
                     :taggable="false"
                     :show-labels="false"
+                    
                     
                    
 
@@ -214,7 +215,7 @@
                       :taggable="false"
                       :show-labels="false"
                       track-by="name"
-                      label="name"
+                      label="combined_size"
                       @input="calcSectionCost()"
 
 
@@ -234,12 +235,17 @@
                       :options="highprice_facade"
 
                       :multiple="false"
-                      :taggable="false"
-                      :show-labels="false"
-                      track-by="name"
-                      label="name"
+                     
+                      
+                      
+                      label="combined_size"
                       @input="calcSectionCost()"
                       v-if="editSectionData.is_highprice_facade"
+                      
+                     
+                      
+                      
+                    
 
 
                     ></multiselect>
@@ -253,8 +259,9 @@
                     :taggable="false"
                     :show-labels="false"
                     track-by="name"
-                    label="name"
+                    label="combined_size"
                     @input="calcSectionCost()"
+                    
 
 
 
@@ -278,7 +285,7 @@
                       :taggable="false"
                       :show-labels="false"
                       track-by="name"
-                      label="name"
+                      label="combined_size"
                       @input="calcSectionCost()"
                     v-if="editSectionData.is_highprice_window"
 
@@ -294,7 +301,7 @@
                     :taggable="false"
                     :show-labels="false"
                     track-by="name"
-                    label="name"
+                    label="combined_size"
                     @input="calcSectionCost()"
 
 
@@ -319,7 +326,7 @@
                       :taggable="false"
                       :show-labels="false"
                       track-by="name"
-                      label="name"
+                      label="combined_size"
                       @input="calcSectionCost()"
 
 
@@ -336,7 +343,7 @@
                       :taggable="false"
                       :show-labels="false"
                       track-by="name"
-                      label="name"
+                      label="combined_size"
                       @input="calcSectionCost()"
 
 
@@ -365,7 +372,7 @@
                       :taggable="false"
                       :show-labels="false"
                       track-by="name"
-                      label="name"
+                      label="combined_size"
                       @input="calcSectionCost()"
 
 
