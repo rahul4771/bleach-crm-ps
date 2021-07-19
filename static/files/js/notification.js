@@ -16,8 +16,6 @@ $('#thumbnails')
     );
 
 function showNotification(msg,type){
-    console.log(msg,type)
-
     if(type == 'success'){
         $("body").append($('<div class="inv-noti-container inv-noti-success"><div class="d-flex"><div class="inv-msg-div">'+msg+'</div><div onclick="closeNotification()"  class="right-pos inv-pointer"><i class="fa fa-times" aria-hidden="true"></i></div></div></div>')
         .hide()

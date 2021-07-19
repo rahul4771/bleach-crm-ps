@@ -64,3 +64,6 @@ class InventoryCheckedIn(View):
 class InventoryOrderDetails(View):
     def get(self,request):
         return render(request,'inventory/orderdetails.html',{})
+class InventoryServices(View):
+    def get(self,request):
+        return render(request,'inventory/services.html',{})
