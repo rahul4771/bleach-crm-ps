@@ -1127,8 +1127,16 @@
                                     class="order-container-main order-clean-section">
                                     <div v-if="edit" class="order-clean-edit"  >
                                     {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR' or request.user.user_type == 'SALESADMIN' %}
-                                        <img class="pointer" src="{% static 'files/icons/edit.png' %}" onclick="editSection(this)" data-section_id="{{section.id}}" data-index="{{forloop.counter}}" data-service="{{orderschedule.order_scheduler_book.service_type.name}}" data-eval_book_id="{{orderschedule.order_scheduler_book.id}}">
-                                        <img class="pointer" src="{% static 'files/icons/delete.png' %}" @click="deleteSection({{forloop.counter}},{{section.id}})">
+                                        {% if orderschedule.evaluation_details.evaluator == None and request.user.user_type == 'AGENT' and request.user.id == orderschedule.order.evaluation.call_attender.id %}
+                                            <img class="pointer" src="{% static 'files/icons/edit.png' %}" onclick="editSection(this)" data-section_id="{{section.id}}" data-index="{{forloop.counter}}" data-service="{{orderschedule.order_scheduler_book.service_type.name}}" data-eval_book_id="{{orderschedule.order_scheduler_book.id}}">
+                                            <img class="pointer" src="{% static 'files/icons/delete.png' %}" @click="deleteSection({{forloop.counter}},{{section.id}})">
+                                        {% elif request.user.user_type == 'EVALUATOR' and orderschedule.evaluation_details.evaluator.id == request.user.id %}
+                                            <img class="pointer" src="{% static 'files/icons/edit.png' %}" onclick="editSection(this)" data-section_id="{{section.id}}" data-index="{{forloop.counter}}" data-service="{{orderschedule.order_scheduler_book.service_type.name}}" data-eval_book_id="{{orderschedule.order_scheduler_book.id}}">
+                                            <img class="pointer" src="{% static 'files/icons/delete.png' %}" @click="deleteSection({{forloop.counter}},{{section.id}})">
+                                        {% else %}
+                                            <img class="pointer" src="{% static 'files/icons/edit.png' %}" onclick="editSection(this)" data-section_id="{{section.id}}" data-index="{{forloop.counter}}" data-service="{{orderschedule.order_scheduler_book.service_type.name}}" data-eval_book_id="{{orderschedule.order_scheduler_book.id}}">
+                                            <img class="pointer" src="{% static 'files/icons/delete.png' %}" @click="deleteSection({{forloop.counter}},{{section.id}})">
+                                        {% endif %}
                                     {% endif %}
                                     </div>
                                    
@@ -1386,12 +1394,29 @@
 
                                                 <h3 class="ml-10">Cleaning Team</h3>
                                                 {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR' or request.user.user_type == 'SALESADMIN' or request.user.user_type == 'ACCOUNTANT' %}
-                                                {% if orderschedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}
-                                                <a href="{% url 'common_items:edit-cleaningteam' orderschedule.id %}" target="_blank">
-                                                <div v-if="edit" class="clean-team-edit">
-                                                    <img src="{% static 'files/icons/edit.png' %}">
-                                                </div></a>
-                                                {% endif %}
+
+                                                    {% if orderschedule.evaluation_details.evaluator == None and request.user.user_type == 'AGENT' and request.user.id == orderschedule.order.evaluation.call_attender.id %}
+                                                        {% if orderschedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}
+                                                        <a href="{% url 'common_items:edit-cleaningteam' orderschedule.id %}" target="_blank">
+                                                        <div v-if="edit" class="clean-team-edit">
+                                                            <img src="{% static 'files/icons/edit.png' %}">
+                                                        </div></a>
+                                                        {% endif %}
+                                                    {% elif request.user.user_type == 'EVALUATOR' and orderschedule.evaluation_details.evaluator.id == request.user.id %}
+                                                        {% if orderschedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}
+                                                        <a href="{% url 'common_items:edit-cleaningteam' orderschedule.id %}" target="_blank">
+                                                        <div v-if="edit" class="clean-team-edit">
+                                                            <img src="{% static 'files/icons/edit.png' %}">
+                                                        </div></a>
+                                                        {% endif %}
+                                                    {% else %}
+                                                        {% if orderschedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}
+                                                        <a href="{% url 'common_items:edit-cleaningteam' orderschedule.id %}" target="_blank">
+                                                        <div v-if="edit" class="clean-team-edit">
+                                                            <img src="{% static 'files/icons/edit.png' %}">
+                                                        </div></a>
+                                                        {% endif %}
+                                                    {% endif %}
                                                 {% endif %}
 
                                                 <a class="team_edit_url" href="#" target="_blank" hidden>
@@ -1637,7 +1662,7 @@
                                                 <div class="row c-mb-3">
                                                     <div class="col-xs-6">Payment Method</div>
                                                     <div class="col-xs-6">: <span class="c-text">{{order.evaluation.payment_method|default_if_none:''}}</span>
-                                                        {% if order.amount_paid == 0.000 and order.evaluation.is_promocode_applied == False and order.evaluation.payment_method != 'SUBSCRIPTION' %}
+                                                        {% if order.amount_paid == 0.000 and order.evaluation.is_promocode_applied == False and order.evaluation.payment_method != 'SUBSCRIPTION' and request.user.user_type != 'AGENT' %}
                                                         <!--<button class="model-close ml-10" data-toggle="modal" data-target="#paymentModel">
                                                             <img  class="policy-time-edit pointer" src="{% static 'files/icons/edit.png' %}">
                                                         </button>-->
