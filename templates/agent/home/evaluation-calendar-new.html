@@ -548,7 +548,7 @@
   </div>
 
 <!-- cleaning cal popups ends-->
-<script type="text/javascript">
+
 $(document).ready(function(){
   $('[data-toggle="tooltip"]').tooltip();   
 });
@@ -562,6 +562,7 @@ $(document).ready(function(){
                 //$("#cl-evaluator{{evaluator.id}}").append('<td width="4.54%"><a href="#">&nbsp;</a></td>');
             
                 evaluator_timings_list =[]
+                var area_name = ''
                 {% for evaluation in evaluator.evaluation_details %}
                     proposed_timing_string      = '{{evaluation.proposed_time|date:'H'}}';
                     proposed_timing             = parseInt(proposed_timing_string)
@@ -838,4 +839,3 @@ function update_evaluation(){
     evaluationcalendar();
 
     })
-</script>
