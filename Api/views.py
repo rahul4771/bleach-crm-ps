@@ -172,6 +172,11 @@ class EvaluationDetailsList(APIView):
 			evaluators = None
 			evaluation_details = None
 
+		try:
+			order = Order.objects.get(is_active=True,evaluation__id=evaluation_details.evaluation.id)
+		except:
+			order = None
+
 		print(evaluation_details.evaluation.evaluation_id,"evid")
 
 		try:
@@ -214,7 +219,12 @@ class EvaluationDetailsList(APIView):
 		
 		if evaluation_details.status == 'EVALUATED':
 			response_dict["blc_number"]=evaluation_details.evaluation.evaluation_id
-
+		
+		if order:
+			response_dict["order_id"]=order.id
+		else:
+			response_dict["order_id"]=0
+			
 		response_dict["agent_notes"]=evaluation_details.attender_note
 		response_dict["customer"]=evaluation_details.evaluation.customer.name 
 		response_dict["customer_mobile"]=evaluation_details.evaluation.customer.mobile_number 
@@ -364,6 +374,7 @@ class PaymentResponseCredit(APIView):
 			order.remining_amount  = 0
 			order.amount_paid     += amount_paid
 			order.save()
+			
 		return Response(HTTP_200_OK)	
 
 #get list of staff for leave scheduler
@@ -1100,6 +1111,7 @@ class CheckInAPI(APIView):
 		response_dict['success'] = False
 
 		team_id = request.data.get('team_id')
+		check_in_notes = request.data.get('check_in_notes')
 	
 		print(team_id,"zack")
 		try:
@@ -1111,7 +1123,12 @@ class CheckInAPI(APIView):
 			cleaning_team_detail.check_in                    = timezone.now()
 		if not cleaning_team_detail.check_out:
 			cleaning_team_detail.order_scheduler.work_status     = 'CLEANING_IN_PROGRESS'
+		
+		if check_in_notes:
+			cleaning_team_detail.check_in_notes = check_in_notes
+		
 		cleaning_team_detail.save()	
+
 		cleaning_team_detail.order_scheduler.save()
 
 		#To Save Media
@@ -1163,6 +1180,7 @@ class CheckOutAPI(APIView):
 		response_dict['success'] = False
 
 		team_id = request.data.get('team_id')
+		check_out_notes = request.data.get('check_out_notes')
 	
 		print(team_id,"zack")
 		try:
@@ -1195,6 +1213,9 @@ class CheckOutAPI(APIView):
 		cleaning_team_detail.check_out                    		= timezone.now()
 		
 		cleaning_team_detail.order_scheduler.order.order_status = 'ORDER_IN_PROGRESS'
+
+		if check_out_notes:
+			cleaning_team_detail.check_out_notes = check_out_notes
 		
 		cleaning_team_detail.save()
 		cleaning_team_detail.order_scheduler.save()

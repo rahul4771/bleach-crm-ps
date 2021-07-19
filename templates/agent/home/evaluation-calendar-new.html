@@ -170,7 +170,7 @@
       </div>
       <div class="modal-body">
       <div class="d-flex cl-modal-icons">
-      {% if request.user.user_type == 'ADMIN' or request.user.user_type == 'SALESADMIN' or request.user.user_type == 'BOOKINGOFFICER' %}
+      {% if request.user.user_type == 'ADMIN' or request.user.user_type == 'SALESADMIN' %}
       {% else %}
         <img src="{% static 'files/icons/edit.png'%}" class="cl-modal-icon edit-evaluation" @click="editEval=!editEval"/>
         <img src="{% static 'files/icons/delete.png'%}" class="cl-modal-icon delete-evaluation" @click="delAlert=!delAlert"/>
@@ -205,9 +205,9 @@
          <div class="row">
            <div class="col-md-12">
            
-            <div class="cl-modal-text-title cl-mt-10 " id="blc_number">
+            <a class="blc_link" href="#"><div class="cl-modal-text-title cl-mt-10 " id="blc_number">
               
-            </div>
+            </div></a>
             
             <div class="cl-modal-text-title cl-mt-10 " id="evaluation_area_name">
               
@@ -773,6 +773,7 @@ function load_evaluation(evaluation_detail_id,item){
       $('#evaluation_evaluator_name').text(response.data.evaluator);
       $('#evaluation_agent_name').text(response.data.agent);
       $('#blc_number').text(response.data.blc_number);
+      $('.blc_link').attr('href','/common/client/order/details/'+response.data.order_id+'');
       $('#evaluation_customer_name').text(response.data.customer);
       $('#evaluation_customer_mobile').text(response.data.customer_mobile);
       $('#evaluation_proposed_date').text(response.data.evaluation_date);

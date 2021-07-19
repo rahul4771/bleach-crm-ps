@@ -62,7 +62,7 @@ const app = new Vue({
     },
 
     submitform(cleaningteam_id,cleaningtype){
-      console.log(cleaningteam_id,cleaningtype,"lop")
+      //console.log(cleaningteam_id,cleaningtype,"lop")
       var form_items = new FormData()
       form_items.append('team_id',cleaningteam_id)
 
@@ -71,11 +71,12 @@ const app = new Vue({
       }
 
     if (cleaningtype == 'check-in'){
+      form_items.append('check_in_notes',$('#check_in_notes').val())
       var form_url = url+'/api/check-in/' ;
     }else{
       var keynote_count = document.querySelectorAll('input[type="checkbox"]').length;
       var checked_keynotes = document.querySelectorAll('input[type="checkbox"]:checked').length;
-      
+      form_items.append('check_out_notes',$('#check_out_notes').val())
       console.log(keynote_count,checked_keynotes,"keyns")
 
       if(checked_keynotes == keynote_count){

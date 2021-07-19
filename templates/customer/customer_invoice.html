@@ -1,5 +1,6 @@
 {% load static %}
 {% load mathfilters %}
+{% include 'common_messages.html' %}
 <!doctype html>
 <html lang="en" xml:lang="en" >
   <head>
@@ -43,12 +44,12 @@
       
        </div>
        <div class="d-flex mt-4 mb-4 mx-auto qt-reject-btn-container">
-       <form method="post" class="mx-auto" action="" enctype= "multipart/form-data">{% csrf_token %}
-        <input type="hidden" name="action_type" value="CASH/CHEQUE">
+       {% comment %} <form method="post" id="cash-form" class="mx-auto" action="" enctype= "multipart/form-data">{% csrf_token %}
+        <input type="text" name="action_type" value="CASH/CHEQUE">
         <div class="inv-btn text-center  text-white" >
         <input class="assignButton clickable-cursor qt-input-btn" name="submit" type="submit" value="Send" >
          </div>      
-        </form>
+        </form> {% endcomment %}
            
           
         
@@ -197,7 +198,7 @@
               </div>
               <div class="d-flex pt-1 inv-invoice-details pb-4">
                 <div class="w-50 inv-text-left inv-highlight-text">
-                  Cleaning Appointment(s)
+                  Visit(s)
                 </div>
                 <div class="w-50 inv-text-right inv-highlight-text">
                 {% for orderschedule in order.orderschedules %}
@@ -572,6 +573,9 @@
                 </form>
 
                 {% if order.evaluation.payment_method == 'POSTPAID' or order.preamount_paid > 0 %}
+                <form method="post" id="cash-form" action="" enctype= "multipart/form-data">{% csrf_token %}
+                <input type="hidden" name="action_type" value="CASH/CHEQUE">
+                </form>
                 <div class="inv-payment-box">
                   <div class="inv-payment-card mt-4 text-center" id="inv-cash" onclick="selectPayment('cash')">
                     <img src="{% static 'files/icons/wallet.png' %}" class="inv-card-icon "  id="inv-cash-img"/>
@@ -583,7 +587,9 @@
                     </div>
                   </div>
                 </div>
+                
                 {% endif %}
+
                 <div class="inv-payment-box">
                   <div class="inv-payment-card mt-4 text-center {% if order.evaluation.customer.is_credit == False %}inv-click-disable{% endif %}" id="inv-credit" onclick="selectPayment('credit')"><!-- to disable click add class inv-click-disable -->
                     <img src="{% static 'files/icons/debit-card.png' %}" class="inv-card-icon {% if order.evaluation.customer.is_credit == False %}inv-payment-disabled{% endif %}" id="inv-credit-img"  /> <!-- to disable  add class inv-payment-disabled -->
