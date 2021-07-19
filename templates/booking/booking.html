@@ -1481,7 +1481,7 @@ width="1000"
                                         class="mx-auto mt-4 mb-4" dark color="primary"
                                         style="float: right;max-width:150px"
                                         v-on:click="addNewKitchen(index-1,floor-1)">
-                                        Add More
+                                        Add Kitchen
                                       </v-btn>
                                       <div class="col-md-12 "
                                         v-if="building[index - 1].floors[floor - 1].kitchens.length<1">
@@ -1526,7 +1526,7 @@ width="1000"
                                               v-if="building[index - 1].floors[floor - 1].kitchen">
                                               <v-btn color="primary" class="mr-4 mx-auto"
                                                 v-on:click="addKitchen(index-1,floor-1)">
-                                                Add
+                                                Add Kitchen
                                               </v-btn>
                                             </div>
                                           </div>
@@ -1774,7 +1774,7 @@ width="1000"
                                                 <v-btn v-if="apartment.kitchens.length>0" class="mx-auto mt-4 mb-4" dark
                                                   color="primary" style="float: right;max-width:150px"
                                                   v-on:click="addNewApartmentKitchen(index-1,floor-1,apindex)">
-                                                  Add More
+                                                  Add Kitchen
                                                 </v-btn>
                                                 <div class="col-md-12" v-if="apartment.kitchens.length<1">
                                                   <div class="row kitchen-box">
@@ -1813,7 +1813,7 @@ width="1000"
                                                     <div class="col-md-12 text-center" v-if="apartment.kitchen">
                                                       <v-btn color="primary" class="mr-4 mx-auto"
                                                         v-on:click="addApartmentKitchen(index-1,floor-1,apindex)">
-                                                        Add
+                                                        Add Kitchen
                                                       </v-btn>
                                                     </div>
                                                   </div>

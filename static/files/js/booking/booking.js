@@ -2307,11 +2307,13 @@ removeOneTimeSlot(slot){
     this.serviceChange=false
     this.selectedService = service;
     this.serviceType = service.name;
-  
+    this.location_type=''
+    this.area_type=''
     this.otherServices = [];
    this.billingData=[];
     this.building = [];
     this.no_of_building = 0;
+    this.temp_no_of_building = 0;
     this.no_of_floors = [];
     this.no_of_apartments = [];
     this.buildingsCompleted=false
@@ -3302,6 +3304,7 @@ try {
        this.serviceData.service_details.area_type=''
        this.e={building:[]}
       this.no_of_building=0
+      this.temp_no_of_building=0
       this.no_of_floors=[]
       this.calcTotal()
        //this.findTotalSize()
@@ -3323,6 +3326,7 @@ try {
     this.no_of_apartments = [];
     this.no_of_floors = [];
     this.no_of_building = 0;
+      this.temp_no_of_building=0
     this.otherService = {
       material: "",
       color: "",
