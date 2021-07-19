@@ -302,6 +302,7 @@ const app=new Vue({
     building: [],
   },
   no_of_building: 0,
+  temp_no_of_building: 0,
   building: [],
   no_of_floors: [],
   buildings: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
@@ -545,10 +546,43 @@ scheduleStatus:false,
 floor_msg:false,
 apartment_stat_err:false,
 building_msg:false,
-others_keynotes:[]
+others_keynotes:[],
+reset_building:false,
+reset_floor:false,
+building_warning:false
 
       },
       methods: {
+        resetAllData(){
+          this.reset_building=false
+          this.building_warning=false
+          this.no_of_building=this.temp_no_of_building
+          this.valid=[]
+    this.building=[]
+    this.e.building=[]
+    this.no_of_floors=[]
+    this.reset_floor=false
+    this.reset_building=false
+    for (var i = 0; i < this.no_of_building; i++) {
+      this.building.push({
+        floors: [],
+        completed:false
+      });
+      this.e.building.push({
+        floors: [],
+        e: 1,
+      });
+      this.no_of_floors.push("")
+      this.valid.push({floors:[]})
+    }
+   
+    this.reset_floor=true
+    this.reset_building=true
+        },
+        cancelResetData(){
+          this.temp_no_of_building=this.no_of_building
+          this.building_warning=false
+        },
         viewEditSchedule(service,index){
           this.schedule_serviceTypes_selected=[]
           this.editScheduleData=service
@@ -1390,6 +1424,7 @@ console.log(response)
               "is_newkitchen":false,
               "is_highprice_facade":false,
               "is_highprice_window":false,
+              
               }
               if(this.multiServicesBill[i].bill[j].section.size.is_highprice_facade){
                 this.serviceDetails.service_details[i].sections[j].is_highprice_facade=true
@@ -1512,6 +1547,7 @@ console.log(response)
          "cement_residue":this.multiServicesBill[i].bill[j].section.cement_residue,
          "section_cost":this.multiServicesBill[i].bill[j].section.section_cost,
          "section_net_cost":this.multiServicesBill[i].bill[j].section.section_cost,
+         
          "keynotes":{
             "1":{
                "sub_area":"bathroom",
@@ -2273,11 +2309,13 @@ removeOneTimeSlot(slot){
     this.serviceChange=false
     this.selectedService = service;
     this.serviceType = service.name;
-  
+    this.location_type=''
+    this.area_type=''
     this.otherServices = [];
    this.billingData=[];
     this.building = [];
     this.no_of_building = 0;
+    this.temp_no_of_building = 0;
     this.no_of_floors = [];
     this.no_of_apartments = [];
     this.buildingsCompleted=false
@@ -3268,6 +3306,7 @@ try {
        this.serviceData.service_details.area_type=''
        this.e={building:[]}
       this.no_of_building=0
+      this.temp_no_of_building=0
       this.no_of_floors=[]
       this.calcTotal()
        //this.findTotalSize()
@@ -3289,6 +3328,7 @@ try {
     this.no_of_apartments = [];
     this.no_of_floors = [];
     this.no_of_building = 0;
+      this.temp_no_of_building=0
     this.otherService = {
       material: "",
       color: "",
@@ -3304,6 +3344,7 @@ try {
       keynote_data:[],
       hallway_size: "",
       sides: "",
+      
     };
     this.e = {
       building: [],
@@ -3317,7 +3358,20 @@ try {
   },
 
   setBuilding() {
+    
+   if(this.no_of_floors.length>0){
+    
+    this.building_warning=true
+   }
+   else{
+    this.no_of_building=this.temp_no_of_building
+   
     this.valid=[]
+    this.building=[]
+    this.e.building=[]
+    this.no_of_floors=[]
+    this.reset_floor=false
+    this.reset_building=false
     for (var i = 0; i < this.no_of_building; i++) {
       this.building.push({
         floors: [],
@@ -3330,6 +3384,11 @@ try {
       this.no_of_floors.push("")
       this.valid.push({floors:[]})
     }
+   
+    this.reset_floor=true
+    this.reset_building=true
+  }
+  
   },
   setFloors(building) {
     this.building[building - 1].floors = [];

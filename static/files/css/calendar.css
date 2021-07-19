@@ -717,6 +717,7 @@ width:100% !important;
     padding:1px;
     z-index: 10;
 }
+
 .cl-end-only{
     border-top-right-radius: 20px;
     border-bottom-right-radius: 20px;
@@ -769,3 +770,4 @@ width:100% !important;
     padding-right: 0px !important;
     }
   }
+  [v-cloak] {display: none}

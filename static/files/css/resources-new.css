@@ -502,3 +502,4 @@
     padding-left: 0px !important;
   }
 }
+[v-cloak] {display: none}

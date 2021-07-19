@@ -8,7 +8,7 @@
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-<div class="wrapper" >
+<div class="wrapper">
     {% if request.user.user_type == 'SALESADMIN' %}
   {% include "salesadmin/common/header.html" %}
 {% elif request.user.user_type == 'AGENT' %}
@@ -187,7 +187,7 @@
                                     src="{% static 'files/images/search-icon.png' %}"></span>
                             </span>
                         </div>
-                        <div id="appResource" class="filter-columns-center">
+                        <div id="appResource" class="filter-columns-center"  v-cloak>
                             <div id="id_1"   v-for="item,i in solt"  :key="item.solt" @click="selectSolt(item.solt)" class="solt-filter-box "  :class="item.check ? 'solt-filter-box-active' : ''">
                                 <% item.solt %>
                             </div>
