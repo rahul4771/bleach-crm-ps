@@ -897,7 +897,7 @@ class CleaningCallendar(APIView):
 			if not calendar_order_schedules_all.duplicate in calendar_order_schedules_duplicates:
 				calendar_order_schedules_list.append(calendar_order_schedules_all.id)
 				calendar_order_schedules_duplicates.append(calendar_order_schedules_all.duplicate)
-		calendar_order_schedules        = OrderScheduler.objects.filter(id__in=calendar_order_schedules_list).select_related('evaluation_details__evaluator','order_scheduler_book','order').prefetch_related('cleaning_team_order_scheduler__team_leader',Prefetch('order__evaluation__booking_evaluation',queryset=CustomerBooking.objects.filter(is_active=True,booking_type='CLEANINGBOOKING'),to_attr='customer_booking'))   #.annotate(customerbooking=Sum(Case(When(order__evaluation__booking_evaluation__booking_type='CLEANINGBOOKING',then=1),default=0,output_field=IntegerField())))
+		calendar_order_schedules        = OrderScheduler.objects.filter(id__in=calendar_order_schedules_list).select_related('evaluation_details__evaluator','evaluation_details__evaluation','order_scheduler_book').prefetch_related('evaluation_details__evaluation__booking_evaluation','cleaning_team_order_scheduler__team_leader')   #.annotate(customerbooking=Sum(Case(When(order__evaluation__booking_evaluation__booking_type='CLEANINGBOOKING',then=1),default=0,output_field=IntegerField())))
 		
 		#not approved & approved not paid schedules
 		calendar_notapprovedorder_schedules_list       = []
