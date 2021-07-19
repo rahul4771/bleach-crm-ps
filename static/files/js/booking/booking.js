@@ -3327,10 +3327,11 @@ try {
 
   setBuilding() {
     
-   if(this.no_of_floors.length>0){
+   /*if(this.no_of_floors.length>0){
+    this.reset_building=false
     this.building_warning=true
-   }
-   else{
+   }*/
+   //else{
 
    
     this.valid=[]
@@ -3354,7 +3355,7 @@ try {
    
     this.reset_floor=true
     this.reset_building=true
-  }
+  //}
   
   },
   setFloors(building) {
