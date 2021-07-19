@@ -1038,7 +1038,7 @@ const app = new Vue({
           /* new order size conversion begins here */
         
            /* General cleaning  size conversion */ 
-          if(this.service_type=='General Cleaning' || this.service_type=='Deep Cleaning' || this.service_type=='Storage Area' || this.service_type=='Sterilization'|| this.service_type=='Carpet Cleaning'|| this.service_type=='Car Parking Umbrella'){
+          if(this.service_type=='General Cleaning' || this.service_type=='Deep Cleaning' || this.service_type=='Storage Area' || this.service_type=='Sterilization'|| this.service_type=='Carpet Cleaning'|| this.service_type=='Car Parking Umbrella' || this.service_type=='Outdoor Cleaning'){
             for(var j=0;j<this.sections.length;j++){
              
               for(var i=0;i<this.service_size.length;i++){
