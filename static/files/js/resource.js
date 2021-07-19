@@ -104,7 +104,7 @@ const appCard = new Vue({
   data: {
     userid:[],
     //url:"http://localhost:8000/"
-    url:"https://test.bleach-kw.com"
+    url:"https://my.bleachkw.com"
     //url : 'http://127.0.0.1:8000'
 
   },
