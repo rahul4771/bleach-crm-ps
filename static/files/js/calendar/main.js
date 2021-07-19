@@ -791,8 +791,15 @@ const app=  new Vue({
             
             if(classType=='cl-start-end' || classType=='cl-end-only')
             {
-            if (!slot.evaluation_details.evaluator){
-              return true
+            if (slot.evaluation_details.evaluation.booking_evaluation.length>0){
+              if(slot.evaluation_details.evaluation.booking_evaluation[0].booking_type=='CLEANINGBOOKING')
+              {
+                return true
+              }
+              else{
+                return false
+              }
+              
             }
             else{
               return false
