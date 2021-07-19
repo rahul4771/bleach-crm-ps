@@ -1069,7 +1069,7 @@
                                                 {% for multi_order_schedule in order.orderschedules %}
                                                 {% if multi_order_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
                                                     <div class="col-md-6  time-text"><i
-                                                            class="fa test-color  fa-calendar  c-mr-5"></i>{{multi_order_schedule.start_at}} 
+                                                            class="fa test-color  fa-calendar  c-mr-5"></i>{{multi_order_schedule.start_at|date:'d-m-Y H:i'}} 
                                                             {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'SENIORTEAMLEADER' %}
                                                             <img v-if="edit" class="order-time-edit pointer" src="{% static 'files/icons/edit.png' %}" onclick="editCleaningDate(this)" data-cleaning_start_date="{{multi_order_schedule.start_at|date:'d-m-Y'}}" data-evaluation_book_id="{{multi_order_schedule.order_scheduler_book.id}}" data-id="{{multi_order_schedule.id}}" data-service="{{multi_order_schedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{multi_order_schedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{multi_order_schedule.order_scheduler_book.cleaning_hours}}">
                                                             {% endif %}
@@ -1081,7 +1081,7 @@
                                                 {% for subscription_schedule in order.orderschedules %}
                                                 {% if subscription_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
                                                     <div class="col-md-6  time-text"><i
-                                                            class="fa test-color  fa-calendar  c-mr-5"></i>{{subscription_schedule.start_at}} 
+                                                            class="fa test-color  fa-calendar  c-mr-5"></i>{{subscription_schedule.start_at|date:'d-m-Y H:i'}} 
                                                             {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'SENIORTEAMLEADER' %}
                                                             <img v-if="edit" class="order-time-edit pointer" src="{% static 'files/icons/edit.png' %}" onclick="editCleaningDate(this)" data-cleaning_start_date="{{subscription_schedule.start_at|date:'d-m-Y'}}" data-evaluation_book_id="{{subscription_schedule.order_scheduler_book.id}}" data-id="{{subscription_schedule.id}}" data-service="{{subscription_schedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{subscription_schedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{subscription_schedule.order_scheduler_book.cleaning_hours}}">
                                                             {% endif %}
