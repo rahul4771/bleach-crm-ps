@@ -112,10 +112,14 @@
           <div class=" bold-text common-label"> <label>After Cleaning Amount</label></div>
                 <input name="after_cleaning_amount" id="after_cleaning_amount_id" type="number" step="0.001" class="textBox" placeholder=" "  >
   </div><!--ticket-form-right-->
+
+  {% if request.user.user_type != 'AGENT' %}
   <div class="ticket-form-right"><!--ticket-form-right-->
     <div class=" bold-text common-label"> <label>Discount</label></div>
           <input name="discount" id="discount_id" type="number" step="0.001" class="textBox" placeholder=" "  >
 </div><!--ticket-form-right-->
+{% endif %}
+
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <input type="hidden" name='total_amount' id="total_amount_id" value="{{evaluation.total_cost|floatformat:'3'}}">
 <br>

@@ -171,7 +171,7 @@
                                                     <div class="tk-title-2 tk-mt-10">{{followup_details.investigation.assigned_by.name}}</div>
                                                     <div class="tk-subtitle tk-mt-5 tk-secondary-text">{{followup_details.investigation.assigned_by.user_type}}</div>
                                                     <div class="tk-desc tk-secondary-text blue-text">
-                                                        {{followup_details.created}}
+                                                        {{followup_details.created|date:'d-m-Y g:i A'}}
                                                     </div>
                                                 </div>
                                                 </div>
@@ -230,7 +230,7 @@
                                                     <div class="tk-title-2 tk-mt-10">{{followup_details.investigation.secondary_investigator.name}}</div>
                                                     <div class="tk-subtitle tk-mt-5 tk-secondary-text">{{followup_details.investigation.secondary_investigator.user_type}}</div>
                                                  <div class="tk-desc tk-secondary-text blue-text">
-                                                     {{followup_details.investigation.secondary_investigation_created|default_if_none:""}}
+                                                     {{followup_details.investigation.secondary_investigation_created|date:'d-m-Y g:i A'|default_if_none:""}}
                                                  </div>
                                              </div>
                                              </div>
@@ -488,7 +488,7 @@
                                                     <div class="tk-title-2 tk-mt-10">{{followup_details.investigation.investigator.name}}</div>
                                                     <div class="tk-subtitle tk-mt-5 tk-secondary-text">{{followup_details.investigation.investigator.user_type}}</div>
                                                  <div class="tk-desc tk-secondary-text blue-text">
-                                                 {% for report in followup_details.investigation.reports %} {{report.created}} {% endfor %} 
+                                                 {% for report in followup_details.investigation.reports %} {{report.created|date:'d-m-Y g:i A'}} {% endfor %} 
                                                  </div>
                                              </div>
                                              </div>
@@ -693,7 +693,7 @@
                                                     <div class="tk-title-2 tk-mt-10">{{buybackpromogift.approved_by.name}}</div>
                                                     <div class="tk-subtitle tk-mt-5 tk-secondary-text">{{buybackpromogift.approved_by.user_type}}</div>
                                                  <div class="tk-desc tk-secondary-text blue-text">
-                                                 {% for report in followup_details.investigation.reports %} {{report.created}} {% endfor %} 
+                                                 {% for report in followup_details.investigation.reports %} {{report.created|date:'d-m-Y g:i A'}} {% endfor %} 
                                                  </div>
                                              </div>
                                             </div>
@@ -790,7 +790,7 @@
                                                     <div class="tk-title-2 tk-mt-10">{{followup_details.closed_by.name}}</div>
                                                     <div class="tk-subtitle tk-mt-5 tk-secondary-text">{{followup_details.closed_by.user_type}}</div>
                                                  <div class="tk-subtitle tk-mt-10 blue-text">
-                                                    {{followup_details.closed}}
+                                                    {{followup_details.closed|date:'d-m-Y g:i A'}}
                                                  </div>
                                              </div>
                                              </div>
@@ -801,7 +801,7 @@
                                          <div class="col-md-12">
                                              <div class="d-flex ">
                                                  <div class="tk-title-2 tk-mt-10 blue-text">
-                                                    {{followup_details.closed}}
+                                                    {{followup_details.closed|date:'d-m-Y g:i A'}}
                                                  </div>
                                              </div>
                                         </div>

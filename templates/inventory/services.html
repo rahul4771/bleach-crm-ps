@@ -1,0 +1,580 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        .nav>li>a {
+  font-family:  AvenirLTStd !important; 
+  color: #333333;
+  font-size: 20px;
+}
+.nav-tabs>li  .active{
+  color: #fff !important;
+
+}
+        .nav-pills>li.active>a, .nav-pills>li.active>a:focus, .nav-pills>li.active>a:hover {
+     
+    background-color: #EDF1F6 !important;
+    border-bottom: 1px solid #ddd;
+     }
+        .nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
+       color: #333333 !important;
+       font-weight: 600; 
+       }
+       .nav-stacked>li+li {
+
+        border-bottom: 1px solid #ddd;
+      }
+    </style>
+<div class="wrapper"><!--wrapper-->
+    {% include "inventory/common/header.html" %}
+    <section class="content">
+        <div class="container-fluid space topspace">
+            <div class="welcome-wrapper">
+                <!--welcome-wrapper-->
+                <h1 class="dashboard-head">Services</h1>
+                <!-- <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p> -->
+            </div>
+        </div>
+
+        <div class="main-content-holder"><!--main-content-holder-->   
+            <div class="white-wrapper" style="min-height: 80vh;">
+                <ul class="nav nav-tabs nav-justified">
+                    <li class="active"><a data-toggle="tab" class="inv-nav-border" href="#menu">Detailed Cleaning</a></li>
+                    <li><a data-toggle="tab" class="inv-nav-border" href="#menu1">Special Care</a></li>
+                    <li><a data-toggle="tab" class="inv-nav-border" href="#menu2">Kitchen Cleaning</a></li>
+                    <li><a data-toggle="tab" class="inv-nav-border" href="#menu3">Infection Control</a></li>
+                  </ul>
+                
+                  <div class="tab-content">
+                    <div id="menu" class="tab-pane fade in active">
+
+                        <div class="row mt-20">
+                            <div class="col-md-4">
+                               
+                                
+                                    <ul id="=" class="nav nav-pills nav-stacked inv-service-border">
+                                      <li onclick="selectActive(this,'detailedCleaning')" class="active detailedCleaning inv-service-border2"><a class="inv-service-side" href="#">General Cleaning</a></li>
+                                      <li class="detailedCleaning" onclick="selectActive(this,'detailedCleaning')"><a class="inv-service-side" href="#">Deep Cleaning</a></li>
+                                      <li onclick="selectActive(this,'detailedCleaning')" class="detailedCleaning"><a class="inv-service-side" href="#">Facade Cleaning</a></li>
+                                      <li onclick="selectActive(this,'detailedCleaning')" class="detailedCleaning"><a class="inv-service-side" href="#">Storage Area</a></li>
+                                      <li onclick="selectActive(this,'detailedCleaning')" class="detailedCleaning"><a class="inv-service-side" href="#">Outdoor Cleaning</a></li>
+                                      <li onclick="selectActive(this,'detailedCleaning')" class="detailedCleaning"><a class="inv-service-side" href="#">Window Cleaning</a></li>
+                                      <li onclick="selectActive(this,'detailedCleaning')" class="detailedCleaning"><a class="inv-service-side" href="#">Carparking Umbrella</a></li>
+
+
+
+                                    </ul>
+                                  
+                            </div>
+                            <div class="col-md-8">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="model-input-name">Select size</div>
+
+                                        <select id="id_payment" class="minimal">
+                                            <option  ></option>
+                                            <option  >Active</option>
+                                            <option value="Post Paid">Inactive</option>
+
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mt-10">
+                                    <div class="col-md-12">
+                                        <div class="attribute-table-2">
+                                            <table class="inv-table"> 
+                                                <tr>
+                                                    <th style="width: %;">
+                                                       Item Name
+                                                    </th>
+                                                    <th style="width: %;">
+                                                       Count
+                                                     </th>
+                                                    <th style="width: %;">
+                                                        Action
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                
+                                                        Item 1
+                                                    </td>
+                                                    <td>
+                                                        1
+                                                    </td>
+                                                    <td>
+                                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                        
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                
+                                                        Item 1
+                                                    </td>
+                                                    <td>
+                                                        1
+                                                    </td>
+                                                    <td>
+                                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                        
+                                                    </td>
+                                                </tr>
+                                               
+                                            </table>
+                                            <div class="attribute-footer p-5">
+                                                <button class="inv-plan-btn" onclick="openNavAddStore()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Item</button>
+                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div id="menu1" class="tab-pane fade">
+                        <div class="row mt-20">
+                            <div class="col-md-4">
+                               
+                                
+                                    <ul  class="nav nav-pills nav-stacked inv-service-border">
+                                      <li onclick="selectActive(this,'specialCare')" class="active specialCare inv-service-border2"><a class="inv-service-side" href="#">Upholstery Cleaning</a></li>
+                                      <li onclick="selectActive(this,'specialCare')" class="specialCare"><a class="inv-service-side" href="#">Carpet Cleaning</a></li>
+                                      <li onclick="selectActive(this,'specialCare')" class="specialCare"><a class="inv-service-side" href="#">Mattress Cleaning</a></li>
+                  
+
+
+
+                                    </ul>
+                                  
+                            </div>
+                            <div class="col-md-8">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="model-input-name">Select size</div>
+
+                                        <select id="id_payment" class="minimal">
+                                            <option  ></option>
+                                            <option  >Active</option>
+                                            <option value="Post Paid">Inactive</option>
+
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mt-10">
+                                    <div class="col-md-12">
+                                        <div class="attribute-table-2">
+                                            <table class="inv-table"> 
+                                                <tr>
+                                                    <th style="width: %;">
+                                                       Item Name
+                                                    </th>
+                                                    <th style="width: %;">
+                                                       Count
+                                                     </th>
+                                                    <th style="width: %;">
+                                                        Action
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                
+                                                        Item 1
+                                                    </td>
+                                                    <td>
+                                                        1
+                                                    </td>
+                                                    <td>
+                                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                        
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                
+                                                        Item 1
+                                                    </td>
+                                                    <td>
+                                                        1
+                                                    </td>
+                                                    <td>
+                                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                        
+                                                    </td>
+                                                </tr>
+                                               
+                                            </table>
+                                            <div class="attribute-footer p-5">
+                                                <button class="inv-plan-btn" onclick="openNavAddStore()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Item</button>
+                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="menu2" class="tab-pane fade">
+                        <div class="row mt-20">
+                            <div class="col-md-4">
+                               
+                                
+                                    <ul id="kitchenCleaning" class="nav nav-pills nav-stacked inv-service-border">
+                                      <li class="active"><a class="inv-service-side" href="#">Kitchen Cleaning</a></li>
+
+                                    </ul>
+                                  
+                            </div>
+                            <div class="col-md-8">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="model-input-name">Select size</div>
+
+                                        <select id="id_payment" class="minimal">
+                                            <option  ></option>
+                                            <option  >Active</option>
+                                            <option value="Post Paid">Inactive</option>
+
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mt-10">
+                                    <div class="col-md-12">
+                                        <div class="attribute-table-2">
+                                            <table class="inv-table"> 
+                                                <tr>
+                                                    <th style="width: %;">
+                                                       Item Name
+                                                    </th>
+                                                    <th style="width: %;">
+                                                       Count
+                                                     </th>
+                                                    <th style="width: %;">
+                                                        Action
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                
+                                                        Item 1
+                                                    </td>
+                                                    <td>
+                                                        1
+                                                    </td>
+                                                    <td>
+                                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                        
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                
+                                                        Item 1
+                                                    </td>
+                                                    <td>
+                                                        1
+                                                    </td>
+                                                    <td>
+                                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                        
+                                                    </td>
+                                                </tr>
+                                               
+                                            </table>
+                                            <div class="attribute-footer p-5">
+                                                <button class="inv-plan-btn" onclick="openNavAddStore()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Item</button>
+                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="menu3" class="tab-pane fade">
+                        <div class="row mt-20">
+                            <div class="col-md-4">
+                               
+                                
+                                    <ul id="infectionControl" class="nav nav-pills nav-stacked inv-service-border">
+                                      <li class="active"><a class="inv-service-side" href="#">Sanitization & Disinfection</a></li>
+
+                                    </ul>
+                                  
+                            </div>
+                            <div class="col-md-8">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="model-input-name">Select size</div>
+
+                                        <select id="id_payment" class="minimal">
+                                            <option  ></option>
+                                            <option  >Active</option>
+                                            <option value="Post Paid">Inactive</option>
+
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mt-10">
+                                    <div class="col-md-12">
+                                        <div class="attribute-table-2">
+                                            <table class="inv-table"> 
+                                                <tr>
+                                                    <th style="width: %;">
+                                                       Item Name
+                                                    </th>
+                                                    <th style="width: %;">
+                                                       Count
+                                                     </th>
+                                                    <th style="width: %;">
+                                                        Action
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                
+                                                        Item 1
+                                                    </td>
+                                                    <td>
+                                                        1
+                                                    </td>
+                                                    <td>
+                                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                        
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                
+                                                        Item 1
+                                                    </td>
+                                                    <td>
+                                                        1
+                                                    </td>
+                                                    <td>
+                                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                        
+                                                    </td>
+                                                </tr>
+                                               
+                                            </table>
+                                            <div class="attribute-footer p-5">
+                                                <button class="inv-plan-btn" onclick="openNavAddStore()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Item</button>
+                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div id="addStore" class="inv-sidedrawer">
+
+        <div class="inv-sidedrawer-inner">
+            <div class="d-flex">
+                <div class="inv-drawer-head" id="itemHead">
+                    Add Store
+                </div>
+                <div class="right-pos">
+
+                    <button onclick="closeNavAddStore()" class="img-button">
+                        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                    </button>
+                </div>
+            </div>
+            <hr>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Item</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Item code</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Category</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Quantity</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Unit Price</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Status</div>
+
+                    <select id="id_payment" class="minimal">
+                        <option  ></option>
+                        <option  >Active</option>
+                        <option value="Post Paid">Inactive</option>
+
+                    </select>
+                </div>
+
+            </div>
+            
+    
+            
+
+
+          
+        </div>
+        <div class="inv-drawer-footer">
+            <button class="sent-button" >Submit</button>
+                        <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
+        </div>
+    </div>
+    <div class="modal fade" id="deleteModel" role="dialog">
+        <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12 mt-20">
+
+                        
+                        <div class="d-flex ">
+                            <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to delete inventory</p></div>
+                            <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                                <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                            </button>
+    
+                        </div>
+                    </div>
+                </div>
+               
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <div class="cancel-model-content">
+                            <button class="sent-button" >Delete</button>
+                            <button data-dismiss="modal" class="view-button">Cancel</button>
+                          
+                        </div>
+                    </div>
+    
+                </div>
+            </div>
+        </div>
+      </div>
+</div>
+
+
+
+{% endblock %}
+
+{% block javascript %}
+
+<script>
+
+
+function selectActive(d,id){
+    $("."+id).each(function(){
+        $(this).removeClass("active")
+
+      
+    });
+    
+    $(d).addClass("active");
+}
+
+    function openNavAddStore(d) {
+    if(d == 'add'){
+            $("#itemHead").text("Add Store");
+        }
+        if(d == 'edit'){
+            $("#itemHead").text("Edit Inventory");
+        }
+        if(screen.width<= 600){
+            document.getElementById("addStore").style.width = "100%";
+        }else if(screen.width<= 720){
+            document.getElementById("addStore").style.width = "50%";
+        }
+        else{
+            document.getElementById("addStore").style.width = "30%";
+        }  
+    }
+    function closeNavAddStore() {
+        document.getElementById("addStore").style.width = "0";
+    }
+</script>
+{% endblock %}

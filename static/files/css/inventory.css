@@ -1,4 +1,6 @@
 /* inventory css */
+
+
 @font-face {
   font-family: AvenirLTStd;
   src: url(../font/AvenirLTStd-Book.otf);
@@ -816,7 +818,22 @@ border-radius: 7px;
 
 
 
-
+.inv-nav-border{
+  border-top: 1px solid #ddd !important;
+  border-left: 1px solid #ddd !important;
+  border-right: 1px solid #ddd !important;
+}
+.inv-service-border{
+  border: 1px solid #ddd
+}
+.inv-service-border2{
+  border-bottom: 1px solid #ddd
+}
+.inv-service-side{
+  font-family: AvenirLTStd !important;
+  color: #333333 !important;
+  font-size: 14px !important;
+}
 
 @media only screen and (max-width: 990px) {
 

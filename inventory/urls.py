@@ -22,6 +22,8 @@ url(r'^editpo/$',views.InventoryEditPurchaseOrder.as_view(),name='inventory-edit
 url(r'^viewpo/$',views.InventoryViewPurchaseOrder.as_view(),name='inventory-viewpurchaseorder'),
 url(r'^checked-in/$',views.InventoryCheckedIn.as_view(),name='inventory-checked-in'),
 url(r'^orderdetails/$',views.InventoryOrderDetails.as_view(),name='inventory-order-details'),
+url(r'^services/$',views.InventoryServices.as_view(),name='inventory-services'),
+
 
 
 
