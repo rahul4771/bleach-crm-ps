@@ -1132,7 +1132,7 @@
                                                 <img class="pointer" src="{% static 'files/icons/edit.png' %}" onclick="editSection(this)" data-section_id="{{section.id}}" data-index="{{forloop.counter}}" data-service="{{orderschedule.order_scheduler_book.service_type.name}}" data-eval_book_id="{{orderschedule.order_scheduler_book.id}}">
                                                 <img class="pointer" src="{% static 'files/icons/delete.png' %}" @click="deleteSection({{forloop.counter}},{{section.id}})">
                                             {% endif %}
-                                        {% elif if request.user.user_type == 'EVALUATOR' %}
+                                        {% elif request.user.user_type == 'EVALUATOR' %}
                                             {% if orderschedule.evaluation_details.evaluator.id == request.user.id %}
                                                 <img class="pointer" src="{% static 'files/icons/edit.png' %}" onclick="editSection(this)" data-section_id="{{section.id}}" data-index="{{forloop.counter}}" data-service="{{orderschedule.order_scheduler_book.service_type.name}}" data-eval_book_id="{{orderschedule.order_scheduler_book.id}}">
                                                 <img class="pointer" src="{% static 'files/icons/delete.png' %}" @click="deleteSection({{forloop.counter}},{{section.id}})">
