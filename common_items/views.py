@@ -3790,11 +3790,6 @@ class AssigncleaningTeam(IsAuthenticated,View):
 		end_at_date       = (order_schedule.end_at+timedelta(hours=3)).date()
 		start_at_time     = (order_schedule.start_at+timedelta(hours=3)).time()
 		end_at_time       = (order_schedule.end_at+timedelta(hours=3)).time()
-
-		today_schedules   = OrderScheduler.objects.filter(Q(start_at__date=start_at_date)|Q(end_at__date=start_at_date)|Q(start_at__date=end_at_date)|Q(end_at__date=end_at_date)).filter(work_status='CLEANING_TEAM_ASSIGNED').select_related('order__evaluation').exclude(Q(order__evaluation__evaluation_id='BLC20210310115')|Q(order__evaluation__evaluation_id='BLC20210710002')|Q(order__evaluation__evaluation_id='BLC20210710216'))
-		print("today cleanings")
-		for schedule in today_schedules:
-			print(schedule.order.order_no)
 		
 		#same time schedules
 		order_schedules = OrderScheduler.objects.filter(start_at=start_at_datetime,end_at=end_at_datetime,evaluation_details__evaluation=order_schedule.evaluation_details.evaluation).select_related('evaluation_details__evaluation','order_scheduler_book__service_type').prefetch_related(Prefetch('order_scheduler_book__evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr="evaluationmedias"),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes')),to_attr='sections'))		

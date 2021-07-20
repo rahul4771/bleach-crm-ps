@@ -42,7 +42,9 @@ $('.owl-item').height(heightCarousel)
 
 
   /** vue js */
-
+  
+  var user_type=$('#user_type').val();
+ 
 
 const app=  new Vue({
 
@@ -52,6 +54,7 @@ const app=  new Vue({
    
     
     data: {
+       user_type:'',
         setAttenderNotes:"",
         agent:'#0D87C5',
         cleaningDate:new Date().toISOString().substr(0, 10),
@@ -1068,6 +1071,64 @@ const app=  new Vue({
                         }
 
                       }
+                      if(slotData.color=='not-approved-status-bg'){
+                        if(user_type!='SENIORTEAMLEADER'){
+                          this.parsedSlots.push(slotData)
+                          var slotFormatted=moment(slot).format('hh:mm A')
+                    
+                      if(slotFormatted=='12:00 AM'){
+                        slots.push(1)
+                        this.slot["1"].slots.push(slotData)
+                      }
+                      else if(slotFormatted=='02:00 AM'){
+                        slots.push(2)
+                        this.slot["2"].slots.push(slotData)
+                      }
+                      else if(slotFormatted=='04:00 AM'){
+                        slots.push(3)
+                        this.slot["3"].slots.push(slotData)
+                      }
+                      else if(slotFormatted=='06:00 AM'){
+                        slots.push(4)
+                        this.slot["4"].slots.push(slotData)
+                      }
+                      else if(slotFormatted=='08:00 AM'){
+                        slots.push(5)
+                        this.slot["5"].slots.push(slotData)
+                      }
+                      else if(slotFormatted=='10:00 AM'){
+                        slots.push(6)
+                        this.slot["6"].slots.push(slotData)
+                      }
+                      else if(slotFormatted=='12:00 PM'){
+                        slots.push(7)
+                        this.slot["7"].slots.push(slotData)
+                      }
+                      else if(slotFormatted=='02:00 PM'){
+                        slots.push(8)
+                        this.slot["8"].slots.push(slotData)
+                      }
+                      else if(slotFormatted=='04:00 PM'){
+                        slots.push(9)
+                        this.slot["9"].slots.push(slotData)
+                      }
+                      else if(slotFormatted=='06:00 PM'){
+                        slots.push(10)
+                        this.slot["10"].slots.push(slotData)
+                      }
+                      else if(slotFormatted=='08:00 PM'){
+                        slots.push(11)
+                        this.slot["11"].slots.push(slotData)
+                      }
+                      else if(slotFormatted=='10:00 PM'){
+                        slots.push(12)
+                        this.slot["12"].slots.push(slotData)
+                      }
+                        }
+                      }
+                      else{
+                        
+                      
                   
                       this.parsedSlots.push(slotData)
                       var slotFormatted=moment(slot).format('hh:mm A')
@@ -1124,7 +1185,7 @@ const app=  new Vue({
                  
                    
                   }
-                 
+                }
                   
                   slot=moment(slot).add(2, 'hours');  
                   }
@@ -1141,6 +1202,7 @@ const app=  new Vue({
                   
                   
                 }
+                
                 
                 /*    continous slot */
              /*   else{
@@ -1334,7 +1396,8 @@ const app=  new Vue({
       }
   })
 
- 
+  app.user_type=user_type
+  console.log("user is "+user_type)
   //New Date picker
   $('.next-day').on('click', function () {
 
