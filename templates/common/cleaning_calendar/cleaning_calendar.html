@@ -981,6 +981,9 @@ class="cl-service-list"
             <div class="text-right cl-mt-20">
             {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
                 <a class="cl-link" @click="editCleaningTeam(currentSlotDetails.id)"  v-if="currentSlotDetails.cleaning_team_order_scheduler[0] && currentSlotDetails.order.order_status!=null && currentSlotDetails.work_status!='CLEANING_CANCELLED' && currentSlotDetails.work_status!='CLEANING_FULFILLED'" @click="editCleaningTeam(currentSlotDetails.id)">Edit Cleaning Team</a>
+                {% if request.user.user_type == 'SENIORTEAMLEADER' %}
+                <a class="cl-link" @click="resetCleaningTeam(currentSlotDetails.id)"  v-if="currentSlotDetails.cleaning_team_order_scheduler[0] && currentSlotDetails.order.order_status!=null && currentSlotDetails.work_status!='CLEANING_CANCELLED' && currentSlotDetails.work_status!='CLEANING_FULFILLED'" @click="resetCleaningTeam(currentSlotDetails.id)">Reset Cleaning Team</a>
+                {% endif %}
                 <a class="cl-link" @click="addCleaningTeam(currentSlotDetails.id)"  v-else-if="currentSlotDetails.order.order_status!=null && currentSlotDetails.work_status!='CLEANING_CANCELLED' && currentSlotDetails.work_status!='CLEANING_FULFILLED' && !approved_not_paid" @click="addCleaningTeam(currentSlotDetails.id)">Add Cleaning Team</a>              
             {% endif %}
             </div>
@@ -1226,6 +1229,9 @@ class="cl-service-list"
           <div class="text-right cl-mt-20">   
           {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
               <a class="cl-link" v-if="currentSlotDetails.followupteam_followupschedule[0] && currentSlotDetails.work_status!='FOLLOW_UP_CLEANING_FULFILLED'" @click="editFollowupTeam(currentSlotDetails.id)">Edit Cleaning Team</a>
+              {% comment %} {% if request.user.user_type == 'SENIORTEAMLEADER' %}
+              <a class="cl-link" v-if="currentSlotDetails.followupteam_followupschedule[0] && currentSlotDetails.work_status!='FOLLOW_UP_CLEANING_FULFILLED'" @click="resetFollowupTeam(currentSlotDetails.id)">Reset Cleaning Team</a>
+              {% endif %} {% endcomment %}
               <a class="cl-link" v-else-if="currentSlotDetails.work_status!='FOLLOW_UP_CLEANING_FULFILLED'" @click="addFollowupTeam(currentSlotDetails.id)">Add Cleaning Team</a>
           {% endif %}
           </div>

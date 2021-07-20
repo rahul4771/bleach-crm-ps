@@ -4184,3 +4184,40 @@ class EditFollowupTeam(IsAuthenticated,View):
 			return redirect('stl:stldash-board')
 		else:
 			return redirect('op-supervisor:op-supervisor-dash-board')
+
+class ResetcleaningTeam(IsAuthenticated,View):
+	def get(self,request,scheduler_id):
+
+		#shceduled order details
+		order_schedule    = OrderScheduler.objects.select_related('evaluation_details__evaluation','order_scheduler_book__service_type').prefetch_related(Prefetch('order_scheduler_book__evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr="evaluationmedias"),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes')).annotate(kitchen_keynote=Sum( Case( When(keynotesections__sub_area='kitchen',then=1),default=0,output_field=IntegerField()))),to_attr='sections')).get(is_active=True,id=scheduler_id)
+		start_at_datetime = order_schedule.start_at
+		end_at_datetime   = order_schedule.end_at
+		start_at_date     = (order_schedule.start_at+timedelta(hours=3)).date()
+		end_at_date       = (order_schedule.end_at+timedelta(hours=3)).date()
+		start_at_time     = (order_schedule.start_at+timedelta(hours=3)).time()
+		end_at_time       = (order_schedule.end_at+timedelta(hours=3)).time()
+		
+		print(order_schedule,"osched")
+
+		related_schedules = OrderScheduler.objects.filter(Q(start_at__date=start_at_date)|Q(end_at__date=start_at_date)|Q(start_at__date=end_at_date)|Q(end_at__date=end_at_date)).filter(work_status='CLEANING_TEAM_ASSIGNED',order__evaluation__id=order_schedule.order.evaluation.id).select_related('order__evaluation').exclude(Q(order__evaluation__evaluation_id='BLC20210310115')|Q(order__evaluation__evaluation_id='BLC20210710002')|Q(order__evaluation__evaluation_id='BLC20210710216'))
+
+
+		print(related_schedules,"relsched")
+
+		if related_schedules:
+			for schedule in related_schedules:
+				cleaningteams = CleaningTeam.objects.filter(is_active=True,order_scheduler__id=schedule.id).delete()
+			
+		else:
+			cleaningteams = CleaningTeam.objects.filter(is_active=True,order_scheduler__id=scheduler_id).delete()
+
+		messages.success(request,"Cleaning team reset successfully !")
+			
+		return redirect('stl:stldash-board')
+
+# class ResetFollowUpTeam(IsAuthenticated,View):
+# 	def get(self,request,scheduler_id):
+# 		followupteams = FollowUpTeam.objects.filter(is_active=True,followup_scheduler__id=int(scheduler_id))
+# 		for team in followupteams:
+# 			team.delete()
+# 		return redirect('stl:stldash-board')

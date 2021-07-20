@@ -258,6 +258,9 @@ const app=  new Vue({
         editCleaningTeam(slot){          
           window.location.href='/common/editcleaning/team/'+slot         
         },
+        resetCleaningTeam(slot){          
+          window.location.href='/common/resetcleaning/team/'+slot         
+        },
         // editCleaningTeamOpSupervisor(slot){
         //   window.location.href='/operation-supervisor/editcleaning/team/'+slot  
         // },
@@ -270,6 +273,9 @@ const app=  new Vue({
         editFollowupTeam(slot){          
           window.location.href='/common/editfollowup/team/'+slot         
         },
+        // resetFollowupTeam(slot){          
+        //   window.location.href='/common/resetfollowup/team/'+slot         
+        // },
         // editFollowupTeamOpSupervisor(slot){
         //   window.location.href='/operation-supervisor/editfollowup/team/'+slot  
         // },
