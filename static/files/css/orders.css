@@ -602,10 +602,12 @@
 }
 
 .clean-team-profile-pic {
-  width: 100%;
   border: 1px solid #707070;
-  border-radius: 42px;
-  opacity: 1;
+    border-radius: 48px;
+    opacity: 1;
+    height: 48px;
+    width: 48px;
+    background: none;
 }
 .order-payment-section {
   padding: 15px 10px 15px 10px;

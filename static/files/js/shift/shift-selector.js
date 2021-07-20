@@ -66,8 +66,8 @@ for (var k=1;k<=noOfDays;k++){
 
 for (var j=0;j<resourceList.length;j++){
     var rsid=j+1;
-    
-    $('#lv-body-head-2').append('<tr class="lv-rows" id="row-2'+rsid+'"><td class="noBorder"> <div class="lv-resource d-flex "> <div class="lv-counter"></div> <img src="'+resourceList[j].photo_url+'"align="absmiddle" class="profile-icon"> <div class="resource-profile"><div class="resource-name text-primary">'+resourceList[j].name+'</div><div class="lv-position">'+resourceList[j].user_type+'</div></div></td></tr>');
+    var noOfShift=0;
+    $('#lv-body-head-2').append('<tr class="lv-rows" id="row-2'+rsid+'"><td class="noBorder"> <div class="lv-resource d-flex "> <div class="lv-counter"><span class="counter-text" id="no-shift-'+j+'">'+noOfShift+'</span></div> <img src="'+resourceList[j].photo_url+'"align="absmiddle" class="profile-icon"> <div class="resource-profile"><div class="resource-name text-primary">'+resourceList[j].name+'</div><div class="lv-position">'+resourceList[j].user_type+'</div></div></td></tr>');
 
    
     for(var i=1;i<=noOfDays;i++){
@@ -87,10 +87,11 @@ for (var j=0;j<resourceList.length;j++){
  
                         }
                         found=true;
+                        noOfShift=noOfShift+1;
                      }
                 }
               
-                
+               
             }
             
            
@@ -109,6 +110,7 @@ for (var j=0;j<resourceList.length;j++){
       
     
     }
+    $('#no-shift-'+j).text(noOfShift);
 
 }
 }
@@ -164,7 +166,8 @@ for (var k=1;k<=noOfDays;k++){
 }
 for (var j=0;j<resourceList.length;j++){
     var rsid=j+1;
-    $('#lv-body-head-2').append('<tr class="lv-rows" id="row-2'+rsid+'"><td class="noBorder"> <div class="lv-resource d-flex "> <div class="lv-counter"></div> <img src="'+resourceList[j].photo_url+'" align="absmiddle" class="profile-icon"> <div class="resource-profile"><div class="resource-name text-primary">'+resourceList[j].name+'</div><div class="lv-position">'+resourceList[j].user_type+'</div></div></td></tr>');
+    var noOfShift=0;
+    $('#lv-body-head-2').append('<tr class="lv-rows" id="row-2'+rsid+'"><td class="noBorder"> <div class="lv-resource d-flex "> <div class="lv-counter"><span class="counter-text" id="no-shift-'+j+'">'+noOfShift+'</span></div> <img src="'+resourceList[j].photo_url+'" align="absmiddle" class="profile-icon"> <div class="resource-profile"><div class="resource-name text-primary">'+resourceList[j].name+'</div><div class="lv-position">'+resourceList[j].user_type+'</div></div></td></tr>');
     for(var i=1;i<=noOfDays;i++){
         found=false;
         var today = i.toString()+'-'+currentMonth.toString()+'-'+currentYear.toString();
@@ -182,6 +185,7 @@ for (var j=0;j<resourceList.length;j++){
 
                    }
                    found=true;
+                   noOfShift=noOfShift+1;
                 }
               
                 
@@ -204,6 +208,7 @@ for (var j=0;j<resourceList.length;j++){
        // console.log('i am running')
        // $('#row-1').append('<p>testing</p>')
     }
+    $('#no-shift-'+j).text(noOfShift);
 
 }
 for(var sel=0;sel<selectedId.length;sel++){

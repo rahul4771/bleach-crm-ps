@@ -1,6 +1,31 @@
 {% load static %}
 
-<tr>
+<div class="white-wrapper"><!--white-wrapper-->
+
+<div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
+
+<div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->
+<h2 class="h2">Cleaning Calendar</h2>
+</div>
+
+<div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
+<div class="date-wrapper"><!--date-wrapper-->
+            <div class="date-wrapper-inner"><!--date-wrapper-inner-->
+            <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
+            <input type="text" id="cleaning_calendar" value="{{schedule_date|date:"d-m-Y"}}" onchange="set_params_go();" class="date-box date_pick">
+            <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
+            <button class='today-date current-date'>Today</button>
+            </div><!--date-wrapper-inner-->
+</div><!--date-wrapper-->
+</div>
+
+</div>
+
+<div class="cleaning-container"><!--cleaning-container-->
+<div class="scrollable"><!--scrollable-->
+<div>
+  <table id="cleaning_table" cellpadding="1" cellspacing="1" class="cleaning-table">
+  <tr>
   <th width="4.166%" colspan="2"> </th>
     <th width="8.333%" colspan="2">2 AM</th>
     <th width="8.333%" colspan="2">4 AM</th>
@@ -14,253 +39,9 @@
     <th width="8.333%" colspan="2">8 PM</th>
     <th width="8.333%" colspan="2">10 PM</th>
     <th width="4.166%" colspan="2"></th>
-  </tr>
-
-  
-{% block javascript %}
-<script type="text/javascript">
-//Function Used For Cleaning Calender    
-    function isArrayInArrayOverlap(source,search)
-    {   count1=1;
-        count2=1;
-
-
-        for(var i=0,len=source.length;i<len;i++)
-        {
-            if(source[i][0]>=search[0] && source[i][0] >= search[1])
-            {
-                count1++;
-            }
-            if(source[i][1]<=search[0] && source[i][1] >= search[1])
-            {
-                count2++;
-            }
-        
-        }
-        if(count1==source.length || count2 == source.length)
-        {
-            return true;
-            }
-        else{
-            return false;
-        }    
-        }
-
-
-      //To add cleaning schedules in cleaning calender  
-      completed_calender = []; 
-      {% for old_schedule in calendar_order_schedules %} 
-            old_starting_time_string      = '{{old_schedule.start_at|date:'H:i'}}'.replace(":",".");
-            old_ending_time_string        = '{{old_schedule.end_at|date:'H:i'}}'.replace(":",".");
-
-            old_starting_time             = parseInt(old_starting_time_string.split('.')[0])+parseInt(old_starting_time_string.split('.')[1])/60
-            old_ending_time               = parseInt(old_ending_time_string.split('.')[0])+parseInt(
-                old_ending_time_string.split('.')[1])/60
-            
-            current_raw_timings = []
-            {% for schedule in calendar_order_schedules %}
-                starting_time_string      = '{{schedule.start_at|date:'H:i'}}'.replace(":",".");
-                ending_time_string        = '{{schedule.end_at|date:'H:i'}}'.replace(":",".");
-
-                starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
-                ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
-                    ending_time_string.split('.')[1])/60
-                if(completed_calender.includes('{{forloop.counter}}'))
-                {
-                    console.log("includes");
-                }
-                else
-                {
-                if(old_starting_time_string>=starting_time && old_starting_time_string>=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true)||(current_raw_timings.length==0)||old_ending_time_string<=starting_time && old_ending_time_string<=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true)||(current_raw_timings.length==0))
-                    {
-                        completed_calender.push('{{forloop.counter}}');
-                        current_raw_timings.push([starting_time,ending_time]);
-                        //append raw
-                        if(current_raw_timings.length==1)
-                        {
-                            left_percentage  = 100/24*starting_time
-                            
-                            if(ending_time == 0)
-                            {
-                              width_percentage = 100/24*24-100/24*starting_time;
-                            }
-                            else
-                            {
-                              width_percentage = 100/24*ending_time-100/24*starting_time;
-                            }
-                            
-                            $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{schedule.id}}" {% if schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="blue-box"{% else %}class="green-box"{% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if schedule.evaluation_details.evaluator.profile_image %}src="{{schedule.evaluation_details.evaluator.profile_image.url}}" {% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %}></div><center>{{schedule.customer_address.area}}</center> <div {% if schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{schedule.evaluation_details.number_of_cleaners}}</div></div></td></tr>')
-                        }
-                        //append td to the raw 
-                        else
-                        { 
-                           left_percentage  = 100/24*starting_time
-                           
-                           if(ending_time == 0)
-                            {
-                              width_percentage = 100/24*24-100/24*starting_time;
-                            }
-                            else
-                            {
-                              width_percentage = 100/24*ending_time-100/24*starting_time;
-                            } 
-                          
-                            $('#cleaning_table tr:last td').append('<div id="cleaningschedule{{schedule.id}}" {% if schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="blue-box"{% else %}class="green-box"{% endif %} style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if schedule.evaluation_details.evaluator.profile_image %}src="{{schedule.evaluation_details.evaluator.profile_image.url}}" {% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %}></div><center>{{schedule.customer_address.area}}</center> <div {% if schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{schedule.evaluation_details.number_of_cleaners}}</div></div>')      
-                        }
-                    }
-                }
-            {% endfor %}        
-
-       {% endfor %}
-
-       //for special cases like 2 days cleanings
-       {% for sp_schedule in sp_calendar_order_schedules %}
-       starting_time_string      = '{{sp_schedule.start_at|date:'H:i'}}'.replace(":",".");
-       ending_time_string        = '{{sp_schedule.end_at|date:'H:i'}}'.replace(":",".");
-       
-       starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
-       ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
-            ending_time_string.split('.')[1])/60
-
-       first_raw_left_percentage   = 100/24*starting_time
-       first_raw_width_percentage  = 100-100/24*starting_time
-
-       second_raw_left_percentage  = 0
-       second_raw_width_percentage = 100/24*ending_time;
-
-
-       $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{sp_schedule.id}}" {% if sp_schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="sp-blue-box-first"{% else %}class="sp-green-box-first"{% endif %} style="width:'+first_raw_width_percentage+'%;left:'+first_raw_left_percentage+'%;"><div class="left-avatar"><img {% if sp_schedule.evaluation_details.evaluator.profile_image %} src="{{sp_schedule.evaluation_details.evaluator.profile_image.url}}" {% else %}src="{% static 'files/images/profile-pic.jpg' %}"{% endif %}></div><center>{{sp_schedule.customer_address.area}}</center> </div></td></tr>')
-
-       {% endfor %}
-
-
-       //for special cases like 2 days cleanings
-       {% for spp_schedule in spp_calendar_order_schedules %}
-       starting_time_string      = '{{spp_schedule.start_at|date:'H:i'}}'.replace(":",".");
-       ending_time_string        = '{{spp_schedule.end_at|date:'H:i'}}'.replace(":",".");
-       
-       starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
-       ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
-            ending_time_string.split('.')[1])/60
-
-       first_raw_left_percentage   = 100/24*starting_time
-       first_raw_width_percentage  = 100-100/24*starting_time
-
-       second_raw_left_percentage  = 0
-       second_raw_width_percentage = 100/24*ending_time;
-
-
-       $('#cleaning_table').append('<tr><td  colspan="26"><div id="cleaningschedule{{spp_schedule.id}}" {% if spp_schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="sp-blue-box-second"{% else %}class="sp-green-box-second"{% endif %} style="width:'+second_raw_width_percentage+'%;left:'+second_raw_left_percentage+'%;"><div {% if spp_schedule.order_scheduler_book.cleaning_policy == "ONE TIME SERVICE" %}class="right-value blue-text"{% else %}class="right-value green-text"{% endif %}>{{spp_schedule.evaluation_details.number_of_cleaners}}</div></div></td></tr>')
-       
-       {% endfor %}
-
-
-      //To add followup schedules in cleaning calender  
-      completed_calender_followup = []; 
-      {% for old_schedule in calendar_followup_schedules %} 
-            old_starting_time_string      = '{{old_schedule.start_at|date:'H:i'}}'.replace(":",".");
-            old_ending_time_string        = '{{old_schedule.end_at|date:'H:i'}}'.replace(":",".");
-
-            old_starting_time             = parseInt(old_starting_time_string.split('.')[0])+parseInt(old_starting_time_string.split('.')[1])/60
-            old_ending_time               = parseInt(old_ending_time_string.split('.')[0])+parseInt(
-                old_ending_time_string.split('.')[1])/60
-            
-            current_raw_timings = []
-            {% for schedule in calendar_followup_schedules %}
-                starting_time_string      = '{{schedule.start_at|date:'H:i'}}'.replace(":",".");
-                ending_time_string        = '{{schedule.end_at|date:'H:i'}}'.replace(":",".");
-
-                starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
-                ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
-                    ending_time_string.split('.')[1])/60
-                if(completed_calender_followup.includes('{{forloop.counter}}'))
-                {
-                    console.log("includes");
-                }
-                else
-                {
-                if(old_starting_time_string>=starting_time && old_starting_time_string>=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true)||(current_raw_timings.length==0)||old_ending_time_string<=starting_time && old_ending_time_string<=ending_time && (isArrayInArrayOverlap(current_raw_timings,[starting_time,ending_time])==true)||(current_raw_timings.length==0))
-                    {
-                        completed_calender_followup.push('{{forloop.counter}}');
-                        current_raw_timings.push([starting_time,ending_time]);
-                        //append raw
-                        if(current_raw_timings.length==1)
-                        {
-                            left_percentage  = 100/24*starting_time
-                            
-                            if(ending_time == 0)
-                            {
-                              width_percentage = 100/24*24-100/24*starting_time;
-                            }
-                            else
-                            {
-                              width_percentage = 100/24*ending_time-100/24*starting_time;
-                            }
-                            
-                            $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupschedule{{schedule.id}}" class="yellow-box" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if schedule.follow_up.investigation.investigator.profile_image %}src="{{schedule.follow_up.investigation.investigator.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}{% endif %}></div><center>{{schedule.customer_address.area}}</center> <div class="right-value yellow-text">{{schedule.follow_up.investigation.order_schedule.evaluation_details.number_of_cleaners}}</div></div></td></tr>')
-                        }
-                        //append td to the raw 
-                        else
-                        { 
-                           left_percentage  = 100/24*starting_time
-                           
-                           if(ending_time == 0)
-                            {
-                              width_percentage = 100/24*24-100/24*starting_time;
-                            }
-                            else
-                            {
-                              width_percentage = 100/24*ending_time-100/24*starting_time;
-                            } 
-                          
-                            $('#cleaning_table tr:last td').append('<div id="followupschedule{{schedule.id}}" class="yellow-box" style="width:'+width_percentage+'%;left:'+left_percentage+'%;"><div class="left-avatar"><img {% if schedule.follow_up.investigation.investigator.profile_image %}src="{{schedule.follow_up.investigation.investigator.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}{% endif %}></div><center>{{schedule.customer_address.area}}</center> <div class="right-value yellow-text">{{schedule.follow_up.investigation.order_schedule.evaluation_details.number_of_cleaners}}</div></div>')      
-                        }
-                    }
-                }
-            {% endfor %}        
-
-       {% endfor %}
-
-       //for special cases like 2 days fllowup cleanings
-       {% for sp_schedule in sp_calendar_followup_schedules %}
-       starting_time_string      = '{{sp_schedule.start_at|date:'H:i'}}'.replace(":",".");
-       ending_time_string        = '{{sp_schedule.end_at|date:'H:i'}}'.replace(":",".");
-       
-       starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
-       ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
-            ending_time_string.split('.')[1])/60
-
-       first_raw_left_percentage   = 100/24*starting_time
-       first_raw_width_percentage  = 100-100/24*starting_time
-
-       second_raw_left_percentage  = 0
-       second_raw_width_percentage = 100/24*ending_time;
-
-
-       $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupschedule{{sp_schedule.id}}" class="sp-yellow-box-first" style="width:'+first_raw_width_percentage+'%;left:'+first_raw_left_percentage+'%;"><div class="left-avatar"><img {% if sp_schedule.follow_up.investigation.investigator.profile_image %}src="{{sp_schedule.follow_up.investigation.investigator.profile_image.url}}"{% else %}src="{% static 'files/images/profile-pic.jpg' %}{% endif %}></div><center>{{sp_schedule.customer_address.area}}</center> </div></td></tr>')
-       
-       {% endfor %}
-
-
-       //for special cases like 2 days fllowup cleanings
-       {% for spp_schedule in spp_calendar_followup_schedules %}
-       starting_time_string      = '{{spp_schedule.start_at|date:'H:i'}}'.replace(":",".");
-       ending_time_string        = '{{spp_schedule.end_at|date:'H:i'}}'.replace(":",".");
-       
-       starting_time             = parseInt(starting_time_string.split('.')[0])+parseInt(starting_time_string.split('.')[1])/60
-       ending_time               = parseInt(ending_time_string.split('.')[0])+parseInt(
-            ending_time_string.split('.')[1])/60
-
-       first_raw_left_percentage   = 100/24*starting_time
-       first_raw_width_percentage  = 100-100/24*starting_time
-
-       second_raw_left_percentage  = 0
-       second_raw_width_percentage = 100/24*ending_time;
-
-
-       $('#cleaning_table').append('<tr><td  colspan="26"><div id="followupschedule{{spp_schedule.id}}" class="sp-yellow-box-second" style="width:'+second_raw_width_percentage+'%;left:'+second_raw_left_percentage+'%;"><div class="right-value yellow-text">{{spp_schedule.follow_up.investigation.order_schedule.evaluation_details.number_of_cleaners}}</div></div></td></tr>')
-       
-       {% endfor %}
-
-</script>
-{% endblock %}
+  </tr>  
+  </table>
+</div>
+</div><!--scrollable-->
+</div><!--cleaning-container-->
+</div><!--white-wrapper--> 

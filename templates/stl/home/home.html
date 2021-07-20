@@ -140,6 +140,9 @@
 </div><!--white-wrapper-->
 {% endif %}
 
+{% comment %} <!--old cleaning calendar-->
+{% include 'admin/home/cleaning-calendar-snippet.html' %}             
+<!--old cleaning calendar--> {% endcomment %}
 
 {% include 'common/cleaning_calendar/cleaning_calendar.html' %}          
         
@@ -182,7 +185,7 @@
       </div><!--ticket-form-left--> 
   </div><!--ticket-wrapper-row ticket-forms-boxes-->
      
-    <div class="edit-collapse collapsible1"><a href="#" ><img src="{% static 'files/images/edit.png' %}" width="30px"></a></div>  
+    {% comment %} <div class="edit-collapse collapsible1"><a href="#" ><img src="{% static 'files/images/edit.png' %}" width="30px"></a></div>   {% endcomment %}
     <div class="popup-collapse popup-collapse1"><!--popup-collapse--> 
     <form method="post" enctype= "multipart/form-data">
     {%csrf_token%}  
@@ -277,7 +280,7 @@
       </div><!--ticket-form-left--> 
   </div><!--ticket-wrapper-row ticket-forms-boxes-->
      
-    <div class="edit-collapse collapsible2"><a href="#" ><img src="{% static 'files/images/edit.png' %}" width="30px"></a></div>  
+    {% comment %} <div class="edit-collapse collapsible2"><a href="#" ><img src="{% static 'files/images/edit.png' %}" width="30px"></a></div>   {% endcomment %}
     <div class="popup-collapse popup-collapse2"><!--popup-collapse--> 
     <form method="post" enctype= "multipart/form-data">
     {%csrf_token%}  
@@ -365,7 +368,7 @@
       </div><!--ticket-form-left--> 
   </div><!--ticket-wrapper-row ticket-forms-boxes-->
      
-    <div class="edit-collapse collapsible1"><a href="#" ><img src="{% static 'files/images/edit.png' %}" width="30px"></a></div>  
+    {% comment %} <div class="edit-collapse collapsible1"><a href="#" ><img src="{% static 'files/images/edit.png' %}" width="30px"></a></div>   {% endcomment %}
     <div class="popup-collapse popup-collapse1"><!--popup-collapse--> 
     <form method="post" enctype= "multipart/form-data">
     {%csrf_token%}  
