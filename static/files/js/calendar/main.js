@@ -227,8 +227,8 @@ const app=  new Vue({
         this.dateSelected = moment().format().split("T")[0];
         this.today = moment().format().split("T")[0];
         var urldate=location.href.split('=')[1]
-        this.cleaningDate=urldate.split('-').reverse().join('-')
-        this.selectedDate=urldate.split('-').reverse().join('-')
+        //this.cleaningDate=urldate.split('-').reverse().join('-')
+        //this.selectedDate=urldate.split('-').reverse().join('-')
         console.log("cleaning date us "+this.cleaningDate)
        
        this.calChecker(urldate)
