@@ -755,7 +755,7 @@ class StlHome(IsSeniorTeamLeader,View):
 		changeshedulers   = OrderScheduler.objects.select_related('order_scheduler_book').filter(start_at__gte=starting_datetime)
 		print(starting_datetime)
 		print(changeshedulers)
-		for changescheduler in changeschedulers:
+		for changescheduler in changeshedulers:
 			if not changescheduler.no_of_cleaners and not changescheduler.cleaning_hours:
 				changescheduler.cleaning_hours = changescheduler.order_scheduler_book.cleaning_hours
 				changescheduler.no_of_cleaners = changescheduler.order_scheduler_book.number_of_cleaners
