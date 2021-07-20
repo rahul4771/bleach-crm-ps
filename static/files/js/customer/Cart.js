@@ -154,7 +154,7 @@ $(document).ready(function(){
     rules: {
       required: v => !!v || 'this field is required',
     },
-      url:'https://test.bleach-kw.com',
+      url:'https://my.bleachkw.com',
       kitchenData:{
           wall_type:'',
           floor_type:'',

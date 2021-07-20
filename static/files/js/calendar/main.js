@@ -27,7 +27,7 @@ $(document).ready(function(){
    
   });
   
-console.log("maxheight:"+$('#cleaningCalendar-carousel').height())
+
 var heightCarousel=$('#cleaningCalendar-carousel').height()
 $('.owl-item').height(heightCarousel)
 
@@ -36,7 +36,7 @@ $('.owl-item').height(heightCarousel)
    
   }
   function selectSlot(elem){
-    console.log("elem is "+elem)
+   
     $(elem).toggleClass('time-slot-active')
   }
 
@@ -181,7 +181,9 @@ const app=  new Vue({
           },
          
         },
-        url:'https://test.bleach-kw.com',
+        new_calendar:true,
+        url:'https://my.bleachkw.com',
+       // url:'https://test.bleach-kw.com',
         //url: 'http://127.0.0.1:8000',
         cleaningData:{
           cleaning_datetime_start:'',
@@ -207,6 +209,7 @@ const app=  new Vue({
           color:'',
           type:''
         },
+        limitdate:'15-07-2021',
         cleaning_duration:[],
             selected_cleaning_duration:{},
             currentServices:[]
@@ -223,8 +226,12 @@ const app=  new Vue({
         this.currentTime=moment().format().split("T")[1];
         this.dateSelected = moment().format().split("T")[0];
         this.today = moment().format().split("T")[0];
+        var urldate=location.href.split('=')[1]
+        //this.cleaningDate=urldate.split('-').reverse().join('-')
+        //this.selectedDate=urldate.split('-').reverse().join('-')
         console.log("cleaning date us "+this.cleaningDate)
        
+       this.calChecker(urldate)
         console.log("today is "+this.today)
         console.log("time is "+this.currentTime)
       
@@ -237,6 +244,17 @@ const app=  new Vue({
         this.getEvaluationSlots()
       },
       methods:{
+        calChecker(date){
+          
+          
+          if(moment(this.limitdate,'DD-MM-YYYY').isSameOrBefore(moment(date,'DD-MM-YYYY'))){
+            this.new_calendar=true
+          }
+          else{
+            this.new_calendar=false
+           // window.location.href='/evaluator/dashboard/?evaluation_calendar_date='+date
+          }
+        },
         editCleaningTeam(slot){          
           window.location.href='/common/editcleaning/team/'+slot         
         },
@@ -388,9 +406,12 @@ const app=  new Vue({
            // console.log($('#cl_cleaning_calendar').val())
            this.services=[]
             this.cleaningDate=$('#cl_cleaning_calendar').val()
+           
+          
             this.combineSlots=[]
             this.selectedCleaningSlot=[]
             this.slots={}
+
             
            // this.slot={}
            this.slot={
@@ -522,8 +543,8 @@ const app=  new Vue({
           },
           getslotAgain(){
             
-            console.log("i m hee")
-            
+           
+           
             this.cleaningData.service_types=this.services
             axios.post(this.url+"/agent/cleaningcallendar/availability/",this.cleaningData).then((response) => {
               this.cleaningDetails=response.data
@@ -698,7 +719,7 @@ const app=  new Vue({
                 min=cslot
               }
             }
-            console.log("max is "+moment(max).format('hh:mm A'))
+           
             var end = (moment(max).add(2, 'hours'))
 
             axios.post(this.url+'/agent/cleaningcallendar/cleaning/edit/save/',{
@@ -714,7 +735,7 @@ const app=  new Vue({
             service_types:serviceTypes,
             action_type:this.action_type
             }).then((response) => {
-              console.log(response)
+             
               this.editEval=false,
               this.selectedEditSlot=[],
               this.availableSlots=[],
@@ -741,7 +762,7 @@ const app=  new Vue({
                 min=cslot
               }
             }
-            console.log("max is "+moment(max).format('hh:mm A'))
+         
             var end = (moment(max).add(3, 'hours'))
 
             axios.post(this.url+'/agent/cleaningcallendar/followup/edit/save/',{
@@ -754,7 +775,8 @@ const app=  new Vue({
             cleaning_hours:this.selected_cleaning_duration.cleaning_hours,
             followup_id:this.currentSlotDetails.id
             }).then((response) => {
-              console.log(response)
+           
+
               this.editEval=false,
               this.selectedEditSlot=[],
               this.availableSlots=[],
@@ -791,8 +813,15 @@ const app=  new Vue({
             
             if(classType=='cl-start-end' || classType=='cl-end-only')
             {
-            if (!slot.evaluation_details.evaluator){
-              return true
+            if (slot.evaluation_details.evaluation.booking_evaluation.length>0){
+              if(slot.evaluation_details.evaluation.booking_evaluation[0].booking_type=='CLEANINGBOOKING')
+              {
+                return true
+              }
+              else{
+                return false
+              }
+              
             }
             else{
               return false
@@ -848,7 +877,7 @@ const app=  new Vue({
               this.followupStat=false
             this.currentSlotDetails={}
             //this.dataCompleted=true
-            console.log("item is "+JSON.stringify(item))
+            
             
          if(item.color!='followup-cleaning-status-bg')
          {
@@ -931,15 +960,15 @@ const app=  new Vue({
                   
                   
                   
-                  console.log("slot:"+slot+'limit:'+limit)
+                
                   var date_start=this.combineSlots[i].slots.start_at
                   var date_end=this.combineSlots[i].slots.end_at
                   /*var beginningTime = moment(startslot, 'h:mma');
                   var endTime = moment(endslot, 'h:mma');*/
-                  console.log("begold time is :"+date_start+'end time :'+date_end)
+               
                   var beginningTime=moment(date_start,'DD-MM-YYYY HH:mm A')
                   var endTime=moment(date_end,'DD-MM-YYYY HH:mm A')
-                  console.log("beg time is :"+beginningTime+'end time :'+endTime)
+                 
 
                   if(this.combineSlots[i].type=='followup')
                   {
@@ -1033,10 +1062,10 @@ const app=  new Vue({
                         }
 
                       }
-                      console.log("slot data is"+JSON.stringify(slotData))
+                  
                       this.parsedSlots.push(slotData)
                       var slotFormatted=moment(slot).format('hh:mm A')
-                  console.log("sloformatted is "+slotFormatted)
+                
                   if(slotFormatted=='12:00 AM'){
                     slots.push(1)
                     this.slot["1"].slots.push(slotData)
@@ -1087,15 +1116,15 @@ const app=  new Vue({
                   }
                   
                  
-                      console.log("end time :" +endslot+",start time :"+startslot+",slot :"+moment(slot).format('hh:mm A'))
+                   
                   }
                  
                   
                   slot=moment(slot).add(2, 'hours');  
                   }
-                  console.log("slots:" +slots)
+                 
                   var rowno=this.setRow(slots)
-                  console.log("row no:" +rowno)
+                 
                   for(var j=0;j<slots.length;j++){
                     var slotind=slots[j]
                     if(this.slot[slotind].slots.length>0){
@@ -1176,12 +1205,12 @@ const app=  new Vue({
               }
             }
             
-            console.log("slots are "+JSON.stringify(maxslots)+"max is:" +max)
+          
             if(rows.length>0){
               if(max<(Math.max(...rows)+1)){
                 max=Math.max(...rows)+1
               }
-              console.log("rows are "+JSON.stringify(rows)+"max is:" +max)
+            
             }
            
             return max
@@ -1200,8 +1229,7 @@ const app=  new Vue({
             if(stop>12){
                 stop=stop-12
             }
-            console.log("stop :"+stop)
-            console.log("end :"+end)
+          
             if(stop==end){
 
                 return true
@@ -1294,7 +1322,7 @@ const app=  new Vue({
 
           },
           changeCleaningDate(){
-            console.log("new date "+ $('#cl_cleaning_calendar').val())
+           
 
           }
       }

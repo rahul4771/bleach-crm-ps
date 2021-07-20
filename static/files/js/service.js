@@ -2,7 +2,7 @@
 //using async funcation to call service methods
 
 
-var api='https://test.bleach-kw.com/';
+var api='https://my.bleachkw.com/';
 
 async function _post(url,data){
     let result;
