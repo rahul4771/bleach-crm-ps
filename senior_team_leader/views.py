@@ -1112,6 +1112,7 @@ class AssigncleaningTeam(IsSeniorTeamLeader,View):
 
 		print(active_cleaners1,"active_cleaners1")
 		print(shift_cleaners,"shift_cleaners")
+		print(super_shift_cleaners,"super_shift_cleaners")
 		print(absent_cleaners,"absent_cleaners")
 		leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_leaders))).filter(Q(id__in=shift_leaders)|Q(id__in=super_shift_leaders))
 		cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_cleaners))).filter(Q(id__in=shift_cleaners)|Q(id__in=super_shift_cleaners))
