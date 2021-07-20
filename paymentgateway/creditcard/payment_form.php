@@ -14,11 +14,11 @@
     </div>
     <div class="loader"></div>
 </div>
-<form id="payment_form" action="https://testpay.bleach-kw.com/creditcard/payment_confirmation.php" method="post">
-    <!-- <input type="hidden" name="access_key" value="cf64db2a5fc13d1e957442b395baffbd">
-    <input type="hidden" name="profile_id" value="32FF6F1C41F34CF1A91CA1039EF0845C"> -->
-    <input type="hidden" name="access_key" value="dc9b55c60e193d98a5861569b4c40d6b">
-    <input type="hidden" name="profile_id" value="340591FC-E863-4714-81A5-FFC0D7B5D9A7"> 
+<form id="payment_form" action="https://payment.bleachkw.com/creditcard/payment_confirmation.php" method="post">
+    <input type="hidden" name="access_key" value="cf64db2a5fc13d1e957442b395baffbd">
+    <input type="hidden" name="profile_id" value="32FF6F1C41F34CF1A91CA1039EF0845C">
+    <!-- <input type="hidden" name="access_key" value="dc9b55c60e193d98a5861569b4c40d6b">
+    <input type="hidden" name="profile_id" value="340591FC-E863-4714-81A5-FFC0D7B5D9A7">  -->
     <input type="hidden" name="transaction_uuid" value="<?php echo uniqid() ?>">
     <input type="hidden" name="signed_field_names" value="access_key,profile_id,transaction_uuid,signed_field_names,unsigned_field_names,signed_date_time,locale,transaction_type,reference_number,amount,currency,bill_to_forename,bill_to_surname,bill_to_email,bill_to_phone,bill_to_address_country,bill_to_address_city,bill_to_address_line1,merchant_defined_data1,merchant_defined_data2,merchant_defined_data3,merchant_defined_data4,merchant_defined_data5,merchant_defined_data7,merchant_defined_data20,customer_ip_address">
     <input type="hidden" name="unsigned_field_names">
