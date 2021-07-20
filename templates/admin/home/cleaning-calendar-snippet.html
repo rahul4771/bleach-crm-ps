@@ -1,6 +1,31 @@
 {% load static %}
 
-<tr>
+<div class="white-wrapper"><!--white-wrapper-->
+
+<div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
+
+<div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->
+<h2 class="h2">Cleaning Calendar</h2>
+</div>
+
+<div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
+<div class="date-wrapper"><!--date-wrapper-->
+            <div class="date-wrapper-inner"><!--date-wrapper-inner-->
+            <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
+            <input type="text" id="cleaning_calendar" value="{{schedule_date|date:"d-m-Y"}}" onchange="set_params_go();" class="date-box date_pick">
+            <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
+            <button class='today-date current-date'>Today</button>
+            </div><!--date-wrapper-inner-->
+</div><!--date-wrapper-->
+</div>
+
+</div>
+
+<div class="cleaning-container"><!--cleaning-container-->
+<div class="scrollable"><!--scrollable-->
+<div>
+  <table id="cleaning_table" cellpadding="1" cellspacing="1" class="cleaning-table">
+  <tr>
   <th width="4.166%" colspan="2"> </th>
     <th width="8.333%" colspan="2">2 AM</th>
     <th width="8.333%" colspan="2">4 AM</th>
@@ -14,7 +39,12 @@
     <th width="8.333%" colspan="2">8 PM</th>
     <th width="8.333%" colspan="2">10 PM</th>
     <th width="4.166%" colspan="2"></th>
-  </tr>
+  </tr>  
+  </table>
+</div>
+</div><!--scrollable-->
+</div><!--cleaning-container-->
+</div><!--white-wrapper--> 
 
   
 {% block javascript %}

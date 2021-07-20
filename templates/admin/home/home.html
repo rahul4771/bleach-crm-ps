@@ -445,6 +445,12 @@ data-customer_name="{{follow_up.investigation.order.evaluation.customer.name}}" 
 {% include 'agent/home/evaluation-calendar-new.html' %}
 <!--new evaluation calendar-->
 
+{% if request.user.username == 'superuser' %}
+<!--old cleaning calendar-->
+{% include 'admin/home/cleaning-calendar-snippet.html' %}             
+<!--old cleaning calendar-->
+{% endif %}
+
 <!--new cleaning calendar-->
 {% include 'common/cleaning_calendar/cleaning_calendar.html' %}             
 <!--new cleaning calendar-->
