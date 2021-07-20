@@ -3791,7 +3791,7 @@ class AssigncleaningTeam(IsAuthenticated,View):
 		start_at_time     = (order_schedule.start_at+timedelta(hours=3)).time()
 		end_at_time       = (order_schedule.end_at+timedelta(hours=3)).time()
 
-		today_schedules   = OrderScheduler.objects.filter(Q(start_at__date=start_at_date)|Q(end_at__date=start_at_date)|Q(start_at__date=end_at_date)|Q(end_at__date=end_at_date)).filter(work_status='CLEANING_TEAM_ASSIGNED').select_related('order')
+		today_schedules   = OrderScheduler.objects.filter(Q(start_at__date=start_at_date)|Q(end_at__date=start_at_date)|Q(start_at__date=end_at_date)|Q(end_at__date=end_at_date)).filter(work_status='CLEANING_TEAM_ASSIGNED').select_related('order__evaluation').exclude(Q(order__evaluation__evaluation_id='BLC20210310115')|Q(order__evaluation__evaluation_id='BLC20210710002')|Q(order__evaluation__evaluation_id='BLC20210710216'))
 		print("today cleanings")
 		for schedule in today_schedules:
 			print(schedule.order.order_no)
