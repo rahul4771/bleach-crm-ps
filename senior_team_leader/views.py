@@ -1247,7 +1247,10 @@ class EditcleaningTeam(IsSeniorTeamLeader,View):
 		if check_cleaners.count() >= len(assigned_cleaners) and check_tl:
 			for order_schedule in order_schedules:
 				#delete existing cleaners
-				cleaners_to_be_deleted       = CleaningTeamMember.objects.filter(team__order_scheduler=order_schedule).delete()
+				try:
+					cleaners_to_be_deleted       = CleaningTeamMember.objects.filter(team__order_scheduler=order_schedule).delete()
+				except:
+					cleaners_to_be_deleted       = None
 
 				#update cleaning team leader
 				cleaning_team                = CleaningTeam.objects.get(is_active=True,order_scheduler=order_schedule,team_leader__user_type='TEAMINCHARGE')
