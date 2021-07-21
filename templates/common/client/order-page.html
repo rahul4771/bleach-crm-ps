@@ -1324,7 +1324,7 @@
                                     </div>
                                     {% endif %}
 
-                                {% elif order.evaluation.quatation_status == 'PENDING' %}
+                                {% elif order.evaluation.quatation_status == 'PENDING' or order.evaluation.quatation_status == None %}
                                     <div v-if="edit">
                                     <button style="box-shadow: none !important;" class="view-button view-btn cp"   onclick="addSection(this)"  data-service="{{orderschedule.order_scheduler_book.service_type.name}}">  <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="">  Add Section</button>
                                     </div>

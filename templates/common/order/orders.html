@@ -290,9 +290,9 @@
         {% elif evaluation.quatation_status == 'PENDING' %}class="pending-line"
         {% elif evaluation.quatation_status == 'EXPIRED' %}class="expired-line"
         {% else %}
-        {% comment %}
+        
         class="evaluating-line"
-        {% endcomment %}
+        
         {%endif%} 
         
         >{{evaluation.evaluation_id}}</td>   
@@ -340,7 +340,7 @@
 
     <td class="align-center">
       <div class="btn-group" id="actionDropdown">
-        <div class="order-dropdown " type="button" {% if evaluation.quatation_status != None %}data-toggle="dropdown"{% endif %} aria-haspopup="true" aria-expanded="false" >
+        <div class="order-dropdown " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
           Action
           <i class="fa fa-chevron-down action-icon" aria-hidden="true" ></i>
         </div>
@@ -598,7 +598,7 @@
     <td class="align-center">
     
     <div class="btn-group" id="actionDropdown">
-        <div class="order-dropdown " type="button" {% if evaluation.quatation_status != None %}data-toggle="dropdown"{% endif %} aria-haspopup="true" aria-expanded="false" >
+        <div class="order-dropdown " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
           Action
           <i class="fa fa-chevron-down action-icon" aria-hidden="true" ></i>
         </div>
