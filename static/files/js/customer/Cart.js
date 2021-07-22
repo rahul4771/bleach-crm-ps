@@ -3619,6 +3619,9 @@ $(document).ready(function(){
                console.log("productivity is "+productivity)
                console.log("total size is "+total_estimated_size)
                var manhour = parseInt(total_estimated_size / productivity);
+               if(manhour<1){
+                manhour=1
+              }
              }
            
             
