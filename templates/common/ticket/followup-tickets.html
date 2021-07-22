@@ -867,7 +867,15 @@
            
             
             
-            
+                   <div id="modal01" class="w3-modal" onclick="this.style.display='none'">
+                    <div class="topright">
+                        <button class="img-close-button" onclick="onClose()"><i
+                                class="fa fa-times fa-lg"></i></button>
+                    </div>
+                    <div class="w3-modal-content w3-animate-zoom">
+                        <img id="img01" style="width:100%;max-height: 400px;">
+                    </div>
+                </div>     
             
             
             
@@ -943,6 +951,15 @@
 {% block javascript %}
 <script src="{% static '/files/externalfiles/plugins/OwlCarousel2/dist/owl.carousel.js'%}"></script>
 <script>
+
+function onClick(element) {
+  document.getElementById("img01").src = element.src;
+  document.getElementById("modal01").style.display = "block";
+}
+function onClose() {
+  
+  document.getElementById("modal01").style.display = "none";
+}
  $('document').ready(function(){
     
     //To Hide Images 
