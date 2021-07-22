@@ -892,16 +892,20 @@ class AvailabilityCleaningCallendar(APIView):
 		total_cleaners = total_cleaners.filter(Q(Q(id__in=shift_cleaners)|Q(id__in=super_shift_cleaners))).exclude(id__in=absent_cleaners)
 		total_leaders  = total_leaders.filter(Q(Q(id__in=shift_leaders)|Q(id__in=super_shift_leaders))).exclude(id__in=absent_leaders)
 		
-		print(total_cleaners,"total_cleaners")
-		print(total_leaders,"total_leaders")
-		print(cleaning_active_cleaners,"cleaning_active_cleaners")
-		print(cleaning_active_team_leaders,"cleaning_active_team_leaders")
-		print(new_absent_cleaners,"new_absent_cleaners")
-		print(new_absent_leaders,"new_absent_leaders")
-		print(team_members_scheduled,"team_members_scheduled")
-		print(team_leaders_scheduled,"team_leaders_scheduled")
+		# print(total_cleaners,"total_cleaners")
+		# print(total_leaders,"total_leaders")
+		# print(cleaning_active_cleaners,"cleaning_active_cleaners")
+		# print(cleaning_active_team_leaders,"cleaning_active_team_leaders")
+		# print(new_absent_cleaners,"new_absent_cleaners")
+		# print(new_absent_leaders,"new_absent_leaders")
+		# print(team_members_scheduled,"team_members_scheduled")
+		# print(team_leaders_scheduled,"team_leaders_scheduled")
 		available_cleaners = total_cleaners.exclude(id__in=team_members_scheduled)
 		available_leaders  = total_leaders.exclude(id__in=team_leaders_scheduled)
+		for cleaner in available_cleaners:
+			print(cleaner.id)
+		for cleaner in available_leaders:
+			print(leader.id)
 		
 		response_dict['available_cleaners_count'] = available_cleaners.count()
 		response_dict['available_leaders_count']  = available_leaders.count()
