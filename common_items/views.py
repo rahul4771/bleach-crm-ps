@@ -4191,20 +4191,18 @@ class ResetcleaningTeam(IsAuthenticated,View):
 		end_at_date       = (order_schedule.end_at+timedelta(hours=3)).date()
 		start_at_time     = (order_schedule.start_at+timedelta(hours=3)).time()
 		end_at_time       = (order_schedule.end_at+timedelta(hours=3)).time()
-		
-		print(order_schedule,"osched")
 
-		related_schedules = OrderScheduler.objects.filter(Q(start_at__date=start_at_date)|Q(end_at__date=start_at_date)|Q(start_at__date=end_at_date)|Q(end_at__date=end_at_date)).filter(work_status='CLEANING_TEAM_ASSIGNED',order__evaluation__id=order_schedule.order.evaluation.id).select_related('order__evaluation').exclude(Q(order__evaluation__evaluation_id='BLC20210310115')|Q(order__evaluation__evaluation_id='BLC20210710002')|Q(order__evaluation__evaluation_id='BLC20210710216'))
-
-
-		print(related_schedules,"relsched")
+		related_schedules = OrderScheduler.objects.filter(Q(start_at__date=start_at_date)|Q(end_at__date=start_at_date)|Q(start_at__date=end_at_date)|Q(end_at__date=end_at_date)).filter(work_status='CLEANING_TEAM_ASSIGNED',order__evaluation__id=order_schedule.order.evaluation.id).select_related('order__evaluation')
 
 		if related_schedules:
 			for schedule in related_schedules:
 				cleaningteams = CleaningTeam.objects.filter(is_active=True,order_scheduler__id=schedule.id).delete()
-			
+				schedule.work_status = None
+				schedule.save()	
 		else:
 			cleaningteams = CleaningTeam.objects.filter(is_active=True,order_scheduler__id=scheduler_id).delete()
+			order_schedule.work_status = None
+			order_schedule.save()
 
 		messages.success(request,"Cleaning team reset successfully !")
 			
