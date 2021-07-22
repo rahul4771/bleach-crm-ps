@@ -860,8 +860,6 @@ class AvailabilityCleaningCallendar(APIView):
 				total_cleaners 	= total_cleaners.filter(is_outdoor_skill=True)
 				total_leaders 	= total_leaders.filter(is_outdoor_skill=True)
 
-		print(total_cleaners.count(),"total cleaners")
-		print(team_members_scheduled,"team_members_scheduled")
 		available_cleaners = total_cleaners.exclude(id__in=team_members_scheduled).filter(Q(id__in=shift_cleaners)|Q(id__in=super_shift_cleaners))
 		available_leaders  = total_leaders.exclude(id__in=team_leaders_scheduled).filter(Q(id__in=shift_leaders)|Q(id__in=super_shift_leaders))
 		print(available_cleaners.count(),"available_cleaners")
