@@ -904,7 +904,7 @@ class AvailabilityCleaningCallendar(APIView):
 		available_leaders  = total_leaders.exclude(id__in=team_leaders_scheduled)
 		for cleaner in available_cleaners:
 			print(cleaner.id)
-		for cleaner in available_leaders:
+		for leader in available_leaders:
 			print(leader.id)
 		
 		response_dict['available_cleaners_count'] = available_cleaners.count()
