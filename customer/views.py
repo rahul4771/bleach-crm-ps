@@ -2158,8 +2158,8 @@ class GetMultipleServiceCleaningSlotes(APIView):
 				if slote == 14 and slote_duration == 2:
 					print(busy_leaders,"busy_leaders")
 					print(busy_cleaners,"busy_cleaners")
-					print(absent_cleaners.count(),"absent cleaners")
-					print(absent_leaders.count(),"absent leaders")
+					print(absent_cleaners,"absent cleaners")
+					print(absent_leaders,"absent leaders")
 
 				#slote appending
 				if((total_newcleaners-busy_cleaners)>=number_of_cleaners and (total_newleaders-busy_leaders)>=1):
