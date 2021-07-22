@@ -2016,7 +2016,7 @@ class GetMultipleServiceCleaningSlotes(APIView):
 	def post(self,request):
 		dropdown_slotes  = {}
 
-		cleaning_date       = datetime.strptime(request.data.get('cleaning_date'),'%d-%m-%Y')
+		cleaning_date       = (datetime.strptime(request.data.get('cleaning_date'),'%d-%m-%Y')).date()
 		number_of_cleaners  = int(request.data.get('number_of_cleaners'))-1
 		service_types       = request.data.get('service_types')
 		
