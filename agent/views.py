@@ -803,7 +803,7 @@ class AvailabilityCleaningCallendar(APIView):
 		followup_active_cleaners     = active_cleaners2.filter(Q(Q(member__user_type='TEAMINCHARGE')|Q(member__user_type='CLEANER'))).values_list('member',flat=True)
 
 		print(cleaning_active_cleaners,"cleaning_active_cleaners")
-		print(cleaning_active_leaders,"cleaning_active_leaders")
+		print(cleaning_active_team_leaders,"cleaning_active_leaders")
 		#merging
 		for active_team_leaders in cleaning_active_team_leaders:
 			team_leaders_scheduled.append(active_team_leaders)
