@@ -618,17 +618,29 @@ const app=  new Vue({
             
             var cleaning_hours=this.currentSlotDetails.cleaning_hours
             var no_of_cleaners=this.currentSlotDetails.no_of_cleaners
-            var prod=cleaning_hours/no_of_cleaners
-            /*for(var i=2;i<=10;i+2){
+            var prod=cleaning_hours*no_of_cleaners
+            console.log("productivity :"+prod)
+            for(var i=2;i<=10;i=i+2){
+             
               var cleaning_hour=i
               var cleaner=Math.round(prod/cleaning_hour)
+              if(cleaner<1){
+                cleaner=1
+              }
+              console.log("cleaning hr :"+i+"productivity:"+prod+"cleaners"+cleaner+"i is"+i)
               this.cleaning_duration.push({
                 cleaning_hours:cleaning_hour,
-                no_of_cleaners:cleaner,
+                no_of_cleaners:cleaner
 
               })
-            }*/
-            if(cleaning_hours>2){
+              if(cleaning_hour==this.currentSlotDetails.cleaning_hours){
+                this.selected_cleaning_duration={
+                  cleaning_hours:cleaning_hour,
+                  no_of_cleaners:cleaner
+                }
+              }
+            }
+           /* if(cleaning_hours>2){
               var cleaning_hour1=cleaning_hours-2
               var cleaning_hour3=cleaning_hours+2
             }
@@ -660,7 +672,7 @@ const app=  new Vue({
               this.selected_cleaning_duration={
                 cleaning_hours:cleaning_hours,
                 no_of_cleaners:no_of_cleaners
-              }
+              }*/
             }
             else{
               this.currentSlotDetails.cleaning_hours=0
@@ -671,6 +683,7 @@ const app=  new Vue({
           },
           selectDuration(duration){
             this.selected_cleaning_duration=duration
+            this.editCleaning()
           },
           editCleaning(){
             var service_type=[]
