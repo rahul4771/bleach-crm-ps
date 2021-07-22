@@ -3972,6 +3972,9 @@ try {
           var productivity = data["perhour_cleaning"];
           console.log("productivity is "+productivity)
           var manhour = parseInt(total_estimated_size / productivity);
+          if(manhour<1){
+            manhour=1
+          }
         }
         console.log("size estimated is" + total_estimated_size);
          console.log("sofa size estimated is" + total_sofa_size);
