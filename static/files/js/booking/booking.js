@@ -2922,7 +2922,7 @@ try {
       type: a.type,
       age: a.age,
       stain: a.stain,
-      stain_reason: a.stain_reason,
+      stain_reason: a.stain_reason.split(','),
       wall_type: a.wall_type,
       floor_type: a.floor_type,
       ceiling_type: a.ceiling_type,
@@ -2939,6 +2939,9 @@ try {
   async saveChanges() {
       await this.calcSize()
        this.otherService.section_cost=this.otherService.size.cost
+       if(this.otherService.stain_reason.length>0){
+         this.otherService.stain_reason=this.otherService.stain_reason.join()
+       }
     this.otherServices[this.currentItem] = this.otherService;
     this.billingData[this.currentItem].section=this.otherService
     this.dialog = false;
@@ -3059,7 +3062,9 @@ try {
 
     await this.calcSize();
     this.otherService.section_cost=this.otherService.size.cost
-   
+   if(this.otherService.stain_reason.length>0){
+     this.otherService.stain_reason=this.otherService.stain_reason.join()
+   }
     this.otherServices.push(this.otherService);
     if(this.serviceType=='Upholstery Cleaning')
     {
@@ -3105,7 +3110,9 @@ try {
 
     await this.calcSize();
     this.otherService.section_cost=this.otherService.size.cost
-   
+    if(this.otherService.stain_reason.length>0){
+      this.otherService.stain_reason=this.otherService.stain_reason.join()
+    }
     this.otherServices.push(this.otherService);
     if(this.serviceType=='Upholstery Cleaning')
     {
@@ -3263,6 +3270,7 @@ try {
      this.imageData=[]
      sampleServicesBill.service=this.serviceType
      Object.assign(sampleServicesBill.bill, this.billingData);
+
      this.multiServicesBill.push(sampleServicesBill)
        this.activeTab='Cart'
        window.scrollTo(0,0);
