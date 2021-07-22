@@ -2083,7 +2083,7 @@ class GetMultipleServiceCleaningSlotes(APIView):
 				today_shifts        = ShiftSchedule.objects.select_related('staff').filter(shift_date=cleaning_date).values_list('staff',flat=True)
 				super_shift_cleaners= UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(id__in=today_shifts).filter( Q(Q(universal_shift_start__lte=slote_start_time)&Q(universal_shift_end__gte=slote_start_time))&Q(Q(universal_shift_start__lte=slote_end_time)&Q(universal_shift_end__gte=slote_end_time)) ).values_list('id',flat=True)
 				super_shift_leaders = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(id__in=today_shifts).filter(Q(Q(universal_shift_start__lte=slote_start_time)&Q(universal_shift_end__gte=slote_start_time))&Q(Q(universal_shift_start__lte=slote_end_time)&Q(universal_shift_end__gte=slote_end_time))).values_list('id',flat=True)
-				if slote == 2 and slote_duration == 2:
+				if slote == 14 and slote_duration == 2:
 					print(slote_start_time,"slote_start_time")
 					print(slote_end_time,"slote_end_time")
 					print(super_shift_cleaners,"super_shift_cleaners")
