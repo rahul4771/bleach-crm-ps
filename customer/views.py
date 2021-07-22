@@ -2060,10 +2060,10 @@ class GetMultipleServiceCleaningSlotes(APIView):
 			elif service_type == 'Outdoor Cleaning':
 				total_cleaners 	= total_cleaners.filter(is_outdoor_skill=True)
 				total_leaders 	= total_leaders.filter(is_outdoor_skill=True)
-		
-		#absent cleaners and leaders	
-		absent_cleaners = LeaveSchedule.objects.select_related('staff').filter(leave_date=cleaning_date).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
-		absent_leaders  = LeaveSchedule.objects.select_related('staff').filter(leave_date=cleaning_date,staff__user_type='TEAMINCHARGE').values_list('staff',flat=True)
+
+		#absent cleaners and leaders
+		absent_cleaners   = LeaveSchedule.objects.select_related('staff').filter(leave_date=cleaning_date).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
+		absent_leaders    = LeaveSchedule.objects.select_related('staff').filter(leave_date=cleaning_date,staff__user_type='TEAMINCHARGE').values_list('staff',flat=True)	
 
 		slotes           =[0,2,4,6,8,10,12,14,16,18,20,22]
 		slote_durations  =[2,4,6,8,10]
@@ -2083,32 +2083,20 @@ class GetMultipleServiceCleaningSlotes(APIView):
 				today_shifts        = ShiftSchedule.objects.select_related('staff').filter(shift_date=cleaning_date).values_list('staff',flat=True)
 				super_shift_cleaners= UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(id__in=today_shifts).filter( Q(Q(universal_shift_start__lte=slote_start_time)&Q(universal_shift_end__gte=slote_start_time))&Q(Q(universal_shift_start__lte=slote_end_time)&Q(universal_shift_end__gte=slote_end_time)) ).values_list('id',flat=True)
 				super_shift_leaders = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(id__in=today_shifts).filter(Q(Q(universal_shift_start__lte=slote_start_time)&Q(universal_shift_end__gte=slote_start_time))&Q(Q(universal_shift_start__lte=slote_end_time)&Q(universal_shift_end__gte=slote_end_time))).values_list('id',flat=True)
-				if slote == 14 and slote_duration == 2:
-					print(slote_start_time,"slote_start_time")
-					print(slote_end_time,"slote_end_time")
-					print(super_shift_cleaners,"super_shift_cleaners")
-					print(super_shift_leaders,"super_shift_leaders")
-					
-				# 	print(shift_cleaners,"shift_cleaners")
-				# 	print(shift_leaders,"shift_leaders")
-				# 	print(today_shifts,"today_shifts")
-				# 	print(super_shift_cleaners,"super_shift_cleaners")
-				# 	print(super_shift_leaders,"super_shift_leaders")
-				# 	print(cleaning_date)
-					# print(busy_leaders,"busy leaders")
-					# print(total_newleaders,"total_newleaders")
-					# print(busy_cleaners,"busy cleaners")
-					# print(total_newcleaners,"total_newcleaners")
-					# print(total_cleaners)
-					# print(total_leaders)
+				
 
 				total_newcleaners = total_cleaners.filter(Q(Q(id__in=shift_cleaners)|Q(id__in=super_shift_cleaners))).exclude(id__in=absent_cleaners).count()-1
-				total_newleaders  = total_leaders.filter(Q(Q(id__in=shift_leaders)|Q(id__in=super_shift_leaders))).exclude(id__in=absent_leaders).count()
+				total_newleaders  = total_leaders.filter(Q(Q(id__in=shift_leaders)|Q(id__in=super_shift_leaders))).exclude(id__in=absent_leaders).count()		
+				
 
+				new_absent_cleaners     = UserProfile.objects.filter(id__in=absent_cleaners).filter(Q(Q(id__in=shift_cleaners)|Q(id__in=super_shift_cleaners))).values_list('staff',flat=True)
+				new_absent_leaders      = UserProfile.objects.filter(id__in=absent_leaders).filter(Q(Q(id__in=shift_cleaners)|Q(id__in=super_shift_cleaners))).values_list('staff',flat=True)
+				
 				active_cleaners1 	= CleaningTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime))|Q(Q(end_at__gte=slote_start_datetime)&Q(end_at__lte=slote_end_datetime))|Q(Q(start_at__lte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__gte=slote_end_datetime))|Q(Q(start_at__gte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__lte=slote_end_datetime))))
 				active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime))|Q(Q(end_at__gte=slote_start_datetime)&Q(end_at__lte=slote_end_datetime))|Q(Q(start_at__lte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__gte=slote_end_datetime))|Q(Q(start_at__gte=slote_start_datetime)&Q(end_at__gte=slote_start_datetime)&Q(start_at__lte=slote_end_datetime)&Q(end_at__lte=slote_end_datetime))))
 
 				for service_type in service_types:
+					
 					if service_type == 'General Cleaning':
 						active_cleaners1 	= active_cleaners1.filter(member__is_general_skill=True)
 						active_cleaners2 	= active_cleaners2.filter(member__is_general_skill=True)
@@ -2166,13 +2154,19 @@ class GetMultipleServiceCleaningSlotes(APIView):
 				for active_team_member in followup_active_cleaners:
 					team_members_scheduled.append(active_team_member)
 
-				for absent_cleaner in absent_cleaners:
+				for absent_cleaner in new_absent_cleaners:
 					team_members_scheduled.append(absent_cleaner)
-				for absent_leader in absent_leaders:
+				for absent_leader in new_absent_leaders:
 					team_leaders_scheduled.append(absent_leader)
 
 				busy_leaders  = len(set(team_leaders_scheduled))
 				busy_cleaners = len(set(team_members_scheduled))
+				
+				if slote == 14 and slote_duration == 2:
+					print(busy_leaders,"busy_leaders")
+					print(busy_cleaners,"busy_cleaners")
+					print(new_absent_cleaners,"absent cleaners")
+					print(new_absent_leaders,"absent leaders")
 
 				#slote appending
 				if((total_newcleaners-busy_cleaners)>=number_of_cleaners and (total_newleaders-busy_leaders)>=1):
