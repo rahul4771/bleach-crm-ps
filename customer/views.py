@@ -2193,6 +2193,8 @@ class GetMultipleServiceCleaningSlotes(APIView):
 					print(busy_cleaners,"busy_cleaners")
 					print(new_absent_cleaners,"absent cleaners")
 					print(new_absent_leaders,"absent leaders")
+					print(total_newcleaners,"total_newcleaners")
+					print(total_newleaders,"total_newleaders")
 
 				#slote appending
 				if((total_newcleaners-busy_cleaners)>=number_of_cleaners and (total_newleaders-busy_leaders)>=1):
