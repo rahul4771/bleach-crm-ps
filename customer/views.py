@@ -2156,6 +2156,13 @@ class GetMultipleServiceCleaningSlotes(APIView):
 				busy_leaders  = len(set(team_leaders_scheduled))
 				busy_cleaners = len(set(team_members_scheduled))
 
+				if slote == 2 and slote_duration == 2: 
+					print(number_of_cleaners,"number_of_cleaners")
+					print(busy_leaders,"busy leaders")
+					print(total_newcleaners,"total_newcleaners")
+					print(busy_cleaners,"busy leaders")
+					print(total_newleaders,"busy leaders")
+
 				#slote appending
 				if((total_newcleaners-busy_cleaners)>=number_of_cleaners and (total_newleaders-busy_leaders)>=1):
 					available_durations.append(slote_duration)				
