@@ -898,6 +898,8 @@ class AvailabilityCleaningCallendar(APIView):
 		print(cleaning_active_team_leaders,"cleaning_active_team_leaders")
 		print(new_absent_cleaners,"new_absent_cleaners")
 		print(new_absent_leaders,"new_absent_leaders")
+		print(team_members_scheduled,"team_members_scheduled")
+		print(team_leaders_scheduled,"team_leaders_scheduled")
 		available_cleaners = total_cleaners.exclude(id__in=team_members_scheduled)
 		available_leaders  = total_leaders.exclude(id__in=team_leaders_scheduled)
 		
