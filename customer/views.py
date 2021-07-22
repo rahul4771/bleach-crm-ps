@@ -2076,7 +2076,6 @@ class GetMultipleServiceCleaningSlotes(APIView):
 				slote_end_datetime                = slote_start_datetime+timedelta(hours=slote_duration)
 				slote_start_time 			      = slote_start_datetime.time()
 				slote_end_time                    = slote_end_datetime.time()
-				cleaning_date                     = datetime.strptime(request.data.get('cleaning_date'),'%d-%m-%Y')
 
 				#included shift cleaners
 				shift_cleaners      = ShiftSchedule.objects.select_related('staff').filter(shift_date=cleaning_date).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=slote_start_time)&Q(shift1_end_at__gte=slote_start_time))&Q(Q(shift1_start_at__lte=slote_end_time)&Q(shift1_end_at__gte=slote_end_time))) | Q(Q(Q(shift2_start_at__lte=slote_start_time)&Q(shift2_end_at__gte=slote_start_time))&Q(Q(shift2_start_at__lte=slote_end_time)&Q(shift2_end_at__gte=slote_end_time)))).values_list('staff',flat=True)
@@ -2084,13 +2083,18 @@ class GetMultipleServiceCleaningSlotes(APIView):
 				today_shifts        = ShiftSchedule.objects.select_related('staff').filter(shift_date=cleaning_date).values_list('staff',flat=True)
 				super_shift_cleaners= UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(id__in=today_shifts).filter( Q(Q(universal_shift_start__lte=slote_start_time)&Q(universal_shift_end__gte=slote_start_time))&Q(Q(universal_shift_start__lte=slote_end_time)&Q(universal_shift_end__gte=slote_end_time)) ).values_list('id',flat=True)
 				super_shift_leaders = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(id__in=today_shifts).filter(Q(Q(universal_shift_start__lte=slote_start_time)&Q(universal_shift_end__gte=slote_start_time))&Q(Q(universal_shift_start__lte=slote_end_time)&Q(universal_shift_end__gte=slote_end_time))).values_list('id',flat=True)
-				if slote == 2 and slote_duration == 2: 
-					print(shift_cleaners,"shift_cleaners")
-					print(shift_leaders,"shift_leaders")
-					print(today_shifts,"today_shifts")
+				if slote == 2 and slote_duration == 2:
+					print(slote_start_time,"slote_start_time")
+					print(slote_end_time,"slote_end_time")
 					print(super_shift_cleaners,"super_shift_cleaners")
 					print(super_shift_leaders,"super_shift_leaders")
-					print(cleaning_date)
+					
+				# 	print(shift_cleaners,"shift_cleaners")
+				# 	print(shift_leaders,"shift_leaders")
+				# 	print(today_shifts,"today_shifts")
+				# 	print(super_shift_cleaners,"super_shift_cleaners")
+				# 	print(super_shift_leaders,"super_shift_leaders")
+				# 	print(cleaning_date)
 					# print(busy_leaders,"busy leaders")
 					# print(total_newleaders,"total_newleaders")
 					# print(busy_cleaners,"busy cleaners")
