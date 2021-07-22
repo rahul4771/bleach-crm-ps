@@ -819,6 +819,7 @@ const app = new Vue({
       }).then(response=>{
         console.log(response)
         $('#edit-payment-close').click()
+        window.location.reload()
         
       })
     }
@@ -833,7 +834,7 @@ const app = new Vue({
       }).then(response=>{
         console.log(response)
         $('#edit-payment-close').click()
-        
+        window.location.reload()
       })
       }
       

@@ -2,7 +2,12 @@
 {% block content %}
 {% load static %}
 <div class="wrapper"><!--wrapper-->
+
+{% if request.user.user_type == 'AGENT' %}
 {% include "agent/common/header.html" %}
+{% else %}
+{% include "bookingofficer/common/header.html" %}
+{% endif %}
 
 <div class="wrapper"><!--wrapper-->
    
@@ -55,7 +60,7 @@
 		
 		<br><br>
 <div class="common-sub-head align-left ticket-form-head">Ticket Form</div> 
-	<form method="post" action="{% url 'agent:agent-ticketregister' %}" enctype="multipart/form-data">{% csrf_token %}
+	<form method="post" action="{% url 'common_items:ticketregister' %}" enctype="multipart/form-data">{% csrf_token %}
 	<input type="hidden" name="order_id" id="order_id_hidden">
 
 <div class="ticket-wrapper-full ltyellow-border ticket-form"><!--ticket-wrapper-full-->

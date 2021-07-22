@@ -1176,7 +1176,10 @@
                                     <div v-if="edit" class="order-clean-edit"  >
                                     {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR' or request.user.user_type == 'SALESADMIN' %}
                                         <img class="pointer" src="{% static 'files/icons/edit.png' %}" onclick="editSection(this)" data-section_id="{{section.id}}" data-index="{{forloop.counter}}" data-service="{{orderschedule.order_scheduler_book.service_type.name}}" data-eval_book_id="{{orderschedule.order_scheduler_book.id}}">
+                                        {% if forloop.last and forloop.counter == 1  %}
+                                        {% else %}
                                         <img class="pointer" src="{% static 'files/icons/delete.png' %}" @click="deleteSection({{forloop.counter}},{{section.id}})">
+                                        {% endif %}
                                     {% endif %}
                                     </div>
                                    
@@ -1893,9 +1896,11 @@
                                         </div>
                                         {% endif %}
 
+                                        {% if request.user.user_type == 'AGENT' %}
                                         <div class="row">
                                             <button style="width: 153px !important;" data-toggle="modal" data-target="#raiseTicketModel" class="view-button">Raise Ticket</button>
                                         </div>
+                                        {% endif %}
                                         
                                     </div>
                                     {% endif %}
@@ -2293,7 +2298,7 @@
             <div class="row">
                 <div class="col-md-12 text-center">
                     <div class="cancel-model-content">
-                        <a href="{% url 'agent:agent-orderticketregister' order.id %}"><button class="sent-button">Yes</button></a>
+                        <a href="{% url 'common_items:orderticketregister' order.id %}"><button class="sent-button">Yes</button></a>
                         <button data-dismiss="modal" class="view-button">Cancel</button>
                     </div>
                 </div>
