@@ -558,12 +558,12 @@ width:100% !important;
 }
 .cl-customer-marker{
     background: #12AED8;
-    height:42px;
+    height:32px;
     color:#ffffff;
     
 }
 .marker-container{
-    height:42px;
+    height:32px;
     cursor:pointer;
     background: #edf1f5;
     
@@ -572,7 +572,7 @@ width:100% !important;
     position: relative;
 }
 .cl-dummy{
-    height:42px;
+    height:32px;
    
 }
 .duration-active{
@@ -654,14 +654,14 @@ width:100% !important;
 }
 
 .cl-marker-text{
-    padding-top: 10px;
+    padding-top: 5px;
     padding-left: 10px;
     color:#ffffff;
 }
 .cl-marker-profile-pic{
-    height:34px;
-    width:34px !important;
-    border-radius:34px;
+    height:24px;
+    width:24px !important;
+    border-radius:24px;
     margin:3px;
     border: 1px solid white;
 
@@ -670,14 +670,14 @@ width:100% !important;
     position: relative;
 }
 .cl-marker-count{
-    height: 34px;
-    width: 34px !important;
-    border-radius: 34px;
+    height: 24px;
+    width: 24px !important;
+    border-radius: 24px;
     margin-top: 3px;
     color: #000000;
     text-align: center;
     font-size: 14px;
-    padding-top: 7px;
+    padding-top: 2px;
     background: #ffffff;
     float: right;
     margin-right: 3px;
@@ -692,7 +692,7 @@ width:100% !important;
 }
 .cl-continue{
    
-    height:42px;
+    height:32px;
     color:#ffffff;
     width:110%;
     z-index: 10;
@@ -702,7 +702,7 @@ width:100% !important;
     border-radius:20px;
     width:100% !important;
     
-    height:42px;
+    height:32px;
     color:#ffffff;
     padding:1px;
     z-index: 10;
@@ -712,7 +712,7 @@ width:100% !important;
     border-bottom-left-radius: 20px;
     width:110% !important;
    
-    height:42px;
+    height:32px;
     color:#ffffff;
     padding:1px;
     z-index: 10;
@@ -724,7 +724,7 @@ width:100% !important;
     padding:1px;
     width:100% !important;
     
-    height:42px;
+    height:32px;
     color:#ffffff;
     padding:1px;
     z-index: 10;

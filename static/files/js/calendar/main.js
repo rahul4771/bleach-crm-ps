@@ -464,15 +464,16 @@ const app=  new Vue({
           }
             axios.get(this.url+"/agent/cleaningcallendar?cleaning_callendar_date="+this.cleaningDate).then((response) => {
                 this.slots = response.data;
-                for(var i=0;i<this.slots.notapproved_cleanings.length;i++){
-
-                    this.combineSlots.push({type:'not approved',class:'subscription-cleaning-bg',slots:this.slots.notapproved_cleanings[i]})
-
-                  }
+                
                 for(var j=0;j<this.slots.appoved_cleanings.length;j++){
 
                   this.combineSlots.push({type:'approved',class:'onetime-cleaning-status-bg',slots:this.slots.appoved_cleanings[j]})
                   
+                  }
+                  for(var i=0;i<this.slots.notapproved_cleanings.length;i++){
+
+                    this.combineSlots.push({type:'not approved',class:'subscription-cleaning-bg',slots:this.slots.notapproved_cleanings[i]})
+
                   }
                 for(var k=0;k<this.slots.followup_cleanings.length;k++){
                     var slot=this.slots.followup_cleanings[k]
