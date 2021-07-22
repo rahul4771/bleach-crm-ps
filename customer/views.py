@@ -2189,10 +2189,12 @@ class GetMultipleServiceCleaningSlotes(APIView):
 				busy_cleaners = len(set(team_members_scheduled))
 				
 				if slote == 14 and slote_duration == 2:
-					print(busy_leaders,"busy_leaders")
-					print(busy_cleaners,"busy_cleaners")
+					print(cleaning_active_cleaners,"cleaning_active_cleaners")
+					print(cleaning_active_team_leaders,"cleaning_active_team_leaders")
 					print(new_absent_cleaners,"absent cleaners")
 					print(new_absent_leaders,"absent leaders")
+					print(busy_leaders,"busy_leaders")
+					print(busy_cleaners,"busy_cleaners")
 					print(total_newcleaners,"total_newcleaners")
 					print(total_newleaders,"total_newleaders")
 
