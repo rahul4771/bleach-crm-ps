@@ -4214,3 +4214,102 @@ class ResetcleaningTeam(IsAuthenticated,View):
 # 		for team in followupteams:
 # 			team.delete()
 # 		return redirect('stl:stldash-board')
+
+
+class TicketRegistration(IsAuthenticated,View):
+	def get(self,request):
+
+		try:
+			orders = Order.objects.filter(is_active=True)
+		except:
+			orders = None
+
+		investigators = UserProfile.objects.filter(Q(Q(user_type='QUALITYCONTROLL')|Q(user_type='OPERATIONSUPERVISOR')),is_active=True)
+
+		return render(request,'agent/ticket/ticket_registration.html',{'orders':orders,'investigators':investigators})
+
+	def post(self,request):
+		order_id           = request.POST.get('order_id')
+		
+		investigation_form = InvestigationForm(request.POST)
+		if investigation_form.is_valid():
+			investigation_form_save             = investigation_form.save(commit=False)
+			investigation_form_save.assigned_by = request.user
+			investigation_form_save.order_id    = order_id
+			investigation_form_save.scheduled_at= timezone.now()
+			investigation_form_save.save()
+
+			FollowUp.objects.create(investigation=investigation_form_save,status='TICKET_RISED')
+
+			#save media
+			investigation_medias = request.FILES.getlist('investigation_media')
+			if not investigation_medias == ['']:
+					for image in investigation_medias:
+						InvestigationMedia.objects.create(
+							investigation = investigation_form_save,
+							media = image,
+							media_type = 'PHOTO',
+							taken_status = 'CUSTOMER_SEND',
+							is_active = True
+						)
+						
+			#Email Send
+			msg_html = render_to_string('email/rise_ticket_request.html',{'investigation_form_save':investigation_form_save})
+			msg      = EmailMultiAlternatives('Ticket Raised', '', 'notification@bleach-kw.com', [investigation_form_save.investigator.email])
+			msg.attach_alternative(msg_html, "text/html")
+			msg.send(fail_silently=False)
+
+			messages.success(request,"Investigation Raised Succesfully!")
+		else:
+			messages.error(request,get_error(investigation_form))
+		
+
+		return redirect('common_items:ticketregister')
+
+
+class OrderTicketRegistration(IsAuthenticated,View):
+	def get(self,request,orderid):
+
+		order = Order.objects.filter(id=int(orderid)).first()
+
+		investigators = UserProfile.objects.filter(Q(Q(user_type='QUALITYCONTROLL')|Q(user_type='OPERATIONSUPERVISOR')),is_active=True)
+
+		return render(request,'agent/ticket/ticket_registration.html',{'order':order,'investigators':investigators})
+
+	def post(self,request,orderid):
+		order_id           = request.POST.get('order_id')
+		
+		investigation_form = InvestigationForm(request.POST)
+		if investigation_form.is_valid():
+			investigation_form_save             = investigation_form.save(commit=False)
+			investigation_form_save.assigned_by = request.user
+			investigation_form_save.order_id    = order_id
+			investigation_form_save.scheduled_at= timezone.now()
+			investigation_form_save.save()
+
+			FollowUp.objects.create(investigation=investigation_form_save,status='TICKET_RISED')
+
+			#save media
+			investigation_medias = request.FILES.getlist('investigation_media')
+			if not investigation_medias == ['']:
+					for image in investigation_medias:
+						InvestigationMedia.objects.create(
+							investigation = investigation_form_save,
+							media = image,
+							media_type = 'PHOTO',
+							taken_status = 'CUSTOMER_SEND',
+							is_active = True
+						)
+
+			#Email Send
+			msg_html = render_to_string('email/rise_ticket_request.html',{'investigation_form_save':investigation_form_save})
+			msg      = EmailMultiAlternatives('Ticket Raised', '', 'notification@bleach-kw.com', [investigation_form_save.investigator.email])
+			msg.attach_alternative(msg_html, "text/html")
+			msg.send(fail_silently=False)
+									
+			messages.success(request,"Investigation Raised Succesfully!")
+		else:
+			messages.error(request,get_error(investigation_form))
+		
+
+		return redirect('common_items:ticketregister')

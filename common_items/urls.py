@@ -11,6 +11,9 @@ urlpatterns = [
 		url(r'^tickets/$',views.TicketDetails.as_view(),name='tickets'),
 		url(r'^tickets/edit/(?P<ticket_id>[-\w]+)/(?P<order_id>[-\w]+)/$',views.TicketDetailsEdit.as_view(),name='tickets-edit'),
 		url(r'^ticket/details/(?P<client_id>[-\w]+)/(?P<followup_id>[-\w]+)/$',views.TicketAdvanced.as_view(),name='ticketadvanced'),
+		url(r'^tickets/register/$',views.TicketRegistration.as_view(),name='ticketregister'),
+		url(r'^tickets/order/register/(?P<orderid>[-\w]+)/$',views.OrderTicketRegistration.as_view(),name='orderticketregister'),
+		
 		url(r'^customer-bookings/$',views.CustomerBookingsList.as_view(),name='customer-bookings'),
 		url(r'^payments/$',views.PaymentDetails.as_view(),name='payments'),
 		url(r'^active-subscriptions/$',views.ActiveSubscriptions.as_view(),name='active-subscriptions'),
