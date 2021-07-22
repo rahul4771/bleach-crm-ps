@@ -802,7 +802,8 @@ class AvailabilityCleaningCallendar(APIView):
 		followup_active_team_leaders = active_cleaners2.filter(member__user_type='TEAMINCHARGE').values_list('member',flat=True)
 		followup_active_cleaners     = active_cleaners2.filter(Q(Q(member__user_type='TEAMINCHARGE')|Q(member__user_type='CLEANER'))).values_list('member',flat=True)
 
-
+		print(cleaning_active_cleaners,"cleaning_active_cleaners")
+		print(cleaning_active_leaders,"cleaning_active_leaders")
 		#merging
 		for active_team_leaders in cleaning_active_team_leaders:
 			team_leaders_scheduled.append(active_team_leaders)
@@ -862,7 +863,7 @@ class AvailabilityCleaningCallendar(APIView):
 
 		available_cleaners = total_cleaners.exclude(id__in=team_members_scheduled).filter(Q(id__in=shift_cleaners)|Q(id__in=super_shift_cleaners))
 		available_leaders  = total_leaders.exclude(id__in=team_leaders_scheduled).filter(Q(id__in=shift_leaders)|Q(id__in=super_shift_leaders))
-		print(available_cleaners.count(),"available_cleaners")
+		
 		response_dict['available_cleaners_count'] = available_cleaners.count()
 		response_dict['available_leaders_count']  = available_leaders.count()
 		response_dict['available_leaders']        = UserProfileShowSerializer(instance=available_leaders,many=True).data
