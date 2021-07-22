@@ -2203,7 +2203,7 @@ class GetMultipleServiceCleaningSlotes(APIView):
 
 				#slote appending
 				if total_newcleaners and total_newleaders:
-					if((total_newcleaners.count())>=number_of_cleaners and (total_newleaders.count())>=1):
+					if((total_newcleaners.count()-1)>=number_of_cleaners and (total_newleaders.count())>=1):
 						available_durations.append(slote_duration)				
 			
 			available_slotes[slote] = available_durations
