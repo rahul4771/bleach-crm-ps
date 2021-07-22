@@ -2016,7 +2016,7 @@ class GetMultipleServiceCleaningSlotes(APIView):
 	def post(self,request):
 		dropdown_slotes  = {}
 
-		cleaning_date       = (datetime.strptime(request.data.get('cleaning_date'),'%d-%m-%Y')).date()
+		cleaning_date       = datetime.strptime(request.data.get('cleaning_date'),'%d-%m-%Y')
 		number_of_cleaners  = int(request.data.get('number_of_cleaners'))-1
 		service_types       = request.data.get('service_types')
 		
@@ -2076,6 +2076,7 @@ class GetMultipleServiceCleaningSlotes(APIView):
 				slote_end_datetime                = slote_start_datetime+timedelta(hours=slote_duration)
 				slote_start_time 			      = slote_start_datetime.time()
 				slote_end_time                    = slote_end_datetime.time()
+				cleaning_date                     = datetime.strptime(request.data.get('cleaning_date'),'%d-%m-%Y')
 
 				#included shift cleaners
 				shift_cleaners      = ShiftSchedule.objects.select_related('staff').filter(shift_date=cleaning_date).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=slote_start_time)&Q(shift1_end_at__gte=slote_start_time))&Q(Q(shift1_start_at__lte=slote_end_time)&Q(shift1_end_at__gte=slote_end_time))) | Q(Q(Q(shift2_start_at__lte=slote_start_time)&Q(shift2_end_at__gte=slote_start_time))&Q(Q(shift2_start_at__lte=slote_end_time)&Q(shift2_end_at__gte=slote_end_time)))).values_list('staff',flat=True)
