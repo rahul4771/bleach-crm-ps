@@ -981,7 +981,7 @@
 
                                     </div>
                                     <div id="id_order{{orderschedule.order_scheduler_book.id}}" class="row order-section-1">
-                                        <div class="col-md-3 c-mt-50">
+                                        <div class="col-md-4 c-mt-50">
                                         
                                             <div class="row">
                                                 <div class="col-md-3">
@@ -1048,7 +1048,7 @@
                                                 </ul>
                                             </div>
                                         </div>
-                                        <div class="col-md-3 m-mt30">
+                                        <div class="col-md-2 m-mt30">
                                             <div class="agent-content-section1 c-mt-022">
                                                 <!-- <div v-if="edit" class="order-agent-edit" >
                                                     <img class="pointer" src="{% static 'files/icons/edit.png' %}">
@@ -1065,9 +1065,13 @@
                                             </div>
                                         </div>
                                         <div class="col-md-4 m-mt30">
+                                            <p style=" font-size: 20px;
+                                            margin: 0 0 10px 0;
+                                            padding: 0;
+                                            color: #434343; margin-top: -22px !important;">Total no of Visits <span style="color:#0D87C5;" class="visitcount{{orderschedule.order_scheduler_book.id}}"></span> </p>
                                             <div id="visti-section{{orderschedule.order_scheduler_book.id}}"
-                                                class="agent-content-section2 visti-section  c-mt-022">
-                                                <p>Total no of Visits <span style="color:#0D87C5;" class="visitcount{{orderschedule.order_scheduler_book.id}}"></span> </p>
+                                                class="agent-content-section2 visti-section  c-mt-022" style="margin-top: 10px;">
+                                                <!-- <p>Total no of Visits <span style="color:#0D87C5;" class="visitcount{{orderschedule.order_scheduler_book.id}}"></span> </p> -->
 
                                                 
                                                 <div class="row visit-times">
@@ -1103,10 +1107,21 @@
                                                 </div>
 
                                             </div>
-                                            <div id="myDropdown{{orderschedule.order_scheduler_book.id}}" class="c-dropdown-content">
+                                            <div id="myDropdown{{orderschedule.order_scheduler_book.id}}" class="c-dropdown-content" style="max-height: 350px; overflow: auto;">
                                                 <div id="visti-section{{orderschedule.order_scheduler_book.id}}" class="agent-content-section2 visti-section  c-mt-022">
-                                                    <p>Total no of Visits <span style="color:#0D87C5;" class="visitcount{{orderschedule.order_scheduler_book.id}}"></span> </p>
+                                                   
+                                                    <!-- <p>Total no of Visits <span style="color:#0D87C5;" class="visitcount{{orderschedule.order_scheduler_book.id}}"></span> </p> -->
+                                               
+                                                    
                                                     <div class="row ">
+                                                        <div class="col-md-6  time-text m-hide-div">
+                                                        </div>
+                                                        <div class="col-md-6  time-text m-hide-div">
+                                                        </div>
+                                                        <div class="col-md-6  time-text m-hide-div">
+                                                        </div>
+                                                        <div class="col-md-6  time-text m-hide-div">
+                                                        </div>
                                                         {% if orderschedule.order_scheduler_book.cleaning_policy  ==  'ONE TIME SERVICE' %}
                                                         {% for multi_order_schedule in order.orderschedules %}
                                                         {% if multi_order_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
@@ -1161,7 +1176,10 @@
                                     <div v-if="edit" class="order-clean-edit"  >
                                     {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR' or request.user.user_type == 'SALESADMIN' %}
                                         <img class="pointer" src="{% static 'files/icons/edit.png' %}" onclick="editSection(this)" data-section_id="{{section.id}}" data-index="{{forloop.counter}}" data-service="{{orderschedule.order_scheduler_book.service_type.name}}" data-eval_book_id="{{orderschedule.order_scheduler_book.id}}">
+                                        {% if forloop.last and forloop.counter == 1  %}
+                                        {% else %}
                                         <img class="pointer" src="{% static 'files/icons/delete.png' %}" @click="deleteSection({{forloop.counter}},{{section.id}})">
+                                        {% endif %}
                                     {% endif %}
                                     </div>
                                    
@@ -1516,7 +1534,7 @@
                                                             class="fa fa-times fa-lg"></i></button>
                                                 </div>
                                                 <div class="w3-modal-content w3-animate-zoom">
-                                                    <img id="img01" style="width:100%">
+                                                    <img id="img01" style="width:100%;max-height: 400px;">
                                                 </div>
                                             </div>
 
@@ -1671,9 +1689,7 @@
                                                     <div class="col-xs-6">Payment Method</div>
                                                     <div class="col-xs-6">: <span class="c-text">{{order.evaluation.payment_method|default_if_none:''}}</span>
                                                         {% if order.amount_paid == 0.000 and order.evaluation.is_promocode_applied == False and order.evaluation.payment_method != 'SUBSCRIPTION' %}
-                                                        <!--<button class="model-close ml-10" data-toggle="modal" data-target="#paymentModel">
-                                                            <img  class="policy-time-edit pointer" src="{% static 'files/icons/edit.png' %}">
-                                                        </button>-->
+                                                       
                                                         <button class="model-close ml-10" >
                                                             <img  class="policy-time-edit pointer" src="{% static 'files/icons/edit.png' %}" data-amount_before_cleaning="{{order.evaluation.before_cleaning_amount}}" data-amount_after_cleaning="{{order.evaluation.after_cleaning_amount}}" data-discount="{{order.evaluation.discount}}" data-payment_method="{{order.evaluation.payment_method}}" data-total_amount="{{order.evaluation.estimated_cost}}" data-final_amount="{{order.evaluation.total_cost}}" onclick="openPaymentEdit(this)">
                                                         </button>
@@ -1727,12 +1743,6 @@
                                             </div>
                                         </div>
 
-                                        <!-- <div class="row">
-                                            <div class="col-md-5">
-                                               
-                                                
-                                            </div>
-                                        </div> -->
                                     </div>
 
                                     {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR' or request.user.user_type == 'SALESADMIN' or request.user.user_type == 'ACCOUNTANT' %}
@@ -1886,9 +1896,11 @@
                                         </div>
                                         {% endif %}
 
+                                        {% if request.user.user_type == 'AGENT' %}
                                         <div class="row">
                                             <button style="width: 153px !important;" data-toggle="modal" data-target="#raiseTicketModel" class="view-button">Raise Ticket</button>
                                         </div>
+                                        {% endif %}
                                         
                                     </div>
                                     {% endif %}
@@ -2286,7 +2298,7 @@
             <div class="row">
                 <div class="col-md-12 text-center">
                     <div class="cancel-model-content">
-                        <a href="{% url 'agent:agent-orderticketregister' order.id %}"><button class="sent-button">Yes</button></a>
+                        <a href="{% url 'common_items:orderticketregister' order.id %}"><button class="sent-button">Yes</button></a>
                         <button data-dismiss="modal" class="view-button">Cancel</button>
                     </div>
                 </div>

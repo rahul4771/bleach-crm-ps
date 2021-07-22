@@ -266,9 +266,15 @@
         
         <div class="row mt-20">
           <div class="col-md-12">
-            <div class="inv-check-orderhead">
-              Recommended List
-            </div>
+            <div class="d-flex d-grid">
+              <div class="inv-check-orderhead">
+                Recommended List
+              </div>
+              <div class="right-pos">
+                <button class="btn-p inv-plan-img-btn" onclick="openNavAddBundle('edit')"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+              </div>
+          </div>
+            
             <div class="mt-20">
               <table class="inv-table footable"> 
                 <thead>
@@ -286,7 +292,7 @@
                           Unit
                       </th>
                      
-                      <th data-hide="phone,tablet"  style="width: %;">Action</th>
+                      <th data-hide="phone,tablet"  style="width: %;">Status</th>
                   </tr>
               </thead>
               <tbody>
@@ -295,30 +301,47 @@
                   <td>0000000</td>
                   <td>Category 1</td>
                   <td>
-
-                    <div class="qty ">
-                      <span class="minus bg-dark">-</span>
-                      <input type="" class="count" name="qty" value="1" >
-                      <span class="plus bg-dark">+</span>
-                  </div>
+                    1
+               
                   </td>
                   <td>
-                    <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                    <span class="inv-dot c-about-finish ml-5"></span>
+                    Waiting
+                  </td>
+                </tr>
+                <tr>
+                  <td>0000000</td>
+                  <td>0000000</td>
+                  <td>Category 1</td>
+                  <td>
+                    6
+               
+                  </td>
+                  <td>
+                    <span class="inv-dot c-out-of-order ml-5"></span>
+                    Out 
+                  </td>
+                </tr><tr>
+                  <td>0000000</td>
+                  <td>0000000</td>
+                  <td>Category 1</td>
+                  <td>
+                    4
+               
+                  </td>
+                  <td>
+                    <span class="inv-dot c-active ml-5"></span>
+                    in
                   </td>
                 </tr>
                 
-                <tr>
-                  <td>           <button class="inv-plan-btn" onclick="openNavaddSegment2()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="" > Add Item</button></td>
-                </tr>
+              
               </tbody>
               </table>
             </div>
           </div>
         </div>
-        <div class="row mt-20 text-center">
-          <button class="sent-button" >Check Out</button>
-                        <button data-dismiss="modal" onclick="closeNavEditCategory()" class="view-button">Cancel</button>
-        </div>
+       
       </div>
 
 

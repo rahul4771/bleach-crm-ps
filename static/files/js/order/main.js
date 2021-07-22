@@ -60,6 +60,10 @@ function onClick(element) {
   document.getElementById("img01").src = element.src;
   document.getElementById("modal01").style.display = "block";
 }
+function onClose() {
+  
+  document.getElementById("modal01").style.display = "none";
+}
 /*function editSection(section){
   console.log("i m here")
   var sectiondata=$(section).data()
@@ -815,6 +819,7 @@ const app = new Vue({
       }).then(response=>{
         console.log(response)
         $('#edit-payment-close').click()
+        window.location.reload()
         
       })
     }
@@ -829,7 +834,7 @@ const app = new Vue({
       }).then(response=>{
         console.log(response)
         $('#edit-payment-close').click()
-        
+        window.location.reload()
       })
       }
       

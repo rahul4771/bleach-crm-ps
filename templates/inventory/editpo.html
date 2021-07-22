@@ -100,9 +100,11 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Unit</div>
 
-                    <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="attributes">
-                      </div>
+                    <div class="qty ">
+                        <span style="color: #4B4B4B;"  class="minus bg-dark qty-border-two">-</span>
+                        <input style="color: #4B4B4B;"  type="" class="count qty-border-two" name="qty" value="1" >
+                        <span style="color: #4B4B4B; margin-left: -4px !important;" class="plus bg-dark qty-border-two">+</span>
+                    </div>
                 </div>
 
             </div>
@@ -137,9 +139,11 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Unit</div>
 
-                    <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="attributes">
-                      </div>
+                    <div class="qty ">
+                        <span style="color: #4B4B4B; "  class="minus bg-dark qty-border-two">-</span>
+                        <input style="color: #4B4B4B;"  type="" class="count qty-border-two" name="qty" value="1" >
+                        <span  style="color: #4B4B4B; margin-left: -4px !important;" class="plus bg-dark qty-border-two">+</span>
+                    </div>
                 </div>
 
             </div>
@@ -195,7 +199,18 @@
 {% block javascript %}
 
 <script>
-
+    $(document).ready(function(){
+		    $('.count').prop('disabled', true);
+   			$(document).on('click','.plus',function(){
+				$('.count').val(parseInt($('.count').val()) + 1 );
+    		});
+        	$(document).on('click','.minus',function(){
+    			$('.count').val(parseInt($('.count').val()) - 1 );
+    				if ($('.count').val() == 0) {
+						$('.count').val(1);
+					}
+    	    	});
+ 		});
 
 
     function openNavAddStore() {

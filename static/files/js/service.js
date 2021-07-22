@@ -25,3 +25,14 @@ async function _get(url){
       });
     return result;
 }
+
+async function _put(url,data){
+  let result;
+  await axios.put(api+url , data).then(response => {
+      result = response;
+    })
+    .catch(({ response }) => {
+      result = response;
+    });
+  return result;
+}

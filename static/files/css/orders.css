@@ -1178,6 +1178,9 @@ select.minimal:focus {
   }
 }
 @media only screen and (max-width: 950px) {
+  .m-hide-div{
+    display: none !important;
+  }
   .bottom-card{
     display: none;
   }

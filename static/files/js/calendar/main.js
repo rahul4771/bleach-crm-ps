@@ -95,6 +95,7 @@ const app=  new Vue({
         parsedSlots:[],
         no_of_slots:0,
         teammembers:'yes',
+        
         slot:{
           "1":{
             slots:[]
@@ -187,6 +188,7 @@ const app=  new Vue({
         new_calendar:true,
         url:'https://my.bleachkw.com',
        // url:'https://test.bleach-kw.com',
+      //   url:'http://localhost:8000',
         //url: 'http://127.0.0.1:8000',
         cleaningData:{
           cleaning_datetime_start:'',
@@ -215,7 +217,8 @@ const app=  new Vue({
         limitdate:'15-07-2021',
         cleaning_duration:[],
             selected_cleaning_duration:{},
-            currentServices:[]
+            currentServices:[],
+           
 
       },
       watch: {
@@ -233,7 +236,9 @@ const app=  new Vue({
         //this.cleaningDate=urldate.split('-').reverse().join('-')
         //this.selectedDate=urldate.split('-').reverse().join('-')
         console.log("cleaning date us "+this.cleaningDate)
-       
+       if(!urldate){
+         urldate=moment().format().split("T")[0]
+       }
        this.calChecker(urldate)
         console.log("today is "+this.today)
         console.log("time is "+this.currentTime)
@@ -464,15 +469,16 @@ const app=  new Vue({
           }
             axios.get(this.url+"/agent/cleaningcallendar?cleaning_callendar_date="+this.cleaningDate).then((response) => {
                 this.slots = response.data;
-                for(var i=0;i<this.slots.notapproved_cleanings.length;i++){
-
-                    this.combineSlots.push({type:'not approved',class:'subscription-cleaning-bg',slots:this.slots.notapproved_cleanings[i]})
-
-                  }
+                
                 for(var j=0;j<this.slots.appoved_cleanings.length;j++){
 
                   this.combineSlots.push({type:'approved',class:'onetime-cleaning-status-bg',slots:this.slots.appoved_cleanings[j]})
                   
+                  }
+                  for(var i=0;i<this.slots.notapproved_cleanings.length;i++){
+
+                    this.combineSlots.push({type:'not approved',class:'subscription-cleaning-bg',slots:this.slots.notapproved_cleanings[i]})
+
                   }
                 for(var k=0;k<this.slots.followup_cleanings.length;k++){
                     var slot=this.slots.followup_cleanings[k]
@@ -612,8 +618,29 @@ const app=  new Vue({
             
             var cleaning_hours=this.currentSlotDetails.cleaning_hours
             var no_of_cleaners=this.currentSlotDetails.no_of_cleaners
-            var prod=cleaning_hours/no_of_cleaners
-            if(cleaning_hours>2){
+            var prod=cleaning_hours*no_of_cleaners
+            console.log("productivity :"+prod)
+            for(var i=2;i<=10;i=i+2){
+             
+              var cleaning_hour=i
+              var cleaner=Math.round(prod/cleaning_hour)
+              if(cleaner<1){
+                cleaner=1
+              }
+              console.log("cleaning hr :"+i+"productivity:"+prod+"cleaners"+cleaner+"i is"+i)
+              this.cleaning_duration.push({
+                cleaning_hours:cleaning_hour,
+                no_of_cleaners:cleaner
+
+              })
+              if(cleaning_hour==this.currentSlotDetails.cleaning_hours){
+                this.selected_cleaning_duration={
+                  cleaning_hours:cleaning_hour,
+                  no_of_cleaners:cleaner
+                }
+              }
+            }
+           /* if(cleaning_hours>2){
               var cleaning_hour1=cleaning_hours-2
               var cleaning_hour3=cleaning_hours+2
             }
@@ -645,7 +672,7 @@ const app=  new Vue({
               this.selected_cleaning_duration={
                 cleaning_hours:cleaning_hours,
                 no_of_cleaners:no_of_cleaners
-              }
+              }*/
             }
             else{
               this.currentSlotDetails.cleaning_hours=0
@@ -656,6 +683,7 @@ const app=  new Vue({
           },
           selectDuration(duration){
             this.selected_cleaning_duration=duration
+            this.editCleaning()
           },
           editCleaning(){
             var service_type=[]
