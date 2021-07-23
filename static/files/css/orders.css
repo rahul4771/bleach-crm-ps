@@ -508,6 +508,21 @@
 
   /* margin-left: 10px; */
 }
+/* Cancelled*/
+.cancel-chip{
+  border-left:6px solid #c91212 !important;
+}
+.assigned-chip{
+  border-left:6px solid #dba03a !important;
+}
+.inprogress-chip{
+  border-left:6px solid #0d87c5 !important;
+}
+.completed-chip{
+  border-left:6px solid #10a82f !important;
+}
+
+
 .c-active {
   border: 1px solid #74a7ff;
   margin: 0;

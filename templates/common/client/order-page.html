@@ -1363,19 +1363,21 @@
 
                                         {% for multi_order_schedule in order.orderschedules %}
                                         {% if multi_order_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
-                                            <div style="margin-bottom: 10px;" class="col-md-4  c-pr5 visit-list" id="id_select_visit{{multi_order_schedule.id}}" onclick="load_cleaning_team({{forloop.counter}},{{multi_order_schedule.id}})">
+                                            <div style="margin-bottom: 10px;" class="col-md-3  c-pr5 visit-list" id="id_select_visit{{multi_order_schedule.id}}" onclick="load_cleaning_team({{forloop.counter}},{{multi_order_schedule.id}})">
                                                 <div class="cleaning-status-container  pointer ">
-                                                    <div  id="id_select_visit_inner{{multi_order_schedule.id}}" class="row cleaning-status-row  cleaning-status-card">
+                                                   
+                                                    <div  id="id_select_visit_inner{{multi_order_schedule.id}}" class="row cleaning-status-row  cleaning-status-card  {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %} inprogress-chip {% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED' %} completed-chip {% else %} cancel-chip {% endif %}">
                                                         <div class="vist-card-item-first">
                                                             Visit {{forloop.counter}}
                                                         </div>
                                                         <div class="vist-card-item-second">
                                                             {{multi_order_schedule.start_at|date:'d-m-Y g:i A'}}
                                                         </div>
-                                                        <div class="vist-card-item-last ml-5">
+                                                        <!--<div class="vist-card-item-last ml-5">
                                                             <button {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %}class="inprogress-button"{% elif multi_order_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}class="assigned-button"{% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED'%}class="completed-button"{% else %}class="canceled-button"{% endif %}>  {% for investigation in multi_order_schedule.investigations|slice:":1" %}{% for followup in investigation.followups|slice:":1" %}{% if followup %} <i aria-hidden="true" class="fa fa-flag" style="margin-right: 5px ;"></i> {% endif %}{% endfor %}{% endfor %} {{multi_order_schedule.work_status|default_if_none:'NOT STARTED'}}</button>
-                                                        </div>
+                                                        </div>-->
                                                     </div>
+                                                   
                                                 </div>
                                             </div>
                                         {% endif %}
@@ -1383,7 +1385,7 @@
                                       
                                         </div>
                                        
-                                            {% if request.user.user_type == 'SALESADMIN' %}
+                                            {% if request.user.user_type == 'SALESADMIN' or request.user.user_type == 'BOOKINGOFFICER' %}
                                             <div class="text-right" style="margin-bottom: 10px;" v-if="edit">
                                                 <button style="box-shadow: none !important;" type="submit" class="view-button view-btn"  onclick="openCleaningDate(this)" data-evaluation_book_id="{{orderschedule.order_scheduler_book.id}}" data-service="{{orderschedule.order_scheduler_book.service_type.name}}" {% for schedule in order.orderschedules %}{% if forloop.first %} data-no_of_cleaners="{{ schedule.no_of_cleaners|default_if_none:'0' }}" {% endif %} {% endfor %} data-cleaning_hours="{{orderschedule.order_scheduler_book.cleaning_hours}}"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="">  Add Visit(s)</button>
                                             </div>
@@ -1509,15 +1511,15 @@
                                                 <div class="row">
                                                     <div class="col-xs-4 pr-0">
                                                         {% if cleaning_team.team_leader.profile_image %}
-                                                        <img class="clean-team-profile-pic id_team_leader_img" src="{{cleaning_team.team_leader.profile_image.url}}">
+                                                        <img class="clean-team-profile-pic id_assigned_by_img" src="{{cleaning_team.team_leader.profile_image.url}}">
                                                         {% else %}
                                                         <img class="clean-team-profile-pic" src="{% static 'files/icons/profile.png' %}">
                                                         {% endif %}
                                                     </div>
                                                     <div class="col-xs-8">
                                                         <div class="order-agent-content text-left">
-                                                            <h2 class="id_team_leader">{{cleaning_team.team_leader.name}}</h2>
-                                                            <h6>Team Leader</h6>
+                                                            <h2 class="id_assigned_by">{{cleaning_team.team_leader.name}}</h2>
+                                                            <h6 class="id_assigned_by_usertype">SENIOR TEAM LEADER</h6>
 
 
                                                         </div>
@@ -2143,6 +2145,17 @@
                         {% elif request.user.user_type == 'SALESADMIN' %}
                         <a href="{% url 'bleach_salesadmin:cancell-order' order.id %}" target="_blank"><button class="sent-button" type="button">Yes</button></a>
                         {% else %}
+                       <div class="row" style="justify-content: center;">
+                            <div class="col-md-3"></div>
+                            <div class="col-md-3">
+                                <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                                <label class="form-check-label" for="exampleCheck1">General Cleaning</label>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                                <label class="form-check-label" for="exampleCheck1">Deep Cleaning</label>
+                            </div>
+                        </div>
                         <button class="sent-button" type="submit">Yes</button>
                         {% endif %}
 
@@ -2525,13 +2538,16 @@ function load_cleaning_team(visitcount,scheduleid){
                         
                         $('.id_team_members_div').empty();
 
+                        $('.id_team_members_div').append('<div class="col-md-2 m-mt20 .c-mb-10 mr-0 ml-0"> <div class="row"> <div class="col-xs-4 pr-0"> <img class="clean-team-profile-pic" src="'+response.data.team_leader_image+'"> </div> <div class="col-xs-8"> <div class="order-agent-content text-left"> <h2>'+response.data.team_leader+'</h2> <h6>Team Leader</h6> </div></div></div></div>');
+
                         $.each(response.data.members,function(key,value){
                             console.log(value,"valk")
                             $('.id_team_members_div').append('<div class="col-md-2 m-mt20 .c-mb-10 mr-0 ml-0"> <div class="row"> <div class="col-xs-4 pr-0"> <img class="clean-team-profile-pic" src="'+value.member_image+'"> </div> <div class="col-xs-8"> <div class="order-agent-content text-left"> <h2>'+value.member_name+'</h2> <h6>Team Member</h6> </div></div></div></div>');
                         })
 
-                        $('.id_team_leader').text(response.data.team_leader);
-                        $('.id_team_leader_img').attr("src",response.data.team_leader_image);
+                        $('.id_assigned_by').text(response.data.assigned_by);
+                        $('.id_assigned_by_img').attr("src",response.data.assigned_by_image);
+                        $('.id_assigned_by_usertype').text(response.data.assigned_by_usertype);
 
 
                         

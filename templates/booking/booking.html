@@ -239,7 +239,8 @@
       v-if="selectedDuration == item"
       class="text-center sub-content"
     >
-      <% item.hours / 2 %> slots
+      <% item.hours / 2 %> slots<br>
+      <% item.cleaners %> <span v-if="item.cleaners<2">cleaner</span><span v-else>cleaners</span>
     </div>
   </div>
 </div>
@@ -390,7 +391,8 @@ width="1000"
         </b>
       </div>
       <div v-if="selectedDuration == item" class="text-center sub-content">
-        <% item.hours / 2 %> slots
+        <% item.hours / 2 %> slots<br>
+        <% item.cleaners %> <span v-if="item.cleaners<2">cleaner</span><span v-else>cleaners</span>
       </div>
     </div>
     </div>
@@ -435,7 +437,7 @@ width="1000"
       <v-btn color="primary" @click="findCustomVisits()">
         Proceed
       </v-btn>
-      <v-btn color="primary" outlined class="ml-2" @click="scheduleDialog=false">
+      <v-btn color="primary" outlined class="ml-2" @click="customDialog=false">
         Cancel
       </v-btn>
       </div>
@@ -476,7 +478,8 @@ width="1000"
         </b>
       </div>
       <div v-if="selectedDuration == item" class="text-center sub-content">
-        <% item.hours / 2 %> slots
+        <% item.hours / 2 %> slots<br>
+        <% item.cleaners %> <span v-if="item.cleaners<2">cleaner</span><span v-else>cleaners</span>
       </div>
     </div>
     </div>
@@ -594,7 +597,8 @@ width="1000"
       </b>
     </div>
     <div v-if="selectedDuration == item" class="text-center sub-content">
-      <% item.hours / 2 %> slots
+      <% item.hours / 2 %> slots<br>
+      <% item.cleaners %> <span v-if="item.cleaners<2">cleaner</span><span v-else>cleaners</span>
     </div>
   </div>
   </div>
@@ -1031,6 +1035,7 @@ width="1000"
             <v-select
               :items="cause_of_stain"
               label="Cause of stain"
+              multiple
               :rules="[v => !!v || 'Cause of stain is required']"
             required
               v-model="otherService.stain_reason"
@@ -2158,7 +2163,7 @@ Fill all the details of the Buildings  to proceed
                         <div class="col-md-6" v-if="otherService.stain">
                           <v-select :items="cause_of_stain" label="Cause of stain"
                             :rules="[v => !!v || 'Cause of Stain is required']" required
-                            v-model="otherService.stain_reason" :attach="true"></v-select>
+                            v-model="otherService.stain_reason" :attach="true"   multiple></v-select>
                         </div>
                         <div class="col-md-6" v-if="otherService.stain">
                           <v-text-field label="Age of stain (In Weeks)" type="number"
