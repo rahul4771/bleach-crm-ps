@@ -2344,6 +2344,12 @@ this.specialCareServices=[]
 this.kitchenCleaningServices=[]
 this.infectionControlServices=[]
     this.selectedCategory=item
+    /*<div class="sr-service-card m-2 p-2"  onclick="selectService('Facade Cleaning',this)">
+    <i class="far fa-circle inactive-icon"></i>
+    <img src="/static/files/icons/booking/icons/FacadeCleaning.png" class="service-icon"> 
+    <div class="text-center pt-2 service-title">
+    Facade Cleaning
+  </div></div>*/
     if(item=='Detailed Cleaning'){
       $('#service-carousel').html(`
       <div class="sr-service-card m-2 p-2 service-one"  onclick="selectService('General Cleaning',this)">
@@ -2362,12 +2368,7 @@ this.infectionControlServices=[]
   
    
   
-    <div class="sr-service-card m-2 p-2"  onclick="selectService('Facade Cleaning',this)">
-    <i class="far fa-circle inactive-icon"></i>
-    <img src="/static/files/icons/booking/icons/FacadeCleaning.png" class="service-icon"> 
-    <div class="text-center pt-2 service-title">
-    Facade Cleaning
-  </div></div>
+    
  
     <div class="sr-service-card m-2 p-2"  onclick="selectService('Storage Area',this)">
     <i class="far fa-circle inactive-icon"></i>
