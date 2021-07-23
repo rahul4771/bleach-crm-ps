@@ -67,12 +67,25 @@
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'"><span v-if="item.slots.order.order_no"> <% item.slots.order.order_no %></span>   </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
+                  <div v-if="item.color!='followup-cleaning-status-bg'">
                   <span  v-if="item.slots.cleaning_team_order_scheduler.length>0"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                </div>
+                <div v-else>
+                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                  <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
+                  <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                </div>
                   {% else %}
+                  <div v-if="item.color!='followup-cleaning-status-bg'">
                   <span  v-if="item.slots.cleaning_team_order_scheduler.length>0 && item.color!='rejected-status-bg'"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                  </div>
+                  <div v-else>
+                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                    <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                  </div>
                   {% endif %}
                 </div>
                 
@@ -123,12 +136,25 @@
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
+                  <div v-if="item.color!='followup-cleaning-status-bg'">
                   <span  v-if="item.slots.cleaning_team_order_scheduler.length>0"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                </div>
+                <div v-else>
+                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                  <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
+                  <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                </div>
                   {% else %}
+                  <div v-if="item.color!='followup-cleaning-status-bg'">
                   <span  v-if="item.slots.cleaning_team_order_scheduler.length>0 && item.color!='rejected-status-bg'"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                  </div>
+                  <div v-else>
+                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                    <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                  </div>
                   {% endif %}
                 </div>
                 
@@ -176,12 +202,25 @@
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
+                  <div v-if="item.color!='followup-cleaning-status-bg'">
                   <span  v-if="item.slots.cleaning_team_order_scheduler.length>0"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                </div>
+                <div v-else>
+                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                  <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
+                  <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                </div>
                   {% else %}
+                  <div v-if="item.color!='followup-cleaning-status-bg'">
                   <span  v-if="item.slots.cleaning_team_order_scheduler.length>0 && item.color!='rejected-status-bg'"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                  </div>
+                  <div v-else>
+                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                    <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                  </div>
                   {% endif %}
                 </div>
                 
@@ -229,12 +268,25 @@
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
+                  <div v-if="item.color!='followup-cleaning-status-bg'">
                   <span  v-if="item.slots.cleaning_team_order_scheduler.length>0"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                </div>
+                <div v-else>
+                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                  <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
+                  <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                </div>
                   {% else %}
+                  <div v-if="item.color!='followup-cleaning-status-bg'">
                   <span  v-if="item.slots.cleaning_team_order_scheduler.length>0 && item.color!='rejected-status-bg'"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                  </div>
+                  <div v-else>
+                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                    <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                  </div>
                   {% endif %}
                 </div>
                 
@@ -280,12 +332,25 @@
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
+                  <div v-if="item.color!='followup-cleaning-status-bg'">
                   <span  v-if="item.slots.cleaning_team_order_scheduler.length>0"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                </div>
+                <div v-else>
+                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                  <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
+                  <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                </div>
                   {% else %}
+                  <div v-if="item.color!='followup-cleaning-status-bg'">
                   <span  v-if="item.slots.cleaning_team_order_scheduler.length>0 && item.color!='rejected-status-bg'"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                  </div>
+                  <div v-else>
+                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                    <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                  </div>
                   {% endif %}
                 </div>
                 
@@ -332,14 +397,27 @@
                 </div>
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
-                <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
+                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
+                  <div v-if="item.color!='followup-cleaning-status-bg'">
                   <span  v-if="item.slots.cleaning_team_order_scheduler.length>0"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                </div>
+                <div v-else>
+                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                  <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
+                  <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                </div>
                   {% else %}
+                  <div v-if="item.color!='followup-cleaning-status-bg'">
                   <span  v-if="item.slots.cleaning_team_order_scheduler.length>0 && item.color!='rejected-status-bg'"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                  </div>
+                  <div v-else>
+                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                    <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                  </div>
                   {% endif %}
                 </div>
                 
@@ -386,12 +464,25 @@
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
+                  <div v-if="item.color!='followup-cleaning-status-bg'">
                   <span  v-if="item.slots.cleaning_team_order_scheduler.length>0"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                </div>
+                <div v-else>
+                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                  <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
+                  <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                </div>
                   {% else %}
+                  <div v-if="item.color!='followup-cleaning-status-bg'">
                   <span  v-if="item.slots.cleaning_team_order_scheduler.length>0 && item.color!='rejected-status-bg'"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                  </div>
+                  <div v-else>
+                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                    <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                  </div>
                   {% endif %}
                 </div>
                 
@@ -437,12 +528,25 @@
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
+                  <div v-if="item.color!='followup-cleaning-status-bg'">
                   <span  v-if="item.slots.cleaning_team_order_scheduler.length>0"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                </div>
+                <div v-else>
+                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                  <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
+                  <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                </div>
                   {% else %}
+                  <div v-if="item.color!='followup-cleaning-status-bg'">
                   <span  v-if="item.slots.cleaning_team_order_scheduler.length>0 && item.color!='rejected-status-bg'"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                  </div>
+                  <div v-else>
+                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                    <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                  </div>
                   {% endif %}
                 </div>
                 
@@ -489,12 +593,25 @@
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
+                  <div v-if="item.color!='followup-cleaning-status-bg'">
                   <span  v-if="item.slots.cleaning_team_order_scheduler.length>0"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                </div>
+                <div v-else>
+                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                  <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
+                  <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                </div>
                   {% else %}
+                  <div v-if="item.color!='followup-cleaning-status-bg'">
                   <span  v-if="item.slots.cleaning_team_order_scheduler.length>0 && item.color!='rejected-status-bg'"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                  </div>
+                  <div v-else>
+                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                    <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                  </div>
                   {% endif %}
                 </div>
                 
@@ -541,12 +658,25 @@
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
+                  <div v-if="item.color!='followup-cleaning-status-bg'">
                   <span  v-if="item.slots.cleaning_team_order_scheduler.length>0"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                </div>
+                <div v-else>
+                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                  <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
+                  <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                </div>
                   {% else %}
+                  <div v-if="item.color!='followup-cleaning-status-bg'">
                   <span  v-if="item.slots.cleaning_team_order_scheduler.length>0 && item.color!='rejected-status-bg'"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                  </div>
+                  <div v-else>
+                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                    <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                  </div>
                   {% endif %}
                 </div>
                 
@@ -580,7 +710,7 @@
               <div :class="item.classType+' '+item.color+' '+'d-flex'" @click="openCleaningModal(item)">
                 <div class="cl-marker-pic-box" v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">
                   <img :src="url+item.slots.cleaning_team_order_scheduler[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color!='followup-cleaning-status-bg'"/>
-                  <img :src="url+item.slots.followupteam_followupschedule[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color=='followup-cleaning-status-bg'"/>                
+                  <img :src="url+item.slots.followupteam_followupschedule[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color=='followup-cleaning-status-bg'"/>                 
                     <div class="cl-marker-completed" v-if="item.slots.work_status=='CLEANING_FULFILLED' || item.slots.work_status=='FOLLOW_UP_CLEANING_FULFILLED'">
                       <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
     
@@ -593,12 +723,25 @@
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
+                  <div v-if="item.color!='followup-cleaning-status-bg'">
                   <span  v-if="item.slots.cleaning_team_order_scheduler.length>0"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                </div>
+                <div v-else>
+                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                  <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
+                  <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                </div>
                   {% else %}
+                  <div v-if="item.color!='followup-cleaning-status-bg'">
                   <span  v-if="item.slots.cleaning_team_order_scheduler.length>0 && item.color!='rejected-status-bg'"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                  </div>
+                  <div v-else>
+                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                    <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                  </div>
                   {% endif %}
                 </div>
                 
@@ -632,7 +775,7 @@
               <div :class="item.classType+' '+item.color+' '+'d-flex'" @click="openCleaningModal(item)">
                 <div class="cl-marker-pic-box" v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">
                   <img :src="url+item.slots.cleaning_team_order_scheduler[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color!='followup-cleaning-status-bg'"/>
-                  <img :src="url+item.slots.followupteam_followupschedule[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color=='followup-cleaning-status-bg'"/>                 
+                  <img :src="url+item.slots.followupteam_followupschedule[0].team_leader.profile_image" class="cl-marker-profile-pic" v-if="checkTeamLeader(item.slots,item.color) && item.color=='followup-cleaning-status-bg'"/>                  
                     <div class="cl-marker-completed" v-if="item.slots.work_status=='CLEANING_FULFILLED' || item.slots.work_status=='FOLLOW_UP_CLEANING_FULFILLED'">
                       <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
     
@@ -645,12 +788,25 @@
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
+                  <div v-if="item.color!='followup-cleaning-status-bg'">
                   <span  v-if="item.slots.cleaning_team_order_scheduler.length>0"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                </div>
+                <div v-else>
+                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                  <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
+                  <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                </div>
                   {% else %}
+                  <div v-if="item.color!='followup-cleaning-status-bg'">
                   <span  v-if="item.slots.cleaning_team_order_scheduler.length>0 && item.color!='rejected-status-bg'"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
                   <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                  </div>
+                  <div v-else>
+                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                    <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
+                  </div>
                   {% endif %}
                 </div>
                 
