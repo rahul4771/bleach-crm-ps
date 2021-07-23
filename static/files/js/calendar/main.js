@@ -235,6 +235,13 @@ const app=  new Vue({
         var urldate=location.href.split('=')[1]
         //this.cleaningDate=urldate.split('-').reverse().join('-')
         //this.selectedDate=urldate.split('-').reverse().join('-')
+        var passed_date=location.href.split("cleaning_calendar_date=")[1]
+        if(passed_date){
+          this.cleaningDate=passed_date
+          this.selectedDate=passed_date
+          $('#cl_cleaning_calendar').val(passed_date)
+        }
+      
         console.log("cleaning date us "+this.cleaningDate)
        if(!urldate){
          urldate=moment().format().split("T")[0]
@@ -242,10 +249,13 @@ const app=  new Vue({
        this.calChecker(urldate)
         console.log("today is "+this.today)
         console.log("time is "+this.currentTime)
-      
-
         this.formatDate()
+      if(!passed_date){
         this.parseDate()
+      }
+      
+       
+        
        this.getSlots()
        
        
@@ -1429,7 +1439,8 @@ const app=  new Vue({
   //New Date picker
   $('.next-day').on('click', function () {
 
-    $selectedDay            = $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").getDate();
+    $selectedDay            = moment($('#cl_cleaning_calendar').val(),'DD-MM-YYYY').valueOf();
+   // console.log("selected day is "+$selectedDay+"other is" + moment($('#cl_cleaning_calendar').val(),'DD-MM-YYYY').valueOf())
     var $tmpSelectedDay     = new Date($selectedDay) 
     $tmpSelectedDay.setDate($tmpSelectedDay.getDate() + 1);
     $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
@@ -1438,8 +1449,8 @@ const app=  new Vue({
 
 
 $('.prev-day').on('click', function () {
-
-    $selectedDay            = $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").getDate();
+  $selectedDay=moment($('#cl_cleaning_calendar').val(),'DD-MM-YYYY').valueOf()
+   // $selectedDay            = $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").getDate();
     var $tmpSelectedDay     = new Date($selectedDay) 
     $tmpSelectedDay.setDate($tmpSelectedDay.getDate() - 1);
     $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
