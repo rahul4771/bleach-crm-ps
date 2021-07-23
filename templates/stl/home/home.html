@@ -140,9 +140,9 @@
 </div><!--white-wrapper-->
 {% endif %}
 
-{% comment %} <!--old cleaning calendar-->
+<!--old cleaning calendar-->
 {% include 'admin/home/cleaning-calendar-snippet.html' %}             
-<!--old cleaning calendar--> {% endcomment %}
+<!--old cleaning calendar-->
 
 {% include 'common/cleaning_calendar/cleaning_calendar.html' %}          
         
@@ -1713,7 +1713,7 @@ $('document').ready(function(){
       $('.modal-popup-wrapper1').toggleClass('is-visible');
       schedule_id         = $(this).data('id'); 
       $('#cleaning_id').val(schedule_id);
-
+      console.log(schedule_id,"loper")
       //date picker and time picker 
         $('#cleaning_change_date').datetimepicker({
               pickTime: false, 

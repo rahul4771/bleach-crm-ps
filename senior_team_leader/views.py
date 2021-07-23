@@ -29,6 +29,7 @@ def GetCleaningInfo(request):
 	cleaning_dict = {}
 
 	scheduler_id  = int(request.GET.get('schedule_id'))
+	print(scheduler_id,"schedid")
 	schedule  = OrderScheduler.objects.select_related('evaluation_details__evaluation','order_scheduler_book','customer_address__customer','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True),to_attr='cleaning_member')),to_attr='cleaning_team')).get(id=scheduler_id,is_active=True)
 
 	if schedule.customer_address.floor == None and schedule.customer_address.avenue == None:
