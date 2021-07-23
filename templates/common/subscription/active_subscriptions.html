@@ -462,11 +462,11 @@
       </div><!--ticket-form-left-->   
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
-<div align="right send_inv"> <input class="assignButton dateconfirm" name="assing" type="button" value="Send Invoice" onclick="options_popup()" >
+<div align="right" class="send_inv"> <input class="assignButton dateconfirm" name="assing" type="button" value="Send Invoice" onclick="options_popup()" >
 <input type="hidden" data-toggle="modal" data-target="#invoiceModalCenter" id="invoice_modal" />
 </div>  
 
-<div align="right issue_inv"> <input class="assignButton dateconfirm" name="assing" type="button" value="Issue Invoice" onclick="send_items()" >
+<div align="right" class="issue_inv"> <input class="assignButton dateconfirm" name="assing" type="button" value="Issue Invoice" onclick="send_items()" >
 <input type="hidden" data-toggle="modal" data-target="#invoiceModalCenter" id="invoice_modal" />
 </div>  
 
@@ -566,8 +566,8 @@ $("#governorate_filter_id").change(function(){
     }
 
     
-    $('.issue_inv').hide();
-    $('.send_inv').show();
+    $('.issue_inv').attr("hidden",true);
+    $('.send_inv').attr("hidden",false);
     
 
     $('#subscription_topay_id').prop('max',parseFloat($(this).data('balance')));
@@ -600,8 +600,8 @@ $('.issue_invoice').click(function(){
         $('#remining_invoice_id').addClass('red-text');
     }
 
-    $('.issue_inv').show();
-    $('.send_inv').hide();
+    $('.issue_inv').attr("hidden",false);
+    $('.send_inv').attr("hidden",true);
 
     $('#subscription_topay_id').prop('max',parseFloat($(this).data('balance')));
 
@@ -639,6 +639,10 @@ function options_popup(){
 
 //send soa mail
 function send_items(){
+
+  if ($('#subscription_topay_id').val() == ''){
+      alert('Please enter Invoice amount !')
+  }else{
  
     var checkedVals = $('.contact-checkbox:checkbox:checked').map(function() {
         return this.value;
@@ -659,6 +663,8 @@ function send_items(){
                     alert("Failed !")  
                   }
                 })
+    $('#send_invoice_popup').css({'visibility':'hidden','opacity':0,});
+  }
 }
 
 function set_params_go(args)

@@ -19,6 +19,62 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.standalone.min.css" integrity="sha512-TQQ3J4WkE/rwojNFo6OJdyu6G8Xe9z8rMrlF9y7xpFbQfW5g8aSWcygCQ4vqRiJqFsDsE1T6MoAOMJkFXlrI9A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
 <div class="wrapper" id="app"><!--wrapper-->
+
+    <!-- helper modal begins here-->
+    <div class="modal fade" id="helpModel" role="dialog">
+        <div style="border: none !important;" class="modal-dialog cancel-model cancel-order-border " role="document">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12 mt-20">
+      
+                        
+                        <div class="d-flex ">
+                            <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Help</p></div>
+                            <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+      
+                                <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                            </button>
+      
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-20">
+                  
+                  <div class="col-md-6 text-right">
+                    <span class="inv-dot inprogress-chip-bg ml-5 "></span>
+                    Cleaning In Progress
+                  </div>
+                  <div class="col-md-6 text-left">
+                    <span class="inv-dot assigned-chip-bg ml-5"></span>
+                    Cleaning Team Assigned
+                  </div>
+                  <div class="col-md-6 text-right " style="margin-top:10px;margin-bottom:10px">
+                    <span class="inv-dot completed-chip-bg ml-5"></span>
+                   Completed
+                  </div>
+                  <div class="col-md-6 text-left  "  style="margin-top:10px;margin-bottom:30px">
+                    <span class="inv-dot cancel-chip-bg ml-5"></span>
+                    Cancelled / Not Started
+                  </div>
+    
+                  
+    
+                  
+                  
+                 
+      
+      
+      
+                  
+                </div>
+              
+                
+           
+               
+            </div>
+        </div>
+      </div>
+    <!-- helper modal ends here-->
     <!-- CHANGE PAYMENT MODAL BEGINS HERE-->
     <div class="modal fade " id="editPaymentModal" tabindex="-1" role="dialog" aria-labelledby="editPaymentModal" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered primary-modal" role="document">
@@ -1079,7 +1135,20 @@
                                                 {% if orderschedule.order_scheduler_book.cleaning_policy  ==  'ONE TIME SERVICE' %}
                                                 {% for multi_order_schedule in order.orderschedules %}
                                                 {% if multi_order_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
-                                                    <a href="" target="_blank"><div class="col-md-6  time-text"><i
+                                                    {% if request.user.user_type == 'AGENT' %}
+                                                    <a href="/agent/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                    {% elif request.user.user_type == 'ADMIN' %}
+                                                    <a href="/bleach_admin/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                    {% elif request.user.user_type == 'SALESADMIN' %}
+                                                    <a href="/bleach_salesadmin/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                    {% elif request.user.user_type == 'BOOKINGOFFICER' %}
+                                                    <a href="/booking-officer/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                    {% elif request.user.user_type == 'EVALUATOR' %}
+                                                    <a href="/evaluator/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                    {% elif request.user.user_type == 'OPERATIONSUPERVISOR' %}
+                                                    <a href="/operation-supervisor/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                    {% else %} <a href="#"> {% endif %}
+                                                    <div class="col-md-6  time-text"><i
                                                             class="fa test-color  fa-calendar  c-mr-5"></i>{{multi_order_schedule.start_at|date:'d-m-Y g:i A'}} 
                                                             {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'SENIORTEAMLEADER' %}
                                                             <img v-if="edit" class="order-time-edit pointer" src="{% static 'files/icons/edit.png' %}" onclick="editCleaningDate(this)" data-cleaning_start_date="{{multi_order_schedule.start_at|date:'d-m-Y'}}" data-evaluation_book_id="{{multi_order_schedule.order_scheduler_book.id}}" data-id="{{multi_order_schedule.id}}" data-service="{{multi_order_schedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{multi_order_schedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{multi_order_schedule.order_scheduler_book.cleaning_hours}}">
@@ -1091,12 +1160,25 @@
                                                 {% else %}
                                                 {% for subscription_schedule in order.orderschedules %}
                                                 {% if subscription_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
+                                                    {% if request.user.user_type == 'AGENT' %}
+                                                            <a href="/agent/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            {% elif request.user.user_type == 'ADMIN' %}
+                                                            <a href="/bleach_admin/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            {% elif request.user.user_type == 'SALESADMIN' %}
+                                                            <a href="/bleach_salesadmin/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            {% elif request.user.user_type == 'BOOKINGOFFICER' %}
+                                                            <a href="/booking-officer/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            {% elif request.user.user_type == 'EVALUATOR' %}
+                                                            <a href="/evaluator/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            {% elif request.user.user_type == 'OPERATIONSUPERVISOR' %}
+                                                            <a href="/operation-supervisor/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            {% else %} <a href="#"> {% endif %}
                                                     <div class="col-md-6  time-text"><i
                                                             class="fa test-color  fa-calendar  c-mr-5"></i>{{subscription_schedule.start_at|date:'d-m-Y g:i A'}} 
                                                             {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'SENIORTEAMLEADER' %}
                                                             <img v-if="edit" class="order-time-edit pointer" src="{% static 'files/icons/edit.png' %}" onclick="editCleaningDate(this)" data-cleaning_start_date="{{subscription_schedule.start_at|date:'d-m-Y'}}" data-evaluation_book_id="{{subscription_schedule.order_scheduler_book.id}}" data-id="{{subscription_schedule.id}}" data-service="{{subscription_schedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{subscription_schedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{subscription_schedule.order_scheduler_book.cleaning_hours}}">
                                                             {% endif %}
-                                                    </div>
+                                                    </div></a>
                                                 {% endif %}
                                                 {% endfor %}
                                                 {% endif %}
@@ -1125,24 +1207,50 @@
                                                         {% if orderschedule.order_scheduler_book.cleaning_policy  ==  'ONE TIME SERVICE' %}
                                                         {% for multi_order_schedule in order.orderschedules %}
                                                         {% if multi_order_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
+                                                            {% if request.user.user_type == 'AGENT' %}
+                                                            <a href="/agent/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            {% elif request.user.user_type == 'ADMIN' %}
+                                                            <a href="/bleach_admin/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            {% elif request.user.user_type == 'SALESADMIN' %}
+                                                            <a href="/bleach_salesadmin/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            {% elif request.user.user_type == 'BOOKINGOFFICER' %}
+                                                            <a href="/booking-officer/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            {% elif request.user.user_type == 'EVALUATOR' %}
+                                                            <a href="/evaluator/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            {% elif request.user.user_type == 'OPERATIONSUPERVISOR' %}
+                                                            <a href="/operation-supervisor/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            {% else %} <a href="#"> {% endif %}
                                                             <div class="col-md-6  time-text"><i
                                                                     class="fa test-color  fa-calendar  c-mr-5"></i>{{multi_order_schedule.start_at|date:'d-m-Y g:i A'}} 
                                                                     {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'SENIORTEAMLEADER' %}
                                                                     <img v-if="edit" class="order-time-edit pointer" src="{% static 'files/icons/edit.png' %}" onclick="editCleaningDate(this)" data-cleaning_start_date="{{multi_order_schedule.start_at|date:'d-m-Y'}}" data-evaluation_book_id="{{multi_order_schedule.order_scheduler_book.id}}" data-id="{{multi_order_schedule.id}}" data-service="{{multi_order_schedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{multi_order_schedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{multi_order_schedule.order_scheduler_book.cleaning_hours}}">
                                                                     {% endif %}
-                                                            </div>
+                                                            </div></a>
 
                                                         {% endif %}
                                                         {% endfor %}
                                                         {% else %}
                                                         {% for subscription_schedule in order.orderschedules %}
                                                         {% if subscription_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
+                                                            {% if request.user.user_type == 'AGENT' %}
+                                                            <a href="/agent/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            {% elif request.user.user_type == 'ADMIN' %}
+                                                            <a href="/bleach_admin/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            {% elif request.user.user_type == 'SALESADMIN' %}
+                                                            <a href="/bleach_salesadmin/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            {% elif request.user.user_type == 'BOOKINGOFFICER' %}
+                                                            <a href="/booking-officer/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            {% elif request.user.user_type == 'EVALUATOR' %}
+                                                            <a href="/evaluator/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            {% elif request.user.user_type == 'OPERATIONSUPERVISOR' %}
+                                                            <a href="/operation-supervisor/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            {% else %} <a href="#"> {% endif %}
                                                             <div class="col-md-6  time-text"><i
                                                                     class="fa test-color  fa-calendar  c-mr-5"></i>{{subscription_schedule.start_at|date:'d-m-Y g:i A'}} 
                                                                     {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'SENIORTEAMLEADER' %}
                                                                     <img v-if="edit" class="order-time-edit pointer" src="{% static 'files/icons/edit.png' %}" onclick="editCleaningDate(this)" data-cleaning_start_date="{{subscription_schedule.start_at|date:'d-m-Y'}}" data-evaluation_book_id="{{subscription_schedule.order_scheduler_book.id}}" data-id="{{subscription_schedule.id}}" data-service="{{subscription_schedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{subscription_schedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{subscription_schedule.order_scheduler_book.cleaning_hours}}" >
                                                                     {% endif %}
-                                                            </div>
+                                                            </div></a>
                                                         {% endif %}
                                                         {% endfor %}
                                                         {% endif %}
@@ -1333,19 +1441,21 @@
                                 </div>
                                 {% endfor %}
 
-                                {% if order.evaluation.quatation_status == 'APPROVED' %}
-                                    {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION' %}
-                                    
-                                    {% else %}
-                                    <div v-if="edit">
-                                    <button style="box-shadow: none !important;" class="view-button view-btn cp"   onclick="addSection(this)"  data-service="{{orderschedule.order_scheduler_book.service_type.name}}">  <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="">  Add Section</button>
-                                    </div>
-                                    {% endif %}
+                                {% if request.user.user_type != 'SENIORTEAMLEADER' %}
+                                    {% if order.evaluation.quatation_status == 'APPROVED' %}
+                                        {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION' %}
+                                        
+                                        {% else %}
+                                        <div v-if="edit">
+                                        <button style="box-shadow: none !important;" class="view-button view-btn cp"   onclick="addSection(this)"  data-service="{{orderschedule.order_scheduler_book.service_type.name}}">  <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="">  Add Section</button>
+                                        </div>
+                                        {% endif %}
 
-                                {% elif order.evaluation.quatation_status == 'PENDING' or order.evaluation.quatation_status == None %}
-                                    <div v-if="edit">
-                                    <button style="box-shadow: none !important;" class="view-button view-btn cp"   onclick="addSection(this)"  data-service="{{orderschedule.order_scheduler_book.service_type.name}}">  <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="">  Add Section</button>
-                                    </div>
+                                    {% elif order.evaluation.quatation_status == 'PENDING' or order.evaluation.quatation_status == None %}
+                                        <div v-if="edit">
+                                        <button style="box-shadow: none !important;" class="view-button view-btn cp"   onclick="addSection(this)"  data-service="{{orderschedule.order_scheduler_book.service_type.name}}">  <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="">  Add Section</button>
+                                        </div>
+                                    {% endif %}
                                 {% endif %}
 
                                 
@@ -1355,6 +1465,9 @@
                                     class="order-container-main order-clean-section">
                                     <div class="order-clean-section-header c-mb-10 d-flex">
                                         <h2>Cleaning Visit(s)</h2>
+                                        <button data-toggle="modal" data-target="#helpModel"  style="margin-top: 9px; color: #3968c6;margin-left:auto;background: none;
+                                        border: none;"><i data-toggle="tooltip" title="Help" class="fa fa-question-circle fa-lg" aria-hidden="true"></i></button>
+
                                         
                                     </div>
 
@@ -2495,6 +2608,7 @@ function resubmit(id){
 }
 
 $(document).ready(function () {
+
     {% if order.evaluation.customer.is_email == True %}
         app.contacts.push('EMAIL');
     {% endif %}
