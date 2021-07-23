@@ -2145,7 +2145,7 @@
                         {% elif request.user.user_type == 'SALESADMIN' %}
                         <a href="{% url 'bleach_salesadmin:cancell-order' order.id %}" target="_blank"><button class="sent-button" type="button">Yes</button></a>
                         {% else %}
-                       <div class="row" style="justify-content: center;">
+                    <!--   <div class="row" style="justify-content: center;">
                             <div class="col-md-3"></div>
                             <div class="col-md-3">
                                 <input type="checkbox" class="form-check-input" id="exampleCheck1">
@@ -2155,7 +2155,7 @@
                                 <input type="checkbox" class="form-check-input" id="exampleCheck1">
                                 <label class="form-check-label" for="exampleCheck1">Deep Cleaning</label>
                             </div>
-                        </div>
+                        </div>-->
                         <button class="sent-button" type="submit">Yes</button>
                         {% endif %}
 
