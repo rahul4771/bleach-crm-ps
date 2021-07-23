@@ -16,12 +16,12 @@
         </div>
 
         <div class="main-content-holder"><!--main-content-holder-->   
-            <div class="white-wrapper f-gray" style="height: 85vh; overflow: auto;">
+            <div class="white-wrapper f-gray" >
               
                 <div class="row">
                     <div class="col-md-8">
                         <div class="row">
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <img style="width: 100%;" src="{% static 'files/images/dummy-profile-pic.jpg' %}"  alt="">
                             </div>
                             <div class="col-md-9">
@@ -32,7 +32,7 @@
                                     865655
                                 </div>
                                 
-                               <div class="row" style="margin-left: 0px; margin-top: 10%;">
+                               <div class="row" style="margin-left: 0px; margin-top: 7%;">
                                 <div class="col-md-4 pl-0">
                                     <div class="inv-item-head-sub-2">Category</div>
                                     <div class="inv-item-head-sub mt-20">
@@ -55,56 +55,63 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4 inv-item-card h-100">
-                        <div class="row">
-                           <div class="col-md-5 text-center">
+                    <div class="col-md-2  h-100">
+                       <div class="inv-item-card">
+                        <div class="av-font text-center">
                             Inventory
-                            <div class="inv-item-card-content text-right mt-40">
-                                135 <span>Unit</span>
+                            <div class="inv-item-card-content av-font mt-40">
+                                135 <span style="font-weight: 100 !important;">Unit</span>
                             </div>
                            </div>
-                           <div class="col-md-7">
-                            Reserve
-                            <div class="inv-item-card-content ml-10 mt-40">
-                                10 <span>Unit</span>
-                            </div>
-                           </div>
-                        </div>
+                       </div>
+                                                 
                     </div>
+                    <div class="col-md-2  h-100">
+                        <div class="inv-item-card">
+                         <div class="av-font text-center">
+                            Reserve
+                             <div class="inv-item-card-content av-font mt-40">
+                                 10 <span style="font-weight: 100 !important;">Unit</span>
+                             </div>
+                            </div>
+                        </div>
+                                                  
+                     </div>
                 </div>
                 <div class="row mt-20">
-                <div class="col-md-10" style="font-size: 18px;">
+                <div class="col-md-10 av-font" style="font-size: 16px;">
                     Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero
                 </div>
                 </div>
-                <div class="row mt-20" style="font-size: 18px;">
-
-                    <div class="col-md-3">
+                <div class="row mt-20 " style="font-size: 16px;">
+                    
+                    <div class="col-md-3 inv-item-card2">
+                    
                         <div class="row c-mb-3">
-                            <div class="col-xs-6">Size</div>
-                            <div class="col-xs-6">: 3</div>
+                            <div class="col-xs-6 av-font">Size</div>
+                            <div class="col-xs-6 av-font">: 3</div>
                         </div>
                         <div class="row c-mb-3 mt-20">
-                            <div class="col-xs-6">Colour</div>
-                            <div class="col-xs-6">: Blue</div>
+                            <div class="col-xs-6 av-font">Colour</div>
+                            <div class="col-xs-6 av-font">: Blue</div>
                         </div>
                         <div class="row c-mb-3 mt-20">
-                            <div class="col-xs-6">Sample 1</div>
-                            <div class="col-xs-6">: Value 1</div>
+                            <div class="col-xs-6 av-font">Sample 1</div>
+                            <div class="col-xs-6 av-font">: Value 1</div>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-3 inv-item-card2">
                         <div class="row c-mb-3">
-                            <div class="col-xs-6">Size</div>
-                            <div class="col-xs-6">: 3</div>
+                            <div class="col-xs-6 av-font">Size</div>
+                            <div class="col-xs-6 av-font">: 3</div>
                         </div>
                         <div class="row c-mb-3 mt-20">
-                            <div class="col-xs-6">Colour</div>
-                            <div class="col-xs-6">: Blue</div>
+                            <div class="col-xs-6 av-font">Colour</div>
+                            <div class="col-xs-6 av-font">: Blue</div>
                         </div>
                         <div class="row c-mb-3 mt-20">
-                            <div class="col-xs-6">Sample 1</div>
-                            <div class="col-xs-6">: Value 1</div>
+                            <div class="col-xs-6 av-font">Sample 1</div>
+                            <div class="col-xs-6 av-font">: Value 1</div>
                         </div>
                     </div>
 
@@ -124,6 +131,157 @@
                     </div>
                    </div>
                     
+                </div>
+                <div class="row mt-20">
+                    <div class="col-md-12">
+                        <div class="d-flex d-grid">
+                           
+                            <div class="right-pos m-mt-10">
+                                <button class="inv-blue-btn"  > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Unit </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mt-10">
+                        <table class="inv-table">
+                            <tr>
+                                <th style="width: %;">
+                                    Unit ID
+                                </th>
+                                <th style="width: %; ">
+                                    Purchase date
+                                </th>
+                                <th style="width: %;" >
+                                    Quantity
+                                </th>
+                                <th style="width: %;" >
+                                    Expiry date
+                                </th>
+                                <th class="text-center">
+                                    Unit Price
+                                </th>
+                                <th>
+                                    Contact
+                                </th>
+                                <th>
+                                    Status
+                                </th>
+
+                                <th style="width:%;" class="text-center">Action</th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    0000000
+                                </td>
+                                <td>
+                                    12/12/2021
+                                </td>
+                                <td >
+                                   3
+                                </td>
+                                <td >
+                                    12/12/2021
+                                    
+                                </td>
+                                <td class="text-center">
+                                    3
+                                </td>
+                                <td>
+                                    000000000
+                                </td>
+                                <td class="">
+                                    <span class="inv-dot c-out-of-order ml-5"></span>
+                                    Out of Order
+
+                                </td>
+                                <td style="float: right;">
+                                  
+
+                                    <button class="inv-plan-img-btn"> <img
+                                            src="{% static 'files/inventory/icons/edit.png' %}" alt="">
+                                    </button>
+                                    <button class="inv-plan-img-btn"> <img
+                                            src="{% static 'files/inventory/icons/delete.png' %}" alt="">
+                                    </button>
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    0000000
+                                </td>
+                                <td>
+                                    12/12/2021
+                                </td>
+                                <td >
+                                   3
+                                </td>
+                                <td >
+                                    12/12/2021
+                                    
+                                </td>
+                                <td class="text-center">
+                                    3
+                                </td>
+                                <td>
+                                    000000000
+                                </td>
+                                <td class="">
+                                    <span class="inv-dot c-expired ml-5"></span>
+                                                Expired
+
+                                </td>
+                                <td style="float: right;">
+                                  
+
+                                    <button class="inv-plan-img-btn"> <img
+                                            src="{% static 'files/inventory/icons/edit.png' %}" alt="">
+                                    </button>
+                                    <button class="inv-plan-img-btn"> <img
+                                            src="{% static 'files/inventory/icons/delete.png' %}" alt="">
+                                    </button>
+
+                                </td>
+                            </tr>  <tr>
+                                <td>
+                                    0000000
+                                </td>
+                                <td>
+                                    12/12/2021
+                                </td>
+                                <td >
+                                   3
+                                </td>
+                                <td >
+                                    12/12/2021
+                                    
+                                </td>
+                                <td class="text-center">
+                                    3
+                                </td>
+                                <td>
+                                    000000000
+                                </td>
+                                <td class="">
+                                    <span class="inv-dot c-active ml-5"></span>
+                                   Active
+
+                                </td>
+                                <td style="float: right;">
+                                  
+
+                                    <button class="inv-plan-img-btn"> <img
+                                            src="{% static 'files/inventory/icons/edit.png' %}" alt="">
+                                    </button>
+                                    <button class="inv-plan-img-btn"> <img
+                                            src="{% static 'files/inventory/icons/delete.png' %}" alt="">
+                                    </button>
+
+                                </td>
+                            </tr>
+                         
+
+                        </table>
+                    </div>
                 </div>
 
             </div>
