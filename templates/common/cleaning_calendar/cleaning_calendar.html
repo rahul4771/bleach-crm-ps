@@ -1551,8 +1551,17 @@ class="cl-service-list"
             </div>
             <div class="row mt-10"></div>
             
-           
+        <input type"hidden" value="{{request.GET.cleaning_calendar_date}}" id="cleaning_calendar_date" />
            
         </div>
     </div>
   </div>
+
+  <script>
+  console.log($('#cleaning_calendar_date').val(),"calodate")
+
+  $(document).ready(function(){
+    $('#cl_cleaning_calendar').val('');
+  })
+  
+  </script>

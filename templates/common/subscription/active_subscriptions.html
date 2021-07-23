@@ -325,7 +325,7 @@
           <img src="{% static 'files/images/SendInvoice.png' %}" class="dropdown-icon pr-2"><div class="ml-2 dropdown-text">Send Invoice</div>
           </div> 
           
-          <div class="d-flex dropdown-orders send_invoice" data-id="{{invoice.id}}" data-blcno="{{invoice.evaluation.evaluation_id}}" data-customername="{{invoice.evaluation.customer.mobile_number}}" data-contactno="{{invoice.evaluation.customer.name}}" {% for schedule in invoice.orderschedules %}{% if forloop.first %}data-startdate="{{schedule.start_at|date:'d-m-Y'}}" {% endif %}{% if forloop.last %}data-enddate="{{schedule.start_at|date:'d-m-Y'}}"{% endif %}{% endfor %} data-totalamount="{{invoice.total_amount|default_if_none:'0.000'|floatformat:'3'}}" data-paidamount="{{invoice.amount_paid|default_if_none:'0.000'|floatformat:'3'}}" data-balance="{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}" data-invoice-type="issued" data-remining="{{invoice.balance|default_if_none:'0.000'|floatformat:'3'}}">
+          <div class="d-flex dropdown-orders issue_invoice" data-id="{{invoice.id}}" data-blcno="{{invoice.evaluation.evaluation_id}}" data-customername="{{invoice.evaluation.customer.mobile_number}}" data-contactno="{{invoice.evaluation.customer.name}}" {% for schedule in invoice.orderschedules %}{% if forloop.first %}data-startdate="{{schedule.start_at|date:'d-m-Y'}}" {% endif %}{% if forloop.last %}data-enddate="{{schedule.start_at|date:'d-m-Y'}}"{% endif %}{% endfor %} data-totalamount="{{invoice.total_amount|default_if_none:'0.000'|floatformat:'3'}}" data-paidamount="{{invoice.amount_paid|default_if_none:'0.000'|floatformat:'3'}}" data-balance="{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}" data-invoice-type="issued" data-remining="{{invoice.balance|default_if_none:'0.000'|floatformat:'3'}}">
           <img src="{% static 'files/images/SendInvoice.png' %}" class="dropdown-icon pr-2"><div class="ml-2 dropdown-text">Issue Invoice</div>
           </div>
           {% endif %}
@@ -462,7 +462,11 @@
       </div><!--ticket-form-left-->   
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
-<div align="right"> <input class="assignButton dateconfirm" name="assing" type="button" value="Send Invoice" onclick="options_popup()" >
+<div align="right" class="send_inv"> <input class="assignButton dateconfirm" name="assing" type="button" value="Send Invoice" onclick="options_popup()" >
+<input type="hidden" data-toggle="modal" data-target="#invoiceModalCenter" id="invoice_modal" />
+</div>  
+
+<div align="right" class="issue_inv"> <input class="assignButton dateconfirm" name="assing" type="button" value="Issue Invoice" onclick="send_items()" >
 <input type="hidden" data-toggle="modal" data-target="#invoiceModalCenter" id="invoice_modal" />
 </div>  
 
@@ -561,10 +565,50 @@ $("#governorate_filter_id").change(function(){
         $('#remining_invoice_id').addClass('red-text');
     }
 
+    
+    $('.issue_inv').attr("hidden",true);
+    $('.send_inv').attr("hidden",false);
+    
+
     $('#subscription_topay_id').prop('max',parseFloat($(this).data('balance')));
 
     $('#send_invoice_popup').css({'visibility':'visible','opacity':1,});
 });
+
+
+$('.issue_invoice').click(function(){
+    $('#order_id').val($(this).data('id'));
+    $('#blcno_invoice_id').text($(this).data('blcno'));
+    $('#customername_invoice_id').text($(this).data('customername'));
+    $('#mobileno_invoice_id').text($(this).data('contactno'));
+    $('#starting_date_invoice_id').text($(this).data('startdate'));
+    $('#ending_date_invoice_id').text($(this).data('enddate'));
+    $('#total_price_invoice_id').text($(this).data('totalamount'));
+    $('#paid_invoice_id').text($(this).data('paidamount'));
+    $('#balance_invoice_id').text($(this).data('balance'));
+    $('#invoice_type').val($(this).data('invoice-type'));
+
+    remining_amount = parseFloat($(this).data('remining'));
+    if(remining_amount <= 0)
+    {
+        $('#remining_invoice_id').text((remining_amount));
+        $('#remining_invoice_id').addClass('green-text');
+    }
+    else
+    {
+        $('#remining_invoice_id').text($(this).data('remining'));
+        $('#remining_invoice_id').addClass('red-text');
+    }
+
+    $('.issue_inv').attr("hidden",false);
+    $('.send_inv').attr("hidden",true);
+
+    $('#subscription_topay_id').prop('max',parseFloat($(this).data('balance')));
+
+    $('#send_invoice_popup').css({'visibility':'visible','opacity':1,});
+});
+
+
 $('#close_send_invoice_popup').click(function(){
       $('#send_invoice_popup').css({'visibility':'hidden','opacity':0,});
   });
@@ -595,6 +639,10 @@ function options_popup(){
 
 //send soa mail
 function send_items(){
+
+  if ($('#subscription_topay_id').val() == ''){
+      alert('Please enter Invoice amount !')
+  }else{
  
     var checkedVals = $('.contact-checkbox:checkbox:checked').map(function() {
         return this.value;
@@ -615,6 +663,8 @@ function send_items(){
                     alert("Failed !")  
                   }
                 })
+    $('#send_invoice_popup').css({'visibility':'hidden','opacity':0,});
+  }
 }
 
 function set_params_go(args)
