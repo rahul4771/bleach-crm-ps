@@ -4928,20 +4928,20 @@ class EditOrderDetails(APIView):
 				else:
 					saved_section                          = section_save_serializer.save(evaluation_book_id=evaluation_book__id,section_cleanings=total_cleanings,section_net_cost=section_save_serializer.validated_data['section_cost'])
 
-				evaluation_book.estimated_cost     				  += (old_section_cost-saved_section.section_net_cost)
-				evaluation_book.total_cost         				  += (old_section_cost-saved_section.section_net_cost)
+				evaluation_book.estimated_cost     				  += (saved_section.section_net_cost-old_section_cost)
+				evaluation_book.total_cost         				  += (saved_section.section_net_cost-old_section_cost)
 				evaluation_book.save()
 
-				evaluation_book.evaluation_details.estimated_cost += (old_section_cost-saved_section.section_net_cost)
-				evaluation_book.evaluation_details.total_cost     += (old_section_cost-saved_section.section_net_cost)
+				evaluation_book.evaluation_details.estimated_cost += (saved_section.section_net_cost-old_section_cost)
+				evaluation_book.evaluation_details.total_cost     += (saved_section.section_net_cost-old_section_cost)
 				evaluation_book.evaluation_details.save()
 
-				order.remining_amount += (old_section_cost-saved_section.section_net_cost)
-				order.total_amount    += (old_section_cost-saved_section.section_net_cost)
+				order.remining_amount += (saved_section.section_net_cost-old_section_cost)
+				order.total_amount    += (saved_section.section_net_cost-old_section_cost)
 				order.save()
 
-				order.evaluation.total_cost   += (old_section_cost-saved_section.section_net_cost)
-				order.evaluation.estimated_cost    += (old_section_cost-saved_section.section_net_cost)
+				order.evaluation.total_cost        += (saved_section.section_net_cost-old_section_cost)
+				order.evaluation.estimated_cost    += (saved_section.section_net_cost-old_section_cost)
 				order.evaluation.save()
 
 				#delete and add keynotes
