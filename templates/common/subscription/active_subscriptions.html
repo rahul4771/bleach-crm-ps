@@ -325,7 +325,7 @@
           <img src="{% static 'files/images/SendInvoice.png' %}" class="dropdown-icon pr-2"><div class="ml-2 dropdown-text">Send Invoice</div>
           </div> 
           
-          <div class="d-flex dropdown-orders send_invoice" data-id="{{invoice.id}}" data-blcno="{{invoice.evaluation.evaluation_id}}" data-customername="{{invoice.evaluation.customer.mobile_number}}" data-contactno="{{invoice.evaluation.customer.name}}" {% for schedule in invoice.orderschedules %}{% if forloop.first %}data-startdate="{{schedule.start_at|date:'d-m-Y'}}" {% endif %}{% if forloop.last %}data-enddate="{{schedule.start_at|date:'d-m-Y'}}"{% endif %}{% endfor %} data-totalamount="{{invoice.total_amount|default_if_none:'0.000'|floatformat:'3'}}" data-paidamount="{{invoice.amount_paid|default_if_none:'0.000'|floatformat:'3'}}" data-balance="{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}" data-invoice-type="issued" data-remining="{{invoice.balance|default_if_none:'0.000'|floatformat:'3'}}">
+          <div class="d-flex dropdown-orders issue_invoice" data-id="{{invoice.id}}" data-blcno="{{invoice.evaluation.evaluation_id}}" data-customername="{{invoice.evaluation.customer.mobile_number}}" data-contactno="{{invoice.evaluation.customer.name}}" {% for schedule in invoice.orderschedules %}{% if forloop.first %}data-startdate="{{schedule.start_at|date:'d-m-Y'}}" {% endif %}{% if forloop.last %}data-enddate="{{schedule.start_at|date:'d-m-Y'}}"{% endif %}{% endfor %} data-totalamount="{{invoice.total_amount|default_if_none:'0.000'|floatformat:'3'}}" data-paidamount="{{invoice.amount_paid|default_if_none:'0.000'|floatformat:'3'}}" data-balance="{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}" data-invoice-type="issued" data-remining="{{invoice.balance|default_if_none:'0.000'|floatformat:'3'}}">
           <img src="{% static 'files/images/SendInvoice.png' %}" class="dropdown-icon pr-2"><div class="ml-2 dropdown-text">Issue Invoice</div>
           </div>
           {% endif %}
@@ -565,6 +565,11 @@ $("#governorate_filter_id").change(function(){
         $('#remining_invoice_id').addClass('red-text');
     }
 
+    
+    $('.issue_inv').hide();
+    $('.send_inv').show();
+    
+
     $('#subscription_topay_id').prop('max',parseFloat($(this).data('balance')));
 
     $('#send_invoice_popup').css({'visibility':'visible','opacity':1,});
@@ -595,13 +600,8 @@ $('.issue_invoice').click(function(){
         $('#remining_invoice_id').addClass('red-text');
     }
 
-    if($('#invoice_type').val() == 'issued'){
-      $('.issue_inv').show();
-      $('.send_inv').hide();
-    }else{
-      $('.issue_inv').hide();
-      $('.send_inv').show();
-    }
+    $('.issue_inv').show();
+    $('.send_inv').hide();
 
     $('#subscription_topay_id').prop('max',parseFloat($(this).data('balance')));
 
