@@ -73,7 +73,7 @@
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                 </div>
                 <div v-else>
-                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].followup_member_team.length %></span>
                   <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                 </div>
@@ -83,7 +83,7 @@
                   <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                   </div>
                   <div v-else>
-                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].followup_member_team.length %></span>
                     <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                   </div>
                   {% endif %}
@@ -142,7 +142,7 @@
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                 </div>
                 <div v-else>
-                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].followup_member_team.length %></span>
                   <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                 </div>
@@ -152,7 +152,7 @@
                   <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                   </div>
                   <div v-else>
-                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].followup_member_team.length %></span>
                     <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                   </div>
                   {% endif %}
@@ -208,7 +208,7 @@
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                 </div>
                 <div v-else>
-                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].followup_member_team.length %></span>
                   <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                 </div>
@@ -218,7 +218,7 @@
                   <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                   </div>
                   <div v-else>
-                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].followup_member_team.length %></span>
                     <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                   </div>
                   {% endif %}
@@ -274,7 +274,7 @@
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                 </div>
                 <div v-else>
-                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].followup_member_team.length %></span>
                   <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                 </div>
@@ -284,7 +284,7 @@
                   <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                   </div>
                   <div v-else>
-                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].followup_member_team.length %></span>
                     <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                   </div>
                   {% endif %}
@@ -338,7 +338,7 @@
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                 </div>
                 <div v-else>
-                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].followup_member_team.length %></span>
                   <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                 </div>
@@ -348,7 +348,7 @@
                   <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                   </div>
                   <div v-else>
-                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].followup_member_team.length %></span>
                     <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                   </div>
                   {% endif %}
@@ -405,7 +405,7 @@
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                 </div>
                 <div v-else>
-                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].followup_member_team.length %></span>
                   <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                 </div>
@@ -415,7 +415,7 @@
                   <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                   </div>
                   <div v-else>
-                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].followup_member_team.length %></span>
                     <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                   </div>
                   {% endif %}
@@ -470,7 +470,7 @@
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                 </div>
                 <div v-else>
-                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].followup_member_team.length %></span>
                   <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                 </div>
@@ -480,7 +480,7 @@
                   <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                   </div>
                   <div v-else>
-                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].followup_member_team.length %></span>
                     <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                   </div>
                   {% endif %}
@@ -534,7 +534,7 @@
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                 </div>
                 <div v-else>
-                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].followup_member_team.length %></span>
                   <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                 </div>
@@ -544,7 +544,7 @@
                   <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                   </div>
                   <div v-else>
-                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].followup_member_team.length %></span>
                     <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                   </div>
                   {% endif %}
@@ -599,7 +599,7 @@
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                 </div>
                 <div v-else>
-                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].followup_member_team.length %></span>
                   <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                 </div>
@@ -609,7 +609,7 @@
                   <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                   </div>
                   <div v-else>
-                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].followup_member_team.length %></span>
                     <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                   </div>
                   {% endif %}
@@ -664,7 +664,7 @@
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                 </div>
                 <div v-else>
-                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].followup_member_team.length %></span>
                   <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                 </div>
@@ -674,7 +674,7 @@
                   <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                   </div>
                   <div v-else>
-                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].followup_member_team.length %></span>
                     <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                   </div>
                   {% endif %}
@@ -729,7 +729,7 @@
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                 </div>
                 <div v-else>
-                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].followup_member_team.length %></span>
                   <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                 </div>
@@ -739,7 +739,7 @@
                   <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                   </div>
                   <div v-else>
-                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].followup_member_team.length %></span>
                     <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                   </div>
                   {% endif %}
@@ -794,7 +794,7 @@
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                 </div>
                 <div v-else>
-                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                  <span  v-if="item.slots.followupteam_followupschedule.length>0"><% item.slots.followupteam_followupschedule[0].followup_member_team.length %></span>
                   <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addCleaningTeam(item.slots.id)">+</span>
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                 </div>
@@ -804,7 +804,7 @@
                   <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                   </div>
                   <div v-else>
-                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].cleaning_member_team.length %></span>
+                    <span  v-if="item.slots.followupteam_followupschedule.length>0 && item.color!='rejected-status-bg'"><% item.slots.followupteam_followupschedule[0].followup_member_team.length %></span>
                     <span  v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                   </div>
                   {% endif %}
