@@ -46,20 +46,20 @@ urlpatterns = [
 		url(r'^ajax/getservicesizeprice$',views.GetServiceSizePrice.as_view(),name='ajax-getservicesizeprice'),
 		url(r'^ajax/getserviceproductivity$',views.GetServiceProductivity.as_view(),name='ajax-serviceproductivity'),
 		
-		url(r'^ajax/getcleaningslotes$',views.GetCleaningSlotes.as_view(),name='ajax-cleaningslotes'),#done not tested
-		url(r'^ajax/getmultipleservicecleaningslotes$',views.GetMultipleServiceCleaningSlotes.as_view(),name='ajax-multipleservicecleaningslotes'),#done not tested
-		url(r'^ajax/multipleservice/multipledates/cleaningslotes/$',views.GetMultipleServiceDateCleaningSlotes.as_view(),name='ajax-multipleservicedatecleaningslotes'),#done not tested
-		url(r'^ajax/multipleservice/multipledates/cleaningslotes/autofix/$',views.GetMultipleServiceDateCleaningSlotesAutofix.as_view(),name='ajax-multipleservicedatecleaningslotes-autofix'),#done not tested
+		url(r'^ajax/getcleaningslotes$',views.GetCleaningSlotes.as_view(),name='ajax-cleaningslotes'),#New logic applied
+		url(r'^ajax/getmultipleservicecleaningslotes$',views.GetMultipleServiceCleaningSlotes.as_view(),name='ajax-multipleservicecleaningslotes'),#New logic applied
+		url(r'^ajax/multipleservice/multipledates/cleaningslotes/$',views.GetMultipleServiceDateCleaningSlotes.as_view(),name='ajax-multipleservicedatecleaningslotes'),#New logic applied
+		url(r'^ajax/multipleservice/multipledates/cleaningslotes/autofix/$',views.GetMultipleServiceDateCleaningSlotesAutofix.as_view(),name='ajax-multipleservicedatecleaningslotes-autofix'),#New logic applied
 		url(r'^ajax/addressotpsend$',views.AddressOtpSend,name='ajax-addressotpsend'),
 		url(r'^ajax/addressotpverify$',views.AddressOtpVerify,name='ajax-addressotpverify'),
 		
 		#booking cleaning
 		url(r'^bookingphase1$',views.ClientCleaningBookingPhase1.as_view(),name='clientcleaningbookingphase1'),
 		
-		url(r'^bookingmultiplephase2$',views.ClientMultipleCleaningBookingPhase2.as_view(),name='clientcleaningmultiplebookingphase2'),#done not tested
-		url(r'^evaluatorbookingmultiplephase2/together/(?P<evaluation_details_id>[-\w]+)/$',views.EvaluatorMultipleCleaningBookingTogetherPhase2.as_view(),name='evaluatorclientcleaningmultiplebookingtogetherphase2'),#done not tested
-		url(r'^evaluatorbookingmultiplephase2/customer/(?P<evaluation_details_id>[-\w]+)/$',views.EvaluatorMultipleCleaningBookingLetCustomerPhase2.as_view(),name='evaluatorclientcleaningmultiplebookingcustomerphase2'),#done not tested
-		url(r'^duplicatebookingphase2/(?P<evaluation_id>[-\w]+)/$',views.DuplicateBookingPhase2.as_view(),name='duplicatebookingphase2'),#done not tested
+		url(r'^bookingmultiplephase2$',views.ClientMultipleCleaningBookingPhase2.as_view(),name='clientcleaningmultiplebookingphase2'),#New Logic Applied
+		url(r'^evaluatorbookingmultiplephase2/together/(?P<evaluation_details_id>[-\w]+)/$',views.EvaluatorMultipleCleaningBookingTogetherPhase2.as_view(),name='evaluatorclientcleaningmultiplebookingtogetherphase2'),#New Logic Applied
+		url(r'^evaluatorbookingmultiplephase2/customer/(?P<evaluation_details_id>[-\w]+)/$',views.EvaluatorMultipleCleaningBookingLetCustomerPhase2.as_view(),name='evaluatorclientcleaningmultiplebookingcustomerphase2'),#New Logic Applied
+		url(r'^duplicatebookingphase2/(?P<evaluation_id>[-\w]+)/$',views.DuplicateBookingPhase2.as_view(),name='duplicatebookingphase2'),#New Logic Applied
 		
 		url(r'^bookingphase3$',views.ClientCleaningBookingPhase3.as_view(),name='clientcleaningbookingphase3'),
 		url(r'^bookingmediasave$',views.ClientCleaningBookingMediaSave.as_view(),name='clientcleaningbookingmediasave'),
