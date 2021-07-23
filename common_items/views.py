@@ -3855,11 +3855,6 @@ class AssigncleaningTeam(IsAuthenticated,View):
 				cleaning_team_assign_form_save.end_at            = end_at_datetime
 				cleaning_team_assign_form_save.created_by        = request.user
 				cleaning_team_assign_form_save.save()
-
-				#update cleaners count
-				order_scheduler.no_of_cleaners = len(assigned_cleaners)+1
-				order_scheduler.work_status    = 'CLEANING_TEAM_ASSIGNED'
-				order_scheduler.save()
 				
 				#cleaners
 				assigned_cleaners_list   = []
@@ -3867,7 +3862,13 @@ class AssigncleaningTeam(IsAuthenticated,View):
 					assigned_cleaners_list.append(CleaningTeamMember(team=cleaning_team_assign_form_save,member_id=cleaner,start_at=start_at_datetime,end_at=end_at_datetime,start_time=start_at_time,end_time=end_at_time))
 				assigned_cleaners_list.append(CleaningTeamMember(team=cleaning_team_assign_form_save,member=cleaning_team_assign_form_save.team_leader,start_at=start_at_datetime,end_at=end_at_datetime,start_time=start_at_time,end_time=end_at_time))
 				#bulk create
-				CleaningTeamMember.objects.bulk_create(assigned_cleaners_list)	
+				CleaningTeamMember.objects.bulk_create(assigned_cleaners_list)
+
+				#update cleaners count
+				order_scheduler.no_of_cleaners = len(assigned_cleaners)+1
+				order_scheduler.work_status    = 'CLEANING_TEAM_ASSIGNED'
+				order_scheduler.save()
+					
 			else:	
 				messages.error(request,"Something Went Wrong !! Please Reupdate")
 

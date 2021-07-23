@@ -521,7 +521,18 @@
 .completed-chip{
   border-left:6px solid #10a82f !important;
 }
-
+.cancel-chip-bg{
+  background: #c91212 !important;
+}
+.assigned-chip-bg{
+  background: #dba03a !important;
+}
+.inprogress-chip-bg{
+  background: #0d87c5 !important;
+}
+.completed-chip-bg{
+  background: #10a82f !important;
+}
 
 .c-active {
   border: 1px solid #74a7ff;
