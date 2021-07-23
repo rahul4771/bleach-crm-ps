@@ -1511,15 +1511,15 @@
                                                 <div class="row">
                                                     <div class="col-xs-4 pr-0">
                                                         {% if cleaning_team.team_leader.profile_image %}
-                                                        <img class="clean-team-profile-pic id_team_leader_img" src="{{cleaning_team.team_leader.profile_image.url}}">
+                                                        <img class="clean-team-profile-pic id_assigned_by_img" src="{{cleaning_team.team_leader.profile_image.url}}">
                                                         {% else %}
                                                         <img class="clean-team-profile-pic" src="{% static 'files/icons/profile.png' %}">
                                                         {% endif %}
                                                     </div>
                                                     <div class="col-xs-8">
                                                         <div class="order-agent-content text-left">
-                                                            <h2 class="id_team_leader">{{cleaning_team.team_leader.name}}</h2>
-                                                            <h6>Team Leader</h6>
+                                                            <h2 class="id_assigned_by">{{cleaning_team.team_leader.name}}</h2>
+                                                            <h6 class="id_assigned_by_usertype">SENIOR TEAM LEADER</h6>
 
 
                                                         </div>
@@ -2543,8 +2543,9 @@ function load_cleaning_team(visitcount,scheduleid){
                             $('.id_team_members_div').append('<div class="col-md-2 m-mt20 .c-mb-10 mr-0 ml-0"> <div class="row"> <div class="col-xs-4 pr-0"> <img class="clean-team-profile-pic" src="'+value.member_image+'"> </div> <div class="col-xs-8"> <div class="order-agent-content text-left"> <h2>'+value.member_name+'</h2> <h6>Team Member</h6> </div></div></div></div>');
                         })
 
-                        $('.id_team_leader').text(response.data.team_leader);
-                        $('.id_team_leader_img').attr("src",response.data.team_leader_image);
+                        $('.id_assigned_by').text(response.data.assigned_by);
+                        $('.id_assigned_by_img').attr("src",response.data.assigned_by_image);
+                        $('.id_assigned_by_usertype').text(response.data.assigned_by_usertype);
 
 
                         

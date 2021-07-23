@@ -172,6 +172,8 @@ def sendinvoice(request):
 
     separator = ", "
 
+    data = False
+    
     if evaluation.customer.is_sms == True or 'SMS' in options:
 
         url = "https://smsapi.future-club.com/fccsms.aspx"
@@ -208,8 +210,7 @@ def sendinvoice(request):
         print(message,response.text,"respo")
         print(order_no)
         data=True
-    else:
-        data = False
+    
 
     if evaluation.customer.is_email == True or 'EMAIL' in options:
         #send mail
@@ -218,8 +219,7 @@ def sendinvoice(request):
         msg.attach_alternative(msg_html, "text/html")
         msg.send(fail_silently=False)
         data=True
-    else:
-        data = False
+        
 
     return JsonResponse(data,safe=False)
 
@@ -264,6 +264,8 @@ def sendquotation(request):
 
     separator = ", "
 
+    data = False
+
     if evaluation.customer.is_sms == True or 'SMS' in options:
     
         url = "https://smsapi.future-club.com/fccsms.aspx"
@@ -290,9 +292,6 @@ def sendquotation(request):
         print(order_no)
         data=True
 
-    else:
-        data = False
-
     if evaluation.customer.is_email == True or 'EMAIL' in options:
         #send mail
         msg_html = render_to_string('email/quatation.html',{"evaluator":evaluator,"evaluation":evaluation,"evaluationbooks":evaluationbooks,"address_list":separator.join(address_list)})
@@ -301,8 +300,8 @@ def sendquotation(request):
         msg.send(fail_silently=False)
         print(msg,"msg")
         data=True
-    else:
-        data = False
+    
+        
 
     return JsonResponse(data,safe=False)
 
