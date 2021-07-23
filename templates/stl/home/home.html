@@ -169,7 +169,7 @@
     
     <table width="100%" border="0" class="popup-tble1">  
                 <tr>
-                    <td valign="center"><a id="order_url"><div class="blc-number" id="blcno_cleaning_id"></div></a><div id="servicetype"></div><br><span id="address_cleaning_id"></span></td>
+                    <td valign="center"><a id="order_url2"><div class="blc-number" id="blcno_cleaning_id"></div></a><div id="servicetype"></div><br><span id="address_cleaning_id"></span></td>
                     <td><div class="bold-text" id="customername_cleaning_id"></div><div id="mobileno_cleaning_id"></div></td>
                 </tr>
  
@@ -356,7 +356,7 @@
     
     <table width="100%" border="0" class="popup-tble1">  
                 <tr>
-                    <td><a id="notapprovedorder_url"><div class="blc-number" id="blcno_notapprovedcleaning_id"></div></a><div id="notapproved_servicetype"></div><br><span id="address_notapprovedcleaning_id"></span></td>
+                    <td><a id="notapprovedorder_url2"><div class="blc-number" id="blcno_notapprovedcleaning_id"></div></a><div id="notapproved_servicetype"></div><br><span id="address_notapprovedcleaning_id"></span></td>
                     <td><div class="bold-text" id="customername_notapprovedcleaning_id"></div><div id="mobileno_notapprovedcleaning_id"></div></td>
                 </tr>
  
@@ -1758,7 +1758,7 @@ $('document').ready(function(){
 
   $.ajax({
 
-        url: "{% url 'stl:ajax-getcleaninginfo' %}",
+        url: "{% url 'agent:ajax-getcleaninginfo' %}",
 
         data: {'schedule_id':schedule_id}, 
 
@@ -1987,7 +1987,7 @@ $('.collapsible1-close').click(function(){
 
   $.ajax({
 
-        url: "{% url 'stl:ajax-getfollowupinfo' %}",
+        url: "{% url 'agent:ajax-getfollowupinfo' %}",
 
         data: {'schedule_id':schedule_id}, 
 
