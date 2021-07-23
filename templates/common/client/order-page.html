@@ -19,6 +19,62 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.standalone.min.css" integrity="sha512-TQQ3J4WkE/rwojNFo6OJdyu6G8Xe9z8rMrlF9y7xpFbQfW5g8aSWcygCQ4vqRiJqFsDsE1T6MoAOMJkFXlrI9A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
 <div class="wrapper" id="app"><!--wrapper-->
+
+    <!-- helper modal begins here-->
+    <div class="modal fade" id="helpModel" role="dialog">
+        <div style="border: none !important;" class="modal-dialog cancel-model cancel-order-border " role="document">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12 mt-20">
+      
+                        
+                        <div class="d-flex ">
+                            <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Help</p></div>
+                            <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+      
+                                <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                            </button>
+      
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-20">
+                  
+                  <div class="col-md-6 text-right">
+                    <span class="inv-dot inprogress-chip-bg ml-5 "></span>
+                    Cleaning In Progress
+                  </div>
+                  <div class="col-md-6 text-left">
+                    <span class="inv-dot assigned-chip-bg ml-5"></span>
+                    Cleaning Team Assigned
+                  </div>
+                  <div class="col-md-6 text-right " style="margin-top:10px;margin-bottom:10px">
+                    <span class="inv-dot completed-chip-bg ml-5"></span>
+                   Completed
+                  </div>
+                  <div class="col-md-6 text-left  "  style="margin-top:10px;margin-bottom:30px">
+                    <span class="inv-dot cancel-chip-bg ml-5"></span>
+                    Cancelled 
+                  </div>
+    
+                  
+    
+                  
+                  
+                 
+      
+      
+      
+                  
+                </div>
+              
+                
+           
+               
+            </div>
+        </div>
+      </div>
+    <!-- helper modal ends here-->
     <!-- CHANGE PAYMENT MODAL BEGINS HERE-->
     <div class="modal fade " id="editPaymentModal" tabindex="-1" role="dialog" aria-labelledby="editPaymentModal" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered primary-modal" role="document">
@@ -1409,6 +1465,9 @@
                                     class="order-container-main order-clean-section">
                                     <div class="order-clean-section-header c-mb-10 d-flex">
                                         <h2>Cleaning Visit(s)</h2>
+                                        <button data-toggle="modal" data-target="#helpModel"  style="margin-top: 9px; color: #3968c6;margin-left:auto;background: none;
+                                        border: none;"><i data-toggle="tooltip" title="Help" class="fa fa-question-circle fa-lg" aria-hidden="true"></i></button>
+
                                         
                                     </div>
 
