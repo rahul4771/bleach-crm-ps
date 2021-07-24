@@ -183,10 +183,10 @@ class OrderScheduler(models.Model):
 	updated         = models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
-		return str(self.order.order_no+str(self.start_at))
+		return str(self.order.order_no+ str(self.start_at.date))
 
 	def __str__(self):
-		return str(self.order.order_no+str(self.start_at))
+		return str(self.order.order_no+ str(self.start_at.date))
 
 class CancellOrderAmountHistory(models.Model):
 	order                 = models.ForeignKey(Order,blank=False,null=False,related_name='cancelled_order')
