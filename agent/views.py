@@ -1270,6 +1270,7 @@ class CleaningPopupSave(APIView):
 	
 				#cleaning team
 				if leaders and cleaners.count() >= (no_of_cleaners-1):
+					
 					#update cleaning schedule
 					cleaning_schedule.start_at 							= schedule_start_at
 					cleaning_schedule.end_at   							= schedule_end_at
