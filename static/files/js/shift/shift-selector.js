@@ -1,5 +1,5 @@
 
-// var url='https://my.bleachkw.com';
+//var url='https://my.bleachkw.com';
 // //var url = 'https://my.bleachkw.com';
 // //var url = 'https://my.bleachkw.com';
 // //var url='http://localhost:8000';
@@ -127,7 +127,7 @@ function nextMonthShift(){
        
     }
     $('#lv-month-select-2').text(DateTime.local(currentYear,currentMonth).monthLong+' '+ currentYear);
-    reCalc();
+    reCalcShift();
 
 }
 function previousMonthShift(){
@@ -139,14 +139,14 @@ function previousMonthShift(){
     }
     $('#lv-month-select-2').text(DateTime.local(currentYear,currentMonth).monthLong+' '+ currentYear);
    
-    reCalc();    
+    reCalcShift();    
 }
 
 
 
 
 //RECALCULATIONS
-function reCalc(){
+function reCalcShift(){
     $('.day-head').remove();
     $('.lv-rows').remove();
     var noOfDays = DateTime.local(2021, currentMonth).daysInMonth;
