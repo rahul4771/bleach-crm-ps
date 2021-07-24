@@ -1196,19 +1196,6 @@ class CleaningPopupSave(APIView):
 
 		if action == 'edit_cleaning_withautofix':
 			for cleaning_schedule in cleaning_schedules:
-				print("loop")	
-				#update cleaning schedule
-				cleaning_schedule.start_at 							= schedule_start_at
-				cleaning_schedule.end_at   							= schedule_end_at
-				cleaning_schedule.no_of_cleaners                    = no_of_cleaners
-				cleaning_schedule.cleaning_hours                    = cleaning_hours
-				cleaning_schedule.save()
-
-				#update cleaning team or create
-				try:
-					cleaning_team                = CleaningTeam.objects.get(order_scheduler=cleaning_schedule)
-				except:
-					cleaning_team                = CleaningTeam.objects.create(order_scheduler=cleaning_schedule,start_at=schedule_start_at,end_at=schedule_end_at,no_of_cleaners=no_of_cleaners)
 
 				#delete cleaning team members if exist
 				try:
@@ -1216,8 +1203,11 @@ class CleaningPopupSave(APIView):
 				except:
 					existing_members = None
 
-				cleaning_date1 = schedule_start_at.date()
-				cleaning_date2 = schedule_end_at.date()
+				cleaning_date1   = schedule_start_at.date()
+				cleaning_date2   = schedule_end_at.date()
+				slote_start_time = schedule_start_at.time()
+				slote_end_time   = schedule_end_at.time()
+
 				#absent cleaners
 				absent_cleaners = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=cleaning_date1)|Q(leave_date=cleaning_date2))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
 				absent_leaders  = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=cleaning_date1)|Q(leave_date=cleaning_date2))).filter(staff__user_type='TEAMINCHARGE').values_list('staff',flat=True)
@@ -1231,10 +1221,13 @@ class CleaningPopupSave(APIView):
 				#shift included
 				shift_cleaners  = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=cleaning_date1)|Q(shift_date=cleaning_date2))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=schedule_start_at.time())&Q(shift1_end_at__gte=schedule_start_at.time()))&Q(Q(shift1_start_at__lte=schedule_end_at.time())&Q(shift1_end_at__gte=schedule_end_at.time()))) | Q(Q(Q(shift2_start_at__lte=schedule_start_at.time())&Q(shift2_end_at__gte=schedule_start_at.time()))&Q(Q(shift2_start_at__lte=schedule_end_at.time())&Q(shift2_end_at__gte=schedule_end_at.time())))).values_list('staff',flat=True)
 				shift_leaders   = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=cleaning_date1)|Q(shift_date=cleaning_date2))).filter(staff__user_type='TEAMINCHARGE').filter(Q(Q(Q(shift1_start_at__lte=schedule_start_at.time())&Q(shift1_end_at__gte=schedule_start_at.time()))&Q(Q(shift1_start_at__lte=schedule_end_at.time())&Q(shift1_end_at__gte=schedule_end_at.time()))) | Q(Q(Q(shift2_start_at__lte=schedule_start_at.time())&Q(shift2_end_at__gte=schedule_start_at.time()))&Q(Q(shift2_start_at__lte=schedule_end_at.time())&Q(shift2_end_at__gte=schedule_end_at.time())))).values_list('staff',flat=True)
+				today_shifts        = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=cleaning_date1)|Q(shift_date=cleaning_date2))).values_list('staff',flat=True)
+				super_shift_cleaners= UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(id__in=today_shifts).filter( Q(Q(universal_shift_start__lte=slote_start_time)&Q(universal_shift_end__gte=slote_start_time))&Q(Q(universal_shift_start__lte=slote_end_time)&Q(universal_shift_end__gte=slote_end_time)) ).values_list('id',flat=True)
+				super_shift_leaders = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(id__in=today_shifts).filter(Q(Q(universal_shift_start__lte=slote_start_time)&Q(universal_shift_end__gte=slote_start_time))&Q(Q(universal_shift_start__lte=slote_end_time)&Q(universal_shift_end__gte=slote_end_time))).values_list('id',flat=True)
 
 				#leaders and cleaners				
-				leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_leaders))).filter(id__in=shift_leaders)
-				cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_cleaners))).filter(id__in=shift_cleaners)	
+				leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_leaders))).filter(Q(id__in=shift_leaders)|Q(id__in=super_shift_leaders))
+				cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_cleaners))).filter(Q(id__in=shift_cleaners)|Q(id__in=super_shift_leaders))	
 				
 				for service_type in service_types:
 					if service_type == 'General Cleaning':
@@ -1277,8 +1270,21 @@ class CleaningPopupSave(APIView):
 	
 				#cleaning team
 				if leaders and cleaners.count() >= (no_of_cleaners-1):
-					cleaning_team.team_leader=leaders.first()
-					cleaning_team.save()
+					
+					#update cleaning schedule
+					cleaning_schedule.start_at 							= schedule_start_at
+					cleaning_schedule.end_at   							= schedule_end_at
+					cleaning_schedule.no_of_cleaners                    = no_of_cleaners
+					cleaning_schedule.cleaning_hours                    = cleaning_hours
+					cleaning_schedule.save()
+
+					#update cleaning team or create
+					try:
+						cleaning_team                = CleaningTeam.objects.get(order_scheduler=cleaning_schedule)
+						cleaning_team.team_leader=leaders.first()
+						cleaning_team.save()
+					except:
+						cleaning_team                = CleaningTeam.objects.create(order_scheduler=cleaning_schedule,start_at=schedule_start_at,end_at=schedule_end_at,no_of_cleaners=no_of_cleaners,team_leader=leaders.first())
 					
 					#cleaning team members
 					cleaning_team_member_array = []
