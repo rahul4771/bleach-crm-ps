@@ -99,11 +99,9 @@
       <span id="netprice-text">NET PRICE</span>
       <div>
         <span>Size : <b>{{section.size}} {{section.unit|default_if_none:''}}</b> Quantity : <b>{% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{section.section_cleanings|floatformat:"-1"}}{% endif %}</b> Unit Price : <b>350.000</b> </span>
-        <span id="netprice"><b>{% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}
-          {{section.section_cost|floatformat:'3'}}
-          {% else %}
-          {{section.section_cost|mul:section.section_cleanings|floatformat:'3'}}
-          {% endif %}</b> KD</span>
+        <span id="netprice"><b>
+          {{section.section_net_cost|floatformat:'3'}}
+          </b> KD</span>
       </div>
     </section>
     <!-- itmes-->
