@@ -516,7 +516,11 @@ function getLeave(){
        if(gt_month[0]=='0'){
         gt_month=gt_month.substring(1);
     }
+    if(userIndex)
+    {
+    console.log("userindex is"+userIndex)
     resourceList[userIndex].leave.push({date:gt_day+'-'+gt_month+'-'+gt_year,type:response.data.staffs[i].leave_type,leave_id:response.data.staffs[i].id});
+    }
     }
     getInitDatas();
    
