@@ -98,7 +98,7 @@
       <span id="order-item-name">{{orderschedule.order_scheduler_book.service_type}}-{{section.section_name}}</span>
       <span id="netprice-text">NET PRICE</span>
       <div>
-        <span>Size : <b>{{section.size}} {{section.unit|default_if_none:''}}</b> Quantity : <b>{% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{section.section_cleanings|floatformat:"-1"}}{% endif %}</b> Unit Price : <b>{{section.section_cost}}</b> </span>
+        <span>Size : <b>{{section.size}} {{section.unit|default_if_none:''}}</b> Quantity : <b>{% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{section.section_cleanings|floatformat:"-1"}}{% endif %}</b> Unit Price : <b>{{section.section_cost|floatformat:'3'}}</b> </span>
         <span id="netprice"><b>
           {{section.section_net_cost|floatformat:'3'}}
           </b> KD</span>
