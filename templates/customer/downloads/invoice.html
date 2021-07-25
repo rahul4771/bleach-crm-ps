@@ -110,6 +110,8 @@
     {% endfor %}
     {% endfor %}
 
+
+    {% if  order.evaluation.payment_method == 'BREAKDOWN' %}
     <section id="new-customer-info_1">
       <!-- <div>
         <span id="contact-text">Completed Jobs</span>
@@ -122,14 +124,15 @@
       </div> -->
       <div>
         <span id="contact-text">Payment Before Cleaning</span>
-        <span id="contact-number"><b>340.000</b> KD</span>
+        <span id="contact-number"><b>{{order.evaluation.before_cleaning_amount|floatformat:'3'}}</b> KD</span>
       </div>
       <br>
       <div>
         <span id="contact-text">Payment After Cleaning</span>
-        <span id="contact-number"><b>35.000</b> KD</span>
+        <span id="contact-number"><b>{{order.evaluation.after_cleaning_amount|floatformat:'3'}}</b> KD</span>
       </div>
     </section>
+    {% endif %}
    
     <section id="invoice_total">
       <div>
@@ -150,18 +153,28 @@
       </div>
       <div>
         <span id="contact-text">Paid till date</span>
-        <span id="contact-number">0</span>
+        <span id="contact-number">{{order.amount_paid|floatformat:'3'}}</span>
       </div>
       <div>
         <span id="contact-text">Balance till date</span>
-        <span id="contact-number">0</span>
+        <span id="contact-number">{{order.remining_amount|floatformat:'3'}}</span>
       </div>
+
+      {% if order.evaluation.cleaning_policy == 'ONE TIME SERVICE' %}
       <div>
         <span id="total_id">Payable Amount</span>
       <h1 id="total_amount">
-        350.000<span id="kd-font">KD</span>
+        {{order.remining_amount|floatformat:'3'}}<span id="kd-font">KD</span>
       </h1>
       </div>
+      {% else %}
+      <div>
+        <span id="total_id">Payable Amount</span>
+      <h1 id="total_amount">
+        {{order.subscription_topay|floatformat:'3'}}<span id="kd-font">KD</span>
+      </h1>
+      </div>
+      {% endif %}
       
       <!-- <h1 id="payment-text"> Payment</h1>
       <div style="margin-top: 20px;">
