@@ -386,7 +386,7 @@ class LeaveUsersList(APIView):
 		response_dict = {"success":False}
 
 		try:
-			staffs = UserProfile.objects.filter(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))
+			staffs = UserProfile.objects.filter(is_active=True).filter(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))
 		except:
 			staffs = None
 		
