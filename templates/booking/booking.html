@@ -290,6 +290,18 @@
     Please fill the required fields
   </v-alert>
 </div>
+<div  v-if="slot_msg">
+  <v-alert
+     
+  dense
+  outlined
+  type="error"
+      type="error"
+    >
+      Please Select the required number of slots
+    </v-alert>
+</div>
+
     <div class="d-flex justify-center">
     <v-btn color="primary" @click="submitOneTimeSlots()">
       Proceed
