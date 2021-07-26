@@ -238,41 +238,51 @@
         </span>
       </div>
       {% endif %}
-    </section>
 
-    <section id="final-section">
-      <span id="total_id">Total</span>
-      <h1 id="total_amount">
-        {{order.total_amount|floatformat:"3"}} <span id="kd-font">KD</span>
-      </h1>
+
+      <div>
+        <span id="contact-text">
+          <b>Total</b>
+        </span>
+        <span id="contact-number">
+          <b>{{order.total_amount|floatformat:"3"}}</b>
+        </span>
+      </div>
+      
+      <div>
+        <span id="contact-text">
+          <b>Paid till date</b>
+        </span>
+        <span id="contact-number">
+          <b>{{order.amount_paid|floatformat:'3'}}</b>
+        </span>
+      </div>
+  
+      <div>
+        <span id="contact-text">
+          <b>Balance till date</b>
+        </span>
+        <span id="contact-number">
+          <b>{{order.remining_amount|floatformat:'3'}}</b>
+        </span>
+      </div>
     </section>
-    
-    {% comment %}
-    <div>
-      <span id="contact-text">Paid till date</span>
-      <span id="contact-number">{{order.amount_paid|floatformat:'3'}}</span>
-    </div>
-    <div>
-      <span id="contact-text">Balance till date</span>
-      <span id="contact-number">{{order.remining_amount|floatformat:'3'}}</span>
-    </div>
 
     {% if order.evaluation.cleaning_policy == 'ONE TIME SERVICE' %}
-    <div>
+    <section id="final-section">
       <span id="total_id">Payable Amount</span>
-    <h1 id="total_amount">
-      {{order.remining_amount|floatformat:'3'}}<span id="kd-font">KD</span>
-    </h1>
-    </div>
+      <h1 id="total_amount">
+        {{order.remining_amount|floatformat:'3'}} <span id="kd-font">KD</span>
+      </h1>
+    </section>
     {% else %}
-    <div>
+    <section id="final-section">
       <span id="total_id">Payable Amount</span>
-    <h1 id="total_amount">
-      {{order.subscription_topay|floatformat:'3'}}<span id="kd-font">KD</span>
-    </h1>
-    </div>
+      <h1 id="total_amount">
+        {{order.subscription_topay|floatformat:'3'}} <span id="kd-font">KD</span>
+      </h1>
+    </section>
     {% endif %}
-    {% endcomment %}
 
 
   
