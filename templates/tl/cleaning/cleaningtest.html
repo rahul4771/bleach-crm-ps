@@ -80,7 +80,7 @@
     {% endif %}
     <div class="common-gray-text align-left d-flex"><label class="common-labels">Size</label> &nbsp;: <span id="id_size"> <strong class="size_text{{section.id}}">{{section.size}}</strong> <strong>{{section.unit}}</strong> </span>
         {% if cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.name == 'Upholstery Cleaning' %}
-        <input type="text" id="id_sizelist" name="size" class="minimal size-edit-select price{{section.id}}" placeholder="Enter area size" />
+        <input type="text" id="id_sizelist" name="size" class="minimal size-edit-select price{{section.id}}" placeholder="Enter area size" style="display: none;" />
         {% else %}
         <select id="id_sizelist" class="minimal size-edit-select price{{section.id}}" style="display: none; height: 28px;" >
             {% for range in price_ranges %}
