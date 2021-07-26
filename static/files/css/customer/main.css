@@ -440,6 +440,14 @@ outline: none !important;
     font-size: 11px;
     margin: auto;
     position: relative;
+    top: 0px;
+    color: #ffffff;
+    display:none;
+}
+.inv-check-onetime-icon{
+    font-size: 11px;
+    margin: auto;
+    position: relative;
     top: 4px;
     color: #ffffff;
     display:none;
