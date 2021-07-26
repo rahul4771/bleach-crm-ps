@@ -1026,7 +1026,7 @@
                             <input type="hidden" value="{{orderschedule.order_scheduler_book.id}}" class="book_id" />
                                 <div class="order-container-main">
                                     <div class="order-header-class">
-                                        <h2>{{orderschedule.order_scheduler_book.service_type.name}}</h2>
+                                        <h2 class="service-name">{{orderschedule.order_scheduler_book.service_type.name}}</h2>
                                         {% if orderschedule.order_scheduler_book.cleaning_policy  ==  'ONE TIME SERVICE' %}
                                         <button class="subscription-button">One Time</button>
                                         {% else %}
@@ -2230,7 +2230,7 @@
             <div class="row">
                 <div class="col-md-12">
 
-                    <div class="d-flex cl-modal-icons">
+                    <div class="d-flex cl-modal-icons mt-10">
                         <button data-dismiss="modal" class="model-close">
                             <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
                         </button>
@@ -2240,15 +2240,20 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <div class="cancel-model-content">
+                    <div class="cancel-model-content p-0">
                         <h1>Do you want to Cancel this order?</h1>
+                    </div>
+                </div>
+                <div class="col-md-12  ">
+                    <div class="text-center mt-20">
+                        Select the Services the you need to cancel
                     </div>
                 </div>
 
             </div>
-            <div class="row">
+            <div class="row pt-20 pb-20">
                 <div class="col-md-12 text-center">
-                    <div class="cancel-model-content">
+                    <div class="cancel-model-content p-0">
                         <form method="post" action="" enctype= "multipart/form-data" id="duplicate_form_id" class="text-center">{% csrf_token %}
                         <input type="hidden" name="evaluation" id="evaluation_id" value="{{order.evaluation.id}}">
                         <input type="hidden" name="action_type" value="cancell_order">
@@ -2258,21 +2263,18 @@
                         {% elif request.user.user_type == 'SALESADMIN' %}
                         <a href="{% url 'bleach_salesadmin:cancell-order' order.id %}" target="_blank"><button class="sent-button" type="button">Yes</button></a>
                         {% else %}
-                    <!--   <div class="row" style="justify-content: center;">
-                            <div class="col-md-3"></div>
-                            <div class="col-md-3">
+                    <!--  <div class="row" style="justify-content: center;">
+                           
+                            <div class="col-md-3" v-for="(service,serindex) in services" v-bind:key="serindex">
                                 <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                                <label class="form-check-label" for="exampleCheck1">General Cleaning</label>
+                                <label class="form-check-label" for="exampleCheck1"><% service %></label>
                             </div>
-                            <div class="col-md-3">
-                                <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                                <label class="form-check-label" for="exampleCheck1">Deep Cleaning</label>
-                            </div>
+                           
                         </div>-->
-                        <button class="sent-button" type="submit">Yes</button>
+                        <button class="sent-button mt-20" type="submit">Yes</button>
                         {% endif %}
 
-                        <button data-dismiss="modal" class="view-button">Cancel</button>
+                        <button data-dismiss="modal mt-20" class="view-button">Cancel</button>
                         </form><!--Content ends here-->
                         
                     </div>

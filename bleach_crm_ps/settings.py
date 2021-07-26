@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'user',
     'evaluator',
     'order',
+    'inventory',
     'senior_team_leader',
     'operationsupervisor',
     'technicalsupervisor',

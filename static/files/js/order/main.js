@@ -220,12 +220,20 @@ const app = new Vue({
     this.selected_date=moment().format('DD-MM-YYYY')
     $('#date_hidden').val(moment().format('MM/DD/YYYY'))
     this.getTheSize('Kitchen Cleaning')
+    console.log("service is"+$('.service-name'))
+    var service=$('.service-name')
+    for(var i=0;i<service.length;i++)
+    {
+      this.services.push($(service[i]).text())
+    }
+    
    
     
   },
   components: { Multiselect: window.VueMultiselect.default },
 
   data: {
+    services:[],
     highprice_facade:[],
     lowprice_facade:[],
     highprice_window:[],
@@ -379,7 +387,7 @@ const app = new Vue({
            
 
             url:'https://my.bleachkw.com'
-           //url:'http://localhost:8000'
+          // url:'http://localhost:8000'
             //url:'http://127.0.0.1:8000'
   },
   methods:{

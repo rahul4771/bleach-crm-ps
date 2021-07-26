@@ -32,7 +32,8 @@
                             <i class="fa fa-filter mr-5" aria-hidden="true"></i>
                             Filter
                         </button>
-                        <!-- <button class="inv-blue-btn" data-toggle="modal" data-target="#addModel" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Store </button> -->
+
+                        <button class="inv-blue-btn"  onclick="openNavAddStore('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Item </button>
                     </div>
                 </div>
                 <div class="mt-20">
@@ -268,7 +269,7 @@
 
     function openNavAddStore(d) {
     if(d == 'add'){
-            $("#itemHead").text("Add Store");
+            $("#itemHead").text("Add Item");
         }
         if(d == 'edit'){
             $("#itemHead").text("Edit Inventory");
