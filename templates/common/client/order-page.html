@@ -1161,17 +1161,17 @@
                                                 {% for subscription_schedule in order.orderschedules %}
                                                 {% if subscription_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
                                                     {% if request.user.user_type == 'AGENT' %}
-                                                            <a href="/agent/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            <a href="/agent/dashboard/?cleaning_calendar_date={{subscription_schedule.start_at|date:'d-m-Y'}}" target="_blank">
                                                             {% elif request.user.user_type == 'ADMIN' %}
-                                                            <a href="/bleach_admin/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            <a href="/bleach_admin/dashboard/?cleaning_calendar_date={{subscription_schedule.start_at|date:'d-m-Y'}}" target="_blank">
                                                             {% elif request.user.user_type == 'SALESADMIN' %}
-                                                            <a href="/bleach_salesadmin/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            <a href="/bleach_salesadmin/dashboard/?cleaning_calendar_date={{subscription_schedule.start_at|date:'d-m-Y'}}" target="_blank">
                                                             {% elif request.user.user_type == 'BOOKINGOFFICER' %}
-                                                            <a href="/booking-officer/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            <a href="/booking-officer/dashboard/?cleaning_calendar_date={{subscription_schedule.start_at|date:'d-m-Y'}}" target="_blank">
                                                             {% elif request.user.user_type == 'EVALUATOR' %}
-                                                            <a href="/evaluator/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            <a href="/evaluator/dashboard/?cleaning_calendar_date={{subscription_schedule.start_at|date:'d-m-Y'}}" target="_blank">
                                                             {% elif request.user.user_type == 'OPERATIONSUPERVISOR' %}
-                                                            <a href="/operation-supervisor/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            <a href="/operation-supervisor/dashboard/?cleaning_calendar_date={{subscription_schedule.start_at|date:'d-m-Y'}}" target="_blank">
                                                             {% else %} <a href="#"> {% endif %}
                                                     <div class="col-md-6  time-text"><i
                                                             class="fa test-color  fa-calendar  c-mr-5"></i>{{subscription_schedule.start_at|date:'d-m-Y g:i A'}} 
@@ -1233,17 +1233,17 @@
                                                         {% for subscription_schedule in order.orderschedules %}
                                                         {% if subscription_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
                                                             {% if request.user.user_type == 'AGENT' %}
-                                                            <a href="/agent/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            <a href="/agent/dashboard/?cleaning_calendar_date={{subscription_schedule.start_at|date:'d-m-Y'}}" target="_blank">
                                                             {% elif request.user.user_type == 'ADMIN' %}
-                                                            <a href="/bleach_admin/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            <a href="/bleach_admin/dashboard/?cleaning_calendar_date={{subscription_schedule.start_at|date:'d-m-Y'}}" target="_blank">
                                                             {% elif request.user.user_type == 'SALESADMIN' %}
-                                                            <a href="/bleach_salesadmin/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            <a href="/bleach_salesadmin/dashboard/?cleaning_calendar_date={{subscription_schedule.start_at|date:'d-m-Y'}}" target="_blank">
                                                             {% elif request.user.user_type == 'BOOKINGOFFICER' %}
-                                                            <a href="/booking-officer/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            <a href="/booking-officer/dashboard/?cleaning_calendar_date={{subscription_schedule.start_at|date:'d-m-Y'}}" target="_blank">
                                                             {% elif request.user.user_type == 'EVALUATOR' %}
-                                                            <a href="/evaluator/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            <a href="/evaluator/dashboard/?cleaning_calendar_date={{subscription_schedule.start_at|date:'d-m-Y'}}" target="_blank">
                                                             {% elif request.user.user_type == 'OPERATIONSUPERVISOR' %}
-                                                            <a href="/operation-supervisor/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            <a href="/operation-supervisor/dashboard/?cleaning_calendar_date={{subscription_schedule.start_at|date:'d-m-Y'}}" target="_blank">
                                                             {% else %} <a href="#"> {% endif %}
                                                             <div class="col-md-6  time-text"><i
                                                                     class="fa test-color  fa-calendar  c-mr-5"></i>{{subscription_schedule.start_at|date:'d-m-Y g:i A'}} 
