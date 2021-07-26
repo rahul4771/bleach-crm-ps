@@ -2088,38 +2088,38 @@ class ResourceManagement(IsAuthenticated,View):
 		    workers = workers.filter(filters)
 
 		##Monthlly Data
-		month_start    = workers_date.replace(day=1)
-		month_end      = month_start+relativedelta(months=1)-relativedelta(days=1)
-		month_range    = pd.date_range(month_start, month_end)
+		# month_start    = workers_date.replace(day=1)
+		# month_end      = month_start+relativedelta(months=1)-relativedelta(days=1)
+		# month_range    = pd.date_range(month_start, month_end)
 		
-		for worker in workers:
-			cleanings = CleaningTeamMember.objects.filter(is_active=True,member=worker).filter(Q(Q(start_at__month=workers_date.month)|Q(end_at__month=workers_date.month))).values('team__order_scheduler__order__feed_backs_order__rating','member__id','member__profile_image','start_at','end_at').annotate(duration = ExpressionWrapper(F('end_at') - F('start_at'), output_field=DurationField()))
-			followups = FollowUpTeamMember.objects.filter(is_active=True,member=worker).filter(Q(Q(start_at__month=workers_date.month)|Q(end_at__month=workers_date.month))).select_related('team__followup_scheduler__follow_up__investigation__order__feed_backs_order').values('team__followup_scheduler__follow_up__investigation__order__feed_backs_order__rating','member__id','member__profile_image','start_at','end_at').annotate(duration = ExpressionWrapper(F('start_at') - F('start_at'), output_field=DurationField()))		
+		# for worker in workers:
+		# 	cleanings = CleaningTeamMember.objects.filter(is_active=True,member=worker).filter(Q(Q(start_at__month=workers_date.month)|Q(end_at__month=workers_date.month))).values('team__order_scheduler__order__feed_backs_order__rating','member__id','member__profile_image','start_at','end_at').annotate(duration = ExpressionWrapper(F('end_at') - F('start_at'), output_field=DurationField()))
+		# 	followups = FollowUpTeamMember.objects.filter(is_active=True,member=worker).filter(Q(Q(start_at__month=workers_date.month)|Q(end_at__month=workers_date.month))).select_related('team__followup_scheduler__follow_up__investigation__order__feed_backs_order').values('team__followup_scheduler__follow_up__investigation__order__feed_backs_order__rating','member__id','member__profile_image','start_at','end_at').annotate(duration = ExpressionWrapper(F('start_at') - F('start_at'), output_field=DurationField()))		
 
-			###to find worked days
-			worked_days = 0
-			for date in month_range:
-				start_date_day = date
-				end_date_day   = date+timedelta(1)
-				if cleanings.filter(start_at__range=(start_date_day,end_date_day),end_at__range=(start_date_day,end_date_day)) or followups.filter(start_at__range=(start_date_day,end_date_day),end_at__range=(start_date_day,end_date_day)):
-					worked_days = worked_days+1		
-			worker.worked_days = worked_days
+		# 	###to find worked days
+		# 	worked_days = 0
+		# 	for date in month_range:
+		# 		start_date_day = date
+		# 		end_date_day   = date+timedelta(1)
+		# 		if cleanings.filter(start_at__range=(start_date_day,end_date_day),end_at__range=(start_date_day,end_date_day)) or followups.filter(start_at__range=(start_date_day,end_date_day),end_at__range=(start_date_day,end_date_day)):
+		# 			worked_days = worked_days+1		
+		# 	worker.worked_days = worked_days
 
 			###to find total hours
-			cleaning_hours     = cleanings.aggregate(total_duration=Sum('duration'))
-			followup_hours     = followups.aggregate(total_duration=Sum('duration'))
-			total_time         = (cleaning_hours['total_duration']or timedelta()) + (followup_hours['total_duration']or timedelta())
-			total_hours        = total_time.days*24+total_time.seconds/3600
-			worker.total_hours = total_hours
+			# cleaning_hours     = cleanings.aggregate(total_duration=Sum('duration'))
+			# followup_hours     = followups.aggregate(total_duration=Sum('duration'))
+			# total_time         = (cleaning_hours['total_duration']or timedelta()) + (followup_hours['total_duration']or timedelta())
+			# total_hours        = total_time.days*24+total_time.seconds/3600
+			# worker.total_hours = total_hours
 			
-			###to find average work hour
-			if total_hours and worked_days:
-				worker.average_hours = total_hours/worked_days
-			else:
-				worker.average_hours = 0.00
+			# ###to find average work hour
+			# if total_hours and worked_days:
+			# 	worker.average_hours = total_hours/worked_days
+			# else:
+			# 	worker.average_hours = 0.00
 
-			###to find total rating
-			worker.rating = cleanings.aggregate(total_rating=Sum('team__order_scheduler__order__feed_backs_order__rating')/Count('team__order_scheduler__order__feed_backs_order__rating'))['total_rating']or 0			
+			# ###to find total rating
+			# worker.rating = cleanings.aggregate(total_rating=Sum('team__order_scheduler__order__feed_backs_order__rating')/Count('team__order_scheduler__order__feed_backs_order__rating'))['total_rating']or 0			
 
 		return render(request,'common/resource/resource-new.html',{"workers":workers,"workers_date":workers_date,"service_type":service_type,"staff_type":staff_type,"search":search})
 
