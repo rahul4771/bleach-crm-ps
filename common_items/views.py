@@ -960,6 +960,28 @@ class PaymentDetails(IsAuthenticated,View):
 				elif payment.evaluation.payment_method == 'SUBSCRIPTION':				
 					payment.delaydays= (timezone.now()-payment.subscription_topay_date).days	
 
+		if due_payments:
+			for payment in due_payments:
+				if payment.evaluation.payment_method == 'PREPAID' and payment.orderschedules:
+					very_old_cleaning   = payment.orderschedules[0]
+					payment.reminigdays = (very_old_cleaning.start_at-timezone.now()).days
+				elif payment.evaluation.payment_method == 'POSTPAID' and payment.orderschedules:
+					very_latest_cleaning=payment.orderschedules[payment.cleaning_count-1]
+					payment.delaydays   = (timezone.now()-very_latest_cleaning.start_at).days	
+				elif payment.evaluation.payment_method == 'BREAKDOWN' and payment.orderschedules:
+				
+					very_old_cleaning   = payment.orderschedules[0]
+					very_latest_cleaning=payment.orderschedules[payment.cleaning_count-1]
+					payment.reminigdays = (very_old_cleaning.start_at-timezone.now()).days
+					payment.delaydays   = (timezone.now()-very_latest_cleaning.start_at).days	
+
+					#to check last cleaning completed for break down after payment
+					if very_latest_cleaning.work_status == 'CLEANING_FULFILLED':
+						payment.last_completed = True	
+
+				elif payment.evaluation.payment_method == 'SUBSCRIPTION':				
+					payment.delaydays= (timezone.now()-payment.subscription_topay_date).days
+
 		#filters
 		fil_order_status			= request.GET.get('status')
 
@@ -2182,7 +2204,7 @@ class CallBackList(IsAuthenticated,View):
 
 		payment_type = request.GET.get('payment_type')
 		if not payment_type :
-			payment_type = 'due'
+			payment_type = 'DUE'
 
 		#Evaluation Details
 		search                  = request.GET.get('search')
@@ -2195,6 +2217,9 @@ class CallBackList(IsAuthenticated,View):
 			callback_status = request.GET.get('callback_status')
 		else:
 			callback_status = request.GET.get('callback_status_payments')
+			
+		if not callback_status:
+			callback_status = 'WAITING'
 
 		print(callback_status,"tabber2")
 		if search:

@@ -24,6 +24,8 @@
           <!--<label for="exampleInputEmail1">Notes</label>-->
           <input type="text" class="form-control" id="note" name="payment_note"  placeholder="Notes" maxlength="50">
           <small id="noteHelp" class="form-text text-muted">Maximum 50 letters</small>
+
+          <p id="note_added_by" align="right"></p>
         </div>
       </div>
       <div class="modal-footer">
@@ -393,7 +395,7 @@
         <h3 class="{% if invoice.delaydays >= 14 %}red-text-h3{% elif invoice.delaydays >= 8 and invoice.delaydays <= 13 %}orange-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 7 %}yellow-text-h3{% elif invoice.delaydays >= 0 and invoice.delaydays <= 3 %}green-text-h3{% endif %}">{{invoice.delaydays}}</h3> Days&#11014;
         {% endif %}
         </td>
-        <td class="align-center" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> {% if request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'BOOKINGOFFICER' %}<div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" data-note="{{invoice.payment_notes|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div>{% endif %} </div></td>
+        <td class="align-center" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> {% if request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'BOOKINGOFFICER' %}<div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by.name|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" data-note="{{invoice.payment_notes|default_if_none:""}}" data-noteby="{{invoice.payment_note_by.name|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div>{% endif %} </div></td>
         </tr>
 
         {% elif invoice.evaluation.payment_method == 'BREAKDOWN' %}
@@ -419,7 +421,7 @@
         {% else %}
         <h3 class="{% if invoice.reminigdays == 0 %}red-text-h3{% elif invoice.reminigdays >= 1 and invoice.reminigdays <= 3 %}orange-text-h3{% elif invoice.reminigdays >= 4 and invoice.reminigdays <= 7 %}yellow-text-h3{% elif invoice.reminigdays >= 8 %}green-text-h3{% endif %}">{{invoice.reminigdays}}</h3> Days&#11015;
         {% endif %}</td>
-        <td class="align-center" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> {% if request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'BOOKINGOFFICER' %}<div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" data-note="{{invoice.payment_notes|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div>{% endif %} </div></td>
+        <td class="align-center" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> {% if request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'BOOKINGOFFICER' %}<div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by.name|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" data-note="{{invoice.payment_notes|default_if_none:""}}" data-noteby="{{invoice.payment_note_by.name|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div>{% endif %} </div></td>
         </tr>
         {% endif %}
 
@@ -440,7 +442,7 @@
         <div class="text-center d-flex "><div class="round-marker prepaid-bg"></div><span>{{invoice.evaluation.payment_method}}</span></div>
         </td>
         <td data-label="" class="bold-text"><h3 class="{% if invoice.delaydays >= 14 %}green-text-h3{% elif invoice.delaydays >= 8 and invoice.delaydays <= 13 %}yellow-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 6 %}orange-text-h3{% elif invoice.delaydays >= 0 and invoice.delaydays <= 3 %}red-text-h3{% endif %}">{{invoice.delaydays}}</h3> Days&#11014;</td>
-        <td class="align-center" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> {% if request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'BOOKINGOFFICER' %}<div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" data-note="{{invoice.payment_notes|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div>{% endif %} </div></td>
+        <td class="align-center" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> {% if request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'BOOKINGOFFICER' %}<div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by.name|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" data-note="{{invoice.payment_notes|default_if_none:""}}" data-noteby="{{invoice.payment_note_by.name|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div>{% endif %} </div></td>
         </tr>
         {% endif %}
 
@@ -464,7 +466,7 @@
         </td>
         <td data-label="" class="bold-text">
         <h3 class="{% if invoice.delaydays == 0 %}green-text-h3{% elif invoice.delaydays >= 1 and invoice.delaydays <= 3 %}yellow-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 7 %}orange-text-h3{% elif invoice.delaydays >= 8 %}red-text-h3{% endif %}">{{invoice.delaydays}}</h3> Days&#11014;</td>
-        <td class="text-left" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> {% if request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'BOOKINGOFFICER' %}<div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" data-note="{{invoice.payment_notes|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div>{% endif %} </div></td>
+        <td class="text-left" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> {% if request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'BOOKINGOFFICER' %}<div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by.name|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" data-note="{{invoice.payment_notes|default_if_none:""}}" data-noteby="{{invoice.payment_note_by.name|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div>{% endif %} </div></td>
         </tr>
         {% endif %}
         
@@ -545,6 +547,7 @@
         <th class="text-center" data-hide="phone,tablet">Mobile</th>
         <th class="text-right" data-hide="phone,tablet">Amount</th>
         <th class="text-left" data-hide="phone,tablet">Payment Policy</th>
+        <th class="text-left" data-hide="phone,tablet">Status</th>
         <th class="text-left" data-hide="phone">Shortcuts</th>
         </tr>
         </thead>
@@ -567,7 +570,21 @@
         <td data-label="Payment Method">
         <div class="text-center d-flex "><div class="round-marker {% if invoice.evaluation.payment_method == 'PREPAID' %}prepaid-bg{% else %}postpaid-bg{% endif %}"></div><span>{{invoice.evaluation.payment_method}}</span></div>
         </td>
-        <td class="align-center" ><div class="d-flex"><a class="dropdown-orders d-flex" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> {% if request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'BOOKINGOFFICER' %}<div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" data-note="{{invoice.payment_notes|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div>{% endif %} </div></td>
+
+        <td data-label="" class="bold-text">
+        {% if invoice.evaluation.payment_method == 'PREPAID' %}
+        {% if invoice.reminigdays < 0 %}
+        <h3 class="red-text-h3">Exp</h3>
+        {% else %}
+        <h3 class="{% if invoice.reminigdays == 0 %}red-text-h3{% elif invoice.reminigdays >= 1 and invoice.reminigdays <= 3 %}orange-text-h3{% elif invoice.reminigdays >= 4 and invoice.reminigdays <= 7 %}yellow-text-h3{% elif invoice.reminigdays >= 8 %}green-text-h3{% endif %}">{{invoice.reminigdays}}</h3> Days&#11015;
+        {% endif %}
+
+        {% elif invoice.evaluation.payment_method == 'POSTPAID' %}
+        <h3 class="{% if invoice.delaydays >= 14 %}red-text-h3{% elif invoice.delaydays >= 8 and invoice.delaydays <= 13 %}orange-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 7 %}yellow-text-h3{% elif invoice.delaydays >= 0 and invoice.delaydays <= 3 %}green-text-h3{% endif %}">{{invoice.delaydays}}</h3> Days&#11014;
+        {% endif %}
+        </td>
+
+        <td class="align-center" ><div class="d-flex"><a class="dropdown-orders d-flex" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> {% if request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'BOOKINGOFFICER' %}<div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by.name|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" data-note="{{invoice.payment_notes|default_if_none:""}}" data-noteby="{{invoice.payment_note_by.name|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div>{% endif %} </div></td>
  
       </tr>
 
@@ -576,7 +593,7 @@
         {% if invoice.preamount_paid != invoice.evaluation.before_cleaning_amount %}
         <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
         <td data-label="BLC Number" class="breakdown-line">{{invoice.evaluation.evaluation_id}}</td>
-        <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
+        <td data-label="Customer" class="text-center">{{invoice.evaluation.customer.name}}</td>
         <td data-label="Service Type(s)">
         {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
         {% for book in evaluation_details.evaluation_books %}
@@ -589,14 +606,21 @@
         <td data-label="Payment Method">
         <div class="text-center d-flex "><div class="round-marker breakdown-bg"></div><span>{{invoice.evaluation.payment_method}}</span></div>
         </td>
-        <td class="align-center" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> {% if request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'BOOKINGOFFICER' %}<div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" data-note="{{invoice.payment_notes|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div>{% endif %} </div></td>
+
+        <td data-label="" class="bold-text">{% if invoice.reminigdays <= 0 %}
+        <h3 class="red-text-h3">Exp</h3>
+        {% else %}
+        <h3 class="{% if invoice.reminigdays == 0 %}red-text-h3{% elif invoice.reminigdays >= 1 and invoice.reminigdays <= 3 %}orange-text-h3{% elif invoice.reminigdays >= 4 and invoice.reminigdays <= 7 %}yellow-text-h3{% elif invoice.reminigdays >= 8 %}green-text-h3{% endif %}">{{invoice.reminigdays}}</h3> Days&#11015;
+        {% endif %}</td>
+
+        <td class="align-center" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> {% if request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'BOOKINGOFFICER' %}<div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by.name|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" data-note="{{invoice.payment_notes|default_if_none:""}}" data-noteby="{{invoice.payment_note_by.name|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div>{% endif %} </div></td>
         </tr>
         {% endif %}
 
         {% if invoice.last_completed and invoice.postamount_paid != invoice.evaluation.after_cleaning_amount %}
         <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
         <td data-label="BLC Number" >{{invoice.evaluation.evaluation_id}}</td>
-        <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
+        <td data-label="Customer" class="text-center">{{invoice.evaluation.customer.name}}</td>
         <td data-label="Service Type(s)">
         {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
         {% for book in evaluation_details.evaluation_books %}
@@ -609,7 +633,8 @@
         <td data-label="Payment Method">
         <div class="text-center d-flex "><div class="round-marker prepaid-bg"></div><span>{{invoice.evaluation.payment_method}}</span></div>
         </td>
-        <td class="align-center" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> {% if request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'BOOKINGOFFICER' %}<div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" data-note="{{invoice.payment_notes|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div>{% endif %} </div></td>
+        <td data-label="" class="bold-text"><h3 class="{% if invoice.delaydays >= 14 %}green-text-h3{% elif invoice.delaydays >= 8 and invoice.delaydays <= 13 %}yellow-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 6 %}orange-text-h3{% elif invoice.delaydays >= 0 and invoice.delaydays <= 3 %}red-text-h3{% endif %}">{{invoice.delaydays}}</h3> Days&#11014;</td>
+        <td class="align-center" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> {% if request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'BOOKINGOFFICER' %}<div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by.name|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" data-note="{{invoice.payment_notes|default_if_none:""}}" data-noteby="{{invoice.payment_note_by.name|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div>{% endif %} </div></td>
         </tr>
         {% endif %}
 
@@ -618,7 +643,7 @@
         {% if invoice.subscription_topay != 0 %}
         <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
         <td data-label="BLC Number" class="subscription-line">{{invoice.evaluation.evaluation_id}}</td>
-        <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
+        <td data-label="Customer" class="text-center">{{invoice.evaluation.customer.name}}</td>
         <td data-label="Service Type(s)">
         {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
         {% for book in evaluation_details.evaluation_books %}
@@ -631,7 +656,9 @@
         <td data-label="Payment Method">
         <div class="text-center d-flex "><div class="round-marker subscription-bg"></div><span>{{invoice.evaluation.payment_method}}</span></div>
         </td>
-        <td class="text-left" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> {% if request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'BOOKINGOFFICER' %}<div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" data-note="{{invoice.payment_notes|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div>{% endif %} </div></td>
+        <td data-label="" class="bold-text">
+        <h3 class="{% if invoice.delaydays == 0 %}green-text-h3{% elif invoice.delaydays >= 1 and invoice.delaydays <= 3 %}yellow-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 7 %}orange-text-h3{% elif invoice.delaydays >= 8 %}red-text-h3{% endif %}">{{invoice.delaydays}}</h3> Days&#11014;</td>
+        <td class="text-left" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> {% if request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'BOOKINGOFFICER' %}<div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by.name|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" data-note="{{invoice.payment_notes|default_if_none:""}}" data-noteby="{{invoice.payment_note_by.name|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div>{% endif %} </div></td>
         </tr>
         {% endif %}
         
@@ -887,6 +914,7 @@
   //payment note popup data fill
   $('.paymentnote').click(function(){
     $('#note').val($(this).data('note'));
+    $('#note_added_by').text($(this).data('noteby'));
     $('#order_id').val($(this).data('orderid'));
 
   })
