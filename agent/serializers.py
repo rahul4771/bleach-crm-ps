@@ -29,7 +29,7 @@ class CleaningTeamMemberShowSerializer(serializers.ModelSerializer):
 class OrderShowSerializer(serializers.ModelSerializer):
 	class Meta:
 		model  = Order
-		fields = ('id','order_no','order_status','payment_status')
+		fields = ('id','order_no','order_status','payment_status','preamount_paid')
 
 class EvaluationDetailsShowSerializer(serializers.ModelSerializer): 
 	evaluator          = UserProfileShowSerializer(read_only=True) 
