@@ -2,7 +2,7 @@
 var url='https://my.bleachkw.com';
 //var url = 'https://test.bleach-kw.com';
 //var url = 'http://127.0.0.1:8000';
-// var url='http://localhost:8000';
+ //var url='http://localhost:8000';
 
 var resourceList=[];
 var cleanerList=[];
@@ -516,11 +516,18 @@ function getLeave(){
        if(gt_month[0]=='0'){
         gt_month=gt_month.substring(1);
     }
-    if(userIndex)
-    {
-   
+    /*if(!userIndex){
+        var day=gt_year+'-'+gt_month+'-'+gt_day
+        console.log("error leave is "+day +"id is"+response.data.staffs[i].id)
+    }*/
+    console.log("user index is"+userIndex +"staff is "+response.data.staffs[i].staff+"date is"+gt_day+'-'+gt_month+'-'+gt_year)
+    
+    
+   if(userIndex != undefined ){
     resourceList[userIndex].leave.push({date:gt_day+'-'+gt_month+'-'+gt_year,type:response.data.staffs[i].leave_type,leave_id:response.data.staffs[i].id});
-    }
+   }
+   
+    
     }
     getInitDatas();
    
