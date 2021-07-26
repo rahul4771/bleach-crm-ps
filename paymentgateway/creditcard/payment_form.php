@@ -15,8 +15,8 @@
     <div class="loader"></div>
 </div>
 <form id="payment_form" action="https://payment.bleachkw.com/creditcard/payment_confirmation.php" method="post">
-    <input type="hidden" name="access_key" value="cf64db2a5fc13d1e957442b395baffbd">
-    <input type="hidden" name="profile_id" value="32FF6F1C41F34CF1A91CA1039EF0845C">
+    <input type="hidden" name="access_key" value="40f69905769b3935b51533269564bfe2">
+    <input type="hidden" name="profile_id" value="32FF6F1C-41F3-4CF1-A91C-A1039EF0845C">
     <!-- <input type="hidden" name="access_key" value="dc9b55c60e193d98a5861569b4c40d6b">
     <input type="hidden" name="profile_id" value="340591FC-E863-4714-81A5-FFC0D7B5D9A7">  -->
     <input type="hidden" name="transaction_uuid" value="<?php echo uniqid() ?>">
