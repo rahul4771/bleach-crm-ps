@@ -2,7 +2,7 @@
 //var url='https://my.bleachkw.com';
 // //var url = 'https://my.bleachkw.com';
 // //var url = 'https://my.bleachkw.com';
-// //var url='http://localhost:8000';
+////var url='http://localhost:8000';
 var shiftId = ''
  //var resourceList=[];
 // var cleanerList=[];
@@ -580,8 +580,12 @@ function getShift(){
        if(gt_month[0]=='0'){
         gt_month=gt_month.substring(1);
     }
+    if(userIndex!=undefined){
+
+    
     resourceList[userIndex].shift.push({date:gt_day+'-'+gt_month+'-'+gt_year,shift1:response.data.staffs[i].shift1,shift2:response.data.staffs[i].shift2,shift_id:response.data.staffs[i].id});
-    }
+    }    
+}
    
     console.log(resourceList)
     getInitDatasShift();
