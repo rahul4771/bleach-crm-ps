@@ -554,6 +554,7 @@
                 <input type="hidden" name="evaluation_id" value="{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}">
                 {% if request.user.user_type == 'AGENT' %}
                 {% elif request.user.user_type == 'EVALUATOR' %}
+                {% elif request.user.user_type == 'ADMIN' %}
                 {% else %}
 
                 {% if order.evaluation.quatation_status == 'APPROVED' %}
@@ -572,6 +573,10 @@
                 {% endif %}
                 </form>
 
+                {% if request.user.user_type == 'AGENT' %}
+                {% elif request.user.user_type == 'EVALUATOR' %}
+                {% elif request.user.user_type == 'ADMIN' %}
+                {% else %}
                 {% if order.evaluation.payment_method == 'POSTPAID' or order.preamount_paid > 0 %}
                 <form method="post" id="cash-form" action="" enctype= "multipart/form-data">{% csrf_token %}
                 <input type="hidden" name="action_type" value="CASH/CHEQUE">
@@ -587,9 +592,14 @@
                     </div>
                   </div>
                 </div>
-                
+                {% endif %}
                 {% endif %}
 
+                {% if request.user.user_type == 'AGENT' %}
+                {% elif request.user.user_type == 'EVALUATOR' %}
+                {% elif request.user.user_type == 'ADMIN' %}
+                {% else %}
+                {% if order.evaluation.quatation_status == 'APPROVED' %}
                 <div class="inv-payment-box">
                   <div class="inv-payment-card mt-4 text-center {% if order.evaluation.customer.is_credit == False %}inv-click-disable{% endif %}" id="inv-credit" onclick="selectPayment('credit')"><!-- to disable click add class inv-click-disable -->
                     <img src="{% static 'files/icons/debit-card.png' %}" class="inv-card-icon {% if order.evaluation.customer.is_credit == False %}inv-payment-disabled{% endif %}" id="inv-credit-img"  /> <!-- to disable  add class inv-payment-disabled -->
@@ -603,6 +613,8 @@
                   </div>
 
                 </div>
+                {% endif %}
+                {% endif %}
               </div>
               
               <div class="col-12   text-center text-white mt-4">
