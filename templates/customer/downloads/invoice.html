@@ -86,11 +86,12 @@
 
             <table id="soa_table2">
               <tr>
-                <th style="width: 50%;">Service</th>
+                <th style="width: 40%;">Service</th>
                 <th >Size</th>
               
                 <th>Quantity</th>
                 <th >Unit Price</th>
+                <th >Net Price</th>
               </tr>
 
               {% for orderschedule in nonduplicate_schedules %}            
@@ -107,13 +108,16 @@
                 <td style="text-align: right;">
                   {{section.section_cost|floatformat:'3'}}
                 </td>
+                <td style="text-align: right;">
+                  {{section.section_net_cost|floatformat:'3'}}
+                </td>
               </tr>
               {% endfor %}
               {% endfor %}
            
 
               <tr>
-                <td colspan="3"> Sub Total</td>
+                <td colspan="4"> Sub Total</td>
                 <td style="text-align: right;">{{order.evaluation.estimated_cost|floatformat:'3'}} KD</td>
               </tr>
             </table>
@@ -134,6 +138,21 @@
               <span id="contact-number">{{order.evaluation.after_cleaning_amount|floatformat:'3'}} KD</span>
             </div>
             {% endif %}
+    
+            {% if order.evaluation.payment_method == 'PREPAID' %}
+            <div>
+              <span id="contact-text">Payment Before Cleaning</span>
+              <span id="contact-number">{{order.total_amount|floatformat:"3"}} KD</span>
+            </div>
+            {% endif %}
+
+            {% if order.evaluation.payment_method == 'POSTPAID' %}
+            <div>
+              <span id="contact-text">Payment After Cleaning</span>
+              <span id="contact-number">{{order.total_amount|floatformat:"3"}} KD</span>
+            </div>
+            {% endif %}
+
             
             {% if order.evaluation.cleaning_policy == 'ONE TIME SERVICE' %}
             <div>
