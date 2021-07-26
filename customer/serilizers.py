@@ -75,8 +75,9 @@ class EvaluationSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
 	class Meta:
 		model  = Order
-		fields = ('order_no','invoice_no','order_status','payment_status','total_amount','amount_paid','remining_amount',)
-
+		fields = ('order_no','invoice_no','order_status','payment_status','total_amount','amount_paid','remining_amount','preamount_paid')
+		read_only_fields = ('preamount_paid',)
+		
 class EvaluationDetailsSerializer(serializers.ModelSerializer): 
 	evaluator                          = UserProfileSerializer(read_only=True)
 	address                            = AddressSerializer(read_only=True)
