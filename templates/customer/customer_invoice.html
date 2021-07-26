@@ -527,6 +527,7 @@
               </div>
             </div>
         
+            {% if request.user.user_type != 'AGENT' and request.user.user_type != 'ADMIN' and request.user.user_type != 'EVALUATOR' and order.payment_status != 'COMPLETED' %}
               <div class="col-12 mt-4 inv-text-color ">
                 Payment Option
               </div>
@@ -552,9 +553,6 @@
                 {% endif %}
                 <input type="hidden" name="qty" value="1">
                 <input type="hidden" name="evaluation_id" value="{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}">
-                {% if request.user.user_type == 'AGENT' %}
-                {% elif request.user.user_type == 'EVALUATOR' %}
-                {% else %}
 
                 {% if order.evaluation.quatation_status == 'APPROVED' %}
                   <div class="inv-payment-card mt-4 text-center" id="inv-debit" onclick="selectPayment('debit')">
@@ -564,11 +562,9 @@
                       Debit Card
                     </div>
                     <div class="inv-check-box mt-2 mb-2 mx-auto" id="inv-debit-check-box">
-                      <i class="fa fa-check inv-check-icon " id="inv-check-debit"></i>
+                      <i class="fa fa-check inv-check-onetime-icon " id="inv-check-debit"></i>
                     </div>
                   </div>
-                {% endif %}
-
                 {% endif %}
                 </form>
 
@@ -583,26 +579,28 @@
                      Cash 
                     </div>
                     <div class="inv-check-box mt-2 mb-2 mx-auto" id="inv-cash-check-box">
-                      <i class="fa fa-check inv-check-icon " id="inv-check-cash"></i>
+                      <i class="fa fa-check inv-check-onetime-icon " id="inv-check-cash"></i>
                     </div>
                   </div>
                 </div>
-                
                 {% endif %}
 
-                <div class="inv-payment-box">
+
+                {% if order.evaluation.quatation_status == 'APPROVED' %}
+                <div class="inv-payment-box" id="credit-card-id" data-url="https://payment.bleachkw.com/creditcard/payment_form.php?merchant_defined_data1={{order.order_no}}{% if order.evaluation.payment_method == 'BREAKDOWN' %}{% if order.evaluation.before_cleaning_amount != order.preamount_paid %}&reference_number={{order.order_no}}1&amount={{order.evaluation.before_cleaning_amount}}&merchant_defined_data2=before_cleaning{% elif order.evaluation.after_cleaning_amount != order.postamount_paid %}&reference_number={{order.order_no}}2&amount={{order.evaluation.before_cleaning_amount}}&merchant_defined_data2=after_cleaning{% endif %}{% elif order.evaluation.payment_method == 'PREPAID' %}&reference_number={{order.order_no}}&amount={{order.evaluation.total_cost|floatformat:'3'}}&merchant_defined_data2=prepaid{% elif order.evaluation.payment_method == 'POSTPAID' %}&reference_number={{order.order_no}}&amount={{order.evaluation.total_cost|floatformat:'3'}}&merchant_defined_data2=postpaid{% endif %}&merchant_defined_data3={{order.order_status}}¤cy=KWD&transaction_type=sale{% for orderschedule in order.orderschedules %}{% if forloop.first %}&bill_to_forename={{firstname}}&bill_to_surname={{lastname}}&bill_to_phone={{orderschedule.customer_address.customer.mobile_number}}&bill_to_email={{orderschedule.customer_address.customer.email}}&bill_to_address_country={{orderschedule.customer_address.customer.nationality.code}}&bill_to_address_city={{orderschedule.customer_address.area.name|default_if_none:''}}&bill_to_address_line1={{orderschedule.customer_address.governorate.name|default_if_none:''}}{% endif %}{% endfor %}&merchant_defined_data4={{order.evaluation.payment_way}}&merchant_defined_data5=NO&merchant_defined_data7=1&merchant_defined_data20=NO&customer_ip_address={{customer_ip_address}}">
                   <div class="inv-payment-card mt-4 text-center {% if order.evaluation.customer.is_credit == False %}inv-click-disable{% endif %}" id="inv-credit" onclick="selectPayment('credit')"><!-- to disable click add class inv-click-disable -->
                     <img src="{% static 'files/icons/debit-card.png' %}" class="inv-card-icon {% if order.evaluation.customer.is_credit == False %}inv-payment-disabled{% endif %}" id="inv-credit-img"  /> <!-- to disable  add class inv-payment-disabled -->
-                    <div class="inv-payment-text {% if order.evaluation.customer.is_credit == False %}inv-payment-disabled{% endif %}"> <!-- to disable  add class inv-payment-disabled -->
+                    <div  class="inv-payment-text {% if order.evaluation.customer.is_credit == False %}inv-payment-disabled{% endif %}" > <!-- to disable  add class inv-payment-disabled -->
                       Credit Card
                     </div>
                     <div class="inv-check-box mt-2 mb-2 mx-auto" id="inv-credit-check-box">
-                      <i class="fa fa-check inv-check-icon " id="inv-check-credit"></i>
+                      <i class="fa fa-check inv-check-onetime-icon " id="inv-check-credit"></i>
                     </div>
                   </div>
                   </div>
 
                 </div>
+                {% endif %}
               </div>
               
               <div class="col-12   text-center text-white mt-4">
@@ -610,7 +608,9 @@
                 Proceed
               </div>
               </div>
-        {% endif %}
+              {% endif %}
+
+              {% endif %}
 
               <div class="col-5 offset-1 inv-white-btn text-center  mt-4 mb-4 ">
 

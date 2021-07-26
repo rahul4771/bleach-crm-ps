@@ -76,6 +76,13 @@ function proceedInvoice(){
     console.log("cash")
     $('#cash-form').submit(); 
   }
+  if($('#inv-credit').hasClass('inv-payment-card-active')){
+    var data_url=$('#credit-card-id').data('url')
+    console.log("url is"+data_url)
+   window.location.href=data_url
+
+  //  window.location.href="https://testpay.bleach-kw.com/creditcard/payment_form.php?merchant_defined_data1="+this.eval_details.order_no+"&reference_number="+this.eval_details.order_no+"1&amount="+this.bookedServiceDetails[0].evaluation_book_evaluation_details[0].total_cost+"&merchant_defined_data2=prepaid&merchant_defined_data3="+this.eval_details.order_status+"currency=KWD&transaction_type=sale&bill_to_forename="+this.bookedServiceDetails[0].address.customer.name.split(" ")[1]+"&bill_to_surname="+this.bookedServiceDetails[0].address.customer.name.split(" ")[2]+"&bill_to_phone="+this.bookedServiceDetails[0].address.customer.mobile_number+"&bill_to_email="+this.bookedServiceDetails[0].address.customer.email+"&bill_to_address_country=KW"+"&bill_to_address_city="+this.bookedServiceDetails[0].address.area.name+"&bill_to_address_line1="+this.bookedServiceDetails[0].address.governorate.name+"&merchant_defined_data4=ONLINE&merchant_defined_data5=NO&merchant_defined_data7=1&merchant_defined_data20=NO&customer_ip_address="+this.ip_address
+  }
 }
 
 function nextStepCash(){
