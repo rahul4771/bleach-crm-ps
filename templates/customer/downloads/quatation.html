@@ -32,51 +32,96 @@
     <section>
       <h1 id="qu-text">QUOTATION</h1>
    </section>
-    {% for orderschedule in order.orderschedules %}
-    {% if forloop.first %}
-    <section id="new-customer-info">
-      <div>
-        <span id="customer-text">Customer </span>
-        <span id="customer-name">{{orderschedule.customer_address.customer.name}}</span>
-      </div>
-      <br>
-      <div>
-        <span id="contact-text">Contact No</span>
-        <span id="contact-number">{{orderschedule.customer_address.customer.mobile_number}}</span>
-      </div>
-      <div>
-        <span id="contact-text">Email</span>
-        <span id="contact-number">{{orderschedule.customer_address.customer.email}}</span>
-      </div>
-      <div>
-        <span id="address-text">Addrees </span>
-        <span id="customer-address">{{orderschedule.customer_address.apartment}}, {% if orderschedule.customer_address.floor %}{{orderschedule.customer_address.floor}} {% else %}{% endif %} {{orderschedule.customer_address.building}},{{orderschedule.customer_address.block}}, {{orderschedule.customer_address.street}},{% if orderschedule.customer_address.avenue %}{{orderschedule.customer_address.avenue}}, {% else %}{% endif %}{{orderschedule.customer_address.area.name}}, {{orderschedule.customer_address.governorate.name}}</span>
-      </div><br>
-    </section>
-    {% endif %}
-    {% endfor %}
-    <section id="quotation_data">
-     
-      <div>
-        <span id="contact-text">Quotation Number</span>
-        <span id="contact-number">  <b>{{order.order_no}} </b> </span>
-      </div>
-      <div>
-        <span id="contact-text">Initiated Date</span>
-        <span id="contact-number">{{order.evaluation.created|date:'d-m-Y'}}</span>
-      </div>
-      <div>
-        <span id="contact-text">Due Date</span>
-        <span id="contact-number">{{order.evaluation.quatation_expiry_date|date:'d-m-Y'}}</span>
-      </div>
-      <div>
-        <span id="contact-text">Payment Policy</span>
-        <span id="contact-number">{{order.evaluation.payment_method}}</span>
-      </div>
-    </section>
-    {% for orderschedule in nonduplicate_schedules %}            
+
+   {% for orderschedule in order.orderschedules %}
+   {% if forloop.first %}
+
+   <section id="customer_container">
+     <div id="left_id">
+       <div>
+         <span id="contact-text">Customer</span>
+         <span id="customer-name">{{orderschedule.customer_address.customer.name}}</span>
+       </div>
+      
+       <div>
+         <span id="contact-text">Contact No</span>
+         <span id="contact-number">{{orderschedule.customer_address.customer.mobile_number}}</span>
+       </div>
+       <div>
+         <span id="contact-text">Email</span>
+         <span id="contact-number">{{orderschedule.customer_address.customer.email}}</span>
+       </div>
+       <div>
+         <span id="address-text">Address </span>
+         <span id="customer-address">{{orderschedule.customer_address.apartment}}, {% if orderschedule.customer_address.floor %}{{orderschedule.customer_address.floor}} {% else %}{% endif %} {{orderschedule.customer_address.building}},{{orderschedule.customer_address.block}}, {{orderschedule.customer_address.street}},{% if orderschedule.customer_address.avenue %}{{orderschedule.customer_address.avenue}} {% else %}{% endif %}<br>{{orderschedule.customer_address.area.name}}, {{orderschedule.customer_address.governorate.name}}</span>
+       </div><br>
+     </div>
+
+     <div id="right_id">
+       
+         <div>
+           <span id="contact-text">Invoice Number</span>
+           <span id="contact-number"> <b>INV{{order.invoice_no}}</b> </span>
+         </div>
+         <div>
+           <span id="contact-text">Invoice Date</span>
+           <span id="contact-number">{{order.evaluation.created|date:'d-m-Y'}}</span>
+         </div>
+         <div>
+           <span id="contact-text">Payment Policy</span>
+           <span id="contact-number">{{order.evaluation.payment_method}}</span>
+         </div>
+         <div>
+           <span id="contact-text">Order Number</span>
+           <span id="contact-number">{{order.evaluation.evaluation_id}}</span>
+         </div>
+     </div>
+
+   </section>
+   {% endif %}
+   {% endfor %}
+   <section id="table_section">
+
+    <table id="soa_table2">
+      <tr>
+        <th style="width: 50%;">Service</th>
+        <th >Size</th>
+      
+        <th>Quantity</th>
+        <th >Unit Price</th>
+      </tr>
+
+      {% for orderschedule in nonduplicate_schedules %}            
+      {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
+      <tr>
+        <td>{{orderschedule.order_scheduler_book.service_type}}-{{section.section_name}}</td>
+        <td>
+          {{section.size}} {{section.unit|default_if_none:''}}
+        </td>
+        <td style="text-align: right;">
+          {% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{section.section_cleanings|floatformat:"-1"}}{% endif %}
+          
+        </td>
+        <td style="text-align: right;">
+          {{section.section_cost|floatformat:'3'}}
+        </td>
+      </tr>
+      {% endfor %}
+      {% endfor %}
+   
+
+      <tr>
+        <td colspan="3"> Sub Total</td>
+        <td style="text-align: right;">{{order.evaluation.estimated_cost|floatformat:'3'}} KD</td>
+      </tr>
+    </table>
+
+  </section>
+
+  
+    <!-- {% for orderschedule in nonduplicate_schedules %}            
     {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
-    <!-- items sectino -->
+   
     <section id="order-items">
       <span id="order-item-name">{{orderschedule.order_scheduler_book.service_type}}-{{section.section_name}}</span>
       <span id="netprice-text">NET PRICE</span>
@@ -85,9 +130,9 @@
         <span id="netprice"><b>{{section.section_cost|floatformat:'3'}}</b> KD</span>
       </div>
     </section>
-    <!-- items end -->
+   
     {% endfor %}
-    {% endfor %}
+    {% endfor %} -->
 
     {% if order.evaluation.payment_method == 'BREAKDOWN' %}
     <section id="paymentmode-sec">

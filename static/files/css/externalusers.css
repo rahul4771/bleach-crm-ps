@@ -1,5 +1,19 @@
 /*! Invoice Templates @author: Invoicebus @email: info@invoicebus.com @web: https://invoicebus.com @version: 1.0.0 @updated: 2015-03-27 14:03:24 @license: Invoicebus */
 /* Reset styles */
+
+
+@font-face {
+  font-family: AvenirLTStd;
+  src: url(../font/AvenirLTStd-Book.otf);
+}
+@font-face {
+  font-family: FarCasablanca;
+  src: url(../font/Far_Casablanca.otf);
+}
+
+.av-font {
+  font-family: AvenirLTStd !important;
+}
 @import url("https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700&subset=cyrillic,cyrillic-ext,latin,greek-ext,greek,latin-ext,vietnamese");
 @import url("https://fonts.googleapis.com/css?family=Sanchez&subset=latin,latin-ext");
 html, body, div, span, applet, object, iframe,
@@ -784,6 +798,7 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
 
 }
 #customer-name{
+  font-family: AvenirLTStd !important;
   font-weight: bold;
   font-size: 16px;
   float: right;
@@ -791,12 +806,13 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
 
 }
 #address-text{
+  font-family: AvenirLTStd !important;
   font-size: 16px;
-
   display: inline-block;
 
 }
 #customer-address{
+  font-family: AvenirLTStd !important;
   text-align: right;
   font-size: 16px;
   float: right;
@@ -804,6 +820,7 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
   width: 250px;
 }
 #contact-text{
+  font-family: AvenirLTStd !important;
   font-size: 16px;
   display: inline-block;
 }
@@ -812,6 +829,7 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
   font-size: 16px;
   float: right;
   right: 0;
+  font-family: AvenirLTStd !important;
 }
 
 #quotation_data{
@@ -825,6 +843,7 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
   margin-bottom: 10px;
 }
 #qu-text{
+  font-family: AvenirLTStd !important;
   margin-top: -10px;
   margin-left: auto;
   font-weight: 100;
@@ -871,7 +890,8 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
 }
 #paymentmode-sec span{
   font-size: 16px;
-  font-weight: 100;
+  font-weight: 400;
+  font-family: AvenirLTStd !important;
 }
 #lastsection{
   margin-top: 10px;
@@ -886,8 +906,10 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
 #paymenttime{
   font-size: 14px;
   display: inline-block;
+  font-family: AvenirLTStd !important;
 }
 #paymenttime-amount{
+  font-family: AvenirLTStd !important;
   font-size: 14px;
   float: right;
   right: 0;
@@ -899,6 +921,7 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
   width: 300px;
 }
 #total-section div{
+  font-family: AvenirLTStd !important;
   margin-bottom: 10px;
   font-size: 16px;
 }
@@ -911,11 +934,12 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
 }
 #total_id{
   font-size: 16px;
-  font-weight: 100;
+  font-weight: 400;
   color: #289BAC;
 }
 
 #total_amount{
+  font-family: AvenirLTStd !important;
   color: #289BAC;
   font-size: 40px;
   text-align: center;
@@ -977,6 +1001,15 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
   position: relative; 
 }
 
+
+#soa-customer-detials2{
+  width: 100% !important;
+  background: #EDF1F6;
+  padding: 20px;
+  color: #303030;
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
 
 .right-statement {/*padding: 40px 30px 40px 130px;*/
   padding: 40px 30px 15px 30px;
@@ -1151,3 +1184,83 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
   }
   
 } */
+
+#customer_container{
+  margin-top: 10px;
+  width: 780px;
+  padding: 20px;
+  background: #EDF1F6;
+  float: left;
+}
+
+#left_id{
+  float: left;
+  
+  width: 380px;
+}
+#left_id div{
+  margin-bottom: 15px;
+}
+#right_id{
+  float: right;
+  right: 0;
+  width: 350px;
+  
+}
+
+#right_id div{
+  margin-bottom: 15px;
+}
+#table_section{
+  width: 100%;
+  margin-top: 30px !important;
+  float: left;
+}
+
+#soa_table2{
+  margin-top: 20px;
+  width: 100%;
+}
+#soa_table2 th {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 8px;
+  text-align: left;
+  background-color: #EDF1F6;
+  color: #303030;
+}
+#soa_table2 td, #soa_table2 th {
+  border: 0.5px solid #528CE6;
+  padding: 8px;
+  font-family: AvenirLTStd !important;
+}
+
+#soa_table2 tr:last-child {
+  font-family: AvenirLTStd !important;
+  background-color: #EDF1F6;
+  font-size: 16px;
+  font-weight: 500;
+  color: #303030 !important;
+}
+
+#new-customer-info_12 {
+  margin-top: 30px;
+  float: right;
+  right: 0;
+  width: 400px;
+}
+#new-customer-info_12 div{
+  margin-bottom: 15px;
+  font-family: AvenirLTStd !important;
+
+}
+
+#payble_id{
+  font-size: 22px;
+  font-family: AvenirLTStd !important;
+  color: #2A8EA2;
+  font-weight: bold;
+  text-align: right;
+
+  float: right;
+}
