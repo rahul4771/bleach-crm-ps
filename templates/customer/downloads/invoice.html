@@ -31,69 +31,124 @@
     <section>
        <h1 id="qu-text">INVOICE hhh</h1>
     </section>
+
+
+    
+
     {% for orderschedule in order.orderschedules %}
           {% if forloop.first %}
-    <section id="new-customer-info">
-      <div>
-        <span id="customer-text">{{orderschedule.customer_address.customer.name}} </span>
-        <span id="customer-name">Mr. Alaa Five</span>
-      </div>
-      <br>
-      <div>
-        <span id="contact-text">Contact No</span>
-        <span id="contact-number">{{orderschedule.customer_address.customer.mobile_number}}</span>
-      </div>
-      <div>
-        <span id="contact-text">Email</span>
-        <span id="contact-number">{{orderschedule.customer_address.customer.email}}</span>
-      </div>
-      <div>
-        <span id="address-text">Address </span>
-        <span id="customer-address">{{orderschedule.customer_address.apartment}}, {% if orderschedule.customer_address.floor %}{{orderschedule.customer_address.floor}} {% else %}{% endif %} {{orderschedule.customer_address.building}},{{orderschedule.customer_address.block}}, {{orderschedule.customer_address.street}},{% if orderschedule.customer_address.avenue %}{{orderschedule.customer_address.avenue}} {% else %}{% endif %}<br>{{orderschedule.customer_address.area.name}}, {{orderschedule.customer_address.governorate.name}}</span>
-      </div><br>
-    </section>
 
-    <section id="quotation_data">
-     
-      <div>
-        <span id="contact-text">Invoice Number</span>
-        <span id="contact-number"> <b>INV{{order.invoice_no}}</b> </span>
-      </div>
-      <div>
-        <span id="contact-text">Invoice Date</span>
-        <span id="contact-number">{{order.evaluation.created|date:'d-m-Y'}}</span>
-      </div>
-      <div>
-        <span id="contact-text">Payment Policy</span>
-        <span id="contact-number">{{order.evaluation.payment_method}}</span>
-      </div>
-      <div>
-        <span id="contact-text">Order Number</span>
-        <span id="contact-number">{{order.evaluation.evaluation_id}}</span>
-      </div>
-      <!-- <div>
-        <span style="color: #0BA300;" id="contact-text">Cleaning</span>
-        <span id="contact-number" style="color: #0BA300;">
-        {% for orderschedule in order.orderschedules %}
-        {% if forloop.last %}
-            {{orderschedule.start_at|date:'d-m-Y g:iA'}}<br>
-        {% else %}
-          {{orderschedule.start_at|date:'d-m-Y g:iA'}},<br>
-        {% endif %}
-        {% endfor %}
-      </span>
-      </div> -->
-      <!-- <div>
-        <span style="color: #0BA300;" id="contact-text">Appointment(s)
-        </span>
-      </div> -->
-    </section>
-    {% endif %}
-    {% endfor %}
+          <section id="customer_container">
+            <div id="left_id">
+              <div>
+                <span id="contact-text">Customer</span>
+                <span id="customer-name">{{orderschedule.customer_address.customer.name}}</span>
+              </div>
+             
+              <div>
+                <span id="contact-text">Contact No</span>
+                <span id="contact-number">{{orderschedule.customer_address.customer.mobile_number}}</span>
+              </div>
+              <div>
+                <span id="contact-text">Email</span>
+                <span id="contact-number">{{orderschedule.customer_address.customer.email}}</span>
+              </div>
+              <div>
+                <span id="address-text">Address </span>
+                <span id="customer-address">{{orderschedule.customer_address.apartment}}, {% if orderschedule.customer_address.floor %}{{orderschedule.customer_address.floor}} {% else %}{% endif %} {{orderschedule.customer_address.building}},{{orderschedule.customer_address.block}}, {{orderschedule.customer_address.street}},{% if orderschedule.customer_address.avenue %}{{orderschedule.customer_address.avenue}} {% else %}{% endif %}<br>{{orderschedule.customer_address.area.name}}, {{orderschedule.customer_address.governorate.name}}</span>
+              </div><br>
+            </div>
+      
+            <div id="right_id">
+              
+                <div>
+                  <span id="contact-text">Invoice Number</span>
+                  <span id="contact-number"> <b>INV{{order.invoice_no}}</b> </span>
+                </div>
+                <div>
+                  <span id="contact-text">Invoice Date</span>
+                  <span id="contact-number">{{order.evaluation.created|date:'d-m-Y'}}</span>
+                </div>
+                <div>
+                  <span id="contact-text">Payment Policy</span>
+                  <span id="contact-number">{{order.evaluation.payment_method}}</span>
+                </div>
+                <div>
+                  <span id="contact-text">Order Number</span>
+                  <span id="contact-number">{{order.evaluation.evaluation_id}}</span>
+                </div>
+            </div>
+      
+          </section>
+          {% endif %}
+          {% endfor %}
 
-    {% for orderschedule in nonduplicate_schedules %}            
+
+          <section id="table_section">
+
+            <table id="soa_table2">
+              <tr>
+                <th style="width: 50%;">Service</th>
+                <th >Size</th>
+              
+                <th>Quantity</th>
+                <th >Unit Price</th>
+              </tr>
+
+              {% for orderschedule in nonduplicate_schedules %}            
+              {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
+              <tr>
+                <td>{{orderschedule.order_scheduler_book.service_type}}-{{section.section_name}}</td>
+                <td>
+                  {{section.size}} {{section.unit|default_if_none:''}}
+                </td>
+                <td style="text-align: right;">
+                  {% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{section.section_cleanings|floatformat:"-1"}}{% endif %}
+                  
+                </td>
+                <td style="text-align: right;">
+                  {{section.section_cost|floatformat:'3'}}
+                </td>
+              </tr>
+              {% endfor %}
+              {% endfor %}
+           
+
+              <tr>
+                <td colspan="3"> Sub Total</td>
+                <td style="text-align: right;">{{order.evaluation.estimated_cost|floatformat:'3'}} KD</td>
+              </tr>
+            </table>
+
+          </section>
+
+          <section id="new-customer-info_12">
+            <div>
+              <span id="contact-text">Payment</span>
+            </div>
+            {% if  order.evaluation.payment_method == 'BREAKDOWN' %}
+            <div>
+              <span id="contact-text">Payment Before Cleaning</span>
+              <span id="contact-number">{{order.evaluation.before_cleaning_amount|floatformat:'3'}} KD</span>
+            </div>
+            <!-- <div>
+              <span id="contact-text">Payment After Cleaning</span>
+              <span id="contact-number">{{order.evaluation.after_cleaning_amount|floatformat:'3'}} KD</span>
+            </div> -->
+            {% endif %}
+            <div>
+              <span id="contact-text">Payable amount</span>
+              <span id="payble_id">  {{order.remining_amount|floatformat:'3'}} KD</span>
+            </div>
+            
+          </section>
+
+
+  
+
+    <!-- {% for orderschedule in nonduplicate_schedules %}            
     {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
-    <!-- itmes-->
+   
     <section id="order-items">
       <span id="order-item-name">{{orderschedule.order_scheduler_book.service_type}}-{{section.section_name}}</span>
       <span id="netprice-text">NET PRICE</span>
@@ -104,22 +159,14 @@
           </b> KD</span>
       </div>
     </section>
-    <!-- itmes-->
+ 
     {% endfor %}
     {% endfor %}
 
 
     {% if  order.evaluation.payment_method == 'BREAKDOWN' %}
     <section id="new-customer-info_1">
-      <!-- <div>
-        <span id="contact-text">Completed Jobs</span>
-        <span id="contact-number"><b>{{order.orderschedules|length}}</b></span>
-      </div>
-      <br>
-      <div>
-        <span id="contact-text">Total</span>
-        <span id="contact-number"><b>{{completed_jobs_count}}</b></span>
-      </div> -->
+
       <div>
         <span id="contact-text">Payment Before Cleaning</span>
         <span id="contact-number"><b>{{order.evaluation.before_cleaning_amount|floatformat:'3'}}</b> KD</span>
@@ -174,23 +221,11 @@
       </div>
       {% endif %}
       
-      <!-- <h1 id="payment-text"> Payment</h1>
-      <div style="margin-top: 20px;">
-        <span id="contact-text">Paid till date</span>
-        <span id="contact-number">0 </span>
-      </div> -->
-      <!-- <div>
-        <span id="contact-text">Balance till date</span>
-        <span id="contact-number">0 </span>
-      </div> -->
-      <!-- <div style="margin-top: 20px;">
-        <span id="contact-text">Payable Amount</span>
-      </div>
-      <h1 style="margin-left: 100px;" id="payment-amount">350.000 KD</h1> -->
+    
     </section>
     <section id="payment-section-invoice">
       
-    </section>
+    </section> -->
     
   
   </div>

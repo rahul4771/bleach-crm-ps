@@ -516,7 +516,11 @@ function getLeave(){
        if(gt_month[0]=='0'){
         gt_month=gt_month.substring(1);
     }
-   
+    /*if(!userIndex){
+        var day=gt_year+'-'+gt_month+'-'+gt_day
+        console.log("error leave is "+day +"id is"+response.data.staffs[i].id)
+    }*/
+    //console.log("user index is"+userIndex +"staff is "+response.data.staffs[i].staff+"date is"+gt_day+'-'+gt_month+'-'+gt_year)
     
     
    if(userIndex != undefined ){
