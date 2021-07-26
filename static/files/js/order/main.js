@@ -384,10 +384,11 @@ const app = new Vue({
             service_size:[],
             chair_size:[],
             sofa_size:[],
-           
+           progress:20,
+           slotloader:false,
 
             url:'https://my.bleachkw.com'
-          // url:'http://localhost:8000'
+         //  url:'http://localhost:8000'
             //url:'http://127.0.0.1:8000'
   },
   methods:{
@@ -568,6 +569,7 @@ const app = new Vue({
       this.schedule_serviceTypes=[]
       this.selectedSlots=[]
       this.schedule_serviceTypes.push(this.service_type)
+      this.slotloader=true
       axios
       .post(
          this.url+"/customer/ajax/getmultipleservicecleaningslotes",{service_types:this.schedule_serviceTypes,cleaning_date:date,number_of_cleaners:this.no_of_cleaners}
@@ -582,6 +584,7 @@ const app = new Vue({
          else{
            this.errMsg=''
          }
+         this.slotloader=false
       
 
       })
@@ -594,12 +597,14 @@ const app = new Vue({
       this.schedule_serviceTypes=[]
       this.selectedSlots=[]
       this.schedule_serviceTypes.push(this.service_type)
+      this.slotloader=true
       axios
       .post(
          this.url+"/customer/ajax/getmultipleservicecleaningslotes",{service_types:this.schedule_serviceTypes,cleaning_date:date,number_of_cleaners:this.selected_no_of_cleaners}
        
       )
       .then((response) => {
+        this.slotloader=false
          this.timeSlots = response.data.slotes;
          this.parseOneTimeSlots()
          if(response.data.Error){
