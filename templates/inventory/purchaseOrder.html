@@ -32,7 +32,7 @@
                             <i class="fa fa-filter mr-5" aria-hidden="true"></i>
                             Filter
                         </button>
-                        <button class="inv-blue-btn" onclick="showDrawer('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Create PO</button>
+                        <a href="/inventory/createpo/"><button class="inv-blue-btn" onclick="showDrawer('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Create PO</button></a>
 
                         <!-- <button class="inv-blue-btn" data-toggle="modal" data-target="#addModel" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Store </button> -->
                     </div>
@@ -86,13 +86,12 @@
                                2300
                             </td>
                             <td>
-                                <button class="inv-active-btn">
-                                    Active
-                                </button>
+                                <span class="inv-dot c-active ml-5"></span>
+                                Active
                             </td>
                             <td style="float: right;">
                               
-                                <button class="inv-plan-img-btn" onclick="openNavAddStore('edit')"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                <a href="/inventory/editpo/"><button class="inv-plan-img-btn" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button></a>
                                 <button class="inv-plan-img-btn"  data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
 
                             </td>
@@ -116,9 +115,8 @@
                                2300
                             </td>
                             <td>
-                                <button class="inv-active-btn">
-                                    Active
-                                </button>
+                                <span class="inv-dot c-active ml-5"></span>
+                                Active
                             </td>
                             <td style="float: right;">
                               
