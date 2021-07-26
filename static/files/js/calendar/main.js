@@ -1227,9 +1227,10 @@ const app=  new Vue({
                   
                   slot=moment(slot).add(2, 'hours');  
                   }
-                 
+                 console.log("row uis"+slots+"slotformatted is "+slotFormatted)
+       
                   var rowno=this.setRow(slots)
-                 
+                  console.log("row no "+rowno)
                   for(var j=0;j<slots.length;j++){
                     var slotind=slots[j]
                     if(this.slot[slotind].slots.length>0){
