@@ -2474,7 +2474,7 @@ this.infectionControlServices=[]
     }*/
     $('#service-carousel').html(`
    
-    <div class="sr-service-card m-2 p-2 service-one"  onclick="selectService('Sanitization',this)">
+    <div class="sr-service-card m-2 p-2 service-one"  onclick="selectService('Sterilization',this)">
     <i class="far fa-circle inactive-icon"></i>
     <img src="/static/files/icons/booking/icons/sanitisation.png" class="service-icon"> 
     <div class="text-center pt-2 service-title">
