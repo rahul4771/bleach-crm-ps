@@ -30,8 +30,9 @@ $(document).ready(function () {
     app.selected_date=newdate
     //console.log($('#date_hidden').val().replace(/\//g, '-'))
     app.setDate($('#date_hidden').val())
-    
+    this.selected_cleaning_date=moment(date,'MM/DD/YYYY').format('DD-MM-YYYY')
     app.getSlotes(moment(date,'MM/DD/YYYY').format('DD-MM-YYYY'))
+   
     app.getVisitSlotes(moment(date,'MM/DD/YYYY').format('DD-MM-YYYY'))
 });
 
@@ -164,6 +165,7 @@ function openCleaningDate(service){
   app.cleaning_hours=parseInt(data.cleaning_hours)
   app.no_of_slots=Math.ceil(data.cleaning_hours/2)
   app.evaluation_book_id=data.evaluation_book_id
+  
   app.getSlotes(moment().format('DD-MM-YYYY'))
   $("#calendar").datepicker("update", (moment().format('MM/DD/YYYY')));
 }
@@ -180,6 +182,7 @@ function editCleaningDate(service){
   app.schedule_id=data.id
   
   app.cleaning_start_date=data.cleaning_start_date
+  app.selected_cleaning_date=data.cleaning_start_date
   app.getSlotes(app.cleaning_start_date)
   $('#date_hidden').val((moment(app.cleaning_start_date,'DD-MM-YYYY').format('MM/DD/YYYY')))
   $("#calendar").datepicker("update", moment(app.cleaning_start_date,'DD-MM-YYYY').format('MM/DD/YYYY'));
@@ -234,6 +237,7 @@ const app = new Vue({
 
   data: {
     services:[],
+    selected_cleaning_date:'',
     highprice_facade:[],
     lowprice_facade:[],
     highprice_window:[],
@@ -572,7 +576,38 @@ const app = new Vue({
       this.slotloader=true
       axios
       .post(
-         this.url+"/customer/ajax/getmultipleservicecleaningslotes",{service_types:this.schedule_serviceTypes,cleaning_date:date,number_of_cleaners:this.no_of_cleaners}
+         this.url+"/customer/ajax/getmultipleservicecleaningslotes",{service_types:this.schedule_serviceTypes,cleaning_date:date,number_of_cleaners:this.selected_no_of_cleaners}
+       
+      )
+      .then((response) => {
+         this.timeSlots = response.data.slotes;
+         this.parseOneTimeSlots()
+         if(response.data.Error){
+           this.errMsg=response.data['Error']
+         }
+         else{
+           this.errMsg=''
+         }
+         this.slotloader=false
+      
+
+      })
+       .catch((error) => {
+        console.log(error);
+      });
+  
+    },
+    getSlotesByCleaners(){
+      this.schedule_serviceTypes=[]
+      this.selectedSlots=[]
+      this.schedule_serviceTypes.push(this.service_type)
+      this.slotloader=true
+      if(!this.selected_cleaning_date){
+        this.selected_cleaning_date=moment().format('DD-MM-YYYY')
+      }
+      axios
+      .post(
+         this.url+"/customer/ajax/getmultipleservicecleaningslotes",{service_types:this.schedule_serviceTypes,cleaning_date:this.selected_cleaning_date,number_of_cleaners:this.selected_no_of_cleaners}
        
       )
       .then((response) => {
