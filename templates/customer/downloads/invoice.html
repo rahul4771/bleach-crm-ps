@@ -124,49 +124,165 @@
 
           </section>
 
-          <section id="new-customer-info_12">
-            <div>
-              <span id="contact-text">Payment</span>
-            </div>
-            {% if  order.evaluation.payment_method == 'BREAKDOWN' %}
-            <div>
-              <span id="contact-text">Payment Before Cleaning</span>
-              <span id="contact-number">{{order.evaluation.before_cleaning_amount|floatformat:'3'}} KD</span>
-            </div>
-            <div>
-              <span id="contact-text">Payment After Cleaning</span>
-              <span id="contact-number">{{order.evaluation.after_cleaning_amount|floatformat:'3'}} KD</span>
-            </div>
-            {% endif %}
-    
-            {% if order.evaluation.payment_method == 'PREPAID' %}
-            <div>
-              <span id="contact-text">Payment Before Cleaning</span>
-              <span id="contact-number">{{order.total_amount|floatformat:"3"}} KD</span>
-            </div>
-            {% endif %}
+          {% if order.evaluation.payment_method == 'BREAKDOWN' %}
+    <section id="paymentmode-sec">
+      <span> BREAKDOWN Payment Mode</span>
+    </section>
+    <section id="lastsection">
+      <div>
+        <span id="paymenttime">
+          Payment Before Cleaning
+        </span>
+        <span id="paymenttime-amount">
+          <b>{{order.evaluation.before_cleaning_amount|floatformat:'3'}}</b> KD
+        </span>
+      </div>
+      <div>
+        <span id="paymenttime">
+          Payment After Cleaning
+        </span>
+        <span id="paymenttime-amount">
+          <b>{{order.evaluation.after_cleaning_amount|floatformat:'3'}}</b> KD
+        </span>
+      </div>
+    </section>
+    {% endif %}
 
-            {% if order.evaluation.payment_method == 'POSTPAID' %}
-            <div>
-              <span id="contact-text">Payment After Cleaning</span>
-              <span id="contact-number">{{order.total_amount|floatformat:"3"}} KD</span>
-            </div>
-            {% endif %}
+    {% if order.evaluation.payment_method == 'PREPAID' %}
+    <section id="lastsection">
+      <div>
+        <span id="paymenttime">
+          Payment Before Cleaning
+        </span>
+        <span id="paymenttime-amount">
+          <b>{{order.total_amount|floatformat:"3"}}</b> KD
+        </span>
+      </div>
+    </section>
+    {% endif %}
 
-            
-            {% if order.evaluation.cleaning_policy == 'ONE TIME SERVICE' %}
-            <div>
-              <span id="contact-text">Payable amount</span>
-              <span id="payble_id">  {{order.remining_amount|floatformat:'3'}} KD</span>
-            </div>
-            {% else %}
-            <div>
-              <span id="contact-text">Payable amount</span>
-              <span id="payble_id">  {{order.subscription_topay|floatformat:'3'}} KD</span>
-            </div>
-            {% endif %}
-            
-          </section>
+    {% if order.evaluation.payment_method == 'POSTPAID' %}
+    <section id="lastsection">
+      <div>
+        <span id="paymenttime">
+          Payment After Cleaning
+        </span>
+        <span id="paymenttime-amount">
+          <b>{{order.total_amount|floatformat:"3"}}</b> KD
+        </span>
+      </div>
+    </section>
+    {% endif %}
+
+    <section id="total-section">
+      <div>
+        <span id="paymenttime">
+          <b>Sub Total</b>
+        </span>
+        <span id="paymenttime-amount">
+          <b>{{order.evaluation.estimated_cost|floatformat:'3'}}</b>
+        </span>
+      </div>
+      
+      {% if order.evaluation.discount != 0 %}
+      <div>
+        <span id="paymenttime">
+          <b>Discount</b>
+        </span>
+        <span id="paymenttime-amount">
+          <b>-{{order.evaluation.discount|floatformat:"3"}}</b>
+        </span>
+      </div>
+      {% endif %}
+
+      {% if order.evaluation.credit_amount != 0 %}
+      <div>
+        <span id="paymenttime">
+          <b>Credit Added</b>
+        </span>
+        <span id="paymenttime-amount">
+          <b>-{{order.evaluation.credit_amount|floatformat:"3"}}}</b>
+        </span>
+      </div>
+      {% endif %}
+      
+      {% if order.evaluation.fine_amount != 0 %}
+      <div>
+        <span id="paymenttime">
+          <b>Fine</b>
+        </span>
+        <span id="paymenttime-amount">
+          <b>-{{order.evaluation.fine_amount|floatformat:'3'}}</b>
+        </span>
+      </div>
+      {% endif %}
+
+      {% if order.evaluation.writeback_amount != 0 %}
+      <div>
+        <span id="paymenttime">
+          <b>Write-Off Amount</b>
+        </span>
+        <span id="paymenttime-amount">
+          <b>-{{order.evaluation.writeback_amount|floatformat:'3'}}</b>
+        </span>
+      </div>
+      {% endif %}
+
+      {% if order.evaluation.is_promocode_applied == True %}
+      <div>
+        <span id="paymenttime">
+          <b>Coupon Added</b>
+        </span>
+        <span id="paymenttime-amount">
+          <b>-{{order.evaluation.promocode_amount|floatformat:"3"}}</b>
+        </span>
+      </div>
+      {% endif %}
+
+
+      <div>
+        <span id="contact-text">
+          <b>Total</b>
+        </span>
+        <span id="contact-number">
+          <b>{{order.total_amount|floatformat:"3"}}</b>
+        </span>
+      </div>
+      
+      <div>
+        <span id="contact-text">
+          <b>Paid till date</b>
+        </span>
+        <span id="contact-number">
+          <b>{{order.amount_paid|floatformat:'3'}}</b>
+        </span>
+      </div>
+  
+      <div>
+        <span id="contact-text">
+          <b>Balance till date</b>
+        </span>
+        <span id="contact-number">
+          <b>{{order.remining_amount|floatformat:'3'}}</b>
+        </span>
+      </div>
+    </section>
+
+    {% if order.evaluation.cleaning_policy == 'ONE TIME SERVICE' %}
+    <section id="final-section">
+      <span id="total_id">Payable Amount</span>
+      <h1 id="total_amount">
+        {{order.remining_amount|floatformat:'3'}} <span id="kd-font">KD</span>
+      </h1>
+    </section>
+    {% else %}
+    <section id="final-section">
+      <span id="total_id">Payable Amount</span>
+      <h1 id="total_amount">
+        {{order.subscription_topay|floatformat:'3'}} <span id="kd-font">KD</span>
+      </h1>
+    </section>
+    {% endif %}
 
 
   
