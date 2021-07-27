@@ -873,7 +873,9 @@ building_warning:false
           this.activeTab='Cart'
         },
         changeVisitDate(){
-          
+          this.slot_msg=false
+        if(this.selected_double_slots.length==selectedDuration.hours/2)
+        {
           var day=moment(this.dateSelected,'YYYY-MM-DD') 
             var dayname=day.format('ddd')
             var startSlot=Math.min(...this.selected_double_slots)
@@ -889,8 +891,11 @@ building_warning:false
             this.fixedSlots={}
             this.checkAvailablility()
             this.reselectDialog=false
-           
-
+            this.slot_msg=false
+          }
+          else{
+            this.slot_msg=true
+          }
         },
         reselectVisitDate(slot,index){
           this.reselectDate=slot
@@ -968,6 +973,9 @@ building_warning:false
           return combined
         },
         findCustomVisits(){
+          if(this.selected_double_slots.length==this.selectedDuration.hours/2){
+
+          
           if(this.customDateSelected.length>0 && this.selected_double_slots.length>0 )
           {
          for(var i=0;i<this.customDateSelected.length;i++){
@@ -992,9 +1000,16 @@ building_warning:false
         else{
           this.schedule_err_msg=true
         }
+        this.slot_msg=false
+      }
+      else{
+        this.slot_msg=true
+      }
+
           
         },
         findVisits(){
+          if(this.selected_double_slots.length==this.selectedDuration.hours/2){
         if(this.selected_double_slots.length>0 && this.dateSelected)
         {
          this.scheduleDialog=false
@@ -1077,8 +1092,14 @@ building_warning:false
         else{
           this.schedule_err_msg=true
         }
+        this.slot_msg=false
+      }
+      else{
+        this.slot_msg=true
+      }
         },
         findMonthlyVisits(){
+          if(this.selected_double_slots.length==this.selectedDuration.hours/2){
           if(this.selected_monthly_date.length>0 && this.selected_double_slots.length>0 )
           {
           console.log("called monthly")
@@ -1128,6 +1149,11 @@ building_warning:false
         else{
           this.schedule_err_msg=true
         }
+        this.slot_msg=false
+      }
+      else{
+        this.slot_msg=true
+      }
         },
         checkAvailablility(){
          axios.post(this.url+'/customer/ajax/multipleservice/multipledates/cleaningslotes/',{number_of_cleaners:this.selectedDuration.cleaners,

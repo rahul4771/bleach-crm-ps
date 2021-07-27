@@ -1239,13 +1239,13 @@ class="cl-service-list"
              
               value="edit_cleaning_withautofix"
               class="cl-radio"
-              :color="popup.color"
+             
             ></v-radio>
             <v-radio
               label="No"
               value="edit_cleaning_withoutautofix"
               class="cl-radio"
-              :color="popup.color"
+             
             ></v-radio>
           </v-radio-group>
        
@@ -1401,6 +1401,45 @@ class="cl-service-list"
           <div class="cl-modal-text-title">
              Edit Cleaning
           </div>
+          <div class="col-md-12">
+            <div class="row  m-0">
+              
+             
+              <div class="col-md-2 mt-2 col-12" v-if="followup_duration.length>0">
+                <div>Choose a duration</div>
+                <div class="text-center p-2">In Hours</div>
+              </div>
+              <div class="col-md-12 mt-2 danger" v-else>
+                  Cleaners not available for the selected service
+              </div>
+              <div
+                class="col-md-2 mt-2 col-6"
+                v-for="(item, durindex) in followup_duration"
+                v-bind:key="durindex"
+              >
+                <div
+                  class="duration-active text-center p-2"
+                  v-on:click="selectFollowupDuration(item)"
+                  v-if="selected_cleaning_duration.cleaning_hours == item.cleaning_hours"
+                >
+                  <b> <% item.cleaning_hours %> </b>Hours
+                </div>
+                <div
+                  class="duration text-center p-2"
+                  v-on:click="selectFollowupDuration(item)"
+                  v-else
+                >
+                  <b> <% item.cleaning_hours %> </b>Hours
+                </div>
+                <div
+                  v-if="selected_cleaning_duration.cleaning_hours == item.cleaning_hours"
+                  class="text-center sub-content"
+                >
+                  <% item.cleaning_hours / 2 %> slots
+                </div>
+              </div>
+            </div>
+          </div>
           <div class="row">
             <div class="mt-2 col-md-4">
          
@@ -1408,8 +1447,17 @@ class="cl-service-list"
            
            </div>
             <div class="col-md-7 offset-md-1">
-          
-              Slots : <% no_of_slots %>
+              <div style="max-width:100px">
+                <v-text-field
+                v-model="followup_cleaners"
+                type="number"
+                label="No of Cleaners"
+                color="#DBA03A"
+                required
+                @input="changeFollowupCleaners()"
+              ></v-text-field>
+              </div>
+             
               <div>
                 <b>Time Slots Available</b>
               </div>

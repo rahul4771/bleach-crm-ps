@@ -15,7 +15,7 @@
 <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
 
 
-<div class="wrapper" id="app">
+<div class="wrapper" id="app" >
   <!--wrapper-->
   {% if request.user.user_type == 'EVALUATOR' %}
 {% include "evaluator/common/header.html" %}
@@ -211,7 +211,7 @@
   </div>
  
   <div class="col-md-2 mt-2 col-12" v-if="duration.length>0">
-    <div class="text-center p-2">In Hours</div>
+    <div class="text-center p-2">Durations</div>
   </div>
   <div class="col-md-12 mt-2 danger" v-else>
       Cleaners not available for the selected service
@@ -226,14 +226,14 @@
       v-on:click="selectDuration(item)"
       v-if="selectedDuration == item"
     >
-      <b> <% item.hours %></b>
+      <b> <% item.hours %> Hrs</b>
     </div>
     <div
       class="duration text-center p-2"
       v-on:click="selectDuration(item)"
       v-else
     >
-      <b> <% item.hours %> </b>
+      <b> <% item.hours %> Hrs</b>
     </div>
     <div
       v-if="selectedDuration == item"
@@ -345,6 +345,7 @@ width="1000"
     <div>
       Select  Slots
     </div>
+    
 <div class="row mt-4">
   <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex">
     <div class="time-slot duration text-center p-2" 
@@ -359,7 +360,19 @@ width="1000"
       <% slot.start_time+' - '+ slot.end_time %>
     </div>
   </div>
+  
   <div class="col-md-12 ">
+    <div  v-if="slot_msg">
+      <v-alert
+         
+      dense
+      outlined
+      type="error"
+          type="error"
+        >
+          Please Select the required number of slots
+        </v-alert>
+    </div>
     <div class="d-flex justify-center">
     <v-btn color="primary" @click="changeVisitDate()">
       Proceed
@@ -445,6 +458,18 @@ width="1000"
       Please fill the required fields
     </v-alert>
   </div>
+  <div  v-if="slot_msg">
+    <v-alert
+       
+    dense
+    outlined
+    type="error"
+        type="error"
+      >
+        Please Select the required number of slots
+      </v-alert>
+  </div>
+  
       <div class="d-flex justify-center">
       <v-btn color="primary" @click="findCustomVisits()">
         Proceed
@@ -557,16 +582,27 @@ width="1000"
         dense
         outlined
         type="error"
-        v-if="schedule_err_msg"
+        v-if="schedule_err_msg && !slot_msg"
       >
         Please fill the required fields
       </v-alert>
+    </div>
+    <div  v-if="slot_msg">
+      <v-alert
+         
+      dense
+      outlined
+      type="error"
+          type="error"
+        >
+          Please Select the required number of slots
+        </v-alert>
     </div>
       <div class="d-flex justify-center">
       <v-btn color="primary" @click="findMonthlyVisits()">
         Proceed
       </v-btn>
-      <v-btn color="primary" outlined class="ml-2" @click="scheduleDialog=false">
+      <v-btn color="primary" outlined class="ml-2" @click="monthlyDialog=false">
         Cancel
       </v-btn>
       </div>
@@ -647,10 +683,21 @@ width="1000"
       dense
       outlined
       type="error"
-      v-if="schedule_err_msg"
+      v-if="schedule_err_msg && !slot_msg"
     >
       Please fill the required fields
     </v-alert>
+  </div>
+  <div  v-if="slot_msg">
+    <v-alert
+       
+    dense
+    outlined
+    type="error"
+        type="error"
+      >
+        Please Select the required number of slots
+      </v-alert>
   </div>
     <div class="d-flex justify-center">
     <v-btn color="primary" @click="findVisits()">
@@ -1126,6 +1173,49 @@ width="1000"
                 </template>
               </v-radio>
             </v-radio-group>
+          </div>
+          <!-- keynote for services other than detailed cleaning category begins here-->
+          <div class="col-md-12" v-if="serviceType=='Upholstery Cleaning'">
+            <div>Add Keynotes</div>
+            <div class="row keynote-chip m-0">
+            <div v-for="(keynote,kindex) in otherService.keynote_data" v-bind:key="kindex" class="col-md-6" >
+              <div class="keynote-item">
+                <v-chip
+
+                class="ma-2 w-100"
+                color="primary"
+                id="keynote-chip"
+               close
+                label
+                outlined
+                @click:close="removeOthersKeynote(kindex)"
+              >
+              
+                <% keynote.name+' - '+keynote.value%>
+              </v-chip>
+              </div>
+
+          </div>
+          </div>
+          </div>
+          <div class="col-md-4"  v-if="serviceType=='Upholstery Cleaning'">
+            <v-combobox
+            v-model="keynote_name"
+            :items="keynote_content"
+            label="Field Name"
+           
+           ></v-combobox>
+          </div>
+          <div class="col-md-4"  v-if="serviceType=='Upholstery Cleaning'">
+            <v-text-field v-model="keynote_value"
+            label="Value"
+              >
+            </v-text-field>
+          </div>
+          <div class="col-md-4"  v-if="serviceType=='Upholstery Cleaning'">
+            <v-btn color="primary" @click="addOthersKeynote()">
+              Add
+            </v-btn>
           </div>
           <div class="col-md-12"></div>
         </div>
@@ -2223,7 +2313,7 @@ Fill all the details of the Buildings  to proceed
                           </v-radio-group>
                         </div>
                         <!-- keynote for services other than detailed cleaning category begins here-->
-                    <!--    <div class="col-md-12">
+                        <div class="col-md-12" v-if="serviceType=='Upholstery Cleaning'">
                           <div>Add Keynotes</div>
                           <div class="row keynote-chip m-0">
                           <div v-for="(keynote,kindex) in otherService.keynote_data" v-bind:key="kindex" class="col-md-3" >
@@ -2246,7 +2336,7 @@ Fill all the details of the Buildings  to proceed
                         </div>
                         </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-4"  v-if="serviceType=='Upholstery Cleaning'">
                           <v-combobox
                           v-model="keynote_name"
                           :items="keynote_content"
@@ -2254,19 +2344,19 @@ Fill all the details of the Buildings  to proceed
                          
                          ></v-combobox>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-4"  v-if="serviceType=='Upholstery Cleaning'">
                           <v-text-field v-model="keynote_value"
                           label="Value"
                             >
                           </v-text-field>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-4"  v-if="serviceType=='Upholstery Cleaning'">
                           <v-btn color="primary" @click="addOthersKeynote()">
                             Add
                           </v-btn>
-                        </div>-->
+                        </div>
                         <!-- key note ends here-->
-                        <div class="col-md-12 text-center">
+                        <div class="col-md-12 text-center"  >
                           <v-btn color="primary" class="mr-4 mx-auto" v-on:click="addOtherService()">
                             Add
                           </v-btn>
