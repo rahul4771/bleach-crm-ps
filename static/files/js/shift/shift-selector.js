@@ -36,7 +36,7 @@ var shiftId = ''
 
 
 //Initialization of data
-
+var shiftSheet=[]
 var shiftList=[]
 function getInitDatasShift(){
    
@@ -242,7 +242,7 @@ function selectDayShift(el){
     console.log("user id is"+userId)
     var user=resourceList[userId].name;
     modalUser=resourceList[userId].id;
-  
+   console.log("resource details is"+resourceList[userId])
     selectedDates[userId].name=user;
     console.log("curent month :"+currentMonth.toString()+"current yr :"+currentYear.toString()+"shift date:"+$('#'+dayId).find('.lv-shift-date').text().toString())
     shiftId=getShiftId($('#'+dayId).find('.lv-shift-date').text().toString()+'-'+currentMonth.toString()+'-'+currentYear.toString(),userId);
@@ -276,8 +276,16 @@ function selectDayShift(el){
         $('#ShiftModal').show();
     }
     if($('#'+dayId).find('.lv-shift-date').hasClass('lv-maternity')){
-        
-        $('.modal-title').text('Maternity/Paternity Leave');
+        var shift_data={}
+        for(var i=0;i<shiftSheet.length;i++){
+            if(shiftSheet[i].id==shiftId){
+                shift_data=shiftSheet[i]
+                break;
+            }
+        }
+        $('.modal-title').text('Custom Shift');
+        $('#start_at').text('Start at : '+ shift_data.shift3_start_at);
+        $('#end_at').text('End at : '+ shift_data.shift3_end_at);
         $('.modal-title').removeClass('lv-sick-text');
         $('.modal-title').removeClass('lv-annual-text');
         $('.modal-title').removeClass('lv-weekly-text');
@@ -366,12 +374,13 @@ function closeConf(){
 //get users 
 function getUsersShift(){
     
-      url ='http://localhost:8000';
+      url ='https://my.bleachkw.com';
       resourceList=[];
   
     axios.get(url+'/api/leave-users-list/')
 .then(function (response) {
   // handle success
+  
   console.log(response);
   for(var i = 0; i < response.data.staffs.length; i++) {
     var staffData={};
@@ -648,7 +657,7 @@ function resetResourcesShift(category){
 //get shifts
 function getShift(){
     
-    url ='http://localhost:8000';
+    url ='https://my.bleachkw.com';
     axios.get(url+'/api/shift-scheduler/')
 .then(function (response) {
   // handle success
@@ -670,7 +679,7 @@ function getShift(){
     if(userIndex!=undefined){
 
     
-    resourceList[userIndex].shift.push({date:gt_day+'-'+gt_month+'-'+gt_year,shift1:response.data.staffs[i].shift1,shift2:response.data.staffs[i].shift2,shift_id:response.data.staffs[i].id});
+    resourceList[userIndex].shift.push({date:gt_day+'-'+gt_month+'-'+gt_year,shift1:response.data.staffs[i].shift1,shift2:response.data.staffs[i].shift2,shift3:response.data.staffs[i].shift3,shift3_start_at:response.data.staffs[i].shift3_start_at,shift3_end_at:response.data.staffs[i].shift3_start_at,shift_id:response.data.staffs[i].id});
     }    
 }
    
