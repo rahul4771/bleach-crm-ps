@@ -42,7 +42,7 @@ class LeaveScheduleSerializer(serializers.ModelSerializer):
 class ShiftScheduleSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShiftSchedule
-        fields = ('id','staff','shift_date','shift1','shift2','shift1_start_at','shift2_start_at','shift1_end_at','shift2_end_at')      
+        fields = ('id','staff','shift_date','shift1','shift2','shift3','shift1_start_at','shift2_start_at','shift3_start_at','shift1_end_at','shift2_end_at','shift3_end_at',)      
 
 class GovernorateSerializer(serializers.ModelSerializer):
     class Meta:      
