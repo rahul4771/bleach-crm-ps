@@ -36,6 +36,7 @@ var shiftId = ''
 
 
 //Initialization of data
+
 var shiftList=[]
 function getInitDatasShift(){
    
@@ -361,7 +362,7 @@ function closeConf(){
 //get users 
 function getUsersShift(){
     
-      url ='https://my.bleachkw.com';
+      url ='http://localhost:8000';
       resourceList=[];
   
     axios.get(url+'/api/leave-users-list/')
@@ -454,6 +455,19 @@ function addToShift1(){
 function openCustomModal(){
     $('#customModal').show();
 }
+/** time converter */
+function tConvert (time) {
+    // Check correct time format and split into components
+    time = time.toString ().match (/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+  
+    if (time.length > 1) { // If time format correct
+      time = time.slice (1);  // Remove full string match value
+      time[5] = +time[0] < 12 ? 'AM' : 'PM'; // Set AM/PM
+      time[0] = +time[0] % 12 || 12; // Adjust hours
+    }
+    return time.join (''); // return adjusted time or original string
+  }
+/** time converter ends here */
 function addToShift3(){
    
     resourceLeave=[];
@@ -473,8 +487,8 @@ function addToShift3(){
             }
             var lvyear=selectedDates[i].dates[j].split('-')[2];
             var lvday=selectedDates[i].dates[j].split('-')[0];
-            var start_at=$('#shift3_start_at').val()
-            var end_at=$('#shift3_end_at').val()
+            var start_at=tConvert($('#shift3_start_at').val())
+            var end_at=tConvert($('#shift3_end_at').val())
             if(lvday.length<2){
                 lvday='0'+lvday;
             }
@@ -630,7 +644,7 @@ function resetResourcesShift(category){
 //get shifts
 function getShift(){
     
-    url ='https://my.bleachkw.com';
+    url ='http://localhost:8000';
     axios.get(url+'/api/shift-scheduler/')
 .then(function (response) {
   // handle success
