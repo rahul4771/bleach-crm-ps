@@ -239,6 +239,7 @@ class ShiftSchedule(models.Model):
     shift_date      = models.DateField(blank=False,null=False)
     shift1          = models.BooleanField(null=False,blank=True,default=False)
     shift2          = models.BooleanField(null=False,blank=True,default=False)
+    shift3          = models.BooleanField(null=False,blank=True,default=False)
     shift1_start_at = models.TimeField(blank=True,null=True)
     shift1_end_at   = models.TimeField(blank=True,null=True)
     shift2_start_at = models.TimeField(blank=True,null=True)
