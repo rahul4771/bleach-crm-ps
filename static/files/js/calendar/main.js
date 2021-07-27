@@ -698,7 +698,9 @@ const app=  new Vue({
             this.editCleaning()
           },
           selectFollowupDuration(duration){
+            duration.no_of_cleaners=this.followup_cleaners
             this.selected_cleaning_duration=duration
+           
             this.editFollowupCleaning()
           },
           editCleaning(){
@@ -731,7 +733,7 @@ const app=  new Vue({
             })
           },
           editFollowupCleaning(){
-            this.followupDuration()
+            
             this.editEval=true
             this.selectedEditSlot=[]
             var temparray=this.selectedDate.split("-")
@@ -740,7 +742,20 @@ const app=  new Vue({
             if(!this.selectedSlotDetailed[this.convertedDate]){
               this.selectedSlotDetailed[this.convertedDate]=[]
             }
-            this.cleaningEditSlots={
+            axios.post(this.url+'/agent/cleaningcallendar/cleaning/edit/slotes/',{
+              // cleaning_date:this.currentSlotDetails.start_at.split(' ')[0],
+              
+ 
+              cleaning_date:selectedDate,
+               number_of_cleaners:this.selected_cleaning_duration.no_of_cleaners,
+               service_types:[],
+               evaluation_id:this.currentSlotDetails.follow_up.ticket_no
+             }).then((response) => {
+               this.cleaningEditSlots=response.data.slotes
+ 
+               this.parseEditSlots()
+             })
+            /*this.cleaningEditSlots={
               "0":[3,6,9,12],
               "3":[3,6,9,12],
               "6":[3,6,9,12],
@@ -750,8 +765,8 @@ const app=  new Vue({
               "18":[3,6,9,12],
               "21":[3,6,9,12]
 
-            }
-            this.parseEditSlots()
+            }*/
+           
           },
           saveEdit(){
             var schedules=[]
@@ -992,6 +1007,7 @@ const app=  new Vue({
 
           
             axios.get(this.url+"/agent/cleaningcallendar/followupcleaning/popup/?followup_scheduler_id="+item.slots.id).then((response) => {
+              this.followupDuration()
               this.currentSlotDetails=response.data.followup_cleanings[0]
               this.followup_cleaners=this.currentSlotDetails.follow_up.no_of_cleaners
               this.selected_cleaning_duration={
@@ -1015,6 +1031,7 @@ const app=  new Vue({
           },
           changeFollowupCleaners(){
             this.selected_cleaning_duration.no_of_cleaners=parseInt(this.followup_cleaners)
+            this.editFollowupCleaning()
           },
           parseSlots(){
             for(var i=0;i<this.combineSlots.length;i++){
