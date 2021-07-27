@@ -54,6 +54,7 @@ const app=  new Vue({
    
     
     data: {
+      slotloader:false,
        user_type:'',
         setAttenderNotes:"",
         agent:'#0D87C5',
@@ -742,15 +743,17 @@ const app=  new Vue({
             if(!this.selectedSlotDetailed[this.convertedDate]){
               this.selectedSlotDetailed[this.convertedDate]=[]
             }
+            this.slotloader=true
             axios.post(this.url+'/agent/cleaningcallendar/cleaning/edit/slotes/',{
               // cleaning_date:this.currentSlotDetails.start_at.split(' ')[0],
               
- 
+              
               cleaning_date:selectedDate,
                number_of_cleaners:this.selected_cleaning_duration.no_of_cleaners,
                service_types:[],
                evaluation_id:this.currentSlotDetails.follow_up.ticket_no
              }).then((response) => {
+              this.slotloader=false
                this.cleaningEditSlots=response.data.slotes
  
                this.parseEditSlots()

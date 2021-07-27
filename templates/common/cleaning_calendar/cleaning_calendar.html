@@ -1458,10 +1458,21 @@ class="cl-service-list"
               ></v-text-field>
               </div>
              
-              <div>
+              <div v-if="!slotloader">
                 <b>Time Slots Available</b>
               </div>
-             <div class="time-slots row mt-2" >
+              <div class="text-center" v-if="slotloader">
+              <vue-ellipse-progress :loading="true" color="#DBA03A" animation="bounce 700 1000"
+                        fontSize="1.5rem"
+                        :size="180"
+                        font-color="white"
+                        dot="7" 
+                        
+                        >
+                        <p slot="legend-caption">Finding Slots</p>
+                        </vue-ellipse-progress>
+                </div>         
+             <div class="time-slots row mt-2" v-if="!slotloader" >
               <div class="col-md-4" v-for="(slot,index) in availableSlots" v-bind:key="index">
                 <div class="time-slot" @click="selectEditSlot(slot.split(' ')[0]+' '+slot.split(' ')[1])"  v-if="!selectedEditSlot.includes((slot.split(' ')[0]+' '+slot.split(' ')[1])) && checkslot(index)">
                  <% slot %>
@@ -1473,7 +1484,7 @@ class="cl-service-list"
                  <% slot %>
                 </div>
               </div>
-              <div class="col-md-12"  v-if="availableSlots.length<1">
+              <div class="col-md-12"  v-if="availableSlots.length<1 && !slotloader">
                <div class=" cl-modal-text-title text-center cl-highlight" >
                Slots not available. 
                </div>
@@ -1604,7 +1615,7 @@ class="cl-service-list"
         </div>
     </div>
   </div>
-
+  
   <script>
   console.log($('#cleaning_calendar_date').val(),"calodate")
 
