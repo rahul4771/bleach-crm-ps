@@ -107,6 +107,40 @@
 
             </div>
           </div>  
+          <!-- custom shift modal -->
+          <div id="customModal" class="lv-modal" style="border: none !important; background: none !important;">
+            <div class="modal-dialog">
+
+
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" onclick="closeCustomModal()">&times;</button>
+                  <h4 class="modal-title"> Choose Start Time & End Time</h4>
+                </div>
+                <div class="modal-body">
+                  <div class="row">
+                    <div class="col-md-3">
+                      <div class="mt-20">Start Time</div>
+                      <input type="time" placeholder="Starting time" class="mt-10 w-100" id="shift3_start_at"/>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="mt-20">End Time</div>
+                      <input type="time" placeholder="Ending time" class="mt-10 w-100" id="shift3_end_at"/>
+                    </div>
+                  </div>
+                  
+                
+
+                </div>
+                <div class="modal-footer ">
+                  <button type="button" class="btn btn-primary"  id="lv-cancel-btn" onclick="addToShift3()">Submit</button>
+                 
+                </div>
+              </div>
+
+            </div>
+          </div> 
+          <!-- custom shift modal ends here-->
 
 
           {% if request.user.user_type == 'OPERATIONSUPERVISOR' or request.user.user_type == 'SENIORTEAMLEADER' %}
@@ -290,6 +324,9 @@
             </button>
             <button id="id_shift_2" class="lv-shift2-btn" onclick="addToShift2()">
               <i class="fa fa-plus" style="margin-right: 10px;" aria-hidden="true"></i> Shift 2 (12 PM - 10 PM)
+            </button>
+            <button id="id_shift_2" class="lv-shift3-btn" onclick="openCustomModal()">
+              <i class="fa fa-plus" style="margin-right: 10px;" aria-hidden="true"></i> Custom Shift
             </button>
           </div>
           <!-- wrapper 2-->

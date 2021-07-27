@@ -34,6 +34,25 @@
     color: #3968c6;
 
 }
+.lv-shift3-btn{
+    margin-left: 10px !important;
+    padding: 12px;
+    cursor: pointer;
+    
+    color: #ffffff;
+    border-radius: 20px;
+    font-size: 14px;
+    height: 100%;
+    border: none;
+    background-color: #ff8c56;
+}
+.lv-shift3-btn:hover {
+
+    border:1px solid #ff8c56;
+    background-color:#ffffff;
+    color: #ff8c56;
+
+}
 .lv-day{
     padding:10px;
     font-size:14px;
