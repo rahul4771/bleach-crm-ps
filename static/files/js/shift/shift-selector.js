@@ -87,6 +87,10 @@ for (var j=0;j<resourceList.length;j++){
                             $('#row-2'+rsid).append('<td class="noBorder text-center lv-shift-date"  onclick="selectDayShift(this)" id="lv-day-2-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-shift-date lv-weekly" id="lv-shift-date-2-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
  
                         }
+                        else if(resourceList[j].shift[rs].shift3==true){
+                            $('#row-2'+rsid).append('<td class="noBorder text-center lv-shift-date"  onclick="selectDayShift(this)" id="lv-day-2-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-shift-date lv-maternity" id="lv-shift-date-2-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
+ 
+                        }
                         found=true;
                         noOfShift=noOfShift+1;
                      }
@@ -462,7 +466,7 @@ function tConvert (time) {
   
     if (time.length > 1) { // If time format correct
       time = time.slice (1);  // Remove full string match value
-      time[5] = +time[0] < 12 ? 'AM' : 'PM'; // Set AM/PM
+      time[5] = +time[0] < 12 ? ' am' : ' pm'; // Set AM/PM
       time[0] = +time[0] % 12 || 12; // Adjust hours
     }
     return time.join (''); // return adjusted time or original string
@@ -497,8 +501,8 @@ function addToShift3(){
             leaveSelected['shift1']=false
             leaveSelected['shift2']=false
             leaveSelected['shift3']=true
-            leaveSelected['shift3_start_at']=leaveSelected['shift_date']+' '+start_at
-            leaveSelected['shift3_end_at']=leaveSelected['shift_date']+' '+end_at
+            leaveSelected['shift3_start_at']=start_at
+            leaveSelected['shift3_end_at']=end_at
             shiftList.push(leaveSelected);
            
         }
