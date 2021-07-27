@@ -33,10 +33,9 @@
       <h1 id="qu-text">QUOTATION</h1>
    </section>
 
-   {% for orderschedule in order.orderschedules %}
-   {% if forloop.first %}
-
    <section id="customer_container">
+    {% for orderschedule in order.orderschedules %}
+    {% if forloop.first %}
      <div id="left_id">
        <div>
          <span id="contact-text">Customer</span>
@@ -56,43 +55,48 @@
          <span id="customer-address">{{orderschedule.customer_address.apartment}}, {% if orderschedule.customer_address.floor %}{{orderschedule.customer_address.floor}} {% else %}{% endif %} {{orderschedule.customer_address.building}},{{orderschedule.customer_address.block}}, {{orderschedule.customer_address.street}},{% if orderschedule.customer_address.avenue %}{{orderschedule.customer_address.avenue}} {% else %}{% endif %}<br>{{orderschedule.customer_address.area.name}}, {{orderschedule.customer_address.governorate.name}}</span>
        </div><br>
      </div>
+   {% endif %}
+   {% endfor %}
 
      <div id="right_id">
        
          <div>
            <span id="contact-text">Quotation Number</span>
-           <span id="contact-number"> <b>BLC20210510093</b> </span>
+           <span id="contact-number"> <b>{{order.order_no}}</b> </span>
          </div>
          <div>
            <span id="contact-text">Initiated Date</span>
-           <span id="contact-number">25-05-2021</span>
+           <span id="contact-number">{{order.evaluation.created|date:'d-m-Y'}}</span>
          </div>
          <div>
            <span id="contact-text">Due Date</span>
-           <span id="contact-number">08-06-2021</span>
+           <span id="contact-number">{{order.evaluation.quatation_expiry_date|date:'d-m-Y'}}</span>
          </div>
+         {% if order.evaluation.evaluator %}
          <div>
            <span id="contact-text">Evaluator</span>
-           <span id="contact-number">Agent Three</span>
+           <span id="contact-number">{{order.evaluation.evaluator.name}}</span>
          </div>
+         {% endif %}
          <div>
           <span id="contact-text">Payment Policy</span>
-          <span id="contact-number">BREAKDOWN</span>
+          <span id="contact-number">{{order.evaluation.payment_method}}</span>
         </div>
      </div>
 
    </section>
-   {% endif %}
-   {% endfor %}
+   
+
    <section id="table_section">
 
     <table id="soa_table2">
       <tr>
-        <th style="width: 50%;">Service</th>
+        <th style="width: 40%;">Service</th>
         <th >Size</th>
       
         <th>Quantity</th>
         <th >Unit Price</th>
+        <th >Net Price</th>
       </tr>
 
       {% for orderschedule in nonduplicate_schedules %}            
@@ -104,10 +108,12 @@
         </td>
         <td style="text-align: right;">
           {% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{section.section_cleanings|floatformat:"-1"}}{% endif %}
-          
         </td>
         <td style="text-align: right;">
           {{section.section_cost|floatformat:'3'}}
+        </td>
+        <td style="text-align: right;">
+          {{section.section_net_cost|floatformat:'3'}}
         </td>
       </tr>
       {% endfor %}
@@ -115,28 +121,13 @@
    
 
       <tr>
-        <td colspan="3"> Sub Total</td>
+        <td colspan="4"> Sub Total</td>
         <td style="text-align: right;">{{order.evaluation.estimated_cost|floatformat:'3'}} KD</td>
       </tr>
     </table>
 
   </section>
 
-  
-    <!-- {% for orderschedule in nonduplicate_schedules %}            
-    {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
-   
-    <section id="order-items">
-      <span id="order-item-name">{{orderschedule.order_scheduler_book.service_type}}-{{section.section_name}}</span>
-      <span id="netprice-text">NET PRICE</span>
-      <div>
-        <span>Size : <b>{{section.size}} {{section.unit|default_if_none:''}}</b> Quantity : <b>{% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{section.section_cleanings|floatformat:"-1"}}{% endif %}</b> Unit Price : <b>{{section.section_cost|floatformat:'3'}}</b> </span>
-        <span id="netprice"><b>{{section.section_cost|floatformat:'3'}}</b> KD</span>
-      </div>
-    </section>
-   
-    {% endfor %}
-    {% endfor %} -->
 
     {% if order.evaluation.payment_method == 'BREAKDOWN' %}
     <section id="paymentmode-sec">

@@ -87,6 +87,7 @@ const app=new Vue({
         
       },
     data: {
+      slot_msg:false,
       keynote_content:[
        'BEDROOMS','BATHROOMS','MAID ROOM','STORAGE ROOM','LIVING ROOM','DRESSING ROOM','CABINETS (Inside)','CABINETS (Outside)','DRIVER ROOM','LAUNDRY ROOM','MECHANICAL ROOM','ELECTRICAL ROOM','ENTERTAINMENT ROOM','DINING ROOM','ENTRANCE AREA','STAIR CASE','HAND WASH AREA','WINDOWS','WALL GLASS','BALCONY','SWIMMING POOL','FAÇADE','DUSTING','GATES & FENCE','HALL WAY','AC VENTS','COVE LIGHTS','SWITCH BOARDS','CHANDELIERS','WALL LIGHTS','CEILING LIGHTS','DOOR','ROOF TOP','FENCE','PARKING AREA'
       ],
@@ -2154,6 +2155,11 @@ removeOneTimeSlot(slot){
     return counter
   },
   submitOneTimeSlots(){
+    this.slot_msg=false
+    var slotscount=this.oneTimeSlotCounter()
+    var slots_required=this.selectedDuration.hours/2
+    if(slotscount==slots_required)
+    {
     this.selected_onetime_slots={}
     
       for(var i in this.one_time_slots){
@@ -2168,7 +2174,12 @@ removeOneTimeSlot(slot){
   
     this.onetime_dialog=false
     this.oneTimeSelectionStat=true
+    }
+    else{
+      this.slot_msg=true
+    }
   },
+  
   addSlot(slot) {
     if (this.time_slot[this.slotDate].selectedSlot.length == 0) {
       this.time_slot[this.slotDate].selectedSlot.push(slot);
@@ -2802,6 +2813,17 @@ getAreaTypes() {
       hours: hours,
       cleaners: cleaners,
     });
+  },
+  sortDuration(){
+    if(this.duration[0].hours<this.duration[1].hours){
+     this.selectDuration(this.duration[0])
+    }
+    else{
+      var temp=this.duration[0]
+      this.duration[0]=this.duration[1]
+      this.duration[1]=temp
+      this.selectDuration(this.duration[0])
+    }
   },
   parseSize() {
     this.sizeData = [];
@@ -4215,6 +4237,7 @@ try {
           console.log(total_cleaners, "total_cleaners");
           this.setDuration(converted_hours, total_cleaners);
         }
+        this.sortDuration()
 })
   },
   durationcalculation() {

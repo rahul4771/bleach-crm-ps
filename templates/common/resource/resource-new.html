@@ -318,7 +318,7 @@
                                                                     </h6>
                                                                     <div class="resource-user-rating">
                                                                         <!--rating section-->
-                                                                        {% if worker.rating >= 4.5 %}
+                                                                        <!-- {% if worker.rating >= 4.5 %}
                                                                         <i class="fas fa-star yellow-icon"></i>
                                                                         <i class="fas fa-star yellow-icon"></i>
                                                                         <i class="fas fa-star yellow-icon"></i>
@@ -353,7 +353,7 @@
                                                                         <i class="fas fa-star "></i>
                                                                         <i class="fas fa-star "></i>
                                                                         <i class="fas fa-star "></i>
-                                                                        <i class="fas fa-star "></i>
+                                                                        <i class="fas fa-star "></i> -->
                                                                         <!--rating section-->
                                                                     </div>
                                                                 </div>
@@ -361,33 +361,28 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-md-6 ">
-                                                        <div class="woking-details">
+                                                        <!-- <div class="woking-details">
                                                             <h2>
-                                                                {{workers_date|date:'M Y'}}
+                                                                Main Shift
                                                             </h2>
                                                             <div class="row ">
-                                                                <div class="col-xs-8  pr-0">Worked Days</div>
+                                                                <div class="col-xs-8  pr-0">Start at</div>
                                                                 <div class="col-xs-4 pl-0 pr-0">: <span
-                                                                        class="c-text">{{worker.worked_days}}</span></div>
+                                                                        class="c-text">{{worker.universal_shift_start|date:"H:i p"|default_if_none:''}}</span></div>
                                                             </div>
                                                             <div class="row">
-                                                                <div class="col-xs-8  pr-0">Worked Hours</div>
+                                                                <div class="col-xs-8  pr-0">End At</div>
                                                                 <div class="col-xs-4 pl-0 pr-0">: <span
-                                                                        class="c-text">{{worker.total_hours|floatformat:'2'}}</span></div>
+                                                                        class="c-text">{{worker.universal_shift_start|default_if_none:''}}</span></div>
                                                             </div>
     
-                                                            <div class="row ">
-                                                                <div class="col-xs-8  pr-0">Average Work Hours</div>
-                                                                <div class="col-xs-4 pl-0 pr-0">: <span
-                                                                        class="c-text">{{worker.average_hours|floatformat:'2'}}</span></div>
-                                                            </div>
-    
-                                                        </div>
+                                                        </div> -->
     
                                                     </div>
                                                 </div>
                                                 <a onclick="flip(this)" data-id="{{worker.id}}">View Skills</a>
                                                 <p class="resource-card-text">Daily Occupancy {{workers_date}}</p>
+                                                <br>
                                                 <div class="row ml-5 m-pr-0" id="slote_details{{worker.id}}">
                                                     <div class="col-xs-2 mb-10 pl-0 pr-0">
                                                         <div class="resource-card-solt-1">

@@ -978,7 +978,7 @@
 
                         </div>
                     </div>
-
+                    
                     {% for orderschedule in order.orderschedules %}
                     <div class="row c-mt-20" id="details{{orderschedule.id}}">
 
@@ -2470,10 +2470,30 @@
                 <div class="col-md-8">
                     <div class="d-flex mt-10">
                         <div class="p-10"> <b>Number of Cleaners</b></div>
-                    <input  type="number" class="textBox model-text-border w-auto" placeholder="No of Cleaners"  required="required" v-model="selected_no_of_cleaners">
+                    <input  type="number" class="textBox model-text-border w-auto" placeholder="No of Cleaners"  required="required" v-model="selected_no_of_cleaners" @input="getSlotesByCleaners()">
                 </div>
-                <div class="mt-20">Select Slots</div>
-                    <div class="row model-time-solt .mt-20">
+                <div class="mt-20" v-if="!slotloader && selected_no_of_cleaners && selected_no_of_cleaners!='None'">Select Slots</div>
+                <div class="row" v-if="slotloader && selected_no_of_cleaners && selected_no_of_cleaners!='None'">
+                    <div class="col-md-12 text-center mt-50">
+                        <vue-ellipse-progress :loading="slotloader" color="#2c4c82" animation="bounce 700 1000"
+                        fontSize="1.5rem"
+                        :size="180"
+                        font-color="white"
+                        dot="7" 
+                        
+                        >
+                        <p slot="legend-caption">Finding Slots</p>
+                        </vue-ellipse-progress>
+                    </div>
+                </div>
+                <div class="row" v-if="!selected_no_of_cleaners || selected_no_of_cleaners=='None' ">
+                    <div class="col-md-12 text-center mt-50">
+                        Please Select the number of Cleaners
+                        </div>
+                        </div>
+               
+
+                    <div class="row model-time-solt .mt-20" v-if="!slotloader  && selected_no_of_cleaners && selected_no_of_cleaners!='None'">
                         <div v-for="(slot,index) in parsedTimeSlots" v-bind:key="index" class="col-md-4">
                             <button class="time-slot-button" v-if="!selectedSlots.includes(index) && checkSlot(index)" @click="selectSlot(index)"><% slot.start_time +' - ' + slot.end_time %></button>
                             <button class="time-slot-button-disabled" v-if="!selectedSlots.includes(index) && !checkSlot(index)" @click="selectSlot(index)"><% slot.start_time +' - ' + slot.end_time %></button>
@@ -2593,6 +2613,7 @@
 <script src="https://unpkg.com/vue-multiselect@2.1.0"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue-ellipse-progress/dist/vue-ellipse-progress.umd.min.js"></script>
 
 
 <script src="{% static '/files/externalfiles/plugins/OwlCarousel2/dist/owl.carousel.js'%}"></script>
