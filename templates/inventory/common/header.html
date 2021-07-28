@@ -35,11 +35,14 @@
         <br>
         	<ul id="accordion" class="">
             <li class="profile-avatar-avatar">
-                   
+                    {% if request.user.profile_image %}
+                    <img class="profile-avatar" src="{{request.user.profile_image.url}}">
+                    {% else %}
                     <img class="profile-avatar" src="{% static 'files/images/usertype-avtar.png' %}">
+                    {% endif %}
                    
             </li>
-            <li class="profile-name">Sonu<br><span>Agent</span></li>
+            <li class="profile-name">{{request.user.name}}<br><span>Inventory Admin</span></li>
             </ul>
             </div><br><br>
             <div id="accordion" class="user-typer-wrapper"><!--user-typer-wrapper-->

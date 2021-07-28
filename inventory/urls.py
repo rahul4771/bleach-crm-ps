@@ -23,6 +23,7 @@ url(r'^viewpo/$',views.InventoryViewPurchaseOrder.as_view(),name='inventory-view
 url(r'^checked-in/$',views.InventoryCheckedIn.as_view(),name='inventory-checked-in'),
 url(r'^orderdetails/$',views.InventoryOrderDetails.as_view(),name='inventory-order-details'),
 url(r'^services/$',views.InventoryServices.as_view(),name='inventory-services'),
+url(r'^segment/(?P<category_id>[-\w]+)/$',views.InventorySegment.as_view(),name='inventory-segment'),
 
 
 
