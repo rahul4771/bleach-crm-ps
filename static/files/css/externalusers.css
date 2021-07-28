@@ -104,7 +104,14 @@ body{ margin:20px auto !important; padding:0 auto !important; background:#efefef
 b, strong, .bold {
   font-weight: bold;
 }
-
+.text-left{
+  text-align: left !important;
+}
+.company_address{
+  font-size:14px;
+  margin-top:20px;
+  padding:10px;
+}
 #container {
   font: normal 14px/1.4em 'Open Sans', Sans-serif;
   margin: 0 auto; width:820px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); background:#fff;
@@ -1039,6 +1046,31 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
   font-weight: 300;
   margin-top: 30px;
 }
+#totalamount{
+  color: #289BAC;
+  opacity: 1;
+  font-size: 32px;
+  text-align: right;
+  font-weight:300;
+}
+#barcode{
+  height:80px;
+  margin-top:10px;
+}
+
+#soa_heading_2{
+  text-align: center;
+  letter-spacing: 0px;
+  color: #289BAC;
+  opacity: 1;
+  font-size: 26px;
+  font-weight: 300;
+  margin-top: 30px;
+}
+.bottom-sub-text{
+  font-size:10px !important;
+  font-weight:200 !important;
+}
 #soa-customer-detials{
   width: 100% !important;
   background: #EDF1F6;
@@ -1086,6 +1118,22 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
 #soa_section3{
   float: left;
   width: 100%;
+}
+#soa_amount_calculation{
+  margin-left: 60%;
+  margin-top: 20px;
+ 
+  color: #4A4A4B;
+  width: 40%;
+  
+}
+#po_amount_section{
+  margin-left: 60%;
+  margin-top: 20px;
+  background: #EDF1F6;
+  color: #4A4A4B;
+  width: 40%;
+  padding: 15px;
 }
 #soa_amount_section{
   margin-left: 70%;

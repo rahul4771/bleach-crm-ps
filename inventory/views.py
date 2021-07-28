@@ -108,8 +108,10 @@ class InventoryCreateCheckout(IsInventoryAdmin,View):
 class InventoryPurchaseOrder(IsInventoryAdmin,View):
     def get(self,request):
         return render(request,'inventory/purchaseOrder.html',{})
-
-class InventoryCreatePurchaseOrder(IsInventoryAdmin,View):
+class InventoryPurchaseOrderPage(View):
+    def get(self,request):
+        return render(request,'inventory/purchaseorderpage.html',{})        
+class InventoryCreatePurchaseOrder(View):
     def get(self,request):
         return render(request,'inventory/createpo.html',{})
 
