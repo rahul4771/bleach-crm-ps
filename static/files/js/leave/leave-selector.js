@@ -425,7 +425,7 @@ function closeConf(){
 
 function getUsers(){
     
-    
+    $('.lv-loader').show()
       resourceList=[];
   
     axios.get(url+'/api/leave-users-list/')
@@ -439,7 +439,7 @@ function getUsers(){
     staffData['photo_url']=response.data.staffs[i].photo_url;
     staffData['leave']=[];
   
-  
+    
      
         resourceList.push(staffData);
    
@@ -531,7 +531,7 @@ function getLeave(){
     }
     getInitDatas();
    
-
+    $('.lv-loader').hide()
 
 })
 .catch(function (error) {
