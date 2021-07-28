@@ -36,6 +36,7 @@ var shiftId = ''
 
 
 //Initialization of data
+var shiftSheet=[]
 var shiftList=[]
 function getInitDatasShift(){
    
@@ -84,6 +85,10 @@ for (var j=0;j<resourceList.length;j++){
                         }
                         else if(resourceList[j].shift[rs].shift2==true){
                             $('#row-2'+rsid).append('<td class="noBorder text-center lv-shift-date"  onclick="selectDayShift(this)" id="lv-day-2-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-shift-date lv-weekly" id="lv-shift-date-2-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
+ 
+                        }
+                        else if(resourceList[j].shift[rs].shift3==true){
+                            $('#row-2'+rsid).append('<td class="noBorder text-center lv-shift-date"  onclick="selectDayShift(this)" id="lv-day-2-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-shift-date lv-maternity" id="lv-shift-date-2-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
  
                         }
                         found=true;
@@ -237,7 +242,7 @@ function selectDayShift(el){
     console.log("user id is"+userId)
     var user=resourceList[userId].name;
     modalUser=resourceList[userId].id;
-  
+   console.log("resource details is"+resourceList[userId])
     selectedDates[userId].name=user;
     console.log("curent month :"+currentMonth.toString()+"current yr :"+currentYear.toString()+"shift date:"+$('#'+dayId).find('.lv-shift-date').text().toString())
     shiftId=getShiftId($('#'+dayId).find('.lv-shift-date').text().toString()+'-'+currentMonth.toString()+'-'+currentYear.toString(),userId);
@@ -271,8 +276,16 @@ function selectDayShift(el){
         $('#ShiftModal').show();
     }
     if($('#'+dayId).find('.lv-shift-date').hasClass('lv-maternity')){
-        
-        $('.modal-title').text('Maternity/Paternity Leave');
+        var shift_data={}
+        for(var i=0;i<shiftSheet.length;i++){
+            if(shiftSheet[i].id==shiftId){
+                shift_data=shiftSheet[i]
+                break;
+            }
+        }
+        $('.modal-title').text('Custom Shift');
+        $('#start_at').text('Start at : '+ shift_data.shift3_start_at);
+        $('#end_at').text('End at : '+ shift_data.shift3_end_at);
         $('.modal-title').removeClass('lv-sick-text');
         $('.modal-title').removeClass('lv-annual-text');
         $('.modal-title').removeClass('lv-weekly-text');
@@ -367,6 +380,7 @@ function getUsersShift(){
     axios.get(url+'/api/leave-users-list/')
 .then(function (response) {
   // handle success
+  
   console.log(response);
   for(var i = 0; i < response.data.staffs.length; i++) {
     var staffData={};
@@ -414,6 +428,7 @@ function addToShift1(){
                 leaveSelected['staff']=resourceList[i].id;
                 leaveSelected['shift1']=true
                 leaveSelected['shift2']=false
+                leaveSelected['shift3']=false
                 shiftList.push(leaveSelected);
                // resourceList[i].leave.push(leaveData);
             }
@@ -450,6 +465,86 @@ function addToShift1(){
       
     
 }
+function openCustomModal(){
+    $('#customModal').show();
+}
+/** time converter */
+function tConvert (time) {
+    // Check correct time format and split into components
+    time = time.toString ().match (/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+  
+    if (time.length > 1) { // If time format correct
+      time = time.slice (1);  // Remove full string match value
+      time[5] = +time[0] < 12 ? ' am' : ' pm'; // Set AM/PM
+      time[0] = +time[0] % 12 || 12; // Adjust hours
+    }
+    return time.join (''); // return adjusted time or original string
+  }
+/** time converter ends here */
+function addToShift3(){
+   
+    resourceLeave=[];
+    shiftList=[]
+    console.log("selected Dates are "+JSON.stringify(selectedDates))
+    for(var i=0;i<selectedDates.length;i++){
+        for (var j=0;j<selectedDates[i].dates.length;j++){
+            var leaveSelected={};
+            var leaveData={
+                type:$("#lv-result-content").text(),
+                date:selectedDates[i].dates[j]
+            }
+         //   leaveSelected['leave_type']=$("#lv-result-content").text().toUpperCase();
+            var lvmonth=selectedDates[i].dates[j].split('-')[1];
+            if(lvmonth.length<2){
+                lvmonth='0'+lvmonth;
+            }
+            var lvyear=selectedDates[i].dates[j].split('-')[2];
+            var lvday=selectedDates[i].dates[j].split('-')[0];
+            var start_at=tConvert($('#shift3_start_at').val())
+            var end_at=tConvert($('#shift3_end_at').val())
+            if(lvday.length<2){
+                lvday='0'+lvday;
+            }
+            leaveSelected['shift_date']=lvyear+'-'+lvmonth+'-'+lvday;
+            leaveSelected['staff']=resourceList[i].id;
+            leaveSelected['shift1']=false
+            leaveSelected['shift2']=false
+            leaveSelected['shift3']=true
+            leaveSelected['shift3_start_at']=start_at
+            leaveSelected['shift3_end_at']=end_at
+            shiftList.push(leaveSelected);
+           
+        }
+    }
+    /* add leave */
+
+    axios.post(url+'/api/shift-scheduler/',shiftList)
+    .then(function (response) {
+      // handle success
+      $('#customModal').hide()
+      resourceLeave=[];
+      selectedDates=[];
+      resourceList=[];
+      shiftList=[];
+      reinitVal();
+      getUsersShift();
+      
+     
+    
+   // getInitDatas();
+    })
+    .catch(function (error) {
+      // handle error
+      console.log(error);
+    })
+    
+   
+    selectedDates=[];
+ 
+    $(".lv-result-box").hide();
+    dateCounter=0;
+      $('#select-counter').text(dateCounter);
+}
 function addToShift2(){
            
     resourceLeave=[];
@@ -476,6 +571,7 @@ function addToShift2(){
             leaveSelected['staff']=resourceList[i].id;
             leaveSelected['shift1']=false
             leaveSelected['shift2']=true
+            leaveSelected['shift3']=false
             shiftList.push(leaveSelected);
            // resourceList[i].leave.push(leaveData);
         }
@@ -583,7 +679,7 @@ function getShift(){
     if(userIndex!=undefined){
 
     
-    resourceList[userIndex].shift.push({date:gt_day+'-'+gt_month+'-'+gt_year,shift1:response.data.staffs[i].shift1,shift2:response.data.staffs[i].shift2,shift_id:response.data.staffs[i].id});
+    resourceList[userIndex].shift.push({date:gt_day+'-'+gt_month+'-'+gt_year,shift1:response.data.staffs[i].shift1,shift2:response.data.staffs[i].shift2,shift3:response.data.staffs[i].shift3,shift3_start_at:response.data.staffs[i].shift3_start_at,shift3_end_at:response.data.staffs[i].shift3_start_at,shift_id:response.data.staffs[i].id});
     }    
 }
    
@@ -622,6 +718,10 @@ function closeShiftModal(){
     $('#ShiftModal').hide();
     closeConf();
 
+}
+function closeCustomModal(){
+    $('#customModal').hide();
+    closeConf();
 }
  /*function closeCancelModal(){
      $('#cancelModal').hide();

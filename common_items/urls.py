@@ -36,12 +36,12 @@ urlpatterns = [
 		url(r'^makequatation/phase2/edit/(?P<evaluation_detail_id>[-\w]+)$',views.MakeQuatationPhase2Edit.as_view(),name='makequatation2edit'),
 		url(r'^makequatation/phase1/edit/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.MakeQuatationPhase1Edit.as_view(),name='makequatation1edit'),
 
-		url(r'^assigncleaning/team/(?P<scheduler_id>[-\w]+)/$',views.AssigncleaningTeam.as_view(),name='assign-cleaningteam'),#done and tested
-		url(r'^editcleaning/team/(?P<scheduler_id>[-\w]+)/$',views.EditcleaningTeam.as_view(),name='edit-cleaningteam'),#done and tested
-		url(r'^resetcleaning/team/(?P<scheduler_id>[-\w]+)/$',views.ResetcleaningTeam.as_view(),name='reset-cleaningteam'),#done and tested
+		url(r'^assigncleaning/team/(?P<scheduler_id>[-\w]+)/$',views.AssigncleaningTeam.as_view(),name='assign-cleaningteam'),#New logic applied
+		url(r'^editcleaning/team/(?P<scheduler_id>[-\w]+)/$',views.EditcleaningTeam.as_view(),name='edit-cleaningteam'),#New logic applied
+		url(r'^resetcleaning/team/(?P<scheduler_id>[-\w]+)/$',views.ResetcleaningTeam.as_view(),name='reset-cleaningteam'),
 		# url(r'^resetfollowup/team/(?P<scheduler_id>[-\w]+)/$',views.ResetFollowUpTeam.as_view(),name='reset-followupteam'),#done and tested
-		url(r'^assignfollowup/team/(?P<scheduler_id>[-\w]+)/$',views.AssignFollowupTeam.as_view(),name='assign-followupteam'),#not done
-		url(r'^editfollowup/team/(?P<scheduler_id>[-\w]+)/$',views.EditFollowupTeam.as_view(),name='edit-followupteam'),#not done	
+		url(r'^assignfollowup/team/(?P<scheduler_id>[-\w]+)/$',views.AssignFollowupTeam.as_view(),name='assign-followupteam'),#New logic applied
+		url(r'^editfollowup/team/(?P<scheduler_id>[-\w]+)/$',views.EditFollowupTeam.as_view(),name='edit-followupteam'),#New logic applied
 
 		url(r'^callback-list/$',views.CallBackList.as_view(),name='callback-list'),
 

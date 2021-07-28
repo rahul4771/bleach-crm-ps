@@ -54,6 +54,7 @@ const app=  new Vue({
    
     
     data: {
+      slotloader:false,
        user_type:'',
         setAttenderNotes:"",
         agent:'#0D87C5',
@@ -218,6 +219,8 @@ const app=  new Vue({
         cleaning_duration:[],
             selected_cleaning_duration:{},
             currentServices:[],
+            followup_duration:[],
+            followup_cleaners:0
            
 
       },
@@ -695,6 +698,12 @@ const app=  new Vue({
             this.selected_cleaning_duration=duration
             this.editCleaning()
           },
+          selectFollowupDuration(duration){
+            duration.no_of_cleaners=this.followup_cleaners
+            this.selected_cleaning_duration=duration
+           
+            this.editFollowupCleaning()
+          },
           editCleaning(){
             var service_type=[]
             for(var i=0;i<this.currentServices.length;i++){
@@ -725,6 +734,7 @@ const app=  new Vue({
             })
           },
           editFollowupCleaning(){
+            
             this.editEval=true
             this.selectedEditSlot=[]
             var temparray=this.selectedDate.split("-")
@@ -733,7 +743,22 @@ const app=  new Vue({
             if(!this.selectedSlotDetailed[this.convertedDate]){
               this.selectedSlotDetailed[this.convertedDate]=[]
             }
-            this.cleaningEditSlots={
+            this.slotloader=true
+            axios.post(this.url+'/agent/cleaningcallendar/cleaning/edit/slotes/',{
+              // cleaning_date:this.currentSlotDetails.start_at.split(' ')[0],
+              
+              
+              cleaning_date:selectedDate,
+               number_of_cleaners:this.selected_cleaning_duration.no_of_cleaners,
+               service_types:[],
+               evaluation_id:this.currentSlotDetails.follow_up.ticket_no
+             }).then((response) => {
+              this.slotloader=false
+               this.cleaningEditSlots=response.data.slotes
+ 
+               this.parseEditSlots()
+             })
+            /*this.cleaningEditSlots={
               "0":[3,6,9,12],
               "3":[3,6,9,12],
               "6":[3,6,9,12],
@@ -743,8 +768,8 @@ const app=  new Vue({
               "18":[3,6,9,12],
               "21":[3,6,9,12]
 
-            }
-            this.parseEditSlots()
+            }*/
+           
           },
           saveEdit(){
             var schedules=[]
@@ -834,6 +859,16 @@ const app=  new Vue({
               this.getSlots()
               
             })
+          },
+          followupDuration(){
+            this.followup_duration=[]
+            for(var i=2;i<=10;i=i+2)
+            {
+            this.followup_duration.push({
+              no_of_cleaners:this.followup_cleaners,
+              cleaning_hours:i
+            })
+          }
           },
           parseEditSlots(){
             this.availableSlots=[]
@@ -975,12 +1010,18 @@ const app=  new Vue({
 
           
             axios.get(this.url+"/agent/cleaningcallendar/followupcleaning/popup/?followup_scheduler_id="+item.slots.id).then((response) => {
+              this.followupDuration()
               this.currentSlotDetails=response.data.followup_cleanings[0]
+              this.followup_cleaners=this.currentSlotDetails.follow_up.no_of_cleaners
+              this.selected_cleaning_duration={
+                cleaning_hours:this.currentSlotDetails.follow_up.cleaning_hours,
+                no_of_cleaners:this.currentSlotDetails.follow_up.no_of_cleaners
+              }
               this.currentServices=response.data.followup_cleanings
               this.no_of_slots=parseInt(this.currentSlotDetails.follow_up.cleaning_hours)/3   
               this.cleaningFollowupDialog=true
               this.followupStat=true
-              this.durationCalculator()
+             // this.durationCalculator()
              
                
             
@@ -990,6 +1031,10 @@ const app=  new Vue({
           this.currentSlot=item
             
 
+          },
+          changeFollowupCleaners(){
+            this.selected_cleaning_duration.no_of_cleaners=parseInt(this.followup_cleaners)
+            this.editFollowupCleaning()
           },
           parseSlots(){
             for(var i=0;i<this.combineSlots.length;i++){

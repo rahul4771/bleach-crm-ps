@@ -94,7 +94,7 @@
             text-transform: uppercase;
             opacity: 1;
             text-align: center;
-            font-size: 50px;
+            font-size: 30px;
         }
 
         footer ul {
@@ -260,7 +260,7 @@
         "
          >
              <div >
-                 <img style=" width: 30%;
+                 <img style=" width: 19%;
                  display: block;
                  margin-left: auto;
                  margin-right: auto;" src="https://web-dev.bleach-kw.com/static/images/bleach-logo.png" alt="">
@@ -301,8 +301,9 @@
                         </div>
                         <span>:</span>
 
-                        <div style="width: 200px;" class="left text-right">
+                        <div style="width: 200px; line-height: 1.5;" class="left text-right">
                             {{address_list}}
+                         
                            
                         </div>
                     </div>
@@ -317,12 +318,13 @@
                         </div>
                     </div>
                     <div class="info-section-item">
-                        <div class="info-section-item-left">
+                        <div style="width: 100px !important;" class="info-section-item-left">
                             email
                         </div>
                         <span>:</span>
 
                         <div class="left text-right">
+                           
                             {{invoice.evaluation.customer.email}}
                         </div>
                     </div>
@@ -458,6 +460,46 @@
                                <b>{{invoice.evaluation.total_cost|floatformat:3}}</b>&nbsp;KD
                             </div>
                         </div>
+                        <div class="info-section-item">
+                            <div style="font-size: 15px;" class="info-section-item-left-3">
+                               Paid till date
+                            </div>
+                            <span>:</span>
+                            <div  style="font-size: 15px;" class="left">
+                                {{invoice.amount_paid|floatformat:'3'}} KD
+                            </div>
+                        </div>
+                      
+                        <div class="info-section-item">
+                            <div style="font-size: 15px;" class="info-section-item-left-3">
+                                Balance till date
+                            </div>
+                            <span>:</span>
+                            <div style="font-size: 15px;" class="left text-right">
+                                {{invoice.remining_amount|floatformat:'3'}} KD
+                            </div>
+                        </div>
+                        <div class="info-section-item">
+                            <div style="font-size: 15px;" class="info-section-item-left-3">
+                                Payable amount
+                            </div>
+                            <div style="font-size: 30px;" class="left text-right">
+                                <br>
+                                {% if invoice.evaluation.payment_method == 'BREAKDOWN' %}
+                                {% if invoice.evaluation.before_cleaning_amount != invoice.preamount_paid %}
+                                    <b>{{invoice.evaluation.before_cleaning_amount|floatformat:'3'}}</b> &nbsp;KD
+                                {% elif invoice.evaluation.after_cleaning_amount != invoice.postamount_paid %}
+                                    <b>{{invoice.remining_amount|floatformat:'3'}}</b> &nbsp;KD
+                                {% endif %}
+        
+                            {% elif invoice.evaluation.payment_method == 'SUBSCRIPTION' %}
+                               <b> {{invoice.subscription_to_pay|floatformat:'3'}}</b> &nbsp;KD
+                            {% else %}
+                                <b>{{invoice.remining_amount|floatformat:'3'}}</b> &nbsp;KD
+                            {% endif %}
+                            </div>
+                        </div>
+                       
                         <!-- <div class="info-section-item">
                             <div class="info-section-item-left-2">
                                Grand Total
@@ -471,54 +513,14 @@
                     </div>
                 </div>
             </div>
-            <div class="info-section">
+            <!-- <div class="info-section">
                 <div class="info-section-left">
                     <h2 style="font-size: 24px; font-weight: 400;" class="mb-10">Payment</h2>
-                    <div class="info-section-item">
-                        <div style="font-size: 15px;" class="info-section-item-left-3">
-                           Paid till date
-                        </div>
-                        <span>:</span>
-                        <div  style="font-size: 15px;" class="left">
-                            {{invoice.amount_paid|floatformat:'3'}}
-                        </div>
-                    </div>
-                  
-                    <div class="info-section-item">
-                        <div style="font-size: 15px;" class="info-section-item-left-3">
-                            Balance till date
-                        </div>
-                        <span>:</span>
-                        <div style="font-size: 15px;" class="left text-right">
-                            {{invoice.remining_amount|floatformat:'3'}}
-                        </div>
-                    </div>
-                    <div class="info-section-item">
-                        <div style="font-size: 15px;" class="info-section-item-left-3">
-                            Payable amount
-                        </div>
-                    </div>
-                    <div id="inovice_amount">
-
-
-                    {% if invoice.evaluation.payment_method == 'BREAKDOWN' %}
-                        {% if invoice.evaluation.before_cleaning_amount != invoice.preamount_paid %}
-                            {{invoice.evaluation.before_cleaning_amount|floatformat:'3'}} &nbsp;KD
-                        {% elif invoice.evaluation.after_cleaning_amount != invoice.postamount_paid %}
-                            {{invoice.remining_amount|floatformat:'3'}} &nbsp;KD
-                        {% endif %}
-
-                    {% elif invoice.evaluation.payment_method == 'SUBSCRIPTION' %}
-                        {{invoice.subscription_to_pay|floatformat:'3'}} &nbsp;KD
-                    {% else %}
-                        {{invoice.remining_amount|floatformat:'3'}} &nbsp;KD
-                    {% endif %}
-
-                    </div>
+                   
                 </div>
 
                 
-            </div>
+            </div> -->
           
 
         </div>
@@ -589,12 +591,12 @@
                 </li>
             </ul>
             <div style="display: flex;">
-            <a href="https://web-dev.bleach-kw.com/terms-and-conditions/?lang=en">
+            <!-- <a href="https://web-dev.bleach-kw.com/terms-and-conditions/?lang=en">
                 <div style="text-align: left; font-size: 12px;">
                     Terms & Conditions
 
                 </div>
-                </a>
+                </a> -->
                 <div style="margin-left: auto; text-align: right; font-size: 12px;">
                     Copyrights © 2021Bleach Cleaning services
                 </div>
