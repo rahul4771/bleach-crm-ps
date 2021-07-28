@@ -508,7 +508,7 @@ class StlHome(IsSeniorTeamLeader,View):
 	def get(self,request):
 
 		try:
-			schedules = OrderScheduler.objects.filter(is_active=True,start_at__gte=timezone.now()+timezone.timedelta(days=1)).prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaningteams'))
+			schedules = OrderScheduler.objects.filter(is_active=True,start_at__gte=timezone.now()+timezone.timedelta(days=1))
 		except:
 			schedules = None
 		
@@ -516,8 +516,10 @@ class StlHome(IsSeniorTeamLeader,View):
 			schedule.work_status = None
 			schedule.save()
 
-			if schedule.cleaningteams:
-				schedule.cleaningteams.delete()
+		schedules_values = schedules.values_list('id',flat=True)
+
+		cleaning_teams   = CleaningTeam.objects.filter(id__in=schedules_values)
+		cleaning_teams.delete()
 
 		#for taking today counts
 		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
