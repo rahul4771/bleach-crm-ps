@@ -58,7 +58,7 @@ $('.ls-dropdown-menu li').click(function () {
 var shiftSheet=[]
 var shiftList=[]
 function getInitDatasShift(){
-   
+    $('.lv-loader').show()
  
     $('.day-head').remove();
     $('.lv-rows').remove();
@@ -135,7 +135,7 @@ for (var j=0;j<resourceList.length;j++){
     
     }
     $('#no-shift-'+j).text(noOfShift);
-
+    $('.lv-loader').hide()
 }
 }
 
@@ -145,10 +145,10 @@ function checkTime(){
     var endTime = $('#shift3_end_at').val()
     var startval=parseInt(startTime.split(':')[0])
     var endval=parseInt(endTime.split(':')[0])
-    
-    if(startval && endval){
+    console.log("start val"+startval+"endval:"+endval)
+    if(!isNaN(startval) && !isNaN(endval)){
         if(startval<endval){
-
+           
             $('#err-msg').hide()
             return true
         }
@@ -384,14 +384,14 @@ function selectDayShift(el){
     }
 }
     
-    $('#select-counter').text(dateCounter);
+    $('#ls-select-counter').text(dateCounter);
 }
 
 
 function clearAllShift(){
     
     dateCounter=0;
-    $('#select-counter').text(dateCounter);
+    $('#ls-select-counter').text(dateCounter);
     selectedId=[];
     resourceLeave=[];
     selectedDates=[];
@@ -422,10 +422,10 @@ function closeConf(){
 
 //get users 
 function getUsersShift(){
-    
+    $('.lv-loader').show()
       url ='https://my.bleachkw.com';
       resourceList=[];
-  
+      
     axios.get(url+'/api/leave-users-list/')
 .then(function (response) {
   // handle success
@@ -510,7 +510,7 @@ function addToShift1(){
      
         $(".lv-result-box").hide();
         dateCounter=0;
-          $('#select-counter').text(dateCounter);
+          $('#ls-select-counter').text(dateCounter);
       
     
 }
@@ -531,6 +531,7 @@ function tConvert (time) {
   }
 /** time converter ends here */
 function addToShift3(){
+    console.log("checktime is "+checkTime())
    if(checkTime()){
     resourceLeave=[];
     shiftList=[]
@@ -592,7 +593,7 @@ function addToShift3(){
  
     $(".lv-result-box").hide();
     dateCounter=0;
-      $('#select-counter').text(dateCounter);
+      $('#ls-select-counter').text(dateCounter);
 }
 }
 function addToShift2(){
@@ -654,7 +655,7 @@ function addToShift2(){
  
     $(".lv-result-box").hide();
     dateCounter=0;
-      $('#select-counter').text(dateCounter);
+      $('#ls-select-counter').text(dateCounter);
   
 
 }
@@ -706,7 +707,7 @@ function resetResourcesShift(category){
 
 //get shifts
 function getShift(){
-    
+    $('.lv-loader').show()
     url ='https://my.bleachkw.com';
     axios.get(url+'/api/shift-scheduler/')
 .then(function (response) {
@@ -734,6 +735,7 @@ function getShift(){
 }
    
     console.log(resourceList)
+    $('.lv-loader').hide()
     getInitDatasShift();
    
 
@@ -795,7 +797,7 @@ function cancelShift(){
         shiftId='';
       $('#ShiftModal').hide();
       dateCounter=0;
-      $('#select-counter').text(dateCounter);
+      $('#ls-select-counter').text(dateCounter);
       })
       .catch(function (error) {
         // handle error

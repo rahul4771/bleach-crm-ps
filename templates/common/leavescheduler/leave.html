@@ -46,9 +46,9 @@
 
 
 
-        <div class="white-wrapper" style="overflow:auto">
+        <div class="white-wrapper" style="overflow:auto;min-height:80vh">
           <!--white-wrapper-->
-
+         
           <div id="leaveModal" class="lv-modal" style="border: none !important; background: none !important;">
             <div class="modal-dialog">
 
@@ -249,6 +249,7 @@
             <button id="work_button_id" onclick="viewWork()" style="color: black !important;" class="productivity-tab-item black ">Work Scheduler</button>
 
           </div>
+         
 
          <!--leave starts here -->
          <div id="leave_id">
@@ -270,7 +271,7 @@
               </div>
 
             </div>
-
+           
 
             <span class="material-icons next-arrow" onclick="previousMonth()">
               arrow_backward
@@ -325,6 +326,7 @@
 
             </div>
           </div>
+          
           <!-- wrapper 1-->
           <div id="table-wrapper">
             <div id="#table-scroll " style="max-height:100vh;">
@@ -377,7 +379,7 @@
             {% if request.user.user_type == 'ADMIN' %}
             {% else %}
             <div class="lv-clear-btn d-flex" onclick="clearAllShift()">
-              <div class="lv-select-counter" id="select-counter">0</div>
+              <div class="lv-select-counter" id="ls-select-counter">0</div>
               <div class="pr-20"> Clear All</div>
             </div>
 
@@ -411,6 +413,7 @@
           <!-- wrapper 2 ends here-->
          </div>
          <!--shift ends here-->
+         <div class="lv-loader"></div>
         </div>
 
 
@@ -428,37 +431,40 @@
 <script src="{% static 'files/js/shift/shift-selector.js' %}"> </script>
 <script>
   function viewWork() {
+    $('.lv-loader').show()
     document.getElementById("leave_id").style.display = "none";
     document.getElementById("work_id").style.display = "block";
     $("#work_button_id").addClass("productivity-tab-border");
     $("#leave_button_id").removeClass("productivity-tab-border");
 
-
-    var resourceList=[];
-    var cleanerList=[];
-    var teamLeaderList=[];
-    var leaveSheet=[];
-    var leaveId='';
-    var modaluser='';
-    var newResource=[];
-    var dateCounter=0;
+    dateCounter=0;
+    $('#select-counter').text('0')
+    $('#ls-select-counter').text('0')
+     resourceList=[];
+     cleanerList=[];
+     teamLeaderList=[];
+     leaveSheet=[];
+     leaveId='';
+     modaluser='';
+     newResource=[];
+   
 
     $(".lv-result-box-2").hide();
     $(".lv-conf-2").hide();
     $('.lv-modal-2').hide();
-    var modalBox=false;
-    var DateTime = luxon.DateTime;
+     modalBox=false;
+     DateTime = luxon.DateTime;
 
-    var selectedId = [];
-    var days=['M','T','W','T','F','S','S'];
-    var currentMonth = DateTime.local().month; //CURRENT MONTH
-    var currentYear=DateTime.local().year;   //CURRENT YEAR
-    var currentDay=DateTime.local(2017, 10, 30).weekday; //CURRENT DAY
+     selectedId = [];
+     days=['M','T','W','T','F','S','S'];
+     currentMonth = DateTime.local().month; //CURRENT MONTH
+     currentYear=DateTime.local().year;   //CURRENT YEAR
+     currentDay=DateTime.local(2017, 10, 30).weekday; //CURRENT DAY
 
     $('#lv-month-select-2').text(DateTime.local().monthLong+' '+ DateTime.local().year);
-    var resources=[];
-    var selectedDates=[];
-    var resourceLeave=[];
+     resources=[];
+     selectedDates=[];
+     resourceLeave=[];
     getUsersShift();
   }
 
@@ -467,38 +473,41 @@
 
 
   function viewLeave() {
+    $('.lv-loader').show()
     document.getElementById("leave_id").style.display = "block";
     document.getElementById("work_id").style.display = "none";
     $("#work_button_id").removeClass("productivity-tab-border");
     $("#leave_button_id").addClass("productivity-tab-border");
 
-    var url='https://test.bleach-kw.com';
-
-    var resourceList=[];
-    var cleanerList=[];
-    var teamLeaderList=[];
-    var leaveSheet=[];
-    var leaveId='';
-    var modaluser='';
-    var newResource=[];
-    var dateCounter=0;
+   
+    dateCounter=0;
+    $('#select-counter').text('0')
+    $('#ls-select-counter').text('0')
+     resourceList=[];
+     cleanerList=[];
+     teamLeaderList=[];
+     leaveSheet=[];
+     leaveId='';
+     modaluser='';
+     newResource=[];
+  
 
     $(".lv-result-box").hide();
     $(".lv-conf").hide();
     $('.lv-modal').hide();
-    var modalBox=false;
-    var DateTime = luxon.DateTime;
+     modalBox=false;
+     DateTime = luxon.DateTime;
 
-    var selectedId = [];
-    var days=['M','T','W','T','F','S','S'];
-    var currentMonth = DateTime.local().month; //CURRENT MONTH
-    var currentYear=DateTime.local().year;   //CURRENT YEAR
-    var currentDay=DateTime.local(2017, 10, 30).weekday; //CURRENT DAY
+     selectedId = [];
+     days=['M','T','W','T','F','S','S'];
+     currentMonth = DateTime.local().month; //CURRENT MONTH
+     currentYear=DateTime.local().year;   //CURRENT YEAR
+     currentDay=DateTime.local(2017, 10, 30).weekday; //CURRENT DAY
 
     $('#lv-month-select').text(DateTime.local().monthLong+' '+ DateTime.local().year);
-    var resources=[];
-    var selectedDates=[];
-    var resourceLeave=[];
+     resources=[];
+     selectedDates=[];
+     resourceLeave=[];
     getUsers();
   }
 
