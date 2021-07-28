@@ -507,11 +507,8 @@ class ClientOrders(IsSeniorTeamLeader,View):
 class StlHome(IsSeniorTeamLeader,View):
 	def get(self,request):
 
-		try:
-			schedules = OrderScheduler.objects.filter(is_active=True,start_at__gte=timezone.now()+timezone.timedelta(days=1))
-		except:
-			schedules = None
-		
+		schedules = OrderScheduler.objects.filter(is_active=True,start_at__gte=timezone.now()+timezone.timedelta(days=1))
+			
 		for schedule in schedules:
 			schedule.work_status = None
 			schedule.save()
