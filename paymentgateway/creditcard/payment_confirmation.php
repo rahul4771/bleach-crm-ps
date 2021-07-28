@@ -7,14 +7,14 @@
     <link rel="stylesheet" type="text/css" href="./loader.css"/>
 </head>
 <body>
-    <div class="ld-screen-loader">
+    <!-- <div class="ld-screen-loader">
         <div class="ld-payment-message">
             Please <b>do not refresh the page</b> and wait while we are
     
               processing your payment. This can take a few minutes.
         </div>
         <div class="loader"></div>
-    </div>   
+    </div>    -->
 <form id="payment_confirmation" action="https://secureacceptance.cybersource.com/pay" method="post"/>
 <?php
     foreach($_REQUEST as $name => $value) {
