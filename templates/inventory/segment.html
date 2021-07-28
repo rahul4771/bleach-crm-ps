@@ -22,13 +22,13 @@
                      
                         <div class="inv-input-container h-30">
                             <i class="fa fa-search inv-icon-input" aria-hidden="true"></i>
-                            <input type="text" placeholder="Search Segments" class="inv-input w-250" name="attributes">
+                            <input type="text" id="search-bar" placeholder="Search Segments" class="inv-input w-250" onchange="set_params_go();" name="attributes" value="{{search_query|default_if_none:''}}">
                           </div>
                     
                     
                     </div>
                     <div class="right-pos m-mt-10">
-                        <button class="inv-blue-btn" onclick="showDrawer('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Segment </button>
+                        <button class="inv-blue-btn add_segment" onclick="showDrawer('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Segment </button>
                     </div>
                 </div>
 
@@ -40,14 +40,14 @@
                             <div>
                                 <label for="favcity" style="width:100%;"> 
                                     <select style="padding: 5px 50px 5px 7px !important; " name="no_of_entries" id="no_of_entries" onchange="set_params_go();"> 
-                                    <option value="20">20 Entries</option>
-                                    <option value="50">50 Entries</option>
-                                    <option value="100">100 Entries</option>
+                                    <option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
+                                    <option value="50" {% if no_of_entries == '50' %}selected{% endif %}>50 Entries</option>
+                                    <option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
                                     </select>
                                     </label>
                             </div>
                             <div class="right-pos">
-                                <p>20 Entries</p>
+                                <p>{{no_of_entries}} Entries</p>
                             </div>
                         </div>
                     </div>
@@ -193,8 +193,6 @@
     </section>
 
     <div id="addSegment" class="inv-sidedrawer">
-        <form method="POST" action="">{% csrf_token %}
-        <input type="hidden" name="action" value="add_segment" />
         <div class="inv-sidedrawer-inner">
             <div class="d-flex">
                 <div class="inv-drawer-head  inv-drawer-head-common">
@@ -208,6 +206,9 @@
                 </div>
             </div>
             <hr>
+            <form method="POST" action="">{% csrf_token %}
+            <input type="hidden" name="action" id="segment_action" value="add_segment" />
+            <input type="hidden" name="segment_edit_id" id="id_edit_segment" />
             <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Category</div>
@@ -346,9 +347,11 @@
         console.log(d)
         if(d == 'add'){
             $(".inv-drawer-head-common").text("Add Segment");
+            $('#segment_action').val('add_segment');
         }
         if(d == 'edit'){
             $(".inv-drawer-head-common").text("Edit Segment");
+            $('#segment_action').val('edit_segment');
         }
         openNavAddSegment()
     }
@@ -384,10 +387,31 @@
     })
 
     $('.edit_segment').click(function(){
-        $('#id_segment').val($(this).data('segmentid'));
+        $('#id_edit_segment').val($(this).data('segmentid'));
         $('#name_segment').val($(this).data('segmentname'));
         $('#status_segment').val($(this).data('segmentstatus'));
     })
+
+    $('.add_segment').click(function(){
+        $('#id_edit_segment').val($(this).data('segmentid'));
+        $('#name_segment').val('');
+        $('#status_segment').val('');
+    })
+
+    function set_params_go(args)
+    {
+    var url='{% url 'inventory:inventory-segment' category.id %}';
+    var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),
+    };
+    for(key in args) 
+        params[key]=args[key];
+    var query='';
+    for(key in params)
+        if(params[key]) 
+            query+='&'+key+'='+params[key].toString();
+    query=query.replace('&','?');
+    window.location.href=url+query;  
+    }
 </script>
 
 {% endblock %}

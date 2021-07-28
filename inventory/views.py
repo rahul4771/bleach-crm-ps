@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.views import View
 from bleach_crm_ps.permissions import IsInventoryAdmin,IsInventoryAdminUser
-from inventory.models import Category,Segment,Line
+from inventory.models import Category,Segment,Line,Attribute
 from django.contrib import messages
 import re
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -52,7 +52,17 @@ class InventoryCategory(IsInventoryAdmin,View):
 # Attribute.
 class InventoryAttribute(IsInventoryAdmin,View):
     def get(self,request):
-        return render(request,'inventory/attribute.html',{})
+        search = request.GET.get('search')
+
+        if search:
+            attributes = Attribute.objects.filter(name__icontains=search).annotate(value_count=Count('value_attribute'))
+        else:
+            attributes = Attribute.objects.all().annotate(value_count=Count('value_attribute'))
+
+        return render(request,'inventory/attribute.html',{"attributes":attributes,"search_query":search})
+
+    def post(self,request):
+        return redirect('inventory:inventory-attribute')
 # value.
 class InventoryValue(IsInventoryAdmin,View):
     def get(self,request):
@@ -125,10 +135,12 @@ class InventoryServices(IsInventoryAdmin,View):
 
 class InventorySegment(IsInventoryAdmin,View):
     def get(self,request,category_id):
-        category = Category.objects.prefetch_related(Prefetch('segment_category',queryset=Segment.objects.all().annotate(lines_count=Count('line_segment')),to_attr='segments'),Prefetch('line_category',queryset=Line.objects.all(),to_attr='lines')).get(id=int(category_id))
-        
-        segments = Segment.objects.filter(category__id=int(category_id))
-        
+        search = request.GET.get('search')
+
+        if search:
+            category = Category.objects.prefetch_related(Prefetch('segment_category',queryset=Segment.objects.filter(name__icontains=search).annotate(lines_count=Count('line_segment')),to_attr='segments'),Prefetch('line_category',queryset=Line.objects.all(),to_attr='lines')).get(id=int(category_id))
+        else:
+            category = Category.objects.prefetch_related(Prefetch('segment_category',queryset=Segment.objects.all().annotate(lines_count=Count('line_segment')),to_attr='segments'),Prefetch('line_category',queryset=Line.objects.all(),to_attr='lines')).get(id=int(category_id))
         # for segment in category.segments:
 
         #PAGINATION CLIENTS
@@ -157,7 +169,7 @@ class InventorySegment(IsInventoryAdmin,View):
         page_range = list(paginator.page_range)[start_index:end_index]
         entry_per_page=(category.segments.end_index())-(category.segments.start_index())+1
 
-        return render(request,'inventory/segment.html',{"category":category,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries})
+        return render(request,'inventory/segment.html',{"category":category,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"search_query":search})
 
     def post(self,request,category_id):
         action =request.POST.get('action')
@@ -169,6 +181,20 @@ class InventorySegment(IsInventoryAdmin,View):
 
             Segment.objects.create(category=category,name=name,status=status)
             messages.success(request,"Segment Added Successfully !")
+
+        if action == 'edit_segment':
+            print("edit")
+            category = Category.objects.get(id=int(category_id))
+            segment_id = request.POST.get('segment_edit_id')
+            name     = request.POST.get('segment')
+            status     = request.POST.get('status')
+
+            segment = Segment.objects.get(id=int(segment_id))
+            segment.category = category
+            segment.name     = name
+            segment.status   = status
+            segment.save()
+            messages.success(request,"Segment Updated Successfully !")
 
         if action == 'delete_segment':
             segment_id = request.POST.get('segment_id')

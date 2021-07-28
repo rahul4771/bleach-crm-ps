@@ -984,7 +984,7 @@
 
                         <div class="order-details-left-wrapper "><!--order details start-->
                             
-                            {% if request.user.user_type != 'ADMIN' or request.user.user_type != 'TECHNICALSUPERVISOR' or request.user.user_type != 'TEAMLEADER' %}
+                            {% if request.user.user_type != 'ADMIN' or request.user.user_type != 'TECHNICALSUPERVISOR' or request.user.user_type != 'TEAMLEADER' or request.user.user_type != 'ACCOUNTANT' %}
                             {% if request.user.user_type == 'AGENT' %}
                                 {% if orderschedule.evaluation_details.evaluator == None and request.user.id == orderschedule.order.evaluation.call_attender.id %}
                                 <div class="order-edit">
