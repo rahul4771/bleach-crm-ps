@@ -54,7 +54,7 @@
 
 }
 /*Styling Selectbox*/
-.dropdown {
+.ls-dropdown {
     width: 300px;
     display: inline-block;
     background-color: #fff;
@@ -67,12 +67,12 @@
     height: 100%;
     text-align: left
   }
-  .dropdown .select {
+  .ls-dropdown .select {
       cursor: pointer;
       display: block;
       padding: 10px
   }
-  .dropdown .select > i {
+  .ls-dropdown .select > i {
       font-size: 13px;
       color: #888;
       cursor: pointer;
@@ -80,22 +80,22 @@
       float: right;
       line-height: 20px
   }
-  .dropdown:hover {
+  .ls-dropdown:hover {
       box-shadow: 0 0 4px rgb(204, 204, 204)
   }
-  .dropdown:active {
+  .ls-dropdown:active {
       background-color: #f8f8f8
   }
-  .dropdown.active:hover,
-  .dropdown.active {
+  .ls-dropdown.active:hover,
+  .ls-dropdown.active {
       box-shadow: 0 0 4px rgb(204, 204, 204);
       border-radius: 5px 5px 0 0;
       background-color: #f8f8f8
   }
-  .dropdown.active .select > i {
+  .ls-dropdown.active .select > i {
       transform: rotate(-90deg)
   }
-  .dropdown .dropdown-menu {
+  .ls-dropdown .ls-dropdown-menu {
       position: absolute;
       background-color: #fff;
       width: 100%;
@@ -109,19 +109,19 @@
       overflow-y: auto;
       z-index: 9
   }
-  .dropdown .dropdown-menu li {
+  .ls-dropdown .ls-dropdown-menu li {
       padding: 10px;
       transition: all .2s ease-in-out;
       cursor: pointer
   } 
-  .dropdown .dropdown-menu {
+  .ls-dropdown .ls-dropdown-menu {
       padding: 0;
       list-style: none
   }
-  .dropdown .dropdown-menu li:hover {
+  .ls-dropdown .ls-dropdown-menu li:hover {
       background-color: #f2f2f2
   }
-  .dropdown .dropdown-menu li:active {
+  .ls-dropdown .ls-dropdown-menu li:active {
       background-color: #e2e2e2
   }
   .err-msg{

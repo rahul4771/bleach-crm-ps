@@ -33,23 +33,23 @@ var shiftId = ''
 
 
 /*Dropdown Menu*/
-$('.dropdown').click(function () {
+$('.ls-dropdown').click(function () {
     $(this).attr('tabindex', 1).focus();
     $(this).toggleClass('active');
-    $(this).find('.dropdown-menu').slideToggle(300);
+    $(this).find('.ls-dropdown-menu').slideToggle(300);
 });
-$('.dropdown').focusout(function () {
+$('.ls-dropdown').focusout(function () {
     $(this).removeClass('active');
-    $(this).find('.dropdown-menu').slideUp(300);
+    $(this).find('.ls-dropdown-menu').slideUp(300);
 });
-$('.dropdown .dropdown-menu li').click(function () {
-    $(this).parents('.dropdown').find('span').text($(this).text());
-    $(this).parents('.dropdown').find('input').attr('value', $(this).attr('id'));
+$('.ls-dropdown .ls-dropdown-menu li').click(function () {
+    $(this).parents('.ls-dropdown').find('span').text($(this).text());
+    $(this).parents('.ls-dropdown').find('input').attr('value', $(this).attr('id'));
 });
 /*End Dropdown Menu*/
 
 
-$('.dropdown-menu li').click(function () {
+$('.ls-dropdown-menu li').click(function () {
     checkTime()
 }); 
 
