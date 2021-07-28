@@ -49,6 +49,9 @@ class InventoryCreateCheckout(View):
 class InventoryPurchaseOrder(View):
     def get(self,request):
         return render(request,'inventory/purchaseOrder.html',{})
+class InventoryPurchaseOrderPage(View):
+    def get(self,request):
+        return render(request,'inventory/purchaseorderpage.html',{})        
 class InventoryCreatePurchaseOrder(View):
     def get(self,request):
         return render(request,'inventory/createpo.html',{})

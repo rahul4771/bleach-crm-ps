@@ -82,7 +82,7 @@ for (var j=0;j<resourceList.length;j++){
             
                                }
                                else{
-                                if(resourceList[j].leave[rs].type=='MATERNITY/PATERNITY'){
+                                if(resourceList[j].leave[rs].type=='NOT PAID'||resourceList[j].leave[rs].type=='MATERNITY/PATERNITY'){
                                     $('#row-'+rsid).append('<td class="noBorder text-center lv-date"  onclick="selectDay(this)" id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date lv-maternity" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
                                    }
                                    else{
@@ -190,7 +190,7 @@ for (var j=0;j<resourceList.length;j++){
 
                    }
                    else{
-                    if(resourceList[j].leave[rs].type=='MATERNITY/PATERNITY'){
+                    if(resourceList[j].leave[rs].type=='NOT PAID'||resourceList[j].leave[rs].type=='MATERNITY/PATERNITY'){
                         $('#row-'+rsid).append('<td class="noBorder text-center lv-date"  onclick="selectDay(this)" id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date lv-maternity" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
                        }
                        else{
@@ -283,7 +283,7 @@ function selectDay(el){
     }
     if($('#'+dayId).find('.lv-date').hasClass('lv-maternity')){
        
-        $('.modal-title').text('Maternity/Paternity Leave');
+        $('.modal-title').text('Not Paid Leave');
         $('.modal-title').removeClass('lv-sick-text');
         $('.modal-title').removeClass('lv-annual-text');
         $('.modal-title').removeClass('lv-weekly-text');

@@ -1,0 +1,518 @@
+{% load mathfilters %}
+{% load static %}
+
+<!DOCTYPE html>
+<!--
+  Invoice template by invoicebus.com
+  To customize this template consider following this guide https://invoicebus.com/how-to-create-invoice-template/
+  This template is under Invoicebus Template License, see https://invoicebus.com/templates/license/
+-->
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Bleach Cleaning Services | Quotation</title>
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta name="description" content="Invoicebus Invoice Template">
+  <meta name="author" content="Invoicebus">
+
+  <meta name="template-hash" content="91216e926eab41d8aa403bf4b00f4e19">
+  
+  <!--new message wrapper-->
+  <link href='https://fonts.googleapis.com/css?family=Roboto:300italic,400italic,400,100,300,600,700' rel='stylesheet'
+    type='text/css'>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'files/css/customer/main.css' %}">
+  <!--new message wrapper-->
+  <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="{% static 'files/css/customer/main.css' %}"> -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"
+    integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w=="
+    crossorigin="anonymous" />
+  <link href="{% static 'files/css/externalusers.css' %}" rel="stylesheet" type="text/css">
+  <link href="{% static 'files/css/message_wrapper.css' %}" rel="stylesheet" type="text/css">
+  <link href="{% static 'files/css/template.css' %}" rel="stylesheet" type="text/css">
+    
+</head>
+
+<body style="background: #F2F2F2;">
+<div id="app">
+  <div id="container">
+    <div class="right-statement">
+
+      <div id="soa-logo-div">
+        <img style="height: 40px;" src="{% static 'files/images/newlogo.png' %}" />
+        <svg id="barcode"></svg>
+      </div>
+      <div class="row">
+          <div class="col-md-6">
+            <div id="soa-logo-div ">
+                <h1 id="soa_heading_2" class="text-left">Purchase Order : P000294</h1>
+                <div id="soa_detials" class="mt-3">
+                    <div id="soa_right">Order Date </div>
+                    <div>: 12-12-2021 </div>
+                  </div>
+                  <div id="soa_detials">
+                    <div id="soa_right">Sale Person </div>
+                    <div>: MR. CHANDLER BING </div>
+                  </div>
+                  <div id="soa_detials">
+                    <div id="soa_right">Via </div>
+                    <div>: Local </div>
+                  </div>
+                  <div id="soa_detials">
+                    <div id="soa_right">Terms </div>
+                    <div>: 90 days Credit </div>
+                  </div>
+              </div>
+          </div>
+          <div class="col-md-6">
+              <div class="company_address">
+                Bleach Cleaning Services Co
+                <div class="mt-2">
+                    Salhiya, Kuwait City, Qibla Building, Mohamed Bin Thinan Al Ghanim Street, Po.Box: 4489, Safat 13045
+                </div>
+               <div class="mt-2">
+                Tel:1882707
+               </div>
+               <div class="mt-2">
+                Fax:1882707
+               </div>
+               <div class="mt-2">
+                Email:ayman.othman@bleach-kw.com
+               </div>
+                
+              </div>
+          </div>
+      </div>
+     
+
+      <div id="soa-customer-detials">
+          <div class="row">
+             
+            <div class="col-md-6">
+                To<br>
+                Oceanic General Trading & Contracting CompanyA-06 Building No. 286,Block 6, Farwaniya, KuwaitAttention <br>Tel:98951548 <br>Email:haseeb@medtrakuwait.com
+            </div>
+            <div class="col-md-6">
+                To<br>
+                Bleach Cleaning Service Co Salhiya, Kuwait City, Qibla Building, Mohamed Bin Thinan Al Ghanim Street, Po.Box: 4489, Safat 13045<br> Tel:1882707<br> Fax:188270
+            </div>
+            <div class="col-md-12 text-center mt-4 bottom-sub-text">
+                This order has been received and therefore CLOSED
+            </div>
+          </div>
+       
+      </div>
+      <table id="soa_table">
+        <tr>
+          <th style="text-align: center;">No</th>
+          <th style="width: 17%; text-align: center;">Supplier Part</th>
+          <!-- <th style="text-align: center;">Details</th> -->
+          <th style="text-align: center;">Description</th>
+          <th style="text-align: center;">Quantity</th>
+          <th style="text-align: center;">Unit</th>
+          <th style="text-align: center;">Pack</th>
+          <th style="text-align: center;">Price(KWD)</th>
+          <th style="text-align: center;">Extension (KWD)</th>
+        </tr>
+       
+        <tr>
+          <td>1</td>
+          <td>BLC2006270</td>
+          <!-- <td>{{order.details}}</td> -->
+          <td style="text-align: right;" class="orderamount">Sterilization</td>
+          <td style="text-align: right;" class="ordercredit">1</td>
+
+          <td style="text-align: right;" class="orderdebit">ECH</td>
+          <td style="text-align: right;" class="orderbalance">PACK</td>
+          <td style="text-align: right;" class="orderbalance">100.000</td>
+          <td style="text-align: right;" class="orderbalance">100.000</td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>BLC2006270</td>
+            <!-- <td>{{order.details}}</td> -->
+            <td style="text-align: right;" class="orderamount">Sterilization</td>
+            <td style="text-align: right;" class="ordercredit">1</td>
+  
+            <td style="text-align: right;" class="orderdebit">ECH</td>
+            <td style="text-align: right;" class="orderbalance">PACK</td>
+            <td style="text-align: right;" class="orderbalance">100.000</td>
+            <td style="text-align: right;" class="orderbalance">100.000</td>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>BLC2006270</td>
+            <!-- <td>{{order.details}}</td> -->
+            <td style="text-align: right;" class="orderamount">Sterilization</td>
+            <td style="text-align: right;" class="ordercredit">1</td>
+  
+            <td style="text-align: right;" class="orderdebit">ECH</td>
+            <td style="text-align: right;" class="orderbalance">PACK</td>
+            <td style="text-align: right;" class="orderbalance">100.000</td>
+            <td style="text-align: right;" class="orderbalance">100.000</td>
+          </tr>
+        
+        <tr>
+          <td colspan="7">
+            Sub Total
+          </td>
+          
+          <td style="text-align: right;" id="total_balance">300.000</td>
+        </tr>
+      </table>
+
+      <!--<script>
+     /* $("#soa_table").table2excel({  
+      exclude: ".excludeThisClass",  
+      name: "Worksheet Name",  
+      filename: "SomeFile"  
+      }); */
+      </script>-->
+
+
+      <div class="soa_section3">
+        <div id="soa_amount_calculation">
+            <div class="d-flex">
+                <div class="w-50 ">
+                    Discount %
+                </div>:
+                <div class="w-50 text-right">
+                    0
+                </div>
+            </div>
+            <div class="d-flex mt-2">
+                <div class="w-50 ">
+                   Tax
+                </div>:
+                <div class="w-50 text-right">
+                    0
+                </div>
+            </div>
+            <div class="d-flex mt-2">
+                <div class="w-50 ">
+                    Shipping Charge
+                </div>:
+                <div class="w-50 text-right">
+                    0
+                </div>
+            </div>
+            <div class="d-flex mt-2">
+                <div class="w-50 ">
+                  Other Charges
+                </div>:
+                <div class="w-50 text-right">
+                    0
+                </div>
+            </div>
+            
+          </div>
+        <div id="po_amount_section">
+          <div id="soa_balance">
+           Total
+          </div>
+          <h1 id="totalamount">300.000</h1>
+        </div>
+      </div>
+    </div>
+    <!-- <div class="inv-footer ">
+      <div class="container m-hide">
+        <div class="row">
+          <div class="col-md-6">
+           <div class="d-flex pt-4 pb-4">
+             <div class="p-2">
+               <img src="{% static 'files/icons/placeholder.png' %}" class="inv-icon"/>
+             </div>
+            
+             <div class="p-2" style="text-align: justify;">
+              
+               <b>Bleach International Contracting Company<br> for Cleaning Building & Cities WLL</b>, 
+               Qibla area, Block 14 Usama Bin Mongith St. AlMashora Tower 8th Floor.
+             </div>
+           </div>
+          </div>
+          <div class="col-md-6">
+           <div class="d-flex pt-4 pb-4 ">
+             <div class="p-2">
+               <img src="{% static 'files/icons/contact.png' %}" class="inv-icon"/>
+             </div>
+            
+             <div class="p-2 w-100">
+              <span> Tel</span> <span class="float-right">+965 1882707</span> <br><span>Email</span><span class="float-right">customercare@bleach-kw.com</span>  <br><span>Website</span> <span class="float-right"> www.bleach-kw.com</span>
+             </div>
+           </div>
+         </div>
+
+        </div>
+      </div>
+      
+    </div> -->
+   
+  </div>
+
+
+  <!-- send invoice modal begins here-->
+<!-- Modal -->
+
+<div class="modal fade " id="invoiceModalCenter" tabindex="-1" role="dialog" aria-labelledby="invoiceModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered primary-modal" role="document">
+      <div class="modal-content primary-modal-border">
+        <div class="d-flex">
+          <div class="popup-title text-center w-100 mt-10 mb-10" id="exampleModalLongTitle">Please Select the Communication Method</div>
+          <button type="button" class="close ml-auto" data-dismiss="modal" aria-label="Close" style="margin-left:auto">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+       
+        <div class="modal-body">
+          <div class="cotainer">
+              <!-- use app.contacts to get the array of selected contact  methods -->
+            <div class="row contact-margin">
+                <div class="col-md-4 text-center">
+                    <div class="contact-card-active text-center" v-if="contacts.includes('EMAIL')">
+                        <div style="text-align: left;">
+                            <input type="checkbox" class="contact-checkbox cc-checkmark" v-model="contacts" value="EMAIL" {% if customer.is_email == True %}checked="True"{% endif %}>
+                        </div>
+                        <img src="{% static 'files/icons/email.png'%}" class="contact-card-icon"/>
+
+                        <div class="contact-card-text">
+                           {{customer.email}}
+                        </div>
+                    </div>
+                
+                    <div class="contact-card text-center" v-else>
+                        <div style="text-align: left;">
+                            <input type="checkbox" class="contact-checkbox cc-checkmark" v-model="contacts" value="EMAIL" {% if customer.is_sms == True %}checked="True"{% endif %}>
+                        </div>
+                        <img src="{% static 'files/icons/email.png'%}" class="contact-card-icon"/>
+
+                        <div class="contact-card-text">
+                           {{customer.email}}
+                        </div>
+                    </div>
+                
+                </div>
+                <div class="col-md-4">
+                    <div class="contact-card-active text-center" v-if="contacts.includes('SMS')">
+                        <div style="text-align: left;">
+                            <input type="checkbox" class="contact-checkbox cc-checkmark" id="exampleCheck1" v-model="contacts" value="SMS" >
+                        </div>
+                        <img src="{% static 'files/icons/sms.png'%}" class="contact-card-icon"/>
+                        <div class="contact-card-text">
+                           {{customer.mobile_number}}
+                        </div>
+                    </div>
+                    <div class="contact-card text-center" v-else>
+                        <div style="text-align: left;">
+                            <input type="checkbox" class="contact-checkbox cc-checkmark" id="exampleCheck1" v-model="contacts" value="SMS" >
+                        </div>
+                        <img src="{% static 'files/icons/sms.png'%}" class="contact-card-icon"/>
+                        <div class="contact-card-text">
+                           {{customer.mobile_number}}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="contact-card-disabled text-center">
+                        <div style="text-align: left;">
+                            <input type="checkbox" class="contact-checkbox cc-checkmark" id="exampleCheck1" v-model="contacts" value="WHATSAPP">
+                        </div>
+                        <img src="{% static 'files/icons/whatsapp.png'%}" class="contact-card-icon"/>
+                        <div class="contact-card-text">
+                            {{customer.mobile_number}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer text-center">
+          
+          <button type="submit" onclick="send_items()" class="btn primary-btn" data-dismiss="modal">Send</button>
+          <button type="button" class="btn primary-btn-bordered" data-dismiss="modal" @click="resetContacts">Cancel</button>
+        </div>
+       
+      </div>
+    </div>
+  </div>
+   <!-- send invoice modal ends here-->
+
+
+  <!--<div style="background: none !important; box-shadow: none !important;" id="container">
+
+    <div class="right-statement">
+      {% comment %} <div class="download_button_id">
+        <i class="fa fa-download mr-5" ></i> Download
+      </div> {% endcomment %}
+      <br>
+      <div class="download_button_id" onclick="printDiv()">
+        <i class="fa fa-print mr-5" ></i> Print
+      </div>
+      <br>
+      <div style="text-align: center;">
+        <button class="soa-button" onclick="exportTableToExcel()"> <i class="fa fa-file-excel mr-5" aria-hidden="true"></i> Export to excel</button>
+        <button class="soa-button" onclick="send_items()" data-toggle="modal" data-target="#invoiceModalCenter"> <i class="fa fa-paper-plane mr-5" aria-hidden="true"></i>Send to customer</button>
+      </div>
+
+     
+    </div>
+
+
+  </div>-->
+  <div>
+    
+  </div>
+  <div class="inv-footer " style="font-family: AvenirLTStd !important; min-width: 820px !important;">
+    <div class="" style="padding-left: 40px;padding-right: 40px;">
+      <div class="row">
+        <div class="col-md-4 col-xs-12">
+         <div class="d-flex pt-4 pb-4">
+           <div class="p-2">
+             <img src="{% static 'files/icons/locnew.png' %}" class="inv-icon"/>
+           </div>
+          
+           <div class="p-2" style="text-align: justify; line-height: 1.4;">
+            
+             <b>Bleach International Contracting Company<br> for Cleaning Building & Cities WLL</b>, 
+             Qibla area, Block 14 Usama Bin Mongith St. AlMashora Tower 8th Floor.
+           </div>
+         </div>
+        </div>
+        <div class="col-md-4  col-xs-12">
+         <div class="d-flex pt-4 pb-4 ">
+           <div class="p-2">
+             <img src="{% static 'files/icons/contnew.png' %}" class="inv-icon"/>
+           </div>
+          
+           <div class="p-2 w-100" style="line-height: 1.4;">
+            <span> Tel</span> <span class="float-right">+965 1882707</span> <br><span>Email</span><span class="float-right">customercare@bleach-kw.com</span>  <br><span>Website</span> <span class="float-right"> www.bleach-kw.com</span>
+           </div>
+         </div>
+       </div>
+       <div class="col-md-3 col-xs-12 offset-md-1 ">
+         <div class="pt-4 pb-4 text-center">
+          <a href="https://www.facebook.com/BleachKw/" target="_blank" class="inv-link"> <i class="fab fa-facebook-f  p-2 inv-cp inv-social text-white"></i> </a>
+           <!-- https://www.facebook.com/BleachKw/ -->
+           <a href="https://twitter.com/bleachkw?lang=en" target="_blank" class="inv-link">  <i class="fab fa-twitter  p-2 inv-cp inv-social text-white"></i></a>
+           <!-- https://twitter.com/bleachkw?lang=en -->
+           <a href="https://www.instagram.com/bleachkw/?hl=en" target="_blank" class="inv-link"><i class="fab fa-instagram p-2 inv-cp inv-social text-white" ></i></a>
+           <!-- https://www.instagram.com/bleachkw/?hl=en -->
+           <a href="https://www.youtube.com/channel/UC_XhgxfirQrft_kAFRZPAOw" target="_blank" class="inv-link"> <i class="fab fa-youtube  p-2 inv-cp inv-social text-white " ></i></a>
+           <!-- https://www.youtube.com/channel/UC_XhgxfirQrft_kAFRZPAOw -->
+           <a href="https://www.linkedin.com/company/bleachkw" target="_blank" class="inv-link"><i class="fab fa-linkedin  p-2 inv-cp inv-social text-white" ></i></a>
+           <!-- https://www.linkedin.com/company/bleachkw -->
+           
+         </div>
+       </div>
+      </div>
+    </div>
+  </div>
+
+
+</div><!--app close-->
+
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.4/dist/JsBarcode.all.min.js"></script>
+
+<script src="{% static 'files/js/table2excel.js' %}"></script>
+<script src="{% static 'files/js/barcode.min.js' %}"></script> <!-- Axios -->
+
+<script>
+JsBarcode("#barcode", "344BA876Y89");
+function printDiv() {
+  
+
+    window.print();
+
+}
+
+    $(document).ready(function(){
+      add_console();
+    });
+
+    function add_console(){
+      console.log("war")
+            var tds = document.getElementById('soa_table').getElementsByTagName('td');
+            
+            var sum1 = 0;
+            var sum2 = 0;
+            var sum3 = 0;
+
+            for(var i = 0; i < tds.length; i ++) {
+              console.log(tds[i].className,"mok")
+                if(tds[i].className == 'orderdebit') {
+                    console.log(tds[i].className,"kol")
+                    sum1 += isNaN(tds[i].innerHTML) ? 0 : parseFloat(tds[i].innerHTML)||0;
+                }
+                if(tds[i].className == 'ordercredit') {
+                     console.log(tds[i].className,"kol2")
+                    sum2 += isNaN(tds[i].innerHTML) ? 0 : parseFloat(tds[i].innerHTML)||0;
+                }
+                if(tds[i].className == 'orderamount') {
+                    console.log(tds[i].className,"kol")
+                    sum3 += isNaN(tds[i].innerHTML) ? 0 : parseFloat(tds[i].innerHTML)||0;
+                }
+                
+
+                if (tds[i].className == 'orderbalance') {
+                      var balance = parseFloat(sum2) + (isNaN(tds[i].innerHTML) ? 0 : parseFloat(tds[i].innerHTML)||0) - parseFloat(sum1) ;
+                      tds[i].innerHTML = parseFloat(balance).toFixed(3) ;
+                      console.log(balance,"abal")
+
+                      if (i < tds.length - 1){
+                        document.getElementById('total_balance').innerHTML =  parseFloat(balance).toFixed(3) ;
+                        document.getElementById('closingbalance').innerHTML =  parseFloat(balance).toFixed(3) ;
+                      }
+                }
+            
+            }
+            
+            document.getElementById('total_debit').innerHTML =  parseFloat(sum1).toFixed(3) ;
+            document.getElementById('total_credit').innerHTML =  parseFloat(sum2).toFixed(3) ;
+            
+          }
+
+
+/*function exportTableToExcel(){
+    $("#soa_table").table2excel({    
+                    filename: "Statement_of_account_"+"{{customer.name}}"+".xls"    
+                }); 
+}*/
+
+//send soa mail
+function send_items(){
+ 
+    var url='https://test.bleach-kw.com';
+    //var url = 'https://my.bleachkw.com';
+    //var url = 'http://127.0.0.1:8000';
+    //var url='http://localhost:8000';
+
+    var checkedVals = $('.contact-checkbox:checkbox:checked').map(function() {
+        return this.value;
+    }).get();
+    //alert(checkedVals.join(","));
+    var selectedoptions = checkedVals.join(",");
+    console.log(selectedoptions,"ops");
+
+   /* axios.get(url+'/api/soa-mail/',{ params: { 'client_id':{{customer.id}}, 'selected_options': selectedoptions } })
+                .then(function (response) {
+                  if (response.data == true){
+                  alert("Invoice Sent!")
+                  }else{
+                    alert("Customer not opted for SMS!")  
+                  }
+                })*/
+}
+
+</script>
+
+
+</body>
+
+</html>
