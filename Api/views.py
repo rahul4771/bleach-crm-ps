@@ -177,7 +177,7 @@ class EvaluationDetailsList(APIView):
 		except:
 			order = None
 
-		print(evaluation_details.evaluation.evaluation_id,"evid")
+		# print(evaluation_details.evaluation.evaluation_id,"evid")
 
 		try:
 			customer_booking = CustomerBooking.objects.get(booking_type='EVALUATIONBOOKING',evaluation__id=evaluation_details.evaluation.id)
