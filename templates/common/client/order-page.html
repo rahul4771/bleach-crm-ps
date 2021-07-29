@@ -1068,8 +1068,8 @@
                                                         {% if orderschedule.order_scheduler_book.evaluator_note %}
                                                         <!-- <p id="evalution-note">{{orderschedule.order_scheduler_book.evaluator_note|default_if_none:''}}</p> -->
                                                         <p id="evalution-note{{orderschedule.order_scheduler_book.id}}" class="evalution-note-less">{{orderschedule.order_scheduler_book.evaluator_note|default_if_none:''}} </p>
-                                                        <span class="see-more" id="id_see{{orderschedule.order_scheduler_book.id}}" onclick="seefull({{orderschedule.order_scheduler_book.id}})">See More</span>
-                                                        <span class="see-more" style="display: none;" id="id_see_less{{orderschedule.order_scheduler_book.id}}" onclick="seeless({{orderschedule.order_scheduler_book.id}})">See Less</span>
+                                                        <span class="see-more" id="id_see{{orderschedule.order_scheduler_book.id}}" onclick="seefull({{orderschedule.order_scheduler_book.id}})">Show More</span>
+                                                        <span class="see-more" style="display: none;" id="id_see_less{{orderschedule.order_scheduler_book.id}}" onclick="seeless({{orderschedule.order_scheduler_book.id}})">Show Less</span>
                                                         
                                                         {% endif %}
 
@@ -1077,16 +1077,28 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-2 m-mt30">
+                                        <div class="col-md-4 c-mt-50">
+                                            <div class="agent-content-section1 c-mt-022">
+                                                <!-- <div v-if="edit" class="order-agent-edit" >
+                                                    <img class="pointer" src="{% static 'files/icons/edit.png' %}">
+                                                </div> -->
+                                                <ul>
+
+                                                    {% if orderschedule.customer_address.gps_location %}<li><i class="fas  test-color fa-map-marker c-mr-10"></i><a href="{{orderschedule.customer_address.gps_location}}">GPS</a></li>{% endif %}
+                                 
+                                                    <li><i class="fas test-color fa-address-card c-mr-10"></i><b>{{orderschedule.customer_address.apartment}}</b>: {% if orderschedule.customer_address.floor %}{{orderschedule.customer_address.floor}}, {% else %}{% endif %} {{orderschedule.customer_address.building}}, {{orderschedule.customer_address.block}}, {{orderschedule.customer_address.street}},<br> {% if orderschedule.customer_address.avenue %}{{orderschedule.customer_address.avenue}}, {% else %}{% endif %} {{orderschedule.customer_address.area.name}}, {{orderschedule.customer_address.governorate.name}}</li>
+
+                                                </ul>
+                                                <div class="gps-btn" onclick="window.location.href='{{orderschedule.customer_address.gps_location}}'"><i class="fas fa-crosshairs mr-10" ></i>GPS Location</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4  c-mt-50">
                                             <div class="agent-content-section1 c-mt-022">
                                                 <!-- <div v-if="edit" class="order-agent-edit">
                                                     <img class="pointer" src="{% static 'files/icons/edit.png' %}">
                                                 </div> -->
                                                 <ul>
-                                                {% if orderschedule.order_scheduler_book.cleaning_method %}
-                                                    <li><i class="fas fa-check-circle yellow-tick "></i> {{orderschedule.order_scheduler_book.cleaning_method}} Method
-                                                    </li>
-                                                {% endif %}
+                                               
 
                                                 {% if orderschedule.order_scheduler_book.area_type %}
                                                     <li><i class="fas fa-check-circle yellow-tick"></i> {{orderschedule.order_scheduler_book.area_type}}
@@ -1104,30 +1116,14 @@
                                                 </ul>
                                             </div>
                                         </div>
-                                        <div class="col-md-2 m-mt30">
-                                            <div class="agent-content-section1 c-mt-022">
-                                                <!-- <div v-if="edit" class="order-agent-edit" >
-                                                    <img class="pointer" src="{% static 'files/icons/edit.png' %}">
-                                                </div> -->
-                                                <ul>
-
-                                                    {% if orderschedule.customer_address.gps_location %}<li><i class="fas  test-color fa-map-marker c-mr-10"></i><a href="{{orderschedule.customer_address.gps_location}}">GPS</a></li>{% endif %}
-                                                    <li><i class="fas test-color fa-users c-mr-10"></i> {% for schedule in order.orderschedules %}{% if forloop.first %}<span id="total_cleaners{{orderschedule.order_scheduler_book.id}}"></span>{% endif %}{% endfor %} cleaners</li>
-                                                    <li><i class="fas test-color fa-clock-o c-mr-10"></i> {% for schedule in order.orderschedules %}{% if forloop.first %}<span id="total_hours{{orderschedule.order_scheduler_book.id}}"></span>{% endif %}{% endfor %} Hours</li>
-                                                    {% if request.user.user_type != 'SENIORTEAMLEADER' %}<li><i class="fas  test-color fa-money c-mr-10"></i> {{orderschedule.order_scheduler_book.total_cost|floatformat:3}} KD</li>{% endif %}
-                                                    <li><i class="fas test-color fa-address-card c-mr-10"></i><b>{{orderschedule.customer_address.apartment}}</b>: {% if orderschedule.customer_address.floor %}{{orderschedule.customer_address.floor}}, {% else %}{% endif %} {{orderschedule.customer_address.building}},<br> {{orderschedule.customer_address.block}}, {{orderschedule.customer_address.street}},<br> {% if orderschedule.customer_address.avenue %}{{orderschedule.customer_address.avenue}}, {% else %}{% endif %} {{orderschedule.customer_address.area.name}},<br> {{orderschedule.customer_address.governorate.name}}</li>
-
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 m-mt30">
+                                        
+                                      <!-- <div class="col-md-4 m-mt30">
                                             <p style=" font-size: 20px;
                                             margin: 0 0 10px 0;
                                             padding: 0;
                                             color: #434343; margin-top: -22px !important;">Total no of Visits <span style="color:#0D87C5;" class="visitcount{{orderschedule.order_scheduler_book.id}}"></span> </p>
                                             <div id="visti-section{{orderschedule.order_scheduler_book.id}}"
                                                 class="agent-content-section2 visti-section  c-mt-022" style="margin-top: 10px;">
-                                                <!-- <p>Total no of Visits <span style="color:#0D87C5;" class="visitcount{{orderschedule.order_scheduler_book.id}}"></span> </p> -->
 
                                                 
                                                 <div class="row visit-times">
@@ -1192,7 +1188,6 @@
                                             <div id="myDropdown{{orderschedule.order_scheduler_book.id}}" class="c-dropdown-content" style="max-height: 350px; overflow: auto;">
                                                 <div id="visti-section{{orderschedule.order_scheduler_book.id}}" class="agent-content-section2 visti-section  c-mt-022">
                                                    
-                                                    <!-- <p>Total no of Visits <span style="color:#0D87C5;" class="visitcount{{orderschedule.order_scheduler_book.id}}"></span> </p> -->
                                                
                                                     
                                                     <div class="row ">
@@ -1264,7 +1259,7 @@
                                                 </div>
                                             </div>
 
-                                        </div>
+                                        </div>-->
 
                                     </div>
                                 </div>
@@ -1476,16 +1471,29 @@
 
                                         {% for multi_order_schedule in order.orderschedules %}
                                         {% if multi_order_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
-                                            <div style="margin-bottom: 10px;" class="col-md-3  c-pr5 visit-list" id="id_select_visit{{multi_order_schedule.id}}" onclick="load_cleaning_team({{forloop.counter}},{{multi_order_schedule.id}})">
+                                            <div style="margin-bottom: 10px;" class="col-md-4  c-pr5 visit-list" id="id_select_visit{{multi_order_schedule.id}}" onclick="load_cleaning_team({{forloop.counter}},{{multi_order_schedule.id}})">
                                                 <div class="cleaning-status-container  pointer ">
                                                    
-                                                    <div  id="id_select_visit_inner{{multi_order_schedule.id}}" class="row cleaning-status-row  cleaning-status-card  {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %} inprogress-chip {% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED' %} completed-chip {% else %} cancel-chip {% endif %}">
-                                                        <div class="vist-card-item-first">
+                                                    <div  id="id_select_visit_inner{{multi_order_schedule.id}}" class="row cleaning-status-row  cleaning-status-card  ">
+                                                        <div class="status-dot {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %} inprogress-chip-bg {% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED' %} completed-chip-bg {% elif multi_order_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}assigned-chip-bg{% else %} cancel-chip-bg {% endif %}"></div>
+                                                        <div class="vist-card-item-first visit-text">
                                                             Visit {{forloop.counter}}
                                                         </div>
-                                                        <div class="vist-card-item-second">
+                                                        <div class="vist-card-item-second visit-text">
                                                             {{multi_order_schedule.start_at|date:'d-m-Y g:i A'}}
                                                         </div>
+                                                        <img  class="visit-time-edit pointer ml-20 mt-2p" src="{% static 'files/icons/flags.png' %}" ><span class="ml-5 visit-text"></span>
+
+                                                        <img  class="visit-time-edit pointer ml-20 mt-2p" src="{% static 'files/icons/user-primary.png' %}" ><span class="ml-5 visit-text">{{multi_order_schedule.order_scheduler_book.number_of_cleaners}}</span>
+                                                        <img  class="visit-time-edit pointer ml-20 mt-2p" src="{% static 'files/icons/time-primary.png' %}" ><span class="ml-5 visit-text">{{multi_order_schedule.order_scheduler_book.cleaning_hours}}</span>
+
+                                                        <img v-if="edit" class="visit-time-edit pointer ml-auto mt-2p" src="{% static 'files/icons/edit-primary.png' %}" onclick="editCleaningDate(this)" data-cleaning_start_date="{{multi_order_schedule.start_at|date:'d-m-Y'}}" data-evaluation_book_id="{{multi_order_schedule.order_scheduler_book.id}}" data-id="{{multi_order_schedule.id}}" data-service="{{multi_order_schedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{multi_order_schedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{multi_order_schedule.order_scheduler_book.cleaning_hours}}">
+                                                        {% if multi_order_schedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}
+                                                        <img v-if="edit" class="visit-time-edit pointer ml-10 mt-2p " src="{% static 'files/icons/delete-primary.png' %}" onclick="deleteCleaning(this)"  data-cleaning_start_date="{{multi_order_schedule.start_at|date:'d-m-Y'}}" data-evaluation_book_id="{{multi_order_schedule.order_scheduler_book.id}}" data-id="{{multi_order_schedule.id}}" data-service="{{multi_order_schedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{multi_order_schedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{multi_order_schedule.order_scheduler_book.cleaning_hours}}">
+                                                       
+                                                        {% elif multi_order_schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' %}
+                                                        <img v-if="edit" class="visit-time-edit pointer ml-10 mt-2p " src="{% static 'files/icons/cancel-primary.png' %}"  onclick="cancelCleaning(this)" data-cleaning_start_date="{{multi_order_schedule.start_at|date:'d-m-Y'}}" data-evaluation_book_id="{{multi_order_schedule.order_scheduler_book.id}}" data-id="{{multi_order_schedule.id}}" data-service="{{multi_order_schedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{multi_order_schedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{multi_order_schedule.order_scheduler_book.cleaning_hours}}">
+                                                        {%endif%}
                                                         <!--<div class="vist-card-item-last ml-5">
                                                             <button {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %}class="inprogress-button"{% elif multi_order_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}class="assigned-button"{% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED'%}class="completed-button"{% else %}class="canceled-button"{% endif %}>  {% for investigation in multi_order_schedule.investigations|slice:":1" %}{% for followup in investigation.followups|slice:":1" %}{% if followup %} <i aria-hidden="true" class="fa fa-flag" style="margin-right: 5px ;"></i> {% endif %}{% endfor %}{% endfor %} {{multi_order_schedule.work_status|default_if_none:'NOT STARTED'}}</button>
                                                         </div>-->
