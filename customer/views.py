@@ -5087,31 +5087,22 @@ class EditOrderDetails(APIView):
 			schedule_id             = request.data.get('schedule_id')
 			reduction_status        = request.data.get('reduction_status')
 
-			cleaning_schedule       = OrderScheduler.objects.select_related('order_scheduler_book__cleaning_policy','evaluation_details').get(id=schedule_id).prefetch_related(Prefetch('order_scheduler_book.evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='booksections'))
+			cleaning_schedule       = OrderScheduler.objects.select_related('order_scheduler_book','evaluation_details').get(id=schedule_id).prefetch_related(Prefetch('order_scheduler_book.evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='booksections'))
 
 			if cleaning_schedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE':
 				cleaning_schedule.delete()
 			else:
 				if reduction_status == True:
-					cleaning_schedule.order_scheduler_book.estimated_cost   -= cleaning_schedule.order_scheduler_book.estimated_cost
-					cleaning_schedule.order_scheduler_book.total_cost       -= cleaning_schedule.order_scheduler_book.estimated_cost
-					cleaning_schedule.evaluation_details.estimated_cost     -= cleaning_schedule.order_scheduler_book.estimated_cost
-					cleaning_schedule.evaluation_details.total_cost         -= cleaning_schedule.order_scheduler_book.estimated_cost
-					order.evaluation.estimated_cost                         -= cleaning_schedule.order_scheduler_book.estimated_cost
-					order.evaluation.total_cost                             -= cleaning_schedule.order_scheduler_book.estimated_cost
-					order.total_amount                                      -= cleaning_schedule.order_scheduler_book.estimated_cost
-					order.remining_amount                                   -= cleaning_schedule.order_scheduler_book.estimated_cost
+					reduction_amount        = int(request.data.get('reduction_amount'))
+
+					order.evaluation.estimated_cost                         -= reduction_amount
+					order.evaluation.total_cost                             -= reduction_amount
+					order.evaluation.cancelled_amount                       -= reduction_amount
+					order.total_amount                                      -= reduction_amount
+					order.remining_amount                                   -= reduction_amount
 										
-					cleaning_schedule.order_scheduler_book.save()
-					cleaning_schedule.evaluation_details.save()
 					order.evaluation.save()
 					order.save()
-
-					#section update
-					for section in cleaning_schedule.order_scheduler_book.booksections:
-						section.total_cost -= section.estimated_cost
-						section.save()
-
 
 
 				cleaning_schedule.work_status = 'CLEANING_CANCELLED'
