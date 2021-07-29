@@ -5108,7 +5108,6 @@ class EditOrderDetails(APIView):
 				cleaning_schedule.work_status = 'CLEANING_CANCELLED'
 				cleaning_schedule.save()
 
-
 			#delete cleaning team
 			CleaningTeam.objects.filter(order_scheduler=cleaning_schedule).delete()
 
@@ -5118,6 +5117,24 @@ class EditOrderDetails(APIView):
 			response_dict['success']  = True
 
 		return Response(response_dict,HTTP_200_OK)
+
+class ServiceCancellationRequest(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+
+	def post(self,request):
+		response_dict['success'] = False
+		
+		service_books            = request.data.get('service_books')
+		requester_id             = request.data.get('requester_id')
+
+		for book in service_books:
+			EvaluationBook.objects.filter(id=book).update(status='CANCELL_IN_PROGRESS',cancell_requester__id=requester_id)
+		
+		response_dict['success'] = True
+		
+		return Response(response_dict,HTTP_200_OK)
+
 
 class EmailTest(APIView):
 	def get(self,request):

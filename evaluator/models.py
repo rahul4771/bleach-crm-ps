@@ -109,6 +109,11 @@ PAYMENT_WAYS =(
 	('CASH/CHEQUE','CASH/CHEQUE'),
 	)
 
+BOOK_CHOICES =(
+	('CANCELL_IN_PROGRESS','CANCELL_IN_PROGRESS'),
+	('CANCELLED','CANCELLED'),
+)
+
 #Different cleaning service types.Eg:General Cleaning,Carpet Cleaning etc
 
 class ServiceType(models.Model):
@@ -286,9 +291,14 @@ class EvaluationBook(models.Model):
 	cleaning_hours 		= models.FloatField(blank=True,null=True)
 	evaluator_note		= models.CharField(max_length=5000,blank=True,null=True)
 	
-	is_active            = models.BooleanField(null=False,blank=True,default=True)
-	created              = models.DateTimeField(auto_now_add=True)
-	updated              = models.DateTimeField(auto_now=True)
+	status              = models.CharField(max_length=20,blank=True,null=True,choices=BOOK_CHOICES)
+	cancell_requester   = models.ForeignKey(UserProfile,blank=True,null=True,related_name='cancell_requester')
+	cancelled_by        = models.ForeignKey(UserProfile,blank=True,null=True,related_name='cancell_by')
+	
+
+	is_active           = models.BooleanField(null=False,blank=True,default=True)
+	created             = models.DateTimeField(auto_now_add=True)
+	updated             = models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
 		return str(self.evaluation_details)
