@@ -5087,7 +5087,7 @@ class EditOrderDetails(APIView):
 			schedule_id             = request.data.get('schedule_id')
 			reduction_status        = request.data.get('reduction_status')
 
-			cleaning_schedule       = OrderScheduler.objects.select_related('order_scheduler_book__cleaning_policy','evaluation_details').get(id=schedule_id).prefetch_related(Prefetch('order_scheduler_book.evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='booksections'))
+			cleaning_schedule       = OrderScheduler.objects.select_related('order_scheduler_book','evaluation_details').get(id=schedule_id).prefetch_related(Prefetch('order_scheduler_book.evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='booksections'))
 
 			if cleaning_schedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE':
 				cleaning_schedule.delete()
