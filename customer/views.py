@@ -5083,6 +5083,49 @@ class EditOrderDetails(APIView):
 				
 			response_dict['success']  = True
 
+		elif action == 'cancell_cleaning':
+			schedule_id             = request.data.get('schedule_id')
+			reduction_status        = request.data.get('reduction_status')
+
+			cleaning_schedule       = OrderScheduler.objects.select_related('order_scheduler_book__cleaning_policy','evaluation_details','order__evaluation').get(id=schedule_id).prefetch_related(Prefetch('order_scheduler_book.evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='booksections'))
+
+			if cleaning_schedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE':
+				cleaning_schedule.delete()
+			else:
+				if reduction_status == True:
+					cleaning_schedule.order_scheduler_book.estimated_cost   -= cleaning_schedule.order_scheduler_book.estimated_cost
+					cleaning_schedule.order_scheduler_book.total_cost       -= cleaning_schedule.order_scheduler_book.estimated_cost
+					cleaning_schedule.evaluation_details.estimated_cost     -= cleaning_schedule.order_scheduler_book.estimated_cost
+					cleaning_schedule.evaluation_details.total_cost         -= cleaning_schedule.order_scheduler_book.estimated_cost
+					cleaning_schedule.order.total_amount                    -= cleaning_schedule.order_scheduler_book.estimated_cost
+					cleaning_schedule.order.remining_amount                 -= cleaning_schedule.order_scheduler_book.estimated_cost
+					cleaning_schedule.order.evaluation.estimated_cost       -= cleaning_schedule.order_scheduler_book.estimated_cost
+					cleaning_schedule.order.evaluation.total_cost           -= cleaning_schedule.order_scheduler_book.estimated_cost
+										
+					cleaning_schedule.order_scheduler_book.save()
+					cleaning_schedule.evaluation_details.save()
+					cleaning_schedule.order.evaluation.save()
+					cleaning_schedule.order.save()
+
+					#section update
+					for section in cleaning_schedule.order_scheduler_book.booksections:
+						section.total_cost -= section.estimated_cost
+						section.save()
+
+
+
+				cleaning_schedule.work_status = 'CLEANING_CANCELLED'
+				cleaning_schedule.save()
+
+
+			#delete cleaning team
+			CleaningTeam.objects.filter(order_scheduler=cleaning_schedule).delete()
+
+			#delete team member
+			CleaningTeamMember.objects.filter(team__order_scheduler=cleaning_schedule).delete()
+				
+			response_dict['success']  = True
+
 		return Response(response_dict,HTTP_200_OK)
 
 class EmailTest(APIView):
