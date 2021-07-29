@@ -59,9 +59,64 @@ class InventoryAttribute(IsInventoryAdmin,View):
         else:
             attributes = Attribute.objects.all().annotate(value_count=Count('value_attribute'))
 
-        return render(request,'inventory/attribute.html',{"attributes":attributes,"search_query":search})
+        #PAGINATION CLIENTS
+        no_of_entries = request.GET.get('no_of_entries')
+        if not no_of_entries:
+            no_of_entries = 20
+
+        page = request.GET.get('page',1)
+        paginator=Paginator(attributes,no_of_entries)
+        try:
+            attributes=paginator.page(page)
+        except PageNotAnInteger:
+            attributes=paginator.page(1)
+        except EmptyPage:
+            attributes = paginator.page(paginator.num_pages)
+
+        # Get the index of the current page
+        index = attributes.number - 1  # edited to something easier without index
+        # This value is maximum index of your pages, so the last page - 1
+        max_index = len(paginator.page_range)
+        # You want a range of 7, so lets calculate where to slice the list
+        start_index = index - 3 if index >= 3 else 0
+        end_index = index + 3 if index <= max_index - 3 else max_index
+        # Get our new page range. In the latest versions of Django page_range returns
+        # an iterator. Thus pass it to list, to make our slice possible again.
+        page_range = list(paginator.page_range)[start_index:end_index]
+        entry_per_page=(attributes.end_index())-(attributes.start_index())+1
+
+        return render(request,'inventory/attribute.html',{"attributes":attributes,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"search_query":search})
 
     def post(self,request):
+        action = request.POST.get('action')
+
+        if action == 'add_attribute':
+            # category = Category.objects.get(id=int(category_id))
+            name     = request.POST.get('attribute')
+            attribute_type     = request.POST.get('attribute_type')
+            status     = request.POST.get('status')
+
+            Attribute.objects.create(attribute_type=attribute_type,name=name,status=status)
+            messages.success(request,"Attribute Added Successfully !")
+
+        if action == 'edit_attribute':
+            print("edit")
+            # category = Category.objects.get(id=int(category_id))
+            attribute_id = request.POST.get('attribute_edit_id')
+            name     = request.POST.get('attribute')
+            status     = request.POST.get('status')
+
+            attribute = Segment.objects.get(id=int(attribute_id))
+            attribute.category = category
+            attribute.name     = name
+            attribute.status   = status
+            attribute.save()
+            messages.success(request,"Attribute Updated Successfully !")
+
+        if action == 'delete_attribute':
+            attribute_id = request.POST.get('attribute_id')
+            Attribute.objects.get(id=int(attribute_id)).delete()
+            messages.success(request,"Attribute Deleted Successfully !")
         return redirect('inventory:inventory-attribute')
 # value.
 class InventoryValue(IsInventoryAdmin,View):

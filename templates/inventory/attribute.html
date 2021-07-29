@@ -40,14 +40,14 @@
                             <div>
                                 <label for="favcity" style="width:100%;"> 
                                     <select style="padding: 5px 50px 5px 7px !important; " name="no_of_entries" id="no_of_entries" onchange="set_params_go();"> 
-                                    <option value="20">20 Entries</option>
-                                    <option value="50">50 Entries</option>
-                                    <option value="100">100 Entries</option>
+                                    <option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
+                                    <option value="50" {% if no_of_entries == '50' %}selected{% endif %}>50 Entries</option>
+                                    <option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
                                     </select>
                                     </label>
                             </div>
                             <div class="right-pos">
-                                <p>20 Entries</p>
+                                <p>{{no_of_entries}} Entries</p>
                             </div>
                         </div>
                     </div>
@@ -71,164 +71,33 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                {% for attribute in attributes %}
                                 <tr>
                                     <td class="inv-green-border">
                                 
-                                        Colour
+                                        {{attribute.name}}
                                     </td>
                                     <td class="text-center">
-                                        3
+                                        {{attribute.value_count}}
                                     </td>
                                     <td>
-                                        <span class="inv-dot c-active ml-5"></span>
-                                        Active
+                                        {% if attribute.status == True %}
+                                        <span class="inv-dot c-active ml-5"></span>Active
+                                        {% else %}
+                                        <span class="inv-dot c-active ml-5"></span>Not Active
+                                        {% endif %}
                                         
                                     </td>
                                     <td>
                                   
-                                        <button class="inv-plan-img-btn" onclick="showDrawer('edit')" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                        <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                                        <button class="inv-plan-img-btn edit_attribute" data-attributeid="{{attribute.id}}" data-attributename="{{attribute.name}}" data-attributestatus="{{attribute.status}}" onclick="showDrawer('edit')" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                        <button class="inv-plan-img-btn delete_attribute" data-attributeid="{{attribute.id}}" data-attributename="{{attribute.name}}" data-attributestatus="{{attribute.status}}" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
         
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td class="inv-green-border">
-                                
-                                        Colour
-                                    </td>
-                                    <td class="text-center">
-                                        3
-                                    </td>
-                                    <td>
-                                        <span class="inv-dot c-active ml-5"></span>
-                                        Active
-                                        
-                                    </td>
-                                    <td>
-                                  
-                                        <button class="inv-plan-img-btn" onclick="showDrawer('edit')" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                        <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-        
-                                    </td>
-                                </tr><tr>
-                                    <td class="inv-green-border">
-                                
-                                        Colour
-                                    </td>
-                                    <td class="text-center">
-                                        3
-                                    </td>
-                                    <td>
-                                        <span class="inv-dot c-active ml-5"></span>
-                                        Active
-                                        
-                                    </td>
-                                    <td>
-                                  
-                                        <button class="inv-plan-img-btn" onclick="showDrawer('edit')" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                        <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-        
-                                    </td>
-                                </tr><tr>
-                                    <td class="inv-green-border">
-                                
-                                        Colour
-                                    </td>
-                                    <td class="text-center">
-                                        3
-                                    </td>
-                                    <td>
-                                        <span class="inv-dot c-active ml-5"></span>
-                                        Active
-                                        
-                                    </td>
-                                    <td>
-                                  
-                                        <button class="inv-plan-img-btn" onclick="showDrawer('edit')" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                        <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-        
-                                    </td>
-                                </tr><tr>
-                                    <td class="inv-green-border">
-                                
-                                        Colour
-                                    </td>
-                                    <td class="text-center">
-                                        3
-                                    </td>
-                                    <td>
-                                        <span class="inv-dot c-active ml-5"></span>
-                                        Active
-                                        
-                                    </td>
-                                    <td>
-                                  
-                                        <button class="inv-plan-img-btn" onclick="showDrawer('edit')" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                        <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-        
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="inv-green-border">
-                                
-                                        Colour
-                                    </td>
-                                    <td class="text-center">
-                                        3
-                                    </td>
-                                    <td>
-                                        <span class="inv-dot c-active ml-5"></span>
-                                        Active
-                                        
-                                    </td>
-                                    <td>
-                                  
-                                        <button class="inv-plan-img-btn" onclick="showDrawer('edit')" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                        <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-        
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="inv-green-border">
-                                
-                                        Colour
-                                    </td>
-                                    <td class="text-center">
-                                        3
-                                    </td>
-                                    <td>
-                                        <span class="inv-dot c-active ml-5"></span>
-                                        Active
-                                        
-                                    </td>
-                                    <td>
-                                  
-                                        <button class="inv-plan-img-btn" onclick="showDrawer('edit')" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                        <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-        
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="inv-green-border">
-                                
-                                        Colour
-                                    </td>
-                                    <td class="text-center">
-                                        3
-                                    </td>
-                                    <td>
-                                        <span class="inv-dot c-active ml-5"></span>
-                                        Active
-                                        
-                                    </td>
-                                    <td>
-                                  
-                                        <button class="inv-plan-img-btn" onclick="showDrawer('edit')" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                        <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-        
-                                    </td>
-                                </tr>
-                                
+                                {% empty%}
+                                <tr><td></td><td>No Data</td><td></td><td></td></tr>
+                                {% endfor %}                               
                               
                             </tbody>
                             </table>
@@ -237,26 +106,50 @@
                         <div class="text-right">
                             <ul class="pagination">
      
+                                {% if attributes.has_previous %}
+                                <li class="page-item">
+                                  <a class="page-link" href="?page={{ attributes.previous_page_number }}&search={{request.GET.search}}" aria-label="Previous">
+                                    <span aria-hidden="true">«</span>
+                                    <span class="sr-only">Previous</span>
+                                  </a>
+                                </li>
+                                {% else %}
                                 <li class="page-item">
                                   <a class="page-link" href="#" aria-label="Previous">
                                     <span aria-hidden="true">«</span>
                                     <span class="sr-only">Previous</span>
                                   </a>
                                 </li>
-                                        <li class="page-item"><a class="page-link" >1</a></li>                             
-                                        <li class="page-item"><a class="page-link" >2</a></li>
-                                        <li class="page-item"><a class="page-link" >3</a></li>
+                                {% endif %}
+
+                                {% for pg in page_range %}
+                                    {% if vus.number == pg %}
+                                        <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}" >{{pg}}</a></li> 
+                                    {% else %}
+                                        <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}" >{{pg}}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% if attributes.has_next %}
                                 <li class="page-item">
-                                  <a class="page-link" href="?page=2&amp;search=&amp;governorate=&amp;area=&amp;customertype=&amp;status=&amp;no_of_entries=" aria-label="Next">
+                                  <a class="page-link" href="?page={{ attributes.next_page_number }}&search={{request.GET.search}}" aria-label="Next">
                                     <span aria-hidden="true">»</span>
                                     <span class="sr-only">Next</span>
                                   </a>
                                 </li>
+                                {% else %}
+                                <li class="page-item">
+                                  <a class="page-link" href="#" aria-label="Next">
+                                    <span aria-hidden="true">»</span>
+                                    <span class="sr-only">Next</span>
+                                  </a>
+                                </li>
+                                {% endif %}
                                 
                               </ul>
                         </div>
                         <div style="color: #928F8F;">
-                            Showing 1 to 20 of 2119 entries 
+                            Showing {{attributes.start_index}} to {{attributes.end_index}} of {{attributes.paginator.count}} entries
                         </div>
         
                     </div>
@@ -325,13 +218,29 @@
                 </div>
             </div>
             <hr>
+            <form method="POST" action="">{% csrf_token %}
+            <input type="hidden" name="action" id="attribute_action" value="add_attribute" />
+            <input type="hidden" name="attribute_edit_id" id="id_edit_attribute" />
             <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Attribute Name</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                        <input type="text"  class="w-p-100 inv-in" name="attribute">
                       </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Attribute Type</div>
+
+                    <select class="minimal" name="attribute_type" id="attribute_type" required>
+                        <option value="CATEGORY" selected>Category</option>
+                        <option value="SEGMENT">Segment</option>
+                        <option value="LINE">Line</option>
+
+                    </select>
                 </div>
 
             </div>
@@ -339,10 +248,9 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Status</div>
 
-                    <select id="id_payment" class="minimal">
-                        <option  ></option>
-                        <option  >Active</option>
-                        <option value="Post Paid">Inactive</option>
+                   <select class="minimal" name="status" id="status_attribute" required>
+                        <option value="True" selected>Active</option>
+                        <option value="False">Inactive</option>
 
                     </select>
                 </div>
@@ -354,9 +262,10 @@
           
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button" >Submit</button>
+            <button class="sent-button" type="submit" >Submit</button>
                         <button data-dismiss="modal" onclick="closeNavAddAttribute()" class="view-button">Cancel</button>
         </div>
+        </form>
     </div>
     <div id="addValue" class="inv-sidedrawer">
 
@@ -449,9 +358,11 @@
         console.log(d)
         if(d == 'add'){
             $(".inv-drawer-head-common").text("Add Attribute");
+            $('#attribute_action').val('add_attribute');
         }
         if(d == 'edit'){
             $(".inv-drawer-head-common").text("Edit Attribute");
+            $('#attribute_action').val('edit_attribute');
         }
         openNavAddAttribute()
     }
@@ -481,6 +392,22 @@
     function closeNavAddValue() {
         document.getElementById("addValue").style.width = "0";
     }
+
+    $('.delete_attribute').click(function(){
+        $('#id_attribute').val($(this).data('attributeid'));
+    })
+
+    $('.edit_attribute').click(function(){
+        $('#id_edit_attribute').val($(this).data('attributeid'));
+        $('#name_attribute').val($(this).data('attributename'));
+        $('#status_attribute').val($(this).data('attributestatus'));
+    })
+
+    $('.add_attribute').click(function(){
+        $('#id_edit_attribute').val($(this).data('attributeid'));
+        $('#name_attribute').val('');
+        $('#status_attribute').val('');
+    })
 </script>
 
 {% endblock %}
