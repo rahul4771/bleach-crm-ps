@@ -748,7 +748,7 @@ const app = new Vue({
        
         
       }).then(response=>{
-        $('.view-button').click()
+       
         location.reload()
        
       })
@@ -761,7 +761,7 @@ const app = new Vue({
         evaluation_book_id:this.evaluation_book_id,
         schedule_id:this.schedule_id,
         reduction_status:this.reduction_status,
-        reduction_amount:this.reduction_total,  
+        reduction_amount:this.reducing_total,  
         }
       }
       else{
@@ -773,7 +773,7 @@ const app = new Vue({
         }
       }
       axios.post(this.url+'/customer/editorder/'+this.orderId,post_data).then(response=>{
-        $('.view-button').click()
+        
         location.reload()
        
       })
