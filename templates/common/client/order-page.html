@@ -1494,7 +1494,7 @@
                                                         <img v-if="edit" class="visit-time-edit pointer ml-10 mt-2p " src="{% static 'files/icons/delete-primary.png' %}" onclick="deleteCleaningDate(this)"  data-cleaning_start_date="{{multi_order_schedule.start_at|date:'d-m-Y'}}" data-evaluation_book_id="{{multi_order_schedule.order_scheduler_book.id}}" data-id="{{multi_order_schedule.id}}" data-service="{{multi_order_schedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{multi_order_schedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{multi_order_schedule.order_scheduler_book.cleaning_hours}}" >
                                                        
                                                         {% elif multi_order_schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' %}
-                                                        <img v-if="edit" class="visit-time-edit pointer ml-10 mt-2p " src="{% static 'files/icons/cancel-primary.png' %}"  onclick="cancelCleaningDate(this)" data-cleaning_start_date="{{multi_order_schedule.start_at|date:'d-m-Y'}}" data-evaluation_book_id="{{multi_order_schedule.order_scheduler_book.id}}" data-id="{{multi_order_schedule.id}}" data-service="{{multi_order_schedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{multi_order_schedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{multi_order_schedule.order_scheduler_book.cleaning_hours}}">
+                                                        <img v-if="edit" class="visit-time-edit pointer ml-10 mt-2p " src="{% static 'files/icons/cancel-primary.png' %}"  onclick="cancelCleaningDate(this)"  data-cleaning_start_date="{{multi_order_schedule.start_at|date:'d-m-Y'}}" data-estimated_cost="{{multi_order_schedule.order_scheduler_book.estimated_cost}}" data-evaluation_book_id="{{multi_order_schedule.order_scheduler_book.id}}" data-id="{{multi_order_schedule.id}}" data-service="{{multi_order_schedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{multi_order_schedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{multi_order_schedule.order_scheduler_book.cleaning_hours}}">
                                                         {%endif%}
                                                         <!--<div class="vist-card-item-last ml-5">
                                                             <button {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %}class="inprogress-button"{% elif multi_order_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}class="assigned-button"{% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED'%}class="completed-button"{% else %}class="canceled-button"{% endif %}>  {% for investigation in multi_order_schedule.investigations|slice:":1" %}{% for followup in investigation.followups|slice:":1" %}{% if followup %} <i aria-hidden="true" class="fa fa-flag" style="margin-right: 5px ;"></i> {% endif %}{% endfor %}{% endfor %} {{multi_order_schedule.work_status|default_if_none:'NOT STARTED'}}</button>
@@ -2262,7 +2262,7 @@
                     <div class="cancel-model-content">
                         
                         <button class="sent-button" type="submit" @click="deleteVisit()">Yes</button>
-                        <button data-dismiss="modal" class="del-visit-button">Cancel</button>
+                        <button data-dismiss="modal" class="view-button">Cancel</button>
                       
                         
                     </div>
@@ -2292,12 +2292,29 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="cancel-model-content">
-                        <h1>Do you want to delete this Visit?</h1>
+                        <h1>Do you want to cancel this Visit?</h1>
                     </div>
                 </div>
                 <div class="col-md-12">
-                    <div class="cancel-model-content">
-                        <h1>Do you want to delete this Visit?</h1>
+                    <div class="d-flex justify-center">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" v-model="reduction_status" checked :value="false">
+                            <label class="form-check-label" for="flexRadioDefault1">
+                              Without Reducing Amount
+                            </label>
+                          </div>
+                          <div class="form-check ml-20">
+                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2"  v-model="reduction_status" :value="true">
+                            <label class="form-check-label" for="flexRadioDefault2">
+                                Reducing Amount
+                            </label>
+                          </div>
+                    </div>
+                    <div v-if="reduction_status" class="text-center">
+                        <div class="input-group mb-3 mx-auto mt-20">
+                          
+                            <input type="text" class="form-control" placeholder="Amount to be Reduced"  v-model="reducing_total">
+                          </div>
                     </div>
                 </div>
 
@@ -2307,7 +2324,7 @@
                     <div class="cancel-model-content">
                         
                         <button class="sent-button" type="submit" @click="cancelVisit()">Yes</button>
-                        <button data-dismiss="modal" class="del-visit-button">Cancel</button>
+                        <button data-dismiss="modal" class="view-button">Cancel</button>
                       
                         
                     </div>

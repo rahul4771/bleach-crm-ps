@@ -209,10 +209,12 @@ function deleteCleaningDate(service){
  
 }
 function cancelCleaningDate(service){
+ 
   app.cleaning_action='cancell_cleaning'
   app.reduction_status=false
   $('#cleaning-cancel-tigger').click()
   var data=$(service).data()
+  
   app.no_of_cleaners=data.no_of_cleaners
   app.cleaning_policy='SUBSCRIPTION'
   app.selected_no_of_cleaners=data.no_of_cleaners
@@ -221,7 +223,7 @@ function cancelCleaningDate(service){
   app.no_of_slots=Math.ceil(data.cleaning_hours/2)
   app.evaluation_book_id=data.evaluation_book_id
   app.schedule_id=data.id
-  
+  app.reducing_total=parseInt(data.estimated_cost)
   app.cleaning_start_date=data.cleaning_start_date
   app.selected_cleaning_date=data.cleaning_start_date
  
@@ -274,7 +276,9 @@ const app = new Vue({
 
   data: {
     reduction_status:false,
+    no_of_visits:0,
     services:[],
+    reducing_total:0,
     selected_cleaning_date:'',
     cleaning_policy:'',
     highprice_facade:[],
@@ -744,7 +748,32 @@ const app = new Vue({
        
         
       }).then(response=>{
-        $('.del-visit-button').click()
+        $('.view-button').click()
+        location.reload()
+       
+      })
+    },
+    cancelVisit(){
+     
+      if(this.reduction_status){
+        var post_data={
+          action_type:'cancell_cleaning',
+        evaluation_book_id:this.evaluation_book_id,
+        schedule_id:this.schedule_id,
+        reduction_status:this.reduction_status,
+        reduction_amount:this.reduction_total,  
+        }
+      }
+      else{
+        var post_data={
+          action_type:'cancell_cleaning',
+        evaluation_book_id:this.evaluation_book_id,
+        schedule_id:this.schedule_id,
+        reduction_status:this.reduction_status,
+        }
+      }
+      axios.post(this.url+'/customer/editorder/'+this.orderId,post_data).then(response=>{
+        $('.view-button').click()
         location.reload()
        
       })
