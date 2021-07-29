@@ -5093,25 +5093,16 @@ class EditOrderDetails(APIView):
 				cleaning_schedule.delete()
 			else:
 				if reduction_status == True:
-					cleaning_schedule.order_scheduler_book.estimated_cost   -= cleaning_schedule.order_scheduler_book.estimated_cost
-					cleaning_schedule.order_scheduler_book.total_cost       -= cleaning_schedule.order_scheduler_book.estimated_cost
-					cleaning_schedule.evaluation_details.estimated_cost     -= cleaning_schedule.order_scheduler_book.estimated_cost
-					cleaning_schedule.evaluation_details.total_cost         -= cleaning_schedule.order_scheduler_book.estimated_cost
-					order.evaluation.estimated_cost                         -= cleaning_schedule.order_scheduler_book.estimated_cost
-					order.evaluation.total_cost                             -= cleaning_schedule.order_scheduler_book.estimated_cost
-					order.total_amount                                      -= cleaning_schedule.order_scheduler_book.estimated_cost
-					order.remining_amount                                   -= cleaning_schedule.order_scheduler_book.estimated_cost
+					reduction_amount        = int(request.data.get('reduction_amount'))
+
+					order.evaluation.estimated_cost                         -= reduction_amount
+					order.evaluation.total_cost                             -= reduction_amount
+					order.evaluation.cancelled_amount                       -= reduction_amount
+					order.total_amount                                      -= reduction_amount
+					order.remining_amount                                   -= reduction_amount
 										
-					cleaning_schedule.order_scheduler_book.save()
-					cleaning_schedule.evaluation_details.save()
 					order.evaluation.save()
 					order.save()
-
-					#section update
-					for section in cleaning_schedule.order_scheduler_book.booksections:
-						section.total_cost -= section.estimated_cost
-						section.save()
-
 
 
 				cleaning_schedule.work_status = 'CLEANING_CANCELLED'
