@@ -1390,15 +1390,17 @@
 
                                             {% if section.sectionkeynotes %}
 
-                                            <div class="col-md-4 ml-0 ">
+                                           
 
                                             {% for keynote in section.sectionkeynotes %}
                                             {% if forloop.counter|divisibleby:2 %}
                                             {% else %}
 
                                                 {% if keynote.sub_area != 'kitchen' %}
+                                                <div class="col-md-4 ml-0 ">
                                                     <div class="clean-section-card">
                                                         <p>{{keynote.sub_area}}<span class="c-text2">{{keynote.quantity}}</span></p>
+                                                    </div>
                                                     </div>
                                                 {% endif %}
 
@@ -1406,30 +1408,33 @@
 
                                             {% if keynote.sub_area == 'kitchen' %}
                                             {% ifchanged keynote.sub_area %}
+                                            <div class="col-md-4 ml-0 ">
                                                 <div class="clean-section-card">
                                                     <p>Kitchen<span class="c-text2">{{section.kitchen_keynote}}</span></p>
+                                                </div>
                                                 </div>
                                             {% endifchanged %}
                                             {% endif %}
 
                                             {% endfor %}
 
-                                            </div>
+                                            
 
-                                            <div class="col-md-4 ml-0 ">
+                                            
                                             {% for keynote in section.sectionkeynotes %}
                                             {% if forloop.counter|divisibleby:2 %}
 
                                                 {% if keynote.sub_area != 'kitchen' %} 
+                                                <div class="col-md-4 ml-0 ">
                                                 <div class="clean-section-card">
                                                     <p>{{keynote.sub_area}}<span class="c-text2">{{keynote.quantity}}</span></p>
                                                 </div>
+                                            </div>
                                                 {% endif %} 
 
                                             {% else %}
                                             {% endif %}
                                             {% endfor %}
-                                            </div>
                                             
                                             
                                             {% endif %}
@@ -1487,8 +1492,8 @@
                                                         </div>
                                                         <img  class="visit-time-edit pointer ml-20 mt-2p" src="{% static 'files/icons/flags.png' %}" ><span class="ml-5 visit-text"></span>
 
-                                                        <img  class="visit-time-edit pointer ml-20 mt-2p" src="{% static 'files/icons/user-primary.png' %}" ><span class="ml-5 visit-text">{{multi_order_schedule.order_scheduler_book.number_of_cleaners}}</span>
-                                                        <img  class="visit-time-edit pointer ml-20 mt-2p" src="{% static 'files/icons/time-primary.png' %}" ><span class="ml-5 visit-text">{{multi_order_schedule.order_scheduler_book.cleaning_hours}}</span>
+                                                        <img  class="visit-time-edit pointer ml-20 mt-2p" src="{% static 'files/icons/user-primary.png' %}" ><span class="ml-5 visit-text">{% if multi_order_schedule.order_scheduler_book.number_of_cleaners %}{{multi_order_schedule.order_scheduler_book.number_of_cleaners}}{% else %}0{% endif %}</span>
+                                                        <img  class="visit-time-edit pointer ml-20 mt-2p" src="{% static 'files/icons/time-primary.png' %}" ><span class="ml-5 visit-text">{% if multi_order_schedule.order_scheduler_book.cleaning_hours %}{{multi_order_schedule.order_scheduler_book.cleaning_hours}}{% else %}0{% endif %}</span>
 
                                                         <img v-if="edit" class="visit-time-edit pointer ml-auto mt-2p" src="{% static 'files/icons/edit-primary.png' %}" onclick="editCleaningDate(this)" data-cleaning_start_date="{{multi_order_schedule.start_at|date:'d-m-Y'}}" data-evaluation_book_id="{{multi_order_schedule.order_scheduler_book.id}}" data-id="{{multi_order_schedule.id}}" data-service="{{multi_order_schedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{multi_order_schedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{multi_order_schedule.order_scheduler_book.cleaning_hours}}">
                                                         {% if multi_order_schedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}
@@ -1581,7 +1586,7 @@
                                         <div class="row c-mt-10 id_team_members_div">
                                         {% for team_member in cleaning_team.cleaning_team_members %}
                                         {% if team_member.member != cleaning_team.team_leader %}
-                                            <div class="col-md-2 m-mt20 .c-mb-10 mr-0 ml-0">
+                                            <div class="col-md-3 m-mt20 .c-mb-10 mr-0 ml-0">
                                                 <div class="row">
                                                     <div class="col-xs-4 pr-0">
                                                         {% if team_member.member.profile_image %}
@@ -1608,7 +1613,7 @@
                                         </div>
 
                                         <div class="row c-mt-10">
-                                            <div class="col-md-2 mr-0 ml-0">
+                                            <div class="col-md-3 mr-0 ml-0">
                                                 <div class="row">
                                                     <div class="col-xs-4 pr-0">
                                                         <img class="clean-team-profile-pic"
@@ -1631,7 +1636,7 @@
                                         </div>
 
                                         <div class="row c-mt-10">
-                                            <div class="col-md-2 mr-0 ml-0">
+                                            <div class="col-md-3 mr-0 ml-0">
                                                 <div class="row">
                                                     <div class="col-xs-4 pr-0">
                                                         {% if cleaning_team.team_leader.profile_image %}
@@ -2790,11 +2795,11 @@ function load_cleaning_team(visitcount,scheduleid){
                         
                         $('.id_team_members_div').empty();
 
-                        $('.id_team_members_div').append('<div class="col-md-2 m-mt20 .c-mb-10 mr-0 ml-0"> <div class="row"> <div class="col-xs-4 pr-0"> <img class="clean-team-profile-pic" src="'+response.data.team_leader_image+'"> </div> <div class="col-xs-8"> <div class="order-agent-content text-left"> <h2>'+response.data.team_leader+'</h2> <h6>Team Leader</h6> </div></div></div></div>');
+                        $('.id_team_members_div').append('<div class="col-md-3 m-mt20 .c-mb-10 mr-0 ml-0"> <div class="row"> <div class="col-xs-4 pr-0"> <img class="clean-team-profile-pic" src="'+response.data.team_leader_image+'"> </div> <div class="col-xs-8"> <div class="order-agent-content text-left"> <h2>'+response.data.team_leader+'</h2> <h6>Team Leader</h6> </div></div></div></div>');
 
                         $.each(response.data.members,function(key,value){
                             console.log(value,"valk")
-                            $('.id_team_members_div').append('<div class="col-md-2 m-mt20 .c-mb-10 mr-0 ml-0"> <div class="row"> <div class="col-xs-4 pr-0"> <img class="clean-team-profile-pic" src="'+value.member_image+'"> </div> <div class="col-xs-8"> <div class="order-agent-content text-left"> <h2>'+value.member_name+'</h2> <h6>Team Member</h6> </div></div></div></div>');
+                            $('.id_team_members_div').append('<div class="col-md-3 m-mt20 .c-mb-10 mr-0 ml-0"> <div class="row"> <div class="col-xs-4 pr-0"> <img class="clean-team-profile-pic" src="'+value.member_image+'"> </div> <div class="col-xs-8"> <div class="order-agent-content text-left"> <h2>'+value.member_name+'</h2> <h6>Team Member</h6> </div></div></div></div>');
                         })
 
                         $('.id_assigned_by').text(response.data.assigned_by);
