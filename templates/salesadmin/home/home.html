@@ -136,23 +136,33 @@
     <tbody>
         {% for book_cancell_request in book_cancell_requests %}
         <tr>
-        <td class="bold-text">
-        {{book_cancell_request.evaluation_details.evaluation.evaluation_id}}
-        </td>
-        <td>
-        {{book_cancell_request.evaluation_details.evaluation.customer.name}}
-        </td>
-        <td>
-        {{book_cancell_request.evaluation_details.evaluation.customer.mobile_number}}
-        </td>
-        <td>
-        {{book_cancell_request.cancell_requester.name}}
-        </td>
-        <td>
-          {{book_cancell_request.service_type.name}}
+          <td class="bold-text">
+          {{book_cancell_request.evaluation_id}}
           </td>
-        <td>
-        <span class="clickable-row red-bg" data-href="#">Click to Cancel</span>
+          <td>
+          {{book_cancell_request.customer.name}}
+          </td>
+          <td>
+          {{book_cancell_request.customer.mobile_number}}
+          </td>
+          <td>
+            {% for book_cancell in book_cancells %}
+            {% if book_cancell.evaluation_details.evaluation == book_cancell_request %}
+            {{book_cancell.cancell_requester.name}}
+            <br>
+            {% endif %}
+            {% endfor %}
+          </td>
+          <td>
+            {% for book_cancell in book_cancells %}
+            {% if book_cancell.evaluation_details.evaluation == book_cancell_request %}
+            {{book_cancell.service_type.name}}
+            <br>
+            {% endif %}
+            {% endfor %}
+            </td>
+          <td>
+        <span class="clickable-row red-bg" data-href="{% url 'bleach_salesadmin:cancell-book' book_cancell_request.id %}">Click to Cancel</span>
         </td>
         </tr>
         {% endfor %}
