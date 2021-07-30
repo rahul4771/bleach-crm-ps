@@ -5130,7 +5130,7 @@ class ServiceCancellationRequest(APIView):
 		requester_id             = request.data.get('requester_id')
 
 		for book in service_books:
-			EvaluationBook.objects.filter(id=book).update(status='CANCELL_IN_PROGRESS',cancell_requester__id=requester_id)
+			EvaluationBook.objects.filter(id=book).update(status='CANCELL_IN_PROGRESS',cancell_requester_id=requester_id)
 		
 		response_dict['success'] = True
 		

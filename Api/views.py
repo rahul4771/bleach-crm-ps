@@ -655,7 +655,7 @@ class DailySalesAPI(APIView):
 
 				schedule_count = OrderScheduler.objects.filter(order__order_no=schedule[0],order_scheduler_book__id=schedule[4]).count()
 
-				order_amount = schedule[1]
+				order_amount     = schedule[1]
 				cleaning_amount += float(order_amount/schedule_count)
 				
 				#fine,promocode, write off calc
