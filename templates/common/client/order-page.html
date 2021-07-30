@@ -41,21 +41,37 @@
                 </div>
                 <div class="row mt-20">
                   
-                  <div class="col-md-6 text-right">
-                    <span class="inv-dot inprogress-chip-bg ml-5 "></span>
-                    Cleaning In Progress
+                  <div class="col-md-4 text-center mt-10">
+                      <div class="cleaning-stat">
+                        <span class="inv-dot inprogress-chip-bg ml-5 "></span>
+                        Cleaning In Progress
+                      </div>
+                    
                   </div>
-                  <div class="col-md-6 text-left">
+                  <div class="col-md-4 text-center mt-10">
+                    <div class="cleaning-stat">
                     <span class="inv-dot assigned-chip-bg ml-5"></span>
                     Cleaning Team Assigned
+                    </div>
                   </div>
-                  <div class="col-md-6 text-right " style="margin-top:10px;margin-bottom:10px">
+                  <div class="col-md-4 text-center mt-10" >
+                    <div class="cleaning-stat">
                     <span class="inv-dot completed-chip-bg ml-5"></span>
                    Completed
+                   </div>
                   </div>
-                  <div class="col-md-6 text-left  "  style="margin-top:10px;margin-bottom:30px">
+                  <div class="col-md-4 text-center  mt-10"  >
+                    <div class="cleaning-stat">
                     <span class="inv-dot cancel-chip-bg ml-5"></span>
-                    Cancelled / Not Started
+                    Cancelled 
+                  </div>
+                  </div>
+                 
+                  <div class="col-md-4 text-center  mt-10"  style="margin-top:10px;margin-bottom:30px">
+                    <div class="cleaning-stat">
+                    <span class="inv-dot notstarted-chip-bg ml-5"></span>
+                     Not Started
+                  </div>
                   </div>
     
                   
@@ -1485,7 +1501,7 @@
                                                 <div class="cleaning-status-container  pointer ">
                                                    
                                                     <div  id="id_select_visit_inner{{multi_order_schedule.id}}" class="row cleaning-status-row  cleaning-status-card  ">
-                                                        <div class="status-dot {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %} inprogress-chip-bg {% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED' %} completed-chip-bg {% elif multi_order_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}assigned-chip-bg{% else %} cancel-chip-bg {% endif %}"></div>
+                                                        <div class="status-dot {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %} inprogress-chip-bg {% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED' %} completed-chip-bg {% elif multi_order_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}assigned-chip-bg{% elif multi_order_schedule.work_status == 'CLEANING_TEAM_CANCELLED' %}cancel-chip-bg{% else %} notstarted-chip-bg {% endif %}"></div>
                                                         <div class="vist-card-item-first visit-text">
                                                             Visit {{forloop.counter}}
                                                         </div>
@@ -1533,9 +1549,9 @@
                                             <div>
                                                 <h1><span>Visit</span> <span class="visit_count">1</span>  </h1> 
                                                 <div class="d-flex secondary-text">
-                                                <div class="status-dot {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %} inprogress-chip-bg {% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED' %} completed-chip-bg {% elif multi_order_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}assigned-chip-bg{% else %} cancel-chip-bg {% endif %}">
+                                                <div class="status-dot {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %} inprogress-chip-bg {% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED' %} completed-chip-bg {% elif multi_order_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}assigned-chip-bg{% elif multi_order_schedule.work_status == 'CLEANING_CANCELLED' %}cancel-chip-bg{% else %} notstarted-chip-bg {% endif %}">
                                                  </div>
-                                                 <div>   {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %} In Progress {% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED' %} Completed{% elif multi_order_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}Team Assigned{% else %} Cancelled{% endif %}
+                                                 <div>   {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %} In Progress {% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED' %} Completed{% elif multi_order_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}Team Assigned{% elif multi_order_schedule.work_status == 'CLEANING_TEAM_CANCELLED' %}Cancelled{% else %} Not Started{% endif %}
                                                 </div>
                                                 </div>
 

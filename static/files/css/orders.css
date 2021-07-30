@@ -631,7 +631,14 @@
 .completed-chip-bg{
   background: #10a82f !important;
 }
-
+.notstarted-chip-bg{
+  background: #AAA8A7 !important;
+}
+.cleaning-stat{
+  max-width: 200px;
+    margin: auto;
+    text-align: left;
+}
 .c-active {
   border: 1px solid #74a7ff;
   margin: 0;
