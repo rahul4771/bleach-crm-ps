@@ -163,7 +163,7 @@
   padding-left: 0px !important;
 }
 .order-card-column {
-  min-height: 170px;
+/*  min-height: 170px;*/
 }
 .visti-section {
   display: block;
@@ -503,7 +503,7 @@
   background: #edf1f6 0% 0% no-repeat padding-box;
   border-radius: 3px;
   opacity: 1;
-  padding: 3px 5px 3px 5px;
+  padding: 4px 5px 3px 5px;
  border: 1px solid transparent ;
 
   /* margin-left: 10px; */
@@ -568,6 +568,9 @@
     height: 10px;
     margin: 5px;
     border-radius: 15px;
+}
+.secondary-text{
+  color: #434343;
 }
 .visit-time-edit{
   height:15px;
