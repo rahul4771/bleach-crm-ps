@@ -165,6 +165,35 @@
 .order-card-column {
 /*  min-height: 170px;*/
 }
+.service-checkbox{
+  border-radius:0px !important;
+  margin: 4px 8px 0px !important;
+  background: #edf1f5 !important;
+    border: 1px solid #B9CFEB !important;
+}
+.service-checkbox:checked::before{
+  color: #2d4c82 !important;
+    padding-left: -1px !important;
+    padding-right: 2px !important;
+    padding-bottom: 5px !important;
+}
+.service-checkbox-label{
+  max-width:200px;
+  min-width:200px;
+  text-align: center;
+  display: inline-block;
+  font-size: 14px;
+  border: 1px solid #B9CFEB;
+  border-radius:3px;
+    max-width: 100%;
+    margin-bottom: 5px;
+    background-color: #edf1f5;
+    font-weight: 300;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
 .visti-section {
   display: block;
   padding: 0px 10px 10px 10px;
@@ -602,7 +631,14 @@
 .completed-chip-bg{
   background: #10a82f !important;
 }
-
+.notstarted-chip-bg{
+  background: #AAA8A7 !important;
+}
+.cleaning-stat{
+  max-width: 200px;
+    margin: auto;
+    text-align: left;
+}
 .c-active {
   border: 1px solid #74a7ff;
   margin: 0;

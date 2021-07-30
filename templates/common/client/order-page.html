@@ -19,7 +19,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.standalone.min.css" integrity="sha512-TQQ3J4WkE/rwojNFo6OJdyu6G8Xe9z8rMrlF9y7xpFbQfW5g8aSWcygCQ4vqRiJqFsDsE1T6MoAOMJkFXlrI9A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
 <div class="wrapper" id="app" v-cloak><!--wrapper-->
-
+   <!--- user id-->
+   <input type="hidden" value="{{request.user.id}}" id="user_id"/>
     <!-- helper modal begins here-->
     <div class="modal fade" id="helpModel" role="dialog">
         <div style="border: none !important;" class="modal-dialog cancel-model cancel-order-border " role="document">
@@ -40,21 +41,37 @@
                 </div>
                 <div class="row mt-20">
                   
-                  <div class="col-md-6 text-right">
-                    <span class="inv-dot inprogress-chip-bg ml-5 "></span>
-                    Cleaning In Progress
+                  <div class="col-md-4 text-center mt-10">
+                      <div class="cleaning-stat">
+                        <span class="inv-dot inprogress-chip-bg ml-5 "></span>
+                        Cleaning In Progress
+                      </div>
+                    
                   </div>
-                  <div class="col-md-6 text-left">
+                  <div class="col-md-4 text-center mt-10">
+                    <div class="cleaning-stat">
                     <span class="inv-dot assigned-chip-bg ml-5"></span>
                     Cleaning Team Assigned
+                    </div>
                   </div>
-                  <div class="col-md-6 text-right " style="margin-top:10px;margin-bottom:10px">
+                  <div class="col-md-4 text-center mt-10" >
+                    <div class="cleaning-stat">
                     <span class="inv-dot completed-chip-bg ml-5"></span>
                    Completed
+                   </div>
                   </div>
-                  <div class="col-md-6 text-left  "  style="margin-top:10px;margin-bottom:30px">
+                  <div class="col-md-4 text-center  mt-10"  >
+                    <div class="cleaning-stat">
                     <span class="inv-dot cancel-chip-bg ml-5"></span>
-                    Cancelled / Not Started
+                    Cancelled 
+                  </div>
+                  </div>
+                 
+                  <div class="col-md-4 text-center  mt-10"  style="margin-top:10px;margin-bottom:30px">
+                    <div class="cleaning-stat">
+                    <span class="inv-dot notstarted-chip-bg ml-5"></span>
+                     Not Started
+                  </div>
                   </div>
     
                   
@@ -1025,9 +1042,10 @@
                             {% endif %}
                             
                             <div id="details{{orderschedule.id}}">
-                            <input type="hidden" value="{{orderschedule.order_scheduler_book.id}}" class="book_id" />
+                            <input type="hidden" value="{{orderschedule.order_scheduler_book.id}}" class="service_id" />
                                 <div class="order-container-main">
                                     <div class="order-header-class">
+                                        
                                         <h2 class="service-name">{{orderschedule.order_scheduler_book.service_type.name}}</h2>
                                         {% if orderschedule.order_scheduler_book.cleaning_policy  ==  'ONE TIME SERVICE' %}
                                         <button class="subscription-button">One Time</button>
@@ -1483,7 +1501,7 @@
                                                 <div class="cleaning-status-container  pointer ">
                                                    
                                                     <div  id="id_select_visit_inner{{multi_order_schedule.id}}" class="row cleaning-status-row  cleaning-status-card  ">
-                                                        <div class="status-dot {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %} inprogress-chip-bg {% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED' %} completed-chip-bg {% elif multi_order_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}assigned-chip-bg{% else %} cancel-chip-bg {% endif %}"></div>
+                                                        <div class="status-dot {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %} inprogress-chip-bg {% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED' %} completed-chip-bg {% elif multi_order_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}assigned-chip-bg{% elif multi_order_schedule.work_status == 'CLEANING_CANCELLED' %}cancel-chip-bg{% else %} notstarted-chip-bg {% endif %}"></div>
                                                         <div class="vist-card-item-first visit-text">
                                                             Visit {{forloop.counter}}
                                                         </div>
@@ -1496,12 +1514,12 @@
                                                         <img  class="visit-time-edit pointer ml-10 mt-2p" src="{% static 'files/icons/time-primary.png' %}" ><span class="ml-5 visit-text">{% if multi_order_schedule.order_scheduler_book.cleaning_hours %}{{multi_order_schedule.order_scheduler_book.cleaning_hours}}{% else %}0{% endif %}</span>
 
                                                         <img v-if="edit" class="visit-time-edit pointer ml-auto mt-2p" src="{% static 'files/icons/edit-primary.png' %}" onclick="editCleaningDate(this)" data-cleaning_start_date="{{multi_order_schedule.start_at|date:'d-m-Y'}}" data-evaluation_book_id="{{multi_order_schedule.order_scheduler_book.id}}" data-id="{{multi_order_schedule.id}}" data-service="{{multi_order_schedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{multi_order_schedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{multi_order_schedule.order_scheduler_book.cleaning_hours}}">
-                                                        {% if multi_order_schedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}
+                                                        <!-- {% if multi_order_schedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}
                                                         <img v-if="edit" class="visit-time-edit pointer ml-10 mt-2p " src="{% static 'files/icons/delete-primary.png' %}" onclick="deleteCleaningDate(this)"  data-cleaning_start_date="{{multi_order_schedule.start_at|date:'d-m-Y'}}" data-evaluation_book_id="{{multi_order_schedule.order_scheduler_book.id}}" data-id="{{multi_order_schedule.id}}" data-service="{{multi_order_schedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{multi_order_schedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{multi_order_schedule.order_scheduler_book.cleaning_hours}}" >
                                                        
                                                         {% elif multi_order_schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' %}
                                                         <img v-if="edit" class="visit-time-edit pointer ml-10 mt-2p " src="{% static 'files/icons/cancel-primary.png' %}"  onclick="cancelCleaningDate(this)"  data-cleaning_start_date="{{multi_order_schedule.start_at|date:'d-m-Y'}}" data-estimated_cost="{{multi_order_schedule.order_scheduler_book.estimated_cost}}" data-evaluation_book_id="{{multi_order_schedule.order_scheduler_book.id}}" data-id="{{multi_order_schedule.id}}" data-service="{{multi_order_schedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{multi_order_schedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{multi_order_schedule.order_scheduler_book.cleaning_hours}}">
-                                                        {%endif%}
+                                                        {%endif%} -->
                                                         <!--<div class="vist-card-item-last ml-5">
                                                             <button {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %}class="inprogress-button"{% elif multi_order_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}class="assigned-button"{% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED'%}class="completed-button"{% else %}class="canceled-button"{% endif %}>  {% for investigation in multi_order_schedule.investigations|slice:":1" %}{% for followup in investigation.followups|slice:":1" %}{% if followup %} <i aria-hidden="true" class="fa fa-flag" style="margin-right: 5px ;"></i> {% endif %}{% endfor %}{% endfor %} {{multi_order_schedule.work_status|default_if_none:'NOT STARTED'}}</button>
                                                         </div>-->
@@ -1531,9 +1549,9 @@
                                             <div>
                                                 <h1><span>Visit</span> <span class="visit_count">1</span>  </h1> 
                                                 <div class="d-flex secondary-text">
-                                                <div class="status-dot {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %} inprogress-chip-bg {% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED' %} completed-chip-bg {% elif multi_order_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}assigned-chip-bg{% else %} cancel-chip-bg {% endif %}">
+                                                <div class="status-dot {% if orderschedule.work_status == 'CLEANING_IN_PROGRESS' %} inprogress-chip-bg {% elif orderschedule.work_status == 'CLEANING_FULFILLED' %} completed-chip-bg {% elif orderschedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}assigned-chip-bg{% elif orderschedule.work_status == 'CLEANING_CANCELLED' %}cancel-chip-bg{% else %} notstarted-chip-bg {% endif %}">
                                                  </div>
-                                                 <div>   {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %} In Progress {% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED' %} Completed{% elif multi_order_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}Team Assigned{% else %} Cancelled{% endif %}
+                                                 <div>   {% if orderschedule.work_status == 'CLEANING_IN_PROGRESS' %} In Progress {% elif orderschedule.work_status == 'CLEANING_FULFILLED' %} Completed{% elif orderschedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}Team Assigned{% elif orderschedule.work_status == 'CLEANING_CANCELLED' %}Cancelled{% else %} Not Started{% endif %}
                                                 </div>
                                                 </div>
 
@@ -2028,11 +2046,11 @@
                                         {% endif %}
 
 
-                                        {% if order.order_status == 'APPROVED_BY_CLIENT' or order.order_status == 'ORDER_IN_PROGRESS'  %}
+                                        <!-- {% if order.order_status == 'APPROVED_BY_CLIENT' or order.order_status == 'ORDER_IN_PROGRESS'  %}
                                         <div class="row">
                                             <button style="width: 153px !important;" data-toggle="modal" data-target="#cancelModel" class="view-button">Order Cancel</button>
                                         </div>
-                                        {% endif %}
+                                        {% endif %} -->
 
                                         {% if request.user.user_type == 'AGENT' %}
                                         <div class="row">
@@ -2381,7 +2399,7 @@
             <div class="row pt-20 pb-20">
                 <div class="col-md-12 text-center">
                     <div class="cancel-model-content p-0">
-                        <form method="post" action="" enctype= "multipart/form-data" id="duplicate_form_id" class="text-center">{% csrf_token %}
+                        <!-- <form method="post" action="" enctype= "multipart/form-data" id="duplicate_form_id" class="text-center">{% csrf_token %} -->
                         <input type="hidden" name="evaluation" id="evaluation_id" value="{{order.evaluation.id}}">
                         <input type="hidden" name="action_type" value="cancell_order">
                         
@@ -2391,18 +2409,21 @@
                         <a href="{% url 'bleach_salesadmin:cancell-order' order.id %}" target="_blank"><button class="sent-button" type="button">Yes</button></a>
                         {% else %}
                      <div class="row" style="justify-content: center;">
-                           
-                            <div class="col-md-3" v-for="(service,serindex) in services" v-bind:key="serindex">
-                                <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                                <label class="form-check-label" for="exampleCheck1"><% service %></label>
+                        <div class="col-md-12 col-offset-3 text-center">
+                            <input type="checkbox" class="form-check-input service-checkbox" id="exampleCheck1" v-model="all_val" @change="checkAll()">
+                            <label class="form-check-label service-checkbox-label" for="exampleCheck1">All</label>
+                        </div>
+                            <div class="col-md-12 col-offset-3 text-center" v-for="(service,serindex) in services" v-bind:key="serindex">
+                                <input type="checkbox" class="form-check-input service-checkbox" id="exampleCheck1" v-model="services_list" :value="service" @change="removeAll()">
+                                <label class="form-check-label service-checkbox-label" for="exampleCheck1"><% service.name %></label>
                             </div>
                            
                         </div>
-                        <button class="sent-button mt-20" type="submit">Yes</button>
+                        <button class="sent-button mt-20" type="submit" @click="cancelServiceOrder()">Yes</button>
                         {% endif %}
 
                         <button data-dismiss="modal mt-20" class="view-button">Cancel</button>
-                        </form><!--Content ends here-->
+                        <!-- </form>Content ends here -->
                         
                     </div>
                 </div>

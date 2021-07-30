@@ -264,9 +264,13 @@ const app = new Vue({
     this.getTheSize('Kitchen Cleaning')
     console.log("service is"+$('.service-name'))
     var service=$('.service-name')
+    var book_ids=$('.service_id')
+    console.log("book ids ae"+JSON.stringify(book_ids))
     for(var i=0;i<service.length;i++)
     {
-      this.services.push($(service[i]).text())
+      this.services.push({
+        id:$(book_ids[i]).val(),
+        name:$(service[i]).text()})
     }
     
    
@@ -275,6 +279,7 @@ const app = new Vue({
   components: { Multiselect: window.VueMultiselect.default },
 
   data: {
+    all_val:false,
     reduction_status:false,
     no_of_visits:0,
     services:[],
@@ -433,13 +438,44 @@ const app = new Vue({
             sofa_size:[],
            progress:20,
            slotloader:false,
-
+            services_list:[],
             url:'https://my.bleachkw.com'
-          // url:'http://localhost:8000'
+         //  url:'http://localhost:8000'
             //url:'http://127.0.0.1:8000'
   },
   methods:{
-   
+   checkAll(){
+    if(this.all_val){
+        this.services_list=this.services
+    }
+    else{
+      this.services_list=[]
+    }
+   },
+   cancelServiceOrder(){
+     var service_books=[]
+     var requester_id=$('#user_id').val()
+     for(var i=0;i<this.services_list.length;i++){
+       service_books.push(this.services_list[i].id)
+     }
+    axios.post(this.url+'/customer/service/cancellrequest/',{
+      service_books:service_books,
+      requester_id:requester_id
+    }).then(response=>{
+     
+      
+      
+    })
+   },
+   removeAll(){
+     
+    if(this.services.length==this.services_list.length){
+      this.all_val=true
+    }
+    else{
+      this.all_val=false
+    }
+   },
     getTheSize(service){
       var service_productivity=[]
       axios.get(this.url+'/customer/ajax/getservicesizeprice?service_type='+service).then(response=>{
