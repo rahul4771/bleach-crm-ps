@@ -19,7 +19,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.standalone.min.css" integrity="sha512-TQQ3J4WkE/rwojNFo6OJdyu6G8Xe9z8rMrlF9y7xpFbQfW5g8aSWcygCQ4vqRiJqFsDsE1T6MoAOMJkFXlrI9A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
 <div class="wrapper" id="app" v-cloak><!--wrapper-->
-
+   <!--- user id-->
+   <input type="hidden" value="{{request.user.id}}" id="user_id"/>
     <!-- helper modal begins here-->
     <div class="modal fade" id="helpModel" role="dialog">
         <div style="border: none !important;" class="modal-dialog cancel-model cancel-order-border " role="document">
@@ -1025,9 +1026,10 @@
                             {% endif %}
                             
                             <div id="details{{orderschedule.id}}">
-                            <input type="hidden" value="{{orderschedule.order_scheduler_book.id}}" class="book_id" />
+                            <input type="hidden" value="{{orderschedule.order_scheduler_book.id}}" class="service_id" />
                                 <div class="order-container-main">
                                     <div class="order-header-class">
+                                        
                                         <h2 class="service-name">{{orderschedule.order_scheduler_book.service_type.name}}</h2>
                                         {% if orderschedule.order_scheduler_book.cleaning_policy  ==  'ONE TIME SERVICE' %}
                                         <button class="subscription-button">One Time</button>
@@ -2381,7 +2383,7 @@
             <div class="row pt-20 pb-20">
                 <div class="col-md-12 text-center">
                     <div class="cancel-model-content p-0">
-                        <form method="post" action="" enctype= "multipart/form-data" id="duplicate_form_id" class="text-center">{% csrf_token %}
+                        <!-- <form method="post" action="" enctype= "multipart/form-data" id="duplicate_form_id" class="text-center">{% csrf_token %} -->
                         <input type="hidden" name="evaluation" id="evaluation_id" value="{{order.evaluation.id}}">
                         <input type="hidden" name="action_type" value="cancell_order">
                         
@@ -2391,18 +2393,21 @@
                         <a href="{% url 'bleach_salesadmin:cancell-order' order.id %}" target="_blank"><button class="sent-button" type="button">Yes</button></a>
                         {% else %}
                      <div class="row" style="justify-content: center;">
-                           
-                            <div class="col-md-3" v-for="(service,serindex) in services" v-bind:key="serindex">
-                                <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                                <label class="form-check-label" for="exampleCheck1"><% service %></label>
+                        <div class="col-md-12 col-offset-3 text-center">
+                            <input type="checkbox" class="form-check-input service-checkbox" id="exampleCheck1" v-model="all_val" @change="checkAll()">
+                            <label class="form-check-label service-checkbox-label" for="exampleCheck1">All</label>
+                        </div>
+                            <div class="col-md-12 col-offset-3 text-center" v-for="(service,serindex) in services" v-bind:key="serindex">
+                                <input type="checkbox" class="form-check-input service-checkbox" id="exampleCheck1" v-model="services_list" :value="service" @change="removeAll()">
+                                <label class="form-check-label service-checkbox-label" for="exampleCheck1"><% service.name %></label>
                             </div>
                            
                         </div>
-                        <button class="sent-button mt-20" type="submit">Yes</button>
+                        <button class="sent-button mt-20" type="submit" @click="cancelServiceOrder()">Yes</button>
                         {% endif %}
 
                         <button data-dismiss="modal mt-20" class="view-button">Cancel</button>
-                        </form><!--Content ends here-->
+                        <!-- </form>Content ends here -->
                         
                     </div>
                 </div>
