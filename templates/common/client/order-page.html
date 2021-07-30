@@ -1501,7 +1501,7 @@
                                                 <div class="cleaning-status-container  pointer ">
                                                    
                                                     <div  id="id_select_visit_inner{{multi_order_schedule.id}}" class="row cleaning-status-row  cleaning-status-card  ">
-                                                        <div class="status-dot {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %} inprogress-chip-bg {% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED' %} completed-chip-bg {% elif multi_order_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}assigned-chip-bg{% elif multi_order_schedule.work_status == 'CLEANING_TEAM_CANCELLED' %}cancel-chip-bg{% else %} notstarted-chip-bg {% endif %}"></div>
+                                                        <div class="status-dot {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %} inprogress-chip-bg {% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED' %} completed-chip-bg {% elif multi_order_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}assigned-chip-bg{% elif multi_order_schedule.work_status == 'CLEANING_CANCELLED' %}cancel-chip-bg{% else %} notstarted-chip-bg {% endif %}"></div>
                                                         <div class="vist-card-item-first visit-text">
                                                             Visit {{forloop.counter}}
                                                         </div>
@@ -1549,9 +1549,9 @@
                                             <div>
                                                 <h1><span>Visit</span> <span class="visit_count">1</span>  </h1> 
                                                 <div class="d-flex secondary-text">
-                                                <div class="status-dot {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %} inprogress-chip-bg {% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED' %} completed-chip-bg {% elif multi_order_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}assigned-chip-bg{% elif multi_order_schedule.work_status == 'CLEANING_CANCELLED' %}cancel-chip-bg{% else %} notstarted-chip-bg {% endif %}">
+                                                <div class="status-dot {% if orderschedule.work_status == 'CLEANING_IN_PROGRESS' %} inprogress-chip-bg {% elif orderschedule.work_status == 'CLEANING_FULFILLED' %} completed-chip-bg {% elif orderschedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}assigned-chip-bg{% elif orderschedule.work_status == 'CLEANING_CANCELLED' %}cancel-chip-bg{% else %} notstarted-chip-bg {% endif %}">
                                                  </div>
-                                                 <div>   {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %} In Progress {% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED' %} Completed{% elif multi_order_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}Team Assigned{% elif multi_order_schedule.work_status == 'CLEANING_TEAM_CANCELLED' %}Cancelled{% else %} Not Started{% endif %}
+                                                 <div>   {% if orderschedule.work_status == 'CLEANING_IN_PROGRESS' %} In Progress {% elif orderschedule.work_status == 'CLEANING_FULFILLED' %} Completed{% elif orderschedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}Team Assigned{% elif orderschedule.work_status == 'CLEANING_CANCELLED' %}Cancelled{% else %} Not Started{% endif %}
                                                 </div>
                                                 </div>
 
@@ -2046,11 +2046,11 @@
                                         {% endif %}
 
 
-                                        {% if order.order_status == 'APPROVED_BY_CLIENT' or order.order_status == 'ORDER_IN_PROGRESS'  %}
+                                        <!-- {% if order.order_status == 'APPROVED_BY_CLIENT' or order.order_status == 'ORDER_IN_PROGRESS'  %}
                                         <div class="row">
                                             <button style="width: 153px !important;" data-toggle="modal" data-target="#cancelModel" class="view-button">Order Cancel</button>
                                         </div>
-                                        {% endif %}
+                                        {% endif %} -->
 
                                         {% if request.user.user_type == 'AGENT' %}
                                         <div class="row">
