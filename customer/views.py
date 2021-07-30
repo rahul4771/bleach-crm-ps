@@ -5123,6 +5123,7 @@ class ServiceCancellationRequest(APIView):
 	authentication_classes    = ()
 
 	def post(self,request):
+		response_dict={}
 		response_dict['success'] = False
 		
 		service_books            = request.data.get('service_books')
@@ -5135,11 +5136,13 @@ class ServiceCancellationRequest(APIView):
 		
 		return Response(response_dict,HTTP_200_OK)
 
+
 class ServiceCancellation(APIView):
 	permission_classes        = (AllowAny,)
 	authentication_classes    = ()
 
 	def post(self,request):
+		response_dict={}
 		response_dict['success'] = False
 		
 		cancelled_by             = service_book['cancelled_by']
