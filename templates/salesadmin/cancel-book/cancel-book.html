@@ -52,16 +52,14 @@
                 <label for="favcity">
                 <select name="cancel_method" id="cancel_method_id" required>
                     <option value="">--Select option--</option>           
-                    
-                    {% if cancell_in_progress_order.amount_paid > cancell_in_progress_order.job_completed_amount %}
-                    <option value="CASHBACK">Give Cash Back</option>
-                    <option value="CREDIT">Add to Credit</option>
-                    {% elif cancell_in_progress_order.amount_paid < cancell_in_progress_order.job_completed_amount %}
-                    <option value="SENDINVOICE">Send Invoice</option>
-                    {% else %}
-                    {% endif %}
                     <option value="CANCELL">Direct Cancellation</option>
-                    <option value="REJECT">Reject Cancellation</option>
+                    <option value="REJECT">Reject Request</option>
+                    {% if cancell_book.payment_method == 'PREPAID' or cancell_book.payment_method == 'BREAKDOWN' %}
+                    <option value="PAYBACK">Pay Back</option>
+                    <option value="CREDIT">Add to Wallet</option>
+                    {% elif cancell_book.payment_method == 'POSTPAID'%}
+                    <option value="REDUCTION">Reduce Order Amount</option>
+                    {% endif %}
                 </select>
                 </label>
   </div><!--ticket-form-left-->
@@ -72,16 +70,15 @@
 <div class="ticket-wrapper-row ticket-forms-boxes amount_div" hidden><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
   	<div class=" bold-text common-label"> <label id="amount_label">Amount</label></div>
-        <input type="number" class="textBox OnlyNumber" id="cancel_amount" name="amount" required/>
+        <input type="number" class="textBox OnlyNumber" id="cancel_amount" name="amount" val="{{cancell_book.total_cost}}" max="{{cancell_book.total_cost}}" required/>
   </div><!--ticket-form-left-->
   <div class="ticket-form-right"><!--ticket-form-right-->
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
 <hr class="hr-dashedpad">
-				<div class="bold-text common-label"> <label>Notes</label></div>
-                 <textarea name="notes" cols="" rows="4" class="textArea"></textarea>
-
+				<div class="bold-text common-label"> <label>Service: {{cancell_book.service_type.name}}</label></div>
+        <div class="bold-text common-label"> <label>Amount: {{cancell_book.total_cost}}</label></div>
 </div><!--ticket-wrapper-full-->
 <br><br> 
 {% endfor %}
@@ -102,5 +99,31 @@
 
 {% include 'salesadmin/common/footer.html' %}
 </div><!--wrapper-->
+{% endblock %}
+{% block javascript %}
+<script>
+$('#cancel_method_id').change(function(){
+  if ($(this).val() == 'CREDIT') {
+    $('.amount_div').attr("hidden",false);
+    $('#amount_label').text('Credit Amount');
+  }
+
+  if ($(this).val() == 'CASHBACK') {
+    $('.amount_div').attr("hidden",false);
+    $('#amount_label').text('PayBack Amount');
+  }
+
+  if ($(this).val() == 'REDUCTION') {
+    $('.amount_div').attr("hidden",false);
+    $('#amount_label').text('Reduction Amount');
+  }
+
+  if ( ($(this).val() == 'CANCELL') || ($(this).val() == '') || $(this).val() == 'REJECT')) {
+    $('.amount_div').attr("hidden",true);
+    $('input[name="amount"]').attr("required",false);
+  }
+
+});
+</script>
 {% endblock %}
 	
