@@ -1497,13 +1497,27 @@
 
                                         {% for multi_order_schedule in order.orderschedules %}
                                         {% if multi_order_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
-                                            <div style="margin-bottom: 10px;" class="col-md-4 col-xs-12 c-pr5 visit-list" id="id_select_visit{{multi_order_schedule.id}}"> <!-- onclick="load_cleaning_team({{forloop.counter}},{{multi_order_schedule.id}})"-->
+                                            <div style="margin-bottom: 10px;" class="col-md-4 col-xs-12 c-pr5 visit-list" id="id_select_visit{{multi_order_schedule.id}}" onclick="load_cleaning_team({{forloop.counter}},{{multi_order_schedule.id}})"> <!-- -->
                                                 <div class="cleaning-status-container  pointer ">
                                                    
                                                     <div  id="id_select_visit_inner{{multi_order_schedule.id}}" class="row cleaning-status-row  cleaning-status-card  ">
                                                         <div class="status-dot {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %} inprogress-chip-bg {% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED' %} completed-chip-bg {% elif multi_order_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}assigned-chip-bg{% elif multi_order_schedule.work_status == 'CLEANING_CANCELLED' %}cancel-chip-bg{% else %} notstarted-chip-bg {% endif %}"></div>
                                                         <div class="vist-card-item-first visit-text">
-                                                            Visit {{forloop.counter}}
+                                                            {% if request.user.user_type == 'AGENT' %}
+                                                            <a href="/agent/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            {% elif request.user.user_type == 'ADMIN' %}
+                                                            <a href="/bleach_admin/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            {% elif request.user.user_type == 'SALESADMIN' %}
+                                                            <a href="/bleach_salesadmin/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            {% elif request.user.user_type == 'BOOKINGOFFICER' %}
+                                                            <a href="/booking-officer/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            {% elif request.user.user_type == 'EVALUATOR' %}
+                                                            <a href="/evaluator/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            {% elif request.user.user_type == 'OPERATIONSUPERVISOR' %}
+                                                            <a href="/operation-supervisor/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            {% else %} <a href="#"> {% endif %}
+                                                                Visit {{forloop.counter}}
+                                                           </a>
                                                         </div>
                                                         <div class="vist-card-item-second visit-text">
                                                             {{multi_order_schedule.start_at|date:'d-m-Y g:i A'}}
@@ -1522,7 +1536,7 @@
                                                         {%endif%} -->
                                                         <!--<div class="vist-card-item-last ml-5">
                                                             <button {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %}class="inprogress-button"{% elif multi_order_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}class="assigned-button"{% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED'%}class="completed-button"{% else %}class="canceled-button"{% endif %}>  {% for investigation in multi_order_schedule.investigations|slice:":1" %}{% for followup in investigation.followups|slice:":1" %}{% if followup %} <i aria-hidden="true" class="fa fa-flag" style="margin-right: 5px ;"></i> {% endif %}{% endfor %}{% endfor %} {{multi_order_schedule.work_status|default_if_none:'NOT STARTED'}}</button>
-                                                        </div>-->
+                                                        </div>--->
                                                     </div>
                                                    
                                                 </div>
@@ -2046,11 +2060,11 @@
                                         {% endif %}
 
 
-                                        <!-- {% if order.order_status == 'APPROVED_BY_CLIENT' or order.order_status == 'ORDER_IN_PROGRESS'  %}
+                                         {% if order.order_status == 'APPROVED_BY_CLIENT' or order.order_status == 'ORDER_IN_PROGRESS'  %}
                                         <div class="row">
                                             <button style="width: 153px !important;" data-toggle="modal" data-target="#cancelModel" class="view-button">Order Cancel</button>
                                         </div>
-                                        {% endif %} -->
+                                        {% endif %} 
 
                                         {% if request.user.user_type == 'AGENT' %}
                                         <div class="row">
