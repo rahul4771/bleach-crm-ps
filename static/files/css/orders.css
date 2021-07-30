@@ -508,6 +508,19 @@
 
   /* margin-left: 10px; */
 }
+.gps-btn{
+  border: 1px solid #2e4e85;
+  border-radius: 5px;
+  max-width: 200px;
+  padding: 4px;
+  text-align: center;
+  color: #2e4e85;
+  cursor: pointer;
+}
+
+.mr-10{
+  margin-right:10px;
+}
 .p-0{
   padding:0px !important;
 }
@@ -529,6 +542,38 @@
 .mb-20{
   margin-bottom:20px !important;
 }
+.ml-20{
+  margin-left:20px !important;
+}
+.ml-10{
+  margin-left:10px !important;
+}
+.ml-5{
+  margin-left:5px !important;
+}
+.mt-2p{
+  margin-top:2px !important;
+}
+.ml-auto{
+  margin-left: auto !important;
+}
+.visit-text{
+  color: #505050;
+  font-size:14px;
+}
+/*status dots */
+.status-dot{
+  
+    width: 10px;
+    height: 10px;
+    margin: 5px;
+    border-radius: 15px;
+}
+.visit-time-edit{
+  height:15px;
+}
+
+
 /* Cancelled*/
 .cancel-chip{
   border-left:6px solid #c91212 !important;

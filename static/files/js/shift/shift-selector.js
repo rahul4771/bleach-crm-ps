@@ -2,7 +2,7 @@
 //var url='https://my.bleachkw.com';
 // //var url = 'https://my.bleachkw.com';
 // //var url = 'https://my.bleachkw.com';
-////var url='https://my.bleachkw.com';
+////var url='http://localhost:8000';
 var shiftId = ''
  //var resourceList=[];
 // var cleanerList=[];

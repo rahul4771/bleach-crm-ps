@@ -189,6 +189,45 @@ function editCleaningDate(service){
   app.setDate(moment(app.cleaning_start_date,'DD-MM-YYYY').format('MM/DD/YYYY'))
   
 }
+function deleteCleaningDate(service){
+  app.cleaning_action='cancell_cleaning'
+  app.reduction_status=false
+  console.log("inside del cleaning")
+  $('#cleaning-delete-tigger').click()
+  var data=$(service).data()
+  app.no_of_cleaners=data.no_of_cleaners
+  app.cleaning_policy='ONE TIME SERVICE'
+  app.selected_no_of_cleaners=data.no_of_cleaners
+  app.service_type=data.service
+  app.cleaning_hours=parseInt(data.cleaning_hours)
+  app.no_of_slots=Math.ceil(data.cleaning_hours/2)
+  app.evaluation_book_id=data.evaluation_book_id
+  app.schedule_id=data.id
+  
+  app.cleaning_start_date=data.cleaning_start_date
+  app.selected_cleaning_date=data.cleaning_start_date
+ 
+}
+function cancelCleaningDate(service){
+ 
+  app.cleaning_action='cancell_cleaning'
+  app.reduction_status=false
+  $('#cleaning-cancel-tigger').click()
+  var data=$(service).data()
+  
+  app.no_of_cleaners=data.no_of_cleaners
+  app.cleaning_policy='SUBSCRIPTION'
+  app.selected_no_of_cleaners=data.no_of_cleaners
+  app.service_type=data.service
+  app.cleaning_hours=parseInt(data.cleaning_hours)
+  app.no_of_slots=Math.ceil(data.cleaning_hours/2)
+  app.evaluation_book_id=data.evaluation_book_id
+  app.schedule_id=data.id
+  app.reducing_total=parseInt(data.estimated_cost)
+  app.cleaning_start_date=data.cleaning_start_date
+  app.selected_cleaning_date=data.cleaning_start_date
+ 
+}
 function addSection(service){
   app.service_type=$(service).data('service')
   app.editSectionData=
@@ -236,8 +275,12 @@ const app = new Vue({
   components: { Multiselect: window.VueMultiselect.default },
 
   data: {
+    reduction_status:false,
+    no_of_visits:0,
     services:[],
+    reducing_total:0,
     selected_cleaning_date:'',
+    cleaning_policy:'',
     highprice_facade:[],
     lowprice_facade:[],
     highprice_window:[],
@@ -392,7 +435,7 @@ const app = new Vue({
            slotloader:false,
 
             url:'https://my.bleachkw.com'
-         //  url:'http://localhost:8000'
+          // url:'http://localhost:8000'
             //url:'http://127.0.0.1:8000'
   },
   methods:{
@@ -694,6 +737,46 @@ const app = new Vue({
        
       })
     }
+    },
+   
+    deleteVisit(){
+      axios.post(this.url+'/customer/editorder/'+this.orderId,{
+        action_type:'cancell_cleaning',
+        evaluation_book_id:this.evaluation_book_id,
+        schedule_id:this.schedule_id,
+        reduction_status:false,
+       
+        
+      }).then(response=>{
+       
+        location.reload()
+       
+      })
+    },
+    cancelVisit(){
+     
+      if(this.reduction_status){
+        var post_data={
+          action_type:'cancell_cleaning',
+        evaluation_book_id:this.evaluation_book_id,
+        schedule_id:this.schedule_id,
+        reduction_status:this.reduction_status,
+        reduction_amount:this.reducing_total,  
+        }
+      }
+      else{
+        var post_data={
+          action_type:'cancell_cleaning',
+        evaluation_book_id:this.evaluation_book_id,
+        schedule_id:this.schedule_id,
+        reduction_status:this.reduction_status,
+        }
+      }
+      axios.post(this.url+'/customer/editorder/'+this.orderId,post_data).then(response=>{
+        
+        location.reload()
+       
+      })
     },
     editVisit(){
       if(this.selectedSlots.length<1){
