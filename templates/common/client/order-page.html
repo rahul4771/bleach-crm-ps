@@ -1490,7 +1490,7 @@
                                                         <div class="vist-card-item-second visit-text">
                                                             {{multi_order_schedule.start_at|date:'d-m-Y g:i A'}}
                                                         </div>
-                                                        <img  class="visit-time-edit pointer ml-10 mt-2p" src="{% static 'files/icons/flags.png' %}" ><span class="ml-5 visit-text"></span>
+                                                        <img  class="visit-time-edit pointer ml-auto mt-2p" src="{% static 'files/icons/flags.png' %}" ><span class="ml-5 visit-text"></span>
 
                                                         <img  class="visit-time-edit pointer ml-10 mt-2p" src="{% static 'files/icons/user-primary.png' %}" ><span class="ml-5 visit-text">{% if multi_order_schedule.order_scheduler_book.number_of_cleaners %}{{multi_order_schedule.order_scheduler_book.number_of_cleaners}}{% else %}0{% endif %}</span>
                                                         <img  class="visit-time-edit pointer ml-10 mt-2p" src="{% static 'files/icons/time-primary.png' %}" ><span class="ml-5 visit-text">{% if multi_order_schedule.order_scheduler_book.cleaning_hours %}{{multi_order_schedule.order_scheduler_book.cleaning_hours}}{% else %}0{% endif %}</span>
@@ -1530,6 +1530,13 @@
                                         <div class="order-clean-section-header c-mb-10">
                                             <div>
                                                 <h1><span>Visit</span> <span class="visit_count">1</span>  </h1> 
+                                                <div class="d-flex secondary-text">
+                                                <div class="status-dot {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %} inprogress-chip-bg {% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED' %} completed-chip-bg {% elif multi_order_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}assigned-chip-bg{% else %} cancel-chip-bg {% endif %}">
+                                                 </div>
+                                                 <div>   {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %} In Progress {% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED' %} Completed{% elif multi_order_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}Team Assigned{% else %} Cancelled{% endif %}
+                                                </div>
+                                                </div>
+
                                             </div>
                                            <div class="ml-10">
                                            {% for investigation in orderschedule.investigations %}{% for followup in investigation.followups %}{% if followup %}
@@ -2298,7 +2305,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="cancel-model-content">
-                        <h1>Do you want to cancel this Visit?</h1>
+                        <h1>How do you want to cancel this Visit?</h1>
                     </div>
                 </div>
                 <div class="col-md-12">
@@ -2329,8 +2336,8 @@
                 <div class="col-md-12 text-center">
                     <div class="cancel-model-content">
                         
-                        <button class="sent-button" type="submit" @click="cancelVisit()">Yes</button>
-                        <button data-dismiss="modal" class="view-button">Cancel</button>
+                        <button class="sent-button" type="submit" @click="cancelVisit()">Submit</button>
+                        <button data-dismiss="modal" class="view-button">Close</button>
                       
                         
                     </div>
@@ -2383,14 +2390,14 @@
                         {% elif request.user.user_type == 'SALESADMIN' %}
                         <a href="{% url 'bleach_salesadmin:cancell-order' order.id %}" target="_blank"><button class="sent-button" type="button">Yes</button></a>
                         {% else %}
-                    <!--  <div class="row" style="justify-content: center;">
+                     <div class="row" style="justify-content: center;">
                            
                             <div class="col-md-3" v-for="(service,serindex) in services" v-bind:key="serindex">
                                 <input type="checkbox" class="form-check-input" id="exampleCheck1">
                                 <label class="form-check-label" for="exampleCheck1"><% service %></label>
                             </div>
                            
-                        </div>-->
+                        </div>
                         <button class="sent-button mt-20" type="submit">Yes</button>
                         {% endif %}
 
