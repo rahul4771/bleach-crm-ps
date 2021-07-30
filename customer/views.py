@@ -5135,6 +5135,85 @@ class ServiceCancellationRequest(APIView):
 		
 		return Response(response_dict,HTTP_200_OK)
 
+class ServiceCancellation(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+
+	def post(self,request):
+		response_dict['success'] = False
+		
+		cancelled_by             = service_book['cancelled_by']
+		order_id                 = service_book['order_id']
+		order                    = Order.objects.select_related('evaluation__customer').get(id=order_id)
+		
+		service_books            = request.data.get('service_books')
+
+		for service_book in service_books:
+			service_id   = service_book['id']
+			action_type  = service_book['action_type']
+			
+			service_book = EvaluationBook.objects.prefetch_related(Prefetch('order_scheduler_book_details',queryset=OrderScheduler.objects.filter(~Q(work_status='CLEANING_FULFILLED')),to_attr="schedules")).get(id=service_id)
+			
+			if action_type == 'CANCELL':
+				service_book.status              = 'CANCELLED'
+				service_book.cancelled_by__id    = cancelled_by
+				
+				for scheduler in service_book.schedules:
+					scheduler.work_status = 'CLEANING_CANCELLED'
+					scheduler.save()
+
+			elif action_type == 'REJECT':
+				service_book.status = None
+
+			elif action_type == 'PAYBACK':
+				service_book.status              = 'CANCELLED'
+				service_book.cancelled_by__id    = cancelled_by
+
+				amount                = float(request.POST.get('amount'))			
+				cancell_order_history = CancellOrderAmountHistory.objects.create(order_id=order_id,return_amount=amount,amount_return_method='CASHBACK')
+
+				for scheduler in service_book.schedules:
+					scheduler.work_status = 'CLEANING_CANCELLED'
+					scheduler.save()
+
+			elif action_type == 'CREDIT':
+				service_book.status              = 'CANCELLED'
+				service_book.cancelled_by__id    = cancelled_by
+
+				amount = float(request.POST.get('amount'))			
+				CancellOrderAmountHistory.objects.create(order_id=order_id,return_amount=amount,amount_return_method='CREDIT',is_completed=True)
+				
+				order.evaluation.customer.credit_amount     += amount
+				order.amount_paid                           -= amount
+				
+				order.evaluation.customer.save()
+				order.save()
+				for scheduler in service_book.schedules:
+					scheduler.work_status = 'CLEANING_CANCELLED'
+					scheduler.save()
+
+			elif action_type == 'REDUCTION':
+				service_book.status              = 'CANCELLED'
+				service_book.cancelled_by__id    = cancelled_by
+
+				order.evaluation.estimated_cost                         -= amount
+				order.evaluation.total_cost                             -= amount
+				order.evaluation.cancelled_amount                       -= amount
+				order.total_amount                                      -= amount
+				order.remining_amount                                   -= amount
+
+				order.evaluation.save()
+				order.save()
+				for scheduler in service_book.schedules:
+					scheduler.work_status = 'CLEANING_CANCELLED'
+					scheduler.save()
+
+			service_book.save()
+
+		response_dict['success'] = True
+		
+		return Response(response_dict,HTTP_200_OK)
+
 
 class EmailTest(APIView):
 	def get(self,request):
