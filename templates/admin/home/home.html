@@ -1310,7 +1310,7 @@ $('document').ready(function(){
                   $('#starting_time_cleaning_id').html(data['start_at_time']);
                   $('#duration_cleaning_id').html(data['duration']+' Hours');
 
-                    var order_url = '/bleach_admin/client/order/details/'+data['order_id']+'';
+                    var order_url = '/common/client/order/details/'+data['order_id']+'';
                     
                     $('#order_url').attr('href',order_url);
 
@@ -1413,7 +1413,7 @@ $('.collapsible1-close').click(function(){
                   $('#starting_time_notapprovedcleaning_id').html(data['start_at_time']);
                   $('#duration_notapprovedcleaning_id').html(data['duration']+' Hours');
 
-                  var order_url = '/bleach_admin/client/order/details/'+data['order_id']+'';
+                  var order_url = '/common/client/order/details/'+data['order_id']+'';
                   $('#notapprovedorder_url').attr('href',order_url);  
 
 
