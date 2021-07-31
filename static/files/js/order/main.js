@@ -183,6 +183,7 @@ function editCleaningDate(service){
   
   app.cleaning_start_date=data.cleaning_start_date
   app.selected_cleaning_date=data.cleaning_start_date
+  app.selected_date=data.cleaning_start_date
   app.getSlotes(app.cleaning_start_date)
   $('#date_hidden').val((moment(app.cleaning_start_date,'DD-MM-YYYY').format('MM/DD/YYYY')))
   $("#calendar").datepicker("update", moment(app.cleaning_start_date,'DD-MM-YYYY').format('MM/DD/YYYY'));
@@ -835,7 +836,7 @@ const app = new Vue({
        no_of_cleaners:parseInt(this.selected_no_of_cleaners)
       }).then(response=>{
         
-        //location.reload()
+        location.reload()
        
       })
     }
