@@ -835,7 +835,7 @@ const app = new Vue({
        no_of_cleaners:parseInt(this.selected_no_of_cleaners)
       }).then(response=>{
         
-        location.reload()
+        //location.reload()
        
       })
     }
