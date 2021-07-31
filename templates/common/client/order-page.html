@@ -1003,8 +1003,9 @@
 
                         <div class="order-details-left-wrapper "><!--order details start-->
                             
-                            {% if request.user.user_type != 'ADMIN' or request.user.user_type != 'TECHNICALSUPERVISOR' or request.user.user_type != 'TEAMLEADER' or request.user.user_type != 'ACCOUNTANT' %}
-                            {% if request.user.user_type == 'AGENT' %}
+                            {% if request.user.user_type == 'ADMIN' or request.user.user_type == 'TECHNICALSUPERVISOR' or request.user.user_type == 'TEAMLEADER' or request.user.user_type == 'ACCOUNTANT' %}
+                                
+                            {% elif request.user.user_type == 'AGENT' %}
                                 {% if orderschedule.evaluation_details.evaluator == None and request.user.id == orderschedule.order.evaluation.call_attender.id %}
                                 <div class="order-edit">
                                     <img class="pointer" v-if="!edit" 
@@ -1016,6 +1017,7 @@
                                         id="done">
                                 </div>
                                 {% endif %}
+                            
                             {% elif request.user.user_type == 'EVALUATOR' %}
                                 {% if orderschedule.evaluation_details.evaluator.id == request.user.id or request.user.id == orderschedule.order.evaluation.call_attender.id %}
                                     <div class="order-edit">
@@ -1028,6 +1030,7 @@
                                             id="done">
                                     </div>
                                 {% endif %}
+
                             {% else %}
                                 <div class="order-edit">
                                     <img class="pointer" v-if="!edit" 
@@ -1038,8 +1041,8 @@
                                     <input name="paid" type="button" @click="edit = false" class="done-button" value="Done"
                                         id="done">
                                 </div>
-                            {% endif %}
-                            {% endif %}
+                            {% endif %} 
+                            
                             
                             <div id="details{{orderschedule.id}}">
                             <input type="hidden" value="{{orderschedule.order_scheduler_book.id}}" class="service_id" />
