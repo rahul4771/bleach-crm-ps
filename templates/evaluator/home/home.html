@@ -111,7 +111,9 @@
 {% else %}
 <img src="{% static 'files/images/profile-pic.jpg' %}" class="profile-avatar" title="{{evaluation.evaluation.call_attender.name}}">
 {% endif %}</td>
-<td data-label=""  {% if evaluation.status == 'TOBEEVALUATED' %}class="clickable-row-list" data-href='{% url 'evaluator:evaluator-makeassignedquatation1' evaluation.evaluation.customer.id evaluation.evaluation.id%}'{% endif %}>
+
+{% comment %} data-href='{% url 'common_items:makequatation1' evaluation.evaluation.customer.id evaluation.evaluation.id%}' {% endcomment %}
+<td data-label=""  {% if evaluation.status == 'TOBEEVALUATED' %}class="clickable-row-list" data-href='{% url 'evaluator:evaluator-makeassignedquatation1' evaluation.evaluation.customer.id evaluation.evaluation.id%}'{% endif %}>  
     {% if evaluation.status == 'EVALUATING' %}
     <span class="blue-bg">Evaluating</span>
     {% elif evaluation.status == 'EVALUATED'  %}

@@ -1107,7 +1107,7 @@
                                                     <img class="pointer" src="{% static 'files/icons/edit.png' %}">
                                                 </div> -->
                                                 <ul>
-                                                    <li><i class="fas fa-money-bill test-color c-mr-10"></i><span><b>{{orderschedule.order_scheduler_book.total_cost|default_if_none:'0.000'|floatformat:'3'}} KD</b></span></li>
+                                                    <li><i class="fas fa-money-bill test-color c-mr-10"></i><span><b>{{orderschedule.order_scheduler_book.estimated_cost|default_if_none:'0.000'|floatformat:'3'}} KD</b></span></li>
 
                                                     {% if orderschedule.customer_address.gps_location %}<li><i class="fas  test-color fa-map-marker c-mr-10"></i><a href="{{orderschedule.customer_address.gps_location}}">GPS</a></li>{% endif %}
                                  
@@ -1560,8 +1560,8 @@
                                                         <img  class="visit-time-edit pointer ml-auto mt-2p" src="{% static 'files/icons/flags.png' %}" ><span class="ml-5 visit-text"></span>
                                                         {% endif %}{% endfor %}{% endfor %}
 
-                                                        <img  class="visit-time-edit pointer ml-10 mt-2p" src="{% static 'files/icons/user-primary.png' %}" ><span class="ml-5 visit-text">{% if multi_order_schedule.order_scheduler_book.number_of_cleaners %}{{multi_order_schedule.order_scheduler_book.number_of_cleaners}}{% else %}0{% endif %}</span>
-                                                        <img  class="visit-time-edit pointer ml-10 mt-2p" src="{% static 'files/icons/time-primary.png' %}" ><span class="ml-5 visit-text">{% if multi_order_schedule.order_scheduler_book.cleaning_hours %}{{multi_order_schedule.order_scheduler_book.cleaning_hours}}{% else %}0{% endif %}</span>
+                                                        <img  class="visit-time-edit pointer ml-10 mt-2p" src="{% static 'files/icons/user-primary.png' %}" ><span class="ml-5 visit-text">{% if multi_order_schedule.no_of_cleaners %}{{multi_order_schedule.no_of_cleaners}}{% else %}{{multi_order_schedule.order_scheduler_book.number_of_cleaners|default_if_none:0}}{% endif %}</span>
+                                                        <img  class="visit-time-edit pointer ml-10 mt-2p" src="{% static 'files/icons/time-primary.png' %}" ><span class="ml-5 visit-text">{% if multi_order_schedule.cleaning_hours %}{{multi_order_schedule.cleaning_hours}}{% else %}{{multi_order_schedule.order_scheduler_book.cleaning_hours|default_if_none:0.0}}{% endif %}</span>
 
                                                         {% if multi_order_schedule.work_status == 'CLEANING_FULFILLED' or multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %}
                                                         {% else %}

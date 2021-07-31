@@ -234,10 +234,13 @@ function exportTableToExcel(){
     for(var i=0,row; row = table.rows[i];i++){
         //rows would be accessed using the "row" variable assigned in the for loop
         //Get each cell value/column from the row
+
         if (i == 0){
           column1 = row.cells[0].innerText;
         }else{
-          column1 = new Date(row.cells[0].innerText).toString("MMMM yyyy");;
+          var sale_date = new Date(row.cells[0].innerText);
+
+          column1 = sale_date.toDateString();
         }
         
         column2 = row.cells[1].innerText;
