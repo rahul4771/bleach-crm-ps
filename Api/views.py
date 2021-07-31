@@ -791,13 +791,13 @@ class DailySalesAPI(APIView):
 				if schedule[2] == 'Upholstery Cleaning':
 					special_care += float(order_amount/schedule_count)
 
-					if schedule[6] != None:
+					if schedule[6] > 0:
 						special_care -= float(schedule[6]/schedule_count)
-					if schedule[7] != None:
+					if schedule[7] > 0:
 						special_care -= float(schedule[7]/schedule_count)
-					if schedule[8] != None:
+					if schedule[8] > 0:
 						special_care += float(schedule[8]/schedule_count)
-					if schedule[10] != None:
+					if schedule[10] > 0:
 						special_care -= float(schedule[10]/schedule_count)
 
 				if schedule[2] == 'Mattress Cleaning':
