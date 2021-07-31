@@ -8,9 +8,9 @@ from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
 from bleachadmin.models import ServicePriceRange
 from django.core.mail import send_mail,EmailMultiAlternatives
-from Api.serializers import UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, LeaveUsersSerializer,ShiftScheduleSerializer
+from Api.serializers import UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, LeaveUsersSerializer,ShiftScheduleSerializer,InventoryLineSerializer
 from agent.views import generate_random_username
-
+from inventory.models import Line
 import re
 import random
 import string
@@ -636,9 +636,9 @@ class DailySalesAPI(APIView):
 			print(list_item,"elist")
 			
 			if date < todate:
-				orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q(Q(work_status = 'CLEANING_TEAM_ASSIGNED') | Q(work_status = 'CLEANING_IN_PROGRESS') | Q(work_status='CLEANING_FULFILLED'))).values_list('order__order_no','order_scheduler_book__total_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id','order_scheduler_book__evaluation_details__evaluation__id','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount','order_scheduler_book__evaluation_details__evaluator__id').order_by('end_at')
+				orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q(Q(work_status = 'CLEANING_TEAM_ASSIGNED') | Q(work_status = 'CLEANING_IN_PROGRESS') | Q(work_status='CLEANING_FULFILLED'))).values_list('order__order_no','order_scheduler_book__estimated_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id','order_scheduler_book__evaluation_details__evaluation__id','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount','order_scheduler_book__evaluation_details__evaluator__id','order_scheduler_book__evaluation_details__evaluation__discount').order_by('end_at')
 			else:
-				orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).values_list('order__order_no','order_scheduler_book__total_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id','order_scheduler_book__evaluation_details__evaluation__id','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount','order_scheduler_book__evaluation_details__evaluator__id').order_by('end_at')
+				orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).values_list('order__order_no','order_scheduler_book__estimated_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id','order_scheduler_book__evaluation_details__evaluation__id','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount','order_scheduler_book__evaluation_details__evaluator__id','order_scheduler_book__evaluation_details__evaluation__discount').order_by('end_at')
 
 			print(orderschedules.count(),"countt")
 			
@@ -665,6 +665,8 @@ class DailySalesAPI(APIView):
 					cleaning_amount -= float(schedule[7]/schedule_count)
 				if schedule[8] != None:
 					cleaning_amount += float(schedule[8]/schedule_count)
+				if schedule[10] != None:
+					cleaning_amount -= float(schedule[10]/schedule_count)
 
 				#adding amount to evaluators dict
 				if schedule[9] != None:
@@ -682,6 +684,8 @@ class DailySalesAPI(APIView):
 								evaluator_amount -= float(schedule[7]/schedule_count)
 							if schedule[8] != None:
 								evaluator_amount += float(schedule[8]/schedule_count)
+							if schedule[10] != None:
+								evaluator_amount -= float(schedule[10]/schedule_count)
 
 							eval_dict = {""+x+"":evaluator_amount}
 							print(date,eval_dict,"evdict")
@@ -695,7 +699,9 @@ class DailySalesAPI(APIView):
 					if schedule[7] != None:
 						others -= float(schedule[7]/schedule_count)
 					if schedule[8] != None:
-						others += float(schedule[8]/schedule_count)						
+						others += float(schedule[8]/schedule_count)	
+					if schedule[10] != None:
+						others -= float(schedule[10]/schedule_count)
 
 				#cleaning type wise amount addition
 				if schedule[2] == 'General Cleaning':
@@ -707,6 +713,8 @@ class DailySalesAPI(APIView):
 						detailed_cleaning -= float(schedule[7]/schedule_count)
 					if schedule[8] != None:
 						detailed_cleaning += float(schedule[8]/schedule_count)
+					if schedule[10] != None:
+						detailed_cleaning -= float(schedule[10]/schedule_count)
 
 				if schedule[2] == 'Deep Cleaning':
 					detailed_cleaning += float(order_amount/schedule_count)
@@ -717,6 +725,8 @@ class DailySalesAPI(APIView):
 						detailed_cleaning -= float(schedule[7]/schedule_count)
 					if schedule[8] != None:
 						detailed_cleaning += float(schedule[8]/schedule_count)
+					if schedule[10] != None:
+						detailed_cleaning -= float(schedule[10]/schedule_count)
 
 				if schedule[2] == 'Facade Cleaning':
 					detailed_cleaning += float(order_amount/schedule_count)
@@ -727,6 +737,8 @@ class DailySalesAPI(APIView):
 						detailed_cleaning -= float(schedule[7]/schedule_count)
 					if schedule[8] != None:
 						detailed_cleaning += float(schedule[8]/schedule_count)
+					if schedule[10] != None:
+						detailed_cleaning -= float(schedule[10]/schedule_count)
 
 				if schedule[2] == 'Storage Area':
 					detailed_cleaning += float(order_amount/schedule_count)
@@ -737,6 +749,8 @@ class DailySalesAPI(APIView):
 						detailed_cleaning -= float(schedule[7]/schedule_count)
 					if schedule[8] != None:
 						detailed_cleaning += float(schedule[8]/schedule_count)
+					if schedule[10] != None:
+						detailed_cleaning -= float(schedule[10]/schedule_count)
 
 				if schedule[2] == 'Car Parking Umbrella':
 					detailed_cleaning += float(order_amount/schedule_count)
@@ -747,6 +761,8 @@ class DailySalesAPI(APIView):
 						detailed_cleaning -= float(schedule[7]/schedule_count)
 					if schedule[8] != None:
 						detailed_cleaning += float(schedule[8]/schedule_count)
+					if schedule[10] != None:
+						detailed_cleaning -= float(schedule[10]/schedule_count)
 
 				if schedule[2] == 'Window Cleaning':
 					detailed_cleaning += float(order_amount/schedule_count)
@@ -757,6 +773,8 @@ class DailySalesAPI(APIView):
 						detailed_cleaning -= float(schedule[7]/schedule_count)
 					if schedule[8] != None:
 						detailed_cleaning += float(schedule[8]/schedule_count)
+					if schedule[10] != None:
+						detailed_cleaning -= float(schedule[10]/schedule_count)
 
 				if schedule[2] == 'Outdoor Cleaning':
 					detailed_cleaning += float(order_amount/schedule_count)
@@ -767,6 +785,8 @@ class DailySalesAPI(APIView):
 						detailed_cleaning -= float(schedule[7]/schedule_count)
 					if schedule[8] != None:
 						detailed_cleaning += float(schedule[8]/schedule_count)
+					if schedule[10] != None:
+						detailed_cleaning -= float(schedule[10]/schedule_count)
 
 				if schedule[2] == 'Upholstery Cleaning':
 					special_care += float(order_amount/schedule_count)
@@ -777,6 +797,8 @@ class DailySalesAPI(APIView):
 						special_care -= float(schedule[7]/schedule_count)
 					if schedule[8] != None:
 						special_care += float(schedule[8]/schedule_count)
+					if schedule[10] != None:
+						special_care -= float(schedule[10]/schedule_count)
 
 				if schedule[2] == 'Mattress Cleaning':
 					special_care += float(order_amount/schedule_count)
@@ -787,6 +809,8 @@ class DailySalesAPI(APIView):
 						special_care -= float(schedule[7]/schedule_count)
 					if schedule[8] != None:
 						special_care += float(schedule[8]/schedule_count)
+					if schedule[10] != None:
+						special_care -= float(schedule[10]/schedule_count)
 
 				if schedule[2] == 'Carpet Cleaning':
 					special_care += float(order_amount/schedule_count)
@@ -797,6 +821,8 @@ class DailySalesAPI(APIView):
 						special_care -= float(schedule[7]/schedule_count)
 					if schedule[8] != None:
 						special_care += float(schedule[8]/schedule_count)
+					if schedule[10] != None:
+						special_care -= float(schedule[10]/schedule_count)
 
 				
 
@@ -829,6 +855,8 @@ class DailySalesAPI(APIView):
 						kitchen_cleaning -= float(schedule[7]/schedule_count)
 					if schedule[8] != None:
 						kitchen_cleaning += float(schedule[8]/schedule_count)
+					if schedule[10] != None:
+						kitchen_cleaning -= float(schedule[10]/schedule_count)
 
 				# if schedule[2] == 'Carpet Cleaning':
 				# 	carpetcleaning += float(order_amount/schedule_count)
@@ -849,6 +877,8 @@ class DailySalesAPI(APIView):
 						infection_control -= float(schedule[7]/schedule_count)
 					if schedule[8] != None:
 						infection_control += float(schedule[8]/schedule_count)
+					if schedule[10] != None:
+						infection_control -= float(schedule[10]/schedule_count)
 			
 			
 			if data_type == 'service':
@@ -1685,3 +1715,22 @@ class ResourceSkillsAPI(APIView):
 		data=True
 
 		return Response(data,HTTP_200_OK)
+
+
+class InventoryLinesAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+		response_dict = {}
+		segment_id = request.GET.get('segment_id')
+		print(segment_id,"sed")
+		try:
+			inventory_lines = Line.objects.filter(segment__id=int(segment_id))
+		except:
+			inventory_lines = None
+		
+		line_serializer = InventoryLineSerializer(inventory_lines,many=True).data
+		print(line_serializer,"sed")	
+		response_dict['inventory_line'] = line_serializer
+		return Response(response_dict,HTTP_200_OK)

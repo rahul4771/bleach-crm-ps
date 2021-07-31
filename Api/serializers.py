@@ -3,6 +3,7 @@ from rest_framework import serializers
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule
 from evaluator.models import Evaluation,EvaluationDetails
 from order.models import Promocode
+from inventory.models import Line
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -66,4 +67,7 @@ class EvaluationSerializer(serializers.ModelSerializer):
         model = Evaluation
         fields = ('evaluation_id','customer__mobile','evaluation_details__evaluator','evaluation_details__proposed_time','evaluation_details__address')
 
-  
+class InventoryLineSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Line
+        fields = ('id','name')
