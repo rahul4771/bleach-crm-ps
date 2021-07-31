@@ -118,6 +118,60 @@
 {% endif %}
 
 
+
+{% if book_cancell_requests %}
+    <div class="white-wrapper"><!--white-wrapper-->
+    <h2 class="h2">Service Cancell Task</h2>
+    <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
+    <thead>
+        <tr>
+        <th>Order Number</th>
+        <th data-hide="phone,tablet">Name</th>
+        <th data-hide="phone,tablet">Mobile</th>
+        <th data-hide="phone,tablet">Requester</th>
+        <th data-hide="phone">Service Type</th>
+        <th class="align-center" data-hide="phone,tablet">Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for book_cancell_request in book_cancell_requests %}
+        <tr>
+          <td class="bold-text">
+          {{book_cancell_request.evaluation_id}}
+          </td>
+          <td>
+          {{book_cancell_request.customer.name}}
+          </td>
+          <td>
+          {{book_cancell_request.customer.mobile_number}}
+          </td>
+          <td>
+            {% for book_cancell in book_cancells %}
+            {% if book_cancell.evaluation_details.evaluation == book_cancell_request %}
+            {{book_cancell.cancell_requester.name}}
+            <br>
+            {% endif %}
+            {% endfor %}
+          </td>
+          <td>
+            {% for book_cancell in book_cancells %}
+            {% if book_cancell.evaluation_details.evaluation == book_cancell_request %}
+            {{book_cancell.service_type.name}}
+            <br>
+            {% endif %}
+            {% endfor %}
+            </td>
+          <td>
+        <span class="clickable-row red-bg" data-href="{% url 'booking-officer:cancell-book' book_cancell_request.id %}">Click to Cancel</span>
+        </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    </table>
+    </div>
+    {% endif %}
+
+
 {% if approved_paybackdiscounts and ticket_count > 0 %}
 {% comment %} {% if approved_paybackdiscounts.paybackdiscount_count > 1 %} {% endcomment %}
     <div class="white-wrapper"><!--white-wrapper-->

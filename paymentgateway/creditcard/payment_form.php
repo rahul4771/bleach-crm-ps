@@ -20,7 +20,7 @@
     <!-- <input type="hidden" name="access_key" value="dc9b55c60e193d98a5861569b4c40d6b">
     <input type="hidden" name="profile_id" value="340591FC-E863-4714-81A5-FFC0D7B5D9A7">  -->
     <input type="hidden" name="transaction_uuid" value="<?php echo uniqid() ?>">
-    <input type="hidden" name="signed_field_names" value="access_key,profile_id,transaction_uuid,signed_field_names,unsigned_field_names,signed_date_time,locale,transaction_type,reference_number,amount,currency,bill_to_forename,bill_to_surname,bill_to_email,bill_to_phone,bill_to_address_country,bill_to_address_city,bill_to_address_line1,merchant_defined_data1,merchant_defined_data2,merchant_defined_data3,merchant_defined_data4,merchant_defined_data5,merchant_defined_data7,merchant_defined_data20,customer_ip_address">
+    <input type="hidden" name="signed_field_names" value="access_key,profile_id,merchant_id,transaction_uuid,signed_field_names,unsigned_field_names,signed_date_time,locale,transaction_type,reference_number,amount,currency,bill_to_forename,bill_to_surname,bill_to_email,bill_to_phone,bill_to_address_country,bill_to_address_city,bill_to_address_line1,merchant_defined_data1,merchant_defined_data2,merchant_defined_data3,merchant_defined_data4,merchant_defined_data5,merchant_defined_data7,merchant_defined_data20,customer_ip_address">
     <input type="hidden" name="unsigned_field_names">
     <input type="hidden" name="signed_date_time" value="<?php echo gmdate("Y-m-d\TH:i:s\Z"); ?>">
     <input type="hidden" name="locale" value="en">
@@ -32,6 +32,7 @@
             <span>amount:</span><input type="text" name="amount" size="25" value="<?php echo htmlspecialchars($_GET['amount']);?>" readonly><br/>
             <span>currency:</span><input type="text" name="currency" size="25" value="<?php echo htmlspecialchars($_GET['currency']);?>" readonly><br/>
         
+            <input type="hidden" name="merchant_id" value="nbk_bleachkw">
             <input type="hidden" name="bill_to_forename" value="<?php echo htmlspecialchars($_GET['bill_to_forename']);?>">
             <input type="hidden" name="bill_to_surname" value="<?php echo htmlspecialchars($_GET['bill_to_surname']);?>">
             <input type="hidden" name="bill_to_phone" value="<?php echo htmlspecialchars($_GET['bill_to_phone']);?>">
@@ -41,6 +42,7 @@
             <input type="hidden" name="bill_to_address_line1" value="<?php echo htmlspecialchars($_GET['bill_to_address_line1']);?>">
             <input type="hidden" name="merchant_defined_data1" value="<?php echo htmlspecialchars($_GET['merchant_defined_data1']);?>">
             <input type="hidden" name="merchant_defined_data2" value="<?php echo htmlspecialchars($_GET['merchant_defined_data2']);?>">
+            <input type="hidden" name="merchant_defined_data3" value="<?php echo htmlspecialchars($_GET['merchant_defined_data3']);?>">
             <input type="hidden" name="merchant_defined_data4" value="<?php echo htmlspecialchars($_GET['merchant_defined_data4']);?>">
             <input type="hidden" name="merchant_defined_data5" value="<?php echo htmlspecialchars($_GET['merchant_defined_data5']);?>">
             <input type="hidden" name="merchant_defined_data7" value="<?php echo htmlspecialchars($_GET['merchant_defined_data7']);?>">

@@ -19,7 +19,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.standalone.min.css" integrity="sha512-TQQ3J4WkE/rwojNFo6OJdyu6G8Xe9z8rMrlF9y7xpFbQfW5g8aSWcygCQ4vqRiJqFsDsE1T6MoAOMJkFXlrI9A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
 <div class="wrapper" id="app" v-cloak><!--wrapper-->
-
+   <!--- user id-->
+   <input type="hidden" value="{{request.user.id}}" id="user_id"/>
     <!-- helper modal begins here-->
     <div class="modal fade" id="helpModel" role="dialog">
         <div style="border: none !important;" class="modal-dialog cancel-model cancel-order-border " role="document">
@@ -40,21 +41,37 @@
                 </div>
                 <div class="row mt-20">
                   
-                  <div class="col-md-6 text-right">
-                    <span class="inv-dot inprogress-chip-bg ml-5 "></span>
-                    Cleaning In Progress
+                  <div class="col-md-4 text-center mt-10">
+                      <div class="cleaning-stat">
+                        <span class="inv-dot inprogress-chip-bg ml-5 "></span>
+                        Cleaning In Progress
+                      </div>
+                    
                   </div>
-                  <div class="col-md-6 text-left">
+                  <div class="col-md-4 text-center mt-10">
+                    <div class="cleaning-stat">
                     <span class="inv-dot assigned-chip-bg ml-5"></span>
                     Cleaning Team Assigned
+                    </div>
                   </div>
-                  <div class="col-md-6 text-right " style="margin-top:10px;margin-bottom:10px">
+                  <div class="col-md-4 text-center mt-10" >
+                    <div class="cleaning-stat">
                     <span class="inv-dot completed-chip-bg ml-5"></span>
                    Completed
+                   </div>
                   </div>
-                  <div class="col-md-6 text-left  "  style="margin-top:10px;margin-bottom:30px">
+                  <div class="col-md-4 text-center  mt-10"  >
+                    <div class="cleaning-stat">
                     <span class="inv-dot cancel-chip-bg ml-5"></span>
-                    Cancelled / Not Started
+                    Cancelled 
+                  </div>
+                  </div>
+                 
+                  <div class="col-md-4 text-center  mt-10"  style="margin-top:10px;margin-bottom:30px">
+                    <div class="cleaning-stat">
+                    <span class="inv-dot notstarted-chip-bg ml-5"></span>
+                     Not Started
+                  </div>
                   </div>
     
                   
@@ -145,7 +162,9 @@
     <!-- EDIT PAYMENT MODAL ENDS HERE-->
     <div data-toggle="modal" data-target="#editPaymentModal" id="edit-payment-tigger"></div> 
     <div data-toggle="modal" data-target="#editSectionDialog" id="edit-dialog-tigger"></div>
-    <div data-toggle="modal" data-target="#cleaningDateModel" id="cleaning-date-tigger"></div> 
+    <div data-toggle="modal" data-target="#cleaningDateModel" id="cleaning-date-tigger"></div>
+    <div data-toggle="modal" data-target="#deleteCleaningModal" id="cleaning-delete-tigger"></div> 
+    <div data-toggle="modal" data-target="#cancelCleaningModal" id="cleaning-cancel-tigger"></div>
     <div data-toggle="modal" data-target="#deleteSectionModel" id="delete-section-tigger"></div> 
 <!-- edit section dialog begins here-->
 <div class="modal fade " id="editSectionDialog" tabindex="-1" role="dialog" aria-labelledby="editSectionDialogTitle" aria-hidden="true">
@@ -1023,9 +1042,10 @@
                             {% endif %}
                             
                             <div id="details{{orderschedule.id}}">
-                            <input type="hidden" value="{{orderschedule.order_scheduler_book.id}}" class="book_id" />
+                            <input type="hidden" value="{{orderschedule.order_scheduler_book.id}}" class="service_id" />
                                 <div class="order-container-main">
                                     <div class="order-header-class">
+                                        
                                         <h2 class="service-name">{{orderschedule.order_scheduler_book.service_type.name}}</h2>
                                         {% if orderschedule.order_scheduler_book.cleaning_policy  ==  'ONE TIME SERVICE' %}
                                         <button class="subscription-button">One Time</button>
@@ -1068,8 +1088,8 @@
                                                         {% if orderschedule.order_scheduler_book.evaluator_note %}
                                                         <!-- <p id="evalution-note">{{orderschedule.order_scheduler_book.evaluator_note|default_if_none:''}}</p> -->
                                                         <p id="evalution-note{{orderschedule.order_scheduler_book.id}}" class="evalution-note-less">{{orderschedule.order_scheduler_book.evaluator_note|default_if_none:''}} </p>
-                                                        <span class="see-more" id="id_see{{orderschedule.order_scheduler_book.id}}" onclick="seefull({{orderschedule.order_scheduler_book.id}})">See More</span>
-                                                        <span class="see-more" style="display: none;" id="id_see_less{{orderschedule.order_scheduler_book.id}}" onclick="seeless({{orderschedule.order_scheduler_book.id}})">See Less</span>
+                                                        <span class="see-more" id="id_see{{orderschedule.order_scheduler_book.id}}" onclick="seefull({{orderschedule.order_scheduler_book.id}})">Show More</span>
+                                                        <span class="see-more" style="display: none;" id="id_see_less{{orderschedule.order_scheduler_book.id}}" onclick="seeless({{orderschedule.order_scheduler_book.id}})">Show Less</span>
                                                         
                                                         {% endif %}
 
@@ -1077,16 +1097,28 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-2 m-mt30">
+                                        <div class="col-md-4 c-mt-50">
+                                            <div class="agent-content-section1 c-mt-022">
+                                                <!-- <div v-if="edit" class="order-agent-edit" >
+                                                    <img class="pointer" src="{% static 'files/icons/edit.png' %}">
+                                                </div> -->
+                                                <ul>
+
+                                                    {% if orderschedule.customer_address.gps_location %}<li><i class="fas  test-color fa-map-marker c-mr-10"></i><a href="{{orderschedule.customer_address.gps_location}}">GPS</a></li>{% endif %}
+                                 
+                                                    <li><i class="fas test-color fa-address-card c-mr-10"></i><b>{{orderschedule.customer_address.apartment}}</b>: {% if orderschedule.customer_address.floor %}{{orderschedule.customer_address.floor}}, {% else %}{% endif %} {{orderschedule.customer_address.building}}, {{orderschedule.customer_address.block}}, {{orderschedule.customer_address.street}},<br> {% if orderschedule.customer_address.avenue %}{{orderschedule.customer_address.avenue}}, {% else %}{% endif %} {{orderschedule.customer_address.area.name}}, {{orderschedule.customer_address.governorate.name}}</li>
+
+                                                </ul>
+                                                <div class="gps-btn" onclick="window.location.href='{{orderschedule.customer_address.gps_location}}'"><i class="fas fa-crosshairs mr-10" ></i>GPS Location</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4  c-mt-50">
                                             <div class="agent-content-section1 c-mt-022">
                                                 <!-- <div v-if="edit" class="order-agent-edit">
                                                     <img class="pointer" src="{% static 'files/icons/edit.png' %}">
                                                 </div> -->
                                                 <ul>
-                                                {% if orderschedule.order_scheduler_book.cleaning_method %}
-                                                    <li><i class="fas fa-check-circle yellow-tick "></i> {{orderschedule.order_scheduler_book.cleaning_method}} Method
-                                                    </li>
-                                                {% endif %}
+                                               
 
                                                 {% if orderschedule.order_scheduler_book.area_type %}
                                                     <li><i class="fas fa-check-circle yellow-tick"></i> {{orderschedule.order_scheduler_book.area_type}}
@@ -1104,30 +1136,14 @@
                                                 </ul>
                                             </div>
                                         </div>
-                                        <div class="col-md-2 m-mt30">
-                                            <div class="agent-content-section1 c-mt-022">
-                                                <!-- <div v-if="edit" class="order-agent-edit" >
-                                                    <img class="pointer" src="{% static 'files/icons/edit.png' %}">
-                                                </div> -->
-                                                <ul>
-
-                                                    {% if orderschedule.customer_address.gps_location %}<li><i class="fas  test-color fa-map-marker c-mr-10"></i><a href="{{orderschedule.customer_address.gps_location}}">GPS</a></li>{% endif %}
-                                                    <li><i class="fas test-color fa-users c-mr-10"></i> {% for schedule in order.orderschedules %}{% if forloop.first %}<span id="total_cleaners{{orderschedule.order_scheduler_book.id}}"></span>{% endif %}{% endfor %} cleaners</li>
-                                                    <li><i class="fas test-color fa-clock-o c-mr-10"></i> {% for schedule in order.orderschedules %}{% if forloop.first %}<span id="total_hours{{orderschedule.order_scheduler_book.id}}"></span>{% endif %}{% endfor %} Hours</li>
-                                                    {% if request.user.user_type != 'SENIORTEAMLEADER' %}<li><i class="fas  test-color fa-money c-mr-10"></i> {{orderschedule.order_scheduler_book.total_cost|floatformat:3}} KD</li>{% endif %}
-                                                    <li><i class="fas test-color fa-address-card c-mr-10"></i><b>{{orderschedule.customer_address.apartment}}</b>: {% if orderschedule.customer_address.floor %}{{orderschedule.customer_address.floor}}, {% else %}{% endif %} {{orderschedule.customer_address.building}},<br> {{orderschedule.customer_address.block}}, {{orderschedule.customer_address.street}},<br> {% if orderschedule.customer_address.avenue %}{{orderschedule.customer_address.avenue}}, {% else %}{% endif %} {{orderschedule.customer_address.area.name}},<br> {{orderschedule.customer_address.governorate.name}}</li>
-
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 m-mt30">
+                                        
+                                      <!-- <div class="col-md-4 m-mt30">
                                             <p style=" font-size: 20px;
                                             margin: 0 0 10px 0;
                                             padding: 0;
                                             color: #434343; margin-top: -22px !important;">Total no of Visits <span style="color:#0D87C5;" class="visitcount{{orderschedule.order_scheduler_book.id}}"></span> </p>
                                             <div id="visti-section{{orderschedule.order_scheduler_book.id}}"
                                                 class="agent-content-section2 visti-section  c-mt-022" style="margin-top: 10px;">
-                                                <!-- <p>Total no of Visits <span style="color:#0D87C5;" class="visitcount{{orderschedule.order_scheduler_book.id}}"></span> </p> -->
 
                                                 
                                                 <div class="row visit-times">
@@ -1192,7 +1208,6 @@
                                             <div id="myDropdown{{orderschedule.order_scheduler_book.id}}" class="c-dropdown-content" style="max-height: 350px; overflow: auto;">
                                                 <div id="visti-section{{orderschedule.order_scheduler_book.id}}" class="agent-content-section2 visti-section  c-mt-022">
                                                    
-                                                    <!-- <p>Total no of Visits <span style="color:#0D87C5;" class="visitcount{{orderschedule.order_scheduler_book.id}}"></span> </p> -->
                                                
                                                     
                                                     <div class="row ">
@@ -1264,7 +1279,7 @@
                                                 </div>
                                             </div>
 
-                                        </div>
+                                        </div>-->
 
                                     </div>
                                 </div>
@@ -1296,112 +1311,114 @@
                                     </div>
                                     <div class="row section-detials-text">
                                         <div class="col-md-6 c-right-border" style="padding-left: 1px;">
-                                            <div class="col-md-6">
-                                               
+                                            <div class="col-md-12">
+                                                <div class="row c-mb-3">
 
                                                 {% if section.age %}
-                                                <div class="row c-mb-3">
-                                                    <div class="col-xs-5">Age</div>
-                                                    <div class="col-xs-7">: <span class="c-text  ">{{section.age}}</span>
+                                                
+                                                    <div class="col-md-2 col-xs-4 mt-10">Age</div>
+                                                    <div class="col-md-4 col-xs-8 mt-10">: <span class="c-text  ">{{section.age}}</span>
                                                     </div>
-                                                </div>
+                                                
                                                 {% endif %}
 
-                                                <div class="row c-mb-3">
-                                                    <div class="col-xs-5">Size</div>
-                                                    <div class="col-xs-7">: <span class="c-text  ">{{section.size}} {{section.unit|default_if_none:''}}</span>
+                                               
+                                                    <div class="col-md-2 col-xs-4 mt-10">Size</div>
+                                                    <div class="col-md-4 col-xs-8 mt-10">: <span class="c-text  ">{{section.size}} {{section.unit|default_if_none:''}}</span>
                                                     </div>
-                                                </div>
+                                               
 
                                                 {% if section.floor %}
-                                                <div class="row c-mb-3">
-                                                    <div class="col-xs-5">Floor</div>
-                                                    <div class="col-xs-7">: <span class="c-text  ">{{section.floor}}</span>
+                                              
+                                                    <div class="col-md-2 col-xs-4 mt-10">Floor</div>
+                                                    <div class="col-md-4 col-xs-8 mt-10">: <span class="c-text  ">{{section.floor}}</span>
                                                     </div>
-                                                </div>
+                                               
                                                 {% endif %}
 
                                                 {% if section.apartment %}
-                                                <div class="row c-mb-3">
-                                                    <div class="col-xs-5">Apartments</div>
-                                                    <div class="col-xs-7">: <span class="c-text  ">{{section.apartment}}</span>
+                                               
+                                                    <div class="col-md-2 col-xs-4 mt-10">Apartments</div>
+                                                    <div class="col-md-4 col-xs-8 mt-10">: <span class="c-text  ">{{section.apartment}}</span>
                                                     </div>
-                                                </div>
+                                               
                                                 {% endif %}
 
                                                 {% if section.room %}
-                                                <div class="row c-mb-3">
-                                                    <div class="col-xs-5">Rooms</div>
-                                                    <div class="col-xs-7">: <span class="c-text  ">{{section.room}}</span>
+                                               
+                                                    <div class="col-md-2 col-xs-4 mt-10">Rooms</div>
+                                                    <div class="col-md-4 col-xs-8 mt-10">: <span class="c-text  ">{{section.room}}</span>
                                                     </div>
-                                                </div>
+                                               
                                                 {% endif %}
-                                            </div>
-                                            <div class="col-md-6">
+                                            
                                                 {% if section.wall_type %}
-                                                <div class="row c-mb-3">
-                                                    <div class="col-xs-5">Wall Type</div>
-                                                    <div class="col-xs-7">: <span class="c-text  ">{{section.wall_type}}</span></div>
-                                                </div>
+                                              
+                                                    <div class="col-md-2 col-xs-4 mt-10">Wall Type</div>
+                                                    <div class="col-md-4 col-xs-8 mt-10">: <span class="c-text  ">{{section.wall_type}}</span></div>
+                                               
                                                 {% endif %}
 
                                                 {% if section.ceiling_type %}
-                                                <div class="row c-mb-3">
-                                                    <div class="col-xs-5">Celling Type</div>
-                                                    <div class="col-xs-7">: <span class="c-text  ">{{section.ceiling_type}}</span></div>
-                                                </div>
+                                               
+                                                    <div class="col-md-2 col-xs-4 mt-10">Celling Type</div>
+                                                    <div class="col-md-4 col-xs-8 mt-10">: <span class="c-text  ">{{section.ceiling_type}}</span></div>
+                                               
                                                 {% endif %}
 
                                                 {% if section.floor_type %}
-                                                <div class="row c-mb-3">
-                                                    <div class="col-xs-5">Floor Type</div>
-                                                    <div class="col-xs-7">: <span class="c-text  ">{{section.floor_type}}</span></div>
-                                                </div>
+                                               
+                                                    <div class="col-md-2 col-xs-4 mt-10">Floor Type</div>
+                                                    <div class="col-md-4 col-xs-8 mt-10">: <span class="c-text  ">{{section.floor_type}}</span></div>
+                                               
                                                 {% endif %}
 
                                                 {% if section.material %}
-                                                <div class="row c-mb-3">
-                                                    <div class="col-xs-5">Material</div>
-                                                    <div class="col-xs-7">: <span class="c-text  ">{{section.material}}</span></div>
-                                                </div>
+                                               
+                                                    <div class="col-md-2 col-xs-4 mt-10">Material</div>
+                                                    <div class="col-md-4 col-xs-8 mt-10">: <span class="c-text  ">{{section.material}}</span></div>
+                                               
                                                 {% endif %}
 
                                                 {% if section.colour %}
-                                                <div class="row c-mb-3">
-                                                    <div class="col-xs-5">Color</div>
-                                                    <div class="col-xs-7">: <span class="c-text  ">{{section.colour}}</span></div>
-                                                </div>
+                                               
+                                                    <div class="col-md-2 col-xs-4 mt-10">Color</div>
+                                                    <div class="col-md-4 col-xs-8 mt-10">: <span class="c-text  ">{{section.colour}}</span></div>
+                                              
                                                 {% endif %}
 
                                                 {% if section.cause_of_stain %}
-                                                <div class="row c-mb-3">
-                                                    <div class="col-xs-5">Cause of Stain</div>
-                                                    <div class="col-xs-7">: <span class="c-text  ">{{section.cause_of_stain}}</span></div>
-                                                </div>
+                                               
+                                                    <div class="col-md-2 col-xs-4 mt-10">Cause of Stain</div>
+                                                    <div class="col-md-4 col-xs-8 mt-10">: <span class="c-text  ">{{section.cause_of_stain}}</span></div>
+
                                                 {% endif %}
 
                                                 {% if request.user.user_type != 'SENIORTEAMLEADER' %}
-                                                <div class="row c-mb-3">
-                                                    <div class="col-xs-5">Cost</div>
-                                                    <div class="col-xs-7">: <span class="c-text  ">{{section.section_cost|floatformat:'3'}} KD</span>
+                                               
+                                                    <div class="col-md-2 col-xs-4 mt-10">Cost</div>
+                                                    <div class="col-md-4 col-xs-8 mt-10">: <span class="c-text  ">{{section.section_cost|floatformat:'3'}} KD</span>
                                                     </div>
-                                                </div>
+                                               
                                                 {% endif %}
+                                            </div>
                                             </div>
                                         </div>
                                         <div class="col-md-6 m-mt30 pl-0">
 
                                             {% if section.sectionkeynotes %}
 
-                                            <div class="col-md-3 ml-0 ">
+                                           
 
                                             {% for keynote in section.sectionkeynotes %}
                                             {% if forloop.counter|divisibleby:2 %}
                                             {% else %}
 
                                                 {% if keynote.sub_area != 'kitchen' %}
+                                                <div class="col-md-4 ml-0 ">
                                                     <div class="clean-section-card">
                                                         <p>{{keynote.sub_area}}<span class="c-text2">{{keynote.quantity}}</span></p>
+                                                    </div>
                                                     </div>
                                                 {% endif %}
 
@@ -1409,30 +1426,34 @@
 
                                             {% if keynote.sub_area == 'kitchen' %}
                                             {% ifchanged keynote.sub_area %}
+                                            <div class="col-md-4 ml-0 ">
                                                 <div class="clean-section-card">
                                                     <p>Kitchen<span class="c-text2">{{section.kitchen_keynote}}</span></p>
+                                                </div>
                                                 </div>
                                             {% endifchanged %}
                                             {% endif %}
 
                                             {% endfor %}
 
-                                            </div>
+                                            
 
-                                            <div class="col-md-3 ml-0 ">
+                                            
                                             {% for keynote in section.sectionkeynotes %}
                                             {% if forloop.counter|divisibleby:2 %}
 
                                                 {% if keynote.sub_area != 'kitchen' %} 
+                                                <div class="col-md-4 ml-0 ">
                                                 <div class="clean-section-card">
                                                     <p>{{keynote.sub_area}}<span class="c-text2">{{keynote.quantity}}</span></p>
                                                 </div>
+                                            </div>
                                                 {% endif %} 
 
                                             {% else %}
                                             {% endif %}
                                             {% endfor %}
-                                            </div>
+                                            
                                             
                                             {% endif %}
                                         </div>
@@ -1476,19 +1497,46 @@
 
                                         {% for multi_order_schedule in order.orderschedules %}
                                         {% if multi_order_schedule.order_scheduler_book == orderschedule.order_scheduler_book %}
-                                            <div style="margin-bottom: 10px;" class="col-md-3  c-pr5 visit-list" id="id_select_visit{{multi_order_schedule.id}}" onclick="load_cleaning_team({{forloop.counter}},{{multi_order_schedule.id}})">
+                                            <div style="margin-bottom: 10px;" class="col-md-4 col-xs-12 c-pr5 visit-list" id="id_select_visit{{multi_order_schedule.id}}" onclick="load_cleaning_team({{forloop.counter}},{{multi_order_schedule.id}})"> <!-- -->
                                                 <div class="cleaning-status-container  pointer ">
                                                    
-                                                    <div  id="id_select_visit_inner{{multi_order_schedule.id}}" class="row cleaning-status-row  cleaning-status-card  {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %} inprogress-chip {% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED' %} completed-chip {% else %} cancel-chip {% endif %}">
-                                                        <div class="vist-card-item-first">
-                                                            Visit {{forloop.counter}}
+                                                    <div  id="id_select_visit_inner{{multi_order_schedule.id}}" class="row cleaning-status-row  cleaning-status-card  ">
+                                                        <div class="status-dot {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %} inprogress-chip-bg {% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED' %} completed-chip-bg {% elif multi_order_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}assigned-chip-bg{% elif multi_order_schedule.work_status == 'CLEANING_CANCELLED' %}cancel-chip-bg{% else %} notstarted-chip-bg {% endif %}"></div>
+                                                        <div class="vist-card-item-first visit-text">
+                                                            {% if request.user.user_type == 'AGENT' %}
+                                                            <a href="/agent/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            {% elif request.user.user_type == 'ADMIN' %}
+                                                            <a href="/bleach_admin/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            {% elif request.user.user_type == 'SALESADMIN' %}
+                                                            <a href="/bleach_salesadmin/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            {% elif request.user.user_type == 'BOOKINGOFFICER' %}
+                                                            <a href="/booking-officer/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            {% elif request.user.user_type == 'EVALUATOR' %}
+                                                            <a href="/evaluator/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            {% elif request.user.user_type == 'OPERATIONSUPERVISOR' %}
+                                                            <a href="/operation-supervisor/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
+                                                            {% else %} <a href="#"> {% endif %}
+                                                                Visit {{forloop.counter}}
+                                                           </a>
                                                         </div>
-                                                        <div class="vist-card-item-second">
+                                                        <div class="vist-card-item-second visit-text">
                                                             {{multi_order_schedule.start_at|date:'d-m-Y g:i A'}}
                                                         </div>
+                                                        <img  class="visit-time-edit pointer ml-auto mt-2p" src="{% static 'files/icons/flags.png' %}" ><span class="ml-5 visit-text"></span>
+
+                                                        <img  class="visit-time-edit pointer ml-10 mt-2p" src="{% static 'files/icons/user-primary.png' %}" ><span class="ml-5 visit-text">{% if multi_order_schedule.order_scheduler_book.number_of_cleaners %}{{multi_order_schedule.order_scheduler_book.number_of_cleaners}}{% else %}0{% endif %}</span>
+                                                        <img  class="visit-time-edit pointer ml-10 mt-2p" src="{% static 'files/icons/time-primary.png' %}" ><span class="ml-5 visit-text">{% if multi_order_schedule.order_scheduler_book.cleaning_hours %}{{multi_order_schedule.order_scheduler_book.cleaning_hours}}{% else %}0{% endif %}</span>
+
+                                                        <img v-if="edit" class="visit-time-edit pointer ml-auto mt-2p" src="{% static 'files/icons/edit-primary.png' %}" onclick="editCleaningDate(this)" data-cleaning_start_date="{{multi_order_schedule.start_at|date:'d-m-Y'}}" data-evaluation_book_id="{{multi_order_schedule.order_scheduler_book.id}}" data-id="{{multi_order_schedule.id}}" data-service="{{multi_order_schedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{multi_order_schedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{multi_order_schedule.order_scheduler_book.cleaning_hours}}">
+                                                        <!-- {% if multi_order_schedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}
+                                                        <img v-if="edit" class="visit-time-edit pointer ml-10 mt-2p " src="{% static 'files/icons/delete-primary.png' %}" onclick="deleteCleaningDate(this)"  data-cleaning_start_date="{{multi_order_schedule.start_at|date:'d-m-Y'}}" data-evaluation_book_id="{{multi_order_schedule.order_scheduler_book.id}}" data-id="{{multi_order_schedule.id}}" data-service="{{multi_order_schedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{multi_order_schedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{multi_order_schedule.order_scheduler_book.cleaning_hours}}" >
+                                                       
+                                                        {% elif multi_order_schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' %}
+                                                        <img v-if="edit" class="visit-time-edit pointer ml-10 mt-2p " src="{% static 'files/icons/cancel-primary.png' %}"  onclick="cancelCleaningDate(this)"  data-cleaning_start_date="{{multi_order_schedule.start_at|date:'d-m-Y'}}" data-estimated_cost="{{multi_order_schedule.order_scheduler_book.estimated_cost}}" data-evaluation_book_id="{{multi_order_schedule.order_scheduler_book.id}}" data-id="{{multi_order_schedule.id}}" data-service="{{multi_order_schedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{multi_order_schedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{multi_order_schedule.order_scheduler_book.cleaning_hours}}">
+                                                        {%endif%} -->
                                                         <!--<div class="vist-card-item-last ml-5">
                                                             <button {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %}class="inprogress-button"{% elif multi_order_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}class="assigned-button"{% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED'%}class="completed-button"{% else %}class="canceled-button"{% endif %}>  {% for investigation in multi_order_schedule.investigations|slice:":1" %}{% for followup in investigation.followups|slice:":1" %}{% if followup %} <i aria-hidden="true" class="fa fa-flag" style="margin-right: 5px ;"></i> {% endif %}{% endfor %}{% endfor %} {{multi_order_schedule.work_status|default_if_none:'NOT STARTED'}}</button>
-                                                        </div>-->
+                                                        </div>--->
                                                     </div>
                                                    
                                                 </div>
@@ -1514,6 +1562,13 @@
                                         <div class="order-clean-section-header c-mb-10">
                                             <div>
                                                 <h1><span>Visit</span> <span class="visit_count">1</span>  </h1> 
+                                                <div class="d-flex secondary-text">
+                                                <div class="status-dot {% if orderschedule.work_status == 'CLEANING_IN_PROGRESS' %} inprogress-chip-bg {% elif orderschedule.work_status == 'CLEANING_FULFILLED' %} completed-chip-bg {% elif orderschedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}assigned-chip-bg{% elif orderschedule.work_status == 'CLEANING_CANCELLED' %}cancel-chip-bg{% else %} notstarted-chip-bg {% endif %}">
+                                                 </div>
+                                                 <div>   {% if orderschedule.work_status == 'CLEANING_IN_PROGRESS' %} In Progress {% elif orderschedule.work_status == 'CLEANING_FULFILLED' %} Completed{% elif orderschedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}Team Assigned{% elif orderschedule.work_status == 'CLEANING_CANCELLED' %}Cancelled{% else %} Not Started{% endif %}
+                                                </div>
+                                                </div>
+
                                             </div>
                                            <div class="ml-10">
                                            {% for investigation in orderschedule.investigations %}{% for followup in investigation.followups %}{% if followup %}
@@ -1570,7 +1625,7 @@
                                         <div class="row c-mt-10 id_team_members_div">
                                         {% for team_member in cleaning_team.cleaning_team_members %}
                                         {% if team_member.member != cleaning_team.team_leader %}
-                                            <div class="col-md-2 m-mt20 .c-mb-10 mr-0 ml-0">
+                                            <div class="col-md-3 m-mt20 .c-mb-10 mr-0 ml-0">
                                                 <div class="row">
                                                     <div class="col-xs-4 pr-0">
                                                         {% if team_member.member.profile_image %}
@@ -1597,7 +1652,7 @@
                                         </div>
 
                                         <div class="row c-mt-10">
-                                            <div class="col-md-2 mr-0 ml-0">
+                                            <div class="col-md-3 mr-0 ml-0">
                                                 <div class="row">
                                                     <div class="col-xs-4 pr-0">
                                                         <img class="clean-team-profile-pic"
@@ -1620,7 +1675,7 @@
                                         </div>
 
                                         <div class="row c-mt-10">
-                                            <div class="col-md-2 mr-0 ml-0">
+                                            <div class="col-md-3 mr-0 ml-0">
                                                 <div class="row">
                                                     <div class="col-xs-4 pr-0">
                                                         {% if cleaning_team.team_leader.profile_image %}
@@ -2005,11 +2060,11 @@
                                         {% endif %}
 
 
-                                        {% if order.order_status == 'APPROVED_BY_CLIENT' or order.order_status == 'ORDER_IN_PROGRESS'  %}
+                                         {% if order.order_status == 'APPROVED_BY_CLIENT' or order.order_status == 'ORDER_IN_PROGRESS'  %}
                                         <div class="row">
                                             <button style="width: 153px !important;" data-toggle="modal" data-target="#cancelModel" class="view-button">Order Cancel</button>
                                         </div>
-                                        {% endif %}
+                                        {% endif %} 
 
                                         {% if request.user.user_type == 'AGENT' %}
                                         <div class="row">
@@ -2223,6 +2278,110 @@
 </div>
 <!-- section delete-->
 <!-- Modal Cancel -->
+<!-- Visit Delete -->
+<div class="modal fade bd-example-modal-lg" id="deleteCleaningModal" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog cancel-model cancel-order-border" role="document">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="d-flex cl-modal-icons">
+                        <button data-dismiss="modal" class="model-close">
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="cancel-model-content">
+                        <h1>Do you want to delete this Visit?</h1>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <div class="cancel-model-content">
+                        
+                        <button class="sent-button" type="submit" @click="deleteVisit()">Yes</button>
+                        <button data-dismiss="modal" class="view-button">Cancel</button>
+                      
+                        
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Visit Delete ends here-->
+<!-- Visit Cancel -->
+<div class="modal fade bd-example-modal-lg" id="cancelCleaningModal" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog cancel-model cancel-order-border" role="document">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="d-flex cl-modal-icons">
+                        <button data-dismiss="modal" class="model-close">
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="cancel-model-content">
+                        <h1>How do you want to cancel this Visit?</h1>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="d-flex justify-center">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" v-model="reduction_status" checked :value="false">
+                            <label class="form-check-label" for="flexRadioDefault1">
+                              Without Reducing Amount
+                            </label>
+                          </div>
+                          <div class="form-check ml-20">
+                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2"  v-model="reduction_status" :value="true">
+                            <label class="form-check-label" for="flexRadioDefault2">
+                                Reducing Amount
+                            </label>
+                          </div>
+                    </div>
+                    <div v-if="reduction_status" class="text-center">
+                        <div class="input-group mb-3 mx-auto mt-20">
+                          
+                            <input type="text" class="form-control" placeholder="Amount to be Reduced"  v-model="reducing_total">
+                          </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <div class="cancel-model-content">
+                        
+                        <button class="sent-button" type="submit" @click="cancelVisit()">Submit</button>
+                        <button data-dismiss="modal" class="view-button">Close</button>
+                      
+                        
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Visit Cancel ends here-->
+<!-- -->
+<!-- -->
 <div class="modal fade bd-example-modal-lg" id="cancelModel" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog cancel-model cancel-order-border" role="document">
@@ -2254,7 +2413,7 @@
             <div class="row pt-20 pb-20">
                 <div class="col-md-12 text-center">
                     <div class="cancel-model-content p-0">
-                        <form method="post" action="" enctype= "multipart/form-data" id="duplicate_form_id" class="text-center">{% csrf_token %}
+                        <!-- <form method="post" action="" enctype= "multipart/form-data" id="duplicate_form_id" class="text-center">{% csrf_token %} -->
                         <input type="hidden" name="evaluation" id="evaluation_id" value="{{order.evaluation.id}}">
                         <input type="hidden" name="action_type" value="cancell_order">
                         
@@ -2263,19 +2422,22 @@
                         {% elif request.user.user_type == 'SALESADMIN' %}
                         <a href="{% url 'bleach_salesadmin:cancell-order' order.id %}" target="_blank"><button class="sent-button" type="button">Yes</button></a>
                         {% else %}
-                    <!--  <div class="row" style="justify-content: center;">
-                           
-                            <div class="col-md-3" v-for="(service,serindex) in services" v-bind:key="serindex">
-                                <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                                <label class="form-check-label" for="exampleCheck1"><% service %></label>
+                     <div class="row" style="justify-content: center;">
+                        <div class="col-md-12 col-offset-3 text-center">
+                            <input type="checkbox" class="form-check-input service-checkbox" id="exampleCheck1" v-model="all_val" @change="checkAll()">
+                            <label class="form-check-label service-checkbox-label" for="exampleCheck1">All</label>
+                        </div>
+                            <div class="col-md-12 col-offset-3 text-center" v-for="(service,serindex) in services" v-bind:key="serindex">
+                                <input type="checkbox" class="form-check-input service-checkbox" id="exampleCheck1" v-model="services_list" :value="service" @change="removeAll()">
+                                <label class="form-check-label service-checkbox-label" for="exampleCheck1"><% service.name %></label>
                             </div>
                            
-                        </div>-->
-                        <button class="sent-button mt-20" type="submit">Yes</button>
+                        </div>
+                        <button class="sent-button mt-20" type="submit" @click="cancelServiceOrder()">Yes</button>
                         {% endif %}
 
                         <button data-dismiss="modal mt-20" class="view-button">Cancel</button>
-                        </form><!--Content ends here-->
+                        <!-- </form>Content ends here -->
                         
                     </div>
                 </div>
@@ -2675,11 +2837,11 @@ function load_cleaning_team(visitcount,scheduleid){
                         
                         $('.id_team_members_div').empty();
 
-                        $('.id_team_members_div').append('<div class="col-md-2 m-mt20 .c-mb-10 mr-0 ml-0"> <div class="row"> <div class="col-xs-4 pr-0"> <img class="clean-team-profile-pic" src="'+response.data.team_leader_image+'"> </div> <div class="col-xs-8"> <div class="order-agent-content text-left"> <h2>'+response.data.team_leader+'</h2> <h6>Team Leader</h6> </div></div></div></div>');
+                        $('.id_team_members_div').append('<div class="col-md-3 m-mt20 .c-mb-10 mr-0 ml-0"> <div class="row"> <div class="col-xs-4 pr-0"> <img class="clean-team-profile-pic" src="'+response.data.team_leader_image+'"> </div> <div class="col-xs-8"> <div class="order-agent-content text-left"> <h2>'+response.data.team_leader+'</h2> <h6>Team Leader</h6> </div></div></div></div>');
 
                         $.each(response.data.members,function(key,value){
                             console.log(value,"valk")
-                            $('.id_team_members_div').append('<div class="col-md-2 m-mt20 .c-mb-10 mr-0 ml-0"> <div class="row"> <div class="col-xs-4 pr-0"> <img class="clean-team-profile-pic" src="'+value.member_image+'"> </div> <div class="col-xs-8"> <div class="order-agent-content text-left"> <h2>'+value.member_name+'</h2> <h6>Team Member</h6> </div></div></div></div>');
+                            $('.id_team_members_div').append('<div class="col-md-3 m-mt20 .c-mb-10 mr-0 ml-0"> <div class="row"> <div class="col-xs-4 pr-0"> <img class="clean-team-profile-pic" src="'+value.member_image+'"> </div> <div class="col-xs-8"> <div class="order-agent-content text-left"> <h2>'+value.member_name+'</h2> <h6>Team Member</h6> </div></div></div></div>');
                         })
 
                         $('.id_assigned_by').text(response.data.assigned_by);

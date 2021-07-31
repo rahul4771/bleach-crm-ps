@@ -163,7 +163,36 @@
   padding-left: 0px !important;
 }
 .order-card-column {
-  min-height: 170px;
+/*  min-height: 170px;*/
+}
+.service-checkbox{
+  border-radius:0px !important;
+  margin: 4px 8px 0px !important;
+  background: #edf1f5 !important;
+    border: 1px solid #B9CFEB !important;
+}
+.service-checkbox:checked::before{
+  color: #2d4c82 !important;
+    padding-left: -1px !important;
+    padding-right: 2px !important;
+    padding-bottom: 5px !important;
+}
+.service-checkbox-label{
+  max-width:200px;
+  min-width:200px;
+  text-align: center;
+  display: inline-block;
+  font-size: 14px;
+  border: 1px solid #B9CFEB;
+  border-radius:3px;
+    max-width: 100%;
+    margin-bottom: 5px;
+    background-color: #edf1f5;
+    font-weight: 300;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 .visti-section {
   display: block;
@@ -503,10 +532,23 @@
   background: #edf1f6 0% 0% no-repeat padding-box;
   border-radius: 3px;
   opacity: 1;
-  padding: 3px 5px 3px 5px;
+  padding: 4px 5px 3px 5px;
  border: 1px solid transparent ;
 
   /* margin-left: 10px; */
+}
+.gps-btn{
+  border: 1px solid #2e4e85;
+  border-radius: 5px;
+  max-width: 200px;
+  padding: 4px;
+  text-align: center;
+  color: #2e4e85;
+  cursor: pointer;
+}
+
+.mr-10{
+  margin-right:10px;
 }
 .p-0{
   padding:0px !important;
@@ -529,6 +571,41 @@
 .mb-20{
   margin-bottom:20px !important;
 }
+.ml-20{
+  margin-left:20px !important;
+}
+.ml-10{
+  margin-left:10px !important;
+}
+.ml-5{
+  margin-left:5px !important;
+}
+.mt-2p{
+  margin-top:2px !important;
+}
+.ml-auto{
+  margin-left: auto !important;
+}
+.visit-text{
+  color: #505050;
+  font-size:14px;
+}
+/*status dots */
+.status-dot{
+  
+    width: 10px;
+    height: 10px;
+    margin: 5px;
+    border-radius: 15px;
+}
+.secondary-text{
+  color: #434343;
+}
+.visit-time-edit{
+  height:15px;
+}
+
+
 /* Cancelled*/
 .cancel-chip{
   border-left:6px solid #c91212 !important;
@@ -554,7 +631,14 @@
 .completed-chip-bg{
   background: #10a82f !important;
 }
-
+.notstarted-chip-bg{
+  background: #AAA8A7 !important;
+}
+.cleaning-stat{
+  max-width: 200px;
+    margin: auto;
+    text-align: left;
+}
 .c-active {
   border: 1px solid #74a7ff;
   margin: 0;

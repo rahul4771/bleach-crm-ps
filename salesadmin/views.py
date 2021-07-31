@@ -187,7 +187,12 @@ class AdminHome(IsSalesAdmin,View):
 					cleaning_price += scheduler.order_scheduler_book.total_cost/len(cancell_in_progress_order.order_scheduler_order.all())			
 			cancell_in_progress_order.job_completed_amount = cleaning_price
 
-		return render(request,'salesadmin/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'month_average_feedback':month_average_feedback,'lastmonth_average_feedback':lastmonth_average_feedback,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'evaluators_sales_targets':evaluators_sales_target,'approve_tickets':approve_tickets,"calendar_notapprovedorder_schedules":calendar_notapprovedorder_schedules,"sp_calendar_notapprovedorder_schedules":sp_calendar_notapprovedorder_schedules,"spp_calendar_notapprovedorder_schedules":spp_calendar_notapprovedorder_schedules,"cancell_in_progress_orders":cancell_in_progress_orders,"ticket_count":ticket_count})
+		#cancell in progress evaluation books
+		book_cancells            = EvaluationBook.objects.filter(status='CANCELL_IN_PROGRESS',is_active=True).select_related('evaluation_details__evaluation')
+		book_cancell_list		 = book_cancells.values_list('evaluation_details__evaluation__id',flat=True)
+		book_cancell_requests    = Evaluation.objects.filter(id__in=book_cancell_list).select_related('customer')
+
+		return render(request,'salesadmin/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'month_average_feedback':month_average_feedback,'lastmonth_average_feedback':lastmonth_average_feedback,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'evaluators_sales_targets':evaluators_sales_target,'approve_tickets':approve_tickets,"calendar_notapprovedorder_schedules":calendar_notapprovedorder_schedules,"sp_calendar_notapprovedorder_schedules":sp_calendar_notapprovedorder_schedules,"spp_calendar_notapprovedorder_schedules":spp_calendar_notapprovedorder_schedules,"cancell_in_progress_orders":cancell_in_progress_orders,"ticket_count":ticket_count,"book_cancell_requests":book_cancell_requests,"book_cancells":book_cancells})
 
 	def post(self,request):
 		action = request.POST.get('action_type')
@@ -2805,3 +2810,15 @@ class OrderCancellation(IsSalesAdmin,View):
 			messages.success(request,'Order Successfully Cancelled')
 		
 		return redirect('bleach_salesadmin:salesadmindash-board')
+
+
+class EvaluationBookCancellation(IsSalesAdmin,View):
+	def get(self,request,evaluation_id):
+
+		#cancell in progress books
+		cancell_books = EvaluationBook.objects.select_related('evaluation_details__evaluation').filter(evaluation_details__evaluation__id=evaluation_id)
+
+		#cancell in progress orders
+		cancell_in_progress_order = Order.objects.select_related('evaluation__customer').get(evaluation__id=evaluation_id)
+
+		return render(request,"salesadmin/cancel-book/cancel-book.html",{"cancell_in_progress_order":cancell_in_progress_order,"cancell_books":cancell_books,})

@@ -294,7 +294,12 @@ class AdminHome(IsBookingOfficer,View):
 					cleaning_price += scheduler.order_scheduler_book.total_cost/len(order_cancell_cashback.order.order_scheduler_order.all())			
 			order_cancell_cashback.job_completed_amount = cleaning_price
 
-		return render(request,'bookingofficer/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'month_average_feedback':month_average_feedback,'lastmonth_average_feedback':lastmonth_average_feedback,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'evaluators_sales_targets':evaluators_sales_target,'approve_tickets':approve_tickets,"calendar_notapprovedorder_schedules":calendar_notapprovedorder_schedules,"sp_calendar_notapprovedorder_schedules":sp_calendar_notapprovedorder_schedules,"spp_calendar_notapprovedorder_schedules":spp_calendar_notapprovedorder_schedules,"cancell_in_progress_orders":cancell_in_progress_orders,"ticket_count":ticket_count,"pending_payments":pending_payments,'total_pending_amount':total_pending_amount,"total_pending_orders":total_pending_orders,"approved_paybackdiscounts":approved_paybackdiscounts,"subscriptions":subscriptions,"ticket_count":ticket_count,"order_cancell_cashbacks":order_cancell_cashbacks})
+		#cancell in progress evaluation books
+		book_cancells            = EvaluationBook.objects.filter(status='CANCELL_IN_PROGRESS',is_active=True).select_related('evaluation_details__evaluation')
+		book_cancell_list		 = book_cancells.values_list('evaluation_details__evaluation__id',flat=True)
+		book_cancell_requests    = Evaluation.objects.filter(id__in=book_cancell_list).select_related('customer')
+
+		return render(request,'bookingofficer/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'month_average_feedback':month_average_feedback,'lastmonth_average_feedback':lastmonth_average_feedback,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'evaluators_sales_targets':evaluators_sales_target,'approve_tickets':approve_tickets,"calendar_notapprovedorder_schedules":calendar_notapprovedorder_schedules,"sp_calendar_notapprovedorder_schedules":sp_calendar_notapprovedorder_schedules,"spp_calendar_notapprovedorder_schedules":spp_calendar_notapprovedorder_schedules,"cancell_in_progress_orders":cancell_in_progress_orders,"ticket_count":ticket_count,"pending_payments":pending_payments,'total_pending_amount':total_pending_amount,"total_pending_orders":total_pending_orders,"approved_paybackdiscounts":approved_paybackdiscounts,"subscriptions":subscriptions,"ticket_count":ticket_count,"order_cancell_cashbacks":order_cancell_cashbacks,"book_cancell_requests":book_cancell_requests,"book_cancells":book_cancells})
 
 	def post(self,request):
 		action = request.POST.get('action_type')
@@ -3193,3 +3198,19 @@ class FineWriteBack(View):
 
 
 		return redirect('booking-officer:bookingofficerdash-board')
+
+
+
+class EvaluationBookCancellation(IsBookingOfficer,View):
+	def get(self,request,order_id):
+
+		#cancell in progress orders
+		cancell_in_progress_order = Order.objects.select_related('evaluation__customer').prefetch_related('order_scheduler_order__order_scheduler_book').annotate(total_cleaners=Sum('order_scheduler_order__order_scheduler_book__number_of_cleaners')).get(id=order_id)
+		
+		cleaning_price = 0
+		for scheduler in cancell_in_progress_order.order_scheduler_order.all():
+			if scheduler.work_status=='CLEANING_FULFILLED':
+				cleaning_price += scheduler.order_scheduler_book.total_cost/len(cancell_in_progress_order.order_scheduler_order.all())			
+		cancell_in_progress_order.job_completed_amount = cleaning_price
+
+		return render(request,"bookingofficer/cancel-order/cancel-order.html",{'order_id':order_id,"cancell_in_progress_order":cancell_in_progress_order})
