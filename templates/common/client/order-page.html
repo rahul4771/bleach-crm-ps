@@ -1103,6 +1103,7 @@
                                                     <img class="pointer" src="{% static 'files/icons/edit.png' %}">
                                                 </div> -->
                                                 <ul>
+                                                    <li><i class="fas fa-money-bill test-color c-mr-10"></i><span><b>{{order.evaluation.total_cost|default_if_none:'0.000'|floatformat:'3'}} KD</b></span></li>
 
                                                     {% if orderschedule.customer_address.gps_location %}<li><i class="fas  test-color fa-map-marker c-mr-10"></i><a href="{{orderschedule.customer_address.gps_location}}">GPS</a></li>{% endif %}
                                  
