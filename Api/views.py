@@ -653,20 +653,24 @@ class DailySalesAPI(APIView):
 
 			for schedule in schedules_list:
 
+				#schedule count of order
+				order_schedule_count = OrderScheduler.objects.filter(order__order_no=schedule[0]).count()
+
+				#schedule count of evaluation book
 				schedule_count = OrderScheduler.objects.filter(order__order_no=schedule[0],order_scheduler_book__id=schedule[4]).count()
 
 				order_amount     = schedule[1]
 				cleaning_amount += float(order_amount/schedule_count)
 				
 				#fine,promocode, write off calc
-				if schedule[6] != None:
-					cleaning_amount -= float(schedule[6]/schedule_count)
-				if schedule[7] != None:
-					cleaning_amount -= float(schedule[7]/schedule_count)
-				if schedule[8] != None:
-					cleaning_amount += float(schedule[8]/schedule_count)
-				if schedule[10] != None:
-					cleaning_amount -= float(schedule[10]/schedule_count)
+				if schedule[6] > 0:
+					cleaning_amount -= float(schedule[6]/order_schedule_count)
+				if schedule[7] > 0:
+					cleaning_amount -= float(schedule[7]/order_schedule_count)
+				if schedule[8] > 0:
+					cleaning_amount += float(schedule[8]/order_schedule_count)
+				if schedule[10] > 0:
+					cleaning_amount -= float(schedule[10]/order_schedule_count)
 
 				#adding amount to evaluators dict
 				if schedule[9] != None:
@@ -679,13 +683,13 @@ class DailySalesAPI(APIView):
 
 							#fine,promocode, write off calc
 							if schedule[6] != None:
-								evaluator_amount -= float(schedule[6]/schedule_count)
+								evaluator_amount -= float(schedule[6]/order_schedule_count)
 							if schedule[7] != None:
-								evaluator_amount -= float(schedule[7]/schedule_count)
+								evaluator_amount -= float(schedule[7]/order_schedule_count)
 							if schedule[8] != None:
-								evaluator_amount += float(schedule[8]/schedule_count)
+								evaluator_amount += float(schedule[8]/order_schedule_count)
 							if schedule[10] != None:
-								evaluator_amount -= float(schedule[10]/schedule_count)
+								evaluator_amount -= float(schedule[10]/order_schedule_count)
 
 							eval_dict = {""+x+"":evaluator_amount}
 							print(date,eval_dict,"evdict")
@@ -695,26 +699,26 @@ class DailySalesAPI(APIView):
 
 					#fine,promocode, write off calc
 					if schedule[6] != None:
-						others -= float(schedule[6]/schedule_count)
+						others -= float(schedule[6]/order_schedule_count)
 					if schedule[7] != None:
-						others -= float(schedule[7]/schedule_count)
+						others -= float(schedule[7]/order_schedule_count)
 					if schedule[8] != None:
-						others += float(schedule[8]/schedule_count)	
+						others += float(schedule[8]/order_schedule_count)	
 					if schedule[10] != None:
-						others -= float(schedule[10]/schedule_count)
+						others -= float(schedule[10]/order_schedule_count)
 
 				#cleaning type wise amount addition
 				if schedule[2] == 'General Cleaning':
 					detailed_cleaning += float(order_amount/schedule_count)
 
 					if schedule[6] != None:
-						detailed_cleaning -= float(schedule[6]/schedule_count)
+						detailed_cleaning -= float(schedule[6]/order_schedule_count)
 					if schedule[7] != None:
-						detailed_cleaning -= float(schedule[7]/schedule_count)
+						detailed_cleaning -= float(schedule[7]/order_schedule_count)
 					if schedule[8] != None:
-						detailed_cleaning += float(schedule[8]/schedule_count)
+						detailed_cleaning += float(schedule[8]/order_schedule_count)
 					if schedule[10] != None:
-						detailed_cleaning -= float(schedule[10]/schedule_count)
+						detailed_cleaning -= float(schedule[10]/order_schedule_count)
 
 				if schedule[2] == 'Deep Cleaning':
 					detailed_cleaning += float(order_amount/schedule_count)
@@ -792,13 +796,13 @@ class DailySalesAPI(APIView):
 					special_care += float(order_amount/schedule_count)
 
 					if schedule[6] > 0:
-						special_care -= float(schedule[6]/schedule_count)
+						special_care -= float(schedule[6]/order_schedule_count)
 					if schedule[7] > 0:
-						special_care -= float(schedule[7]/schedule_count)
+						special_care -= float(schedule[7]/order_schedule_count)
 					if schedule[8] > 0:
-						special_care += float(schedule[8]/schedule_count)
+						special_care += float(schedule[8]/order_schedule_count)
 					if schedule[10] > 0:
-						special_care -= float(schedule[10]/schedule_count)
+						special_care -= float(schedule[10]/order_schedule_count)
 
 				if schedule[2] == 'Mattress Cleaning':
 					special_care += float(order_amount/schedule_count)
