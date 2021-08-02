@@ -277,7 +277,7 @@ function exportTableToExcel(){
         var encodedUri = encodeURI(csvContent);
         var link = document.createElement("a");
         link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "DailySales_"+month+".csv");
+        link.setAttribute("download", "DailySales_"+$('#calendar_month').val()+".csv");
         document.body.appendChild(link);
          /* download the data file named "Stock_Price_Report.csv" */
         link.click();
