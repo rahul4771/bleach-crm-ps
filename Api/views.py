@@ -690,6 +690,7 @@ class DailySalesAPI(APIView):
 								evaluator_amount += float(schedule[8]/order_schedule_count)
 							if schedule[10] > 0:
 								evaluator_amount -= float(schedule[10]/order_schedule_count)
+							
 
 							eval_dict = {""+x+"":evaluator_amount}
 							print(date,eval_dict,"evdict")
@@ -706,6 +707,7 @@ class DailySalesAPI(APIView):
 						others += float(schedule[8]/order_schedule_count)	
 					if schedule[10] > 0:
 						others -= float(schedule[10]/order_schedule_count)
+					
 
 				#cleaning type wise amount addition
 				if schedule[2] == 'General Cleaning':
@@ -719,6 +721,7 @@ class DailySalesAPI(APIView):
 						detailed_cleaning += float(schedule[8]/order_schedule_count)
 					if schedule[10] > 0:
 						detailed_cleaning -= float(schedule[10]/order_schedule_count)
+					
 
 				if schedule[2] == 'Deep Cleaning':
 					detailed_cleaning += float(order_amount/schedule_count)
@@ -731,6 +734,7 @@ class DailySalesAPI(APIView):
 						detailed_cleaning += float(schedule[8]/order_schedule_count)
 					if schedule[10] > 0:
 						detailed_cleaning -= float(schedule[10]/order_schedule_count)
+					
 
 				if schedule[2] == 'Facade Cleaning':
 					detailed_cleaning += float(order_amount/schedule_count)
@@ -743,6 +747,7 @@ class DailySalesAPI(APIView):
 						detailed_cleaning += float(schedule[8]/order_schedule_count)
 					if schedule[10] > 0:
 						detailed_cleaning -= float(schedule[10]/order_schedule_count)
+					
 
 				if schedule[2] == 'Storage Area':
 					detailed_cleaning += float(order_amount/schedule_count)
@@ -755,6 +760,7 @@ class DailySalesAPI(APIView):
 						detailed_cleaning += float(schedule[8]/order_schedule_count)
 					if schedule[10] > 0:
 						detailed_cleaning -= float(schedule[10]/order_schedule_count)
+					
 
 				if schedule[2] == 'Car Parking Umbrella':
 					detailed_cleaning += float(order_amount/schedule_count)
@@ -767,6 +773,7 @@ class DailySalesAPI(APIView):
 						detailed_cleaning += float(schedule[8]/order_schedule_count)
 					if schedule[10] > 0:
 						detailed_cleaning -= float(schedule[10]/order_schedule_count)
+					
 
 				if schedule[2] == 'Window Cleaning':
 					detailed_cleaning += float(order_amount/schedule_count)
@@ -779,6 +786,7 @@ class DailySalesAPI(APIView):
 						detailed_cleaning += float(schedule[8]/order_schedule_count)
 					if schedule[10] > 0:
 						detailed_cleaning -= float(schedule[10]/order_schedule_count)
+					
 
 				if schedule[2] == 'Outdoor Cleaning':
 					detailed_cleaning += float(order_amount/schedule_count)
@@ -791,6 +799,7 @@ class DailySalesAPI(APIView):
 						detailed_cleaning += float(schedule[8]/order_schedule_count)
 					if schedule[10] > 0:
 						detailed_cleaning -= float(schedule[10]/order_schedule_count)
+					
 
 				if schedule[2] == 'Upholstery Cleaning':
 					special_care += float(order_amount/schedule_count)
@@ -803,6 +812,7 @@ class DailySalesAPI(APIView):
 						special_care += float(schedule[8]/order_schedule_count)
 					if schedule[10] > 0:
 						special_care -= float(schedule[10]/order_schedule_count)
+					
 
 				if schedule[2] == 'Mattress Cleaning':
 					special_care += float(order_amount/schedule_count)
@@ -815,6 +825,7 @@ class DailySalesAPI(APIView):
 						special_care += float(schedule[8]/order_schedule_count)
 					if schedule[10] > 0:
 						special_care -= float(schedule[10]/order_schedule_count)
+					
 
 				if schedule[2] == 'Carpet Cleaning':
 					special_care += float(order_amount/schedule_count)
@@ -827,6 +838,7 @@ class DailySalesAPI(APIView):
 						special_care += float(schedule[8]/order_schedule_count)
 					if schedule[10] > 0:
 						special_care -= float(schedule[10]/order_schedule_count)
+					
 
 				
 
@@ -861,6 +873,7 @@ class DailySalesAPI(APIView):
 						kitchen_cleaning += float(schedule[8]/order_schedule_count)
 					if schedule[10] > 0:
 						kitchen_cleaning -= float(schedule[10]/order_schedule_count)
+					
 
 				# if schedule[2] == 'Carpet Cleaning':
 				# 	carpetcleaning += float(order_amount/schedule_count)
@@ -883,6 +896,7 @@ class DailySalesAPI(APIView):
 						infection_control += float(schedule[8]/order_schedule_count)
 					if schedule[10] > 0:
 						infection_control -= float(schedule[10]/order_schedule_count)
+					
 			
 			
 			if data_type == 'service':
@@ -921,7 +935,7 @@ class DailySalesAPI(APIView):
 			cleaning_amount_month += cleaning_amount
 
 				
-		response_dict = {'success':True,'datatype':data_type,'list':saleslist,'list2':evaluators_list,'list3':evaluator_list_monthly, 'todate':str(today.date()),'month_name':full_month_name,'generalcleaning_month':detailed_cleaning_month,'upholsterycleaning_month':special_care_month,'kitchencleaning_month':kitchen_cleaning_month,'sterilization_month':infection_control_month,'cleaning_amount_month':cleaning_amount_month}
+		response_dict = {'success':True,'datatype':data_type,'list':saleslist,'list2':evaluators_list,'list3':evaluator_list_monthly, 'todate':str(today.date()),'month_name':full_month_name,'detailed_cleaning_month':detailed_cleaning_month,'special_care_month':special_care_month,'kitchen_cleaning_month':kitchen_cleaning_month,'infection_control_month':infection_control_month,'cleaning_amount_month':cleaning_amount_month}
 
 		return Response(response_dict,HTTP_200_OK)
 

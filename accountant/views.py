@@ -1894,7 +1894,7 @@ def export_users_xls(request):
 		
 		#total sales
 		response['Content-Disposition'] = 'attachment; filename="SALES_REPORT_'+from_date+'_'+to_date+'.xls"'
-		orderschedules = OrderScheduler.objects.filter(Q(is_active=True)&Q(order__evaluation__quatation_status='APPROVED')&Q(Q(work_status='CLEANING_FULFILLED')|Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS'))&Q(end_at__range=(prev_date_start,todate_date_end))).values_list('order__order_no','end_at','end_at','id','evaluation_details__address__customer__name','evaluation_details__evaluation__payment_method','order_scheduler_book__total_cost','order__amount_paid','evaluation_details__evaluation__payment_way','order_scheduler_book__id','order__remining_amount','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__cleaning_hours','order_scheduler_book__number_of_cleaners','evaluation_details__evaluator__name','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount').order_by('end_at')
+		orderschedules = OrderScheduler.objects.filter(Q(is_active=True)&Q(order__evaluation__quatation_status='APPROVED')&Q(Q(work_status='CLEANING_FULFILLED')|Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS'))&Q(end_at__range=(prev_date_start,todate_date_end))).values_list('order__order_no','end_at','end_at','id','evaluation_details__address__customer__name','evaluation_details__evaluation__payment_method','order_scheduler_book__total_cost','order__amount_paid','evaluation_details__evaluation__payment_way','order_scheduler_book__id','order__remining_amount','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__cleaning_hours','order_scheduler_book__number_of_cleaners','evaluation_details__evaluator__name','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount','order_scheduler_book__evaluation_details__evaluation__discount','order_scheduler_book__evaluation_details__evaluation__cancelled_amount').order_by('end_at')
 		print(orderschedules.count(),"count")
 	
 		
@@ -1912,7 +1912,7 @@ def export_users_xls(request):
 		#sales report
 		ws2 = wb.add_sheet('SALES REPORT',cell_overwrite_ok = True)
 	
-		columns2 = ['Date','Day','General Cleaning','Deep Cleaning','Sanitization','Carpet Cleaning','Upholstery Cleaning','Kitchen Cleaning','Grand Total']
+		columns2 = ['Date','Day','Detailed Cleaning','Special Care','Kitchen Cleaning','Infection Control','Grand Total']
 		
 		for col_num in range(len(columns2)):
 			ws2.write(row_num2, col_num, columns2[col_num], font_style)
@@ -1944,6 +1944,11 @@ def export_users_xls(request):
 			sterilization = 0
 			carpet = 0
 			kitchen = 0
+
+			detailed_cleaning = 0
+			special_care = 0
+			kitchen_cleaning = 0
+			infection_control = 0
 			
 			test_elem = d
 
@@ -1955,85 +1960,174 @@ def export_users_xls(request):
 
 				calc_orderschedules = OrderScheduler.objects.filter( order__order_no = r[0] , order_scheduler_book__id = r[9] )
 			
+				total_order_schedule_count = OrderScheduler.objects.filter( order__order_no = r[0] ).count()
+
 				orderschedules_count = calc_orderschedules.count()
 
 				print(r[0],r[6],orderschedules_count,"orc")
 
 				day_name = r[3]
 
+				
 				if r[11] == 'General Cleaning':
-					general += float(r[6]/orderschedules_count)
+					detailed_cleaning += float(r[6]/orderschedules_count)
 
-					if r[16] != None:
-						general -= float(r[16]/orderschedules_count)
-					if r[17] != None:
-						general -= float(r[17]/orderschedules_count)
-					if r[18] != None:
-						general += float(r[18]/orderschedules_count)	
+					if r[16] > 0:
+						detailed_cleaning -= float(r[16]/total_order_schedule_count)
+					if r[17] > 0:
+						detailed_cleaning -= float(r[17]/total_order_schedule_count)
+					if r[18] > 0:
+						detailed_cleaning += float(r[18]/total_order_schedule_count)	
+					if r[19] > 0:
+						detailed_cleaning -= float(r[19]/total_order_schedule_count)			
 
 				if r[11] == 'Deep Cleaning':
-					deep += float(r[6]/orderschedules_count)
+					detailed_cleaning += float(r[6]/orderschedules_count)
 
-					if r[16] != None:
-						deep -= float(r[16]/orderschedules_count)
-					if r[17] != None:
-						deep -= float(r[17]/orderschedules_count)
-					if r[18] != None:
-						deep += float(r[18]/orderschedules_count)	
+					if r[16] > 0:
+						detailed_cleaning -= float(r[16]/total_order_schedule_count)
+					if r[17] > 0:
+						detailed_cleaning -= float(r[17]/total_order_schedule_count)
+					if r[18] > 0:
+						detailed_cleaning += float(r[18]/total_order_schedule_count)	
+					if r[19] > 0:
+						detailed_cleaning -= float(r[19]/total_order_schedule_count)	
+
+				if r[11] == 'Facade Cleaning':
+					detailed_cleaning += float(r[6]/orderschedules_count)
+
+					if r[16] > 0:
+						detailed_cleaning -= float(r[16]/total_order_schedule_count)
+					if r[17] > 0:
+						detailed_cleaning -= float(r[17]/total_order_schedule_count)
+					if r[18] > 0:
+						detailed_cleaning += float(r[18]/total_order_schedule_count)	
+					if r[19] > 0:
+						detailed_cleaning -= float(r[19]/total_order_schedule_count)	
+
+				if r[11] == 'Storage Area':
+					detailed_cleaning += float(r[6]/orderschedules_count)
+
+					if r[16] > 0:
+						detailed_cleaning -= float(r[16]/total_order_schedule_count)
+					if r[17] > 0:
+						detailed_cleaning -= float(r[17]/total_order_schedule_count)
+					if r[18] > 0:
+						detailed_cleaning += float(r[18]/total_order_schedule_count)	
+					if r[19] > 0:
+						detailed_cleaning -= float(r[19]/total_order_schedule_count)	
+
+				if r[11] == 'Car Parking Umbrella':
+					detailed_cleaning += float(r[6]/orderschedules_count)
+
+					if r[16] > 0:
+						detailed_cleaning -= float(r[16]/total_order_schedule_count)
+					if r[17] > 0:
+						detailed_cleaning -= float(r[17]/total_order_schedule_count)
+					if r[18] > 0:
+						detailed_cleaning += float(r[18]/total_order_schedule_count)	
+					if r[19] > 0:
+						detailed_cleaning -= float(r[19]/total_order_schedule_count)	
+
+				if r[11] == 'Window Cleaning':
+					detailed_cleaning += float(r[6]/orderschedules_count)
+
+					if r[16] > 0:
+						detailed_cleaning -= float(r[16]/total_order_schedule_count)
+					if r[17] > 0:
+						detailed_cleaning -= float(r[17]/total_order_schedule_count)
+					if r[18] > 0:
+						detailed_cleaning += float(r[18]/total_order_schedule_count)	
+					if r[19] > 0:
+						detailed_cleaning -= float(r[19]/total_order_schedule_count)	
+
+				if r[11] == 'Outdoor Cleaning':
+					detailed_cleaning += float(r[6]/orderschedules_count)
+
+					if r[16] > 0:
+						detailed_cleaning -= float(r[16]/total_order_schedule_count)
+					if r[17] > 0:
+						detailed_cleaning -= float(r[17]/total_order_schedule_count)
+					if r[18] > 0:
+						detailed_cleaning += float(r[18]/total_order_schedule_count)	
+					if r[19] > 0:
+						detailed_cleaning -= float(r[19]/total_order_schedule_count)	
 
 				if r[11] == 'Sterilization':
-					sterilization += float(r[6]/orderschedules_count)
+					infection_control += float(r[6]/orderschedules_count)
 
-					if r[16] != None:
-						sterilization -= float(r[16]/orderschedules_count)
-					if r[17] != None:
-						sterilization -= float(r[17]/orderschedules_count)
-					if r[18] != None:
-						sterilization += float(r[18]/orderschedules_count)
+					if r[16] > 0:
+						infection_control -= float(r[16]/total_order_schedule_count)
+					if r[17] > 0:
+						infection_control -= float(r[17]/total_order_schedule_count)
+					if r[18] > 0:
+						infection_control += float(r[18]/total_order_schedule_count)	
+					if r[19] > 0:
+						infection_control -= float(r[19]/total_order_schedule_count)	
 					
 
 				if r[11] == 'Carpet Cleaning':
-					carpet += float(r[6]/orderschedules_count)
+					special_care += float(r[6]/orderschedules_count)
 
-					if r[16] != None:
-						carpet -= float(r[16]/orderschedules_count)
-					if r[17] != None:
-						carpet -= float(r[17]/orderschedules_count)
-					if r[18] != None:
-						carpet += float(r[18]/orderschedules_count)
+					if r[16] > 0:
+						special_care -= float(r[16]/total_order_schedule_count)
+					if r[17] > 0:
+						special_care -= float(r[17]/total_order_schedule_count)
+					if r[18] > 0:
+						special_care += float(r[18]/total_order_schedule_count)	
+					if r[19] > 0:
+						special_care -= float(r[19]/total_order_schedule_count)	
 
 				if r[11] == 'Upholstery Cleaning':
-					upholstery += float(r[6]/orderschedules_count)
+					special_care += float(r[6]/orderschedules_count)
 
-					if r[16] != None:
-						upholstery -= float(r[16]/orderschedules_count)
-					if r[17] != None:
-						upholstery -= float(r[17]/orderschedules_count)
-					if r[18] != None:
-						upholstery += float(r[18]/orderschedules_count)
+					if r[16] > 0:
+						special_care -= float(r[16]/total_order_schedule_count)
+					if r[17] > 0:
+						special_care -= float(r[17]/total_order_schedule_count)
+					if r[18] > 0:
+						special_care += float(r[18]/total_order_schedule_count)	
+					if r[19] > 0:
+						special_care -= float(r[19]/total_order_schedule_count)	
+
+				if r[11] == 'Mattress Cleaning':
+					special_care += float(r[6]/orderschedules_count)
+
+					if r[16] > 0:
+						special_care -= float(r[16]/total_order_schedule_count)
+					if r[17] > 0:
+						special_care -= float(r[17]/total_order_schedule_count)
+					if r[18] > 0:
+						special_care += float(r[18]/total_order_schedule_count)	
+					if r[19] > 0:
+						special_care -= float(r[19]/total_order_schedule_count)	
 
 				if r[11] == 'Kitchen Cleaning':
-					kitchen += float(r[6]/orderschedules_count)
+					kitchen_cleaning += float(r[6]/orderschedules_count)
 
-					if r[16] != None:
-						kitchen -= float(r[16]/orderschedules_count)
-					if r[17] != None:
-						kitchen -= float(r[17]/orderschedules_count)
-					if r[18] != None:
-						kitchen += float(r[18]/orderschedules_count)
+					if r[16] > 0:
+						kitchen_cleaning -= float(r[16]/total_order_schedule_count)
+					if r[17] > 0:
+						kitchen_cleaning -= float(r[17]/total_order_schedule_count)
+					if r[18] > 0:
+						kitchen_cleaning += float(r[18]/total_order_schedule_count)	
+					if r[19] > 0:
+						kitchen_cleaning -= float(r[19]/total_order_schedule_count)	
 
 				grand_total += float(r[6]/orderschedules_count)
 
 				#fine,promocode, write off calc
-				if r[16] != None:
-					grand_total -= float(r[16]/orderschedules_count)
-				if r[17] != None:
-					grand_total -= float(r[17]/orderschedules_count)
-				if r[18] != None:
-					grand_total += float(r[18]/orderschedules_count)
+				if r[16] > 0:
+					grand_total -= float(r[16]/total_order_schedule_count)
+				if r[17] > 0:
+					grand_total -= float(r[17]/total_order_schedule_count)
+				if r[18] > 0:
+					grand_total += float(r[18]/total_order_schedule_count)
+				if r[19] > 0:
+					grand_total -= float(r[19]/total_order_schedule_count)	
 
-			print(general,"gen")
-			daily_report = (d, day_name, round(general,3), round(deep,3), round(sterilization,3), round(carpet,3), round(upholstery,3), round(kitchen,3), round(grand_total,3))
+			print(detailed_cleaning,"gen")
+			daily_report = (d, day_name, round(detailed_cleaning,3), round(special_care,3), round(kitchen_cleaning,3), round(infection_control,3), round(grand_total,3))
 
 			rows2.append(daily_report)
 
@@ -2063,6 +2157,8 @@ def export_users_xls(request):
 
 			calc_orderschedules = OrderScheduler.objects.filter( order__order_no = schedule_list[0] , order_scheduler_book__id = schedule_list[9] )
 
+			total_order_schedule_count = OrderScheduler.objects.filter( order__order_no = schedule_list[0] ).count()
+
 			orderschedules_count = calc_orderschedules.count()
 			last_orderschedule = calc_orderschedules.last()
 
@@ -2078,12 +2174,14 @@ def export_users_xls(request):
 			schedule_list[6] = round(float(schedule_list[6] / orderschedules_count),3)
 
 			#fine,promocode, write off calc
-			if schedule_list[16] != None:
-				schedule_list[6] -= float(schedule_list[16]/orderschedules_count)
-			if schedule_list[17] != None:
-				schedule_list[6] -= float(schedule_list[17]/orderschedules_count)
-			if schedule_list[18] != None:
-				schedule_list[6] += float(schedule_list[18]/orderschedules_count)
+			if schedule_list[16] > 0:
+				schedule_list[6] -= float(schedule_list[16]/total_order_schedule_count)
+			if schedule_list[17] > 0:
+				schedule_list[6] -= float(schedule_list[17]/total_order_schedule_count)
+			if schedule_list[18] > 0:
+				schedule_list[6] += float(schedule_list[18]/total_order_schedule_count)
+			if schedule_list[19] > 0:
+				schedule_list[6] -= float(schedule_list[19]/total_order_schedule_count)
 
 			schedule_list[7] = round(float(schedule_list[7] / orderschedules_count),3)
 
