@@ -113,7 +113,7 @@
 {% endif %}</td>
 
 {% comment %} data-href='{% url 'common_items:makequatation1' evaluation.evaluation.customer.id evaluation.evaluation.id%}' {% endcomment %}
-<td data-label=""  {% if evaluation.status == 'TOBEEVALUATED' %}class="clickable-row-list" data-href='{% url 'evaluator:evaluator-makeassignedquatation1' evaluation.evaluation.customer.id evaluation.evaluation.id%}'{% endif %}>  
+<td data-label=""  {% if evaluation.status == 'TOBEEVALUATED' %}class="clickable-row-list" data-href='{% url 'common_items:makequatation1' evaluation.evaluation.customer.id evaluation.evaluation.id%}'{% endif %}>  
     {% if evaluation.status == 'EVALUATING' %}
     <span class="blue-bg">Evaluating</span>
     {% elif evaluation.status == 'EVALUATED'  %}
