@@ -1771,6 +1771,56 @@ def export_users_xls(request):
 				ws.write(row_num, col_num, row[col_num], font_style)
 
 
+	if report_type == 'due_payments':
+
+		response = HttpResponse(content_type='application/ms-excel')
+		response['Content-Disposition'] = 'attachment; filename="DUE_PAYMENTS_'+from_date+'_'+to_date+'.xls"'
+
+		wb = xlwt.Workbook(encoding='utf-8')
+		ws = wb.add_sheet('DUE PAYMENTS')
+
+		# columns = ['Order Date', 'Order Number', 'Client Name', 'Payment Policy', 'Payment Mode', 'Total Amount', 'Paid', 'Balance' ]
+
+		columns = ['Date','Order No.','Customer Name','Mobile','Service Type','Amount','Payment Policy']
+		
+		for col_num in range(len(columns)):
+			ws.write(row_num, col_num, columns[col_num], font_style)
+
+		orders = Order.objects.filter(is_active=True).order_by('-id').filter(evaluation__quatation_status='APPROVED',order_status__isnull=False).annotate(cleaning_count=Count('order_scheduler_order'),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())),cleaning_in_progress_count=Sum(Case(When(Q(Q(order_scheduler_order__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler_order__work_status='CLEANING_IN_PROGRESS')),then=1),default=0,output_field=IntegerField())))
+		orders = orders.filter(order_scheduler_order__end_at__range = (prev_date_start,todate_date_end) ).filter(Q( Q(Q(evaluation__payment_method='POSTPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) | Q(Q(evaluation__payment_method='SUBSCRIPTION')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&~Q(subscription_topay=0)) )).values_list('id','order_no','evaluation__customer__name','evaluation__customer__mobile_number','order_no','remining_amount','evaluation__payment_method')
+		
+
+		rows = []
+
+		for order in orders:
+
+			# end_date = order.orderschedules[0]
+
+			# print(order.orderschedules,"ed")
+			
+			order_list = list(order)
+			print(order_list[0],"ordrdat")
+
+			last_orderschedule = OrderScheduler.objects.filter(is_active=True,order__id=order_list[0]).last()
+
+			order_list[0] = last_orderschedule.end_at
+
+			order_list[4] = last_orderschedule.order_scheduler_book.service_type.name
+
+			print(last_orderschedule.end_at,"dat")
+
+			order = tuple(order_list)
+			
+			rows.append(order)
+
+		rows = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows ]
+	
+		for row in rows:
+			row_num += 1
+			for col_num in range(len(row)):
+				ws.write(row_num, col_num, row[col_num], font_style)
+
+
 	if report_type == 'transactionhistory':
 		response = HttpResponse(content_type='application/ms-excel')
 		response['Content-Disposition'] = 'attachment; filename="TRANSACTION_HISTORY_'+from_date+'_'+to_date+'.xls"'

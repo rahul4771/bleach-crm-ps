@@ -10,6 +10,14 @@ $('document').ready(function(){
     }else{
         datatype = 'service';
     }
+
+    var date1 = new Date();
+
+    var month = ("0" + (date1.getMonth()+1)).slice(-2);
+    console.log(month,"lp")
+
+    var datestring = month + "/" + date1.getFullYear();
+    $('#calendar_month').val(datestring);
     
 })
 

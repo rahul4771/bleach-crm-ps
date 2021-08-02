@@ -26,7 +26,7 @@
   
 <div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
         <div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->   
-        <h2 class="h2">Evaluation Callender</h2>
+        <h2 class="h2">Evaluation Calendar</h2>
         </div><!--filter-column-boxes filter-columns-left-->
         <div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
         
@@ -106,12 +106,19 @@
 <th class="theadbg" width="4.54%" scope="col">00 AM</th>
 </tr>
 </thead>
-<tbody>    
-{% for evaluator in evaluation_details %}
-<tr class="clickable-cursor" id="evaluator{{evaluator.id}}">
-<th bgcolor="#eee" width="4.54%" class="fixed-side"><img {% if evaluator.profile_image %} src="{{evaluator.profile_image.url}}" {% else %} src="{% static 'files/images/profile-pic.jpg' %}" {% endif %} class="profile-avtar"></th>
-</tr>
-{% endfor %}
+<tbody> 
+
+{% if request.user.user_type == 'EVALUATOR' %}
+  <tr class="clickable-cursor" id="evaluator{{request.user.id}}">
+  <th bgcolor="#eee" width="4.54%" class="fixed-side"><img {% if request.user.profile_image %} src="{{request.user.profile_image.url}}" {% else %} src="{% static 'files/images/profile-pic.jpg' %}" {% endif %} class="profile-avtar"></th>
+  </tr>
+{% else %}
+  {% for evaluator in evaluation_details %}
+  <tr class="clickable-cursor" id="evaluator{{evaluator.id}}">
+  <th bgcolor="#eee" width="4.54%" class="fixed-side"><img {% if evaluator.profile_image %} src="{{evaluator.profile_image.url}}" {% else %} src="{% static 'files/images/profile-pic.jpg' %}" {% endif %} class="profile-avtar"></th>
+  </tr>
+  {% endfor %}
+{% endif %}
 </tbody>
 </table>
 </div><!--table-wrap-->
