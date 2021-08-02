@@ -13,22 +13,32 @@
 <link href="{% static 'files/css/message_wrapper.css' %}?v=1" rel="stylesheet" type="text/css" />
 {% endblock %}
 
+{% if messages %}
+{% for message in messages %}
+{% if forloop.counter0 == 0 %}
 <!-- chnage notification class success, error,warning -->
 <div class="inv-noti-container inv-noti-success">
     <div class="d-flex">
-        <div class="inv-msg-div">Msg Here</div>
+        <div class="inv-msg-div">{% autoescape off %}{{ message }}{% endautoescape %}</div>
         <div onclick="closeNotification()" class="right-pos inv-pointer"><i class="fa fa-times" aria-hidden="true"></i>
         </div>
     </div>
 </div>
+
+{% endif %}
+{% endfor %}
+{% endif %}
 <script>
     function close_message() {
         $('.message_wrapper').hide();
     }
     $(window).ready(function () {
-        $('.message_wrapper').addClass('display_class');
-        AutoCloseDialogBox(1600);
-        return false;
+        setTimeout(
+            function () {
+                closeNotification();
+            }, 1600);
+        
+        
     });
     function AutoCloseDialogBox(WaitSeconds) {
         //Auto Close Dialog Box after few seconds
