@@ -183,11 +183,51 @@ function editCleaningDate(service){
   
   app.cleaning_start_date=data.cleaning_start_date
   app.selected_cleaning_date=data.cleaning_start_date
+  app.selected_date=data.cleaning_start_date
   app.getSlotes(app.cleaning_start_date)
   $('#date_hidden').val((moment(app.cleaning_start_date,'DD-MM-YYYY').format('MM/DD/YYYY')))
   $("#calendar").datepicker("update", moment(app.cleaning_start_date,'DD-MM-YYYY').format('MM/DD/YYYY'));
   app.setDate(moment(app.cleaning_start_date,'DD-MM-YYYY').format('MM/DD/YYYY'))
   
+}
+function deleteCleaningDate(service){
+  app.cleaning_action='cancell_cleaning'
+  app.reduction_status=false
+  console.log("inside del cleaning")
+  $('#cleaning-delete-tigger').click()
+  var data=$(service).data()
+  app.no_of_cleaners=data.no_of_cleaners
+  app.cleaning_policy='ONE TIME SERVICE'
+  app.selected_no_of_cleaners=data.no_of_cleaners
+  app.service_type=data.service
+  app.cleaning_hours=parseInt(data.cleaning_hours)
+  app.no_of_slots=Math.ceil(data.cleaning_hours/2)
+  app.evaluation_book_id=data.evaluation_book_id
+  app.schedule_id=data.id
+  
+  app.cleaning_start_date=data.cleaning_start_date
+  app.selected_cleaning_date=data.cleaning_start_date
+ 
+}
+function cancelCleaningDate(service){
+ 
+  app.cleaning_action='cancell_cleaning'
+  app.reduction_status=false
+  $('#cleaning-cancel-tigger').click()
+  var data=$(service).data()
+  
+  app.no_of_cleaners=data.no_of_cleaners
+  app.cleaning_policy='SUBSCRIPTION'
+  app.selected_no_of_cleaners=data.no_of_cleaners
+  app.service_type=data.service
+  app.cleaning_hours=parseInt(data.cleaning_hours)
+  app.no_of_slots=Math.ceil(data.cleaning_hours/2)
+  app.evaluation_book_id=data.evaluation_book_id
+  app.schedule_id=data.id
+  app.reducing_total=parseInt(data.estimated_cost)
+  app.cleaning_start_date=data.cleaning_start_date
+  app.selected_cleaning_date=data.cleaning_start_date
+ 
 }
 function addSection(service){
   app.service_type=$(service).data('service')
@@ -225,9 +265,13 @@ const app = new Vue({
     this.getTheSize('Kitchen Cleaning')
     console.log("service is"+$('.service-name'))
     var service=$('.service-name')
+    var book_ids=$('.service_id')
+    console.log("book ids ae"+JSON.stringify(book_ids))
     for(var i=0;i<service.length;i++)
     {
-      this.services.push($(service[i]).text())
+      this.services.push({
+        id:$(book_ids[i]).val(),
+        name:$(service[i]).text()})
     }
     
    
@@ -236,8 +280,13 @@ const app = new Vue({
   components: { Multiselect: window.VueMultiselect.default },
 
   data: {
+    all_val:false,
+    reduction_status:false,
+    no_of_visits:0,
     services:[],
+    reducing_total:0,
     selected_cleaning_date:'',
+    cleaning_policy:'',
     highprice_facade:[],
     lowprice_facade:[],
     highprice_window:[],
@@ -390,13 +439,44 @@ const app = new Vue({
             sofa_size:[],
            progress:20,
            slotloader:false,
-
+            services_list:[],
             url:'https://my.bleachkw.com'
          //  url:'http://localhost:8000'
             //url:'http://127.0.0.1:8000'
   },
   methods:{
-   
+   checkAll(){
+    if(this.all_val){
+        this.services_list=this.services
+    }
+    else{
+      this.services_list=[]
+    }
+   },
+   cancelServiceOrder(){
+     var service_books=[]
+     var requester_id=$('#user_id').val()
+     for(var i=0;i<this.services_list.length;i++){
+       service_books.push(this.services_list[i].id)
+     }
+    axios.post(this.url+'/customer/service/cancellrequest/',{
+      service_books:service_books,
+      requester_id:requester_id
+    }).then(response=>{
+     
+      
+      
+    })
+   },
+   removeAll(){
+     
+    if(this.services.length==this.services_list.length){
+      this.all_val=true
+    }
+    else{
+      this.all_val=false
+    }
+   },
     getTheSize(service){
       var service_productivity=[]
       axios.get(this.url+'/customer/ajax/getservicesizeprice?service_type='+service).then(response=>{
@@ -695,6 +775,46 @@ const app = new Vue({
       })
     }
     },
+   
+    deleteVisit(){
+      axios.post(this.url+'/customer/editorder/'+this.orderId,{
+        action_type:'cancell_cleaning',
+        evaluation_book_id:this.evaluation_book_id,
+        schedule_id:this.schedule_id,
+        reduction_status:false,
+       
+        
+      }).then(response=>{
+       
+        location.reload()
+       
+      })
+    },
+    cancelVisit(){
+     
+      if(this.reduction_status){
+        var post_data={
+          action_type:'cancell_cleaning',
+        evaluation_book_id:this.evaluation_book_id,
+        schedule_id:this.schedule_id,
+        reduction_status:this.reduction_status,
+        reduction_amount:this.reducing_total,  
+        }
+      }
+      else{
+        var post_data={
+          action_type:'cancell_cleaning',
+        evaluation_book_id:this.evaluation_book_id,
+        schedule_id:this.schedule_id,
+        reduction_status:this.reduction_status,
+        }
+      }
+      axios.post(this.url+'/customer/editorder/'+this.orderId,post_data).then(response=>{
+        
+        location.reload()
+       
+      })
+    },
     editVisit(){
       if(this.selectedSlots.length<1){
         this.visit_err='Please select atleast one slot'
@@ -715,7 +835,7 @@ const app = new Vue({
        cleaning_hours:this.selectedSlots.length*2,
        no_of_cleaners:parseInt(this.selected_no_of_cleaners)
       }).then(response=>{
-        $('#visit-close').click()
+        
         location.reload()
        
       })

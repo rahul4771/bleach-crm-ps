@@ -1384,14 +1384,6 @@ class FollowupPopupSave(APIView):
 class AgentHome(IsAgent,View):
 	def get(self,request):
 
-		# update_schedules = OrderScheduler.objects.filter(is_active=True,order__order_no='BLC20210210358',start_at__date__gt=date.today())
-		# for schedule in update_schedules:
-		# 	schedule.start_at = schedule.start_at.replace(hour=8,minute=0,second=0,microsecond=0)-timedelta(hours=3)
-		# 	schedule.end_at = schedule.end_at.replace(hour=10,minute=0,second=0,microsecond=0)-timedelta(hours=3)
-		# 	schedule.no_of_cleaners = '3'
-		# 	schedule.cleaning_hours = '2'
-		# 	schedule.save()
-		# print(update_schedules,"popp")
 		
 		#for taking today counts
 		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)

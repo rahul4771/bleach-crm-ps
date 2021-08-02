@@ -155,7 +155,7 @@
                 <label for="favcity">
                 <select name="status_filter" id="status_filter_id">
                 <option value=''>---ALL---</option>
-                <!-- <option value="EVALUATING" {% if fil_status == 'EVALUATING' %}selected{% endif %}>EVALUATING</option> -->
+                <option value="EVALUATING" {% if fil_status == 'EVALUATING' %}selected{% endif %}>EVALUATING</option>
                 <option value="PENDING" {% if fil_status == 'PENDING' %}selected{% endif %}>PENDING</option>
                 <option value="APPROVED" {% if fil_status == 'APPROVED' %}selected{% endif %}>APPROVED</option>
                 <option value="APPROVED-NOT PAID" {% if fil_status == 'APPROVED-NOT PAID' %}selected{% endif %}>APPROVED-NOT PAID</option>
@@ -265,6 +265,7 @@
 <tbody>
 
     {% for evaluation in evaluations %}
+    {% if  evaluation.estimated_cost > 0 %}
     <tr>
     <td {% if evaluation.quatation_status == 'APPROVED' %}
         {% for order in evaluation.evaluationorder %}
@@ -443,7 +444,8 @@
     {% endif %}-->
 
   </td>
-    </tr>    
+    </tr>
+    {% endif %}    
     {% empty %}
     <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td></tr>
     {% endfor %} 

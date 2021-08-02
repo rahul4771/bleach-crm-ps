@@ -32,14 +32,33 @@ var shiftId = ''
 // var resourceLeave=[];
 
 
+/*Dropdown Menu*/
+$('.ls-dropdown').click(function () {
+    $(this).attr('tabindex', 1).focus();
+    $(this).toggleClass('active');
+    $(this).find('.ls-dropdown-menu').slideToggle(300);
+});
+$('.ls-dropdown').focusout(function () {
+    $(this).removeClass('active');
+    $(this).find('.ls-dropdown-menu').slideUp(300);
+});
+$('.ls-dropdown .ls-dropdown-menu li').click(function () {
+    $(this).parents('.ls-dropdown').find('span').text($(this).text());
+    $(this).parents('.ls-dropdown').find('input').attr('value', $(this).attr('id'));
+});
+/*End Dropdown Menu*/
 
+
+$('.ls-dropdown-menu li').click(function () {
+    checkTime()
+}); 
 
 
 //Initialization of data
 var shiftSheet=[]
 var shiftList=[]
 function getInitDatasShift(){
-   
+    $('.lv-loader').show()
  
     $('.day-head').remove();
     $('.lv-rows').remove();
@@ -116,12 +135,38 @@ for (var j=0;j<resourceList.length;j++){
     
     }
     $('#no-shift-'+j).text(noOfShift);
-
+    $('.lv-loader').hide()
 }
 }
 
 
-
+function checkTime(){
+    var startTime = $('#shift3_start_at').val()
+    var endTime = $('#shift3_end_at').val()
+    var startval=parseInt(startTime.split(':')[0])
+    var endval=parseInt(endTime.split(':')[0])
+    console.log("start val"+startval+"endval:"+endval)
+    if(!isNaN(startval) && !isNaN(endval)){
+        if(startval<endval){
+           
+            $('#err-msg').hide()
+            return true
+        }
+        else if(startval==0 && endval==0){
+            $('#err-msg').hide()
+            return true
+        }
+        else{
+            $('#err-msg').show()
+            return false
+        }
+    }
+    else{
+        $('#err-msg').hide()
+        return false
+    }
+    
+}
 
 //Next Month and previous month caalculations
 function nextMonthShift(){
@@ -187,6 +232,10 @@ for (var j=0;j<resourceList.length;j++){
                    }
                    else if(resourceList[j].shift[rs].shift2==true){
                     $('#row-2'+rsid).append('<td class="noBorder text-center lv-shift-date"  onclick="selectDayShift(this)" id="lv-day-2-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-shift-date lv-weekly" id="lv-shift-date-2'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
+
+                   }
+                   else if(resourceList[j].shift[rs].shift3==true){
+                    $('#row-2'+rsid).append('<td class="noBorder text-center lv-shift-date"  onclick="selectDayShift(this)" id="lv-day-2-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-shift-date lv-maternity" id="lv-shift-date-2'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
 
                    }
                    found=true;
@@ -284,8 +333,8 @@ function selectDayShift(el){
             }
         }
         $('.modal-title').text('Custom Shift');
-        $('#start_at').text('Start at : '+ shift_data.shift3_start_at);
-        $('#end_at').text('End at : '+ shift_data.shift3_end_at);
+        $('#start_at').text('Start at : '+ tConvert(shift_data.shift3_start_at));
+        $('#end_at').text('End at : '+ tConvert(shift_data.shift3_end_at));
         $('.modal-title').removeClass('lv-sick-text');
         $('.modal-title').removeClass('lv-annual-text');
         $('.modal-title').removeClass('lv-weekly-text');
@@ -335,14 +384,14 @@ function selectDayShift(el){
     }
 }
     
-    $('#select-counter').text(dateCounter);
+    $('#ls-select-counter').text(dateCounter);
 }
 
 
 function clearAllShift(){
     
     dateCounter=0;
-    $('#select-counter').text(dateCounter);
+    $('#ls-select-counter').text(dateCounter);
     selectedId=[];
     resourceLeave=[];
     selectedDates=[];
@@ -373,10 +422,10 @@ function closeConf(){
 
 //get users 
 function getUsersShift(){
-    
+    $('.lv-loader').show()
       url ='https://my.bleachkw.com';
       resourceList=[];
-  
+      
     axios.get(url+'/api/leave-users-list/')
 .then(function (response) {
   // handle success
@@ -461,7 +510,7 @@ function addToShift1(){
      
         $(".lv-result-box").hide();
         dateCounter=0;
-          $('#select-counter').text(dateCounter);
+          $('#ls-select-counter').text(dateCounter);
       
     
 }
@@ -482,7 +531,8 @@ function tConvert (time) {
   }
 /** time converter ends here */
 function addToShift3(){
-   
+    console.log("checktime is "+checkTime())
+   if(checkTime()){
     resourceLeave=[];
     shiftList=[]
     console.log("selected Dates are "+JSON.stringify(selectedDates))
@@ -543,7 +593,8 @@ function addToShift3(){
  
     $(".lv-result-box").hide();
     dateCounter=0;
-      $('#select-counter').text(dateCounter);
+      $('#ls-select-counter').text(dateCounter);
+}
 }
 function addToShift2(){
            
@@ -604,7 +655,7 @@ function addToShift2(){
  
     $(".lv-result-box").hide();
     dateCounter=0;
-      $('#select-counter').text(dateCounter);
+      $('#ls-select-counter').text(dateCounter);
   
 
 }
@@ -656,7 +707,7 @@ function resetResourcesShift(category){
 
 //get shifts
 function getShift(){
-    
+    $('.lv-loader').show()
     url ='https://my.bleachkw.com';
     axios.get(url+'/api/shift-scheduler/')
 .then(function (response) {
@@ -684,6 +735,7 @@ function getShift(){
 }
    
     console.log(resourceList)
+    $('.lv-loader').hide()
     getInitDatasShift();
    
 
@@ -745,7 +797,7 @@ function cancelShift(){
         shiftId='';
       $('#ShiftModal').hide();
       dateCounter=0;
-      $('#select-counter').text(dateCounter);
+      $('#ls-select-counter').text(dateCounter);
       })
       .catch(function (error) {
         // handle error

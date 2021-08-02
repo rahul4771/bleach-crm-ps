@@ -22,7 +22,7 @@
                      
                         <div class="inv-input-container h-30">
                             <i class="fa fa-search inv-icon-input" aria-hidden="true"></i>
-                            <input type="text" placeholder="Search Category" class="inv-input w-250" name="attributes">
+                            <input type="text" placeholder="Search Category" id="search-bar" class="inv-input w-250" onchange ="set_params_go()" value="{{search_query|default_if_none:''}}" name="attributes">
                           </div>
                     
                     
@@ -54,32 +54,36 @@
                         </tr>
                     </thead>
                     <tbody>
+                    {% for category in categories %}
                         <tr>
                             <td class="inv-green-border">
                                 
-                                Category 1
+                               {{category.name}}
                             </td>
                             <td class="text-center">
-                                811881
+                                {{category.category_code}}
                             </td>
                             <td class="text-center">
-                                2
+                                {{category.segments_count}}
                             </td>
                             <td class="text-center">
-                                2
+                                {{category.lines_count}}
                             </td>
                             <td>
-                                <span class="inv-dot c-active ml-5"></span>
-                                Active
+                                {% if category.status == True %}
+                                <span class="inv-dot c-active ml-5"></span>Active
+                                {% else %}
+                                <span class="inv-dot c-active ml-5"></span>Not Active
+                                {% endif %}
                             </td>
                             <td>
-                                <button class="inv-plan-btn" onclick="openNavaddSegment2()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="" > Add Segment</button>
+                                <a href="/inventory/segment/"><a href="/inventory/segment/{{category.id}}/" target="_blank"<button class="inv-plan-btn" onclick="openNavaddSegment2()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="" > Add Segment</button></a>
                                 <button class="inv-plan-img-btn" onclick="openNavEditCategory()"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
                                 <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
 
                             </td>
                         </tr>
-                        
+                        {% endfor %}
                     </tbody>
                     </table>
                 </div>
@@ -133,22 +137,23 @@
                 </div>
             </div>
             <hr>
+        <form method="POST" action="" >{% csrf_token %}
             <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Category  Name</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                        <input type="text"  class="w-p-100 inv-in" name="category_name">
                       </div>
                 </div>
 
             </div>
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Category  Code</div>
+                    <div class="model-input-name">Category Code</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                        <input type="text"  class="w-p-100 inv-in" name="category_code" value="{{new_category_code}}" readonly>
                       </div>
                 </div>
 
@@ -157,10 +162,10 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Status</div>
 
-                    <select id="id_payment" class="minimal">
+                    <select id="id_payment" name="category_status" class="minimal">
                         <option  ></option>
-                        <option  >Active</option>
-                        <option value="Post Paid">Inactive</option>
+                        <option value="True" selected>Active</option>
+                        <option value="False" >Inactive</option>
 
                     </select>
                 </div>
@@ -175,6 +180,7 @@
             <button class="sent-button" >Submit</button>
                         <button data-dismiss="modal" onclick="closeNavAddCategory()" class="view-button">Cancel</button>
         </div>
+        </form>
     </div>
     <div id="editCategory" class="inv-sidedrawer">
 
@@ -341,7 +347,22 @@
     function closeNavaddSegment2() {
         document.getElementById("addSegment2").style.width = "0";
     }
-   
+
+    function set_params_go(args)
+    {
+    var url='{% url 'inventory:inventory-category' %}';
+    var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),
+    };
+    for(key in args) 
+        params[key]=args[key];
+    var query='';
+    for(key in params)
+        if(params[key]) 
+            query+='&'+key+'='+params[key].toString();
+    query=query.replace('&','?');
+    window.location.href=url+query;  
+    }
+
 </script>
 
 {% endblock %}

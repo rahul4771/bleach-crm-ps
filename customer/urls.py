@@ -67,6 +67,8 @@ urlpatterns = [
 
 		#order resubmit
 		url(r'^editorder/(?P<order_id>[-\w]+)$',views.EditOrderDetails.as_view(),name='edit-order'),
+		url(r'^service/cancellrequest/$',views.ServiceCancellationRequest.as_view(),name='cancell-service'),
+		url(r'^service/cancell/$',views.ServiceCancellation.as_view(),name='cancell-service-submit'),
 		url(r'^resubmitorder/(?P<order_id>[-\w]+)$',views.ReSubmitOrder.as_view(),name='resubmit-order'),
 
 		#edit order

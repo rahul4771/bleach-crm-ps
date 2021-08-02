@@ -77,6 +77,22 @@ class IsBookingOfficer(UserPassesTestMixin):
         else:
             return False
 
+class IsInventoryAdmin(UserPassesTestMixin):
+    def test_func(self):
+        if self.request.user.is_authenticated and self.request.user.user_type=='INVENTORYADMIN' and self.request.user.is_active==True:
+            return True
+        else:
+            return False
+
+class IsInventoryAdminUser(UserPassesTestMixin):
+    def test_func(self):
+        if self.request.user.is_authenticated and self.request.user.user_type=='INVENTORYADMIN' and self.request.user.is_active==True:
+            return True
+        if self.request.user.is_authenticated and self.request.user.user_type=='INVENTORYUSER' and self.request.user.is_active==True:
+            return True
+        else:
+            return False
+
 class IsAgentEvaluatorSalesAdmin(UserPassesTestMixin):
     def test_func(self):
         if self.request.user.is_authenticated and self.request.user.user_type=='SALESADMIN' and self.request.user.is_active==True:

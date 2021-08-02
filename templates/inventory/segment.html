@@ -10,7 +10,7 @@
         <div class="container-fluid space topspace">
             <div class="welcome-wrapper">
                 <!--welcome-wrapper-->
-                <h1 class="dashboard-head">Attribute</h1>
+                <h1 class="dashboard-head">{{category.name}}</h1>
                 <!-- <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p> -->
             </div>
         </div>
@@ -22,13 +22,13 @@
                      
                         <div class="inv-input-container h-30">
                             <i class="fa fa-search inv-icon-input" aria-hidden="true"></i>
-                            <input type="text" placeholder="Search Attributes" class="inv-input w-250" name="attributes">
+                            <input type="text" id="search-bar" placeholder="Search Segments" class="inv-input w-250" onchange="set_params_go();" name="attributes" value="{{search_query|default_if_none:''}}">
                           </div>
                     
                     
                     </div>
                     <div class="right-pos m-mt-10">
-                        <button class="inv-blue-btn" onclick="showDrawer('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Attribute </button>
+                        <button class="inv-blue-btn add_segment" onclick="showDrawer('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Segment </button>
                     </div>
                 </div>
 
@@ -58,10 +58,10 @@
                                 <thead>
                                 <tr>
                                     <th style="width: %;">
-                                        Attribute Name
+                                        Segment Name
                                     </th>
                                     <th data-hide="phone,tablet" style="width: %; text-align: center;">
-                                        Total Values
+                                        Total Lines
                                     </th>
                                     <th  style="width: %;" >
                                         Status
@@ -71,17 +71,17 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for attribute in attributes %}
-                                <tr>
+                                {% for segment in category.segments %}
+                                <tr onclick="getlines({{segment.id}})">
                                     <td class="inv-green-border">
                                 
-                                        {{attribute.name}}
+                                        {{segment.name}}
                                     </td>
                                     <td class="text-center">
-                                        {{attribute.value_count}}
+                                        {{segment.lines_count}}
                                     </td>
                                     <td>
-                                        {% if attribute.status == True %}
+                                        {% if segment.status == True %}
                                         <span class="inv-dot c-active ml-5"></span>Active
                                         {% else %}
                                         <span class="inv-dot c-active ml-5"></span>Not Active
@@ -90,13 +90,11 @@
                                     </td>
                                     <td>
                                   
-                                        <button class="inv-plan-img-btn edit_attribute" data-attributeid="{{attribute.id}}" data-attributename="{{attribute.name}}" data-attributestatus="{{attribute.status}}" onclick="showDrawer('edit')" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                        <button class="inv-plan-img-btn delete_attribute" data-attributeid="{{attribute.id}}" data-attributename="{{attribute.name}}" data-attributestatus="{{attribute.status}}" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                                        <button class="inv-plan-img-btn edit_segment" data-segmentid="{{segment.id}}" data-segmentname="{{segment.name}}" data-segmentstatus="{{segment.status}}" onclick="showDrawer('edit')" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                        <button class="inv-plan-img-btn delete_segment" data-segmentid="{{segment.id}}" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
         
                                     </td>
                                 </tr>
-                                {% empty%}
-                                <tr><td></td><td>No Data</td><td></td><td></td></tr>
                                 {% endfor %}                               
                               
                             </tbody>
@@ -106,9 +104,9 @@
                         <div class="text-right">
                             <ul class="pagination">
      
-                                {% if attributes.has_previous %}
+                                {% if category.segments.has_previous %}
                                 <li class="page-item">
-                                  <a class="page-link" href="?page={{ attributes.previous_page_number }}&search={{request.GET.search}}" aria-label="Previous">
+                                  <a class="page-link" href="?page={{ category.segments.previous_page_number }}&search={{request.GET.search}}" aria-label="Previous">
                                     <span aria-hidden="true">«</span>
                                     <span class="sr-only">Previous</span>
                                   </a>
@@ -130,9 +128,9 @@
                                     {% endif %}
                                 {% endfor %}
 
-                                {% if attributes.has_next %}
+                                {% if category.segments.has_next %}
                                 <li class="page-item">
-                                  <a class="page-link" href="?page={{ attributes.next_page_number }}&search={{request.GET.search}}" aria-label="Next">
+                                  <a class="page-link" href="?page={{ category.segments.next_page_number }}&search={{request.GET.search}}" aria-label="Next">
                                     <span aria-hidden="true">»</span>
                                     <span class="sr-only">Next</span>
                                   </a>
@@ -149,25 +147,26 @@
                               </ul>
                         </div>
                         <div style="color: #928F8F;">
-                            Showing {{attributes.start_index}} to {{attributes.end_index}} of {{attributes.paginator.count}} entries
+                            Showing {{category.segments.start_index}} to {{category.segments.end_index}} of {{category.segments.paginator.count}} entries
                         </div>
         
                     </div>
                     <div class="col-md-5 mt-10">
                         <div class="attribute-table-2">
-                            <table class="inv-table"> 
+                            <table class="inv-table line_table"> 
                                 <tr>
                                     <th style="width: %;">
-                                        Value Name
+                                        Line Name
                                     </th>
                                     <th style="width: %;">
                                         Action
                                     </th>
                                 </tr>
+                                {% comment %} {% for line in category.lines %}
                                 <tr>
                                     <td>
                                 
-                                        Blue
+                                        {{line.name}}
                                     </td>
                                     <td>
                                         <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
@@ -175,21 +174,11 @@
         
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td>
-                                
-                                        Blue
-                                    </td>
-                                    <td>
-                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-        
-                                    </td>
-                                </tr>
+                                {% endfor %} {% endcomment %}
                                
                             </table>
                             <div class="attribute-footer p-5">
-                                <button class="inv-plan-btn" onclick="openNavAddValue()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Value</button>
+                                <button class="inv-plan-btn" onclick="openNavAddLine()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Line</button>
 
                             </div>
                         </div>
@@ -203,8 +192,7 @@
        
     </section>
 
-    <div id="addAttribute" class="inv-sidedrawer">
-
+    <div id="addSegment" class="inv-sidedrawer">
         <div class="inv-sidedrawer-inner">
             <div class="d-flex">
                 <div class="inv-drawer-head  inv-drawer-head-common">
@@ -212,35 +200,32 @@
                 </div>
                 <div class="right-pos">
 
-                    <button onclick="closeNavAddAttribute()" class="img-button">
+                    <button onclick="closeNavAddSegment()" class="img-button">
                         <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
                     </button>
                 </div>
             </div>
             <hr>
             <form method="POST" action="">{% csrf_token %}
-            <input type="hidden" name="action" id="attribute_action" value="add_attribute" />
-            <input type="hidden" name="attribute_edit_id" id="id_edit_attribute" />
+            <input type="hidden" name="action" id="segment_action" value="add_segment" />
+            <input type="hidden" name="segment_edit_id" id="id_edit_segment" />
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Attribute Name</div>
+                    <div class="model-input-name">Category</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" id="name_attribute" name="attribute">
+                        <input type="text"  class="w-p-100 inv-in" name="category" value="{{category.name}}" readonly>
                       </div>
                 </div>
 
             </div>
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Attribute Type</div>
+                    <div class="model-input-name">Segment Name</div>
 
-                    <select class="minimal" name="attribute_type" id="attribute_type" required>
-                        <option value="CATEGORY" selected>Category</option>
-                        <option value="SEGMENT">Segment</option>
-                        <option value="LINE">Line</option>
-
-                    </select>
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="segment" id="name_segment" required>
+                      </div>
                 </div>
 
             </div>
@@ -248,7 +233,7 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Status</div>
 
-                   <select class="minimal" name="status" id="status_attribute" required>
+                    <select class="minimal" name="status" id="status_segment" required>
                         <option value="True" selected>Active</option>
                         <option value="False">Inactive</option>
 
@@ -263,20 +248,20 @@
         </div>
         <div class="inv-drawer-footer">
             <button class="sent-button" type="submit" >Add</button>
-                        <button data-dismiss="modal" onclick="closeNavAddAttribute()" class="view-button">Cancel</button>
+                        <button data-dismiss="modal" onclick="closeNavAddSegment()" class="view-button">Cancel</button>
         </div>
         </form>
     </div>
-    <div id="addValue" class="inv-sidedrawer">
+    <div id="addLine" class="inv-sidedrawer">
 
         <div class="inv-sidedrawer-inner">
             <div class="d-flex">
                 <div class="inv-drawer-head">
-                    Add Value
+                    Add Line
                 </div>
                 <div class="right-pos">
 
-                    <button onclick="closeNavAddValue()" class="img-button">
+                    <button onclick="closeNavAddLine()" class="img-button">
                         <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
                     </button>
                 </div>
@@ -284,7 +269,7 @@
             <hr>
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Value Name</div>
+                    <div class="model-input-name">Line Name</div>
 
                     <div class="inv-input-container h-30"> 
                         <input type="text"  class="w-p-100 inv-in" name="attributes">
@@ -296,7 +281,7 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Status</div>
 
-                    <select id="id_payment" class="minimal">
+                    <select class="minimal">
                         <option  ></option>
                         <option  >Active</option>
                         <option value="Post Paid">Inactive</option>
@@ -312,7 +297,7 @@
         </div>
         <div class="inv-drawer-footer">
             <button class="sent-button" >Submit</button>
-                        <button data-dismiss="modal" onclick="closeNavAddValue()" class="view-button">Cancel</button>
+                        <button data-dismiss="modal" onclick="closeNavAddLine()" class="view-button">Cancel</button>
         </div>
     </div>
     <div class="modal fade" id="deleteModel" role="dialog">
@@ -323,7 +308,7 @@
 
                         
                         <div class="d-flex ">
-                            <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to delete Attribute</p></div>
+                            <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to delete Segment</p></div>
                             <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
 
                                 <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
@@ -336,8 +321,8 @@
                 <div class="row">
                     <div class="col-md-12 text-center">
                         <form method="POST" action="" >{% csrf_token %}
-                        <input type="hidden" name="action" value="delete_attribute" />
-                        <input type="hidden" name="attribute_id" id="id_attribute" />
+                        <input type="hidden" name="action" value="delete_segment" />
+                        <input type="hidden" name="segment_id" id="id_segment" />
                         <div class="cancel-model-content">
                             <button class="sent-button" type="submit" >Delete</button>
                             <button data-dismiss="modal" class="view-button">Cancel</button>
@@ -361,57 +346,88 @@
     function showDrawer(d){
         console.log(d)
         if(d == 'add'){
-            $(".inv-drawer-head-common").text("Add Attribute");
-            $('#attribute_action').val('add_attribute');
+            $(".inv-drawer-head-common").text("Add Segment");
+            $('#segment_action').val('add_segment');
         }
         if(d == 'edit'){
-            $(".inv-drawer-head-common").text("Edit Attribute");
-            $('#attribute_action').val('edit_attribute');
+            $(".inv-drawer-head-common").text("Edit Segment");
+            $('#segment_action').val('edit_segment');
         }
-        openNavAddAttribute()
+        openNavAddSegment()
     }
-    function openNavAddAttribute() {
+    function openNavAddSegment() {
         if(screen.width<= 600){
-            document.getElementById("addAttribute").style.width = "100%";
+            document.getElementById("addSegment").style.width = "100%";
         }else if(screen.width<= 720){
-            document.getElementById("addAttribute").style.width = "50%";
+            document.getElementById("addSegment").style.width = "50%";
         }
         else{
-            document.getElementById("addAttribute").style.width = "30%";
+            document.getElementById("addSegment").style.width = "30%";
         }  
     }
-    function closeNavAddAttribute() {
-        document.getElementById("addAttribute").style.width = "0";
+    function closeNavAddSegment() {
+        document.getElementById("addSegment").style.width = "0";
     }
-    function openNavAddValue() {
+    function openNavAddLine() {
         if(screen.width<= 600){
-            document.getElementById("addValue").style.width = "100%";
+            document.getElementById("addLine").style.width = "100%";
         }else if(screen.width<= 720){
-            document.getElementById("addValue").style.width = "50%";
+            document.getElementById("addLine").style.width = "50%";
         }
         else{
-            document.getElementById("addValue").style.width = "30%";
+            document.getElementById("addLine").style.width = "30%";
         }  
     }
-    function closeNavAddValue() {
-        document.getElementById("addValue").style.width = "0";
+    function closeNavAddLine() {
+        document.getElementById("addLine").style.width = "0";
     }
 
-    $('.delete_attribute').click(function(){
-        $('#id_attribute').val($(this).data('attributeid'));
+    $('.delete_segment').click(function(){
+        $('#id_segment').val($(this).data('segmentid'));
     })
 
-    $('.edit_attribute').click(function(){
-        $('#id_edit_attribute').val($(this).data('attributeid'));
-        $('#name_attribute').val($(this).data('attributename'));
-        $('#status_attribute').val($(this).data('attributestatus'));
+    $('.edit_segment').click(function(){
+        $('#id_edit_segment').val($(this).data('segmentid'));
+        $('#name_segment').val($(this).data('segmentname'));
+        $('#status_segment').val($(this).data('segmentstatus'));
     })
 
-    $('.add_attribute').click(function(){
-        $('#id_edit_attribute').val($(this).data('attributeid'));
-        $('#name_attribute').val('');
-        $('#status_attribute').val('');
+    $('.add_segment').click(function(){
+        $('#id_edit_segment').val($(this).data('segmentid'));
+        $('#name_segment').val('');
+        $('#status_segment').val('');
     })
+
+    function set_params_go(args)
+    {
+    var url='{% url 'inventory:inventory-segment' category.id %}';
+    var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),
+    };
+    for(key in args) 
+        params[key]=args[key];
+    var query='';
+    for(key in params)
+        if(params[key]) 
+            query+='&'+key+'='+params[key].toString();
+    query=query.replace('&','?');
+    window.location.href=url+query;  
+    }
+
+    function getlines(segment_id){
+        axios.get(url+'/api/inventory-lines/',{ params: { 'segment_id':segment_id } })
+                .then(function (response) {
+                    if (response.data.inventory_line !== ''){
+
+                        $.each(response.data.inventory_line,function(key,value){
+                                console.log(value.id,value.name,"lines")
+                                $('.line_table').append('<tr><td>'+value.name+'</td><td><button class="inv-plan-img-btn" data-lineid='+value.id+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
+                        })
+
+                    }else{
+                        $(".line_table tr").remove(); 
+                    }
+                })
+    }
 </script>
 
 {% endblock %}
