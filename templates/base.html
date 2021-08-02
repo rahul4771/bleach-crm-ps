@@ -169,6 +169,13 @@
 
 {% block javascript %}
 {% endblock %}
+
+
+{% if request.user.user_type == 'INVENTORYADMIN' or request.user.user_type == 'INVENTORYUSER' %}
+{% include 'common_notification.html' %}
+{% else %}
 {% include 'common_messages.html' %}
+{% endif %}
+
 </body>
 </html>

@@ -104,11 +104,13 @@ class InventoryAttribute(IsInventoryAdmin,View):
             # category = Category.objects.get(id=int(category_id))
             attribute_id = request.POST.get('attribute_edit_id')
             name     = request.POST.get('attribute')
+            attribute_type     = request.POST.get('attribute_type')
             status     = request.POST.get('status')
-
-            attribute = Segment.objects.get(id=int(attribute_id))
-            attribute.category = category
+            print(attribute_id,name,attribute_type,status,"lop")
+            attribute = Attribute.objects.get(id=int(attribute_id))
+            # attribute.category = category
             attribute.name     = name
+            attribute.attribute_type = attribute_type
             attribute.status   = status
             attribute.save()
             messages.success(request,"Attribute Updated Successfully !")

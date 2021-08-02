@@ -72,7 +72,7 @@
                             </thead>
                             <tbody>
                                 {% for segment in category.segments %}
-                                <tr>
+                                <tr onclick="getlines({{segment.id}})">
                                     <td class="inv-green-border">
                                 
                                         {{segment.name}}
@@ -153,7 +153,7 @@
                     </div>
                     <div class="col-md-5 mt-10">
                         <div class="attribute-table-2">
-                            <table class="inv-table"> 
+                            <table class="inv-table line_table"> 
                                 <tr>
                                     <th style="width: %;">
                                         Line Name
@@ -162,7 +162,7 @@
                                         Action
                                     </th>
                                 </tr>
-                                {% for line in category.lines %}
+                                {% comment %} {% for line in category.lines %}
                                 <tr>
                                     <td>
                                 
@@ -174,7 +174,7 @@
         
                                     </td>
                                 </tr>
-                                {% endfor %}
+                                {% endfor %} {% endcomment %}
                                
                             </table>
                             <div class="attribute-footer p-5">
@@ -247,7 +247,7 @@
           
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button" type="submit" >Submit</button>
+            <button class="sent-button" type="submit" >Add</button>
                         <button data-dismiss="modal" onclick="closeNavAddSegment()" class="view-button">Cancel</button>
         </div>
         </form>
@@ -411,6 +411,22 @@
             query+='&'+key+'='+params[key].toString();
     query=query.replace('&','?');
     window.location.href=url+query;  
+    }
+
+    function getlines(segment_id){
+        axios.get(url+'/api/inventory-lines/',{ params: { 'segment_id':segment_id } })
+                .then(function (response) {
+                    if (response.data.inventory_line !== ''){
+
+                        $.each(response.data.inventory_line,function(key,value){
+                                console.log(value.id,value.name,"lines")
+                                $('.line_table').append('<tr><td>'+value.name+'</td><td><button class="inv-plan-img-btn" data-lineid='+value.id+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
+                        })
+
+                    }else{
+                        $(".line_table tr").remove(); 
+                    }
+                })
     }
 </script>
 
