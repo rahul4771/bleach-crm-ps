@@ -6,14 +6,14 @@
     <script type="text/javascript" src="jquery-1.7.min.js"></script>
 </head>
 <body>
-    <!-- <div class="ld-screen-loader">
+    <div class="ld-screen-loader">
     <div class="ld-payment-message">
         Please <b>do not refresh the page</b> and wait while we are
 
           processing your payment. This can take a few minutes.
     </div>
     <div class="loader"></div>
-</div> -->
+</div>
 <form id="payment_form" action="https://payment.bleachkw.com/creditcard/payment_confirmation.php" method="post">
     <input type="hidden" name="access_key" value="40f69905769b3935b51533269564bfe2">
     <input type="hidden" name="profile_id" value="32FF6F1C-41F3-4CF1-A91C-A1039EF0845C">
@@ -58,7 +58,7 @@
 
 <script type="text/javascript">
 
-   //document.getElementById('payment_form').submit(); // SUBMIT FORM
+   document.getElementById('payment_form').submit(); // SUBMIT FORM
 </script>
 
 
