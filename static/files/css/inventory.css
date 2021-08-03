@@ -538,6 +538,31 @@
 .h-min-160{
   max-height: 160px !important;
 }
+
+.inv-text-1{
+  font-size: 24px;
+  font-family:  AvenirLTStd !important;
+}
+.inv-text-2{
+  font-size: 18px;
+  font-family:  AvenirLTStd !important;
+  color: #333333;
+}
+.inv-edit-img{
+  width: 25px;
+  cursor: pointer;
+}
+
+.inv-hide{
+  display: none;
+}
+.edit-div{
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin-right: 15px;
+}
+
 .inv-item-card{
   padding-top: 20px;
   background: #E6E6E6;
@@ -546,7 +571,9 @@
  font-weight: 500;
  border-radius: 4px;
  text-align: center;
-
+ padding-left: 10px;
+ padding-right: 10px;
+ min-height: 190px;
 }
 .inv-item-card2{
   padding-top: 20px;
@@ -858,8 +885,20 @@ border-radius: 7px;
   border: 1px solid #4B4B4B !important;
 }
 
-@media only screen and (max-width: 990px) {
+@media only screen and (max-width: 1280px) {
+  .inv-text-1 {
+    font-size: 18px !important;
+  }
+  .inv-text-2 {
+    font-size: 14px !important;
+  }
 
+}
+
+@media only screen and (max-width: 990px) {
+  .m-mt-30{
+    margin-top: 30px !important;
+  }
   .m-mt-10{
     margin-top: 10px !important;
   }
