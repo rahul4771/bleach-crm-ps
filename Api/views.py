@@ -709,6 +709,9 @@ class DailySalesAPI(APIView):
 						others -= float(schedule[10]/order_schedule_count)
 					
 
+				if d == '05-07-2021':
+					print(schedule[2],schedule[0], float(order_amount/schedule_count)-float(schedule[6]/order_schedule_count)-float(schedule[7]/order_schedule_count)+float(schedule[8]/order_schedule_count)-float(schedule[10]/order_schedule_count),"service")
+				
 				#cleaning type wise amount addition
 				if schedule[2] == 'General Cleaning':
 					detailed_cleaning += float(order_amount/schedule_count)
