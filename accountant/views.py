@@ -1255,8 +1255,8 @@ def export_users_xls(request):
 	todate_date_start= todate.replace(hour=0,minute=0,second=0,microsecond=0)   #single_date+timedelta(1)
 	todate_date_end = todate+timedelta(1)
 
-	start_date_day = date
-	end_date_day   = date+timedelta(1)
+	# start_date_day = date
+	# end_date_day   = date+timedelta(1)
 
 	print(prev_date_start,todate_date_end,"datesss")
 	# Sheet header, first row
