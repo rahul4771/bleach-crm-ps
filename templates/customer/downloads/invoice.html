@@ -268,23 +268,35 @@
       </div>
     </section>
 
-    {% if order.evaluation.cleaning_policy == 'ONE TIME SERVICE' %}
-    <section id="final-section">
-      <span id="total_id">Payable Amount</span>
-      <h1 id="total_amount">
-        {{order.remining_amount|floatformat:'3'}} <span id="kd-font">KD</span>
-      </h1>
-    </section>
+    {% if order.remining_amount == 0 %}
     {% else %}
     <section id="final-section">
       <span id="total_id">Payable Amount</span>
-      <h1 id="total_amount">
-        {{order.subscription_topay|floatformat:'3'}} <span id="kd-font">KD</span>
-      </h1>
+               {% if order.evaluation.payment_method == 'BREAKDOWN' %}
+                  {% if order.evaluation.before_cleaning_amount != order.preamount_paid %}
+                    <h1 id="total_amount">
+                    {{order.evaluation.before_cleaning_amount|floatformat:'3'}} <span id="kd-font">KD</span>
+                    </h1>
+                  {% elif order.evaluation.after_cleaning_amount != order.postamount_paid %}
+                    <h1 id="total_amount">
+                      {{order.remining_amount|floatformat:'3'}} <span id="kd-font">KD</span>
+                    </h1>
+                  {% endif %}
+              {% elif order.evaluation.payment_method == 'PREPAID' %}
+                    <h1 id="total_amount">
+                      {{order.remining_amount|floatformat:'3'}} <span id="kd-font">KD</span>
+                    </h1>
+              {% elif order.evaluation.payment_method == 'POSTPAID' %}
+                    <h1 id="total_amount">
+                      {{order.remining_amount|floatformat:'3'}} <span id="kd-font">KD</span>
+                    </h1>
+              {% else %}
+                    <h1 id="total_amount">
+                      {{order.subscription_topay|floatformat:'3'}} <span id="kd-font">KD</span>
+                    </h1>
+              {% endif %}
     </section>
     {% endif %}
-
-
   
 
     <!-- {% for orderschedule in nonduplicate_schedules %}            

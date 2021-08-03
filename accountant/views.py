@@ -1253,9 +1253,9 @@ def export_users_xls(request):
 	prev_date_start  = prevdate.replace(hour=0,minute=0,second=0,microsecond=0)
 	prev_date_end = prevdate+timedelta(1)
 	todate_date_start= todate.replace(hour=0,minute=0,second=0,microsecond=0)   #single_date+timedelta(1)
-	todate_date_end = todate+timedelta(1)
+	todate_date_end = todate_date_start+timedelta(1)
 
-	print(prev_date_start,todate_date_end,"datesss")
+	# print(prev_date_start,todate_date_end,"datesss")
 	# Sheet header, first row
 	row_num = 0
 	row_num2 = 0
@@ -1949,7 +1949,7 @@ def export_users_xls(request):
 		#total sales
 		response['Content-Disposition'] = 'attachment; filename="SALES_REPORT_'+from_date+'_'+to_date+'.xls"'
 		orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(prev_date_start,todate_date_end)).filter(Q(Q(work_status = 'CLEANING_TEAM_ASSIGNED') | Q(work_status = 'CLEANING_IN_PROGRESS') | Q(work_status='CLEANING_FULFILLED'))).values_list('order__order_no','end_at','end_at','id','evaluation_details__address__customer__name','evaluation_details__evaluation__payment_method','order_scheduler_book__estimated_cost','order__amount_paid','evaluation_details__evaluation__payment_way','order_scheduler_book__id','order__remining_amount','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__cleaning_hours','order_scheduler_book__number_of_cleaners','evaluation_details__evaluator__name','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount','order_scheduler_book__evaluation_details__evaluation__discount').order_by('end_at')
-		# print(orderschedules.count(),"count")
+		print(orderschedules,"schedules_list")
 	
 		
 		rows = []
@@ -1957,6 +1957,7 @@ def export_users_xls(request):
 		for schedule in orderschedules:
 			schedule_list = list(schedule)
 			schedule_list[3] = schedule_list[1].strftime("%A")
+			schedule_list[1] = schedule_list[1]+timedelta(hours=3)
 			schedule = tuple(schedule_list)
 			rows.append(schedule)
 			
@@ -2008,6 +2009,7 @@ def export_users_xls(request):
 
 			#filtering rows list using date
 			res = [item for item in rows if item[1] == d ]
+			print(d)
 
 			#calculating service totals and grand total
 			for r in res:
@@ -2021,8 +2023,8 @@ def export_users_xls(request):
 
 				day_name = r[3]
 
-				if d == '05-07-2021':
-					print(r[11],float(r[6]/orderschedules_count)-float(r[16]/total_order_schedule_count)-float(r[17]/total_order_schedule_count)+float(r[18]/total_order_schedule_count)-float(r[19]/total_order_schedule_count),"service")
+				if d == '05-07-2021' and r[0] == 'BLC20210610161' :					
+					print(r[11],r[0], float(r[6]/orderschedules_count)-float(r[16]/total_order_schedule_count)-float(r[17]/total_order_schedule_count)+float(r[18]/total_order_schedule_count)-float(r[19]/total_order_schedule_count),"service")
 				
 				if r[11] == 'General Cleaning':
 					detailed_cleaning += float(r[6]/orderschedules_count)
@@ -2181,7 +2183,7 @@ def export_users_xls(request):
 				if r[19] > 0:
 					grand_total -= float(r[19]/total_order_schedule_count)	
 
-			print(detailed_cleaning,"gen")
+			# print(detailed_cleaning,"gen")
 			daily_report = (d, day_name, round(detailed_cleaning,3), round(special_care,3), round(kitchen_cleaning,3), round(infection_control,3), round(grand_total,3))
 
 			rows2.append(daily_report)
