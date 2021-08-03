@@ -2217,7 +2217,7 @@ def export_users_xls(request):
 			orderschedules_count = calc_orderschedules.count()
 			last_orderschedule = calc_orderschedules.last()
 
-			print(orderschedules_count,"osh")
+			# print(orderschedules_count,"osh")
 
 			orderschedule = OrderScheduler.objects.get(id=int(schedule_list[3]))
 
@@ -2390,7 +2390,7 @@ def export_users_xls(request):
 
 	wb.save(response)
 
-	print(response.status_code,"resp")
+	# print(response.status_code,"resp")
 	
 	return response
 
