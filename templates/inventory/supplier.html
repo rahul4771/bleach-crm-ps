@@ -154,56 +154,59 @@
                     </div>
                     <div class="col-md-5 mt-10">
                         <div class="attribute-table-2">
-                            <table class="inv-table footable">
-                                <thead>
+                            <div class="attribute-table-div2">
+                                <table class="inv-table footable">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: %;">
+                                                Item Name
+                                            </th>
+                                            <th  style="width: %;">
+                                                Count
+                                            </th>
+                                            <th data-hide="phone,tablet"  style="width: %;">
+                                                Price
+                                            </th>
+                                            <th data-hide="phone,tablet"  style="width: %;">
+                                                Action
+                                            </th>
+                                        </tr>
+                                    </thead> 
+                                   <tbody>
                                     <tr>
-                                        <th style="width: %;">
-                                            Item Name
-                                        </th>
-                                        <th  style="width: %;">
-                                            Count
-                                        </th>
-                                        <th data-hide="phone,tablet"  style="width: %;">
-                                            Price
-                                        </th>
-                                        <th data-hide="phone,tablet"  style="width: %;">
-                                            Action
-                                        </th>
+                                        <td>
+                                    
+                                            Item 1
+                                        </td>
+                                        <td>1</td>
+                                        <td>1</td>
+                                        <td>
+                                            <button class="inv-plan-img-btn" onclick="openNavAddItem('edit')"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                            <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel2"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+            
+                                        </td>
                                     </tr>
-                                </thead> 
-                               <tbody>
-                                <tr>
-                                    <td>
-                                
-                                        Item 1
-                                    </td>
-                                    <td>1</td>
-                                    <td>1</td>
-                                    <td>
-                                        <button class="inv-plan-img-btn" onclick="openNavAddItem('edit')"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                        <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel2"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-        
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                
-                                        Item 1
-                                    </td>
-                                    <td>1</td>
-                                    <td>1</td>
-                                    <td>
-                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-        
-                                    </td>
-                                </tr>
-                               </tbody>
-                               
-
-                               
-                               
-                            </table>
+                                    <tr>
+                                        <td>
+                                    
+                                            Item 1
+                                        </td>
+                                        <td>1</td>
+                                        <td>1</td>
+                                        <td>
+                                            <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                            <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+            
+                                        </td>
+                                    </tr>
+                                   </tbody>
+                                   
+    
+                                   
+                                   
+                                </table>
+                            </div>
+                           
                             <div class="attribute-footer p-5">
                                 <button class="inv-plan-btn" onclick="openNavAddItem('add')"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Value</button>
 

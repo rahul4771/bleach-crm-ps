@@ -453,6 +453,12 @@
   border: 1px solid #c4c4c4;
   position: relative;
 }
+
+.attribute-table-div2{
+  height: 60vh;
+  overflow: auto;
+} 
+
 .h-180-min{
   max-height: 180px !important;
 }

@@ -153,30 +153,33 @@
                     </div>
                     <div class="col-md-5 mt-10">
                         <div class="attribute-table-2">
-                            <table class="inv-table line_table"> 
-                                <tr>
-                                    <th style="width: %;">
-                                        Line Name
-                                    </th>
-                                    <th style="width: %;">
-                                        Action
-                                    </th>
-                                </tr>
-                                {% comment %} {% for line in category.lines %}
-                                <tr>
-                                    <td>
-                                
-                                        {{line.name}}
-                                    </td>
-                                    <td>
-                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                        <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-        
-                                    </td>
-                                </tr>
-                                {% endfor %} {% endcomment %}
-                               
-                            </table>
+                            <div class="attribute-table-div2">
+                                <table class="inv-table line_table"> 
+                                    <tr>
+                                        <th style="width: %;">
+                                            Line Name
+                                        </th>
+                                        <th style="width: %;">
+                                            Action
+                                        </th>
+                                    </tr>
+                                    {% comment %} {% for line in category.lines %}
+                                    <tr>
+                                        <td>
+                                    
+                                            {{line.name}}
+                                        </td>
+                                        <td>
+                                            <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                            <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+            
+                                        </td>
+                                    </tr>
+                                    {% endfor %} {% endcomment %}
+                                   
+                                </table>
+                            </div>
+                           
                             <div class="attribute-footer p-5">
                                 <button class="inv-plan-btn" onclick="openNavAddLine()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Line</button>
 
@@ -247,7 +250,7 @@
           
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button" type="submit" >Add</button>
+            <button class="sent-button" type="submit" id="button_segment">Add</button>
                         <button data-dismiss="modal" onclick="closeNavAddSegment()" class="view-button">Cancel</button>
         </div>
         </form>
@@ -346,10 +349,13 @@
     function showDrawer(d){
         console.log(d)
         if(d == 'add'){
+            $("#button_segment").text("Add");
             $(".inv-drawer-head-common").text("Add Segment");
             $('#segment_action').val('add_segment');
         }
         if(d == 'edit'){
+            
+            $("#button_segment").text("Save");
             $(".inv-drawer-head-common").text("Edit Segment");
             $('#segment_action').val('edit_segment');
         }
@@ -414,6 +420,7 @@
     }
 
     async function getlines(segment_id){
+
          var result = await _get('api/inventory-lines/?segment_id='+segment_id);
          if(result.status == 200){
             if (result.data.inventory_line !== ''){
