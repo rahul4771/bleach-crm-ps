@@ -233,12 +233,13 @@
             </div>
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Attribute Type</div>
+                    <div class="model-input-name">Category</div>
 
-                    <select class="minimal" name="attribute_type" id="attribute_type" required>
-                        <option value="CATEGORY" selected>Category</option>
-                        <option value="SEGMENT">Segment</option>
-                        <option value="LINE">Line</option>
+                    <select class="minimal" name="category" id="id_category" required>
+                        <option value="">--Select Category--</option>
+                        {% for category in categories %}
+                        <option value="{{category.id}}">{{category.name}}</option>
+                        {% endfor %}
 
                     </select>
                 </div>

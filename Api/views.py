@@ -8,9 +8,9 @@ from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
 from bleachadmin.models import ServicePriceRange
 from django.core.mail import send_mail,EmailMultiAlternatives
-from Api.serializers import UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, LeaveUsersSerializer,ShiftScheduleSerializer,InventoryLineSerializer
+from Api.serializers import UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, LeaveUsersSerializer,ShiftScheduleSerializer,InventoryLineSerializer,InventorySegmentSerializer
 from agent.views import generate_random_username
-from inventory.models import Line
+from inventory.models import Line,Segment,Category
 import re
 import random
 import string
@@ -1737,6 +1737,24 @@ class ResourceSkillsAPI(APIView):
 		data=True
 
 		return Response(data,HTTP_200_OK)
+
+class InventorySegmentsAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+		response_dict = {}
+		category_id = request.GET.get('category_id')
+		print(category_id,"sed")
+		try:
+			inventory_segments = Segment.objects.filter(segment__id=int(category_id))
+		except:
+			inventory_segments = None
+		
+		segment_serializer = InventorySegmentSerializer(inventory_segments,many=True).data
+		print(segment_serializer,"sed")	
+		response_dict['inventory_segment'] = segment_serializer
+		return Response(response_dict,HTTP_200_OK)
 
 
 class InventoryLinesAPI(APIView):

@@ -54,6 +54,8 @@ class InventoryAttribute(IsInventoryAdmin,View):
     def get(self,request):
         search = request.GET.get('search')
 
+        categories = Category.objects.all()
+        
         if search:
             attributes = Attribute.objects.filter(name__icontains=search).annotate(value_count=Count('value_attribute'))
         else:
@@ -85,7 +87,7 @@ class InventoryAttribute(IsInventoryAdmin,View):
         page_range = list(paginator.page_range)[start_index:end_index]
         entry_per_page=(attributes.end_index())-(attributes.start_index())+1
 
-        return render(request,'inventory/attribute.html',{"attributes":attributes,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"search_query":search})
+        return render(request,'inventory/attribute.html',{"attributes":attributes,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"search_query":search,"categories":categories})
 
     def post(self,request):
         action = request.POST.get('action')
