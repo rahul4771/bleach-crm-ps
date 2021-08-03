@@ -11,7 +11,9 @@ const app = new Vue({
         url:'http://localhost:8000',
         userid:'',
         order_id:'',
-        service_books:[]
+        service_books:[],
+        
+
     },
     methods:{
         doCancellation(){
