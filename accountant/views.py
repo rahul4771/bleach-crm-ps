@@ -2022,7 +2022,7 @@ def export_users_xls(request):
 				day_name = r[3]
 
 				if d == '05-07-2021':
-					print(r[11],float(r[6]/orderschedules_count)-float(r[16]/total_order_schedule_count)-float(r[17]/total_order_schedule_count)+float(r[18]/total_order_schedule_count)-float(r[19]/total_order_schedule_count),"service")
+					print(r[11],r[0], float(r[6]/orderschedules_count)-float(r[16]/total_order_schedule_count)-float(r[17]/total_order_schedule_count)+float(r[18]/total_order_schedule_count)-float(r[19]/total_order_schedule_count),"service")
 				
 				if r[11] == 'General Cleaning':
 					detailed_cleaning += float(r[6]/orderschedules_count)
@@ -2181,7 +2181,7 @@ def export_users_xls(request):
 				if r[19] > 0:
 					grand_total -= float(r[19]/total_order_schedule_count)	
 
-			print(detailed_cleaning,"gen")
+			# print(detailed_cleaning,"gen")
 			daily_report = (d, day_name, round(detailed_cleaning,3), round(special_care,3), round(kitchen_cleaning,3), round(infection_control,3), round(grand_total,3))
 
 			rows2.append(daily_report)
