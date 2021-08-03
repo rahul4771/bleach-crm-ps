@@ -17,8 +17,8 @@ const app = new Vue({
         doCancellation(){
             axios.post(this.url+'/customer/service/cancell/',
             {cancelled_by:this.userid,
-            order_id:this.,
-            service_books:[{'id':,'action_type':'PAYBACK','amount':100}]
+            order_id:this.order_id,
+            service_books:this.service_books
             }
             )
         }
