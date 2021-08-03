@@ -3202,15 +3202,12 @@ class FineWriteBack(View):
 
 
 class EvaluationBookCancellation(IsBookingOfficer,View):
-	def get(self,request,order_id):
+	def get(self,request,evaluation_id):
+
+		#cancell in progress books
+		cancell_books = EvaluationBook.objects.select_related('evaluation_details__evaluation').filter(evaluation_details__evaluation__id=evaluation_id)
 
 		#cancell in progress orders
-		cancell_in_progress_order = Order.objects.select_related('evaluation__customer').prefetch_related('order_scheduler_order__order_scheduler_book').annotate(total_cleaners=Sum('order_scheduler_order__order_scheduler_book__number_of_cleaners')).get(id=order_id)
-		
-		cleaning_price = 0
-		for scheduler in cancell_in_progress_order.order_scheduler_order.all():
-			if scheduler.work_status=='CLEANING_FULFILLED':
-				cleaning_price += scheduler.order_scheduler_book.total_cost/len(cancell_in_progress_order.order_scheduler_order.all())			
-		cancell_in_progress_order.job_completed_amount = cleaning_price
+		cancell_in_progress_order = Order.objects.select_related('evaluation__customer').get(evaluation__id=evaluation_id)
 
-		return render(request,"bookingofficer/cancel-order/cancel-order.html",{'order_id':order_id,"cancell_in_progress_order":cancell_in_progress_order})
+		return render(request,"bookingofficer/cancel-book/cancel-book.html",{"cancell_in_progress_order":cancell_in_progress_order,"cancell_books":cancell_books,})
