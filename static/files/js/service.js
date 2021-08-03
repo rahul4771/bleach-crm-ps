@@ -1,8 +1,9 @@
 //Service file
-//using async funcation to call service methods
+//use async funcation to call service methods
+//Check Response status always
 
 
-var api='https://my.bleachkw.com/';
+var api='https://test.bleach-kw.com/';
 
 async function _post(url,data){
     let result;
