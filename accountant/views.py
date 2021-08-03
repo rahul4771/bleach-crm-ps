@@ -2018,10 +2018,10 @@ def export_users_xls(request):
 
 				orderschedules_count = calc_orderschedules.count()
 
-				print(r[0],r[6],orderschedules_count,"orc")
 
 				day_name = r[3]
 
+				print(r[11],float(r[6]/orderschedules_count)-float(r[16]/total_order_schedule_count)-float(r[17]/total_order_schedule_count)+float(r[18]/total_order_schedule_count)-float(r[19]/total_order_schedule_count),"service")
 				
 				if r[11] == 'General Cleaning':
 					detailed_cleaning += float(r[6]/orderschedules_count)
