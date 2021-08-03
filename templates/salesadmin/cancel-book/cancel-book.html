@@ -54,10 +54,10 @@
                     <option value="">--Select option--</option>           
                     <option value="CANCELL">Direct Cancellation</option>
                     <option value="REJECT">Reject Request</option>
-                    {% if cancell_book.payment_method == 'PREPAID' or cancell_book.payment_method == 'BREAKDOWN' %}
+                    {% if cancell_in_progress_order.evaluation.payment_method == 'PREPAID' or cancell_in_progress_order.evaluation.payment_method == 'BREAKDOWN' %}
                     <option value="PAYBACK">Pay Back</option>
                     <option value="CREDIT">Add to Wallet</option>
-                    {% elif cancell_book.payment_method == 'POSTPAID'%}
+                    {% elif cancell_in_progress_order.evaluation.payment_method == 'POSTPAID'%}
                     <option value="REDUCTION">Reduce Order Amount</option>
                     {% endif %}
                 </select>
