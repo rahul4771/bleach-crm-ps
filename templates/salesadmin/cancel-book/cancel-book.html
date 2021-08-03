@@ -101,6 +101,10 @@
 </div><!--wrapper-->
 {% endblock %}
 {% block javascript %}
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="{% static 'files/js/cancel-book.js'%}"></script>
 <script>
 $('#cancel_method_id').change(function(){
   if ($(this).val() == 'CREDIT') {
