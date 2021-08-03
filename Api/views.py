@@ -1747,7 +1747,7 @@ class InventorySegmentsAPI(APIView):
 		category_id = request.GET.get('category_id')
 		print(category_id,"sed")
 		try:
-			inventory_segments = Segment.objects.filter(segment__id=int(category_id))
+			inventory_segments = Segment.objects.filter(category__id=int(category_id))
 		except:
 			inventory_segments = None
 		

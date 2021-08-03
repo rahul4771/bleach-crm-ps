@@ -1978,9 +1978,9 @@ def export_users_xls(request):
 		for cln_date in rows:
 			ro = list(cln_date)
 
-			if ro[1] not in found:
-				dates.append(ro[1])
-				found.add(ro[1])
+			# if ro[1] not in found:
+			dates.append(ro[1])
+				# found.add(ro[1])
 
 			print(dates,"dts")
 
