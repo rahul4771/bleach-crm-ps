@@ -4,6 +4,44 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/assets/owl.carousel.css' %}" rel="stylesheet">
+<style>
+    .owl-theme .owl-nav {
+        margin-top: 10px;
+        text-align: center;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .owl-prev {
+        position: absolute;
+        top: 50%;
+        left: -5px;
+
+        display: block !important;
+        border: 0px solid black;
+        height: 30px;
+        width: 30px;
+        border-radius: 40px;
+        background: #fff !important;
+
+        box-shadow: 0px 3px 6px #00000029;
+    }
+
+    .owl-next {
+        position: absolute;
+        top: 50%;   
+        right: -5px;
+
+        display: block !important;
+        border: 0px solid black;
+        height: 30px;
+        width: 30px;
+        border-radius: 40px;
+        background: #fff !important;
+
+        box-shadow: 0px 3px 6px #00000029;
+    }
+</style>
 <div class="wrapper"><!--wrapper-->
     {% include "inventory/common/header.html" %}
     <section class="content">
@@ -14,19 +52,34 @@
                 <!-- <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p> -->
             </div>
         </div>
+        <button  data-toggle="modal" data-target="#imgModel" id="id_model_button" hidden>Done </button>
+        <button  data-toggle="modal" data-target="#addimgModel" id="id_model_close" hidden>Done </button>
 
+        <button data-dismiss="modal" class="view-button" id="model_close" hidden>Cancel</button>
         <div class="main-content-holder"><!--main-content-holder-->   
             <div class="white-wrapper f-gray" >
-              
-                <div class="row">
+              <div class="row">
+                  <div class="col-md-12" style="position: relative;">
+                    <div class="edit-div">
+                        <img id="id_editButton" onclick="editItemData()" class="inv-edit-img"
+                        src="{% static 'files/icons/edit.png' %}">
+                        <button id="id_editDone" class="inv-blue-btn inv-hide" onclick="doneEdit()">Done </button>
+                    </div>
+                  </div>
+              </div>
+                <div class="row mt-40">
                     <div class="col-md-8">
-                        <div class="row">
+                        <div class="row" style="position: relative;">
                             <div class="col-md-2">
-                                <img style="width: 100%;" src="{% static 'files/images/dummy-profile-pic.jpg' %}"  alt="">
+                                <img onclick="viewImgModel()" style="width: 100%; cursor: pointer;" src="{% static 'files/images/dummy-profile-pic.jpg' %}"  alt="">
                             </div>
-                            <div class="col-md-9">
+                            <div class="col-md-9 m-mt-30">
                                 <div class="inv-item-head">
-                                    Item Name
+                                    <!-- Item Name -->
+                                    <span id="id_name_val" class="av-font">Item Name</span>
+                                    <div id="id_name_text" class="inv-input-container h-30 inv-hide" style="width: 50%;"> 
+                                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                                      </div>
                                 </div>
                                 <div class="inv-item-head-sub mt-20">
                                     865655
@@ -35,19 +88,40 @@
                                <div class="row" style="margin-left: 0px; margin-top: 7%;">
                                 <div class="col-md-4 pl-0">
                                     <div class="inv-item-head-sub-2">Category</div>
-                                    <div class="inv-item-head-sub mt-20">
-                                        Category 1
+                                    <div class="inv-item-head-sub mt-20" id="id_cat" >
+                                        <span id="id_cat_val"  class="av-font">  Category 1</span>
+                                       
+                                        <select id="id_cat_select" class="minimal av-font inv-hide">
+                                            <option></option>
+                                            <option value="Category1">Category1</option>
+                                            <option value="Category2">Category2</option>
+                                                            
+                                        </select>
                                     </div>
                                 </div>
-                                <div class="col-md-4 pl-0">
+                                <div class="col-md-4 pl-0 m-mt-10">
                                     <div class="inv-item-head-sub-2">Segment</div>
                                     <div class="inv-item-head-sub mt-20">
-                                        Segment 1
+                                        <span id="id_seg_val"  class="av-font">  Segment 1</span>
+                                       
+                                        <select id="id_seg_select" class="minimal av-font inv-hide">
+                                            <option></option>
+                                            <option value="Category1">Category1</option>
+                                            <option value="Category2">Category2</option>
+                                                            
+                                        </select>
                                     </div>
-                                </div> <div class="col-md-4 pl-0">
+                                </div> <div class="col-md-4 pl-0 m-mt-10">
                                     <div class="inv-item-head-sub-2">Line</div>
                                     <div class="inv-item-head-sub mt-20">
-                                        Line 1
+                                        <span id="id_line_val"  class="av-font">  Line 1</span>
+                                       
+                                        <select id="id_line_select" class="minimal av-font inv-hide">
+                                            <option></option>
+                                            <option value="Category1">Category1</option>
+                                            <option value="Category2">Category2</option>
+                                                            
+                                        </select>
                                     </div>
                                 </div>
                                 
@@ -55,23 +129,46 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-2  h-100">
-                       <div class="inv-item-card">
+                    <div class="col-md-2  h-100 m-mt-30">
+                       <div class="inv-item-card green-border">
                         <div class="av-font text-center">
                             Inventory
-                            <div class="inv-item-card-content av-font mt-40">
-                                135 <span style="font-weight: 100 !important;">Unit</span>
+                            <div class=" av-font mt-40">
+                                <div class="row ">
+                                    <div class="col-xs-6 text-left inv-text-1 green-text" > Quantity</div>
+                                    <div class="col-xs-6 inv-text-1 green-text text-left">135 Unit </div>
+
+                                </div>
+                               
+                                <div class="row mt-30">
+                                    <div class="col-xs-6 text-left inv-text-2"> Unit Price</div>
+                                    
+                                    <div class="col-xs-6 inv-text-2 text-left">135 KD </div>
+
+                                </div>
+                               
                             </div>
                            </div>
                        </div>
                                                  
                     </div>
-                    <div class="col-md-2  h-100">
-                        <div class="inv-item-card">
+                    <div class="col-md-2  h-100 m-mt-10">
+                        <div class="inv-item-card orange-border">
                          <div class="av-font text-center">
                             Reserve
-                             <div class="inv-item-card-content av-font mt-40">
-                                 10 <span style="font-weight: 100 !important;">Unit</span>
+                             <div class=" av-font mt-40">
+                                <div class="row ">
+                                    <div class="col-md-6 text-left inv-text-1 orange-text" > Quantity</div>
+                                    <div class="col-md-6 inv-text-1 orange-text">
+                                        <div id="id_res_text" class="inv-input-container h-30 inv-hide" > 
+                                            <input type="number"  class="w-p-100 inv-in" name="attributes">
+                                          </div>    
+                                        <!-- 135 Unit  -->
+                                        <span id="id_res_val"> 135 Unit</span>
+                                    
+                                    </div>
+
+                                </div>
                              </div>
                             </div>
                         </div>
@@ -80,10 +177,21 @@
                 </div>
                 <div class="row mt-20">
                 <div class="col-md-10 av-font" style="font-size: 16px;">
-                    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero
+                    <textarea class="inv-hide" id="id_des_text" style="width: 100%; border-radius: 5px;" rows="4">vr</textarea>
+                    <span id="id_des_val" class="av-font ">                 Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+                        At vero Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero</span>
                 </div>
                 </div>
-                <div class="row mt-20 " style="font-size: 16px;">
+                <div class="row mt-20">
+                    <div class="col-md-12" style="position: relative;">
+                      <div class="edit-div">
+                          <img id="id_editButton" onclick="editItemDetials()" class="inv-edit-img"
+                          src="{% static 'files/icons/edit.png' %}">
+                        
+                      </div>
+                    </div>
+                </div>
+                <div class="row mt-30 " style="font-size: 16px; margin-left: 0px;">
                     
                     <div class="col-md-3 inv-item-card2">
                     
@@ -117,7 +225,7 @@
 
                    
                 </div>
-                <div class="row mt-20">
+                <!-- <div class="row mt-20">
                    <div class="col-md-12">
                     <div class="inv-item-head-sub-2">Quantity</div>
               
@@ -131,153 +239,159 @@
                     </div>
                    </div>
                     
-                </div>
+                </div> -->
                 <div class="row mt-20">
                     <div class="col-md-12">
                         <div class="d-flex d-grid">
                            
                             <div class="right-pos m-mt-10">
-                                <button class="inv-blue-btn"  > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Unit </button>
+                                <button class="inv-blue-btn" onclick="openNavAddBundle('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Unit </button>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-12 mt-10">
-                        <table class="inv-table">
-                            <tr>
-                                <th style="width: %;">
-                                    Unit ID
-                                </th>
-                                <th style="width: %; ">
-                                    Purchase date
-                                </th>
-                                <th style="width: %;" >
-                                    Quantity
-                                </th>
-                                <th style="width: %;" >
-                                    Expiry date
-                                </th>
-                                <th class="text-center">
-                                    Unit Price
-                                </th>
-                                <th>
-                                    Contact
-                                </th>
-                                <th>
-                                    Status
-                                </th>
-
-                                <th style="width:%;" class="text-center">Action</th>
-                            </tr>
-                            <tr>
-                                <td>
-                                    0000000
-                                </td>
-                                <td>
-                                    12/12/2021
-                                </td>
-                                <td >
-                                   3
-                                </td>
-                                <td >
-                                    12/12/2021
-                                    
-                                </td>
-                                <td class="text-center">
-                                    3
-                                </td>
-                                <td>
-                                    000000000
-                                </td>
-                                <td class="">
-                                    <span class="inv-dot c-out-of-order ml-5"></span>
-                                    Out of Order
-
-                                </td>
-                                <td style="float: right;">
-                                  
-
-                                    <button class="inv-plan-img-btn"> <img
-                                            src="{% static 'files/inventory/icons/edit.png' %}" alt="">
-                                    </button>
-                                    <button class="inv-plan-img-btn"> <img
-                                            src="{% static 'files/inventory/icons/delete.png' %}" alt="">
-                                    </button>
-
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    0000000
-                                </td>
-                                <td>
-                                    12/12/2021
-                                </td>
-                                <td >
-                                   3
-                                </td>
-                                <td >
-                                    12/12/2021
-                                    
-                                </td>
-                                <td class="text-center">
-                                    3
-                                </td>
-                                <td>
-                                    000000000
-                                </td>
-                                <td class="">
-                                    <span class="inv-dot c-expired ml-5"></span>
-                                                Expired
-
-                                </td>
-                                <td style="float: right;">
-                                  
-
-                                    <button class="inv-plan-img-btn"> <img
-                                            src="{% static 'files/inventory/icons/edit.png' %}" alt="">
-                                    </button>
-                                    <button class="inv-plan-img-btn"> <img
-                                            src="{% static 'files/inventory/icons/delete.png' %}" alt="">
-                                    </button>
-
-                                </td>
-                            </tr>  <tr>
-                                <td>
-                                    0000000
-                                </td>
-                                <td>
-                                    12/12/2021
-                                </td>
-                                <td >
-                                   3
-                                </td>
-                                <td >
-                                    12/12/2021
-                                    
-                                </td>
-                                <td class="text-center">
-                                    3
-                                </td>
-                                <td>
-                                    000000000
-                                </td>
-                                <td class="">
-                                    <span class="inv-dot c-active ml-5"></span>
-                                   Active
-
-                                </td>
-                                <td style="float: right;">
-                                  
-
-                                    <button class="inv-plan-img-btn"> <img
-                                            src="{% static 'files/inventory/icons/edit.png' %}" alt="">
-                                    </button>
-                                    <button class="inv-plan-img-btn"> <img
-                                            src="{% static 'files/inventory/icons/delete.png' %}" alt="">
-                                    </button>
-
-                                </td>
-                            </tr>
+                        <table class="inv-table footable">
+                            <thead>
+                                <tr>
+                                    <th style="width: %;">
+                                        Unit ID
+                                    </th>
+                                    <th data-hide="phone,tablet"  style="width: %; ">
+                                        Purchase date
+                                    </th>
+                                    <th data-hide="phone,tablet"  style="width: %;" >
+                                        Quantity
+                                    </th>
+                                    <th data-hide="phone,tablet"  style="width: %;" >
+                                        Expiry date
+                                    </th>
+                                    <th data-hide="phone,tablet"  class="text-center">
+                                        Unit Price
+                                    </th>
+                                    <th data-hide="phone,tablet" >
+                                        Contact
+                                    </th>
+                                    <th>
+                                        Status
+                                    </th>
+    
+                                    <th data-hide="phone,tablet"  style="width:%;" class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        0000000
+                                    </td>
+                                    <td>
+                                        12/12/2021
+                                    </td>
+                                    <td >
+                                       3
+                                    </td>
+                                    <td >
+                                        12/12/2021
+                                        
+                                    </td>
+                                    <td class="text-center">
+                                        3
+                                    </td>
+                                    <td>
+                                        000000000
+                                    </td>
+                                    <td class="">
+                                        <span class="inv-dot c-out-of-order ml-5"></span>
+                                        Out of Order
+    
+                                    </td>
+                                    <td style="float: right;">
+                                      
+    
+                                        <button onclick="openNavAddBundle('edit')" class="inv-plan-img-btn"> <img
+                                                src="{% static 'files/inventory/icons/edit.png' %}" alt="">
+                                        </button>
+                                        <button class="inv-plan-img-btn"> <img
+                                                src="{% static 'files/inventory/icons/delete.png' %}" alt="">
+                                        </button>
+    
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        0000000
+                                    </td>
+                                    <td>
+                                        12/12/2021
+                                    </td>
+                                    <td >
+                                       3
+                                    </td>
+                                    <td >
+                                        12/12/2021
+                                        
+                                    </td>
+                                    <td class="text-center">
+                                        3
+                                    </td>
+                                    <td>
+                                        000000000
+                                    </td>
+                                    <td class="">
+                                        <span class="inv-dot c-expired ml-5"></span>
+                                                    Expired
+    
+                                    </td>
+                                    <td style="float: right;">
+                                      
+    
+                                        <button onclick="openNavAddBundle('edit')" class="inv-plan-img-btn"> <img
+                                                src="{% static 'files/inventory/icons/edit.png' %}" alt="">
+                                        </button>
+                                        <button class="inv-plan-img-btn"> <img
+                                                src="{% static 'files/inventory/icons/delete.png' %}" alt="">
+                                        </button>
+    
+                                    </td>
+                                </tr> 
+                                 <tr>
+                                    <td>
+                                        0000000
+                                    </td>
+                                    <td>
+                                        12/12/2021
+                                    </td>
+                                    <td >
+                                       3
+                                    </td>
+                                    <td >
+                                        12/12/2021
+                                        
+                                    </td>
+                                    <td class="text-center">
+                                        3
+                                    </td>
+                                    <td>
+                                        000000000
+                                    </td>
+                                    <td class="">
+                                        <span class="inv-dot c-active ml-5"></span>
+                                       Active
+    
+                                    </td>
+                                    <td style="float: right;">
+                                      
+    
+                                        <button onclick="openNavAddBundle('edit')" class="inv-plan-img-btn"> <img
+                                                src="{% static 'files/inventory/icons/edit.png' %}" alt="">
+                                        </button>
+                                        <button class="inv-plan-img-btn"> <img
+                                                src="{% static 'files/inventory/icons/delete.png' %}" alt="">
+                                        </button>
+    
+                                    </td>
+                                </tr>
+                            </tbody>
+                          
                          
 
                         </table>
@@ -289,7 +403,331 @@
 
       
     </section>
+
+    <div id="addBundle" class="inv-sidedrawer">
+
+        <div class="inv-sidedrawer-inner">
+            <div class="d-flex">
+                <div class="inv-drawer-head" id="supHead">
+                    Add Supplier
+                </div>
+                <div class="right-pos">
+
+                    <button onclick="closeNavAddBundle()" class="img-button">
+                        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                    </button>
+                </div>
+            </div>
+            <hr>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Purchase Date</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="date"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Quantity</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="number"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Expired Date</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="date"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Unit Price</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Status</div>
+
+                    <select id="id_payment" class="minimal">
+                        <option value="Post Paid">Active</option>
+                        <option  >Out Of order</option>
+                        <option value="Post Paid">Expired</option>
+                      
+
+
+                    </select>
+                </div>
+
+            </div>
+            
+
+
+          
+        </div>
+        <div class="inv-drawer-footer">
+            <button class="sent-button" >Submit</button>
+                        <button data-dismiss="modal" onclick="closeNavAddBundle()" class="view-button">Cancel</button>
+        </div>
+    </div>
+    <div id="editExtra" class="inv-sidedrawer">
+
+        <div class="inv-sidedrawer-inner">
+            <div class="d-flex">
+                <div class="inv-drawer-head" >
+                   Edit
+                </div>
+                <div class="right-pos">
+
+                    <button onclick="closeExtraEdit()" class="img-button">
+                        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                    </button>
+                </div>
+            </div>
+            <hr>
+          
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Size</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Colour</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Sample</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+            </div>
+          
+            
+
+
+          
+        </div>
+        <div class="inv-drawer-footer">
+            <button class="sent-button" >Submit</button>
+                        <button  onclick="closeExtraEdit()" class="view-button">Cancel</button>
+        </div>
+    </div>
+
+    <div class="modal fade" id="imgModel" role="dialog">
+        <div class="modal-dialog cancel-model " style="border: none !important;" role="document">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12 mt-20">
+
+                        
+                        <div class="d-flex ">
+                            
+                            <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                                <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                            </button>
+    
+                        </div>
+                    </div>
+                </div>
+               
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <div class="cancel-model-content">
+                            <div class="owl-carousel owl-theme">
+                                <div class="item" style="position: relative;">
+                                    <img  style="width: 100%;" src="{% static 'files/images/dummy-profile-pic.jpg' %}"  alt="">
+
+                                    <div style="position: absolute; top: 0; right: 0;">
+                                        <button style="border: none; background: none; color: red;"> <i class="fa fa-trash fa-lg" aria-hidden="true"></i> Remove</button>
+                                    </div>
+                                </div>
+                                <div class="item" style="position: relative;">
+                                    <img  style="width: 100%;" src="{% static 'files/images/dummy-profile-pic.jpg' %}"  alt="">
+                                    <div style="position: absolute; top: 0; right: 0;">
+                                        <button style="border: none; background: none; color: red;"> <i class="fa fa-trash fa-lg" aria-hidden="true"></i> Remove</button>
+                                    </div>
+                                </div>
+                            </div>
+                           
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <div class="inv-input-container h-30"> 
+                                        <input type="file"  class="w-p-100 inv-in" name="attributes">
+                                      </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <button class="sent-button">Add Image</button>
+                                </div>
+                            </div>
+                          
+                        </div>
+                    </div>
+    
+                </div>
+            </div>
+        </div>
+      </div>
+      <div class="modal fade" id="addimgModel" role="dialog">
+        <div class="modal-dialog cancel-model cancel-order-border " role="document">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12 mt-20">
+
+                        
+                        <div class="d-flex ">
+                            
+                            <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                                <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                            </button>
+    
+                        </div>
+                    </div>
+                </div>
+               
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <div class="cancel-model-content">
+                           
+                            <button class="sent-button" >Add Image</button>
+                            
+                            <button data-dismiss="modal" class="view-button" id="model_close">Cancel</button>
+                        </div>
+                    </div>
+    
+                </div>
+            </div>
+        </div>
+      </div>
 </div>
 
 
+{% endblock %}
+
+
+{% block javascript %}
+<script src="{% static '/files/externalfiles/plugins/OwlCarousel2/dist/owl.carousel.js'%}"></script>
+<script>
+    $(document).ready(function () {
+        $('.owl-carousel').owlCarousel({
+            items: 1,
+            nav: true,
+            navText: [
+                `<i style="color:#000000 !important;" class='fa fa-chevron-left service-control' @click='prevService()'></i>`,
+                `<i style="color:#000000 !important;"  class='fa fa-chevron-right service-control'></i>`,
+            ],
+        });
+    });
+function viewImgModel(){
+    console.log('c')
+    $('#id_model_button').click()
+    
+}
+
+function addImgModel(){
+    // $('#imgModel').modal('hide');
+    
+    $('#model_close').click()
+}
+function editItemData(){
+    document.getElementById('id_editButton').style.display = 'none';
+    document.getElementById('id_editDone').style.display = 'block';
+    document.getElementById('id_cat_val').style.display = 'none';
+    document.getElementById('id_cat_select').style.display = 'block';
+    document.getElementById('id_seg_val').style.display = 'none';
+    document.getElementById('id_seg_select').style.display = 'block';
+    document.getElementById('id_line_val').style.display = 'none';
+    document.getElementById('id_line_select').style.display = 'block';
+    document.getElementById('id_name_val').style.display = 'none';
+    document.getElementById('id_name_text').style.display = 'block';
+    document.getElementById('id_des_val').style.display = 'none';
+    document.getElementById('id_des_text').style.display = 'block';
+    document.getElementById('id_res_val').style.display = 'none';
+    document.getElementById('id_res_text').style.display = 'block';
+
+    
+}
+
+function doneEdit(){
+    document.getElementById('id_editButton').style.display = 'block';
+    document.getElementById('id_editDone').style.display = 'none';
+    document.getElementById('id_cat_val').style.display = 'block';
+    document.getElementById('id_cat_select').style.display = 'none';
+    document.getElementById('id_seg_val').style.display = 'block';
+    document.getElementById('id_seg_select').style.display = 'none';
+    document.getElementById('id_line_val').style.display = 'block';
+    document.getElementById('id_line_select').style.display = 'none';
+    document.getElementById('id_name_val').style.display = 'block';
+    document.getElementById('id_name_text').style.display = 'none';
+    document.getElementById('id_des_val').style.display = 'block';
+    document.getElementById('id_des_text').style.display = 'none';
+    document.getElementById('id_res_val').style.display = 'block';
+    document.getElementById('id_res_text').style.display = 'none';
+}
+
+function editItemDetials() {
+  
+        if(screen.width<= 600){
+            document.getElementById("editExtra").style.width = "100%";
+        }else if(screen.width<= 720){
+            document.getElementById("editExtra").style.width = "50%";
+        }
+        else{
+            document.getElementById("editExtra").style.width = "30%";
+        }  
+    }
+    function closeExtraEdit() {
+        document.getElementById("editExtra").style.width = "0";
+    }
+function openNavAddBundle(d) {
+    if(d == 'add'){
+            $("#supHead").text("Add Unit");
+        }
+        if(d == 'edit'){
+            $("#supHead").text("Edit Unit");
+        }
+        if(screen.width<= 600){
+            document.getElementById("addBundle").style.width = "100%";
+        }else if(screen.width<= 720){
+            document.getElementById("addBundle").style.width = "50%";
+        }
+        else{
+            document.getElementById("addBundle").style.width = "30%";
+        }  
+    }
+    function closeNavAddBundle() {
+        document.getElementById("addBundle").style.width = "0";
+    }
+
+
+
+   
+</script>
 {% endblock %}
