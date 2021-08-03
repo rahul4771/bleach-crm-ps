@@ -1251,12 +1251,9 @@ def export_users_xls(request):
 	todate = datetime.strptime(to_date, '%d-%m-%Y')
 
 	prev_date_start  = prevdate.replace(hour=0,minute=0,second=0,microsecond=0)
-	# prev_date_end = prevdate+timedelta(1)
-	# todate_date_start= todate.replace(hour=0,minute=0,second=0,microsecond=0)   #single_date+timedelta(1)
-	todate_date_end = todate.replace(hour=0,minute=0,second=0,microsecond=0)+timedelta(1)
-
-	# start_date_day = date
-	# end_date_day   = date+timedelta(1)
+	prev_date_end = prevdate+timedelta(1)
+	todate_date_start= todate.replace(hour=0,minute=0,second=0,microsecond=0)   #single_date+timedelta(1)
+	todate_date_end = todate_date_start+timedelta(1)
 
 	# print(prev_date_start,todate_date_end,"datesss")
 	# Sheet header, first row
