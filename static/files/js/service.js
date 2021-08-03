@@ -3,7 +3,9 @@
 //Check Response status always
 
 
-var api='https://test.bleach-kw.com/';
+// var api='https://test.bleach-kw.com/';
+var api = 'http://localhost:8000/'
+
 
 async function _post(url,data){
     let result;
@@ -17,6 +19,7 @@ async function _post(url,data){
 }
 
 async function _get(url){
+  console.log(url)
     let result;
     await axios.get(api+url).then(response => {
         result = response;

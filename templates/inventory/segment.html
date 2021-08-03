@@ -413,20 +413,19 @@
     window.location.href=url+query;  
     }
 
-    function getlines(segment_id){
-        axios.get(url+'/api/inventory-lines/',{ params: { 'segment_id':segment_id } })
-                .then(function (response) {
-                    if (response.data.inventory_line !== ''){
-
-                        $.each(response.data.inventory_line,function(key,value){
-                                console.log(value.id,value.name,"lines")
-                                $('.line_table').append('<tr><td>'+value.name+'</td><td><button class="inv-plan-img-btn" data-lineid='+value.id+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
-                        })
-
-                    }else{
-                        $(".line_table tr").remove(); 
-                    }
+    async function getlines(segment_id){
+         var result = await _get('api/inventory-lines/?segment_id='+segment_id);
+         if(result.status == 200){
+            if (result.data.inventory_line !== ''){
+                $.each(result.data.inventory_line,function(key,value){
+                        $('.line_table').append('<tr><td>'+value.name+'</td><td><button class="inv-plan-img-btn" data-lineid='+value.id+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
                 })
+            }else{
+                $(".line_table tr").remove(); 
+            }
+         }else{
+            showNotification('Something went wrong','error')
+         }
     }
 </script>
 
