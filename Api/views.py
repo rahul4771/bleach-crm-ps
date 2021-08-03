@@ -612,7 +612,8 @@ class DailySalesAPI(APIView):
 			# end_date_day   = date+timedelta(1)
 
 			start_date_day  = date.replace(hour=0,minute=0,second=0,microsecond=0)
-			end_date_day = start_date_day+timedelta(1).replace(hour=0,minute=0,second=0,microsecond=0)
+			end_date_day = start_date_day+timedelta(1)
+			end_date_day = end_date_day.replace(hour=0,minute=0,second=0,microsecond=0)
 
 			print(date.strftime("%A"),"dt")
 			# generalcleaning = 0
