@@ -2021,7 +2021,7 @@ def export_users_xls(request):
 
 				day_name = r[3]
 
-				if d == '05-07-2021' and r[0] == 'BLC20210610392' or r[0] == 'BLC20210610412' or r[0] == 'BLC20210210154' or r[0] == 'BLC20210610161' or r[0] == 'BLC20210310115' :					
+				if d == '05-07-2021' and r[0] == 'BLC20210610161' :					
 					print(r[11],r[0], float(r[6]/orderschedules_count)-float(r[16]/total_order_schedule_count)-float(r[17]/total_order_schedule_count)+float(r[18]/total_order_schedule_count)-float(r[19]/total_order_schedule_count),"service")
 				
 				if r[11] == 'General Cleaning':
