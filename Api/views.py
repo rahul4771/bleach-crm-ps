@@ -709,7 +709,7 @@ class DailySalesAPI(APIView):
 						others -= float(schedule[10]/order_schedule_count)
 					
 
-				if d == '05-07-2021':
+				if date == '05-07-2021' and schedule[0] == 'BLC20210610161':
 					print(schedule[2],schedule[0], float(order_amount/schedule_count)-float(schedule[6]/order_schedule_count)-float(schedule[7]/order_schedule_count)+float(schedule[8]/order_schedule_count)-float(schedule[10]/order_schedule_count),"service")
 				
 				#cleaning type wise amount addition
