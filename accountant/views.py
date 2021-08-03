@@ -2010,7 +2010,8 @@ def export_users_xls(request):
 			test_elem = d
 
 			#filtering rows list using date
-			res = [item for item in rows if item[1] == d ]
+			res = [item for item in rows if item[1]+timedelta(hours=3) == d ]
+			print(d)
 
 			#calculating service totals and grand total
 			for r in res:
