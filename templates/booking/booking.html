@@ -2861,6 +2861,18 @@ Fill all the details of the Buildings  to proceed
                   <!-- Cart ends here-->
                   <div v-if="activeTab=='Schedule'">
                     <div >
+                      <div class="mt-2 mb-2">
+
+                         <v-btn color="primary" outlined @click="activeTab='Cart'">
+                         <v-icon
+                         
+                         left
+                       >
+                         mdi-arrow-left
+                       </v-icon>
+                         Back
+                        </v-btn> 
+                      </div>
                     <div class="row m-0" v-if="!scheduleDateSat && !editScheduleStat">
                       <div class="col-md-3">
                         <div>
@@ -3046,7 +3058,8 @@ Fill all the details of the Buildings  to proceed
                            
                              </div>
                              </div>
-                             <div class="row schedule-details-head" v-if="scheduleDateSat && cleaningPolicy!='One Time' && !editScheduleStat">
+                             <div class="row schedule-details-head mt-2" v-if="scheduleDateSat && cleaningPolicy!='One Time' && !editScheduleStat">
+                               
                                <div class="col-md-2">
                                  <div>
                                   <b>Cleaning Policy</b> 
@@ -3095,7 +3108,7 @@ Fill all the details of the Buildings  to proceed
                               </div>
                              </div>
                              <div v-if="editScheduleStat">
-                               <div class="mt-2 mb-2">
+                               <!-- <div class="mt-2 mb-2">
 
                                  <v-btn color="primary" outlined @click="activeTab='Cart'">
                                   <v-icon
@@ -3106,7 +3119,7 @@ Fill all the details of the Buildings  to proceed
                                 </v-icon>
                                   Back
                                  </v-btn>
-                               </div>
+                               </div> -->
                              <div class="row schedule-details-head mt-4" >
                               <div class="col-md-2">
                                 <div>

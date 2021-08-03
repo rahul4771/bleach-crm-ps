@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 {% load static %}
-<div class="wrapper"><!--wrapper-->
+<div class="wrapper" id="app"><!--wrapper-->
 {% include "bookingofficer/common/header.html" %}
 
 <div class="wrapper"><!--wrapper-->
@@ -50,7 +50,7 @@
   <div class="ticket-form-left"><!--ticket-form-left-->
           <div class=" bold-text common-label"> <label>Cancel Options</label></div>
                 <label for="favcity">
-                <select name="cancel_method" id="cancel_method_id" required>
+                <select name="cancel_method" id="cancel_method_id-{{cancell_book.id}}" required >
                     <option value="">--Select option--</option>           
                     <option value="CANCELL">Direct Cancellation</option>
                     <option value="REJECT">Reject Request</option>
@@ -78,12 +78,12 @@
 
 <hr class="hr-dashedpad">
 				<div class="bold-text common-label"> <label>Service: {{cancell_book.service_type.name}}</label></div>
-        <div class="bold-text common-label"> <label>Amount: {{cancell_book.total_cost}}</label></div>
+        <div class="bold-text common-label" > <label>Amount: <span id="cancel_amount-{{cancell_book.id}}">{{cancell_book.total_cost}}</span></label></div>
 </div><!--ticket-wrapper-full-->
 <br><br> 
 {% endfor %}
 
-<div align="center" class="ticket-form-button"><input class="assignButton" name="submit" type="submit" value="Submit" onclick='SubmitNewTicket(this);'></div>   	
+<div align="center" class="ticket-form-button"><input class="assignButton" name="submit" type="submit" value="Submit" onclick='submitCancel(this);' data-user_id="{{user.id}}" data-order_id="{{cancell_in_progress_order.id}}"  ></div>   	
 </form>
 <br> <br>
 	</div><!--center-formDiv-->
@@ -106,6 +106,15 @@
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="{% static 'files/js/cancel-book.js'%}"></script>
 <script>
+  
+  {% for cancell_book in cancell_books %}
+        app.services.push({
+          id:"{{cancell_book.id}}",
+          amount:"{{cancell_book.total_cost}}",
+          name:"{{cancell_book.service_type.name}}"
+        })
+  {% endfor %}
+
 $('#cancel_method_id').change(function(){
   if ($(this).val() == 'CREDIT') {
     $('.amount_div').attr("hidden",false);
@@ -122,7 +131,7 @@ $('#cancel_method_id').change(function(){
     $('#amount_label').text('Reduction Amount');
   }
 
-  if ( ($(this).val() == 'CANCELL') || ($(this).val() == '') || $(this).val() == 'REJECT')) {
+  if ( ($(this).val() == 'CANCELL') || ($(this).val() == '') || ($(this).val() == 'REJECT')) {
     $('.amount_div').attr("hidden",true);
     $('input[name="amount"]').attr("required",false);
   }
