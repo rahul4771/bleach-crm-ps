@@ -1960,6 +1960,7 @@ def export_users_xls(request):
 		for schedule in orderschedules:
 			schedule_list = list(schedule)
 			schedule_list[3] = schedule_list[1].strftime("%A")
+			schedule_list[1] = schedule_list[1].strftime('%d-%m-%Y %h:%i')+timedelta(hours=3)
 			schedule = tuple(schedule_list)
 			rows.append(schedule)
 			
@@ -2010,7 +2011,7 @@ def export_users_xls(request):
 			test_elem = d
 
 			#filtering rows list using date
-			res = [item for item in rows if item[1]+timedelta(hours=3) == d ]
+			res = [item for item in rows if item[1] == d ]
 			print(d)
 
 			#calculating service totals and grand total
