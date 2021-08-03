@@ -10,7 +10,7 @@ ATTRIBUTE_TYPE_CHOICES=(
 
 class Category(models.Model):
     name            =   models.CharField(max_length=100,blank=False,null=False)
-    category_code       =   models.CharField(max_length=50,blank=False,null=False)
+    category_code   =   models.CharField(max_length=50,blank=False,null=False)
     status          =   models.BooleanField(default=True,blank=False,null=False)
 
     def __unicode__(self):
@@ -58,7 +58,7 @@ class Item(models.Model):
 
 
 class Attribute(models.Model):
-    attribute_type      =   models.CharField(max_length=100,blank=False,null=False,choices=ATTRIBUTE_TYPE_CHOICES)
+    # attribute_type      =   models.CharField(max_length=100,blank=False,null=False,choices=ATTRIBUTE_TYPE_CHOICES)
     attribute_category  =   models.ForeignKey(Category,blank=True,null=True,related_name='attribute_category')
     attribute_segment   =   models.ForeignKey(Segment,blank=True,null=True,related_name='attribute_segment')
     attribute_line      =   models.ForeignKey(Line,blank=True,null=True,related_name='attribute_line')

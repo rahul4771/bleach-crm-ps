@@ -3,7 +3,7 @@ from rest_framework import serializers
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule
 from evaluator.models import Evaluation,EvaluationDetails
 from order.models import Promocode
-from inventory.models import Line
+from inventory.models import Line,Segment,Category
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -70,4 +70,9 @@ class EvaluationSerializer(serializers.ModelSerializer):
 class InventoryLineSerializer(serializers.ModelSerializer):
     class Meta:
         model = Line
+        fields = ('id','name')
+
+class InventorySegmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Segment
         fields = ('id','name')

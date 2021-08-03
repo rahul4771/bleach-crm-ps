@@ -51,5 +51,5 @@ urlpatterns = [
 	url(r'^ajax/cleaning-calendar-date/',views.cleaningcalendardate,name='cleaning-calendar-date'),
 
 	url(r'^cancell-order/(?P<order_id>[-\w]+)/$',views.OrderCancellation.as_view(),name='cancell-order'),
-	url(r'^cancell-book/(?P<order_id>[-\w]+)/$',views.EvaluationBookCancellation.as_view(),name='cancell-book'),	
+	url(r'^cancell-book/(?P<evaluation_id>[-\w]+)/$',views.EvaluationBookCancellation.as_view(),name='cancell-book'),	
 ]

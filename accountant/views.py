@@ -1255,6 +1255,7 @@ def export_users_xls(request):
 	todate_date_start= todate.replace(hour=0,minute=0,second=0,microsecond=0)   #single_date+timedelta(1)
 	todate_date_end = todate+timedelta(1)
 
+	print(prev_date_start,todate_date_end,"datesss")
 	# Sheet header, first row
 	row_num = 0
 	row_num2 = 0
@@ -1947,8 +1948,8 @@ def export_users_xls(request):
 		
 		#total sales
 		response['Content-Disposition'] = 'attachment; filename="SALES_REPORT_'+from_date+'_'+to_date+'.xls"'
-		orderschedules = OrderScheduler.objects.filter(Q(is_active=True)&Q(order__evaluation__quatation_status='APPROVED')&Q(Q(work_status='CLEANING_FULFILLED')|Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS'))&Q(end_at__range=(prev_date_start,todate_date_end))).values_list('order__order_no','end_at','end_at','id','evaluation_details__address__customer__name','evaluation_details__evaluation__payment_method','order_scheduler_book__estimated_cost','order__amount_paid','evaluation_details__evaluation__payment_way','order_scheduler_book__id','order__remining_amount','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__cleaning_hours','order_scheduler_book__number_of_cleaners','evaluation_details__evaluator__name','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount','order_scheduler_book__evaluation_details__evaluation__discount').order_by('end_at')
-		print(orderschedules.count(),"count")
+		orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(prev_date_start,todate_date_end)).filter(Q(Q(work_status = 'CLEANING_TEAM_ASSIGNED') | Q(work_status = 'CLEANING_IN_PROGRESS') | Q(work_status='CLEANING_FULFILLED'))).values_list('order__order_no','end_at','end_at','id','evaluation_details__address__customer__name','evaluation_details__evaluation__payment_method','order_scheduler_book__estimated_cost','order__amount_paid','evaluation_details__evaluation__payment_way','order_scheduler_book__id','order__remining_amount','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__cleaning_hours','order_scheduler_book__number_of_cleaners','evaluation_details__evaluator__name','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount','order_scheduler_book__evaluation_details__evaluation__discount').order_by('end_at')
+		# print(orderschedules.count(),"count")
 	
 		
 		rows = []
@@ -1982,7 +1983,7 @@ def export_users_xls(request):
 				dates.append(ro[1])
 				found.add(ro[1])
 
-			print(dates,"dts")
+			# print(dates,"dts")
 
 		#appending data to list
 		rows2 = []
@@ -2017,10 +2018,11 @@ def export_users_xls(request):
 
 				orderschedules_count = calc_orderschedules.count()
 
-				print(r[0],r[6],orderschedules_count,"orc")
 
 				day_name = r[3]
 
+				if d == '05-07-2021':
+					print(r[11],float(r[6]/orderschedules_count)-float(r[16]/total_order_schedule_count)-float(r[17]/total_order_schedule_count)+float(r[18]/total_order_schedule_count)-float(r[19]/total_order_schedule_count),"service")
 				
 				if r[11] == 'General Cleaning':
 					detailed_cleaning += float(r[6]/orderschedules_count)

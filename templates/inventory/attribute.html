@@ -236,17 +236,43 @@
             </div>
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Attribute Type</div>
+                    <div class="model-input-name">Category</div>
 
-                    <select class="minimal" name="attribute_type" id="attribute_type" required>
-                        <option value="CATEGORY" selected>Category</option>
-                        <option value="SEGMENT">Segment</option>
-                        <option value="LINE">Line</option>
+                    <select class="minimal" name="category" id="id_category" required>
+                        <option value="">--Select Category--</option>
+                        {% for category in categories %}
+                        <option value="{{category.id}}">{{category.name}}</option>
+                        {% endfor %}
 
                     </select>
                 </div>
 
             </div>
+
+            <div class="row mt-20 segment_dropdown">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Segment</div>
+
+                    <select class="minimal" name="category" id="id_segment" required>
+                        <option value="">--Select Segment--</option>
+                    
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="row mt-20 line_dropdown">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Line</div>
+
+                    <select class="minimal" name="category" id="id_line" required>
+                        <option value="">--Select Line--</option>
+                    
+                    </select>
+                </div>
+
+            </div>
+
             <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Status</div>
@@ -361,6 +387,11 @@
 {% block javascript %}
 
 <script>
+
+    $(document).ready(function(){
+        $('.segment_dropdown').hide();
+        $('.line_dropdown').hide();
+    })
     function showDrawer(d){
         console.log(d)
         if(d == 'add'){
@@ -415,6 +446,47 @@
         $('#name_attribute').val('');
         $('#status_attribute').val('');
     })
+
+    $('#id_category').change(function(){
+        var category_id = $('#id_category').val();
+        console.log(category_id,"cid")
+        getsegments(category_id);
+    })
+        
+    async function getsegments(category_id){
+         var result = await _get('api/inventory-segments/?category_id='+category_id);
+         
+         if(result.status == 200){
+             console.log(result.data.inventory_segment,"stat")
+            if (result.data.inventory_segment !== ''){
+                $.each(result.data.inventory_segment,function(key,value){
+                        $('.id_segment').append('<option value='+value.id+'>'+value.name+'</option>')
+                })
+
+                $('.segment_dropdown').show();
+            }else{
+                showNotification('No Segments','error')
+            }
+            
+         }else{
+            showNotification('Something went wrong','error')
+         }
+    }
+
+    async function getlines(segment_id){
+         var result = await _get('api/inventory-lines/?segment_id='+segment_id);
+         if(result.status == 200){
+            if (result.data.inventory_line !== ''){
+                $.each(result.data.inventory_line,function(key,value){
+                        $('.line_table').append('<tr><td>'+value.name+'</td><td><button class="inv-plan-img-btn" data-lineid='+value.id+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
+                })
+            }else{
+                $(".line_table tr").remove(); 
+            }
+         }else{
+            showNotification('Something went wrong','error')
+         }
+    }
 </script>
 
 {% endblock %}
