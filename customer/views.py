@@ -5145,8 +5145,8 @@ class ServiceCancellation(APIView):
 		response_dict={}
 		response_dict['success'] = False
 		
-		cancelled_by             = service_book['cancelled_by']
-		order_id                 = service_book['order_id']
+		cancelled_by             = request.data.get('cancelled_by')
+		order_id                 = request.data.get('order_id')
 		order                    = Order.objects.select_related('evaluation__customer').get(id=order_id)
 		
 		service_books            = request.data.get('service_books')
@@ -5156,7 +5156,7 @@ class ServiceCancellation(APIView):
 			action_type  = service_book['action_type']
 			
 			service_book = EvaluationBook.objects.prefetch_related(Prefetch('order_scheduler_book_details',queryset=OrderScheduler.objects.filter(~Q(work_status='CLEANING_FULFILLED')),to_attr="schedules")).get(id=service_id)
-			
+			print(service_book,"service_book")	
 			if action_type == 'CANCELL':
 				service_book.status              = 'CANCELLED'
 				service_book.cancelled_by__id    = cancelled_by
