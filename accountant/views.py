@@ -1957,7 +1957,7 @@ def export_users_xls(request):
 		for schedule in orderschedules:
 			schedule_list = list(schedule)
 			schedule_list[3] = schedule_list[1].strftime("%A")
-			schedule_list[1] = schedule_list[1]+timedelta(hours=3)
+			schedule_list[1] = schedule_list[1]+timedelta(1)
 			schedule = tuple(schedule_list)
 			rows.append(schedule)
 			
