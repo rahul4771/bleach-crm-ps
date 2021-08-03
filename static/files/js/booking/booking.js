@@ -4041,7 +4041,7 @@ try {
         //optimal finding
         this.totalmanhour=this.totalmanhour+manhour
         console.log("total man hour is "+this.totalmanhour)
-        var r = 2 ** (this.totalmanhour.toString().length - 1);
+        var r = 2 ** (this.totalmanhour.toString().length + 1);
         var mod = this.totalmanhour % r;
 
         if (mod > parseInt(r / 2)) {
