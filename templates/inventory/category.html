@@ -28,7 +28,7 @@
                     
                     </div>
                     <div class="right-pos">
-                        <button class="inv-blue-btn" onclick="showDrawer('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Category </button>
+                        <button class="inv-blue-btn add_category" onclick="showDrawer('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Category </button>
                     </div>
                 </div>
                 <div class="mt-20">
@@ -78,7 +78,7 @@
                             </td>
                             <td>
                                 <a href="/inventory/segment/"><a href="/inventory/segment/{{category.id}}/" target="_blank"<button class="inv-plan-btn" onclick="openNavaddSegment2()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="" > Add Segment</button></a>
-                                <button class="inv-plan-img-btn" onclick="openNavEditCategory()"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                <button class="inv-plan-img-btn edit_category" onclick="showDrawer('edit')" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
                                 <button class="inv-plan-img-btn delete_category" data-categoryid="{{category.id}}" data-categoryname="{{attribute.name}}" data-categorystatus="{{attribute.status}}" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
                             </td>
                         </tr>
@@ -182,7 +182,7 @@
           
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button" >Submit</button>
+            <button class="sent-button category-form-btn" >Submit</button>
                         <button data-dismiss="modal" onclick="closeNavAddCategory()" class="view-button">Cancel</button>
         </div>
         </form>
@@ -241,7 +241,7 @@
           
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button" >Submit</button>
+            <button class="sent-button category-form-btn" >Submit</button>
                         <button data-dismiss="modal" onclick="closeNavEditCategory()" class="view-button">Cancel</button>
         </div>
     </div>
@@ -316,12 +316,14 @@
         if(d == 'add'){
             $(".inv-drawer-head-common").text("Add Category");
             $('#category_action').val('add_category');
+            openNavAddCategory()
         }
         if(d == 'edit'){
             $(".inv-drawer-head-common").text("Edit Category");
             $('#category_action').val('edit_category');
+            openNavEditCategory()
         }
-        openNavAddCategory()
+        
     }
 
     function openNavAddCategory() {
