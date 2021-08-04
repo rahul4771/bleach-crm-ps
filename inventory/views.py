@@ -34,19 +34,29 @@ class InventoryCategory(IsInventoryAdmin,View):
         return render(request,'inventory/category.html',{"categories":categories,"new_category_code":new_category_code,"search_query":search})
 
     def post(self,request):
-        category_name   = request.POST.get('category_name')
-        category_status = request.POST.get('category_status')
 
-        category_latest = Category.objects.all().last()
-        if category_latest:
-            code_number  =  int(re.findall(r'(\d+)', category_latest.category_code)[0]) + 1
-            category_code = 'CAT'+str(code_number)
-        else:
-            category_code = 'CAT9001'
+        action = request.POST.get('action')
 
-        Category.objects.create(name=category_name,category_code=category_code,status=category_status)
+        if action == 'add_category':
+            category_name   = request.POST.get('category_name')
+            category_status = request.POST.get('category_status')
 
-        messages.success(request,"Category Added Successfully !")
+            category_latest = Category.objects.all().last()
+            if category_latest:
+                code_number  =  int(re.findall(r'(\d+)', category_latest.category_code)[0]) + 1
+                category_code = 'CAT'+str(code_number)
+            else:
+                category_code = 'CAT9001'
+
+            Category.objects.create(name=category_name,category_code=category_code,status=category_status)
+
+            messages.success(request,"Category Added Successfully !")
+
+        if action == 'delete_category':
+            category_id = request.POST.get('category_id')
+            Category.objects.get(id=int(category_id)).delete()
+            messages.success(request,"Category Deleted Successfully !")
+
         return redirect('inventory:inventory-category')
 
 # Attribute.
@@ -95,10 +105,31 @@ class InventoryAttribute(IsInventoryAdmin,View):
         if action == 'add_attribute':
             # category = Category.objects.get(id=int(category_id))
             name     = request.POST.get('attribute')
-            attribute_type     = request.POST.get('attribute_type')
+            category_id = request.POST.get('attribute_category')
+            segment_id = request.POST.get('attribute_segment')
+            line_id = request.POST.get('attribute_line')
+            # attribute_type     = request.POST.get('attribute_type')
             status     = request.POST.get('status')
 
-            Attribute.objects.create(attribute_type=attribute_type,name=name,status=status)
+            print(category_id,segment_id,line_id,"print vals")
+
+            if category_id:
+                category = Category.objects.get(id=int(category_id))
+            else:
+                category = None
+
+            if segment_id:
+                segment = Segment.objects.get(id=int(segment_id))
+            else:
+                segment = None
+
+            if line_id:
+                line = Line.objects.get(id=int(line_id))
+            else:
+                line = None
+
+
+            Attribute.objects.create(attribute_category=category,attribute_segment=segment,attribute_line=line,name=name,status=status)
             messages.success(request,"Attribute Added Successfully !")
 
         if action == 'edit_attribute':
