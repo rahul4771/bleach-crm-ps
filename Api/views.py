@@ -144,7 +144,7 @@ class EvaluationUpdate(APIView):
 
 		slot_count_check = EvaluationDetails.objects.filter(is_active=True,proposed_time=converted_datetime).count()
 
-		if slot_count_check > 1:
+		if slot_count_check > 3:
 			response_dict = {"success":False,"alert":"This slot is Filled. Please select another slot."}
 		else:
 			evaluationdetail.evaluator = evaluator
