@@ -504,3 +504,10 @@
   }
 }
 [v-cloak] {display: none}
+
+
+.resource-img-circle{
+  height: 72px;
+  width: 72px;
+  border-radius: 50%;
+}
