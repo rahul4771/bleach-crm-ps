@@ -28,7 +28,7 @@
                     
                     </div>
                     <div class="right-pos">
-                        <button class="inv-blue-btn" onclick="openNavAddCategory()" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Category </button>
+                        <button class="inv-blue-btn add_category" onclick="showDrawer('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Category </button>
                     </div>
                 </div>
                 <div class="mt-20">
@@ -78,9 +78,8 @@
                             </td>
                             <td>
                                 <a href="/inventory/segment/"><a href="/inventory/segment/{{category.id}}/" target="_blank"<button class="inv-plan-btn" onclick="openNavaddSegment2()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="" > Add Segment</button></a>
-                                <button class="inv-plan-img-btn" onclick="openNavEditCategory()"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-
+                                <button class="inv-plan-img-btn edit_category" onclick="showDrawer('edit')" data-categoryid="{{category.id}}" data-categoryname="{{category.name}}" data-categorystatus="{{category.status}}" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                <button class="inv-plan-img-btn delete_category" data-categoryid="{{category.id}}" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
                             </td>
                         </tr>
                         {% endfor %}
@@ -110,11 +109,15 @@
                
                 <div class="row">
                     <div class="col-md-12 text-center">
+                        <form method="POST" action="" >{% csrf_token %}
+                        <input type="hidden" name="action" value="delete_category" />
+                        <input type="hidden" name="category_id" id="id_category" />
                         <div class="cancel-model-content">
-                            <button class="sent-button" >Delete</button>
+                            <button class="sent-button" type="submit" >Delete</button>
                             <button data-dismiss="modal" class="view-button">Cancel</button>
                           
                         </div>
+                        </form>
                     </div>
     
                 </div>
@@ -138,12 +141,14 @@
             </div>
             <hr>
         <form method="POST" action="" >{% csrf_token %}
+            <input type="hidden" name="action" id="category_action" value="add_category" />
+            <input type="hidden" name="category_edit_id" id="id_edit_category" />
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Category  Name</div>
+                    <div class="model-input-name">Category Name</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="category_name">
+                        <input type="text" id="name_category" class="w-p-100 inv-in" name="category_name">
                       </div>
                 </div>
 
@@ -162,7 +167,7 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Status</div>
 
-                    <select id="id_payment" name="category_status" class="minimal">
+                    <select id="status_category" name="category_status" class="minimal">
                         <option  ></option>
                         <option value="True" selected>Active</option>
                         <option value="False" >Inactive</option>
@@ -177,7 +182,7 @@
           
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button" >Submit</button>
+            <button class="sent-button category-form-btn" >Submit</button>
                         <button data-dismiss="modal" onclick="closeNavAddCategory()" class="view-button">Cancel</button>
         </div>
         </form>
@@ -236,7 +241,7 @@
           
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button" >Submit</button>
+            <button class="sent-button category-form-btn" >Submit</button>
                         <button data-dismiss="modal" onclick="closeNavEditCategory()" class="view-button">Cancel</button>
         </div>
     </div>
@@ -279,10 +284,9 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Status</div>
 
-                    <select id="id_payment" class="minimal">
-                        <option  ></option>
-                        <option  >Active</option>
-                        <option value="Post Paid">Inactive</option>
+                    <select id="status_category" class="minimal">
+                        <option value="True" selected>Active</option>
+                        <option value="False">Inactive</option>
 
                     </select>
                 </div>
@@ -307,6 +311,21 @@
 {% block javascript %}
 
 <script>
+    function showDrawer(d){
+        console.log(d)
+        if(d == 'add'){
+            $(".inv-drawer-head").text("Add Category");
+            $('#category_action').val('add_category');
+            openNavAddCategory()
+        }
+        if(d == 'edit'){
+            $(".inv-drawer-head").text("Edit Category");
+            $('#category_action').val('edit_category');
+            openNavAddCategory()
+        }
+        
+    }
+
     function openNavAddCategory() {
         if(screen.width<= 600){
             document.getElementById("addCategory").style.width = "100%";
@@ -347,6 +366,34 @@
     function closeNavaddSegment2() {
         document.getElementById("addSegment2").style.width = "0";
     }
+
+    
+    $('.add_category').click(function(){
+        console.log("click")
+        $('#id_edit_category').val($(this).data('categoryid'));
+        $('#name_category').val('');
+        $('#status_category').val('');
+        $('.category-form-btn').text('Add');
+    })
+    
+    
+    //edit category
+    $('.edit_category').click(function(){
+        console.log($(this).data('categoryid'),$(this).data('categoryname'),"editc")
+        $('#id_edit_category').val($(this).data('categoryid'));
+        $('#name_category').val($(this).data('categoryname'));
+        
+        document.getElementById("status_category").value = $(this).data('categorystatus');
+
+        $('.category-form-btn').text('Update');
+
+    })
+
+    
+    //delete category
+    $('.delete_category').click(function(){
+        $('#id_category').val($(this).data('categoryid'));
+    })
 
     function set_params_go(args)
     {

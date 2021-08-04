@@ -31,7 +31,7 @@
         {% if forloop.first %}
         <div class="inside-head align-left">
         <div class="address-bold"><i class="fa fa-lg fa-home orange-text" aria-hidden="true"></i> Address {{forloop.counter}}: <b>{{address.apartment}}</b></div>
-        <div class="address">{% if cancell_book.evaluation_details.address.floor %}{{cancell_book.evaluation_details.address.floor}}, {% else %}{% endif %} {{cancell_book.evaluation_details.address.building}}, {{cancell_book.evaluation_details.address.block}}, {{cancell_book.evaluation_details.address.street}}, {% if cancell_book.evaluation_details.address.avenue %}{{cancell_book.evaluation_details.address.avenue}}, {% else %}{% endif %} {{cancell_book.evaluation_details.address.area.name}}, {{cancell_book.evaluation_details.address.governorate.name}}</div>                
+        <div class="address">{% if cancell_book.evaluation_details.address.floor %}{{cancell_book.evaluation_details.address.floor}}, {% else %}{% endif %} {{cancell_book.evaluation_details.address.building}}, {{cancell_book.evaluation_details.address.block}},<br> {{cancell_book.evaluation_details.address.street}}, <br>{% if cancell_book.evaluation_details.address.avenue %}{{cancell_book.evaluation_details.address.avenue}}, {% else %}{% endif %} {{cancell_book.evaluation_details.address.area.name}}, <br>{{cancell_book.evaluation_details.address.governorate.name}}</div>                
         </div>
         {% endif %}
         {% endfor %}
@@ -91,7 +91,7 @@
 <br><br> 
 {% endfor %}
 
-<div align="center" class="ticket-form-button"><input class="assignButton" name="submit" type="submit" value="Submit" onclick='submitCancel(this);' data-user_id="{{user.id}}" data-order_id="{{cancell_in_progress_order.id}}"  ></div>   	
+<div align="center" class="ticket-form-button"><input class="assignButton" name="submit" type="submit" value="Submit" onclick='submitCancel(this,"/bleach_salesadmin/dashboard/");' data-user_id="{{user.id}}" data-order_id="{{cancell_in_progress_order.id}}"  ></div>   	
 </form>
 <br> <br>
 	</div><!--center-formDiv-->

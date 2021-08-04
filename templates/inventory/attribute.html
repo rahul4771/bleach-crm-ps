@@ -28,7 +28,7 @@
                     
                     </div>
                     <div class="right-pos m-mt-10">
-                        <button class="inv-blue-btn" onclick="showDrawer('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Attribute </button>
+                        <button class="inv-blue-btn add_attribute" onclick="showDrawer('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Attribute </button>
                     </div>
                 </div>
 
@@ -90,7 +90,7 @@
                                     </td>
                                     <td>
                                   
-                                        <button class="inv-plan-img-btn edit_attribute" data-attributeid="{{attribute.id}}" data-attributename="{{attribute.name}}" data-attributestatus="{{attribute.status}}" onclick="showDrawer('edit')" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                        <button class="inv-plan-img-btn edit_attribute" data-attributeid="{{attribute.id}}" data-attributename="{{attribute.name}}" data-attributecategory="{{attribute.attribute_category.id}}" data-attributesegment="{{attribute.attribute_segment.id}}" data-attributeline="{{attribute.attribute_line.id}}" data-attributestatus="{{attribute.status}}" onclick="showDrawer('edit')" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
                                         <button class="inv-plan-img-btn delete_attribute" data-attributeid="{{attribute.id}}" data-attributename="{{attribute.name}}" data-attributestatus="{{attribute.status}}" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
         
                                     </td>
@@ -171,7 +171,7 @@
                                             Blue
                                         </td>
                                         <td>
-                                            <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                            <button class="inv-plan-img-btn" onclick="openNavAddValue('edit')" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
                                             <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
             
                                         </td>
@@ -192,7 +192,7 @@
                             </div>
                           
                             <div class="attribute-footer p-5">
-                                <button class="inv-plan-btn" onclick="openNavAddValue()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Value</button>
+                                <button class="inv-plan-btn" onclick="openNavAddValue('add')" > <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Value</button>
 
                             </div>
                         </div>
@@ -238,7 +238,7 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Category</div>
 
-                    <select class="minimal" name="category" id="id_category" required>
+                    <select class="minimal" name="attribute_category" id="id_category" required>
                         <option value="">--Select Category--</option>
                         {% for category in categories %}
                         <option value="{{category.id}}">{{category.name}}</option>
@@ -253,7 +253,7 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Segment</div>
 
-                    <select class="minimal" name="category" id="id_segment" required>
+                    <select class="minimal" name="attribute_segment" id="id_segment">
                         <option value="">--Select Segment--</option>
                     
                     </select>
@@ -265,7 +265,7 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Line</div>
 
-                    <select class="minimal" name="category" id="id_line" required>
+                    <select class="minimal" name="attribute_line" id="id_line">
                         <option value="">--Select Line--</option>
                     
                     </select>
@@ -291,7 +291,7 @@
           
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button" type="submit" >Add</button>
+            <button class="sent-button attribute-form-btn" type="submit" >Add</button>
                         <button data-dismiss="modal" onclick="closeNavAddAttribute()" class="view-button">Cancel</button>
         </div>
         </form>
@@ -300,7 +300,7 @@
 
         <div class="inv-sidedrawer-inner">
             <div class="d-flex">
-                <div class="inv-drawer-head">
+                <div class="inv-drawer-head" id="valueHead">
                     Add Value
                 </div>
                 <div class="right-pos">
@@ -417,7 +417,16 @@
     function closeNavAddAttribute() {
         document.getElementById("addAttribute").style.width = "0";
     }
-    function openNavAddValue() {
+    function openNavAddValue(d) {
+        if(d == 'add'){
+            $("#valueHead").text("Add Value");
+            
+        }
+        if(d == 'edit'){
+            $("#valueHead").text("Edit Value");
+            
+        }
+        console.log(d)
         if(screen.width<= 600){
             document.getElementById("addValue").style.width = "100%";
         }else if(screen.width<= 720){
@@ -431,26 +440,57 @@
         document.getElementById("addValue").style.width = "0";
     }
 
+    //delete attribute
     $('.delete_attribute').click(function(){
         $('#id_attribute').val($(this).data('attributeid'));
     })
 
-    $('.edit_attribute').click(function(){
+    //edit attribute
+    $('.edit_attribute').click(async function(){
         $('#id_edit_attribute').val($(this).data('attributeid'));
         $('#name_attribute').val($(this).data('attributename'));
-        $('#status_attribute').val($(this).data('attributestatus'));
+
+       await getsegments($(this).data('attributecategory'));
+       await getlines($(this).data('attributesegment'));
+
+        console.log($(this).data('attributecategory'),$(this).data('attributesegment'),$(this).data('attributeline'),"attrcheck")
+        
+        document.getElementById("id_category").value = $(this).data('attributecategory');
+        document.getElementById("id_line").value = $(this).data('attributeline');
+
+        console.log('seg',$(this).data('attributesegment'))
+        document.getElementById("id_segment").value = $(this).data('attributesegment');
+        
+        document.getElementById("status_attribute").value = $(this).data('attributestatus');
+
+        $('.attribute-form-btn').text('Update');
+
     })
 
     $('.add_attribute').click(function(){
+        console.log("click")
         $('#id_edit_attribute').val($(this).data('attributeid'));
         $('#name_attribute').val('');
         $('#status_attribute').val('');
+        $('.attribute-form-btn').text('Add');
+        $('.segment_dropdown').hide();
+        $('.line_dropdown').hide();
+        $('#id_segment').attr("required",false);
+        $('#id_line').attr("required",false);
     })
 
     $('#id_category').change(function(){
         var category_id = $('#id_category').val();
         console.log(category_id,"cid")
         getsegments(category_id);
+        $('.line_dropdown').hide();
+        $('#id_line').attr("required",false);
+    })
+
+    $('#id_segment').change(function(){
+        var segment_id = $('#id_segment').val();
+        console.log(segment_id,"cid")
+        getlines(segment_id);
     })
         
     async function getsegments(category_id){
@@ -458,9 +498,13 @@
          
          if(result.status == 200){
              console.log(result.data.inventory_segment,"stat")
-            if (result.data.inventory_segment !== ''){
+            if (result.data.inventory_segment.length > 0){
+                $('#id_segment').find('option').remove();
+                $('#id_segment').append('<option value="">--Select Segment--</option>')
+                $('#id_segment').attr("required",true);
                 $.each(result.data.inventory_segment,function(key,value){
-                        $('.id_segment').append('<option value='+value.id+'>'+value.name+'</option>')
+                    console.log(key.id,value.id,"stat")
+                        $('#id_segment').append('<option value='+value.id+'>'+value.name+'</option>')
                 })
 
                 $('.segment_dropdown').show();
@@ -469,20 +513,31 @@
             }
             
          }else{
+             $('#id_segment').attr("required",false);
             showNotification('Something went wrong','error')
          }
     }
 
     async function getlines(segment_id){
          var result = await _get('api/inventory-lines/?segment_id='+segment_id);
+         
          if(result.status == 200){
-            if (result.data.inventory_line !== ''){
+             console.log(result.data.inventory_line,"stat")
+            if (result.data.inventory_line.length > 0 ){
+                $('#id_line').find('option').remove();
+                $('#id_line').append('<option value="">--Select Line--</option>')
+                $('#id_line').attr("required",true);
                 $.each(result.data.inventory_line,function(key,value){
-                        $('.line_table').append('<tr><td>'+value.name+'</td><td><button class="inv-plan-img-btn" data-lineid='+value.id+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
+                    console.log(key.id,value.id,"stat")
+                        $('#id_line').append('<option value='+value.id+'>'+value.name+'</option>')
                 })
+
+                $('.line_dropdown').show();
             }else{
-                $(".line_table tr").remove(); 
+                $('#id_line').attr("required",false);
+                showNotification('No Lines','error')
             }
+            
          }else{
             showNotification('Something went wrong','error')
          }
