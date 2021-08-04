@@ -144,8 +144,8 @@ const app=new Vue({
   rules: {
     required: v => !!v || 'this field is required',
   },
-  url:'http://localhost:8000',
-   // url:'https://my.bleachkw.com',
+  //url:'http://localhost:8000',
+    url:'https://my.bleachkw.com',
     //url:'http://127.0.0.1:8000',
     kitchenData:{
         wall_type:'',
@@ -765,7 +765,7 @@ building_warning:false
                 "date":date,
                "time":this.parsedTimeSlots[parseInt(min_slot)-1].start_time,
               "no_of_cleaners":this.selectedDuration.cleaners,
-               "cleaning_hours":this.selectedDuration.hours
+               "cleaning_hours":this.selected_onetime_slots[k].slots.length*2
               }
               count=count+1
             }

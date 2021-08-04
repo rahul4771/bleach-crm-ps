@@ -30,14 +30,14 @@
 			</div><!--cleaning-column-widget cleaning-column-widget-column1-->
 			
 			<div class="cleaning-column-widget cleaning-column-widget-column2 order-details"><!--cleaning-column-widget cleaning-column-widget-column2-->
-				<div class="common-gray-text align-left">{{cancell_in_progress_order.evaluation.created|date:'d-m-Y g:i A'}}</div>
+				<div class="common-gray-text align-left ">{{cancell_in_progress_order.evaluation.created|date:'d-m-Y g:i A'}}</div>
 				<br>
-        <div class="common-gray-text align-left yellow-text lg-text">{{cancell_in_progress_order.evaluation.payment_method}} Service</div>
+        <div class=" align-left  lg-text cancel-heading" style="text-transform:capitalize"><b>{{cancell_in_progress_order.evaluation.payment_method}} Service </b></div>
         <br>
-        <div class="common-gray-text align-left yellow-text lg-text">Total Amount :{{cancell_in_progress_order.evaluation.total_cost|floatformat:"3"}} KD</div>
+        <div class=" align-left  lg-text cancel-heading">Total Amount :{{cancell_in_progress_order.evaluation.total_cost|floatformat:"3"}} KD</div>
         <br>
-        <div class="common-gray-text align-left yellow-text lg-text">Paid Amount :{{cancell_in_progress_order.amount_paid|floatformat:"3"}} KD</div>
-        <p><a href="{% url 'bleach_salesadmin:salesadmin-client-orderdetails' cancell_in_progress_order.id%}">View Order Details</a></p>
+        <div class=" align-left  lg-text cancel-heading">Paid Amount :{{cancell_in_progress_order.amount_paid|floatformat:"3"}} KD</div>
+        <p style="margin-top:20px;"><a href="{% url 'bleach_salesadmin:salesadmin-client-orderdetails' cancell_in_progress_order.id%}" >View Order Details</a></p>
       </div><!--cleaning-column-widget cleaning-column-widget-column2-->
 		</div><!--cleaning-column-wrapper-->
 		
