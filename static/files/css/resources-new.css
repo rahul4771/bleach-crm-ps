@@ -88,6 +88,7 @@
 .resource-user-pic {
   width: 100%;
   border-radius: 50%;
+  height: 60px;
 }
 .resource-user-details {
   color: #6b6b6b;
@@ -503,3 +504,10 @@
   }
 }
 [v-cloak] {display: none}
+
+
+.resource-img-circle{
+  height: 72px;
+  width: 72px;
+  border-radius: 50%;
+}

@@ -164,14 +164,9 @@ data-customer_name="{{follow_up.investigation.order.evaluation.customer.name}}" 
 
 <!--calendar switching-->
 
- <!--old evaluation calendar-->
-<div v-if="!new_calendar">
-{% include 'agent/home/old-evaluation-calendar.html' %}
-</div>
-<!--old evaluation calendar end--> 
 
 <!--new evaluation calendar-->
-<div v-if="new_calendar">
+<div>
 {% include 'agent/home/evaluation-calendar-new.html' %}
 </div>
 <!--new evaluation calendar end-->

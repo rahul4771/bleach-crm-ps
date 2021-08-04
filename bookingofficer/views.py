@@ -3205,7 +3205,7 @@ class EvaluationBookCancellation(IsBookingOfficer,View):
 	def get(self,request,evaluation_id):
 
 		#cancell in progress books
-		cancell_books = EvaluationBook.objects.select_related('evaluation_details__evaluation').filter(evaluation_details__evaluation__id=evaluation_id)
+		cancell_books = EvaluationBook.objects.select_related('evaluation_details__evaluation','evaluation_details__address').filter(evaluation_details__evaluation__id=evaluation_id)
 
 		#cancell in progress orders
 		cancell_in_progress_order = Order.objects.select_related('evaluation__customer').get(evaluation__id=evaluation_id)

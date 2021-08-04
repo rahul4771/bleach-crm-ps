@@ -11,7 +11,8 @@ const app = new Vue({
     },
    
     data: {
-        url:'http://localhost:8000',
+       // url:'http://localhost:8000',
+       url:'https://test.bleach-kw.com',
         user_id:'',
         order_id:'',
         service_books:[],
@@ -35,7 +36,10 @@ const app = new Vue({
             order_id:this.order_id,
             service_books:this.service_books
             }
-            )
+            
+            ).then(response=>{
+                location.href="/bleach_salesadmin/dashboard/"
+            })
         },
         setData(){
             for(var i=0;i<this.services.length;i++){
