@@ -27,7 +27,15 @@
         <div class="details-head align-left order_blc_no clickable-row">{{cancell_in_progress_order.order_no}}</div>
 				<div class="inside-head align-left order_customer_name">{{cancell_in_progress_order.evaluation.customer.name}}</div>
 				<p class="paragraph order_customer_mobile">{{cancell_in_progress_order.evaluation.customer.mobile_number}}</p>
-			</div><!--cleaning-column-widget cleaning-column-widget-column1-->
+        {% for cancell_book in cancell_books %}
+        {% if forloop.first %}
+        <div class="inside-head align-left">
+        <div class="address-bold"><i class="fa fa-lg fa-home orange-text" aria-hidden="true"></i> Address {{forloop.counter}}: <b>{{address.apartment}}</b></div>
+        <div class="address">{% if cancell_book.evaluation_details.address.floor %}{{cancell_book.evaluation_details.address.floor}}, {% else %}{% endif %} {{cancell_book.evaluation_details.address.building}}, {{cancell_book.evaluation_details.address.block}}, {{cancell_book.evaluation_details.address.street}}, {% if cancell_book.evaluation_details.address.avenue %}{{cancell_book.evaluation_details.address.avenue}}, {% else %}{% endif %} {{cancell_book.evaluation_details.address.area.name}}, {{cancell_book.evaluation_details.address.governorate.name}}</div>                
+        </div>
+        {% endif %}
+        {% endfor %}
+      </div><!--cleaning-column-widget cleaning-column-widget-column1-->
 			
 			<div class="cleaning-column-widget cleaning-column-widget-column2 order-details"><!--cleaning-column-widget cleaning-column-widget-column2-->
 				<div class="common-gray-text align-left ">{{cancell_in_progress_order.evaluation.created|date:'d-m-Y g:i A'}}</div>
