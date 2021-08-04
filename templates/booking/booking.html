@@ -270,7 +270,7 @@
       <% slot.start_time+' - '+ slot.end_time %>
     </div>
   </div>
-  <div class="col-md-12" v-if="parsedTimeSlots.length<1">
+  <div class="col-md-12" v-if="parsedTimeSlots.length<1 && !slot_loader">
     <v-alert
       dense
       outlined
