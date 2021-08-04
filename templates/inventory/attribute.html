@@ -437,16 +437,19 @@
     })
 
     //edit attribute
-    $('.edit_attribute').click(function(){
+    $('.edit_attribute').click(async function(){
         $('#id_edit_attribute').val($(this).data('attributeid'));
         $('#name_attribute').val($(this).data('attributename'));
 
-        getsegments($(this).data('attributecategory'));
-        getlines($(this).data('attributesegment'));
+       await getsegments($(this).data('attributecategory'));
+       await getlines($(this).data('attributesegment'));
 
         console.log($(this).data('attributecategory'),$(this).data('attributesegment'),$(this).data('attributeline'),"attrcheck")
-        document.getElementById("id_category").value = $(this).data('attributecategory');
         
+        document.getElementById("id_category").value = $(this).data('attributecategory');
+        document.getElementById("id_line").value = $(this).data('attributeline');
+
+        console.log('seg',$(this).data('attributesegment'))
         document.getElementById("id_segment").value = $(this).data('attributesegment');
         
         document.getElementById("status_attribute").value = $(this).data('attributestatus');

@@ -11,8 +11,9 @@ const app = new Vue({
     },
    
     data: {
-       // url:'http://localhost:8000',
-       url:'https://test.bleach-kw.com',
+      //  url:'http://localhost:8000',
+     //  url:'https://test.bleach-kw.com',
+     url:'https://my.bleachkw.com',
         user_id:'',
         order_id:'',
         service_books:[],
