@@ -2455,11 +2455,13 @@
                         <h1>Do you want to Cancel this order?</h1>
                     </div>
                 </div>
+                {% if request.user.user_type != 'BOOKINGOFFICER' and request.user.user_type != 'SALESADMIN' %}
                 <div class="col-md-12  ">
                     <div class="text-center mt-20">
                         Select the Services the you need to cancel
                     </div>
                 </div>
+                {% endif %}
 
             </div>
             <div class="row pt-20 pb-20">

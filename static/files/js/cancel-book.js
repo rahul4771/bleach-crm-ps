@@ -31,7 +31,7 @@ const app = new Vue({
         setDetails(){
 
         },
-        doCancellation(){
+        doCancellation(return_url){
             axios.post(this.url+'/customer/service/cancell/',
             {cancelled_by:this.user_id,
             order_id:this.order_id,
@@ -39,10 +39,11 @@ const app = new Vue({
             }
             
             ).then(response=>{
-                location.href="/bleach_salesadmin/dashboard/"
+                //location.href="/bleach_salesadmin/dashboard/"
+                location.href=return_url
             })
         },
-        setData(){
+        setData(returnurl){
             for(var i=0;i<this.services.length;i++){
 
                 var action_type=$('#cancel_method_id-'+this.services[i].id).val()
@@ -52,15 +53,15 @@ const app = new Vue({
                   amount:this.services[i].amount  
                 })
             }
-            this.doCancellation()
+            this.doCancellation(returnurl)
         }
     },
 
 })
-function submitCancel(service){
+function submitCancel(service,rurl){
     app.user_id=$(service).data('user_id')
     app.order_id=$(service).data('order_id')
    
-    app.setData()
+    app.setData(rurl)
 
 }
