@@ -3,7 +3,9 @@
 <link rel="stylesheet" href="{% static 'files/plugins/bootstrap-datepicker/bootstrap-datetimepicker.min.css'  %}">
 <link rel="stylesheet" href="{% static 'files/plugins/bootstrap-multipledatepicker/datepicker1.8.css'  %}">
 <!-- Bootstrap Datepicker -->
-
+<style>
+    
+</style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -293,9 +295,9 @@
                                         <div class="front">
                                             <div class="resource-card" id="front_id_{{worker.id}}">
                                                 <div class="row">
-                                                    <div class="col-md-6">
+                                                    <div class="col-md-12">
                                                         <div class="row">
-                                                            <div class="col-xs-5 pr-0">
+                                                            <div class="col-xs-2 pr-0">
                                                                 <div class="resource-card-profile">
                                                                     <img class="resource-user-pic"
                                                                         {% if worker.profile_image %}
@@ -307,7 +309,7 @@
                                                                     <span {% if worker.leave == 1 %}class="dot-red"{% else %}class="dot-gray"{% endif %} id="attendance_{{worker.id}}"></span>
                                                                 </div>
                                                             </div>
-                                                            <div class="col-xs-7">
+                                                            <div class="col-xs-10">
                                                                 <div class="resource-user-details text-left">
                                                                     <h2>{{worker.name}}</h2>
                                                                     <h6>{% if worker.user_type == 'TEAMINCHARGE' %}

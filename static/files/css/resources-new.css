@@ -88,6 +88,7 @@
 .resource-user-pic {
   width: 100%;
   border-radius: 50%;
+  height: 60px;
 }
 .resource-user-details {
   color: #6b6b6b;
