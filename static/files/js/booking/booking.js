@@ -147,6 +147,7 @@ const app=new Vue({
   //url:'http://localhost:8000',
     url:'https://my.bleachkw.com',
     //url:'http://127.0.0.1:8000',
+    slot_loader:false,
     kitchenData:{
         wall_type:'',
         floor_type:'',
@@ -2731,12 +2732,14 @@ responsive:{
       });
   },
   getMultipleSlots(){
+    this.slot_loader=true
     axios
       .post(
          this.url+"/customer/ajax/getmultipleservicecleaningslotes",{service_types:this.schedule_serviceTypes,cleaning_date:this.slotDate,number_of_cleaners:this.selectedDuration.cleaners}
        
       )
       .then((response) => {
+        this.slot_loader=false
          this.timeSlots = response.data.slotes;
          this.parseOneTimeSlots()
          if(response.data.Error){
@@ -4044,7 +4047,7 @@ try {
         var r = 2 ** (this.totalmanhour.toString().length + 1);
         var mod = this.totalmanhour % r;
 
-        if (mod > parseInt(r / 2)) {
+        if (mod > parseInt(r / 4)) {
             this.n = this.totalmanhour + (r - mod);
         } else {
            this.n = this.totalmanhour - mod;

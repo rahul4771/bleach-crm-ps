@@ -3633,7 +3633,7 @@ $(document).ready(function(){
            var r = 2 ** (this.totalmanhour.toString().length - 1);
            var mod = this.totalmanhour % r;
    
-           if (mod > parseInt(r / 2)) {
+           if (mod > parseInt(r / 4)) {
                this.n = this.totalmanhour + (r - mod);
            } else {
               this.n = this.totalmanhour - mod;

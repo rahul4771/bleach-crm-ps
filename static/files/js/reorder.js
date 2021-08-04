@@ -3937,7 +3937,7 @@ function openNav() {
             var r = 2 ** (manhour.toString().length - 1);
             var mod = manhour % r;
     
-            if (mod > parseInt(r / 2)) {
+            if (mod > parseInt(r / 4)) {
               var n = manhour + (r - mod);
             } else {
               var n = manhour - mod;
