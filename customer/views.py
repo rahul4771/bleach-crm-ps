@@ -5171,7 +5171,7 @@ class ServiceCancellation(APIView):
 			elif action_type == 'PAYBACK':
 				service_book.status              = 'CANCELLED'
 				service_book.cancelled_by__id    = cancelled_by
-				amount                = float(request.POST.get(service_book['amount'])			
+				amount                = float(service_book['amount'])			
 				
 				cancell_order_history = CancellOrderAmountHistory.objects.create(order_id=order_id,return_amount=amount,amount_return_method='CASHBACK')
 
