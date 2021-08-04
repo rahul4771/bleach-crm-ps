@@ -3,7 +3,9 @@
 <link rel="stylesheet" href="{% static 'files/plugins/bootstrap-datepicker/bootstrap-datetimepicker.min.css'  %}">
 <link rel="stylesheet" href="{% static 'files/plugins/bootstrap-multipledatepicker/datepicker1.8.css'  %}">
 <!-- Bootstrap Datepicker -->
-
+<style>
+    
+</style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -293,11 +295,12 @@
                                         <div class="front">
                                             <div class="resource-card" id="front_id_{{worker.id}}">
                                                 <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="row">
-                                                            <div class="col-xs-5 pr-0">
-                                                                <div class="resource-card-profile">
-                                                                    <img class="resource-user-pic"
+                                                    <div class="col-md-12">
+
+                                                        <div class="d-flex">
+
+                                                            <div class="resource-card-profile">
+                                                                <img class="resource-img-circle"
                                                                         {% if worker.profile_image %}
                                                                         src="{{worker.profile_image.url}}"
                                                                         {% else %}
@@ -305,10 +308,10 @@
                                                                         {% endif %}
                                                                         >
                                                                     <span {% if worker.leave == 1 %}class="dot-red"{% else %}class="dot-gray"{% endif %} id="attendance_{{worker.id}}"></span>
-                                                                </div>
                                                             </div>
-                                                            <div class="col-xs-7">
-                                                                <div class="resource-user-details text-left">
+
+                                                            <div>
+                                                                <div style="margin-left: 10px;" class="resource-user-details text-left">
                                                                     <h2>{{worker.name}}</h2>
                                                                     <h6>{% if worker.user_type == 'TEAMINCHARGE' %}
                                                                         Team Leader
@@ -359,8 +362,74 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="col-md-6 ">
+
+                                                        <!-- <div class="row">
+                                                            <div class="col-xs-2 pr-0">
+                                                                <div class="resource-card-profile">
+                                                                    <img class="resource-user-pic"
+                                                                        {% if worker.profile_image %}
+                                                                        src="{{worker.profile_image.url}}"
+                                                                        {% else %}
+                                                                        src="{% static 'files/icons/profile.png' %}"
+                                                                        {% endif %}
+                                                                        >
+                                                                    <span {% if worker.leave == 1 %}class="dot-red"{% else %}class="dot-gray"{% endif %} id="attendance_{{worker.id}}"></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-xs-10">
+                                                                <div class="resource-user-details text-left">
+                                                                    <h2>{{worker.name}}</h2>
+                                                                    <h6>{% if worker.user_type == 'TEAMINCHARGE' %}
+                                                                        Team Leader
+                                                                        {% elif worker.user_type == 'CLEANER' %}
+                                                                        Cleaner
+                                                                        {% endif %}
+                                                                    </h6>
+                                                                    <div class="resource-user-rating">
+                                                                        <!--rating section-->
+                                                                        <!-- {% if worker.rating >= 4.5 %}
+                                                                        <i class="fas fa-star yellow-icon"></i>
+                                                                        <i class="fas fa-star yellow-icon"></i>
+                                                                        <i class="fas fa-star yellow-icon"></i>
+                                                                        <i class="fas fa-star yellow-icon"></i>
+                                                                        <i class="fas fa-star yellow-icon"></i>
+                                                                        {% elif worker.rating < 4.5 and worker.rating >= 3.5 %}
+                                                                        <i class="fas fa-star yellow-icon"></i>
+                                                                        <i class="fas fa-star yellow-icon"></i>
+                                                                        <i class="fas fa-star yellow-icon"></i>
+                                                                        <i class="fas fa-star yellow-icon"></i>
+                                                                        <i class="fas fa-star "></i>
+                                                                        {% elif worker.rating < 3.5 and worker.rating >= 2.5 %}
+                                                                        <i class="fas fa-star yellow-icon"></i>
+                                                                        <i class="fas fa-star yellow-icon"></i>
+                                                                        <i class="fas fa-star yellow-icon"></i>
+                                                                        <i class="fas fa-star "></i>
+                                                                        <i class="fas fa-star "></i>
+                                                                        {% elif worker.rating < 2.5 and worker.rating >= 1.5 %}
+                                                                        <i class="fas fa-star yellow-icon"></i>
+                                                                        <i class="fas fa-star yellow-icon"></i>
+                                                                        <i class="fas fa-star"></i>
+                                                                        <i class="fas fa-star"></i>
+                                                                        <i class="fas fa-star "></i>
+                                                                        {% elif worker.rating < 1.5 and worker.rating >= .5 %}
+                                                                        <i class="fas fa-star yellow-icon"></i>
+                                                                        <i class="fas fa-star "></i>
+                                                                        <i class="fas fa-star "></i>
+                                                                        <i class="fas fa-star "></i>
+                                                                        <i class="fas fa-star "></i>
+                                                                        {% endif %}
+                                                                        <i class="fas fa-star "></i>
+                                                                        <i class="fas fa-star "></i>
+                                                                        <i class="fas fa-star "></i>
+                                                                        <i class="fas fa-star "></i>
+                                                                        <i class="fas fa-star "></i>
+                                                                        <!--rating section-->
+                                                                    <!-- </div>
+                                                                </div>
+                                                            </div>
+                                                        </div> -->
+                                                    <!-- </div>
+                                                    <div class="col-md-6 "> --> 
                                                         <!-- <div class="woking-details">
                                                             <h2>
                                                                 Main Shift
