@@ -3167,6 +3167,18 @@ class MakeQuatationPhase1(IsAuthenticated,View):
 
 	def post(self,request,enquiry_id,evaluation_id):
 		
+		action = request.POST.get('action_type',None)
+		if action == 'cancel' :
+			evaluation_detail_id =request.POST.get('evaluation_detail')
+			cancel_reason = request.POST.get('cancellation_reason')
+			print(evaluation_detail_id,"evd")
+			evaluation_detail = EvaluationDetails.objects.filter(id=int(evaluation_detail_id)).first()
+			evaluation_detail.status = 'CANCELLED'
+			evaluation_detail.evaluation_cancel_reason = cancel_reason
+			evaluation_detail.save()
+			messages.success(request,"Evaluation Cancelled !!")
+			return redirect('common_items:makequatation1', enquiry_id,evaluation_id)
+
 		payment_method          = request.POST.get('payment_method')
 		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0.000)
 		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0.000)
