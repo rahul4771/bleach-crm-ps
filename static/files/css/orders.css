@@ -140,6 +140,7 @@
 
 .c-text {
   margin-left: auto;
+  overflow-wrap: anywhere;
 }
 .c-text2 {
   margin-left: auto;
