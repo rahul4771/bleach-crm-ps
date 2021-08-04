@@ -170,7 +170,7 @@
                                             {{line.name}}
                                         </td>
                                         <td>
-                                            <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                            <button class="inv-plan-img-btn ml-5" onclick="openNavAddLine2()" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
                                             <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
             
                                         </td>
@@ -181,7 +181,7 @@
                             </div>
                            
                             <div class="attribute-footer p-5">
-                                <button class="inv-plan-btn" onclick="openNavAddLine()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Line</button>
+                                <button class="inv-plan-btn" onclick="openNavAddLine('add')"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Line</button>
 
                             </div>
                         </div>
@@ -259,7 +259,7 @@
 
         <div class="inv-sidedrawer-inner">
             <div class="d-flex">
-                <div class="inv-drawer-head">
+                <div class="inv-drawer-head" id="lineHead">
                     Add Line
                 </div>
                 <div class="right-pos">
@@ -374,7 +374,30 @@
     function closeNavAddSegment() {
         document.getElementById("addSegment").style.width = "0";
     }
-    function openNavAddLine() {
+    function openNavAddLine(d) {
+        console.log('cl')
+        if(d == 'add'){
+            $("#lineHead").text("Add Line");
+           
+        }
+        if(d == 'edit'){
+            
+            $("#lineHead").text("Edit Line");
+           
+        }
+        if(screen.width<= 600){
+            document.getElementById("addLine").style.width = "100%";
+        }else if(screen.width<= 720){
+            document.getElementById("addLine").style.width = "50%";
+        }
+        else{
+            document.getElementById("addLine").style.width = "30%";
+        }  
+    }
+    function openNavAddLine2() {
+        
+            $("#lineHead").text("Edit Line");
+      
         if(screen.width<= 600){
             document.getElementById("addLine").style.width = "100%";
         }else if(screen.width<= 720){
@@ -420,12 +443,13 @@
     }
 
     async function getlines(segment_id){
-
+        
          var result = await _get('api/inventory-lines/?segment_id='+segment_id);
          if(result.status == 200){
             if (result.data.inventory_line !== ''){
+                var edit = "edit";
                 $.each(result.data.inventory_line,function(key,value){
-                        $('.line_table').append('<tr><td>'+value.name+'</td><td><button class="inv-plan-img-btn" data-lineid='+value.id+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
+                        $('.line_table').append('<tr><td>'+value.name+'</td><td><button class="inv-plan-img-btn mr-5" onclick="openNavAddLine2()" data-lineid='+value.id+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
                 })
             }else{
                 $(".line_table tr").remove(); 
