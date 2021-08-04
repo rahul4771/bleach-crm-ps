@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 {% load static %}
-<div class="wrapper"><!--wrapper-->
+<div class="wrapper" id="app"><!--wrapper-->
 {% include "bookingofficer/common/header.html" %}
 
 <div class="wrapper"><!--wrapper-->
@@ -27,17 +27,25 @@
         <div class="details-head align-left order_blc_no clickable-row">{{cancell_in_progress_order.order_no}}</div>
 				<div class="inside-head align-left order_customer_name">{{cancell_in_progress_order.evaluation.customer.name}}</div>
 				<p class="paragraph order_customer_mobile">{{cancell_in_progress_order.evaluation.customer.mobile_number}}</p>
-			</div><!--cleaning-column-widget cleaning-column-widget-column1-->
+        {% for cancell_book in cancell_books %}
+        {% if forloop.first %}
+        <div class="inside-head align-left">
+        <div class="address-bold"><i class="fa fa-lg fa-home orange-text" aria-hidden="true"></i> Address {{forloop.counter}}: <b>{{address.apartment}}</b></div>
+        <div class="address">{% if cancell_book.evaluation_details.address.floor %}{{cancell_book.evaluation_details.address.floor}}, {% else %}{% endif %} {{cancell_book.evaluation_details.address.building}}, {{cancell_book.evaluation_details.address.block}}, {{cancell_book.evaluation_details.address.street}}, {% if cancell_book.evaluation_details.address.avenue %}{{cancell_book.evaluation_details.address.avenue}}, {% else %}{% endif %} {{cancell_book.evaluation_details.address.area.name}}, {{cancell_book.evaluation_details.address.governorate.name}}</div>                
+        </div>
+        {% endif %}
+        {% endfor %}
+      </div><!--cleaning-column-widget cleaning-column-widget-column1-->
 			
 			<div class="cleaning-column-widget cleaning-column-widget-column2 order-details"><!--cleaning-column-widget cleaning-column-widget-column2-->
-				<div class="common-gray-text align-left">{{cancell_in_progress_order.evaluation.created|date:'d-m-Y g:i A'}}</div>
+				<div class="common-gray-text align-left ">{{cancell_in_progress_order.evaluation.created|date:'d-m-Y g:i A'}}</div>
 				<br>
-        <div class="common-gray-text align-left yellow-text lg-text">{{cancell_in_progress_order.evaluation.payment_method}} Service</div>
+        <div class=" align-left  lg-text cancel-heading" style="text-transform:capitalize"><b>{{cancell_in_progress_order.evaluation.payment_method}} Service </b></div>
         <br>
-        <div class="common-gray-text align-left yellow-text lg-text">Total Amount :{{cancell_in_progress_order.evaluation.total_cost|floatformat:"3"}} KD</div>
+        <div class=" align-left  lg-text cancel-heading">Total Amount :{{cancell_in_progress_order.evaluation.total_cost|floatformat:"3"}} KD</div>
         <br>
-        <div class="common-gray-text align-left yellow-text lg-text">Paid Amount :{{cancell_in_progress_order.amount_paid|floatformat:"3"}} KD</div>
-        <p><a href="{% url 'bleach_salesadmin:salesadmin-client-orderdetails' cancell_in_progress_order.id%}">View Order Details</a></p>
+        <div class=" align-left  lg-text cancel-heading">Paid Amount :{{cancell_in_progress_order.amount_paid|floatformat:"3"}} KD</div>
+        <p style="margin-top:20px;"><a href="{% url 'bleach_salesadmin:salesadmin-client-orderdetails' cancell_in_progress_order.id%}" >View Order Details</a></p>
       </div><!--cleaning-column-widget cleaning-column-widget-column2-->
 		</div><!--cleaning-column-wrapper-->
 		
@@ -50,7 +58,7 @@
   <div class="ticket-form-left"><!--ticket-form-left-->
           <div class=" bold-text common-label"> <label>Cancel Options</label></div>
                 <label for="favcity">
-                <select name="cancel_method" id="cancel_method_id" required>
+                <select name="cancel_method" id="cancel_method_id-{{cancell_book.id}}" required >
                     <option value="">--Select option--</option>           
                     <option value="CANCELL">Direct Cancellation</option>
                     <option value="REJECT">Reject Request</option>
@@ -78,12 +86,12 @@
 
 <hr class="hr-dashedpad">
 				<div class="bold-text common-label"> <label>Service: {{cancell_book.service_type.name}}</label></div>
-        <div class="bold-text common-label"> <label>Amount: {{cancell_book.total_cost}}</label></div>
+        <div class="bold-text common-label" > <label>Amount: <span id="cancel_amount-{{cancell_book.id}}">{{cancell_book.total_cost}}</span></label></div>
 </div><!--ticket-wrapper-full-->
 <br><br> 
 {% endfor %}
 
-<div align="center" class="ticket-form-button"><input class="assignButton" name="submit" type="submit" value="Submit" onclick='SubmitNewTicket(this);'></div>   	
+<div align="center" class="ticket-form-button"><input class="assignButton" name="submit" type="submit" value="Submit" onclick='submitCancel(this);' data-user_id="{{user.id}}" data-order_id="{{cancell_in_progress_order.id}}"  ></div>   	
 </form>
 <br> <br>
 	</div><!--center-formDiv-->
@@ -101,7 +109,20 @@
 </div><!--wrapper-->
 {% endblock %}
 {% block javascript %}
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="{% static 'files/js/cancel-book.js'%}"></script>
 <script>
+  
+  {% for cancell_book in cancell_books %}
+        app.services.push({
+          id:"{{cancell_book.id}}",
+          amount:"{{cancell_book.total_cost}}",
+          name:"{{cancell_book.service_type.name}}"
+        })
+  {% endfor %}
+
 $('#cancel_method_id').change(function(){
   if ($(this).val() == 'CREDIT') {
     $('.amount_div').attr("hidden",false);
@@ -118,7 +139,7 @@ $('#cancel_method_id').change(function(){
     $('#amount_label').text('Reduction Amount');
   }
 
-  if ( ($(this).val() == 'CANCELL') || ($(this).val() == '') || $(this).val() == 'REJECT')) {
+  if ( ($(this).val() == 'CANCELL') || ($(this).val() == '') || ($(this).val() == 'REJECT')) {
     $('.amount_div').attr("hidden",true);
     $('input[name="amount"]').attr("required",false);
   }

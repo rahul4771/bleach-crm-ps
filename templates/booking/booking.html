@@ -1074,10 +1074,9 @@ width="1000"
               serviceType != 'Outdoor Cleaning'
             "
           >
+          <div>Any Stain ? <span style="color:red">*</span></div>
             <v-radio-group v-model="otherService.stain" class="p-2" row>
-              <template v-slot:label>
-                <div>Any <strong>Stain ?</strong></div>
-              </template>
+            
               <v-radio :value="true">
                 <template v-slot:label>
                   <div>Yes<strong class="success--text"></strong></div>
@@ -1398,10 +1397,11 @@ width="1000"
                                         building[index - 1].floors[floor - 1]
                                           .apartment
                                       " class="p-4" v-if="serviceType != 'Storage Area'" row>
-                                          <template v-slot:label>
-                                            <div>Any Apartments ?</div>
-                                          </template>
-                                          <v-radio :value="true">
+                                        
+                                      <div>Any Apartments ?  <span style="color:red">*</span></div>
+
+                                         
+                                          <v-radio :value="true" class="ml-2">
                                             <template v-slot:label>
                                               <div>
                                                 Yes<strong class="success--text"></strong>
@@ -1510,16 +1510,15 @@ width="1000"
                                           </v-radio>
                                         </v-radio-group>
                                       </div>
-                                      <div class="col-md-6">
+                                      <div class="col-md-6 ">
+                                        <div>
+                                          <div>Do you want to clean your Kitchen ? <span style="color:red">*</span></div>  
+                                        </div>
                                         <v-radio-group v-model="
                                         building[index - 1].floors[floor - 1]
                                           .kitchen
                                       " class="p-2" v-if="serviceType != 'Storage Area'" row @change="changeFloorKitchenStat(index-1,floor-1)">
-                                          <template v-slot:label>
-                                            <div>
-                                              Do you want to clean your Kitchen ?
-                                            </div>
-                                          </template>
+                                          
                                           <v-radio :value="true">
                                             <template v-slot:label>
                                               <div>
@@ -1805,15 +1804,14 @@ width="1000"
                                                 </div>
                                                 <!-- Apartment Kitchen begins here -->
                                                 <div class="col-md-6">
+                                                  <div>
+                                                    <div>Do you want to clean your Kitchen ? <span style="color:red">*</span></div>  
+                                                  </div>
                                                   <v-radio-group v-model="
                                         apartment
                                           .kitchen
                                       " class="p-2" v-if="serviceType != 'Storage Area'" row @change="changeApartmentKitchenStat(index-1,floor-1,apindex)">
-                                                    <template v-slot:label>
-                                                      <div>
-                                                        Do you want to clean your Kitchen ?
-                                                      </div>
-                                                    </template>
+                                                   
                                                     <v-radio :value="true">
                                                       <template v-slot:label>
                                                         <div>
@@ -2246,10 +2244,13 @@ Fill all the details of the Buildings  to proceed
                     serviceType != 'Window Cleaning' &&
                     serviceType != 'Outdoor Cleaning'
                   ">
+                  <div>
+                    <div>Any Stain ? <span style="color:red">*</span></div>  
+                  </div>
                           <v-radio-group v-model="otherService.stain" class="p-2" row>
-                            <template v-slot:label>
+                            <!-- <template v-slot:label>
                               <div>Any <strong>Stain ?</strong></div>
-                            </template>
+                            </template> -->
                             <v-radio :value="true">
                               <template v-slot:label>
                                 <div>Yes<strong class="success--text"></strong></div>
@@ -2861,6 +2862,18 @@ Fill all the details of the Buildings  to proceed
                   <!-- Cart ends here-->
                   <div v-if="activeTab=='Schedule'">
                     <div >
+                      <div class="mt-2 mb-2">
+
+                         <v-btn color="primary" outlined @click="activeTab='Cart'">
+                         <v-icon
+                         
+                         left
+                       >
+                         mdi-arrow-left
+                       </v-icon>
+                         Back
+                        </v-btn> 
+                      </div>
                     <div class="row m-0" v-if="!scheduleDateSat && !editScheduleStat">
                       <div class="col-md-3">
                         <div>
@@ -3046,7 +3059,8 @@ Fill all the details of the Buildings  to proceed
                            
                              </div>
                              </div>
-                             <div class="row schedule-details-head" v-if="scheduleDateSat && cleaningPolicy!='One Time' && !editScheduleStat">
+                             <div class="row schedule-details-head mt-2" v-if="scheduleDateSat && cleaningPolicy!='One Time' && !editScheduleStat">
+                               
                                <div class="col-md-2">
                                  <div>
                                   <b>Cleaning Policy</b> 
@@ -3095,7 +3109,7 @@ Fill all the details of the Buildings  to proceed
                               </div>
                              </div>
                              <div v-if="editScheduleStat">
-                               <div class="mt-2 mb-2">
+                               <!-- <div class="mt-2 mb-2">
 
                                  <v-btn color="primary" outlined @click="activeTab='Cart'">
                                   <v-icon
@@ -3106,7 +3120,7 @@ Fill all the details of the Buildings  to proceed
                                 </v-icon>
                                   Back
                                  </v-btn>
-                               </div>
+                               </div> -->
                              <div class="row schedule-details-head mt-4" >
                               <div class="col-md-2">
                                 <div>

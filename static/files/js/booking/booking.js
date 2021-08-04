@@ -765,7 +765,7 @@ building_warning:false
                 "date":date,
                "time":this.parsedTimeSlots[parseInt(min_slot)-1].start_time,
               "no_of_cleaners":this.selectedDuration.cleaners,
-               "cleaning_hours":this.selectedDuration.hours
+               "cleaning_hours":this.selected_onetime_slots[k].slots.length*2
               }
               count=count+1
             }
@@ -4041,7 +4041,7 @@ try {
         //optimal finding
         this.totalmanhour=this.totalmanhour+manhour
         console.log("total man hour is "+this.totalmanhour)
-        var r = 2 ** (this.totalmanhour.toString().length - 1);
+        var r = 2 ** (this.totalmanhour.toString().length + 1);
         var mod = this.totalmanhour % r;
 
         if (mod > parseInt(r / 2)) {

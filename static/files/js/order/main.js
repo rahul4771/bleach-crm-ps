@@ -440,8 +440,9 @@ const app = new Vue({
            progress:20,
            slotloader:false,
             services_list:[],
-            url:'https://my.bleachkw.com'
-         //  url:'http://localhost:8000'
+          //  url:'https://my.bleachkw.com'
+       //   url:'http://localhost:8000'
+       url:'https://test.bleach-kw.com'
             //url:'http://127.0.0.1:8000'
   },
   methods:{
@@ -463,7 +464,7 @@ const app = new Vue({
       service_books:service_books,
       requester_id:requester_id
     }).then(response=>{
-     
+     location.reload()
       
       
     })
@@ -749,6 +750,7 @@ const app = new Vue({
     this.selected_date=moment().format('DD-MM-YYYY')
     $('#date_hidden').val(moment().format('MM/DD/YYYY'))
     },
+    
    
     addVisit(){
       if(this.selectedSlots.length<1){

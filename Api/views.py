@@ -144,7 +144,7 @@ class EvaluationUpdate(APIView):
 
 		slot_count_check = EvaluationDetails.objects.filter(is_active=True,proposed_time=converted_datetime).count()
 
-		if slot_count_check > 1:
+		if slot_count_check > 3:
 			response_dict = {"success":False,"alert":"This slot is Filled. Please select another slot."}
 		else:
 			evaluationdetail.evaluator = evaluator
@@ -609,7 +609,7 @@ class DailySalesAPI(APIView):
 
 		for date in daterange:
 			start_date_day = date
-			end_date_day   = date+timedelta(1)
+			end_date_day   = date+timedelta(1)-timedelta(minutes=1)
 
 			print(date.strftime("%A"),"dt")
 			# generalcleaning = 0
@@ -709,6 +709,9 @@ class DailySalesAPI(APIView):
 						others -= float(schedule[10]/order_schedule_count)
 					
 
+				if date == '05-07-2021' and schedule[0] == 'BLC20210610161':
+					print(schedule[2],schedule[0], float(order_amount/schedule_count)-float(schedule[6]/order_schedule_count)-float(schedule[7]/order_schedule_count)+float(schedule[8]/order_schedule_count)-float(schedule[10]/order_schedule_count),"service")
+				
 				#cleaning type wise amount addition
 				if schedule[2] == 'General Cleaning':
 					detailed_cleaning += float(order_amount/schedule_count)
