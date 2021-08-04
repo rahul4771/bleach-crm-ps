@@ -78,8 +78,8 @@
                             </td>
                             <td>
                                 <a href="/inventory/segment/"><a href="/inventory/segment/{{category.id}}/" target="_blank"<button class="inv-plan-btn" onclick="openNavaddSegment2()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="" > Add Segment</button></a>
-                                <button class="inv-plan-img-btn edit_category" onclick="showDrawer('edit')" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                <button class="inv-plan-img-btn delete_category" data-categoryid="{{category.id}}" data-categoryname="{{attribute.name}}" data-categorystatus="{{attribute.status}}" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                                <button class="inv-plan-img-btn edit_category" onclick="showDrawer('edit')" data-categoryid="{{category.id}}" data-categoryname="{{category.name}}" data-categorystatus="{{category.status}}" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                <button class="inv-plan-img-btn delete_category" data-categoryid="{{category.id}}" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
                             </td>
                         </tr>
                         {% endfor %}
@@ -145,10 +145,10 @@
             <input type="hidden" name="category_edit_id" id="id_edit_category" />
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Category  Name</div>
+                    <div class="model-input-name">Category Name</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="category_name">
+                        <input type="text" id="name_category" class="w-p-100 inv-in" name="category_name">
                       </div>
                 </div>
 
@@ -314,14 +314,14 @@
     function showDrawer(d){
         console.log(d)
         if(d == 'add'){
-            $(".inv-drawer-head-common").text("Add Category");
+            $(".inv-drawer-head").text("Add Category");
             $('#category_action').val('add_category');
             openNavAddCategory()
         }
         if(d == 'edit'){
-            $(".inv-drawer-head-common").text("Edit Category");
+            $(".inv-drawer-head").text("Edit Category");
             $('#category_action').val('edit_category');
-            openNavEditCategory()
+            openNavAddCategory()
         }
         
     }
@@ -379,6 +379,7 @@
     
     //edit category
     $('.edit_category').click(function(){
+        console.log($(this).data('categoryid'),$(this).data('categoryname'),"editc")
         $('#id_edit_category').val($(this).data('categoryid'));
         $('#name_category').val($(this).data('categoryname'));
         
