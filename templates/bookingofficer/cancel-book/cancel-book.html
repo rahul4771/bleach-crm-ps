@@ -24,7 +24,7 @@
         
           <div class="cleaning-column-wrapper ltyellow-border order-details"><!--cleaning-column-wrapper-->
           <div class="cleaning-column-widget cleaning-column-widget-column1"><!--cleaning-column-widget cleaning-column-widget-column1-->
-          <div class="details-head align-left order_blc_no clickable-row">{{cancell_in_progress_order.order_no}}</div>
+          <div class="details-head align-left order_blc_no">{{cancell_in_progress_order.order_no}}</div>
           <div class="inside-head align-left order_customer_name">{{cancell_in_progress_order.evaluation.customer.name}}</div>
           <p class="paragraph order_customer_mobile">{{cancell_in_progress_order.evaluation.customer.mobile_number}}</p>
           {% for cancell_book in cancell_books %}
@@ -45,7 +45,7 @@
           <div class=" align-left  lg-text cancel-heading">Total Amount :{{cancell_in_progress_order.evaluation.total_cost|floatformat:"3"}} KD</div>
           <br>
           <div class=" align-left  lg-text cancel-heading">Paid Amount :{{cancell_in_progress_order.amount_paid|floatformat:"3"}} KD</div>
-          <p style="margin-top:20px;"><a href="{% url 'bleach_salesadmin:salesadmin-client-orderdetails' cancell_in_progress_order.id%}" >View Order Details</a></p>
+          <p style="margin-top:20px;"><a href="{% url 'booking-officer:bookingofficer-client-orderdetails' cancell_in_progress_order.id%}" >View Order Details</a></p>
         </div><!--cleaning-column-widget cleaning-column-widget-column2-->
       </div><!--cleaning-column-wrapper-->
       
@@ -60,12 +60,22 @@
                   <label for="favcity">
                   <select name="cancel_method" id="cancel_method_id-{{cancell_book.id}}" required >
                       <option value="">--Select option--</option>           
+                      
+                      {% if cancell_in_progress_order.evaluation.quatation_status == 'PENDING' or cancell_in_progress_order.evaluation.quatation_status == 'EXPIRED' or cancell_in_progress_order.evaluation.quatation_status == 'REJECTED' %}
+                      {% else %}
                       <option value="CANCELL">Direct Cancellation</option>
+                      {% endif %}
+                      
                       <option value="REJECT">Reject Request</option>
-                      {% if cancell_in_progress_order.evaluation.payment_method == 'PREPAID' or cancell_in_progress_order.evaluation.payment_method == 'BREAKDOWN' %}
+                      
+                      {% if cancell_in_progress_order.evaluation.payment_method == 'BREAKDOWN' or cancell_in_progress_order.evaluation.payment_method == 'PREPAID' %}
+                      {% if cancell_in_progress_order.amount_paid > 0 %}
                       <option value="PAYBACK">Pay Back</option>
                       <option value="CREDIT">Add to Wallet</option>
-                      {% elif cancell_in_progress_order.evaluation.payment_method == 'POSTPAID'%}
+                      {% endif %}
+                      {% endif %}
+
+                      {% if cancell_in_progress_order.evaluation.quatation_status == 'PENDING' or cancell_in_progress_order.evaluation.quatation_status == 'EXPIRED' or cancell_in_progress_order.evaluation.quatation_status == 'REJECTED' or cancell_in_progress_order.evaluation.payment_method == 'BREAKDOWN' or cancell_in_progress_order.evaluation.payment_method == 'POSTPAID' %}
                       <option value="REDUCTION">Reduce Order Amount</option>
                       {% endif %}
                   </select>
