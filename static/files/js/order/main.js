@@ -440,8 +440,8 @@ const app = new Vue({
            progress:20,
            slotloader:false,
             services_list:[],
-          //  url:'https://my.bleachkw.com'
-          url:'http://localhost:8000'
+            url:'https://my.bleachkw.com'
+        //  url:'http://localhost:8000'
       // url:'https://test.bleach-kw.com'
             //url:'http://127.0.0.1:8000'
   },
