@@ -1051,6 +1051,7 @@
                                     <div class="order-header-class">
                                         
                                         <h2 class="service-name">{{orderschedule.order_scheduler_book.service_type.name}}</h2>
+                                        {% if orderschedule.order_scheduler_book.status == 'CANCELLED' %}  <div class="d-flex mb-10 cancelled-flag" >  <div class="status-dot cancel-chip-bg"></div> <div class="ml-2">Cancelled</div></div> {% endif %}
                                         {% if orderschedule.order_scheduler_book.cleaning_policy  ==  'ONE TIME SERVICE' %}
                                         <button class="subscription-button">One Time</button>
                                         {% else %}
@@ -2112,7 +2113,7 @@
 
                                          {% if order.order_status == 'APPROVED_BY_CLIENT' or order.order_status == 'ORDER_IN_PROGRESS'  %}
                                         <div class="row">
-                                            <button style="width: 153px !important;" data-toggle="modal" data-target="#cancelModel" class="view-button">Order Cancel</button>
+                                            <button style="width: 153px !important;" data-toggle="modal" data-target="#cancelModel" class="view-button"> Cancel</button>
                                         </div>
                                         {% endif %} 
 
@@ -2255,7 +2256,7 @@
 
                                                 </div>
                                                 <div class="col-xs-6 text-left mpl-0">
-                                                    Order Cancel
+                                                     Cancel
                                                 </div>
                                             </div>
                                         </button>
@@ -2455,7 +2456,7 @@
                         <h1>Do you want to Cancel this order?</h1>
                     </div>
                 </div>
-                {% if request.user.user_type != 'BOOKINGOFFICER' and request.user.user_type != 'SALESADMIN' %}
+                {% if order.evaluation.payment_method != 'SUBSCRIPTION' %}
                 <div class="col-md-12  ">
                     <div class="text-center mt-20">
                         Select the Services the you need to cancel
@@ -2472,15 +2473,54 @@
                         <input type="hidden" name="action_type" value="cancell_order">
                         
                         {% if request.user.user_type == 'BOOKINGOFFICER' %}
-                        <a href="{% url 'booking-officer:cancell-order' order.id %}" target="_blank"><button class="sent-button" type="button">Yes</button></a>
+                        
+                            {% if order.evaluation.payment_method != 'SUBSCRIPTION' %}
+                                <div class="row" style="justify-content: center;">
+                                    <div class="col-md-12 col-offset-3 text-center">
+                                        <input type="checkbox" class="form-check-input service-checkbox" id="exampleCheck1" v-model="all_val" @change="checkAll()">
+                                        <label class="form-check-label service-checkbox-label" for="exampleCheck1">All</label>
+                                    </div>
+                                    <div class="col-md-12 col-offset-3 text-center" v-for="(service,serindex) in services" v-bind:key="serindex">
+                                        <input type="checkbox" class="form-check-input service-checkbox" id="exampleCheck1" v-model="services_list" :value="service" @change="removeAll()">
+                                        <label class="form-check-label service-checkbox-label" for="exampleCheck1"><% service.name %></label>
+                                    </div>
+                                
+                                </div>
+
+                                <a v-if="all_val" href="{% url 'booking-officer:cancell-order' order.id %}" target="_blank"><button class="sent-button" type="button">Yes</button></a>
+                                <a v-else href="{% url 'booking-officer:cancell-book' order.evaluation.id %}" target="_blank"><button class="sent-button" type="button">Yes</button></a>
+                            {% else %}
+                            <a href="{% url 'booking-officer:cancell-order' order.id %}" target="_blank"><button class="sent-button" type="button">Yes</button></a>
+                            {% endif %}
+                        
                         {% elif request.user.user_type == 'SALESADMIN' %}
-                        <a href="{% url 'bleach_salesadmin:cancell-order' order.id %}" target="_blank"><button class="sent-button" type="button">Yes</button></a>
+                        
+                            {% if order.evaluation.payment_method != 'SUBSCRIPTION' %}
+                                <div class="row" style="justify-content: center;">
+                                    <div class="col-md-12 col-offset-3 text-center">
+                                        <input type="checkbox" class="form-check-input service-checkbox" id="exampleCheck1" v-model="all_val" @change="checkAll()">
+                                        <label class="form-check-label service-checkbox-label" for="exampleCheck1">All</label>
+                                    </div>
+                                    <div class="col-md-12 col-offset-3 text-center" v-for="(service,serindex) in services" v-bind:key="serindex">
+                                        <input type="checkbox" class="form-check-input service-checkbox" id="exampleCheck1" v-model="services_list" :value="service" @change="removeAll()">
+                                        <label class="form-check-label service-checkbox-label" for="exampleCheck1"><% service.name %></label>
+                                    </div>
+                                
+                                </div>
+
+                                <a v-if="all_val" href="{% url 'bleach_salesadmin:cancell-order' order.id %}" target="_blank"><button class="sent-button" type="button">Yes</button></a>
+                                <a v-else href="{% url 'bleach_salesadmin:cancell-book' order.evaluation.id %}" target="_blank"><button class="sent-button" type="button">Yes</button></a>
+                            {% else %}
+                            <a href="{% url 'bleach_salesadmin:cancell-order' order.id %}" target="_blank"><button class="sent-button" type="button">Yes</button></a>
+                            {% endif %}
+
+                        
                         {% else %}
-                     <div class="row" style="justify-content: center;">
-                        <div class="col-md-12 col-offset-3 text-center">
-                            <input type="checkbox" class="form-check-input service-checkbox" id="exampleCheck1" v-model="all_val" @change="checkAll()">
-                            <label class="form-check-label service-checkbox-label" for="exampleCheck1">All</label>
-                        </div>
+                        <div class="row" style="justify-content: center;">
+                            <div class="col-md-12 col-offset-3 text-center">
+                                <input type="checkbox" class="form-check-input service-checkbox" id="exampleCheck1" v-model="all_val" @change="checkAll()">
+                                <label class="form-check-label service-checkbox-label" for="exampleCheck1">All</label>
+                            </div>
                             <div class="col-md-12 col-offset-3 text-center" v-for="(service,serindex) in services" v-bind:key="serindex">
                                 <input type="checkbox" class="form-check-input service-checkbox" id="exampleCheck1" v-model="services_list" :value="service" @change="removeAll()">
                                 <label class="form-check-label service-checkbox-label" for="exampleCheck1"><% service.name %></label>
