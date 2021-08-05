@@ -15,6 +15,13 @@ class InventoryHome(IsInventoryAdmin,View):
 # Category.
 class InventoryCategory(IsInventoryAdmin,View):
     def get(self,request):
+
+        # Category.objects.all().delete()
+        # Segment.objects.all().delete()
+        # Line.objects.all().delete()
+        # Attribute.objects.all().delete()
+        # AttributeValue.objects.all().delete()
+
         search = request.GET.get('search')
 
         if search:
@@ -161,7 +168,7 @@ class InventoryAttribute(IsInventoryAdmin,View):
             messages.success(request,"Attribute Updated Successfully !")
 
         if action == 'delete_attribute':
-            attribute_id = request.POST.get('attribute_id')
+            attribute_id = request.POST.get('object_id')
             Attribute.objects.get(id=int(attribute_id)).delete()
             messages.success(request,"Attribute Deleted Successfully !")
 
@@ -175,6 +182,11 @@ class InventoryAttribute(IsInventoryAdmin,View):
             AttributeValue.objects.create(attribute=attribute,name=value_name,status=value_status)
 
             messages.success(request,"Value Added Successfully !")
+
+        if action == 'delete_value':
+            value_id = request.POST.get('object_id')
+            AttributeValue.objects.get(id=int(value_id)).delete()
+            messages.success(request,"Value Deleted Successfully !")
 
         return redirect('inventory:inventory-attribute')
 # value.
@@ -313,7 +325,7 @@ class InventorySegment(IsInventoryAdmin,View):
             messages.success(request,"Segment Updated Successfully !")
 
         if action == 'delete_segment':
-            segment_id = request.POST.get('segment_id')
+            segment_id = request.POST.get('object_id')
             Segment.objects.get(id=int(segment_id)).delete()
             messages.success(request,"Segment Deleted Successfully !")
 
@@ -327,5 +339,10 @@ class InventorySegment(IsInventoryAdmin,View):
             Line.objects.create(category=segment.category,segment=segment,name=line_name,status=line_status)
 
             messages.success(request,"Line Added Successfully !")
+
+        if action == 'delete_line':
+            line_id = request.POST.get('object_id')
+            Line.objects.get(id=int(line_id)).delete()
+            messages.success(request,"Line Deleted Successfully !")
             
         return redirect('inventory:inventory-segment', category_id)
