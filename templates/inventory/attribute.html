@@ -156,7 +156,7 @@
                     <div class="col-md-5 mt-10">
                         <div class="attribute-table-2">
                             <div class="attribute-table-div2">
-                                <table class="inv-table"> 
+                                <table class="inv-table value_table"> 
                                     <tr>
                                         <th style="width: %;">
                                             Value Name
@@ -165,28 +165,7 @@
                                             Action
                                         </th>
                                     </tr>
-                                    <tr>
-                                        <td>
                                     
-                                            Blue
-                                        </td>
-                                        <td>
-                                            <button class="inv-plan-img-btn" onclick="openNavAddValue('edit')" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                            <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-            
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                    
-                                            Blue
-                                        </td>
-                                        <td>
-                                            <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                            <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-            
-                                        </td>
-                                    </tr>
                                    
                                 </table>
                             </div>
@@ -311,12 +290,16 @@
                 </div>
             </div>
             <hr>
+            <form method="POST" action="" >{% csrf_token %}
+            <input type="hidden" name="action" id="value_action" value="add_value" />
+            <input type="hidden" name="value_attribute_id" id="value_attribute_id" />
+            <input type="hidden" name="edit_value_id" id="id_edit_value" />
             <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Value Name</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                        <input type="text" id="value_name_id" name="value_name" class="w-p-100 inv-in" >
                       </div>
                 </div>
 
@@ -325,10 +308,9 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Status</div>
 
-                    <select id="id_payment" class="minimal">
-                        <option  ></option>
-                        <option  >Active</option>
-                        <option value="Post Paid">Inactive</option>
+                    <select id="value_status_id" name="value_status" class="minimal">
+                        <option value="True" selected>Active</option>
+                        <option value="False">Inactive</option>
 
                     </select>
                 </div>
@@ -343,6 +325,7 @@
             <button class="sent-button" >Submit</button>
                         <button data-dismiss="modal" onclick="closeNavAddValue()" class="view-button">Cancel</button>
         </div>
+        </form>
     </div>
     <div class="modal fade" id="deleteModel" role="dialog">
         <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
@@ -391,6 +374,15 @@
     $(document).ready(function(){
         $('.segment_dropdown').hide();
         $('.line_dropdown').hide();
+
+        $(document).ready(function(){
+        {% for attribute in attributes %}
+        {% if forloop.first %}
+        console.log({{attribute.id}},"lopattr")
+        getvalues({{attribute.id}});
+        {% endif %}
+        {% endfor %}
+    })
     })
     function showDrawer(d){
         console.log(d)
@@ -538,6 +530,26 @@
                 showNotification('No Lines','error')
             }
             
+         }else{
+            showNotification('Something went wrong','error')
+         }
+    }
+
+    async function getvalues(attribute_id){
+        $('#value_attribute_id').val(attribute_id); //adding value to hidden input for adding value
+
+         var result = await _get('api/inventory-values/?attribute_id='+attribute_id);
+         
+         if(result.status == 200){
+            if (result.data.inventory_value.length > 0){
+                $(".value_table tr:not(:first)").remove(); 
+                var edit = "edit";
+                $.each(result.data.inventory_value,function(key,value){
+                        $('.value_table').append('<tr><td>'+value.name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddLine2()" data-valueid='+value.id+' data-valuename='+value.name+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn value_delete" data-valueid='+value.id+'> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
+                })
+            }else{
+                $(".value_table tr:not(:first)").remove(); 
+            }
          }else{
             showNotification('Something went wrong','error')
          }

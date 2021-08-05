@@ -71,8 +71,8 @@ class Attribute(models.Model):
     def __str__(self):
         return self.name
 
-class Value(models.Model):
-    Attribute           =   models.ForeignKey(Attribute,blank=True,null=True,related_name='value_attribute')
+class AttributeValue(models.Model):
+    attribute           =   models.ForeignKey(Attribute,blank=True,null=True,related_name='value_attribute')
     name                =   models.CharField(max_length=100,blank=False,null=False)
     status              =   models.BooleanField(default=True,blank=False,null=False)
 
