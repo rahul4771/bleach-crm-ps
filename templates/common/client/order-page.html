@@ -2129,7 +2129,12 @@
                                             <button style="width: 153px !important;" data-toggle="modal" data-target="#raiseTicketModel" class="view-button">Raise Ticket</button>
                                         </div>
                                         {% endif %}
-                                        
+
+                                        {% if not order.evaluation.quatation_status %}
+                                        <div class="row">
+                                            <button style="width: 153px !important;" data-toggle="modal" data-target="#submitModel" class="view-button">Submit</button>
+                                        </div>
+                                        {% endif %}
                                     </div>
                                     {% endif %}
                                 </div>
