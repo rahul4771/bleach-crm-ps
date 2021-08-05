@@ -2366,7 +2366,7 @@
                                 {% endif %}
                                 {% endif %}
 
-                                {% if request.user.user_type == 'EVALUATOR' %}
+                                {% if request.user.user_type == 'EVALUATOR' or request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}
                                 {% if not order.evaluation.quatation_status %}
                                 <div class="c-button-div">
                                     <button data-toggle="modal" data-target="#submitModal" class="side-buttons" data-amount_before_cleaning="{{order.evaluation.before_cleaning_amount}}" data-amount_after_cleaning="{{order.evaluation.after_cleaning_amount}}" data-discount="{{order.evaluation.discount}}" data-payment_method="{{order.evaluation.payment_method}}" data-total_amount="{{order.evaluation.estimated_cost}}" data-final_amount="{{order.evaluation.total_cost}}" onclick="openSubmit(this)">
