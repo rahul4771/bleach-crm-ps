@@ -8,9 +8,9 @@ from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
 from bleachadmin.models import ServicePriceRange
 from django.core.mail import send_mail,EmailMultiAlternatives
-from Api.serializers import UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, LeaveUsersSerializer,ShiftScheduleSerializer,InventoryLineSerializer,InventorySegmentSerializer
+from Api.serializers import UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, LeaveUsersSerializer,ShiftScheduleSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer
 from agent.views import generate_random_username
-from inventory.models import Line,Segment,Category
+from inventory.models import Line,Segment,Category,Attribute,AttributeValue
 import re
 import random
 import string
@@ -1776,4 +1776,23 @@ class InventoryLinesAPI(APIView):
 		line_serializer = InventoryLineSerializer(inventory_lines,many=True).data
 		print(line_serializer,"sed")	
 		response_dict['inventory_line'] = line_serializer
+		return Response(response_dict,HTTP_200_OK)
+
+class InventoryValuesAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+		response_dict = {}
+		attribute_id = request.GET.get('attribute_id')
+		print(attribute_id,"attrsed")
+		try:
+			inventory_values = AttributeValue.objects.filter(attribute__id=int(attribute_id))
+		except:
+			inventory_values = None
+		
+		print(inventory_values,"invo")
+		value_serializer = InventoryValueSerializer(inventory_values,many=True).data
+		print(value_serializer,"sed")	
+		response_dict['inventory_value'] = value_serializer
 		return Response(response_dict,HTTP_200_OK)

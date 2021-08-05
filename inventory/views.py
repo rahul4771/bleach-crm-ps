@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.views import View
 from bleach_crm_ps.permissions import IsInventoryAdmin,IsInventoryAdminUser
-from inventory.models import Category,Segment,Line,Attribute
+from inventory.models import Category,Segment,Line,Attribute,AttributeValue
 from django.contrib import messages
 import re
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -15,6 +15,13 @@ class InventoryHome(IsInventoryAdmin,View):
 # Category.
 class InventoryCategory(IsInventoryAdmin,View):
     def get(self,request):
+
+        # Category.objects.all().delete()
+        # Segment.objects.all().delete()
+        # Line.objects.all().delete()
+        # Attribute.objects.all().delete()
+        # AttributeValue.objects.all().delete()
+
         search = request.GET.get('search')
 
         if search:
@@ -52,6 +59,18 @@ class InventoryCategory(IsInventoryAdmin,View):
 
             messages.success(request,"Category Added Successfully !")
 
+        if action == 'edit_category':
+            print("edit")
+            # category = Category.objects.get(id=int(category_id))
+            category_id = request.POST.get('category_edit_id')
+            name     = request.POST.get('category_name')
+            status     = request.POST.get('category_status')
+            category = Category.objects.get(id=int(category_id))
+            category.name     = name
+            category.status   = status
+            category.save()
+            messages.success(request,"Category Updated Successfully !")
+        
         if action == 'delete_category':
             category_id = request.POST.get('category_id')
             Category.objects.get(id=int(category_id)).delete()
@@ -149,9 +168,26 @@ class InventoryAttribute(IsInventoryAdmin,View):
             messages.success(request,"Attribute Updated Successfully !")
 
         if action == 'delete_attribute':
-            attribute_id = request.POST.get('attribute_id')
+            attribute_id = request.POST.get('object_id')
             Attribute.objects.get(id=int(attribute_id)).delete()
             messages.success(request,"Attribute Deleted Successfully !")
+
+        if action == 'add_value':
+            attribute_id = request.POST.get('value_attribute_id')
+            value_name   = request.POST.get('value_name')
+            value_status = request.POST.get('value_status')
+
+            attribute = Attribute.objects.get(id=int(attribute_id))
+
+            AttributeValue.objects.create(attribute=attribute,name=value_name,status=value_status)
+
+            messages.success(request,"Value Added Successfully !")
+
+        if action == 'delete_value':
+            value_id = request.POST.get('object_id')
+            AttributeValue.objects.get(id=int(value_id)).delete()
+            messages.success(request,"Value Deleted Successfully !")
+
         return redirect('inventory:inventory-attribute')
 # value.
 class InventoryValue(IsInventoryAdmin,View):
@@ -289,8 +325,24 @@ class InventorySegment(IsInventoryAdmin,View):
             messages.success(request,"Segment Updated Successfully !")
 
         if action == 'delete_segment':
-            segment_id = request.POST.get('segment_id')
+            segment_id = request.POST.get('object_id')
             Segment.objects.get(id=int(segment_id)).delete()
             messages.success(request,"Segment Deleted Successfully !")
+
+        if action == 'add_line':
+            segment_id = request.POST.get('line_segment_id')
+            line_name   = request.POST.get('line_name')
+            line_status = request.POST.get('line_status')
+
+            segment = Segment.objects.get(id=int(segment_id))
+
+            Line.objects.create(category=segment.category,segment=segment,name=line_name,status=line_status)
+
+            messages.success(request,"Line Added Successfully !")
+
+        if action == 'delete_line':
+            line_id = request.POST.get('object_id')
+            Line.objects.get(id=int(line_id)).delete()
+            messages.success(request,"Line Deleted Successfully !")
             
         return redirect('inventory:inventory-segment', category_id)
