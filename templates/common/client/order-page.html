@@ -2296,7 +2296,9 @@
                                         </button>
                                     </div>
                                 {% endif %}
+                                {% endif %}
 
+                                {% if request.user.user_type == 'EVALUATOR' %}
                                 {% if not order.evaluation.quatation_status %}
                                 <div class="c-button-div">
                                     <button data-toggle="modal" data-target="#submitModel" class="side-buttons">
@@ -2312,7 +2314,7 @@
                                     </button>
                                 </div>
                                 {% endif %}
-                            {% endif %}
+                                {% endif %}
 
                             <div class="c-button-div">
                                 <button class="side-buttons" data-toggle="modal" data-target="#raiseTicketModel"
