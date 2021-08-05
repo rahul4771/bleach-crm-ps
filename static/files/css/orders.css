@@ -1242,12 +1242,17 @@ select.minimal:focus {
   }
 }
 @media only screen and (max-width: 1400px) {
+  .visit-time-edit{
+    height:12px;
+  }
   .vist-card-item-first {
    margin-right: 10px;
     flex: none;
+    font-size:12px;
 }
 .vist-card-item-second {
   flex: none;
+  font-size:12px;
 }
   #evalution-note{
     font-size: 12px;
@@ -1390,13 +1395,13 @@ select.minimal:focus {
   .c-pr0060 {
     padding-left: 0px;
   }
-  .cleaning-status-row {
+  /* .cleaning-status-row {
     display: inline-block;
     padding-left: 20px;
     padding-right: 20px;
     padding-top: 10px;
     padding-bottom: 10px;
-  }
+  } */
   .vist-card-item-first {
     text-align: left;
   }
