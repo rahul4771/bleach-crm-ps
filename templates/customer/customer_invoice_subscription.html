@@ -23,6 +23,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" />
     <link rel="stylesheet" href="{% static 'files/css/customer/main.css' %}">
+    <link rel="stylesheet" href="{% static 'files/css/colors.css' %}">
+
     <title>Bleach Cleaning Services | Invoice</title>
 
   </head>
@@ -210,6 +212,8 @@
                   <div class="inv-service-title p-2 inv-text-bold">
                     {{orderschedule.order_scheduler_book.service_type}}-{{section.section_name}}
                   </div>
+                  <div class="d-flex mb-10" > {% if orderschedule.order_scheduler_book.status == 'CANCELLED' %} <div class="status-dot cancel-chip-bg"></div> <div class="ml-2">Cancelled</div> {% endif %}</div>
+
                   <div class="d-md-flex d-print-flex">
                     <div class="p-2">
                       Size : <span class="inv-text-bold">{{section.size}} {{section.unit|default_if_none:''}}</span>
@@ -554,6 +558,7 @@
                 </div>
               {% endif %}
                 
+                {% comment %}
                 {% if order.evaluation.quatation_status == 'APPROVED' %}
                 <div class="inv-payment-box" id="credit-card-id" data-url="https://payment.bleachkw.com/creditcard/payment_form.php?merchant_defined_data1={{order.order_no}}{% if order.evaluation.payment_method == 'BREAKDOWN' %}{% if order.evaluation.before_cleaning_amount != order.preamount_paid %}&reference_number={{order.order_no}}1&amount={{order.evaluation.before_cleaning_amount}}&merchant_defined_data2=before_cleaning{% elif order.evaluation.after_cleaning_amount != order.postamount_paid %}&reference_number={{order.order_no}}2&amount={{order.evaluation.before_cleaning_amount}}&merchant_defined_data2=after_cleaning{% endif %}{% elif order.evaluation.payment_method == 'PREPAID' %}&reference_number={{order.order_no}}&amount={{order.evaluation.total_cost|floatformat:'3'}}&merchant_defined_data2=prepaid{% elif order.evaluation.payment_method == 'POSTPAID' %}&reference_number={{order.order_no}}&amount={{order.evaluation.total_cost|floatformat:'3'}}&merchant_defined_data2=postpaid{% endif %}&merchant_defined_data3={{order.order_status}}&currency=KWD&transaction_type=sale{% for orderschedule in order.orderschedules %}{% if forloop.first %}&bill_to_forename={{firstname}}&bill_to_surname={{lastname}}&bill_to_phone={{orderschedule.customer_address.customer.mobile_number}}&bill_to_email={{orderschedule.customer_address.customer.email}}&bill_to_address_country={{orderschedule.customer_address.customer.nationality.code}}&bill_to_address_city={{orderschedule.customer_address.area.name|default_if_none:''}}&bill_to_address_line1={{orderschedule.customer_address.governorate.name|default_if_none:''}}{% endif %}{% endfor %}&merchant_defined_data4={{order.evaluation.payment_way|default_if_none:'ONLINE'}}&merchant_defined_data5=NO&merchant_defined_data7=1&merchant_defined_data20=NO&customer_ip_address={{customer_ip_address}}">
                   <div class="inv-payment-card mt-4 text-center {% if order.evaluation.customer.is_credit == False %}inv-click-disable{% endif %}" id="inv-credit" onclick="selectPayment('credit')"><!-- to disable click add class inv-click-disable -->
@@ -567,6 +572,7 @@
                   </div>
                 </div>
                 {% endif %}
+                {% endcomment %}
                 
                 </div>
               </div>

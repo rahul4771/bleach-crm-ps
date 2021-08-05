@@ -213,6 +213,8 @@
                   <div class="inv-service-title p-2 inv-text-bold">
                     {{evaluation_book.service_type}}-{{book_section.section_name}}
                   </div>
+                  <div class="d-flex mb-10" > {% if evaluation_book.status == 'CANCELLED' %} <div class="status-dot cancel-chip-bg"></div> <div class="ml-2">Cancelled</div> {% endif %}</div>
+
                   <div class="d-md-flex d-print-flex">
                     <div class="p-2">
                       Size : <span class="inv-text-bold">{{book_section.size}} {{book_section.unit|default_if_none:''}}</span>

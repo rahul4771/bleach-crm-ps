@@ -1283,8 +1283,9 @@ class ClientOrderDetails(IsAuthenticated,View):
 			if invoice.balance == int(invoice.balance):
 				invoice.balance = int(invoice.balance)
 
+		price_ranges = ServicePriceRange.objects.filter(is_active=True)
 
-		return render(request,"common/client/order-page.html",{"invoice":invoice,"booking_id":booking_id,"order":order,"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"average_feedback":average_feedback,})
+		return render(request,"common/client/order-page.html",{"invoice":invoice,"booking_id":booking_id,"order":order,"client_details":client_details,"active_orders_count":active_orders_count,"total_orders_count":total_orders_count,"average_feedback":average_feedback,"price_ranges":price_ranges})
 
 	def post(self,request,order_id):
 		action = request.POST.get('action_type')

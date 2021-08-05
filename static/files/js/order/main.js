@@ -154,6 +154,18 @@ function openPaymentEdit(payment){
  app.paymentData.amount_after_cleaning=paymentDetails.amount_after_cleaning
  app.openPayment()
 }
+function openSubmit(payment){
+  var paymentDetails=$(payment).data()
+  app.paymentData.payment_method='PREPAID'
+  app.paymentData.total_amount=paymentDetails.total_amount
+  app.paymentData.final_amount=paymentDetails.final_amount
+  app.total_amount=paymentDetails.total_amount
+  app.paymentData.discount=paymentDetails.discount
+  app.paymentData.amount_before_cleaning=paymentDetails.amount_before_cleaning
+  app.paymentData.amount_after_cleaning=paymentDetails.amount_after_cleaning
+  
+ }
+
 function openCleaningDate(service){
   app.cleaning_action='add_cleaning'
   $('#cleaning-date-tigger').click()
@@ -440,8 +452,8 @@ const app = new Vue({
            progress:20,
            slotloader:false,
             services_list:[],
-            url:'https://my.bleachkw.com'
-       //   url:'http://localhost:8000'
+        //  url:'https://my.bleachkw.com'
+          url:'http://localhost:8000'
       // url:'https://test.bleach-kw.com'
             //url:'http://127.0.0.1:8000'
   },
@@ -1004,6 +1016,40 @@ const app = new Vue({
       }).then(response=>{
         console.log(response)
         $('#edit-payment-close').click()
+        window.location.reload()
+      })
+      }
+      
+    },
+    updateEvaluation(){
+      if(this.paymentData.payment_method=='BREAKDOWN')
+      {
+       
+      axios.post(this.url+'/customer/editorder/'+this.orderId,{
+        "action_type":'submit_quatation',
+       "payment_method":this.paymentData.payment_method,
+       "discount_amount":parseInt(this.paymentData.discount),
+       "before_cleaning_amount":parseInt(this.paymentData.amount_before_cleaning),
+       "after_cleaning_amount":parseInt(this.paymentData.amount_after_cleaning),
+       
+      }).then(response=>{
+        console.log(response)
+        $('#submit-close').click()
+        window.location.reload()
+        
+      })
+    }
+      else
+      {
+      axios.post(this.url+'/customer/editorder/'+this.orderId,{
+        "action_type":'submit_quatation',
+       "payment_method":this.paymentData.payment_method,
+       "discount_amount":parseInt(this.paymentData.discount),
+       
+       
+      }).then(response=>{
+        console.log(response)
+        $('#submit-close').click()
         window.location.reload()
       })
       }

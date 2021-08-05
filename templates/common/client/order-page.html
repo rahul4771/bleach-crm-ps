@@ -93,6 +93,74 @@
         </div>
       </div>
     <!-- helper modal ends here-->
+     <!--  SUBMIT EVALUATION MODAL BEGINS HERE-->
+     <div class="modal fade " id="submitModal" tabindex="-1" role="dialog" aria-labelledby="submitModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered primary-modal" role="document">
+          <div class="modal-content primary-modal-border">
+            
+           
+            <div class="modal-body">
+              <div class="cotainer">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="row">
+                    <div class="col-md-12 mt-10">
+                        <div class=" bold-text common-label required-field"> <label>Discount</label></div>
+                      <input  id="id_name" type="text" class="textBox OnlyNumber" placeholder="Discount" required="" v-model="paymentData.discount" @input="calDiscount()" >
+                    </div>
+                    <div class="col-md-12 mt-10"  >
+                    
+                        <div class=" bold-text common-label required-field"> <label>Payment Policy</label></div>
+                        <multiselect
+                       
+                         v-model="paymentData.payment_method"
+                          placeholder="Payment Policy"
+                          
+                          :options="['PREPAID','POSTPAID','BREAKDOWN']"
+                          :multiple="false"
+                          :taggable="false"
+                          :show-labels="false"
+                          @input="changeCategory()"
+                          
+                        ></multiselect>
+                      
+                            
+                     </div>
+                     <div class="col-md-12 mt-10"  v-if="paymentData.payment_method=='BREAKDOWN'">
+                        <div class=" bold-text common-label required-field "> <label>Amount Before Cleaning</label></div>
+                      <input   type="text" class="textBox OnlyNumber" placeholder="Amount" required=""  v-model="paymentData.amount_before_cleaning" @input="calcBreakdownBefore()">
+                    </div>
+                    <div class="col-md-12 mt-10"  v-if="paymentData.payment_method=='BREAKDOWN'">
+                        <div class=" bold-text common-label required-field "> <label>Amount After Cleaning</label></div>
+                      <input  type="text" class="textBox OnlyNumber" placeholder="Amount" required="" v-model="paymentData.amount_after_cleaning" @input="calcBreakdownAfter()">
+                    </div>
+                </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="amount-card">
+                        <h2>Total Amount</h2>
+                        <div class="text-center amount-text"> <span id="id_amount"><% paymentData.total_amount %></span> KD</div>
+                    </div>
+                    <div class="amount-card mt-20">
+                        <h2>Final Amount</h2>
+                        <div class="text-center amount-text"> <span id="id_amount"><% paymentData.final_amount %></span> KD</div>
+                    </div>
+                </div>
+                 
+
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer text-center">
+              
+              <button type="submit"  class="btn primary-btn"  @click="updateEvaluation()">Submit</button>
+              <button type="button" class="btn primary-btn-bordered" data-dismiss="modal"  id="submit-close">Cancel</button>
+            </div>
+           
+          </div>
+        </div>
+      </div>
+    <!-- SUBMIT EVALUATION MODAL ENDS HERE-->
     <!-- CHANGE PAYMENT MODAL BEGINS HERE-->
     <div class="modal fade " id="editPaymentModal" tabindex="-1" role="dialog" aria-labelledby="editPaymentModal" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered primary-modal" role="document">
@@ -1051,6 +1119,7 @@
                                     <div class="order-header-class">
                                         
                                         <h2 class="service-name">{{orderschedule.order_scheduler_book.service_type.name}}</h2>
+                                        {% if orderschedule.order_scheduler_book.status == 'CANCELLED' %}  <div class="d-flex mb-10 cancelled-flag" >  <div class="status-dot cancel-chip-bg"></div> <div class="ml-2">Cancelled</div></div> {% endif %}
                                         {% if orderschedule.order_scheduler_book.cleaning_policy  ==  'ONE TIME SERVICE' %}
                                         <button class="subscription-button">One Time</button>
                                         {% else %}
@@ -1359,7 +1428,7 @@
 
                                                
                                                     <div class="col-md-2 col-xs-4 mt-10">Size</div>
-                                                    <div class="col-md-4 col-xs-8 mt-10">: <span class="c-text  ">{{section.size}} {{section.unit|default_if_none:''}}</span>
+                                                    <div class="col-md-4 col-xs-8 mt-10">: <span class="c-text  ">{{section.size}} ({% for price_range in price_ranges %}{% if price_range.name == section.size and price_range.service_type == orderschedule.order_scheduler_book.service_type %}{{price_range.minimum_area}}-{{price_range.maximum_area}}{% endif %}{% endfor %})</span>
                                                     </div>
                                                
 
@@ -1565,16 +1634,23 @@
                                                         <img  class="visit-time-edit pointer ml-10 mt-2p" src="{% static 'files/icons/user-primary.png' %}" ><span class="ml-5 visit-text">{% if multi_order_schedule.no_of_cleaners %}{{multi_order_schedule.no_of_cleaners}}{% else %}{{multi_order_schedule.order_scheduler_book.number_of_cleaners|default_if_none:0}}{% endif %}</span>
                                                         <img  class="visit-time-edit pointer ml-10 mt-2p" src="{% static 'files/icons/time-primary.png' %}" ><span class="ml-5 visit-text">{% if multi_order_schedule.cleaning_hours %}{{multi_order_schedule.cleaning_hours}}{% else %}{{multi_order_schedule.order_scheduler_book.cleaning_hours|default_if_none:0.0}}{% endif %}</span>
 
+                                                        {% if request.user.user_type == 'SALESADMIN' or request.user.user_type == 'BOOKINGOFFICER' %}
+                                                        
                                                         {% if multi_order_schedule.work_status == 'CLEANING_FULFILLED' or multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %}
                                                         {% else %}
                                                         <img v-if="edit" class="visit-time-edit pointer ml-auto mt-2p" src="{% static 'files/icons/edit-primary.png' %}" onclick="editCleaningDate(this)" data-cleaning_start_date="{{multi_order_schedule.start_at|date:'d-m-Y'}}" data-evaluation_book_id="{{multi_order_schedule.order_scheduler_book.id}}" data-id="{{multi_order_schedule.id}}" data-service="{{multi_order_schedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{multi_order_schedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{multi_order_schedule.order_scheduler_book.cleaning_hours}}">
                                                         {% endif %}
-                                                        <!-- {% if multi_order_schedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}
-                                                        <img v-if="edit" class="visit-time-edit pointer ml-10 mt-2p " src="{% static 'files/icons/delete-primary.png' %}" onclick="deleteCleaningDate(this)"  data-cleaning_start_date="{{multi_order_schedule.start_at|date:'d-m-Y'}}" data-evaluation_book_id="{{multi_order_schedule.order_scheduler_book.id}}" data-id="{{multi_order_schedule.id}}" data-service="{{multi_order_schedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{multi_order_schedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{multi_order_schedule.order_scheduler_book.cleaning_hours}}" >
-                                                       
+                                                        
+                                                        {% if multi_order_schedule.work_status == 'CLEANING_FULFILLED' or multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %}
+                                                        {% else %}
+                                                        {% if multi_order_schedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}
+                                                        <img v-if="edit" class="visit-time-edit pointer ml-10 mt-2p " src="{% static 'files/icons/delete-primary.png' %}" onclick="deleteCleaningDate(this)"  data-cleaning_start_date="{{multi_order_schedule.start_at|date:'d-m-Y'}}" data-evaluation_book_id="{{multi_order_schedule.order_scheduler_book.id}}" data-id="{{multi_order_schedule.id}}" data-service="{{multi_order_schedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{multi_order_schedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{multi_order_schedule.order_scheduler_book.cleaning_hours}}" >                                                       
                                                         {% elif multi_order_schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' %}
                                                         <img v-if="edit" class="visit-time-edit pointer ml-10 mt-2p " src="{% static 'files/icons/cancel-primary.png' %}"  onclick="cancelCleaningDate(this)"  data-cleaning_start_date="{{multi_order_schedule.start_at|date:'d-m-Y'}}" data-estimated_cost="{{multi_order_schedule.order_scheduler_book.estimated_cost}}" data-evaluation_book_id="{{multi_order_schedule.order_scheduler_book.id}}" data-id="{{multi_order_schedule.id}}" data-service="{{multi_order_schedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{multi_order_schedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{multi_order_schedule.order_scheduler_book.cleaning_hours}}">
-                                                        {%endif%} -->
+                                                        {%endif%}
+                                                        {% endif %} 
+                                                        
+                                                        {%endif%}
                                                         <!--<div class="vist-card-item-last ml-5">
                                                             <button {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %}class="inprogress-button"{% elif multi_order_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}class="assigned-button"{% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED'%}class="completed-button"{% else %}class="canceled-button"{% endif %}>  {% for investigation in multi_order_schedule.investigations|slice:":1" %}{% for followup in investigation.followups|slice:":1" %}{% if followup %} <i aria-hidden="true" class="fa fa-flag" style="margin-right: 5px ;"></i> {% endif %}{% endfor %}{% endfor %} {{multi_order_schedule.work_status|default_if_none:'NOT STARTED'}}</button>
                                                         </div>-->
@@ -1905,6 +1981,12 @@
                                                     </div>
                                                 </div>
                                                 
+
+
+
+
+                                                {% if order.evaluation.quatation_status %}
+                                                
                                                 <div class="row c-mb-3">
                                                     <div class="col-xs-6">Payment Method</div>
                                                     <div class="col-xs-6">: <span class="c-text">{{order.evaluation.payment_method|default_if_none:''}}</span>
@@ -1938,6 +2020,12 @@
                                                     <div class="col-xs-6">: <span class="c-text">{{order.remining_amount|default_if_none:'0.000'|floatformat:'3'}} KD</span></div>
                                                 </div>
 
+                                                {% endif %}
+
+
+
+
+
                                                 {% if order.paymenthistory %}
                                                 <div class="row c-mb-3">
                                                     <div class="col-xs-6">Payment Type(s)</div>
@@ -1964,6 +2052,9 @@
                                         </div>
 
                                     </div>
+
+
+                                    {% if order.evaluation.quatation_status %}
 
                                     {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR' or request.user.user_type == 'SALESADMIN' or request.user.user_type == 'ACCOUNTANT' %}
                                     <div class="col-md-3 m-mt30">
@@ -2018,6 +2109,12 @@
 
                                     </div>
                                     {% endif %}
+                                    
+                                    {% endif %}
+                                
+                                
+                                
+                                
                                 </div>
                             </div>
 
@@ -2112,7 +2209,7 @@
 
                                          {% if order.order_status == 'APPROVED_BY_CLIENT' or order.order_status == 'ORDER_IN_PROGRESS'  %}
                                         <div class="row">
-                                            <button style="width: 153px !important;" data-toggle="modal" data-target="#cancelModel" class="view-button">Order Cancel</button>
+                                            <button style="width: 153px !important;" data-toggle="modal" data-target="#cancelModel" class="view-button"> Cancel</button>
                                         </div>
                                         {% endif %} 
 
@@ -2121,7 +2218,12 @@
                                             <button style="width: 153px !important;" data-toggle="modal" data-target="#raiseTicketModel" class="view-button">Raise Ticket</button>
                                         </div>
                                         {% endif %}
-                                        
+
+                                        {% if not order.evaluation.quatation_status %}
+                                        <div class="row">
+                                            <button style="width: 153px !important;" data-toggle="modal" data-target="#submitModal" class="view-button"  data-amount_before_cleaning="{{order.evaluation.before_cleaning_amount}}" data-amount_after_cleaning="{{order.evaluation.after_cleaning_amount}}" data-discount="{{order.evaluation.discount}}" data-payment_method="{{order.evaluation.payment_method}}" data-total_amount="{{order.evaluation.estimated_cost}}" data-final_amount="{{order.evaluation.total_cost}}" onclick="openSubmit(this)">Submit</button>
+                                        </div>
+                                        {% endif %}
                                     </div>
                                     {% endif %}
                                 </div>
@@ -2245,6 +2347,7 @@
                             </div>
                             {% endif %}
 
+
                             {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'SALESADMIN' %}
                                 {% if order.order_status != 'ORDER_CLOSED'  %}
                                     <div class="c-button-div">
@@ -2255,13 +2358,31 @@
 
                                                 </div>
                                                 <div class="col-xs-6 text-left mpl-0">
-                                                    Order Cancel
+                                                     Cancel
                                                 </div>
                                             </div>
                                         </button>
                                     </div>
                                 {% endif %}
-                            {% endif %}
+                                {% endif %}
+
+                                {% if request.user.user_type == 'EVALUATOR' or request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}
+                                {% if not order.evaluation.quatation_status %}
+                                <div class="c-button-div">
+                                    <button data-toggle="modal" data-target="#submitModal" class="side-buttons" data-amount_before_cleaning="{{order.evaluation.before_cleaning_amount}}" data-amount_after_cleaning="{{order.evaluation.after_cleaning_amount}}" data-discount="{{order.evaluation.discount}}" data-payment_method="{{order.evaluation.payment_method}}" data-total_amount="{{order.evaluation.estimated_cost}}" data-final_amount="{{order.evaluation.total_cost}}" onclick="openSubmit(this)">
+                                        <div class="row">
+                                            <div class="col-xs-4 text-right">
+                                                <img class="button-icons" src="{% static 'files/icons/close.png' %}">
+
+                                            </div>
+                                            <div class="col-xs-6 text-left mpl-0">
+                                                Submit
+                                            </div>
+                                        </div>
+                                    </button>
+                                </div>
+                                {% endif %}
+                                {% endif %}
 
                             <div class="c-button-div">
                                 <button class="side-buttons" data-toggle="modal" data-target="#raiseTicketModel"
