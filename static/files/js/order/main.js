@@ -156,7 +156,7 @@ function openPaymentEdit(payment){
 }
 function openSubmit(payment){
   var paymentDetails=$(payment).data()
-  app.paymentData.payment_method=paymentDetails.payment_method
+  app.paymentData.payment_method='PREPAID'
   app.paymentData.total_amount=paymentDetails.total_amount
   app.paymentData.final_amount=paymentDetails.final_amount
   app.total_amount=paymentDetails.total_amount
