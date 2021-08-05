@@ -253,6 +253,18 @@
     v-on:change="oneTimeDateChange()" class="mt-2" :min="today" ></v-date-picker>
   </div>
   <div class="col-md-8 "  >
+    <div  v-for="(sdate,sdindex) in one_time_slots">
+     <div v-if="sdate.slots.length>0"><b>Date : <% sdindex %></b></div> 
+     <v-chip
+    v-for="(st,stindex) in sdate.slots"
+      class="ma-2"
+      
+     
+    >
+  
+   <span v-if="parsedTimeSlots[st-1]"> <% parsedTimeSlots[st-1].start_time+' - '+parsedTimeSlots[st-1].end_time %></span> 
+    </v-chip>
+  </div>
     <div class="mt-4">
       Select  Slots
     </div>

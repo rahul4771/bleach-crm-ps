@@ -267,3 +267,52 @@ Popups
 font-size:12px;
 text-align: right;
 }
+
+
+/** chip +dot **/
+/* Cancelled*/
+.cancel-chip{
+    border-left:6px solid #c91212 !important;
+  }
+  .assigned-chip{
+    border-left:6px solid #dba03a !important;
+  }
+  .inprogress-chip{
+    border-left:6px solid #0d87c5 !important;
+  }
+  .completed-chip{
+    border-left:6px solid #10a82f !important;
+  }
+  .cancel-chip-bg{
+    background: #c91212 !important;
+  }
+  .assigned-chip-bg{
+    background: #dba03a !important;
+  }
+  .inprogress-chip-bg{
+    background: #0d87c5 !important;
+  }
+  .completed-chip-bg{
+    background: #10a82f !important;
+  }
+  .notstarted-chip-bg{
+    background: #AAA8A7 !important;
+  }
+  .status-dot{
+  
+    width: 10px;
+    height: 10px;
+    margin: 5px;
+    border-radius: 15px;
+}
+.cancelled-flag{
+    border: 1px solid red;
+    border-radius: 10px;
+    background: #ff000005;
+    max-width: 100px;
+    padding: 2px;
+    font-size: 13px;
+    line-height: -2px;
+    /* justify-content: center; */
+    text-align: center;
+}

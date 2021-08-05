@@ -1051,6 +1051,7 @@
                                     <div class="order-header-class">
                                         
                                         <h2 class="service-name">{{orderschedule.order_scheduler_book.service_type.name}}</h2>
+                                        {% if orderschedule.order_scheduler_book.status == 'CANCELLED' %}  <div class="d-flex mb-10 cancelled-flag" >  <div class="status-dot cancel-chip-bg"></div> <div class="ml-2">Cancelled</div></div> {% endif %}
                                         {% if orderschedule.order_scheduler_book.cleaning_policy  ==  'ONE TIME SERVICE' %}
                                         <button class="subscription-button">One Time</button>
                                         {% else %}
@@ -2112,7 +2113,7 @@
 
                                          {% if order.order_status == 'APPROVED_BY_CLIENT' or order.order_status == 'ORDER_IN_PROGRESS'  %}
                                         <div class="row">
-                                            <button style="width: 153px !important;" data-toggle="modal" data-target="#cancelModel" class="view-button">Order Cancel</button>
+                                            <button style="width: 153px !important;" data-toggle="modal" data-target="#cancelModel" class="view-button"> Cancel</button>
                                         </div>
                                         {% endif %} 
 
@@ -2255,7 +2256,7 @@
 
                                                 </div>
                                                 <div class="col-xs-6 text-left mpl-0">
-                                                    Order Cancel
+                                                     Cancel
                                                 </div>
                                             </div>
                                         </button>
