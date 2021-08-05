@@ -2606,7 +2606,8 @@
                                 </div>
 
                                 <a v-if="all_val" href="{% url 'booking-officer:cancell-order' order.id %}" target="_blank"><button class="sent-button" type="button">Yes</button></a>
-                                <a v-else href="{% url 'booking-officer:cancell-book' order.evaluation.id %}" target="_blank"><button class="sent-button" type="button">Yes</button></a>
+                                <button v-else class="sent-button mt-20" type="submit" @click="bookingofficerCancelServiceOrder()" >Yes</button>
+                                <a  href="{% url 'booking-officer:cancell-book' order.evaluation.id %}" target="_blank" ><button class="sent-button" type="button" id="bookingofficer-redirect" style="display: none;">Yes</button></a>
                             {% else %}
                             <a href="{% url 'booking-officer:cancell-order' order.id %}" target="_blank"><button class="sent-button" type="button">Yes</button></a>
                             {% endif %}
@@ -2627,9 +2628,12 @@
                                 </div>
 
                                 <a v-if="all_val" href="{% url 'bleach_salesadmin:cancell-order' order.id %}" target="_blank"><button class="sent-button" type="button">Yes</button></a>
-                                <a v-else href="{% url 'bleach_salesadmin:cancell-book' order.evaluation.id %}" target="_blank"><button class="sent-button" type="button">Yes</button></a>
-                            {% else %}
-                            <a href="{% url 'bleach_salesadmin:cancell-order' order.id %}" target="_blank"><button class="sent-button" type="button">Yes</button></a>
+                                <button v-else class="sent-button mt-20" type="submit" @click="salesadminCancelServiceOrder()">Yes</button>
+                                <a  href="{% url 'bleach_salesadmin:cancell-book' order.evaluation.id %}" target="_blank" ><button class="sent-button" type="button" id="salesadmin-redirect" style="display: none;">Yes</button></a>
+                                
+                                {% else %}
+                           
+                            <a href="{% url 'bleach_salesadmin:cancell-order' order.id %}" target="_blank" ><button class="sent-button" type="button" style="display: none;">Yes</button></a>
                             {% endif %}
 
                         
