@@ -1913,6 +1913,12 @@
                                                     </div>
                                                 </div>
                                                 
+
+
+
+
+                                                {% if order.evaluation.quatation_status %}
+                                                
                                                 <div class="row c-mb-3">
                                                     <div class="col-xs-6">Payment Method</div>
                                                     <div class="col-xs-6">: <span class="c-text">{{order.evaluation.payment_method|default_if_none:''}}</span>
@@ -1946,6 +1952,12 @@
                                                     <div class="col-xs-6">: <span class="c-text">{{order.remining_amount|default_if_none:'0.000'|floatformat:'3'}} KD</span></div>
                                                 </div>
 
+                                                {% endif %}
+
+
+
+
+
                                                 {% if order.paymenthistory %}
                                                 <div class="row c-mb-3">
                                                     <div class="col-xs-6">Payment Type(s)</div>
@@ -1972,6 +1984,9 @@
                                         </div>
 
                                     </div>
+
+
+                                    {% if order.evaluation.quatation_status %}
 
                                     {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR' or request.user.user_type == 'SALESADMIN' or request.user.user_type == 'ACCOUNTANT' %}
                                     <div class="col-md-3 m-mt30">
@@ -2026,6 +2041,12 @@
 
                                     </div>
                                     {% endif %}
+                                    
+                                    {% endif %}
+                                
+                                
+                                
+                                
                                 </div>
                             </div>
 
