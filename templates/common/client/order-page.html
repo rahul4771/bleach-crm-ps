@@ -2130,7 +2130,7 @@
                                         </div>
                                         {% endif %}
 
-                                        {% if order.evaluation.quatation_status == '' %}
+                                        {% if not order.evaluation.quatation_status %}
                                         <div class="row">
                                             <button style="width: 153px !important;" data-toggle="modal" data-target="#submitModel" class="view-button">Submit</button>
                                         </div>
