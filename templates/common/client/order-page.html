@@ -2279,6 +2279,7 @@
                             </div>
                             {% endif %}
 
+
                             {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'SALESADMIN' %}
                                 {% if order.order_status != 'ORDER_CLOSED'  %}
                                     <div class="c-button-div">
@@ -2294,6 +2295,22 @@
                                             </div>
                                         </button>
                                     </div>
+                                {% endif %}
+
+                                {% if not order.evaluation.quatation_status %}
+                                <div class="c-button-div">
+                                    <button data-toggle="modal" data-target="#submitModel" class="side-buttons">
+                                        <div class="row">
+                                            <div class="col-xs-4 text-right">
+                                                <img class="button-icons" src="{% static 'files/icons/close.png' %}">
+
+                                            </div>
+                                            <div class="col-xs-6 text-left mpl-0">
+                                                Submit
+                                            </div>
+                                        </div>
+                                    </button>
+                                </div>
                                 {% endif %}
                             {% endif %}
 
