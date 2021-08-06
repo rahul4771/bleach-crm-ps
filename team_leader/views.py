@@ -273,11 +273,11 @@ class Cleaning(IsTeamLeader,View):
 		else:
 			is_customer_booking = False
 
-		price_ranges = ServicePriceRange.objects.filter(is_active=True,service_type__id=cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.id)
-		#checkin save	
+		price_ranges_change = ServicePriceRange.objects.filter(is_active=True,service_type__id=cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.id)	
+
+		price_ranges = ServicePriceRange.objects.filter(is_active=True)
 		
-		
-		return render(request,'tl/cleaning/cleaningtest.html',{"price_ranges":price_ranges,"cleaning_team_detail":cleaning_team_detail,"cleaning_team_members":cleaning_team_members,"is_customer_booking":is_customer_booking})
+		return render(request,'tl/cleaning/cleaningtest.html',{"price_ranges":price_ranges,"price_ranges_change":price_ranges_change,"cleaning_team_detail":cleaning_team_detail,"cleaning_team_members":cleaning_team_members,"is_customer_booking":is_customer_booking})
 	def post(self,request,team_id):
 		print("checkk")
 		#checkout save
