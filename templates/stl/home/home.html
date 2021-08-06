@@ -114,7 +114,7 @@
 <tbody>
 {% for order_schedule in assign_order_schedules %}
 <tr {% if order_schedule.days_left_coming < 0 %}class="red-line"{% elif order_schedule.days_left_coming == 0 %}class="orange-line"{% elif order_schedule.days_left_coming == 1 %}class="yellow-line"{% elif order_schedule.days_left_coming >= 2 %}class="green-line"{% endif %}>
-<td data-label="BLC Number" class="bold-text clickable-row" data-href="{% url 'stl:stl-order-details' order_schedule.order.id %}">{{order_schedule.order.evaluation.evaluation_id}}</td>
+<td data-label="BLC Number" class="bold-text clickable-row" data-href="{% url 'common_items:client-orderdetails' order_schedule.order.id %}">{{order_schedule.order.evaluation.evaluation_id}}</td>
 <td data-label="Customer">{{order_schedule.order.evaluation.customer.name}}</td>
 <td data-label="Area">{{order_schedule.customer_address.area}}</td>
 <td class="hide-a" data-label="">{% if order_schedule.evaluation_details.evaluator.profile_image %}<img src="{{order_schedule.evaluation_details.evaluator.profile_image.url}}" title="{{order_schedule.evaluation_details.evaluator.name}}" class="profile-avatar">{% else %}<img src="{{order_schedule.evaluation_details.evaluation.call_attender.profile_image.url}}" title="{{order_schedule.evaluation_details.evaluation.call_attender.name}}" class="profile-avatar">{% endif %}</td>
