@@ -2,10 +2,10 @@ from django.db import models
 
 # Create your models here.
 
-ATTRIBUTE_TYPE_CHOICES=(
-	('CATEGORY','CATEGORY'),
-	('SEGMENT','SEGMENT'),
-	('LINE','LINE')
+UNIT_STATUS_CHOICES=(
+	('Active','active'),
+	('Out of Order','out_of_order'),
+	('Expired','expired')
 	)
 
 class Category(models.Model):
@@ -49,7 +49,9 @@ class InventoryItem(models.Model):
     name            =   models.CharField(max_length=100,blank=False,null=False)
     item_code       =   models.CharField(max_length=50,blank=False,null=False)
     description     =   models.TextField(max_length=1000,blank=True,null=True)
+    reserve_count   =   models.CharField(max_length=10,blank=True,null=True)
     status          =   models.BooleanField(default=True,blank=False,null=False)
+
     # created         =   models.DateTimeField(auto_now_add=True)
     def __unicode__(self):
         return str(self.name)
@@ -64,7 +66,7 @@ class ItemUnit(models.Model):
     purchase_date   =   models.DateField(blank=True,null=True)
     expiry_date     =   models.DateField(blank=True,null=True)
     unit_price      =   models.CharField(max_length=10,blank=False,null=False)
-    status          =   models.BooleanField(default=True,blank=False,null=False)
+    status          =   models.CharField(max_length=50,default='Active',blank=False,null=False,choices=UNIT_STATUS_CHOICES)
     # created         =   models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):

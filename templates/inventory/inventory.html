@@ -22,7 +22,7 @@
                      
                         <div class="inv-input-container h-30">
                             <i class="fa fa-search inv-icon-input" aria-hidden="true"></i>
-                            <input type="text" placeholder="Search inventory" class="inv-input w-250" name="attributes">
+                            <input type="text" placeholder="Search Inventory" id="search-bar" class="inv-input w-250" onchange ="set_params_go()" value="{{search_query|default_if_none:''}}" name="attributes">
                           </div>
                     
                     
@@ -49,14 +49,14 @@
                                 <th data-hide="phone,tablet"  style="width: %;" class="text-center">
                                     Category
                                 </th>
-                                <th  data-hide="phone,tablet"  style="width: %;" class="text-center">
-                                    Quantity
+                                <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                    Segment
+                                </th>
+                               <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                    Line
                                 </th>
                                 <th data-hide="phone,tablet"  class="text-center">
-                                    Unit Price
-                                </th>
-                                <th data-hide="phone,tablet"  class="text-center">
-                                    Contact
+                                    Reserve
                                 </th>
                                 <th>
                                     Status
@@ -66,68 +66,39 @@
                             </tr>
                         </thead>
                      <tbody>
+                        {% for item in items %}
                         <tr>
                             <td>
-                                item 1
+                                {{item.name}}
                             </td>
                             <td class="text-center">
-                                3
+                                {{item.item_code}}
                             </td>
                             <td class="text-center">
-                                Category 1 
+                                {{item.item_category.name}}
                             <td class="text-center">
-                                2
+                                {{item.item_segment.name}}
                             </td>
                             <td class="text-center">
-                                2
+                                {{item.item_line.name}}
                             </td>
                             <td class="text-center">
-                                00000000
+                                {{item.reserve_count}}
                             </td>
                             <td>
                                 <span class="inv-dot c-active ml-5"></span>
                                         Active
                             </td>
                             <td style="float: right;">
-                                <a href="/inventory/item/">
+                                <a href="/inventory/item/{{item.id}}">
                                 <button class="inv-plan-img-btn"> <img style="width: auto;" src="{% static 'files/inventory/icons/view.png' %}"  alt=""> </button>
                                 </a>
-                                <button class="inv-plan-img-btn" onclick="openNavAddStore('edit')"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                <button class="inv-plan-img-btn"  data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                                <button class="inv-plan-img-btn edit-item" onclick="openNavAddStore('edit')" data-itemid="{{item.id}}" data-itemname="{{item.name}}" data-itemcode="{{item.item_code}}" data-itemcategory="{{item.item_category.id}}" data-itemsegment="{{item.item_segment.id}}" data-itemline="{{item.item_line.id}}" data-itemdescription="{{item.description}}" data-itemreserve="{{item.reserve_count}}" data-itemstatus="{{item.status}}"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                <button class="inv-plan-img-btn delete-item"  data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
 
                             </td>
                         </tr>
-                        <tr>
-                            <td>
-                                item 1
-                            </td>
-                            <td class="text-center">
-                                3
-                            </td>
-                            <td class="text-center">
-                                Category 1 
-                            <td class="text-center">
-                                2
-                            </td>
-                            <td class="text-center">
-                                2
-                            </td>
-                            <td class="text-center">
-                                00000000
-                            </td>
-                            <td>
-                                <span class="inv-dot c-active ml-5"></span>
-                                        Active
-                            </td>
-                            <td style="float: right;">
-                                <a href="/inventory/item/">
-                                <button class="inv-plan-img-btn"> <img style="width: auto;" src="{% static 'files/inventory/icons/view.png' %}"  alt=""> </button>
-                                </a>
-                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-
-                            </td>
-                        </tr>
+                        {% endfor %}
                      </tbody>
                        
                       
@@ -153,12 +124,16 @@
                 </div>
             </div>
             <hr>
+
+            <form method="POST" action="">{% csrf_token %}
+            <input type="hidden" name="action" id="item_action" value="add_item" />
+            <input type="hidden" name="item_edit_id" id="id_edit_item" />
             <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Item</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                        <input type="text"  class="w-p-100 inv-in" name="item_name" id="id_item_name">
                       </div>
                 </div>
 
@@ -168,7 +143,7 @@
                     <div class="model-input-name">Item code</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                        <input type="text" id="id_item_code"  class="w-p-100 inv-in" name="item_code" value="{{item_code}}">
                       </div>
                 </div>
 
@@ -177,28 +152,56 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Category</div>
 
-                    <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="attributes">
-                      </div>
+                    <select class="minimal" name="item_category" id="id_category" required>
+                        <option value="">--Select Category--</option>
+                        {% for category in categories %}
+                        <option value="{{category.id}}">{{category.name}}</option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="row mt-20 segment_dropdown">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Segment</div>
+
+                    <select class="minimal" name="item_segment" id="id_segment">
+                        <option value="">--Select Segment--</option>
+                    
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="row mt-20 line_dropdown">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Line</div>
+
+                    <select class="minimal" name="item_line" id="id_line">
+                        <option value="">--Select Line--</option>
+                    
+                    </select>
                 </div>
 
             </div>
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Quantity</div>
+                    <div class="model-input-name">Description</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="attributes">
-                      </div>
+                    <textarea id="id_item_description" name="item_description"></textarea>
+                    </div>
                 </div>
 
             </div>
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Unit Price</div>
+                    <div class="model-input-name">Reserve</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                        <input type="text"  class="w-p-100 inv-in" name="item_reserve" id="id_item_reserve">
                       </div>
                 </div>
 
@@ -207,26 +210,22 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Status</div>
 
-                    <select id="id_payment" class="minimal">
-                        <option  ></option>
-                        <option  >Active</option>
-                        <option value="Post Paid">Inactive</option>
+                    <select id="item_status_id" name="item_status" class="minimal">
+                        <option value="True" selected>Active</option>
+                        <option value="False">Inactive</option>
 
                     </select>
                 </div>
 
             </div>
             
-    
-            
-
-
-          
+  
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button" >Submit</button>
+            <button class="sent-button inventory-form-btn" type="submit" >Submit</button>
                         <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
         </div>
+        </form>
     </div>
     <div class="modal fade" id="deleteModel" role="dialog">
         <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
@@ -248,11 +247,15 @@
                
                 <div class="row">
                     <div class="col-md-12 text-center">
+                        <form method="POST" action="" >{% csrf_token %}
+                        <input type="hidden" name="action" value="delete_item" id="delete_item_id" />
+                        <input type="hidden" name="item_id" id="id_item" />
                         <div class="cancel-model-content">
                             <button class="sent-button" >Delete</button>
                             <button data-dismiss="modal" class="view-button">Cancel</button>
                           
                         </div>
+                        </form>
                     </div>
     
                 </div>
@@ -268,15 +271,19 @@
 {% block javascript %}
 
 <script>
-
-
+    $(document).ready(function(){
+        $('.segment_dropdown').hide();
+        $('.line_dropdown').hide();
+    })
 
     function openNavAddStore(d) {
     if(d == 'add'){
             $("#itemHead").text("Add Item");
+            $('.inventory-form-btn').text('Add');
         }
         if(d == 'edit'){
             $("#itemHead").text("Edit Inventory");
+            $('.inventory-form-btn').text('Update');
         }
         if(screen.width<= 600){
             document.getElementById("addStore").style.width = "100%";
@@ -289,6 +296,118 @@
     }
     function closeNavAddStore() {
         document.getElementById("addStore").style.width = "0";
+    }
+
+    
+    async function getsegments(category_id){
+         var result = await _get('api/inventory-segments/?category_id='+category_id);
+         $('#id_segment').find('option').remove();
+         $('#id_line').find('option').remove();
+         if(result.status == 200){
+             console.log(result.data.inventory_segment,"stat")
+            if (result.data.inventory_segment.length > 0){
+                $('#id_segment').find('option').remove();
+                $('#id_segment').append('<option value="">--Select Segment--</option>')
+                $('#id_segment').attr("required",true);
+                $.each(result.data.inventory_segment,function(key,value){
+                    console.log(key.id,value.id,"stat")
+                        $('#id_segment').append('<option value='+value.id+'>'+value.name+'</option>')
+                })
+
+                $('.segment_dropdown').show();
+            }else{
+                showNotification('No Segments','error')
+            }
+            
+         }else{
+             $('#id_segment').attr("required",false);
+            showNotification('Something went wrong','error')
+         }
+    }
+
+    async function getlines(segment_id){
+         var result = await _get('api/inventory-lines/?segment_id='+segment_id);
+         
+         if(result.status == 200){
+             console.log(result.data.inventory_line,"stat")
+            if (result.data.inventory_line.length > 0 ){
+                $('#id_line').find('option').remove();
+                $('#id_line').append('<option value="">--Select Line--</option>')
+                $('#id_line').attr("required",true);
+                $.each(result.data.inventory_line,function(key,value){
+                    console.log(key.id,value.id,"stat")
+                        $('#id_line').append('<option value='+value.id+'>'+value.name+'</option>')
+                })
+
+                $('.line_dropdown').show();
+            }else{
+                $('#id_line').attr("required",false);
+                showNotification('No Lines','error')
+            }
+            
+         }else{
+            showNotification('Something went wrong','error')
+         }
+    }
+    
+
+    $('#id_category').change(function(){
+        var category_id = $('#id_category').val();
+        console.log(category_id,"cid")
+        getsegments(category_id);
+        $('.line_dropdown').hide();
+        $('#id_line').attr("required",false);
+    })
+
+    $('#id_segment').change(function(){
+        var segment_id = $('#id_segment').val();
+        console.log(segment_id,"cid")
+        getlines(segment_id);
+    })
+
+    
+
+    //edit attribute
+    $('.edit-item').click(async function(){
+        $('#id_edit_item').val($(this).data('itemid'));
+        $('#item_action').val('edit_item');
+        $('#id_item_name').val($(this).data('itemname'));
+        $('#id_item_code').val($(this).data('itemcode'));
+        $('#id_item_reserve').val($(this).data('itemreserve'));
+        $('#id_item_description').val($(this).data('itemdescription'));
+
+       await getsegments($(this).data('itemcategory'));
+       await getlines($(this).data('itemsegment'));
+        
+        document.getElementById("id_category").value = $(this).data('itemcategory');
+        document.getElementById("id_line").value = $(this).data('itemline');
+        document.getElementById("id_segment").value = $(this).data('itemsegment');
+        
+        document.getElementById("id_item_status").value = $(this).data('itemstatus');
+
+        $('.item-form-btn').text('Update');
+
+    })
+
+    
+    //delete item
+    $('.delete-item').click(function(){
+        $('#id_item').val($(this).data('itemid'));
+    })
+
+    function set_params_go(args)
+    {
+    var url='{% url 'inventory:inventory-inv' %}';
+    var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),
+    };
+    for(key in args) 
+        params[key]=args[key];
+    var query='';
+    for(key in params)
+        if(params[key]) 
+            query+='&'+key+'='+params[key].toString();
+    query=query.replace('&','?');
+    window.location.href=url+query;  
     }
 </script>
 {% endblock %}
