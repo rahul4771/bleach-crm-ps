@@ -482,17 +482,18 @@ const app=  new Vue({
           }
             axios.get(this.url+"/agent/cleaningcallendar?cleaning_callendar_date="+this.cleaningDate).then((response) => {
                 this.slots = response.data;
-                
                 for(var j=0;j<this.slots.appoved_cleanings.length;j++){
 
                   this.combineSlots.push({type:'approved',class:'onetime-cleaning-status-bg',slots:this.slots.appoved_cleanings[j]})
                   
                   }
-                  for(var i=0;i<this.slots.notapproved_cleanings.length;i++){
+                for(var i=0;i<this.slots.notapproved_cleanings.length;i++){
 
-                    this.combineSlots.push({type:'not approved',class:'subscription-cleaning-bg',slots:this.slots.notapproved_cleanings[i]})
+                  this.combineSlots.push({type:'not approved',class:'subscription-cleaning-bg',slots:this.slots.notapproved_cleanings[i]})
 
-                  }
+                }
+                
+                 
                 for(var k=0;k<this.slots.followup_cleanings.length;k++){
                     var slot=this.slots.followup_cleanings[k]
                     //this.slots.followup_cleanings[k]['cleaning_hours']=this.slots.followup_cleanings[k].follow_up.cleaning_hours
@@ -1344,28 +1345,29 @@ const app=  new Vue({
             }*/
             var max=0
             var rows=[]
-            
+            var maxrow=0
             var maxslots=[]
             for(var i=0;i<slots.length;i++){
-              maxslots.push(this.slot[slots[i]].slots.length)
-              if(this.slot[slots[i]].slots.length>max){
-                max=this.slot[slots[i]].slots.length
+              maxslots.push(this.slot[slots[i]].slots.length) // 7
+             // if(this.slot[slots[i]].slots.length>max){
+                max=this.slot[slots[i]].slots.length //max=7
                 for(var j=0;j<max;j++){
-                  rows.push(this.slot[slots[i]].slots[j].row)
+                  rows.push(this.slot[slots[i]].slots[j].row) //row=9
                 }
 
-              }
+             // }
             }
             
           
             if(rows.length>0){
-              if(max<(Math.max(...rows)+1)){
-                max=Math.max(...rows)+1
-              }
+             // if(max<(Math.max(...rows)+1)){
+                maxrow=Math.max(...rows)+1
+              //}
+              
             
             }
            
-            return max
+            return maxrow
           },
           startChecker(start,end,hour){
               start=start.split(':')[0]
