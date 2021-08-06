@@ -1335,34 +1335,27 @@ const app=  new Vue({
            
           },
           setRow(slots){
-           /* var max=this.slot[slots[0]].slots.length
-            var rows =[]
-            if(max>0)
-            {
-              for(var j=0;j<max;j++){
-                rows.push(this.slot[slots[0]].slots[j].row)
-              }
-            }*/
+           
             var max=0
             var rows=[]
             var maxrow=0
             var maxslots=[]
             for(var i=0;i<slots.length;i++){
-              maxslots.push(this.slot[slots[i]].slots.length) // 7
-             // if(this.slot[slots[i]].slots.length>max){
-                max=this.slot[slots[i]].slots.length //max=7
+              maxslots.push(this.slot[slots[i]].slots.length) 
+             
+                max=this.slot[slots[i]].slots.length 
                 for(var j=0;j<max;j++){
-                  rows.push(this.slot[slots[i]].slots[j].row) //row=9
+                  rows.push(this.slot[slots[i]].slots[j].row) 
                 }
 
-             // }
+            
             }
             
           
             if(rows.length>0){
-             // if(max<(Math.max(...rows)+1)){
+           
                 maxrow=Math.max(...rows)+1
-              //}
+              
               
             
             }
