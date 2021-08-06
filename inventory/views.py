@@ -200,8 +200,86 @@ class InventoryBundle(IsInventoryAdmin,View):
         return render(request,'inventory/bundle.html',{})
 
 class InventoryItems(IsInventoryAdmin,View):
-    def get(self,request):
-        return render(request,'inventory/item.html',{})
+    def get(self,request,item_id):
+        inventory_item = InventoryItem.objects.get(id=item_id)
+        categories = Category.objects.all()
+        item_units = ItemUnit.objects.all()
+
+        units       = ItemUnit.objects.all()
+        unit_latest  = units.last()
+        if unit_latest:
+            code_number  =  int(re.findall(r'(\d+)', unit_latest.unit_code)[0]) + 1
+            new_unit_code = 'UNIT'+str(code_number)
+        else:
+            new_unit_code = 'UNIT9001'
+
+        return render(request,'inventory/item.html',{"inventory_item":inventory_item,"categories":categories,"item_units":item_units,"new_unit_code":new_unit_code})
+
+    def post(self,request,item_id):
+        action =request.POST.get('action')
+
+        if action == 'edit_item_details':
+            category_id = request.POST.get('item_category')
+            segment_id = request.POST.get('item_segment')
+            line_id = request.POST.get('item_line')
+            print(category_id,segment_id,line_id,"ids")
+
+            if category_id:
+                category = Category.objects.get(id=int(category_id))
+            else:
+                category = None
+
+            if segment_id:
+                segment = Segment.objects.get(id=int(segment_id))
+            else:
+                segment = None
+
+            if line_id:
+                line = Line.objects.get(id=int(line_id))
+            else:
+                line = None
+
+            item = InventoryItem.objects.get(id=item_id)
+
+            item.name = request.POST.get('item_name')
+            item.item_category = category
+            item.item_segment = segment
+            item.item_line = line
+            item.description = request.POST.get('description')
+            item.reserve_count = request.POST.get('reserve')
+            item.save()
+
+            messages.success(request,"Item Details Updated !")
+
+        if action == "add_unit":
+            
+            purchase_date = request.POST.get('purchase_date')
+            expiry_date = request.POST.get('expiry_date')
+            unit_price = request.POST.get('unit_price')
+            status = request.POST.get('unit_status')
+
+            item = InventoryItem.objects.get(id=item_id)
+
+            units       = ItemUnit.objects.all()
+            unit_latest  = units.last()
+            if unit_latest:
+                code_number  =  int(re.findall(r'(\d+)', unit_latest.unit_code)[0]) + 1
+                new_unit_code = 'UNIT'+str(code_number)
+            else:
+                new_unit_code = 'UNIT9001'
+
+            ItemUnit.objects.create(
+            item = item,
+            name='name',
+            unit_code = new_unit_code,
+            purchase_date = purchase_date,
+            expiry_date = expiry_date,
+            unit_price = unit_price,
+            status = status
+            )
+            messages.success(request,"Unit Added Successfully !")
+
+        return redirect('inventory:inventory-item',item_id)
 
 class InventorySupplier(IsInventoryAdmin,View):
     def get(self,request):
@@ -242,7 +320,7 @@ class InventoryInv(IsInventoryAdmin,View):
             line_id = request.POST.get('item_line')
             description = request.POST.get('item_description')
             reserve = request.POST.get('item_reserve')
-            # status     = request.POST.get('status')
+            status     = request.POST.get('item_status')
 
             if category_id:
                 category = Category.objects.get(id=int(category_id))
@@ -272,6 +350,43 @@ class InventoryInv(IsInventoryAdmin,View):
             InventoryItem.objects.create(item_category=category,item_segment=segment,item_line=line,name=name,item_code=new_item_code,description=description,reserve_count=reserve)
             messages.success(request,"Item Added Successfully !")
 
+        if action == 'edit_item':
+            print("edit")
+            name     = request.POST.get('item_name')
+            item_id = request.POST.get('item_edit_id')
+            category_id = request.POST.get('item_category')
+            segment_id = request.POST.get('item_segment')
+            line_id = request.POST.get('item_line')
+            description = request.POST.get('item_description')
+            reserve = request.POST.get('item_reserve')
+            status     = request.POST.get('item_status')
+
+            if category_id:
+                category = Category.objects.get(id=int(category_id))
+            else:
+                category = None
+
+            if segment_id:
+                segment = Segment.objects.get(id=int(segment_id))
+            else:
+                segment = None
+
+            if line_id:
+                line = Line.objects.get(id=int(line_id))
+            else:
+                line = None
+
+            item = InventoryItem.objects.get(id=int(item_id))
+            item.item_category = category
+            item.item_segment = segment
+            item.item_line = line
+            item.name = name
+            item.description = description
+            item.reserve_count   = reserve
+            item.status = status
+            item.save()
+            messages.success(request,"Item Updated Successfully !")
+        
         if action == 'delete_item':
             item_id = request.POST.get('item_id')
             InventoryItem.objects.get(id=int(item_id)).delete()
