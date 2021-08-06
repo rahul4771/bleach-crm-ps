@@ -74,7 +74,7 @@
     {% if section.dirt_level %}
     <div class="common-gray-text align-left"><label class="common-labels">Dirt Level</label> : <strong>{{section.dirt_level}}</strong></div>
     {% endif %}
-    <div class="common-gray-text align-left"><label class="common-labels">Size</label> : <strong>{{section.size}} {{section.unit}}</strong></div>
+    <div class="common-gray-text align-left"><label class="common-labels">Size</label> : <strong>{{section.size}} {% for price_range in price_ranges %}{% if price_range.name == section.size and price_range.service_type == cleaning_team_detail.order_scheduler.order_scheduler_book.service_type and  price_range.is_newkitchen == section.new_kitchen and price_range.is_highprice_facade == section.is_highprice_facade and price_range.is_highprice_window == section.is_highprice_window %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}}){% endif %}{% endfor %}</strong></div>
     {% if section.floor %}
     <div class="common-gray-text align-left"><label class="common-labels">Floors</label> : <strong>{{section.floor}}</strong></div>
     {% endif %}

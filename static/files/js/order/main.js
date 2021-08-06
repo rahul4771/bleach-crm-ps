@@ -452,8 +452,8 @@ const app = new Vue({
            progress:20,
            slotloader:false,
             services_list:[],
-        //  url:'https://my.bleachkw.com'
-          url:'http://localhost:8000'
+          url:'https://my.bleachkw.com'
+        //  url:'http://localhost:8000'
       // url:'https://test.bleach-kw.com'
             //url:'http://127.0.0.1:8000'
   },
@@ -480,6 +480,36 @@ const app = new Vue({
       
       
     })
+   },
+   salesadminCancelServiceOrder(){
+    var service_books=[]
+    var requester_id=$('#user_id').val()
+    for(var i=0;i<this.services_list.length;i++){
+      service_books.push(this.services_list[i].id)
+    }
+   axios.post(this.url+'/customer/service/cancellrequest/',{
+     service_books:service_books,
+     requester_id:requester_id
+   }).then(response=>{
+    $('#salesadmin-redirect').click()
+     
+     
+   })
+   },
+   bookingofficerCancelServiceOrder(){
+    var service_books=[]
+    var requester_id=$('#user_id').val()
+    for(var i=0;i<this.services_list.length;i++){
+      service_books.push(this.services_list[i].id)
+    }
+   axios.post(this.url+'/customer/service/cancellrequest/',{
+     service_books:service_books,
+     requester_id:requester_id
+   }).then(response=>{
+    $('#bookingofficer-redirect').click()
+     
+     
+   })
    },
    removeAll(){
      

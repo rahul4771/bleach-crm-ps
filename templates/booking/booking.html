@@ -253,7 +253,7 @@
     v-on:change="oneTimeDateChange()" class="mt-2" :min="today" ></v-date-picker>
   </div>
   <div class="col-md-8 "  >
-    <!-- <div  v-for="(sdate,sdindex) in one_time_slots">
+     <div  v-for="(sdate,sdindex) in one_time_slots">
      <div v-if="sdate.slots.length>0"><b>Date : <% sdindex %></b></div> 
      <v-chip
     v-for="(st,stindex) in sdate.slots"
@@ -262,23 +262,23 @@
      
     >
   
-   <span v-if="parsedTimeSlots[st-1]"> <% parsedTimeSlots[st-1].start_time+' - '+parsedTimeSlots[st-1].end_time %></span> 
+   <span v-if="slotFormat[st]"> <% slotFormat[st].start_time+' - '+slotFormat[st].end_time %></span> 
     </v-chip>
-  </div> -->
+  </div> 
     <div class="mt-4">
       Select  Slots
     </div>
 <div class="row mt-2" style="margin:0 !important">
   <div class="col-md-4" v-for="(slot,sindex) in parsedTimeSlots" v-bind:key="sindex" v-if="one_time_slots[oneTimeDateSelected] && !slot_loader">
     <div class="time-slot duration text-center p-2" 
-   @click="addOneTimeSlot(slot.start_time,slot.end_time,(sindex+1))" v-if='!one_time_slots[oneTimeDateSelected].slots.includes((sindex+1)) && checkOneTimeSlotStat((sindex+1))'>
+   @click="addOneTimeSlot(slot.start_time,slot.end_time,(sindex+1))" v-if='!checkOneTimeSlot(slot.start_time,slot.end_time,(sindex+1)) && checkOneTimeSlotStat((sindex+1))'>
      <% slot.start_time+' - '+ slot.end_time %>
     </div>
 
-    <div class="time-slot duration-active text-center p-2"  v-if='one_time_slots[oneTimeDateSelected].slots.includes((sindex+1))' @click="removeOneTimeSlot((sindex+1))">
+    <div class="time-slot duration-active text-center p-2"  v-if='checkOneTimeSlot(slot.start_time,slot.end_time,(sindex+1))' @click="removeOneTimeSlot((sindex+1))">
       <% slot.start_time+' - '+ slot.end_time %>
     </div>
-    <div class="time-slot duration-inactive text-center p-2"  v-if='!checkOneTimeSlotStat((sindex+1)) && !one_time_slots[oneTimeDateSelected].slots.includes((sindex+1))'>
+    <div class="time-slot duration-inactive text-center p-2"  v-if='!checkOneTimeSlotStat((sindex+1)) && !checkOneTimeSlot(slot.start_time,slot.end_time,(sindex+1))'>
       <% slot.start_time+' - '+ slot.end_time %>
     </div>
   </div>
