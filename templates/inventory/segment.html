@@ -270,12 +270,16 @@
                 </div>
             </div>
             <hr>
+            <form method="POST" action="" >{% csrf_token %}
+            <input type="hidden" name="action" id="segment_action_id" value="add_line" />
+            <input type="hidden" name="line_segment_id" id="line_segment_id" />
+            <input type="hidden" name="edit_line_id" id="id_edit_line" />
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Line Name</div>
+                    <div class="model-input-name" >Line Name</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                        <input type="text"  class="w-p-100 inv-in" name="line_name" id="line_name_id">
                       </div>
                 </div>
 
@@ -284,10 +288,9 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Status</div>
 
-                    <select class="minimal">
-                        <option  ></option>
-                        <option  >Active</option>
-                        <option value="Post Paid">Inactive</option>
+                    <select class="minimal" id="line_status_id" name="line_status">
+                        <option value="True" selected>Active</option>
+                        <option value="False">Inactive</option>
 
                     </select>
                 </div>
@@ -299,9 +302,10 @@
           
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button" >Submit</button>
+            <button class="sent-button line-form-btn" type="submit" >Submit</button>
                         <button data-dismiss="modal" onclick="closeNavAddLine()" class="view-button">Cancel</button>
         </div>
+        </form>
     </div>
     <div class="modal fade" id="deleteModel" role="dialog">
         <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
@@ -324,8 +328,8 @@
                 <div class="row">
                     <div class="col-md-12 text-center">
                         <form method="POST" action="" >{% csrf_token %}
-                        <input type="hidden" name="action" value="delete_segment" />
-                        <input type="hidden" name="segment_id" id="id_segment" />
+                        <input type="hidden" id="action_delete_id" name="action" value="delete_segment" />
+                        <input type="hidden" name="object_id" id="object_id" />
                         <div class="cancel-model-content">
                             <button class="sent-button" type="submit" >Delete</button>
                             <button data-dismiss="modal" class="view-button">Cancel</button>
@@ -346,6 +350,15 @@
 {% block javascript %}
 
 <script>
+    $(document).ready(function(){
+        {% for segment in category.segments %}
+        {% if forloop.first %}
+        console.log({{segment.id}},"lop")
+        getlines({{segment.id}});
+        {% endif %}
+        {% endfor %}
+    })
+
     function showDrawer(d){
         console.log(d)
         if(d == 'add'){
@@ -378,11 +391,13 @@
         console.log('cl')
         if(d == 'add'){
             $("#lineHead").text("Add Line");
+            $('.line-form-btn').text('Add');
            
         }
         if(d == 'edit'){
             
             $("#lineHead").text("Edit Line");
+            $('.line-form-btn').text('Edit');
            
         }
         if(screen.width<= 600){
@@ -397,6 +412,11 @@
     function openNavAddLine2() {
         
             $("#lineHead").text("Edit Line");
+            $('.line-form-btn').text('Edit');
+
+            $('#id_edit_line').val($(this).data('lineid'));
+            $('#line_name_id').val($(this).data('linename'));
+            $('#line_status_id').val($(this).data('linestatus'));
       
         if(screen.width<= 600){
             document.getElementById("addLine").style.width = "100%";
@@ -412,8 +432,15 @@
     }
 
     $('.delete_segment').click(function(){
-        $('#id_segment').val($(this).data('segmentid'));
+        $('#object_id').val($(this).data('segmentid'));
+        $('#action_delete_id').val('delete_segment');
     })
+
+    //Delete line
+    function deleteLine(lineid){
+        $('#object_id').val(lineid);
+        $('#action_delete_id').val('delete_line');
+    }
 
     $('.edit_segment').click(function(){
         $('#id_edit_segment').val($(this).data('segmentid'));
@@ -425,6 +452,15 @@
         $('#id_edit_segment').val($(this).data('segmentid'));
         $('#name_segment').val('');
         $('#status_segment').val('');
+    })
+
+    $('.line_edit').click(function(){
+        console.log($(this).data('linename'),"lopz")
+        $('#id_edit_line').val($(this).data('lineid'));
+        $('#line_name_id').val($(this).data('linename'));
+        $('#line_status_id').val($(this).data('linestatus'));
+
+        openNavAddLine2();
     })
 
     function set_params_go(args)
@@ -442,17 +478,21 @@
     window.location.href=url+query;  
     }
 
+    //get lines using api
     async function getlines(segment_id){
-        
+
+        $('#line_segment_id').val(segment_id); //adding value to hidden input for adding line
+
          var result = await _get('api/inventory-lines/?segment_id='+segment_id);
          if(result.status == 200){
-            if (result.data.inventory_line !== ''){
+            if (result.data.inventory_line.length > 0){
+                $(".line_table tr:not(:first)").remove(); 
                 var edit = "edit";
                 $.each(result.data.inventory_line,function(key,value){
-                        $('.line_table').append('<tr><td>'+value.name+'</td><td><button class="inv-plan-img-btn mr-5" onclick="openNavAddLine2()" data-lineid='+value.id+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
+                        $('.line_table').append('<tr><td>'+value.name+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavAddLine2()" data-lineid='+value.id+' data-linename='+value.name+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteLine('+value.id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
                 })
             }else{
-                $(".line_table tr").remove(); 
+                $(".line_table tr:not(:first)").remove(); 
             }
          }else{
             showNotification('Something went wrong','error')

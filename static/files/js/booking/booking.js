@@ -764,7 +764,7 @@ building_warning:false
               this.multiServicesBill[this.schedule_serviceTypes_selected[j]].schedule_details[count+1]={
                 
                 "date":date,
-               "time":this.parsedTimeSlots[parseInt(min_slot)-1].start_time,
+               "time":this.slotFormat[parseInt(min_slot)].start_time,
               "no_of_cleaners":this.selectedDuration.cleaners,
                "cleaning_hours":this.selected_onetime_slots[k].slots.length*2
               }
@@ -970,7 +970,7 @@ building_warning:false
           var min=Math.min(...slots)
           var max=Math.max(...slots)
           console.log("aray:"+slots+"min is"+min+"max is"+max)
-          var combined = this.parsedTimeSlots[parseInt(min)-1].start_time+' - '+this.parsedTimeSlots[parseInt(max)-1].end_time
+          var combined = this.slotFormat[parseInt(min)].start_time+' - '+this.slotFormat[parseInt(max)].end_time
           return combined
         },
         findCustomVisits(){
@@ -2038,15 +2038,32 @@ console.log(response)
   },
   addOneTimeSlot(start,end,slot){
    this.onetimerender=false
-  /* var currSlot=''
+  var currSlot=''
    for(var i in this.slotFormat){
      if(this.slotFormat[i].start_time==start){
       currSlot=i
       break;
      }
-   }*/
-    this.one_time_slots[this.oneTimeDateSelected].slots.push(slot)
+   }
+    this.one_time_slots[this.oneTimeDateSelected].slots.push(currSlot)
     this.onetimerender=true
+},
+checkOneTimeSlot(start,end,slot){
+  
+  var currSlot=''
+   for(var i in this.slotFormat){
+     if(this.slotFormat[i].start_time==start){
+      currSlot=i
+      break;
+     }
+   }
+   if(this.one_time_slots[this.oneTimeDateSelected].slots.includes(currSlot)){
+     return true
+   }
+   else{
+     return false
+   }
+  
 },
 removeOneTimeSlot(slot){
   this.onetimerender=false

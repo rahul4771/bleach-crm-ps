@@ -78,7 +78,7 @@
                             </td>
                             <td>
                                 <a href="/inventory/segment/"><a href="/inventory/segment/{{category.id}}/" target="_blank"<button class="inv-plan-btn" onclick="openNavaddSegment2()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="" > Add Segment</button></a>
-                                <button class="inv-plan-img-btn edit_category" onclick="showDrawer('edit')" data-categoryid="{{category.id}}" data-categoryname="{{category.name}}" data-categorystatus="{{category.status}}" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                <button class="inv-plan-img-btn edit_category" onclick="showDrawer('edit')" data-categoryid="{{category.id}}" data-categoryname="{{category.name}}" data-categorycode="{{category.category_code}}" data-categorystatus="{{category.status}}" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
                                 <button class="inv-plan-img-btn delete_category" data-categoryid="{{category.id}}" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
                             </td>
                         </tr>
@@ -158,7 +158,7 @@
                     <div class="model-input-name">Category Code</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="category_code" value="{{new_category_code}}" readonly>
+                        <input type="text"  class="w-p-100 inv-in" id="code_category"  name="category_code" value="{{new_category_code}}" readonly>
                       </div>
                 </div>
 
@@ -168,10 +168,8 @@
                     <div class="model-input-name">Status</div>
 
                     <select id="status_category" name="category_status" class="minimal">
-                        <option  ></option>
                         <option value="True" selected>Active</option>
-                        <option value="False" >Inactive</option>
-
+                        <option value="False">Inactive</option>
                     </select>
                 </div>
 
@@ -227,7 +225,6 @@
                     <div class="model-input-name">Status</div>
 
                     <select id="id_payment" class="minimal">
-                        <option  ></option>
                         <option  >Active</option>
                         <option value="Post Paid">Inactive</option>
 
@@ -372,7 +369,7 @@
         console.log("click")
         $('#id_edit_category').val($(this).data('categoryid'));
         $('#name_category').val('');
-        $('#status_category').val('');
+        document.getElementById("status_category").value = 'True';
         $('.category-form-btn').text('Add');
     })
     
@@ -382,7 +379,7 @@
         console.log($(this).data('categoryid'),$(this).data('categoryname'),"editc")
         $('#id_edit_category').val($(this).data('categoryid'));
         $('#name_category').val($(this).data('categoryname'));
-        
+        $('#code_category').val($(this).data('categorycode'));
         document.getElementById("status_category").value = $(this).data('categorystatus');
 
         $('.category-form-btn').text('Update');

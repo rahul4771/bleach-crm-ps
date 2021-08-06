@@ -172,8 +172,7 @@
     {% endif %}
 
 
-{% if approved_paybackdiscounts and ticket_count > 0 %}
-{% comment %} {% if approved_paybackdiscounts.paybackdiscount_count > 1 %} {% endcomment %}
+{% comment %} {% if approved_paybackdiscounts and ticket_count > 0 %}
     <div class="white-wrapper"><!--white-wrapper-->
     <h2 class="h2">Payback/Discount Task</h2>
     <table class="main-table">
@@ -185,7 +184,6 @@
         {% for followup in ticket.followup %}
         TKT{{followup.ticket_no}}
         {% endfor %}</td>
-        {% comment %} <td data-label="Ticket Types">{{ticket.ticket_types}}</td> {% endcomment %}
         <td data-label="Action">Payback/Discount</td>
         <td>{{paybackdiscount.investigation.order_schedule.order.evaluation.customer.name}}</td>
         <td>{{paybackdiscount.investigation.order_schedule.order.evaluation.customer.mobile_number}}</td>
@@ -200,8 +198,7 @@
     </tbody>
     </table>
     </div>
-    {% comment %} {% endif %} {% endcomment %}
-    {% endif %}
+    {% endif %} {% endcomment %}
 
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Cash Collection Requests</h2>
