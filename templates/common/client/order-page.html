@@ -1421,21 +1421,21 @@
                                                 {% if section.age %}
                                                 
                                                     <div class="col-md-2 col-xs-4 mt-10">Age</div>
-                                                    <div class="col-md-4 col-xs-8 mt-10">: <span class="c-text  ">{{section.age}}</span>
+                                                    <div class="col-md-4 col-xs-8 mt-10"> <span class="c-text  ">: {{section.age}}</span>
                                                     </div>
                                                 
                                                 {% endif %}
 
                                                
                                                     <div class="col-md-2 col-xs-4 mt-10">Size</div>
-                                                    <div class="col-md-4 col-xs-8 mt-10">: <span class="c-text  ">{{section.size}} {% for price_range in price_ranges %}{% if price_range.name == section.size and price_range.service_type == orderschedule.order_scheduler_book.service_type and  price_range.is_newkitchen == section.new_kitchen and price_range.is_highprice_facade == section.is_highprice_facade and price_range.is_highprice_window == section.is_highprice_window %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}}){% endif %}{% endfor %}</span>
+                                                    <div class="col-md-4 col-xs-8 mt-10"> <span class="c-text  ">: {{section.size}} {% for price_range in price_ranges %}{% if price_range.name == section.size and price_range.service_type == orderschedule.order_scheduler_book.service_type and  price_range.is_newkitchen == section.new_kitchen and price_range.is_highprice_facade == section.is_highprice_facade and price_range.is_highprice_window == section.is_highprice_window %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}}){% endif %}{% endfor %}</span>
                                                     </div>
                                                
 
                                                 {% if section.floor %}
                                               
                                                     <div class="col-md-2 col-xs-4 mt-10">Floor</div>
-                                                    <div class="col-md-4 col-xs-8 mt-10">: <span class="c-text  ">{{section.floor}}</span>
+                                                    <div class="col-md-4 col-xs-8 mt-10"> <span class="c-text  ">: {{section.floor}}</span>
                                                     </div>
                                                
                                                 {% endif %}
@@ -1443,7 +1443,7 @@
                                                 {% if section.apartment %}
                                                
                                                     <div class="col-md-2 col-xs-4 mt-10">Apartments</div>
-                                                    <div class="col-md-4 col-xs-8 mt-10">: <span class="c-text  ">{{section.apartment}}</span>
+                                                    <div class="col-md-4 col-xs-8 mt-10"> <span class="c-text  ">: {{section.apartment}}</span>
                                                     </div>
                                                
                                                 {% endif %}
@@ -1451,7 +1451,7 @@
                                                 {% if section.room %}
                                                
                                                     <div class="col-md-2 col-xs-4 mt-10">Rooms</div>
-                                                    <div class="col-md-4 col-xs-8 mt-10">: <span class="c-text  ">{{section.room}}</span>
+                                                    <div class="col-md-4 col-xs-8 mt-10"> <span class="c-text  ">: {{section.room}}</span>
                                                     </div>
                                                
                                                 {% endif %}
@@ -1459,49 +1459,49 @@
                                                 {% if section.wall_type %}
                                               
                                                     <div class="col-md-2 col-xs-4 mt-10">Wall Type</div>
-                                                    <div class="col-md-4 col-xs-8 mt-10">: <span class="c-text  ">{{section.wall_type}}</span></div>
+                                                    <div class="col-md-4 col-xs-8 mt-10"> <span class="c-text  ">: {{section.wall_type}}</span></div>
                                                
                                                 {% endif %}
 
                                                 {% if section.ceiling_type %}
                                                
                                                     <div class="col-md-2 col-xs-4 mt-10">Celling Type</div>
-                                                    <div class="col-md-4 col-xs-8 mt-10">: <span class="c-text  ">{{section.ceiling_type}}</span></div>
+                                                    <div class="col-md-4 col-xs-8 mt-10"> <span class="c-text  ">: {{section.ceiling_type}}</span></div>
                                                
                                                 {% endif %}
 
                                                 {% if section.floor_type %}
                                                
                                                     <div class="col-md-2 col-xs-4 mt-10">Floor Type</div>
-                                                    <div class="col-md-4 col-xs-8 mt-10">: <span class="c-text  ">{{section.floor_type}}</span></div>
+                                                    <div class="col-md-4 col-xs-8 mt-10"> <span class="c-text  ">: {{section.floor_type}}</span></div>
                                                
                                                 {% endif %}
 
                                                 {% if section.material %}
                                                
                                                     <div class="col-md-2 col-xs-4 mt-10">Material</div>
-                                                    <div class="col-md-4 col-xs-8 mt-10">: <span class="c-text  ">{{section.material}}</span></div>
+                                                    <div class="col-md-4 col-xs-8 mt-10"> <span class="c-text  ">: {{section.material}}</span></div>
                                                
                                                 {% endif %}
 
                                                 {% if section.colour %}
                                                
                                                     <div class="col-md-2 col-xs-4 mt-10">Color</div>
-                                                    <div class="col-md-4 col-xs-8 mt-10">: <span class="c-text  ">{{section.colour}}</span></div>
+                                                    <div class="col-md-4 col-xs-8 mt-10"> <span class="c-text  ">: {{section.colour}}</span></div>
                                               
                                                 {% endif %}
 
                                                 {% if section.cause_of_stain %}
                                                
                                                     <div class="col-md-2 col-xs-4 mt-10">Cause of Stain</div>
-                                                    <div class="col-md-4 col-xs-8 mt-10">: <span class="c-text  ">{{section.cause_of_stain}}</span></div>
+                                                    <div class="col-md-4 col-xs-8 mt-10"> <span class="c-text  ">: {{section.cause_of_stain}}</span></div>
 
                                                 {% endif %}
 
                                                 {% if request.user.user_type != 'SENIORTEAMLEADER' %}
                                                
                                                     <div class="col-md-2 col-xs-4 mt-10">Cost</div>
-                                                    <div class="col-md-4 col-xs-8 mt-10">: <span class="c-text  ">{{section.section_cost|floatformat:'3'}} KD</span>
+                                                    <div class="col-md-4 col-xs-8 mt-10"> <span class="c-text  ">: {{section.section_cost|floatformat:'3'}} KD</span>
                                                     </div>
                                                
                                                 {% endif %}

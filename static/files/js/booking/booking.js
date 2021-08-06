@@ -2048,6 +2048,15 @@ console.log(response)
     this.one_time_slots[this.oneTimeDateSelected].slots.push(currSlot)
     this.onetimerender=true
 },
+resetOneTime(){
+  this.onetimerender=false
+  this.one_time_slots={}
+  this.one_time_slots[this.oneTimeDateSelected]={
+    slots:[]
+  }
+ 
+  this.onetimerender=true
+},
 checkOneTimeSlot(start,end,slot){
   
   var currSlot=''
@@ -3532,6 +3541,7 @@ try {
   selectDuration(duration) {
     duration.slots = duration.hours / 2;
     this.selectedDuration = duration;
+    this.resetOneTime()
     this.calcSlots()
     this.getMultipleSlots();
   },
