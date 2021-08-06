@@ -49,7 +49,9 @@ class InventoryItem(models.Model):
     name            =   models.CharField(max_length=100,blank=False,null=False)
     item_code       =   models.CharField(max_length=50,blank=False,null=False)
     description     =   models.TextField(max_length=1000,blank=True,null=True)
+    reserve_count   =   models.CharField(max_length=10,blank=True,null=True)
     status          =   models.BooleanField(default=True,blank=False,null=False)
+
     # created         =   models.DateTimeField(auto_now_add=True)
     def __unicode__(self):
         return str(self.name)

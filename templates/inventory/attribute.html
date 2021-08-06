@@ -22,7 +22,7 @@
                      
                         <div class="inv-input-container h-30">
                             <i class="fa fa-search inv-icon-input" aria-hidden="true"></i>
-                            <input type="text" placeholder="Search Attributes" class="inv-input w-250" name="attributes">
+                            <input type="text" placeholder="Search Attribute" id="search-bar" class="inv-input w-250" onchange ="set_params_go()" value="{{search_query|default_if_none:''}}" name="attributes">
                           </div>
                     
                     
@@ -566,6 +566,21 @@
          }else{
             showNotification('Something went wrong','error')
          }
+    }
+
+    function set_params_go(args)
+    {
+    var url='{% url 'inventory:inventory-attribute' %}';
+    var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),
+    };
+    for(key in args) 
+        params[key]=args[key];
+    var query='';
+    for(key in params)
+        if(params[key]) 
+            query+='&'+key+'='+params[key].toString();
+    query=query.replace('&','?');
+    window.location.href=url+query;  
     }
 </script>
 

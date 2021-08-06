@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.views import View
 from bleach_crm_ps.permissions import IsInventoryAdmin,IsInventoryAdminUser
-from inventory.models import Category,Segment,Line,Attribute,AttributeValue
+from inventory.models import Category,Segment,Line,Attribute,AttributeValue,InventoryItem,ItemUnit
 from django.contrib import messages
 import re
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -199,7 +199,7 @@ class InventoryBundle(IsInventoryAdmin,View):
     def get(self,request):
         return render(request,'inventory/bundle.html',{})
 
-class InventoryItem(IsInventoryAdmin,View):
+class InventoryItems(IsInventoryAdmin,View):
     def get(self,request):
         return render(request,'inventory/item.html',{})
 
@@ -213,7 +213,71 @@ class InventoryStore(IsInventoryAdmin,View):
 
 class InventoryInv(IsInventoryAdmin,View):
     def get(self,request):
-        return render(request,'inventory/inventory.html',{})
+        search = request.GET.get('search')
+
+        if search:
+            inventory_items       = InventoryItem.objects.filter(Q(name__icontains=search)|Q(item_code__icontains=search))
+        else:
+            inventory_items       = InventoryItem.objects.all()
+        
+        inventory_latest  = inventory_items.last()
+        if inventory_latest:
+            code_number  =  int(re.findall(r'(\d+)', inventory_latest.item_code)[0]) + 1
+            new_item_code = 'ITEM'+str(code_number)
+        else:
+            new_item_code = 'ITEM9001'
+
+        categories  = Category.objects.all()
+
+        return render(request,'inventory/inventory.html',{"item_code":new_item_code,"categories":categories,"items":inventory_items,"search_query":search,})
+
+    def post(self,request):
+        action =request.POST.get('action')
+
+        if action == 'add_item':
+            # category = Category.objects.get(id=int(category_id))
+            name     = request.POST.get('item_name')
+            category_id = request.POST.get('item_category')
+            segment_id = request.POST.get('item_segment')
+            line_id = request.POST.get('item_line')
+            description = request.POST.get('item_description')
+            reserve = request.POST.get('item_reserve')
+            # status     = request.POST.get('status')
+
+            if category_id:
+                category = Category.objects.get(id=int(category_id))
+            else:
+                category = None
+
+            if segment_id:
+                segment = Segment.objects.get(id=int(segment_id))
+            else:
+                segment = None
+
+            if line_id:
+                line = Line.objects.get(id=int(line_id))
+            else:
+                line = None
+
+            items    = InventoryItem.objects.all()
+        
+            item_latest  = items.last()
+            if item_latest:
+                code_number  =  int(re.findall(r'(\d+)', item_latest.item_code)[0]) + 1
+                new_item_code = 'ITEM'+str(code_number)
+            else:
+                new_item_code = 'ITEM9001'
+
+
+            InventoryItem.objects.create(item_category=category,item_segment=segment,item_line=line,name=name,item_code=new_item_code,description=description,reserve_count=reserve)
+            messages.success(request,"Item Added Successfully !")
+
+        if action == 'delete_item':
+            item_id = request.POST.get('item_id')
+            InventoryItem.objects.get(id=int(item_id)).delete()
+            messages.success(request,"Item Deleted Successfully !")
+
+        return redirect('inventory:inventory-inv')
 
 class InventoryOrder(IsInventoryAdmin,View):
     def get(self,request):
