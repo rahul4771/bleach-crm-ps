@@ -125,9 +125,29 @@ if(app.service_type=='Facade Cleaning'){
   {
     app.editSectionData.ceiling_type=app.sectionData.ceiling_type.split(',')
   }
-  if(app.sectionData.materials!="" && app.sectionData.materials!=null )
+  if(app.sectionData.material!="" && app.sectionData.material!=null )
   {
-    app.editSectionData.materials=app.sectionData.materials.split(',')
+    app.editSectionData.material=app.sectionData.material.split(',')
+  }
+  if(app.sectionData.age!="" && app.sectionData.age!=null )
+  {
+    app.editSectionData.age=app.sectionData.age.split(',')
+  }
+  if(app.sectionData.colour!="" && app.sectionData.colour!=null )
+  {
+    app.editSectionData.colour=app.sectionData.colour.split(',')
+  }
+  if(app.sectionData.age!="" && app.sectionData.age!=null )
+  {
+    app.editSectionData.age=app.sectionData.age.split(',')
+  }
+  if(app.sectionData.cause_of_stain!="" && app.sectionData.cause_of_stain!=null )
+  {
+    app.editSectionData.cause_of_stain=app.sectionData.cause_of_stain.split(',')
+  }
+  if(app.sectionData.age_of_stain!="" && app.sectionData.age_of_stain!=null )
+  {
+    app.editSectionData.age_of_stain=app.sectionData.age_of_stain
   }
   
   
@@ -333,6 +353,7 @@ const app = new Vue({
     currentServiceType:'',
     service_productivity:[],
     selected_size:{},
+    cause_of_stain:['INK MARK', 'HARD DUST', 'COFFEE & TEA SPILL', 'OIL','GREASE', 'PAINT', 'URINE', 'MILK SPILL', 'NO STAIN', 'OTHERS'],
     walltypes:["BRICKS","GLASS","CONCRETE","CERAMIC","GYPSUM","FABRIC","RUBBER","STONE","TERRAZO","STAINLESS","VINYL","WOODEN","OTHERS"],
   ceilingtypes:["WOODEN","GLASS","CONCRETE","CERAMIC","GYPSUM","FOAM","PLASTIC","FABRIC","RUBBER","STAINLESS","VENYL","OTHERS"],
   floortypes:["MARBLE","GLASS","STONE","CERAMIC","CONCRETE","BRICKS","WOODEN","TERRAZO","OTHERS"],
@@ -461,7 +482,7 @@ const app = new Vue({
            slotloader:false,
             services_list:[],
           url:'https://my.bleachkw.com'
-        //  url:'http://localhost:8000'
+       //   url:'http://localhost:8000'
       // url:'https://test.bleach-kw.com'
             //url:'http://127.0.0.1:8000'
   },
@@ -1178,6 +1199,26 @@ setTimeout(function() {
       if(this.editSectionData.ceiling_type.length>0){
         sectionData.ceiling_type=this.editSectionData.ceiling_type.join()   
       }
+      if(this.editSectionData.material){
+        if(this.editSectionData.material.length>0){
+          sectionData.material=this.editSectionData.material.join()   
+        }
+      }
+      if(this.editSectionData.cause_of_stain){
+      if(this.editSectionData.cause_of_stain.length>0){
+        sectionData.cause_of_stain=this.editSectionData.cause_of_stain.join()   
+      }
+    }
+    
+      if(this.editSectionData.age_of_stain){
+        sectionData.age_of_stain=this.editSectionData.age_of_stain   
+      }
+    
+    if(this.editSectionData.colour){
+      if(this.editSectionData.colour.length>0){
+        sectionData.colour=this.editSectionData.colour.join()   
+      }
+    }
       axios.post(this.url+'/customer/editorder/'+this.orderId,{
         "action_type":'edit_section',
         "evaluation_book__id":this.eval_book_id,
@@ -1346,11 +1387,26 @@ setTimeout(function() {
           if(this.service_type=='Upholstery Cleaning'){
            var type=""
             for(var j=0;j<this.sections.length;j++){
-              if(this.sections[j].size.includes('Seater')){
+              if(this.sections[j].size.includes('Seater')||this.sections[j].upholstery_type=='SOFA'){
                 type="SOFA"
                 //this.sections[j].size=this.this.sections[j].size.split(" ")[0]
-                this.sections[j].size=this.sections[j].size.split(" ")[0]
-                console.log("section size is "+this.sections[j].size.split(" ")[0])
+                if(this.sections[j].upholstery_type=='SOFA' && !this.sections[j].size.includes('Seater')){
+                  for(var i=0;i<this.service_size.length;i++){
+                    if(this.service_size[i].upholstery_type=="SOFA" && this.sections[j].size==this.service_size[i].name){
+                      
+                      this.sections[j].size=this.service_size[i].max_size
+
+                     
+                    }
+                  }
+                
+                }
+                else{
+                  this.sections[j].size=this.sections[j].size.split(" ")[0]
+                  console.log("section size is "+this.sections[j].size.split(" ")[0])
+                }
+                
+               
                 this.sections[j].upholstery_type="SOFA"
               }
               else{
@@ -1360,7 +1416,7 @@ setTimeout(function() {
               console.log("type is"+type)
               if(type=="CHAIR"){
                 for(var i=0;i<this.service_size.length;i++){
-                  if(this.service_size[i].upholstery_type=="SOFA" && this.sections[j].size==this.service_size[i].name){
+                  if(this.service_size[i].upholstery_type=="CHAIR" && this.sections[j].size==this.service_size[i].name){
                     
                     this.sections[j].size=this.service_size[i]
                    
