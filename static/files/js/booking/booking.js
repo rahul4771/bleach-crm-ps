@@ -556,6 +556,7 @@ available_slotes:[]
 
       },
       methods: {
+        
         resetAllData(){
           this.reset_building=false
           this.building_warning=false
@@ -2057,6 +2058,16 @@ resetOneTime(){
   }
  
   this.onetimerender=true
+},
+checkSlotSelection(){
+  for(var i in  this.one_time_slots){
+    if(this.one_time_slots[i].slots.length>0){
+      return true
+    
+    }
+    
+  }
+  return false
 },
 checkOneTimeSlot(start,end,slot){
   
