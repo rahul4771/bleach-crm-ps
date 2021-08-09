@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django_countries',
     'django_crontab',
     'rest_framework',
+    'rest_framework.authtoken',
     'user',
     'evaluator',
     'order',
