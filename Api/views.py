@@ -27,11 +27,15 @@ from dateutil.relativedelta import relativedelta
 import pandas as pd
 
 from datetime import date
+from django.contrib.auth import authenticate
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from rest_framework.response import Response 
 from rest_framework.status import HTTP_200_OK 
 from rest_framework import status
+from rest_framework.authentication import TokenAuthentication 
+from rest_framework.authtoken.models import Token
+
 
 # Create your views here.
 class ApiCheckSlote(APIView):
@@ -1796,3 +1800,46 @@ class InventoryValuesAPI(APIView):
 		print(value_serializer,"sed")	
 		response_dict['inventory_value'] = value_serializer
 		return Response(response_dict,HTTP_200_OK)
+
+
+###Team Leader Mobile app API'S
+from bleach_crm_ps.api_permissions import IsTeamInchargePermission
+
+class LoginAPI(APIView):  
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+	
+	def post(self,request): 
+		response_dict = {'success':False}  
+		
+		get_username  = request.data.get('username')
+		get_password  = request.data.get('password')
+          
+		user = authenticate(username=get_username,password=get_password)
+		
+		if user:
+			t, c= Token.objects.get_or_create(user=user)
+			response_dict['success']    = True
+			response_dict['token']      = t.key
+		else:
+			response_dict['reason']     = 'Invalid Credentials'
+        
+		return Response(response_dict, HTTP_200_OK)
+
+class TlHomeAPI(APIView):  
+	permission_classes        = (IsTeamInchargePermission)
+	authentication_classes    = (TokenAuthentication,)
+	
+	def get(self,request): 
+		response_dict = {'success':False}  
+        
+		return Response(response_dict, HTTP_200_OK)
+
+class TlCleanings(APIView):  
+	permission_classes        = (IsTeamInchargePermission)
+	authentication_classes    = (TokenAuthentication,)
+	
+	def get(self,request): 
+		response_dict = {'success':False}  
+        
+		return Response(response_dict, HTTP_200_OK)

@@ -122,7 +122,7 @@
     <h5>Callback Status</h5>
     <label for="favcity" style="width:100%;"> 
     <select name="callback_status" id="callback_status" onchange="set_params_go();"> 
-    <option value="" >ALL</option>
+    <option value="" {% if callback_status == '' %}selected{% endif %} >ALL</option>
     <option value="WAITING" {% if callback_status == 'WAITING' %}selected{% endif %}>WAITING</option>
     <option value="WILL_AGREE" {% if callback_status == 'WILL_AGREE' %}selected{% endif %}>WILL AGRREE</option>
     <option value="CALLBACK_LATER" {% if callback_status == 'CALLBACK_LATER' %}selected{% endif %}>CALLBACK LATER</option>
@@ -144,7 +144,7 @@
 {% comment %} <th data-hide="phone,tablet">Service Type</th> {% endcomment %}
 <th data-hide="phone">Customer Mobile</th>
 <th data-hide="phone">Service Type</th>
-<th data-hide="phone,tablet">Status</th>
+<th data-hide="phone,tablet">{% if request.user.user_type == 'ADMIN' %}Callback Status{% else %}Status{% endif %}</th>
 {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}<th class="align-center" data-hide="phone,tablet">Actions</th>{% endif %}
 <th data-hide="phone,tablet">Shortcuts</th>
 </tr>
@@ -166,13 +166,22 @@
 
     {% comment %} <td>{% for evaluation_detail in evaluation.details_evaluation %}{% if evaluation_detail.evaluator %}{{evaluation_detail.evaluator.name}}<br>{% else %}{{evaluation_detail.evaluation.call_attender.name}}{% endif %}{% endfor %}</td> {% endcomment %}
     
-    <td>{% if evaluation.quatation_status == 'REJECTED' %}<div {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'common_items:client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="d-flex "><div class="round-marker red-bg"></div><span>REJECTED</span></div>
-        {% elif evaluation.quatation_status == 'PENDING' %}<div {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'common_items:client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="d-flex "><div class="round-marker yellow-bg"></div><span>PENDING</span></div>
-        {% elif evaluation.quatation_status == 'EXPIRED' %}<div {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'common_items:client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="d-flex "><div class="round-marker orange-bg"></div><span>EXPIRED</span></div>
-        {% else %}
-        <div  class="d-flex "><div class="round-marker approved-not-paid-status-bg"></div><span>Approved-Not Paid</span></div>
-        {%endif%}
-    </td>
+    {% if request.user.user_type == 'ADMIN' %}
+      <td>
+      {% for order in evaluation.evaluationorder %}{% if order.callback_status == 'CALLBACK_LATER' %}<div class="d-flex "><div class="round-marker blue-bg"></div><span>CALLBACK LATER</span></div>{% endif %}{% endfor %}
+      {% for order in evaluation.evaluationorder %}{% if order.callback_status == 'WAITING' %}<div class="d-flex "><div class="round-marker yellow-bg"></div><span>WAITING</span></div>{% endif %}{% endfor %}
+      {% for order in evaluation.evaluationorder %}{% if order.callback_status == 'WILL_AGREE' %}<div class="d-flex "><div class="round-marker green-bg"></div><span>WILL AGREE</span></div>{% endif %}{% endfor %}
+      {% for order in evaluation.evaluationorder %}{% if order.callback_status == 'REJECTED' %}<div class="d-flex "><div class="round-marker red-bg"></div><span>REJECTED</span></div>{% endif %}{% endfor %}
+      </td>
+    {% else %}
+      <td>{% if evaluation.quatation_status == 'REJECTED' %}<div {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'common_items:client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="d-flex "><div class="round-marker red-bg"></div><span>REJECTED</span></div>
+          {% elif evaluation.quatation_status == 'PENDING' %}<div {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'common_items:client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="d-flex "><div class="round-marker yellow-bg"></div><span>PENDING</span></div>
+          {% elif evaluation.quatation_status == 'EXPIRED' %}<div {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'common_items:client-orderdetails' order.id %}"{% endfor %}{% else %}data-href="#"{% endif %} class="d-flex "><div class="round-marker orange-bg"></div><span>EXPIRED</span></div>
+          {% else %}
+          <div  class="d-flex "><div class="round-marker approved-not-paid-status-bg"></div><span>Approved-Not Paid</span></div>
+          {%endif%}
+      </td>
+    {% endif %}
 
     {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}
     <td class="align-center">
@@ -196,7 +205,7 @@
     {% endif %}
 
     <td class="align-center">
-      <div class="d-flex"><a class="d-flex dropdown-orders" {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}href="{% url 'common_items:client-orderdetails' order.id %}" target="_blank"{% endfor %}{% else %}href="#"{% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/><div class="ml-2 dropdown-text">View Order Details</div></a> {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}<div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="{% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}<div>{{order.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{order.payment_note_by|default_if_none:""}}</div>{% endfor %}{% endif %}"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-note="{{order.payment_notes|default_if_none:""}}" data-noteby="{{order.payment_note_by.name|default_if_none:""}}" data-orderid="{{order.id}}"{% endfor %}{% endif %} data-style="cursor:pointer"/> </div>{% endif %} </div>
+      <div class="d-flex"><a class="d-flex dropdown-orders" {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}href="{% url 'common_items:client-orderdetails' order.id %}" target="_blank"{% endfor %}{% else %}href="#"{% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/><div class="ml-2 dropdown-text">View Order Details</div></a> <div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="{% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}<div>{{order.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{order.payment_note_by.name|default_if_none:""}}</div>{% endfor %}{% endif %}"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}data-toggle="modal" data-target="#notesModalCenter"{% endif %} {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-note="{{order.payment_notes|default_if_none:""}}" data-noteby="{{order.payment_note_by.name|default_if_none:""}}" data-orderid="{{order.id}}"{% endfor %}{% endif %} data-style="cursor:pointer"/> </div> </div>
      </td>
 
     </tr>    
@@ -221,7 +230,7 @@
   <ul class="pagination">
      {% if evaluations.has_previous %}
     <li class="page-item">
-      <a class="page-link" href="?page={{ evaluations.previous_page_number }}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&tab=ORDERS" aria-label="Previous">
+      <a class="page-link" href="?page={{ evaluations.previous_page_number }}&search={{request.GET.search}}&order_status={{request.GET.order_status}}&callback_status={{request.GET.callback_status}}&no_of_entries={{request.GET.no_of_entries}}&tab=ORDERS" aria-label="Previous">
         <span aria-hidden="true">&laquo;</span>
         <span class="sr-only">Previous</span>
       </a>
@@ -236,14 +245,14 @@
     {% endif %}
     {% for pg in page_range %}
     {% if vus.number == pg %}
-            <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}&tab=ORDERS">{{pg}}</a></li>
+            <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}&order_status={{request.GET.order_status}}&callback_status={{request.GET.callback_status}}&no_of_entries={{request.GET.no_of_entries}}&tab=ORDERS">{{pg}}</a></li>
     {% else %}
-            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}&tab=ORDERS">{{pg}}</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&order_status={{request.GET.order_status}}&callback_status={{request.GET.callback_status}}&no_of_entries={{request.GET.no_of_entries}}&tab=ORDERS">{{pg}}</a></li>
     {% endif %}
     {% endfor %}
     {% if evaluations.has_next %}        
     <li class="page-item">
-      <a class="page-link" href="?page={{ evaluations.next_page_number}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}&tab=ORDERS" aria-label="Next">
+      <a class="page-link" href="?page={{ evaluations.next_page_number}}&search={{request.GET.search}}&order_status={{request.GET.order_status}}&callback_status={{request.GET.callback_status}}&no_of_entries={{request.GET.no_of_entries}}&tab=ORDERS" aria-label="Next">
         <span aria-hidden="true">&raquo;</span>
         <span class="sr-only">Next</span>
       </a>
@@ -319,7 +328,7 @@
       <th class="text-left" data-hide="phone,tablet">Customer</th>
       <th class="text-left" data-hide="phone,tablet">Mobile</th>
       <th class="text-left" data-hide="phone,tablet">Amount</th>
-      <th class="text-left" data-hide="phone,tablet">Payment Policy</th>
+      <th class="text-left" data-hide="phone,tablet">{% if request.user.user_type == 'ADMIN' %}Callback Status{% else %}Payment Policy{% endif %}</th>
       {% if payment_type == 'PENDING' %}<th data-hide="phone">Status</th>{% endif %}
       {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}<th class="align-center" data-hide="phone,tablet">Actions</th>{% endif %}
       <th class="text-left" data-hide="phone">Shortcuts</th>
@@ -336,9 +345,19 @@
         
         <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
         <td data-label="Total Amount">{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}KD</td>
+        
+        {% if request.user.user_type == 'ADMIN' %}
+        <td>
+        {% if invoice.callback_status == 'CALLBACK_LATER' %}<div class="d-flex "><div class="round-marker blue-bg"></div><span>CALLBACK LATER</span></div>{% endif %}
+        {% if invoice.callback_status == 'WAITING' %}<div class="d-flex "><div class="round-marker yellow-bg"></div><span>WAITING</span></div>{% endif %}
+        {% if invoice.callback_status == 'WILL_AGREE' %}<div class="d-flex "><div class="round-marker green-bg"></div><span>WILL AGREE</span></div>{% endif %}
+        {% if invoice.callback_status == 'REJECTED' %}<div class="d-flex "><div class="round-marker red-bg"></div><span>REJECTED</span></div>{% endif %}
+        </td>
+        {% else %}
         <td data-label="Payment Method">
         <div class="text-center d-flex "><div class="round-marker {% if invoice.evaluation.payment_method == 'PREPAID' %}prepaid-bg{% else %}postpaid-bg{% endif %}"></div><span>{{invoice.evaluation.payment_method}}</span></div>
         </td>
+        {% endif %}
 
         {% if payment_type == 'PENDING' %}
         <td data-label="" class="bold-text">
@@ -355,6 +374,7 @@
         </td>
         {% endif %}
 
+        {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}
         <td class="text-center">
 
           <div class="btn-group" id="actionDropdown">
@@ -374,8 +394,9 @@
           </div>
 
          </td>
+         {% endif %}
 
-        <td class="text-left" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> {% if request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'BOOKINGOFFICER' %}<div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" data-note="{{invoice.payment_notes|default_if_none:""}}" data-noteby="{{invoice.payment_note_by.name|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div>{% endif %} </div></td>
+        <td class="text-left" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> <div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by.name|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}data-toggle="modal" data-target="#notesModalCenter"{% endif %} data-note="{{invoice.payment_notes|default_if_none:""}}" data-noteby="{{invoice.payment_note_by.name|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div> </div></td>
         </tr>
 
         {% elif invoice.evaluation.payment_method == 'BREAKDOWN' %}
@@ -387,9 +408,19 @@
         
         <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
         <td data-label="Total Amount">{{invoice.evaluation.before_cleaning_amount|default_if_none:'0.000'|floatformat:'3'}}KD</td>
-        <td data-label="Payment Method">
-        <div class="text-center d-flex "><div class="round-marker breakdown-bg"></div><span>{{invoice.evaluation.payment_method}}</span></div>
-        </td>
+        
+        {% if request.user.user_type == 'ADMIN' %}
+          <td>
+          {% if invoice.callback_status == 'CALLBACK_LATER' %}<div class="d-flex "><div class="round-marker blue-bg"></div><span>CALLBACK LATER</span></div>{% endif %}
+          {% if invoice.callback_status == 'WAITING' %}<div class="d-flex "><div class="round-marker yellow-bg"></div><span>WAITING</span></div>{% endif %}
+          {% if invoice.callback_status == 'WILL_AGREE' %}<div class="d-flex "><div class="round-marker green-bg"></div><span>WILL AGREE</span></div>{% endif %}
+          {% if invoice.callback_status == 'REJECTED' %}<div class="d-flex "><div class="round-marker red-bg"></div><span>REJECTED</span></div>{% endif %}
+          </td>
+        {% else %}
+          <td data-label="Payment Method">
+          <div class="text-center d-flex "><div class="round-marker breakdown-bg"></div><span>{{invoice.evaluation.payment_method}}</span></div>
+          </td>
+        {% endif %}
 
         {% if payment_type == 'PENDING' %}
         <td data-label="" class="bold-text">{% if invoice.reminigdays <= 0 %}
@@ -399,6 +430,7 @@
         {% endif %}</td>
         {% endif %}
         
+        {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}
         <td class="text-center">
 
           <div class="btn-group" id="actionDropdown">
@@ -418,8 +450,9 @@
           </div>
 
          </td>
+         {% endif %}
 
-        <td class="text-left" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> {% if request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'BOOKINGOFFICER' %}<div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" data-note="{{invoice.payment_notes|default_if_none:""}}" data-noteby="{{invoice.payment_note_by.name|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div>{% endif %} </div></td>
+        <td class="text-left" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> <div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}data-toggle="modal" data-target="#notesModalCenter"{% endif %} data-note="{{invoice.payment_notes|default_if_none:""}}" data-noteby="{{invoice.payment_note_by.name|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div> </div></td>
         </tr>
         {% endif %}
 
@@ -430,14 +463,25 @@
         
         <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
         <td data-label="Total Amount">{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}KD</td>
-        <td data-label="Payment Method">
-        <div class="text-center d-flex "><div class="round-marker prepaid-bg"></div><span>{{invoice.evaluation.payment_method}}</span></div>
-        </td>
+        
+        {% if request.user.user_type == 'ADMIN' %}
+          <td>
+          {% if invoice.callback_status == 'CALLBACK_LATER' %}<div class="d-flex "><div class="round-marker blue-bg"></div><span>CALLBACK LATER</span></div>{% endif %}
+          {% if invoice.callback_status == 'WAITING' %}<div class="d-flex "><div class="round-marker yellow-bg"></div><span>WAITING</span></div>{% endif %}
+          {% if invoice.callback_status == 'WILL_AGREE' %}<div class="d-flex "><div class="round-marker green-bg"></div><span>WILL AGREE</span></div>{% endif %}
+          {% if invoice.callback_status == 'REJECTED' %}<div class="d-flex "><div class="round-marker red-bg"></div><span>REJECTED</span></div>{% endif %}
+          </td>
+        {% else %}
+          <td data-label="Payment Method">
+          <div class="text-center d-flex "><div class="round-marker prepaid-bg"></div><span>{{invoice.evaluation.payment_method}}</span></div>
+          </td>
+        {% endif %}
 
         {% if payment_type == 'PENDING' %}
         <td data-label="" class="bold-text"><h3 class="{% if invoice.delaydays >= 14 %}green-text-h3{% elif invoice.delaydays >= 8 and invoice.delaydays <= 13 %}yellow-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 6 %}orange-text-h3{% elif invoice.delaydays >= 0 and invoice.delaydays <= 3 %}red-text-h3{% endif %}">{{invoice.delaydays}}</h3> Days&#11014;</td>
         {% endif %}
 
+        {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}
         <td class="text-center">
 
           <div class="btn-group" id="actionDropdown">
@@ -457,8 +501,9 @@
           </div>
 
          </td>
+         {% endif %}
         
-        <td class="text-left" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> {% if request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'BOOKINGOFFICER' %}<div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" data-note="{{invoice.payment_notes|default_if_none:""}}" data-noteby="{{invoice.payment_note_by.name|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div>{% endif %} </div></td>
+        <td class="text-left" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> <div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by.name|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}data-toggle="modal" data-target="#notesModalCenter"{% endif %} data-note="{{invoice.payment_notes|default_if_none:""}}" data-noteby="{{invoice.payment_note_by.name|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div> </div></td>
         </tr>
         {% endif %}
 
@@ -471,15 +516,27 @@
         
         <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
         <td data-label="Total Amount">{{invoice.subscription_topay|default_if_none:'0.000'|floatformat:'3'}}KD</td>
-        <td data-label="Payment Method">
-        <div class="text-center d-flex "><div class="round-marker subscription-bg"></div><span>{{invoice.evaluation.payment_method}}</span></div>
-        </td>
+        
+        {% if request.user.user_type == 'ADMIN' %}
+          <td>
+          {% if invoice.callback_status == 'CALLBACK_LATER' %}<div class="d-flex "><div class="round-marker blue-bg"></div><span>CALLBACK LATER</span></div>{% endif %}
+          {% if invoice.callback_status == 'WAITING' %}<div class="d-flex "><div class="round-marker yellow-bg"></div><span>WAITING</span></div>{% endif %}
+          {% if invoice.callback_status == 'WILL_PAY' %}<div class="d-flex "><div class="round-marker green-bg"></div><span>WILL PAY</span></div>{% endif %}
+          {% if invoice.callback_status == 'FOLLOW_UP' %}<div class="d-flex "><div class="round-marker orange-bg"></div><span>FOLLOW UP</span></div>{% endif %}
+          {% if invoice.callback_status == 'LEGAL_ACTION' %}<div class="d-flex "><div class="round-marker red-bg"></div><span>LEGAL ACTION</span></div>{% endif %}
+          </td>
+        {% else %}
+          <td data-label="Payment Method">
+          <div class="text-center d-flex "><div class="round-marker subscription-bg"></div><span>{{invoice.evaluation.payment_method}}</span></div>
+          </td>
+        {% endif %}
 
         {% if payment_type == 'PENDING' %}
         <td data-label="" class="bold-text">
         <h3 class="{% if invoice.delaydays == 0 %}green-text-h3{% elif invoice.delaydays >= 1 and invoice.delaydays <= 3 %}yellow-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 7 %}orange-text-h3{% elif invoice.delaydays >= 8 %}red-text-h3{% endif %}">{{invoice.delaydays}}</h3> Days&#11014;</td>
         {% endif %}
 
+        {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}
         <td class="text-center">
 
           <div class="btn-group" id="actionDropdown">
@@ -499,8 +556,9 @@
           </div>
 
          </td>
+         {% endif %}
 
-        <td class="text-left" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> {% if request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'BOOKINGOFFICER' %}<div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" data-note="{{invoice.payment_notes|default_if_none:""}}" data-noteby="{{invoice.payment_note_by.name|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div>{% endif %} </div></td>
+        <td class="text-left" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> <div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by.name|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}data-toggle="modal" data-target="#notesModalCenter"{% endif %} data-note="{{invoice.payment_notes|default_if_none:""}}" data-noteby="{{invoice.payment_note_by.name|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div> </div></td>
         </tr>
         {% endif %}
         
@@ -524,7 +582,7 @@
   <ul class="pagination">
      {% if payments.has_previous %}
     <li class="page-item">
-      <a class="page-link" href="?page2={{ payments.previous_page_number }}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&tab=PAYMENTS" aria-label="Previous">
+      <a class="page-link" href="?page2={{ payments.previous_page_number }}&search={{request.GET.search}}&payment_type={{request.GET.payment_type}}&callback_status_payments={{request.GET.callback_status_payments}}&no_of_entries={{request.GET.no_of_entries}}&tab=PAYMENTS" aria-label="Previous">
         <span aria-hidden="true">&laquo;</span>
         <span class="sr-only">Previous</span>
       </a>
@@ -539,14 +597,14 @@
     {% endif %}
     {% for pg in page_range %}
     {% if vus.number == pg %}
-            <li class="page-item"><a class="page-link active" href="?page2={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}&tab=PAYMENTS">{{pg}}</a></li>
+            <li class="page-item"><a class="page-link active" href="?page2={{pg}}&search={{request.GET.search}}&payment_type={{request.GET.payment_type}}&callback_status_payments={{request.GET.callback_status_payments}}&no_of_entries={{request.GET.no_of_entries}}&tab=PAYMENTS">{{pg}}</a></li>
     {% else %}
-            <li class="page-item"><a class="page-link" href="?page2={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}&tab=PAYMENTS">{{pg}}</a></li>
+            <li class="page-item"><a class="page-link" href="?page2={{pg}}&search={{request.GET.search}}&payment_type={{request.GET.payment_type}}&callback_status_payments={{request.GET.callback_status_payments}}&no_of_entries={{request.GET.no_of_entries}}&tab=PAYMENTS">{{pg}}</a></li>
     {% endif %}
     {% endfor %}
     {% if payments.has_next %}        
     <li class="page-item">
-      <a class="page-link" href="?page2={{ payments.next_page_number}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}&tab=PAYMENTS" aria-label="Next">
+      <a class="page-link" href="?page2={{ payments.next_page_number}}&search={{request.GET.search}}&payment_type={{request.GET.payment_type}}&callback_status_payments={{request.GET.callback_status_payments}}&no_of_entries={{request.GET.no_of_entries}}&tab=PAYMENTS" aria-label="Next">
         <span aria-hidden="true">&raquo;</span>
         <span class="sr-only">Next</span>
       </a>

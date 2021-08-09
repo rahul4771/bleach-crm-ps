@@ -183,6 +183,19 @@ class InventoryAttribute(IsInventoryAdmin,View):
 
             messages.success(request,"Value Added Successfully !")
 
+        if action == 'edit_value':
+            value_id = request.POST.get('edit_value_id')
+            value_name   = request.POST.get('value_name')
+            value_status = request.POST.get('value_status')
+
+            value = AttributeValue.objects.get(id=int(value_id))
+
+            value.name = value_name
+            value.status = value_status
+            value.save()
+
+            messages.success(request,"Value Updated Successfully !")
+
         if action == 'delete_value':
             value_id = request.POST.get('object_id')
             AttributeValue.objects.get(id=int(value_id)).delete()
@@ -518,6 +531,19 @@ class InventorySegment(IsInventoryAdmin,View):
             Line.objects.create(category=segment.category,segment=segment,name=line_name,status=line_status)
 
             messages.success(request,"Line Added Successfully !")
+
+        if action == 'edit_line':
+            line_id = request.POST.get('edit_line_id')
+            line_name   = request.POST.get('line_name')
+            line_status = request.POST.get('line_status')
+
+            line = Line.objects.get(id=int(line_id))
+
+            line.name = line_name
+            line.status = line_status
+            line.save()
+
+            messages.success(request,"Line Updated Successfully !")
 
         if action == 'delete_line':
             line_id = request.POST.get('object_id')
