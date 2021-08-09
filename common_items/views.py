@@ -2346,39 +2346,45 @@ class CallBackList(IsAuthenticated,View):
 		if not no_of_entries:
 			no_of_entries = 20
 
-		page = request.GET.get('page',1) 
-		paginator=Paginator(evaluations,no_of_entries)
+		page1 = request.GET.get('page1',1) 
+		paginator1=Paginator(evaluations,no_of_entries)
 		try: 
-			evaluations=paginator.page(page) 
+			evaluations=paginator1.page(page1) 
 		except PageNotAnInteger:
-			evaluations=paginator.page(1)
+			evaluations=paginator1.page(1)
 		except EmptyPage:
-			evaluations = paginator.page(paginator.num_pages) 
+			evaluations = paginator1.page(paginator1.num_pages) 
 
-		page = request.GET.get('page2',1) 
-		paginator=Paginator(payments_list,no_of_entries)
+		page2 = request.GET.get('page2',1) 
+		paginator2=Paginator(payments_list,no_of_entries)
 		try: 
-			payments_list=paginator.page(page) 
+			payments_list=paginator2.page(page2) 
 		except PageNotAnInteger:
-			payments_list=paginator.page(1)
+			payments_list=paginator2.page(1)
 		except EmptyPage:
-			payments_list = paginator.page(paginator.num_pages)
+			payments_list = paginator2.page(paginator2.num_pages)
 
 		# Get the index of the current page
-		index = evaluations.number - 1  # edited to something easier without index
-		index = payments_list.number - 1
+		index1 = evaluations.number - 1  # edited to something easier without index
+		index2 = payments_list.number - 1
 		# This value is maximum index of your pages, so the last page - 1
-		max_index = len(paginator.page_range)
+		max_index1 = len(paginator1.page_range)
+		max_index2 = len(paginator2.page_range)
 		# You want a range of 7, so lets calculate where to slice the list
-		start_index = index - 3 if index >= 3 else 0
-		end_index = index + 3 if index <= max_index - 3 else max_index
+		start_index1 = index1 - 3 if index1 >= 3 else 0
+		end_index1 = index1 + 3 if index1 <= max_index1 - 3 else max_index1
+
+		start_index2 = index2 - 3 if index2 >= 3 else 0
+		end_index2 = index2 + 3 if index2 <= max_index2 - 3 else max_index2
 		# Get our new page range. In the latest versions of Django page_range returns 
 		# an iterator. Thus pass it to list, to make our slice possible again.
-		page_range = list(paginator.page_range)[start_index:end_index]	
-		entry_per_page=(evaluations.end_index())-(evaluations.start_index())+1
-		entry_per_page=(payments_list.end_index())-(payments_list.start_index())+1
+		page_range1 = list(paginator1.page_range)[start_index1:end_index1]
+		page_range2 = list(paginator2.page_range)[start_index2:end_index2]	
 
-		return render(request,"common/callback-list/callbacklist.html",{"tab":tab,"order_status":order_status,"payment_type":payment_type,"payments":payments_list,"callback_status":callback_status,"evaluations":evaluations,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries})
+		entry_per_page1=(evaluations.end_index())-(evaluations.start_index())+1
+		entry_per_page2=(payments_list.end_index())-(payments_list.start_index())+1
+
+		return render(request,"common/callback-list/callbacklist.html",{"tab":tab,"order_status":order_status,"payment_type":payment_type,"payments":payments_list,"callback_status":callback_status,"evaluations":evaluations,"search_query":search,"page_range1":page_range1,"page_range2":page_range2,"entry_per_page1":entry_per_page1,"entry_per_page2":entry_per_page2,"no_of_entries":no_of_entries})
 
 	def post(self,request):
 		order_id = request.POST.get('callback_orderid')
