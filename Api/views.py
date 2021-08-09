@@ -1827,7 +1827,7 @@ class LoginAPI(APIView):
 		return Response(response_dict, HTTP_200_OK)
 
 class TlHomeAPI(APIView):  
-	permission_classes        = (IsAuthenticated,IsTeamInchargePermission)
+	permission_classes        = (IsTeamInchargePermission)
 	authentication_classes    = (TokenAuthentication,)
 	
 	def get(self,request): 
@@ -1836,7 +1836,7 @@ class TlHomeAPI(APIView):
 		return Response(response_dict, HTTP_200_OK)
 
 class TlCleanings(APIView):  
-	permission_classes        = (IsAuthenticated,IsTeamInchargePermission)
+	permission_classes        = (IsTeamInchargePermission)
 	authentication_classes    = (TokenAuthentication,)
 	
 	def get(self,request): 
