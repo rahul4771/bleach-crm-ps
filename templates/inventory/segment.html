@@ -489,7 +489,7 @@
                 $(".line_table tr:not(:first)").remove(); 
                 var edit = "edit";
                 $.each(result.data.inventory_line,function(key,value){
-                        $('.line_table').append('<tr><td>'+value.name+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavAddLine2()" data-lineid='+value.id+' data-linename='+value.name+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteLine('+value.id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
+                        $('.line_table').append('<tr><td>'+value.name+'</td><td><button class="line_edit inv-plan-img-btn mr-5" data-lineid='+value.id+' data-linename='+value.name+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteLine('+value.id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
                 })
             }else{
                 $(".line_table tr:not(:first)").remove(); 
@@ -498,6 +498,15 @@
             showNotification('Something went wrong','error')
          }
     }
+
+    $('.line_edit').click(function(){
+        console.log($(this).data('linename'),"lopz")
+        $('#id_edit_line').val($(this).data('lineid'));
+        $('#line_name_id').val($(this).data('linename'));
+        $('#line_status_id').val($(this).data('linestatus'));
+
+        openNavAddLine2();
+    })
 </script>
 
 {% endblock %}
