@@ -1499,6 +1499,12 @@
                                                     <div class="col-md-4 col-xs-8 mt-10"> <span class="c-text  ">: {{section.cause_of_stain}}</span></div>
 
                                                 {% endif %}
+                                                {% if section.age_of_stain %}
+                                               
+                                                    <div class="col-md-2 col-xs-4 mt-10">Cause of Stain</div>
+                                                    <div class="col-md-4 col-xs-8 mt-10"> <span class="c-text  ">: {{section.age_of_stain}}</span></div>
+
+                                                {% endif %}
 
                                                 {% if request.user.user_type != 'SENIORTEAMLEADER' %}
                                                
