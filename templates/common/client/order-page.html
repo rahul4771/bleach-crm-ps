@@ -2656,12 +2656,36 @@
                                     </div>
                                 
                                 </div>
-
-                                <a v-if="all_val" href="{% url 'booking-officer:cancell-order' order.id %}" target="_blank"><button class="sent-button" type="button">Yes</button></a>
+                                <form method="post" action="" enctype= "multipart/form-data" id="duplicate_form_id" class="text-center" v-if="all_val">{% csrf_token %}
+                                    <input type="hidden" name="evaluation" id="evaluation_id" value="{{order.evaluation.id}}">
+                                    <input type="hidden" name="action_type" value="cancell_order">
+                                    
+                                   
+                                    <button class="sent-button mt-20" type="submit">Yes</button>
+                                   
+            
+                                    <button data-dismiss="modal" class="view-button mt-20">Cancel</button>
+                             </form><!--Content ends here-->
+                                <!-- <a v-if="all_val" href="{% url 'booking-officer:cancell-order' order.id %}" target="_blank"><button class="sent-button" type="button">Yes</button></a>-->
                                 <button v-else class="sent-button mt-20" type="submit" @click="bookingofficerCancelServiceOrder()" >Yes</button>
+                                <button data-dismiss="modal" class="view-button" v-if="!all_val">Cancel</button>
+
                                 <a  href="{% url 'booking-officer:cancell-book' order.evaluation.id %}" target="_blank" ><button class="sent-button" type="button" id="bookingofficer-redirect" style="display: none;">Yes</button></a>
-                            {% else %}
-                            <a href="{% url 'booking-officer:cancell-order' order.id %}" target="_blank"><button class="sent-button" type="button">Yes</button></a>
+
+                            {% else %} 
+                            <form method="post" action="" enctype= "multipart/form-data" id="duplicate_form_id" class="text-center" >{% csrf_token %}
+                                <input type="hidden" name="evaluation" id="evaluation_id" value="{{order.evaluation.id}}">
+                                <input type="hidden" name="action_type" value="cancell_order">
+                                
+                               
+                                <button class="sent-button mt-20" type="submit">Yes</button>
+                               
+        
+                                <button data-dismiss="modal" class="view-button mt-20">Cancel</button>
+                         </form>
+                       
+
+
                             {% endif %}
                         
                         {% elif request.user.user_type == 'SALESADMIN' %}
@@ -2678,14 +2702,35 @@
                                     </div>
                                 
                                 </div>
+                                <form method="post" action="" enctype= "multipart/form-data" id="duplicate_form_id" class="text-center" v-if="all_val">{% csrf_token %}
+                                    <input type="hidden" name="evaluation" id="evaluation_id" value="{{order.evaluation.id}}">
+                                    <input type="hidden" name="action_type" value="cancell_order">
+                                    
+                                   
+                                    <button class="sent-button mt-20" type="submit">Yes</button>
+                                   
+            
+                                    <button data-dismiss="modal" class="view-button mt-20">Cancel</button>
+                             </form><!--Content ends here-->
+                             <button v-else class="sent-button mt-20" type="submit" @click="salesadminCancelServiceOrder()">Yes</button>
+                             <button data-dismiss="modal" class="view-button" v-if="!all_val">Cancel</button>
 
-                                <a v-if="all_val" href="{% url 'bleach_salesadmin:cancell-order' order.id %}" target="_blank"><button class="sent-button" type="button">Yes</button></a>
-                                <button v-else class="sent-button mt-20" type="submit" @click="salesadminCancelServiceOrder()">Yes</button>
-                                <a  href="{% url 'bleach_salesadmin:cancell-book' order.evaluation.id %}" target="_blank" ><button class="sent-button" type="button" id="salesadmin-redirect" style="display: none;">Yes</button></a>
+                                <!-- <a v-if="all_val" href="{% url 'bleach_salesadmin:cancell-order' order.id %}" target="_blank"><button class="sent-button" type="button">Yes</button></a>-->
+                                
+                                <a  href="{% url 'bleach_salesadmin:cancell-book' order.evaluation.id %}" target="_blank" ><button class="sent-button" type="button" id="salesadmin-redirect" style="display: none;">Yes</button></a> 
                                 
                                 {% else %}
-                           
-                            <a href="{% url 'bleach_salesadmin:cancell-order' order.id %}" target="_blank" ><button class="sent-button" type="button" style="display: none;">Yes</button></a>
+                                <form method="post" action="" enctype= "multipart/form-data" id="duplicate_form_id" class="text-center" v-if="all_val">{% csrf_token %}
+                                    <input type="hidden" name="evaluation" id="evaluation_id" value="{{order.evaluation.id}}">
+                                    <input type="hidden" name="action_type" value="cancell_order">
+                                    
+                                   
+                                    <button class="sent-button mt-20" type="submit">Yes</button>
+                                   
+            
+                                    <button data-dismiss="modal" class="view-button mt-20">Cancel</button>
+                             </form><!--Content ends here-->
+                            <!-- <a href="{% url 'bleach_salesadmin:cancell-order' order.id %}" target="_blank" ><button class="sent-button" type="button" style="display: none;">Yes</button></a> -->
                             {% endif %}
 
                         
@@ -2701,10 +2746,21 @@
                             </div>
                            
                         </div>
-                        <button class="sent-button mt-20" type="submit" @click="cancelServiceOrder()">Yes</button>
+                        <form method="post" action="" enctype= "multipart/form-data" id="duplicate_form_id" class="text-center" v-if="all_val">{% csrf_token %}
+                            <input type="hidden" name="evaluation" id="evaluation_id" value="{{order.evaluation.id}}">
+                            <input type="hidden" name="action_type" value="cancell_order">
+                            
+                           
+                            <button class="sent-button mt-20" type="submit">Yes</button>
+                           
+    
+                            <button data-dismiss="modal" class="view-button mt-20">Cancel</button>
+                     </form><!--Content ends here-->
+                        <button class="sent-button mt-20" type="submit" @click="cancelServiceOrder()" v-else>Yes</button>
+                        <button data-dismiss="modal" class="view-button" v-if="!all_val">Cancel</button>
+
                         {% endif %}
 
-                        <button data-dismiss="modal mt-20" class="view-button">Cancel</button>
                         <!-- </form>Content ends here -->
                         
                     </div>

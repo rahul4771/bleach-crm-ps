@@ -281,6 +281,8 @@ const app = new Vue({
     console.log("book ids ae"+JSON.stringify(book_ids))
     for(var i=0;i<service.length;i++)
     {
+      if(!this.serviceExist($(book_ids[i]).val()))
+      {
       var serid=$(book_ids[i]).val()
       var status=$('#service_status_'+serid).val()
       this.services.push({
@@ -288,7 +290,7 @@ const app = new Vue({
         name:$(service[i]).text(),
         status:status
       })
-       
+    }
     }
     
    
@@ -458,11 +460,20 @@ const app = new Vue({
            slotloader:false,
             services_list:[],
           url:'https://my.bleachkw.com'
-        //  url:'http://localhost:8000'
+      //    url:'http://localhost:8000'
       // url:'https://test.bleach-kw.com'
             //url:'http://127.0.0.1:8000'
   },
   methods:{
+    serviceExist(id){
+      for(var k=0;k<this.services.length;k++){
+        if(this.services[k].id==id){
+          return true
+        }
+      }
+      return false
+
+    },
    checkAll(){
     if(this.all_val){
         this.services_list=this.services
