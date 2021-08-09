@@ -100,7 +100,7 @@
 
 <br>
   
-<div style="color: #666;">Show {{entry_per_page}} entries</div>
+<div style="color: #666;">Show {{entry_per_page1}} entries</div>
 <br>
 </div>
 <div>
@@ -144,7 +144,7 @@
 {% comment %} <th data-hide="phone,tablet">Service Type</th> {% endcomment %}
 <th data-hide="phone">Customer Mobile</th>
 <th data-hide="phone">Service Type</th>
-<th data-hide="phone,tablet">{% if request.user.user_type == 'ADMIN' %}Callback Status{% else %}Status{% endif %}</th>
+<th data-hide="phone,tablet">{% if request.user.user_type == 'ADMIN' or request.user.user_type == 'SALESADMIN' %}Callback Status{% else %}Status{% endif %}</th>
 {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}<th class="align-center" data-hide="phone,tablet">Actions</th>{% endif %}
 <th data-hide="phone,tablet">Shortcuts</th>
 </tr>
@@ -153,7 +153,12 @@
 
     {% for evaluation in evaluations %}
     <tr>
-    <td {% if evaluation.quatation_status == 'REJECTED' %}class="red-line"{% elif evaluation.quatation_status == 'PENDING' %}class="yellow-line"{% elif evaluation.quatation_status == 'EXPIRED' %}class="orange-line"{%else%}class="approved-not-paid-line"{%endif%} {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'common_items:client-orderdetails' order.id %}"{% endfor %}{% endif %}>{{evaluation.evaluation_id}}</td>    
+    {% if request.user.user_type == 'ADMIN' or request.user.user_type == 'SALESADMIN' %}
+      <td {% for order in evaluation.evaluationorder %}{% if order.callback_status == 'CALLBACK_LATER' %}class="blue-line"{% elif order.callback_status == 'WAITING' %}class="yellow-line"{% elif order.callback_status == 'WILL_AGREE' %}class="green-line"{% elif order.callback_status == 'REJECTED' %}class="red-line"{% endif %}{% endfor %} {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'common_items:client-orderdetails' order.id %}"{% endfor %}{% endif %}>{{evaluation.evaluation_id}}</td>
+    {% else %}
+      <td {% if evaluation.quatation_status == 'REJECTED' %}class="red-line"{% elif evaluation.quatation_status == 'PENDING' %}class="yellow-line"{% elif evaluation.quatation_status == 'EXPIRED' %}class="orange-line"{%else%}class="approved-not-paid-line"{%endif%} {% if evaluation.evaluationorder %}{% for order in evaluation.evaluationorder %}data-href="{% url 'common_items:client-orderdetails' order.id %}"{% endfor %}{% endif %}>{{evaluation.evaluation_id}}</td>    
+    {% endif %}
+
     <td>{{evaluation.customer.name|default_if_none:''}}</td>
     <td>{{evaluation.customer.mobile_number|default_if_none:''}}</td>
 
@@ -166,7 +171,7 @@
 
     {% comment %} <td>{% for evaluation_detail in evaluation.details_evaluation %}{% if evaluation_detail.evaluator %}{{evaluation_detail.evaluator.name}}<br>{% else %}{{evaluation_detail.evaluation.call_attender.name}}{% endif %}{% endfor %}</td> {% endcomment %}
     
-    {% if request.user.user_type == 'ADMIN' %}
+    {% if request.user.user_type == 'ADMIN' or request.user.user_type == 'SALESADMIN' %}
       <td>
       {% for order in evaluation.evaluationorder %}{% if order.callback_status == 'CALLBACK_LATER' %}<div class="d-flex "><div class="round-marker blue-bg"></div><span>CALLBACK LATER</span></div>{% endif %}{% endfor %}
       {% for order in evaluation.evaluationorder %}{% if order.callback_status == 'WAITING' %}<div class="d-flex "><div class="round-marker yellow-bg"></div><span>WAITING</span></div>{% endif %}{% endfor %}
@@ -230,7 +235,7 @@
   <ul class="pagination">
      {% if evaluations.has_previous %}
     <li class="page-item">
-      <a class="page-link" href="?page={{ evaluations.previous_page_number }}&search={{request.GET.search}}&order_status={{request.GET.order_status}}&callback_status={{request.GET.callback_status}}&no_of_entries={{request.GET.no_of_entries}}&tab=ORDERS" aria-label="Previous">
+      <a class="page-link" href="?page1={{ evaluations.previous_page_number }}&search={{request.GET.search}}&order_status={{request.GET.order_status}}&callback_status={{request.GET.callback_status}}&no_of_entries={{request.GET.no_of_entries}}&tab=ORDERS" aria-label="Previous">
         <span aria-hidden="true">&laquo;</span>
         <span class="sr-only">Previous</span>
       </a>
@@ -243,16 +248,16 @@
       </a>
     </li>
     {% endif %}
-    {% for pg in page_range %}
+    {% for pg in page_range1 %}
     {% if vus.number == pg %}
-            <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}&order_status={{request.GET.order_status}}&callback_status={{request.GET.callback_status}}&no_of_entries={{request.GET.no_of_entries}}&tab=ORDERS">{{pg}}</a></li>
+            <li class="page-item"><a class="page-link active" href="?page1={{pg}}&search={{request.GET.search}}&order_status={{request.GET.order_status}}&callback_status={{request.GET.callback_status}}&no_of_entries={{request.GET.no_of_entries}}&tab=ORDERS">{{pg}}</a></li>
     {% else %}
-            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&order_status={{request.GET.order_status}}&callback_status={{request.GET.callback_status}}&no_of_entries={{request.GET.no_of_entries}}&tab=ORDERS">{{pg}}</a></li>
+            <li class="page-item"><a class="page-link" href="?page1={{pg}}&search={{request.GET.search}}&order_status={{request.GET.order_status}}&callback_status={{request.GET.callback_status}}&no_of_entries={{request.GET.no_of_entries}}&tab=ORDERS">{{pg}}</a></li>
     {% endif %}
     {% endfor %}
     {% if evaluations.has_next %}        
     <li class="page-item">
-      <a class="page-link" href="?page={{ evaluations.next_page_number}}&search={{request.GET.search}}&order_status={{request.GET.order_status}}&callback_status={{request.GET.callback_status}}&no_of_entries={{request.GET.no_of_entries}}&tab=ORDERS" aria-label="Next">
+      <a class="page-link" href="?page1={{ evaluations.next_page_number}}&search={{request.GET.search}}&order_status={{request.GET.order_status}}&callback_status={{request.GET.callback_status}}&no_of_entries={{request.GET.no_of_entries}}&tab=ORDERS" aria-label="Next">
         <span aria-hidden="true">&raquo;</span>
         <span class="sr-only">Next</span>
       </a>
@@ -290,7 +295,7 @@
 
 <br>
   
-<div style="color: #666;">Show {{entry_per_page}} entries</div>
+<div style="color: #666;">Show {{entry_per_page2}} entries</div>
 </div>
 <div class="col-md-2 pr-0 m-pl-0">
 
@@ -328,7 +333,7 @@
       <th class="text-left" data-hide="phone,tablet">Customer</th>
       <th class="text-left" data-hide="phone,tablet">Mobile</th>
       <th class="text-left" data-hide="phone,tablet">Amount</th>
-      <th class="text-left" data-hide="phone,tablet">{% if request.user.user_type == 'ADMIN' %}Callback Status{% else %}Payment Policy{% endif %}</th>
+      <th class="text-left" data-hide="phone,tablet">{% if request.user.user_type == 'ADMIN' or request.user.user_type == 'SALESADMIN' %}Callback Status{% else %}Payment Policy{% endif %}</th>
       {% if payment_type == 'PENDING' %}<th data-hide="phone">Status</th>{% endif %}
       {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}<th class="align-center" data-hide="phone,tablet">Actions</th>{% endif %}
       <th class="text-left" data-hide="phone">Shortcuts</th>
@@ -340,19 +345,26 @@
         
         {% if invoice.evaluation.payment_method == 'PREPAID' or invoice.evaluation.payment_method == 'POSTPAID' %}
         <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
+        
+        {% if request.user.user_type == 'ADMIN' or request.user.user_type == 'SALESADMIN' %}
+        <td {% if invoice.callback_status == 'CALLBACK_LATER' %}class="blue-line"{% elif invoice.callback_status == 'WAITING' %}class="yellow-line"{% elif invoice.callback_status == 'WILL_PAY' %}class="green-line"{% elif invoice.callback_status == 'FOLLOW_UP' %}class="orange-line"{% elif invoice.callback_status == 'LEGAL_ACTION' %}class="red-line"{% endif %}>{{invoice.evaluation.evaluation_id}}</td>
+        {% else %}
         <td data-label="BLC Number" {% if invoice.evaluation.payment_method == 'PREPAID' %}class="prepaid-line"{% else %}class="postpaid-line"{% endif %}>{{invoice.evaluation.evaluation_id}}</td>
+        {% endif %}
+
         <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
         
         <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
         <td data-label="Total Amount">{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}KD</td>
         
-        {% if request.user.user_type == 'ADMIN' %}
+        {% if request.user.user_type == 'ADMIN' or request.user.user_type == 'SALESADMIN' %}
         <td>
-        {% if invoice.callback_status == 'CALLBACK_LATER' %}<div class="d-flex "><div class="round-marker blue-bg"></div><span>CALLBACK LATER</span></div>{% endif %}
-        {% if invoice.callback_status == 'WAITING' %}<div class="d-flex "><div class="round-marker yellow-bg"></div><span>WAITING</span></div>{% endif %}
-        {% if invoice.callback_status == 'WILL_AGREE' %}<div class="d-flex "><div class="round-marker green-bg"></div><span>WILL AGREE</span></div>{% endif %}
-        {% if invoice.callback_status == 'REJECTED' %}<div class="d-flex "><div class="round-marker red-bg"></div><span>REJECTED</span></div>{% endif %}
-        </td>
+          {% if invoice.callback_status == 'CALLBACK_LATER' %}<div class="d-flex "><div class="round-marker blue-bg"></div><span>CALLBACK LATER</span></div>{% endif %}
+          {% if invoice.callback_status == 'WAITING' %}<div class="d-flex "><div class="round-marker yellow-bg"></div><span>WAITING</span></div>{% endif %}
+          {% if invoice.callback_status == 'WILL_PAY' %}<div class="d-flex "><div class="round-marker green-bg"></div><span>WILL PAY</span></div>{% endif %}
+          {% if invoice.callback_status == 'FOLLOW_UP' %}<div class="d-flex "><div class="round-marker orange-bg"></div><span>FOLLOW UP</span></div>{% endif %}
+          {% if invoice.callback_status == 'LEGAL_ACTION' %}<div class="d-flex "><div class="round-marker red-bg"></div><span>LEGAL ACTION</span></div>{% endif %}
+          </td>
         {% else %}
         <td data-label="Payment Method">
         <div class="text-center d-flex "><div class="round-marker {% if invoice.evaluation.payment_method == 'PREPAID' %}prepaid-bg{% else %}postpaid-bg{% endif %}"></div><span>{{invoice.evaluation.payment_method}}</span></div>
@@ -403,18 +415,25 @@
         
         {% if invoice.preamount_paid != invoice.evaluation.before_cleaning_amount %}
         <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
+        
+        {% if request.user.user_type == 'ADMIN' or request.user.user_type == 'SALESADMIN' %}
+        <td {% if invoice.callback_status == 'CALLBACK_LATER' %}class="blue-line"{% elif invoice.callback_status == 'WAITING' %}class="yellow-line"{% elif invoice.callback_status == 'WILL_PAY' %}class="green-line"{% elif invoice.callback_status == 'FOLLOW_UP' %}class="orange-line"{% elif invoice.callback_status == 'LEGAL_ACTION' %}class="red-line"{% endif %}>{{invoice.evaluation.evaluation_id}}</td>
+        {% else %}
         <td data-label="BLC Number" class="breakdown-line">{{invoice.evaluation.evaluation_id}}</td>
+        {% endif %}
+
         <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
         
         <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
         <td data-label="Total Amount">{{invoice.evaluation.before_cleaning_amount|default_if_none:'0.000'|floatformat:'3'}}KD</td>
         
-        {% if request.user.user_type == 'ADMIN' %}
+        {% if request.user.user_type == 'ADMIN' or request.user.user_type == 'SALESADMIN' %}
           <td>
           {% if invoice.callback_status == 'CALLBACK_LATER' %}<div class="d-flex "><div class="round-marker blue-bg"></div><span>CALLBACK LATER</span></div>{% endif %}
           {% if invoice.callback_status == 'WAITING' %}<div class="d-flex "><div class="round-marker yellow-bg"></div><span>WAITING</span></div>{% endif %}
-          {% if invoice.callback_status == 'WILL_AGREE' %}<div class="d-flex "><div class="round-marker green-bg"></div><span>WILL AGREE</span></div>{% endif %}
-          {% if invoice.callback_status == 'REJECTED' %}<div class="d-flex "><div class="round-marker red-bg"></div><span>REJECTED</span></div>{% endif %}
+          {% if invoice.callback_status == 'WILL_PAY' %}<div class="d-flex "><div class="round-marker green-bg"></div><span>WILL PAY</span></div>{% endif %}
+          {% if invoice.callback_status == 'FOLLOW_UP' %}<div class="d-flex "><div class="round-marker orange-bg"></div><span>FOLLOW UP</span></div>{% endif %}
+          {% if invoice.callback_status == 'LEGAL_ACTION' %}<div class="d-flex "><div class="round-marker red-bg"></div><span>LEGAL ACTION</span></div>{% endif %}
           </td>
         {% else %}
           <td data-label="Payment Method">
@@ -458,18 +477,25 @@
 
         {% if invoice.last_completed and invoice.postamount_paid != invoice.evaluation.after_cleaning_amount %}
         <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
+        
+        {% if request.user.user_type == 'ADMIN' or request.user.user_type == 'SALESADMIN' %}
+        <td {% if invoice.callback_status == 'CALLBACK_LATER' %}class="blue-line"{% elif invoice.callback_status == 'WAITING' %}class="yellow-line"{% elif invoice.callback_status == 'WILL_PAY' %}class="green-line"{% elif invoice.callback_status == 'FOLLOW_UP' %}class="orange-line"{% elif invoice.callback_status == 'LEGAL_ACTION' %}class="red-line"{% endif %}>{{invoice.evaluation.evaluation_id}}</td>
+        {% else %}
         <td data-label="BLC Number" >{{invoice.evaluation.evaluation_id}}</td>
+        {% endif %}
+
         <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
         
         <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
         <td data-label="Total Amount">{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}KD</td>
         
-        {% if request.user.user_type == 'ADMIN' %}
+        {% if request.user.user_type == 'ADMIN' or request.user.user_type == 'SALESADMIN' %}
           <td>
           {% if invoice.callback_status == 'CALLBACK_LATER' %}<div class="d-flex "><div class="round-marker blue-bg"></div><span>CALLBACK LATER</span></div>{% endif %}
           {% if invoice.callback_status == 'WAITING' %}<div class="d-flex "><div class="round-marker yellow-bg"></div><span>WAITING</span></div>{% endif %}
-          {% if invoice.callback_status == 'WILL_AGREE' %}<div class="d-flex "><div class="round-marker green-bg"></div><span>WILL AGREE</span></div>{% endif %}
-          {% if invoice.callback_status == 'REJECTED' %}<div class="d-flex "><div class="round-marker red-bg"></div><span>REJECTED</span></div>{% endif %}
+          {% if invoice.callback_status == 'WILL_PAY' %}<div class="d-flex "><div class="round-marker green-bg"></div><span>WILL PAY</span></div>{% endif %}
+          {% if invoice.callback_status == 'FOLLOW_UP' %}<div class="d-flex "><div class="round-marker orange-bg"></div><span>FOLLOW UP</span></div>{% endif %}
+          {% if invoice.callback_status == 'LEGAL_ACTION' %}<div class="d-flex "><div class="round-marker red-bg"></div><span>LEGAL ACTION</span></div>{% endif %}
           </td>
         {% else %}
           <td data-label="Payment Method">
@@ -511,13 +537,19 @@
         {% elif invoice.evaluation.payment_method == 'SUBSCRIPTION' %}
         {% if invoice.subscription_topay != 0 %}
         <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
+        
+        {% if request.user.user_type == 'ADMIN' or request.user.user_type == 'SALESADMIN' %}
+        <td {% if invoice.callback_status == 'CALLBACK_LATER' %}class="blue-line"{% elif invoice.callback_status == 'WAITING' %}class="yellow-line"{% elif invoice.callback_status == 'WILL_PAY' %}class="green-line"{% elif invoice.callback_status == 'FOLLOW_UP' %}class="orange-line"{% elif invoice.callback_status == 'LEGAL_ACTION' %}class="red-line"{% endif %}>{{invoice.evaluation.evaluation_id}}</td>
+        {% else %}
         <td data-label="BLC Number" class="subscription-line">{{invoice.evaluation.evaluation_id}}</td>
+        {% endif %}
+
         <td data-label="Customer">{{invoice.evaluation.customer.name}}</td>
         
         <td data-label="Contact Number">{{invoice.evaluation.customer.mobile_number}}</td>
         <td data-label="Total Amount">{{invoice.subscription_topay|default_if_none:'0.000'|floatformat:'3'}}KD</td>
         
-        {% if request.user.user_type == 'ADMIN' %}
+        {% if request.user.user_type == 'ADMIN' or request.user.user_type == 'SALESADMIN' %}
           <td>
           {% if invoice.callback_status == 'CALLBACK_LATER' %}<div class="d-flex "><div class="round-marker blue-bg"></div><span>CALLBACK LATER</span></div>{% endif %}
           {% if invoice.callback_status == 'WAITING' %}<div class="d-flex "><div class="round-marker yellow-bg"></div><span>WAITING</span></div>{% endif %}
@@ -595,7 +627,7 @@
       </a>
     </li>
     {% endif %}
-    {% for pg in page_range %}
+    {% for pg in page_range2 %}
     {% if vus.number == pg %}
             <li class="page-item"><a class="page-link active" href="?page2={{pg}}&search={{request.GET.search}}&payment_type={{request.GET.payment_type}}&callback_status_payments={{request.GET.callback_status_payments}}&no_of_entries={{request.GET.no_of_entries}}&tab=PAYMENTS">{{pg}}</a></li>
     {% else %}

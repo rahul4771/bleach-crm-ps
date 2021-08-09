@@ -1635,6 +1635,7 @@
                                                         <img  class="visit-time-edit pointer ml-10 mt-2p" src="{% static 'files/icons/user-primary.png' %}" ><span class="ml-5 visit-text">{% if multi_order_schedule.no_of_cleaners %}{{multi_order_schedule.no_of_cleaners}}{% else %}{{multi_order_schedule.order_scheduler_book.number_of_cleaners|default_if_none:0}}{% endif %}</span>
                                                         <img  class="visit-time-edit pointer ml-10 mt-2p" src="{% static 'files/icons/time-primary.png' %}" ><span class="ml-5 visit-text">{% if multi_order_schedule.cleaning_hours %}{{multi_order_schedule.cleaning_hours}}{% else %}{{multi_order_schedule.order_scheduler_book.cleaning_hours|default_if_none:0.0}}{% endif %}</span>
 
+                                                        <!--CLEANING DATE EDIT-->
                                                         {% if request.user.user_type == 'SALESADMIN' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'SENIORTEAMLEADER' %}
                                                         
                                                             {% if multi_order_schedule.work_status == 'CLEANING_FULFILLED' or multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %}
@@ -1644,16 +1645,32 @@
 
 
                                                         
-                                                        {% if multi_order_schedule.work_status == 'CLEANING_FULFILLED' or multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %}
-                                                        {% else %}
-                                                            {% if multi_order_schedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}
-                                                            <img v-if="edit" class="visit-time-edit pointer ml-10 mt-2p " src="{% static 'files/icons/delete-primary.png' %}" onclick="deleteCleaningDate(this)"  data-cleaning_start_date="{{multi_order_schedule.start_at|date:'d-m-Y'}}" data-evaluation_book_id="{{multi_order_schedule.order_scheduler_book.id}}" data-id="{{multi_order_schedule.id}}" data-service="{{multi_order_schedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{multi_order_schedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{multi_order_schedule.order_scheduler_book.cleaning_hours}}" >                                                       
-                                                            {% elif multi_order_schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' %}
-                                                            <img v-if="edit" class="visit-time-edit pointer ml-10 mt-2p " src="{% static 'files/icons/cancel-primary.png' %}"  onclick="cancelCleaningDate(this)"  data-cleaning_start_date="{{multi_order_schedule.start_at|date:'d-m-Y'}}" data-estimated_cost="{{multi_order_schedule.order_scheduler_book.estimated_cost}}" data-evaluation_book_id="{{multi_order_schedule.order_scheduler_book.id}}" data-id="{{multi_order_schedule.id}}" data-service="{{multi_order_schedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{multi_order_schedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{multi_order_schedule.order_scheduler_book.cleaning_hours}}">
-                                                            {%endif%}
-                                                        {% endif %} 
+                                                            {% if multi_order_schedule.work_status == 'CLEANING_FULFILLED' or multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %}
+                                                            {% else %}
+                                                                {% if multi_order_schedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}
+                                                                <img v-if="edit" class="visit-time-edit pointer ml-10 mt-2p " src="{% static 'files/icons/delete-primary.png' %}" onclick="deleteCleaningDate(this)"  data-cleaning_start_date="{{multi_order_schedule.start_at|date:'d-m-Y'}}" data-evaluation_book_id="{{multi_order_schedule.order_scheduler_book.id}}" data-id="{{multi_order_schedule.id}}" data-service="{{multi_order_schedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{multi_order_schedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{multi_order_schedule.order_scheduler_book.cleaning_hours}}" >                                                       
+                                                                {% elif multi_order_schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' %}
+                                                                <img v-if="edit" class="visit-time-edit pointer ml-10 mt-2p " src="{% static 'files/icons/cancel-primary.png' %}"  onclick="cancelCleaningDate(this)"  data-cleaning_start_date="{{multi_order_schedule.start_at|date:'d-m-Y'}}" data-estimated_cost="{{multi_order_schedule.order_scheduler_book.estimated_cost}}" data-evaluation_book_id="{{multi_order_schedule.order_scheduler_book.id}}" data-id="{{multi_order_schedule.id}}" data-service="{{multi_order_schedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{multi_order_schedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{multi_order_schedule.order_scheduler_book.cleaning_hours}}">
+                                                                {%endif%}
+                                                            {% endif %} 
+                                                            
+                                                        {% elif request.user.user_type == 'AGENT' %}
+
+                                                            {% if order.evaluation.quatation_status == 'APPROVED' %}
+
+                                                                {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION' %}
+                                                                
+                                                                {% else %}
+                                                                <img v-if="edit" class="visit-time-edit pointer ml-auto mt-2p" src="{% static 'files/icons/edit-primary.png' %}" onclick="editCleaningDate(this)" data-cleaning_start_date="{{multi_order_schedule.start_at|date:'d-m-Y'}}" data-evaluation_book_id="{{multi_order_schedule.order_scheduler_book.id}}" data-id="{{multi_order_schedule.id}}" data-service="{{multi_order_schedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{multi_order_schedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{multi_order_schedule.order_scheduler_book.cleaning_hours}}">
+                                                                {% endif %}
+
+                                                            {% elif order.evaluation.quatation_status == 'PENDING' or order.evaluation.quatation_status == None %}
+                                                                <img v-if="edit" class="visit-time-edit pointer ml-auto mt-2p" src="{% static 'files/icons/edit-primary.png' %}" onclick="editCleaningDate(this)" data-cleaning_start_date="{{multi_order_schedule.start_at|date:'d-m-Y'}}" data-evaluation_book_id="{{multi_order_schedule.order_scheduler_book.id}}" data-id="{{multi_order_schedule.id}}" data-service="{{multi_order_schedule.order_scheduler_book.service_type.name}}" data-no_of_cleaners="{{multi_order_schedule.order_scheduler_book.number_of_cleaners}}" data-cleaning_hours="{{multi_order_schedule.order_scheduler_book.cleaning_hours}}">
+                                                            {% endif %}
                                                         
                                                         {%endif%}
+                                                        <!--CLEANING DATE EDIT-->
+
                                                         <!--<div class="vist-card-item-last ml-5">
                                                             <button {% if multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %}class="inprogress-button"{% elif multi_order_schedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}class="assigned-button"{% elif multi_order_schedule.work_status == 'CLEANING_FULFILLED'%}class="completed-button"{% else %}class="canceled-button"{% endif %}>  {% for investigation in multi_order_schedule.investigations|slice:":1" %}{% for followup in investigation.followups|slice:":1" %}{% if followup %} <i aria-hidden="true" class="fa fa-flag" style="margin-right: 5px ;"></i> {% endif %}{% endfor %}{% endfor %} {{multi_order_schedule.work_status|default_if_none:'NOT STARTED'}}</button>
                                                         </div>-->
