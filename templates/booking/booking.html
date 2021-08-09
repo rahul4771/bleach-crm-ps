@@ -797,10 +797,9 @@ width="1000"
           
       
           <div class="col-md-6" >
+            <div>Oil Residue? <span style="color:red">*</span></div>
             <v-radio-group v-model="kitchenData.residue" class="p-2">
-              <template v-slot:label>
-                <div>Oil Residue ?</div>
-              </template>
+              
               <v-radio :value="true">
                 <template v-slot:label>
                   <div>Yes<strong class="success--text"></strong></div>
@@ -1193,10 +1192,9 @@ width="1000"
             ></v-select>
           </div>
           <div class="col-md-6" v-if="serviceType == 'Kitchen Cleaning'">
+            <div>Oil Residue? <span style="color:red">*</span></div>
             <v-radio-group v-model="otherService.residue" class="p-2">
-              <template v-slot:label>
-                <div>Oil Residue ?</div>
-              </template>
+             
               <v-radio :value="true">
                 <template v-slot:label>
                   <div>Yes<strong class="success--text"></strong></div>
@@ -1205,7 +1203,7 @@ width="1000"
               <v-radio :value="false">
                 <template v-slot:label>
                   <div>No <strong class="primary--text"></strong></div>
-                </template>
+               </template>
               </v-radio>
             </v-radio-group>
           </div>
@@ -1367,15 +1365,15 @@ width="1000"
                   <div class="col-md-4 mt-2" id="field-location-type"
                     v-if="serviceType=='General Cleaning' || serviceType=='Sterilization'||serviceType=='Deep Cleaning' || serviceType=='Window Cleaning' || serviceType=='Kitchen Cleaning'">
                     <v-select :items="location_types2" v-model="location_type" label="Location Type"
-                      v-if="serviceType=='General Cleaning' || serviceType=='Sterilization'" :attach="true">
+                      v-if="serviceType=='General Cleaning' || serviceType=='Sterilization'">
                     </v-select>
                     <v-select
                       v-if="serviceType=='Deep Cleaning' || serviceType=='Window Cleaning' || serviceType=='Kitchen Cleaning'"
-                      :items="location_types" v-model="location_type" label="Location Type" :attach="true">
+                      :items="location_types" v-model="location_type" label="Location Type" >
                     </v-select>
                   </div>
                   <div class="col-md-4 mt-2" id="field-no-of-buildings">
-                    <v-select :items="area_types" v-model="area_type" item-text="name" label="Area Type" :attach="true">
+                    <v-select :items="area_types" v-model="area_type" item-text="name" label="Area Type">
                     </v-select>
                   </div>
                   <div class="col-md-4 mt-2" id="field-wall-type" v-if="
@@ -1498,23 +1496,23 @@ width="1000"
                                         <v-text-field type="number" v-model="
                                         building[index - 1].floors[floor - 1]
                                           .no_of_rooms
-                                      " :rules="[v => !!v || 'No of Rooms is required']" label="No of Rooms" required>
+                                      " label="No of Rooms" class="not-required">
                                         </v-text-field>
                                       </div>
                                       <div class="col-md-6">
                                         <v-text-field type="number" v-model="
                                         building[index - 1].floors[floor - 1]
                                           .no_of_bathrooms
-                                      " :rules="[v => !!v || 'No of Bathrooms is required']" label="No of Bathrooms"
-                                          required>
+                                      "  label="No of Bathrooms"
+                                      class="not-required">
                                         </v-text-field>
                                       </div>
                                       <div class="col-md-6">
                                         <v-text-field type="number" v-model="
                                         building[index - 1].floors[floor - 1]
                                           .no_of_windows
-                                      " :rules="[v => !!v || 'No of windows is required']" label="No of Windows"
-                                          required>
+                                      " label="No of Windows"
+                                      class="not-required">
                                         </v-text-field>
                                       </div>
                                       <div class="col-md-6" v-if="
@@ -1648,10 +1646,9 @@ width="1000"
                                             </div>
                                             <div class="col-md-6" v-if="building[index - 1].floors[floor - 1]
                                         .kitchen">
+                                        <div>Oil Residue? <span style="color:red">*</span></div>
                                               <v-radio-group v-model="kitchenData.residue" class="p-2" row>
-                                                <template v-slot:label>
-                                                  <div>Oil <strong>Residue ?</strong></div>
-                                                </template>
+                                               
                                                 <v-radio :value="true">
                                                   <template v-slot:label>
                                                     <div>Yes<strong class="success--text"></strong></div>
@@ -1935,10 +1932,9 @@ width="1000"
                                                     </div>
                                                     <div class="col-md-6" v-if="apartment
                                         .kitchen">
+                                        <div>Oil Residue? <span style="color:red">*</span></div>
                                                       <v-radio-group v-model="kitchenData.residue" class="p-2" row>
-                                                        <template v-slot:label>
-                                                          <div>Oil <strong>Residue ?</strong></div>
-                                                        </template>
+                                                        
                                                         <v-radio :value="true">
                                                           <template v-slot:label>
                                                             <div>Yes<strong class="success--text"></strong></div>
@@ -2333,10 +2329,9 @@ Fill all the details of the Buildings  to proceed
                             v-model="otherService.ceiling_type" :attach="true"></v-select>
                         </div>
                         <div class="col-md-6" v-if="serviceType == 'Kitchen Cleaning'">
+                          <div>Oil Residue? <span style="color:red">*</span></div>
                           <v-radio-group v-model="otherService.residue" class="p-2">
-                            <template v-slot:label>
-                              <div>Oil <strong>Residue ?</strong></div>
-                            </template>
+                            
                             <v-radio :value="true">
                               <template v-slot:label>
                                 <div>Yes<strong class="success--text"></strong></div>
