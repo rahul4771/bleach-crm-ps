@@ -230,7 +230,7 @@
   <ul class="pagination">
      {% if evaluations.has_previous %}
     <li class="page-item">
-      <a class="page-link" href="?page={{ evaluations.previous_page_number }}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&tab=ORDERS" aria-label="Previous">
+      <a class="page-link" href="?page={{ evaluations.previous_page_number }}&search={{request.GET.search}}&order_status={{request.GET.order_status}}&callback_status={{request.GET.callback_status}}&no_of_entries={{request.GET.no_of_entries}}&tab=ORDERS" aria-label="Previous">
         <span aria-hidden="true">&laquo;</span>
         <span class="sr-only">Previous</span>
       </a>
@@ -245,14 +245,14 @@
     {% endif %}
     {% for pg in page_range %}
     {% if vus.number == pg %}
-            <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}&tab=ORDERS">{{pg}}</a></li>
+            <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}&order_status={{request.GET.order_status}}&callback_status={{request.GET.callback_status}}&no_of_entries={{request.GET.no_of_entries}}&tab=ORDERS">{{pg}}</a></li>
     {% else %}
-            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}&tab=ORDERS">{{pg}}</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&order_status={{request.GET.order_status}}&callback_status={{request.GET.callback_status}}&no_of_entries={{request.GET.no_of_entries}}&tab=ORDERS">{{pg}}</a></li>
     {% endif %}
     {% endfor %}
     {% if evaluations.has_next %}        
     <li class="page-item">
-      <a class="page-link" href="?page={{ evaluations.next_page_number}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}&tab=ORDERS" aria-label="Next">
+      <a class="page-link" href="?page={{ evaluations.next_page_number}}&search={{request.GET.search}}&order_status={{request.GET.order_status}}&callback_status={{request.GET.callback_status}}&no_of_entries={{request.GET.no_of_entries}}&tab=ORDERS" aria-label="Next">
         <span aria-hidden="true">&raquo;</span>
         <span class="sr-only">Next</span>
       </a>
@@ -582,7 +582,7 @@
   <ul class="pagination">
      {% if payments.has_previous %}
     <li class="page-item">
-      <a class="page-link" href="?page2={{ payments.previous_page_number }}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&tab=PAYMENTS" aria-label="Previous">
+      <a class="page-link" href="?page2={{ payments.previous_page_number }}&search={{request.GET.search}}&payment_type={{request.GET.payment_type}}&callback_status_payments={{request.GET.callback_status_payments}}&no_of_entries={{request.GET.no_of_entries}}&tab=PAYMENTS" aria-label="Previous">
         <span aria-hidden="true">&laquo;</span>
         <span class="sr-only">Previous</span>
       </a>
@@ -597,14 +597,14 @@
     {% endif %}
     {% for pg in page_range %}
     {% if vus.number == pg %}
-            <li class="page-item"><a class="page-link active" href="?page2={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}&tab=PAYMENTS">{{pg}}</a></li>
+            <li class="page-item"><a class="page-link active" href="?page2={{pg}}&search={{request.GET.search}}&payment_type={{request.GET.payment_type}}&callback_status_payments={{request.GET.callback_status_payments}}&no_of_entries={{request.GET.no_of_entries}}&tab=PAYMENTS">{{pg}}</a></li>
     {% else %}
-            <li class="page-item"><a class="page-link" href="?page2={{pg}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}&tab=PAYMENTS">{{pg}}</a></li>
+            <li class="page-item"><a class="page-link" href="?page2={{pg}}&search={{request.GET.search}}&payment_type={{request.GET.payment_type}}&callback_status_payments={{request.GET.callback_status_payments}}&no_of_entries={{request.GET.no_of_entries}}&tab=PAYMENTS">{{pg}}</a></li>
     {% endif %}
     {% endfor %}
     {% if payments.has_next %}        
     <li class="page-item">
-      <a class="page-link" href="?page2={{ payments.next_page_number}}&search={{request.GET.search}}&governorate={{request.GET.governorate}}&area={{request.GET.area}}&status={{request.GET.status}}&cleaning_policy={{request.GET.cleaning_policy}}&service_type={{request.GET.service_type}}&evaluator={{request.GET.evaluator}}&no_of_entries={{request.GET.no_of_entries}}&tab=PAYMENTS" aria-label="Next">
+      <a class="page-link" href="?page2={{ payments.next_page_number}}&search={{request.GET.search}}&payment_type={{request.GET.payment_type}}&callback_status_payments={{request.GET.callback_status_payments}}&no_of_entries={{request.GET.no_of_entries}}&tab=PAYMENTS" aria-label="Next">
         <span aria-hidden="true">&raquo;</span>
         <span class="sr-only">Next</span>
       </a>
