@@ -1459,17 +1459,22 @@ console.log(response)
               "material":'',
               "cause_of_stain":'',
               "upholstery_type":'',
-              "age":''
+              "age":'',
+              "age_of_stain":''
               
               }
               if(this.multiServicesBill[i].bill[j].section.size.is_highprice_facade){
                 this.serviceDetails.service_details[i].sections[j].is_highprice_facade=true
               }
+              
               if(this.multiServicesBill[i].bill[j].section.size.is_highprice_window){
                 this.serviceDetails.service_details[i].sections[j].is_highprice_window=true
               }
               if(this.multiServicesBill[i].bill[j].section.size.is_newkitchen){
                 this.serviceDetails.service_details[i].sections[j].is_newkitchen=true
+              }
+              if(this.multiServicesBill[i].bill[j].section.stain_age){
+                this.serviceDetails.service_details[i].sections[j].age_of_stain=this.multiServicesBill[i].bill[j].section.stain_age
               }
               if(this.multiServicesBill[i].bill[j].section.color){
                 this.serviceDetails.service_details[i].sections[j].colour=this.multiServicesBill[i].bill[j].section.color.join()
@@ -1620,6 +1625,9 @@ console.log(response)
             }
             if(this.multiServicesBill[i].bill[j].section.size.is_newkitchen){
               this.serviceDetails.service_details[i].sections[j].is_newkitchen=true
+            }
+            if(this.multiServicesBill[i].bill[j].section.stain_age){
+              this.serviceDetails.service_details[i].sections[j].age_of_stain=this.multiServicesBill[i].bill[j].section.stain_age
             }
             if(this.multiServicesBill[i].bill[j].section.color){
               this.serviceDetails.service_details[i].sections[j].colour=this.multiServicesBill[i].bill[j].section.color.join()
@@ -2829,13 +2837,13 @@ responsive:{
       )
       .then((response) => {
         
-        console.log(response,"pok")
-     //window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
+       
+     window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
        
       })
        .catch((error) => {
         console.log(error);
-       // window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
+        window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
       });
 
    }
