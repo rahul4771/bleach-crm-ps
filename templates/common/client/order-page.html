@@ -21,6 +21,7 @@
 <link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
 <div class="wrapper" id="app" v-cloak><!--wrapper-->
    <!--- user id-->
+   
    <input type="hidden" value="{{request.user.id}}" id="user_id"/>
     <!-- helper modal begins here-->
     <div class="modal fade" id="helpModel" role="dialog">
@@ -3010,6 +3011,7 @@
     </div>
 </div>
 <!-- Add visit popup ends here-->
+
 <!-- Modal Payment Policy -->
 <div class="modal fade bd-example-modal-lg" id="paymentModel" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -3069,9 +3071,18 @@
                 </div>
 
             </div>
+            
         </div>
     </div>
 </div>
+<!-- 
+
+    Alert Box
+-->
+
+<notifications group="message" />
+
+<!-- alert box ends here-->
 
 </div>
 <!--container-fluid space topspace-->
@@ -3103,7 +3114,16 @@
 
 
 <script src="{% static '/files/externalfiles/plugins/OwlCarousel2/dist/owl.carousel.js'%}"></script>
-<script src="{% static 'files/js/order/main.js' %}"></script>
+
+<script type="text/javascript">
+    window.vue = window.Vue; // quick fix for vue-notification
+  </script>
+  <script type="text/javascript" src="{% static 'files/js/vue-notification.js' %}"></script>
+  <script type="text/javascript">
+    window.vueNotification = window["vue-notification"].default;
+    Vue.use(vueNotification);
+  </script>
+  <script src="{% static 'files/js/order/main.js' %}"></script>
 
 
 <script>

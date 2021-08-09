@@ -797,10 +797,9 @@ width="1000"
           
       
           <div class="col-md-6" >
+            <div>Oil Residue? <span style="color:red">*</span></div>
             <v-radio-group v-model="kitchenData.residue" class="p-2">
-              <template v-slot:label>
-                <div>Oil Residue ?</div>
-              </template>
+              
               <v-radio :value="true">
                 <template v-slot:label>
                   <div>Yes<strong class="success--text"></strong></div>
@@ -1193,10 +1192,9 @@ width="1000"
             ></v-select>
           </div>
           <div class="col-md-6" v-if="serviceType == 'Kitchen Cleaning'">
+            <div>Oil Residue? <span style="color:red">*</span></div>
             <v-radio-group v-model="otherService.residue" class="p-2">
-              <template v-slot:label>
-                <div>Oil Residue ?</div>
-              </template>
+             
               <v-radio :value="true">
                 <template v-slot:label>
                   <div>Yes<strong class="success--text"></strong></div>
@@ -1205,7 +1203,7 @@ width="1000"
               <v-radio :value="false">
                 <template v-slot:label>
                   <div>No <strong class="primary--text"></strong></div>
-                </template>
+               </template>
               </v-radio>
             </v-radio-group>
           </div>
@@ -1648,10 +1646,9 @@ width="1000"
                                             </div>
                                             <div class="col-md-6" v-if="building[index - 1].floors[floor - 1]
                                         .kitchen">
+                                        <div>Oil Residue? <span style="color:red">*</span></div>
                                               <v-radio-group v-model="kitchenData.residue" class="p-2" row>
-                                                <template v-slot:label>
-                                                  <div>Oil <strong>Residue ?</strong></div>
-                                                </template>
+                                               
                                                 <v-radio :value="true">
                                                   <template v-slot:label>
                                                     <div>Yes<strong class="success--text"></strong></div>
@@ -1935,10 +1932,9 @@ width="1000"
                                                     </div>
                                                     <div class="col-md-6" v-if="apartment
                                         .kitchen">
+                                        <div>Oil Residue? <span style="color:red">*</span></div>
                                                       <v-radio-group v-model="kitchenData.residue" class="p-2" row>
-                                                        <template v-slot:label>
-                                                          <div>Oil <strong>Residue ?</strong></div>
-                                                        </template>
+                                                        
                                                         <v-radio :value="true">
                                                           <template v-slot:label>
                                                             <div>Yes<strong class="success--text"></strong></div>
@@ -2333,10 +2329,9 @@ Fill all the details of the Buildings  to proceed
                             v-model="otherService.ceiling_type" :attach="true"></v-select>
                         </div>
                         <div class="col-md-6" v-if="serviceType == 'Kitchen Cleaning'">
+                          <div>Oil Residue? <span style="color:red">*</span></div>
                           <v-radio-group v-model="otherService.residue" class="p-2">
-                            <template v-slot:label>
-                              <div>Oil <strong>Residue ?</strong></div>
-                            </template>
+                            
                             <v-radio :value="true">
                               <template v-slot:label>
                                 <div>Yes<strong class="success--text"></strong></div>

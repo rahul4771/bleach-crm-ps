@@ -1448,12 +1448,18 @@ console.log(response)
               "floor_type":'',
               "ceiling_type":'',
               "cement_residue":this.multiServicesBill[i].bill[j].section.cement_residue,
+              "oil_residue":this.multiServicesBill[i].bill[j].section.residue,
               "section_cost":this.multiServicesBill[i].bill[j].section.section_cost,
               "section_net_cost":this.multiServicesBill[i].bill[j].section.section_cost,
               "keynotes":{},
               "is_newkitchen":false,
               "is_highprice_facade":false,
               "is_highprice_window":false,
+              "colour":'',
+              "material":'',
+              "cause_of_stain":'',
+              "upholstery_type":'',
+              "age":''
               
               }
               if(this.multiServicesBill[i].bill[j].section.size.is_highprice_facade){
@@ -1465,7 +1471,20 @@ console.log(response)
               if(this.multiServicesBill[i].bill[j].section.size.is_newkitchen){
                 this.serviceDetails.service_details[i].sections[j].is_newkitchen=true
               }
-              
+              if(this.multiServicesBill[i].bill[j].section.color){
+                this.serviceDetails.service_details[i].sections[j].colour=this.multiServicesBill[i].bill[j].section.color.join()
+              }
+              if(this.multiServicesBill[i].bill[j].section.material){
+                this.serviceDetails.service_details[i].sections[j].material=this.multiServicesBill[i].bill[j].section.material.join()
+              }
+              if(this.multiServicesBill[i].bill[j].section.stain_reason){
+                this.serviceDetails.service_details[i].sections[j].cause_of_stain=this.multiServicesBill[i].bill[j].section.stain_reason
+              }
+              if(this.multiServicesBill[i].bill[j].section.type=='SOFA'||this.multiServicesBill[i].bill[j].section.type=='CHAIR')
+           {
+             this.serviceDetails.service_details[i].sections[j].upholstery_type=this.multiServicesBill[i].bill[j].section.type
+           
+           }
            if(this.multiServicesBill[i].bill[j].section.wall_type)
            {
              this.serviceDetails.service_details[i].sections[j].wall_type=this.multiServicesBill[i].bill[j].section.wall_type.join()
@@ -1479,6 +1498,11 @@ console.log(response)
            if(this.multiServicesBill[i].bill[j].section.floor_type)
            {
              this.serviceDetails.service_details[i].sections[j].floor_type=this.multiServicesBill[i].bill[j].section.floor_type.join()
+           
+           }
+           if(this.multiServicesBill[i].bill[j].section.age)
+           {
+             this.serviceDetails.service_details[i].sections[j].age=this.multiServicesBill[i].bill[j].section.age
            
            }
           
@@ -1565,80 +1589,132 @@ console.log(response)
              "total_cost":this.multiServicesBill[i].total_cost,
                sections:{}
           }
-        for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
-          
-       if(this.multiServicesBill[i].bill[j].section.wall_type && this.multiServicesBill[i].bill[j].section.ceiling_type)
-       {
-         this.serviceDetails.service_details[i].sections[j]={
-           "section_name":this.multiServicesBill[i].bill[j].name,
-         "size":this.multiServicesBill[i].bill[j].section.size.name,
-         "wall_type":this.multiServicesBill[i].bill[j].section.wall_type.join(),
-         "ceiling_type":this.multiServicesBill[i].bill[j].section.ceiling_type.join(),
-         "cement_residue":this.multiServicesBill[i].bill[j].section.cement_residue,
-         "section_cost":this.multiServicesBill[i].bill[j].section.section_cost,
-         "section_net_cost":this.multiServicesBill[i].bill[j].section.section_cost,
+          for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
+            this.serviceDetails.service_details[i].sections[j]={
+              "section_name":this.multiServicesBill[i].bill[j].name,
+            "size":this.multiServicesBill[i].bill[j].section.size.name,
+            "wall_type":"",
+            "floor_type":'',
+            "ceiling_type":'',
+            "cement_residue":this.multiServicesBill[i].bill[j].section.cement_residue,
+            "oil_residue":this.multiServicesBill[i].bill[j].section.residue,
+            "section_cost":this.multiServicesBill[i].bill[j].section.section_cost,
+
+            "section_net_cost":this.multiServicesBill[i].bill[j].section.section_cost,
+            "keynotes":{},
+            "is_newkitchen":false,
+            "is_highprice_facade":false,
+            "is_highprice_window":false,
+            "colour":'',
+            "material":'',
+            "cause_of_stain":'',
+            "upholstery_type":'',
+            "age":''
+            
+            }
+            if(this.multiServicesBill[i].bill[j].section.size.is_highprice_facade){
+              this.serviceDetails.service_details[i].sections[j].is_highprice_facade=true
+            }
+            if(this.multiServicesBill[i].bill[j].section.size.is_highprice_window){
+              this.serviceDetails.service_details[i].sections[j].is_highprice_window=true
+            }
+            if(this.multiServicesBill[i].bill[j].section.size.is_newkitchen){
+              this.serviceDetails.service_details[i].sections[j].is_newkitchen=true
+            }
+            if(this.multiServicesBill[i].bill[j].section.color){
+              this.serviceDetails.service_details[i].sections[j].colour=this.multiServicesBill[i].bill[j].section.color.join()
+            }
+            if(this.multiServicesBill[i].bill[j].section.material){
+              this.serviceDetails.service_details[i].sections[j].material=this.multiServicesBill[i].bill[j].section.material.join()
+            }
+            if(this.multiServicesBill[i].bill[j].section.stain_reason){
+              this.serviceDetails.service_details[i].sections[j].cause_of_stain=this.multiServicesBill[i].bill[j].section.stain_reason
+            }
+            if(this.multiServicesBill[i].bill[j].section.type=='SOFA'||this.multiServicesBill[i].bill[j].section.type=='CHAIR')
+         {
+           this.serviceDetails.service_details[i].sections[j].upholstery_type=this.multiServicesBill[i].bill[j].section.type
          
-         "keynotes":{
-            "1":{
-               "sub_area":"bathroom",
-               "quantity":this.multiServicesBill[i].bill[j].section.no_of_bathrooms
-            },
-            "2":{
-               "sub_area":"rooms",
-               "quantity":this.multiServicesBill[i].bill[j].section.no_of_rooms
-            },
-            "3":{
-               "sub_area":"windows",
-               "quantity":this.multiServicesBill[i].bill[j].section.no_of_windows
-            }
          }
+         if(this.multiServicesBill[i].bill[j].section.wall_type)
+         {
+           this.serviceDetails.service_details[i].sections[j].wall_type=this.multiServicesBill[i].bill[j].section.wall_type.join()
+         
          }
-       }
-       else{
-         this.serviceDetails.service_details[i].sections[j]={
-           "section_name":this.multiServicesBill[i].bill[j].name,
-         "size":this.multiServicesBill[i].bill[j].section.size.name,
-         "wall_type":this.multiServicesBill[i].bill[j].section.wall_type,
-         "ceiling_type":this.multiServicesBill[i].bill[j].section.ceiling_type,
-         "cement_residue":this.multiServicesBill[i].bill[j].section.cement_residue,
-         "section_cost":this.multiServicesBill[i].bill[j].section.section_cost,
-         "section_net_cost":this.multiServicesBill[i].bill[j].section.section_cost,
-         "keynotes":{
-            "1":{
-               "sub_area":"bathroom",
-               "quantity":this.multiServicesBill[i].bill[j].section.no_of_bathrooms
-            },
-            "2":{
-               "sub_area":"rooms",
-               "quantity":this.multiServicesBill[i].bill[j].section.no_of_rooms
-            },
-            "3":{
-               "sub_area":"windows",
-               "quantity":this.multiServicesBill[i].bill[j].section.no_of_windows
-            }
+         if(this.multiServicesBill[i].bill[j].section.ceiling_type)
+         {
+           this.serviceDetails.service_details[i].sections[j].ceiling_type=this.multiServicesBill[i].bill[j].section.ceiling_type.join()
+         
          }
+         if(this.multiServicesBill[i].bill[j].section.floor_type)
+         {
+           this.serviceDetails.service_details[i].sections[j].floor_type=this.multiServicesBill[i].bill[j].section.floor_type.join()
+         
          }
-       }
-         if(this.multiServicesBill[i].bill[j].section.kitchen){
-            var newindex=Object.keys(this.serviceDetails.service_details[i].sections[j].keynotes).length
-            var kitchencounter=newindex
-            for(var k=0;k<this.multiServicesBill[i].bill[j].section.kitchens.length;k++){
-             this.serviceDetails.service_details[i].sections[j].keynotes[kitchencounter]={
-               "sub_area":'kitchen',
-               "quantity":JSON.stringify({
-                 size:this.multiServicesBill[i].bill[j].section.kitchens[k].size.name,
-                 max_size:this.multiServicesBill[i].bill[j].section.kitchens[k].size.max_size,
-                 type:this.multiServicesBill[i].bill[j].section.kitchens[k].type,
-                 residue:this.multiServicesBill[i].bill[j].section.kitchens[k].residue,
-                 cost:this.multiServicesBill[i].bill[j].section.kitchens[k].size.cost
-               })
-             
-             }
-             kitchencounter=kitchencounter+1
-            }
-           
+         if(this.multiServicesBill[i].bill[j].section.age)
+         {
+           this.serviceDetails.service_details[i].sections[j].age=this.multiServicesBill[i].bill[j].section.age
+         
+         }
+        
+         var keynotecounter=1
+         if(this.multiServicesBill[i].bill[j].section.no_of_bathrooms){
+          this.serviceDetails.service_details[i].sections[j].keynotes[keynotecounter]={
+            "sub_area":"bathroom",
+            "quantity":this.multiServicesBill[i].bill[j].section.no_of_bathrooms
+
           }
+          keynotecounter=keynotecounter+1
+         }
+         if(this.multiServicesBill[i].bill[j].section.no_of_rooms){
+          this.serviceDetails.service_details[i].sections[j].keynotes[keynotecounter]={
+            "sub_area":"rooms",
+            "quantity":this.multiServicesBill[i].bill[j].section.no_of_rooms
+
+          }
+          keynotecounter=keynotecounter+1
+         }
+         if(this.multiServicesBill[i].bill[j].section.no_of_windows){
+          this.serviceDetails.service_details[i].sections[j].keynotes[keynotecounter]={
+            "sub_area":"windows",
+            "quantity":this.multiServicesBill[i].bill[j].section.no_of_windows
+
+          }
+          keynotecounter=keynotecounter+1
+         }
+         if(this.multiServicesBill[i].bill[j].section.keynote_data.length>0){
+           for(var ky=0;ky<this.multiServicesBill[i].bill[j].section.keynote_data.length;ky++){
+            this.serviceDetails.service_details[i].sections[j].keynotes[keynotecounter]={
+              "sub_area":this.multiServicesBill[i].bill[j].section.keynote_data[ky].name,
+              "quantity":this.multiServicesBill[i].bill[j].section.keynote_data[ky].value
+
+            }
+            keynotecounter=keynotecounter+1
+           }
+
+         }
+         
+         if(this.multiServicesBill[i].bill[j].section.kitchen){
+          var newindex=Object.keys(this.serviceDetails.service_details[i].sections[j].keynotes).length
+          var kitchencounter=newindex
+          for(var k=0;k<this.multiServicesBill[i].bill[j].section.kitchens.length;k++){
+           this.serviceDetails.service_details[i].sections[j].keynotes[kitchencounter]={
+             "sub_area":'kitchen',
+             "quantity":JSON.stringify({
+               size:this.multiServicesBill[i].bill[j].section.kitchens[k].size.name,
+               max_size:this.multiServicesBill[i].bill[j].section.kitchens[k].size.max_size,
+               type:this.multiServicesBill[i].bill[j].section.kitchens[k].type,
+               residue:this.multiServicesBill[i].bill[j].section.kitchens[k].residue,
+               cost:this.multiServicesBill[i].bill[j].section.kitchens[k].size.cost
+             })
+             
+           
+           }
+           kitchencounter=kitchencounter+1
+           keynotecounter=keynotecounter+1
+          }
+         
         }
+          }
       }
    
       this.serviceDetails.total_cost=this.totalCost
@@ -2754,12 +2830,12 @@ responsive:{
       .then((response) => {
         
         console.log(response,"pok")
-     window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
+     //window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
        
       })
        .catch((error) => {
         console.log(error);
-        window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
+       // window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
       });
 
    }
