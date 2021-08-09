@@ -1905,5 +1905,27 @@ class TlCleanings(APIView):
 	
 	def get(self,request): 
 		response_dict = {'success':False}  
-        
+
+		#My cleanings	
+		my_cleaning_calendar_date	= request.GET.get('my_cleaning_calendar_date')
+		
+		try:
+			my_cleaning_date = datetime.strptime(my_cleaning_calendar_date,'%d-%m-%Y')
+		except:
+			my_cleaning_date = timezone.now().replace(tzinfo=None)
+
+		my_cleaning_date_start = my_cleaning_date.replace(hour=0,minute=0,second=0,microsecond=0)
+		my_cleaning_date_end   = my_cleaning_date_start+timedelta(1)
+
+		try:	
+			my_cleanings  = CleaningTeam.objects.filter(Q(Q(Q(start_at__gte=my_cleaning_date_start)&Q(start_at__lt=my_cleaning_date_end))&Q(team_leader=request.user))).select_related('order_scheduler__order_scheduler_book__service_type','order_scheduler__order__evaluation__customer','order_scheduler__customer_address')
+		except:
+			my_cleanings  = None
+		try:
+			my_followups  = FollowUpTeam.objects.filter(Q(Q(Q(start_at__gte=my_cleaning_date_start)&Q(start_at__lt=my_cleaning_date_end))&Q(team_leader=request.user))).select_related('followup_scheduler__follow_up__investigation__order__evaluation__customer','followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book__service_type','followup_scheduler__customer_address')
+		except:
+			my_followups  = None
+
+		response_dict['success'] = True
+
 		return Response(response_dict, HTTP_200_OK)

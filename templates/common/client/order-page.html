@@ -1186,7 +1186,6 @@
                                                     <li><i class="fas test-color fa-address-card c-mr-10"></i><b>{{orderschedule.customer_address.apartment}}</b>: {% if orderschedule.customer_address.floor %}{{orderschedule.customer_address.floor}}, {% else %}{% endif %} {{orderschedule.customer_address.building}}, {{orderschedule.customer_address.block}}, {{orderschedule.customer_address.street}},<br> {% if orderschedule.customer_address.avenue %}{{orderschedule.customer_address.avenue}}, {% else %}{% endif %} {{orderschedule.customer_address.area.name}}, {{orderschedule.customer_address.governorate.name}}</li>
 
                                                 </ul>
-                                                {% if orderschedule.customer_address.gps_location %}<div class="gps-btn" onclick="window.location.href='{{orderschedule.customer_address.gps_location}}'"><i class="fas fa-crosshairs mr-10" ></i>GPS Location</div>{% endif %}
                                             </div>
                                         </div>
                                         <div class="col-md-4  c-mt-50">
