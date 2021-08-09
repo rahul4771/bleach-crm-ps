@@ -81,3 +81,6 @@ class InventorySegmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Segment
         fields = ('id','name')
+
+
+###Team Leader Mobile app serializers
