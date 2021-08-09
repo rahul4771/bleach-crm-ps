@@ -253,7 +253,22 @@
     v-on:change="oneTimeDateChange()" class="mt-2" :min="today" ></v-date-picker>
   </div>
   <div class="col-md-8 "  >
+    <div class="text-right">
+      <v-btn
+     
+      color="primary"
+      rounded
+      small
+      outlined
+      @click="resetOneTime()"
+      v-if="checkSlotSelection()"
+    >
+    <v-icon left>mdi-cached</v-icon>
+      Reset Selection
+    </v-btn>
+    </div>
      <div  v-for="(sdate,sdindex) in one_time_slots">
+     
      <div v-if="sdate.slots.length>0"><b>Date : <% sdindex %></b></div> 
      <v-chip
     v-for="(st,stindex) in sdate.slots"
@@ -1352,15 +1367,15 @@ width="1000"
                   <div class="col-md-4 mt-2" id="field-location-type"
                     v-if="serviceType=='General Cleaning' || serviceType=='Sterilization'||serviceType=='Deep Cleaning' || serviceType=='Window Cleaning' || serviceType=='Kitchen Cleaning'">
                     <v-select :items="location_types2" v-model="location_type" label="Location Type"
-                      v-if="serviceType=='General Cleaning' || serviceType=='Sterilization'" :attach="true">
+                      v-if="serviceType=='General Cleaning' || serviceType=='Sterilization'">
                     </v-select>
                     <v-select
                       v-if="serviceType=='Deep Cleaning' || serviceType=='Window Cleaning' || serviceType=='Kitchen Cleaning'"
-                      :items="location_types" v-model="location_type" label="Location Type" :attach="true">
+                      :items="location_types" v-model="location_type" label="Location Type" >
                     </v-select>
                   </div>
                   <div class="col-md-4 mt-2" id="field-no-of-buildings">
-                    <v-select :items="area_types" v-model="area_type" item-text="name" label="Area Type" :attach="true">
+                    <v-select :items="area_types" v-model="area_type" item-text="name" label="Area Type">
                     </v-select>
                   </div>
                   <div class="col-md-4 mt-2" id="field-wall-type" v-if="
@@ -1483,23 +1498,23 @@ width="1000"
                                         <v-text-field type="number" v-model="
                                         building[index - 1].floors[floor - 1]
                                           .no_of_rooms
-                                      " :rules="[v => !!v || 'No of Rooms is required']" label="No of Rooms" required>
+                                      " label="No of Rooms" class="not-required">
                                         </v-text-field>
                                       </div>
                                       <div class="col-md-6">
                                         <v-text-field type="number" v-model="
                                         building[index - 1].floors[floor - 1]
                                           .no_of_bathrooms
-                                      " :rules="[v => !!v || 'No of Bathrooms is required']" label="No of Bathrooms"
-                                          required>
+                                      "  label="No of Bathrooms"
+                                      class="not-required">
                                         </v-text-field>
                                       </div>
                                       <div class="col-md-6">
                                         <v-text-field type="number" v-model="
                                         building[index - 1].floors[floor - 1]
                                           .no_of_windows
-                                      " :rules="[v => !!v || 'No of windows is required']" label="No of Windows"
-                                          required>
+                                      " label="No of Windows"
+                                      class="not-required">
                                         </v-text-field>
                                       </div>
                                       <div class="col-md-6" v-if="
