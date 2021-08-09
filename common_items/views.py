@@ -232,8 +232,8 @@ class OrderDetails(IsAuthenticated,View):
 					case1 = Q(order_cancellinprogress_count__gte=1)
 				elif fil_status == 'ORDER_CANCELLED':
 					case1 = Q(order_cancelled_count__gte=1)
-				# elif fil_status == 'EVALUATING':
-				# 	case1 = Q(quatation_status__isnull=True)
+				elif fil_status == 'EVALUATING':
+					case1 = Q(quatation_status__isnull=True)
 			else:
 				if fil_status == 'APPROVED':
 					case1 = Q(Q(quatation_status=fil_status)&~Q(order_in_progress_count__gte=1)&~Q(order_closed_count__gte=1)&~Q(approved_not_paid_count__gte=1))
