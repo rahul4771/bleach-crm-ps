@@ -322,7 +322,7 @@
           
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button" >Submit</button>
+            <button class="sent-button value-form-btn" type="submit" >Submit</button>
                         <button data-dismiss="modal" onclick="closeNavAddValue()" class="view-button">Cancel</button>
         </div>
         </form>
@@ -412,6 +412,7 @@
     function openNavAddValue(d) {
         if(d == 'add'){
             $("#valueHead").text("Add Value");
+            $(".value-form-btn").text("Add");
             
         }
         if(d == 'edit'){
@@ -428,6 +429,34 @@
             document.getElementById("addValue").style.width = "30%";
         }  
     }
+
+    function openNavEditValue(d) {
+        $("#valueHead").text("Edit Value");
+        $(".value-form-btn").text("Update");
+
+        $('#value_action').val('edit_value');
+        $('#id_edit_value').val($(d).data('valueid'));
+        $('#value_name_id').val($(d).data('valuename'));
+
+        if ($(d).data('valuestatus') == true){
+            document.getElementById("value_status_id").value = 'True';
+        }
+        else{
+            document.getElementById("value_status_id").value = 'False';
+        }
+      
+
+        console.log(d)
+        if(screen.width<= 600){
+            document.getElementById("addValue").style.width = "100%";
+        }else if(screen.width<= 720){
+            document.getElementById("addValue").style.width = "50%";
+        }
+        else{
+            document.getElementById("addValue").style.width = "30%";
+        }  
+    }
+
     function closeNavAddValue() {
         document.getElementById("addValue").style.width = "0";
     }
@@ -558,7 +587,7 @@
                 $(".value_table tr:not(:first)").remove(); 
                 var edit = "edit";
                 $.each(result.data.inventory_value,function(key,value){
-                        $('.value_table').append('<tr><td>'+value.name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="editValue('+value.id+','+value.name+')" data-valueid='+value.id+' data-valuename='+value.name+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn value_delete" onclick="deleteValue('+value.id+')" data-valueid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
+                        $('.value_table').append('<tr><td>'+value.name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavEditValue(this)" data-valueid='+value.id+' data-valuename='+value.name+' data-valuestatus='+value.status+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn value_delete" onclick="deleteValue('+value.id+')" data-valueid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
                 })
             }else{
                 $(".value_table tr:not(:first)").remove(); 

@@ -392,12 +392,14 @@
         if(d == 'add'){
             $("#lineHead").text("Add Line");
             $('.line-form-btn').text('Add');
+            $('#segment_action_id').val('add_line');
            
         }
         if(d == 'edit'){
             
             $("#lineHead").text("Edit Line");
             $('.line-form-btn').text('Edit');
+            $('#segment_action_id').val('edit_line');
            
         }
         if(screen.width<= 600){
@@ -414,9 +416,17 @@
         console.log($(d).data('linestatus'))
             $("#lineHead").text("Edit Line");
             $('.line-form-btn').text('Edit');
+            $('#segment_action_id').val('edit_line');
             $('#id_edit_line').val($(d).data('lineid'));
             $('#line_name_id').val($(d).data('linename'));
-            $('#line_status_id').val($(d).data('linestatus'));
+            console.log($(d).data('linename'),$(d).data('linestatus'),"stats")
+
+            if ($(d).data('linestatus') == true){
+                document.getElementById("line_status_id").value = 'True';
+            }
+            else{
+                document.getElementById("line_status_id").value = 'False';
+            }
       
         if(screen.width<= 600){
             document.getElementById("addLine").style.width = "100%";
@@ -454,16 +464,6 @@
         $('#status_segment').val('');
     })
 
-    $('.line_edit').click(function(){
-        console.log('h')
-        console.log($(this).data('linename'),"lopz")
-        $('#id_edit_line').val($(this).data('lineid'));
-        $('#line_name_id').val($(this).data('linename'));
-        $('#line_status_id').val($(this).data('linestatus'));
-
-        openNavAddLine2();
-    })
-
     function set_params_go(args)
     {
     var url='{% url 'inventory:inventory-segment' category.id %}';
@@ -490,7 +490,7 @@
                 $(".line_table tr:not(:first)").remove(); 
                 var edit = "edit";
                 $.each(result.data.inventory_line,function(key,value){
-                        $('.line_table').append('<tr><td>'+value.name+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavAddLine2(this)" data-lineid='+value.id+' data-linename='+value.name+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteLine('+value.id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
+                        $('.line_table').append('<tr><td>'+value.name+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavAddLine2(this)" data-lineid='+value.id+' data-linename='+value.name+' data-linestatus='+value.status+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteLine('+value.id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
                 })
             }else{
                 $(".line_table tr:not(:first)").remove(); 
@@ -500,14 +500,6 @@
          }
     }
 
-    $('.line_edit').click(function(){
-        console.log($(this).data('linename'),"lopz")
-        $('#id_edit_line').val($(this).data('lineid'));
-        $('#line_name_id').val($(this).data('linename'));
-        $('#line_status_id').val($(this).data('linestatus'));
-
-        openNavAddLine2();
-    })
 </script>
 
 {% endblock %}

@@ -70,12 +70,12 @@ class EvaluationSerializer(serializers.ModelSerializer):
 class InventoryLineSerializer(serializers.ModelSerializer):
     class Meta:
         model = Line
-        fields = ('id','name')
+        fields = ('id','name','status')
 
 class InventoryValueSerializer(serializers.ModelSerializer):
     class Meta:
         model = AttributeValue
-        fields = ('id','name')
+        fields = ('id','name','status')
 
 class InventorySegmentSerializer(serializers.ModelSerializer):
     class Meta:
