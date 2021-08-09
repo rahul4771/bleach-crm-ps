@@ -39,6 +39,6 @@ urlpatterns = [
 
 	###Team Leader Mobile app API'S
 	url(r'^login/$',views.LoginAPI.as_view(),name='api-login'),
-	url(r'^stl/home/$',views.TlHomeAPI.as_view(),name='api-stlhome'),
-	url(r'^stl/cleanings/$',views.TlCleanings.as_view(),name='api-stlcleanings'),
+	url(r'^tl/home/$',views.TlHomeAPI.as_view(),name='api-stlhome'),
+	url(r'^tl/cleanings/$',views.TlCleanings.as_view(),name='api-stlcleanings'),
 ]
