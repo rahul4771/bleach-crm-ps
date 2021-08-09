@@ -551,7 +551,8 @@ building_msg:false,
 others_keynotes:[],
 reset_building:false,
 reset_floor:false,
-building_warning:false
+building_warning:false,
+available_slotes:[]
 
       },
       methods: {
@@ -2115,6 +2116,7 @@ removeOneTimeSlot(slot){
     }
   },
   checkSlotStat(slot){
+    
     var prevSlot=parseInt(slot)-1
     var nextSlot=parseInt(slot)+1
     if(this.selected_double_slots.length<this.selectedDuration.slots)
@@ -2155,19 +2157,30 @@ removeOneTimeSlot(slot){
     return false
   }
   },
-  checkOneTimeSlotStat(slot){
-    var prevSlot=parseInt(slot)-1
-    var nextSlot=parseInt(slot)+1
+  
+  checkOneTimeSlotStat(start,end,slot){
+    for(var i in this.slotFormat){
+      if(this.slotFormat[i].start_time==start){
+       currSlot=i
+       break;
+      }
+    }
+   
+    var prevSlot=parseInt(currSlot)-1
+    var nextSlot=parseInt(currSlot)+1
+   
     var counter=0
     for(var i in this.one_time_slots){
       counter=counter+this.one_time_slots[i].slots.length
     }
     if(counter<this.selectedDuration.slots)
     {
+      
     if(this.one_time_slots[this.oneTimeDateSelected].slots.length>0)
     {
+     
     if(slot==1){
-      if(this.one_time_slots[this.oneTimeDateSelected].slots.includes(nextSlot)){
+      if(this.one_time_slots[this.oneTimeDateSelected].slots.includes(String(nextSlot))){
         return true
       }
       else {
@@ -2175,7 +2188,7 @@ removeOneTimeSlot(slot){
       }
     }
     else if(slot==12){
-      if(this.one_time_slots[this.oneTimeDateSelected].slots.includes(prevSlot)){
+      if(this.one_time_slots[this.oneTimeDateSelected].slots.includes(String(prevSlot))){
         return true
       }
       else {
@@ -2183,8 +2196,10 @@ removeOneTimeSlot(slot){
       }
     }
     else{
-      if(this.one_time_slots[this.oneTimeDateSelected].slots.includes(prevSlot)||this.one_time_slots[this.oneTimeDateSelected].slots.includes(nextSlot))
+    
+      if(this.one_time_slots[this.oneTimeDateSelected].slots.includes(String(prevSlot))||this.one_time_slots[this.oneTimeDateSelected].slots.includes(String(nextSlot)))
       {
+       
         return true
       }
       else{
@@ -2200,6 +2215,7 @@ removeOneTimeSlot(slot){
     return false
   }
   },
+
   oneTimeSlotCounter(){
     var counter=0
     for(var i in this.one_time_slots){
@@ -2788,10 +2804,11 @@ responsive:{
   },
   parseOneTimeSlots(){
     this.parsedTimeSlots=[]
+    this.available_slotes=[]
     for(var i in this.timeSlots){
       if(this.timeSlots[i].includes(2)){
         var slotNo=(parseInt(i)+2)/2
-
+        this.available_slotes.push(slotNo)
         this.parsedTimeSlots.push(this.slotFormat[String(slotNo)])
         
         
