@@ -170,7 +170,7 @@
                                             {{line.name}}
                                         </td>
                                         <td>
-                                            <button class="inv-plan-img-btn ml-5" onclick="openNavAddLine2()" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                            <button class="inv-plan-img-btn ml-5" onclick="openNavAddLine2(this)" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
                                             <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
             
                                         </td>
@@ -409,14 +409,14 @@
             document.getElementById("addLine").style.width = "30%";
         }  
     }
-    function openNavAddLine2() {
-        
+    function openNavAddLine2(d) {
+        console.log(d)
+        console.log($(d).data('linestatus'))
             $("#lineHead").text("Edit Line");
             $('.line-form-btn').text('Edit');
-
-            $('#id_edit_line').val($(this).data('lineid'));
-            $('#line_name_id').val($(this).data('linename'));
-            $('#line_status_id').val($(this).data('linestatus'));
+            $('#id_edit_line').val($(d).data('lineid'));
+            $('#line_name_id').val($(d).data('linename'));
+            $('#line_status_id').val($(d).data('linestatus'));
       
         if(screen.width<= 600){
             document.getElementById("addLine").style.width = "100%";
@@ -490,7 +490,7 @@
                 $(".line_table tr:not(:first)").remove(); 
                 var edit = "edit";
                 $.each(result.data.inventory_line,function(key,value){
-                        $('.line_table').append('<tr><td>'+value.name+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavAddLine2()" data-lineid='+value.id+' data-linename='+value.name+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteLine('+value.id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
+                        $('.line_table').append('<tr><td>'+value.name+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavAddLine2(this)" data-lineid='+value.id+' data-linename='+value.name+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteLine('+value.id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
                 })
             }else{
                 $(".line_table tr:not(:first)").remove(); 
