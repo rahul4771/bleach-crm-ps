@@ -530,6 +530,7 @@
 </thead>
 <tbody>
     {% for evaluation in bookings %}
+    {% if  evaluation.estimated_cost > 0 %}
     <tr>
     <td {% if evaluation.quatation_status == 'APPROVED' %}
         {% for order in evaluation.evaluationorder %}
@@ -622,6 +623,7 @@
 
     </td>
     </tr>    
+    {% endif %}
     {% empty %}
     <tr><td></td><td></td><td></td><td>No Data</td><td></td><td></td></tr>    
     {% endfor %}

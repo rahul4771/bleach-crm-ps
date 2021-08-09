@@ -1827,16 +1827,80 @@ class LoginAPI(APIView):
 		return Response(response_dict, HTTP_200_OK)
 
 class TlHomeAPI(APIView):  
-	permission_classes        = (IsTeamInchargePermission)
+	permission_classes        = (IsAuthenticated,IsTeamInchargePermission)
 	authentication_classes    = (TokenAuthentication,)
 	
 	def get(self,request): 
-		response_dict = {'success':False}  
+		response_dict = {'success':False} 
+
+		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
+		count_today_end   = count_today_start+timedelta(1)
+
+		#Cleaning Jobs count
+		try:
+			cleaning_job	= CleaningTeam.objects.filter(is_active=True,team_leader=request.user)
+		except:
+			cleaning_job    = None
+
+		today_cleaning_job_count = cleaning_job.filter(Q(Q(start_at__gte=count_today_start)&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_start)&Q(end_at__lt=count_today_end))).count() 
+		week_cleaning_job_count  = cleaning_job.filter(Q(Q(start_at__gte=count_today_end-timedelta(7))&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_end-timedelta(7))&Q(end_at__lt=count_today_end))).count()
+				
+
+		#Investigation Count
+		try:
+			investigation = Investigation.objects.filter(is_active=True,investigator=request.user)
+		except:
+			investigation = None	
+
+		today_investigation_count = investigation.filter(scheduled_at__gte=count_today_start,scheduled_at__lt=count_today_end).count()
+		week_investigation_count   = investigation.filter(scheduled_at__gte=count_today_end-timedelta(7),scheduled_at__lt=count_today_end).count()	
+
+		##To find average and total hour  team leader 
+		try:
+			cleaning_teams  = CleaningTeam.objects.filter(is_active=True,team_leader=request.user)
+		except:
+			cleaning_teams  = None
+		try:
+			follow_up_teams = FollowUpTeam.objects.filter(is_active=True,team_leader=request.user)
+		except:
+			follow_up_teams = None
+
+		today_cleaning_active_teams  = cleaning_teams.filter(Q(Q(Q(start_at__gte=count_today_start)&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_start)&Q(end_at__lt=count_today_end))))
+		today_followup_active_teams  = follow_up_teams.filter(Q(Q(Q(start_at__gte=count_today_start)&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_start)&Q(end_at__lt=count_today_end))))
+		week_cleaning_active_teams   = cleaning_teams.filter(Q( Q(Q(start_at__gte=count_today_end-timedelta(7))&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_end-timedelta(7))&Q(end_at__lt=count_today_end)) ))
+		week_followup_active_teams   = follow_up_teams.filter(Q( Q(Q(start_at__gte=count_today_end-timedelta(7))&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_end-timedelta(7))&Q(end_at__lt=count_today_end)) ))
+		
+
+		today_date            = timezone.now()
+		weekstart_date        = timezone.now().date()-timedelta(6)
+
+
+		try:
+			today_total_team_mens = today_cleaning_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+today_cleaning_active_teams.count() or 0+today_followup_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+today_followup_active_teams.count() or 0
+		except:
+			today_total_team_mens = 0
+		try:	
+			week_total_team_mens  = week_cleaning_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+week_cleaning_active_teams.count() or 0+week_followup_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+week_followup_active_teams.count() or 0
+		except:	
+			week_total_team_mens  = 0 
         
+
+		response_dict['today_cleaning_job_count']  = today_cleaning_job_count
+		response_dict['week_cleaning_job_count']   = week_cleaning_job_count
+
+		response_dict['today_investigation_count'] = today_investigation_count
+		response_dict['week_investigation_count']  = week_investigation_count
+		
+		response_dict['today_total_team_mens']     = today_total_team_mens 
+		response_dict['week_total_team_mens']      = week_total_team_mens
+
+		response_dict['success']                   = True
+
+
 		return Response(response_dict, HTTP_200_OK)
 
 class TlCleanings(APIView):  
-	permission_classes        = (IsTeamInchargePermission)
+	permission_classes        = (IsAuthenticated,IsTeamInchargePermission)
 	authentication_classes    = (TokenAuthentication,)
 	
 	def get(self,request): 
