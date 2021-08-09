@@ -281,9 +281,14 @@ const app = new Vue({
     console.log("book ids ae"+JSON.stringify(book_ids))
     for(var i=0;i<service.length;i++)
     {
+      var serid=$(book_ids[i]).val()
+      var status=$('#service_status_'+serid).val()
       this.services.push({
         id:$(book_ids[i]).val(),
-        name:$(service[i]).text()})
+        name:$(service[i]).text(),
+        status:status
+      })
+       
     }
     
    

@@ -122,7 +122,7 @@
     <h5>Callback Status</h5>
     <label for="favcity" style="width:100%;"> 
     <select name="callback_status" id="callback_status" onchange="set_params_go();"> 
-    <option value="" >ALL</option>
+    <option value="" {% if callback_status == '' %}selected{% endif %} >ALL</option>
     <option value="WAITING" {% if callback_status == 'WAITING' %}selected{% endif %}>WAITING</option>
     <option value="WILL_AGREE" {% if callback_status == 'WILL_AGREE' %}selected{% endif %}>WILL AGRREE</option>
     <option value="CALLBACK_LATER" {% if callback_status == 'CALLBACK_LATER' %}selected{% endif %}>CALLBACK LATER</option>

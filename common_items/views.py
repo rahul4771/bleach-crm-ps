@@ -2237,10 +2237,9 @@ class CallBackList(IsAuthenticated,View):
 		else:
 			callback_status = request.GET.get('callback_status_payments')
 			
-		if not callback_status:
-			callback_status = 'WAITING'
-
 		print(callback_status,"tabber2")
+
+		
 		if search:
 			evaluations = Evaluation.objects.filter(is_active=True).filter(Q( Q(Q(quatation_status='APPROVED') & Q(Q(payment_method='PREPAID')&~Q(evaluation_order__payment_status='COMPLETED'))|Q(Q(payment_method='BREAKDOWN')&Q(evaluation_order__preamount_paid=0))) | Q(quatation_status='PENDING')|Q(quatation_status='REJECTED')|Q(quatation_status='EXPIRED') )).select_related('customer').filter(Q(Q(customer__name__icontains=search)|Q(customer__mobile_number__icontains=search)|Q(evaluation_id__icontains=search))).order_by('-id').prefetch_related(Prefetch('evaluation_order',queryset=Order.objects.filter(is_active=True),to_attr='evaluationorder'),Prefetch('evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_book')),to_attr='details_evaluation'))
 		else:

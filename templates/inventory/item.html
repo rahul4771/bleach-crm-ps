@@ -58,12 +58,15 @@
         <button data-dismiss="modal" class="view-button" id="model_close" hidden>Cancel</button>
         <div class="main-content-holder"><!--main-content-holder-->   
             <div class="white-wrapper f-gray" >
+              
+                <form method="POST" action="">{% csrf_token %}
+                <input type"hidden" name="action" value="edit_item_details" />
               <div class="row">
                   <div class="col-md-12" style="position: relative;">
                     <div class="edit-div">
                         <img id="id_editButton" onclick="editItemData()" class="inv-edit-img"
                         src="{% static 'files/icons/edit.png' %}">
-                        <button id="id_editDone" class="inv-blue-btn inv-hide" onclick="doneEdit()">Done </button>
+                        <button id="id_editDone" class="inv-blue-btn inv-hide" type="submit" onclick="doneEdit()">Done </button>
                     </div>
                   </div>
               </div>
@@ -73,12 +76,13 @@
                             <div class="col-md-2">
                                 <img onclick="viewImgModel()" style="width: 100%; cursor: pointer;" src="{% static 'files/images/dummy-profile-pic.jpg' %}"  alt="">
                             </div>
+                            
                             <div class="col-md-9 m-mt-30">
                                 <div class="inv-item-head">
                                     <!-- Item Name -->
-                                    <span id="id_name_val" class="av-font">Item Name</span>
+                                    <span id="id_name_val" class="av-font">{{inventory_item.name}}</span>
                                     <div id="id_name_text" class="inv-input-container h-30 inv-hide" style="width: 50%;"> 
-                                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                                        <input type="text"  class="w-p-100 inv-in" name="item_name" value="{{inventory_item.name}}">
                                       </div>
                                 </div>
                                 <div class="inv-item-head-sub mt-20">
@@ -89,12 +93,13 @@
                                 <div class="col-md-4 pl-0">
                                     <div class="inv-item-head-sub-2">Category</div>
                                     <div class="inv-item-head-sub mt-20" id="id_cat" >
-                                        <span id="id_cat_val"  class="av-font">  Category 1</span>
+                                        <span id="id_cat_val"  class="av-font">  {{inventory_item.item_category.name}}</span>
                                        
-                                        <select id="id_cat_select" class="minimal av-font inv-hide">
-                                            <option></option>
-                                            <option value="Category1">Category1</option>
-                                            <option value="Category2">Category2</option>
+                                        <select id="id_cat_select" name="item_category" class="minimal av-font inv-hide" >
+                                            <option value="">--Select Category--</option>
+                                            {% for category in categories %}
+                                            <option value="{{category.id}}" {% if inventory_item.item_category.id == category.id %}selected{% endif %}>{{category.name}}</option>
+                                            {% endfor %}
                                                             
                                         </select>
                                     </div>
@@ -102,24 +107,22 @@
                                 <div class="col-md-4 pl-0 m-mt-10">
                                     <div class="inv-item-head-sub-2">Segment</div>
                                     <div class="inv-item-head-sub mt-20">
-                                        <span id="id_seg_val"  class="av-font">  Segment 1</span>
+                                        <span id="id_seg_val"  class="av-font">  {{inventory_item.item_segment.name|default_if_none:'-'}}</span>
                                        
-                                        <select id="id_seg_select" class="minimal av-font inv-hide">
-                                            <option></option>
-                                            <option value="Category1">Category1</option>
-                                            <option value="Category2">Category2</option>
+                                        <select id="id_seg_select" name="item_segment" class="minimal av-font inv-hide">
+                                            <option value="">--Select Segment--</option>
+                                            
                                                             
                                         </select>
                                     </div>
+                                
                                 </div> <div class="col-md-4 pl-0 m-mt-10">
                                     <div class="inv-item-head-sub-2">Line</div>
                                     <div class="inv-item-head-sub mt-20">
-                                        <span id="id_line_val"  class="av-font">  Line 1</span>
+                                        <span id="id_line_val" class="av-font">  {{inventory_item.item_line.name|default_if_none:'-'}}</span>
                                        
-                                        <select id="id_line_select" class="minimal av-font inv-hide">
-                                            <option></option>
-                                            <option value="Category1">Category1</option>
-                                            <option value="Category2">Category2</option>
+                                        <select id="id_line_select" name="item_line" class="minimal av-font inv-hide">
+                                            <option value="">--Select Line--</option>
                                                             
                                         </select>
                                     </div>
@@ -127,6 +130,7 @@
                                 
                                </div>
                             </div>
+                            
                         </div>
                     </div>
                     <div class="col-md-2  h-100 m-mt-30">
@@ -161,10 +165,10 @@
                                     <div class="col-md-6 text-left inv-text-1 " > Quantity</div>
                                     <div class="col-md-6 inv-text-1">
                                         <div id="id_res_text" class="inv-input-container h-30 inv-hide" > 
-                                            <input type="number"  class="w-p-100 inv-in" name="attributes">
+                                            <input type="number"  class="w-p-100 inv-in" value="{{inventory_item.reserve_count|default_if_none:'0'}}" name="reserve">
                                           </div>    
                                         <!-- 135 Unit  -->
-                                        <span id="id_res_val"> 135 Unit</span>
+                                        <span id="id_res_val"> {{inventory_item.reserve_count|default_if_none:'0'}} unit(s)</span>
                                     
                                     </div>
 
@@ -177,9 +181,8 @@
                 </div>
                 <div class="row mt-20">
                 <div class="col-md-10 av-font" style="font-size: 16px;">
-                    <textarea class="inv-hide" id="id_des_text" style="width: 100%; border-radius: 5px;" rows="4">vr</textarea>
-                    <span id="id_des_val" class="av-font ">                 Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
-                        At vero Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero</span>
+                    <textarea class="inv-hide" id="id_des_text" name="description" style="width: 100%; border-radius: 5px;" rows="4">vr</textarea>
+                    <span id="id_des_val" class="av-font ">{{inventory_item.description|default_if_none:"-"}}</span>
                 </div>
                 </div>
                 <div class="row mt-20">
@@ -191,6 +194,8 @@
                       </div>
                     </div>
                 </div>
+                </form>
+
                 <div class="row mt-30 " style="font-size: 16px; margin-left: 0px;">
                     
                     <div class="col-md-3 inv-item-card2">
@@ -259,18 +264,14 @@
                                     <th data-hide="phone,tablet"  style="width: %; ">
                                         Purchase date
                                     </th>
-                                    <th data-hide="phone,tablet"  style="width: %;" >
-                                        Quantity
-                                    </th>
+                                    
                                     <th data-hide="phone,tablet"  style="width: %;" >
                                         Expiry date
                                     </th>
                                     <th data-hide="phone,tablet"  class="text-center">
                                         Unit Price
                                     </th>
-                                    <th data-hide="phone,tablet" >
-                                        Contact
-                                    </th>
+                                    
                                     <th>
                                         Status
                                     </th>
@@ -279,29 +280,26 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                {% for unit in item_units %}
                                 <tr>
                                     <td>
-                                        0000000
+                                        {{unit.unit_code}}
                                     </td>
                                     <td>
-                                        12/12/2021
+                                        {{unit.purchase_date|date:'d-m-Y'}}
                                     </td>
+                                    
                                     <td >
-                                       3
-                                    </td>
-                                    <td >
-                                        12/12/2021
+                                        {{unit.expiry_date|date:'d-m-Y'}}
                                         
                                     </td>
                                     <td class="text-center">
-                                        3
+                                        {{unit.unit_price|floatformat:3}} KD
                                     </td>
-                                    <td>
-                                        000000000
-                                    </td>
+                                    
                                     <td class="">
-                                        <span class="inv-dot c-out-of-order ml-5"></span>
-                                        Out of Order
+                                        <span class="inv-dot {% if unit.status == 'active' %}c-active{% elif unit.status == 'expired' %}c-expired{% else %}c-out-of-order{% endif %} ml-5"></span>
+                                        {{unit.status}}
     
                                     </td>
                                     <td style="float: right;">
@@ -316,80 +314,7 @@
     
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td>
-                                        0000000
-                                    </td>
-                                    <td>
-                                        12/12/2021
-                                    </td>
-                                    <td >
-                                       3
-                                    </td>
-                                    <td >
-                                        12/12/2021
-                                        
-                                    </td>
-                                    <td class="text-center">
-                                        3
-                                    </td>
-                                    <td>
-                                        000000000
-                                    </td>
-                                    <td class="">
-                                        <span class="inv-dot c-expired ml-5"></span>
-                                                    Expired
-    
-                                    </td>
-                                    <td style="float: right;">
-                                      
-    
-                                        <button onclick="openNavAddBundle('edit')" class="inv-plan-img-btn"> <img
-                                                src="{% static 'files/inventory/icons/edit.png' %}" alt="">
-                                        </button>
-                                        <button class="inv-plan-img-btn"> <img
-                                                src="{% static 'files/inventory/icons/delete.png' %}" alt="">
-                                        </button>
-    
-                                    </td>
-                                </tr> 
-                                 <tr>
-                                    <td>
-                                        0000000
-                                    </td>
-                                    <td>
-                                        12/12/2021
-                                    </td>
-                                    <td >
-                                       3
-                                    </td>
-                                    <td >
-                                        12/12/2021
-                                        
-                                    </td>
-                                    <td class="text-center">
-                                        3
-                                    </td>
-                                    <td>
-                                        000000000
-                                    </td>
-                                    <td class="">
-                                        <span class="inv-dot c-active ml-5"></span>
-                                       Active
-    
-                                    </td>
-                                    <td style="float: right;">
-                                      
-    
-                                        <button onclick="openNavAddBundle('edit')" class="inv-plan-img-btn"> <img
-                                                src="{% static 'files/inventory/icons/edit.png' %}" alt="">
-                                        </button>
-                                        <button class="inv-plan-img-btn"> <img
-                                                src="{% static 'files/inventory/icons/delete.png' %}" alt="">
-                                        </button>
-    
-                                    </td>
-                                </tr>
+                                {% endfor %}
                             </tbody>
                           
                          
@@ -419,22 +344,26 @@
                 </div>
             </div>
             <hr>
+
+            <form method="POST" action="" >{% csrf_token %}
+            <input type="hidden" name="item_id" value="{{inventory_item.id}}">
+            <input type="hidden" name="action" value="add_unit" id="unit_action" >
             <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Purchase Date</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="date"  class="w-p-100 inv-in" name="attributes">
+                        <input type="date" class="w-p-100 inv-in" name="purchase_date" id="id_purchase_date">
                       </div>
                 </div>
 
             </div>
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Quantity</div>
+                    <div class="model-input-name">Unit Code</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="number"  class="w-p-100 inv-in" name="attributes">
+                        <input type="text" class="w-p-100 inv-in" value="{{new_unit_code}}" name="unit_code" id="id_unit_code" readonly>
                       </div>
                 </div>
 
@@ -444,7 +373,7 @@
                     <div class="model-input-name">Expired Date</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="date"  class="w-p-100 inv-in" name="attributes">
+                        <input type="date" class="w-p-100 inv-in" name="expiry_date" id="id_expiry_date">
                       </div>
                 </div>
 
@@ -454,7 +383,7 @@
                     <div class="model-input-name">Unit Price</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                        <input type="text"  class="w-p-100 inv-in" name="unit_price" id="id_unit_price">
                       </div>
                 </div>
 
@@ -463,10 +392,10 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Status</div>
 
-                    <select id="id_payment" class="minimal">
-                        <option value="Post Paid">Active</option>
-                        <option  >Out Of order</option>
-                        <option value="Post Paid">Expired</option>
+                    <select id="id_unit_status" name="unit_status" class="minimal">
+                        <option value="active">Active</option>
+                        <option value="out_of_order">Out Of order</option>
+                        <option value="expired">Expired</option>
                       
 
 
@@ -480,9 +409,11 @@
           
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button" >Submit</button>
+            <button class="sent-button" type="submit" >Submit</button>
                         <button data-dismiss="modal" onclick="closeNavAddBundle()" class="view-button">Cancel</button>
         </div>
+        </form>
+
     </div>
     <div id="editExtra" class="inv-sidedrawer">
 
@@ -644,12 +575,102 @@
                 `<i style="color:#000000 !important;"  class='fa fa-chevron-right service-control'></i>`,
             ],
         });
+
+        var categoryid = $('#id_cat_select').val();
+        var segmentid = "{{inventory_item.item_segment.id}}";
+        console.log(segmentid,"sid")
+
+        getsegments(categoryid);
+        getlines(segmentid);
     });
+
 function viewImgModel(){
     console.log('c')
     $('#id_model_button').click()
     
 }
+
+$('#id_cat_select').change(function(){
+    var categoryid = $('#id_cat_select').val();
+    getsegments(categoryid);
+})
+
+$('#id_seg_select').change(function(){
+    var segmentid = $('#id_seg_select').val();
+    getlines(segmentid);
+})
+
+async function getsegments(categoryid){
+         var result = await _get('api/inventory-segments/?category_id='+categoryid);
+         $('#id_seg_select').find('option').remove();
+         $('#id_line_select').find('option').remove();
+         if(result.status == 200){
+             console.log(result.data.inventory_segment,"stat")
+            if (result.data.inventory_segment.length > 0){
+                $('#id_seg_select').find('option').remove();
+                $('#id_seg_select').append('<option value="">--Select Segment--</option>')
+                $('#id_seg_select').attr("required",true);
+                $.each(result.data.inventory_segment,function(key,value){
+                    console.log(value.name,"stat")
+
+                    if( parseInt(value.id) == parseInt("{{inventory_item.item_segment.id}}")){
+                        $('#id_seg_select').append('<option value='+value.id+' selected>'+value.name+'</option>')
+                    console.log("tat")
+                    }else{
+                        $('#id_seg_select').append('<option value='+value.id+'>'+value.name+'</option>')
+                    console.log("tat2")
+                    }
+                        
+                })
+
+                document.getElementById("id_seg_select").value = "{{inventory_item.item_segment.id|default_if_none:""}}";
+                
+            }else{
+                $('#id_seg_select').find('option').remove();
+                $('#id_line_select').find('option').remove();
+                $('#id_seg_select').attr("required",false);
+                $('#id_line_select').attr("required",false);
+                //showNotification('No Segments','error')
+            }
+            
+         }else{
+             
+            showNotification('Something went wrong','error')
+         }
+    }
+
+    async function getlines(segmentid){
+         var result = await _get('api/inventory-lines/?segment_id='+segmentid);
+         $('#id_line_select').find('option').remove();
+         if(result.status == 200){
+             console.log(result.data.inventory_line,"stat")
+            if (result.data.inventory_line.length > 0 ){
+                $('#id_line_select').find('option').remove();
+                $('#id_line_select').append('<option value="">--Select Line--</option>')
+                $('#id_line_select').attr("required",true);
+                $.each(result.data.inventory_line,function(key,value){
+                    console.log(key.id,value.id,"stat")
+                        if( parseInt(value.id) == parseInt("{{inventory_item.item_line.id}}") ){
+                            $('#id_line_select').append('<option value='+value.id+' selected>'+value.name+'</option>')
+                        }else{
+                            $('#id_line_select').append('<option value='+value.id+'>'+value.name+'</option>')
+                        }
+                })
+
+                document.getElementById("id_line_select").value = "{{inventory_item.item_line.id|default_if_none:""}}";
+
+            }else{
+                
+                $('#id_line_select').find('option').remove();
+                $('#id_line_select').attr("required",false);
+                //showNotification('No Lines','error')
+            }
+            
+         }else{
+            showNotification('Something went wrong','error')
+         }
+    }
+
 
 function addImgModel(){
     // $('#imgModel').modal('hide');
