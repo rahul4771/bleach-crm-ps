@@ -59,6 +59,17 @@ class InventoryItem(models.Model):
     def __str__(self):
         return self.name
 
+class InventoryItemImages(models.Model):
+    inventory_item  = models.ForeignKey(InventoryItem,blank=False,null=False,related_name='image_item')
+    item_image      = models.FileField(upload_to='inventory_item_images/',blank=True,null=True,max_length=1000)
+    created         = models.DateTimeField(auto_now_add=True)   
+
+    def __unicode__(self):
+        return str(self.inventory_item.name)
+
+    def __str__(self):
+        return self.inventory_item.name
+
 class ItemUnit(models.Model):
     item            =   models.ForeignKey(InventoryItem,blank=False,null=False,related_name='unit_item')
     name            =   models.CharField(max_length=100,blank=False,null=False)
