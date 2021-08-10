@@ -74,7 +74,13 @@
                     <div class="col-md-8">
                         <div class="row" style="position: relative;">
                             <div class="col-md-2">
+                                
+                                {% if inventory_item.item_images %}{% for image in inventory_item.item_images %}{% if forloop.first %}
+                                <img onclick="viewImgModel()" style="width: 100%; cursor: pointer;" src="src="{{image.item_image.url}}""  alt="">
+                                {% endif %}{% endfor %}
+                                {% else %}
                                 <img onclick="viewImgModel()" style="width: 100%; cursor: pointer;" src="{% static 'files/images/dummy-profile-pic.jpg' %}"  alt="">
+                                {% endif %}
                             </div>
                             
                             <div class="col-md-9 m-mt-30">
@@ -491,32 +497,42 @@
                 <div class="row">
                     <div class="col-md-12 text-center">
                         <div class="cancel-model-content">
+                        
                             <div class="owl-carousel owl-theme">
+                            {% if inventory_item.item_images %}
+                                {% for image in inventory_item.item_images %}
                                 <div class="item" style="position: relative;">
-                                    <img  style="width: 100%;" src="{% static 'files/images/dummy-profile-pic.jpg' %}"  alt="">
+                                    <img  style="width: 100%;" src="{{image.item_image.url}}"  alt="">
 
                                     <div style="position: absolute; top: 0; right: 0;">
                                         <button style="border: none; background: none; color: red;"> <i class="fa fa-trash fa-lg" aria-hidden="true"></i> Remove</button>
                                     </div>
                                 </div>
-                                <div class="item" style="position: relative;">
-                                    <img  style="width: 100%;" src="{% static 'files/images/dummy-profile-pic.jpg' %}"  alt="">
-                                    <div style="position: absolute; top: 0; right: 0;">
-                                        <button style="border: none; background: none; color: red;"> <i class="fa fa-trash fa-lg" aria-hidden="true"></i> Remove</button>
-                                    </div>
+                                {% endfor %}
+                            {% else %}
+                            <div class="item" style="position: relative;">
+                                <img  style="width: 100%;" src="{% static 'files/images/dummy-profile-pic.jpg' %}"  alt="">
+                                <div style="position: absolute; top: 0; right: 0;">
+                                    <button style="border: none; background: none; color: red;"> <i class="fa fa-trash fa-lg" aria-hidden="true"></i> Remove</button>
                                 </div>
                             </div>
+                            {% endif %}
+                            </div>
                            
+
+                            <form method="POST" action="" enctype='multipart/form-data'>{% csrf_token %}
+                            <input type"hidden" name="action" value="add_image" />
                             <div class="row">
                                 <div class="col-md-7">
                                     <div class="inv-input-container h-30"> 
-                                        <input type="file"  class="w-p-100 inv-in" name="attributes">
+                                        <input type="file"  class="w-p-100 inv-in" name="item_image">
                                       </div>
                                 </div>
                                 <div class="col-md-5">
-                                    <button class="sent-button">Add Image</button>
+                                    <button class="sent-button" type="submit">Add Image</button>
                                 </div>
                             </div>
+                            </form>
                           
                         </div>
                     </div>
@@ -537,6 +553,7 @@
                             <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
 
                                 <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                                
                             </button>
     
                         </div>

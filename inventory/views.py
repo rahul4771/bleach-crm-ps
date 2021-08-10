@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.views import View
 from bleach_crm_ps.permissions import IsInventoryAdmin,IsInventoryAdminUser
-from inventory.models import Category,Segment,Line,Attribute,AttributeValue,InventoryItem,ItemUnit
+from inventory.models import Category,Segment,Line,Attribute,AttributeValue,InventoryItem,ItemUnit,InventoryItemImages
 from django.contrib import messages
 import re
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -214,7 +214,7 @@ class InventoryBundle(IsInventoryAdmin,View):
 
 class InventoryItems(IsInventoryAdmin,View):
     def get(self,request,item_id):
-        inventory_item = InventoryItem.objects.get(id=item_id)
+        inventory_item = InventoryItem.objects.prefetch_related(Prefetch('image_item',queryset=InventoryItemImages.objects.all(),to_attr='item_images')).get(id=item_id)
         categories = Category.objects.all()
         item_units = ItemUnit.objects.all()
 
@@ -291,6 +291,14 @@ class InventoryItems(IsInventoryAdmin,View):
             status = status
             )
             messages.success(request,"Unit Added Successfully !")
+
+        if action == 'add_image':
+            image = request.FILES.get('item_image')
+
+            inventory_item = InventoryItem.objects.get(id=item_id)
+
+            InventoryItemImages.objects.create(inventory_item=inventory_item,item_image=image)
+            messages.success(request,"Image Added successfully!")
 
         return redirect('inventory:inventory-item',item_id)
 
