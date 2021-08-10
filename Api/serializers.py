@@ -83,4 +83,85 @@ class InventorySegmentSerializer(serializers.ModelSerializer):
         fields = ('id','name')
 
 
-###Team Leader Mobile app serializers
+
+
+#Team Leader Mobile app serializers
+from order.models import FollowUp
+from senior_team_leader.models import OrderScheduler,FollowUpScheduler,CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember
+from agent.serializers import UserProfileShowSerializer,EvaluationDetailsShowSerializer,OrderShowSerializer,EvaluationBookShowSerializer
+
+##Cleaning Team API's
+class OrderScheduleAPISerializer(serializers.ModelSerializer):
+	customer_address     = AddressSerializer(read_only=True)
+	evaluation_details   = EvaluationDetailsShowSerializer(read_only=True)
+	order                = OrderShowSerializer(read_only=True)
+	order_scheduler_book = EvaluationBookShowSerializer(read_only=True)
+	class Meta:
+		model  = OrderScheduler
+		fields = ('id','start_at','end_at','customer_address','work_status','no_of_cleaners','cleaning_hours','evaluation_details','order','order_scheduler_book')
+	
+	def to_representation(self,obj):
+		td = super(OrderScheduleAPISerializer,self).to_representation(obj)	
+		td['start_at']  = ((obj.start_at)+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
+		td['end_at'] 	= ((obj.end_at)+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
+		return(td)
+
+class CleaningTeamMemberAPISerializer(serializers.ModelSerializer):
+	member = UserProfileShowSerializer(read_only=True)
+	class Meta:
+		model = CleaningTeamMember
+		fields= ('member',)
+
+
+
+class CleaningTeamAPISerializer(serializers.ModelSerializer):
+    team_leader                     = UserProfileShowSerializer(read_only=True)
+    order_scheduler                 = OrderScheduleAPISerializer(read_only=True)
+    created_by                      = UserProfileShowSerializer(read_only=True)
+
+    cleaning_member_team			= CleaningTeamMemberAPISerializer(many=True,read_only=True)
+    class Meta:
+        model = CleaningTeam
+        fields= ('id','team_leader','created_by','order_scheduler','cleaning_member_team')
+
+
+
+##followup team apis    
+class FollowupAPISerializer(serializers.ModelSerializer):
+	class Meta:		
+		model   = FollowUp
+		fields  = ('ticket_no','no_of_cleaners','cleaning_hours')
+
+
+
+class FollowUpTeamMemberAPISerializer(serializers.ModelSerializer):
+	member = UserProfileShowSerializer(read_only=True)
+	class Meta:
+		model = FollowUpTeamMember
+		fields= ('member',) 
+    
+class FollowupScheduleAPISerializer(serializers.ModelSerializer):
+	customer_address              = AddressSerializer(read_only=True)
+	follow_up                     = FollowupAPISerializer(read_only=True)
+	class Meta:		
+		model  = FollowUpScheduler
+		fields = ('id','start_at','end_at','customer_address','work_status','follow_up')
+	
+	def to_representation(self,obj):
+		td = super(FollowupScheduleAPISerializer,self).to_representation(obj)	
+		td['start_at']  = ((obj.start_at)+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
+		td['end_at'] 	= ((obj.end_at)+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
+		return(td)
+
+
+
+
+class FollowUpTeamAPISerializer(serializers.ModelSerializer):
+    team_leader            = UserProfileShowSerializer(read_only=True)
+    created_by             = UserProfileShowSerializer(read_only=True)
+    followup_scheduler     = FollowupScheduleAPISerializer(read_only=True)
+
+    followup_member_team   = FollowUpTeamMemberAPISerializer(many=True,read_only=True)	
+    class Meta:
+        model   = FollowUpTeam
+        fields  = ('id','team_leader','created_by','followup_scheduler','followup_member_team')

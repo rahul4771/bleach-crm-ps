@@ -60,7 +60,7 @@
             <div class="white-wrapper f-gray" >
               
                 <form method="POST" action="">{% csrf_token %}
-                <input type"hidden" id="edit_item_details" name="action" value="edit_item_details" />
+                <input type="hidden" name="action" value="edit_item_details" />
               <div class="row">
                   <div class="col-md-12" style="position: relative;">
                     <div class="edit-div">
@@ -259,6 +259,7 @@
                         <div class="d-flex d-grid">
                            
                             <div class="right-pos m-mt-10">
+                                <button class="inv-blue-btn" onclick="openNavAdd('add')"> <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Bundle </button>
                                 <button class="inv-blue-btn" onclick="openNavAddBundle('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Unit </button>
                             </div>
                         </div>
@@ -577,6 +578,74 @@
             </div>
         </div>
       </div>
+      <div id="addBundle2" class="inv-sidedrawer">
+
+        <div class="inv-sidedrawer-inner">
+            <div class="d-flex">
+                <div class="inv-drawer-head" id="bundleHead">
+                    Add Bundle
+                </div>
+                <div class="right-pos">
+
+                    <button onclick="closeNavAdd()" class="img-button">
+                        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                    </button>
+                </div>
+            </div>
+            <hr>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Bundle Name</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Items</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Price</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Status</div>
+
+                    <select id="id_payment" class="minimal">
+                        <option  ></option>
+                        <option  >Active</option>
+                        <option value="Post Paid">Inactive</option>
+
+                    </select>
+                </div>
+
+            </div>
+            
+
+
+          
+        </div>
+        <div class="inv-drawer-footer">
+            <button class="sent-button" >Submit</button>
+                        <button data-dismiss="modal" onclick="closeNavAdd()" class="view-button">Cancel</button>
+        </div>
+    </div>
 </div>
 
 
@@ -603,6 +672,25 @@
         getsegments(categoryid);
         getlines(segmentid);
     });
+    function openNavAdd(d) {
+    if(d == 'add'){
+            $("#bundleHead").text("Add Bundle");
+        }
+        if(d == 'edit'){
+            $("#bundleHead").text("Edit Bundle");
+        }
+        if(screen.width<= 600){
+            document.getElementById("addBundle2").style.width = "100%";
+        }else if(screen.width<= 720){
+            document.getElementById("addBundle2").style.width = "50%";
+        }
+        else{
+            document.getElementById("addBundle2").style.width = "30%";
+        }  
+    }
+    function closeNavAdd() {
+        document.getElementById("addBundle2").style.width = "0";
+    }
 
 function viewImgModel(){
     console.log('c')
