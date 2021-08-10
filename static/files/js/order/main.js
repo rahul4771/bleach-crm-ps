@@ -311,6 +311,14 @@ const app = new Vue({
         name:$(service[i]).text(),
         status:status
       })
+      if(status!='CANCELLED')
+      {
+      this.services_options.push({
+        id:$(book_ids[i]).val(),
+        name:$(service[i]).text(),
+        status:status
+      })
+    }
     }
     }
     
@@ -331,6 +339,7 @@ const app = new Vue({
     lowprice_facade:[],
     highprice_window:[],
     lowprice_window:[],
+    services_options:[],
     fixed_section_cost:null,
     soltdate: null, 
     edit: false,
@@ -482,7 +491,7 @@ const app = new Vue({
            slotloader:false,
             services_list:[],
           url:'https://my.bleachkw.com'
-       //   url:'http://localhost:8000'
+         // url:'http://localhost:8000'
       // url:'https://test.bleach-kw.com'
             //url:'http://127.0.0.1:8000'
   },
@@ -498,7 +507,7 @@ const app = new Vue({
     },
    checkAll(){
     if(this.all_val){
-        this.services_list=this.services
+        this.services_list=this.services_options
     }
     else{
       this.services_list=[]
@@ -565,7 +574,7 @@ setTimeout(function() {
    },
    removeAll(){
      
-    if(this.services.length==this.services_list.length){
+    if(this.services_options.length==this.services_list.length){
       this.all_val=true
     }
     else{
