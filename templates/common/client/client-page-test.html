@@ -71,7 +71,7 @@
                         <div class="text-center">
                             <div class="cd-card-content"> Language : {{client_details.sms_preference}}</div>
                             <div class="cd-card-content"> Platform : {% if client_details.is_sms %}SMS,{% else %}{% endif %}{% if client_details.is_email %}Email,{% else %}{% endif %}{% if client_details.is_whatsapp %}Whatsapp,{% else %}{% endif %}</div>
-                            <div class="cd-card-content"> Credit : {% if client_details.is_credit %}Active{% else %}Inactive{% endif %}</div>
+                            {% comment %} <div class="cd-card-content"> Credit : {% if client_details.is_credit %}Active{% else %}Inactive{% endif %}</div> {% endcomment %}
                         </div>
                         
                     </div>
@@ -534,7 +534,7 @@
                                   <p class="contact_platform_alert" style="color:Red;"></p>
                     </div>
                      </div>
-                     <div class="col-md-12 cd-mt-4">
+                     {% comment %} <div class="col-md-12 cd-mt-4">
                         <div ><!--ticket-form-left-->
                             <div ><!--ticket-form-left-->
                                 <div class=" bold-text common-label required-field"> <label>Credit Card</label></div>
@@ -546,7 +546,7 @@
                               </label>
                             </div>
                         </div>
-                     </div>
+                     </div> {% endcomment %}
                     
                      <!-- <div class="col-md-6 cd-mt-4">
                         <div ><!--ticket-form-right-->

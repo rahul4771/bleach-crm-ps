@@ -1804,6 +1804,7 @@ class InventoryValuesAPI(APIView):
 
 ###Team Leader Mobile app API'S
 from bleach_crm_ps.api_permissions import IsTeamInchargePermission
+from Api.serializers import CleaningTeamAPISerializer,FollowUpTeamAPISerializer
 
 class LoginAPI(APIView):  
 	permission_classes        = (AllowAny,)
@@ -1926,6 +1927,9 @@ class TlCleanings(APIView):
 		except:
 			my_followups  = None
 
+		response_dict['cleanings']          = CleaningTeamAPISerializer(instance=my_cleanings,many=True).data
+		response_dict['followup_cleanings'] = FollowUpTeamAPISerializer(instance=my_followups,many=True).data
+		
 		response_dict['success'] = True
 
 		return Response(response_dict, HTTP_200_OK)
