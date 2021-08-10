@@ -1927,8 +1927,8 @@ class TlCleanings(APIView):
 		except:
 			my_followups  = None
 
-		response_dict['cleanings']          = CleaningTeamAPISerializer(instance=my_cleanings,many=True)
-		response_dict['followup_cleanings'] = FollowUpTeamAPISerializer(instance=my_followups,many=True)
+		response_dict['cleanings']          = CleaningTeamAPISerializer(instance=my_cleanings,many=True).data
+		response_dict['followup_cleanings'] = FollowUpTeamAPISerializer(instance=my_followups,many=True).data
 		
 		response_dict['success'] = True
 
