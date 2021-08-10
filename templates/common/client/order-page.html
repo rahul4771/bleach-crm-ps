@@ -527,14 +527,7 @@
                         
                  </div>
                  <div class="col-md-6 mt-10" v-if="service_type=='Upholstery Cleaning' || service_type=='Mattress Cleaning' || service_type=='Carpet Cleaning'">
-                  <!--  <multiselect
-                    v-model="value"
-                    placeholder="Material"
-                    label="city" track-by="city_ascii"
-                    :options="options"
-                    :multiple="true"
-                    :taggable="true"
-                  ></multiselect>-->
+                 
                   <div class=" bold-text common-label required-field"> <label>Material</label></div>
                   <multiselect
                     v-model="editSectionData.material"
@@ -546,6 +539,41 @@
                     :show-labels="false"
                     
                   ></multiselect>
+                 </div>
+                 <div class="col-md-6 mt-10" v-if="service_type=='Upholstery Cleaning' || service_type=='Mattress Cleaning' || service_type=='Carpet Cleaning'">
+                 
+                    <div class=" bold-text common-label required-field"> <label>Colour</label></div>
+                    <multiselect
+                      v-model="editSectionData.colour"
+                      placeholder="Color"
+                      
+                      :options="colors"
+                      :multiple="true"
+                      :taggable="false"
+                      :show-labels="false"
+                      
+                    ></multiselect>
+                   </div>
+                   <div class="col-md-6 mt-10" v-if="service_type=='Upholstery Cleaning' || service_type=='Mattress Cleaning' || service_type=='Carpet Cleaning'">
+                 
+                    <div class=" bold-text common-label"> <label>Cause of Stain</label></div>
+                    <multiselect
+                      v-model="editSectionData.cause_of_stain"
+                      placeholder="Cause Of Stain"
+                      
+                      :options="cause_of_stain"
+                      :multiple="true"
+                      :taggable="false"
+                      :show-labels="false"
+                      
+                    ></multiselect>
+                   </div>
+                   <div class="col-md-6 mt-10" v-if="service_type=='Upholstery Cleaning' || service_type=='Mattress Cleaning' || service_type=='Carpet Cleaning'">
+                    
+                    <div class=" bold-text common-label "> <label>Age Of Stain</label></div>
+                    <input   type="text" class="textBox OnlyNumber" placeholder="In Weeks" required="" v-model="editSectionData.age_of_stain" >
+                  
+                        
                  </div>
                
                 <div class="col-md-6 mt-10" v-if="service_type=='General Cleaning' || service_type=='Deep Cleaning' || service_type=='Storage Area' || service_type=='Facade Cleaning' || service_type=='Kitchen Cleaning'|| service_type=='Sterilization'" >
@@ -1480,27 +1508,27 @@
 
                                                 {% if section.material %}
                                                
-                                                    <div class="col-md-2 col-xs-4 mt-10">Material</div>
-                                                    <div class="col-md-4 col-xs-8 mt-10"> <span class="c-text  ">: {{section.material}}</span></div>
+                                                    <div class="col-md-3 col-xs-4 mt-10">Material</div>
+                                                    <div class="col-md-9 col-xs-8 mt-10"> <span class="c-text  ">: {{section.material}}</span></div>
                                                
                                                 {% endif %}
 
                                                 {% if section.colour %}
                                                
-                                                    <div class="col-md-2 col-xs-4 mt-10">Color</div>
-                                                    <div class="col-md-4 col-xs-8 mt-10"> <span class="c-text  ">: {{section.colour}}</span></div>
+                                                    <div class="col-md-3 col-xs-4 mt-10">Color</div>
+                                                    <div class="col-md-9 col-xs-8 mt-10"> <span class="c-text  ">: {{section.colour}}</span></div>
                                               
                                                 {% endif %}
 
                                                 {% if section.cause_of_stain %}
                                                
-                                                    <div class="col-md-2 col-xs-4 mt-10">Cause of Stain</div>
-                                                    <div class="col-md-4 col-xs-8 mt-10"> <span class="c-text  ">: {{section.cause_of_stain}}</span></div>
+                                                    <div class="col-md-3 col-xs-4 mt-10">Cause of Stain</div>
+                                                    <div class="col-md-9 col-xs-8 mt-10"> <span class="c-text  ">: {{section.cause_of_stain}}</span></div>
 
                                                 {% endif %}
                                                 {% if section.age_of_stain %}
                                                
-                                                    <div class="col-md-2 col-xs-4 mt-10">Cause of Stain</div>
+                                                    <div class="col-md-2 col-xs-4 mt-10">Age of Stain</div>
                                                     <div class="col-md-4 col-xs-8 mt-10"> <span class="c-text  ">: {{section.age_of_stain}}</span></div>
 
                                                 {% endif %}
@@ -2673,7 +2701,7 @@
                                         <input type="checkbox" class="form-check-input service-checkbox" id="exampleCheck1" v-model="all_val" @change="checkAll()">
                                         <label class="form-check-label service-checkbox-label" for="exampleCheck1">All</label>
                                     </div>
-                                    <div class="col-md-12 col-offset-3 text-center" v-for="(service,serindex) in services" v-bind:key="serindex" v-if="service.status!='CANCELLED'">
+                                    <div class="col-md-12 col-offset-3 text-center" v-for="(service,serindex) in services_options" v-bind:key="serindex" v-if="service.status!='CANCELLED'">
                                         <input type="checkbox" class="form-check-input service-checkbox" id="exampleCheck1" v-model="services_list" :value="service" @change="removeAll()">
                                         <label class="form-check-label service-checkbox-label" for="exampleCheck1"><% service.name %></label>
                                     </div>
@@ -2719,7 +2747,7 @@
                                         <input type="checkbox" class="form-check-input service-checkbox" id="exampleCheck1" v-model="all_val" @change="checkAll()">
                                         <label class="form-check-label service-checkbox-label" for="exampleCheck1">All</label>
                                     </div>
-                                    <div class="col-md-12 col-offset-3 text-center" v-for="(service,serindex) in services" v-bind:key="serindex">
+                                    <div class="col-md-12 col-offset-3 text-center" v-for="(service,serindex) in services_options" v-bind:key="serindex">
                                         <input type="checkbox" class="form-check-input service-checkbox" id="exampleCheck1" v-model="services_list" :value="service" @change="removeAll()">
                                         <label class="form-check-label service-checkbox-label" for="exampleCheck1"><% service.name %></label>
                                     </div>
@@ -2763,7 +2791,7 @@
                                 <input type="checkbox" class="form-check-input service-checkbox" id="exampleCheck1" v-model="all_val" @change="checkAll()">
                                 <label class="form-check-label service-checkbox-label" for="exampleCheck1">All</label>
                             </div>
-                            <div class="col-md-12 col-offset-3 text-center" v-for="(service,serindex) in services" v-bind:key="serindex">
+                            <div class="col-md-12 col-offset-3 text-center" v-for="(service,serindex) in services_options" v-bind:key="serindex">
                                 <input type="checkbox" class="form-check-input service-checkbox" id="exampleCheck1" v-model="services_list" :value="service" @change="removeAll()">
                                 <label class="form-check-label service-checkbox-label" for="exampleCheck1"><% service.name %></label>
                             </div>
