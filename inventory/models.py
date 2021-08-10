@@ -112,5 +112,30 @@ class AttributeValue(models.Model):
     def __str__(self):
         return self.name
 
+class Bundle(models.Model):
+    name                =   models.CharField(max_length=100,blank=False,null=False)
+    bundle_code         =   models.CharField(max_length=50,blank=False,null=False)
+    bundle_items_count  =   models.IntegerField(default=0,null=True,blank=True)
+    bundle_price        =   models.CharField(default=0,max_length=100,blank=False,null=False)
+    status              =   models.BooleanField(default=True,blank=False,null=False)
+    created             =   models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return str(self.name)
+
+    def __str__(self):
+        return self.name
+
+class BundleItems(models.Model):
+    bundle              = models.ForeignKey(Bundle,blank=True,null=True,related_name='item_bundle')
+    item_count          = models.IntegerField(default=0,null=True,blank=True)
+    created             = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return str(self.bundle.name)
+
+    def __str__(self):
+        return self.bundle.name
+
 
 

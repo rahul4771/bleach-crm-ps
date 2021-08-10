@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.views import View
 from bleach_crm_ps.permissions import IsInventoryAdmin,IsInventoryAdminUser
-from inventory.models import Category,Segment,Line,Attribute,AttributeValue,InventoryItem,ItemUnit,InventoryItemImages
+from inventory.models import Category,Segment,Line,Attribute,AttributeValue,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems
 from django.contrib import messages
 import re
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -210,7 +210,22 @@ class InventoryValue(IsInventoryAdmin,View):
 # bundle.
 class InventoryBundle(IsInventoryAdmin,View):
     def get(self,request):
-        return render(request,'inventory/bundle.html',{})
+
+        search = request.GET.get('search')
+
+        if search:
+            bundles       = Bundle.objects.filter(Q(name__icontains=search)|Q(bundle_code__icontains=search)).prefetch_related(Prefetch('item_bundle',queryset=BundleItems.objects.all(),to_attr='bundle_items')).annotate(items_count=Count('item_bundle'))
+        else:
+            bundles       = Bundle.objects.all().prefetch_related(Prefetch('item_bundle',queryset=BundleItems.objects.all(),to_attr='bundle_items')).annotate(items_count=Count('item_bundle'))
+        
+        bundle_latest  = bundles.last()
+        if bundle_latest:
+            code_number  =  int(re.findall(r'(\d+)', bundle_latest.category_code)[0]) + 1
+            new_bundle_code = 'BUNDLE'+str(code_number)
+        else:
+            new_bundle_code = 'BUNDLE9001'
+
+        return render(request,'inventory/bundle.html',{"bundle_code":new_bundle_code})
 
 class InventoryItems(IsInventoryAdmin,View):
     def get(self,request,item_id):

@@ -60,7 +60,7 @@
             <div class="white-wrapper f-gray" >
               
                 <form method="POST" action="">{% csrf_token %}
-                <input type"hidden" name="action" value="edit_item_details" />
+                <input type"hidden" id="edit_item_details" name="action" value="edit_item_details" />
               <div class="row">
                   <div class="col-md-12" style="position: relative;">
                     <div class="edit-div">
@@ -75,11 +75,14 @@
                         <div class="row" style="position: relative;">
                             <div class="col-md-2">
                                 
-                                {% if inventory_item.item_images %}{% for image in inventory_item.item_images %}{% if forloop.first %}
-                                <img onclick="viewImgModel()" style="width: 100%; cursor: pointer;" src="src="{{image.item_image.url}}""  alt="">
-                                {% endif %}{% endfor %}
+                                {% if inventory_item.item_images %}
+                                    {% for image in inventory_item.item_images %}
+                                        {% if forloop.first %}
+                                            <img onclick="viewImgModel()" style="width: 100%; cursor: pointer;" src="{{image.item_image.url}}"  alt="">
+                                        {% endif %}
+                                    {% endfor %}
                                 {% else %}
-                                <img onclick="viewImgModel()" style="width: 100%; cursor: pointer;" src="{% static 'files/images/dummy-profile-pic.jpg' %}"  alt="">
+                                    <img onclick="viewImgModel()" style="width: 100%; cursor: pointer;" src="{% static 'files/images/dummy-profile-pic.jpg' %}"  alt="">
                                 {% endif %}
                             </div>
                             
