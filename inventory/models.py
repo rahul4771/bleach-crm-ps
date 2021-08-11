@@ -128,6 +128,8 @@ class Bundle(models.Model):
 
 class BundleItems(models.Model):
     bundle              = models.ForeignKey(Bundle,blank=True,null=True,related_name='item_bundle')
+    bundle_item         = models.ForeignKey(InventoryItem,blank=True,null=True,related_name='inventory_item_bundle')
+    item_price          = models.CharField(default=0,max_length=100,blank=False,null=False)
     item_count          = models.IntegerField(default=0,null=True,blank=True)
     created             = models.DateTimeField(auto_now_add=True)
 

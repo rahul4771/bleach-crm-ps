@@ -220,12 +220,53 @@ class InventoryBundle(IsInventoryAdmin,View):
         
         bundle_latest  = bundles.last()
         if bundle_latest:
-            code_number  =  int(re.findall(r'(\d+)', bundle_latest.category_code)[0]) + 1
+            code_number  =  int(re.findall(r'(\d+)', bundle_latest.bundle_code)[0]) + 1
             new_bundle_code = 'BUNDLE'+str(code_number)
         else:
             new_bundle_code = 'BUNDLE9001'
 
-        return render(request,'inventory/bundle.html',{"bundle_code":new_bundle_code})
+        return render(request,'inventory/bundle.html',{"bundle_code":new_bundle_code,"bundles":bundles})
+
+    def post(self,request):
+        action =request.POST.get('action')
+
+        if action == 'add_bundle':
+            name = request.POST.get('bundle_name')
+
+            bundles       = Bundle.objects.all()
+            bundle_latest  = bundles.last()
+            if bundle_latest:
+                code_number  =  int(re.findall(r'(\d+)', bundle_latest.bundle_code)[0]) + 1
+                new_bundle_code = 'BUNDLE'+str(code_number)
+            else:
+                new_bundle_code = 'BUNDLE9001'
+
+            status = request.POST.get('bundle_status')
+
+            Bundle.objects.create(name=name,bundle_code=new_bundle_code,status=status)
+
+            messages.success(request,"Bundle Created Successfully !")
+
+        if action == 'edit_bundle':
+            name = request.POST.get('bundle_name')
+            status = request.POST.get('bundle_status')
+            bundle_id = request.POST.get('bundle_edit_id')
+
+            bundle = Bundle.objects.get(id=int(bundle_id))
+
+            bundle.name = name
+            bundle.status = status
+            bundle.save()
+
+            messages.success(request,"Bundle updated Successfully !")
+
+        if action == 'delete_bundle':
+            bundle_id = request.POST.get('bundle_delete_id')
+
+            bundle = Bundle.objects.get(id=int(bundle_id)).delete()
+            messages.success(request,"Bundle deleted Successfully !")
+
+        return redirect('inventory:inventory-bundle')
 
 class InventoryItems(IsInventoryAdmin,View):
     def get(self,request,item_id):
