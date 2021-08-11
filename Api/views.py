@@ -1921,18 +1921,39 @@ class TlCleanings(APIView):
 		my_cleaning_date_start = my_cleaning_date.replace(hour=0,minute=0,second=0,microsecond=0)
 		my_cleaning_date_end   = my_cleaning_date_start+timedelta(1)
 
-		try:	
-			my_cleanings  = CleaningTeam.objects.filter(Q(Q(Q(start_at__gte=my_cleaning_date_start)&Q(start_at__lt=my_cleaning_date_end))&Q(team_leader=request.user))).select_related('order_scheduler__order_scheduler_book__service_type','order_scheduler__order__evaluation__customer','order_scheduler__customer_address')
-		except:
-			my_cleanings  = None
-		try:
-			my_followups  = FollowUpTeam.objects.filter(Q(Q(Q(start_at__gte=my_cleaning_date_start)&Q(start_at__lt=my_cleaning_date_end))&Q(team_leader=request.user))).select_related('followup_scheduler__follow_up__investigation__order__evaluation__customer','followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book__service_type','followup_scheduler__customer_address')
-		except:
-			my_followups  = None
+			
+		my_cleanings  = CleaningTeam.objects.filter(Q(Q(Q(start_at__gte=my_cleaning_date_start)&Q(start_at__lt=my_cleaning_date_end))&Q(team_leader=request.user))).select_related('order_scheduler__order_scheduler_book__service_type','order_scheduler__order__evaluation__customer','order_scheduler__customer_address')
+		my_followups  = FollowUpTeam.objects.filter(Q(Q(Q(start_at__gte=my_cleaning_date_start)&Q(start_at__lt=my_cleaning_date_end))&Q(team_leader=request.user))).select_related('followup_scheduler__follow_up__investigation__order__evaluation__customer','followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book__service_type','followup_scheduler__customer_address')
+		
 
 		response_dict['cleanings']          = CleaningTeamAPISerializer(instance=my_cleanings,many=True).data
 		response_dict['followup_cleanings'] = FollowUpTeamAPISerializer(instance=my_followups,many=True).data
 		
 		response_dict['success'] = True
+
+		return Response(response_dict, HTTP_200_OK)
+
+
+class TlCleaningDetails(APIView):  
+	permission_classes        = (IsAuthenticated,IsTeamInchargePermission)
+	authentication_classes    = (TokenAuthentication,)
+	def get(self,request,team_id): 
+		response_dict                     = {'success':False}
+		
+		cleaning_details                  = CleaningTeam.objects.select_related('order_scheduler__order_scheduler_book__service_type','order_scheduler__order__evaluation__customer','order_scheduler__customer_address').prefetch_related(Prefetch('order_scheduler__order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='booksections')).get(id=team_id)
+		response_dict['cleaning_details'] = CleaningTeamAPISerializer(instance=cleaning_details).data
+		response_dict['success']          = True
+
+		return Response(response_dict, HTTP_200_OK)
+
+class TlFollowupCleaningDetails(APIView):  
+	permission_classes        = (IsAuthenticated,IsTeamInchargePermission)
+	authentication_classes    = (TokenAuthentication,)
+	def get(self,request,team_id): 
+		response_dict                             = {'success':False}
+
+		followupcleaning_details                  = FollowUpTeam.objects.select_related('followup_scheduler__follow_up__investigation__order__evaluation__customer','followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book__service_type','followup_scheduler__customer_address').prefetch_related(Prefetch('followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='sections')).get(id=team_id)
+		response_dict['followupcleaning_details'] = FollowUpTeamAPISerializer(instance=followupcleaning_details).data
+		response_dict['success']                  = True
 
 		return Response(response_dict, HTTP_200_OK)

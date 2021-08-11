@@ -41,4 +41,6 @@ urlpatterns = [
 	url(r'^login/$',views.LoginAPI.as_view(),name='api-login'),
 	url(r'^tl/home/$',views.TlHomeAPI.as_view(),name='api-stlhome'),
 	url(r'^tl/cleanings/$',views.TlCleanings.as_view(),name='api-stlcleanings'),
+	url(r'^tl/cleaning/details/(?P<team_id>\d+)/$',views.TlCleaningDetails.as_view(),name='api-cleaningdetails'),
+	url(r'^tl/followupcleaning/details/(?P<team_id>\d+)/$',views.TlFollowupCleaningDetails.as_view(),name='api-followupdetails'),
 ]
