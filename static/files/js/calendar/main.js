@@ -187,7 +187,7 @@ const app=  new Vue({
          
         },
         new_calendar:true,
-        url:'https://my.bleachkw.com',
+        url:'',
        // url:'https://test.bleach-kw.com',
       //   url:'http://localhost:8000',
         //url: 'http://127.0.0.1:8000',
@@ -231,6 +231,7 @@ const app=  new Vue({
         } 
       },
       mounted(){
+        this.url = api;
         moment.locale('fr');
         this.currentTime=moment().format().split("T")[1];
         this.dateSelected = moment().format().split("T")[0];

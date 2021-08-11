@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.views import View
 from bleach_crm_ps.permissions import IsInventoryAdmin,IsInventoryAdminUser
-from inventory.models import Category,Segment,Line,Attribute,AttributeValue,InventoryItem,ItemUnit,InventoryItemImages
+from inventory.models import Category,Segment,Line,Attribute,AttributeValue,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems,Store,Supplier
 from django.contrib import messages
 import re
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -210,7 +210,65 @@ class InventoryValue(IsInventoryAdmin,View):
 # bundle.
 class InventoryBundle(IsInventoryAdmin,View):
     def get(self,request):
-        return render(request,'inventory/bundle.html',{})
+
+        items = InventoryItem.objects.all()
+
+        search = request.GET.get('search')
+
+        if search:
+            bundles       = Bundle.objects.filter(Q(name__icontains=search)|Q(bundle_code__icontains=search)).prefetch_related(Prefetch('item_bundle',queryset=BundleItems.objects.all(),to_attr='bundle_items')).annotate(items_count=Count('item_bundle'))
+        else:
+            bundles       = Bundle.objects.all().prefetch_related(Prefetch('item_bundle',queryset=BundleItems.objects.all(),to_attr='bundle_items')).annotate(items_count=Count('item_bundle'))
+        
+        bundle_latest  = bundles.last()
+        if bundle_latest:
+            code_number  =  int(re.findall(r'(\d+)', bundle_latest.bundle_code)[0]) + 1
+            new_bundle_code = 'BUNDLE'+str(code_number)
+        else:
+            new_bundle_code = 'BUNDLE9001'
+
+        return render(request,'inventory/bundle.html',{"bundle_code":new_bundle_code,"bundles":bundles,"items":items})
+
+    def post(self,request):
+        action =request.POST.get('action')
+
+        if action == 'add_bundle':
+            name = request.POST.get('bundle_name')
+
+            bundles       = Bundle.objects.all()
+            bundle_latest  = bundles.last()
+            if bundle_latest:
+                code_number  =  int(re.findall(r'(\d+)', bundle_latest.bundle_code)[0]) + 1
+                new_bundle_code = 'BUNDLE'+str(code_number)
+            else:
+                new_bundle_code = 'BUNDLE9001'
+
+            status = request.POST.get('bundle_status')
+
+            Bundle.objects.create(name=name,bundle_code=new_bundle_code,status=status)
+
+            messages.success(request,"Bundle Created Successfully !")
+
+        if action == 'edit_bundle':
+            name = request.POST.get('bundle_name')
+            status = request.POST.get('bundle_status')
+            bundle_id = request.POST.get('bundle_edit_id')
+
+            bundle = Bundle.objects.get(id=int(bundle_id))
+
+            bundle.name = name
+            bundle.status = status
+            bundle.save()
+
+            messages.success(request,"Bundle updated Successfully !")
+
+        if action == 'delete_bundle':
+            bundle_id = request.POST.get('bundle_delete_id')
+
+            bundle = Bundle.objects.get(id=int(bundle_id)).delete()
+            messages.success(request,"Bundle deleted Successfully !")
+
+        return redirect('inventory:inventory-bundle')
 
 class InventoryItems(IsInventoryAdmin,View):
     def get(self,request,item_id):
@@ -308,7 +366,11 @@ class InventorySupplier(IsInventoryAdmin,View):
 
 class InventoryStore(IsInventoryAdmin,View):
     def get(self,request):
-        return render(request,'inventory/store.html',{})
+        stores = Store.objects.all()
+        return render(request,'inventory/store.html',{"stores":stores})
+
+    def post(self,request):
+        return redirect('')
 
 class InventoryInv(IsInventoryAdmin,View):
     def get(self,request):

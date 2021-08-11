@@ -2,15 +2,15 @@
 //use async funcation to call service methods
 //Check Response status always
 
-var api ='https://my.bleachkw.com/';
-// var api='https://test.bleach-kw.com/';
-//var api = 'http://localhost:8000/'
-//var api = 'http://127.0.0.1:8000/'
+var api ='https://my.bleachkw.com';
+//var api='https://test.bleach-kw.com';
+//var api = 'http://localhost:8000'
+//var api = 'http://127.0.0.1:8000'
 
 
 async function _post(url,data){
     let result;
-    await axios.post(api+url , data).then(response => {
+    await axios.post(api+'/'+url , data).then(response => {
         result = response;
       })
       .catch(({ response }) => {
@@ -22,7 +22,7 @@ async function _post(url,data){
 async function _get(url){
   console.log(url)
     let result;
-    await axios.get(api+url).then(response => {
+    await axios.get(api+'/'+url).then(response => {
         result = response;
       })
       .catch(({ response }) => {
@@ -33,7 +33,7 @@ async function _get(url){
 
 async function _put(url,data){
   let result;
-  await axios.put(api+url , data).then(response => {
+  await axios.put(api+'/'+url , data).then(response => {
       result = response;
     })
     .catch(({ response }) => {

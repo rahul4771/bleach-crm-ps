@@ -177,6 +177,8 @@
                         <div class=" bold-text common-label required-field"> <label>Discount</label></div>
                       <input  id="id_name" type="text" class="textBox OnlyNumber" placeholder="Discount" required="" v-model="paymentData.discount" @input="calDiscount()" >
                     </div>
+
+                    {% if order.evaluation.payment_method != 'SUBSCRIPTION' %}
                     <div class="col-md-12 mt-10"  >
                     
                         <div class=" bold-text common-label required-field"> <label>Payment Policy</label></div>
@@ -203,6 +205,8 @@
                         <div class=" bold-text common-label required-field "> <label>Amount After Cleaning</label></div>
                       <input  type="text" class="textBox OnlyNumber" placeholder="Amount" required="" v-model="paymentData.amount_after_cleaning" @input="calcBreakdownAfter()">
                     </div>
+                    {% endif %}
+
                 </div>
                 </div>
                 <div class="col-md-6">
@@ -215,7 +219,6 @@
                         <div class="text-center amount-text"> <span id="id_amount"><% paymentData.final_amount %></span> KD</div>
                     </div>
                 </div>
-                 
 
                 </div>
               </div>
@@ -1508,15 +1511,15 @@
 
                                                 {% if section.material %}
                                                
-                                                    <div class="col-md-3 col-xs-4 mt-10">Material</div>
-                                                    <div class="col-md-9 col-xs-8 mt-10"> <span class="c-text  ">: {{section.material}}</span></div>
+                                                    <div class="col-md-2 col-xs-4 mt-10">Material</div>
+                                                    <div class="col-md-10 col-xs-8 mt-10"> <span class="c-text  ">: {{section.material}}</span></div>
                                                
                                                 {% endif %}
 
                                                 {% if section.colour %}
                                                
-                                                    <div class="col-md-3 col-xs-4 mt-10">Color</div>
-                                                    <div class="col-md-9 col-xs-8 mt-10"> <span class="c-text  ">: {{section.colour}}</span></div>
+                                                    <div class="col-md-2 col-xs-4 mt-10">Color</div>
+                                                    <div class="col-md-10 col-xs-8 mt-10"> <span class="c-text  ">: {{section.colour}}</span></div>
                                               
                                                 {% endif %}
 
@@ -2044,7 +2047,7 @@
                                                 <div class="row c-mb-3">
                                                     <div class="col-xs-6">Payment Method</div>
                                                     <div class="col-xs-6">: <span class="c-text">{{order.evaluation.payment_method|default_if_none:''}}</span>
-                                                        {% if order.amount_paid == 0.000 and order.evaluation.is_promocode_applied == False and order.evaluation.payment_method != 'SUBSCRIPTION' %}
+                                                        {% if order.amount_paid == 0.000 and order.evaluation.is_promocode_applied == False %}
                                                        
                                                         <button class="model-close ml-10" >
                                                             <img  class="policy-time-edit pointer" src="{% static 'files/icons/edit.png' %}" data-amount_before_cleaning="{{order.evaluation.before_cleaning_amount}}" data-amount_after_cleaning="{{order.evaluation.after_cleaning_amount}}" data-discount="{{order.evaluation.discount}}" data-payment_method="{{order.evaluation.payment_method}}" data-total_amount="{{order.evaluation.estimated_cost}}" data-final_amount="{{order.evaluation.total_cost}}" onclick="openPaymentEdit(this)">

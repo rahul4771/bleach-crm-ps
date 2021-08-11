@@ -8,9 +8,9 @@ from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
 from bleachadmin.models import ServicePriceRange
 from django.core.mail import send_mail,EmailMultiAlternatives
-from Api.serializers import UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, LeaveUsersSerializer,ShiftScheduleSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer
+from Api.serializers import UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, LeaveUsersSerializer,ShiftScheduleSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer
 from agent.views import generate_random_username
-from inventory.models import Line,Segment,Category,Attribute,AttributeValue
+from inventory.models import Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems
 import re
 import random
 import string
@@ -1799,6 +1799,26 @@ class InventoryValuesAPI(APIView):
 		value_serializer = InventoryValueSerializer(inventory_values,many=True).data
 		print(value_serializer,"sed")	
 		response_dict['inventory_value'] = value_serializer
+		return Response(response_dict,HTTP_200_OK)
+
+
+class InventoryItemsAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+		response_dict = {}
+		bundle_id = request.GET.get('bundle_id')
+		print(bundle_id,"attrsed")
+		try:
+			inventory_items = BundleItems.objects.filter(bundle=int(bundle_id))
+		except:
+			inventory_items = None
+		
+		print(inventory_items,"invo")
+		item_serializer = InventoryBundleItemSerializer(inventory_items,many=True).data
+		print(item_serializer,"sed")	
+		response_dict['inventory_item'] = item_serializer
 		return Response(response_dict,HTTP_200_OK)
 
 
