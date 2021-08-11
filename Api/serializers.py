@@ -99,16 +99,54 @@ class InventorySegmentSerializer(serializers.ModelSerializer):
 #Team Leader Mobile app serializers
 from datetime import timedelta,date,datetime
 
-from order.models import FollowUp
+from order.models import Order,FollowUp
+from evaluator.models import EvaluationDetails,EvaluationBook,EvaluationBookSection,EvaluationSectionKeynote
 from senior_team_leader.models import OrderScheduler,FollowUpScheduler,CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember
-from agent.serializers import UserProfileShowSerializer,EvaluationDetailsShowSerializer,OrderShowSerializer,EvaluationBookShowSerializer
+from agent.serializers import UserProfileShowSerializer,ServiceTypeShowSerializer
+from customer.serilizers import EvaluationSerializer
+
+
+class OrderAPISerializer(serializers.ModelSerializer):
+    class Meta:
+        model  = Order
+        fields = ('order_no','order_status','payment_status')
+
+class KeynoteAPISerializer(serializers.ModelSerializer):
+    class Meta:
+        model  = EvaluationSectionKeynote
+        fields = ('sub_area','quantity','completion_status')
+
+
+
+class EvaluationDetailsAPISerializer(serializers.ModelSerializer):
+    evaluator          = UserProfileShowSerializer(read_only=True) 
+    evaluation         = EvaluationSerializer(read_only=True)
+    class Meta:
+        model  = EvaluationDetails
+        fields = ('evaluator','evaluation')
+
+class SectionAPISerializer(serializers.ModelSerializer):
+    keynotesections = KeynoteAPISerializer(read_only=True,many=True)
+    class Meta:
+        model  = EvaluationBookSection
+        fields = ('section_name','category','dirt_level','size','quantity','unit','age','floor','apartment','room','wall_type','ceiling_type','floor_type','material','colour','cause_of_stain','age_of_stain','cement_residue','oil_residue','hall_size','window_side','new_kitchen','is_highprice_facade','is_highprice_window','upholstery_type','vacuuming','section_cost','section_cleanings','section_net_cost','keynotesections')
+
+
+
+class EvaluationBookAPISerializer(serializers.ModelSerializer):
+    service_type             = ServiceTypeShowSerializer(read_only=True)
+    evaluationsection_book   = SectionAPISerializer(many=True,read_only=True)
+    class Meta:
+        model = EvaluationBook
+        fields = ('cleaning_policy','service_type','evaluationsection_book')
+
 
 ##Cleaning Team API's
 class OrderScheduleAPISerializer(serializers.ModelSerializer):
 	customer_address     = AddressSerializer(read_only=True)
-	evaluation_details   = EvaluationDetailsShowSerializer(read_only=True)
-	order                = OrderShowSerializer(read_only=True)
-	order_scheduler_book = EvaluationBookShowSerializer(read_only=True)
+	evaluation_details   = EvaluationDetailsAPISerializer(read_only=True)
+	order                = OrderAPISerializer(read_only=True)
+	order_scheduler_book = EvaluationBookAPISerializer(read_only=True)
 	class Meta:
 		model  = OrderScheduler
 		fields = ('id','start_at','end_at','customer_address','work_status','no_of_cleaners','cleaning_hours','evaluation_details','order','order_scheduler_book')
