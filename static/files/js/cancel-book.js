@@ -7,13 +7,14 @@ const app = new Vue({
     delimiters: ["<%", "%>"],
     
     mounted() {
+        this.url = api;
 
     },
    
     data: {
      //   url:'http://localhost:8000',
        //url:'https://test.bleach-kw.com',
-    url:'https://my.bleachkw.com',
+    url:'',
         user_id:'',
         order_id:'',
         service_books:[],

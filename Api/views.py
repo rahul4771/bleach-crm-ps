@@ -1840,8 +1840,11 @@ class LoginAPI(APIView):
 		
 		if user:
 			t, c= Token.objects.get_or_create(user=user)
-			response_dict['success']    = True
-			response_dict['token']      = t.key
+			response_dict['success']             = True
+			response_dict['token']               = t.key
+			
+			response_dict['name']                = user.name
+			response_dict['profile_image']       = user.profile_image.url
 		else:
 			response_dict['reason']     = 'Invalid Credentials'
         

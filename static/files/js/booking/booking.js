@@ -144,8 +144,8 @@ const app=new Vue({
   rules: {
     required: v => !!v || 'this field is required',
   },
-  //url:'http://localhost:8000',
-    url:'https://my.bleachkw.com',
+  url:'',
+   // url:'https://my.bleachkw.com',
     //url:'http://127.0.0.1:8000',
     slot_loader:false,
     kitchenData:{
@@ -4664,7 +4664,7 @@ try {
   },
 },
 mounted() {
-   
+  this.url = api;
   this.getServices()
   this.getAreaTypes()
   this.getIp()
