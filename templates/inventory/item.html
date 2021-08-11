@@ -75,11 +75,14 @@
                         <div class="row" style="position: relative;">
                             <div class="col-md-2">
                                 
-                                {% if inventory_item.item_images %}{% for image in inventory_item.item_images %}{% if forloop.first %}
-                                <img onclick="viewImgModel()" style="width: 100%; cursor: pointer;" src="src="{{image.item_image.url}}""  alt="">
-                                {% endif %}{% endfor %}
+                                {% if inventory_item.item_images %}
+                                    {% for image in inventory_item.item_images %}
+                                        {% if forloop.first %}
+                                            <img onclick="viewImgModel()" style="width: 100%; cursor: pointer;" src="{{image.item_image.url}}"  alt="">
+                                        {% endif %}
+                                    {% endfor %}
                                 {% else %}
-                                <img onclick="viewImgModel()" style="width: 100%; cursor: pointer;" src="{% static 'files/images/dummy-profile-pic.jpg' %}"  alt="">
+                                    <img onclick="viewImgModel()" style="width: 100%; cursor: pointer;" src="{% static 'files/images/dummy-profile-pic.jpg' %}"  alt="">
                                 {% endif %}
                             </div>
                             
@@ -522,7 +525,7 @@
                            
 
                             <form method="POST" action="" enctype='multipart/form-data'>{% csrf_token %}
-                            <input type"hidden" name="action" value="add_image" />
+                            <input type="hidden" name="action" value="add_image" />
                             <div class="row">
                                 <div class="col-md-7">
                                     <div class="inv-input-container h-30"> 
