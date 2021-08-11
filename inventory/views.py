@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.views import View
 from bleach_crm_ps.permissions import IsInventoryAdmin,IsInventoryAdminUser
-from inventory.models import Category,Segment,Line,Attribute,AttributeValue,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems
+from inventory.models import Category,Segment,Line,Attribute,AttributeValue,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems,Store,Supplier
 from django.contrib import messages
 import re
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -211,6 +211,8 @@ class InventoryValue(IsInventoryAdmin,View):
 class InventoryBundle(IsInventoryAdmin,View):
     def get(self,request):
 
+        items = InventoryItem.objects.all()
+
         search = request.GET.get('search')
 
         if search:
@@ -225,7 +227,7 @@ class InventoryBundle(IsInventoryAdmin,View):
         else:
             new_bundle_code = 'BUNDLE9001'
 
-        return render(request,'inventory/bundle.html',{"bundle_code":new_bundle_code,"bundles":bundles})
+        return render(request,'inventory/bundle.html',{"bundle_code":new_bundle_code,"bundles":bundles,"items":items})
 
     def post(self,request):
         action =request.POST.get('action')
@@ -364,7 +366,11 @@ class InventorySupplier(IsInventoryAdmin,View):
 
 class InventoryStore(IsInventoryAdmin,View):
     def get(self,request):
-        return render(request,'inventory/store.html',{})
+        stores = Store.objects.all()
+        return render(request,'inventory/store.html',{"stores":stores})
+
+    def post(self,request):
+        return redirect('')
 
 class InventoryInv(IsInventoryAdmin,View):
     def get(self,request):

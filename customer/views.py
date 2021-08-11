@@ -5033,6 +5033,14 @@ class EditOrderDetails(APIView):
 					order.total_amount                       = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
 					order.remining_amount                    = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
 				
+				else:
+					order.evaluation.discount                = discount_amount
+					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
+					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
+					order.total_amount                       = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
+					order.remining_amount                    = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
+
+
 				#to check payment completed
 				if order.remining_amount == 0:
 					order.payment_status = 'COMPLETED'
