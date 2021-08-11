@@ -7,6 +7,7 @@
 <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
 <link href="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/assets/owl.carousel.css' %}" rel="stylesheet">
+<style></style>
 {% include "salesadmin/common/header.html" %}
 <v-app>
 
@@ -709,6 +710,27 @@
 
 {% endblock %}
 {% block javascript %}
+<script>
+  $(document).ready(function(){
+    $('.footable').trigger('footable_resize');
+   // setTimeout(function(){ $('.footable').trigger('footable_resize'); console.log("script trigger") }, 1000);
+   //$('.footable').footable();
+  })
+ 
+  
+
+</script>
+<script id="rendered-js">
+$('.footable').footable({
+  calculateWidthOverride: function () {
+    return { width: $(window).width() };
+  } });
+
+
+// See:
+// http://www.sitepoint.com/responsive-data-tables-comprehensive-list-solutions
+//# sourceURL=pen.js
+    </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdn.jsdelivr.net/npm/v-owl-carousel@1.0.8/dist/v-owl-carousel.min.js"></script>
@@ -727,6 +749,7 @@
 <script src="{% static 'files/js/charts/overall-sales-chart.js' %}"></script>
 {% comment %} <script src="{% static 'files/js/charts/sales-target-chart.js' %}"></script> {% endcomment %}
 <script type="text/javascript">
+
 //previous time limit
 function nextDay(){
   console.log("next day")
