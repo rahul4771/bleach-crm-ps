@@ -284,13 +284,20 @@ function addSection(service){
   app.getProductivity()
   $('#edit-dialog-tigger').click()
 }
+function editNotes(serviceDetails){
+  app.action_type='evaluationbook_note'
+  var note=$(serviceDetails).data('note')
+  app.eval_book_id=$(serviceDetails).data('book_id')
+  app.notes=note
+  $('#notes-tigger').click()
+}
 const app = new Vue({
   el: "#app",
   
   delimiters: ["<%", "%>"],
   
   mounted() {
-   
+   this.url=api
     this.getOrderId()
     this.setDate(moment().format('MM/DD/YYYY'))
     this.selected_date=moment().format('DD-MM-YYYY')
@@ -328,6 +335,8 @@ const app = new Vue({
   components: { Multiselect: window.VueMultiselect.default },
 
   data: {
+    notes:'',
+    
     all_val:false,
     reduction_status:false,
     no_of_visits:0,
@@ -490,7 +499,7 @@ const app = new Vue({
            progress:20,
            slotloader:false,
             services_list:[],
-          url:'https://my.bleachkw.com'
+          url:''
          // url:'http://localhost:8000'
       // url:'https://test.bleach-kw.com'
             //url:'http://127.0.0.1:8000'
@@ -1077,6 +1086,20 @@ setTimeout(function() {
       else {
         this.getProductivity()
       }
+    },
+    updateNotes(){
+      axios.post(this.url+'/customer/editorder/'+this.orderId,{
+        "action_type":'evaluationbook_note',
+       "evaluationbook_id":this.eval_book_id,
+       "note":this.notes,
+       
+       
+      }).then(response=>{
+        console.log(response)
+        $('#note-close').click()
+        window.location.reload()
+        
+      })
     },
     updateDiscount(){
       if(this.paymentData.payment_method=='BREAKDOWN')

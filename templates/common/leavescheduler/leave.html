@@ -4,6 +4,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+
 <div class="wrapper">
   <!--wrapper-->
 
@@ -41,7 +43,7 @@
       <!-- Button trigger modal -->
 
 
-      <div class="main-content-holder">
+      <div class="main-content-holder" id="app">
         <!--main-content-holder-->
 
 
@@ -118,14 +120,14 @@
               <div class="modal-content">
                 <div class="modal-header">
                   <button type="button" class="close" onclick="closeCustomModal()">&times;</button>
-                  <h4 class="modal-title"> Choose Start Time & End Time</h4>
+                  <h4 class="modal-title"> Select Slots</h4>
                 </div>
                 <div class="modal-body">
                   <div class="row">
                     <div class="col-md-12">
                      
                       <!--<input type="time" placeholder="Starting time" class="mt-10 w-100" id="shift3_start_at"/>-->
-                      <div >
+                      <!--<div >
                         <span class="choose">Start Time</span>
                       
                           <div class="ls-dropdown">
@@ -151,12 +153,27 @@
                           </div>
                       
                      
+                    </div>-->
+                    <div class="row">
+                      <div class="col-md-4 mt-10" v-for="(time,index) in time_slots" v-bind:key="index">
+                        <div class="time-slot duration-active text-center p-2" v-if="selected_slot.includes(index)" @click="removeSlot(index)">
+                          <% time.start_time + ' - '+ time.end_time %>
+                        </div>
+                        <div class="time-slot duration text-center p-2"  v-else-if="checkSlot(index)"   @click="selectSlot(index)">
+                          <% time.start_time + ' - '+ time.end_time %>
+                        </div>
+                        <div class="time-slot duration-inactive text-center p-2"  v-else >
+                          <% time.start_time + ' - '+ time.end_time %>
+                        </div>
+                       
+                        
+                      </div>
                     </div>
                     </div>
                     <div class="col-md-12 mt-20">
                       
                       <!--<input type="time" placeholder="Ending time" class="mt-10 w-100 " id="shift3_end_at"/>-->
-                      <div >
+                      <!-- <div >
                         <span class="choose">End Time</span>
                       
                           <div class="ls-dropdown">
@@ -183,7 +200,7 @@
                           </div>
                       
                      
-                    </div>
+                    </div> -->
                     
                     </div>
                     <div class="col-md-12 mt-20 " id="err-msg">
@@ -428,7 +445,9 @@
 
   {% endblock %}
   {% block javascript %}
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
 <script src="{% static 'files/js/shift/shift-selector.js' %}"> </script>
+
 <script>
   function viewWork() {
     $('.lv-loader').show()

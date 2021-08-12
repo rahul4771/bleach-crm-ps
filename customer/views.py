@@ -5175,6 +5175,15 @@ class EditOrderDetails(APIView):
 			CleaningTeamMember.objects.filter(team__order_scheduler=cleaning_schedule).delete()
 				
 			response_dict['success']  = True
+	
+		elif action == 'evaluationbook_note':
+			evaluationbook_id = request.data.get('evaluationbook_id')
+			note              = request.data.get('note')
+
+			#update book note
+			EvaluationBook.objects.filter(id=evaluationbook_id).update(evaluator_note=note)
+
+			response_dict['success']  = True
 
 		return Response(response_dict,HTTP_200_OK)
 
