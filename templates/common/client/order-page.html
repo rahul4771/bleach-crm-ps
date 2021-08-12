@@ -1131,7 +1131,7 @@
                             
                             {% if request.user.user_type == 'ADMIN' or request.user.user_type == 'TECHNICALSUPERVISOR' or request.user.user_type == 'TEAMLEADER' or request.user.user_type == 'ACCOUNTANT' %}
                                 
-                            {% elif request.user.user_type == 'AGENT' %}
+                            {% elif request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}
                                 {% if orderschedule.evaluation_details.evaluator == None and request.user.id == orderschedule.order.evaluation.call_attender.id %}
                                 <div class="order-edit">
                                     <img class="pointer" v-if="!edit" 
