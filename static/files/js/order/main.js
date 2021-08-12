@@ -285,7 +285,9 @@ function addSection(service){
   $('#edit-dialog-tigger').click()
 }
 function editNotes(serviceDetails){
+  app.action_type='evaluationbook_note'
   var note=$(serviceDetails).data('note')
+  app.eval_book_id=$(serviceDetails).data('book_id')
   app.notes=note
   $('#notes-tigger').click()
 }
@@ -334,6 +336,7 @@ const app = new Vue({
 
   data: {
     notes:'',
+    
     all_val:false,
     reduction_status:false,
     no_of_visits:0,
@@ -1083,6 +1086,20 @@ setTimeout(function() {
       else {
         this.getProductivity()
       }
+    },
+    updateNotes(){
+      axios.post(this.url+'/customer/editorder/'+this.orderId,{
+        "action_type":'evaluationbook_note',
+       "evaluationbook_id":this.eval_book_id,
+       "note":this.notes,
+       
+       
+      }).then(response=>{
+        console.log(response)
+        $('#note-close').click()
+        window.location.reload()
+        
+      })
     },
     updateDiscount(){
       if(this.paymentData.payment_method=='BREAKDOWN')

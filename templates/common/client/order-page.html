@@ -1218,12 +1218,13 @@
                                                         
                                                         {% if orderschedule.order_scheduler_book.evaluator_note %}
                                                         <!-- <p id="evalution-note">{{orderschedule.order_scheduler_book.evaluator_note|default_if_none:''}}</p> -->
-                                                         <!-- <div class="order-edit">
+                                                          <div class="order-edit">
                                                             <img class="pointer" v-if="edit" 
                                                             data-service="{{orderschedule.order_scheduler_book.service_type.name}}" onclick="editNotes(this)"
+                                                            data-book_id="{{orderschedule.order_scheduler_book.id}}"
                                                             data-note="{{orderschedule.order_scheduler_book.evaluator_note|default_if_none:''}}"
                                                                 src="{% static 'files/icons/edit.png' %}">
-                                                        </div>  -->
+                                                        </div>  
                                                         <p id="evalution-note{{orderschedule.order_scheduler_book.id}}" class="evalution-note-less">{{orderschedule.order_scheduler_book.evaluator_note|default_if_none:''}} </p>
                                                         <span class="see-more" id="id_see{{orderschedule.order_scheduler_book.id}}" onclick="seefull({{orderschedule.order_scheduler_book.id}})">Show More</span>
                                                         <span class="see-more" style="display: none;" id="id_see_less{{orderschedule.order_scheduler_book.id}}" onclick="seeless({{orderschedule.order_scheduler_book.id}})">Show Less</span>
