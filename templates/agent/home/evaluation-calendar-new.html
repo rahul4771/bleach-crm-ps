@@ -209,14 +209,16 @@
         <div class="cl-evaluator" id="cl-evaluator{{evaluator.id}}"> <img src="{{evaluator.profile_image.url}}" class="cal-img"  data-toggle="tooltip" data-placement="bottom" title="{{evaluator.name}}"/></div>
      
         
-          {% for evaluation in evaluator.evaluation_details %}
+          
           
           <!-- 07 AM to 08 AM-->
           <div class="d-flex flex_height">
             <div class="cl-mob-slot w-100">
+            {% for evaluation in evaluator.evaluation_details %}
             {% if evaluation.proposed_time|date:'H' == '07' %}
               <div class="{% if evaluation.evaluation.booking_evaluation.all %} {% for booking in evaluation.evaluation.booking_evaluation.all %}{% if forloop.first and booking.booking_type == 'EVALUATIONBOOKING' %}customer-submitted{% endif %}{% endfor %}{% elif evaluation.status == 'CANCELLED' %}cl-cancelled{% else %}agent-submitted{% endif %} cl-chip d-flex" data-toggle="modal" data-target="#evaluationAgentModal" onclick="load_evaluation({{evaluation.id}},this)"> {% if evaluation.status == 'EVALUATED' %}<div class="cl-completed"><img src="/static/files/icons/check-white.png" class="cl-check-icon"></div>{% endif %} <div class="text-center w-100" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{evaluation.address.area.name|slice:":3"|upper}}">{{evaluation.address.area.name|slice:":3"|upper}}</div></div>
             {% endif %}
+            {% endfor %}
             </div>
           </div>
           
@@ -224,72 +226,88 @@
            <!-- 08 AM to 09 AM-->
            <div class="d-flex flex_height">
             <div class="cl-mob-slot w-100">
+            {% for evaluation in evaluator.evaluation_details %}
             {% if evaluation.proposed_time|date:'H' == '08' %}
               <div class="{% if evaluation.evaluation.booking_evaluation.all %} {% for booking in evaluation.evaluation.booking_evaluation.all %}{% if forloop.first and booking.booking_type == 'EVALUATIONBOOKING' %}customer-submitted{% endif %}{% endfor %}{% elif evaluation.status == 'CANCELLED' %}cl-cancelled{% else %}agent-submitted{% endif %} cl-chip d-flex" data-toggle="modal" data-target="#evaluationAgentModal" onclick="load_evaluation({{evaluation.id}},this)"> {% if evaluation.status == 'EVALUATED' %}<div class="cl-completed"><img src="/static/files/icons/check-white.png" class="cl-check-icon"></div>{% endif %} <div class="text-center w-100" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{evaluation.address.area.name|slice:":3"|upper}}">{{evaluation.address.area.name|slice:":3"|upper}}</div></div>
             {% endif %}
+            {% endfor %}
             </div>
           </div>
           
            <!-- 09 AM to 10 AM-->
            <div class="d-flex flex_height">
             <div class="cl-mob-slot w-100">
+            {% for evaluation in evaluator.evaluation_details %}
             {% if evaluation.proposed_time|date:'H' == '09' %}
               <div class="{% if evaluation.evaluation.booking_evaluation.all %} {% for booking in evaluation.evaluation.booking_evaluation.all %}{% if forloop.first and booking.booking_type == 'EVALUATIONBOOKING' %}customer-submitted{% endif %}{% endfor %}{% elif evaluation.status == 'CANCELLED' %}cl-cancelled{% else %}agent-submitted{% endif %} cl-chip d-flex" data-toggle="modal" data-target="#evaluationAgentModal" onclick="load_evaluation({{evaluation.id}},this)"> {% if evaluation.status == 'EVALUATED' %}<div class="cl-completed"><img src="/static/files/icons/check-white.png" class="cl-check-icon"></div>{% endif %} <div class="text-center w-100" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{evaluation.address.area.name|slice:":3"|upper}}">{{evaluation.address.area.name|slice:":3"|upper}}</div></div>
             {% endif %}
+            {% endfor %}
             </div>
           </div>
           
            <!-- 10 AM to 11 AM-->
            <div class="d-flex flex_height">
             <div class="cl-mob-slot w-100">
+            {% for evaluation in evaluator.evaluation_details %}
             {% if evaluation.proposed_time|date:'H' == '10' %}
               <div class="{% if evaluation.evaluation.booking_evaluation.all %} {% for booking in evaluation.evaluation.booking_evaluation.all %}{% if forloop.first and booking.booking_type == 'EVALUATIONBOOKING' %}customer-submitted{% endif %}{% endfor %}{% elif evaluation.status == 'CANCELLED' %}cl-cancelled{% else %}agent-submitted{% endif %} cl-chip d-flex" data-toggle="modal" data-target="#evaluationAgentModal" onclick="load_evaluation({{evaluation.id}},this)"> {% if evaluation.status == 'EVALUATED' %}<div class="cl-completed"><img src="/static/files/icons/check-white.png" class="cl-check-icon"></div>{% endif %} <div class="text-center w-100" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{evaluation.address.area.name|slice:":3"|upper}}">{{evaluation.address.area.name|slice:":3"|upper}}</div></div>
             {% endif %}
+            {% endfor %}
             </div>
           </div>
           
           <!-- 11 AM to 12 PM-->
           <div class="d-flex flex_height">
             <div class="cl-mob-slot w-100">
+            {% for evaluation in evaluator.evaluation_details %}
             {% if evaluation.proposed_time|date:'H' == '11' %}
               <div class="{% if evaluation.evaluation.booking_evaluation.all %} {% for booking in evaluation.evaluation.booking_evaluation.all %}{% if forloop.first and booking.booking_type == 'EVALUATIONBOOKING' %}customer-submitted{% endif %}{% endfor %}{% elif evaluation.status == 'CANCELLED' %}cl-cancelled{% else %}agent-submitted{% endif %} cl-chip d-flex" data-toggle="modal" data-target="#evaluationAgentModal" onclick="load_evaluation({{evaluation.id}},this)"> {% if evaluation.status == 'EVALUATED' %}<div class="cl-completed"><img src="/static/files/icons/check-white.png" class="cl-check-icon"></div>{% endif %} <div class="text-center w-100" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{evaluation.address.area.name|slice:":3"|upper}}">{{evaluation.address.area.name|slice:":3"|upper}}</div></div>
             {% endif %}
+            {% endfor %}
             </div>
           </div>
           
           <!-- 12 PM to 01 PM-->
           <div class="d-flex flex_height">
             <div class="cl-mob-slot w-100">
+            {% for evaluation in evaluator.evaluation_details %}
             {% if evaluation.proposed_time|date:'H' == '12' %}
               <div class="{% if evaluation.evaluation.booking_evaluation.all %} {% for booking in evaluation.evaluation.booking_evaluation.all %}{% if forloop.first and booking.booking_type == 'EVALUATIONBOOKING' %}customer-submitted{% endif %}{% endfor %}{% elif evaluation.status == 'CANCELLED' %}cl-cancelled{% else %}agent-submitted{% endif %} cl-chip d-flex" data-toggle="modal" data-target="#evaluationAgentModal" onclick="load_evaluation({{evaluation.id}},this)"> {% if evaluation.status == 'EVALUATED' %}<div class="cl-completed"><img src="/static/files/icons/check-white.png" class="cl-check-icon"></div>{% endif %} <div class="text-center w-100" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{evaluation.address.area.name|slice:":3"|upper}}">{{evaluation.address.area.name|slice:":3"|upper}}</div></div>
             {% endif %}
+            {% endfor %}
             </div>
           </div>
           
           <!-- 01 PM to 02 PM-->
           <div class="d-flex flex_height">
             <div class="cl-mob-slot w-100">
+            {% for evaluation in evaluator.evaluation_details %}
             {% if evaluation.proposed_time|date:'H' == '13' %}
               <div class="{% if evaluation.evaluation.booking_evaluation.all %} {% for booking in evaluation.evaluation.booking_evaluation.all %}{% if forloop.first and booking.booking_type == 'EVALUATIONBOOKING' %}customer-submitted{% endif %}{% endfor %}{% elif evaluation.status == 'CANCELLED' %}cl-cancelled{% else %}agent-submitted{% endif %} cl-chip d-flex" data-toggle="modal" data-target="#evaluationAgentModal" onclick="load_evaluation({{evaluation.id}},this)"> {% if evaluation.status == 'EVALUATED' %}<div class="cl-completed"><img src="/static/files/icons/check-white.png" class="cl-check-icon"></div>{% endif %} <div class="text-center w-100" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{evaluation.address.area.name|slice:":3"|upper}}">{{evaluation.address.area.name|slice:":3"|upper}}</div></div>
             {% endif %}
+            {% endfor %}
             </div>
           </div>
           
           <!-- 02 PM to 03 PM-->
           <div class="d-flex flex_height">
             <div class="cl-mob-slot w-100">
+            {% for evaluation in evaluator.evaluation_details %}
             {% if evaluation.proposed_time|date:'H' == '14' %}
               <div class="{% if evaluation.evaluation.booking_evaluation.all %} {% for booking in evaluation.evaluation.booking_evaluation.all %}{% if forloop.first and booking.booking_type == 'EVALUATIONBOOKING' %}customer-submitted{% endif %}{% endfor %}{% elif evaluation.status == 'CANCELLED' %}cl-cancelled{% else %}agent-submitted{% endif %} cl-chip d-flex" data-toggle="modal" data-target="#evaluationAgentModal" onclick="load_evaluation({{evaluation.id}},this)"> {% if evaluation.status == 'EVALUATED' %}<div class="cl-completed"><img src="/static/files/icons/check-white.png" class="cl-check-icon"></div>{% endif %} <div class="text-center w-100" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{evaluation.address.area.name|slice:":3"|upper}}">{{evaluation.address.area.name|slice:":3"|upper}}</div></div>
             {% endif %}
+            {% endfor %}
             </div>
           </div>
           
            <!-- 03 PM to 04 PM-->
            <div class="d-flex flex_height">
             <div class="cl-mob-slot w-100">
+            {% for evaluation in evaluator.evaluation_details %}
             {% if evaluation.proposed_time|date:'H' == '15' %}
               <div class="{% if evaluation.evaluation.booking_evaluation.all %} {% for booking in evaluation.evaluation.booking_evaluation.all %}{% if forloop.first and booking.booking_type == 'EVALUATIONBOOKING' %}customer-submitted{% endif %}{% endfor %}{% elif evaluation.status == 'CANCELLED' %}cl-cancelled{% else %}agent-submitted{% endif %} cl-chip d-flex" data-toggle="modal" data-target="#evaluationAgentModal" onclick="load_evaluation({{evaluation.id}},this)"> {% if evaluation.status == 'EVALUATED' %}<div class="cl-completed"><img src="/static/files/icons/check-white.png" class="cl-check-icon"></div>{% endif %} <div class="text-center w-100" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{evaluation.address.area.name|slice:":3"|upper}}">{{evaluation.address.area.name|slice:":3"|upper}}</div></div>
             {% endif %}
+            {% endfor %}
             </div>
           </div>
           
@@ -297,9 +315,11 @@
           <!-- 04 PM to 05 PM-->
           <div class="d-flex flex_height">
             <div class="cl-mob-slot w-100">
+            {% for evaluation in evaluator.evaluation_details %}
             {% if evaluation.proposed_time|date:'H' == '16' %}
               <div class="{% if evaluation.evaluation.booking_evaluation.all %} {% for booking in evaluation.evaluation.booking_evaluation.all %}{% if forloop.first and booking.booking_type == 'EVALUATIONBOOKING' %}customer-submitted{% endif %}{% endfor %}{% elif evaluation.status == 'CANCELLED' %}cl-cancelled{% else %}agent-submitted{% endif %} cl-chip d-flex" data-toggle="modal" data-target="#evaluationAgentModal" onclick="load_evaluation({{evaluation.id}},this)"> {% if evaluation.status == 'EVALUATED' %}<div class="cl-completed"><img src="/static/files/icons/check-white.png" class="cl-check-icon"></div>{% endif %} <div class="text-center w-100" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{evaluation.address.area.name|slice:":3"|upper}}">{{evaluation.address.area.name|slice:":3"|upper}}</div></div>
             {% endif %}
+            {% endfor %}
             </div>
           </div>
           
@@ -307,9 +327,11 @@
            <!-- 05 PM to 06 PM-->
            <div class="d-flex flex_height">
             <div class="cl-mob-slot w-100">
+            {% for evaluation in evaluator.evaluation_details %}
             {% if evaluation.proposed_time|date:'H' == '17' %}
               <div class="{% if evaluation.evaluation.booking_evaluation.all %} {% for booking in evaluation.evaluation.booking_evaluation.all %}{% if forloop.first and booking.booking_type == 'EVALUATIONBOOKING' %}customer-submitted{% endif %}{% endfor %}{% elif evaluation.status == 'CANCELLED' %}cl-cancelled{% else %}agent-submitted{% endif %} cl-chip d-flex" data-toggle="modal" data-target="#evaluationAgentModal" onclick="load_evaluation({{evaluation.id}},this)"> {% if evaluation.status == 'EVALUATED' %}<div class="cl-completed"><img src="/static/files/icons/check-white.png" class="cl-check-icon"></div>{% endif %} <div class="text-center w-100" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{evaluation.address.area.name|slice:":3"|upper}}">{{evaluation.address.area.name|slice:":3"|upper}}</div></div>
             {% endif %}
+            {% endfor %}
             </div>
           </div>
             
@@ -317,9 +339,11 @@
            <!-- 06 PM to 07 PM-->
            <div class="d-flex flex_height" >
             <div class="cl-mob-slot w-100">
+            {% for evaluation in evaluator.evaluation_details %}
             {% if evaluation.proposed_time|date:'H' == '18' %}
               <div class="{% if evaluation.evaluation.booking_evaluation.all %} {% for booking in evaluation.evaluation.booking_evaluation.all %}{% if forloop.first and booking.booking_type == 'EVALUATIONBOOKING' %}customer-submitted{% endif %}{% endfor %}{% elif evaluation.status == 'CANCELLED' %}cl-cancelled{% else %}agent-submitted{% endif %} cl-chip d-flex" data-toggle="modal" data-target="#evaluationAgentModal" onclick="load_evaluation({{evaluation.id}},this)"> {% if evaluation.status == 'EVALUATED' %}<div class="cl-completed"><img src="/static/files/icons/check-white.png" class="cl-check-icon"></div>{% endif %} <div class="text-center w-100" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{evaluation.address.area.name|slice:":3"|upper}}">{{evaluation.address.area.name|slice:":3"|upper}}</div></div>
             {% endif %}
+            {% endfor %}
             </div>
           </div>
 

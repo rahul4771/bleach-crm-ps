@@ -2190,7 +2190,7 @@ def SalesTargetDaily(request):
 		"approved_count":total_sales_approved_count,
 		"submitted_count":total_sales_submitted_count
 		}
-		data.append(evaluator_target_dict)
+		data.append(agent_target_dict)
 	print(data,"here")
 
 
