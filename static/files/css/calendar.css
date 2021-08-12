@@ -749,9 +749,58 @@ width:100% !important;
 .cl-right-divider{
     border-right: 3px solid #CFD7E2;
 }
-
+.cal-img{
+    width: 80px !important;
+    height: 80px !important;
+    border-radius: 40px !important;
+    margin:auto;
+    margin-top:20px;
+ }
+ .pl-0{
+     padding-left: 0px !important;
+ }
+ #eval-calendar-mobile{
+     display: none !important;
+ }
   @media only screen and (max-width: 600px) {
-
+    #eval-calendar-mobile{
+        display: flex !important;
+    }
+    .cl-marker-text {
+        padding-top: 10px;
+        padding-left: 10px;
+        color: #ffffff;
+        font-size: 9px;
+    }
+      .cl-time{
+        margin-top: 140px;
+        text-align: center;
+      }
+      .cl-mob-slot{
+        width: 8.33%;
+        color: #434343;
+        font-size:14px;
+        font-weight:400;
+        padding:2px;
+        margin-top:0px !important;
+        
+    }
+    .cl-check-icon{
+        height: 10px;
+    width: 10px !important;
+    }
+    .cl-mob-slot div{
+        margin-top:0px !important;
+    }
+      .cl-time-label{
+        font-size: 10px;
+      }
+      .white-wrapper {
+        padding: 24px 1px;
+    }
+  #eval-calendar-desktop{
+      display: none;
+  }
     .cl-slot{
         width:auto;
     }

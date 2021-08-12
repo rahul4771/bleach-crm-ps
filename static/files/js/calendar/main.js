@@ -14,7 +14,7 @@ $(document).ready(function(){
       `<i class='fa fa-chevron-right service-control'></i>`], 
         responsive:{
             0:{
-                items:1
+                items:2
             },
             600:{
                 items:4
@@ -24,8 +24,32 @@ $(document).ready(function(){
             }
         }
     })
+    $('#evalCalendar-carousel').owlCarousel({
+      loop:false,
+      margin:10,
+     
+      nav:true,
+      dots:false,
+      navText:[`<i class='fa fa-chevron-left service-control' @click='prevService()'></i>`,
+    `<i class='fa fa-chevron-right service-control'></i>`], 
+      responsive:{
+          0:{
+              items:2
+          },
+          600:{
+              items:4
+          },
+          1000:{
+              items:6
+          }
+      }
+  })
    
   });
+  
+
+
+ 
   
 
 var heightCarousel=$('#cleaningCalendar-carousel').height()

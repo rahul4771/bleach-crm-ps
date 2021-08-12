@@ -324,7 +324,7 @@ data-customer_name="{{follow_up.investigation.order.evaluation.customer.name}}" 
         </div><!--filter-column-boxes filter-columns-right-->        
     </div><!--filter-columns-wrapper-->
     <div style="height: 500px; overflow: auto;">
-        {% for evaluator in evaluators_sales_targets %}
+        {% for evaluator in staff_sales_targets %}
         <div class="bar-chart"><!--bar-chart-->
         
             <div class="bar-chart-items chart-column-one"><!--bar-chart-items chart-column-one-->
@@ -362,79 +362,6 @@ data-customer_name="{{follow_up.investigation.order.evaluation.customer.name}}" 
             
         </div><!--bar-chart-->        
         {% endfor %}
-        {% for evaluator in evaluators_sales_targets %}
-        <div class="bar-chart"><!--bar-chart-->
-        
-            <div class="bar-chart-items chart-column-one"><!--bar-chart-items chart-column-one-->
-            {% if evaluator.profile_image %}
-                <img src="{{evaluator.profile_image.url}}" class="sals-team-profile">
-            {% else %}
-                <img src="{% static 'files/images/profile.jpg' %}" class="sals-team-profile">
-            {% endif %}
-            </div><!--bar-chart-items chart-column-one-->
-            
-            <div class="bar-chart-items chart-column-two"><!--bar-chart-items chart-column-two-->
-                <div class="evaluator-name">{{ evaluator.name }}</div>
-                <div class="designation">{{evaluator.user_type}}</div>
-            </div><!--bar-chart-items chart-column-two-->
-            
-            <div class="bar-chart-items chart-column-three"><!--bar-chart-items chart-column-three-->
-            
-            <div class="evaluator-name">
-              <span  style="float: left;">Approved : <span id="approved_count{{evaluator.id}}">0</span></span>
-              <span  style="float: right;">Submitted : <span id="submitted_count{{evaluator.id}}">0</span></span>.</div>
-
-            {% comment %} <div class="evaluator-name" align="right"><span id="submittedid{{evaluator.id}}">0.000</span> KD</div>
-            <div class="evaluator-name" ><span id="evaluatorid{{evaluator.id}}">0.0</span> <span>%</span></div> {% endcomment %}
-                <div class="bar-chart-graybg color"><div id="color{{evaluator.id}}"></div></div>
-
-            <div class="evaluator-name">
-            <span id="approved_amount{{evaluator.id}}" style="float: left;">0.000</span>  <span></span>
-            <span id="submitted_amount{{evaluator.id}}" style="float: right;">0.000</span>  <span></span>.</div>
-            </div><!--bar-chart-items chart-column-three-->
-            
-            {% comment %} <div class="bar-chart-items chart-column-four evaluator-name"><!--bar-chart-items chart-column-four-->
-                <span id="submittedid{{evaluator.id}}"></span> KD
-                 <a class="followup_graph" data-evaluator="{{evaluator.name}}"><input name="Follow" type="button" class="follow" onclick="salestarget({{evaluator.id}});" value="Follow"> </a>
-            </div><!--bar-chart-items chart-column-four--> {% endcomment %}
-            
-        </div><!--bar-chart-->        
-        {% endfor %}
-        <div class="bar-chart"><!--bar-chart-->
-            
-            <div class="bar-chart-items chart-column-one"><!--bar-chart-items chart-column-one-->
-            
-            <img src="{% static 'files/images/dummy-profile-pic.jpg' %}" class="sals-team-profile">
-            
-            </div><!--bar-chart-items chart-column-one-->
-            
-            <div class="bar-chart-items chart-column-two"><!--bar-chart-items chart-column-two-->
-                <div class="evaluator-name">Customer Service</div>
-                <div class="designation">AGENT</div>
-            </div><!--bar-chart-items chart-column-two-->
-            
-            <div class="bar-chart-items chart-column-three"><!--bar-chart-items chart-column-three-->
-            
-            <div class="evaluator-name">
-              <span  style="float: left;">Approved : <span id="approved_count0">0</span></span>
-              <span  style="float: right;">Submitted : <span id="submitted_count0">0</span></span>.</div>
-
-            {% comment %} <div class="evaluator-name" align="right"><span id="submittedid0">0.000</span> KD</div> 
-            <div class="evaluator-name" id="agent_sales_target"><span id="evaluatorid0">0.0</span> <span>%</span></div>{% endcomment %}
-                <div class="bar-chart-graybg color"><div id="color0"></div></div>
-
-            <div class="evaluator-name">
-            <span id="approved_amount0" style="float: left;">0.000</span> <span></span>
-            <span id="submitted_amount0" style="float: right;">0.000</span> <span></span>.</div>
-
-            </div><!--bar-chart-items chart-column-three-->
-            
-            {% comment %} <div class="bar-chart-items chart-column-four"><!--bar-chart-items chart-column-four-->
-                    <span id="submittedid0">8320.000</span>
-                 <a class="followup_graph" data-evaluator="Customer Service"><input name="Follow" type="button" class="follow" onclick="salestarget(0);" value="Follow"> </a>
-            </div><!--bar-chart-items chart-column-four--> {% endcomment %}
-            
-        </div><!--bar-chart-->
     </div>
             
 

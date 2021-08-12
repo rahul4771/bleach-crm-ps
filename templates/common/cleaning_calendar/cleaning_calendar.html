@@ -949,7 +949,7 @@ class="cl-service-list"
    <div class="col-md-4 ">
     <div class="cl-slot-card-title2">Available Team Incharge</div>
     <div class="row">
-      <div class="col-md-3 text-center" v-for="(cleaner,index) in cleaningDetails.available_leaders" >
+      <div class="col-md-3 col-6 text-center" v-for="(cleaner,index) in cleaningDetails.available_leaders" >
         <img :src="url+cleaner.profile_image" class="cl-profile-pic"  data-toggle="tooltip" data-placement="bottom" title="Amanadiel"/>
         <div><% cleaner.name %></div>
       </div>

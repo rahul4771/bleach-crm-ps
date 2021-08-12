@@ -422,24 +422,7 @@
                 </div>
 
             </div>
-            <div class="row mt-20">
-                <div class="col-md-12 ">
-                    <div class="model-input-name">Price</div>
-
-                    <select data-placeholder="Begin typing a name " multiple class="chosen-select" name="test" class="minimal">
-                        <option value=""></option>
-                        <option>American Black Bear</option>
-                        <option>Asiatic Black Bear</option>
-                        <option>Brown Bear</option>
-                        <option>Giant Panda</option>
-                        <option>Sloth Bear</option>
-                        <option>Sun Bear</option>
-                        <option>Polar Bear</option>
-                        <option>Spectacled Bear</option>
-                      </select>
-                </div>
-
-            </div>
+            
             <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Status</div>
@@ -572,6 +555,19 @@
                         {% endfor %}
 
                     </select>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Price</div>
+
+                    <select data-placeholder="Begin typing a name " multiple class="chosen-select" name="test" class="minimal">
+                        <option value=""></option>
+                        {% for item in items %}
+                        <option value="{{item.id}}">{{item.name}}</option>
+                        {% endfor %}
+                      </select>
                 </div>
 
             </div>
