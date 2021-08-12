@@ -209,6 +209,8 @@
         <div class="cl-evaluator" id="cl-evaluator{{evaluator.id}}"> <img src="{{evaluator.profile_image.url}}" class="cal-img"  data-toggle="tooltip" data-placement="bottom" title="{{evaluator.name}}"/></div>
      
         
+          {% for evaluation in evaluator.evaluation_details %}
+          
           <!-- 07 AM to 08 AM-->
           <div class="d-flex mt-30">
             <div class="cl-mob-slot w-100">
@@ -216,9 +218,11 @@
             </div>
             <div class="cl-mob-slot w-100">
               <div class="agent-submitted cl-chip d-flex" data-toggle="modal" data-target="#evaluationAgentModal"> 
-                <div class="text-center w-100" data-toggle="tooltip" data-placement="top" title="" data-original-title="Kabd">KAB</div></div>
+                <div class="text-center w-100" data-toggle="tooltip" data-placement="top" title="" data-original-title="Kabd">{{evaluation.proposed_time|date:'H:i'}}</div></div>
               </div>
           </div>
+
+          {% endfor %}
 
            <!-- 08 AM to 09 AM-->
            <div class="d-flex">
