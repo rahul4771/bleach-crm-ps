@@ -4126,9 +4126,6 @@ class AssignFollowupTeam(IsAuthenticated,View):
 
 			#update cleaners count
 			followup_schedule.follow_up.no_of_cleaners = len(assigned_cleaners)+1
-			followup_schedule.work_status                          = 'FOLLOW_UP_TEAM_ASSIGNED'
-			followup_schedule.follow_up.save()
-			followup_schedule.save()
 
 			#cleaners
 			assigned_cleaners_list   = []
@@ -4136,7 +4133,11 @@ class AssignFollowupTeam(IsAuthenticated,View):
 				assigned_cleaners_list.append(FollowUpTeamMember(team=follow_up_team_assign_form_save,member_id=cleaner,start_at=followup_schedule.start_at,end_at=followup_schedule.end_at,start_time=start_at_time,end_time=end_at_time))
 			assigned_cleaners_list.append(FollowUpTeamMember(team=follow_up_team_assign_form_save,member=follow_up_team_assign_form_save.team_leader,start_at=followup_schedule.start_at,end_at=followup_schedule.end_at,start_time=start_at_time,end_time=end_at_time))
 			#bulk create
-			FollowUpTeamMember.objects.bulk_create(assigned_cleaners_list)	
+			FollowUpTeamMember.objects.bulk_create(assigned_cleaners_list)
+
+			followup_schedule.work_status                          = 'FOLLOW_UP_TEAM_ASSIGNED'
+			followup_schedule.follow_up.save()
+			followup_schedule.save()	
 		else:	
 			messages.error(request,"Something Went Wrong")
 

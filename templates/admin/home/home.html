@@ -270,24 +270,7 @@ data-customer_name="{{follow_up.investigation.order.evaluation.customer.name}}" 
         <div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->   
         <h2 class="h2">Individual Evaluations</h2>
         </div><!--filter-column-boxes filter-columns-left-->
-        {% comment %} <div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
-        
-            <div class="date-wrapper"><!--date-wrapper-->
-            <div class="date-wrapper-inner right-p"><!--date-wrapper-inner-->
-            <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
-            <input type='text' id='sales_target_datepicker' value="{{evaluation_date|date:"d-m-Y"}}" onchange="salestargetcalculation();" class="date-box date_pick">
-            <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
-            <button class='today-date current-date'>Today</button>
-            </div><!--date-wrapper-inner-->
-            <div class="date-togglewrapper"><!--date-togglewrapper-->
-            <div class="Button_wrapperChart">
-    
-            </div>
-            </div><!--date-togglewrapper-->
-            </div><!--date-wrapper-->
-        
-        
-        </div><!--filter-column-boxes filter-columns-right-->   {% endcomment %}
+
 
 
 
@@ -304,10 +287,10 @@ data-customer_name="{{follow_up.investigation.order.evaluation.customer.name}}" 
             
             <!-- monthpicker -->
             <div id="working_calendar2" hidden>
-            <button class="prev-month-resource previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
-            <input type='text' id='working_calendar_month'  name='monthpicker' class="date-box month_pick_resource" onchange="salestargetcalculation();">
-            <button class='next-month-resource next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
-            <button class='this-month-resource current-date'>Month</button>
+                <button class="prev-month-resource previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
+                <input type='text' id='working_calendar_month'  name='monthpicker' class="date-box month_pick_resource" onchange="salestargetcalculation();">
+                <button class='next-month-resource next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
+                <button class='this-month-resource current-date'>Month</button>
             </div>
             {% comment %} <input type="text" id="resource_month" class="month_pick date-picker-resource" hidden> {% endcomment %}
             </div><!--date-wrapper-inner-->
@@ -324,7 +307,7 @@ data-customer_name="{{follow_up.investigation.order.evaluation.customer.name}}" 
         </div><!--filter-column-boxes filter-columns-right-->        
     </div><!--filter-columns-wrapper-->
     <div style="height: 500px; overflow: auto;">
-        {% for evaluator in staff_sales_targets %}
+        {% for evaluator in evaluators_sales_targets %}
         <div class="bar-chart"><!--bar-chart-->
         
             <div class="bar-chart-items chart-column-one"><!--bar-chart-items chart-column-one-->
@@ -362,6 +345,79 @@ data-customer_name="{{follow_up.investigation.order.evaluation.customer.name}}" 
             
         </div><!--bar-chart-->        
         {% endfor %}
+        {% for evaluator in evaluators_sales_targets %}
+        <div class="bar-chart"><!--bar-chart-->
+        
+            <div class="bar-chart-items chart-column-one"><!--bar-chart-items chart-column-one-->
+            {% if evaluator.profile_image %}
+                <img src="{{evaluator.profile_image.url}}" class="sals-team-profile">
+            {% else %}
+                <img src="{% static 'files/images/profile.jpg' %}" class="sals-team-profile">
+            {% endif %}
+            </div><!--bar-chart-items chart-column-one-->
+            
+            <div class="bar-chart-items chart-column-two"><!--bar-chart-items chart-column-two-->
+                <div class="evaluator-name">{{ evaluator.name }}</div>
+                <div class="designation">{{evaluator.user_type}}</div>
+            </div><!--bar-chart-items chart-column-two-->
+            
+            <div class="bar-chart-items chart-column-three"><!--bar-chart-items chart-column-three-->
+            
+            <div class="evaluator-name">
+              <span  style="float: left;">Approved : <span id="approved_count{{evaluator.id}}">0</span></span>
+              <span  style="float: right;">Submitted : <span id="submitted_count{{evaluator.id}}">0</span></span>.</div>
+
+            {% comment %} <div class="evaluator-name" align="right"><span id="submittedid{{evaluator.id}}">0.000</span> KD</div>
+            <div class="evaluator-name" ><span id="evaluatorid{{evaluator.id}}">0.0</span> <span>%</span></div> {% endcomment %}
+                <div class="bar-chart-graybg color"><div id="color{{evaluator.id}}"></div></div>
+
+            <div class="evaluator-name">
+            <span id="approved_amount{{evaluator.id}}" style="float: left;">0.000</span>  <span></span>
+            <span id="submitted_amount{{evaluator.id}}" style="float: right;">0.000</span>  <span></span>.</div>
+            </div><!--bar-chart-items chart-column-three-->
+            
+            {% comment %} <div class="bar-chart-items chart-column-four evaluator-name"><!--bar-chart-items chart-column-four-->
+                <span id="submittedid{{evaluator.id}}"></span> KD
+                 <a class="followup_graph" data-evaluator="{{evaluator.name}}"><input name="Follow" type="button" class="follow" onclick="salestarget({{evaluator.id}});" value="Follow"> </a>
+            </div><!--bar-chart-items chart-column-four--> {% endcomment %}
+            
+        </div><!--bar-chart-->        
+        {% endfor %}
+        <div class="bar-chart"><!--bar-chart-->
+            
+            <div class="bar-chart-items chart-column-one"><!--bar-chart-items chart-column-one-->
+            
+            <img src="{% static 'files/images/dummy-profile-pic.jpg' %}" class="sals-team-profile">
+            
+            </div><!--bar-chart-items chart-column-one-->
+            
+            <div class="bar-chart-items chart-column-two"><!--bar-chart-items chart-column-two-->
+                <div class="evaluator-name">Customer Service</div>
+                <div class="designation">AGENT</div>
+            </div><!--bar-chart-items chart-column-two-->
+            
+            <div class="bar-chart-items chart-column-three"><!--bar-chart-items chart-column-three-->
+            
+            <div class="evaluator-name">
+              <span  style="float: left;">Approved : <span id="approved_count0">0</span></span>
+              <span  style="float: right;">Submitted : <span id="submitted_count0">0</span></span>.</div>
+
+            {% comment %} <div class="evaluator-name" align="right"><span id="submittedid0">0.000</span> KD</div> 
+            <div class="evaluator-name" id="agent_sales_target"><span id="evaluatorid0">0.0</span> <span>%</span></div>{% endcomment %}
+                <div class="bar-chart-graybg color"><div id="color0"></div></div>
+
+            <div class="evaluator-name">
+            <span id="approved_amount0" style="float: left;">0.000</span> <span></span>
+            <span id="submitted_amount0" style="float: right;">0.000</span> <span></span>.</div>
+
+            </div><!--bar-chart-items chart-column-three-->
+            
+            {% comment %} <div class="bar-chart-items chart-column-four"><!--bar-chart-items chart-column-four-->
+                    <span id="submittedid0">8320.000</span>
+                 <a class="followup_graph" data-evaluator="Customer Service"><input name="Follow" type="button" class="follow" onclick="salestarget(0);" value="Follow"> </a>
+            </div><!--bar-chart-items chart-column-four--> {% endcomment %}
+            
+        </div><!--bar-chart-->
     </div>
             
 
@@ -591,6 +647,7 @@ data-customer_name="{{follow_up.investigation.order.evaluation.customer.name}}" 
 <!-- /edit_notapprovedcleaning_popup -->
 {% endblock %}
 {% block javascript %}
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdn.jsdelivr.net/npm/v-owl-carousel@1.0.8/dist/v-owl-carousel.min.js"></script>
@@ -600,9 +657,61 @@ data-customer_name="{{follow_up.investigation.order.evaluation.customer.name}}" 
   <!-- calendar-->
   <script src="{% static '/files/externalfiles/plugins/OwlCarousel2/dist/owl.carousel.js'%}"></script>
   <script src="https://cdn.jsdelivr.net/npm/vue-ellipse-progress/dist/vue-ellipse-progress.umd.min.js"></script>
+  <script src="{% static 'files/js/common.js' %}"></script>
 <script src="{% static 'files/js/calendar/main.js' %}"></script>
 <!--calender-->
+<script>
+    $('.next-day').on('click', function () {
+       console.log("next day")
+       $selectedDay            = $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").getDate();
+       var $tmpSelectedDay     = new Date($selectedDay) 
+       $tmpSelectedDay.setDate($tmpSelectedDay.getDate() + 1);
+       $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
+           
+    });
 
+
+   $('.prev-day').on('click', function () {
+    console.log("prev day");
+       $selectedDay            = $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").getDate();
+       var $tmpSelectedDay     = new Date($selectedDay) 
+       $tmpSelectedDay.setDate($tmpSelectedDay.getDate() - 1);
+       $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
+   
+   });
+
+   $('.today-date').on('click', function () {
+       var $tmpSelectedDay     = new Date();
+       $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
+   });
+
+   //New Month picker
+        $('.next-month-resource').on('click', function () {
+        console.log($(this).parent('.date-wrapper-inner-resource'));
+        
+        $selectedDay            = $(this).parent('#working_calendar2').children('.month_pick_resource').data("DateTimePicker").getDate();
+        var $tmpSelectedDay     = new Date($selectedDay) 
+        $tmpSelectedDay.setMonth($tmpSelectedDay.getMonth() + 1);
+        $(this).parent('#working_calendar2').children('.month_pick_resource').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('MM/YYYY'));;
+            
+        });
+
+        $('.prev-month-resource').on('click', function () {
+
+        $selectedDay            = $(this).parent('#working_calendar2').children('.month_pick_resource').data("DateTimePicker").getDate();
+        var $tmpSelectedDay     = new Date($selectedDay) 
+        $tmpSelectedDay.setMonth($tmpSelectedDay.getMonth() - 1);
+        $(this).parent('#working_calendar2').children('.month_pick_resource').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('MM/YYYY'));
+
+        });
+
+        $('.this-month-resource').on('click', function () {
+        var $tmpSelectedDay     = new Date();
+        $tmpSelectedDay.setMonth($tmpSelectedDay.getMonth());
+        $(this).parent('#working_calendar2').children('.month_pick_resource').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('MM/YYYY'));
+        }); 
+
+</script>
 <script src="{% static 'files/js/charts/sales-pie-charts.js' %}"></script>
 <script src="{% static 'files/js/charts/overall-sales-chart.js' %}"></script>
 

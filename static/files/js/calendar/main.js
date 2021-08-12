@@ -1503,7 +1503,7 @@ const app=  new Vue({
   app.user_type=user_type
   console.log("user is "+user_type)
   //New Date picker
-  $('.next-day').on('click', function () {
+  $('.next-day-calendar').on('click', function () {
 
     $selectedDay            = moment($('#cl_cleaning_calendar').val(),'DD-MM-YYYY').valueOf();
    // console.log("selected day is "+$selectedDay+"other is" + moment($('#cl_cleaning_calendar').val(),'DD-MM-YYYY').valueOf())
@@ -1514,7 +1514,7 @@ const app=  new Vue({
  });
 
 
-$('.prev-day').on('click', function () {
+$('.prev-day-calendar').on('click', function () {
   $selectedDay=moment($('#cl_cleaning_calendar').val(),'DD-MM-YYYY').valueOf()
    // $selectedDay            = $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").getDate();
     var $tmpSelectedDay     = new Date($selectedDay) 
