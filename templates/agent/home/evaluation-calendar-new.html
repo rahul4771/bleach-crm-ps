@@ -209,6 +209,9 @@
         <div class="cl-evaluator" id="cl-evaluator{{evaluator.id}}"> <img src="{{evaluator.profile_image.url}}" class="cal-img"  data-toggle="tooltip" data-placement="bottom" title="{{evaluator.name}}"/></div>
      
         
+          {% for evaluation in evaluator.evaluation_details %}
+          
+          {% if evaluation.proposed_time|date:'H:i' == '07:00' %}
           <!-- 07 AM to 08 AM-->
           <div class="d-flex mt-30">
             <div class="cl-mob-slot w-100">
@@ -216,9 +219,22 @@
             </div>
             <div class="cl-mob-slot w-100">
               <div class="agent-submitted cl-chip d-flex" data-toggle="modal" data-target="#evaluationAgentModal"> 
-                <div class="text-center w-100" data-toggle="tooltip" data-placement="top" title="" data-original-title="Kabd">KAB</div></div>
+                <div class="text-center w-100" data-toggle="tooltip" data-placement="top" title="" data-original-title="Kabd">{{evaluation.proposed_time|date:'H:i'}}</div></div>
               </div>
           </div>
+          {% else %}
+          <!-- 07 AM to 08 AM-->
+          <div class="d-flex mt-30">
+            <div class="cl-mob-slot w-100">
+              <div class="agent-submitted cl-chip d-flex" data-toggle="modal" data-target="#evaluationAgentModal" onclick="load_evaluation(3478,this)"> <div class="cl-completed"><img src="/static/files/icons/check-white.png" class="cl-check-icon"></div><div class="text-center w-100" data-toggle="tooltip" data-placement="top" title="" data-original-title="Al Dasma">ddd</div></div>
+            </div>
+            <div class="cl-mob-slot w-100">
+              <div class="agent-submitted cl-chip d-flex" data-toggle="modal" data-target="#evaluationAgentModal"> 
+                <div class="text-center w-100" data-toggle="tooltip" data-placement="top" title="" data-original-title="Kabd">{{evaluation.proposed_time|date:'H:i'}}</div></div>
+              </div>
+          </div>
+          {% endif %}
+          
 
            <!-- 08 AM to 09 AM-->
            <div class="d-flex">
@@ -316,6 +332,8 @@
             </div>
             
           </div>
+          
+          {% if evaluation.proposed_time >= '17:00' and evaluation.proposed_time <= '18:00' %}
            <!-- 05 PM to 06 PM-->
            <div class="d-flex">
             <div class="cl-mob-slot w-100">
@@ -324,18 +342,19 @@
             </div>
             
           </div>
+          {% endif %}
+
+          {% if evaluation.proposed_time|date:'H:i' == '18:00' %}
            <!-- 06 PM to 07 PM-->
            <div class="d-flex">
             <div class="cl-mob-slot w-100">
             <div class="agent-submitted cl-chip d-flex" data-toggle="modal" data-target="#evaluationAgentModal"> 
               <div class="text-center w-100" data-toggle="tooltip" data-placement="top" title="" data-original-title="Kabd">KAB</div></div>
             </div>
-            <div class="cl-mob-slot w-100">
-              <div class="agent-submitted cl-chip d-flex" data-toggle="modal" data-target="#evaluationAgentModal"> 
-                <div class="text-center w-100" data-toggle="tooltip" data-placement="top" title="" data-original-title="Kabd">KAB</div></div>
-              </div>
           </div>
-          
+          {% endif %}
+
+          {% endfor %}
           
           </div>
           {% endfor %}

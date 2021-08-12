@@ -775,6 +775,8 @@ width:100% !important;
       .cl-time{
         margin-top: 140px;
         text-align: center;
+        padding-right: 0px !important;
+
       }
       .cl-mob-slot{
         width: 8.33%;
