@@ -664,6 +664,7 @@ function addToShift3(){
       selectedDates=[];
       resourceList=[];
       shiftList=[];
+      app.selected_slot=[]
       reinitVal();
       getUsersShift();
       
