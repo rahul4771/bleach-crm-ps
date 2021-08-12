@@ -629,6 +629,11 @@ width:100% !important;
     #cleaningCalendar-carousel  .owl-prev:hover{
         opacity:1 !important;
     }
+
+.flex_height{
+    height: 37.5px;
+}
+
 /*.owl-prev i:hover {
     color: #616161;
 }
