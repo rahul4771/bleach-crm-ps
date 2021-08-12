@@ -152,7 +152,7 @@ $('.month_pick_resource').datetimepicker({
 
 
    $('.prev-day').on('click', function () {
-    console.log("prev day")
+    console.log("prev day");
        $selectedDay            = $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").getDate();
        var $tmpSelectedDay     = new Date($selectedDay) 
        $tmpSelectedDay.setDate($tmpSelectedDay.getDate() - 1);
@@ -177,7 +177,7 @@ $(function () {
 
 //New Date picker
   $('.next-day-resource').on('click', function () {
-
+    console.log("re necxt")
     console.log($(this).parent('.date-wrapper-inner-resource'));
     $selectedDay            = $(this).parent('#working_calendar').children('.resource_date_pick').data("DateTimePicker").getDate();
     var $tmpSelectedDay     = new Date($selectedDay) 
@@ -189,7 +189,6 @@ $(function () {
 
 
    $('.prev-day-resource').on('click', function () {
-
        $selectedDay            = $(this).parent('#working_calendar').children('.resource_date_pick').data("DateTimePicker").getDate();
        var $tmpSelectedDay     = new Date($selectedDay) 
        $tmpSelectedDay.setDate($tmpSelectedDay.getDate() - 1);
