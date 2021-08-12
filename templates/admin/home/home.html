@@ -288,7 +288,7 @@ data-customer_name="{{follow_up.investigation.order.evaluation.customer.name}}" 
             <!-- monthpicker -->
             <div id="working_calendar2" hidden>
                 <button class="prev-month-resource previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
-                <input type='text' id='working_calendar_month'  name='monthpicker' class="date-box month_pick_resource" onchange="salestargetcalculation();">
+                <input  type='text' id='working_calendar_month'  name='monthpicker' class="date-box month_pick_resource" onchange="salestargetcalculation();">
                 <button class='next-month-resource next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
                 <button class='this-month-resource current-date'>Month</button>
             </div>
@@ -660,58 +660,7 @@ data-customer_name="{{follow_up.investigation.order.evaluation.customer.name}}" 
   <script src="{% static 'files/js/common.js' %}"></script>
 <script src="{% static 'files/js/calendar/main.js' %}"></script>
 <!--calender-->
-<script>
-    $('.next-day').on('click', function () {
-       console.log("next day")
-       $selectedDay            = $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").getDate();
-       var $tmpSelectedDay     = new Date($selectedDay) 
-       $tmpSelectedDay.setDate($tmpSelectedDay.getDate() + 1);
-       $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
-           
-    });
 
-
-   $('.prev-day').on('click', function () {
-    console.log("prev day");
-       $selectedDay            = $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").getDate();
-       var $tmpSelectedDay     = new Date($selectedDay) 
-       $tmpSelectedDay.setDate($tmpSelectedDay.getDate() - 1);
-       $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
-   
-   });
-
-   $('.today-date').on('click', function () {
-       var $tmpSelectedDay     = new Date();
-       $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
-   });
-
-   //New Month picker
-        $('.next-month-resource').on('click', function () {
-        console.log($(this).parent('.date-wrapper-inner-resource'));
-        
-        $selectedDay            = $(this).parent('#working_calendar2').children('.month_pick_resource').data("DateTimePicker").getDate();
-        var $tmpSelectedDay     = new Date($selectedDay) 
-        $tmpSelectedDay.setMonth($tmpSelectedDay.getMonth() + 1);
-        $(this).parent('#working_calendar2').children('.month_pick_resource').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('MM/YYYY'));;
-            
-        });
-
-        $('.prev-month-resource').on('click', function () {
-
-        $selectedDay            = $(this).parent('#working_calendar2').children('.month_pick_resource').data("DateTimePicker").getDate();
-        var $tmpSelectedDay     = new Date($selectedDay) 
-        $tmpSelectedDay.setMonth($tmpSelectedDay.getMonth() - 1);
-        $(this).parent('#working_calendar2').children('.month_pick_resource').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('MM/YYYY'));
-
-        });
-
-        $('.this-month-resource').on('click', function () {
-        var $tmpSelectedDay     = new Date();
-        $tmpSelectedDay.setMonth($tmpSelectedDay.getMonth());
-        $(this).parent('#working_calendar2').children('.month_pick_resource').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('MM/YYYY'));
-        }); 
-
-</script>
 <script src="{% static 'files/js/charts/sales-pie-charts.js' %}"></script>
 <script src="{% static 'files/js/charts/overall-sales-chart.js' %}"></script>
 
@@ -1659,6 +1608,57 @@ $('.chart-toggle3').click(function(){
         $('#example3').css("display","block");   
     }
 });
+
+</script>
+<script>
+    $('.next-day').on('click', function () {
+       console.log("next day")
+       $selectedDay            = $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").getDate();
+       var $tmpSelectedDay     = new Date($selectedDay) 
+       $tmpSelectedDay.setDate($tmpSelectedDay.getDate() + 1);
+       $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
+           
+    });
+
+
+   $('.prev-day').on('click', function () {
+    console.log("prev day");
+       $selectedDay            = $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").getDate();
+       var $tmpSelectedDay     = new Date($selectedDay) 
+       $tmpSelectedDay.setDate($tmpSelectedDay.getDate() - 1);
+       $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
+   
+   });
+
+   $('.today-date').on('click', function () {
+       var $tmpSelectedDay     = new Date();
+       $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
+   });
+
+   //New Month picker
+        $('.next-month-resource').on('click', function () {
+        var tempV = $('#working_calendar_month').val().split('/');
+       
+        var selMon =new Date(tempV[0]+'/'+'01/'+tempV[1]);
+        selMon.setMonth(selMon.getMonth() + 1);
+        $('#working_calendar_month').val(moment(selMon).format('MM/YYYY'));
+            
+        });
+
+        $('.prev-month-resource').on('click', function () {
+
+            var tempV = $('#working_calendar_month').val().split('/');
+       
+        var selMon =new Date(tempV[0]+'/'+'01/'+tempV[1]);
+        selMon.setMonth(selMon.getMonth() - 1);
+        $('#working_calendar_month').val(moment(selMon).format('MM/YYYY'));
+
+        });
+
+        $('.this-month-resource').on('click', function () {
+        var $tmpSelectedDay     = new Date();
+        $('#working_calendar_month').val(moment($tmpSelectedDay ).format('MM/YYYY'));
+        }); 
 
 </script>
 
