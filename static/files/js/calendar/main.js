@@ -266,7 +266,8 @@ const app=  new Vue({
         var passed_date=location.href.split("cleaning_calendar_date=")[1]
         if(passed_date){
           this.cleaningDate=passed_date
-          this.selectedDate=passed_date
+          var dateArray=passed_date.split('-')
+          this.selectedDate=dateArray[2]+'-'+dateArray[1]+'-'+dateArray[0]
           $('#cl_cleaning_calendar').val(passed_date)
         }
       
