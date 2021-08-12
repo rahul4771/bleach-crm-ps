@@ -284,13 +284,18 @@ function addSection(service){
   app.getProductivity()
   $('#edit-dialog-tigger').click()
 }
+function editNotes(serviceDetails){
+  var note=$(serviceDetails).data('note')
+  app.notes=note
+  $('#notes-tigger').click()
+}
 const app = new Vue({
   el: "#app",
   
   delimiters: ["<%", "%>"],
   
   mounted() {
-   
+   this.url=api
     this.getOrderId()
     this.setDate(moment().format('MM/DD/YYYY'))
     this.selected_date=moment().format('DD-MM-YYYY')
@@ -328,6 +333,7 @@ const app = new Vue({
   components: { Multiselect: window.VueMultiselect.default },
 
   data: {
+    notes:'',
     all_val:false,
     reduction_status:false,
     no_of_visits:0,
@@ -490,7 +496,7 @@ const app = new Vue({
            progress:20,
            slotloader:false,
             services_list:[],
-          url:'https://my.bleachkw.com'
+          url:''
          // url:'http://localhost:8000'
       // url:'https://test.bleach-kw.com'
             //url:'http://127.0.0.1:8000'

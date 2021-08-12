@@ -74,26 +74,49 @@
                     <span class="inv-dot notstarted-chip-bg ml-5"></span>
                      Not Started
                   </div>
-                  </div>
-    
+                </div> 
                   
-    
-                  
-                  
-                 
-      
-      
-      
-                  
-                </div>
-              
-                
-           
-               
+                </div>     
             </div>
         </div>
       </div>
     <!-- helper modal ends here-->
+      <!--  edit notes MODAL BEGINS HERE-->
+      <div class="modal fade " id="notesModal" tabindex="-1" role="dialog" aria-labelledby="notesModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered primary-modal" role="document">
+          <div class="modal-content primary-modal-border">
+            
+           
+            <div class="modal-body">
+              <div class="cotainer">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+                    <div class="col-md-12 mt-10">
+                        <div class=" bold-text common-label required-field"> <label>Notes</label></div>
+                        <textarea class="form-control w-100" id="exampleFormControlTextarea1" rows="5" v-model="notes"></textarea>
+                    </div>
+                   
+                     
+                    
+                </div>
+                </div>
+               
+                 
+
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer text-center">
+              
+              <button type="submit"  class="btn primary-btn"  @click="updateNotes()">Submit</button>
+              <button type="button" class="btn primary-btn-bordered" data-dismiss="modal"  id="notes-close">Cancel</button>
+            </div>
+           
+          </div>
+        </div>
+      </div>
+    <!-- Edit notes MODAL ENDS HERE-->
      <!--  SUBMIT EVALUATION MODAL BEGINS HERE-->
      <div class="modal fade " id="submitModal" tabindex="-1" role="dialog" aria-labelledby="submitModal" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered primary-modal" role="document">
@@ -233,7 +256,9 @@
         </div>
       </div>
     <!-- EDIT PAYMENT MODAL ENDS HERE-->
-    <div data-toggle="modal" data-target="#editPaymentModal" id="edit-payment-tigger"></div> 
+    <div data-toggle="modal" data-target="#notesModal" id="notes-tigger"></div>
+    <div data-toggle="modal" data-target="#editPaymentModal" id="edit-payment-tigger"></div>
+
     <div data-toggle="modal" data-target="#editSectionDialog" id="edit-dialog-tigger"></div>
     <div data-toggle="modal" data-target="#cleaningDateModel" id="cleaning-date-tigger"></div>
     <div data-toggle="modal" data-target="#deleteCleaningModal" id="cleaning-delete-tigger"></div> 
@@ -1193,6 +1218,12 @@
                                                         
                                                         {% if orderschedule.order_scheduler_book.evaluator_note %}
                                                         <!-- <p id="evalution-note">{{orderschedule.order_scheduler_book.evaluator_note|default_if_none:''}}</p> -->
+                                                         <!-- <div class="order-edit">
+                                                            <img class="pointer" v-if="edit" 
+                                                            data-service="{{orderschedule.order_scheduler_book.service_type.name}}" onclick="editNotes(this)"
+                                                            data-note="{{orderschedule.order_scheduler_book.evaluator_note|default_if_none:''}}"
+                                                                src="{% static 'files/icons/edit.png' %}">
+                                                        </div>  -->
                                                         <p id="evalution-note{{orderschedule.order_scheduler_book.id}}" class="evalution-note-less">{{orderschedule.order_scheduler_book.evaluator_note|default_if_none:''}} </p>
                                                         <span class="see-more" id="id_see{{orderschedule.order_scheduler_book.id}}" onclick="seefull({{orderschedule.order_scheduler_book.id}})">Show More</span>
                                                         <span class="see-more" style="display: none;" id="id_see_less{{orderschedule.order_scheduler_book.id}}" onclick="seeless({{orderschedule.order_scheduler_book.id}})">Show Less</span>

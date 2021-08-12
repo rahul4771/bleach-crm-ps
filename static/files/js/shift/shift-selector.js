@@ -31,7 +31,92 @@ var shiftId = ''
 // var selectedDates=[];
 // var resourceLeave=[];
 
+/** Define Time slots */
+const app=  new Vue({
 
+    el: '#app',
+   
+    delimiters: ['<%', '%>'],  
+    data: {
+        time_slots:[
+            {
+                start_time:"12:00 AM",
+                end_time:"02:00 AM"
+            },
+            {
+                start_time:"02:00 AM",
+                end_time:"04:00 AM"
+            },
+            {
+                start_time:"04:00 AM",
+                end_time:"06:00 AM"
+            },
+            {
+                start_time:"06:00 AM",
+                end_time:"08:00 AM"
+            },  {
+                start_time:"08:00 AM",
+                end_time:"10:00 AM"
+            },
+            {
+                start_time:"10:00 AM",
+                end_time:"12:00 PM"
+            },  {
+                start_time:"12:00 PM",
+                end_time:"02:00 PM"
+            },
+            {
+                start_time:"02:00 PM",
+                end_time:"04:00 PM"
+            },
+            {
+                start_time:"04:00 PM",
+                end_time:"06:00 PM"
+            }
+            ,
+            {
+                start_time:"06:00 PM",
+                end_time:"08:00 PM"
+            },
+            {
+                start_time:"08:00 PM",
+                end_time:"10:00 PM"
+            },
+            {
+                start_time:"10:00 PM",
+                end_time:"12:00 AM"
+            }
+        ],
+        selected_slot:[]
+    },
+    methods:{
+        selectSlot(slot){
+            this.selected_slot.push(slot)
+        },
+        removeSlot(slot){
+            var index=this.selected_slot.indexOf(slot)
+           
+            this.selected_slot.splice(index,1)
+        },
+        checkSlot(slot){
+            var nextslot=slot+1
+            var prevslot=slot-1
+            if(this.selected_slot.length<1){
+                return true
+            }
+            else{
+                
+                if(this.selected_slot.includes(nextslot)||this.selected_slot.includes(prevslot)){
+                    return true
+                }
+                else{
+                    return false
+                }
+            }
+        }
+    }
+
+})
 /*Dropdown Menu*/
 $('.ls-dropdown').click(function () {
     $(this).attr('tabindex', 1).focus();
@@ -423,7 +508,8 @@ function closeConf(){
 //get users 
 function getUsersShift(){
     $('.lv-loader').show()
-      url ='https://my.bleachkw.com';
+     // url ='https://my.bleachkw.com';
+     url =api;
       resourceList=[];
       
     axios.get(url+'/api/leave-users-list/')
@@ -531,8 +617,11 @@ function tConvert (time) {
   }
 /** time converter ends here */
 function addToShift3(){
-    console.log("checktime is "+checkTime())
-   if(checkTime()){
+    
+    
+   if(app.selected_slot.length>0){
+    var start = Math.min( ...app.selected_slot )
+    var end = Math.max( ...app.selected_slot )
     resourceLeave=[];
     shiftList=[]
     console.log("selected Dates are "+JSON.stringify(selectedDates))
@@ -543,15 +632,14 @@ function addToShift3(){
                 type:$("#lv-result-content").text(),
                 date:selectedDates[i].dates[j]
             }
-         //   leaveSelected['leave_type']=$("#lv-result-content").text().toUpperCase();
+        
             var lvmonth=selectedDates[i].dates[j].split('-')[1];
             if(lvmonth.length<2){
                 lvmonth='0'+lvmonth;
             }
             var lvyear=selectedDates[i].dates[j].split('-')[2];
             var lvday=selectedDates[i].dates[j].split('-')[0];
-            var start_at=tConvert($('#shift3_start_at').val())
-            var end_at=tConvert($('#shift3_end_at').val())
+           
             if(lvday.length<2){
                 lvday='0'+lvday;
             }
@@ -560,8 +648,8 @@ function addToShift3(){
             leaveSelected['shift1']=false
             leaveSelected['shift2']=false
             leaveSelected['shift3']=true
-            leaveSelected['shift3_start_at']=start_at
-            leaveSelected['shift3_end_at']=end_at
+            leaveSelected['shift3_start_at']=app.time_slots[start].start_time
+            leaveSelected['shift3_end_at']=app.time_slots[end].end_time
             shiftList.push(leaveSelected);
            
         }
@@ -708,7 +796,8 @@ function resetResourcesShift(category){
 //get shifts
 function getShift(){
     $('.lv-loader').show()
-    url ='https://my.bleachkw.com';
+  //  url ='https://my.bleachkw.com';
+  url =api;
     axios.get(url+'/api/shift-scheduler/')
 .then(function (response) {
   // handle success
