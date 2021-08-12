@@ -36,9 +36,12 @@ urlpatterns = [
 	url(r'^inventory-lines/$',views.InventoryLinesAPI.as_view(),name='api-inventory-lines'),
 	url(r'^inventory-segments/$',views.InventorySegmentsAPI.as_view(),name='api-inventory-segments'),
 	url(r'^inventory-values/$',views.InventoryValuesAPI.as_view(),name='api-inventory-values'),
+	url(r'^inventory-items/$',views.InventoryItemsAPI.as_view(),name='api-inventory-items'),
 
 	###Team Leader Mobile app API'S
 	url(r'^login/$',views.LoginAPI.as_view(),name='api-login'),
 	url(r'^tl/home/$',views.TlHomeAPI.as_view(),name='api-stlhome'),
 	url(r'^tl/cleanings/$',views.TlCleanings.as_view(),name='api-stlcleanings'),
+	url(r'^tl/cleaning/details/(?P<team_id>\d+)/$',views.TlCleaningDetails.as_view(),name='api-cleaningdetails'),
+	url(r'^tl/followupcleaning/details/(?P<team_id>\d+)/$',views.TlFollowupCleaningDetails.as_view(),name='api-followupdetails'),
 ]

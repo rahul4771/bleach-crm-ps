@@ -290,7 +290,7 @@ const app = new Vue({
   delimiters: ["<%", "%>"],
   
   mounted() {
-    this.url = api;
+   
     this.getOrderId()
     this.setDate(moment().format('MM/DD/YYYY'))
     this.selected_date=moment().format('DD-MM-YYYY')
@@ -490,7 +490,7 @@ const app = new Vue({
            progress:20,
            slotloader:false,
             services_list:[],
-          url:''
+          url:'https://my.bleachkw.com'
          // url:'http://localhost:8000'
       // url:'https://test.bleach-kw.com'
             //url:'http://127.0.0.1:8000'

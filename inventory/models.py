@@ -112,5 +112,69 @@ class AttributeValue(models.Model):
     def __str__(self):
         return self.name
 
+class Bundle(models.Model):
+    name                =   models.CharField(max_length=100,blank=False,null=False)
+    bundle_code         =   models.CharField(max_length=50,blank=False,null=False)
+    bundle_items_count  =   models.IntegerField(default=0,null=True,blank=True)
+    bundle_price        =   models.CharField(default=0,max_length=100,blank=False,null=False)
+    status              =   models.BooleanField(default=True,blank=False,null=False)
+    created             =   models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return str(self.name)
+
+    def __str__(self):
+        return self.name
+
+class BundleItems(models.Model):
+    bundle              = models.ForeignKey(Bundle,blank=True,null=True,related_name='item_bundle')
+    item                = models.ForeignKey(InventoryItem,blank=True,null=True,related_name='inventory_item_bundle')
+    item_price          = models.CharField(default=0,max_length=100,blank=False,null=False)
+    item_count          = models.IntegerField(default=0,null=True,blank=True)
+    created             = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return str(self.bundle.name)
+
+    def __str__(self):
+        return self.bundle.name
+
+class BundleItemUnits(models.Model):
+    bundle_item         = models.ForeignKey(BundleItems,blank=True,null=True,related_name='bundle_unit_bundle_item')
+    item_unit           = models.ForeignKey(ItemUnit,blank=True,null=True,related_name='unit_item_bundle')
+    unit_price          = models.CharField(default=0,max_length=100,blank=False,null=False)
+    created             = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return str(self.bundle_item.bundle.name)
+
+    def __str__(self):
+        return self.bundle_item.bundle.name
+
+class Supplier(models.Model):
+    supplier_name       = models.CharField(max_length=100,blank=False,null=False)
+    supplier_id         = models.CharField(max_length=50,blank=False,null=False)
+    contact             = models.CharField(max_length=50,blank=False,null=False)
+    status              = models.BooleanField(default=True,blank=False,null=False)
+
+    def __unicode__(self):
+        return str(self.supplier_name)
+
+    def __str__(self):
+        return self.supplier_name
+
+class Store(models.Model):
+    store_name          = models.CharField(max_length=100,blank=False,null=False)
+    store_code          = models.CharField(max_length=50,blank=False,null=False)
+    address             = models.TextField(max_length=1000,blank=False,null=False)
+    contact             = models.CharField(max_length=50,blank=False,null=False)
+    status              = models.BooleanField(default=True,blank=False,null=False)
+
+    def __unicode__(self):
+        return str(self.store_name)
+
+    def __str__(self):
+        return self.store_name
+
 
 
