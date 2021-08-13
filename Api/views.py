@@ -1249,7 +1249,7 @@ class CheckOutAPI(APIView):
 		response_dict = {}
 		response_dict['success'] = False
 
-		team_id = request.data.get('team_id')
+		team_id         = request.data.get('team_id')
 		check_out_notes = request.data.get('check_out_notes')
 	
 		print(team_id,"zack")
@@ -1981,34 +1981,72 @@ class TlFollowupCleaningDetails(APIView):
 
 		return Response(response_dict, HTTP_200_OK)
 
-class TlCleaningCheckin(APIView):  
-	permission_classes        = (IsAuthenticated,IsTeamInchargePermission)
-	authentication_classes    = (TokenAuthentication,)
-	def post(self,request,team_id):
-		response_dict                             = {'success':False}
-
-		return Response(response_dict, HTTP_200_OK)
-
-class TlCleaningCheckout(APIView):  
-	permission_classes        = (IsAuthenticated,IsTeamInchargePermission)
-	authentication_classes    = (TokenAuthentication,)
-	def post(self,request,team_id):
-		response_dict                             = {'success':False}
-
-		return Response(response_dict, HTTP_200_OK)
-
 class TlFollowupCleaningCheckin(APIView):  
 	permission_classes        = (IsAuthenticated,IsTeamInchargePermission)
 	authentication_classes    = (TokenAuthentication,)
-	def post(self,request,team_id):
+	def post(self,request):
 		response_dict                             = {'success':False}
+		team_id                                   = request.data.get('team_id')
+
+		try:
+			followup_team_detail = FollowUpTeam.objects.select_related('followup_scheduler__follow_up').get(is_active=True,id=team_id)
+		except:	
+			followup_team_detail = None
+
+		#update
+		if not followup_team_detail.check_in:
+			followup_team_detail.check_in                       = timezone.now()
+		
+		if not followup_team_detail.check_out:
+			followup_team_detail.followup_scheduler.work_status     = 'FOLLOW_UP_CLEANING_IN_PROGRESS'
+			followup_team_detail.followup_scheduler.follow_up.status= 'FOLLOWUP_IN_PROGRESS'
+		
+		followup_team_detail.save()	
+		followup_team_detail.followup_scheduler.save()
+		followup_team_detail.followup_scheduler.follow_up.save()
+
+		#To Save Media
+		medias = request.FILES.getlist('media')
+		if not medias==['']:
+			for media in medias:
+				FollowUpTeamMedia.objects.create(
+						team_id=team_id,
+						media=media,
+						taken_status='BEFORE_CLEANING'
+						)
+
+		response_dict['success'] = True
 
 		return Response(response_dict, HTTP_200_OK)
 
 class TlFollowupCleaningCheckout(APIView):  
 	permission_classes        = (IsAuthenticated,IsTeamInchargePermission)
 	authentication_classes    = (TokenAuthentication,)
-	def post(self,request,team_id):
-		response_dict                             = {'success':False}
+	def post(self,request):
+		response_dict                       = {'success':False}
+		team_id                             = request.data.get('team_id')
 
+		try:
+			followup_team_detail = FollowUpTeam.objects.select_related('followup_scheduler__follow_up').get(is_active=True,id=team_id)
+		except:	
+			followup_team_detail = None
+
+		#update
+		followup_team_detail.check_out                          = timezone.now()
+		followup_team_detail.followup_scheduler.work_status     = 'FOLLOW_UP_CLEANING_FULFILLED'
+		followup_team_detail.save()
+		followup_team_detail.followup_scheduler.save()	
+
+		#To Save Media
+		medias = request.FILES.getlist('media')
+		if not medias==['']:
+			for media in medias:
+				FollowUpTeamMedia.objects.create(
+						team_id=team_id,
+						media=media,
+						taken_status='AFTER_CLEANING'
+						)
+		
+		response_dict['success'] = True
+		
 		return Response(response_dict, HTTP_200_OK)
