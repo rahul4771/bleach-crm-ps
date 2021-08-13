@@ -99,7 +99,7 @@ class InventorySegmentSerializer(serializers.ModelSerializer):
 #Team Leader Mobile app serializers
 from datetime import timedelta,date,datetime
 
-from order.models import Order,FollowUp
+from order.models import Order,FollowUp,Investigation
 from evaluator.models import EvaluationDetails,EvaluationBook,EvaluationBookSection,EvaluationSectionKeynote
 from senior_team_leader.models import OrderScheduler,FollowUpScheduler,CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember
 from agent.serializers import UserProfileShowSerializer,ServiceTypeShowSerializer
@@ -138,7 +138,7 @@ class EvaluationBookAPISerializer(serializers.ModelSerializer):
     evaluationsection_book   = SectionAPISerializer(many=True,read_only=True)
     class Meta:
         model = EvaluationBook
-        fields = ('cleaning_policy','service_type','evaluationsection_book')
+        fields = ('cleaning_policy','evaluator_note','service_type','evaluationsection_book')
 
 
 ##Cleaning Team API's
@@ -178,10 +178,21 @@ class CleaningTeamAPISerializer(serializers.ModelSerializer):
 
 
 ##followup team apis    
+class InvestigationAPISerializer(serializers.ModelSerializer):
+    investigator   = UserProfileShowSerializer(read_only=True)
+    assigned_by    = UserProfileShowSerializer(read_only=True)
+    order_schedule = OrderScheduleAPISerializer(read_only=True)
+    class Meta:		
+        model   = Investigation
+        fields  = ('ticket_types','investigator','assigned_by','scheduled_at','notes','order_schedule')
+
+
+
 class FollowupAPISerializer(serializers.ModelSerializer):
-	class Meta:		
-		model   = FollowUp
-		fields  = ('ticket_no','no_of_cleaners','cleaning_hours')
+    investigation = InvestigationAPISerializer(read_only=True)
+    class Meta:		
+        model   = FollowUp
+        fields  = ('ticket_no','no_of_cleaners','cleaning_hours','investigation')
 
 
 
