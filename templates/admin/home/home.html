@@ -631,6 +631,8 @@ $('#daymonthtoggle_resource').click(function(){
 // sales target calculation
     function salestargetcalculation(){
         console.log($('#sales_target_datepicker').val(),"romo");
+        console.log($('#working_calendar_month').val(),"romo2");
+        
         if($('#daymonthtoggle_resource').is(':checked')){
             var dom = 'Month'
             var target_date = $('#working_calendar_month').val();
@@ -1570,7 +1572,7 @@ $('.chart-toggle3').click(function(){
         var selMon =new Date(tempV[0]+'/'+'01/'+tempV[1]);
         selMon.setMonth(selMon.getMonth() + 1);
         $('#working_calendar_month').val(moment(selMon).format('MM/YYYY'));
-            
+          salestargetcalculation();  
         });
 
         $('.prev-month-resource').on('click', function () {
@@ -1580,12 +1582,13 @@ $('.chart-toggle3').click(function(){
         var selMon =new Date(tempV[0]+'/'+'01/'+tempV[1]);
         selMon.setMonth(selMon.getMonth() - 1);
         $('#working_calendar_month').val(moment(selMon).format('MM/YYYY'));
-
+            salestargetcalculation();
         });
 
         $('.this-month-resource').on('click', function () {
         var $tmpSelectedDay     = new Date();
         $('#working_calendar_month').val(moment($tmpSelectedDay ).format('MM/YYYY'));
+        salestargetcalculation();
         }); 
 
 </script>
