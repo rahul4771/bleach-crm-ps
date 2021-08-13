@@ -552,7 +552,8 @@ others_keynotes:[],
 reset_building:false,
 reset_floor:false,
 building_warning:false,
-available_slotes:[]
+available_slotes:[],
+date_group:{}
 
       },
       methods: {
@@ -756,8 +757,49 @@ available_slotes:[]
             this.multiServicesBill[this.schedule_serviceTypes_selected[j]].cleaning_policy='ONE TIME SERVICE'
             this.multiServicesBill[this.schedule_serviceTypes_selected[j]].schedule_details={}
             this.multiServicesBill[this.schedule_serviceTypes_selected[j]].cleaners=this.selectedDuration.cleaners
-            var count=0
+           
+            
+            if(Object.keys(this.selected_onetime_slots).length>1){
+              this.findContDate()
+              var count=0
+              for(var i in this.date_group){
+                var cleaning_hr=0
+                var dates=this.date_group[i]
+                if(dates.length>0)
+                {
+                var min=dates[0]
+                cleaning_hr=this.selected_onetime_slots[dates[0]].slots.length*2
+                for(var m=1;m<dates.length;m++){
+                    if(moment(dates[m],'YYYY-MM-DD').isBefore(moment(min,'YYYY-MM-DD'))){
+                      
+                      min=dates[m]
+                    }
+                
+                    cleaning_hr=cleaning_hr+(this.selected_onetime_slots[dates[m]].slots.length*2)
+                }
+              
+                /** add to schedule details */
+                var yr=min.split('-')[0]
+              var month=min.split('-')[1]
+              var day=min.split('-')[2]
+              var date=day+'-'+month+'-'+yr
+              var min_slot=Math.min(...this.selected_onetime_slots[min].slots)
+              this.multiServicesBill[this.schedule_serviceTypes_selected[j]].schedule_details[count+1]={
+                
+                "date":date,
+               "time":this.slotFormat[parseInt(min_slot)].start_time,
+              "no_of_cleaners":this.selectedDuration.cleaners,
+               "cleaning_hours":cleaning_hr
+              }
+              count=count+1
+              }
+              }
+            }
+            else{
+
+              var count=0
             for(var k in this.selected_onetime_slots){
+              
               var yr=k.split('-')[0]
               var month=k.split('-')[1]
               var day=k.split('-')[2]
@@ -772,6 +814,25 @@ available_slotes:[]
               }
               count=count+1
             }
+          }
+
+            //Find continous dates
+          //   var removedDates=[]
+          //   var contDates=[]
+            
+          //   for(var m in this.multiServicesBill[this.schedule_serviceTypes_selected[j]].schedule_details){
+          //   if (Object.keys(this.multiServicesBill[this.schedule_serviceTypes_selected[j]].schedule_details).length>1 && Object.keys(this.multiServicesBill[this.schedule_serviceTypes_selected[j]].schedule_details).length!=m){
+            
+          //     if(moment(this.multiServicesBill[this.schedule_serviceTypes_selected[j]].schedule_details[m].date,'DD-MM-YYYY').add(1,'days').format('DD-MM-YYYY') == this.multiServicesBill[this.schedule_serviceTypes_selected[j]].schedule_details[(parseInt(m)+1)].date){
+          //       if(contDates.includes())
+          //       contDates.push(this.multiServicesBill[this.schedule_serviceTypes_selected[j]].schedule_details[m].date,this.multiServicesBill[this.schedule_serviceTypes_selected[j]].schedule_details[(parseInt(m)+1)].date)
+
+          //     }
+          //     else{
+          //       console.log("yes i exited")
+          //     }
+          //   }
+          // }
           }
           for(var k=0;k<this.schedule_serviceTypes_selected;k++)
           {
@@ -796,6 +857,91 @@ available_slotes:[]
          this.formatDate()
          this.one_time_slots={}
           this.activeTab='Cart'
+        },
+        findContDate(){
+          
+          var dates=Object.keys(this.selected_onetime_slots)
+          var count=0;
+          var found=false
+          this.date_group[count]=[]
+          for(var i=0;i<dates.length;i++){
+            found=false
+              if(dates.includes(moment(dates[i],'YYYY-MM-DD').add(1,'days').format('YYYY-MM-DD'))){
+                
+                for(var g in this.date_group){
+                  if(this.date_group[g].includes(dates[i])){
+                    found=true;
+                    break;
+                  }
+                }
+                if(!found){
+                  
+                  if(this.selected_onetime_slots[dates[i]].slots.includes("12") && this.selected_onetime_slots[moment(dates[i],'YYYY-MM-DD').add(1,'days').format('YYYY-MM-DD')].slots.includes("1"))
+                  {
+                    if(this.date_group[count].length>0){
+                      if((this.date_group[count].includes(this.selected_onetime_slots[moment(dates[i],'YYYY-MM-DD').add(1,'days').format('YYYY-MM-DD')]))||(this.date_group[count].includes(this.selected_onetime_slots[moment(dates[i],'YYYY-MM-DD').substract(1,'days').format('YYYY-MM-DD')])))
+                      {
+
+                      this.date_group[count].push(dates[i])
+                      }
+                      else{
+                        count=count+1
+                        this.date_group[count].push(dates[i])
+                      }
+
+                    }
+                    else{
+                      this.date_group[count].push(dates[i])
+                    }
+                  for(var g in this.date_group){
+                    if(this.date_group[g].includes(moment(dates[i],'YYYY-MM-DD').add(1,'days').format('YYYY-MM-DD'))){
+                      found=true;
+                      break;
+                    }
+                  }
+                  if(!found){
+                   
+                    this.date_group[count].push(moment(dates[i],'YYYY-MM-DD').add(1,'days').format('YYYY-MM-DD'))
+                  }
+                 
+                  }
+                  else{
+                    found=false
+                    count=count+1
+                    
+                    this.date_group[count]=[]
+                    for(var g in this.date_group){
+                      if(this.date_group[g].includes(dates[i])){
+                        found=true;
+                        break;
+                      }
+                    }
+                    if(!found){
+                     
+                    this.date_group[count].push(dates[i])
+                    }
+                  }
+                }
+                  
+              }
+              else{
+                found=false
+                count=count+1
+                
+                this.date_group[count]=[]
+                for(var g in this.date_group){
+                  if(this.date_group[g].includes(dates[i])){
+                    found=true;
+                    break;
+                  }
+                }
+                if(!found){
+                 
+                this.date_group[count].push(dates[i])
+                }
+              }
+              
+          }
         },
         addAllServiceTypes(){
           this.schedule_serviceTypes_selected=[]
@@ -2137,6 +2283,7 @@ console.log(response)
 resetOneTime(){
   this.onetimerender=false
   this.one_time_slots={}
+  this.date_group={}
   this.one_time_slots[this.oneTimeDateSelected]={
     slots:[]
   }
