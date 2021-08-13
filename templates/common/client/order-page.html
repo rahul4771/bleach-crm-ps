@@ -1131,7 +1131,7 @@
                             
                             {% if request.user.user_type == 'ADMIN' or request.user.user_type == 'TECHNICALSUPERVISOR' or request.user.user_type == 'TEAMLEADER' or request.user.user_type == 'ACCOUNTANT' %}
                                 
-                            {% elif request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}
+                            {% elif request.user.user_type == 'AGENT' %}
                                 {% if orderschedule.evaluation_details.evaluator == None and request.user.id == orderschedule.order.evaluation.call_attender.id %}
                                 <div class="order-edit">
                                     <img class="pointer" v-if="!edit" 
@@ -1218,13 +1218,32 @@
                                                         
                                                         {% if orderschedule.order_scheduler_book.evaluator_note %}
                                                         <!-- <p id="evalution-note">{{orderschedule.order_scheduler_book.evaluator_note|default_if_none:''}}</p> -->
-                                                          <div class="order-edit">
-                                                            <img class="pointer" v-if="edit" 
-                                                            data-service="{{orderschedule.order_scheduler_book.service_type.name}}" onclick="editNotes(this)"
-                                                            data-book_id="{{orderschedule.order_scheduler_book.id}}"
-                                                            data-note="{{orderschedule.order_scheduler_book.evaluator_note|default_if_none:''}}"
-                                                                src="{% static 'files/icons/edit.png' %}">
-                                                        </div>  
+                                                        
+                                                        {% if request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'AGENT' %}
+                                                            {% if orderschedule.evaluation_details.evaluator == None and request.user.id == orderschedule.order.evaluation.call_attender.id %}
+                                                                <div class="order-edit">
+                                                                    <img class="pointer" v-if="edit" 
+                                                                    data-service="{{orderschedule.order_scheduler_book.service_type.name}}" onclick="editNotes(this)"
+                                                                    data-book_id="{{orderschedule.order_scheduler_book.id}}"
+                                                                    data-note="{{orderschedule.order_scheduler_book.evaluator_note|default_if_none:''}}"
+                                                                        src="{% static 'files/icons/edit.png' %}">
+                                                                </div>
+                                                            {% endif %}
+                                                        {% elif request.user.user_type == 'EVALUATOR' %}
+                                                            {% if orderschedule.evaluation_details.evaluator.id == request.user.id or request.user.id == orderschedule.order.evaluation.call_attender.id %}
+
+                                                                <div class="order-edit">
+                                                                    <img class="pointer" v-if="edit" 
+                                                                    data-service="{{orderschedule.order_scheduler_book.service_type.name}}" onclick="editNotes(this)"
+                                                                    data-book_id="{{orderschedule.order_scheduler_book.id}}"
+                                                                    data-note="{{orderschedule.order_scheduler_book.evaluator_note|default_if_none:''}}"
+                                                                        src="{% static 'files/icons/edit.png' %}">
+                                                                </div>
+
+                                                            {% endif %}
+
+                                                        {% endif %}
+
                                                         <p id="evalution-note{{orderschedule.order_scheduler_book.id}}" class="evalution-note-less">{{orderschedule.order_scheduler_book.evaluator_note|default_if_none:''}} </p>
                                                         <span class="see-more" id="id_see{{orderschedule.order_scheduler_book.id}}" onclick="seefull({{orderschedule.order_scheduler_book.id}})">Show More</span>
                                                         <span class="see-more" style="display: none;" id="id_see_less{{orderschedule.order_scheduler_book.id}}" onclick="seeless({{orderschedule.order_scheduler_book.id}})">Show Less</span>

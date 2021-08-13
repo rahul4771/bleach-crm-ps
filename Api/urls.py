@@ -43,5 +43,8 @@ urlpatterns = [
 	url(r'^tl/home/$',views.TlHomeAPI.as_view(),name='api-stlhome'),
 	url(r'^tl/cleanings/$',views.TlCleanings.as_view(),name='api-stlcleanings'),
 	url(r'^tl/cleaning/details/(?P<team_id>\d+)/$',views.TlCleaningDetails.as_view(),name='api-cleaningdetails'),
+	#cleaning checkin allready done
 	url(r'^tl/followupcleaning/details/(?P<team_id>\d+)/$',views.TlFollowupCleaningDetails.as_view(),name='api-followupdetails'),
+	url(r'^tl/followupcleaning/checkin/$',views.TlFollowupCleaningCheckin.as_view(),name='api-followupcheckin'),
+	url(r'^tl/followupcleaning/checkout/$',views.TlFollowupCleaningCheckout.as_view(),name='api-followupcheckout'),
 ]

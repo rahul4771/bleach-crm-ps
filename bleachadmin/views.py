@@ -69,7 +69,7 @@ class AdminHome(IsAdmin,View):
 
 
 		#evaluators
-		staff_sales_target = UserProfile.objects.filter(is_active=True).filter(Q(user_type='EVALUATOR')|Q(user_type='AGENT')|Q(user_type='BOOKINGOFFICER'))
+		staff_sales_target = UserProfile.objects.filter(is_active=True).filter(Q(user_type='EVALUATOR')|Q(user_type='AGENT')|Q(user_type='BOOKINGOFFICER')).exclude(Q( Q(username='agent001') | Q(username='ahmadn') | Q(username='samih') ))
 
 		#for taking today counts
 		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
@@ -2108,7 +2108,7 @@ def SalesTargetDaily(request):
 	data2 = []
 	target_dict = dict()
 	evaluators_sales_target = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR')
-	agents_sales_target = UserProfile.objects.filter(is_active=True,user_type='AGENT')
+	agents_sales_target = UserProfile.objects.filter(is_active=True,user_type='AGENT').exclude(Q( Q(username='agent001') | Q(username='ahmadn') | Q(username='samih') ))
 	bookingofficer_sales_target = UserProfile.objects.filter(is_active=True,user_type='BOOKINGOFFICER')
 	target_date = request.GET.get('target_date')
 	date_or_month = request.GET.get('date_or_month')
