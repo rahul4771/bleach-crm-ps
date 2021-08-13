@@ -325,44 +325,27 @@
         <div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->   
         <h2 class="h2">Individual Evaluations</h2>
         </div><!--filter-column-boxes filter-columns-left-->
-        {% comment %} <div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
-        
-            <div class="date-wrapper"><!--date-wrapper-->
-            <div class="date-wrapper-inner right-p"><!--date-wrapper-inner-->
-            <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
-            <input type='text' id='sales_target_datepicker' value="{{evaluation_date|date:"d-m-Y"}}" onchange="salestargetcalculation();" class="date-box date_pick" style="padding-top:8px !important">
-            <button class='next-day next-button' onclick="nextDay()" ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
-            <button class='today-date current-date'>Today</button>
-            </div><!--date-wrapper-inner-->
-            <div class="date-togglewrapper"><!--date-togglewrapper-->
-            <div class="Button_wrapperChart">
-    
-            </div>
-            </div><!--date-togglewrapper-->
-            </div><!--date-wrapper-->
-        
-        
-        </div><!--filter-column-boxes filter-columns-right-->   {% endcomment %}
+
 
 
 
         <div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
             <!-- datepicker -->
             <div class="date-wrapper"><!--date-wrapper-->
-            <div class="date-wrapper-inner-resource" style="position: relative;width:auto"><!--date-wrapper-inner-->
-            <div id="working_calendar" class="date-wrapper-inner" style="right:80px">
+            <div class="date-wrapper-inner-resource"><!--date-wrapper-inner-->
+            <div id="working_calendar" class="date-wrapper-inner">
             <button class="prev-day previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
-            <input type='text' id='sales_target_datepicker' value="{{evaluation_date|date:"d-m-Y"}}" onchange="salestargetcalculation();" class="date-box date_pick" style="padding-top:8px !important">
+            <input type='text' id='sales_target_datepicker' value="{{evaluation_date|date:"d-m-Y"}}" onchange="salestargetcalculation();" class="date-box date_pick">
             <button class='next-day next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
             <button class='today-date current-date'>Today</button>
             </div>
             
             <!-- monthpicker -->
-            <div id="working_calendar2" hidden >
-            <button class="prev-month-resource previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
-            <input type='text' id='working_calendar_month'  name='monthpicker' class="date-box month_pick_resource" onchange="salestargetcalculation();" style="padding-top:8px !important">
-            <button class='next-month-resource next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
-            <button class='this-month-resource current-date'>Month</button>
+            <div id="working_calendar2" hidden>
+                <button class="prev-month-resource previous-button"><i class="fa fa-caret-left" aria-hidden="true"></i></button>
+                <input  type='text' id='working_calendar_month'  name='monthpicker' class="date-box month_pick_resource" onchange="salestargetcalculation();">
+                <button class='next-month-resource next-button' ><i class="fa fa-caret-right" aria-hidden="true"></i></button>
+                <button class='this-month-resource current-date'>Month</button>
             </div>
             {% comment %} <input type="text" id="resource_month" class="month_pick date-picker-resource" hidden> {% endcomment %}
             </div><!--date-wrapper-inner-->
@@ -378,82 +361,47 @@
         
         </div><!--filter-column-boxes filter-columns-right-->        
     </div><!--filter-columns-wrapper-->
-    
-            {% for evaluator in evaluators_sales_targets %}
-            <div class="bar-chart"><!--bar-chart-->
+    <div style="height: 500px; overflow: auto;">
+        
+        {% for evaluator in staff_sales_targets %}
+        <div class="bar-chart"><!--bar-chart-->
+        
+            <div class="bar-chart-items chart-column-one"><!--bar-chart-items chart-column-one-->
+            {% if evaluator.profile_image %}
+                <img src="{{evaluator.profile_image.url}}" class="sals-team-profile">
+            {% else %}
+                <img src="{% static 'files/images/profile.jpg' %}" class="sals-team-profile">
+            {% endif %}
+            </div><!--bar-chart-items chart-column-one-->
             
-                <div class="bar-chart-items chart-column-one"><!--bar-chart-items chart-column-one-->
-                {% if evaluator.profile_image %}
-                    <img src="{{evaluator.profile_image.url}}" class="sals-team-profile">
-                {% else %}
-                    <img src="{% static 'files/images/profile.jpg' %}" class="sals-team-profile">
-                {% endif %}
-                </div><!--bar-chart-items chart-column-one-->
-                
-                <div class="bar-chart-items chart-column-two"><!--bar-chart-items chart-column-two-->
-                    <div class="evaluator-name">{{ evaluator.name }}</div>
-                    <div class="designation">{{evaluator.user_type}}</div>
-                </div><!--bar-chart-items chart-column-two-->
-                
-                <div class="bar-chart-items chart-column-three"><!--bar-chart-items chart-column-three-->
-                
-                <div class="evaluator-name">
-                  <span  style="float: left;">Approved : <span id="approved_count{{evaluator.id}}">0</span></span>
-                  <span  style="float: right;">Submitted : <span id="submitted_count{{evaluator.id}}">0</span></span>.</div>
-
-                {% comment %} <div class="evaluator-name" align="right"><span id="submittedid{{evaluator.id}}">0.000</span> KD</div>
-                <div class="evaluator-name" ><span id="evaluatorid{{evaluator.id}}">0.0</span> <span>%</span></div> {% endcomment %}
-                    <div class="bar-chart-graybg color"><div id="color{{evaluator.id}}"></div></div>
-
-                <div class="evaluator-name">
-                <span id="approved_amount{{evaluator.id}}" style="float: left;">0.000</span>  <span></span>
-                <span id="submitted_amount{{evaluator.id}}" style="float: right;">0.000</span>  <span></span>.</div>
-                </div><!--bar-chart-items chart-column-three-->
-                
-                {% comment %} <div class="bar-chart-items chart-column-four evaluator-name"><!--bar-chart-items chart-column-four-->
-                    <span id="submittedid{{evaluator.id}}"></span> KD
-                     <a class="followup_graph" data-evaluator="{{evaluator.name}}"><input name="Follow" type="button" class="follow" onclick="salestarget({{evaluator.id}});" value="Follow"> </a>
-                </div><!--bar-chart-items chart-column-four--> {% endcomment %}
-                
-            </div><!--bar-chart-->        
-            {% endfor %}
-
-
-            <div class="bar-chart"><!--bar-chart-->
+            <div class="bar-chart-items chart-column-two"><!--bar-chart-items chart-column-two-->
+                <div class="evaluator-name">{{ evaluator.name }}</div>
+                <div class="designation">{{evaluator.user_type}}</div>
+            </div><!--bar-chart-items chart-column-two-->
             
-                <div class="bar-chart-items chart-column-one"><!--bar-chart-items chart-column-one-->
-                
-                <img src="{% static 'files/images/dummy-profile-pic.jpg' %}" class="sals-team-profile">
-                
-                </div><!--bar-chart-items chart-column-one-->
-                
-                <div class="bar-chart-items chart-column-two"><!--bar-chart-items chart-column-two-->
-                    <div class="evaluator-name">Customer Service</div>
-                    <div class="designation">AGENT</div>
-                </div><!--bar-chart-items chart-column-two-->
-                
-                <div class="bar-chart-items chart-column-three"><!--bar-chart-items chart-column-three-->
-                
-                <div class="evaluator-name">
-                  <span  style="float: left;">Approved : <span id="approved_count0">0</span></span>
-                  <span  style="float: right;">Submitted : <span id="submitted_count0">0</span></span>.</div>
+            <div class="bar-chart-items chart-column-three"><!--bar-chart-items chart-column-three-->
+            
+            <div class="evaluator-name">
+              <span  style="float: left;">Approved : <span id="approved_count{{evaluator.id}}">0</span></span>
+              <span  style="float: right;">Submitted : <span id="submitted_count{{evaluator.id}}">0</span></span>.</div>
 
-                {% comment %} <div class="evaluator-name" align="right"><span id="submittedid0">0.000</span> KD</div> 
-                <div class="evaluator-name" id="agent_sales_target"><span id="evaluatorid0">0.0</span> <span>%</span></div>{% endcomment %}
-                    <div class="bar-chart-graybg color"><div id="color0"></div></div>
+            {% comment %} <div class="evaluator-name" align="right"><span id="submittedid{{evaluator.id}}">0.000</span> KD</div>
+            <div class="evaluator-name" ><span id="evaluatorid{{evaluator.id}}">0.0</span> <span>%</span></div> {% endcomment %}
+                <div class="bar-chart-graybg color"><div id="color{{evaluator.id}}"></div></div>
 
-                <div class="evaluator-name">
-                <span id="approved_amount0" style="float: left;">0.000</span> <span></span>
-                <span id="submitted_amount0" style="float: right;">0.000</span> <span></span>.</div>
-
-                </div><!--bar-chart-items chart-column-three-->
-                
-                {% comment %} <div class="bar-chart-items chart-column-four"><!--bar-chart-items chart-column-four-->
-                        <span id="submittedid0">8320.000</span>
-                     <a class="followup_graph" data-evaluator="Customer Service"><input name="Follow" type="button" class="follow" onclick="salestarget(0);" value="Follow"> </a>
-                </div><!--bar-chart-items chart-column-four--> {% endcomment %}
-                
-            </div><!--bar-chart-->
+            <div class="evaluator-name">
+            <span id="approved_amount{{evaluator.id}}" style="float: left;">0.000</span>  <span></span>
+            <span id="submitted_amount{{evaluator.id}}" style="float: right;">0.000</span>  <span></span>.</div>
+            </div><!--bar-chart-items chart-column-three-->
+            
+            {% comment %} <div class="bar-chart-items chart-column-four evaluator-name"><!--bar-chart-items chart-column-four-->
+                <span id="submittedid{{evaluator.id}}"></span> KD
+                 <a class="followup_graph" data-evaluator="{{evaluator.name}}"><input name="Follow" type="button" class="follow" onclick="salestarget({{evaluator.id}});" value="Follow"> </a>
+            </div><!--bar-chart-items chart-column-four--> {% endcomment %}
+            
+        </div><!--bar-chart-->        
+        {% endfor %}
+    </div>
             
     </div><!--two-col-fluid-left two-col-fluid-boxes--> 
     <div class="two-col-fluid-right two-col-fluid-boxes"><!--two-col-fluid-right two-col-fluid-boxes-->
@@ -1837,6 +1785,57 @@ $('.chart-toggle3').click(function(){
 
 </script>
 
+<script>
+    $('.next-day').on('click', function () {
+       console.log("next day")
+       $selectedDay            = $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").getDate();
+       var $tmpSelectedDay     = new Date($selectedDay) 
+       $tmpSelectedDay.setDate($tmpSelectedDay.getDate() + 1);
+       $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
+           
+    });
 
-    </script>
+
+   $('.prev-day').on('click', function () {
+    console.log("prev day");
+       $selectedDay            = $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").getDate();
+       var $tmpSelectedDay     = new Date($selectedDay) 
+       $tmpSelectedDay.setDate($tmpSelectedDay.getDate() - 1);
+       $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
+   
+   });
+
+   $('.today-date').on('click', function () {
+       var $tmpSelectedDay     = new Date();
+       $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
+   });
+
+   //New Month picker
+        $('.next-month-resource').on('click', function () {
+        var tempV = $('#working_calendar_month').val().split('/');
+       
+        var selMon =new Date(tempV[0]+'/'+'01/'+tempV[1]);
+        selMon.setMonth(selMon.getMonth() + 1);
+        $('#working_calendar_month').val(moment(selMon).format('MM/YYYY'));
+          salestargetcalculation();  
+        });
+
+        $('.prev-month-resource').on('click', function () {
+
+            var tempV = $('#working_calendar_month').val().split('/');
+       
+        var selMon =new Date(tempV[0]+'/'+'01/'+tempV[1]);
+        selMon.setMonth(selMon.getMonth() - 1);
+        $('#working_calendar_month').val(moment(selMon).format('MM/YYYY'));
+            salestargetcalculation();
+        });
+
+        $('.this-month-resource').on('click', function () {
+        var $tmpSelectedDay     = new Date();
+        $('#working_calendar_month').val(moment($tmpSelectedDay ).format('MM/YYYY'));
+        salestargetcalculation();
+        }); 
+
+</script>
+
 {% endblock %}
