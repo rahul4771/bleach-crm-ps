@@ -138,7 +138,7 @@ class EvaluationBookAPISerializer(serializers.ModelSerializer):
     evaluationsection_book   = SectionAPISerializer(many=True,read_only=True)
     class Meta:
         model = EvaluationBook
-        fields = ('cleaning_policy','evaluator_note','service_type','evaluationsection_book')
+        fields = ('cleaning_policy','area_type','location_type','cleaning_method','evaluator_note','service_type','evaluationsection_book')
 
 
 ##Cleaning Team API's
