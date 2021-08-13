@@ -1980,3 +1980,35 @@ class TlFollowupCleaningDetails(APIView):
 		response_dict['success']                  = True
 
 		return Response(response_dict, HTTP_200_OK)
+
+class TlCleaningCheckin(APIView):  
+	permission_classes        = (IsAuthenticated,IsTeamInchargePermission)
+	authentication_classes    = (TokenAuthentication,)
+	def post(self,request,team_id):
+		response_dict                             = {'success':False}
+
+		return Response(response_dict, HTTP_200_OK)
+
+class TlCleaningCheckout(APIView):  
+	permission_classes        = (IsAuthenticated,IsTeamInchargePermission)
+	authentication_classes    = (TokenAuthentication,)
+	def post(self,request,team_id):
+		response_dict                             = {'success':False}
+
+		return Response(response_dict, HTTP_200_OK)
+
+class TlFollowupCleaningCheckin(APIView):  
+	permission_classes        = (IsAuthenticated,IsTeamInchargePermission)
+	authentication_classes    = (TokenAuthentication,)
+	def post(self,request,team_id):
+		response_dict                             = {'success':False}
+
+		return Response(response_dict, HTTP_200_OK)
+
+class TlFollowupCleaningCheckout(APIView):  
+	permission_classes        = (IsAuthenticated,IsTeamInchargePermission)
+	authentication_classes    = (TokenAuthentication,)
+	def post(self,request,team_id):
+		response_dict                             = {'success':False}
+
+		return Response(response_dict, HTTP_200_OK)
