@@ -75,7 +75,7 @@ $(document).ready(function(){
         },
       data: {
        // success_booking_dialog:true,
-        
+        slot_loader:false,
         payment_total_cost:0,
         customDateSelected:[],
         customDialog:false,
@@ -2369,6 +2369,7 @@ $(document).ready(function(){
         });
     },
     getMultipleSlots(){
+      this.slot_loader=true
       this.onetimeslots=[]
       this.timeSlots={}
       this.time_slot[this.slotDate] = {
@@ -2385,6 +2386,7 @@ $(document).ready(function(){
          
         )
         .then((response) => {
+          this.slot_loader=true
           this.bookingonetimeslots=[]
         this.onetimeslots=[]
            this.timeSlots = response.data.slotes;
@@ -2399,9 +2401,11 @@ $(document).ready(function(){
           }
            if(response.data.Error){
              this.errMsg=response.data['Error']
+             this.slot_loader=false
            }
            else{
              this.errMsg=''
+             this.slot_loader=false
            }
           if (!this.time_slot.hasOwnProperty(this.slotDate)) {
             this.time_slot[this.slotDate] = {
@@ -3548,9 +3552,14 @@ $(document).ready(function(){
                                  
                }
                else  if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].upholstery_type=='SOFA'){
-                
+                if(!isNaN(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].size)){
+                  sofa_size=sofa_size+parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].size)  
+                }
+                else{
+                  sofa_size=sofa_size+parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].size.max_size)  
+                }
                  
-                 sofa_size=sofa_size+parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].size)   
+                 
                                  
                }
 
@@ -4343,7 +4352,7 @@ getBookedServices(){
     var currentAddress=this.bookedServiceDetails[0]
    
       this.currentAddressIndex=0
-    console.log("booked service is"+JSON.stringify(currentAddress))
+   
     var serviceBookedDetails=currentAddress.evaluation_book_evaluation_details
     for(var i=0;i<serviceBookedDetails.length;i++)
     {
@@ -4370,15 +4379,15 @@ getBookedServices(){
   })
 },
 async rearrangeSize(){
-  console.log("just called me")
+ 
   for(var i=0;i<this.multiServicesBill.length;i++){
-  
+   
     var productivity= await this.getTheProd(this.multiServicesBill[i].service)
-    console.log("productivity is"+JSON.stringify(productivity))
+   
     for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
       /* If old bookings */
-      if(parseInt(this.multiServicesBill[i].bill[j].size)){
-        
+      if(!isNaN(this.multiServicesBill[i].bill[j].size)){
+      
         for(var p in productivity){
            /** for kitchen Cleaning*/
            if(this.multiServicesBill[i].service=='Kitchen Cleaning'){
@@ -4407,9 +4416,10 @@ async rearrangeSize(){
 
       /* new bookings */
       else{
-
-      
+        console.log("just called me"+ "i am "+this.multiServicesBill[i].service)
+        console.log("i m inside new booking")
       if(this.multiServicesBill[i].service=='Kitchen Cleaning'){
+        
         if(this.multiServicesBill[i].bill[j].new_kitchen)
         {
           for(var p in productivity){
@@ -4427,22 +4437,36 @@ async rearrangeSize(){
       }
       }
       else if(this.multiServicesBill[i].service=='Upholstery Cleaning'){
+        console.log("i m inside upholsetry")
+        console.log("up type is "+this.multiServicesBill[i].bill[j].upholstery_type)
         var type=""
          for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
-           if(this.multiServicesBill[i].bill[j].size.includes('Seater')){
+           if(this.multiServicesBill[i].bill[j].upholstery_type=='SOFA'){
              type="SOFA"
+             if(this.multiServicesBill[i].bill[j].size.includes('Seater')){
+              this.multiServicesBill[i].bill[j].size=this.multiServicesBill[i].bill[j].size.split(" ")[0]
+              console.log("section size is "+this.multiServicesBill[i].bill[j].size.split(" ")[0])
+               this.multiServicesBill[i].bill[j].upholstery_type="SOFA"
+              
+             }
+             else{
+              for(var p in productivity){
+        
+      
+                if(productivity[p].name==this.multiServicesBill[i].bill[j].size && productivity[p].upholstery_type=='SOFA'){
+                  this.multiServicesBill[i].bill[j].size=productivity[p]
+                }
+              
+              
+            }
+             }
              //this.sections[j].size=this.this.sections[j].size.split(" ")[0]
-             this.multiServicesBill[i].bill[j].size=this.multiServicesBill[i].bill[j].size.split(" ")[0]
-             console.log("section size is "+this.multiServicesBill[i].bill[j].size.split(" ")[0])
-             this.multiServicesBill[i].bill[j].upholstery_type="SOFA"
+             
            }
-           else{
+           else if(this.multiServicesBill[i].bill[j].upholstery_type=='CHAIR'){
              type="CHAIR"
              this.multiServicesBill[i].bill[j].upholstery_type="CHAIR"
-           }
-           console.log("type is"+type)
-           if(type=="CHAIR"){
-            for(var p in productivity){
+             for(var p in productivity){
         
       
               if(productivity[p].name==this.multiServicesBill[i].bill[j].size && productivity[p].upholstery_type=='CHAIR'){
@@ -4451,8 +4475,9 @@ async rearrangeSize(){
             
             
           }
-            
            }
+           console.log("type is"+type)
+           
           
          }
            
@@ -4499,6 +4524,7 @@ async rearrangeSize(){
       }
        }  
       else{
+        console.log("i m inside general")
       for(var p in productivity){
         
       
@@ -4519,7 +4545,7 @@ async rearrangeSize(){
 async getTheProd(service){
   var res={}
   await axios.get(this.url+'/customer/ajax/getservicesizeprice?service_type='+service).then( response =>{
-    console.log("dat is "+JSON.stringify(response.data))
+  
     res= response.data
   })
   return res

@@ -16,6 +16,9 @@
     color: #3cbbb1;
 
 }
+.mt-10{
+    margin-top:10px;
+}
 .lv-shift2-btn {
     margin-left: 10px !important;
     padding: 12px;
@@ -124,6 +127,20 @@
   .ls-dropdown .ls-dropdown-menu li:active {
       background-color: #e2e2e2
   }
+  .duration-inactive{
+    pointer-events: none;
+    background-color: #eeeeee;
+}
+.duration-active{
+    border: 1px solid #2e4e85;
+    border-radius: 5px;
+    cursor:pointer;
+}
+.duration{
+    border:1px solid #dee2e6;
+    border-radius:5px;
+    cursor:pointer;
+}
   .err-msg{
     color: #e40606;
     border: 1px solid red;
