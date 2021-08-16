@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.template.loader import render_to_string
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule,Shift
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType
-from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question
+from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
@@ -1249,7 +1249,7 @@ class CheckOutAPI(APIView):
 		response_dict = {}
 		response_dict['success'] = False
 
-		team_id = request.data.get('team_id')
+		team_id         = request.data.get('team_id')
 		check_out_notes = request.data.get('check_out_notes')
 	
 		print(team_id,"zack")
@@ -1987,46 +1987,111 @@ class TlCleaningDetails(APIView):
 
 		return Response(response_dict, HTTP_200_OK)
 
+
 class TlFollowupCleaningDetails(APIView):  
 	permission_classes        = (IsAuthenticated,IsTeamInchargePermission)
 	authentication_classes    = (TokenAuthentication,)
 	def get(self,request,team_id): 
 		response_dict                             = {'success':False}
 
-		followupcleaning_details                  = FollowUpTeam.objects.select_related('followup_scheduler__follow_up__investigation__order__evaluation__customer','followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book__service_type','followup_scheduler__customer_address').prefetch_related(Prefetch('followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='sections')).get(id=team_id)
+		followupcleaning_details                  = FollowUpTeam.objects.select_related('followup_scheduler__follow_up__investigation__order','followup_scheduler__customer_address').prefetch_related(Prefetch('followup_scheduler__follow_up__follow_up_of_section',queryset=FollowUpSection.filter(is_active=True).prefetch_related(Prefetch('keynotesectionsfollowup',queryset=FollowUpSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='sections')).get(id=team_id)
 		response_dict['followupcleaning_details'] = FollowUpTeamAPISerializer(instance=followupcleaning_details).data
 		response_dict['success']                  = True
 
-		return Response(response_dict, HTTP_200_OK)
-
-class TlCleaningCheckin(APIView):  
-	permission_classes        = (IsAuthenticated,IsTeamInchargePermission)
-	authentication_classes    = (TokenAuthentication,)
-	def post(self,request,team_id):
-		response_dict                             = {'success':False}
-
-		return Response(response_dict, HTTP_200_OK)
-
-class TlCleaningCheckout(APIView):  
-	permission_classes        = (IsAuthenticated,IsTeamInchargePermission)
-	authentication_classes    = (TokenAuthentication,)
-	def post(self,request,team_id):
-		response_dict                             = {'success':False}
-
-		return Response(response_dict, HTTP_200_OK)
+		return Response(response_dict, HTTP_200_OK) 
 
 class TlFollowupCleaningCheckin(APIView):  
 	permission_classes        = (IsAuthenticated,IsTeamInchargePermission)
 	authentication_classes    = (TokenAuthentication,)
-	def post(self,request,team_id):
+	def post(self,request):
 		response_dict                             = {'success':False}
+		team_id                                   = request.data.get('team_id')
+
+		try:
+			followup_team_detail = FollowUpTeam.objects.select_related('followup_scheduler__follow_up').get(is_active=True,id=team_id)
+		except:	
+			followup_team_detail = None
+
+		#update
+		if not followup_team_detail.check_in:
+			followup_team_detail.check_in                       = timezone.now()
+		
+		if not followup_team_detail.check_out:
+			followup_team_detail.followup_scheduler.work_status     = 'FOLLOW_UP_CLEANING_IN_PROGRESS'
+			followup_team_detail.followup_scheduler.follow_up.status= 'FOLLOWUP_IN_PROGRESS'
+		
+		followup_team_detail.save()	
+		followup_team_detail.followup_scheduler.save()
+		followup_team_detail.followup_scheduler.follow_up.save()
+
+		#To Save Media
+		medias = request.FILES.getlist('media')
+		if not medias==['']:
+			for media in medias:
+				FollowUpTeamMedia.objects.create(
+						team_id=team_id,
+						media=media,
+						taken_status='BEFORE_CLEANING'
+						)
+
+		response_dict['success'] = True
 
 		return Response(response_dict, HTTP_200_OK)
 
 class TlFollowupCleaningCheckout(APIView):  
 	permission_classes        = (IsAuthenticated,IsTeamInchargePermission)
 	authentication_classes    = (TokenAuthentication,)
-	def post(self,request,team_id):
-		response_dict                             = {'success':False}
+	def post(self,request):
+		response_dict                       = {'success':False}
+		team_id                             = request.data.get('team_id')
+
+		try:
+			followup_team_detail = FollowUpTeam.objects.select_related('followup_scheduler__follow_up').get(is_active=True,id=team_id)
+		except:	
+			followup_team_detail = None
+
+		#update
+		followup_team_detail.check_out                          = timezone.now()
+		followup_team_detail.followup_scheduler.work_status     = 'FOLLOW_UP_CLEANING_FULFILLED'
+		followup_team_detail.save()
+		followup_team_detail.followup_scheduler.save()	
+
+		#To Save Media
+		medias = request.FILES.getlist('media')
+		if not medias==['']:
+			for media in medias:
+				FollowUpTeamMedia.objects.create(
+						team_id=team_id,
+						media=media,
+						taken_status='AFTER_CLEANING'
+						)
+		
+		response_dict['success'] = True
+		
+		return Response(response_dict, HTTP_200_OK)
+
+class CheckinChecklist(APIView):
+	permission_classes        = (IsAuthenticated,IsTeamInchargePermission)
+	authentication_classes    = (TokenAuthentication,)
+	def post(self,request):
+		response_dict            = {'success':False}
+
+		keynote_id     = request.data.get('keynote_id')
+		keynote_status = request.data.get('status')
+		keynote_type   = request.data.get('keynote_type')
+
+		if keynote_type == 'followupcleaning':
+			if keynote_status == 'true':
+				FollowUpSectionKeynote.objects.filter(id=keynote_id).update(completion_status=True)
+			else:
+				FollowUpSectionKeynote.objects.filter(id=keynote_id).update(completion_status=False)
+		else:
+			if keynote_status == 'true':
+				EvaluationSectionKeynote.objects.filter(id=keynote_id).update(completion_status=True)
+			else:
+				EvaluationSectionKeynote.objects.filter(id=keynote_id).update(completion_status=False)
+		
+		response_dict['success'] = True
 
 		return Response(response_dict, HTTP_200_OK)
+	
