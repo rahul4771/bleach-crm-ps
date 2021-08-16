@@ -698,20 +698,21 @@
       v-on:click="selectDuration(item)"
       v-if="selectedDuration == item"
     >
-      <b> <% item.hours %></b>
+      <b> <% item.hours %> hours</b>
     </div>
     <div
       class="duration text-center p-2"
       v-on:click="selectDuration(item)"
       v-else
     >
-      <b> <% item.hours %> </b>
+      <b> <% item.hours %> hours</b>
     </div>
     <div
       v-if="selectedDuration == item"
       class="text-center sub-content"
     >
-      <% item.hours / 2 %> slots
+      <% item.hours / 2 %> slots<br>
+      <% item.cleaners %> cleaners
     </div>
   </div>
 </div>
@@ -721,9 +722,38 @@
       Choose Cleaning Slots
     </div>
     <v-date-picker  v-model="oneTimeDateSelected" full-width elevation="5" color="primary"
+    :event-color="'green'"
+        :events="functionEvents"
     v-on:change="oneTimeDateChange()" class="mt-2" :min="today" ></v-date-picker>
   </div>
   <div class="col-md-8 "  >
+    <div class="text-right">
+      <v-btn
+     
+      color="primary"
+      rounded
+      small
+      outlined
+      @click="resetOneTime()"
+      v-if="checkSlotSelection()"
+    >
+    <v-icon left>mdi-cached</v-icon>
+      Reset Selection
+    </v-btn>
+    </div>
+     <div  v-for="(sdate,sdindex) in one_time_slots">
+     
+     <div v-if="sdate.slots.length>0"><b>Date : <% sdindex %></b></div> 
+     <v-chip
+    v-for="(st,stindex) in sdate.slots"
+      class="ma-2"
+      
+     
+    >
+  
+   <span v-if="slotFormat[st]"> <% slotFormat[st].start_time+' - '+slotFormat[st].end_time %></span> 
+    </v-chip>
+  </div> 
     <div class="mt-4" v-if="!slot_loader">
       Select  Slots
     </div>

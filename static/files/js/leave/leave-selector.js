@@ -458,7 +458,7 @@ getLeave();
 })
 }
 function resetResources(category){
-    
+    console.log("called me")
     var newResource=[];
     if(category=='ALL')
         {  
