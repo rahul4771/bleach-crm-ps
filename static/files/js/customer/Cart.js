@@ -1960,7 +1960,7 @@ $(document).ready(function(){
       for(var i in this.one_time_slots){
         counter=counter+this.one_time_slots[i].slots.length
       }
-      if(counter<this.selectedDuration.slots && counter<5)
+      if(counter<this.selectedDuration.slots && this.one_time_slots[this.oneTimeDateSelected].slots.length<5)
       {
       if(this.one_time_slots[this.oneTimeDateSelected].slots.length>0)
       {
