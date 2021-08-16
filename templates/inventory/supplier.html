@@ -80,20 +80,24 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    {% for supplier in suppliers %}
                                     <tr>
                                         <td class="r">
                                     
-                                            Supplier 1
+                                            {{supplier.supplier_name}}
                                         </td>
                                         <td class="text-center">
-                                            23564
+                                            {{supplier.supplier_id}}
                                         </td>
                                         <td class="text-center">
-                                            00000000
+                                            {{supplier.contact}}
                                         </td>
                                         <td>
-                                            <span class="inv-dot c-active ml-5"></span>
-                                            Active
+                                            {% if supplier.status == True %}
+                                            <span class="inv-dot c-active ml-5"></span>Active
+                                            {% else %}
+                                            <span class="inv-dot c-active ml-5"></span>Not Active
+                                            {% endif %}
                                         </td>
                                         <td style="float: right;">
                                             <button class="inv-plan-btn"> Purchase History</button>
@@ -105,31 +109,7 @@
             
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td class="r">
-                                    
-                                            Supplier 1
-                                        </td>
-                                        <td class="text-center">
-                                            23564
-                                        </td>
-                                        <td class="text-center">
-                                            00000000
-                                        </td>
-                                        <td>
-                                            <span class="inv-dot c-active ml-5"></span>
-                                            Active
-                                        </td>
-                                        <td style="float: right;">
-                                            <button class="inv-plan-btn"> Purchase History</button>
-                                            <button class="inv-plan-img-btn"> <img class="view-img"
-                                                src="{% static 'files/inventory/icons/view.png' %}" alt="">
-                                        </button>
-                                            <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                            <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-            
-                                        </td>
-                                    </tr>
+                                    {% endfor %}
                                    
                                 </tbody>
                                
@@ -295,12 +275,16 @@
                 </div>
             </div>
             <hr>
+
+            <form method="POST" action="" >{% csrf_token %}
+            <input type="hidden" name="action" id="supplier_action" value="add_supplier" />
+            <input type="hidden" name="supplier_edit_id" id="id_edit_supplier" />
             <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Supplier Name</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                        <input type="text"  class="w-p-100 inv-in" name="supplier_name">
                       </div>
                 </div>
 
@@ -310,7 +294,7 @@
                     <div class="model-input-name">Id number</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                        <input type="text"  class="w-p-100 inv-in" value="{{supplier_id}}" name="supplier_id">
                       </div>
                 </div>
 
@@ -320,7 +304,7 @@
                     <div class="model-input-name">Contact</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                        <input type="text"  class="w-p-100 inv-in" name="contact">
                       </div>
                 </div>
 
@@ -329,10 +313,9 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Status</div>
 
-                    <select id="id_payment" class="minimal">
-                        <option  ></option>
-                        <option  >Active</option>
-                        <option value="Post Paid">Inactive</option>
+                    <select id="id_payment" class="minimal" name="status">
+                        <option value="True" selected>Active</option>
+                        <option value="False">Inactive</option>
 
                     </select>
                 </div>
@@ -344,9 +327,10 @@
           
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button" >Submit</button>
+            <button class="sent-button" type="submit" >Submit</button>
                         <button data-dismiss="modal" onclick="closeNavAddBundle()" class="view-button">Cancel</button>
         </div>
+        </form>
     </div>
     <div id="addItem" class="inv-sidedrawer">
 

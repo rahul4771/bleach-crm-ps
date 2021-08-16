@@ -54,22 +54,27 @@
                             </tr>
                         </thead>
                        <tbody>
+
+                        {% for store in stores %}
                         <tr>
                             <td>
                                 
-                                Supplier 1
+                                {{store.store_name}}
                             </td>
                             <td class="text-center">
-                                3
+                                {{store.store_code}}
                             </td>
                             <td class="text-center">
-                                Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod 
+                                {{store.address}}
                             <td class="text-center">
-                                00000000
+                                {{store.contact}}
                             </td>
                             <td>
-                                <span class="inv-dot c-active ml-5"></span>
-                                Active
+                                {% if store.status == True %}
+                                <span class="inv-dot c-active ml-5"></span>Active
+                                {% else %}
+                                <span class="inv-dot c-active ml-5"></span>Not Active
+                                {% endif %}
                             </td>
                             <td style="float: right;">
                               
@@ -78,30 +83,8 @@
 
                             </td>
                         </tr>
-                        <tr>
-                            <td>
-                                
-                                Supplier 1
-                            </td>
-                            <td class="text-center">
-                                3
-                            </td>
-                            <td class="text-center">
-                                Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod 
-                            <td class="text-center">
-                                00000000
-                            </td>
-                            <td>
-                                <span class="inv-dot c-active ml-5"></span>
-                                        Active
-                            </td>
-                            <td style="float: right;">
-                              
-                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-
-                            </td>
-                        </tr>
+                        {% endfor %}
+                        
                        </tbody>
                       
                      
@@ -126,12 +109,16 @@
                 </div>
             </div>
             <hr>
+
+            <form method="POST" action="" >{% csrf_token %}
+            <input type="hidden" name="action" id="store_action" value="add_store" />
+            <input type="hidden" name="store_edit_id" id="id_edit_store" />
             <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Store Name</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                        <input type="text"  class="w-p-100 inv-in" name="store_name">
                       </div>
                 </div>
 
@@ -141,7 +128,7 @@
                     <div class="model-input-name">Store code</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                        <input type="text"  class="w-p-100 inv-in" value="{{store_code}}" name="store_code">
                       </div>
                 </div>
 
@@ -151,7 +138,7 @@
                     <div class="model-input-name">Address</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                        <input type="text"  class="w-p-100 inv-in" name="store_address">
                       </div>
                 </div>
 
@@ -161,7 +148,7 @@
                     <div class="model-input-name">Contact</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                        <input type="text"  class="w-p-100 inv-in" name="store_contact">
                       </div>
                 </div>
 
@@ -170,11 +157,9 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Status</div>
 
-                    <select id="id_payment" class="minimal">
-                        <option  ></option>
-                        <option  >Active</option>
-                        <option value="Post Paid">Inactive</option>
-
+                    <select id="status_category" name="store_status" class="minimal">
+                        <option value="True" selected>Active</option>
+                        <option value="False">Inactive</option>
                     </select>
                 </div>
 
@@ -187,9 +172,10 @@
           
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button" >Submit</button>
+            <button class="sent-button" type="submit" >Submit</button>
                         <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
         </div>
+        </form>
     </div>
     <div class="modal fade" id="deleteModel" role="dialog">
         <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">

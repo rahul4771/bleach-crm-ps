@@ -8,9 +8,9 @@ from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
 from bleachadmin.models import ServicePriceRange
 from django.core.mail import send_mail,EmailMultiAlternatives
-from Api.serializers import UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, LeaveUsersSerializer,ShiftScheduleSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer
+from Api.serializers import UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, LeaveUsersSerializer,ShiftScheduleSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer
 from agent.views import generate_random_username
-from inventory.models import Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems
+from inventory.models import Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,ItemUnit
 import re
 import random
 import string
@@ -1804,8 +1804,26 @@ class InventoryValuesAPI(APIView):
 		response_dict['inventory_value'] = value_serializer
 		return Response(response_dict,HTTP_200_OK)
 
+class InventoryItemUnitsAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
 
-class InventoryItemsAPI(APIView):
+	def get(self,request):
+		response_dict = {}
+		item_id = request.GET.get('item_id')
+		print(item_id,"attrsed")
+		try:
+			item_units = ItemUnit.objects.filter(item__id=int(item_id))
+		except:
+			item_units = None
+		
+		print(item_units,"invo")
+		item_unit_serializer = InventoryItemUnitSerializer(item_units,many=True).data
+		print(item_unit_serializer,"sed")	
+		response_dict['inventory_item_unit'] = item_unit_serializer
+		return Response(response_dict,HTTP_200_OK)
+
+class InventoryBundleItemsAPI(APIView):
 	permission_classes  	=   (AllowAny,)
 	authentication_classes  = ()
 
@@ -1814,7 +1832,7 @@ class InventoryItemsAPI(APIView):
 		bundle_id = request.GET.get('bundle_id')
 		print(bundle_id,"attrsed")
 		try:
-			inventory_items = BundleItems.objects.filter(bundle=int(bundle_id))
+			inventory_items = BundleItems.objects.filter(bundle__id=int(bundle_id))
 		except:
 			inventory_items = None
 		
