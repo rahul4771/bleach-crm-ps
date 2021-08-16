@@ -2,9 +2,9 @@
 //use async funcation to call service methods
 //Check Response status always
 
-var api ='https://my.bleachkw.com';
+//var api ='https://my.bleachkw.com';
 //var api='https://test.bleach-kw.com';
-//var api = 'http://localhost:8000'
+var api = 'http://localhost:8000'
 //var api = 'http://127.0.0.1:8000'
 
 

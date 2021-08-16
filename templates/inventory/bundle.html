@@ -9,6 +9,12 @@
             border: 1px solid #4b4b4b !important;
             border-radius: 4px !important;
         }
+        .multiselect{
+            background: #fff !important;
+        }
+        .multiselect-container li{
+            padding-left: 5px !important;
+        }
     </style>
 <div class="wrapper" id="bundle"><!--wrapper-->
     {% include "inventory/common/header.html" %}
@@ -433,9 +439,13 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Units</div>
 
-                    <select data-placeholder="Begin typing a name " multiple class="chosen-select" name="test" class="minimal" id="item_unit_id">
+                    <select id="multiple-checkboxes" multiple="multiple" id="item_unit_id">
                        
                     </select>
+
+                    <!-- <select  multiple class="chosen-select" name="test" class="minimal" id="item_unit_id">
+                       
+                    </select> -->
                 </div>
 
             </div>
@@ -473,9 +483,14 @@
 {% endblock %}
 
 {% block javascript %}
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
 <script>
-
+   $(document).ready(function() {
+        $('#multiple-checkboxes').multiselect({
+          includeSelectAllOption: true,
+        });
+    });
 $(document).ready(function(){
         {% for bundle in bundles %}
         {% if forloop.first %}
@@ -592,9 +607,18 @@ function openNavAddBundle(d) {
                
                 $.each(result.data.inventory_item_unit,function(key,value){
                     console.log(key,value.unit_code,"rome")
-                        $('#item_unit_id').append('<option value="'+value.id+'">'+value.unit_code+'</option>')
+                        $('#multiple-checkboxes').append('<option value="'+value.id+'">'+value.unit_code+'</option>').multiselect("destroy").multiselect();
                 })
-                $('#item_unit_id').multiselect( 'refresh' );
+                 $("#multiple-checkboxes").multiselect('destroy');
+                 $("#multiple-checkboxes").multiselect({
+                includeSelectAllOption: true,
+                });
+                //$('#item_unit_id').multiselect('refresh');
+                // $('#Select1').multiselect( 'refresh' );
+                 
+            //    $('.multiselect').multiselect('destroy');
+            // $('.multiselect').multiselect();
+         
                 
             }else{
                 console.log("no units")
