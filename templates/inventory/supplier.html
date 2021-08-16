@@ -104,8 +104,8 @@
                                             <button class="inv-plan-img-btn"> <img class="view-img"
                                                 src="{% static 'files/inventory/icons/view.png' %}" alt="">
                                         </button>
-                                            <button class="inv-plan-img-btn" onclick="openNavAddBundle('edit')"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                            <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                                            <button class="inv-plan-img-btn edit_supplier" onclick="openNavAddBundle('edit')" data-supplierid="{{supplier.id}}" data-suppliername="{{supplier.supplier_name}}" data-suppliercontact="{{supplier.contact}}" data-suppliercontactother="{{supplier.other_contact}}" data-suppliercode="{{supplier.supplier_id}}" data-supplieraddress="{{supplier.address}}" data-supplierterms="{{supplier.terms}}" data-supplierstatus="{{supplier.status}}"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                            <button class="inv-plan-img-btn delete_supplier" data-supplierid="{{supplier.id}}" data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
             
                                         </td>
                                     </tr>
@@ -284,7 +284,7 @@
                     <div class="model-input-name">Supplier Name</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="supplier_name">
+                        <input type="text"  class="w-p-100 inv-in" name="supplier_name" id="name_supplier" required>
                       </div>
                 </div>
 
@@ -294,7 +294,7 @@
                     <div class="model-input-name">Id number</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" value="{{supplier_id}}" name="supplier_id">
+                        <input type="text" id="code_supplier" class="w-p-100 inv-in" value="{{supplier_id}}" name="supplier_id">
                       </div>
                 </div>
 
@@ -304,7 +304,37 @@
                     <div class="model-input-name">Contact</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="contact">
+                        <input type="text" id="contact_supplier" class="w-p-100 inv-in" name="contact">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Other Contact</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text" id="other_contact_supplier" class="w-p-100 inv-in" name="other_contact">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Address</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <textarea name="address" id="address_supplier" class="w-p-100 inv-in"></textarea>
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Terms</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <textarea name="terms" id="terms_supplier" class="w-p-100 inv-in"></textarea>
                       </div>
                 </div>
 
@@ -313,7 +343,7 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Status</div>
 
-                    <select id="id_payment" class="minimal" name="status">
+                    <select id="status_supplier" class="minimal" name="status">
                         <option value="True" selected>Active</option>
                         <option value="False">Inactive</option>
 
@@ -327,7 +357,7 @@
           
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button" type="submit" >Submit</button>
+            <button class="sent-button supplier-form-btn" type="submit" >Submit</button>
                         <button data-dismiss="modal" onclick="closeNavAddBundle()" class="view-button">Cancel</button>
         </div>
         </form>
@@ -427,11 +457,15 @@
                
                 <div class="row">
                     <div class="col-md-12 text-center">
+                    <form method="POST" action="" >{% csrf_token %}
+                    <input type="hidden" name="action" value="delete_supplier" />
+                    <input type="hidden" name="supplier_id_delete" id="id_supplier_delete" />
                         <div class="cancel-model-content">
-                            <button class="sent-button" >Delete</button>
+                            <button class="sent-button" type="submit" >Delete</button>
                             <button data-dismiss="modal" class="view-button">Cancel</button>
                           
                         </div>
+                    </form>
                     </div>
     
                 </div>
@@ -480,9 +514,13 @@
 function openNavAddBundle(d) {
     if(d == 'add'){
             $("#supHead").text("Add Supplier");
+            $('.supplier-form-btn').text('Add');
+            $('#supplier_action').val('add_supplier');
         }
         if(d == 'edit'){
             $("#supHead").text("Edit Supplier");
+            $('.supplier-form-btn').text('Update');
+            $('#supplier_action').val('edit_supplier');
         }
         if(screen.width<= 600){
             document.getElementById("addBundle").style.width = "100%";
@@ -518,5 +556,20 @@ function openNavAddBundle(d) {
     function closeNavAddItem() {
         document.getElementById("addItem").style.width = "0";
     }
+
+    //edit supplier
+    $('.edit_supplier').click(function(){
+        //console.log($(this).data('categoryid'),$(this).data('categoryname'),"editc")
+        $('#id_edit_supplier').val($(this).data('supplierid'));
+        $('#name_supplier').val($(this).data('suppliername'));
+        $('#code_supplier').val($(this).data('suppliercode'));
+        $('#contact_supplier').val($(this).data('suppliercontact'));
+        $('#other_contact_supplier').val($(this).data('suppliercontactother'));
+        $('#address_supplier').val($(this).data('supplieraddress'));
+        $('#terms_supplier').val($(this).data('supplierterms'));
+        document.getElementById("status_supplier").value = $(this).data('supplierstatus');
+
+
+    })
 </script>
 {% endblock %}
