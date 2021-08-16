@@ -272,9 +272,9 @@ class InventoryBundle(IsInventoryAdmin,View):
 
 class InventoryItems(IsInventoryAdmin,View):
     def get(self,request,item_id):
-        inventory_item = InventoryItem.objects.prefetch_related(Prefetch('image_item',queryset=InventoryItemImages.objects.all(),to_attr='item_images')).get(id=item_id)
+        inventory_item = InventoryItem.objects.prefetch_related(Prefetch('image_item',queryset=InventoryItemImages.objects.all(),to_attr='item_images')).annotate(unit_count=Count('unit_item'),total_unit_price=Sum('unit_item__unit_price')).get(id=item_id)
         categories = Category.objects.all()
-        item_units = ItemUnit.objects.all()
+        item_units = ItemUnit.objects.filter(item=inventory_item)
 
         units       = ItemUnit.objects.all()
         unit_latest  = units.last()
@@ -362,15 +362,77 @@ class InventoryItems(IsInventoryAdmin,View):
 
 class InventorySupplier(IsInventoryAdmin,View):
     def get(self,request):
-        return render(request,'inventory/supplier.html',{})
+        suppliers = Supplier.objects.all()
+        
+        suppliers_latest  = suppliers.last()
+        if suppliers_latest:
+            code_number  =  int(re.findall(r'(\d+)', suppliers_latest.supplier_id)[0]) + 1
+            new_supplier_id = 'SUP'+str(code_number)
+        else:
+            new_supplier_id = 'SUP9001'
+
+        return render(request,'inventory/supplier.html',{"suppliers":suppliers,"supplier_id":new_supplier_id})
+
+    def post(self,request):
+        action =request.POST.get('action')
+
+        if action == 'add_supplier':
+            # category = Category.objects.get(id=int(category_id))
+            name     = request.POST.get('supplier_name')
+            contact = request.POST.get('contact')
+            status     = request.POST.get('status')
+
+            suppliers    = Supplier.objects.all()
+        
+            supplier_latest  = suppliers.last()
+            if supplier_latest:
+                code_number  =  int(re.findall(r'(\d+)', supplier_latest.supplier_id)[0]) + 1
+                new_supplier_id = 'SUP'+str(code_number)
+            else:
+                new_supplier_id = 'SUP9001'
+
+
+            Supplier.objects.create(supplier_name=name,supplier_id=new_supplier_id,contact=contact,status=status)
+            messages.success(request,"Supplier Added Successfully !")
+
+        return redirect('inventory:inventory-supplier')
 
 class InventoryStore(IsInventoryAdmin,View):
     def get(self,request):
         stores = Store.objects.all()
-        return render(request,'inventory/store.html',{"stores":stores})
+        
+        store_latest  = stores.last()
+        if store_latest:
+            code_number  =  int(re.findall(r'(\d+)', store_latest.store_code)[0]) + 1
+            new_store_code = 'STORE'+str(code_number)
+        else:
+            new_store_code = 'STORE9001'
+
+        return render(request,'inventory/store.html',{"stores":stores,"store_code":new_store_code})
 
     def post(self,request):
-        return redirect('')
+        action =request.POST.get('action')
+
+        if action == 'add_store':
+            # category = Category.objects.get(id=int(category_id))
+            name     = request.POST.get('store_name')
+            address = request.POST.get('store_address')
+            contact = request.POST.get('store_contact')
+            status     = request.POST.get('store_status')
+
+            stores    = Store.objects.all()
+        
+            store_latest  = stores.last()
+            if store_latest:
+                code_number  =  int(re.findall(r'(\d+)', store_latest.store_code)[0]) + 1
+                new_store_code = 'STORE'+str(code_number)
+            else:
+                new_store_code = 'STORE9001'
+
+
+            Store.objects.create(store_name=name,address=address,store_code=new_store_code,contact=contact,status=status)
+            messages.success(request,"Store Added Successfully !")
+        return redirect('inventory:inventory-store')
 
 class InventoryInv(IsInventoryAdmin,View):
     def get(self,request):
