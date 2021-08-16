@@ -485,7 +485,7 @@ class ShiftScheduleAPI(APIView):
 			serializer = ShiftScheduleSerializer(data=schedule)
 			if serializer.is_valid():
 				if schedule['shift3_end_at'] == '12:00 AM':
-					serializer.save(shift1_start_at=shift1_start_at,shift2_start_at=shift2_start_at,shift1_end_at=shift1_end_at,shift2_end_at=shift2_end_at,shift3_start_at=shift3_start_at,shift3_end_at=shift3_end_at)
+					serializer.save(shift_date=serializer.validated_data['shift_date']+timedelta(1),shift1_start_at=shift1_start_at,shift2_start_at=shift2_start_at,shift1_end_at=shift1_end_at,shift2_end_at=shift2_end_at,shift3_start_at=shift3_start_at,shift3_end_at=shift3_end_at)
 				else:
 					serializer.save(shift1_start_at=shift1_start_at,shift2_start_at=shift2_start_at,shift1_end_at=shift1_end_at,shift2_end_at=shift2_end_at,shift3_start_at=shift3_start_at,shift3_end_at=shift3_end_at)
    
