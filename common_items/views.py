@@ -3885,7 +3885,7 @@ class AssigncleaningTeam(IsAuthenticated,View):
 	def post(self,request,scheduler_id):
 		
 		#shceduled order details
-		order_schedule = OrderScheduler.objects.select_related('evaluation_details__evaluation','order_scheduler_book').get(is_active=True,id=scheduler_id)
+		order_schedule = OrderScheduler.objects.select_related('evaluation_details__evaluation','order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',query_set=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).get(is_active=True,id=scheduler_id)
 		start_at_datetime = order_schedule.start_at
 		end_at_datetime   = order_schedule.end_at
 		start_at_date     = (order_schedule.start_at+timedelta(hours=3)).date()
@@ -3897,7 +3897,7 @@ class AssigncleaningTeam(IsAuthenticated,View):
 		order_schedules = OrderScheduler.objects.filter(start_at=start_at_datetime,end_at=end_at_datetime,evaluation_details__evaluation=order_schedule.evaluation_details.evaluation).select_related('evaluation_details__evaluation','order_scheduler_book__service_type').prefetch_related(Prefetch('order_scheduler_book__evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr="evaluationmedias"),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes')),to_attr='sections'))	
 		
 		#to block back button submission
-		if order_schedule.work_status=='CLEANING_TEAM_ASSIGNED':
+		if order_schedule.cleaning_team and order_schedule.work_status=='CLEANING_TEAM_ASSIGNED':
 			return redirect('stl:stldash-board')
 
 		assigned_cleaners         = request.POST.getlist('assigned_cleaner')
@@ -4125,20 +4125,20 @@ class AssignFollowupTeam(IsAuthenticated,View):
 			follow_up_team_assign_form_save.created_by        = request.user
 			follow_up_team_assign_form_save.save()
 
-			#update cleaners count
-			followup_schedule.follow_up.no_of_cleaners = len(assigned_cleaners)+1
-
 			#cleaners
 			assigned_cleaners_list   = []
 			for cleaner in assigned_cleaners:
 				assigned_cleaners_list.append(FollowUpTeamMember(team=follow_up_team_assign_form_save,member_id=cleaner,start_at=followup_schedule.start_at,end_at=followup_schedule.end_at,start_time=start_at_time,end_time=end_at_time))
 			assigned_cleaners_list.append(FollowUpTeamMember(team=follow_up_team_assign_form_save,member=follow_up_team_assign_form_save.team_leader,start_at=followup_schedule.start_at,end_at=followup_schedule.end_at,start_time=start_at_time,end_time=end_at_time))
 			#bulk create
-			FollowUpTeamMember.objects.bulk_create(assigned_cleaners_list)
+			follow_up_team_members_assign = FollowUpTeamMember.objects.bulk_create(assigned_cleaners_list)
 
-			followup_schedule.work_status                          = 'FOLLOW_UP_TEAM_ASSIGNED'
-			followup_schedule.follow_up.save()
-			followup_schedule.save()	
+			#update cleaners count
+			if follow_up_team_members_assign:
+				followup_schedule.follow_up.no_of_cleaners = len(assigned_cleaners)+1			
+				followup_schedule.work_status                          = 'FOLLOW_UP_TEAM_ASSIGNED'
+				followup_schedule.follow_up.save()
+				followup_schedule.save()	
 		else:	
 			messages.error(request,"Something Went Wrong")
 
