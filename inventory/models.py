@@ -155,6 +155,9 @@ class Supplier(models.Model):
     supplier_name       = models.CharField(max_length=100,blank=False,null=False)
     supplier_id         = models.CharField(max_length=50,blank=False,null=False)
     contact             = models.CharField(max_length=50,blank=False,null=False)
+    other_contact       = models.CharField(max_length=50,blank=False,null=False)
+    address             = models.TextField(max_length=500,blank=False,null=False)
+    terms               = models.TextField(max_length=1000,blank=False,null=False)
     status              = models.BooleanField(default=True,blank=False,null=False)
 
     def __unicode__(self):

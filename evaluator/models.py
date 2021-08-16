@@ -77,6 +77,10 @@ SPOT_STAIN_CHOICES=(
 	('STAIN','STAIN')
 	)
 
+SERVICEDIVISION_CHOICES = (('SOFA','SOFA'),
+					 ('CHAIR','CHAIR'),
+					 ('CURTAIN','CURTAIN'))
+
 MEDIA_TAKEN_CHOICES = (
 	('CUSTOMER_SEND','CUSTOMER_SEND'),
 	('AGENT_TAKEN','AGENT_TAKEN'),
@@ -374,7 +378,7 @@ class EvaluationBookSection(models.Model):
 	new_kitchen         = models.BooleanField(null=False,blank=True,default=False)
 	is_highprice_facade = models.BooleanField(null=False,blank=True,default=False)
 	is_highprice_window = models.BooleanField(null=False,blank=True,default=False)
-	upholstery_type     = models.CharField(max_length=50,null=True,blank=True)
+	upholstery_type     = models.CharField(max_length=50,blank=True,null=True,choices=SERVICEDIVISION_CHOICES)
 	vacuuming        = models.BooleanField(null=False,blank=True,default=False)
 
 	section_cost     = models.FloatField(blank=True,null=True)
