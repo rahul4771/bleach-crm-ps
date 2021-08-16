@@ -3887,7 +3887,19 @@ $(document).ready(function(){
             console.log(total_cleaners, "total_cleaners");
             this.setDuration(converted_hours, total_cleaners);
           }
+          this.sortDuration()
   })
+    },
+    sortDuration(){
+      if(this.duration[0].hours<this.duration[1].hours){
+       this.selectDuration(this.duration[0])
+      }
+      else{
+        var temp=this.duration[0]
+        this.duration[0]=this.duration[1]
+        this.duration[1]=temp
+        this.selectDuration(this.duration[0])
+      }
     },
     durationcalculation() {
       
