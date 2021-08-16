@@ -3,7 +3,7 @@ from rest_framework import serializers
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule
 from evaluator.models import Evaluation,EvaluationDetails
 from order.models import Promocode
-from inventory.models import Line,Segment,Category,Attribute,AttributeValue,BundleItems,InventoryItem
+from inventory.models import Line,Segment,Category,Attribute,AttributeValue,BundleItems,InventoryItem,ItemUnit
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -82,6 +82,11 @@ class InventoryItemSerializer(serializers.ModelSerializer):
         model = InventoryItem
         fields = ('id','name','status')
 
+class InventoryItemUnitSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ItemUnit
+        fields = ('id','item','unit_code','status')
+
 class InventoryBundleItemSerializer(serializers.ModelSerializer):
     bundle_item     = InventoryItemSerializer(read_only=True)
     class Meta:
@@ -99,7 +104,7 @@ class InventorySegmentSerializer(serializers.ModelSerializer):
 #Team Leader Mobile app serializers
 from datetime import timedelta,date,datetime
 
-from order.models import Order,FollowUp,Investigation
+from order.models import Order,FollowUp,Investigation,FollowUpSectionKeynote,FollowUpSection
 from evaluator.models import EvaluationDetails,EvaluationBook,EvaluationBookSection,EvaluationSectionKeynote
 from senior_team_leader.models import OrderScheduler,FollowUpScheduler,CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember
 from agent.serializers import UserProfileShowSerializer,ServiceTypeShowSerializer
@@ -114,7 +119,7 @@ class OrderAPISerializer(serializers.ModelSerializer):
 class KeynoteAPISerializer(serializers.ModelSerializer):
     class Meta:
         model  = EvaluationSectionKeynote
-        fields = ('sub_area','quantity','completion_status')
+        fields = ('id','sub_area','quantity','completion_status')
 
 
 
@@ -181,18 +186,30 @@ class CleaningTeamAPISerializer(serializers.ModelSerializer):
 class InvestigationAPISerializer(serializers.ModelSerializer):
     investigator   = UserProfileShowSerializer(read_only=True)
     assigned_by    = UserProfileShowSerializer(read_only=True)
-    order_schedule = OrderScheduleAPISerializer(read_only=True)
+    order_schedule = OrderScheduleAPISerializer(read_only=True) 
     class Meta:		
         model   = Investigation
         fields  = ('ticket_types','investigator','assigned_by','scheduled_at','notes','order_schedule')
 
+class FollowUpSectionKeynoteSerializer(serializers.ModelSerializer):
+    class Meta:		
+        model   = FollowUpSectionKeynote
+        fields  = ('id','sub_area','quantity','completion_status')
+
+class FollowUpSectionSerializer(serializers.ModelSerializer):
+    keynotesectionsfollowup = FollowUpSectionKeynoteSerializer(many=True,read_only=True)
+    class Meta:		
+        model   = FollowUpSection
+        fields  = ('section_name','category','dirt_level','quantity','size','unit','age','floor','apartment','room','wall_type','ceiling_type','floor_type','material','colour','cause_of_stain','section_cost','section_cleanings','section_net_cost','keynotesectionsfollowup')
+
 
 
 class FollowupAPISerializer(serializers.ModelSerializer):
-    investigation = InvestigationAPISerializer(read_only=True)
+    investigation         = InvestigationAPISerializer(read_only=True)
+    follow_up_of_section  = FollowUpSectionSerializer(many=True,read_only=True)
     class Meta:		
         model   = FollowUp
-        fields  = ('ticket_no','no_of_cleaners','cleaning_hours','investigation')
+        fields  = ('ticket_no','no_of_cleaners','cleaning_hours','investigation','follow_up_of_section')
 
 
 

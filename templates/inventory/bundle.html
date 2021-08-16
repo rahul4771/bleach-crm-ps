@@ -9,6 +9,12 @@
             border: 1px solid #4b4b4b !important;
             border-radius: 4px !important;
         }
+        .multiselect{
+            background: #fff !important;
+        }
+        .multiselect-container li{
+            padding-left: 5px !important;
+        }
     </style>
 <div class="wrapper" id="bundle"><!--wrapper-->
     {% include "inventory/common/header.html" %}
@@ -157,136 +163,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>
                                         
-                                                Item 1
-                                            </td>
-                                            <td>1</td>
-                                            <td>1</td>
-                                            <td>
-                                                <button class="inv-plan-img-btn" onclick="openNavAddItem('edit')"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                                <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel2"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-                
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                        
-                                                Item 1
-                                            </td>
-                                            <td>1</td>
-                                            <td>1</td>
-                                            <td>
-                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-                
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                        
-                                                Item 1
-                                            </td>
-                                            <td>1</td>
-                                            <td>1</td>
-                                            <td>
-                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-                
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                        
-                                                Item 1
-                                            </td>
-                                            <td>1</td>
-                                            <td>1</td>
-                                            <td>
-                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-                
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                        
-                                                Item 1
-                                            </td>
-                                            <td>1</td>
-                                            <td>1</td>
-                                            <td>
-                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-                
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                        
-                                                Item 1
-                                            </td>
-                                            <td>1</td>
-                                            <td>1</td>
-                                            <td>
-                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-                
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                        
-                                                Item 1
-                                            </td>
-                                            <td>1</td>
-                                            <td>1</td>
-                                            <td>
-                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-                
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                        
-                                                Item 1
-                                            </td>
-                                            <td>1</td>
-                                            <td>1</td>
-                                            <td>
-                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-                
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                        
-                                                Item 1
-                                            </td>
-                                            <td>1</td>
-                                            <td>1</td>
-                                            <td>
-                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-                
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                        
-                                                Item 1
-                                            </td>
-                                            <td>1</td>
-                                            <td>1</td>
-                                            <td>
-                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                                <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-                
-                                            </td>
-                                        </tr>
                                     </tbody>
                                     
     
@@ -548,8 +425,8 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Item</div>
 
-                    <select class="minimal" name="attribute_category" id="id_category" required>
-                        <option value="">--Select Category--</option>
+                    <select class="minimal" name="attribute_category" id="id_item" onchange="getunits()" required>
+                        <option value="">--Select Item--</option>
                         {% for item in items %}
                         <option value="{{item.id}}">{{item.name}}</option>
                         {% endfor %}
@@ -560,14 +437,15 @@
             </div>
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Price</div>
+                    <div class="model-input-name">Units</div>
 
-                    <select data-placeholder="Begin typing a name " multiple class="chosen-select" name="test" class="minimal">
-                        <option value=""></option>
-                        {% for item in items %}
-                        <option value="{{item.id}}">{{item.name}}</option>
-                        {% endfor %}
-                      </select>
+                    <select id="multiple-checkboxes" multiple="multiple" id="item_unit_id">
+                       
+                    </select>
+
+                    <!-- <select  multiple class="chosen-select" name="test" class="minimal" id="item_unit_id">
+                       
+                    </select> -->
                 </div>
 
             </div>
@@ -605,9 +483,14 @@
 {% endblock %}
 
 {% block javascript %}
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
 <script>
-
+   $(document).ready(function() {
+        $('#multiple-checkboxes').multiselect({
+          includeSelectAllOption: true,
+        });
+    });
 $(document).ready(function(){
         {% for bundle in bundles %}
         {% if forloop.first %}
@@ -709,21 +592,37 @@ function openNavAddBundle(d) {
             showNotification('Something went wrong','error')
          }
     }
+    
 
-    async function getunits(bundle_id){
-        $('#item_bundle_id').val(bundle_id); //adding value to hidden input for adding value
+    async function getunits(){
+        //$('#item_bundle_id').val(item_id); //adding value to hidden input for adding value
+        var item_id = $('#id_item').val();
+        console.log(item_id,"itmid")
 
-         var result = await _get('api/inventory-items/?bundle_id='+bundle_id);
+         var result = await _get('api/inventory-item-units/?item_id='+item_id);
          
          if(result.status == 200){
-            if (result.data.inventory_item.length > 0){
-                $("#table2 tr:not(:first)").remove(); 
-                var edit = "edit";
-                $.each(result.data.inventory_item,function(key,value){
-                        $('#table2').append('<tr><td>'+value.name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavEditValue(this)" data-valueid='+value.id+' data-valuename='+value.name+' data-valuestatus='+value.status+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn value_delete" onclick="deleteValue('+value.id+')" data-valueid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
+            if (result.data.inventory_item_unit.length > 0){
+                //$("#item_unit_id").remove(); 
+               
+                $.each(result.data.inventory_item_unit,function(key,value){
+                    console.log(key,value.unit_code,"rome")
+                        $('#multiple-checkboxes').append('<option value="'+value.id+'">'+value.unit_code+'</option>').multiselect("destroy").multiselect();
                 })
+                 $("#multiple-checkboxes").multiselect('destroy');
+                 $("#multiple-checkboxes").multiselect({
+                includeSelectAllOption: true,
+                });
+                //$('#item_unit_id').multiselect('refresh');
+                // $('#Select1').multiselect( 'refresh' );
+                 
+            //    $('.multiselect').multiselect('destroy');
+            // $('.multiselect').multiselect();
+         
+                
             }else{
-                $("#table2 tr:not(:first)").remove(); 
+                console.log("no units")
+                //$("#table2 tr:not(:first)").remove(); 
             }
          }else{
             showNotification('Something went wrong','error')

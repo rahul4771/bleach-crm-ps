@@ -2,15 +2,15 @@ from django.shortcuts import render
 from django.template.loader import render_to_string
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule,Shift
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType
-from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question
-from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
+from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote
+from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
 from bleachadmin.models import ServicePriceRange
 from django.core.mail import send_mail,EmailMultiAlternatives
-from Api.serializers import UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, LeaveUsersSerializer,ShiftScheduleSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer
+from Api.serializers import UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, LeaveUsersSerializer,ShiftScheduleSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer
 from agent.views import generate_random_username
-from inventory.models import Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems
+from inventory.models import Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,ItemUnit
 import re
 import random
 import string
@@ -1180,7 +1180,7 @@ class CheckInAPI(APIView):
 		response_dict = {}
 		response_dict['success'] = False
 
-		team_id = request.data.get('team_id')
+		team_id        = request.data.get('team_id')
 		check_in_notes = request.data.get('check_in_notes')
 	
 		print(team_id,"zack")
@@ -1804,8 +1804,26 @@ class InventoryValuesAPI(APIView):
 		response_dict['inventory_value'] = value_serializer
 		return Response(response_dict,HTTP_200_OK)
 
+class InventoryItemUnitsAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
 
-class InventoryItemsAPI(APIView):
+	def get(self,request):
+		response_dict = {}
+		item_id = request.GET.get('item_id')
+		print(item_id,"attrsed")
+		try:
+			item_units = ItemUnit.objects.filter(item__id=int(item_id))
+		except:
+			item_units = None
+		
+		print(item_units,"invo")
+		item_unit_serializer = InventoryItemUnitSerializer(item_units,many=True).data
+		print(item_unit_serializer,"sed")	
+		response_dict['inventory_item_unit'] = item_unit_serializer
+		return Response(response_dict,HTTP_200_OK)
+
+class InventoryBundleItemsAPI(APIView):
 	permission_classes  	=   (AllowAny,)
 	authentication_classes  = ()
 
@@ -1814,7 +1832,7 @@ class InventoryItemsAPI(APIView):
 		bundle_id = request.GET.get('bundle_id')
 		print(bundle_id,"attrsed")
 		try:
-			inventory_items = BundleItems.objects.filter(bundle=int(bundle_id))
+			inventory_items = BundleItems.objects.filter(bundle__id=int(bundle_id))
 		except:
 			inventory_items = None
 		
@@ -1869,57 +1887,24 @@ class TlHomeAPI(APIView):
 		except:
 			cleaning_job    = None
 
-		today_cleaning_job_count = cleaning_job.filter(Q(Q(start_at__gte=count_today_start)&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_start)&Q(end_at__lt=count_today_end))).count() 
-		week_cleaning_job_count  = cleaning_job.filter(Q(Q(start_at__gte=count_today_end-timedelta(7))&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_end-timedelta(7))&Q(end_at__lt=count_today_end))).count()
+		today_cleaning_job_count   = cleaning_job.filter(Q(Q(start_at__gte=count_today_start)&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_start)&Q(end_at__lt=count_today_end))).count() 
+		week_cleaning_job_count    = cleaning_job.filter(Q(Q(start_at__gte=count_today_end-timedelta(7))&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_end-timedelta(7))&Q(end_at__lt=count_today_end))).count()
 				
 
 		#Investigation Count
 		try:
-			investigation = Investigation.objects.filter(is_active=True,investigator=request.user)
+			investigation          = Investigation.objects.filter(is_active=True,investigator=request.user)
 		except:
-			investigation = None	
+			investigation          = None	
 
-		today_investigation_count = investigation.filter(scheduled_at__gte=count_today_start,scheduled_at__lt=count_today_end).count()
+		today_investigation_count  = investigation.filter(scheduled_at__gte=count_today_start,scheduled_at__lt=count_today_end).count()
 		week_investigation_count   = investigation.filter(scheduled_at__gte=count_today_end-timedelta(7),scheduled_at__lt=count_today_end).count()	
-
-		##To find average and total hour  team leader 
-		try:
-			cleaning_teams  = CleaningTeam.objects.filter(is_active=True,team_leader=request.user)
-		except:
-			cleaning_teams  = None
-		try:
-			follow_up_teams = FollowUpTeam.objects.filter(is_active=True,team_leader=request.user)
-		except:
-			follow_up_teams = None
-
-		today_cleaning_active_teams  = cleaning_teams.filter(Q(Q(Q(start_at__gte=count_today_start)&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_start)&Q(end_at__lt=count_today_end))))
-		today_followup_active_teams  = follow_up_teams.filter(Q(Q(Q(start_at__gte=count_today_start)&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_start)&Q(end_at__lt=count_today_end))))
-		week_cleaning_active_teams   = cleaning_teams.filter(Q( Q(Q(start_at__gte=count_today_end-timedelta(7))&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_end-timedelta(7))&Q(end_at__lt=count_today_end)) ))
-		week_followup_active_teams   = follow_up_teams.filter(Q( Q(Q(start_at__gte=count_today_end-timedelta(7))&Q(start_at__lt=count_today_end))|Q(Q(end_at__gte=count_today_end-timedelta(7))&Q(end_at__lt=count_today_end)) ))
-		
-
-		today_date            = timezone.now()
-		weekstart_date        = timezone.now().date()-timedelta(6)
-
-
-		try:
-			today_total_team_mens = today_cleaning_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+today_cleaning_active_teams.count() or 0+today_followup_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+today_followup_active_teams.count() or 0
-		except:
-			today_total_team_mens = 0
-		try:	
-			week_total_team_mens  = week_cleaning_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+week_cleaning_active_teams.count() or 0+week_followup_active_teams.aggregate(Sum('no_of_cleaners'))['no_of_cleaners__sum']+week_followup_active_teams.count() or 0
-		except:	
-			week_total_team_mens  = 0 
-        
 
 		response_dict['today_cleaning_job_count']  = today_cleaning_job_count
 		response_dict['week_cleaning_job_count']   = week_cleaning_job_count
 
 		response_dict['today_investigation_count'] = today_investigation_count
 		response_dict['week_investigation_count']  = week_investigation_count
-		
-		response_dict['today_total_team_mens']     = today_total_team_mens 
-		response_dict['week_total_team_mens']      = week_total_team_mens
 
 		response_dict['success']                   = True
 
@@ -1969,17 +1954,18 @@ class TlCleaningDetails(APIView):
 
 		return Response(response_dict, HTTP_200_OK)
 
+
 class TlFollowupCleaningDetails(APIView):  
 	permission_classes        = (IsAuthenticated,IsTeamInchargePermission)
 	authentication_classes    = (TokenAuthentication,)
 	def get(self,request,team_id): 
 		response_dict                             = {'success':False}
 
-		followupcleaning_details                  = FollowUpTeam.objects.select_related('followup_scheduler__follow_up__investigation__order__evaluation__customer','followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book__service_type','followup_scheduler__customer_address').prefetch_related(Prefetch('followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='sections')).get(id=team_id)
+		followupcleaning_details                  = FollowUpTeam.objects.select_related('followup_scheduler__follow_up__investigation__order','followup_scheduler__customer_address').prefetch_related(Prefetch('followup_scheduler__follow_up__follow_up_of_section',queryset=FollowUpSection.filter(is_active=True).prefetch_related(Prefetch('keynotesectionsfollowup',queryset=FollowUpSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='sections')).get(id=team_id)
 		response_dict['followupcleaning_details'] = FollowUpTeamAPISerializer(instance=followupcleaning_details).data
 		response_dict['success']                  = True
 
-		return Response(response_dict, HTTP_200_OK)
+		return Response(response_dict, HTTP_200_OK) 
 
 class TlFollowupCleaningCheckin(APIView):  
 	permission_classes        = (IsAuthenticated,IsTeamInchargePermission)
@@ -2050,3 +2036,29 @@ class TlFollowupCleaningCheckout(APIView):
 		response_dict['success'] = True
 		
 		return Response(response_dict, HTTP_200_OK)
+
+class CheckinChecklist(APIView):
+	permission_classes        = (IsAuthenticated,IsTeamInchargePermission)
+	authentication_classes    = (TokenAuthentication,)
+	def post(self,request):
+		response_dict            = {'success':False}
+
+		keynote_id     = request.data.get('keynote_id')
+		keynote_status = request.data.get('status')
+		keynote_type   = request.data.get('keynote_type')
+
+		if keynote_type == 'followupcleaning':
+			if keynote_status == 'true':
+				FollowUpSectionKeynote.objects.filter(id=keynote_id).update(completion_status=True)
+			else:
+				FollowUpSectionKeynote.objects.filter(id=keynote_id).update(completion_status=False)
+		else:
+			if keynote_status == 'true':
+				EvaluationSectionKeynote.objects.filter(id=keynote_id).update(completion_status=True)
+			else:
+				EvaluationSectionKeynote.objects.filter(id=keynote_id).update(completion_status=False)
+		
+		response_dict['success'] = True
+
+		return Response(response_dict, HTTP_200_OK)
+	
