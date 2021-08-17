@@ -476,8 +476,8 @@ class ShiftScheduleAPI(APIView):
 				shift2_end_at   = None
 
 			if schedule['shift3']:
-				shift3_start_at = datetime.strptime(schedule['shift3_start_at'],'%I:%M %p') 
-				shift3_end_at   = datetime.strptime(schedule['shift3_end_at'],'%I:%M %p')
+				shift3_start_at = datetime.strptime(schedule['shift3_start_at'],'%Y-%m-%d %I:%M %p') 
+				shift3_end_at   = datetime.strptime(schedule['shift3_end_at'],'%Y-%m-%d %I:%M %p')
 			else:
 				shift3_start_at = None
 				shift3_end_at   = None
