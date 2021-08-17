@@ -102,7 +102,7 @@ crossorigin="anonymous" />
     <button  onclick="exportTableToExcel()" class="export-excel-btn"> <i class="fa fa-file-excel mr-5" aria-hidden="true"></i> Export to excel</button>
 </div>
 
-  <div class="filter-column-boxes filter-columns-right">
+  <div class="filter-column-boxes filter-columns-right m-mt-10">
   
     <!-- datepicker -->
     <div class="date-wrapper"><!--date-wrapper-->
@@ -125,8 +125,8 @@ crossorigin="anonymous" />
   </div><!--filter-column-boxes filter-columns-right-->  
 </div>
 
-
-  <table id="salesTable"  cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable  common-table">
+<div style="width: 100%; overflow: auto;"> 
+  <table id="salesTable"  cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable  common-table" style="table-layout: auto !important;">
  
     <thead>
     <tr id="salesheaders">
@@ -147,6 +147,9 @@ crossorigin="anonymous" />
      
     </tfoot>
     </table>
+</div>
+
+
     <button  data-toggle="modal" data-target="#detialsModel" id="id_model_button" hidden>Done </button>
     <div class="modal fade" id="detialsModel" role="dialog">
       <div class="modal-dialog model-dailysals w-p-75" role="document">
@@ -165,7 +168,7 @@ crossorigin="anonymous" />
                 <span class="model-date-sale" id="model_date2"></span><br><br>
                 <span class="model-date-sale" id="sale_day"></span>
                </div>
-               <div class="col-md-10 text-right">
+               <div class="col-md-10 text-right m-mt-10">
               <div class="d-flex" style="float: right; margin-right: 10px;">
                 <div class="model-sale-card mr-5 ">
                   <span class="model-sale-card-head">Total Sales</span><br><br>
@@ -180,16 +183,22 @@ crossorigin="anonymous" />
              </div>
               <div class="row">
                   <div class="col-md-12 text-center" style="height: 60vh; overflow: auto;">
-                    <table id="model-table">
-                      <tr>
-                        <th style="text-align: left;">Order No</th>
-                        <th style="width: 17%; text-align: left;">Customer</th>
-                        <!-- <th style="text-align: center;">Details</th> -->
-                        <th style="text-align: left;">Payment policy</th>
-                        <th style="text-align: left;">Net amount</th>
-                        <th style="text-align: left;">Service Type</th>
-                        <th style="text-align: left;">Salesman</th>
-                      </tr>
+                    <table id="model-table" class="footable">
+                      <thead>
+                        <tr>
+                          <th style="text-align: left;">Order No</th>
+                          <th data-hide="phone,tablet" style="width: 17%; text-align: left;">Customer</th>
+                          <!-- <th style="text-align: center;">Details</th> -->
+                          <th data-hide="phone,tablet" style="text-align: left;">Payment policy</th>
+                          <th data-hide="phone,tablet" style="text-align: left;">Net amount</th>
+                          <th data-hide="phone,tablet" style="text-align: left;">Service Type</th>
+                          <th data-hide="phone,tablet" style="text-align: left;">Salesman</th>
+                        </tr>
+                      </thead>
+                      <tbody id="model-table2">
+                        
+                      </tbody>
+                     
 
                       
 

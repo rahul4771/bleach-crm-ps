@@ -38,11 +38,11 @@ function nextDay(){
         console.log(response.data.total_day_sales,"salelis")
 
         if (response.data.list.length > 0){
-            $("#model-table tr:not(:first)").remove(); 
+            $("#model-table2 tr:not(:first)").remove(); 
             $('#sales_status').html('');
 
             $.each(response.data.list,function(key,value){
-                $('#model-table').append('<tr><td>'+value.order_no+'</td><td>'+value.customer+'</td><td>'+value.payment_policy+'</td><td  style="text-align: right;">'+parseFloat(value.net_amount).toFixed(3)+'</td><td>'+value.service_type+'</td><td>'+value.salesman+'</td></tr>');
+                $('#model-table2').append('<tr><td>'+value.order_no+'</td><td>'+value.customer+'</td><td>'+value.payment_policy+'</td><td  style="text-align: right;">'+parseFloat(value.net_amount).toFixed(3)+'</td><td>'+value.service_type+'</td><td>'+value.salesman+'</td></tr>');
             })
 
             $('#total_day_sale').text(parseFloat(response.data.total_day_sales).toFixed(3));
@@ -57,12 +57,14 @@ function nextDay(){
             }
 
         }else{
-            $("#model-table tr:not(:first)").remove(); 
+            $("#model-table2 tr:not(:first)").remove(); 
             $('#total_day_sale').text('000.000');
             $('#sales_status').html('');
             $('#sales_status').append('000.000 <i class="fa fa-arrow-down" aria-hidden="true" style="color:#ec6262;"></i>');
             $('#sale_day').text(response.data.day);
         }
+        $('#model-table').footable();
+        $('#model-table').trigger('footable_redraw');
 
     })
 
@@ -86,11 +88,11 @@ function prevDay(){.0
         console.log(response.data.total_day_sales,"salelis")
 
         if (response.data.list.length > 0){
-            $("#model-table tr:not(:first)").remove(); 
+            $("#model-table2 tr:not(:first)").remove(); 
             $('#sales_status').html('');
 
             $.each(response.data.list,function(key,value){
-                $('#model-table').append('<tr><td>'+value.order_no+'</td><td>'+value.customer+'</td><td>'+value.payment_policy+'</td><td  style="text-align: right;">'+parseFloat(value.net_amount).toFixed(3)+'</td><td>'+value.service_type+'</td><td>'+value.salesman+'</td></tr>');
+                $('#model-table2').append('<tr><td>'+value.order_no+'</td><td>'+value.customer+'</td><td>'+value.payment_policy+'</td><td  style="text-align: right;">'+parseFloat(value.net_amount).toFixed(3)+'</td><td>'+value.service_type+'</td><td>'+value.salesman+'</td></tr>');
             })
 
             $('#total_day_sale').text(parseFloat(response.data.total_day_sales).toFixed(3));
@@ -105,12 +107,14 @@ function prevDay(){.0
             }
 
         }else{
-            $("#model-table tr:not(:first)").remove(); 
+            $("#model-table2 tr:not(:first)").remove(); 
             $('#total_day_sale').text('000.000');
             $('#sales_status').html('');
             $('#sales_status').append('000.000 <i class="fa fa-arrow-down" aria-hidden="true" style="color:#ec6262;"></i>');
             $('#sale_day').text(response.data.day);
         }
+        $('#model-table').footable();
+        $('#model-table').trigger('footable_redraw');
 
     })
 
@@ -136,11 +140,11 @@ function showModal(dd){
             console.log(response.data.total_day_sales,"salelis")
 
             if (response.data.list.length > 0){
-                $("#model-table tr:not(:first)").remove(); 
+                $("#model-table2 tr:not(:first)").remove(); 
                 $('#sales_status').html('');
 
                 $.each(response.data.list,function(key,value){
-                    $('#model-table').append('<tr><td>'+value.order_no+'</td><td>'+value.customer+'</td><td>'+value.payment_policy+'</td><td  style="text-align: right;">'+parseFloat(value.net_amount).toFixed(3)+'</td><td>'+value.service_type+'</td><td>'+value.salesman+'</td></tr>');
+                    $('#model-table2').append('<tr><td>'+value.order_no+'</td><td>'+value.customer+'</td><td>'+value.payment_policy+'</td><td  style="text-align: right;">'+parseFloat(value.net_amount).toFixed(3)+'</td><td>'+value.service_type+'</td><td>'+value.salesman+'</td></tr>');
                 })
 
                 $('#total_day_sale').text(parseFloat(response.data.total_day_sales).toFixed(3));
@@ -155,12 +159,14 @@ function showModal(dd){
                 }
 
             }else{
-                $("#model-table tr:not(:first)").remove(); 
+                $("#model-table2 tr:not(:first)").remove(); 
                 $('#total_day_sale').text('000.000');
                 $('#sales_status').html('');
                 $('#sales_status').append('000.000 <i class="fa fa-arrow-down" aria-hidden="true" style="color:#ec6262;"></i>');
                 $('#sale_day').text(response.data.day);
             }
+            $('#model-table').footable();
+            $('#model-table').trigger('footable_redraw');
     
         })
   }
@@ -304,6 +310,12 @@ function monthlysales(){
         }else{
             console.log("zero")
         }
+       // $('.footable').trigger('footable_resize');
+       $('#salesTable').footable();
+        $('#salesTable').trigger('footable_redraw');
+        // jQuery(function() {  
+        //     jQuery('#salesTable').footable();  
+        //    });  
         
 
          
