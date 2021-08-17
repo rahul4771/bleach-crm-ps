@@ -732,9 +732,7 @@
     </div>
   </div>
   <div class="col-md-8 "  >
-    <div  v-if="oneTimeSlotCounter()>0">
-      <% oneTimeSlotCounter() +'/'+ selectedDuration.hours/2 + 'Slots selected' %> 
-    </div>
+    
     <div class="text-right">
       <v-btn
      
@@ -762,8 +760,11 @@
    <span v-if="slotFormat[st]"> <% slotFormat[st].start_time+' - '+slotFormat[st].end_time %></span> 
     </v-chip>
   </div> 
-    <div class="mt-4" v-if="!slot_loader">
+    <div class="mt-4" v-if="!slot_loader && oneTimeSlotCounter()<1">
       Please Select  <% selectedDuration.hours/2 %> Slots
+    </div>
+    <div  v-if="oneTimeSlotCounter()>0 && !slot_loader" class="mt-2">
+      <% oneTimeSlotCounter() +'/'+ selectedDuration.hours/2 + ' Slots selected' %> 
     </div>
     <div class="row mt-2" style="margin:0 !important">
       <div class="col-md-4" v-for="(slot,sindex) in bookingonetimeslots" v-bind:key="sindex" v-if="!slot_loader">
@@ -809,7 +810,10 @@
       </v-alert>
     </div>
         <div class="d-flex justify-center" v-if="!slot_loader">
-        <v-btn color="primary" @click="submitOneTimeSlots()">
+        <v-btn color="primary" @click="submitOneTimeSlots()" v-if="oneTimeSlotCounter()==(selectedDuration.hours/2)">
+          Proceed
+        </v-btn>
+        <v-btn color="primary" v-else disabled>
           Proceed
         </v-btn>
         <v-btn color="primary" outlined class="ml-2" @click="onetime_dialog=false">
