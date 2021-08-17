@@ -1,4 +1,4 @@
-url=api
+var url=api
 const app = new Vue({
   el: "#app",
   delimiters: ["<%", "%>"],
