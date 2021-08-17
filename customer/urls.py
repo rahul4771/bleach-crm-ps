@@ -46,8 +46,8 @@ urlpatterns = [
 		url(r'^ajax/getservicesizeprice$',views.GetServiceSizePrice.as_view(),name='ajax-getservicesizeprice'),
 		url(r'^ajax/getserviceproductivity$',views.GetServiceProductivity.as_view(),name='ajax-serviceproductivity'),
 		
-		url(r'^ajax/getcleaningslotes$',views.GetCleaningSlotes.as_view(),name='ajax-cleaningslotes'),#New logic applied
-		url(r'^ajax/getmultipleservicecleaningslotes$',views.GetMultipleServiceCleaningSlotes.as_view(),name='ajax-multipleservicecleaningslotes'),#New logic applied
+		url(r'^ajax/getcleaningslotes$',views.GetCleaningSlotes.as_view(),name='ajax-cleaningslotes'),#New logic applied latest
+		url(r'^ajax/getmultipleservicecleaningslotes$',views.GetMultipleServiceCleaningSlotes.as_view(),name='ajax-multipleservicecleaningslotes'),#New logic applied latest
 		url(r'^ajax/multipleservice/multipledates/cleaningslotes/$',views.GetMultipleServiceDateCleaningSlotes.as_view(),name='ajax-multipleservicedatecleaningslotes'),#New logic applied
 		url(r'^ajax/multipleservice/multipledates/cleaningslotes/autofix/$',views.GetMultipleServiceDateCleaningSlotesAutofix.as_view(),name='ajax-multipleservicedatecleaningslotes-autofix'),#New logic applied
 		url(r'^ajax/addressotpsend$',views.AddressOtpSend,name='ajax-addressotpsend'),
