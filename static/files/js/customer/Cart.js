@@ -1953,6 +1953,13 @@ $(document).ready(function(){
       return false
     }
     },
+    oneTimeSlotCounter(){
+      var counter=0
+      for(var i in this.one_time_slots){
+        counter=counter+this.one_time_slots[i].slots.length
+      }
+      return counter
+    },
     checkOneTimeSlotStat(slot){
       var prevSlot=parseInt(slot)-1
       var nextSlot=parseInt(slot)+1
