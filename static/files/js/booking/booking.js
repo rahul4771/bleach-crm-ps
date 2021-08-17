@@ -879,7 +879,7 @@ date_group:{}
                   if(this.selected_onetime_slots[dates[i]].slots.includes("12") && this.selected_onetime_slots[moment(dates[i],'YYYY-MM-DD').add(1,'days').format('YYYY-MM-DD')].slots.includes("1"))
                   {
                     if(this.date_group[count].length>0){
-                      if((this.date_group[count].includes(this.selected_onetime_slots[moment(dates[i],'YYYY-MM-DD').add(1,'days').format('YYYY-MM-DD')]))||(this.date_group[count].includes(this.selected_onetime_slots[moment(dates[i],'YYYY-MM-DD').substract(1,'days').format('YYYY-MM-DD')])))
+                      if((this.date_group[count].includes(this.selected_onetime_slots[moment(dates[i],'YYYY-MM-DD').add(1,'days').format('YYYY-MM-DD')]))||(this.date_group[count].includes(this.selected_onetime_slots[moment(dates[i],'YYYY-MM-DD').subtract(1,'days').format('YYYY-MM-DD')])))
                       {
 
                       this.date_group[count].push(dates[i])
