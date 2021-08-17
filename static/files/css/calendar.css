@@ -802,9 +802,9 @@ width:100% !important;
       .cl-time-label{
         font-size: 10px;
       }
-      .white-wrapper {
+      /* .white-wrapper {
         padding: 24px 1px;
-    }
+    } */
   #eval-calendar-desktop{
       display: none;
   }
