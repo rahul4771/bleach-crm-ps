@@ -578,6 +578,26 @@ $(document).ready(function(){
 
 
         methods: {
+          checkSlotSelection(){
+            for(var i in  this.one_time_slots){
+              if(this.one_time_slots[i].slots.length>0){
+                return true
+              
+              }
+              
+            }
+            return false
+          },
+          resetOneTime(){
+            this.onetimerender=false
+            this.one_time_slots={}
+            this.date_group={}
+            this.one_time_slots[this.oneTimeDateSelected]={
+              slots:[]
+            }
+           
+            this.onetimerender=true
+          },
           paymentSubmit(){
             if(this.activePayment=='debit'){
               $('#payment_submit').click()
@@ -1940,7 +1960,7 @@ $(document).ready(function(){
       for(var i in this.one_time_slots){
         counter=counter+this.one_time_slots[i].slots.length
       }
-      if(counter<this.selectedDuration.slots)
+      if(counter<this.selectedDuration.slots && this.one_time_slots[this.oneTimeDateSelected].slots.length<5)
       {
       if(this.one_time_slots[this.oneTimeDateSelected].slots.length>0)
       {
@@ -1977,6 +1997,21 @@ $(document).ready(function(){
     else{
       return false
     }
+    },
+    functionEvents (date) {
+      //const [,, day] = date.split('-')
+      //if ([12, 17, 28].includes(parseInt(day, 10))) return true
+     // if ([1, 19, 22].includes(parseInt(day, 10))) return ['red', '#00f']
+     var selected_dates=[]
+     for(var i in this.one_time_slots){
+       if(this.one_time_slots[i].slots.length>0){
+        selected_dates.push(i)
+       }
+     }
+     if(selected_dates.includes(moment(date,'YYYY-MM-DD').subtract(1,"days").format('YYYY-MM-DD'))){
+      return true
+     }
+      return false
     },
     oneTimeSlotCounter(){
       var counter=0
@@ -2368,6 +2403,7 @@ $(document).ready(function(){
           console.log(error);
         });
     },
+    
     getMultipleSlots(){
       this.slot_loader=true
       this.onetimeslots=[]
@@ -3861,7 +3897,19 @@ $(document).ready(function(){
             console.log(total_cleaners, "total_cleaners");
             this.setDuration(converted_hours, total_cleaners);
           }
+          this.sortDuration()
   })
+    },
+    sortDuration(){
+      if(this.duration[0].hours<this.duration[1].hours){
+       this.selectDuration(this.duration[0])
+      }
+      else{
+        var temp=this.duration[0]
+        this.duration[0]=this.duration[1]
+        this.duration[1]=temp
+        this.selectDuration(this.duration[0])
+      }
     },
     durationcalculation() {
       

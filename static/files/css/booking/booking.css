@@ -439,6 +439,16 @@ margin: auto;
 .item-list{
    
 }
+.v-date-picker-table__events{
+    height:4px !important;
+}
+.round-indicator{
+    height:10px;
+    width:10px;
+    border-radius: 10px;
+    background-color: #2e4e85;
+    margin:6px;
+}
 .duration-active{
     border: 1px solid #2e4e85;
     border-radius: 5px;

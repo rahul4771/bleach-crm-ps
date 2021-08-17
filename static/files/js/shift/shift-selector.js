@@ -643,13 +643,19 @@ function addToShift3(){
             if(lvday.length<2){
                 lvday='0'+lvday;
             }
+            var start_date_time=moment(selectedDates[i].dates[j],'DD-MM-YYYY').format('DD-MM-YYYY')+' '+app.time_slots[start].start_time
+            var end_date_time=moment(selectedDates[i].dates[j],'DD-MM-YYYY').format('DD-MM-YYYY')+' '+app.time_slots[end].end_time
+             if(app.time_slots[end].end_time=='12:00 AM'){
+                 var new_date=moment(selectedDates[i].dates[j],'DD-MM-YYYY').add(1,'days').format('DD-MM-YYYY')
+                 end_date_time=new_date+' '+app.time_slots[end].end_time
+             }
             leaveSelected['shift_date']=lvyear+'-'+lvmonth+'-'+lvday;
             leaveSelected['staff']=resourceList[i].id;
             leaveSelected['shift1']=false
             leaveSelected['shift2']=false
             leaveSelected['shift3']=true
-            leaveSelected['shift3_start_at']=app.time_slots[start].start_time
-            leaveSelected['shift3_end_at']=app.time_slots[end].end_time
+            leaveSelected['shift3_start_at']=start_date_time
+            leaveSelected['shift3_end_at']=end_date_time
             shiftList.push(leaveSelected);
            
         }

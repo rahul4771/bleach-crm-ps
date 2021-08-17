@@ -1,4 +1,5 @@
 $('.lv-dropdown').click(function () {
+   
     $(this).attr('tabindex', 1).focus();
     $(this).toggleClass('active');
     $(this).find('.lv-dropdown-menu').slideToggle(300);

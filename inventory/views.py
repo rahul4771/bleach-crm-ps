@@ -380,6 +380,9 @@ class InventorySupplier(IsInventoryAdmin,View):
             # category = Category.objects.get(id=int(category_id))
             name     = request.POST.get('supplier_name')
             contact = request.POST.get('contact')
+            other_contact = request.POST.get('other_contact')
+            address = request.POST.get('address')
+            terms = request.POST.get('terms')
             status     = request.POST.get('status')
 
             suppliers    = Supplier.objects.all()
@@ -392,8 +395,34 @@ class InventorySupplier(IsInventoryAdmin,View):
                 new_supplier_id = 'SUP9001'
 
 
-            Supplier.objects.create(supplier_name=name,supplier_id=new_supplier_id,contact=contact,status=status)
+            Supplier.objects.create(supplier_name=name,supplier_id=new_supplier_id,contact=contact,address=address,terms=terms,status=status)
             messages.success(request,"Supplier Added Successfully !")
+
+        if action == 'edit_supplier':
+            supplier_id = request.POST.get('supplier_edit_id')
+            name     = request.POST.get('supplier_name')
+            contact = request.POST.get('contact')
+            other_contact = request.POST.get('other_contact')
+            address = request.POST.get('address')
+            terms = request.POST.get('terms')
+            status     = request.POST.get('status')
+
+            supplier = Supplier.objects.get(id=int(supplier_id))
+
+            supplier.supplier_name= name
+            supplier.contact = contact
+            supplier.other_contact = other_contact
+            supplier.address = address
+            supplier.terms = terms
+            supplier.status = status
+
+            supplier.save()
+            messages.success(request,"Supplier Updated Successfully !")
+
+        if action == 'delete_supplier':
+            supplier_id = request.POST.get('supplier_id_delete')
+            supplier = Supplier.objects.get(id=int(supplier_id)).delete()
+            messages.success(request,"Supplier Deleted Successfully !")
 
         return redirect('inventory:inventory-supplier')
 
