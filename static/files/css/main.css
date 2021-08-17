@@ -1526,3 +1526,9 @@ text-align: center;
 .model-sale-card-head{
   font-size: 16px;
 }
+
+@media only screen and (max-width: 600px) {
+  .w-p-75 {
+    width: 90% !important;
+}
+}
