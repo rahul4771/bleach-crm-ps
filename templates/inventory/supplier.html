@@ -379,11 +379,29 @@
             <hr>
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Item Name</div>
+                    <div class="model-input-name">Item</div>
 
-                    <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="attributes">
-                      </div>
+                    <select class="minimal" name="item" id="id_item" onchange="getunits()" required>
+                        <option value="">--Select Item--</option>
+                        {% for item in items %}
+                        <option value="{{item.id}}">{{item.name}}</option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Units</div>
+
+                    <select id="multiple-checkboxes" multiple="multiple" name="units">
+                       
+                    </select>
+
+                    <!-- <select  multiple class="chosen-select" name="test" class="minimal" id="item_unit_id">
+                       
+                    </select> -->
                 </div>
 
             </div>
@@ -407,30 +425,8 @@
                 </div>
 
             </div>
-            <div class="row mt-20">
-                <div class="col-md-12 ">
-                    <div class="model-input-name">Price</div>
-
-                    <select data-placeholder="Begin typing a name " multiple class="chosen-select" name="test" class="minimal">
-                        <option value=""></option>
-                        <option>American Black Bear</option>
-                        <option>Asiatic Black Bear</option>
-                        <option>Brown Bear</option>
-                        <option>Giant Panda</option>
-                        <option>Sloth Bear</option>
-                        <option>Sun Bear</option>
-                        <option>Polar Bear</option>
-                        <option>Spectacled Bear</option>
-                      </select>
-                </div>
-
-            </div>
-           
-    
             
-
-
-          
+  
         </div>
         <div class="inv-drawer-footer">
             <button class="sent-button" >Submit</button>
@@ -509,8 +505,15 @@
 {% endblock %}
 
 {% block javascript %}
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
 <script>
+
+$(document).ready(function() {
+        $('#multiple-checkboxes').multiselect({
+          includeSelectAllOption: true,
+        });
+    });
+
 function openNavAddBundle(d) {
     if(d == 'add'){
             $("#supHead").text("Add Supplier");
@@ -557,6 +560,42 @@ function openNavAddBundle(d) {
         document.getElementById("addItem").style.width = "0";
     }
 
+    async function getunits(){
+        //$('#item_bundle_id').val(item_id); //adding value to hidden input for adding value
+        var item_id = $('#id_item').val();
+        console.log(item_id,"itmid")
+
+         var result = await _get('api/inventory-item-units/?item_id='+item_id);
+         
+         if(result.status == 200){
+            if (result.data.inventory_item_unit.length > 0){
+                //$("#item_unit_id").remove(); 
+               
+                $.each(result.data.inventory_item_unit,function(key,value){
+                    console.log(key,value.unit_code,"rome")
+                        $('#multiple-checkboxes').append('<option value="'+value.id+'" >'+value.unit_code+'</option>').multiselect("destroy").multiselect();
+                })
+                 $("#multiple-checkboxes").multiselect('destroy');
+                 $("#multiple-checkboxes").multiselect({
+                includeSelectAllOption: true,
+                });
+                //$('#item_unit_id').multiselect('refresh');
+                // $('#Select1').multiselect( 'refresh' );
+                 
+            //    $('.multiselect').multiselect('destroy');
+            // $('.multiselect').multiselect();
+         
+                
+            }else{
+                console.log("no units")
+                //$("#table2 tr:not(:first)").remove(); 
+            }
+         }else{
+             console.log("no units")
+            //showNotification('Something went wrong','error')
+         }
+    }
+
     //edit supplier
     $('.edit_supplier').click(function(){
         //console.log($(this).data('categoryid'),$(this).data('categoryname'),"editc")
@@ -570,6 +609,12 @@ function openNavAddBundle(d) {
         document.getElementById("status_supplier").value = $(this).data('supplierstatus');
 
 
+    })
+
+    //delete supplier
+    $('.delete_supplier').click(function(){
+        //console.log($(this).data('categoryid'),$(this).data('categoryname'),"editc")
+        $('#id_supplier_delete').val($(this).data('supplierid'));
     })
 </script>
 {% endblock %}

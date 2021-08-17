@@ -425,7 +425,7 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Item</div>
 
-                    <select class="minimal" name="attribute_category" id="id_item" onchange="getunits()" required>
+                    <select class="minimal" name="item" id="id_item" onchange="getunits()" required>
                         <option value="">--Select Item--</option>
                         {% for item in items %}
                         <option value="{{item.id}}">{{item.name}}</option>
@@ -439,7 +439,7 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Units</div>
 
-                    <select id="multiple-checkboxes" multiple="multiple">
+                    <select id="multiple-checkboxes" multiple="multiple" name="units">
                        
                     </select>
 
@@ -472,7 +472,7 @@
              
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button" type="submit" >Submit</button>
+            <button class="sent-button submitbtn" >Submit</button>
                         <button data-dismiss="modal" onclick="closeNavAddItem()" class="view-button">Cancel</button>
         </div>
         </form>
@@ -542,6 +542,34 @@ function openNavAddBundle(d) {
             document.getElementById("addItem").style.width = "30%";
         }  
     }
+    
+    function openNavEditValue(d) {
+        $("#valueHead").text("Edit Value");
+        $(".value-form-btn").text("Update");
+
+        $('#value_action').val('edit_value');
+        $('#id_edit_value').val($(d).data('valueid'));
+        $('#value_name_id').val($(d).data('valuename'));
+
+        if ($(d).data('valuestatus') == true){
+            document.getElementById("value_status_id").value = 'True';
+        }
+        else{
+            document.getElementById("value_status_id").value = 'False';
+        }
+      
+
+        console.log(d)
+        if(screen.width<= 600){
+            document.getElementById("addValue").style.width = "100%";
+        }else if(screen.width<= 720){
+            document.getElementById("addValue").style.width = "50%";
+        }
+        else{
+            document.getElementById("addValue").style.width = "30%";
+        }  
+    }
+    
     function closeNavAddItem() {
         document.getElementById("addItem").style.width = "0";
     }
@@ -576,24 +604,25 @@ function openNavAddBundle(d) {
     async function getitems(bundle_id){
         $('#item_bundle_id').val(bundle_id); //adding value to hidden input for adding value
 
-         var result = await _get('api/inventory-items/?bundle_id='+bundle_id);
+         var result = await _get('api/inventory-bundle-items/?bundle_id='+bundle_id);
          
          if(result.status == 200){
             if (result.data.inventory_item.length > 0){
                 $("#table2 tr:not(:first)").remove(); 
-                var edit = "edit";
+                
                 $.each(result.data.inventory_item,function(key,value){
-                        $('#table2').append('<tr><td>'+value.name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavEditValue(this)" data-valueid='+value.id+' data-valuename='+value.name+' data-valuestatus='+value.status+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn value_delete" onclick="deleteValue('+value.id+')" data-valueid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
+                    console.log(value.bundle_item,value.id,"eyed")
+                        $('#table2').append('<tr><td>'+value.id+'</td><td>'+value.item_count+'</td><td>'+value.item_price+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavEditValue(this)" data-valueid='+value.id+' data-valuename='+value.name+' data-valuestatus='+value.status+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn value_delete" onclick="deleteValue('+value.id+')" data-valueid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
                 })
             }else{
                 $("#table2 tr:not(:first)").remove(); 
             }
          }else{
-            showNotification('Something went wrong','error')
+             console.log("no units")
+            //showNotification('Something went wrong','error')
          }
     }
     
-
     async function getunits(){
         //$('#item_bundle_id').val(item_id); //adding value to hidden input for adding value
         var item_id = $('#id_item').val();
@@ -607,7 +636,7 @@ function openNavAddBundle(d) {
                
                 $.each(result.data.inventory_item_unit,function(key,value){
                     console.log(key,value.unit_code,"rome")
-                        $('#multiple-checkboxes').append('<option value="'+value.id+'">'+value.unit_code+'</option>').multiselect("destroy").multiselect();
+                        $('#multiple-checkboxes').append('<option value="'+value.id+'" >'+value.unit_code+'</option>').multiselect("destroy").multiselect();
                 })
                  $("#multiple-checkboxes").multiselect('destroy');
                  $("#multiple-checkboxes").multiselect({
@@ -625,7 +654,8 @@ function openNavAddBundle(d) {
                 //$("#table2 tr:not(:first)").remove(); 
             }
          }else{
-            showNotification('Something went wrong','error')
+             console.log("no units")
+            //showNotification('Something went wrong','error')
          }
     }
 </script>

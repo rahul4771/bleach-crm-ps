@@ -950,6 +950,386 @@ class DailySalesAPI(APIView):
 		return Response(response_dict,HTTP_200_OK)
 
 
+class DailySalesAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+		print("heers")
+		response_dict = {'success':False}
+
+		today = datetime.now()
+
+		sales_month = request.GET.get('sales_month')
+		data_type = request.GET.get('datatype')
+		print(sales_month,data_type,"smonthlist")
+
+		month,year = sales_month.split("/")
+		monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
+		monthdate2 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)-relativedelta(days=1)
+		daterange  = pd.date_range(monthdate1, monthdate2)
+
+		full_month_name = monthdate1.strftime("%B")
+		print(daterange,"dr")
+		
+		#adding evaluator names to list for table header
+		evaluators = UserProfile.objects.filter(is_active=True,user_type='EVALUATOR')
+		evaluators_list = []
+		for evaluator in evaluators:
+			evaluators_list.append(str(evaluator.name)+str(evaluator.id))
+
+		saleslist = []
+		evaluator_list_monthly = []
+
+		# generalcleaning_month = 0
+		# upholsterycleaning_month = 0
+		# deepcleaning_month = 0
+		# carpetcleaning_month = 0
+		# kitchencleaning_month = 0
+		# sterilization_month = 0
+		cleaning_amount_month = 0
+
+		detailed_cleaning_month = 0
+		special_care_month = 0
+		kitchen_cleaning_month = 0
+		infection_control_month = 0
+
+		todate = datetime.now().replace(hour=0,minute=0,second=0,microsecond=0)
+
+		for date in daterange:
+			start_date_day = date
+			end_date_day   = date+timedelta(1)-timedelta(minutes=1)
+
+			print(date.strftime("%A"),"dt")
+			# generalcleaning = 0
+			# upholsterycleaning = 0
+			# deepcleaning = 0
+			# carpetcleaning = 0
+			# kitchencleaning = 0
+			# sterilization = 0
+			cleaning_amount = 0
+			evaluator_amount = 0
+			others = 0
+
+			detailed_cleaning = 0
+			special_care = 0
+			kitchen_cleaning = 0
+			infection_control = 0
+
+			list_item = {}
+		
+			for evaluator in evaluators:
+				eval_dict = {""+str(evaluator.name)+str(evaluator.id)+"":0}
+				list_item.update(eval_dict)
+
+			print(list_item,"elist")
+			
+			# if date < todate:
+			orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q(Q(work_status = 'CLEANING_TEAM_ASSIGNED') | Q(work_status = 'CLEANING_IN_PROGRESS') | Q(work_status='CLEANING_FULFILLED'))).exclude( Q(Q(Q(order__evaluation__payment_method='PREPAID')&~Q(order__payment_status='COMPLETED'))|Q(Q(order__evaluation__payment_method='BREAKDOWN')&Q(order__preamount_paid=0))) ).values_list('order__order_no','order_scheduler_book__estimated_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id','order_scheduler_book__evaluation_details__evaluation__id','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount','order_scheduler_book__evaluation_details__evaluator__id','order_scheduler_book__evaluation_details__evaluation__discount').order_by('end_at')
+			# else:
+			# 	orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).exclude( Q(Q(Q(order__evaluation__payment_method='PREPAID')&~Q(order__payment_status='COMPLETED'))|Q(Q(order__evaluation__payment_method='BREAKDOWN')&Q(order__preamount_paid=0))) ).values_list('order__order_no','order_scheduler_book__estimated_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id','order_scheduler_book__evaluation_details__evaluation__id','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount','order_scheduler_book__evaluation_details__evaluator__id','order_scheduler_book__evaluation_details__evaluation__discount').order_by('end_at')
+
+			print(orderschedules.count(),"countt")
+			
+			found = set()
+			schedules_list = []
+
+			for schedule in orderschedules:
+
+				#if schedule[4] not in found:
+				schedules_list.append(schedule)
+				#found.add(schedule[4])
+
+			for schedule in schedules_list:
+
+				#schedule count of order
+				order_schedule_count = OrderScheduler.objects.filter(order__order_no=schedule[0]).count()
+
+				#schedule count of evaluation book
+				schedule_count = OrderScheduler.objects.filter(order__order_no=schedule[0],order_scheduler_book__id=schedule[4]).count()
+
+				order_amount     = schedule[1]
+				cleaning_amount += float(order_amount/schedule_count)
+				
+				#fine,promocode, write off calc
+				if schedule[6] > 0:
+					cleaning_amount -= float(schedule[6]/order_schedule_count)
+				if schedule[7] > 0:
+					cleaning_amount -= float(schedule[7]/order_schedule_count)
+				if schedule[8] > 0:
+					cleaning_amount += float(schedule[8]/order_schedule_count)
+				if schedule[10] > 0:
+					cleaning_amount -= float(schedule[10]/order_schedule_count)
+
+				#adding amount to evaluators dict
+				if schedule[9] != None:
+					for x, y in list_item.items():
+						evaluator_id = int(re.search(r'\d+', x).group(0))
+						print(evaluator_id,"loll")
+						if int(evaluator_id) == int(schedule[9]):
+							print("evade",evaluator_id)
+							evaluator_amount += float(order_amount/schedule_count)
+
+							#fine,promocode, write off calc
+							if schedule[6] > 0:
+								evaluator_amount -= float(schedule[6]/order_schedule_count)
+							if schedule[7] > 0:
+								evaluator_amount -= float(schedule[7]/order_schedule_count)
+							if schedule[8] > 0:
+								evaluator_amount += float(schedule[8]/order_schedule_count)
+							if schedule[10] > 0:
+								evaluator_amount -= float(schedule[10]/order_schedule_count)
+							
+
+							eval_dict = {""+x+"":evaluator_amount}
+							print(date,eval_dict,"evdict")
+					list_item.update(eval_dict)
+				else:
+					others += float(order_amount/schedule_count)
+
+					#fine,promocode, write off calc
+					if schedule[6] > 0:
+						others -= float(schedule[6]/order_schedule_count)
+					if schedule[7] > 0:
+						others -= float(schedule[7]/order_schedule_count)
+					if schedule[8] > 0:
+						others += float(schedule[8]/order_schedule_count)	
+					if schedule[10] > 0:
+						others -= float(schedule[10]/order_schedule_count)
+					
+
+				if date == '05-07-2021' and schedule[0] == 'BLC20210610161':
+					print(schedule[2],schedule[0], float(order_amount/schedule_count)-float(schedule[6]/order_schedule_count)-float(schedule[7]/order_schedule_count)+float(schedule[8]/order_schedule_count)-float(schedule[10]/order_schedule_count),"service")
+				
+				#cleaning type wise amount addition
+				if schedule[2] == 'General Cleaning':
+					detailed_cleaning += float(order_amount/schedule_count)
+
+					if schedule[6] > 0:
+						detailed_cleaning -= float(schedule[6]/order_schedule_count)
+					if schedule[7] > 0:
+						detailed_cleaning -= float(schedule[7]/order_schedule_count)
+					if schedule[8] > 0:
+						detailed_cleaning += float(schedule[8]/order_schedule_count)
+					if schedule[10] > 0:
+						detailed_cleaning -= float(schedule[10]/order_schedule_count)
+					
+
+				if schedule[2] == 'Deep Cleaning':
+					detailed_cleaning += float(order_amount/schedule_count)
+
+					if schedule[6] > 0:
+						detailed_cleaning -= float(schedule[6]/order_schedule_count)
+					if schedule[7] > 0:
+						detailed_cleaning -= float(schedule[7]/order_schedule_count)
+					if schedule[8] > 0:
+						detailed_cleaning += float(schedule[8]/order_schedule_count)
+					if schedule[10] > 0:
+						detailed_cleaning -= float(schedule[10]/order_schedule_count)
+					
+
+				if schedule[2] == 'Facade Cleaning':
+					detailed_cleaning += float(order_amount/schedule_count)
+
+					if schedule[6] > 0:
+						detailed_cleaning -= float(schedule[6]/order_schedule_count)
+					if schedule[7] > 0:
+						detailed_cleaning -= float(schedule[7]/order_schedule_count)
+					if schedule[8] > 0:
+						detailed_cleaning += float(schedule[8]/order_schedule_count)
+					if schedule[10] > 0:
+						detailed_cleaning -= float(schedule[10]/order_schedule_count)
+					
+
+				if schedule[2] == 'Storage Area':
+					detailed_cleaning += float(order_amount/schedule_count)
+
+					if schedule[6] > 0:
+						detailed_cleaning -= float(schedule[6]/order_schedule_count)
+					if schedule[7] > 0:
+						detailed_cleaning -= float(schedule[7]/order_schedule_count)
+					if schedule[8] > 0:
+						detailed_cleaning += float(schedule[8]/order_schedule_count)
+					if schedule[10] > 0:
+						detailed_cleaning -= float(schedule[10]/order_schedule_count)
+					
+
+				if schedule[2] == 'Car Parking Umbrella':
+					detailed_cleaning += float(order_amount/schedule_count)
+
+					if schedule[6] > 0:
+						detailed_cleaning -= float(schedule[6]/order_schedule_count)
+					if schedule[7] > 0:
+						detailed_cleaning -= float(schedule[7]/order_schedule_count)
+					if schedule[8] > 0:
+						detailed_cleaning += float(schedule[8]/order_schedule_count)
+					if schedule[10] > 0:
+						detailed_cleaning -= float(schedule[10]/order_schedule_count)
+					
+
+				if schedule[2] == 'Window Cleaning':
+					detailed_cleaning += float(order_amount/schedule_count)
+
+					if schedule[6] > 0:
+						detailed_cleaning -= float(schedule[6]/order_schedule_count)
+					if schedule[7] > 0:
+						detailed_cleaning -= float(schedule[7]/order_schedule_count)
+					if schedule[8] > 0:
+						detailed_cleaning += float(schedule[8]/order_schedule_count)
+					if schedule[10] > 0:
+						detailed_cleaning -= float(schedule[10]/order_schedule_count)
+					
+
+				if schedule[2] == 'Outdoor Cleaning':
+					detailed_cleaning += float(order_amount/schedule_count)
+
+					if schedule[6] > 0:
+						detailed_cleaning -= float(schedule[6]/order_schedule_count)
+					if schedule[7] > 0:
+						detailed_cleaning -= float(schedule[7]/order_schedule_count)
+					if schedule[8] > 0:
+						detailed_cleaning += float(schedule[8]/order_schedule_count)
+					if schedule[10] > 0:
+						detailed_cleaning -= float(schedule[10]/order_schedule_count)
+					
+
+				if schedule[2] == 'Upholstery Cleaning':
+					special_care += float(order_amount/schedule_count)
+
+					if schedule[6] > 0:
+						special_care -= float(schedule[6]/order_schedule_count)
+					if schedule[7] > 0:
+						special_care -= float(schedule[7]/order_schedule_count)
+					if schedule[8] > 0:
+						special_care += float(schedule[8]/order_schedule_count)
+					if schedule[10] > 0:
+						special_care -= float(schedule[10]/order_schedule_count)
+					
+
+				if schedule[2] == 'Mattress Cleaning':
+					special_care += float(order_amount/schedule_count)
+
+					if schedule[6] > 0:
+						special_care -= float(schedule[6]/order_schedule_count)
+					if schedule[7] > 0:
+						special_care -= float(schedule[7]/order_schedule_count)
+					if schedule[8] > 0:
+						special_care += float(schedule[8]/order_schedule_count)
+					if schedule[10] > 0:
+						special_care -= float(schedule[10]/order_schedule_count)
+					
+
+				if schedule[2] == 'Carpet Cleaning':
+					special_care += float(order_amount/schedule_count)
+
+					if schedule[6] > 0:
+						special_care -= float(schedule[6]/order_schedule_count)
+					if schedule[7] > 0:
+						special_care -= float(schedule[7]/order_schedule_count)
+					if schedule[8] > 0:
+						special_care += float(schedule[8]/order_schedule_count)
+					if schedule[10] > 0:
+						special_care -= float(schedule[10]/order_schedule_count)
+					
+
+				
+
+				# if schedule[2] == 'Upholstery Cleaning':
+				# 	upholsterycleaning += float(order_amount/schedule_count)
+
+				# 	if schedule[6] != None:
+				# 		upholsterycleaning -= float(schedule[6]/schedule_count)
+				# 	if schedule[7] != None:
+				# 		upholsterycleaning -= float(schedule[7]/schedule_count)
+				# 	if schedule[8] != None:
+				# 		upholsterycleaning += float(schedule[8]/schedule_count)
+
+				# if schedule[2] == 'Deep Cleaning':
+				# 	deepcleaning += float(order_amount/schedule_count)
+
+				# 	if schedule[6] != None:
+				# 		deepcleaning -= float(schedule[6]/schedule_count)
+				# 	if schedule[7] != None:
+				# 		deepcleaning -= float(schedule[7]/schedule_count)
+				# 	if schedule[8] != None:
+				# 		deepcleaning += float(schedule[8]/schedule_count)
+
+				if schedule[2] == 'Kitchen Cleaning':
+					kitchen_cleaning += float(order_amount/schedule_count)
+
+					if schedule[6] > 0:
+						kitchen_cleaning -= float(schedule[6]/order_schedule_count)
+					if schedule[7] > 0:
+						kitchen_cleaning -= float(schedule[7]/order_schedule_count)
+					if schedule[8] > 0:
+						kitchen_cleaning += float(schedule[8]/order_schedule_count)
+					if schedule[10] > 0:
+						kitchen_cleaning -= float(schedule[10]/order_schedule_count)
+					
+
+				# if schedule[2] == 'Carpet Cleaning':
+				# 	carpetcleaning += float(order_amount/schedule_count)
+
+				# 	if schedule[6] != None:
+				# 		carpetcleaning -= float(schedule[6]/schedule_count)
+				# 	if schedule[7] != None:
+				# 		carpetcleaning -= float(schedule[7]/schedule_count)
+				# 	if schedule[8] != None:
+				# 		carpetcleaning += float(schedule[8]/schedule_count)
+				
+				if schedule[2] == 'Sterilization':
+					infection_control += float(order_amount/schedule_count)
+
+					if schedule[6] > 0:
+						infection_control -= float(schedule[6]/order_schedule_count)
+					if schedule[7] > 0:
+						infection_control -= float(schedule[7]/order_schedule_count)
+					if schedule[8] > 0:
+						infection_control += float(schedule[8]/order_schedule_count)
+					if schedule[10] > 0:
+						infection_control -= float(schedule[10]/order_schedule_count)
+					
+			
+			
+			if data_type == 'service':
+				list_item = {
+					'Date': str(date.date()),
+					'Day': date.strftime("%A"),
+					'DetailedCleaning':detailed_cleaning,
+					'SpecialCare':special_care,
+					'KitchenCleaning':kitchen_cleaning,
+					'InfectionControl':infection_control,
+					# 'GeneralCleaning':generalcleaning,
+					# 'UpholsteryCleaning':upholsterycleaning,
+					# 'KitchenCleaning':kitchencleaning,
+					# 'CarpetCleaning':carpetcleaning,
+					# 'DeepCleaning':deepcleaning,
+					# 'Sterilization':sterilization,
+					'Total':cleaning_amount
+				}
+			else:
+				evaluator_list_monthly.append(list_item)
+				list_item.update( {
+					'Date': str(date.date()),
+					'Day': date.strftime("%A"),
+					'others':others,
+					'Total':cleaning_amount
+				} )
+
+			saleslist.append(list_item) #cleaningtype list append
+
+			detailed_cleaning_month += detailed_cleaning
+			special_care_month += special_care
+			kitchen_cleaning_month += kitchen_cleaning
+			infection_control_month += infection_control
+			# carpetcleaning_month += carpetcleaning
+			# sterilization_month += sterilization
+			cleaning_amount_month += cleaning_amount
+
+				
+		response_dict = {'success':True,'datatype':data_type,'list':saleslist,'list2':evaluators_list,'list3':evaluator_list_monthly, 'todate':str(today.date()),'month_name':full_month_name,'detailed_cleaning_month':detailed_cleaning_month,'special_care_month':special_care_month,'kitchen_cleaning_month':kitchen_cleaning_month,'infection_control_month':infection_control_month,'cleaning_amount_month':cleaning_amount_month}
+
+
 class DailySalesChartAPI(APIView):
 	permission_classes  	=   (AllowAny,)
 	authentication_classes  = ()
