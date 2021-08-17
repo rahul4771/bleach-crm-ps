@@ -203,6 +203,12 @@ function monthlysales(){
         }else{
             console.log("zero")
         }
+       // $('.footable').trigger('footable_resize');
+       $('#salesTable').footable();
+        $('#salesTable').trigger('footable_redraw');
+        // jQuery(function() {  
+        //     jQuery('#salesTable').footable();  
+        //    });  
         
 
          
