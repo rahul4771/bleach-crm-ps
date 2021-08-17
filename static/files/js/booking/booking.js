@@ -1023,7 +1023,7 @@ date_group:{}
         },
         changeVisitDate(){
           this.slot_msg=false
-        if(this.selected_double_slots.length==selectedDuration.hours/2)
+        if(this.selected_double_slots.length==this.selectedDuration.hours/2)
         {
           var day=moment(this.dateSelected,'YYYY-MM-DD') 
             var dayname=day.format('ddd')
