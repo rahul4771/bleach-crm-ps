@@ -22,35 +22,36 @@ $('document').ready(function(){
 })
 
 function nextDay(){
-    var a = $('#model_date').text().split('/');
+    var a = $('#model_date').text().split('-');
     console.log(a);
       
-       var tmpSelectedDay   = new Date(a[1]+'/'+ a[0]+'/' +a[2]);
+       var tmpSelectedDay   = new Date(a[1]+'/'+ a[2]+'/' +a[0]);
      console.log(tmpSelectedDay)
     tmpSelectedDay.setDate(tmpSelectedDay.getDate() + 1);
-    var d = moment(tmpSelectedDay).format('DD-MM-YYYY')
+    var d = moment(tmpSelectedDay).format('YYYY-MM-DD')
     $('#model_date').text(d);
     $('#model_date2').text(d);
 }
 
 function prevDay(){.0
-    var a = $('#model_date').text().split('/');
+    var a = $('#model_date').text().split('-');
     console.log(a);
       
-       var tmpSelectedDay   = new Date(a[1]+'/'+ a[0]+'/' +a[2]);
+       var tmpSelectedDay   = new Date(a[1]+'/'+ a[2]+'/' +a[0]);
      console.log(tmpSelectedDay)
     tmpSelectedDay.setDate(tmpSelectedDay.getDate() - 1);
-    var d = moment(tmpSelectedDay).format('DD-MM-YYYY')
+    var d = moment(tmpSelectedDay).format('YYYY-MM-DD')
     $('#model_date').text(d);
     $('#model_date2').text(d);
 }
 
-function showModal(salesdate){
-console.log(salesdate,"saleda")
-    //var tmpSelectedDay     = salesdate
-  var d =  salesdate.toString()    //moment(tmpSelectedDay).format('DD-MM-YYYY')
-  $('#model_date').text(d);
-  $('#model_date2').text(d);
+function showModal(dd){
+// console.log(d,"saleda")
+// console.log($(d).attr("data-d"))
+    var tmpSelectedDay     = $(dd).attr("data-d")
+    var d =  tmpSelectedDay.toString()    //moment(tmpSelectedDay).format('DD-MM-YYYY')
+    $('#model_date').text(d);
+    $('#model_date2').text(d);
 
     console.log(d)
     console.log( $('#id_model_button'));
@@ -138,12 +139,13 @@ function monthlysales(){
 
             //checking service or evauator mode
             if (response.data.datatype == 'service'){
+                    var salesdate = String(value.Date);
                 if (response.data.todate == value.Date){
-                    $('#dailysaleslist').append('<tr class="sales_rows" bgcolor="#CCFFFF"><td>'+value.Date+'</td><td>'+value.Day+'</td><td class="generalclean align-right">'+parseFloat(value.DetailedCleaning).toFixed(3)+'</td><td class="upholsteryclean align-right">'+parseFloat(value.SpecialCare).toFixed(3)+'</td><td class="kitchenclean align-right">'+parseFloat(value.KitchenCleaning).toFixed(3)+'</td><td class="sterilizationclean align-right">'+parseFloat(value.InfectionControl).toFixed(3)+'</td><td class="totalclean align-right">'+parseFloat(value.Total).toFixed(3)+'</td><td class="salestatus align-right">'+salestatus+'</td> <td onclick="showModal('+value.Date+')" class="align-center pointer" style="color:#2e4e85;">Daily Breakdown</td> </tr>')
+                    $('#dailysaleslist').append('<tr class="sales_rows" bgcolor="#CCFFFF"><td>'+value.Date+'</td><td>'+value.Day+'</td><td class="generalclean align-right">'+parseFloat(value.DetailedCleaning).toFixed(3)+'</td><td class="upholsteryclean align-right">'+parseFloat(value.SpecialCare).toFixed(3)+'</td><td class="kitchenclean align-right">'+parseFloat(value.KitchenCleaning).toFixed(3)+'</td><td class="sterilizationclean align-right">'+parseFloat(value.InfectionControl).toFixed(3)+'</td><td class="totalclean align-right">'+parseFloat(value.Total).toFixed(3)+'</td><td class="salestatus align-right">'+salestatus+'</td> <td data-d="'+salesdate+'" onclick="showModal(this)" class="align-center pointer" style="color:#2e4e85;">Daily Breakdown</td> </tr>')
                 }else{
-                    var salesdate = value.Date;
+                    var salesdate = String(value.Date);
                     console.log(salesdate,"fpr")
-                    $('#dailysaleslist').append('<tr class="sales_rows"><td>'+value.Date+'</td><td>'+value.Day+'</td><td class="generalclean align-right">'+parseFloat(value.DetailedCleaning).toFixed(3)+'</td><td class="upholsteryclean align-right">'+parseFloat(value.SpecialCare).toFixed(3)+'</td><td class="kitchenclean align-right">'+parseFloat(value.KitchenCleaning).toFixed(3)+'</td><td class="sterilizationclean align-right">'+parseFloat(value.InfectionControl).toFixed(3)+'</td><td class="totalclean align-right">'+parseFloat(value.Total).toFixed(3)+'</td><td class="salestatus align-right">'+salestatus+'</td><td onclick="showModal('+salesdate+')" class="align-center pointer" style="color:#2e4e85;">Daily Breakdown</td></tr>')
+                    $('#dailysaleslist').append('<tr class="sales_rows"><td>'+value.Date+'</td><td>'+value.Day+'</td><td class="generalclean align-right">'+parseFloat(value.DetailedCleaning).toFixed(3)+'</td><td class="upholsteryclean align-right">'+parseFloat(value.SpecialCare).toFixed(3)+'</td><td class="kitchenclean align-right">'+parseFloat(value.KitchenCleaning).toFixed(3)+'</td><td class="sterilizationclean align-right">'+parseFloat(value.InfectionControl).toFixed(3)+'</td><td class="totalclean align-right">'+parseFloat(value.Total).toFixed(3)+'</td><td class="salestatus align-right">'+salestatus+'</td><td data-d="'+salesdate+'" onclick="showModal(this)" class="align-center pointer" style="color:#2e4e85;">Daily Breakdown</td></tr>')
                 }
             }else{
 
