@@ -946,6 +946,46 @@ class DailySalesAPI(APIView):
 		return Response(response_dict,HTTP_200_OK)
 
 
+class DailySalesBreakDownAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+		print("heers")
+		response_dict = {'success':False}
+
+		today = datetime.now()
+
+		sales_date = request.GET.get('sales_date')
+		sales_date = datetime.strptime(sales_date,'%d-%m-%Y')
+
+		start_date_day = sales_date.replace(hour=0,minute=0,second=0,microsecond=0)
+		end_date_day   = start_date_day+timedelta(1)
+		end_date_day   = end_date_day.replace(hour=0,minute=0,second=0,microsecond=0)
+		
+		print(start_date_day,end_date_day,"smonthlist")
+
+		# full_month_name = monthdate1.strftime("%B")
+		# print(daterange,"dr")
+		
+		cleaning_amount_month = 0
+	
+		# if date < todate:
+		orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q(Q(work_status = 'CLEANING_TEAM_ASSIGNED') | Q(work_status = 'CLEANING_IN_PROGRESS') | Q(work_status='CLEANING_FULFILLED'))).exclude( Q(Q(Q(order__evaluation__payment_method='PREPAID')&~Q(order__payment_status='COMPLETED'))|Q(Q(order__evaluation__payment_method='BREAKDOWN')&Q(order__preamount_paid=0))) ).values_list('order__order_no','order_scheduler_book__estimated_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id','order_scheduler_book__evaluation_details__evaluation__id','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount','order_scheduler_book__evaluation_details__evaluator__id','order_scheduler_book__evaluation_details__evaluation__discount').order_by('end_at')
+		# else:
+		# 	orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).exclude( Q(Q(Q(order__evaluation__payment_method='PREPAID')&~Q(order__payment_status='COMPLETED'))|Q(Q(order__evaluation__payment_method='BREAKDOWN')&Q(order__preamount_paid=0))) ).values_list('order__order_no','order_scheduler_book__estimated_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id','order_scheduler_book__evaluation_details__evaluation__id','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount','order_scheduler_book__evaluation_details__evaluator__id','order_scheduler_book__evaluation_details__evaluation__discount').order_by('end_at')
+
+		print(orderschedules,"countt")
+		
+		found = set()
+		schedules_list = []
+
+				
+		response_dict = {'success':True,}
+
+		return Response(response_dict,HTTP_200_OK)
+
+
 class DailySalesChartAPI(APIView):
 	permission_classes  	=   (AllowAny,)
 	authentication_classes  = ()

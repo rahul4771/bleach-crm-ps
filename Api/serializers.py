@@ -88,10 +88,10 @@ class InventoryItemUnitSerializer(serializers.ModelSerializer):
         fields = ('id','item','unit_code','status')
 
 class InventoryBundleItemSerializer(serializers.ModelSerializer):
-    bundle_item     = InventoryItemSerializer(read_only=True)
+    bundleitem     = InventoryItemSerializer(read_only=True)
     class Meta:
         model = BundleItems
-        fields = ('id','bundle_item','item_price','item_count')
+        fields = ('id','bundleitem','item_price','item_count')
 
 class InventorySegmentSerializer(serializers.ModelSerializer):
     class Meta:

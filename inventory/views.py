@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.views import View
 from bleach_crm_ps.permissions import IsInventoryAdmin,IsInventoryAdminUser
-from inventory.models import Category,Segment,Line,Attribute,AttributeValue,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems,Store,Supplier
+from inventory.models import Category,Segment,Line,Attribute,AttributeValue,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier
 from django.contrib import messages
 import re
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -268,6 +268,34 @@ class InventoryBundle(IsInventoryAdmin,View):
             bundle = Bundle.objects.get(id=int(bundle_id)).delete()
             messages.success(request,"Bundle deleted Successfully !")
 
+        if action == 'add_item':
+            bundle_id = request.POST.get('item_bundle_id')
+            item = request.POST.get('item')
+            units = request.POST.getlist('units')
+
+            bundle = Bundle.objects.get(id=int(bundle_id))
+            bundle_item = InventoryItem.objects.get(id=int(item))
+
+            item_bundle = BundleItems.objects.create(bundle=bundle,item=bundle_item)
+
+            bundle_item_total_price = 0
+            unit_count = 0
+
+            for unit in units:
+                item_unit = ItemUnit.objects.get(id=int(unit))
+                bundle_item_total_price += float(item_unit.unit_price)
+                unit_count += 1
+                BundleItemUnits.objects.create(bundle_item=item_bundle,item_unit=item_unit,unit_price=item_unit.unit_price)
+
+                print(unit,"unt")
+
+            item_bundle.item_price = bundle_item_total_price
+            item_bundle.item_count = unit_count
+            item_bundle.save()
+
+            messages.success(request,"Item Added successfully !")
+
+
         return redirect('inventory:inventory-bundle')
 
 class InventoryItems(IsInventoryAdmin,View):
@@ -363,6 +391,8 @@ class InventoryItems(IsInventoryAdmin,View):
 class InventorySupplier(IsInventoryAdmin,View):
     def get(self,request):
         suppliers = Supplier.objects.all()
+
+        items = InventoryItem.objects.all()
         
         suppliers_latest  = suppliers.last()
         if suppliers_latest:
@@ -371,7 +401,7 @@ class InventorySupplier(IsInventoryAdmin,View):
         else:
             new_supplier_id = 'SUP9001'
 
-        return render(request,'inventory/supplier.html',{"suppliers":suppliers,"supplier_id":new_supplier_id})
+        return render(request,'inventory/supplier.html',{"suppliers":suppliers,"supplier_id":new_supplier_id,"items":items})
 
     def post(self,request):
         action =request.POST.get('action')
@@ -428,7 +458,12 @@ class InventorySupplier(IsInventoryAdmin,View):
 
 class InventoryStore(IsInventoryAdmin,View):
     def get(self,request):
-        stores = Store.objects.all()
+        search = request.GET.get('search')
+
+        if search:
+            stores = Store.objects.filter(Q( Q(store_name__icontains=search) | Q(store_code__icontains=search)))
+        else:
+            stores = Store.objects.all()
         
         store_latest  = stores.last()
         if store_latest:
@@ -437,7 +472,7 @@ class InventoryStore(IsInventoryAdmin,View):
         else:
             new_store_code = 'STORE9001'
 
-        return render(request,'inventory/store.html',{"stores":stores,"store_code":new_store_code})
+        return render(request,'inventory/store.html',{"stores":stores,"store_code":new_store_code,"search_query":search})
 
     def post(self,request):
         action =request.POST.get('action')
@@ -461,6 +496,26 @@ class InventoryStore(IsInventoryAdmin,View):
 
             Store.objects.create(store_name=name,address=address,store_code=new_store_code,contact=contact,status=status)
             messages.success(request,"Store Added Successfully !")
+
+        if action == 'edit_store':
+            store_id = request.POST.get('store_edit_id')
+            name     = request.POST.get('store_name')
+            address = request.POST.get('store_address')
+            contact = request.POST.get('store_contact')
+            status     = request.POST.get('store_status')
+
+            store = Store.objects.get(id=int(store_id))
+            store.store_name = name
+            store.address = address
+            store.contact = contact
+            store.status = status
+            store.save()
+            messages.success(request,"Store Updated  Successfully !")
+
+        if action == 'delete_store':
+            store_id = request.POST.get('store_id_delete')
+            Store.objects.get(id=int(store_id)).delete()
+            messages.success(request,"Store Deleted Successfully !")
         return redirect('inventory:inventory-store')
 
 class InventoryInv(IsInventoryAdmin,View):
