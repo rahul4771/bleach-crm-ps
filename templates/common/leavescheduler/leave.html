@@ -124,10 +124,15 @@
                 </div>
                 <div class="modal-body">
                   <div class="row">
+                    <div class="col-md-4">
+                      <div>
+                        <input type="number" placeholder="Cleaning hours" class="mt-10 w-100 num-input" id="shift_cleaning_hr" v-model="cl_cleaning_hr"/>
+                      </div>
+                    </div>
                     <div class="col-md-12">
                      
                       <!--<input type="time" placeholder="Starting time" class="mt-10 w-100" id="shift3_start_at"/>-->
-                      <!--<div >
+                      <div  class="mt-10">
                         <span class="choose">Start Time</span>
                       
                           <div class="ls-dropdown">
@@ -135,26 +140,27 @@
                               <span>Select Time</span>
                               <i class="fa fa-chevron-left"></i>
                             </div>
-                            <input type="hidden" name="shift3_start_at" id="shift3_start_at" >
+                            <input type="hidden" name="shift3_start_at" id="shift3_start_at" v-model="cl_start_time">
                             <ul class="ls-dropdown-menu">
-                              <li id="00:00">00:00 AM</li>
-                              <li id="02:00">02:00 AM</li>
-                              <li id="04:00">04:00 AM</li>
-                              <li id="06:00">06:00 AM</li>
-                              <li id="08:00">08:00 AM</li>
-                              <li id="10:00">10:00 AM</li>
-                              <li id="12:00">12:00 PM</li>
-                              <li id="14:00">02:00 PM</li>
-                              <li id="16:00">04:00 PM</li>
-                              <li id="18:00">06:00 PM</li>
-                              <li id="20:00">08:00 PM</li>
-                              <li id="22:00">10:00 PM</li>
+                              <li id="12:00 AM">00:00 AM</li>
+                              <li id="02:00 AM">02:00 AM</li>
+                              <li id="04:00 AM">04:00 AM</li>
+                              <li id="06:00 AM">06:00 AM</li>
+                              <li id="08:00 AM">08:00 AM</li>
+                              <li id="10:00 AM">10:00 AM</li>
+                              <li id="12:00 PM">12:00 PM</li>
+                              <li id="02:00 PM">02:00 PM</li>
+                              <li id="04:00 PM">04:00 PM</li>
+                              <li id="06:00 PM">06:00 PM</li>
+                              <li id="08:00 PM">08:00 PM</li>
+                              <li id="10:00 PM">10:00 PM</li>
                             </ul>
                           </div>
                       
                      
-                    </div>-->
-                    <div class="row">
+                    </div>
+                    
+                    <!-- <div class="row">
                       <div class="col-md-4 mt-10" v-for="(time,index) in time_slots" v-bind:key="index">
                         <div class="time-slot duration-active text-center p-2" v-if="selected_slot.includes(index)" @click="removeSlot(index)">
                           <% time.start_time + ' - '+ time.end_time %>
@@ -168,7 +174,7 @@
                        
                         
                       </div>
-                    </div>
+                    </div> -->
                     </div>
                     <div class="col-md-12 mt-20">
                       

@@ -19,6 +19,11 @@
 .mt-10{
     margin-top:10px;
 }
+.num-input{
+    padding: 5px;
+   
+    border: 1px solid #426ec8;
+    }
 .lv-shift2-btn {
     margin-left: 10px !important;
     padding: 12px;
