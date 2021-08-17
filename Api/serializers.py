@@ -41,9 +41,18 @@ class LeaveScheduleSerializer(serializers.ModelSerializer):
         fields = ('id','staff','leave_date','leave_type')
 
 class ShiftScheduleSerializer(serializers.ModelSerializer):
+    shift3_start_at = serializers.DateTimeField(input_formats=["%d-%m-%Y %I:%M %p"])
+    shift3_end_at   = serializers.DateTimeField(input_formats=["%d-%m-%Y %I:%M %p"])
     class Meta:
         model = ShiftSchedule
         fields = ('id','staff','shift_date','shift1','shift2','shift3','shift1_start_at','shift2_start_at','shift3_start_at','shift1_end_at','shift2_end_at','shift3_end_at',)      
+
+    def to_representation(self,obj):
+        td = super(ShiftScheduleSerializer,self).to_representation(obj)
+        if obj.shift3_start_at and obj.shift3_end_at:
+            td['shift3_start_at']  = ((obj.shift3_start_at)+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
+            td['shift3_end_at']    = ((obj.shift3_end_at)+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
+        return(td)
 
 class GovernorateSerializer(serializers.ModelSerializer):
     class Meta:      

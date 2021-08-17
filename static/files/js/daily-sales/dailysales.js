@@ -25,31 +25,103 @@ function nextDay(){
     var a = $('#model_date').text().split('-');
     console.log(a);
       
-       var tmpSelectedDay   = new Date(a[1]+'/'+ a[2]+'/' +a[0]);
-     console.log(tmpSelectedDay)
+    var tmpSelectedDay   = new Date(a[1]+'/'+ a[0]+'/' +a[2]);
+    console.log(tmpSelectedDay)
     tmpSelectedDay.setDate(tmpSelectedDay.getDate() + 1);
-    var d = moment(tmpSelectedDay).format('YYYY-MM-DD')
+    var d = moment(tmpSelectedDay).format('DD-MM-YYYY')
     $('#model_date').text(d);
     $('#model_date2').text(d);
+
+    //daily sales api fetch for single day
+    axios.get(url+'/api/daily-sales-breakdown-list/',{ params: { 'sales_date': d } })
+    .then(function (response) {
+        console.log(response.data.total_day_sales,"salelis")
+
+        if (response.data.list.length > 0){
+            $("#model-table tr:not(:first)").remove(); 
+            $('#sales_status').html('');
+
+            $.each(response.data.list,function(key,value){
+                $('#model-table').append('<tr><td>'+value.order_no+'</td><td>'+value.customer+'</td><td>'+value.payment_policy+'</td><td  style="text-align: right;">'+parseFloat(value.net_amount).toFixed(3)+'</td><td>'+value.service_type+'</td><td>'+value.salesman+'</td></tr>');
+            })
+
+            $('#total_day_sale').text(parseFloat(response.data.total_day_sales).toFixed(3));
+            $('#sale_day').text(response.data.day);
+            
+            if (response.data.sales_status < 2000){
+                $('#sales_status').append(parseFloat(response.data.sales_status).toFixed(3) + '<i class="fa fa-arrow-down" aria-hidden="true" style="color:#ec6262;"></i>');
+                $('#sales_status').attr('style','color:#ec6262;');
+            }else{
+                $('#sales_status').append(parseFloat(response.data.sales_status).toFixed(3) + '<i class="fa fa-arrow-up" aria-hidden="true" style="color:#3cbbb1;"></i>');
+                $('#sales_status').attr('style','color:#3cbbb1;');
+            }
+
+        }else{
+            $("#model-table tr:not(:first)").remove(); 
+            $('#total_day_sale').text('000.000');
+            $('#sales_status').html('');
+            $('#sales_status').append('000.000 <i class="fa fa-arrow-down" aria-hidden="true" style="color:#ec6262;"></i>');
+            $('#sale_day').text(response.data.day);
+        }
+
+    })
+
 }
 
 function prevDay(){.0
     var a = $('#model_date').text().split('-');
     console.log(a);
       
-       var tmpSelectedDay   = new Date(a[1]+'/'+ a[2]+'/' +a[0]);
+    var tmpSelectedDay   = new Date(a[1]+'/'+ a[0]+'/' +a[2]);
      console.log(tmpSelectedDay)
     tmpSelectedDay.setDate(tmpSelectedDay.getDate() - 1);
-    var d = moment(tmpSelectedDay).format('YYYY-MM-DD')
+    var d = moment(tmpSelectedDay).format('DD-MM-YYYY')
     $('#model_date').text(d);
     $('#model_date2').text(d);
+
+
+    //daily sales api fetch for single day
+    axios.get(url+'/api/daily-sales-breakdown-list/',{ params: { 'sales_date': d } })
+    .then(function (response) {
+        console.log(response.data.total_day_sales,"salelis")
+
+        if (response.data.list.length > 0){
+            $("#model-table tr:not(:first)").remove(); 
+            $('#sales_status').html('');
+
+            $.each(response.data.list,function(key,value){
+                $('#model-table').append('<tr><td>'+value.order_no+'</td><td>'+value.customer+'</td><td>'+value.payment_policy+'</td><td  style="text-align: right;">'+parseFloat(value.net_amount).toFixed(3)+'</td><td>'+value.service_type+'</td><td>'+value.salesman+'</td></tr>');
+            })
+
+            $('#total_day_sale').text(parseFloat(response.data.total_day_sales).toFixed(3));
+            $('#sale_day').text(response.data.day);
+            
+            if (response.data.sales_status < 2000){
+                $('#sales_status').append(parseFloat(response.data.sales_status).toFixed(3) + '<i class="fa fa-arrow-down" aria-hidden="true" style="color:#ec6262;"></i>');
+                $('#sales_status').attr('style','color:#ec6262;');
+            }else{
+                $('#sales_status').append(parseFloat(response.data.sales_status).toFixed(3) + '<i class="fa fa-arrow-up" aria-hidden="true" style="color:#3cbbb1;"></i>');
+                $('#sales_status').attr('style','color:#3cbbb1;');
+            }
+
+        }else{
+            $("#model-table tr:not(:first)").remove(); 
+            $('#total_day_sale').text('000.000');
+            $('#sales_status').html('');
+            $('#sales_status').append('000.000 <i class="fa fa-arrow-down" aria-hidden="true" style="color:#ec6262;"></i>');
+            $('#sale_day').text(response.data.day);
+        }
+
+    })
+
 }
 
 function showModal(dd){
 // console.log(d,"saleda")
 // console.log($(d).attr("data-d"))
     var tmpSelectedDay     = $(dd).attr("data-d")
-    var d =  tmpSelectedDay.toString()    //moment(tmpSelectedDay).format('DD-MM-YYYY')
+    var d = moment(tmpSelectedDay).format('DD-MM-YYYY') //tmpSelectedDay.toString()    
+
     $('#model_date').text(d);
     $('#model_date2').text(d);
 
@@ -58,9 +130,38 @@ function showModal(dd){
       $('#id_model_button').click();
       //$('#detialsModel').modal('show');
 
+      //daily sales api fetch for single day
       axios.get(url+'/api/daily-sales-breakdown-list/',{ params: { 'sales_date': d } })
         .then(function (response) {
-            
+            console.log(response.data.total_day_sales,"salelis")
+
+            if (response.data.list.length > 0){
+                $("#model-table tr:not(:first)").remove(); 
+                $('#sales_status').html('');
+
+                $.each(response.data.list,function(key,value){
+                    $('#model-table').append('<tr><td>'+value.order_no+'</td><td>'+value.customer+'</td><td>'+value.payment_policy+'</td><td  style="text-align: right;">'+parseFloat(value.net_amount).toFixed(3)+'</td><td>'+value.service_type+'</td><td>'+value.salesman+'</td></tr>');
+                })
+
+                $('#total_day_sale').text(parseFloat(response.data.total_day_sales).toFixed(3));
+                $('#sale_day').text(response.data.day);
+                
+                if (response.data.sales_status < 2000){
+                    $('#sales_status').append(parseFloat(response.data.sales_status).toFixed(3) + '<i class="fa fa-arrow-down" aria-hidden="true" style="color:#ec6262;"></i>');
+                    $('#sales_status').attr('style','color:#ec6262;');
+                }else{
+                    $('#sales_status').append(parseFloat(response.data.sales_status).toFixed(3) + '<i class="fa fa-arrow-up" aria-hidden="true" style="color:#3cbbb1;"></i>');
+                    $('#sales_status').attr('style','color:#3cbbb1;');
+                }
+
+            }else{
+                $("#model-table tr:not(:first)").remove(); 
+                $('#total_day_sale').text('000.000');
+                $('#sales_status').html('');
+                $('#sales_status').append('000.000 <i class="fa fa-arrow-down" aria-hidden="true" style="color:#ec6262;"></i>');
+                $('#sale_day').text(response.data.day);
+            }
+    
         })
   }
   

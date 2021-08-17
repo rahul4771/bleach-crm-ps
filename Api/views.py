@@ -475,16 +475,10 @@ class ShiftScheduleAPI(APIView):
 				shift2_start_at = None
 				shift2_end_at   = None
 
-			if schedule['shift3']:
-				shift3_start_at = datetime.strptime(schedule['shift3_start_at'],'%Y-%m-%d %I:%M %p') 
-				shift3_end_at   = datetime.strptime(schedule['shift3_end_at'],'%Y-%m-%d %I:%M %p')
-			else:
-				shift3_start_at = None
-				shift3_end_at   = None
-
 			serializer = ShiftScheduleSerializer(data=schedule)
+			
 			if serializer.is_valid():
-				serializer.save(shift1_start_at=shift1_start_at,shift2_start_at=shift2_start_at,shift1_end_at=shift1_end_at,shift2_end_at=shift2_end_at,shift3_start_at=shift3_start_at,shift3_end_at=shift3_end_at)
+				serializer.save(shift1_start_at=shift1_start_at,shift2_start_at=shift2_start_at,shift1_end_at=shift1_end_at,shift2_end_at=shift2_end_at)
 			else: 
 				errors= serializer.errors   
 				key=tuple(errors.keys())[0] 
@@ -958,30 +952,61 @@ class DailySalesBreakDownAPI(APIView):
 
 		sales_date = request.GET.get('sales_date')
 		sales_date = datetime.strptime(sales_date,'%d-%m-%Y')
+		sales_day_name = sales_date.strftime("%A")
 
 		start_date_day = sales_date.replace(hour=0,minute=0,second=0,microsecond=0)
 		end_date_day   = start_date_day+timedelta(1)
 		end_date_day   = end_date_day.replace(hour=0,minute=0,second=0,microsecond=0)
 		
 		print(start_date_day,end_date_day,"smonthlist")
-
-		# full_month_name = monthdate1.strftime("%B")
-		# print(daterange,"dr")
-		
-		cleaning_amount_month = 0
 	
 		# if date < todate:
-		orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q(Q(work_status = 'CLEANING_TEAM_ASSIGNED') | Q(work_status = 'CLEANING_IN_PROGRESS') | Q(work_status='CLEANING_FULFILLED'))).exclude( Q(Q(Q(order__evaluation__payment_method='PREPAID')&~Q(order__payment_status='COMPLETED'))|Q(Q(order__evaluation__payment_method='BREAKDOWN')&Q(order__preamount_paid=0))) ).values_list('order__order_no','order_scheduler_book__estimated_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id','order_scheduler_book__evaluation_details__evaluation__id','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount','order_scheduler_book__evaluation_details__evaluator__id','order_scheduler_book__evaluation_details__evaluation__discount').order_by('end_at')
+		orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q(Q(work_status = 'CLEANING_TEAM_ASSIGNED') | Q(work_status = 'CLEANING_IN_PROGRESS') | Q(work_status='CLEANING_FULFILLED'))).exclude( Q(Q(Q(order__evaluation__payment_method='PREPAID')&~Q(order__payment_status='COMPLETED'))|Q(Q(order__evaluation__payment_method='BREAKDOWN')&Q(order__preamount_paid=0))) ).order_by('end_at')
 		# else:
 		# 	orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).exclude( Q(Q(Q(order__evaluation__payment_method='PREPAID')&~Q(order__payment_status='COMPLETED'))|Q(Q(order__evaluation__payment_method='BREAKDOWN')&Q(order__preamount_paid=0))) ).values_list('order__order_no','order_scheduler_book__estimated_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id','order_scheduler_book__evaluation_details__evaluation__id','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount','order_scheduler_book__evaluation_details__evaluator__id','order_scheduler_book__evaluation_details__evaluation__discount').order_by('end_at')
 
 		print(orderschedules,"countt")
 		
-		found = set()
-		schedules_list = []
+		saleslist = []
 
-				
-		response_dict = {'success':True,}
+		total_day_sales = 0
+
+		for schedule in orderschedules:
+			#schedule count of order
+			order_schedule_count = OrderScheduler.objects.filter(order__order_no=schedule.order.order_no).count()
+
+			#schedule count of evaluation book
+			schedule_count = OrderScheduler.objects.filter(order__order_no=schedule.order.order_no,order_scheduler_book__id=schedule.order_scheduler_book.id).count()
+
+			order_amount     = schedule.order_scheduler_book.estimated_cost
+			cleaning_amount  = float(order_amount/schedule_count)
+			
+			#fine,promocode, write off calc
+			if schedule.order.evaluation.promocode_amount > 0:
+				cleaning_amount -= float(schedule.order.evaluation.promocode_amount/order_schedule_count)
+			if schedule.order.evaluation.writeback_amount > 0:
+				cleaning_amount -= float(schedule.order.evaluation.writeback_amount/order_schedule_count)
+			if schedule.order.evaluation.fine_amount > 0:
+				cleaning_amount += float(schedule.order.evaluation.fine_amount/order_schedule_count)
+			if schedule.order.evaluation.discount > 0:
+				cleaning_amount -= float(schedule.order.evaluation.discount/order_schedule_count)
+
+			total_day_sales += float(cleaning_amount)			
+
+			schedule_dict = {
+				'order_no' : schedule.order.order_no,
+				'customer'	: schedule.order.evaluation.customer.name,
+				'payment_policy' : schedule.order.evaluation.payment_method,
+				'net_amount' : cleaning_amount,
+				'service_type' : schedule.order_scheduler_book.service_type.name,
+				'salesman' : schedule.order.evaluation.call_attender.name
+			}
+
+			saleslist.append(schedule_dict)
+
+		sales_status = float(2000) - float(total_day_sales)
+	
+		response_dict = {'success':True,'list':saleslist,'total_day_sales':total_day_sales,'sales_status':sales_status,'day':sales_day_name}
 
 		return Response(response_dict,HTTP_200_OK)
 
