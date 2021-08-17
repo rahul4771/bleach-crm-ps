@@ -677,8 +677,10 @@
 <v-dialog v-model="onetime_dialog" width="1000">
   <v-card style="min-height:500px">
 <div class="row mt-4 m-0">
-  <div class="col-md-12">
-    <h6>Choose a duration</h6>
+  <div class="col-md-12 mt-4">
+    <h3 class="ml-2">Please select  a duration</h3>
+    <p class="ml-2"> Please select a preferred duration which is convinient for you. The differences in the duration will not affect the cleaning quality. 
+      Our system will automatically distribute the cleaners as per the entered details. </p>
    
   </div>
  
@@ -712,7 +714,7 @@
       class="text-center sub-content"
     >
       <% item.hours / 2 %> slots<br>
-      <% item.cleaners %> cleaners
+      
     </div>
   </div>
 </div>
@@ -730,6 +732,9 @@
     </div>
   </div>
   <div class="col-md-8 "  >
+    <div  v-if="oneTimeSlotCounter()>0">
+      <% oneTimeSlotCounter() +'/'+ selectedDuration.hours/2 + 'Slots selected' %> 
+    </div>
     <div class="text-right">
       <v-btn
      
@@ -758,7 +763,7 @@
     </v-chip>
   </div> 
     <div class="mt-4" v-if="!slot_loader">
-      Select  Slots
+      Please Select  <% selectedDuration.hours/2 %> Slots
     </div>
     <div class="row mt-2" style="margin:0 !important">
       <div class="col-md-4" v-for="(slot,sindex) in bookingonetimeslots" v-bind:key="sindex" v-if="!slot_loader">

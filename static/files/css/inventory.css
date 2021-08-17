@@ -887,6 +887,12 @@ border-radius: 7px;
   border: 1px solid #4B4B4B !important;
 }
 
+
+.inv-po-id{
+  font-size: 20px;
+  font-family: AvenirLTStd !important;
+  color: #333333;
+
 @media only screen and (max-width: 1280px) {
   .inv-text-1 {
     font-size: 18px !important;

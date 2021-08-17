@@ -22,7 +22,7 @@
                      
                         <div class="inv-input-container h-30">
                             <i class="fa fa-search inv-icon-input" aria-hidden="true"></i>
-                            <input type="text" placeholder="Search Store" class="inv-input w-250" name="attributes">
+                            <input type="text" placeholder="Search Store" id="search-bar" class="inv-input w-250" onchange ="set_params_go()" value="{{search_query|default_if_none:''}}" name="attributes">
                           </div>
                     
                     
@@ -78,8 +78,8 @@
                             </td>
                             <td style="float: right;">
                               
-                                <button class="inv-plan-img-btn" onclick="openNavAddStore('edit')"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                                <button class="inv-plan-img-btn edit_store" onclick="openNavAddStore('edit')" data-storeid="{{store.id}}" data-storename="{{store.store_name}}" data-storecontact="{{store.contact}}" data-storecode="{{store.store_code}}" data-storeaddress="{{store.address}}" data-storestatus="{{store.status}}" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                                <button class="inv-plan-img-btn delete_store" data-storeid="{{store.id}}" data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
 
                             </td>
                         </tr>
@@ -118,7 +118,7 @@
                     <div class="model-input-name">Store Name</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="store_name">
+                        <input type="text"  class="w-p-100 inv-in" name="store_name" id="name_store">
                       </div>
                 </div>
 
@@ -128,7 +128,7 @@
                     <div class="model-input-name">Store code</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" value="{{store_code}}" name="store_code">
+                        <input type="text"  class="w-p-100 inv-in" value="{{store_code}}" name="store_code" id="code_store">
                       </div>
                 </div>
 
@@ -138,7 +138,7 @@
                     <div class="model-input-name">Address</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="store_address">
+                        <input type="text"  class="w-p-100 inv-in" name="store_address" id="address_store">
                       </div>
                 </div>
 
@@ -148,7 +148,7 @@
                     <div class="model-input-name">Contact</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="store_contact">
+                        <input type="text"  class="w-p-100 inv-in" name="store_contact" id="contact_store">
                       </div>
                 </div>
 
@@ -157,7 +157,7 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Status</div>
 
-                    <select id="status_category" name="store_status" class="minimal">
+                    <select id="status_store" name="store_status" class="minimal">
                         <option value="True" selected>Active</option>
                         <option value="False">Inactive</option>
                     </select>
@@ -172,8 +172,8 @@
           
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button" type="submit" >Submit</button>
-                        <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
+            <button class="sent-button store-form-btn" type="submit" >Submit</button>
+            <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
         </div>
         </form>
     </div>
@@ -197,11 +197,15 @@
                
                 <div class="row">
                     <div class="col-md-12 text-center">
+                    <form method="POST" action="" >{% csrf_token %}
+                    <input type="hidden" name="action" value="delete_store" />
+                    <input type="hidden" name="store_id_delete" id="id_store_delete" />
                         <div class="cancel-model-content">
-                            <button class="sent-button" >Delete</button>
+                            <button class="sent-button" type="submit" >Delete</button>
                             <button data-dismiss="modal" class="view-button">Cancel</button>
                           
                         </div>
+                    </form>
                     </div>
     
                 </div>
@@ -223,9 +227,13 @@
     function openNavAddStore(d) {
     if(d == 'add'){
             $("#itemHead").text("Add Store");
+            $('.store-form-btn').text('Add');
+            $('#store_action').val('add_store');
         }
         if(d == 'edit'){
             $("#itemHead").text("Edit Store");
+            $('.store-form-btn').text('Update');
+            $('#store_action').val('edit_store');
         }
         if(screen.width<= 600){
             document.getElementById("addStore").style.width = "100%";
@@ -238,6 +246,42 @@
     }
     function closeNavAddStore() {
         document.getElementById("addStore").style.width = "0";
+    }
+
+    //edit store
+    $('.edit_store').click(function(){
+        //console.log($(this).data('categoryid'),$(this).data('categoryname'),"editc")
+        $('#id_edit_store').val($(this).data('storeid'));
+        $('#name_store').val($(this).data('storename'));
+        $('#code_store').val($(this).data('storecode'));
+        $('#contact_store').val($(this).data('storecontact'));
+        //$('#other_contact_store').val($(this).data('storecontactother'));
+        $('#address_store').val($(this).data('storeaddress'));
+        //$('#terms_store').val($(this).data('storeterms'));
+        document.getElementById("status_store").value = $(this).data('storestatus');
+
+
+    })
+
+    //delete store
+    $('.delete_store').click(function(){
+        //console.log($(this).data('categoryid'),$(this).data('categoryname'),"editc")
+        $('#id_store_delete').val($(this).data('storeid'));
+    })
+
+    function set_params_go(args)
+    {
+    var url='{% url 'inventory:inventory-store' %}';
+    var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),
+    };
+    for(key in args) 
+        params[key]=args[key];
+    var query='';
+    for(key in params)
+        if(params[key]) 
+            query+='&'+key+'='+params[key].toString();
+    query=query.replace('&','?');
+    window.location.href=url+query;  
     }
 </script>
 {% endblock %}

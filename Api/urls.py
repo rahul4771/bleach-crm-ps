@@ -26,6 +26,7 @@ urlpatterns = [
 
 	url(r'^payment/response/credit/$',views.PaymentResponseCredit.as_view(),name='api-responsecredit'),
 	url(r'^daily-sales-list/$',views.DailySalesAPI.as_view(),name='api-daily-sales'),
+	url(r'^daily-sales-breakdown-list/$',views.DailySalesBreakDownAPI.as_view(),name='api-daily-sales-breakdown'),
 	url(r'^daily-sales-chart/$',views.DailySalesChartAPI.as_view(),name='api-daily-sales-chart'),
 	url(r'^payment-policy-edit/$',views.PaymentPolicyEditAPI.as_view(),name='api-payment-policy-edit'),
 	url(r'^cleaning-team-data/$',views.CleaningTeamAPI.as_view(),name='api-cleaning-team-data'),
