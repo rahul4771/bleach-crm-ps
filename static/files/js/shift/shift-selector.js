@@ -38,6 +38,9 @@ const app=  new Vue({
    
     delimiters: ['<%', '%>'],  
     data: {
+        
+        cl_cleaning_hr:'',
+        cl_start_time:'',
         time_slots:[
             {
                 start_time:"12:00 AM",
@@ -134,9 +137,9 @@ $('.ls-dropdown .ls-dropdown-menu li').click(function () {
 /*End Dropdown Menu*/
 
 
-$('.ls-dropdown-menu li').click(function () {
-    checkTime()
-}); 
+ $('.ls-dropdown-menu li').click(function () {
+     app.cl_start_time=$('#shift3_start_at').val()
+ }); 
 
 
 //Initialization of data
@@ -619,7 +622,7 @@ function tConvert (time) {
 function addToShift3(){
     
     
-   if(app.selected_slot.length>0){
+   if(app.cl_cleaning_hr && app.cl_start_time){
     var start = Math.min( ...app.selected_slot )
     var end = Math.max( ...app.selected_slot )
     resourceLeave=[];
@@ -643,12 +646,13 @@ function addToShift3(){
             if(lvday.length<2){
                 lvday='0'+lvday;
             }
-            var start_date_time=moment(selectedDates[i].dates[j],'DD-MM-YYYY').format('DD-MM-YYYY')+' '+app.time_slots[start].start_time
-            var end_date_time=moment(selectedDates[i].dates[j],'DD-MM-YYYY').format('DD-MM-YYYY')+' '+app.time_slots[end].end_time
-             if(app.time_slots[end].end_time=='12:00 AM'){
-                 var new_date=moment(selectedDates[i].dates[j],'DD-MM-YYYY').add(1,'days').format('DD-MM-YYYY')
-                 end_date_time=new_date+' '+app.time_slots[end].end_time
-             }
+            var cleaning_hr=parseInt(app.cl_cleaning_hr)
+            var start_date_time=moment(selectedDates[i].dates[j],'DD-MM-YYYY').format('DD-MM-YYYY')+' '+app.cl_start_time
+            var end_date_time=moment(start_date_time,'DD-MM-YYYY hh:mm A').add(cleaning_hr,'hours').format('DD-MM-YYYY hh:mm A')
+            //  if(app.time_slots[end].end_time=='12:00 AM'){
+            //      var new_date=moment(selectedDates[i].dates[j],'DD-MM-YYYY').add(1,'days').format('DD-MM-YYYY')
+            //      end_date_time=new_date+' '+app.time_slots[end].end_time
+            //  }
             leaveSelected['shift_date']=lvyear+'-'+lvmonth+'-'+lvday;
             leaveSelected['staff']=resourceList[i].id;
             leaveSelected['shift1']=false
@@ -671,6 +675,10 @@ function addToShift3(){
       resourceList=[];
       shiftList=[];
       app.selected_slot=[]
+      app.cl_cleaning_hr=''
+      app.cl_start_time=''
+      $('#shift3_start_at').val(' ')
+      
       reinitVal();
       getUsersShift();
       

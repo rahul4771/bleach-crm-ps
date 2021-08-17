@@ -41,6 +41,8 @@ class LeaveScheduleSerializer(serializers.ModelSerializer):
         fields = ('id','staff','leave_date','leave_type')
 
 class ShiftScheduleSerializer(serializers.ModelSerializer):
+    shift3_start_at = serializers.DateTimeField(input_formats=["%d-%m-%Y %I:%M %p"])
+    shift3_end_at   = serializers.DateTimeField(input_formats=["%d-%m-%Y %I:%M %p"])
     class Meta:
         model = ShiftSchedule
         fields = ('id','staff','shift_date','shift1','shift2','shift3','shift1_start_at','shift2_start_at','shift3_start_at','shift1_end_at','shift2_end_at','shift3_end_at',)      

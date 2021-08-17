@@ -1,5 +1,10 @@
 /* inventory css */
-
+.white-wrapper-padding{
+  padding: 20px;
+}
+.white-wrapper-padding2{
+  padding: 20px;
+}
 
 @font-face {
   font-family: AvenirLTStd;
@@ -892,7 +897,7 @@ border-radius: 7px;
   font-size: 20px;
   font-family: AvenirLTStd !important;
   color: #333333;
-
+}
 @media only screen and (max-width: 1280px) {
   .inv-text-1 {
     font-size: 18px !important;
@@ -938,9 +943,13 @@ border-radius: 7px;
   }
 
   .inv-dash-card-head{
-    font-size: 3vw;
+    font-size: 4vw;
   }
   .inv-item-card-head{
     font-size: 2.5vw;
   }
+  .inv-item-am {
+   
+    font-size: 12px;
+}
 }
