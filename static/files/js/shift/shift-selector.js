@@ -643,10 +643,10 @@ function addToShift3(){
             if(lvday.length<2){
                 lvday='0'+lvday;
             }
-            var start_date_time=moment(selectedDates[i].dates[j],'DD-MM-YYYY').format('DD-MM-YYYY')+' '+app.time_slots[start].start_time
-            var end_date_time=moment(selectedDates[i].dates[j],'DD-MM-YYYY').format('DD-MM-YYYY')+' '+app.time_slots[end].end_time
+            var start_date_time=moment(selectedDates[i].dates[j],'DD-MM-YYYY').format('YYYY-MM-DD')+' '+app.time_slots[start].start_time
+            var end_date_time=moment(selectedDates[i].dates[j],'DD-MM-YYYY').format('YYYY-MM-DD')+' '+app.time_slots[end].end_time
              if(app.time_slots[end].end_time=='12:00 AM'){
-                 var new_date=moment(selectedDates[i].dates[j],'DD-MM-YYYY').add(1,'days').format('DD-MM-YYYY')
+                 var new_date=moment(selectedDates[i].dates[j],'DD-MM-YYYY').add(1,'days').format('YYYY-MM-DD')
                  end_date_time=new_date+' '+app.time_slots[end].end_time
              }
             leaveSelected['shift_date']=lvyear+'-'+lvmonth+'-'+lvday;
