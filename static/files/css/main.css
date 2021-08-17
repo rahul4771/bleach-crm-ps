@@ -1472,3 +1472,57 @@ select.minimal:focus {
 .pointer {
   cursor: pointer;
 }
+
+.w-p-75 {
+  width: 75% !important;
+}
+.model-dailysals{
+  background: #FFFFFF 0% 0% no-repeat padding-box !important;
+border: 1px solid #707070 !important;
+opacity: 1;
+padding-bottom: 20px !important;
+}
+#model-table{
+  margin-top: 20px;
+  width: 100%;
+}
+#model-table th {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 8px;
+  text-align: left;
+  background-color: #EDF1F6;
+  color: #303030;
+}
+#model-table td, #model-table th {
+  border: 1px solid #528CE6;
+  padding: 8px;
+  font-weight: normal;
+}
+
+.model-date-next{
+  padding: 5px;
+  color: #707070 !important;
+  background: #FFFFFF 0% 0% no-repeat padding-box;
+  box-shadow: 0px 3px 6px #00000029;
+  border: 1px solid #BEBEBE;
+  opacity: 1;
+  border-radius: 50%;
+  padding-left: 7px;
+  padding-right: 7px;
+}
+.model-date-sale{
+  color: #8B8B8B;
+  font-size: 22px;
+}
+
+.model-sale-card{
+  background: #EDF1F6 0% 0% no-repeat padding-box;
+opacity: 1;
+padding: 15px;
+color: #8B8B8B;
+text-align: center;
+}
+.model-sale-card-head{
+  font-size: 16px;
+}
