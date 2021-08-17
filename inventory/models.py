@@ -129,7 +129,7 @@ class Bundle(models.Model):
 class BundleItems(models.Model):
     bundle              = models.ForeignKey(Bundle,blank=True,null=True,related_name='item_bundle')
     item                = models.ForeignKey(InventoryItem,blank=True,null=True,related_name='inventory_item_bundle')
-    item_price          = models.CharField(default=0,max_length=100,blank=False,null=False)
+    item_price          = models.CharField(default=0,max_length=100,blank=True,null=True)
     item_count          = models.IntegerField(default=0,null=True,blank=True)
     created             = models.DateTimeField(auto_now_add=True)
 
@@ -165,6 +165,31 @@ class Supplier(models.Model):
 
     def __str__(self):
         return self.supplier_name
+
+class SupplierItems(models.Model):
+    supplier             = models.ForeignKey(Supplier,blank=True,null=True,related_name='item_supplier')
+    item                = models.ForeignKey(InventoryItem,blank=True,null=True,related_name='inventory_item_supplier')
+    item_price          = models.CharField(default=0,max_length=100,blank=True,null=True)
+    item_count          = models.IntegerField(default=0,null=True,blank=True)
+    created             = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return str(self.supplier.name)
+
+    def __str__(self):
+        return self.supplier.name
+
+class SupplierItemUnits(models.Model):
+    supplier_item         = models.ForeignKey(SupplierItems,blank=True,null=True,related_name='supplier_unit_supplier_item')
+    item_unit           = models.ForeignKey(ItemUnit,blank=True,null=True,related_name='unit_item_supplier')
+    unit_price          = models.CharField(default=0,max_length=100,blank=False,null=False)
+    created             = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return str(self.supplier_item.bundle.name)
+
+    def __str__(self):
+        return self.supplier_item.bundle.name
 
 class Store(models.Model):
     store_name          = models.CharField(max_length=100,blank=False,null=False)
