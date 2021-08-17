@@ -722,9 +722,12 @@
       Choose Cleaning Slots
     </div>
     <v-date-picker  v-model="oneTimeDateSelected" full-width elevation="5" color="primary"
-    :event-color="'green'"
+    :event-color="'#2e4e85'"
         :events="functionEvents"
     v-on:change="oneTimeDateChange()" class="mt-2" :min="today" ></v-date-picker>
+    <div class="d-flex mt-4 mb-2 justify-center">
+      <div class="round-indicator"></div> Indicates Offer 
+    </div>
   </div>
   <div class="col-md-8 "  >
     <div class="text-right">
@@ -812,6 +815,7 @@
       </div>
 
   </div>
+  
 </div>
 </v-card>
 </v-dialog>
