@@ -47,6 +47,16 @@ class ShiftScheduleSerializer(serializers.ModelSerializer):
         model = ShiftSchedule
         fields = ('id','staff','shift_date','shift1','shift2','shift3','shift1_start_at','shift2_start_at','shift3_start_at','shift1_end_at','shift2_end_at','shift3_end_at',)      
 
+    def to_representation(self,obj):
+        td = super(ShiftScheduleSerializer,self).to_representation(obj)	
+        td['shift1_start_at']  = ((obj.shift3_start_at)+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
+        td['shift1_end_at']    = ((obj.shift3_end_at)+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
+        td['shift2_start_at']  = ((obj.shift3_start_at)+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
+        td['shift2_end_at']    = ((obj.shift3_end_at)+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
+        td['shift3_start_at']  = ((obj.shift3_start_at)+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
+        td['shift3_end_at']    = ((obj.shift3_end_at)+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
+        return(td)
+
 class GovernorateSerializer(serializers.ModelSerializer):
     class Meta:      
         model = Governorate   
