@@ -475,16 +475,10 @@ class ShiftScheduleAPI(APIView):
 				shift2_start_at = None
 				shift2_end_at   = None
 
-			if schedule['shift3']:
-				shift3_start_at = datetime.strptime(schedule['shift3_start_at'],'%d-%m-%Y %I:%M %p') 
-				shift3_end_at   = datetime.strptime(schedule['shift3_end_at'],'%d-%m-%Y %I:%M %p')
-			else:
-				shift3_start_at = None
-				shift3_end_at   = None
-
 			serializer = ShiftScheduleSerializer(data=schedule)
+			
 			if serializer.is_valid():
-				serializer.save(shift1_start_at=shift1_start_at,shift2_start_at=shift2_start_at,shift1_end_at=shift1_end_at,shift2_end_at=shift2_end_at,shift3_start_at=shift3_start_at,shift3_end_at=shift3_end_at)
+				serializer.save(shift1_start_at=shift1_start_at,shift2_start_at=shift2_start_at,shift1_end_at=shift1_end_at,shift2_end_at=shift2_end_at)
 			else: 
 				errors= serializer.errors   
 				key=tuple(errors.keys())[0] 
