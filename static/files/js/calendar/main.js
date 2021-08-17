@@ -868,7 +868,7 @@ const app=  new Vue({
               }
             }
          
-            var end = (moment(max).add(3, 'hours'))
+            var end = (moment(max).add(2, 'hours'))
 
             axios.post(this.url+'/agent/cleaningcallendar/followup/edit/save/',{
           
