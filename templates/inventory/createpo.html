@@ -20,6 +20,11 @@
             <!--main-content-holder-->
             <div class="white-wrapper">
                 <div class="row">
+                    <div class="col-md-12">
+                        <span class="inv-po-id">BLPO00000001</span>
+                    </div>
+                </div>
+                <div class="row mt-20">
                     <div class="col-md-3">
                         <div class="model-input-name">Select Seller</div>
 
@@ -29,6 +34,11 @@
 
                         </select>
                     </div>
+                    <!-- <div class="col-md-9 text-right">
+                        <button class="inv-plan-btn" onclick="openNavAddStore()"> <img
+                            src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5"
+                            alt=""> Add Item</button>
+                    </div> -->
                 </div>
                 <div class="row mt-20">
                     <div class="col-md-12 inv-text-normal">
@@ -46,6 +56,9 @@
                             <thead>
                                 <tr>
                                     <th style="width: %;">
+                                        Product ID
+                                    </th>
+                                    <th style="width: %;">
                                         Product
                                     </th>
                                     <th data-hide="phone,tablet" style="width: %; ">
@@ -55,7 +68,7 @@
                                         Number of units
                                     </th>
                                     <th data-hide="phone,tablet" style="width: %;">
-                                        Category
+                                        Total Cost
                                     </th>
 
                                     <th data-hide="phone,tablet" style="width: %;">Action</th>
@@ -64,10 +77,14 @@
                             <tbody>
                                 <tr>
                                     <td>0000000</td>
+                                    <td>0000000</td>
                                     <td>232</td>
                                     <td>232</td>
-                                    <td>Category 1</td>
-                                    <td> <button class="inv-plan-img-btn"> <img
+                                    <td>222</td>
+                                    <td>
+                                        <button class="inv-plan-img-btn"> <img
+                                            src="{% static 'files/inventory/icons/edit.png' %}" alt=""> </button>
+                                        <button class="inv-plan-img-btn"> <img
                                                 src="{% static 'files/inventory/icons/delete.png' %}" alt=""> </button>
                                     </td>
                                 </tr>
