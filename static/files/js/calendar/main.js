@@ -572,7 +572,13 @@ const app=  new Vue({
               this.cleaningData.cleaning_datetime_start=this.cleaningDate+' '+this.slotFormat[min].start_time
             }
             if(this.slotFormat[max].end_time){
-              this.cleaningData.cleaning_datetime_end=this.cleaningDate+' '+this.slotFormat[max].end_time
+              if(this.slotFormat[max].end_time=='12:00 AM'){
+                this.cleaningData.cleaning_datetime_end=moment(this.cleaningDate,'DD-MM-YYYY').add(1,'days').format('DD-MM-YYYY')+' '+this.slotFormat[max].end_time
+              }
+              else{
+                this.cleaningData.cleaning_datetime_end=this.cleaningDate+' '+this.slotFormat[max].end_time
+              }
+              
             }
            
            
