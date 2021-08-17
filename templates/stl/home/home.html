@@ -124,6 +124,7 @@
 <span {% if order_schedule.days_left_coming < 0 %}class="red-bg"{% elif order_schedule.days_left_coming == 0 %}class="orange-bg clickable-row"{% elif order_schedule.days_left_coming == 1 %}class="yellow-bg clickable-row"{% elif order_schedule.days_left_coming >= 2 %}class="green-bg clickable-row"{% endif %} {% if order_schedule.days_left_coming >= 0 %}data-href="{% url 'common_items:assign-cleaningteam' order_schedule.id %}"{%endif%}>{% if order_schedule.days_left_coming < 0  %}Expired{%else%}Click to Assign{%endif%}</span></td>
 </tr>
 {% endfor %}
+
 {% for follow_up_schedule in assign_followup_schedules %}
 <tr {% if follow_up_schedule.days_left_coming < 0 %}class="red-line"{% elif follow_up_schedule.days_left_coming == 0 %}class="orange-line"{% elif follow_up_schedule.days_left_coming == 1 %}class="yellow-line"{% elif follow_up_schedule.days_left_coming == 2 or follow_up_schedule.days_left_coming == 3 %}class="green-line"{% endif %}>
 <td data-label="BLC Number" class="bold-text">TKT{{follow_up_schedule.follow_up.ticket_no}}</td>
@@ -132,7 +133,7 @@
 <td class="hide-a" data-label=""><img src="{{follow_up_schedule.follow_up.investigation.investigator.profile_image.url}}" class="profile-avatar" title="{{follow_up_schedule.follow_up.investigation.investigator.name}}"></td>
 <td data-label="cleaning policy"><span class="yellow-text bold-text">FOLLOW UP</span></td>
 <td data-label="" class="bold-text">{% if follow_up_schedule.days_left_coming < 0 %}<h3 class="red-text-h3">Exp</h3>{% elif follow_up_schedule.days_left_coming == 0 %}<h3 class="orange-text-h3">{{follow_up_schedule.days_left_coming}}</h3> Days&#11015;{% elif follow_up_schedule.days_left_coming == 1 or follow_up_schedule.days_left_coming == 2 %}<h3 class="yellow-text-h3">{{follow_up_schedule.days_left_coming}} </h3>Days&#11015;{% elif follow_up_schedule.days_left_coming >= 3 %}<h3 class="green-text-h3">{{follow_up_schedule.days_left_coming}}</h3> Days&#11015;{% endif %}</td>
-<td data-label=""><span {% if follow_up_schedule.days_left_coming < 0 %}class="red-bg"{% elif follow_up_schedule.days_left_coming == 0 %}class="orange-bg clickable-row"{% elif follow_up_schedule.days_left_coming == 2 %}class="yellow-bg clickable-row"{% elif follow_up_schedule.days_left_coming >= 3 %}class="green-bg clickable-row"{% endif %} {% if follow_up_schedule.days_left_coming >= 0  %}data-href="{% url 'common_items:assign-followupteam' follow_up_schedule.id %}"{% endif %}> {% if follow_up_schedule.days_left_coming < 0 %}Expired{%else%} Click to Assign{%endif%}</span></td>
+<td data-label=""><span {% if follow_up_schedule.days_left_coming < 0 %}class="red-bg"{% elif follow_up_schedule.days_left_coming == 0 %}class="orange-bg clickable-row"{% elif follow_up_schedule.days_left_coming == 2 or follow_up_schedule.days_left_coming == 1 %}class="yellow-bg clickable-row"{% elif follow_up_schedule.days_left_coming >= 3 %}class="green-bg clickable-row"{% endif %} {% if follow_up_schedule.days_left_coming >= 0  %}data-href="{% url 'common_items:assign-followupteam' follow_up_schedule.id %}"{% endif %}> {% if follow_up_schedule.days_left_coming < 0 %}Expired{%else%} Click to Assign{%endif%}</span></td>
 </tr>
 {% endfor %}
 </tbody>

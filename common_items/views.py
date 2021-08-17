@@ -4094,7 +4094,7 @@ class AssignFollowupTeam(IsAuthenticated,View):
 	def post(self,request,scheduler_id):
 	
 		#shceduled order details
-		followup_schedule = FollowUpScheduler.objects.select_related('follow_up__investigation__order','follow_up__investigation__order_schedule__order_scheduler_book__service_type','customer_address').prefetch_related(Preftech('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True),to_attr='followup_team')).get(is_active=True,id=scheduler_id)	
+		followup_schedule = FollowUpScheduler.objects.select_related('follow_up__investigation__order','follow_up__investigation__order_schedule__order_scheduler_book__service_type','customer_address').prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True),to_attr='followup_team')).get(is_active=True,id=scheduler_id)	
 		start_at_datetime = followup_schedule.start_at
 		end_at_datetime   = followup_schedule.end_at
 		start_at_date     = (followup_schedule.start_at+timedelta(hours=3)).date()
