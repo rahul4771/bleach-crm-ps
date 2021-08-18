@@ -471,6 +471,7 @@ const app = new Vue({
               }
             },
             parsedTimeSlots:[],
+            available_slotes:[],
             selected_no_of_cleaners:null,
             visit_err:'',
             cleaning_action:'',
@@ -726,17 +727,23 @@ setTimeout(function() {
     checkSlot(index){
       if(this.selectedSlots.length>0){
        
-       
-
-        
-          var prevSlot=index-1
-          var nextSlot=index+1
-          if(this.selectedSlots.includes(prevSlot)||this.selectedSlots.includes(nextSlot)){
+       var real_slot=this.available_slotes[index]
+        var prevSlot=real_slot-1
+        var nextSlot=real_slot+1
+        if(this.available_slotes.includes(prevSlot) || this.available_slotes.includes(nextSlot)){
+          var prevSlotIndex=this.available_slotes.indexOf(prevSlot)
+          var nextSlotIndex=this.available_slotes.indexOf(nextSlot)
+          if(this.selectedSlots.includes(prevSlotIndex)||this.selectedSlots.includes(nextSlotIndex)){
             return true
           }
           else{
             return false
           }
+        }
+        else{
+          return false
+        }
+         
         
       }
       else{
@@ -752,10 +759,11 @@ setTimeout(function() {
     },
     parseOneTimeSlots(){
       this.parsedTimeSlots=[]
+      this.available_slotes=[]
       for(var i in this.timeSlots){
         if(this.timeSlots[i].includes(2)){
           var slotNo=(parseInt(i)+2)/2
-  
+          this.available_slotes.push(slotNo)
           this.parsedTimeSlots.push(this.slotFormat[String(slotNo)])
           
           
