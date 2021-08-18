@@ -82,7 +82,9 @@
   width: 26px !important;
 }
 
-
+.inv-selected-row{
+  background-color: #c3c2c2;
+}
 
 .btn-shadow{box-shadow: 0px 3px 6px #0000003B;}
 
@@ -836,7 +838,7 @@ border-radius: 7px;
   border-radius: 6px;
   margin-right: 0px !important;
   margin-left: 0px !important;
-  height: 150px;
+  height: 200px;
   overflow: auto;
 }
 
