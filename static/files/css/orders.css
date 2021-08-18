@@ -9,6 +9,18 @@
   font-weight: 200;
  
 }
+.check-head{
+  letter-spacing: 0px;
+  color: #434343;
+  opacity: 1;
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+  font-weight: 200;
+}
+.checkin-note{
+  color:#434343
+}
 .customer-detials-text{
   font-size: 18px;
   color: #737373;

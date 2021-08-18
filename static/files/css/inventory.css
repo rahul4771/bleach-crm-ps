@@ -647,6 +647,11 @@
   height:  28px !important;
 
 }
+.view-img2{
+  width: 26px !important;
+  height:  26px !important;
+
+}
 
 
 .inv-check-orderhead{
@@ -833,7 +838,7 @@ border-radius: 7px;
   border-radius: 6px;
   margin-right: 0px !important;
   margin-left: 0px !important;
-  height: 150px;
+  height: 200px;
   overflow: auto;
 }
 

@@ -83,14 +83,14 @@
                                     <td>222</td>
                                     <td>
                                         <button class="inv-plan-img-btn"> <img
-                                            src="{% static 'files/inventory/icons/edit.png' %}" alt=""> </button>
+                                            src="{% static 'files/inventory/icons/edit.png' %}" alt="" onclick="openNavAddStore('edit')"> </button>
                                         <button class="inv-plan-img-btn"> <img
                                                 src="{% static 'files/inventory/icons/delete.png' %}" alt=""> </button>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
-                                        <button class="inv-plan-btn" onclick="openNavAddStore()"> <img
+                                        <button class="inv-plan-btn" onclick="openNavAddStore('add')"> <img
                                                 src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5"
                                                 alt=""> Add Item</button>
                                     </td>
@@ -99,6 +99,10 @@
                         </table>
                     </div>
                 </div>
+                <div class="row mt-20 text-center">
+                    <button class="sent-button" >Submit</button>
+                                  <button  class="view-button">Cancel</button>
+                  </div>
             </div>
         </div>
     </section>
@@ -124,30 +128,30 @@
                     <div style="position: relative;">
                         <div class="inv-input-container inv-border h-30">
                             <input type="text" id="pro-name" style="border: none !important; width: 90%;" class=" inv-in"
-                                name="attributes">
-                            <div class="inv-hr"></div>
+                                name="attributes" oninput="showProducts()">
+                            <!-- <div class="inv-hr"></div>
                             <div class="model-filter">
                                 <button class="inv-normal-btn" onclick="showDrop()">
                                     <i class="fa fa-angle-down fa-lg " style="color: #707070;" aria-hidden="true"></i>
                                 </button>
 
-                            </div>
+                            </div> -->
 
 
 
                         </div>
                         <div id="id_search" class="row inv-result-box" style="display: none;">
-                            <div class="col-md-12">
+                            <div class="col-md-12" onclick="closeProductShow(this)" data-pro="12" data-name="! fri">
                                 <div class="inv-search-result">
                                     ! fri
                                 </div>
                             </div>
-                            <div class="col-md-12">
+                            <div class="col-md-12" onclick="closeProductShow(this)" data-pro="13" data-name="1! fri">
                                 <div class="inv-search-result">
                                     ! fri
                                 </div>
                             </div>
-                            <div class="col-md-12">
+                            <div class="col-md-12" onclick="closeProductShow(this)" data-pro="13" data-name="! fri">
                                 <div class="inv-search-result">
                                     ! fri
                                 </div>
@@ -194,6 +198,12 @@
                            
                         </div>
                     </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Unit Price   <span id="id_price"> 00</span></div>
                 </div>
 
             </div>
@@ -285,8 +295,14 @@
     }
 
 
-    function openNavAddStore() {
+    function openNavAddStore(d) {
+        if(d == 'add'){
+            $('#itemHead').text('Add Item');
+        }
+        if(d == 'edit'){
+            $('#itemHead').text('Edit Item');
 
+        }
         if (screen.width <= 600) {
             document.getElementById("addStore").style.width = "100%";
         } else if (screen.width <= 720) {
@@ -299,5 +315,30 @@
     function closeNavAddStore() {
         document.getElementById("addStore").style.width = "0";
     }
+
+
+
+    function showProducts(){
+        console.log( $('#pro-name').val());
+        if($('#pro-name').val() !=""){
+        document.getElementById("id_search").style.display="block"
+
+        }else{
+        document.getElementById("id_search").style.display="none"
+
+        }
+        
+    }
+
+    function closeProductShow(d){
+        console.log(d);
+        var proId = $(d).attr("data-pro")
+        $('#id_price').text(proId);
+        $('#pro-name').val($(d).attr("data-name"));
+
+
+        document.getElementById("id_search").style.display="none"
+    }
+
 </script>
 {% endblock %}
