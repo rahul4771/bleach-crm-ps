@@ -1822,18 +1822,10 @@
                                         <div class="row c-mt-20 check_in_out">
                                             <div class="col-md-12">
                                                 {% if cleaning_team.check_in %}
-                                                <!-- <div class="row c-mb-10 ">
-                                                    <div class="col-xs-7 col-md-2">
-                                                        <img class="button-icons"
-                                                            src="{% static 'files/icons/time-in.png' %}">
-                                                        Check in
-                                                    </div>
-                                                    <div class="col-xs-5 col-md-2 id_check_in">{{cleaning_team.check_in|time|lower}}</div>
-                                                </div> -->
                                                 <div class="row c-mt-10">
                                                     <div class="col-md-12">
                                                        <h3 class="check-head">Check In</h3>
-                                                       <div class="mt-10 mb-10"><i class="far fa-clock"></i><span class="checkin-note ml-10">
+                                                       <div class="mt-10 mb-10"><i class="far fa-clock"></i><span class="checkin-note id_check_in ml-10">
                                                         {{cleaning_team.check_in|time|lower}}
                                                        </span></div>
                                                        <div class="mt-10 mb-10"><i class="far fa-file-alt"></i><span class="checkin-note ml-10">
@@ -1847,7 +1839,7 @@
                                                 <div class="row c-mt-10">
                                                     <div class="col-md-12">
                                                        <h3 class="check-head">Check Out</h3>
-                                                       <div class="mt-10 mb-10"><i class="far fa-clock"></i><span class="checkin-note ml-10">
+                                                       <div class="mt-10 mb-10"><i class="far fa-clock"></i><span class="checkin-note id_check_out ml-10">
                                                         {{cleaning_team.check_out|time|lower}}
                                                        </span></div>
                                                        <div class="mt-10 mb-10"><i class="far fa-file-alt"></i><span class="checkin-note ml-10">
