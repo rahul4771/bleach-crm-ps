@@ -1148,9 +1148,15 @@ class CleaningTeamAPI(APIView):
 				check_out = None
 				check_out_time = None
 
-			check_in_notes = cleaningteam.check_in_notes
+			if cleaningteam.check_in_notes:
+				check_in_notes = cleaningteam.check_in_notes
+			else:
+				check_in_notes = 'No Notes'
 
-			check_out_notes = cleaningteam.check_out_notes
+			if cleaningteam.check_out_notes:
+				check_out_notes = cleaningteam.check_out_notes
+			else:
+				check_out_notes = 'No Notes'
 
 			cleaning_status = cleaningteam.order_scheduler.work_status
 

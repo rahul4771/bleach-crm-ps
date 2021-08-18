@@ -1828,7 +1828,7 @@
                                                        <div class="mt-10 mb-10"><i class="far fa-clock"></i><span class="checkin-note id_check_in ml-10">
                                                         {{cleaning_team.check_in|time|lower}}
                                                        </span></div>
-                                                       <div class="mt-10 mb-10"><i class="far fa-file-alt"></i><span class="checkin-note ml-10">
+                                                       <div class="mt-10 mb-10"><i class="far fa-file-alt"></i><span class="checkin-note id_check_in_note ml-10">
                                                         {{cleaning_team.check_in_notes|default_if_none:'Notes not Added'}}
                                                        </span></div>
                                                     </div>
@@ -1842,7 +1842,7 @@
                                                        <div class="mt-10 mb-10"><i class="far fa-clock"></i><span class="checkin-note id_check_out ml-10">
                                                         {{cleaning_team.check_out|time|lower}}
                                                        </span></div>
-                                                       <div class="mt-10 mb-10"><i class="far fa-file-alt"></i><span class="checkin-note ml-10">
+                                                       <div class="mt-10 mb-10"><i class="far fa-file-alt"></i><span class="checkin-note id_check_out_note ml-10">
                                                         {{cleaning_team.check_out_notes|default_if_none:'Notes not Added'}}
                                                        </span></div>
                                                     </div>
@@ -3297,11 +3297,15 @@ function load_cleaning_team(visitcount,scheduleid){
                         }else if(response.data.cleaning_status == 'CLEANING_IN_PROGRESS'){
                             $('.check_in_out').show();
                             $('.check_out').hide();
+                            $('.id_check_in').text(response.data.start_at);
+                            $('.id_check_in_notes').text(response.data.checkin_notes);
                             $('.team_edit_url').attr('hidden',true);
                         }else{
                             $('.check_in_out').show();
                             $('.id_check_in').text(response.data.start_at);
                             $('.id_check_out').text(response.data.end_at);
+                            $('.id_check_in_notes').text(response.data.checkin_notes);
+                            $('.id_check_out_notes').text(response.data.checkout_notes);
                             $('.team_edit_url').attr('hidden',true);
                         }
                         
