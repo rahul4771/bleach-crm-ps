@@ -5,6 +5,49 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"
 integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w=="
 crossorigin="anonymous" />
+<style>
+  .progress-loader {
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+  margin: auto;
+  margin-top:100px;
+  margin-bottom:100px;
+  
+  
+}
+.progress-loader-graph {
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+  margin: auto;
+  margin-top:100px;
+  
+  
+}
+
+
+
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>
 <div class="wrapper"><!--wrapper-->
 
 {% if request.user.user_type == 'SALESADMIN' %}
@@ -64,6 +107,7 @@ crossorigin="anonymous" />
 
         <div class="clients-card-column clients-column-right whitebg hover ltorange-border"><!--clients-card-column clients-column-right-->
         <h2 class="orange-text">Sales (Month of <span id="month_name"></span>)</h2><br> 
+        <div class="progress-loader-graph"></div>
 		<div class="chart_boxDiv"><!--chart_boxDiv-->
   			<div class="chart_box_Right"><!--chart_box_Right-->
  				<!-- <button type="button" id="mnt_btn" class="set2" >Update</button> -->
@@ -126,6 +170,7 @@ crossorigin="anonymous" />
 </div>
 
 <div style="width: 100%; overflow: auto;"> 
+  <div class="progress-loader"></div>
   <table id="salesTable"  cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable  common-table" style="table-layout: auto !important;">
  
     <thead>
@@ -141,7 +186,7 @@ crossorigin="anonymous" />
     </tr>
     </thead>
     <tbody id="dailysaleslist">
-    
+     
     </tbody>
     <tfoot>
      
