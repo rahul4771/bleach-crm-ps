@@ -271,27 +271,29 @@ class InventoryBundle(IsInventoryAdmin,View):
         if action == 'add_item':
             bundle_id = request.POST.get('item_bundle_id')
             item = request.POST.get('item')
-            units = request.POST.getlist('units')
+            item_count = request.POST.get('item_count')
 
             bundle = Bundle.objects.get(id=int(bundle_id))
-            bundle_item = InventoryItem.objects.get(id=int(item))
+            inventory_item = InventoryItem.objects.get(id=int(item))
 
-            item_bundle = BundleItems.objects.create(bundle=bundle,item=bundle_item)
+            inventory_item_unit_count = ItemUnit.objects.filter(item=inventory_item).count()
 
-            bundle_item_total_price = 0
-            unit_count = 0
+            if int(inventory_item_unit_count) >= int(item_count) :
+                selected_units = ItemUnit.objects.filter(item=inventory_item)
 
-            for unit in units:
-                item_unit = ItemUnit.objects.get(id=int(unit))
-                bundle_item_total_price += float(item_unit.unit_price)
-                unit_count += 1
-                BundleItemUnits.objects.create(bundle_item=item_bundle,item_unit=item_unit,unit_price=item_unit.unit_price)
+                total_item_price = 0
+                loop_count = 0
 
-                print(unit,"unt")
+                for unit in selected_units:
+                    loop_count += 1
+                    total_item_price += unit.unit_price
 
-            item_bundle.item_price = bundle_item_total_price
-            item_bundle.item_count = unit_count
-            item_bundle.save()
+            else:
+                selected_units = ItemUnit.objects.filter(item=inventory_item)[:inventory_item_unit_count]
+            
+            print(selected_units,"units")
+
+            
 
             messages.success(request,"Item Added successfully !")
 
