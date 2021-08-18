@@ -32,7 +32,7 @@
             <span>amount:</span><input type="text" name="amount" size="25" value="<?php echo htmlspecialchars($_GET['amount']);?>" readonly><br/>
             <span>currency:</span><input type="text" name="currency" size="25" value="<?php echo htmlspecialchars($_GET['currency']);?>" readonly><br/>
         
-            <input type="hidden" name="merchant_id" value="nbk_bleach">
+            <input type="hidden" name="merchant_id" value="nbk_bleachkw">
             <input type="hidden" name="bill_to_forename" value="<?php echo htmlspecialchars($_GET['bill_to_forename']);?>">
             <input type="hidden" name="bill_to_surname" value="<?php echo htmlspecialchars($_GET['bill_to_surname']);?>">
             <input type="hidden" name="bill_to_phone" value="<?php echo htmlspecialchars($_GET['bill_to_phone']);?>">

@@ -77,7 +77,7 @@
                                 {% endif %}
                             </td>
                             <td>
-                                <a href="/inventory/segment/"><a href="/inventory/segment/{{category.id}}/" target="_blank"<button class="inv-plan-btn" onclick="openNavaddSegment2()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="" > Add Segment</button></a>
+                                <a href="/inventory/segment/"><a href="/inventory/segment/{{category.id}}/" target="_blank"<button class="inv-plan-btn" onclick="openNavaddSegment2()"> <img class="view-img" src="{% static 'files/inventory/icons/view.png' %}" alt=""> Add Segment</button></a>
                                 <button class="inv-plan-img-btn edit_category" onclick="showDrawer('edit')" data-categoryid="{{category.id}}" data-categoryname="{{category.name}}" data-categorycode="{{category.category_code}}" data-categorystatus="{{category.status}}" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
                                 <button class="inv-plan-img-btn delete_category" data-categoryid="{{category.id}}" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
                             </td>
@@ -181,9 +181,10 @@
         </div>
         <div class="inv-drawer-footer">
             <button class="sent-button category-form-btn" >Submit</button>
+            </form>
                         <button data-dismiss="modal" onclick="closeNavAddCategory()" class="view-button">Cancel</button>
         </div>
-        </form>
+        
     </div>
     <div id="editCategory" class="inv-sidedrawer">
 

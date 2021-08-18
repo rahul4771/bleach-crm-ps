@@ -819,7 +819,7 @@ $("#governorate_filter_id").change(function(){
 function callbacklist(status,order_id){
     console.log(order_id,status,"callbak");
     
-    axios.get(url+'/api/callback-status-update/',{ params: { 'order_id':order_id, 'callback_status': status } })
+    axios.get(api+'/api/callback-status-update/',{ params: { 'order_id':order_id, 'callback_status': status } })
     .then(function (response) {
       if (response.data.success == true){
         console.log("RES")
