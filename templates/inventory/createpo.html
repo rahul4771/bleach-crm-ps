@@ -83,14 +83,14 @@
                                     <td>222</td>
                                     <td>
                                         <button class="inv-plan-img-btn"> <img
-                                            src="{% static 'files/inventory/icons/edit.png' %}" alt=""> </button>
+                                            src="{% static 'files/inventory/icons/edit.png' %}" alt="" onclick="openNavAddStore('edit')"> </button>
                                         <button class="inv-plan-img-btn"> <img
                                                 src="{% static 'files/inventory/icons/delete.png' %}" alt=""> </button>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
-                                        <button class="inv-plan-btn" onclick="openNavAddStore()"> <img
+                                        <button class="inv-plan-btn" onclick="openNavAddStore('add')"> <img
                                                 src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5"
                                                 alt=""> Add Item</button>
                                     </td>
@@ -295,8 +295,14 @@
     }
 
 
-    function openNavAddStore() {
+    function openNavAddStore(d) {
+        if(d == 'add'){
+            $('#itemHead').text('Add Item');
+        }
+        if(d == 'edit'){
+            $('#itemHead').text('Edit Item');
 
+        }
         if (screen.width <= 600) {
             document.getElementById("addStore").style.width = "100%";
         } else if (screen.width <= 720) {
