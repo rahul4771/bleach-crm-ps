@@ -313,7 +313,14 @@
 
 
     function showProducts(){
+        console.log( $('#pro-name').val());
+        if($('#pro-name').val() !=""){
         document.getElementById("id_search").style.display="block"
+
+        }else{
+        document.getElementById("id_search").style.display="none"
+
+        }
         
     }
 
