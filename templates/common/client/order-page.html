@@ -1834,7 +1834,7 @@
                                                     <div class="col-md-12">
                                                        <h3 class="check-head">Check In Notes</h3>
                                                        <div class="mt-10 mb-10"><i class="far fa-file-alt"></i><span class="checkin-note ml-10">
-                                                        {{cleaning_team.check_in_notes}}
+                                                        {{cleaning_team.check_in_notes|default_if_none:'Notes not Added'}}
                                                        </span></div>
                                                     </div>
                                                 </div>
@@ -1853,7 +1853,7 @@
                                                     <div class="col-md-12">
                                                        <h3 class="check-head">Check Out Notes</h3>
                                                        <div class="mt-10 mb-10"><i class="far fa-file-alt"></i><span class="checkin-note ml-10">
-                                                        {{cleaning_team.check_out_notes}}
+                                                        {{cleaning_team.check_out_notes|default_if_none:'Notes not Added'}}
                                                        </span></div>
                                                     </div>
                                                 </div>
