@@ -35,7 +35,7 @@ urlpatterns = [
 	url(r'^inventory-lines/$',views.InventoryLinesAPI.as_view(),name='api-inventory-lines'),
 	url(r'^inventory-segments/$',views.InventorySegmentsAPI.as_view(),name='api-inventory-segments'),
 	url(r'^inventory-values/$',views.InventoryValuesAPI.as_view(),name='api-inventory-values'),
-	url(r'^inventory-item-units/$',views.InventoryItemUnitsAPI.as_view(),name='api-inventory-item-units'),
+	url(r'^inventory-items/$',views.InventoryItemsAPI.as_view(),name='api-inventory-items'),
 	url(r'^inventory-supplier-items/$',views.InventorySupplierItemsAPI.as_view(),name='api-inventory-supplier-items'),
 	url(r'^inventory-bundle-items/$',views.InventoryBundleItemsAPI.as_view(),name='api-inventory-bundle-items'),
 

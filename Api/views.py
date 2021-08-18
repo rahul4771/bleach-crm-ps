@@ -1875,7 +1875,7 @@ class InventoryValuesAPI(APIView):
 		response_dict['inventory_value'] = value_serializer
 		return Response(response_dict,HTTP_200_OK)
 
-class InventoryItemUnitsAPI(APIView):
+class InventoryItemsAPI(APIView):
 	permission_classes  	=   (AllowAny,)
 	authentication_classes  = ()
 
@@ -1885,13 +1885,14 @@ class InventoryItemUnitsAPI(APIView):
 		print(item_id,"attrsed")
 		try:
 			item_units = ItemUnit.objects.filter(item__id=int(item_id))
+			unit_count = item_units.count()
 		except:
 			item_units = None
+			unit_count = 0
 		
-		print(item_units,"invo")
-		item_unit_serializer = InventoryItemUnitSerializer(item_units,many=True).data
-		print(item_unit_serializer,"sed")	
-		response_dict['inventory_item_unit'] = item_unit_serializer
+		print(unit_count,"invo")
+		
+		response_dict['inventory_item_unit_count'] = unit_count
 		return Response(response_dict,HTTP_200_OK)
 
 class InventoryBundleItemsAPI(APIView):
