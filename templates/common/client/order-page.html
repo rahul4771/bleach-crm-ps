@@ -1833,28 +1833,23 @@
                                                 <div class="row c-mt-10">
                                                     <div class="col-md-12">
                                                        <h3 class="check-head">Check In</h3>
-                                                       <div class="mt-10 mb-10"><i class="far fa-file-alt"></i><span class="checkin-note ml-10">
-                                                        {{cleaning_team.check_in_notes|default_if_none:'Notes not Added'}}
+                                                       <div class="mt-10 mb-10"><i class="far fa-clock"></i><span class="checkin-note ml-10">
+                                                        {{cleaning_team.check_in|time|lower}}
                                                        </span></div>
                                                        <div class="mt-10 mb-10"><i class="far fa-file-alt"></i><span class="checkin-note ml-10">
-                                                        {{cleaning_team.check_in|time|lower}}
+                                                        {{cleaning_team.check_in_notes|default_if_none:'Notes not Added'}}
                                                        </span></div>
                                                     </div>
                                                 </div>
                                                 {% endif %}
 
                                                 {% if cleaning_team.check_out %}
-                                                <div class="row c-mb-10 c-mt-20 check_out">
-                                                    <div class="col-xs-7 col-md-2">
-                                                        <img class="button-icons"
-                                                            src="{% static 'files/icons/time-out.png' %}">
-                                                        Check Out
-                                                    </div>
-                                                    <div class="col-xs-5 col-md-2 id_check_out">{{cleaning_team.check_out|time|lower}}</div>
-                                                </div>
                                                 <div class="row c-mt-10">
                                                     <div class="col-md-12">
-                                                       <h3 class="check-head">Check Out Notes</h3>
+                                                       <h3 class="check-head">Check Out</h3>
+                                                       <div class="mt-10 mb-10"><i class="far fa-clock"></i><span class="checkin-note ml-10">
+                                                        {{cleaning_team.check_out|time|lower}}
+                                                       </span></div>
                                                        <div class="mt-10 mb-10"><i class="far fa-file-alt"></i><span class="checkin-note ml-10">
                                                         {{cleaning_team.check_out_notes|default_if_none:'Notes not Added'}}
                                                        </span></div>
