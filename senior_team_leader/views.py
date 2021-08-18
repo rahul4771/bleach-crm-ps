@@ -12,7 +12,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils import timezone 
 from datetime import timedelta,date,datetime
 from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField,CharField
-from django.db.models.functions import Cast 
+from django.db.models.functions import Cast,TruncDate,ExtractMonth,ExtractYear,Concat
 from django.db.models import Prefetch
 from django.contrib import messages
 
