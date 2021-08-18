@@ -3,7 +3,7 @@ from rest_framework import serializers
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule
 from evaluator.models import Evaluation,EvaluationDetails
 from order.models import Promocode
-from inventory.models import Line,Segment,Category,Attribute,AttributeValue,BundleItems,InventoryItem,ItemUnit
+from inventory.models import Line,Segment,Category,Attribute,AttributeValue,BundleItems,InventoryItem,ItemUnit,SupplierItems
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -90,6 +90,11 @@ class InventoryItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = InventoryItem
         fields = ('id','name','status')
+       
+class InventorySupplierItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SupplierItems
+        fields = ('id','item','item_price','item_count')
 
 class InventoryItemUnitSerializer(serializers.ModelSerializer):
     class Meta:

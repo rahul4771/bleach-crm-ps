@@ -28,7 +28,7 @@
                      
                         <div class="inv-input-container h-30">
                             <i class="fa fa-search inv-icon-input" aria-hidden="true"></i>
-                            <input type="text" placeholder="Search Attributes" class="inv-input w-250" name="attributes">
+                            <input type="text" placeholder="Search Suppliers" id="search-bar" class="inv-input w-250" onchange ="set_params_go()" value="{{search_query|default_if_none:''}}" name="attributes">
                           </div>
                     
                     
@@ -81,7 +81,7 @@
                                 </thead>
                                 <tbody>
                                     {% for supplier in suppliers %}
-                                    <tr>
+                                    <tr onclick="getitems({{supplier.id}})">
                                         <td class="r">
                                     
                                             {{supplier.supplier_name}}
@@ -141,15 +141,15 @@
                     <div class="col-md-5 mt-10">
                         <div class="attribute-table-2">
                             <div class="attribute-table-div2">
-                                <table class="inv-table footable">
+                                <table class="inv-table footable" id="item_table">
                                     <thead>
                                         <tr>
                                             <th style="width: %;">
                                                 Item Name
                                             </th>
-                                            <th  style="width: %;">
+                                            {% comment %} <th  style="width: %;">
                                                 Count
-                                            </th>
+                                            </th> {% endcomment %}
                                             <th data-hide="phone,tablet"  style="width: %;">
                                                 Price
                                             </th>
@@ -159,32 +159,7 @@
                                         </tr>
                                     </thead> 
                                    <tbody>
-                                    <tr>
-                                        <td>
                                     
-                                            Item 1
-                                        </td>
-                                        <td>1</td>
-                                        <td>1</td>
-                                        <td>
-                                            <button class="inv-plan-img-btn" onclick="openNavAddItem('edit')"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                            <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel2"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-            
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                    
-                                            Item 1
-                                        </td>
-                                        <td>1</td>
-                                        <td>1</td>
-                                        <td>
-                                            <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                            <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-            
-                                        </td>
-                                    </tr>
                                    </tbody>
                                    
     
@@ -378,41 +353,16 @@
                 </div>
             </div>
             <hr>
+
+            <form method="POST" action="" >{% csrf_token %}
+            <input type="hidden" name="action" id="supplier_item_action" value="add_item" />
+            <input type="hidden" name="item_supplier_id" id="item_supplier_id" />
+            <input type="hidden" name="item_edit_id" id="id_edit_item" />
             <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Item</div>
 
-                    <select class="minimal" name="item" id="id_item" onchange="getunits()" required>
-                        <option value="">--Select Item--</option>
-                        {% for item in items %}
-                        <option value="{{item.id}}">{{item.name}}</option>
-                        {% endfor %}
-
-                    </select>
-                </div>
-
-            </div>
-            <div class="row mt-20">
-                <div class="col-md-12 ">
-                    <div class="model-input-name">Units</div>
-
-                    <select id="multiple-checkboxes" multiple="multiple" name="units">
-                       
-                    </select>
-
-                    <!-- <select  multiple class="chosen-select" name="test" class="minimal" id="item_unit_id">
-                       
-                    </select> -->
-                </div>
-
-            </div>
-            <div class="row mt-20">
-                <div class="col-md-12 ">
-                    <div class="model-input-name">Count</div>
-
-                    <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="attributes">
-                      </div>
+                    <input type="text"  class="w-p-100 inv-in" name="supplier_item" id="id_supplier_item">
                 </div>
 
             </div>
@@ -420,18 +370,27 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Price</div>
 
-                    <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="attributes">
-                      </div>
+                    <input type="text"  class="w-p-100 inv-in" name="supplier_item_price" id="id_supplier_item_price">
                 </div>
 
             </div>
+            {% comment %} <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Count</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="supplier_item_count" id="id_supplier_item_count">
+                      </div>
+                </div>
+
+            </div> {% endcomment %}
             
   
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button" >Submit</button>
-                        <button data-dismiss="modal" onclick="closeNavAddItem()" class="view-button">Cancel</button>
+            <button class="sent-button item-form-btn" type="submit" >Submit</button>
+            </form>
+            <button data-dismiss="modal" onclick="closeNavAddItem()" class="view-button">Cancel</button>
         </div>
     </div>
     <div class="modal fade" id="deleteModel" role="dialog">
@@ -455,7 +414,7 @@
                 <div class="row">
                     <div class="col-md-12 text-center">
                     <form method="POST" action="" >{% csrf_token %}
-                    <input type="hidden" name="action" value="delete_supplier" />
+                    <input type="hidden" name="action" value="delete_supplier" id="delete_action_id" />
                     <input type="hidden" name="supplier_id_delete" id="id_supplier_delete" />
                         <div class="cancel-model-content">
                             <button class="sent-button" type="submit" >Delete</button>
@@ -510,6 +469,12 @@
 <script>
 
 $(document).ready(function() {
+    {% for supplier in suppliers %}
+        {% if forloop.first %}
+        getitems({{supplier.id}});
+        {% endif %}
+    {% endfor %}
+
         $('#multiple-checkboxes').multiselect({
           includeSelectAllOption: true,
         });
@@ -561,40 +526,52 @@ function openNavAddBundle(d) {
         document.getElementById("addItem").style.width = "0";
     }
 
-    async function getunits(){
-        //$('#item_bundle_id').val(item_id); //adding value to hidden input for adding value
-        var item_id = $('#id_item').val();
-        console.log(item_id,"itmid")
+    async function getitems(supplier_id){
+        $('#item_supplier_id').val(supplier_id); //adding value to hidden input for adding value
 
-         var result = await _get('api/inventory-item-units/?item_id='+item_id);
+         var result = await _get('api/inventory-supplier-items/?supplier_id='+supplier_id);
          
          if(result.status == 200){
-            if (result.data.inventory_item_unit.length > 0){
-                //$("#item_unit_id").remove(); 
-               
-                $.each(result.data.inventory_item_unit,function(key,value){
-                    console.log(key,value.unit_code,"rome")
-                        $('#multiple-checkboxes').append('<option value="'+value.id+'" >'+value.unit_code+'</option>').multiselect("destroy").multiselect();
-                })
-                 $("#multiple-checkboxes").multiselect('destroy');
-                 $("#multiple-checkboxes").multiselect({
-                includeSelectAllOption: true,
-                });
-                //$('#item_unit_id').multiselect('refresh');
-                // $('#Select1').multiselect( 'refresh' );
-                 
-            //    $('.multiselect').multiselect('destroy');
-            // $('.multiselect').multiselect();
-         
+            if (result.data.inventory_item.length > 0){
+                $("#item_table tr:not(:first)").remove(); 
                 
+                $.each(result.data.inventory_item,function(key,value){
+                    
+                        $('#item_table').append('<tr><td>'+value.item+'</td><td>'+value.item_price+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavEditItem(this)" data-itemid='+value.id+' data-itemname='+value.item+' data-itemprice='+value.item_price+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn value_delete" onclick="deleteItem('+value.id+')" data-itemid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
+                })
             }else{
-                console.log("no units")
-                //$("#table2 tr:not(:first)").remove(); 
+                $("#item_table tr:not(:first)").remove(); 
             }
          }else{
              console.log("no units")
             //showNotification('Something went wrong','error')
          }
+    }
+
+    function openNavEditItem(d) {
+        $("#itemHead").text("Edit Item");
+        $(".item-form-btn").text("Update");
+
+        $('#supplier_item_action').val('edit_item');
+        $('#id_edit_item').val($(d).data('itemid'));
+        $('#id_supplier_item').val($(d).data('itemname'));
+        $('#id_supplier_item_price').val($(d).data('itemprice'));
+
+        console.log(d)
+        if(screen.width<= 600){
+            document.getElementById("addItem").style.width = "100%";
+        }else if(screen.width<= 720){
+            document.getElementById("addItem").style.width = "50%";
+        }
+        else{
+            document.getElementById("addItem").style.width = "30%";
+        }  
+    }
+
+    //Delete VALUE
+    function deleteItem(item_id){
+        $('#id_supplier_delete').val(item_id);
+        $('#delete_action_id').val('delete_item');
     }
 
     //edit supplier
@@ -617,5 +594,21 @@ function openNavAddBundle(d) {
         //console.log($(this).data('categoryid'),$(this).data('categoryname'),"editc")
         $('#id_supplier_delete').val($(this).data('supplierid'));
     })
+
+    function set_params_go(args)
+    {
+    var url='{% url 'inventory:inventory-supplier' %}';
+    var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),
+    };
+    for(key in args) 
+        params[key]=args[key];
+    var query='';
+    for(key in params)
+        if(params[key]) 
+            query+='&'+key+'='+params[key].toString();
+    query=query.replace('&','?');
+    window.location.href=url+query;  
+    }
+
 </script>
 {% endblock %}

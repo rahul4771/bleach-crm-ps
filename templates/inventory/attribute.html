@@ -72,7 +72,7 @@
                             </thead>
                             <tbody>
                                 {% for attribute in attributes %}
-                                <tr onclick="getvalues({{attribute.id}})">
+                                <tr class="attribute_row" onclick="getvalues({{attribute.id}})" data-name="{{attribute.name}}">
                                     <td class="inv-green-border">
                                 
                                         {{attribute.name}}
@@ -155,6 +155,7 @@
                     </div>
                     <div class="col-md-5 mt-10">
                         <div class="attribute-table-2">
+                        <h3>Lines under <span id="attribute_name"></span> </h3>
                             <div class="attribute-table-div2">
                                 <table class="inv-table value_table"> 
                                     <tr>
@@ -271,9 +272,10 @@
         </div>
         <div class="inv-drawer-footer">
             <button class="sent-button attribute-form-btn" type="submit" >Add</button>
+            </form>
                         <button data-dismiss="modal" onclick="closeNavAddAttribute()" class="view-button">Cancel</button>
         </div>
-        </form>
+        
     </div>
     <div id="addValue" class="inv-sidedrawer">
 
@@ -323,9 +325,10 @@
         </div>
         <div class="inv-drawer-footer">
             <button class="sent-button value-form-btn" type="submit" >Submit</button>
+            </form>
                         <button data-dismiss="modal" onclick="closeNavAddValue()" class="view-button">Cancel</button>
         </div>
-        </form>
+        
     </div>
     <div class="modal fade" id="deleteModel" role="dialog">
         <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
@@ -375,15 +378,28 @@
         $('.segment_dropdown').hide();
         $('.line_dropdown').hide();
 
-        $(document).ready(function(){
+        
         {% for attribute in attributes %}
         {% if forloop.first %}
         console.log({{attribute.id}},"lopattr")
         getvalues({{attribute.id}});
+        $('.attribute_row:first').addClass('inv-selected-row');
+        $('#attribute_name').text("{{attribute.name}}");
         {% endif %}
         {% endfor %}
+    
     })
+
+    //highlighting row and adding selected item name to table top
+    $('.attribute_row').click(function(){
+        $('.attribute_row').each(function(i, obj) {
+            $(obj).removeClass('inv-selected-row');
+        });
+
+        $(this).addClass('inv-selected-row');
+        $('#attribute_name').text($(this).data('name'));
     })
+
     function showDrawer(d){
         console.log(d)
         if(d == 'add'){
