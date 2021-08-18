@@ -99,6 +99,10 @@
                         </table>
                     </div>
                 </div>
+                <div class="row mt-20 text-center">
+                    <button class="sent-button" >Submit</button>
+                                  <button  class="view-button">Cancel</button>
+                  </div>
             </div>
         </div>
     </section>
@@ -124,30 +128,30 @@
                     <div style="position: relative;">
                         <div class="inv-input-container inv-border h-30">
                             <input type="text" id="pro-name" style="border: none !important; width: 90%;" class=" inv-in"
-                                name="attributes">
-                            <div class="inv-hr"></div>
+                                name="attributes" oninput="showProducts()">
+                            <!-- <div class="inv-hr"></div>
                             <div class="model-filter">
                                 <button class="inv-normal-btn" onclick="showDrop()">
                                     <i class="fa fa-angle-down fa-lg " style="color: #707070;" aria-hidden="true"></i>
                                 </button>
 
-                            </div>
+                            </div> -->
 
 
 
                         </div>
                         <div id="id_search" class="row inv-result-box" style="display: none;">
-                            <div class="col-md-12">
+                            <div class="col-md-12" onclick="closeProductShow(this)" data-pro="12" data-name="! fri">
                                 <div class="inv-search-result">
                                     ! fri
                                 </div>
                             </div>
-                            <div class="col-md-12">
+                            <div class="col-md-12" onclick="closeProductShow(this)" data-pro="13" data-name="1! fri">
                                 <div class="inv-search-result">
                                     ! fri
                                 </div>
                             </div>
-                            <div class="col-md-12">
+                            <div class="col-md-12" onclick="closeProductShow(this)" data-pro="13" data-name="! fri">
                                 <div class="inv-search-result">
                                     ! fri
                                 </div>
@@ -194,6 +198,12 @@
                            
                         </div>
                     </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Unit Price   <span id="id_price"> 00</span></div>
                 </div>
 
             </div>
@@ -299,5 +309,23 @@
     function closeNavAddStore() {
         document.getElementById("addStore").style.width = "0";
     }
+
+
+
+    function showProducts(){
+        document.getElementById("id_search").style.display="block"
+        
+    }
+
+    function closeProductShow(d){
+        console.log(d);
+        var proId = $(d).attr("data-pro")
+        $('#id_price').text(proId);
+        $('#pro-name').val($(d).attr("data-name"));
+
+
+        document.getElementById("id_search").style.display="none"
+    }
+
 </script>
 {% endblock %}
