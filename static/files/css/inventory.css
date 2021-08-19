@@ -149,19 +149,19 @@
   display: block;
 }
 .inv-orders {
-  background: url(../inventory/icons/shopping.png) no-repeat left;
+  background: url(../inventory/icons/Order.png) no-repeat left;
   background-size: 30px 30px;
   background-position: 18px 7px;
   display: block;
 }
 .inv-purchase-order {
-  background: url(../inventory/icons/shopping-bag.png) no-repeat left;
+  background: url(../inventory/icons/Purchaseorder.png) no-repeat left;
   background-size: 30px 30px;
   background-position: 18px 7px;
   display: block;
 }
 .inv-bundils {
-  background: url(../inventory/icons/group.png) no-repeat left;
+  background: url(../inventory/icons/Bundle.png) no-repeat left;
   background-size: 30px 30px;
   background-position: 18px 7px;
   display: block;
@@ -173,7 +173,13 @@
   display: block;
 }
 .inv-store {
-  background: url(../inventory/icons/warehouse.png) no-repeat left;
+  background: url(../inventory/icons/Warehouse.png) no-repeat left;
+  background-size: 30px 30px;
+  background-position: 18px 7px;
+  display: block;
+}
+.inv-servicerecipe {
+  background: url(../inventory/icons/servicerecipe.png) no-repeat left;
   background-size: 30px 30px;
   background-position: 18px 7px;
   display: block;
@@ -185,7 +191,7 @@
   display: block;
 }
 .inv-cat {
-  background: url(../inventory/icons/menu.png) no-repeat left;
+  background: url(../inventory/icons/Category.png) no-repeat left;
   background-size: 30px 30px;
   background-position: 18px 7px;
   display: block;
@@ -197,7 +203,7 @@
   display: block;
 }
 .inv-user {
-  background: url(../inventory/icons/profile-1.png) no-repeat left;
+  background: url(../inventory/icons/Profile.png) no-repeat left;
   background-size: 30px 30px;
   background-position: 18px 7px;
   display: block;
