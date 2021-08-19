@@ -977,8 +977,8 @@ class CashCollect(IsAccountant,View):
 		if order_id:
 			if payment_policy == 'CLEANING BALANCE':
 				payment_method = request.POST.get('payment_method')
-				amount       = request.POST.get('amount')
-				payment_date = datetime.strptime(request.POST.get('collection_date'),'%d/%m/%Y %I:%M %p')
+				amount         = request.POST.get('amount')
+				payment_date   = datetime.strptime(request.POST.get('collection_date'),'%d/%m/%Y %I:%M %p')
 
 				#Receipt Number
 				receipt_no               = PaymentHistory.objects.filter(is_active=True,receipt_no__isnull=False).aggregate(t=Max('receipt_no'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
@@ -1037,7 +1037,7 @@ class CashCollect(IsAccountant,View):
 						Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,postamount_paid=F('postamount_paid')+amount)
 						PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CASH',received_by=request.user,paid_date=payment_date,receipt_no=new_receipt_no)
 					elif payment_policy == 'SUBSCRIPTION':
-						Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,subscription_topay=0)
+						Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,subscription_topay=0,is_advance=False)
 						PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CASH',received_by=request.user,paid_date=payment_date,receipt_no=new_receipt_no)
 
 					messages.success(request,"Payment Received thruogh Cash")
@@ -1056,7 +1056,7 @@ class CashCollect(IsAccountant,View):
 						Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,postamount_paid=F('postamount_paid')+amount)
 						PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CHEQUE',received_by=request.user,paid_date=payment_date,check_no=check_no,check_date=check_date,receipt_no=new_receipt_no)
 					elif payment_policy == 'SUBSCRIPTION':
-						Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,subscription_topay=0)
+						Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,subscription_topay=0,is_advance=False)
 						PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='CHEQUE',received_by=request.user,paid_date=payment_date,check_no=check_no,check_date=check_date,receipt_no=new_receipt_no)
 					
 					messages.success(request,"Payment Received thruogh Cheque")
@@ -1075,7 +1075,7 @@ class CashCollect(IsAccountant,View):
 						Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,postamount_paid=F('postamount_paid')+amount)
 						PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='BANK',received_by=request.user,paid_date=payment_date,bank_name=bank_name,bank_no=bank_no,receipt_no=new_receipt_no)
 					elif payment_policy == 'SUBSCRIPTION':
-						Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,subscription_topay=0)
+						Order.objects.filter(is_active=True,id=order_id).update(amount_paid=amount+F('amount_paid'),remining_amount=F('remining_amount')-amount,subscription_topay=0,is_advance=False)
 						PaymentHistory.objects.create(order_id=order_id,amount_paid=amount,payment_mode='BANK',received_by=request.user,paid_date=payment_date,bank_name=bank_name,bank_no=bank_no,receipt_no=new_receipt_no)
 
 					messages.success(request,"Payment Received through Bank")

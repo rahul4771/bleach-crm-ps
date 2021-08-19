@@ -630,7 +630,7 @@ class StlHome(IsSeniorTeamLeader,View):
 		
 		calendar_order_schedules_list       = []
 		calendar_order_schedules_duplicates = []
-		calendar_order_schedules_alls       = OrderScheduler.objects.filter(work_status__isnull=True,status='CONFIRMED',is_active=True,start_at__lt=teamassign_to_date+timedelta(14)).select_related('order__evaluation__customer','customer_address','order_scheduler_book').filter(order__evaluation__quatation_status='APPROVED').filter(Q( Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid = 0)) | Q(order__evaluation__payment_method='POSTPAID') | Q(order__evaluation__payment_method='SUBSCRIPTION') )).annotate(duplicate=Concat('start_at','end_at','order__id',output_field=CharField()))
+		calendar_order_schedules_alls       = OrderScheduler.objects.filter(work_status__isnull=True,status='CONFIRMED',is_active=True,start_at__lt=teamassign_to_date+timedelta(14)).select_related('order__evaluation__customer','customer_address','order_scheduler_book').filter(order__evaluation__quatation_status='APPROVED',order__is_advance=False).filter(Q( Q(Q(order__payment_status='COMPLETED')|~Q(order__preamount_paid = 0)) | Q(order__evaluation__payment_method='POSTPAID') | Q(order__evaluation__payment_method='SUBSCRIPTION') )).annotate(duplicate=Concat('start_at','end_at','order__id',output_field=CharField()))
 		for calendar_order_schedules_all in calendar_order_schedules_alls:
 			if not calendar_order_schedules_all.duplicate in calendar_order_schedules_duplicates:
 				calendar_order_schedules_list.append(calendar_order_schedules_all.id)
