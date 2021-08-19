@@ -767,6 +767,25 @@ class InventoryServices(IsInventoryAdmin,View):
 
             messages.success(request,"Item Added successfully!")
 
+        if action == 'edit_item':
+            service_item_id = request.POST.get('item_edit_id')
+            item = request.POST.get('item')
+            item_count = request.POST.get('item_count')
+            unit_price = request.POST.get('unit_price')
+            item_status = request.POST.get('item_status')
+
+            inventoryitem = InventoryItem.objects.get(id=int(item))
+
+            serviceitem = ServiceRecipe.objects.get(id=int(service_item_id))
+
+            serviceitem.item = inventoryitem
+            serviceitem.item_count = item_count
+            serviceitem.item_price = unit_price
+            serviceitem.status = item_status
+            serviceitem.save()
+
+            messages.success(request,"Item Updated successfully!")
+
         if action == 'delete_item':
             item_id = request.POST.get('object_id')
 
