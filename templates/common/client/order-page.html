@@ -3646,6 +3646,7 @@ function send_items(){
         contentType: "application/json;charset=utf-8",
         
         success: function(data) {
+            console.log(data,"datap")
             if (data == true){
             alert("Invoice Sent!")
               }else{
@@ -3669,6 +3670,7 @@ function send_items(){
           contentType: "application/json;charset=utf-8",
           
           success: function(data) {
+              console.log(data,"datap")
               if (data == true){
               alert("Quotation Sent!")
               }else{

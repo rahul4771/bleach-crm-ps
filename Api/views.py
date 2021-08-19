@@ -1651,6 +1651,8 @@ class InvoiceSMSMailAPI(APIView):
 		return Response(response_dict,HTTP_200_OK)
 
 	def post(self,request):
+		data = False
+		
 		order_id = request.data.get('orderid')
 		subscription_topay = request.data.get('subscription_topay',None)
 		selected_options = request.data.get('selectedoptions')
@@ -1727,8 +1729,6 @@ class InvoiceSMSMailAPI(APIView):
 				print(message,response.text,"respo")
 				
 				data=True
-			else:
-				data = False
 
 			if evaluation.customer.is_email == True or 'EMAIL' in options:
 				#send mail
@@ -1737,8 +1737,7 @@ class InvoiceSMSMailAPI(APIView):
 				msg.attach_alternative(msg_html, "text/html")
 				msg.send(fail_silently=False)
 				data=True
-			else:
-				data = False
+			
 		return Response(data,HTTP_200_OK)
 
 

@@ -227,7 +227,33 @@ class InventoryBundle(IsInventoryAdmin,View):
         else:
             new_bundle_code = 'BUNDLE9001'
 
-        return render(request,'inventory/bundle.html',{"bundle_code":new_bundle_code,"bundles":bundles,"items":items})
+        #PAGINATION CLIENTS
+        no_of_entries = request.GET.get('no_of_entries')
+        if not no_of_entries:
+            no_of_entries = 20
+
+        page = request.GET.get('page',1)
+        paginator=Paginator(bundles,no_of_entries)
+        try:
+            bundles=paginator.page(page)
+        except PageNotAnInteger:
+            bundles=paginator.page(1)
+        except EmptyPage:
+            bundles = paginator.page(paginator.num_pages)
+
+        # Get the index of the current page
+        index = bundles.number - 1  # edited to something easier without index
+        # This value is maximum index of your pages, so the last page - 1
+        max_index = len(paginator.page_range)
+        # You want a range of 7, so lets calculate where to slice the list
+        start_index = index - 3 if index >= 3 else 0
+        end_index = index + 3 if index <= max_index - 3 else max_index
+        # Get our new page range. In the latest versions of Django page_range returns
+        # an iterator. Thus pass it to list, to make our slice possible again.
+        page_range = list(paginator.page_range)[start_index:end_index]
+        entry_per_page=(bundles.end_index())-(bundles.start_index())+1
+
+        return render(request,'inventory/bundle.html',{"bundle_code":new_bundle_code,"bundles":bundles,"items":items,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,})
 
     def post(self,request):
         action =request.POST.get('action')
@@ -757,6 +783,7 @@ class InventoryServices(IsInventoryAdmin,View):
         if action == 'add_item':
             service_type = request.POST.get('service_type')
             item = request.POST.get('item')
+            print(item,"itm")
             item_count = request.POST.get('item_count')
             unit_price = request.POST.get('unit_price')
             item_status = request.POST.get('item_status')
@@ -766,6 +793,25 @@ class InventoryServices(IsInventoryAdmin,View):
             ServiceRecipe.objects.create(service_type=service_type,item=inventoryitem,item_price=unit_price,item_count=item_count,status=item_status)
 
             messages.success(request,"Item Added successfully!")
+
+        if action == 'edit_item':
+            service_item_id = request.POST.get('item_edit_id')
+            item = request.POST.get('item')
+            item_count = request.POST.get('item_count')
+            unit_price = request.POST.get('unit_price')
+            item_status = request.POST.get('item_status')
+
+            inventoryitem = InventoryItem.objects.get(id=int(item))
+
+            serviceitem = ServiceRecipe.objects.get(id=int(service_item_id))
+
+            serviceitem.item = inventoryitem
+            serviceitem.item_count = item_count
+            serviceitem.item_price = unit_price
+            serviceitem.status = item_status
+            serviceitem.save()
+
+            messages.success(request,"Item Updated successfully!")
 
         if action == 'delete_item':
             item_id = request.POST.get('object_id')
