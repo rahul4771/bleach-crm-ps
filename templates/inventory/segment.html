@@ -72,7 +72,7 @@
                             </thead>
                             <tbody>
                                 {% for segment in category.segments %}
-                                <tr onclick="getlines({{segment.id}})">
+                                <tr class="segment_row" onclick="getlines({{segment.id}})" data-name="{{segment.name}}">
                                     <td class="inv-green-border">
                                 
                                         {{segment.name}}
@@ -153,6 +153,7 @@
                     </div>
                     <div class="col-md-5 mt-10">
                         <div class="attribute-table-2">
+                        <h3>Lines under <span id="segment_name"></span> </h3>
                             <div class="attribute-table-div2">
                                 <table class="inv-table line_table"> 
                                     <tr>
@@ -251,9 +252,10 @@
         </div>
         <div class="inv-drawer-footer">
             <button class="sent-button" type="submit" id="button_segment">Add</button>
+            </form>
                         <button data-dismiss="modal" onclick="closeNavAddSegment()" class="view-button">Cancel</button>
         </div>
-        </form>
+        
     </div>
     <div id="addLine" class="inv-sidedrawer">
 
@@ -303,9 +305,10 @@
         </div>
         <div class="inv-drawer-footer">
             <button class="sent-button line-form-btn" type="submit" >Submit</button>
+            </form>
                         <button data-dismiss="modal" onclick="closeNavAddLine()" class="view-button">Cancel</button>
         </div>
-        </form>
+        
     </div>
     <div class="modal fade" id="deleteModel" role="dialog">
         <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
@@ -355,8 +358,20 @@
         {% if forloop.first %}
         console.log({{segment.id}},"lop")
         getlines({{segment.id}});
+        $('.segment_row:first').addClass('inv-selected-row');
+        $('#segment_name').text("{{segment.name}}");
         {% endif %}
         {% endfor %}
+    })
+
+    //highlighting row and adding selected item name to table top
+    $('.segment_row').click(function(){
+        $('.segment_row').each(function(i, obj) {
+            $(obj).removeClass('inv-selected-row');
+        });
+
+        $(this).addClass('inv-selected-row');
+        $('#segment_name').text($(this).data('name'));
     })
 
     function showDrawer(d){

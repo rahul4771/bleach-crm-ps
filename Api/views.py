@@ -8,9 +8,9 @@ from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
 from bleachadmin.models import ServicePriceRange
 from django.core.mail import send_mail,EmailMultiAlternatives
-from Api.serializers import UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, LeaveUsersSerializer,ShiftScheduleSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer
+from Api.serializers import UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, LeaveUsersSerializer,ShiftScheduleSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
 from agent.views import generate_random_username
-from inventory.models import Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,ItemUnit
+from inventory.models import Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,ItemUnit,SupplierItems
 import re
 import random
 import string
@@ -1148,6 +1148,16 @@ class CleaningTeamAPI(APIView):
 				check_out = None
 				check_out_time = None
 
+			if cleaningteam.check_in_notes:
+				check_in_notes = cleaningteam.check_in_notes
+			else:
+				check_in_notes = 'No Notes'
+
+			if cleaningteam.check_out_notes:
+				check_out_notes = cleaningteam.check_out_notes
+			else:
+				check_out_notes = 'No Notes'
+
 			cleaning_status = cleaningteam.order_scheduler.work_status
 
 			followup = FollowUp.objects.filter(is_active=True,investigation__order_schedule__id=cleaningteam.order_scheduler.id).last()
@@ -1160,7 +1170,7 @@ class CleaningTeamAPI(APIView):
 			
 			print(cleaning_status,"printest")
 
-			response_dict = {'success':True,"visit_count":visit_count,"schedule_id":schedule_id, "customer_id":customer_id,"followup_id":followup_id,"cleaning_status":cleaning_status,"team_leader":cleaningteam.team_leader.name,"team_leader_image":cleaningteam.team_leader.profile_image.url,"assigned_by":cleaningteam.created_by.name,"assigned_by_image":cleaningteam.created_by.profile_image.url,"assigned_by_usertype":cleaningteam.created_by.user_type,"start_at":check_in_time,"end_at":check_out_time,'members':team_members_list, 'before_cleaning_media':before_cleaning_media_list, 'after_cleaning_media':after_cleaning_media_list}
+			response_dict = {'success':True,"visit_count":visit_count,"schedule_id":schedule_id, "customer_id":customer_id,"followup_id":followup_id,"cleaning_status":cleaning_status,"team_leader":cleaningteam.team_leader.name,"team_leader_image":cleaningteam.team_leader.profile_image.url,"assigned_by":cleaningteam.created_by.name,"assigned_by_image":cleaningteam.created_by.profile_image.url,"assigned_by_usertype":cleaningteam.created_by.user_type,"start_at":check_in_time,"end_at":check_out_time,'members':team_members_list, 'before_cleaning_media':before_cleaning_media_list, 'after_cleaning_media':after_cleaning_media_list,'checkin_notes':check_in_notes,'checkout_notes':check_out_notes}
 
 		else:
 
@@ -1865,7 +1875,7 @@ class InventoryValuesAPI(APIView):
 		response_dict['inventory_value'] = value_serializer
 		return Response(response_dict,HTTP_200_OK)
 
-class InventoryItemUnitsAPI(APIView):
+class InventoryItemsAPI(APIView):
 	permission_classes  	=   (AllowAny,)
 	authentication_classes  = ()
 
@@ -1875,13 +1885,14 @@ class InventoryItemUnitsAPI(APIView):
 		print(item_id,"attrsed")
 		try:
 			item_units = ItemUnit.objects.filter(item__id=int(item_id))
+			unit_count = item_units.count()
 		except:
 			item_units = None
+			unit_count = 0
 		
-		print(item_units,"invo")
-		item_unit_serializer = InventoryItemUnitSerializer(item_units,many=True).data
-		print(item_unit_serializer,"sed")	
-		response_dict['inventory_item_unit'] = item_unit_serializer
+		print(unit_count,"invo")
+		
+		response_dict['inventory_item_unit_count'] = unit_count
 		return Response(response_dict,HTTP_200_OK)
 
 class InventoryBundleItemsAPI(APIView):
@@ -1899,6 +1910,25 @@ class InventoryBundleItemsAPI(APIView):
 		
 		print(inventory_items,"invo")
 		item_serializer = InventoryBundleItemSerializer(inventory_items,many=True).data
+		print(item_serializer,"sed")	
+		response_dict['inventory_item'] = item_serializer
+		return Response(response_dict,HTTP_200_OK)
+
+class InventorySupplierItemsAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+		response_dict = {}
+		supplier_id = request.GET.get('supplier_id')
+		print(supplier_id,"attrsed2")
+		try:
+			supplier_items = SupplierItems.objects.filter(supplier__id=int(supplier_id))
+		except:
+			supplier_items = None
+		
+		print(supplier_items,"invo")
+		item_serializer = InventorySupplierItemSerializer(supplier_items,many=True).data
 		print(item_serializer,"sed")	
 		response_dict['inventory_item'] = item_serializer
 		return Response(response_dict,HTTP_200_OK)

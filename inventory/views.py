@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.views import View
 from bleach_crm_ps.permissions import IsInventoryAdmin,IsInventoryAdminUser
-from inventory.models import Category,Segment,Line,Attribute,AttributeValue,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier
+from inventory.models import Category,Segment,Line,Attribute,AttributeValue,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems
 from django.contrib import messages
 import re
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -271,27 +271,29 @@ class InventoryBundle(IsInventoryAdmin,View):
         if action == 'add_item':
             bundle_id = request.POST.get('item_bundle_id')
             item = request.POST.get('item')
-            units = request.POST.getlist('units')
+            item_count = request.POST.get('item_count')
 
             bundle = Bundle.objects.get(id=int(bundle_id))
-            bundle_item = InventoryItem.objects.get(id=int(item))
+            inventory_item = InventoryItem.objects.get(id=int(item))
 
-            item_bundle = BundleItems.objects.create(bundle=bundle,item=bundle_item)
+            inventory_item_unit_count = ItemUnit.objects.filter(item=inventory_item).count()
 
-            bundle_item_total_price = 0
-            unit_count = 0
+            if int(inventory_item_unit_count) >= int(item_count) :
+                selected_units = ItemUnit.objects.filter(item=inventory_item)
 
-            for unit in units:
-                item_unit = ItemUnit.objects.get(id=int(unit))
-                bundle_item_total_price += float(item_unit.unit_price)
-                unit_count += 1
-                BundleItemUnits.objects.create(bundle_item=item_bundle,item_unit=item_unit,unit_price=item_unit.unit_price)
+                total_item_price = 0
+                loop_count = 0
 
-                print(unit,"unt")
+                for unit in selected_units:
+                    loop_count += 1
+                    total_item_price += unit.unit_price
 
-            item_bundle.item_price = bundle_item_total_price
-            item_bundle.item_count = unit_count
-            item_bundle.save()
+            else:
+                selected_units = ItemUnit.objects.filter(item=inventory_item)[:inventory_item_unit_count]
+            
+            print(selected_units,"units")
+
+            
 
             messages.success(request,"Item Added successfully !")
 
@@ -390,7 +392,13 @@ class InventoryItems(IsInventoryAdmin,View):
 
 class InventorySupplier(IsInventoryAdmin,View):
     def get(self,request):
-        suppliers = Supplier.objects.all()
+
+        search = request.GET.get('search')
+
+        if search:
+            suppliers = Supplier.objects.filter(Q( Q(supplier_name__icontains=search) | Q(supplier_id__icontains=search) | Q(contact__icontains=search) ))
+        else:
+            suppliers = Supplier.objects.all()
 
         items = InventoryItem.objects.all()
         
@@ -401,7 +409,7 @@ class InventorySupplier(IsInventoryAdmin,View):
         else:
             new_supplier_id = 'SUP9001'
 
-        return render(request,'inventory/supplier.html',{"suppliers":suppliers,"supplier_id":new_supplier_id,"items":items})
+        return render(request,'inventory/supplier.html',{"suppliers":suppliers,"supplier_id":new_supplier_id,"items":items,"search_query":search})
 
     def post(self,request):
         action =request.POST.get('action')
@@ -453,6 +461,40 @@ class InventorySupplier(IsInventoryAdmin,View):
             supplier_id = request.POST.get('supplier_id_delete')
             supplier = Supplier.objects.get(id=int(supplier_id)).delete()
             messages.success(request,"Supplier Deleted Successfully !")
+
+        if action == 'add_item':
+            supplier_id = request.POST.get('item_supplier_id')
+            item = request.POST.get('supplier_item')
+            item_price = request.POST.get('supplier_item_price')
+            item_count = request.POST.get('supplier_item_count')
+
+            supplier = Supplier.objects.get(id=int(supplier_id))
+
+            SupplierItems.objects.create(supplier=supplier,item=item,item_price=item_price,item_count=item_count)
+
+            messages.success(request,"Item Added Successfully !")
+
+        if action == 'edit_item':
+            supplier_item_id = request.POST.get('item_edit_id')
+            item = request.POST.get('supplier_item')
+            item_price = request.POST.get('supplier_item_price')
+            item_count = request.POST.get('supplier_item_count')
+
+            supplieritem = SupplierItems.objects.get(id=int(supplier_item_id))
+
+            supplieritem.item = item
+            supplieritem.item_price = item_price
+            supplieritem.item_count = item_count
+            supplieritem.save()
+
+            messages.success(request,"Item Updated Successfully !")
+
+        if action == 'delete_item':
+            supplier_item_id = request.POST.get('supplier_id_delete')
+
+            supplieritem = SupplierItems.objects.get(id=int(supplier_item_id)).delete()
+
+            messages.success(request,"Item Deleted Successfully !")
 
         return redirect('inventory:inventory-supplier')
 

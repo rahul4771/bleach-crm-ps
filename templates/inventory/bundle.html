@@ -319,9 +319,10 @@
         </div>
         <div class="inv-drawer-footer">
             <button class="sent-button bundle-form-btn" type="submit" >Submit</button>
+            </form>
                         <button data-dismiss="modal" onclick="closeNavAddBundle()" class="view-button">Cancel</button>
         </div>
-        </form>
+        
     </div>
     <div class="modal fade" id="deleteModel" role="dialog">
         <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
@@ -435,7 +436,7 @@
                 </div>
 
             </div>
-            <div class="row mt-20">
+            {% comment %} <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Units</div>
 
@@ -448,18 +449,19 @@
                     </select> -->
                 </div>
 
-            </div>
+            </div> {% endcomment %}
             <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Count</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                        <input type="number"  class="w-p-100 inv-in" name="item_count" id="id_unit_count">
                       </div>
+                      Available : <span id="available_unit_count">0</span>
                 </div>
 
             </div>
-            <div class="row mt-20">
+            {% comment %} <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Price</div>
 
@@ -468,14 +470,15 @@
                       </div>
                 </div>
 
-            </div>
+            </div> {% endcomment %}
              
         </div>
         <div class="inv-drawer-footer">
             <button class="sent-button submitbtn" >Submit</button>
+            </form>
                         <button data-dismiss="modal" onclick="closeNavAddItem()" class="view-button">Cancel</button>
         </div>
-        </form>
+        
     </div>
 </div>
 
@@ -628,32 +631,14 @@ function openNavAddBundle(d) {
         var item_id = $('#id_item').val();
         console.log(item_id,"itmid")
 
-         var result = await _get('api/inventory-item-units/?item_id='+item_id);
+         var result = await _get('api/inventory-items/?item_id='+item_id);
          
          if(result.status == 200){
-            if (result.data.inventory_item_unit.length > 0){
-                //$("#item_unit_id").remove(); 
-               
-                $.each(result.data.inventory_item_unit,function(key,value){
-                    console.log(key,value.unit_code,"rome")
-                        $('#multiple-checkboxes').append('<option value="'+value.id+'" >'+value.unit_code+'</option>').multiselect("destroy").multiselect();
-                })
-                 $("#multiple-checkboxes").multiselect('destroy');
-                 $("#multiple-checkboxes").multiselect({
-                includeSelectAllOption: true,
-                });
-                //$('#item_unit_id').multiselect('refresh');
-                // $('#Select1').multiselect( 'refresh' );
-                 
-            //    $('.multiselect').multiselect('destroy');
-            // $('.multiselect').multiselect();
-         
-                
-            }else{
-                console.log("no units")
-                //$("#table2 tr:not(:first)").remove(); 
-            }
+             console.log(result,"res")
+            $('#available_unit_count').text(result.data.inventory_item_unit_count)
+            $('#id_unit_count').attr('max',result.data.inventory_item_unit_count)
          }else{
+             $('#available_unit_count').text(0)
              console.log("no units")
             //showNotification('Something went wrong','error')
          }
