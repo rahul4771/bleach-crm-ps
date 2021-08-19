@@ -3191,9 +3191,18 @@ class MakeQuatationPhase1(IsAuthenticated,View):
 		discount                = float(request.POST.get('discount')or 0.000)
 		total_cost              = float(request.POST.get('total_amount')or 0.000)
 
+
 		#update payment method
 		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount,total_cost=total_cost,discount=discount)
-		Order.objects.filter(evaluation__id=evaluation_id,is_active=True).update(total_amount=total_cost,remining_amount=total_cost)
+
+		##advance payment check
+		is_advance              = request.POST.get('is_advance')
+		if is_advance:
+			subscription_topay      = request.POST.get('subscription_topay')
+
+			Order.objects.filter(evaluation__id=evaluation_id,is_active=True).update(total_amount=total_cost,remining_amount=total_cost,subscription_topay=subscription_topay,is_advance=True,subscription_topay_date=timezone.now())
+		else:
+			Order.objects.filter(evaluation__id=evaluation_id,is_active=True).update(total_amount=total_cost,remining_amount=total_cost)
 
 		#sms integration
 		order = Order.objects.filter(evaluation__id=evaluation_id,is_active=True).first()

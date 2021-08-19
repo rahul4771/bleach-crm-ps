@@ -297,6 +297,7 @@ class PaymentResponseCredit(APIView):
 				order.amount_paid      += amount_paid
 				order.remining_amount   = order.remining_amount-amount_paid
 				order.subscription_topay= 0
+				order.is_advance        = False
 				#to check payment completed
 				if order.remining_amount == 0:
 					order.payment_status         = 'COMPLETED'

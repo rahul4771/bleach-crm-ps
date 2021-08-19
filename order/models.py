@@ -126,6 +126,7 @@ class Order(models.Model):
 
 	subscription_topay     = models.FloatField(blank=True,null=True,default=0)
 	subscription_topay_date= models.DateTimeField(blank=True,null=True)
+	is_advance             = models.BooleanField(null=False,blank=True,default=False)
 	
 	instructions		   = models.CharField(max_length=5000,blank=True,null=True)
 	

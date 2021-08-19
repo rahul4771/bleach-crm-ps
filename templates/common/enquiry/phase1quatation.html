@@ -129,6 +129,19 @@
                 </select>
                 </label>
   </div><!--ticket-form-left-->
+
+<div class="ticket-form-right advance_track1"><!--ticket-form-right-->
+    <div class=" bold-text common-label"> <label>Advance Amount Needed?</label></div>
+          <input name="is_advance" id="is_advance_id" type="checkbox">
+</div><!--ticket-form-right-->
+<div class="ticket-form-right advance_track2"><!--ticket-form-right-->
+  <div class=" bold-text common-label"> <label>Advance Amount</label></div>
+        <input name="subscription_topay" id="advance_amount_id" type="number" step="0.001" class="textBox" placeholder=" "  max="{{evaluation.total_cost}}">
+</div><!--ticket-form-right-->
+
+
+
+
   <div class="ticket-form-right payment_track"><!--ticket-form-right-->
           <div class=" bold-text common-label"> <label>Before Cleaning Amount</label></div>
                 <input name="before_cleaning_amount" id="before_cleaning_amount_id" type="number" step="0.001" class="textBox" placeholder=" "  >
@@ -231,6 +244,9 @@ $('document').ready(function(){
 //Initial Hiding of payment Breakdown
 $('.payment_track').hide();
 
+//Initial hiding of advance amount
+$('.advance_track1').hide();
+$('.advance_track2').hide();
 });
 
 //hide shw formset with payment method
@@ -246,7 +262,33 @@ $('.payment_method').change(function(){
     $('.payment_track').hide();
   }
 
+
+  // if(payment_method == 'SUBSCRIPTION')
+  // {
+  //   $('.advance_track1').show();
+  // }
+  // else{
+  //   $('.advance_track1').hide();
+  //   $('.advance_track2').hide();
+  //   $('#advance_amount_id').val('');
+  //   $('#is_advance_id').prop('checked', false);
+  // }
+
   });
+
+//advance amount hide show
+// $('#is_advance_id').click(function(){
+//     if($('#is_advance_id').is(":checked") == true)
+//     {
+//       $('.advance_track2').show();
+//     }
+//     else
+//     {
+//       $('#advance_amount_id').val('');
+//       $('.advance_track2').hide();
+//     }
+
+// });
 
 //total adjustment
 total_cost = parseFloat("{{evaluation.total_cost|floatformat:'3'}}")
