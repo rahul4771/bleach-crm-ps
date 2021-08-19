@@ -263,32 +263,32 @@ $('.payment_method').change(function(){
   }
 
 
-  if(payment_method == 'SUBSCRIPTION')
-  {
-    $('.advance_track1').show();
-  }
-  else{
-    $('.advance_track1').hide();
-    $('.advance_track2').hide();
-    $('#advance_amount_id').val('');
-    $('#is_advance_id').prop('checked', false);
-  }
+  // if(payment_method == 'SUBSCRIPTION')
+  // {
+  //   $('.advance_track1').show();
+  // }
+  // else{
+  //   $('.advance_track1').hide();
+  //   $('.advance_track2').hide();
+  //   $('#advance_amount_id').val('');
+  //   $('#is_advance_id').prop('checked', false);
+  // }
 
   });
 
 //advance amount hide show
-$('#is_advance_id').click(function(){
-    if($('#is_advance_id').is(":checked") == true)
-    {
-      $('.advance_track2').show();
-    }
-    else
-    {
-      $('#advance_amount_id').val('');
-      $('.advance_track2').hide();
-    }
+// $('#is_advance_id').click(function(){
+//     if($('#is_advance_id').is(":checked") == true)
+//     {
+//       $('.advance_track2').show();
+//     }
+//     else
+//     {
+//       $('#advance_amount_id').val('');
+//       $('.advance_track2').hide();
+//     }
 
-});
+// });
 
 //total adjustment
 total_cost = parseFloat("{{evaluation.total_cost|floatformat:'3'}}")
