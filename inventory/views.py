@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.views import View
 from bleach_crm_ps.permissions import IsInventoryAdmin,IsInventoryAdminUser
-from inventory.models import Category,Segment,Line,Attribute,AttributeValue,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems
+from inventory.models import Category,Segment,Line,Attribute,AttributeValue,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems,ServiceRecipe
 from django.contrib import messages
 import re
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -750,6 +750,30 @@ class InventoryServices(IsInventoryAdmin,View):
     def get(self,request):
         items = InventoryItem.objects.all()
         return render(request,'inventory/services.html',{"items":items})
+
+    def post(self,request):
+        action =request.POST.get('action')
+
+        if action == 'add_item':
+            service_type = request.POST.get('service_type')
+            item = request.POST.get('item')
+            item_count = request.POST.get('item_count')
+            unit_price = request.POST.get('unit_price')
+            item_status = request.POST.get('item_status')
+
+            inventoryitem = InventoryItem.objects.get(id=int(item))
+
+            ServiceRecipe.objects.create(service_type=service_type,item=inventoryitem,item_price=unit_price,item_count=item_count,status=item_status)
+
+            messages.success(request,"Item Added successfully!")
+
+        if action == 'delete_item':
+            item_id = request.POST.get('object_id')
+
+            ServiceRecipe.objects.filter(id=int(item_id)).delete()
+            messages.success(request,"Item Deleted successfully!")
+
+        return redirect('inventory:inventory-services')
 
 class InventorySegment(IsInventoryAdmin,View):
     def get(self,request,category_id):

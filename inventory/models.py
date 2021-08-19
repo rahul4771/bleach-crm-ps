@@ -206,7 +206,7 @@ class Store(models.Model):
 
 class ServiceRecipe(models.Model):
     service_type        = models.CharField(max_length=100,blank=False,null=False)
-    item                = models.CharField(max_length=100,blank=False,null=False)
+    item                = models.ForeignKey(InventoryItem,blank=True,null=True,related_name='service_item')
     item_price          = models.CharField(default=0,max_length=100,blank=True,null=True)
     item_count          = models.IntegerField(default=0,null=True,blank=True)
     status              = models.BooleanField(default=True,blank=False,null=False)

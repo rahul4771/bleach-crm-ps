@@ -10,7 +10,7 @@ from bleachadmin.models import ServicePriceRange
 from django.core.mail import send_mail,EmailMultiAlternatives
 from Api.serializers import UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, LeaveUsersSerializer,ShiftScheduleSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
 from agent.views import generate_random_username
-from inventory.models import Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,ItemUnit,SupplierItems
+from inventory.models import Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,ItemUnit,SupplierItems,ServiceRecipe
 import re
 import random
 import string
@@ -1931,6 +1931,38 @@ class InventorySupplierItemsAPI(APIView):
 		item_serializer = InventorySupplierItemSerializer(supplier_items,many=True).data
 		print(item_serializer,"sed")	
 		response_dict['inventory_item'] = item_serializer
+		return Response(response_dict,HTTP_200_OK)
+
+
+class InventoryServiceRecipeAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+		response_dict = {}
+		service_type = request.GET.get('service_type')
+		print(service_type,"attrsed2")
+		try:
+			service_items = ServiceRecipe.objects.filter(service_type=service_type)
+		except:
+			service_items = None
+		
+		print(service_items,"invo")
+
+		items_list = []
+
+		for item in service_items:
+			list_item = {
+				'service_item_id' : item.id,
+				'item_name' : item.item.name,
+				'item_id' :item.item.id,
+				'item_count' : item.item_count,
+				'status' : item.status
+			}
+
+			items_list.append(list_item)
+	
+		response_dict['service_items'] = items_list
 		return Response(response_dict,HTTP_200_OK)
 
 
