@@ -419,7 +419,7 @@
         <div class="inv-sidedrawer-inner">
             <div class="d-flex">
                 <div class="inv-drawer-head" id="itemHead">
-                    Add Store
+                    Add Item
                 </div>
                 <div class="right-pos">
 
@@ -429,11 +429,14 @@
                 </div>
             </div>
             <hr>
+
+            <input type="text" name="service_type" id="id_service_type" value="General Cleaning" />
             <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Item</div>
 
                     <div class="inv-input-container h-30"> 
+                        <select name="item" id="service_item"
                         <input type="text"  class="w-p-100 inv-in" name="attributes">
                       </div>
                 </div>
@@ -545,7 +548,6 @@
 
 <script>
 
-
 function selectActive(d,id){
     $("."+id).each(function(){
         $(this).removeClass("active")
@@ -558,10 +560,10 @@ function selectActive(d,id){
 
     function openNavAddStore(d) {
     if(d == 'add'){
-            $("#itemHead").text("Add Store");
+            $("#itemHead").text("Add Item");
         }
         if(d == 'edit'){
-            $("#itemHead").text("Edit Inventory");
+            $("#itemHead").text("Edit Item");
         }
         if(screen.width<= 600){
             document.getElementById("addStore").style.width = "100%";

@@ -344,8 +344,8 @@
                
                 <div class="row">
                     <form method="POST" action="" >{% csrf_token %}
-                    <input type="hidden" name="action" value="delete_bundle" />
-                    <input type="hidden" name="bundle_delete_id" id="id_delete_bundle" />
+                    <input type="text" name="action" value="delete_bundle" id="id_delete_bundle_action" />
+                    <input type="text" name="bundle_delete_id" id="id_delete_bundle" />
                     <div class="col-md-12 text-center">
                         <div class="cancel-model-content">
                             <button class="sent-button" type="submit" >Delete</button>
@@ -615,7 +615,7 @@ function openNavAddBundle(d) {
                 
                 $.each(result.data.inventory_item,function(key,value){
                     console.log(value.bundle_item,value.id,"eyed")
-                        $('#table2').append('<tr><td>'+value.id+'</td><td>'+value.item_count+'</td><td>'+value.item_price+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavEditValue(this)" data-valueid='+value.id+' data-valuename='+value.name+' data-valuestatus='+value.status+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn value_delete" onclick="deleteValue('+value.id+')" data-valueid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
+                        $('#table2').append('<tr><td>'+value.item+'</td><td>'+value.item_count+'</td><td>'+value.item_price+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavEditValue(this)" data-valueid='+value.id+' data-valuename='+value.name+' data-valuestatus='+value.status+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn value_delete" onclick="deleteItem('+value.id+')" data-valueid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
                 })
             }else{
                 $("#table2 tr:not(:first)").remove(); 
@@ -642,6 +642,12 @@ function openNavAddBundle(d) {
              console.log("no units")
             //showNotification('Something went wrong','error')
          }
+    }
+
+    //Delete VALUE
+    function deleteItem(item_id){
+        $('#id_delete_bundle').val(item_id);
+        $('#id_delete_bundle_action').val('delete_item');
     }
 </script>
 {% endblock %}

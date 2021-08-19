@@ -278,31 +278,70 @@ class InventoryBundle(IsInventoryAdmin,View):
 
             inventory_item_unit_count = ItemUnit.objects.filter(item=inventory_item).count()
 
-            if int(inventory_item_unit_count) >= int(item_count) :
-                selected_units = ItemUnit.objects.filter(item=inventory_item)
+            total_item_price = 0
 
-                total_item_price = 0
-                loop_count = 0
+            used_units = []
+
+            if int(inventory_item_unit_count) >= int(item_count) :
+                selected_units = ItemUnit.objects.filter(item=inventory_item,status='active')[:int(item_count)]
 
                 for unit in selected_units:
-                    loop_count += 1
-                    total_item_price += unit.unit_price
+                    total_item_price += float(unit.unit_price)
+                    unit.status = 'out_of_order'
+                    unit.save()
+                    used_units.append(unit)
+
+                item_count = item_count
 
             else:
-                selected_units = ItemUnit.objects.filter(item=inventory_item)[:inventory_item_unit_count]
-            
-            print(selected_units,"units")
+                selected_units = ItemUnit.objects.filter(item=inventory_item,status='active')[:int(inventory_item_unit_count)]
 
-            
+                for unit in selected_units:
+                    total_item_price += float(unit.unit_price)
+                    unit.status = 'out_of_order'
+                    unit.save()
+                    used_units.append(unit)
 
+                item_count = inventory_item_unit_count
+
+            bundleitem = BundleItems.objects.create(bundle=bundle,item=inventory_item,item_price=total_item_price,item_count=item_count)
+
+            for unit in used_units:
+                BundleItemUnits.objects.create(bundle_item=bundleitem,item_unit=unit,unit_price=unit.unit_price)
+            
+            bundle.bundle_items_count += int(item_count)
+            bundle_price = bundle.bundle_price
+            bundle.bundle_price = float(bundle_price)+float(total_item_price)
+            bundle.save()
+            
             messages.success(request,"Item Added successfully !")
+
+        if action == 'delete_item':
+            item_id = request.POST.get('bundle_delete_id')
+            bundleitem = BundleItems.objects.prefetch_related(Prefetch('bundle_unit_bundle_item',queryset=BundleItemUnits.objects.all(),to_attr='bundle_units')).get(id=int(item_id))
+            bundle = Bundle.objects.get(id=int(bundleitem.bundle.id))
+
+            for unit in bundleitem.bundle_units:
+                item_unit = ItemUnit.objects.get(id=int(unit.item_unit.id))
+                item_unit.status = 'active'
+                item_unit.save()
+
+                # bundleitem.item_price = float(bundleitem.item_price) - float(unit.unit_price)
+                # bundleitem.item_count = int(bundleitem.item_count) - 1
+
+                bundle.bundle_items_count = int(bundleitem.bundle.bundle_items_count) - 1
+                bundle.bundle_price = float(bundleitem.bundle.bundle_price) - float(unit.unit_price)
+                bundle.save()
+
+            bundleitem.delete()
+            messages.success(request,"Item Deleted successfully !")
 
 
         return redirect('inventory:inventory-bundle')
 
 class InventoryItems(IsInventoryAdmin,View):
     def get(self,request,item_id):
-        inventory_item = InventoryItem.objects.prefetch_related(Prefetch('image_item',queryset=InventoryItemImages.objects.all(),to_attr='item_images')).annotate(unit_count=Count('unit_item'),total_unit_price=Sum('unit_item__unit_price')).get(id=item_id)
+        inventory_item = InventoryItem.objects.prefetch_related(Prefetch('image_item',queryset=InventoryItemImages.objects.all(),to_attr='item_images')).annotate(unit_count=Sum(Case(When(unit_item__status='active',then=1),default=0,output_field=IntegerField())),total_unit_price=Sum(Case(When(unit_item__status='active',then='unit_item__unit_price'),default=0,output_field=FloatField()))).get(id=item_id)
         categories = Category.objects.all()
         item_units = ItemUnit.objects.filter(item=inventory_item)
 
@@ -709,7 +748,8 @@ class InventoryOrderDetails(IsInventoryAdmin,View):
 
 class InventoryServices(IsInventoryAdmin,View):
     def get(self,request):
-        return render(request,'inventory/services.html',{})
+        items = InventoryItem.objects.all()
+        return render(request,'inventory/services.html',{"items":items})
 
 class InventorySegment(IsInventoryAdmin,View):
     def get(self,request,category_id):

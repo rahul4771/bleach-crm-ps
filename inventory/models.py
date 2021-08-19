@@ -3,9 +3,9 @@ from django.db import models
 # Create your models here.
 
 UNIT_STATUS_CHOICES=(
-	('Active','active'),
-	('Out of Order','out_of_order'),
-	('Expired','expired')
+	('active','active'),
+	('out_of_order','out_of_order'),
+	('expired','expired')
 	)
 
 class Category(models.Model):
@@ -77,7 +77,7 @@ class ItemUnit(models.Model):
     purchase_date   =   models.DateField(blank=True,null=True)
     expiry_date     =   models.DateField(blank=True,null=True)
     unit_price      =   models.CharField(max_length=10,blank=False,null=False)
-    status          =   models.CharField(max_length=50,default='Active',blank=False,null=False,choices=UNIT_STATUS_CHOICES)
+    status          =   models.CharField(max_length=50,default='active',blank=False,null=False,choices=UNIT_STATUS_CHOICES)
     # created         =   models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
@@ -204,5 +204,17 @@ class Store(models.Model):
     def __str__(self):
         return self.store_name
 
+class ServiceRecipe(models.Model):
+    service_type        = models.CharField(max_length=100,blank=False,null=False)
+    item                = models.CharField(max_length=100,blank=False,null=False)
+    item_price          = models.CharField(default=0,max_length=100,blank=True,null=True)
+    item_count          = models.IntegerField(default=0,null=True,blank=True)
+    status              = models.BooleanField(default=True,blank=False,null=False)
+
+    def __unicode__(self):
+        return str(self.item.name)
+
+    def __str__(self):
+        return self.item.name
 
 

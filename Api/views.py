@@ -1884,7 +1884,7 @@ class InventoryItemsAPI(APIView):
 		item_id = request.GET.get('item_id')
 		print(item_id,"attrsed")
 		try:
-			item_units = ItemUnit.objects.filter(item__id=int(item_id))
+			item_units = ItemUnit.objects.filter(item__id=int(item_id),status='active')
 			unit_count = item_units.count()
 		except:
 			item_units = None
