@@ -1,5 +1,5 @@
 from django.contrib import admin
-from inventory.models import Category,Line,Segment,Attribute,AttributeValue,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems
+from inventory.models import Category,Line,Segment,Attribute,AttributeValue,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems,BundleItemUnits
 # Register your models here.
 
 admin.site.register(Category)
@@ -12,3 +12,4 @@ admin.site.register(AttributeValue)
 admin.site.register(InventoryItemImages)
 admin.site.register(Bundle)
 admin.site.register(BundleItems)
+admin.site.register(BundleItemUnits)

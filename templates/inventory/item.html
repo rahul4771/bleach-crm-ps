@@ -308,7 +308,7 @@
                                     </td>
                                     
                                     <td class="">
-                                        <span class="inv-dot {% if unit.status == 'active' %}c-active{% elif unit.status == 'expired' %}c-expired{% else %}c-out-of-order{% endif %} ml-5"></span>
+                                        <span class="inv-dot {% if unit.status == 'active' %}c-active{% elif unit.status == 'expired' %}c-expired{% elif unit.status == 'out_of_order' %}c-out-of-order{% endif %} ml-5"></span>
                                         {{unit.status}}
     
                                     </td>

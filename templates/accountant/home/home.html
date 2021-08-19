@@ -1,8 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
 {% load static %}
-<div class="wrapper"><!--wrapper-->
+
+<div class="wrapper" id="app" v-cloak>
+<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+<link href="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/assets/owl.carousel.css' %}" rel="stylesheet">
 {% include "accountant/common/header.html" %}
+<v-app>  
+
     
     <section class="content"><!--content-->
         <div class="container-fluid space topspace"><!--container-fluid space-->
@@ -273,6 +280,9 @@
 
 </div><!--white-wrapper-->
 
+<!--new cleaning calendar-->
+{% include 'common/cleaning_calendar/cleaning_calendar.html' %}             
+<!--new cleaning calendar-->
 
 {% comment %} {% if subscriptions %}
 <div class="white-wrapper"><!--white-wrapper-->
@@ -477,6 +487,20 @@
 
 {% block javascript %}
 <script src='js/footable.js'></script> 
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdn.jsdelivr.net/npm/v-owl-carousel@1.0.8/dist/v-owl-carousel.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vuetify/2.5.7/vuetify.min.js" integrity="sha512-BPXn+V2iK/Zu6fOm3WiAdC1pv9uneSxCCFsJHg8Cs3PEq6BGRpWgXL+EkVylCnl8FpJNNNqvY+yTMQRi4JIfZA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<!-- calendar-->
+  <script src="{% static '/files/externalfiles/plugins/OwlCarousel2/dist/owl.carousel.js'%}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-ellipse-progress/dist/vue-ellipse-progress.umd.min.js"></script>
+  <script src="{% static 'files/js/common.js' %}"></script>
+<script src="{% static 'files/js/calendar/main.js' %}"></script>
+<!--calender-->
+
 <script id="rendered-js">
 $('.footable').footable({
   calculateWidthOverride: function () {

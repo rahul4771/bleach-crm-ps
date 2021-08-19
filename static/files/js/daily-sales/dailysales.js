@@ -22,6 +22,10 @@ $('document').ready(function(){
 })
 
 function nextDay(){
+    $('.progress-loader').show()
+    $('#salesTable').hide()
+    $('.progress-loader-graph').hide()
+   // $('.chart_boxDiv').hide()
     var a = $('#model_date').text().split('-');
     console.log(a);
       
@@ -36,7 +40,9 @@ function nextDay(){
     axios.get(url+'/api/daily-sales-breakdown-list/',{ params: { 'sales_date': d } })
     .then(function (response) {
         console.log(response.data.total_day_sales,"salelis")
-
+        $('.progress-loader').hide()
+        $('#salesTable').show()
+        $('.chart_boxDiv').show()
         if (response.data.list.length > 0){
             $("#model-table2 tr:not(:first)").remove(); 
             $('#sales_status').html('');
@@ -73,7 +79,10 @@ function nextDay(){
 function prevDay(){.0
     var a = $('#model_date').text().split('-');
     console.log(a);
-      
+    $('.progress-loader').show()
+    $('#salesTable').hide()
+    $('.progress-loader-graph').hide()
+   // $('.chart_boxDiv').hide()
     var tmpSelectedDay   = new Date(a[1]+'/'+ a[0]+'/' +a[2]);
      console.log(tmpSelectedDay)
     tmpSelectedDay.setDate(tmpSelectedDay.getDate() - 1);
@@ -85,6 +94,9 @@ function prevDay(){.0
     //daily sales api fetch for single day
     axios.get(url+'/api/daily-sales-breakdown-list/',{ params: { 'sales_date': d } })
     .then(function (response) {
+        $('.progress-loader').hide()
+        $('#salesTable').show()
+        $('.chart_boxDiv').show()
         console.log(response.data.total_day_sales,"salelis")
 
         if (response.data.list.length > 0){
@@ -175,10 +187,18 @@ function showModal(dd){
 function monthlysales(){
     
     var sales_month = $('#calendar_month').val();
-
+    $('.progress-loader').show()
+  //  $('.progress-loader-graph').show()
+    $('#salesTable').hide()
+    //$('#chart_div').hide()
+    //$('.chart_boxDiv').hide()
     axios.get(url+'/api/daily-sales-list/',{ params: { 'sales_month': sales_month, 'datatype':datatype } })
     .then(function (response) {
-
+        $('.progress-loader').hide()
+        $('.progress-loader-graph').hide()
+        $('#salesTable').show()
+        $('#chart_div').show()
+       // $('.chart_boxDiv').show()
         $('#month_name').text(response.data.month_name);
 
         //refresh table body
