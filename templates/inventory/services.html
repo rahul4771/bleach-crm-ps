@@ -432,7 +432,7 @@
 
                     <div style="position: relative;">
                         <div class="inv-input-container inv-border h-30">
-                            <input type="text" id="pro-name" style="border: none !important; width: 90%;" class=" inv-in"
+                            <input onclick="ProductListShow()" type="text" id="pro-name" style="border: none !important; width: 90%;" class=" inv-in"
                                 name="attributes" oninput="showProducts()">
                             <!-- <div class="inv-hr"></div>
                             <div class="model-filter">
@@ -584,7 +584,9 @@ $(document).ready(function(){
 
 })
 
-
+function ProductListShow(){
+    document.getElementById("id_search").style.display="block"
+}
 function showProducts(){
     $('#id_search').empty();
     for (var j=0; j<products.length; j++) {
