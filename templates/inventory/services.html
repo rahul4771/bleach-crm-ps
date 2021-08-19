@@ -43,10 +43,10 @@
         <div class="main-content-holder"><!--main-content-holder-->   
             <div class="white-wrapper white-wrapper-padding" style="min-height: 80vh;">
                 <ul class="nav nav-tabs nav-justified">
-                    <li class="active headText-main"><a data-toggle="tab" class="inv-nav-border headText-main" href="#menu">Detailed Cleaning</a></li>
-                    <li class="headText-main"><a data-toggle="tab" class="inv-nav-border headText-main" href="#menu1">Special Care</a></li>
-                    <li class="headText-main"><a data-toggle="tab" class="inv-nav-border headText-main" href="#menu2">Kitchen Cleaning</a></li>
-                    <li class="headText-main"><a data-toggle="tab" class="inv-nav-border headText-main" href="#menu3">Infection Control</a></li>
+                    <li class="active headText-main"><a data-toggle="tab" class="inv-nav-border headText-main" href="#menu" onclick="getName('General Cleaning')">Detailed Cleaning</a></li>
+                    <li class="headText-main"><a data-toggle="tab" class="inv-nav-border headText-main" href="#menu1" onclick="getName('Upholstery Cleaning')">Special Care</a></li>
+                    <li class="headText-main"><a data-toggle="tab" class="inv-nav-border headText-main" href="#menu2" onclick="getName('Kitchen Cleaning')">Kitchen Cleaning</a></li>
+                    <li class="headText-main"><a data-toggle="tab" class="inv-nav-border headText-main" href="#menu3" onclick="getName('Sanitization & Disinfection')">Infection Control</a></li>
                   </ul>
                 
                   <div class="tab-content">
@@ -57,13 +57,13 @@
                                
                                 
                                     <ul id="=" class="nav nav-pills nav-stacked inv-service-border">
-                                      <li onclick="selectActive(this,'detailedCleaning')" class="active detailedCleaning inv-service-border2"><a class="inv-service-side" href="#">General Cleaning</a></li>
-                                      <li class="detailedCleaning" onclick="selectActive(this,'detailedCleaning')"><a class="inv-service-side" href="#">Deep Cleaning</a></li>
-                                      <li onclick="selectActive(this,'detailedCleaning')" class="detailedCleaning"><a class="inv-service-side" href="#">Facade Cleaning</a></li>
-                                      <li onclick="selectActive(this,'detailedCleaning')" class="detailedCleaning"><a class="inv-service-side" href="#">Storage Area</a></li>
-                                      <li onclick="selectActive(this,'detailedCleaning')" class="detailedCleaning"><a class="inv-service-side" href="#">Outdoor Cleaning</a></li>
-                                      <li onclick="selectActive(this,'detailedCleaning')" class="detailedCleaning"><a class="inv-service-side" href="#">Window Cleaning</a></li>
-                                      <li onclick="selectActive(this,'detailedCleaning')" class="detailedCleaning"><a class="inv-service-side" href="#">Carparking Umbrella</a></li>
+                                      <li onclick="selectActive(this,'detailedCleaning','General Cleaning')" class="active detailedCleaning inv-service-border2"><a class="inv-service-side" href="#">General Cleaning</a></li>
+                                      <li class="detailedCleaning" onclick="selectActive(this,'detailedCleaning','Deep Cleaning')"><a class="inv-service-side" href="#">Deep Cleaning</a></li>
+                                      <li onclick="selectActive(this,'detailedCleaning','Facade Cleaning')" class="detailedCleaning"><a class="inv-service-side" href="#">Facade Cleaning</a></li>
+                                      <li onclick="selectActive(this,'detailedCleaning','Storage Area')" class="detailedCleaning"><a class="inv-service-side" href="#">Storage Area</a></li>
+                                      <li onclick="selectActive(this,'detailedCleaning','Outdoor Cleaning')" class="detailedCleaning"><a class="inv-service-side" href="#">Outdoor Cleaning</a></li>
+                                      <li onclick="selectActive(this,'detailedCleaning','Window Cleaning')" class="detailedCleaning"><a class="inv-service-side" href="#">Window Cleaning</a></li>
+                                      <li onclick="selectActive(this,'detailedCleaning','Carparking Umbrella')" class="detailedCleaning"><a class="inv-service-side" href="#">Carparking Umbrella</a></li>
 
 
 
@@ -144,9 +144,9 @@
                                
                                 
                                     <ul  class="nav nav-pills nav-stacked inv-service-border">
-                                      <li onclick="selectActive(this,'specialCare')" class="active specialCare inv-service-border2"><a class="inv-service-side" href="#">Upholstery Cleaning</a></li>
-                                      <li onclick="selectActive(this,'specialCare')" class="specialCare"><a class="inv-service-side" href="#">Carpet Cleaning</a></li>
-                                      <li onclick="selectActive(this,'specialCare')" class="specialCare"><a class="inv-service-side" href="#">Mattress Cleaning</a></li>
+                                      <li onclick="selectActive(this,'specialCare','Upholstery Cleaning')" class="active specialCare inv-service-border2"><a class="inv-service-side" href="#">Upholstery Cleaning</a></li>
+                                      <li onclick="selectActive(this,'specialCare','Carpet Cleaning')" class="specialCare"><a class="inv-service-side" href="#">Carpet Cleaning</a></li>
+                                      <li onclick="selectActive(this,'specialCare','Mattress Cleaning')" class="specialCare"><a class="inv-service-side" href="#">Mattress Cleaning</a></li>
                   
 
 
@@ -228,7 +228,7 @@
                                
                                 
                                     <ul id="kitchenCleaning" class="nav nav-pills nav-stacked inv-service-border">
-                                      <li class="active"><a class="inv-service-side" href="#">Kitchen Cleaning</a></li>
+                                      <li onchange="getName('Kitchen Cleaning')" class="active"><a class="inv-service-side" href="#">Kitchen Cleaning</a></li>
 
                                     </ul>
                                   
@@ -307,7 +307,7 @@
                                
                                 
                                     <ul id="infectionControl" class="nav nav-pills nav-stacked inv-service-border">
-                                      <li class="active"><a class="inv-service-side" href="#">Sanitization & Disinfection</a></li>
+                                      <li class="active" onclick="getName('Sanitization & Disinfection')"><a class="inv-service-side" href="#">Sanitization & Disinfection</a></li>
 
                                     </ul>
                                   
@@ -419,7 +419,7 @@
         <div class="inv-sidedrawer-inner">
             <div class="d-flex">
                 <div class="inv-drawer-head" id="itemHead">
-                    Add Store
+                    Add Item
                 </div>
                 <div class="right-pos">
 
@@ -479,6 +479,7 @@
                 </div>
 
             </div>
+            
             <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Status</div>
@@ -492,6 +493,8 @@
                 </div>
 
             </div>
+            <br>
+            <input type="text"  class="w-p-100 inv-in" id="id_name_cleaning" value="General  Cleaning">
             
     
             
@@ -545,8 +548,14 @@
 
 <script>
 
+function getName(name){
+    $('#id_name_cleaning').val(name)
+}
 
-function selectActive(d,id){
+function selectActive(d,id,name){
+    
+    console.log(name)
+    $('#id_name_cleaning').val(name)
     $("."+id).each(function(){
         $(this).removeClass("active")
 
