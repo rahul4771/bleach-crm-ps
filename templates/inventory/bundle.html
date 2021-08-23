@@ -123,9 +123,9 @@
                         <div class="text-right">
                             <ul class="pagination">
      
-                                {% if attributes.has_previous %}
+                                {% if bundles.has_previous %}
                                 <li class="page-item">
-                                  <a class="page-link" href="?page={{ attributes.previous_page_number }}&search={{request.GET.search}}" aria-label="Previous">
+                                  <a class="page-link" href="?page={{ bundles.previous_page_number }}&search={{request.GET.search}}" aria-label="Previous">
                                     <span aria-hidden="true">«</span>
                                     <span class="sr-only">Previous</span>
                                   </a>
@@ -147,9 +147,9 @@
                                     {% endif %}
                                 {% endfor %}
 
-                                {% if attributes.has_next %}
+                                {% if bundles.has_next %}
                                 <li class="page-item">
-                                  <a class="page-link" href="?page={{ attributes.next_page_number }}&search={{request.GET.search}}" aria-label="Next">
+                                  <a class="page-link" href="?page={{ bundles.next_page_number }}&search={{request.GET.search}}" aria-label="Next">
                                     <span aria-hidden="true">»</span>
                                     <span class="sr-only">Next</span>
                                   </a>
@@ -166,7 +166,7 @@
                               </ul>
                         </div>
                         <div style="color: #928F8F;">
-                            Showing {{attributes.start_index}} to {{attributes.end_index}} of {{attributes.paginator.count}} entries
+                            Showing {{bundles.start_index}} to {{bundles.end_index}} of {{bundles.paginator.count}} entries
                         </div>
 
                     </div>   
