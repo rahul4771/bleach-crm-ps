@@ -2478,7 +2478,7 @@
                                 {% if forloop.first %}
                             
                                 {% if request.user.user_type == 'AGENT' %}
-                                    {% if orderschedule.evaluation_details.evaluator == None and request.user.id == orderschedule.order.evaluation.call_attender.id %}
+                                    {% if orderschedule.evaluation_details.evaluator == None and request.user.id == order.evaluation.call_attender.id %}
                                 
                                         {% if not order.evaluation.quatation_status %}
                                         <div class="c-button-div">
@@ -2499,7 +2499,7 @@
                                     {% endif %}
 
                                 {% elif request.user.user_type == 'EVALUATOR' %}
-                                    {% if orderschedule.evaluation_details.evaluator.id == request.user.id or request.user.id == orderschedule.order.evaluation.call_attender.id %}
+                                    {% if orderschedule.evaluation_details.evaluator.id == request.user.id or request.user.id == order.evaluation.call_attender.id %}
 
                                         {% if not order.evaluation.quatation_status %}
                                         <div class="c-button-div">
