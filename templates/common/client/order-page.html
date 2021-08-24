@@ -2315,12 +2315,16 @@
 
                                     {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR' or request.user.user_type == 'SALESADMIN' %}
                                     <div class="col-md-3" style="margin-top: -38px;">
+
+                                        <!-- add feedback-->
                                         {% if order.order_status == 'ORDER_CLOSED' and order.is_feedback_marked == 'False' %}
                                         <div class="row">
                                             <button style="width: 153px !important;" class="view-button">Add Feedback</button>
                                         </div>
                                         {% endif %}
+                                        <!-- feedback end-->
 
+                                        <!--reorder -->
                                         {% for schedule in order.orderschedules|slice:"1" %}
                                         {% if forloop.first and schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' or order.order_status == 'ORDER_CLOSED'%}
                                         <div class="row">
@@ -2328,34 +2332,78 @@
                                         </div>
                                         {% endif %}
                                         {% endfor %}
+                                        <!--re order end-->
 
-
-                                        {% if order.evaluation.quatation_status == 'EXPIRED' or order.evaluation.quatation_status == 'REJECTED' %}
-                                        <div class="row">
-                                            <button style="width: 153px !important;" data-toggle="modal" data-target="#resubmitModel" class="view-button">Re-Submit</button>
-                                        </div>
-                                        {% endif %}
-
-
-                                         {% if order.order_status == 'APPROVED_BY_CLIENT' or order.order_status == 'ORDER_IN_PROGRESS'  %}
-                                        <div class="row">
-                                            <button style="width: 153px !important;" data-toggle="modal" data-target="#cancelModel" class="view-button"> Cancel</button>
-                                        </div>
-                                        {% endif %} 
-
-                                        {% if request.user.user_type == 'AGENT' %}
-                                        <div class="row">
-                                            <button style="width: 153px !important;" data-toggle="modal" data-target="#raiseTicketModel" class="view-button">Raise Ticket</button>
-                                        </div>
-                                        {% endif %}
-
+                                        <!-- cancell-->
                                         {% if not order.evaluation.quatation_status %}
                                         <div class="row">
                                             <button style="width: 153px !important;" data-toggle="modal" data-target="#submitModal" class="view-button"  data-amount_before_cleaning="{{order.evaluation.before_cleaning_amount}}" data-amount_after_cleaning="{{order.evaluation.after_cleaning_amount}}" data-discount="{{order.evaluation.discount}}" data-payment_method="{{order.evaluation.payment_method}}" data-total_amount="{{order.evaluation.estimated_cost}}" data-final_amount="{{order.evaluation.total_cost}}" onclick="openSubmit(this)">Submit</button>
                                         </div>
                                         {% endif %}
+                                        <!-- cancell end-->
+
+                                        <!--submit-->
+
+                                        {% for schedule in order.orderschedules|slice:"1" %}
+                                        {% if forloop.first %}
+                            
+                                        {% if request.user.user_type == 'AGENT' %}
+                                        {% if schedule.evaluation_details.evaluator == None and request.user.id == order.evaluation.call_attender.id %}
+                                
+                                        {% if not order.evaluation.quatation_status %}
+                                        <div class="row">
+                                            <button style="width: 153px !important;" data-toggle="modal" data-target="#cancelModel" class="view-button"> Cancel</button>
+                                        </div>
+                                        {% endif %}
+
+                                        {% endif %}
+
+                                        {% elif request.user.user_type == 'EVALUATOR' %}
+                                        {% if schedule.evaluation_details.evaluator.id == request.user.id or request.user.id == order.evaluation.call_attender.id %}
+
+                                        {% if not order.evaluation.quatation_status %}
+                                        <div class="row">
+                                            <button style="width: 153px !important;" data-toggle="modal" data-target="#cancelModel" class="view-button"> Cancel</button>
+                                        </div>
+                                        {% endif %}
+
+                                        {% endif %}
+
+                                        {% elif request.user.user_type == 'BOOKINGOFFICER' %}
+
+                                        {% if not order.evaluation.quatation_status %}
+                                        <div class="row">
+                                            <button style="width: 153px !important;" data-toggle="modal" data-target="#cancelModel" class="view-button"> Cancel</button>
+                                        </div>                                
+                                        {% endif %}
+
+                                        {% endif %}
+
+                                        {% endif %}
+                                        {% endfor %}
+                                        <!--submit end-->
+
+
+                                        <!--resubmit-->
+                                        {% if order.evaluation.quatation_status == 'EXPIRED' or order.evaluation.quatation_status == 'REJECTED' %}
+                                        <div class="row">
+                                            <button style="width: 153px !important;" data-toggle="modal" data-target="#resubmitModel" class="view-button">Re-Submit</button>
+                                        </div>
+                                        {% endif %}
+                                        <!--resubmit end--> 
+
+
+                                        <!--Rise Ticket-->
+                                        {% if request.user.user_type == 'AGENT' %}
+                                        <div class="row">
+                                            <button style="width: 153px !important;" data-toggle="modal" data-target="#raiseTicketModel" class="view-button">Raise Ticket</button>
+                                        </div>
+                                        {% endif %}
+                                        <!-- Rise ticket end-->
+
                                     </div>
                                     {% endif %}
+
                                 </div>
                             </div>
                         </div>
@@ -2431,6 +2479,9 @@
                             </div><!--right-bgwrapper-->
 
                             {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR' or request.user.user_type == 'SALESADMIN' %}
+          
+
+                            <!--add feedback-->
                             {% if order.order_status == 'ORDER_CLOSED' and order.is_feedback_marked == 'False' %}
                             <div class="c-button-div">
                                 <button class="side-buttons" data-toggle="modal" data-target="#feedbackModel">
@@ -2445,6 +2496,10 @@
                                 </button>
                             </div>
                             {% endif %}
+                            <!--feedback end here -->
+
+
+                            <!--reorder-->
                             {% for schedule in order.orderschedules|slice:"1" %}
                             {% if forloop.first and schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' or order.order_status == 'ORDER_CLOSED'%}
                             <div class="c-button-div">
@@ -2461,45 +2516,16 @@
                             </div>
                             {% endif %}
                             {% endfor %}
-
-                            {% if order.evaluation.quatation_status == 'EXPIRED' or order.evaluation.quatation_status == 'REJECTED' %}
-                            <div class="c-button-div">
-                                <button class="side-buttons" data-toggle="modal" data-target="#resubmitModel">
-                                    <div class="row">
-                                        <div class="col-xs-4 text-right">
-                                            <img class="button-icons" src="{% static 'files/icons/resubmit.png' %}">
-                                        </div>
-                                        <div class="col-xs-6 text-left mpl-0">
-                                            Re-Submit
-                                        </div>
-                                    </div>
-                                </button>
-                            </div>
-                            {% endif %}
-
-
-                            {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'SALESADMIN' %}
-                                {% if order.order_status != 'ORDER_CLOSED'  %}
-                                    <div class="c-button-div">
-                                        <button data-toggle="modal" data-target="#cancelModel" class="side-buttons">
-                                            <div class="row">
-                                                <div class="col-xs-4 text-right">
-                                                    <img class="button-icons" src="{% static 'files/icons/close.png' %}">
-
-                                                </div>
-                                                <div class="col-xs-6 text-left mpl-0">
-                                                     Cancel
-                                                </div>
-                                            </div>
-                                        </button>
-                                    </div>
-                                {% endif %}
-                                {% endif %}
-
+                            <!--reorder end here-->
                                 
+
+
                                 <!--submit button -->
+                                {% for schedule in order.orderschedules|slice:"1" %}
+                                {% if forloop.first %}
+                            
                                 {% if request.user.user_type == 'AGENT' %}
-                                    {% if orderschedule.evaluation_details.evaluator == None and request.user.id == orderschedule.order.evaluation.call_attender.id %}
+                                    {% if schedule.evaluation_details.evaluator == None and request.user.id == order.evaluation.call_attender.id %}
                                 
                                         {% if not order.evaluation.quatation_status %}
                                         <div class="c-button-div">
@@ -2520,7 +2546,7 @@
                                     {% endif %}
 
                                 {% elif request.user.user_type == 'EVALUATOR' %}
-                                    {% if orderschedule.evaluation_details.evaluator.id == request.user.id or request.user.id == orderschedule.order.evaluation.call_attender.id %}
+                                    {% if schedule.evaluation_details.evaluator.id == request.user.id or request.user.id == order.evaluation.call_attender.id %}
 
                                         {% if not order.evaluation.quatation_status %}
                                         <div class="c-button-div">
@@ -2559,8 +2585,53 @@
                                     {% endif %}
 
                                 {% endif %}
+
+                                {% endif %}
+                                {% endfor %}
                                 <!-- submit button end -->
 
+
+                            <!--resubmit order-->    
+                                {% if order.evaluation.quatation_status == 'EXPIRED' or order.evaluation.quatation_status == 'REJECTED' %}
+                                <div class="c-button-div">
+                                    <button class="side-buttons" data-toggle="modal" data-target="#resubmitModel">
+                                        <div class="row">
+                                            <div class="col-xs-4 text-right">
+                                                <img class="button-icons" src="{% static 'files/icons/resubmit.png' %}">
+                                            </div>
+                                            <div class="col-xs-6 text-left mpl-0">
+                                                Re-Submit
+                                            </div>
+                                        </div>
+                                    </button>
+                                </div>
+                                {% endif %}
+                            <!--resubmit end here -->
+    
+    
+                            <!--cancell order-->
+                                {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'SALESADMIN' %}
+                                    {% if order.order_status != 'ORDER_CLOSED'  %}
+                                        <div class="c-button-div">
+                                            <button data-toggle="modal" data-target="#cancelModel" class="side-buttons">
+                                                <div class="row">
+                                                    <div class="col-xs-4 text-right">
+                                                        <img class="button-icons" src="{% static 'files/icons/close.png' %}">
+    
+                                                    </div>
+                                                    <div class="col-xs-6 text-left mpl-0">
+                                                         Cancel
+                                                    </div>
+                                                </div>
+                                            </button>
+                                        </div>
+                                    {% endif %}
+                                    {% endif %}                            
+                            <!--cancell end here -->        
+                            
+                            
+                            <!--rise ticket-->
+                            {% if request.user.user_type == 'AGENT' %}
                             <div class="c-button-div">
                                 <button class="side-buttons" data-toggle="modal" data-target="#raiseTicketModel"
                                     class="side-buttons">
@@ -2575,6 +2646,9 @@
                                     </div>
                                 </button>
                             </div>
+                            {% endif %}
+                            <!--rise ticket end here -->
+
 
                             {% endif %}
                             <!--right-bgwrapper-->

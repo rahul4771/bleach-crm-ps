@@ -1208,7 +1208,7 @@ width="1000"
             </v-radio-group>
           </div>
           <!-- keynote for services other than detailed cleaning category begins here-->
-          <div class="col-md-12" v-if="serviceType=='Upholstery Cleaning'">
+          <div class="col-md-12" v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning'">
             <div>Add Keynotes</div>
             <div class="row keynote-chip m-0">
             <div v-for="(keynote,kindex) in otherService.keynote_data" v-bind:key="kindex" class="col-md-6" >
@@ -1231,7 +1231,7 @@ width="1000"
           </div>
           </div>
           </div>
-          <div class="col-md-4"  v-if="serviceType=='Upholstery Cleaning'">
+          <div class="col-md-4"  v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning'">
             <v-combobox
             v-model="keynote_name"
             :items="keynote_content"
@@ -1239,13 +1239,13 @@ width="1000"
            
            ></v-combobox>
           </div>
-          <div class="col-md-4"  v-if="serviceType=='Upholstery Cleaning'">
+          <div class="col-md-4"  v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning'">
             <v-text-field v-model="keynote_value"
             label="Value"
               >
             </v-text-field>
           </div>
-          <div class="col-md-4"  v-if="serviceType=='Upholstery Cleaning'">
+          <div class="col-md-4"  v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning'">
             <v-btn color="primary" @click="addOthersKeynote()">
               Add
             </v-btn>
@@ -2345,7 +2345,7 @@ Fill all the details of the Buildings  to proceed
                           </v-radio-group>
                         </div>
                         <!-- keynote for services other than detailed cleaning category begins here-->
-                        <div class="col-md-12" v-if="serviceType=='Upholstery Cleaning'">
+                        <div class="col-md-12" v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning'">
                           <div>Add Keynotes</div>
                           <div class="row keynote-chip m-0">
                           <div v-for="(keynote,kindex) in otherService.keynote_data" v-bind:key="kindex" class="col-md-3" >
@@ -2368,7 +2368,7 @@ Fill all the details of the Buildings  to proceed
                         </div>
                         </div>
                         </div>
-                        <div class="col-md-4"  v-if="serviceType=='Upholstery Cleaning'">
+                        <div class="col-md-4"  v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning'">
                           <v-combobox
                           v-model="keynote_name"
                           :items="keynote_content"
@@ -2376,15 +2376,15 @@ Fill all the details of the Buildings  to proceed
                          
                          ></v-combobox>
                         </div>
-                        <div class="col-md-4"  v-if="serviceType=='Upholstery Cleaning'">
+                        <div class="col-md-4"  v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning'">
                           <v-text-field v-model="keynote_value"
                           label="Value"
                             >
                           </v-text-field>
                         </div>
-                        <div class="col-md-4"  v-if="serviceType=='Upholstery Cleaning'">
+                        <div class="col-md-4"  v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning'">
                           <v-btn color="primary" @click="addOthersKeynote()">
-                            Add
+                            Add Keynote
                           </v-btn>
                         </div>
                         <!-- key note ends here-->
