@@ -2502,6 +2502,7 @@
 
                                 
                                 <!--submit button -->
+                                {{orderschedule|default_if_none:"hiiii"}} hlw
                                 {% if request.user.user_type == 'AGENT' %}
                                     {% if orderschedule.evaluation_details.evaluator == None and request.user.id == orderschedule.order.evaluation.call_attender.id %}
                                 
@@ -2524,7 +2525,6 @@
                                     {% endif %}
 
                                 {% elif request.user.user_type == 'EVALUATOR' %}
-                                    {{orderschedule}}
                                     {% if orderschedule.evaluation_details.evaluator.id == request.user.id or request.user.id == orderschedule.order.evaluation.call_attender.id %}
 
                                         {% if not order.evaluation.quatation_status %}
