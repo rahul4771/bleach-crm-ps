@@ -4,8 +4,9 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
-
+   
     <style>
+  
         .headText-main{
   font-family:  AvenirLTStd !important; 
   color: #333333;
@@ -75,7 +76,7 @@
                                     <div class="col-md-4">
                                         <div class="model-input-name">Select size</div>
 
-                                        <select id="id_payment" class="minimal">
+                                        <select  id="id_payment" class="minimal">
                                             <option  >By Service</option>
                                             <option value="Post Paid">By Person</option>
 
@@ -353,13 +354,13 @@
                     <div style="position: relative;">
                         <div class="inv-input-container inv-border h-30">
                             <input onclick="ProductListShow()" type="text" id="pro-name" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()">
-                            <!-- <div class="inv-hr"></div>
-                            <div class="model-filter">
-                                <button class="inv-normal-btn" onclick="showDrop()">
+                           
+                            <div onclick="ProductListShow()" class="model-filter">
+                                
                                     <i class="fa fa-angle-down fa-lg " style="color: #707070;" aria-hidden="true"></i>
-                                </button>
+                                
 
-                            </div> -->
+                            </div>
 
 
 
@@ -422,6 +423,7 @@
                         <option value="False">Inactive</option>
 
                     </select>
+                    
                 </div>
 
             </div>
@@ -497,6 +499,7 @@ var products = [];
 
     console.log(products)
 $(document).ready(function(){
+    $(".country1").chosen();
     getitems('General Cleaning','detailedCleaning');
     var a = [];
 
@@ -511,7 +514,7 @@ function showProducts(){
     for (var j=0; j<products.length; j++) {
         if (products[j].name.match($('#pro-name').val())){
             console.log(products[j]);
-    $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
+    $('#id_search').append('<div class="col-md-12" style="padding:0px !important;" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
 
         }
     }
@@ -545,7 +548,7 @@ function getName(name,type){
 function selectActive(d,id,name){
     
     console.log(id,"kop")
-    console.log(a)
+    //console.log(a)
 
     $('#id_name_cleaning').val(name)
 
@@ -561,10 +564,11 @@ function selectActive(d,id,name){
 }
 
      function openNavAddStore(d) {
+       
         {% for item in items %}
     var tempId = '{{item.id}}';
     var tempName = '{{item.name}}';
-    $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="12" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
+    $('#id_search').append('<div class="col-md-12" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="12" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
 
     {% endfor %}
     if(d == 'add'){
@@ -580,11 +584,19 @@ function selectActive(d,id,name){
     }
         if(screen.width<= 600){
             document.getElementById("addStore").style.width = "100%";
+          //  $(".js-example-basic-single").select2("destroy");
+        //$(".js-example-basic-single").select2();
         }else if(screen.width<= 720){
             document.getElementById("addStore").style.width = "50%";
+           //$(".js-example-basic-single").select2("destroy");
+        //$(".js-example-basic-single").select2();
         }
         else{
             document.getElementById("addStore").style.width = "30%";
+           
+           //$(".js-example-basic-single").trigger('change.select2');
+         //  $('.select2-container').css("width","100%");
+           //$('.select2-dropdown').css("width","100%");
         }  
     }
     function closeNavAddStore() {
@@ -613,6 +625,7 @@ function selectActive(d,id,name){
       
         if(screen.width<= 600){
             document.getElementById("addStore").style.width = "100%";
+
         }else if(screen.width<= 720){
             document.getElementById("addStore").style.width = "50%";
         }
