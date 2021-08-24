@@ -1,5 +1,5 @@
 from django.db import models
-
+from user.models import UserProfile
 # Create your models here.
 
 UNIT_STATUS_CHOICES=(
@@ -210,6 +210,22 @@ class ServiceRecipe(models.Model):
     item_price          = models.CharField(default=0,max_length=100,blank=True,null=True)
     item_count          = models.IntegerField(default=0,null=True,blank=True)
     status              = models.BooleanField(default=True,blank=False,null=False)
+
+    def __unicode__(self):
+        return str(self.item.name)
+
+    def __str__(self):
+        return self.item.name
+
+class PurchaseOrder(models.Model):
+    supplier            = models.ForeignKey(Supplier,blank=True,null=True,related_name='supplier_purchase_order')
+    product             = models.ForeignKey(InventoryItem,blank=True,null=True,related_name='product_purchase_order')
+    item_count          = models.IntegerField(default=0,null=True,blank=True)
+    unit_price          = models.CharField(default=0,max_length=100,blank=True,null=True)
+    total_price         = models.CharField(default=0,max_length=100,blank=True,null=True)
+    status              = models.BooleanField(default=True,blank=False,null=False)
+    initiated_by        = models.ForeignKey(UserProfile,blank=True,null=True,related_name='initiated_by_purchase_order')
+    created             = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
         return str(self.item.name)

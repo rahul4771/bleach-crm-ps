@@ -2561,6 +2561,7 @@
                                 {% endif %}
                                 <!-- submit button end -->
 
+                            {% if request.user.user_type == 'AGENT' %}
                             <div class="c-button-div">
                                 <button class="side-buttons" data-toggle="modal" data-target="#raiseTicketModel"
                                     class="side-buttons">
@@ -2575,6 +2576,7 @@
                                     </div>
                                 </button>
                             </div>
+                            {% endif %}
 
                             {% endif %}
                             <!--right-bgwrapper-->
