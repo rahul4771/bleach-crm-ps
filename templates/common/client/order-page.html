@@ -2446,6 +2446,8 @@
                                 </button>
                             </div>
                             {% endif %}
+
+
                             {% for schedule in order.orderschedules|slice:"1" %}
                             {% if forloop.first and schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' or order.order_status == 'ORDER_CLOSED'%}
                             <div class="c-button-div">
@@ -2462,6 +2464,7 @@
                             </div>
                             {% endif %}
                             {% endfor %}
+
 
                             {% if order.evaluation.quatation_status == 'EXPIRED' or order.evaluation.quatation_status == 'REJECTED' %}
                             <div class="c-button-div">
@@ -2521,6 +2524,7 @@
                                     {% endif %}
 
                                 {% elif request.user.user_type == 'EVALUATOR' %}
+                                    {{orderschedule}}
                                     {% if orderschedule.evaluation_details.evaluator.id == request.user.id or request.user.id == orderschedule.order.evaluation.call_attender.id %}
 
                                         {% if not order.evaluation.quatation_status %}
