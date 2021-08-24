@@ -5156,9 +5156,8 @@ class EditOrderDetails(APIView):
 				if reduction_status == True:
 					reduction_amount        = int(request.data.get('reduction_amount'))
 
-					order.evaluation.estimated_cost                         -= reduction_amount
 					order.evaluation.total_cost                             -= reduction_amount
-					order.evaluation.cancelled_amount                       -= reduction_amount
+					order.evaluation.cancelled_amount                       += reduction_amount
 					order.total_amount                                      -= reduction_amount
 					order.remining_amount                                   -= reduction_amount
 										
@@ -5270,9 +5269,8 @@ class ServiceCancellation(APIView):
 				service_book.cancelled_by__id    = cancelled_by
 				amount                           = float(servicebook['amount'])
 
-				order.evaluation.estimated_cost                         -= amount
 				order.evaluation.total_cost                             -= amount
-				order.evaluation.cancelled_amount                       -= amount
+				order.evaluation.cancelled_amount                       += amount
 				order.total_amount                                      -= amount
 				order.remining_amount                                   -= amount
 
