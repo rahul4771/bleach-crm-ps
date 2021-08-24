@@ -2313,6 +2313,7 @@
                                         </div>
                                     </div>
 
+                                    <!--Used for bottom showing only -->
                                     {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR' or request.user.user_type == 'SALESADMIN' %}
                                     <div class="col-md-3" style="margin-top: -38px;">
                                         {% if order.order_status == 'ORDER_CLOSED' and order.is_feedback_marked == 'False' %}
@@ -2356,6 +2357,8 @@
                                         {% endif %}
                                     </div>
                                     {% endif %}
+                                    <!--end Used for bottom showing only -->
+
                                 </div>
                             </div>
                         </div>
