@@ -37,8 +37,8 @@ from customer.models import CustomerBooking
 from agent.forms import UserProfileForm,AddressForm
 from evaluator.forms import EvaluationDetailsForm,QuatationServiceForm
 from order.forms import InvestigationForm,PromocodeForm
-from bleachadmin.models import ServiceProductivity,ServicePriceRange
-from bleachadmin.forms import ServicePriceRangeForm
+from bleachadmin.models import ServiceProductivity,ServicePriceRange,Settings
+from bleachadmin.forms import ServicePriceRangeForm,DiscountSettingsForm
 from senior_team_leader.forms import CleaningTeamAssignForm,FollowupTeamAssignForm
 from django.db.models import Count
 
@@ -2182,7 +2182,9 @@ class Productivity(IsAuthenticated,View):
 		except:
 			service_productivities = None
 
-		return render(request,'common/productivity/productivity.html',{'service_price_ranges':service_price_ranges,'service_productivities':service_productivities,'service_types':service_types})
+		discount_settings = Settings.objects.filter(is_active=True).first()
+
+		return render(request,'common/productivity/productivity.html',{'service_price_ranges':service_price_ranges,'service_productivities':service_productivities,'service_types':service_types,"discount_settings":discount_settings,})
 
 	def post(self,request):
 		
@@ -2210,7 +2212,18 @@ class Productivity(IsAuthenticated,View):
 			price_range_id       = request.POST.get('price_range')
 			price_range          = ServicePriceRange.objects.filter(id=price_range_id).delete()
 			messages.success(request,"Service Price Range Deleted Successfully")
-		
+
+		if action == 'edit_customer_discount':
+			discount_setting_id    = request.POST.get('discount_setting_id')
+			discount_setting       = Settings.objects.get(id=discount_setting_id)
+			discount_setting_form  = DiscountSettingsForm(request.POST,instance=discount_setting)
+			
+			if discount_setting_form.is_valid():
+				discount_setting_form.save()
+				messages.success(request,"Customer Discount Successfully Updated")
+			else:
+				messages.error(request,get_error(discount_setting_form))
+
 		return redirect('common_items:productivity')
 
 class CallBackList(IsAuthenticated,View):

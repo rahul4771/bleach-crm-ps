@@ -57,10 +57,11 @@
                 <div class="white-wrapper">
                     <!--white-wrapper-->
                     <div class="row">
-                        <form method="POST" action="https://bleach-kw.com">
+                        <form method="POST" action="">
+                            {% csrf_token %}
                             <input   type="checkbox" required="required" name="is_active" id="is_active" checked="true" class="hidden-field"/>
                             <input   type="text" required="required" name="action_type" id="action_type" value="edit_customer_discount" class="hidden-field"/>
-                            <input   type="text" required="required" name="discount_setting_id" id="discount_setting_id" value="test" class="hidden-field"/>
+                            <input   type="text" required="required" name="discount_setting_id" id="discount_setting_id" value="{{discount_settings.id}}" class="hidden-field"/>
                         <div class="col-md-6 ">
                             <div class="discount-card">
                             <div class="row ml-10">
@@ -72,7 +73,7 @@
                                         
                                         <label class="switch">
                                           
-                                            <input type="checkbox" id="is_stat" name="is_stat" checked onchange="changeDiscountStat()">
+                                            <input type="checkbox" id="is_stat" name="is_stat" {% if discount_percentage.is_active == true %}checked{% endif %} onchange="changeDiscountStat()">
                                             <span class="slider round"></span>
                                           </label>
                                       </div>
@@ -81,10 +82,10 @@
                                 </div>
                                 
                                 <div class="col-md-5 mt-10 ">
-                                    <input   type="number" class="discount-card-sub-input" placeholder="Duration" required="required" name="duration"/>
+                                    <input   type="number" class="discount-card-sub-input" placeholder="Duration" required="required" name="duration" value="{{discount_settings.duration}}"/>
                                 </div>
                                 <div class="col-md-5 mt-10">
-                                    <input   type="number" class="discount-card-sub-input" placeholder="Discount in %" required="required" name="discount_percentage"/>
+                                    <input   type="number" class="discount-card-sub-input" placeholder="Discount in %" required="required" name="discount_percentage" value="{{discount_settings.discount_percentage}}"/>
                                 </div>
                                 <div class="col-md-12 text-center mt-10 mb-10 ">
                                     <input type="submit" value="Update" class="discount-submit"/>
