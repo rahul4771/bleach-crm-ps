@@ -499,8 +499,42 @@
    
  >
  <v-card style="padding:30px" class="primary-popup">
-    <div class="col-md-12 title">
+    <div class="col-md-12 title p-0">
         Payment
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="d-flex">
+          <div class="w-50">
+             Sub Total
+          </div>:
+          <div class="w-50 text-right">
+           <b> 100 KD</b>
+          </div>
+        </div>
+        <div class="d-flex mt-2">
+          <div class="w-50">
+            Discount
+          </div>:
+          <div class="w-50 text-right">
+            <b> 30 KD</b>
+          </div>
+        </div>
+        <div class="d-flex mt-2">
+          <div class="w-50">
+              Total
+          </div>:
+          <div class="w-50 text-right">
+            <b> 70 KD</b>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="payment-total-popup">
+          <div class="p-2 text-center"> Payable Amount </div>
+         <div class="payment-total-heading p-2 text-center"> 70 KD</div>
+        </div>
+      </div>
     </div>
      <div class="row">
       <form style="display: none;" action="https://testpay.bleach-kw.com/SendPerformREQuest.php" method="POST">
@@ -512,7 +546,7 @@
         <input type="submit" id="payment_submit"/>
       </form>
       
-        <div class="col-md-6">
+        <div class="col-6">
             <div class="inv-payment-card mt-4 text-center" id="inv-debit" @click="selectPayment('debit')" v-if="activePayment!='debit'"><!-- to disable click add class inv-click-disable -->
                 <img src="{% static 'files/icons/knet-icon.png' %}" class="inv-card-icon" id="inv-debit-img"  /> <!-- to disable  add class inv-payment-disabled -->
                 <div class="inv-payment-text"> <!-- to disable  add class inv-payment-disabled -->
@@ -532,7 +566,7 @@
                 </div>
               </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-6">
             <div class="inv-payment-card mt-4 text-center" id="inv-credit" @click="selectPayment('credit')" v-if="activePayment!='credit'"><!-- to disable click add class inv-click-disable -->
                 <img src="{% static 'files/icons/debit-card.png' %}" class="inv-card-icon" id="inv-credit-img"  /> <!-- to disable  add class inv-payment-disabled -->
                 <div class="inv-payment-text"> <!-- to disable  add class inv-payment-disabled -->
@@ -556,9 +590,9 @@
             <v-btn color="primary" @click="paymentSubmit()">
                 Proceed
             </v-btn>
-          <!-- <v-btn color="primary" outlined class="ml-2" @click="payment_dialog=false">
+          <v-btn color="primary" outlined class="ml-2" @click="payment_dialog=false">
                 Cancel
-            </v-btn>-->
+            </v-btn>
         </div>
      </div>
  </v-card>
@@ -677,21 +711,62 @@
 <v-dialog v-model="onetime_dialog" width="1000">
   <v-card style="min-height:500px">
 <div class="row mt-4 m-0">
-  <div class="col-md-12 mt-4">
+  
+  <div class="col-md-12 m-2">
+    <!-- <div>Do you have any gender preference ? </div>
+    <v-radio-group
+      v-model="gender_pref"
+      row
+    >
+      <v-radio
+        label="Yes"
+        :value="true"
+      ></v-radio>
+      <v-radio
+        label="No"
+        :value="false"
+      ></v-radio>
+
+    </v-radio-group> -->
+    <h3>Please Select the preferred gender </h3>
+    <v-radio-group
+      v-model="gender"
+      row
+      class="mt-0"
+      @change="getMultipleSlots()"
+    >
+      <v-radio
+        label="Male"
+        value="MALE"
+        class="mt-2"
+      ></v-radio>
+      <v-radio
+        label="Female"
+        class="mt-2"
+        value="FEMALE"
+      ></v-radio>
+      <v-radio
+      class="mt-2"
+        label="Not Preferred"
+        value=" "
+      ></v-radio>
+      
+  </div>
+  <div class="col-md-12 ">
     <h3 class="ml-2">Please select  a duration</h3>
     <p class="ml-2"> Please select a preferred duration which is convinient for you. The differences in the duration will not affect the cleaning quality. 
       Our system will automatically distribute the cleaners as per the entered details. </p>
    
   </div>
  
-  <div class="col-md-2 mt-2 col-12" v-if="duration.length>0">
+  <div class="col-md-2  col-12" v-if="duration.length>0">
     <div class="text-center p-2">In Hours</div>
   </div>
-  <div class="col-md-12 mt-2 danger" v-else>
+  <div class="col-md-12  danger" v-else>
       Cleaners not available for the selected service
   </div>
   <div
-    class="col-md-2 mt-2 col-6"
+    class="col-md-2  col-6"
     v-for="(item, durindex) in duration"
     v-bind:key="durindex"
   >
@@ -767,7 +842,7 @@
       <% oneTimeSlotCounter() +'/'+ selectedDuration.hours/2 + ' Slots selected' %> 
     </div>
     <div class="row mt-2" style="margin:0 !important">
-      <div class="col-md-4" v-for="(slot,sindex) in bookingonetimeslots" v-bind:key="sindex" v-if="!slot_loader">
+      <div class="col-md-4 col-6" v-for="(slot,sindex) in bookingonetimeslots" v-bind:key="sindex" v-if="!slot_loader">
         <div class="time-slot duration text-center p-2" 
        @click="addOneTimeSlot(slot.start_time,slot.end_time,onetimeslots[sindex])" v-if='!one_time_slots[oneTimeDateSelected].slots.includes(onetimeslots[sindex]) && checkOneTimeSlotStat(onetimeslots[sindex])'>
          <% slot.start_time+' - '+ slot.end_time %>
@@ -1194,7 +1269,9 @@ width="1000"
                   <div v-if="activeTab=='Cart'">
                     
 
-                  
+                  <div class="mt-4 text-center">
+                    <img src="{% static 'files/images/offer-banner.png'%}" style="max-width:400px;width:100%"/>
+                  </div>
                 
                     <div class="page-main-title">
                       Cart

@@ -75,6 +75,8 @@ $(document).ready(function(){
         },
       data: {
        // success_booking_dialog:true,
+       gender_pref:false,
+       gender:" ",
         slot_loader:false,
         payment_total_cost:0,
         customDateSelected:[],
@@ -2009,7 +2011,7 @@ $(document).ready(function(){
       //const [,, day] = date.split('-')
       //if ([12, 17, 28].includes(parseInt(day, 10))) return true
      // if ([1, 19, 22].includes(parseInt(day, 10))) return ['red', '#00f']
-     var selected_dates=[]
+   /*  var selected_dates=[]
      for(var i in this.one_time_slots){
        if(this.one_time_slots[i].slots.length>0){
         selected_dates.push(i)
@@ -2019,7 +2021,18 @@ $(document).ready(function(){
       return true
      }
       return false
-    },
+    },*/
+    var nextDay=moment(this.today,'YYYY-MM-DD').add(1,"days").format('YYYY-MM-DD')
+    var nextDay2=moment(this.today,'YYYY-MM-DD').add(2,"days").format('YYYY-MM-DD')
+    console.log("day :"+moment(date,'YYYY-MM-DD')+"next day :"+nextDay)
+    if(moment(date,'YYYY-MM-DD').format('YYYY-MM-DD')==nextDay||moment(date,'YYYY-MM-DD').format('YYYY-MM-DD')==nextDay2||moment(date,'YYYY-MM-DD').format('YYYY-MM-DD')==this.today){
+      return true
+    }
+    else{
+      return false
+    }
+    
+  },
     oneTimeSlotCounter(){
       var counter=0
       for(var i in this.one_time_slots){
@@ -2412,6 +2425,10 @@ $(document).ready(function(){
     },
     
     getMultipleSlots(){
+      var gender=this.gender
+      if(this.gender==" "){
+        var gender=""
+      }
       this.slot_loader=true
       this.onetimeslots=[]
       this.timeSlots={}
@@ -2425,7 +2442,7 @@ $(document).ready(function(){
       this.bookingonetimeslots=[]
       axios
         .post(
-           this.url+"/customer/ajax/getmultipleservicecleaningslotes",{service_types:this.schedule_serviceTypes,cleaning_date:full_date,number_of_cleaners:this.selectedDuration.cleaners}
+           this.url+"/customer/ajax/getmultipleservicecleaningslotes",{service_types:this.schedule_serviceTypes,cleaning_date:full_date,number_of_cleaners:this.selectedDuration.cleaners,gender:gender}
          
         )
         .then((response) => {
@@ -4645,10 +4662,15 @@ reCalcAddressData(){
 
 },
 bookLetCustService(){
+  var gender=this.gender
+  if(this.gender==" "){
+    gender=""
+  }
   if(this.currentAddressIndex==0){
     this.custServiceScheduled={
       "booking_type":"",
-      "service_details":{}
+      "service_details":{},
+      "gender":gender
     },
     this.custServiceScheduled.booking_type='together'
   }
@@ -4675,20 +4697,26 @@ bookLetCustService(){
   
 },
 sendLetCustScheduled(){
+  var gender=this.gender
+  if(this.gender==" "){
+    gender=""
+  }
   if(!this.scheduleStat){
     var ch_count=0
     for(var ch in this.scheduleGroup){
       if(this.scheduleGroup[ch].length>0){
         var serviceDetails={
           "booking_type":"together",
-          "service_details":{}
+          "service_details":{},
+          "gender":gender
         }
         for(var j=0;j<this.scheduleGroup[ch].length;j++){
           var service=this.scheduleGroup[ch]
           serviceDetails.service_details[j+1]={
             "id":this.multiServicesBill[service[j]].id,
             "evaluation_details_id":this.multiServicesBill[service[j]].evaluation_details_id,
-            "schedule_details":this.multiServicesBill[service[j]].schedule_details
+            "schedule_details":this.multiServicesBill[service[j]].schedule_details,
+            
           }
         }
         axios.post(this.url+'/customer/evaluatorbookingmultiplephase3/customer/'+this.custId,serviceDetails).then(response=>{

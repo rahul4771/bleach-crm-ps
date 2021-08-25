@@ -51,7 +51,7 @@
                                     Initiated by
                                 </th>
                                 <th  data-hide="phone,tablet"  style="width: %;" class="text-center">
-                                    Seller/vender
+                                    Supplier
                                 </th>
                                 <th data-hide="phone,tablet"  class="text-center">
                                     Number Of units
@@ -67,27 +67,31 @@
                             </tr>
                         </thead>
                      <tbody>
+                        {% for order in purchase_orders %}
                         <tr>
                             <td>
-                                0000000
+                                {{order.purchase_order_id}}
                             </td>
                             <td class="text-center">
-                                12/12/2021
+                                {{order.created|date:'d-m-Y'}}
                             </td>
                             <td class="text-center">
-                                Name
+                                {{order.initiated_by}}
                             <td class="text-center">
-                                Name
+                                {{order.supplier.name}}
                             </td>
                             <td class="text-center">
-                                23
+                                {{order.total_units}}
                             </td>
                             <td class="text-center">
-                               2300
+                               {{order.total_price}}
                             </td>
                             <td>
-                                <span class="inv-dot c-active ml-5"></span>
-                                Active
+                                {% if order.status == True %}
+                                <span class="inv-dot c-active ml-5"></span>Active
+                                {% else %}
+                                <span class="inv-dot c-active ml-5"></span>Not Active
+                                {% endif %}
                             </td>
                             <td style="float: right;">
                               
@@ -96,35 +100,8 @@
 
                             </td>
                         </tr>
-                        <tr>
-                            <td>
-                                0000000
-                            </td>
-                            <td class="text-center">
-                                12/12/2021
-                            </td>
-                            <td class="text-center">
-                                Name
-                            <td class="text-center">
-                                Name
-                            </td>
-                            <td class="text-center">
-                                23
-                            </td>
-                            <td class="text-center">
-                               2300
-                            </td>
-                            <td>
-                                <span class="inv-dot c-active ml-5"></span>
-                                Active
-                            </td>
-                            <td style="float: right;">
-                              
-                                <button class="inv-plan-img-btn" onclick="openNavAddStore('edit')"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                <button class="inv-plan-img-btn"  data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-
-                            </td>
-                        </tr>
+                        {% endfor %}
+        
                       
                      </tbody>
                        
