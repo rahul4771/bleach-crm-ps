@@ -28,17 +28,19 @@
                     <div class="col-md-3">
                         <div class="model-input-name">Select Seller</div>
 
-                        <select id="id_payment" class="minimal">
-                            <option></option>
+                        <select onchange="showAdditem()" id="id_payment" class="minimal">
+                            <option>Select Seler</option>
+                            <option value="1">1</option>
+                            <option value="3">2</option>
 
 
                         </select>
                     </div>
-                    <div class="col-md-9 text-right">
+                    <!-- <div class="col-md-9 text-right">
                         <button class="inv-plan-btn" onclick="openNavAddStore()"> <img
                             src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5"
                             alt=""> Add Item</button>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="row mt-20">
                     <div class="col-md-12 inv-text-normal">
@@ -88,7 +90,7 @@
                                                 src="{% static 'files/inventory/icons/delete.png' %}" alt=""> </button>
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr style="display: none;" id="is_additemrow">
                                     <td>
                                         <button class="inv-plan-btn" onclick="openNavAddStore('add')"> <img
                                                 src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5"
@@ -275,6 +277,16 @@
 {% block javascript %}
 
 <script>
+
+
+
+function showAdditem(){
+    console.log($('#id_payment').val())
+    if($('#id_payment').val()!=''){
+        document.getElementById("is_additemrow").style.display="block"
+    }
+}
+
     	$(document).ready(function(){
 		    $('.count').prop('disabled', true);
    			$(document).on('click','.plus',function(){

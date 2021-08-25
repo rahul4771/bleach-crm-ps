@@ -6,6 +6,8 @@
     crossorigin="anonymous" referrerpolicy="no-referrer" />
    
     <style>
+
+option:hover{background-color:yellow;}
   
         .headText-main{
   font-family:  AvenirLTStd !important; 
@@ -418,9 +420,11 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Status</div>
 
-                    <select id="id_item_status" name="item_status" class="minimal">
+                    <select id="id_item_status" name="item_status" class="minimal"  onblur='this.size=0;' 
+                    onchange='this.size=1; this.blur();' >
                         <option value="True" selected>Active</option>
-                        <option value="False">Inactive</option>
+                        <option  value="False">Inactive</option>
+                        
 
                     </select>
                     
@@ -486,6 +490,22 @@
 {% block javascript %}
 
 <script>
+
+function select_option(){
+    var selectBox = document.getElementById("colored_select");
+    $size = selectBox.size;
+    $set_size = 4;
+    if ($size == $set_size) {
+      selectBox.size = 2;
+      selectBox.style.overflow = 'hidden';
+    } else {
+      selectBox.size = $set_size;
+      selectBox.style.height = 'auto';
+      selectBox.style.overflow = 'auto';
+    }
+    var selectedOptionTop = selectBox.options[selectBox.selectedIndex].offsetTop;
+    selectBox.scrollTop = selectedOptionTop;
+  }
 var products = [];
 {% for item in items %}
     var tempId = '{{item.id}}';
