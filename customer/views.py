@@ -4855,6 +4855,18 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 
 					CleaningTeamMember.objects.bulk_create(cleaning_team_member_array)
 		
+		#update cost details
+		discount = float(request.data.get('discount'))
+		if discount:
+			evaluation.discount   += discount
+			evaluation.total_cost -= discount
+
+			order.total_amount    -= discount
+			order.remining_amount -= discount
+
+			evaluation.save()
+			order.save()
+
 		response_dict['secret_code']        = str(evaluation.evaluation_id[3:14])+str(evaluation.customer.username)
 		response_dict['order_no']           = evaluation.evaluation_id
 		response_dict['order_status']       = order.order_status
