@@ -290,6 +290,9 @@ select.minimal {
 .hidden-field{
   display: none !important;
 }
+.mt-5{
+  margin-top:5px;
+}
 /* Toggle swicth */
 .switch {
   position: relative;
@@ -342,7 +345,7 @@ input:focus + .slider {
   background: #2d4e85;
     color: #ffffff;
     border-radius: 10px;
-    padding: 5px;
+    padding: 8px;
     outline: none;
     border: none;
 }
