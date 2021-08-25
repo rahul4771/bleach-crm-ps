@@ -4535,7 +4535,7 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 
 		#evaluation id decryption
 		evaluation_id_encrypted = evaluation_id
-		evaluation_id = 'BLC'+evaluation_id_encrypted[3:14]
+		evaluation_id           = 'BLC'+evaluation_id_encrypted[3:14]
 		
 		#evaluation books,sections,and keynotes
 		evaluation_details                  = EvaluationDetails.objects.select_related('evaluation').prefetch_related('evaluation_book_evaluation_details__evaluationsection_book__keynotesections').filter(evaluation__evaluation_id=evaluation_id)
