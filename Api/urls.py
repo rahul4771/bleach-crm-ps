@@ -15,6 +15,8 @@ urlpatterns = [
 	url(r'^leave-scheduler/$',views.LeaveScheduleAPI.as_view(),name='api-leaveschedule'),
 	url(r'^leave-scheduler-delete/(?P<leave_id>\d+)/$',views.DeleteLeaveSchedule.as_view(),name='api-leaveschedule-delete'),
 
+	url(r'^discount-settings/$',views.DiscountSettingsAPI.as_view(),name='api-discount-settings'),
+
 	url(r'^section-verification-updation/$',views.SectionVerificationUpdationAPI.as_view(),name='api-section-verification-updation'),
 	url(r'^resource-skills/$',views.ResourceSkillsAPI.as_view(),name='api-resource-skills'),
 
