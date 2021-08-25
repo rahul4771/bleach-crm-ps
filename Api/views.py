@@ -1966,6 +1966,7 @@ class InventoryServiceRecipeAPI(APIView):
 		return Response(response_dict,HTTP_200_OK)
 
 
+
 ###Team Leader Mobile app API'S
 from bleach_crm_ps.api_permissions import IsTeamInchargePermission
 from Api.serializers import CleaningTeamAPISerializer,FollowUpTeamAPISerializer
