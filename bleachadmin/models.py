@@ -58,4 +58,4 @@ class Settings(models.Model):
 		return str(self.discount_percentage)
 
 	def __str__(self):
-		return self.discount_percentage
+		return str(self.discount_percentage)
