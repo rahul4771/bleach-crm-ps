@@ -70,7 +70,8 @@ class EvaluationSerializer(serializers.ModelSerializer):
 	quatation_approved_date = serializers.DateTimeField(format="%d-%m-%Y %I:%M %p ")
 	class Meta:
 		model  = Evaluation
-		fields = ('customer','quatation_status','quatation_approved_date','payment_method','booking_evaluation')
+		fields = ('customer','quatation_status','quatation_approved_date','payment_method','booking_evaluation','estimated_cost','total_cost','discount')
+		read_only_fields = ('estimated_cost','total_cost','discount')
 
 class OrderSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -83,10 +84,11 @@ class EvaluationDetailsSerializer(serializers.ModelSerializer):
 	address                            = AddressSerializer(read_only=True)
 	evaluation_book_evaluation_details = EvaluationBookSerializer(many=True,read_only=True)
 	proposed_time                      = serializers.DateTimeField(format="%d-%m-%Y %I:%M %p ")
+	evaluation                         = EvaluationSerializer(read_only=True)
 	class Meta:
 		model  = EvaluationDetails
-		fields = ('id','evaluator','proposed_time','address','evaluation_book_evaluation_details')	
-		read_only_fields = ('id',)
+		fields = ('id','evaluator','proposed_time','address','evaluation','evaluation_book_evaluation_details')	
+		read_only_fields = ('id','evaluation')
 class CustomerBookingSerializer(serializers.ModelSerializer):
 	evaluation = EvaluationSerializer(read_only=True)
 	class Meta:

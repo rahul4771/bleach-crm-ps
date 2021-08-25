@@ -4,6 +4,12 @@ from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,Shift
 from evaluator.models import Evaluation,EvaluationDetails
 from order.models import Promocode
 from inventory.models import Line,Segment,Category,Attribute,AttributeValue,BundleItems,InventoryItem,ItemUnit,SupplierItems
+from bleachadmin.models import Settings
+
+class DiscountSettingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model  = Settings
+        fields = ('discount_percentage','duration')
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:

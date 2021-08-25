@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.views import View
 from bleach_crm_ps.permissions import IsInventoryAdmin,IsInventoryAdminUser
-from inventory.models import Category,Segment,Line,Attribute,AttributeValue,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems,ServiceRecipe
+from inventory.models import Category,Segment,Line,Attribute,AttributeValue,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems,ServiceRecipe,PurchaseOrder,PurchaseOrderItems
 from django.contrib import messages
 import re
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -748,13 +748,76 @@ class InventoryCreateCheckout(IsInventoryAdmin,View):
 
 class InventoryPurchaseOrder(IsInventoryAdmin,View):
     def get(self,request):
-        return render(request,'inventory/purchaseOrder.html',{})
+        purchase_orders = PurchaseOrder.objects.filter(is_order_completed=True).annotate(total_units=Sum('purchase_order_purchase_order_item__item_count'),total_price=Sum('purchase_order_purchase_order_item__total_price'))
+        return render(request,'inventory/purchaseOrder.html',{"purchase_orders":purchase_orders})
+
 class InventoryPurchaseOrderPage(View):
     def get(self,request):
         return render(request,'inventory/purchaseorderpage.html',{})        
 class InventoryCreatePurchaseOrder(View):
     def get(self,request):
-        return render(request,'inventory/createpo.html',{})
+
+        purchase_order = PurchaseOrder.objects.filter(is_order_completed=False,initiated_by=request.user).last()
+
+        items = InventoryItem.objects.all()
+
+        if not purchase_order:
+            
+            purchase_order_latest = PurchaseOrder.objects.all().last()
+            if purchase_order_latest:
+                code_number  =  int(re.findall(r'(\d+)', purchase_order_latest.purchase_order_id)[0]) + 1
+                new_item_code = 'PO'+str(code_number)
+            else:
+                new_item_code = 'PO9001'
+            
+            purchase_order = PurchaseOrder.objects.create(purchase_order_id=new_item_code,initiated_by=request.user)
+
+        suppliers = Supplier.objects.filter(status=True)
+
+        supplier_id = request.GET.get('supplier_id')
+        if supplier_id :
+            supplier = Supplier.objects.get(id=int(supplier_id))
+        else:
+            supplier = None
+
+        purchase_order_items = PurchaseOrderItems.objects.filter(purchase_order=purchase_order,purchase_order__supplier=supplier)
+
+        return render(request,'inventory/createpo.html',{"items":items,"suppliers":suppliers,"supplier":supplier,"purchase_order":purchase_order,"purchase_order_items":purchase_order_items})
+
+    def post(self,request):
+        action = request.POST.get('action')
+        print(action,"act")
+
+        if action == 'add_item':
+            purchase_order_id = request.POST.get('purchase_order_id')
+            product = request.POST.get('item')
+            
+            unit_price = request.POST.get('unit_price')
+            unit_count = request.POST.get('item_count')
+            total_price = request.POST.get('total_price')
+            print(product,unit_price,unit_count,total_price,"kok")
+
+            purchase_order = PurchaseOrder.objects.get(id=int(purchase_order_id))
+            product = InventoryItem.objects.get(id=int(product))
+
+            PurchaseOrderItems.objects.create(purchase_order=purchase_order,product=product,unit_price=unit_price,total_price=total_price)
+            
+            messages.success(request,"Item Added successfully!")
+
+        if action == 'order_close':
+            purchase_order_id = request.POST.get('purchase_order_id')
+            purchase_order = PurchaseOrder.objects.get(id=int(purchase_order_id))
+            purchase_order.is_order_completed = True
+            purchase_order.save()
+            messages.success(request,"Order Completed successfully!")
+            return redirect('inventory:inventorydash-board')
+
+        if action == 'delete_item':
+            order_item_id = request.POST.get('item_id')
+            PurchaseOrderItems.objects.get(id=int(order_item_id)).delete()
+            messages.success(request,"Item Deleted successfully!")
+
+        return redirect('inventory:inventory-createpurchaseorder')
 
 class InventoryEditPurchaseOrder(IsInventoryAdmin,View):
     def get(self,request):

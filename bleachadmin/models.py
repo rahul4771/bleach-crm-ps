@@ -45,3 +45,17 @@ class ServicePriceRange(models.Model):
 
 	def __str__(self):
 		return self.service_type.name
+
+class Settings(models.Model):
+	discount_percentage = models.FloatField(blank=True,null=True)
+	duration            = models.IntegerField(blank=True,null=True)
+	
+	is_active           = models.BooleanField(null=False,blank=True,default=True)
+	created             = models.DateTimeField(auto_now_add=True)
+	updated             = models.DateTimeField(auto_now=True)
+
+	def __unicode__(self):
+		return str(self.discount_percentage)
+
+	def __str__(self):
+		return str(self.discount_percentage)

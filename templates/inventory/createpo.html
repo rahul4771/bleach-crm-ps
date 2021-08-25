@@ -21,35 +21,41 @@
             <div class="white-wrapper white-wrapper-padding2">
                 <div class="row">
                     <div class="col-md-12">
-                        <span class="inv-po-id">BLPO00000001</span>
+                        <span class="inv-po-id">{{purchase_order.purchase_order_id}}</span>
                     </div>
                 </div>
                 <div class="row mt-20">
                     <div class="col-md-3">
-                        <div class="model-input-name">Select Seller</div>
+                        <div class="model-input-name">Select Supplier</div>
 
-                        <select id="id_payment" class="minimal">
-                            <option></option>
-
+                        <select id="supplier_id" class="minimal" onchange="set_params_go();">
+                            <option value="">--Select Supplier--</option>
+                           
+                            {% for supplier in suppliers %}
+                            <option value="{{supplier.id}}">{{supplier.supplier_name}}</option>
+                            {% endfor %}
 
                         </select>
                     </div>
-                    <div class="col-md-9 text-right">
+                    <!-- <div class="col-md-9 text-right">
                         <button class="inv-plan-btn" onclick="openNavAddStore()"> <img
                             src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5"
                             alt=""> Add Item</button>
-                    </div>
+                    </div> -->
                 </div>
+                
+                {% if supplier != None %}
                 <div class="row mt-20">
                     <div class="col-md-12 inv-text-normal">
-                        Supplier Address
+                        {{supplier.address}}
                     </div>
                 </div>
                 <div class="row mt-10">
                     <div class="col-md-12 inv-text-normal">
-                        Supplier contact
+                        {{supplier.contact}}
                     </div>
                 </div>
+                {% endif %}
                 <div class="row mt-10">
                     <div class="col-md-12 ">
                         <table class="inv-table footable">
@@ -75,32 +81,41 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                {% for item in purchase_order_items %}
                                 <tr>
-                                    <td>0000000</td>
-                                    <td>0000000</td>
-                                    <td>232</td>
-                                    <td>232</td>
-                                    <td>222</td>
+                                    <td>{{item.product.item_code}}</td>
+                                    <td>{{item.product.name}}</td>
+                                    <td>{{item.unit_price}}</td>
+                                    <td>{{item.item_count}}</td>
+                                    <td>{{item.total_price}}</td>
                                     <td>
                                         <button class="inv-plan-img-btn"> <img
                                             src="{% static 'files/inventory/icons/edit.png' %}" alt="" onclick="openNavAddStore('edit')"> </button>
-                                        <button class="inv-plan-img-btn"> <img
+                                        <button data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}"  class="inv-plan-img-btn delete-item-btn"> <img
                                                 src="{% static 'files/inventory/icons/delete.png' %}" alt=""> </button>
                                     </td>
                                 </tr>
-                                <tr>
+                                {% endfor %}
+                               
+                                {% if supplier != None %}
+                                <tr  id="id_addrow">
                                     <td>
                                         <button class="inv-plan-btn" onclick="openNavAddStore('add')"> <img
                                                 src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5"
                                                 alt=""> Add Item</button>
                                     </td>
                                 </tr>
+                                {% endif %}
                             </tbody>
                         </table>
                     </div>
                 </div>
                 <div class="row mt-20 text-center">
-                    <button class="sent-button" >Submit</button>
+                    <form method="POST" action="" >{% csrf_token %}
+                    <input type="hidden" name="action" value="order_close" />
+                    <input type="hidden" name="purchase_order_id" value="{{purchase_order.id}}" />
+                    <button class="sent-button" type="submit" >Submit</button>
+                    </form>
                                   <button  class="view-button">Cancel</button>
                   </div>
             </div>
@@ -121,14 +136,19 @@
                 </div>
             </div>
             <hr>
+
+            <form method="POST" action="" >{% csrf_token %}
+            <input type="hidden" name="action" id="purchase_order_action" value="add_item" />
+            <input type="text" name="item" id="id_pro_sel" value="" />
+            <input type="hidden" name="purchase_order_id" value="{{purchase_order.id}}" />
+            <input type="hidden" name="item_edit_id" id="id_edit_item" />
             <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Product</div>
 
                     <div style="position: relative;">
                         <div class="inv-input-container inv-border h-30">
-                            <input type="text" id="pro-name" style="border: none !important; width: 90%;" class=" inv-in"
-                                name="attributes" oninput="showProducts()">
+                            <input onclick="ProductListShow()" type="text" id="pro-name" name="product" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()">
                             <!-- <div class="inv-hr"></div>
                             <div class="model-filter">
                                 <button class="inv-normal-btn" onclick="showDrop()">
@@ -141,133 +161,118 @@
 
                         </div>
                         <div id="id_search" class="row inv-result-box" style="display: none;">
-                            <div class="col-md-12" onclick="closeProductShow(this)" data-pro="12" data-name="! fri">
-                                <div class="inv-search-result">
-                                    ! fri
-                                </div>
-                            </div>
-                            <div class="col-md-12" onclick="closeProductShow(this)" data-pro="13" data-name="1! fri">
-                                <div class="inv-search-result">
-                                    ! fri
-                                </div>
-                            </div>
-                            <div class="col-md-12" onclick="closeProductShow(this)" data-pro="13" data-name="! fri">
-                                <div class="inv-search-result">
-                                    ! fri
-                                </div>
-                            </div>
-                        </div>
-                        <div id="id_cat" class="row inv-result-box" style="display: none;">
-                            <div class="col-md-12">
-                                <div class="inv-search-result">
-                                    
-                                    <label class="c-container">cat 1
-                                        <input type="checkbox">
-                                        <span style="top:2px !important;" class="c-checkmark"></span>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="inv-search-result">
-                                    
-                                    <label class="c-container">cat 1
-                                        <input type="checkbox">
-                                        <span style="top:2px !important;" class="c-checkmark"></span>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="inv-search-result">
-                                    
-                                    <label class="c-container">cat 1
-                                        <input type="checkbox">
-                                        <span style="top:2px !important;" class="c-checkmark"></span>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="inv-search-result">
-                                    
-                                    <label class="c-container">cat 1
-                                        <input type="checkbox">
-                                        <span style="top:2px !important;" class="c-checkmark"></span>
-                                    </label>
-                                </div>
-                            </div>
                           
-                           
                         </div>
                     </div>
                 </div>
 
             </div>
-            <div class="row mt-20">
+            {% comment %} <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Unit Price   <span id="id_price"> 00</span></div>
                 </div>
 
+            </div> {% endcomment %}
+
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Unit Price</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" id="id_unit_price" name="unit_price" onkeyup="calc_total_price()" >
+                      </div>
+                </div>
+
             </div>
+
             <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Unit</div>
 
                     <div class="qty ">
-                        <span style="color: #4B4B4B;"  class="minus bg-dark qty-border-two">-</span>
-                        <input style="color: #4B4B4B;"  type="" class="count qty-border-two" name="qty" value="1" >
-                        <span style="color: #4B4B4B; margin-left: -4px !important;" class="plus bg-dark qty-border-two">+</span>
+                        <span style="color: #4B4B4B;"  class="minus bg-dark qty-border-two" onclick="calc_total_price()">-</span>
+                        <input style="color: #4B4B4B;"  type="text" class="count qty-border-two"   >
+                        <input style="color: #4B4B4B;"   type="hidden" class="count qty-border-two" value="1" id="id_item_count" name="item_count"  >
+
+                        <span style="color: #4B4B4B; margin-left: -4px !important;" class="plus bg-dark qty-border-two" onclick="calc_total_price()">+</span>
                     </div>
                 </div>
 
             </div>
 
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Total Price</div>
 
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" id="id_total_price"  name="total_price" >
+                      </div>
+                </div>
+
+            </div>
 
 
 
 
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button">Submit</button>
+            <button class="sent-button" type="submit" >Submit</button>
+            </form>
             <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
         </div>
     </div>
-    
     <div class="modal fade" id="deleteModel" role="dialog">
         <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-12 mt-20">
 
-
+                        
                         <div class="d-flex ">
-                            <div style="margin: 0 auto; flex-grow: 3;">
-                                <p class="text-center model-head">Do you want to delete inventory</p>
-                            </div>
+                            <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to delete item ?</p></div>
                             <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
 
-                                <img src="{% static 'files/icons/cancel.png'%}"
-                                    class="cl-modal-icon close-evaluation" />
+                                <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
                             </button>
-
+    
                         </div>
                     </div>
                 </div>
-
+               
                 <div class="row">
                     <div class="col-md-12 text-center">
+                        <form method="POST" action="" >{% csrf_token %}
+                        <input type="hidden" name="action" value="delete_item" />
+                        <input type="text" name="item_id" id="id_item" />
                         <div class="cancel-model-content">
-                            <button class="sent-button">Delete</button>
+                            <button class="sent-button" type="submit" >Delete</button>
                             <button data-dismiss="modal" class="view-button">Cancel</button>
-
+                          
                         </div>
+                        </form>
                     </div>
-
+    
                 </div>
             </div>
         </div>
-    </div>
+      </div>
+    
 </div>
 
+{% comment %} <div class="row">
+    <div class="col-md-12 text-center">
+        <form method="POST" action="" >{% csrf_token %}
+        <input type="hidden" id="action_delete_id" name="action" value="delete_segment" />
+        <input type="hidden" name="object_id" id="object_id" />
+        <div class="cancel-model-content">
+            <button class="sent-button" type="submit" >Delete</button>
+            <button data-dismiss="modal" class="view-button">Cancel</button>
+            
+        </div>
+        </form>
+    </div>
+
+</div> {% endcomment %}
 
 
 {% endblock %}
@@ -275,27 +280,72 @@
 {% block javascript %}
 
 <script>
+
+
+
+function showAdditem(){
+
+}
+        var products = [];
+        {% for item in items %}
+            var tempId = '{{item.id}}';
+            var tempName = '{{item.name}}';
+            products.push({id:tempId,name:tempName})
+        // $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
+
+        {% endfor %}
+
     	$(document).ready(function(){
-		    $('.count').prop('disabled', true);
+
+            
+            var urlc = window.location.href;
+            console.log(urlc)
+            if(urlc.includes('supplier_id')){
+                var supid = urlc.split("=")[1];
+                console.log(supid);
+                $('#supplier_id').val(supid);
+            }
+            var products = [];
+            {% for item in items %}
+                var tempId = '{{item.id}}';
+                var tempName = '{{item.name}}';
+                products.push({id:tempId,name:tempName})
+            // $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
+
+            {% endfor %}
+
+		    $('.count').val(1);
    			$(document).on('click','.plus',function(){
 				$('.count').val(parseInt($('.count').val()) + 1 );
+                $('#id_item_count'.val(parseInt($('.count').val()) + 1 ))
+                calc_total_price();
+                console.log($('.count').val(),"countval")
     		});
         	$(document).on('click','.minus',function(){
     			$('.count').val(parseInt($('.count').val()) - 1 );
+                $('#id_item_count'.val(parseInt($('.count').val()) - 1 ))
     				if ($('.count').val() == 0) {
+                        $('#id_item_count').val(1);
 						$('.count').val(1);
 					}
+                    calc_total_price();
+                    console.log($('.count').val(),"countval")
     	    	});
  		});
-    $("#pro-name").click(function(){
-        document.getElementById("id_cat").style.display="none"
-    });
+    
     function showDrop() {
        document.getElementById("id_cat").style.display="block"
     }
 
 
     function openNavAddStore(d) {
+        {% for item in items %}
+    var tempId = '{{item.id}}';
+    var tempName = '{{item.name}}';
+    $('#id_search').append('<div class="col-md-12" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
+
+    {% endfor %}
+       // $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
         if(d == 'add'){
             $('#itemHead').text('Add Item');
         }
@@ -318,26 +368,74 @@
 
 
 
-    function showProducts(){
-        console.log( $('#pro-name').val());
-        if($('#pro-name').val() !=""){
+    function ProductListShow(){
         document.getElementById("id_search").style.display="block"
-
-        }else{
-        document.getElementById("id_search").style.display="none"
-
-        }
-        
     }
+
+    function showProducts(){
+        $('#id_search').empty();
+        for (var j=0; j<products.length; j++) {
+            if (products[j].name.match($('#pro-name').val())){
+                console.log(products[j]);
+        $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
+
+            }
+        }
+            console.log( $('#pro-name').val());
+            if($('#pro-name').val() !=""){
+            document.getElementById("id_search").style.display="block"
+
+            }else{
+            document.getElementById("id_search").style.display="none"
+
+            }
+            
+        }
 
     function closeProductShow(d){
         console.log(d);
         var proId = $(d).attr("data-pro")
-        $('#id_price').text(proId);
+        $('#id_pro_sel').val($(d).attr("data-pro"));
         $('#pro-name').val($(d).attr("data-name"));
 
 
         document.getElementById("id_search").style.display="none"
+    }
+
+    function calc_total_price(){
+        var unit_price = $('#id_unit_price').val();
+        var count = $('.count').val();
+        console.log("log")
+        var total_price = parseFloat(unit_price * count);
+        $('#id_total_price').val(total_price);
+    }
+
+    $('.delete-item-btn').click(function(){
+        $('#id_item').val($(this).data('itemid'));
+    })
+    
+    function set_params_go(args)
+    {
+       // console.log($('#supplier_id').val())
+        //  if($('#supplier_id').val()!='--Select Supplier--'){
+        //      document.getElementById("id_search").style.display="none"
+        //  }else if($('#supplier_id').val()!=''){
+        //      document.getElementById("id_search").style.display="none"
+        //  }
+        // else{
+        //      document.getElementById("id_search").style.display="block"
+        //  }
+    var url='{% url 'inventory:inventory-createpurchaseorder' %}';
+    var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),supplier_id:$('#supplier_id').val()
+    };
+    for(key in args) 
+        params[key]=args[key];
+    var query='';
+    for(key in params)
+        if(params[key]) 
+            query+='&'+key+'='+params[key].toString();
+    query=query.replace('&','?');
+    window.location.href=url+query;  
     }
 
 </script>

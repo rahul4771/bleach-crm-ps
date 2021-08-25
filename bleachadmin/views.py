@@ -23,10 +23,10 @@ from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,Evaluat
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,Reporting,ReportingMedia,Promocode
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
-from bleachadmin.models import ServiceProductivity,ServicePriceRange
+from bleachadmin.models import ServiceProductivity,ServicePriceRange,Settings
 
 from order.forms import PromocodeForm
-from bleachadmin.forms import ProductivityForm,ServicePriceRangeForm
+from bleachadmin.forms import ProductivityForm,ServicePriceRangeForm,DiscountSettingsForm
 
 from django.db.models.functions import TruncMonth as Month, TruncYear as Year
 from django.db.models import Count
@@ -1612,7 +1612,9 @@ class ProductivityView(IsAdmin,View):
 		except:
 			service_types = None
 
-		return render(request,'admin/productivity/productivity.html',{'productivities':productivities,'service_types':service_types,'price_ranges':price_ranges})
+		discount_settings = Settings.objects.filter(is_active=True).first()
+		
+		return render(request,'admin/productivity/productivity.html',{'productivities':productivities,'service_types':service_types,'price_ranges':price_ranges,'discount_settings':discount_settings})
 
 	def post(self,request):
 		action = request.POST.get('action_type')
@@ -1644,11 +1646,21 @@ class ProductivityView(IsAdmin,View):
 			pricerange_form = ServicePriceRangeForm(request.POST,instance=pricerange)
 			
 			if pricerange_form.is_valid():
-				print(pricerange_form)
 				pricerange_form.save()
 				messages.success(request,"Service Price Range Successfully Updated")
 			else:
 				messages.error(request,get_error(pricerange_form))
+		
+		elif action == 'edit_customer_discount':
+			discount_setting_id    = request.POST.get('discount_setting_id')
+			discount_setting       = Settings.objects.get(id=discount_setting_id)
+			discount_setting_form  = DiscountSettingsForm(request.POST,instance=discount_setting)
+			
+			if discount_setting_form.is_valid():
+				discount_setting_form.save()
+				messages.success(request,"Customer Discount Successfully Updated")
+			else:
+				messages.error(request,get_error(discount_setting_form))
 
 		return redirect('bleach_admin:admin-productivity')
 

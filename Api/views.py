@@ -6,9 +6,9 @@ from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investi
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
-from bleachadmin.models import ServicePriceRange
+from bleachadmin.models import ServicePriceRange,Settings
 from django.core.mail import send_mail,EmailMultiAlternatives
-from Api.serializers import UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, LeaveUsersSerializer,ShiftScheduleSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
+from Api.serializers import DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, LeaveUsersSerializer,ShiftScheduleSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
 from agent.views import generate_random_username
 from inventory.models import Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,ItemUnit,SupplierItems,ServiceRecipe
 import re
@@ -1963,6 +1963,20 @@ class InventoryServiceRecipeAPI(APIView):
 			items_list.append(list_item)
 	
 		response_dict['service_items'] = items_list
+		return Response(response_dict,HTTP_200_OK)
+
+
+class DiscountSettingsAPI(APIView):
+	permission_classes  	= (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+		response_dict                     = {}
+		discount_settings                 = Settings.objects.filter(is_active=True).first()
+		
+		discount_setting_serializer       = DiscountSettingSerializer(discount_settings).data
+		response_dict['discount_details'] = discount_setting_serializer
+
 		return Response(response_dict,HTTP_200_OK)
 
 
