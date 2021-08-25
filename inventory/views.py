@@ -791,8 +791,9 @@ class InventoryCreatePurchaseOrder(View):
         if action == 'add_item':
             purchase_order_id = request.POST.get('purchase_order_id')
             product = request.POST.get('item')
+            
             unit_price = request.POST.get('unit_price')
-            unit_count = request.POST.get('qty')
+            unit_count = request.POST.get('item_count')
             total_price = request.POST.get('total_price')
             print(product,unit_price,unit_count,total_price,"kok")
 
@@ -810,6 +811,11 @@ class InventoryCreatePurchaseOrder(View):
             purchase_order.save()
             messages.success(request,"Order Completed successfully!")
             return redirect('inventory:inventorydash-board')
+
+        if action == 'delete_item':
+            order_item_id = request.POST.get('item_id')
+            PurchaseOrderItems.objects.get(id=int(order_item_id)).delete()
+            messages.success(request,"Item Deleted successfully!")
 
         return redirect('inventory:inventory-createpurchaseorder')
 
