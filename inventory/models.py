@@ -219,18 +219,30 @@ class ServiceRecipe(models.Model):
 
 class PurchaseOrder(models.Model):
     supplier            = models.ForeignKey(Supplier,blank=True,null=True,related_name='supplier_purchase_order')
-    product             = models.ForeignKey(InventoryItem,blank=True,null=True,related_name='product_purchase_order')
-    item_count          = models.IntegerField(default=0,null=True,blank=True)
-    unit_price          = models.CharField(default=0,max_length=100,blank=True,null=True)
-    total_price         = models.CharField(default=0,max_length=100,blank=True,null=True)
+    purchase_order_id   = models.CharField(max_length=50,blank=False,null=False)
     status              = models.BooleanField(default=True,blank=False,null=False)
     initiated_by        = models.ForeignKey(UserProfile,blank=True,null=True,related_name='initiated_by_purchase_order')
+    is_order_completed  = models.BooleanField(default=False,blank=False,null=False)
     created             = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
-        return str(self.item.name)
+        return str(self.purchase_order_id)
 
     def __str__(self):
-        return self.item.name
+        return self.purchase_order_id
 
+
+class PurchaseOrderItems(models.Model):
+    purchase_order      = models.ForeignKey(PurchaseOrder,blank=True,null=True,related_name='purchase_order_purchase_order_item')
+    product             = models.ForeignKey(InventoryItem,blank=True,null=True,related_name='product_purchase_order_item')
+    item_count          = models.IntegerField(default=0,null=True,blank=True)
+    unit_price          = models.CharField(default=0,max_length=100,blank=True,null=True)
+    total_price         = models.CharField(default=0,max_length=100,blank=True,null=True)
+    created             = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return str(self.purchase_order.purchase_order_id)
+
+    def __str__(self):
+        return self.purchase_order.purchase_order_id
 
