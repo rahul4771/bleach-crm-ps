@@ -18,6 +18,15 @@ html{
 .booking-card{
     margin-top:-75px !important;
 }
+.payment-total-popup{
+    background: #EDF1F6 0% 0% no-repeat padding-box;
+   
+}
+.payment-total-heading{
+    color:#289bac;
+    font-weight: 700;
+    font-size:24px;
+}
 .v-application--wrap{
     min-height:0px !important;
 }
