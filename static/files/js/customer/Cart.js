@@ -74,11 +74,13 @@ $(document).ready(function(){
           
         },
       data: {
+        settings:{},
        // success_booking_dialog:true,
        gender_pref:false,
        gender:" ",
         slot_loader:false,
         payment_total_cost:0,
+        payable_amount:0,
         customDateSelected:[],
         customDialog:false,
         cleaningPolicy:'One Time',
@@ -573,13 +575,16 @@ $(document).ready(function(){
     editScheduleData:{},
     editScheduleStat:false,
     evaluation_id:'',
-    eval_details:{}
+    eval_details:{},
+    discount:false,
+    discount_val:0
         },
      
 /* header data */
 
 
         methods: {
+          
           checkSlotSelection(){
             for(var i in  this.one_time_slots){
               if(this.one_time_slots[i].slots.length>0){
@@ -609,7 +614,7 @@ $(document).ready(function(){
 
              ONLINE
              &merchant_defined_data5=NO&merchant_defined_data7=1&merchant_defined_data20=NO&customer_ip_address={{customer_ip_address}}"*/
-             window.location.href="https://testpay.bleach-kw.com/creditcard/payment_form.php?merchant_defined_data1="+this.eval_details.order_no+"&reference_number="+this.eval_details.order_no+"1&amount="+this.bookedServiceDetails[0].evaluation_book_evaluation_details[0].total_cost+"&merchant_defined_data2=prepaid&merchant_defined_data3="+this.eval_details.order_status+"currency=KWD&transaction_type=sale&bill_to_forename="+this.bookedServiceDetails[0].address.customer.name.split(" ")[1]+"&bill_to_surname="+this.bookedServiceDetails[0].address.customer.name.split(" ")[2]+"&bill_to_phone="+this.bookedServiceDetails[0].address.customer.mobile_number+"&bill_to_email="+this.bookedServiceDetails[0].address.customer.email+"&bill_to_address_country=KW"+"&bill_to_address_city="+this.bookedServiceDetails[0].address.area.name+"&bill_to_address_line1="+this.bookedServiceDetails[0].address.governorate.name+"&merchant_defined_data4=ONLINE&merchant_defined_data5=NO&merchant_defined_data7=1&merchant_defined_data20=NO&customer_ip_address="+this.ip_address
+             window.location.href="https://testpay.bleach-kw.com/creditcard/payment_form.php?merchant_defined_data1="+this.eval_details.order_no+"&reference_number="+this.eval_details.order_no+"1&amount="+this.payable_amount+"&merchant_defined_data2=prepaid&merchant_defined_data3="+this.eval_details.order_status+"currency=KWD&transaction_type=sale&bill_to_forename="+this.bookedServiceDetails[0].address.customer.name.split(" ")[1]+"&bill_to_surname="+this.bookedServiceDetails[0].address.customer.name.split(" ")[2]+"&bill_to_phone="+this.bookedServiceDetails[0].address.customer.mobile_number+"&bill_to_email="+this.bookedServiceDetails[0].address.customer.email+"&bill_to_address_country=KW"+"&bill_to_address_city="+this.bookedServiceDetails[0].address.area.name+"&bill_to_address_line1="+this.bookedServiceDetails[0].address.governorate.name+"&merchant_defined_data4=ONLINE&merchant_defined_data5=NO&merchant_defined_data7=1&merchant_defined_data20=NO&customer_ip_address="+this.ip_address
             }
            
           },
@@ -811,6 +816,9 @@ $(document).ready(function(){
               this.multiServicesBill[this.schedule_serviceTypes_selected[j]].cleaning_policy='ONE TIME SERVICE'
               this.multiServicesBill[this.schedule_serviceTypes_selected[j]].schedule_details={}
               var count=0
+              if(this.discount){
+                this.multiServicesBill[this.schedule_serviceTypes_selected[j]].discount=this.discount
+               }
               for(var k in this.selected_onetime_slots){
                 var yr=k.split('-')[0]
                 var month=k.split('-')[1]
@@ -846,8 +854,10 @@ $(document).ready(function(){
             this.schedule_serviceTypes_selected=[]
            // this.oneTimeDateSelected=''
            //this.one_time_slots={}
+           
             this.activeTab='Cart'
           },
+         
           addAllServiceTypes(){
             this.schedule_serviceTypes_selected=[]
             if(this.scheduleStat){
@@ -2022,15 +2032,26 @@ $(document).ready(function(){
      }
       return false
     },*/
-    var nextDay=moment(this.today,'YYYY-MM-DD').add(1,"days").format('YYYY-MM-DD')
-    var nextDay2=moment(this.today,'YYYY-MM-DD').add(2,"days").format('YYYY-MM-DD')
-    console.log("day :"+moment(date,'YYYY-MM-DD')+"next day :"+nextDay)
-    if(moment(date,'YYYY-MM-DD').format('YYYY-MM-DD')==nextDay||moment(date,'YYYY-MM-DD').format('YYYY-MM-DD')==nextDay2||moment(date,'YYYY-MM-DD').format('YYYY-MM-DD')==this.today){
+    var flag=false
+   
+   // var nextDay2=moment(this.today,'YYYY-MM-DD').add(2,"days").format('YYYY-MM-DD')
+   
+    for(var i=1;i<=this.settings.duration;i++){
+      var nextDay=moment(this.today,'YYYY-MM-DD').add(i,"days").format('YYYY-MM-DD')
+      if(moment(date,'YYYY-MM-DD').format('YYYY-MM-DD')==nextDay||moment(date,'YYYY-MM-DD').format('YYYY-MM-DD')==this.today){
+        flag=true
+        break
+      }
+      else{
+        flag=false
+      }
+    }
+    /*if(moment(date,'YYYY-MM-DD').format('YYYY-MM-DD')==nextDay||moment(date,'YYYY-MM-DD').format('YYYY-MM-DD')==nextDay2||moment(date,'YYYY-MM-DD').format('YYYY-MM-DD')==this.today){
       return true
-    }
-    else{
-      return false
-    }
+    }*/
+   
+      return flag
+    
     
   },
     oneTimeSlotCounter(){
@@ -2042,6 +2063,7 @@ $(document).ready(function(){
     },
     submitOneTimeSlots(){
       this.selected_onetime_slots={}
+     
       
         for(var i in this.one_time_slots){
           if(this.one_time_slots[i].slots.length>0){
@@ -2051,11 +2073,44 @@ $(document).ready(function(){
           }
         }
       
-    
+       this.checkDiscount()
        this.addOneTimeToSchedule()
       this.onetime_dialog=false
       this.oneTimeSelectionStat=true
     },
+    checkDiscount(){
+      var dates=Object.keys(this.one_time_slots)
+      this.discount=false
+      for(var i=0;i<dates.length;i++){
+      for(var j=1;j<=this.settings.duration;j++){
+        var nextDay=moment(this.today,'YYYY-MM-DD').add(j,"days").format('YYYY-MM-DD')
+        if(dates[i]==nextDay||dates[i]==this.today){
+          flag=true
+          break
+        }
+        else{
+          flag=false
+        }
+      }
+    }
+    if(flag){
+      this.discount=true
+    }
+    else{
+      this.discount=false
+    }
+      
+    },
+    calculateDiscount(){
+      var discount=0
+      for(var i=0;i<this.multiServicesBill.length;i++){
+        if(this.multiServicesBill[i].discount){
+          discount=discount+((this.settings.discount_percentage/100)*this.multiServicesBill[i].total_cost)
+        }
+      }
+      return discount
+    },
+    
     addSlot(slot) {
       if (this.time_slot[this.slotDate].selectedSlot.length == 0) {
         this.time_slot[this.slotDate].selectedSlot.push(slot);
@@ -2985,6 +3040,7 @@ $(document).ready(function(){
   
        var sampleServicesBill={
          service:'',
+         discount:false,
          bill:[],
          serviceNo:this.serviceCount,
          area_type:this.area_type,
@@ -3004,6 +3060,7 @@ $(document).ready(function(){
      sampleServicesBill={
          service:'',
          bill:[],
+         discount:false,
          serviceNo:'',
          area_type:'',
          location_type:'',
@@ -4416,7 +4473,7 @@ getBookedServices(){
   this.multiServicesBill=[]
   axios.get(this.url+'/customer/evaluatorbookingmultiplephase3/customer/'+this.custId).then(response=>{
     this.bookedServiceDetails=response.data.evaluation_details
-    this.payment_total_cost=this.bookedServiceDetails[0].evaluation_book_evaluation_details[0].total_cost
+    this.payment_total_cost=this.bookedServiceDetails[0].evaluation.total_cost
     if(this.bookedServiceDetails.length>0){
       this.multiAddress=true
     }
@@ -4437,7 +4494,8 @@ getBookedServices(){
         location_type:serviceBookedDetails[i].location_type,
         schedule_details:{},
         service:serviceBookedDetails[i].service_type.name,
-        total_cost:serviceBookedDetails[i].total_cost
+        total_cost:serviceBookedDetails[i].total_cost,
+        discount:false
       }
       for(var j=0;j<serviceBookedDetails[i].evaluationsection_book.length;j++) {
         scheduleDetails.bill.push(serviceBookedDetails[i].evaluationsection_book[j])
@@ -4661,8 +4719,15 @@ reCalcAddressData(){
   this.rearrangeSize()
 
 },
+getSettings(){
+  axios.get(this.url+'/api/discount-settings/').then(response=>{
+    this.settings=response.data.discount_details
+  })
+},
 bookLetCustService(){
   var gender=this.gender
+  var discount=this.calculateDiscount()
+  this.payable_amount=this.payment_total_cost-discount
   if(this.gender==" "){
     gender=""
   }
@@ -4670,6 +4735,7 @@ bookLetCustService(){
     this.custServiceScheduled={
       "booking_type":"",
       "service_details":{},
+      "discount":discount,
       "gender":gender
     },
     this.custServiceScheduled.booking_type='together'
@@ -4685,6 +4751,7 @@ bookLetCustService(){
   this.currentAddressIndex=this.currentAddressIndex+1
   
   this.selectedAddress=this.bookedServiceDetails[this.currentAddressIndex]
+ // this.payment_total_cost=this.bookedServiceDetails[this.currentAddressIndex].evaluation.total_cost
  console.log("service details length is"+this.bookedServiceDetails.length+"address index is"+this.currentAddressIndex)
 
     
@@ -4698,6 +4765,8 @@ bookLetCustService(){
 },
 sendLetCustScheduled(){
   var gender=this.gender
+  var discount=this.calculateDiscount()
+  this.payable_amount=this.payment_total_cost-discount
   if(this.gender==" "){
     gender=""
   }
@@ -4708,7 +4777,8 @@ sendLetCustScheduled(){
         var serviceDetails={
           "booking_type":"together",
           "service_details":{},
-          "gender":gender
+          "gender":gender,
+          "discount":discount
         }
         for(var j=0;j<this.scheduleGroup[ch].length;j++){
           var service=this.scheduleGroup[ch]
@@ -4772,6 +4842,7 @@ sendLetCustScheduled(){
     this.getBookedServices()
    // this.getServices()
    // this.getAreaTypes()
+   this.getSettings()
     this.getIp()
     //this.getGovernorate()
     //this.dummyDataGenerator(3)
