@@ -278,6 +278,9 @@
 {% block javascript %}
 
 <script>
+
+
+
 function showAdditem(){
 
 }
@@ -334,10 +337,10 @@ function showAdditem(){
         {% for item in items %}
     var tempId = '{{item.id}}';
     var tempName = '{{item.name}}';
-    $('#id_search').append('<div class="col-md-12" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="12" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
+    $('#id_search').append('<div class="col-md-12" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
 
     {% endfor %}
-        $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="12" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
+       // $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
         if(d == 'add'){
             $('#itemHead').text('Add Item');
         }
