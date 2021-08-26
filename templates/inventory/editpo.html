@@ -167,7 +167,7 @@
                     <div class="model-input-name">Unit Price</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" id="id_unit_price" name="unit_price" >
+                        <input type="text"  class="w-p-100 inv-in" id="id_unit_price" name="unit_price" onchange onpropertychange oninput="calc_total_price()">
                       </div>
                 </div>
 
@@ -315,10 +315,11 @@ function showAdditem(){
 
 
     function openNavAddStore(d) {
+        $('#id_search').empty();
         {% for item in items %}
     var tempId = '{{item.id}}';
     var tempName = '{{item.item}}';
-    $('#id_search').empty();
+    
     $('#id_search').append('<div class="col-md-12" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-productprice="{{item.item_price}}" data-name="{{item.item}}"><div class="inv-search-result">{{item.item}}</div></div>');
 
     {% endfor %}
@@ -381,7 +382,7 @@ function showAdditem(){
         }
 
     function closeProductShow(d){
-        console.log(d);
+        console.log(d,"d");
         var proId = $(d).attr("data-pro")
         $('#id_pro_sel').val($(d).attr("data-pro"));
         $('#id_unit_price').val($(d).attr("data-productprice"));
@@ -400,6 +401,11 @@ function showAdditem(){
         var total_price = parseFloat(unit_price * count);
         $('#id_total_price').val(total_price);
     }
+
+    $('#id_unit_price').change(function(){
+        console.log("logm")
+        calc_total_price();
+    })
 
     $('.delete-item-btn').click(function(){
         $('#id_item').val($(this).data('itemid'));

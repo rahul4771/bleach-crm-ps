@@ -776,8 +776,9 @@ class InventoryPurchaseOrder(IsInventoryAdmin,View):
         return redirect('inventory:inventory-purchaseorder')
 
 class InventoryPurchaseOrderPage(View):
-    def get(self,request):
-        return render(request,'inventory/purchaseorderpage.html',{})
+    def get(self,request,purchase_order_id):
+        purchase_order = PurchaseOrder.objects.prefetch_related(Prefetch('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.all(),to_attr='purchase_order_items')).get(id=int(purchase_order_id))
+        return render(request,'inventory/purchaseorderpage.html',{"purchase_order":purchase_order})
 
 class InventoryCreatePurchaseOrder(View):
     def get(self,request):
