@@ -25,18 +25,24 @@
                     </div>
                 </div>
                 <div class="row mt-20">
+                    
                     <div class="col-md-3">
                         <div class="model-input-name">Select Supplier</div>
 
                         <select id="supplier_id" class="minimal" onchange="set_params_go();">
-                            <option value="">--Select Supplier--</option>
-                           
-                            {% for supplier in suppliers %}
-                            <option value="{{supplier.id}}">{{supplier.supplier_name}}</option>
-                            {% endfor %}
+                            {% if purchase_order.supplier == None %}
+                                <option value="">--Select Supplier--</option>
+                            
+                                {% for supplier in suppliers %}
+                                <option value="{{supplier.id}}">{{supplier.supplier_name}}</option>
+                                {% endfor %}
+                            {% else %}
+                                <option value="{{purchase_order.supplier.id}}" selected>{{purchase_order.supplier.supplier_name}}</option>
+                            {% endif %}
 
                         </select>
                     </div>
+                    
                     <!-- <div class="col-md-9 text-right">
                         <button class="inv-plan-btn" onclick="openNavAddStore()"> <img
                             src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5"
@@ -53,6 +59,11 @@
                 <div class="row mt-10">
                     <div class="col-md-12 inv-text-normal">
                         {{supplier.contact}}
+                    </div>
+                </div>
+                 <div class="row mt-20">
+                    <div class="col-md-12 inv-text-normal">
+                        {{supplier.terms}}
                     </div>
                 </div>
                 {% endif %}
@@ -83,13 +94,13 @@
                             <tbody>
                                 {% for item in purchase_order_items %}
                                 <tr>
-                                    <td>{{item.product.item_code}}</td>
-                                    <td>{{item.product.name}}</td>
+                                    <td>{{item.product.supplier_item_id}}</td>
+                                    <td>{{item.product.item}}</td>
                                     <td>{{item.unit_price}}</td>
                                     <td>{{item.item_count}}</td>
                                     <td>{{item.total_price}}</td>
                                     <td>
-                                        <button class="inv-plan-img-btn"> <img
+                                        <button class="inv-plan-img-btn edit-item-btn" data-itemid="{{item.id}}" data-productid="{{item.product.id}}" data-productname="{{item.product.item}}" data-unitprice="{{item.unit_price}}" data-itemcount="{{item.item_count}}" data-totalprice="{{item.total_price}}"> <img
                                             src="{% static 'files/inventory/icons/edit.png' %}" alt="" onclick="openNavAddStore('edit')"> </button>
                                         <button data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}"  class="inv-plan-img-btn delete-item-btn"> <img
                                                 src="{% static 'files/inventory/icons/delete.png' %}" alt=""> </button>
@@ -97,7 +108,7 @@
                                 </tr>
                                 {% endfor %}
                                
-                                {% if supplier != None %}
+                                {% if purchase_order.supplier != None %}
                                 <tr  id="id_addrow">
                                     <td>
                                         <button class="inv-plan-btn" onclick="openNavAddStore('add')"> <img
@@ -139,7 +150,7 @@
 
             <form method="POST" action="" >{% csrf_token %}
             <input type="hidden" name="action" id="purchase_order_action" value="add_item" />
-            <input type="text" name="item" id="id_pro_sel" value="" />
+            <input type="hidden" name="item" id="id_pro_sel" value="" />
             <input type="hidden" name="purchase_order_id" value="{{purchase_order.id}}" />
             <input type="hidden" name="item_edit_id" id="id_edit_item" />
             <div class="row mt-20">
@@ -148,7 +159,7 @@
 
                     <div style="position: relative;">
                         <div class="inv-input-container inv-border h-30">
-                            <input onclick="ProductListShow()" type="text" id="pro-name" name="product" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()">
+                            <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" name="product" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()">
                             <!-- <div class="inv-hr"></div>
                             <div class="model-filter">
                                 <button class="inv-normal-btn" onclick="showDrop()">
@@ -179,7 +190,7 @@
                     <div class="model-input-name">Unit Price</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" id="id_unit_price" name="unit_price" onkeyup="calc_total_price()" >
+                        <input type="text"  class="w-p-100 inv-in" id="id_unit_price" name="unit_price" >
                       </div>
                 </div>
 
@@ -190,11 +201,11 @@
                     <div class="model-input-name">Unit</div>
 
                     <div class="qty ">
-                        <span style="color: #4B4B4B;"  class="minus bg-dark qty-border-two" onclick="calc_total_price()">-</span>
+                        <span style="color: #4B4B4B;"  class="minus bg-dark qty-border-two" >-</span>
                         <input style="color: #4B4B4B;"  type="text" class="count qty-border-two"   >
                         <input style="color: #4B4B4B;"   type="hidden" class="count qty-border-two" value="1" id="id_item_count" name="item_count"  >
 
-                        <span style="color: #4B4B4B; margin-left: -4px !important;" class="plus bg-dark qty-border-two" onclick="calc_total_price()">+</span>
+                        <span style="color: #4B4B4B; margin-left: -4px !important;" class="plus bg-dark qty-border-two" >+</span>
                     </div>
                 </div>
 
@@ -205,7 +216,7 @@
                     <div class="model-input-name">Total Price</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" id="id_total_price"  name="total_price" >
+                        <input type="text"  class="w-p-100 inv-in" id="id_total_price"  name="total_price" readonly>
                       </div>
                 </div>
 
@@ -216,7 +227,7 @@
 
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button" type="submit" >Submit</button>
+            <button class="sent-button purchaseorder-form-btn" type="submit" >Submit</button>
             </form>
             <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
         </div>
@@ -289,7 +300,7 @@ function showAdditem(){
         var products = [];
         {% for item in items %}
             var tempId = '{{item.id}}';
-            var tempName = '{{item.name}}';
+            var tempName = '{{item.item}}';
             products.push({id:tempId,name:tempName})
         // $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
 
@@ -308,7 +319,7 @@ function showAdditem(){
             var products = [];
             {% for item in items %}
                 var tempId = '{{item.id}}';
-                var tempName = '{{item.name}}';
+                var tempName = '{{item.item}}';
                 products.push({id:tempId,name:tempName})
             // $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
 
@@ -317,19 +328,26 @@ function showAdditem(){
 		    $('.count').val(1);
    			$(document).on('click','.plus',function(){
 				$('.count').val(parseInt($('.count').val()) + 1 );
-                $('#id_item_count'.val(parseInt($('.count').val()) + 1 ))
+                console.log($('#id_item_count').val(),'firs')
+               // $('#id_item_count').val(parseInt($('#id_item_count').val()) + 1 );
+                console.log($('#id_item_count').val(),'se')
+
                 calc_total_price();
-                console.log($('.count').val(),"countval")
+                console.log($('#id_item_count').val(),"countval")
     		});
         	$(document).on('click','.minus',function(){
-    			$('.count').val(parseInt($('.count').val()) - 1 );
-                $('#id_item_count'.val(parseInt($('.count').val()) - 1 ))
+                
+                if($('.count').val() >= 1){
+                    $('.count').val(parseInt($('.count').val()) - 1 );
+                //$('#id_item_count').val(parseInt($('#id_item_count').val()) - 1 )
     				if ($('.count').val() == 0) {
                         $('#id_item_count').val(1);
 						$('.count').val(1);
 					}
                     calc_total_price();
                     console.log($('.count').val(),"countval")
+                }
+    			
     	    	});
  		});
     
@@ -339,18 +357,33 @@ function showAdditem(){
 
 
     function openNavAddStore(d) {
+        $('#id_search').empty();
         {% for item in items %}
+
     var tempId = '{{item.id}}';
-    var tempName = '{{item.name}}';
-    $('#id_search').append('<div class="col-md-12" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
+    var tempName = '{{item.item}}';
+    console.log(tempId,tempName)
+   
+    $('#id_search').append('<div class="col-md-12" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-productprice="{{item.item_price}}" data-name="{{item.item}}"><div class="inv-search-result">{{item.item}}</div></div>');
 
     {% endfor %}
        // $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
         if(d == 'add'){
             $('#itemHead').text('Add Item');
+            $('#purchase_order_action').val('add_item');
+            $('.purchaseorder-form-btn').text('Add');
+
+            $('#pro-name').val('');
+            $('#id_pro_sel').val('');
+            $('#id_unit_price').val('');
+            $('#id_item_count').val(1);
+            $('.count').val(1);
+            $('#id_total_price').val('');
         }
         if(d == 'edit'){
             $('#itemHead').text('Edit Item');
+            $('#purchase_order_action').val('edit_item');
+            $('.purchaseorder-form-btn').text('Update');
 
         }
         if (screen.width <= 600) {
@@ -377,7 +410,7 @@ function showAdditem(){
         for (var j=0; j<products.length; j++) {
             if (products[j].name.match($('#pro-name').val())){
                 console.log(products[j]);
-        $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
+        $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-productprice="'+products[j].item_price+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
 
             }
         }
@@ -396,6 +429,8 @@ function showAdditem(){
         console.log(d);
         var proId = $(d).attr("data-pro")
         $('#id_pro_sel').val($(d).attr("data-pro"));
+        $('#id_unit_price').val($(d).attr("data-productprice"));
+        $('#id_total_price').val($(d).attr("data-productprice"));
         $('#pro-name').val($(d).attr("data-name"));
 
 
@@ -403,8 +438,9 @@ function showAdditem(){
     }
 
     function calc_total_price(){
+        console.log("c")
         var unit_price = $('#id_unit_price').val();
-        var count = $('.count').val();
+        var count = $('#id_item_count').val();
         console.log("log")
         var total_price = parseFloat(unit_price * count);
         $('#id_total_price').val(total_price);
@@ -412,6 +448,16 @@ function showAdditem(){
 
     $('.delete-item-btn').click(function(){
         $('#id_item').val($(this).data('itemid'));
+    })
+
+    $('.edit-item-btn').click(function(){
+        $('#id_edit_item').val($(this).data('itemid'));
+        $('#pro-name').val($(this).data('productname'));
+        $('#id_pro_sel').val($(this).data('productid'));
+        $('#id_unit_price').val($(this).data('unitprice'));
+        $('#id_item_count').val($(this).data('itemcount'));
+        $('.count').val($(this).data('itemcount'));
+        $('#id_total_price').val($(this).data('totalprice'));
     })
     
     function set_params_go(args)

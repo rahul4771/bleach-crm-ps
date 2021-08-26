@@ -533,9 +533,17 @@ class InventorySupplier(IsInventoryAdmin,View):
             item_price = request.POST.get('supplier_item_price')
             item_count = request.POST.get('supplier_item_count')
 
+            supplier_items_latest = SupplierItems.objects.all().last()
+
+            if supplier_items_latest:
+                code_number  =  int(re.findall(r'(\d+)', supplier_items_latest.supplier_item_id)[0]) + 1
+                new_supplier_item_id = 'SPITM'+str(code_number)
+            else:
+                new_supplier_item_id = 'SPITM9001'
+
             supplier = Supplier.objects.get(id=int(supplier_id))
 
-            SupplierItems.objects.create(supplier=supplier,item=item,item_price=item_price,item_count=item_count)
+            SupplierItems.objects.create(supplier=supplier,item=item,item_price=item_price,supplier_item_id=new_supplier_item_id,item_count=item_count)
 
             messages.success(request,"Item Added Successfully !")
 
@@ -748,18 +756,33 @@ class InventoryCreateCheckout(IsInventoryAdmin,View):
 
 class InventoryPurchaseOrder(IsInventoryAdmin,View):
     def get(self,request):
-        purchase_orders = PurchaseOrder.objects.filter(is_order_completed=True).annotate(total_units=Sum('purchase_order_purchase_order_item__item_count'),total_price=Sum('purchase_order_purchase_order_item__total_price'))
-        return render(request,'inventory/purchaseOrder.html',{"purchase_orders":purchase_orders})
+        search = request.GET.get('search')
+
+        if search:
+            purchase_orders = PurchaseOrder.objects.filter(is_order_completed=True).filter(Q( Q(purchase_order_id__icontains = search) | Q(supplier__supplier_name__icontains = search) )) .annotate(total_units=Sum('purchase_order_purchase_order_item__item_count'),total_price=Sum('purchase_order_purchase_order_item__total_price'))
+        else:
+            purchase_orders = PurchaseOrder.objects.filter(is_order_completed=True).annotate(total_units=Sum('purchase_order_purchase_order_item__item_count'),total_price=Sum('purchase_order_purchase_order_item__total_price'))
+        
+        return render(request,'inventory/purchaseOrder.html',{"purchase_orders":purchase_orders,"search_query":search})
+
+    def post(self,request):
+        action = request.POST.get('action')
+
+        if action == 'delete_order':
+            order_id = request.POST.get('order_id')
+            PurchaseOrder.objects.get(id=int(order_id)).delete()
+            messages.success(request,"Purchase Order Deleted successfully!")
+
+        return redirect('inventory:inventory-purchaseorder')
 
 class InventoryPurchaseOrderPage(View):
     def get(self,request):
-        return render(request,'inventory/purchaseorderpage.html',{})        
+        return render(request,'inventory/purchaseorderpage.html',{})
+
 class InventoryCreatePurchaseOrder(View):
     def get(self,request):
 
         purchase_order = PurchaseOrder.objects.filter(is_order_completed=False,initiated_by=request.user).last()
-
-        items = InventoryItem.objects.all()
 
         if not purchase_order:
             
@@ -777,10 +800,14 @@ class InventoryCreatePurchaseOrder(View):
         supplier_id = request.GET.get('supplier_id')
         if supplier_id :
             supplier = Supplier.objects.get(id=int(supplier_id))
+            purchase_order.supplier = supplier
+            purchase_order.save()
         else:
             supplier = None
 
-        purchase_order_items = PurchaseOrderItems.objects.filter(purchase_order=purchase_order,purchase_order__supplier=supplier)
+        items = SupplierItems.objects.filter(supplier=purchase_order.supplier)
+
+        purchase_order_items = PurchaseOrderItems.objects.filter(purchase_order=purchase_order,purchase_order__supplier=purchase_order.supplier)
 
         return render(request,'inventory/createpo.html',{"items":items,"suppliers":suppliers,"supplier":supplier,"purchase_order":purchase_order,"purchase_order_items":purchase_order_items})
 
@@ -798,9 +825,9 @@ class InventoryCreatePurchaseOrder(View):
             print(product,unit_price,unit_count,total_price,"kok")
 
             purchase_order = PurchaseOrder.objects.get(id=int(purchase_order_id))
-            product = InventoryItem.objects.get(id=int(product))
+            product = SupplierItems.objects.get(id=int(product))
 
-            PurchaseOrderItems.objects.create(purchase_order=purchase_order,product=product,unit_price=unit_price,total_price=total_price)
+            PurchaseOrderItems.objects.create(purchase_order=purchase_order,product=product,unit_price=unit_price,item_count=unit_count,total_price=total_price)
             
             messages.success(request,"Item Added successfully!")
 
@@ -812,6 +839,28 @@ class InventoryCreatePurchaseOrder(View):
             messages.success(request,"Order Completed successfully!")
             return redirect('inventory:inventorydash-board')
 
+        if action == 'edit_item':
+            purchase_order_item_id = request.POST.get('item_edit_id')
+            
+            product = request.POST.get('item')
+            
+            unit_price = request.POST.get('unit_price')
+            unit_count = request.POST.get('item_count')
+            total_price = request.POST.get('total_price')
+            print(product,unit_price,unit_count,total_price,"kok")
+
+            product = SupplierItems.objects.get(id=int(product))
+
+            order_item = PurchaseOrderItems.objects.get(id=int(purchase_order_item_id))
+            order_item.product = product
+            order_item.item_count = unit_count
+            order_item.unit_price = unit_price
+            order_item.total_price = total_price
+            order_item.save()
+            
+            messages.success(request,"Item Updated successfully!")
+
+        
         if action == 'delete_item':
             order_item_id = request.POST.get('item_id')
             PurchaseOrderItems.objects.get(id=int(order_item_id)).delete()
@@ -820,8 +869,27 @@ class InventoryCreatePurchaseOrder(View):
         return redirect('inventory:inventory-createpurchaseorder')
 
 class InventoryEditPurchaseOrder(IsInventoryAdmin,View):
-    def get(self,request):
-        return render(request,'inventory/editpo.html',{})
+    def get(self,request,purchase_order_id):
+
+        purchase_order = PurchaseOrder.objects.get(id=int(purchase_order_id))
+
+        suppliers = Supplier.objects.filter(status=True)
+
+        supplier_id = request.GET.get('supplier_id')
+        if supplier_id :
+            supplier = Supplier.objects.get(id=int(supplier_id))
+            purchase_order.supplier = supplier
+            purchase_order.save()
+        else:
+            supplier = None
+
+        items = SupplierItems.objects.filter(supplier=purchase_order.supplier)
+
+        print(items,"im")
+
+        purchase_order_items = PurchaseOrderItems.objects.filter(purchase_order=purchase_order,purchase_order__supplier=purchase_order.supplier)
+
+        return render(request,'inventory/editpo.html',{"items":items,"suppliers":suppliers,"supplier":supplier,"purchase_order":purchase_order,"purchase_order_items":purchase_order_items})
 
 class InventoryViewPurchaseOrder(IsInventoryAdmin,View):
     def get(self,request):

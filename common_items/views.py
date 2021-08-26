@@ -3212,14 +3212,13 @@ class MakeQuatationPhase1(IsAuthenticated,View):
 		is_advance              = request.POST.get('is_advance')
 		if is_advance:
 			subscription_topay      = request.POST.get('subscription_topay')
-
 			Order.objects.filter(evaluation__id=evaluation_id,is_active=True).update(total_amount=total_cost,remining_amount=total_cost,subscription_topay=subscription_topay,is_advance=True,subscription_topay_date=timezone.now())
 		else:
 			Order.objects.filter(evaluation__id=evaluation_id,is_active=True).update(total_amount=total_cost,remining_amount=total_cost)
 
 		#sms integration
-		order = Order.objects.filter(evaluation__id=evaluation_id,is_active=True).first()
-		evaluation = order.evaluation
+		order             = Order.objects.filter(evaluation__id=evaluation_id,is_active=True).prefetch_related(Prefetch('evaluation__booking_evaluation',queryset=CustomerBooking.objects.filter(is_active=True,booking_type='CLEANINGBOOKING'),to_attr='customerbooking')).first()
+		evaluation        = order.evaluation
 		evaluationdetails = EvaluationDetails.objects.filter(evaluation=evaluation).first()
 		
 		if evaluationdetails.evaluator:
@@ -3250,44 +3249,73 @@ class MakeQuatationPhase1(IsAuthenticated,View):
 
 		separator = ", "
 
+		#SEPERATE MSG FOR LET CUSTOMER BOOKING AND DIRECT BOOKING
 		if evaluation.customer.is_sms == True:
 
-			url = "https://smsapi.future-club.com/fccsms.aspx"
+			if evaluation.customerbooking:
+				messages.success(request,"CUSTOMER BOOKED")
 
-			if evaluation.payment_method == 'SUBSCRIPTION':
-				smsurl = "https://my.bleachkw.com/customer/subscription/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+""
+				url = "https://smsapi.future-club.com/fccsms.aspx"
+
+				if language == 'ENGLISH':
+
+					message = "Dear Customer , We have completed your Site Evaluation.You can Book your Slote through https://my.bleachkw.com/customer/cart?id=paw"+str(evaluation.evaluation_id[3:14])+str(evaluation.customer.username)+".For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+
+					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile+"","M":message,"IID":"1468","L":"L"}
+
+				else:
+
+					message = "عزيزي العميل ، لقد أكملنا تقييم الموقع الخاص بك.يمكنك حجز الكسلان الخاص بك من خلال https://my.bleachkw.com/customer/cart?id=paw"+str(evaluation.evaluation_id [3:14])+str(evaluation.customer.username)+". للحصول على أي مساعدة يرجى الاتصال بنا على +9651882707. شكرا لاختيارك بليتش الكويت."
+
+					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile+"","M":message,"IID":"1468","L":"A"}
+				
+				headers = {
+					'cache-control': "no-cache"
+				}
+
+				response = requests.request("GET", url, headers=headers, params=querystring)
+
 			else:
-				smsurl = "https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+""
+				messages.success(request,"Direct BOOKED")
 
-			if language == 'ENGLISH':
-				print(str(evaluation.id),str(evaluation.evaluation_id),str(evaluation.total_cost),str(evaluation.quatation_expiry_date),str(evaluation.customer.username),str(evaluation.tracking_no),"trerr")
+				url = "https://smsapi.future-club.com/fccsms.aspx"
 
-				message = "Dear Customer, Please find the Quotation against the cleaning at "+separator.join(address_list)+" here "+smsurl+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait"
+				if evaluation.payment_method == 'SUBSCRIPTION':
+					smsurl = "https://my.bleachkw.com/customer/subscription/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+""
+				else:
+					smsurl = "https://my.bleachkw.com/customer/quatation/paw"+str(evaluation.tracking_no)+""+str(evaluation.customer.username)+""
 
-				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
-			
-			else:
-				message = "عزيزنا العميل نرجوا الاطلاع على عرض سعر خدمات التنظيف المطلوبة في "+separator.join(address_list)+" "+smsurl+"  لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
+				if language == 'ENGLISH':
+					print(str(evaluation.id),str(evaluation.evaluation_id),str(evaluation.total_cost),str(evaluation.quatation_expiry_date),str(evaluation.customer.username),str(evaluation.tracking_no),"trerr")
 
-				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
+					message = "Dear Customer, Please find the Quotation against the cleaning at "+separator.join(address_list)+" here "+smsurl+". For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait"
 
-			headers = {
-				'cache-control': "no-cache"
-			}
-			
-			response = requests.request("GET", url, headers=headers, params=querystring)
+					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
+				
+				else:
+					message = "عزيزنا العميل نرجوا الاطلاع على عرض سعر خدمات التنظيف المطلوبة في "+separator.join(address_list)+" "+smsurl+"  لأي استفسارات يمكنكم التواصل معنا على . 9651882707+ شكراً لاختياركم بليتش لخدمات التنظيف"
 
-			print(response.text,"respo")
+					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
+
+				headers = {
+					'cache-control': "no-cache"
+				}
+				
+				response = requests.request("GET", url, headers=headers, params=querystring)
+
 		else:
 			pass
 
+
+
+		#SAME EMAIL(CONTENT LINK CHANGE) FOR LET CUSTOMER BOOKING AND DIRECT BOOKING
 		if evaluation.customer.is_email == True :
 			#send mail
 			msg_html = render_to_string('email/quatation.html',{"evaluator":evaluator,"evaluation":evaluation,"evaluationbooks":evaluationbooks,"address_list":separator.join(address_list)})
 			msg = EmailMultiAlternatives('Bleach Quotation', '', 'notification@bleach-kw.com', [evaluation.customer.email])
 			msg.attach_alternative(msg_html, "text/html")
 			msg.send(fail_silently=False)
-			print(msg,"msg")
+				
 		
 		if request.user.user_type == 'AGENT':
 			return redirect('agent:agentdash-board')

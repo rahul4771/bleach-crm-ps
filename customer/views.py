@@ -4092,7 +4092,7 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase2(APIView):
 							return Response(response_dict,HTTP_200_OK)
 
 			service_dict[saved_service.id] = saved_service.service_type.name				
-		
+
 		response_dict['evaluation_book_ids'] = service_dict
 		response_dict['booking_id']          = customerbooking.booking_id
 		response_dict['success']             = True
@@ -4539,7 +4539,9 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 		
 		#evaluation books,sections,and keynotes
 		evaluation_details                  = EvaluationDetails.objects.select_related('evaluation').prefetch_related('evaluation_book_evaluation_details__evaluationsection_book__keynotesections').filter(evaluation__evaluation_id=evaluation_id)
+		order_details                       = Order.objects.get(evaluation__evaluation_id=evaluation_id)
 		response_dict['evaluation_details'] = EvaluationDetailsSerializer(instance=evaluation_details,many=True).data
+		response_dict['order_details']      = OrderSerializer(instance=order_details).data
 
 		response_dict['evaluation_id']      = evaluation_details.first().evaluation.id
 		response_dict['success'] = True
