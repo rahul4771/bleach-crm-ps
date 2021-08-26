@@ -1269,7 +1269,7 @@ width="1000"
                   <div v-if="activeTab=='Cart'">
                     
 
-                  <div class="mt-4 text-center">
+                  <div class="mt-4 text-center" v-if="payment_status=='PENDING'">
                     <img src="{% static 'files/images/offer-banner.png'%}" style="max-width:400px;width:100%"/>
                   </div>
                 

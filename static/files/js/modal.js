@@ -29,3 +29,9 @@ function closeCashModal(){
   $('#cash-step-2').show();
   
 }
+function openDetailsModal(){
+  $('#detailsModal').show(); 
+}
+function closeDetailsModal(){
+  $('#detailsModal').hide(); 
+}
