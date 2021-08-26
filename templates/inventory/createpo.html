@@ -25,18 +25,24 @@
                     </div>
                 </div>
                 <div class="row mt-20">
+                    
                     <div class="col-md-3">
                         <div class="model-input-name">Select Supplier</div>
 
                         <select id="supplier_id" class="minimal" onchange="set_params_go();">
-                            <option value="">--Select Supplier--</option>
-                           
-                            {% for supplier in suppliers %}
-                            <option value="{{supplier.id}}">{{supplier.supplier_name}}</option>
-                            {% endfor %}
+                            {% if purchase_order.supplier == None %}
+                                <option value="">--Select Supplier--</option>
+                            
+                                {% for supplier in suppliers %}
+                                <option value="{{supplier.id}}">{{supplier.supplier_name}}</option>
+                                {% endfor %}
+                            {% else %}
+                                <option value="{{purchase_order.supplier.id}}" selected>{{purchase_order.supplier.supplier_name}}</option>
+                            {% endif %}
 
                         </select>
                     </div>
+                    
                     <!-- <div class="col-md-9 text-right">
                         <button class="inv-plan-btn" onclick="openNavAddStore()"> <img
                             src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5"
@@ -97,7 +103,7 @@
                                 </tr>
                                 {% endfor %}
                                
-                                {% if supplier != None %}
+                                {% if purchase_order.supplier != None %}
                                 <tr  id="id_addrow">
                                     <td>
                                         <button class="inv-plan-btn" onclick="openNavAddStore('add')"> <img
@@ -324,7 +330,7 @@ function showAdditem(){
         	$(document).on('click','.minus',function(){
     			$('.count').val(parseInt($('.count').val()) - 1 );
                 $('#id_item_count'.val(parseInt($('.count').val()) - 1 ))
-    				if ($('.count').val() == 0) {
+    				if ($('.count').val() < 0) {
                         $('#id_item_count').val(1);
 						$('.count').val(1);
 					}
@@ -342,7 +348,7 @@ function showAdditem(){
         {% for item in items %}
     var tempId = '{{item.id}}';
     var tempName = '{{item.item}}';
-    $('#id_search').append('<div class="col-md-12" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.item}}"><div class="inv-search-result">{{item.item}}</div></div>');
+    $('#id_search').append('<div class="col-md-12" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-productprice="{{item.item_price}}" data-name="{{item.item}}"><div class="inv-search-result">{{item.item}}</div></div>');
 
     {% endfor %}
        // $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
@@ -377,7 +383,7 @@ function showAdditem(){
         for (var j=0; j<products.length; j++) {
             if (products[j].name.match($('#pro-name').val())){
                 console.log(products[j]);
-        $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
+        $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-productprice="'+products[j].item_price+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
 
             }
         }
@@ -396,6 +402,8 @@ function showAdditem(){
         console.log(d);
         var proId = $(d).attr("data-pro")
         $('#id_pro_sel').val($(d).attr("data-pro"));
+        $('#id_unit_price').val($(d).attr("data-productprice"));
+        $('#id_total_price').val($(d).attr("data-productprice"));
         $('#pro-name').val($(d).attr("data-name"));
 
 

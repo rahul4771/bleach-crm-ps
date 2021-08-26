@@ -760,8 +760,6 @@ class InventoryCreatePurchaseOrder(View):
 
         purchase_order = PurchaseOrder.objects.filter(is_order_completed=False,initiated_by=request.user).last()
 
-        items = SupplierItems.objects.all()
-
         if not purchase_order:
             
             purchase_order_latest = PurchaseOrder.objects.all().last()
@@ -779,8 +777,11 @@ class InventoryCreatePurchaseOrder(View):
         if supplier_id :
             supplier = Supplier.objects.get(id=int(supplier_id))
             purchase_order.supplier = supplier
+            purchase_order.save()
         else:
             supplier = None
+
+        items = SupplierItems.objects.filter(supplier=purchase_order.supplier)
 
         purchase_order_items = PurchaseOrderItems.objects.filter(purchase_order=purchase_order,purchase_order__supplier=supplier)
 
