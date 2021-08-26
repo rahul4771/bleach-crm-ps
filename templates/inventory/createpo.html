@@ -61,6 +61,11 @@
                         {{supplier.contact}}
                     </div>
                 </div>
+                 <div class="row mt-20">
+                    <div class="col-md-12 inv-text-normal">
+                        {{supplier.terms}}
+                    </div>
+                </div>
                 {% endif %}
                 <div class="row mt-10">
                     <div class="col-md-12 ">
@@ -89,13 +94,13 @@
                             <tbody>
                                 {% for item in purchase_order_items %}
                                 <tr>
-                                    <td>{{item.product.item_code}}</td>
-                                    <td>{{item.product.name}}</td>
+                                    <td>{{item.product.supplier_item_id}}</td>
+                                    <td>{{item.product.item}}</td>
                                     <td>{{item.unit_price}}</td>
                                     <td>{{item.item_count}}</td>
                                     <td>{{item.total_price}}</td>
                                     <td>
-                                        <button class="inv-plan-img-btn edit-item-btn" data-itemid="{{item.id}}" data-productid="{{item.product.id}}" data-productname="{{item.product.name}}" data-unitprice="{{item.unit_price}}" data-itemcount="{{item.unit_count}}" data-totalprice="{{item.total_price}}"> <img
+                                        <button class="inv-plan-img-btn edit-item-btn" data-itemid="{{item.id}}" data-productid="{{item.product.id}}" data-productname="{{item.product.item}}" data-unitprice="{{item.unit_price}}" data-itemcount="{{item.item_count}}" data-totalprice="{{item.total_price}}"> <img
                                             src="{% static 'files/inventory/icons/edit.png' %}" alt="" onclick="openNavAddStore('edit')"> </button>
                                         <button data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}"  class="inv-plan-img-btn delete-item-btn"> <img
                                                 src="{% static 'files/inventory/icons/delete.png' %}" alt=""> </button>
@@ -145,7 +150,7 @@
 
             <form method="POST" action="" >{% csrf_token %}
             <input type="hidden" name="action" id="purchase_order_action" value="add_item" />
-            <input type="text" name="item" id="id_pro_sel" value="" />
+            <input type="hidden" name="item" id="id_pro_sel" value="" />
             <input type="hidden" name="purchase_order_id" value="{{purchase_order.id}}" />
             <input type="hidden" name="item_edit_id" id="id_edit_item" />
             <div class="row mt-20">
@@ -211,7 +216,7 @@
                     <div class="model-input-name">Total Price</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" id="id_total_price"  name="total_price" >
+                        <input type="text"  class="w-p-100 inv-in" id="id_total_price"  name="total_price" readonly>
                       </div>
                 </div>
 
@@ -222,7 +227,7 @@
 
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button" type="submit" >Submit</button>
+            <button class="sent-button purchaseorder-form-btn" type="submit" >Submit</button>
             </form>
             <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
         </div>
@@ -352,18 +357,33 @@ function showAdditem(){
 
 
     function openNavAddStore(d) {
+        $('#id_search').empty();
         {% for item in items %}
+
     var tempId = '{{item.id}}';
     var tempName = '{{item.item}}';
+    console.log(tempId,tempName)
+   
     $('#id_search').append('<div class="col-md-12" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-productprice="{{item.item_price}}" data-name="{{item.item}}"><div class="inv-search-result">{{item.item}}</div></div>');
 
     {% endfor %}
        // $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
         if(d == 'add'){
             $('#itemHead').text('Add Item');
+            $('#purchase_order_action').val('add_item');
+            $('.purchaseorder-form-btn').text('Add');
+
+            $('#pro-name').val('');
+            $('#id_pro_sel').val('');
+            $('#id_unit_price').val('');
+            $('#id_item_count').val(1);
+            $('.count').val(1);
+            $('#id_total_price').val('');
         }
         if(d == 'edit'){
             $('#itemHead').text('Edit Item');
+            $('#purchase_order_action').val('edit_item');
+            $('.purchaseorder-form-btn').text('Update');
 
         }
         if (screen.width <= 600) {
@@ -436,6 +456,7 @@ function showAdditem(){
         $('#id_pro_sel').val($(this).data('productid'));
         $('#id_unit_price').val($(this).data('unitprice'));
         $('#id_item_count').val($(this).data('itemcount'));
+        $('.count').val($(this).data('itemcount'));
         $('#id_total_price').val($(this).data('totalprice'));
     })
     

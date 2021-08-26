@@ -22,7 +22,7 @@
                      
                         <div class="inv-input-container h-30">
                             <i class="fa fa-search inv-icon-input" aria-hidden="true"></i>
-                            <input type="text" placeholder="Search inventory" class="inv-input w-250" name="attributes">
+                            <input type="text" id="search-bar" placeholder="Search Segments" class="inv-input w-250" onchange="set_params_go();" name="attributes" value="{{search_query|default_if_none:''}}">
                           </div>
                     
                     
@@ -78,7 +78,7 @@
                             <td class="text-center">
                                 {{order.initiated_by}}
                             <td class="text-center">
-                                {{order.supplier.name}}
+                                {{order.supplier.supplier_name}}
                             </td>
                             <td class="text-center">
                                 {{order.total_units}}
@@ -95,8 +95,8 @@
                             </td>
                             <td style="float: right;">
                               
-                                <a href="/inventory/editpo/"><button class="inv-plan-img-btn" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button></a>
-                                <button class="inv-plan-img-btn"  data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                                <a href="/inventory/editpo/{{order.id}}"><button class="inv-plan-img-btn" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button></a>
+                                <button class="inv-plan-img-btn delete-order" data-id="{{order.id}}"  data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
 
                             </td>
                         </tr>
@@ -224,7 +224,11 @@
                 <div class="row">
                     <div class="col-md-12 text-center">
                         <div class="cancel-model-content">
+                            <form method="POST" action="" >{% csrf_token %}
+                            <input type="hidden" name="action" value="delete_order" />
+                            <input type="hidden" name="order_id" id="id_order" />
                             <button class="sent-button" >Delete</button>
+                            </form>
                             <button data-dismiss="modal" class="view-button">Cancel</button>
                           
                         </div>
@@ -264,6 +268,25 @@
     }
     function closeNavAddStore() {
         document.getElementById("addStore").style.width = "0";
+    }
+
+    $('.delete-order').click(function(){
+        $('#id_order').val($(this).data('id'));
+    })
+
+    function set_params_go(args)
+    {
+    var url='{% url 'inventory:inventory-purchaseorder' %}';
+    var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),
+    };
+    for(key in args) 
+        params[key]=args[key];
+    var query='';
+    for(key in params)
+        if(params[key]) 
+            query+='&'+key+'='+params[key].toString();
+    query=query.replace('&','?');
+    window.location.href=url+query;  
     }
 </script>
 {% endblock %}
