@@ -185,7 +185,7 @@
                     <div class="model-input-name">Unit Price</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" id="id_unit_price" name="unit_price" onkeyup="calc_total_price()" >
+                        <input type="text"  class="w-p-100 inv-in" id="id_unit_price" name="unit_price" >
                       </div>
                 </div>
 
@@ -328,14 +328,18 @@ function showAdditem(){
                 console.log($('#id_item_count').val(),"countval")
     		});
         	$(document).on('click','.minus',function(){
-    			$('.count').val(parseInt($('.count').val()) - 1 );
+                console.log()
+                if($('.count').val()>1){
+                    $('.count').val(parseInt($('.count').val()) - 1 );
                 $('#id_item_count'.val(parseInt($('.count').val()) - 1 ))
     				if ($('.count').val() < 0) {
                         $('#id_item_count').val(1);
 						$('.count').val(1);
 					}
                     calc_total_price();
-                    console.log($('#id_item_count').val(),"countval")
+                    console.log($('.count').val(),"countval")
+                }
+    			
     	    	});
  		});
     
