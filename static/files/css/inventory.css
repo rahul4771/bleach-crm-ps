@@ -6,6 +6,10 @@
   padding: 20px;
 }
 
+.pt-4{
+  padding-top: 4px !important;
+}
+
 @font-face {
   font-family: AvenirLTStd;
   src: url(../font/AvenirLTStd-Book.otf);
@@ -987,3 +991,9 @@ select.minimal option:hover {
 /* .minimal option:hover{
   background: #EDF1F6 !important;
 } */
+.inv-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+}
