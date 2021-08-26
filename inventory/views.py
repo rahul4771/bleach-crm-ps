@@ -778,6 +778,7 @@ class InventoryCreatePurchaseOrder(View):
         supplier_id = request.GET.get('supplier_id')
         if supplier_id :
             supplier = Supplier.objects.get(id=int(supplier_id))
+            purchase_order.supplier = supplier
         else:
             supplier = None
 
