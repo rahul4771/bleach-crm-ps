@@ -4092,10 +4092,35 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase2(APIView):
 							return Response(response_dict,HTTP_200_OK)
 
 			service_dict[saved_service.id] = saved_service.service_type.name				
-		
+
 		response_dict['evaluation_book_ids'] = service_dict
 		response_dict['booking_id']          = customerbooking.booking_id
 		response_dict['success']             = True
+
+		#MSG FOR BOOK AND PAY
+		if evaluation.customer.is_sms == True:
+				
+			url = "https://smsapi.future-club.com/fccsms.aspx"
+
+			if evaluation.customer.sms_preference == 'ENGLISH':
+
+				message = "Dear Customer , We have completed your Site Evaluation.You can Book your Slote through https://my.bleachkw.com/customer/cart?id=paw"+str(evaluation.evaluation_id[3:14])+str(evaluation.customer.username)+".For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+
+				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile+"","M":message,"IID":"1468","L":"L"}
+
+			else:
+
+				message = "عزيزي العميل ، لقد أكملنا تقييم الموقع الخاص بك.يمكنك حجز الكسلان الخاص بك من خلال https://my.bleachkw.com/customer/cart?id=paw"+str(evaluation.evaluation_id [3:14])+str(evaluation.customer.username)+". للحصول على أي مساعدة يرجى الاتصال بنا على +9651882707. شكرا لاختيارك بليتش الكويت."
+
+				querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile+"","M":message,"IID":"1468","L":"A"}
+			
+			headers = {
+				'cache-control': "no-cache"
+			}
+
+			response = requests.request("GET", url, headers=headers, params=querystring)
+		else:
+			pass
 
 		return Response(response_dict,HTTP_200_OK)
 
@@ -4539,7 +4564,9 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 		
 		#evaluation books,sections,and keynotes
 		evaluation_details                  = EvaluationDetails.objects.select_related('evaluation').prefetch_related('evaluation_book_evaluation_details__evaluationsection_book__keynotesections').filter(evaluation__evaluation_id=evaluation_id)
+		order_details                       = Order.objects.get(evaluation__evaluation_id=evaluation_id)
 		response_dict['evaluation_details'] = EvaluationDetailsSerializer(instance=evaluation_details,many=True).data
+		response_dict['order_details']      = OrderSerializer(instance=order_details).data
 
 		response_dict['evaluation_id']      = evaluation_details.first().evaluation.id
 		response_dict['success'] = True
