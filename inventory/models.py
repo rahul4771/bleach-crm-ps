@@ -169,6 +169,7 @@ class Supplier(models.Model):
 class SupplierItems(models.Model):
     supplier            = models.ForeignKey(Supplier,blank=True,null=True,related_name='item_supplier')
     item                = models.CharField(max_length=100,blank=False,null=False)
+    supplier_item_id    = models.CharField(max_length=50,blank=False,null=False)
     item_price          = models.CharField(default=0,max_length=100,blank=True,null=True)
     item_count          = models.IntegerField(default=0,null=True,blank=True)
     created             = models.DateTimeField(auto_now_add=True)
@@ -234,7 +235,7 @@ class PurchaseOrder(models.Model):
 
 class PurchaseOrderItems(models.Model):
     purchase_order      = models.ForeignKey(PurchaseOrder,blank=True,null=True,related_name='purchase_order_purchase_order_item')
-    product             = models.ForeignKey(InventoryItem,blank=True,null=True,related_name='product_purchase_order_item')
+    product             = models.ForeignKey(SupplierItems,blank=True,null=True,related_name='product_purchase_order_item')
     item_count          = models.IntegerField(default=0,null=True,blank=True)
     unit_price          = models.CharField(default=0,max_length=100,blank=True,null=True)
     total_price         = models.CharField(default=0,max_length=100,blank=True,null=True)

@@ -783,7 +783,7 @@ class InventoryCreatePurchaseOrder(View):
 
         items = SupplierItems.objects.filter(supplier=purchase_order.supplier)
 
-        purchase_order_items = PurchaseOrderItems.objects.filter(purchase_order=purchase_order,purchase_order__supplier=supplier)
+        purchase_order_items = PurchaseOrderItems.objects.filter(purchase_order=purchase_order,purchase_order__supplier=purchase_order.supplier)
 
         return render(request,'inventory/createpo.html',{"items":items,"suppliers":suppliers,"supplier":supplier,"purchase_order":purchase_order,"purchase_order_items":purchase_order_items})
 
