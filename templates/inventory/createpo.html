@@ -154,7 +154,7 @@
 
                     <div style="position: relative;">
                         <div class="inv-input-container inv-border h-30">
-                            <input onclick="ProductListShow()" type="text" id="pro-name" name="product" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()">
+                            <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" name="product" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()">
                             <!-- <div class="inv-hr"></div>
                             <div class="model-filter">
                                 <button class="inv-normal-btn" onclick="showDrop()">
@@ -196,11 +196,11 @@
                     <div class="model-input-name">Unit</div>
 
                     <div class="qty ">
-                        <span style="color: #4B4B4B;"  class="minus bg-dark qty-border-two" onclick="calc_total_price()">-</span>
+                        <span style="color: #4B4B4B;"  class="minus bg-dark qty-border-two" >-</span>
                         <input style="color: #4B4B4B;"  type="text" class="count qty-border-two"   >
                         <input style="color: #4B4B4B;"   type="hidden" class="count qty-border-two" value="1" id="id_item_count" name="item_count"  >
 
-                        <span style="color: #4B4B4B; margin-left: -4px !important;" class="plus bg-dark qty-border-two" onclick="calc_total_price()">+</span>
+                        <span style="color: #4B4B4B; margin-left: -4px !important;" class="plus bg-dark qty-border-two" >+</span>
                     </div>
                 </div>
 
@@ -323,20 +323,23 @@ function showAdditem(){
 		    $('.count').val(1);
    			$(document).on('click','.plus',function(){
 				$('.count').val(parseInt($('.count').val()) + 1 );
-                $('#id_item_count').val(parseInt($('.count').val()) + 1 )
-                //calc_total_price();
+                console.log($('#id_item_count').val(),'firs')
+               // $('#id_item_count').val(parseInt($('#id_item_count').val()) + 1 );
+                console.log($('#id_item_count').val(),'se')
+
+                calc_total_price();
                 console.log($('#id_item_count').val(),"countval")
     		});
         	$(document).on('click','.minus',function(){
                 
                 if($('.count').val() >= 1){
                     $('.count').val(parseInt($('.count').val()) - 1 );
-                $('#id_item_count').val(parseInt($('.count').val()) - 1 )
+                //$('#id_item_count').val(parseInt($('#id_item_count').val()) - 1 )
     				if ($('.count').val() == 0) {
                         $('#id_item_count').val(1);
 						$('.count').val(1);
 					}
-                    //calc_total_price();
+                    calc_total_price();
                     console.log($('.count').val(),"countval")
                 }
     			
@@ -415,6 +418,7 @@ function showAdditem(){
     }
 
     function calc_total_price(){
+        console.log("c")
         var unit_price = $('#id_unit_price').val();
         var count = $('#id_item_count').val();
         console.log("log")
