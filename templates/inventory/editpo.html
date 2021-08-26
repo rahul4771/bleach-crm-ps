@@ -231,8 +231,8 @@
                     <div class="col-md-12 text-center">
                         <div class="cancel-model-content">
                             <form method="POST" action="" >{% csrf_token %}
-                            <input type="text" name="action" value="delete_item" />
-                            <input type="text" name="item_id" id="id_item" />
+                            <input type="hidden" name="action" value="delete_item" />
+                            <input type="hidden" name="item_id" id="id_item" />
                             <button class="sent-button" >Delete</button>
                             </form>
                             <button data-dismiss="modal" class="view-button">Cancel</button>
