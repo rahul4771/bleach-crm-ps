@@ -57,6 +57,53 @@
                 <div class="white-wrapper">
                     <!--white-wrapper-->
                     <div class="row">
+                        <form method="POST" action="">
+                            {% csrf_token %}
+                            <input   type="checkbox" required="required" name="is_active" id="is_active" checked="true" class="hidden-field"/>
+                            <input   type="text" required="required" name="action_type" id="action_type" value="edit_customer_discount" class="hidden-field"/>
+                            <input   type="text" required="required" name="discount_setting_id" id="discount_setting_id" value="{{discount_settings.id}}" class="hidden-field"/>
+                        <div class="col-md-6 ">
+                            <div class="discount-card">
+                            <div class="row ml-10">
+                                
+                                <div class="col-md-12">
+                                    <h2 class="productivity-name"> Discounts</h2>
+                                    <div class="d-flex mt-10">
+                                    <div >
+                                        
+                                        <label class="switch">
+                                          
+                                            <input type="checkbox" id="is_stat" name="is_stat" {% if discount_percentage.is_active == true %}checked{% endif %} onchange="changeDiscountStat()">
+                                            <span class="slider round"></span>
+                                          </label>
+                                      </div>
+                                      <div class="discount-stat">Active</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-5 mt-10 ">
+                                    <div class="discount-label">Duration (Days)</div>
+                                    <input   type="number" class="discount-card-sub-input mt-5" placeholder="Duration" required="required" name="duration" value="{{discount_settings.duration}}"/>
+                                </div>
+                                <div class="col-md-5 mt-10">
+                                    <div class="discount-label">Discount (%)</div>
+                                    <input   type="number" class="discount-card-sub-input mt-5" placeholder="Discount in %" required="required" name="discount_percentage" value="{{discount_settings.discount_percentage}}"/>
+                                </div>
+                                <div class="col-md-12  mt-10 mb-10 ">
+                                    <input type="submit" value="Update" class="discount-submit"/>
+                                   
+
+                                </div>
+                            
+                            </div>
+                        </div>
+                            
+
+                        </div>
+                    </form>
+                    </div>
+                   
+                    <div class="row">
                         <button data-toggle="modal" data-target="#editModal"  class="pricerange_edit_button" style="display:none;"></button>
                         <button data-toggle="modal" data-target="#addModal" class="pricerange_add_button" style="display:none;"></button>
                         <button data-toggle="modal" data-target="#DeleteModal" class="pricerange_delete_button" style="display:none;"></button>
@@ -440,6 +487,19 @@
 {% endblock %}
 {% block javascript %}
 <script>
+    function changeDiscountStat(){
+        var stat=$('.discount-stat').text()
+        console.log("stat is"+stat)
+        if(stat=='Active'){
+            $('.discount-stat').text('In Active')
+            $('#is_active').prop('checked', false);
+        }
+        else{
+            $('.discount-stat').text('Active')
+            $('#is_active').prop('checked', true);
+        }
+       
+    }
   function viewVerySpecial(id) {
     document.getElementById("veryspecial_id_"+id).style.display = "block";
     document.getElementById("normal_id_"+id).style.display = "none";
