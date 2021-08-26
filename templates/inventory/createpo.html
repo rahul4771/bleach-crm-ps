@@ -357,10 +357,13 @@ function showAdditem(){
 
 
     function openNavAddStore(d) {
+        $('#id_search').empty();
         {% for item in items %}
+
     var tempId = '{{item.id}}';
     var tempName = '{{item.item}}';
-    $('#id_search').empty();
+    console.log(tempId,tempName)
+   
     $('#id_search').append('<div class="col-md-12" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-productprice="{{item.item_price}}" data-name="{{item.item}}"><div class="inv-search-result">{{item.item}}</div></div>');
 
     {% endfor %}
