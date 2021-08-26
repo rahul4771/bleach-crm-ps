@@ -6,6 +6,10 @@
   padding: 20px;
 }
 
+.pt-4{
+  padding-top: 4px !important;
+}
+
 @font-face {
   font-family: AvenirLTStd;
   src: url(../font/AvenirLTStd-Book.otf);
@@ -287,14 +291,20 @@
 
 .inv-table {
   width: 100%;
-  border: 1px solid #c4c4c4;
+  /* border: 1px solid #c4c4c4; */
+  border-left: 1px solid #c4c4c4;
+  border-bottom: 1px solid #c4c4c4;
+  border-right: 1px solid #c4c4c4;
+
   font-family: AvenirLTStd !important;
+  
 }
 
 .inv-table tr {
   border-bottom: 1px solid #c4c4c4;
   font-family: AvenirLTStd !important;
 }
+
 
 .inv-table th {
   color: #333333;
@@ -986,4 +996,15 @@ select.minimal option:hover {
 
 /* .minimal option:hover{
   background: #EDF1F6 !important;
+} */
+.inv-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  position: -webkit-sticky;
+
+}
+
+/* .inv-table thead tr {
+  border-top: 1px solid #c4c4c4 !important;
 } */

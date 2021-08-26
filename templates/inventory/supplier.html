@@ -56,9 +56,6 @@
                                 <p>20 Entries</p>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="col-md-7 mt-10">
                         <div class="attribute-table">
                             <table class="inv-table footable"> 
                                 <thead>
@@ -81,7 +78,7 @@
                                 </thead>
                                 <tbody>
                                     {% for supplier in suppliers %}
-                                    <tr onclick="getitems({{supplier.id}})">
+                                    <tr class="segment_row" onclick="getitems({{supplier.id}})">
                                         <td class="r">
                                     
                                             {{supplier.supplier_name}}
@@ -138,7 +135,12 @@
                               </ul>
                         </div>
                     </div>
-                    <div class="col-md-5 mt-10">
+
+                    <!-- <div class="col-md-7 mt-10">
+                        
+                    </div> -->
+                    <div class="col-md-5 mt-10 pt-4">
+                    <h3>Items under <span id="item_name"></span> </h3>
                         <div class="attribute-table-2">
                             <div class="attribute-table-div2">
                                 <table class="inv-table footable" id="item_table">
@@ -547,6 +549,16 @@ function openNavAddBundle(d) {
             //showNotification('Something went wrong','error')
          }
     }
+
+    //highlighting row and adding selected item name to table top
+    $('.segment_row').click(function(){
+        $('.segment_row').each(function(i, obj) {
+            $(obj).removeClass('inv-selected-row');
+        });
+
+        $(this).addClass('inv-selected-row');
+        $('#segment_name').text($(this).data('name'));
+    })
 
     function openNavEditItem(d) {
         $("#itemHead").text("Edit Item");

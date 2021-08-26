@@ -753,13 +753,12 @@ class InventoryPurchaseOrder(IsInventoryAdmin,View):
 
 class InventoryPurchaseOrderPage(View):
     def get(self,request):
-        return render(request,'inventory/purchaseorderpage.html',{})        
+        return render(request,'inventory/purchaseorderpage.html',{})
+
 class InventoryCreatePurchaseOrder(View):
     def get(self,request):
 
         purchase_order = PurchaseOrder.objects.filter(is_order_completed=False,initiated_by=request.user).last()
-
-        items = InventoryItem.objects.all()
 
         if not purchase_order:
             
@@ -777,8 +776,12 @@ class InventoryCreatePurchaseOrder(View):
         supplier_id = request.GET.get('supplier_id')
         if supplier_id :
             supplier = Supplier.objects.get(id=int(supplier_id))
+            purchase_order.supplier = supplier
+            purchase_order.save()
         else:
             supplier = None
+
+        items = SupplierItems.objects.filter(supplier=purchase_order.supplier)
 
         purchase_order_items = PurchaseOrderItems.objects.filter(purchase_order=purchase_order,purchase_order__supplier=supplier)
 
@@ -798,9 +801,9 @@ class InventoryCreatePurchaseOrder(View):
             print(product,unit_price,unit_count,total_price,"kok")
 
             purchase_order = PurchaseOrder.objects.get(id=int(purchase_order_id))
-            product = InventoryItem.objects.get(id=int(product))
+            product = SupplierItems.objects.get(id=int(product))
 
-            PurchaseOrderItems.objects.create(purchase_order=purchase_order,product=product,unit_price=unit_price,total_price=total_price)
+            PurchaseOrderItems.objects.create(purchase_order=purchase_order,product=product,unit_price=unit_price,item_count=unit_count,total_price=total_price)
             
             messages.success(request,"Item Added successfully!")
 
@@ -812,6 +815,9 @@ class InventoryCreatePurchaseOrder(View):
             messages.success(request,"Order Completed successfully!")
             return redirect('inventory:inventorydash-board')
 
+        # if action == 'edit_item':
+
+        
         if action == 'delete_item':
             order_item_id = request.POST.get('item_id')
             PurchaseOrderItems.objects.get(id=int(order_item_id)).delete()
