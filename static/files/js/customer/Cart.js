@@ -576,6 +576,7 @@ $(document).ready(function(){
     editScheduleStat:false,
     evaluation_id:'',
     eval_details:{},
+    payment_status:'',
     discount:false,
     discount_val:0
         },
@@ -816,7 +817,7 @@ $(document).ready(function(){
               this.multiServicesBill[this.schedule_serviceTypes_selected[j]].cleaning_policy='ONE TIME SERVICE'
               this.multiServicesBill[this.schedule_serviceTypes_selected[j]].schedule_details={}
               var count=0
-              if(this.discount){
+              if(this.discount && this.payment_status=='PENDING'){
                 this.multiServicesBill[this.schedule_serviceTypes_selected[j]].discount=this.discount
                }
               for(var k in this.selected_onetime_slots){
@@ -2079,6 +2080,7 @@ $(document).ready(function(){
       this.oneTimeSelectionStat=true
     },
     checkDiscount(){
+      if(this.payment_status=='PENDING'){
       var dates=Object.keys(this.one_time_slots)
       this.discount=false
       for(var i=0;i<dates.length;i++){
@@ -2099,7 +2101,10 @@ $(document).ready(function(){
     else{
       this.discount=false
     }
-      
+  }
+  else{
+    return false
+  }
     },
     calculateDiscount(){
       var discount=0
@@ -4474,6 +4479,7 @@ getBookedServices(){
   axios.get(this.url+'/customer/evaluatorbookingmultiplephase3/customer/'+this.custId).then(response=>{
     this.bookedServiceDetails=response.data.evaluation_details
     this.payment_total_cost=this.bookedServiceDetails[0].evaluation.total_cost
+    this.payment_status=response.data.order_details.payment_status
     if(this.bookedServiceDetails.length>0){
       this.multiAddress=true
     }
@@ -4751,6 +4757,7 @@ bookLetCustService(){
   this.currentAddressIndex=this.currentAddressIndex+1
   
   this.selectedAddress=this.bookedServiceDetails[this.currentAddressIndex]
+  //this.payment_status=this.bookedServiceDetails[this.currentAddressIndex].order_details.payment_status
  // this.payment_total_cost=this.bookedServiceDetails[this.currentAddressIndex].evaluation.total_cost
  console.log("service details length is"+this.bookedServiceDetails.length+"address index is"+this.currentAddressIndex)
 

@@ -1416,9 +1416,23 @@ width="1000"
                           class="elevation-0">
                           <div v-for="floor in parseInt(no_of_floors[index - 1])" :key="floor">
                             <v-stepper-step :complete="e.building[index - 1].e > floor" :step="floor"
-                              @click="openFloor(index,floor)" style="cursor: pointer">
+                             style="cursor: pointer">
                               <% "Floor " + floor %>
+                              <div class="d-flex">
                                 <small>Fill the details for Floor <% floor %></small>
+                                <v-btn   @click="openFloor(index,floor)"  outlined
+                                x-small
+                                 fab
+                                 color="primary" v-if="billingData[floor-1]" style="position: absolute;
+                                 right: 10px;">
+                                   <v-icon>mdi-pencil</v-icon>
+                                 </v-btn>
+                              </div>
+                               
+                                <div v-if="checkBillingData(index,floor)" class="mt-2"> <v-text-field type="text" v-model="
+                                  billingData[findBillingDataIndex(index,floor)].section_name
+                                " label="Section Name" class="not-required" >
+                                  </v-text-field></div>
                             </v-stepper-step>
 
                             <v-stepper-content :step="floor">
@@ -1752,10 +1766,25 @@ width="1000"
                                         e.building[index - 1].floors[floor - 1]
                                           .e >
                                         apindex + 1
-                                      " :step="apindex + 1" @click="openApartment(index,floor,apindex)"
+                                      " :step="apindex + 1" 
                                             style="cursor: pointer">
                                             <% "Apartment " + (apindex + 1) %>
                                           </v-stepper-step>
+                                          <div class="d-flex">
+                                           
+                                            <v-btn   @click="openApartment(index,floor,apindex)"  outlined
+                                            x-small
+                                             fab
+                                             color="primary" v-if="billingData[floor-1]" style="position: absolute;
+                                             right: 10px;">
+                                               <v-icon>mdi-pencil</v-icon>
+                                             </v-btn>
+                                          </div>
+                                           
+                                            <div v-if="checkBillingApartmentData(index,floor,apindex)" class="mt-2"> <v-text-field type="text" v-model="
+                                              billingData[findBillingApartmentDataIndex(index,floor,apindex)].section_name
+                                            " label="Section Name" class="not-required" style="max-width:300px" >
+                                              </v-text-field></div>
 
                                           <v-divider></v-divider>
 
@@ -2036,11 +2065,11 @@ width="1000"
           >
             Fill all the details of the Apartment  to proceed
           </v-alert>
-                              <v-btn color="primary" v-on:click="nextFloor(index - 1, floor)" class="mb-2"
+                              <v-btn color="primary" v-on:click="nextFloor(index - 1, floor)" class="mb-2 mt-2"
                                 v-if="!building[index - 1].completed && !building[index-1].floors[floor-1].apartment">
                                 Continue
                               </v-btn>
-                              <v-btn color="primary" v-on:click="nextFloor(index - 1, floor)" class="mb-2"
+                              <v-btn color="primary" v-on:click="nextFloor(index - 1, floor)" class="mb-2 mt-2"
                                 v-if="!building[index - 1].completed && building[index-1].floors[floor-1].apartment && building[index-1].floors[floor-1].completed">
                                 Continue
                               </v-btn>
@@ -2081,7 +2110,7 @@ type="error"
 >
 Fill all the details of the Buildings  to proceed
 </v-alert>
-                            <v-btn color="primary" :id="'btn-' + index" @click="nextTab(index)" class="mb-2"
+                            <v-btn color="primary" :id="'btn-' + index" @click="nextTab(index)" class="mb-2 mt-2"
                               v-if="!buildingsCompleted">
                               Continue
                             </v-btn>
@@ -2780,7 +2809,7 @@ Fill all the details of the Buildings  to proceed
                            </div>
                           <div class="cart-card-items">
                           <div v-for="(bill,bindex) in service.bill" v-bind:key="bindex">
-                            <div><b><% bill.name%></b></div>
+                            <div><b><% bill.section_name%></b></div>
                             <div class="d-flex mt-1">
                               <div >
                                <% bill.section.size.name %>

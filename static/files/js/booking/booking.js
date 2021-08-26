@@ -87,6 +87,7 @@ const app=new Vue({
         
       },
     data: {
+      billingDataIndex:null,
       slot_msg:false,
       keynote_content:[
        'BEDROOMS','BATHROOMS','MAID ROOM','STORAGE ROOM','LIVING ROOM','DRESSING ROOM','CABINETS (Inside)','CABINETS (Outside)','DRIVER ROOM','LAUNDRY ROOM','MECHANICAL ROOM','ELECTRICAL ROOM','ENTERTAINMENT ROOM','DINING ROOM','ENTRANCE AREA','STAIR CASE','HAND WASH AREA','WINDOWS','WALL GLASS','BALCONY','SWIMMING POOL','FAÇADE','DUSTING','GATES & FENCE','HALL WAY','AC VENTS','COVE LIGHTS','SWITCH BOARDS','CHANDELIERS','WALL LIGHTS','CEILING LIGHTS','DOOR','ROOF TOP','FENCE','PARKING AREA'
@@ -411,6 +412,7 @@ const app=new Vue({
   billSample:{
     name:'',
     section:{},
+    section_name:'',
     serviceNo:1,
   },
   totalmanhour:0,
@@ -1588,7 +1590,7 @@ console.log(response)
               }
             for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
               this.serviceDetails.service_details[i].sections[j]={
-                "section_name":this.multiServicesBill[i].bill[j].name,
+                "section_name":this.multiServicesBill[i].bill[j].section_name,
               "size":this.multiServicesBill[i].bill[j].section.size.name,
               "wall_type":"",
               "floor_type":'',
@@ -1742,7 +1744,7 @@ console.log(response)
           }
           for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
             this.serviceDetails.service_details[i].sections[j]={
-              "section_name":this.multiServicesBill[i].bill[j].name,
+              "section_name":this.multiServicesBill[i].bill[j].section_name,
             "size":this.multiServicesBill[i].bill[j].section.size.name,
             "wall_type":"",
             "floor_type":'',
@@ -3407,6 +3409,7 @@ try {
     {
     this.billingData.push({
       name: this.serviceType + " - " + this.otherService.type,
+      section_name: this.serviceType + " - " + this.otherService.type,
       section: this.otherService,
       section_cost:this.otherService.size.cost
     });
@@ -3414,6 +3417,7 @@ try {
     else{
        this.billingData.push({
       name: this.serviceType ,
+      section_name: this.serviceType,
       section: this.otherService,
       section_cost:this.otherService.size.cost
     });
@@ -3455,12 +3459,14 @@ try {
     {
        this.billingData.push({
       name: this.serviceType + " - " + this.otherService.type,
+      section_name: this.serviceType + " - " + this.otherService.type,
       section: this.otherService,
     });
     }
     else{
         this.billingData.push({
       name: this.serviceType,
+      section_name: this.serviceType,
       section: this.otherService,
     });
     }
@@ -4017,6 +4023,80 @@ try {
       this.sizeData.push(this.serviceSize[i]);
     }
   },
+  checkBillingData(building,floor){
+    this.billingDataIndex=null
+    var itemFound = false;
+    for (var i = 0; i < this.billingData.length; i++) {
+      if (
+        this.billingData[i].name ==
+        "Building " +
+          building +
+          " Floor " +
+          floor
+      ) {
+        itemFound = true;
+        this.billingDataIndex=i
+        break
+      }
+    }
+    return itemFound
+  },
+  findBillingDataIndex(building,floor){
+    this.billingDataIndex=null
+    var itemFound = false;
+    for (var i = 0; i < this.billingData.length; i++) {
+      if (
+        this.billingData[i].name ==
+        "Building " +
+          building +
+          " Floor " +
+          floor
+      ) {
+        itemFound = true;
+       return i 
+      }
+    }
+
+  },
+  checkBillingApartmentData(building,floor,apartment){
+    this.billingDataIndex=null
+    var itemFound = false;
+    for (var i = 0; i < this.billingData.length; i++) {
+      if (
+        this.billingData[i].name ==
+        "Building " +
+          building +
+          " Floor " +
+          floor +
+          " Apartment " +
+          (apartment + 1)
+      ) {
+        itemFound = true;
+        this.billingDataIndex=i
+        break
+      }
+    }
+    return itemFound
+  },
+  findBillingApartmentDataIndex(building,floor,apartment){
+    this.billingDataIndex=null
+    var itemFound = false;
+    for (var i = 0; i < this.billingData.length; i++) {
+      if (
+        this.billingData[i].name ==
+        "Building " +
+          building +
+          " Floor " +
+          floor +
+          " Apartment " +
+          (apartment + 1)
+      ) {
+        itemFound = true;
+       return i 
+      }
+    }
+
+  },
   nextApartment(building, floor, apartment) {
     //this.$refs.apartmentForm[0].validate()
       if(this.$refs['building-'+building+'floor-'+floor+'apartment-'+ apartment][0].validate()){
@@ -4056,6 +4136,12 @@ try {
       this.billingData.push({
         name:
           "Building " +
+          (building + 1) +
+          " Floor " +
+          (floor + 1) +
+          " Apartment " +
+          (apartment + 1),
+          section_name: "Building " +
           (building + 1) +
           " Floor " +
           (floor + 1) +
@@ -4135,11 +4221,13 @@ try {
          // this.building[building].floors[floor - 1].section_cost=
        
          this.billSample.name= "Building " + (building + 1) + " Floor " + floor
+         this.billSample.section_name= "Building " + (building + 1) + " Floor " + floor
          this.billSample.serviceNo=this.serviceCount
          Object.assign(this.billSample.section, this.building[building].floors[floor - 1]);
         
         this.billingData.push(this.billSample);
         this.billSample={
+     section_name:'',     
     name:'',
     section:{},
     serviceNo:this.serviceCount,

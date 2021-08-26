@@ -159,7 +159,7 @@
 
                     <div style="position: relative;">
                         <div class="inv-input-container inv-border h-30">
-                            <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" name="product" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()">
+                            <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" name="product" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()" required>
                             <!-- <div class="inv-hr"></div>
                             <div class="model-filter">
                                 <button class="inv-normal-btn" onclick="showDrop()">
@@ -190,7 +190,7 @@
                     <div class="model-input-name">Unit Price</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" id="id_unit_price" name="unit_price" >
+                        <input type="text"  class="w-p-100 inv-in" id="id_unit_price" name="unit_price" required readonly>
                       </div>
                 </div>
 
@@ -203,7 +203,7 @@
                     <div class="qty ">
                         <span style="color: #4B4B4B;"  class="minus bg-dark qty-border-two" >-</span>
                         <input style="color: #4B4B4B;"  type="text" class="count qty-border-two"   >
-                        <input style="color: #4B4B4B;"   type="hidden" class="count qty-border-two" value="1" id="id_item_count" name="item_count"  >
+                        <input style="color: #4B4B4B;"   type="hidden" class="count qty-border-two" value="1" id="id_item_count" name="item_count" onkeyup="calc_total_price()" >
 
                         <span style="color: #4B4B4B; margin-left: -4px !important;" class="plus bg-dark qty-border-two" >+</span>
                     </div>
