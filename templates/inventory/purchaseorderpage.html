@@ -170,10 +170,10 @@ border-radius: 2px;
         {% for item in purchase_order.purchase_order_items %}
         <tr>
           <td>{{forloop.counter}}</td>
-          <td>{{item.product.item}}</td>
+          <td style="text-align: center;">{{item.product.item}}</td>
           <!-- <td>{{order.details}}</td> -->
           {% comment %} <td style="text-align: right;" >Sterilization</td> {% endcomment %}
-          <td style="text-align: right;" >{{item.item_count}}</td>
+          <td style="text-align: center;" >{{item.item_count}}</td>
 
           <td style="text-align: right;" >{{item.unit_price|floatformat:3}}</td> 
           {% comment %} <td style="text-align: right;" >{{item.total_price|floatformat:3}}</td>
