@@ -110,10 +110,10 @@ border-radius: 2px;
                     <div id="soa_right">Via </div>
                     <div>: {{purchase_order.supplier.supplier_name}} </div>
                   </div>
-                  <div id="soa_detials">
+                  <!-- <div id="soa_detials">
                     <div id="soa_right">Terms </div>
                     <div>: {{purchase_order.supplier.terms}} </div>
-                  </div>
+                  </div> -->
               </div>
           </div>
           <div class="col-md-6">
@@ -137,7 +137,7 @@ border-radius: 2px;
       </div>
      
 
-      <div id="soa-customer-detials">
+      <div id="soa-customer-detials" style="margin-bottom: 10px;">
           <div class="row">
              
             <div class="col-md-6">
@@ -154,6 +154,19 @@ border-radius: 2px;
           </div>
        
       </div>
+    
+        <div class="row">
+           
+          <div class="col-md-12">
+            <div id="soa_detials">
+              <div id="soa_right">Terms </div>
+              <div>: {{purchase_order.supplier.terms}} </div>
+            </div>
+          </div>
+       
+       
+     
+    </div>
       <table id="soa_table">
         <tr>
           <th style="text-align: center; width: 5%;">No</th>

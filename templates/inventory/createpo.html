@@ -1,6 +1,80 @@
 {% extends "base.html" %}
 {% block content %}
 {% load static %}
+<!-- <style>
+    /*the container must be positioned relative:*/
+    .custom-select {
+      position: relative;
+      font-family: Arial;
+      z-index:999999999999;
+      
+    }
+    
+    .custom-select select {
+      display: none; /*hide original SELECT element:*/
+    }
+    
+    .select-selected {
+      background-color: #fff;
+      border: 1px solid #707070 !important;
+      border-radius: 7px;
+    }
+    
+    /*style the arrow inside the select element:*/
+    .select-selected:after {
+        position:absolute;
+  right:1rem;
+  top:35%;
+
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-right: 0.2em solid black;
+  border-top: 0.2em solid black;
+  transform: rotate(135deg);
+    }
+    
+    /*point the arrow upwards when the select box is open (active):*/
+    .select-selected.select-arrow-active:after {
+        transform: rotate(45deg);
+    }
+    
+    /*style the items (options), including the selected item:*/
+    .select-items div,.select-selected {
+      color: #5a5a5a;
+      padding: 8px 16px;
+      border: 1px solid transparent;
+      border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
+      cursor: pointer;
+      user-select: none;
+    }
+    
+    /*style items (options):*/
+    .select-items {
+        margin-top: -3px;
+        border-left: 1px solid #707070 !important;
+        border-bottom: 1px solid #707070 !important;
+        border-right: 1px solid #707070 !important;
+
+      position: absolute;
+      background-color: #fff;
+      top: 100%;
+      left: 0;
+      right: 0;
+      z-index: 99999;
+      border-radius: 0px 0px 7px 7px;
+    }
+    
+    /*hide the items when the select box is closed:*/
+    .select-hide {
+      display: none;
+    }
+    
+    .select-items div:hover, .same-as-selected {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+    </style> -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -28,8 +102,8 @@
                     
                     <div class="col-md-3">
                         <div class="model-input-name">Select Supplier</div>
-
-                        <select id="supplier_id" class="minimal" onchange="set_params_go();">
+                        
+                        <!-- <select id="supplier_id" class="minimal" onchange="set_params_go();">
                             {% if purchase_order.supplier == None %}
                                 <option value="">--Select Supplier--</option>
                             
@@ -40,40 +114,50 @@
                                 <option value="{{purchase_order.supplier.id}}" selected>{{purchase_order.supplier.supplier_name}}</option>
                             {% endif %}
 
-                        </select>
-                         <!-- <div class="wrap-drop" id="noble-gases">
+                        </select> -->
+                       
+                       
+                          
+                         <div class="wrap-drop" id="noble-gases">
                             <span>All Noble Gases</span>
                             <ul class="drop">
                                 <li class="selected"><a>All Noble Gases</a></li>
                                 <li><a>Helium</a></li>
+                                <li><a>Helium</a></li>
+                                <li><a>Helium</a></li>
+                                <li><a>Helium</a></li>
                             
                              
                             </ul>
-                        </div> -->
-                        <br>
-                        <div class="row mt-20">
-                            <div class="col-md-12 inv-text-normal">
-                                Initiated Date : {{purchase_order.created|date:'d-m-Y'}}
-                            </div>
                         </div>
-        
-                        <div class="row mt-20">
-                            <div class="col-md-12 inv-text-normal">
-                                Initiated By : {{purchase_order.initiated_by.name}}
-                            </div>
-                        </div>
+                        <br><br>
+                       
                         
                         {% if purchase_order.supplier != None %}
-                        <div class="row mt-20">
-                            <div class="col-md-12 inv-text-normal">
-                                Supplier Address : {{purchase_order.supplier.address}}
+                        <div class="inv-po-cu">
+                            <div class="row mt-10">
+                                <div class="col-md-12 inv-text-normal">
+                                    Initiated Date : {{purchase_order.created|date:'d-m-Y'}}
+                                </div>
+                            </div>
+            
+                            <div class="row mt-10">
+                                <div class="col-md-12 inv-text-normal">
+                                    Initiated By : {{purchase_order.initiated_by.name}}
+                                </div>
+                            </div>
+                            <div class="row mt-10">
+                                <div class="col-md-12 inv-text-normal">
+                                    Supplier Address : {{purchase_order.supplier.address}}
+                                </div>
+                            </div>
+                            <div class="row mt-10" >
+                                <div class="col-md-12 inv-text-normal">
+                                    Supplier Contact : {{purchase_order.supplier.contact}}
+                                </div>
                             </div>
                         </div>
-                        <div class="row mt-10">
-                            <div class="col-md-12 inv-text-normal">
-                                Supplier Contact : {{purchase_order.supplier.contact}}
-                            </div>
-                        </div>
+                       
                          <div class="row mt-20">
                             <div class="col-md-12 inv-text-normal">
                                 Supplier Terms : {{purchase_order.supplier.terms}}
@@ -141,26 +225,26 @@
 
                 <div class="row mt-10">
                     <div class="col-md-12 ">
-                        <table class="inv-table footable">
+                        <table class="inv-table footable" style="border-top: 1px solid #c4c4c4;">
                             <thead>
                                 <tr>
-                                    <th style="width: %;">
+                                    <th style="width: 15%;">
                                         Product ID
                                     </th>
                                     <th style="width: %;">
                                         Product
                                     </th>
-                                    <th data-hide="phone,tablet" style="width: %; ">
+                                    <th data-hide="phone,tablet" style="text-align: center;">
                                         Unit Price
                                     </th>
-                                    <th data-hide="phone,tablet" style="width: %;">
+                                    <th data-hide="phone,tablet" style="text-align: center;">
                                         Number of units
                                     </th>
-                                    <th data-hide="phone,tablet" style="width: %;">
+                                    <th data-hide="phone,tablet" style="text-align: center;">
                                         Net Price
                                     </th>
 
-                                    <th data-hide="phone,tablet" style="width: %;">Action</th>
+                                    <th data-hide="phone,tablet" style="text-align: center;">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -168,10 +252,10 @@
                                 <tr>
                                     <td>{{item.product.supplier_item_id}}</td>
                                     <td>{{item.product.item}}</td>
-                                    <td>{{item.unit_price|floatformat:3}} KD</td>
-                                    <td>{{item.item_count}}</td>
-                                    <td>{{item.total_price|floatformat:3}} KD</td>
-                                    <td>
+                                    <td style="text-align: right;">{{item.unit_price|floatformat:3}} KD</td>
+                                    <td style="text-align: center;">{{item.item_count}}</td>
+                                    <td style="text-align: right;">{{item.total_price|floatformat:3}} KD</td>
+                                    <td style="float: right;"> 
                                         <button class="inv-plan-img-btn edit-item-btn" data-itemid="{{item.id}}" data-productid="{{item.product.id}}" data-productname="{{item.product.item}}" data-unitprice="{{item.unit_price}}" data-itemcount="{{item.item_count}}" data-totalprice="{{item.total_price}}"> <img
                                             src="{% static 'files/inventory/icons/edit.png' %}" alt="" onclick="openNavAddStore('edit')"> </button>
                                         <button data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}"  class="inv-plan-img-btn delete-item-btn"> <img
@@ -204,7 +288,7 @@
                     <div class="d-flex" style="align-items: center;
                     justify-content: center;">  <button class="sent-button" type="submit" >Submit</button>
                     </form>
-                                  <a href=""  class="view-button2">Cancel</a>
+                                  <a  onclick="showRe()" class="view-button2 pointer">Cancel</a>
                    
                 </div>
                 {% endif %}
@@ -212,7 +296,7 @@
             </div>
         </div>
     </section>
-    <div id="addStore" class="inv-sidedrawer">
+    <div id="addStore" class="inv-sidedrawer" >
 
         <div class="inv-sidedrawer-inner">
             <div class="d-flex">
@@ -285,7 +369,7 @@
                         <input style="color: #4B4B4B;"  type="text" class="count qty-border-two"   >
                         <input style="color: #4B4B4B;"   type="hidden" class="count qty-border-two" value="1" id="id_item_count" name="item_count" onkeyup="calc_total_price()" >
 
-                        <span style="color: #4B4B4B; margin-left: -4px !important;" class="plus bg-dark qty-border-two" >+</span>
+                        <span style="color: #4B4B4B; margin-left: -5px !important;" class="plus bg-dark qty-border-two" >+</span>
                     </div>
                 </div>
 
@@ -312,6 +396,7 @@
             <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
         </div>
     </div>
+    
     <div class="modal fade" id="deleteModel" role="dialog">
         <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
             <div class="container-fluid">
@@ -347,7 +432,42 @@
             </div>
         </div>
       </div>
+      <button id="id_c" hidden data-toggle="modal" data-target="#cancelModel">dd</button>
+      <div class="modal fade" id="cancelModel" role="dialog">
+        <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12 mt-20">
+
+                        
+                        <div class="d-flex ">
+                            <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to reset order?</p></div>
+                            <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                                <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                            </button>
     
+                        </div>
+                    </div>
+                </div>
+               
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <!-- <form method="POST" action="" >{% csrf_token %}
+                        <input type="hidden" name="action" value="delete_item" />
+                        <input type="text" name="item_id" id="id_item" /> -->
+                        <div class="cancel-model-content">
+                            <button class="sent-button" type="submit" >reset</button>
+                            <button data-dismiss="modal" class="view-button">Cancel</button>
+                          
+                        </div>
+                        <!-- </form> -->
+                    </div>
+    
+                </div>
+            </div>
+        </div>
+      </div>
 </div>
 
 {% comment %} <div class="row">
@@ -414,9 +534,92 @@ $(function () {
     });
 });
 </script>
+<!-- <script>
+    var x, i, j, l, ll, selElmnt, a, b, c;
+    /*look for any elements with the class "custom-select":*/
+    x = document.getElementsByClassName("custom-select");
+    l = x.length;
+    for (i = 0; i < l; i++) {
+      selElmnt = x[i].getElementsByTagName("select")[0];
+      ll = selElmnt.length;
+      /*for each element, create a new DIV that will act as the selected item:*/
+      a = document.createElement("DIV");
+      a.setAttribute("class", "select-selected");
+      a.innerHTML = selElmnt.options[selElmnt.selectedIndex].innerHTML;
+      x[i].appendChild(a);
+      /*for each element, create a new DIV that will contain the option list:*/
+      b = document.createElement("DIV");
+      b.setAttribute("class", "select-items select-hide");
+      for (j = 1; j < ll; j++) {
+        /*for each option in the original select element,
+        create a new DIV that will act as an option item:*/
+        c = document.createElement("DIV");
+        c.innerHTML = selElmnt.options[j].innerHTML;
+        c.addEventListener("click", function(e) {
+            /*when an item is clicked, update the original select box,
+            and the selected item:*/
+            var y, i, k, s, h, sl, yl;
+            s = this.parentNode.parentNode.getElementsByTagName("select")[0];
+            sl = s.length;
+            h = this.parentNode.previousSibling;
+            for (i = 0; i < sl; i++) {
+              if (s.options[i].innerHTML == this.innerHTML) {
+                s.selectedIndex = i;
+                h.innerHTML = this.innerHTML;
+                y = this.parentNode.getElementsByClassName("same-as-selected");
+                yl = y.length;
+                for (k = 0; k < yl; k++) {
+                  y[k].removeAttribute("class");
+                }
+                this.setAttribute("class", "same-as-selected");
+                break;
+              }
+            }
+            h.click();
+        });
+        b.appendChild(c);
+      }
+      x[i].appendChild(b);
+      a.addEventListener("click", function(e) {
+          /*when the select box is clicked, close any other select boxes,
+          and open/close the current select box:*/
+          e.stopPropagation();
+          closeAllSelect(this);
+          this.nextSibling.classList.toggle("select-hide");
+          this.classList.toggle("select-arrow-active");
+        });
+    }
+    function closeAllSelect(elmnt) {
+      /*a function that will close all select boxes in the document,
+      except the current select box:*/
+      var x, y, i, xl, yl, arrNo = [];
+      x = document.getElementsByClassName("select-items");
+      y = document.getElementsByClassName("select-selected");
+      xl = x.length;
+      yl = y.length;
+      for (i = 0; i < yl; i++) {
+        if (elmnt == y[i]) {
+          arrNo.push(i)
+        } else {
+          y[i].classList.remove("select-arrow-active");
+        }
+      }
+      for (i = 0; i < xl; i++) {
+        if (arrNo.indexOf(i)) {
+          x[i].classList.add("select-hide");
+        }
+      }
+    }
+    /*if the user clicks anywhere outside the select box,
+    then close all select boxes:*/
+    document.addEventListener("click", closeAllSelect);
+    </script> -->
 <script>
 
-
+function showRe(){
+    console.log('j')
+    $('#id_c').click();
+}
 
 function showAdditem(){
 
@@ -493,6 +696,7 @@ function showAdditem(){
     $('#id_search').append('<div class="col-md-12" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-productprice="{{item.item_price}}" data-name="{{item.item}}"><div class="inv-search-result">{{item.item}}</div></div>');
 
     {% endfor %}
+
        // $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
         if(d == 'add'){
             $('#itemHead').text('Add Item');
@@ -512,6 +716,7 @@ function showAdditem(){
             $('.purchaseorder-form-btn').text('Update');
 
         }
+        document.body.style.backgroundColor = "rgba(0,0,0,0.4) !important";
         if (screen.width <= 600) {
             document.getElementById("addStore").style.width = "100%";
         } else if (screen.width <= 720) {
@@ -536,7 +741,7 @@ function showAdditem(){
         for (var j=0; j<products.length; j++) {
             if (products[j].name.match($('#pro-name').val())){
                 console.log(products[j]);
-        $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-productprice="'+products[j].price+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
+        $('#id_search').append('<div class="col-md-12" style="padding:0px !important;" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-productprice="'+products[j].price+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
 
             }
         }
