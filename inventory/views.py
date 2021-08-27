@@ -497,9 +497,13 @@ class InventorySupplier(IsInventoryAdmin,View):
             else:
                 new_supplier_id = 'SUP9001'
 
+            supplier_name_check = Supplier.objects.filter(supplier_nmae__icontains=name).first()
 
-            Supplier.objects.create(supplier_name=name,supplier_id=new_supplier_id,contact=contact,address=address,terms=terms,status=status)
-            messages.success(request,"Supplier Added Successfully !")
+            if supplier_name_check:
+                messages.error(request,"Supplier Name Exists !")
+            else:
+                Supplier.objects.create(supplier_name=name,supplier_id=new_supplier_id,contact=contact,address=address,terms=terms,status=status)
+                messages.success(request,"Supplier Added Successfully !")
 
         if action == 'edit_supplier':
             supplier_id = request.POST.get('supplier_edit_id')
@@ -512,15 +516,20 @@ class InventorySupplier(IsInventoryAdmin,View):
 
             supplier = Supplier.objects.get(id=int(supplier_id))
 
-            supplier.supplier_name= name
-            supplier.contact = contact
-            supplier.other_contact = other_contact
-            supplier.address = address
-            supplier.terms = terms
-            supplier.status = status
+            supplier_name_check = Supplier.objects.filter(supplier_name__icontains=name).exclude(id=int(supplier_id)).first()
 
-            supplier.save()
-            messages.success(request,"Supplier Updated Successfully !")
+            if supplier_name_check:
+                messages.error(request,"Supplier Name Exists !")
+            else:
+                supplier.supplier_name= name
+                supplier.contact = contact
+                supplier.other_contact = other_contact
+                supplier.address = address
+                supplier.terms = terms
+                supplier.status = status
+
+                supplier.save()
+                messages.success(request,"Supplier Updated Successfully !")
 
         if action == 'delete_supplier':
             supplier_id = request.POST.get('supplier_id_delete')
@@ -878,12 +887,30 @@ class InventoryCreatePurchaseOrder(View):
             PurchaseOrderItems.objects.get(id=int(order_item_id)).delete()
             messages.success(request,"Item Deleted successfully!")
 
+        if action == 'reset':
+            purchase_order_id = request.POST.get('purchase_order_id')
+
+            purchase_order = PurchaseOrder.objects.get(id=int(purchase_order_id))
+
+            purchase_order.is_order_completed = False
+            purchase_order.supplier = None
+            purchase_order.discount = 0.000
+            purchase_order.tax = 0.000
+            purchase_order.shipping_charge = 0.000
+            purchase_order.other_charge = 0.000
+            purchase_order.save()
+
+            PurchaseOrderItems.objects.filter(purchase_order=purchase_order).delete()
+
+            messages.success(request,"Purchase Order Reset successfully!")
+
+
         return redirect('inventory:inventory-createpurchaseorder')
 
 class InventoryEditPurchaseOrder(IsInventoryAdmin,View):
     def get(self,request,purchase_order_id):
 
-        purchase_order = PurchaseOrder.objects.get(id=int(purchase_order_id))
+        purchase_order = PurchaseOrder.objects.prefetch_related(Prefetch('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.all(),to_attr='purchase_order_items')).annotate(total_order_price=Sum('purchase_order_purchase_order_item__total_price')).get(id=int(purchase_order_id))
 
         suppliers = Supplier.objects.filter(status=True)
 
@@ -899,9 +926,9 @@ class InventoryEditPurchaseOrder(IsInventoryAdmin,View):
 
         print(items,"im")
 
-        purchase_order_items = PurchaseOrderItems.objects.filter(purchase_order=purchase_order,purchase_order__supplier=purchase_order.supplier)
+        # purchase_order_items = PurchaseOrderItems.objects.filter(purchase_order=purchase_order,purchase_order__supplier=purchase_order.supplier).annotate(total_price=Sum('total_price'))
 
-        return render(request,'inventory/editpo.html',{"items":items,"suppliers":suppliers,"supplier":supplier,"purchase_order":purchase_order,"purchase_order_items":purchase_order_items})
+        return render(request,'inventory/editpo.html',{"items":items,"suppliers":suppliers,"supplier":supplier,"purchase_order":purchase_order})
 
     def post(self,request,purchase_order_id):
             action = request.POST.get('action')

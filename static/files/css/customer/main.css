@@ -40,6 +40,7 @@ padding:5px;
 }
 .qt-details-value{
     color:#000000;
+    word-wrap: break-word;
 }
 .qt-more-details{
     background: #EDF1F6 0% 0% no-repeat padding-box;
@@ -380,6 +381,7 @@ outline: none !important;
     
     float: right;
     font-size: 16px;
+    word-wrap: break-word;
   
 }
 .text-right{
@@ -858,6 +860,17 @@ height: 42px;
   .ml-5{
       margin-left:5px;
   }
+  .ml-10{
+    margin-left:10px;
+}
+.visits-view{
+    text-decoration: underline;
+    cursor :pointer;
+}
+.visit-popup{
+    font-size: 12px;
+     justify-content: flex-end;
+}
   .float-left{
       float:left;
   }

@@ -11,6 +11,12 @@
    function openModal(){  
         $('#termsModal').show();    
    }
+   function openVisit(){  
+    $('#visitModal').show();    
+}
+function closeVisit(){  
+  $('#visitModal').hide();    
+}
    function closeModal(){  
     $('#termsModal').hide();    
 }
@@ -32,6 +38,7 @@ function closeCashModal(){
 function openDetailsModal(elem){
   id = $(elem).data('popup_id');
   $('#detailsModal'+id).show(); 
+  
 }
 function closeDetailsModal(elem){
   id = $(elem).data('popup_id');

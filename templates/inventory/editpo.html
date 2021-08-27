@@ -149,26 +149,26 @@
                                         Product
                                     </th>
                                     <th data-hide="phone,tablet" style="width: %; ">
-                                        Unit Cost
+                                        Unit Price
                                     </th>
                                     <th data-hide="phone,tablet" style="width: %;">
                                         Number of units
                                     </th>
                                     <th data-hide="phone,tablet" style="width: %;">
-                                        Total Cost
+                                        Net Price
                                     </th>
 
                                     <th data-hide="phone,tablet" style="width: %;">Action</th>
                                 </tr>
                           </thead>
                           <tbody>
-                                {% for item in purchase_order_items %}
+                                {% for item in purchase_order.purchase_order_items %}
                                 <tr>
                                     <td>{{item.product.supplier_item_id}}</td>
                                     <td>{{item.product.item}}</td>
-                                    <td>{{item.unit_price}}</td>
+                                    <td>{{item.unit_price|floatformat:3}} KD</td>
                                     <td>{{item.item_count}}</td>
-                                    <td>{{item.total_price}}</td>
+                                    <td>{{item.total_price|floatformat:3}} KD</td>
                                     <td>
                                         <button type="button" class="inv-plan-img-btn edit-item-btn" data-itemid="{{item.id}}" data-productid="{{item.product.id}}" data-productname="{{item.product.item}}" data-unitprice="{{item.unit_price}}" data-itemcount="{{item.item_count}}" data-totalprice="{{item.total_price}}"> <img
                                             src="{% static 'files/inventory/icons/edit.png' %}" alt="" onclick="openNavAddStore('edit')"> </button>
@@ -177,6 +177,7 @@
                                     </td>
                                 </tr>
                                 {% endfor %}
+                                <tr><td></td><td></td><td></td><td><b>Total Price</b></td><td><b>{{purchase_order.total_order_price|floatformat:3}} KD</b></td><td></td></tr>
                                
                                 {% if purchase_order.supplier != None %}
                                 <tr  id="id_addrow">
@@ -192,7 +193,7 @@
                     </div>
                 </div>
 
-                {% if purchase_order_items %}
+                {% if purchase_order.purchase_order_items %}
                 
                 <div class="row mt-20 text-center">
                     <div class="d-flex" style="align-items: center;

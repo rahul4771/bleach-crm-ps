@@ -117,28 +117,24 @@
                         </select> {% endcomment %}
                        
                        
-                          
-                         <div class="wrap-drop" id="noble-gases">
-                         {% if purchase_order.supplier == None %}
-                            <span>--Select Supplier</span>
+                          <input type="text" hidden id="supplier_id" >
+                         <div class="wrap-drop" id="noble-gases" id="supplier_id" >
+                            {% if purchase_order.supplier == None %}
+                            <span>--Select Supplier--</span>
                             <ul class="drop">
                                 {% for supplier in suppliers %}
-                                <li><a>{{supplier.supplier_name}}</a></li>
+                                <li onclick="dropSelectSeller({{supplier.id}})" ><a>{{supplier.supplier_name}}</a></li>
                                 {% endfor %}
-                            
-                             
                             </ul>
-                        {% else %}
-                        <span>{{purchase_order.supplier.supplier_name}}</span>
+                            {% else %}
+                            <span>{{purchase_order.supplier.supplier_name}}</span>
                             <ul class="drop">
+                               
+                                <li class="drop-selected" ><a>{{purchase_order.supplier.supplier_name}}</a></li>
                                 
-                                {% for supplier in suppliers %}
-                                <li><a>{{supplier.supplier_name}}</a></li>
-                                {% endif %}
-                             
                             </ul>
-                        {% endif %}
-                        </div> 
+                            {% endif %}
+                        </div>
                         <br><br>
                        
                         
@@ -224,7 +220,7 @@
         
                         </div>
                     </div>
-                    </form>
+                    
                     <!-- <div class="col-md-9 text-right">
                         <button class="inv-plan-btn" onclick="openNavAddStore()"> <img
                             src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5"
@@ -268,9 +264,9 @@
                                     <td style="text-align: center;">{{item.item_count}}</td>
                                     <td style="text-align: right;">{{item.total_price|floatformat:3}} KD</td>
                                     <td style="float: right;"> 
-                                        <button class="inv-plan-img-btn edit-item-btn" data-itemid="{{item.id}}" data-productid="{{item.product.id}}" data-productname="{{item.product.item}}" data-unitprice="{{item.unit_price}}" data-itemcount="{{item.item_count}}" data-totalprice="{{item.total_price}}"> <img
+                                        <button type="button" class="inv-plan-img-btn edit-item-btn" data-itemid="{{item.id}}" data-productid="{{item.product.id}}" data-productname="{{item.product.item}}" data-unitprice="{{item.unit_price}}" data-itemcount="{{item.item_count}}" data-totalprice="{{item.total_price}}"> <img
                                             src="{% static 'files/inventory/icons/edit.png' %}" alt="" onclick="openNavAddStore('edit')"> </button>
-                                        <button data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}"  class="inv-plan-img-btn delete-item-btn"> <img
+                                        <button type="button" data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}"  class="inv-plan-img-btn delete-item-btn"> <img
                                                 src="{% static 'files/inventory/icons/delete.png' %}" alt=""> </button>
                                     </td>
                                 </tr>
@@ -281,7 +277,7 @@
                                 {% if purchase_order.supplier != None %}
                                 <tr  id="id_addrow">
                                     <td>
-                                        <button class="inv-plan-btn" onclick="openNavAddStore('add')"> <img
+                                        <button class="inv-plan-btn" onclick="openNavAddStore('add')" type="button"> <img
                                                 src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5"
                                                 alt=""> Add Item</button>
                                     </td>
@@ -293,8 +289,6 @@
                 </div>
                 
                 {% if purchase_order_items %}
-                <form method="POST" action="" >{% csrf_token %}
-                <input type="hidden" name="action" value="order_close" />
                 <input type="hidden" name="purchase_order_id" value="{{purchase_order.id}}" />
                 <div class="row mt-20 text-center">
                     <div class="d-flex" style="align-items: center;
@@ -431,7 +425,7 @@
                     <div class="col-md-12 text-center">
                         <form method="POST" action="" >{% csrf_token %}
                         <input type="hidden" name="action" value="delete_item" />
-                        <input type="text" name="item_id" id="id_item" />
+                        <input type="hidden" name="item_id" id="id_item" />
                         <div class="cancel-model-content">
                             <button class="sent-button" type="submit" >Delete</button>
                             <button data-dismiss="modal" class="view-button">Cancel</button>
@@ -469,7 +463,11 @@
                         <input type="hidden" name="action" value="delete_item" />
                         <input type="text" name="item_id" id="id_item" /> -->
                         <div class="cancel-model-content">
+                            <form method="POST" action="" >{% csrf_token %}
+                            <input type="hidden" name="action" value="reset" />
+                            <input type="hidden" name="purchase_order_id" value="{{purchase_order.id}}" />
                             <button class="sent-button" type="submit" >reset</button>
+                            </form>
                             <button data-dismiss="modal" class="view-button">Cancel</button>
                           
                         </div>
@@ -627,7 +625,11 @@ $(function () {
     document.addEventListener("click", closeAllSelect);
     </script> -->
 <script>
-
+function dropSelectSeller(id){
+    console.log(id)
+    $('#supplier_id').val(id);
+    set_params_go();
+}
 function showRe(){
     console.log('j')
     $('#id_c').click();
