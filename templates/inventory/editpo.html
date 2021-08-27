@@ -17,7 +17,7 @@
 
         <div class="main-content-holder"><!--main-content-holder-->   
             <div class="white-wrapper white-wrapper-padding">
-                <div class="row">
+                {% comment %} <div class="row">
                     <div class="col-md-3">
                         <div class="model-input-name">Select Supplier</div>
 
@@ -34,24 +34,90 @@
 
                         </select>
                     </div>
-                </div>
-                {% if supplier != None %}
+                </div> {% endcomment %}
+
+                {% if purchase_order.supplier != None %}
                 <div class="row mt-20">
                     <div class="col-md-12 inv-text-normal">
-                        {{supplier.address}}
+                        Initiated Date : {{purchase_order.created|date:'d-m-Y'}}
+                    </div>
+                </div>
+
+                <div class="row mt-20">
+                    <div class="col-md-12 inv-text-normal">
+                        Initiated By : {{purchase_order.initiated_by.name}}
+                    </div>
+                </div>
+                <div class="row mt-20">
+                    <div class="col-md-12 inv-text-normal">
+                        Supplier : {{purchase_order.supplier.supplier_name}}
+                    </div>
+                </div>
+                <div class="row mt-20">
+                    <div class="col-md-12 inv-text-normal">
+                        Supplier Address : {{purchase_order.supplier.address}}
                     </div>
                 </div>
                 <div class="row mt-10">
                     <div class="col-md-12 inv-text-normal">
-                        {{supplier.contact}}
+                        Supplier {{purchase_order.supplier.contact}}
                     </div>
                 </div>
                 <div class="row mt-20">
                     <div class="col-md-12 inv-text-normal">
-                        {{supplier.terms}}
+                        {{purchase_order.supplier.terms}}
                     </div>
                 </div>
                 {% endif %}
+
+                <div class="col-md-3" style="float: right;">
+                        <div class="row ">
+                            <div class="col-md-12 ">
+                                <div class="model-input-name">Discount</div>
+        
+                                <div class="inv-input-container h-30"> 
+                                    <input type="number" step="0.01"  class="w-p-100 inv-in" name="unit_price" value="{{purchase_order.discount|floatformat:3}}" >
+                                </div>
+                            </div>
+        
+                        </div>
+        
+                        <div class="row mt-20">
+                            <div class="col-md-12 ">
+                                <div class="model-input-name">Tax</div>
+        
+                                <div class="inv-input-container h-30"> 
+                                    <input type="number" step="0.01" class="w-p-100 inv-in" name="unit_price" value="{{purchase_order.tax|floatformat:3}}" >
+                                </div>
+                            </div>
+        
+                        </div>
+        
+                        <div class="row mt-20">
+                            <div class="col-md-12 ">
+                                <div class="model-input-name">Shipping Charges</div>
+        
+                                <div class="inv-input-container h-30"> 
+                                    <input type="number" step="0.01"  class="w-p-100 inv-in" name="unit_price" value="{{purchase_order.shipping_charges|floatformat:3}}" >
+                                </div>
+                            </div>
+        
+                        </div>
+        
+                        <div class="row mt-20">
+                            <div class="col-md-12 ">
+                                <div class="model-input-name">Other Charges</div>
+        
+                                <div class="inv-input-container h-30"> 
+                                    <input type="text"  class="w-p-100 inv-in" name="unit_price" value="{{purchase_order.other_charges|floatformat:3}}" >
+                                </div>
+                            </div>
+        
+                        </div>
+                    </div>
+                
+                
+
                 <div class="row mt-10">
                     <div class="col-md-12 ">
                         <table class="inv-table footable"> 
