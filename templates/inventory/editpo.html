@@ -307,9 +307,12 @@
                             <form method="POST" action="" >{% csrf_token %}
                             <input type="hidden" name="action" value="delete_item" />
                             <input type="hidden" name="item_id" id="id_item" />
-                            <button class="sent-button" >Delete</button>
+                            <div class="d-flex" style="align-items: center;
+                            justify-content: center;">
+                                <button class="sent-button" >Delete</button>
                             </form>
                             <button data-dismiss="modal" class="view-button">Cancel</button>
+                            </div>
                           
                         </div>
                     </div>
