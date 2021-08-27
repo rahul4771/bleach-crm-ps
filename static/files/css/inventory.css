@@ -645,7 +645,9 @@
   background-color: #FFFFFF;
   overflow-x: hidden;
   transition: 0.5s;
-  border: 1px solid #707070;
+  box-shadow: -8px 0px 6px #0000001C;
+border: 1px solid #D5D5D5;
+opacity: 1;
   border-radius: 10px;
 }
 .inv-sidedrawer-inner{
@@ -1016,11 +1018,16 @@ select.minimal option:hover {
 
 }
 
+.inv-po-cu{
+  background: #EDF1F6;
+  padding: 5px;
+}
+
 /* .inv-table thead tr {
   border-top: 1px solid #c4c4c4 !important;
 } */
 .wrap-drop {
-  border-radius: 4px;
+  border-radius: 7px;
   background:#ffffff;
   border: 1px solid #707070 !important;
   /* box-shadow:3px 3px 3px rgba(0,0,0,.2); */
@@ -1035,16 +1042,19 @@ select.minimal option:hover {
   }
   
   .wrap-drop::after {
-  border-color:#695d52 transparent;
-  border-style:solid;
-  border-width:10px 10px 0;
-  content:"";
-  height:0;
-  margin-top:-4px;
+   
   position:absolute;
   right:1rem;
-  top:50%;
-  width:0;
+  top:35%;
+
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-right: 0.2em solid black;
+  border-top: 0.2em solid black;
+  transform: rotate(135deg);
+ 
   }
   
   .wrap-drop .drop {
@@ -1059,7 +1069,9 @@ select.minimal option:hover {
   display:none;
   left:0;
   list-style:none;
-  margin-top:0;
+  margin-top:-3px;
+  margin-left: -1px;
+  margin-right: -1px;
   opacity:0;
   padding-left:0;
   pointer-events:none;
@@ -1073,6 +1085,7 @@ select.minimal option:hover {
   }
   
   .wrap-drop .drop li a {
+    border-top: 1px solid #ececec;
   color:#695d52;
   display:block;
   padding:.5rem;
@@ -1090,7 +1103,8 @@ select.minimal option:hover {
   }
   
   .wrap-drop.active::after {
-  border-width:0 10px 10px;
+    
+    transform: rotate(45deg);
   }
   
   .wrap-drop.active .drop {

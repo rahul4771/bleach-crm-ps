@@ -1,6 +1,80 @@
 {% extends "base.html" %}
 {% block content %}
 {% load static %}
+<!-- <style>
+    /*the container must be positioned relative:*/
+    .custom-select {
+      position: relative;
+      font-family: Arial;
+      z-index:999999999999;
+      
+    }
+    
+    .custom-select select {
+      display: none; /*hide original SELECT element:*/
+    }
+    
+    .select-selected {
+      background-color: #fff;
+      border: 1px solid #707070 !important;
+      border-radius: 7px;
+    }
+    
+    /*style the arrow inside the select element:*/
+    .select-selected:after {
+        position:absolute;
+  right:1rem;
+  top:35%;
+
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-right: 0.2em solid black;
+  border-top: 0.2em solid black;
+  transform: rotate(135deg);
+    }
+    
+    /*point the arrow upwards when the select box is open (active):*/
+    .select-selected.select-arrow-active:after {
+        transform: rotate(45deg);
+    }
+    
+    /*style the items (options), including the selected item:*/
+    .select-items div,.select-selected {
+      color: #5a5a5a;
+      padding: 8px 16px;
+      border: 1px solid transparent;
+      border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
+      cursor: pointer;
+      user-select: none;
+    }
+    
+    /*style items (options):*/
+    .select-items {
+        margin-top: -3px;
+        border-left: 1px solid #707070 !important;
+        border-bottom: 1px solid #707070 !important;
+        border-right: 1px solid #707070 !important;
+
+      position: absolute;
+      background-color: #fff;
+      top: 100%;
+      left: 0;
+      right: 0;
+      z-index: 99999;
+      border-radius: 0px 0px 7px 7px;
+    }
+    
+    /*hide the items when the select box is closed:*/
+    .select-hide {
+      display: none;
+    }
+    
+    .select-items div:hover, .same-as-selected {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+    </style> -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -28,7 +102,7 @@
                     
                     <div class="col-md-3">
                         <div class="model-input-name">Select Supplier</div>
-
+                        
                         <select id="supplier_id" class="minimal" onchange="set_params_go();">
                             {% if purchase_order.supplier == None %}
                                 <option value="">--Select Supplier--</option>
@@ -41,6 +115,9 @@
                             {% endif %}
 
                         </select>
+                       
+                       
+                          
                          <!-- <div class="wrap-drop" id="noble-gases">
                             <span>All Noble Gases</span>
                             <ul class="drop">
@@ -53,30 +130,34 @@
                              
                             </ul>
                         </div> -->
-                        <br>
-                        <div class="row mt-20">
-                            <div class="col-md-12 inv-text-normal">
-                                Initiated Date : {{purchase_order.created|date:'d-m-Y'}}
-                            </div>
-                        </div>
-        
-                        <div class="row mt-20">
-                            <div class="col-md-12 inv-text-normal">
-                                Initiated By : {{purchase_order.initiated_by.name}}
-                            </div>
-                        </div>
+                        <br><br>
+                       
                         
                         {% if purchase_order.supplier != None %}
-                        <div class="row mt-20">
-                            <div class="col-md-12 inv-text-normal">
-                                Supplier Address : {{purchase_order.supplier.address}}
+                        <div class="inv-po-cu">
+                            <div class="row mt-10">
+                                <div class="col-md-12 inv-text-normal">
+                                    Initiated Date : {{purchase_order.created|date:'d-m-Y'}}
+                                </div>
+                            </div>
+            
+                            <div class="row mt-10">
+                                <div class="col-md-12 inv-text-normal">
+                                    Initiated By : {{purchase_order.initiated_by.name}}
+                                </div>
+                            </div>
+                            <div class="row mt-10">
+                                <div class="col-md-12 inv-text-normal">
+                                    Supplier Address : {{purchase_order.supplier.address}}
+                                </div>
+                            </div>
+                            <div class="row mt-10" >
+                                <div class="col-md-12 inv-text-normal">
+                                    Supplier Contact : {{purchase_order.supplier.contact}}
+                                </div>
                             </div>
                         </div>
-                        <div class="row mt-10">
-                            <div class="col-md-12 inv-text-normal">
-                                Supplier Contact : {{purchase_order.supplier.contact}}
-                            </div>
-                        </div>
+                       
                          <div class="row mt-20">
                             <div class="col-md-12 inv-text-normal">
                                 Supplier Terms : {{purchase_order.supplier.terms}}
@@ -215,7 +296,7 @@
             </div>
         </div>
     </section>
-    <div id="addStore" class="inv-sidedrawer" style="	box-shadow: -5px 0 5px -5px #333;">
+    <div id="addStore" class="inv-sidedrawer" >
 
         <div class="inv-sidedrawer-inner">
             <div class="d-flex">
@@ -453,6 +534,86 @@ $(function () {
     });
 });
 </script>
+<!-- <script>
+    var x, i, j, l, ll, selElmnt, a, b, c;
+    /*look for any elements with the class "custom-select":*/
+    x = document.getElementsByClassName("custom-select");
+    l = x.length;
+    for (i = 0; i < l; i++) {
+      selElmnt = x[i].getElementsByTagName("select")[0];
+      ll = selElmnt.length;
+      /*for each element, create a new DIV that will act as the selected item:*/
+      a = document.createElement("DIV");
+      a.setAttribute("class", "select-selected");
+      a.innerHTML = selElmnt.options[selElmnt.selectedIndex].innerHTML;
+      x[i].appendChild(a);
+      /*for each element, create a new DIV that will contain the option list:*/
+      b = document.createElement("DIV");
+      b.setAttribute("class", "select-items select-hide");
+      for (j = 1; j < ll; j++) {
+        /*for each option in the original select element,
+        create a new DIV that will act as an option item:*/
+        c = document.createElement("DIV");
+        c.innerHTML = selElmnt.options[j].innerHTML;
+        c.addEventListener("click", function(e) {
+            /*when an item is clicked, update the original select box,
+            and the selected item:*/
+            var y, i, k, s, h, sl, yl;
+            s = this.parentNode.parentNode.getElementsByTagName("select")[0];
+            sl = s.length;
+            h = this.parentNode.previousSibling;
+            for (i = 0; i < sl; i++) {
+              if (s.options[i].innerHTML == this.innerHTML) {
+                s.selectedIndex = i;
+                h.innerHTML = this.innerHTML;
+                y = this.parentNode.getElementsByClassName("same-as-selected");
+                yl = y.length;
+                for (k = 0; k < yl; k++) {
+                  y[k].removeAttribute("class");
+                }
+                this.setAttribute("class", "same-as-selected");
+                break;
+              }
+            }
+            h.click();
+        });
+        b.appendChild(c);
+      }
+      x[i].appendChild(b);
+      a.addEventListener("click", function(e) {
+          /*when the select box is clicked, close any other select boxes,
+          and open/close the current select box:*/
+          e.stopPropagation();
+          closeAllSelect(this);
+          this.nextSibling.classList.toggle("select-hide");
+          this.classList.toggle("select-arrow-active");
+        });
+    }
+    function closeAllSelect(elmnt) {
+      /*a function that will close all select boxes in the document,
+      except the current select box:*/
+      var x, y, i, xl, yl, arrNo = [];
+      x = document.getElementsByClassName("select-items");
+      y = document.getElementsByClassName("select-selected");
+      xl = x.length;
+      yl = y.length;
+      for (i = 0; i < yl; i++) {
+        if (elmnt == y[i]) {
+          arrNo.push(i)
+        } else {
+          y[i].classList.remove("select-arrow-active");
+        }
+      }
+      for (i = 0; i < xl; i++) {
+        if (arrNo.indexOf(i)) {
+          x[i].classList.add("select-hide");
+        }
+      }
+    }
+    /*if the user clicks anywhere outside the select box,
+    then close all select boxes:*/
+    document.addEventListener("click", closeAllSelect);
+    </script> -->
 <script>
 
 function showRe(){
