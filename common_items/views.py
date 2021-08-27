@@ -3190,7 +3190,6 @@ class MakeQuatationPhase1(IsAuthenticated,View):
 		if action == 'cancel' :
 			evaluation_detail_id =request.POST.get('evaluation_detail')
 			cancel_reason = request.POST.get('cancellation_reason')
-			print(evaluation_detail_id,"evd")
 			evaluation_detail = EvaluationDetails.objects.filter(id=int(evaluation_detail_id)).first()
 			evaluation_detail.status = 'CANCELLED'
 			evaluation_detail.evaluation_cancel_reason = cancel_reason
@@ -3198,6 +3197,8 @@ class MakeQuatationPhase1(IsAuthenticated,View):
 			messages.success(request,"Evaluation Cancelled !!")
 			return redirect('common_items:makequatation1', enquiry_id,evaluation_id)
 
+
+        ###SUBMIT QUATATION
 		payment_method          = request.POST.get('payment_method')
 		before_cleaning_amount	= float(request.POST.get('before_cleaning_amount')or 0.000)
 		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0.000)
@@ -3253,21 +3254,22 @@ class MakeQuatationPhase1(IsAuthenticated,View):
 		if evaluation.customer.is_sms == True:
 
 			if evaluation.customerbooking:
-				messages.success(request,"CUSTOMER BOOKED")
 
-				url = "https://smsapi.future-club.com/fccsms.aspx"
+				url     = "https://smsapi.future-club.com/fccsms.aspx"
+
+				sms_url = "https://my.bleachkw.com/customer/cart?id=paw"+str(evaluation.evaluation_id [3:14])+str(evaluation.customer.username)
 
 				if language == 'ENGLISH':
 
-					message = "Dear Customer , We have completed your Site Evaluation.You can Book your Slote through https://my.bleachkw.com/customer/cart?id=paw"+str(evaluation.evaluation_id[3:14])+str(evaluation.customer.username)+".For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
+					message = "Dear Customer , We have completed your Site Evaluation.You can Book your Slote through "+sms_url+".For any assistance please contact us on +9651882707. Thank you for choosing Bleach Kuwait."
 
-					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile+"","M":message,"IID":"1468","L":"L"}
+					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"L"}
 
 				else:
 
-					message = "عزيزي العميل ، لقد أكملنا تقييم الموقع الخاص بك.يمكنك حجز الكسلان الخاص بك من خلال https://my.bleachkw.com/customer/cart?id=paw"+str(evaluation.evaluation_id [3:14])+str(evaluation.customer.username)+". للحصول على أي مساعدة يرجى الاتصال بنا على +9651882707. شكرا لاختيارك بليتش الكويت."
+					message = "عزيزي العميل ، لقد أكملنا تقييم الموقع الخاص بك.يمكنك حجز الكسلان الخاص بك من خلال "+sms_url+". للحصول على أي مساعدة يرجى الاتصال بنا على +9651882707. شكرا لاختيارك بليتش الكويت."
 
-					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile+"","M":message,"IID":"1468","L":"A"}
+					querystring = {"UID":"Blkusr","P":"lckw33","S":"BLEACH","G":"965"+evaluation.customer.mobile_number+"","M":message,"IID":"1468","L":"A"}
 				
 				headers = {
 					'cache-control': "no-cache"
