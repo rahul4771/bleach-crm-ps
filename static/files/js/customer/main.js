@@ -1,5 +1,6 @@
 $(".inv-coupon").hide();
 //$(".inv-coupon-error").hide();
+
 selectPayment('debit');
 var cashcounter=false;
 function addCoupon(){
