@@ -35,8 +35,10 @@
                         </select>
                     </div>
                 </div> {% endcomment %}
+                
                 <div class="row">
                     <div class="col-md-3">
+                        <div class="inv-po-cu">
                 {% if purchase_order.supplier != None %}
                 <div class="row mt-20">
                     <div class="col-md-12 inv-text-normal">
@@ -64,12 +66,14 @@
                         Supplier {{purchase_order.supplier.contact}}
                     </div>
                 </div>
+            </div>
                 <div class="row mt-20">
                     <div class="col-md-12 inv-text-normal">
                         {{purchase_order.supplier.terms}}
                     </div>
                 </div>
                 {% endif %}
+                       
                 </div>
                 <div class="col-md-3" style="float: right;">
                     <div class="row ">
