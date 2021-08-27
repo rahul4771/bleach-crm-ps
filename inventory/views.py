@@ -950,6 +950,24 @@ class InventoryEditPurchaseOrder(IsInventoryAdmin,View):
                 PurchaseOrderItems.objects.get(id=int(order_item_id)).delete()
                 messages.success(request,"Item Deleted successfully!")
 
+            if action == 'order_update':
+                print("vupdate")
+                discount = request.POST.get('discount')
+                tax = request.POST.get('tax')
+                shipping_charges = request.POST.get('shipping_charges')
+                other_charges = request.POST.get('other_charges')
+
+                purchase_order = PurchaseOrder.objects.get(id=int(purchase_order_id))
+                purchase_order.discount = discount
+                purchase_order.tax = tax
+                purchase_order.shipping_charge = shipping_charges
+                purchase_order.other_charge = other_charges
+
+                purchase_order.is_order_completed = True
+                purchase_order.save()
+                messages.success(request,"Order Updated successfully!")
+                return redirect('inventory:inventory-purchaseorder')
+
             return redirect('inventory:inventory-editpurchaseorder',purchase_order_id)
 
 class InventoryViewPurchaseOrder(IsInventoryAdmin,View):
