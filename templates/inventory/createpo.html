@@ -125,9 +125,11 @@
                     <form method="POST" action="" >{% csrf_token %}
                     <input type="hidden" name="action" value="order_close" />
                     <input type="hidden" name="purchase_order_id" value="{{purchase_order.id}}" />
-                    <button class="sent-button" type="submit" >Submit</button>
+                    <div class="d-flex" style="align-items: center;
+                    justify-content: center;">  <button class="sent-button" type="submit" >Submit</button>
                     </form>
-                                  <button  class="view-button">Cancel</button>
+                                  <a href=""  class="view-button2">Cancel</a></div>
+                   
                   </div>
             </div>
         </div>
