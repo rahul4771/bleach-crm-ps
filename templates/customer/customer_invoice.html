@@ -205,13 +205,6 @@
                 </div>
                 
                 <div class="w-50 inv-text-right inv-primary-text visits-view" onclick="openVisit()">
-                  <!-- {% for orderschedule in order.orderschedules %}
-                  {% if forloop.last %}
-                     {{orderschedule.start_at|date:'d-m-Y g:iA'}}<br>
-                  {% else %}
-                    {{orderschedule.start_at|date:'d-m-Y g:iA'}},<br>
-                  {% endif %}
-                  {% endfor %} -->
                    Show Visits
                   </div>
               </div>
@@ -232,7 +225,7 @@
           <div class="row ">
             <div class="col-md-8 mx-auto white-bg br-10">
               <div class="mt-2 text-right">
-                <i class="far fa-times-circle qt-details-close" data-popup_id="{{orderschedule.order_scheduler_book.id}}{{section.id}}" onclick="closeVisit()"></i>
+                <i class="far fa-times-circle qt-details-close" onclick="closeVisit()"></i>
               </div>
               <div class="row mb-4">
             <div class="col-md-12">
@@ -241,98 +234,28 @@
             </div>
             <div class="col-md-12">
               <div class="row">
-                  <!--Visit begins-->
-                <div class="col-md-6 col-lg-4 mt-2">
-                
-                  <div class="keynote-chip">
-                    <div class="qt-details-title">
-                      Visit 1
-                    </div>
-                    <div class="d-flex visit-popup">
-                    <div>
-                      <i class="far fa-calendar-alt mt-1 inv-primary-text"></i><span class="ml-2 "> 12-08-2021</span>  
-                    </div>
-                    <div class="ml-10">
-                      <i class="far fa-clock mt-1 inv-primary-text"></i><span class="ml-2 "> 12:00 PM</span>  
-                    </div>
-                    <div class="ml-10">
-                      <i class="fas fa-hourglass-end mt-1 inv-primary-text"></i><span class="ml-2 "> 3 hours</span> 
-                    </div>
-                  </div>
-                  </div>
-                    
-                    
-                </div>
-                <!--Visit ends-->
+                {% for orderschedule in order.orderschedules %}
                 <!--Visit begins-->
-                <div class="col-md-6 col-lg-4 mt-2">
-                
-                  <div class="keynote-chip">
-                    <div class="qt-details-title">
-                      Visit 2
-                    </div>
-                    <div class="d-flex visit-popup">
-                    <div>
-                      <i class="far fa-calendar-alt mt-1 inv-primary-text"></i><span class="ml-2 "> 12-08-2021</span>  
-                    </div>
-                    <div class="ml-10">
-                      <i class="far fa-clock mt-1 inv-primary-text"></i><span class="ml-2 "> 12:00 PM</span>  
-                    </div>
-                    <div class="ml-10">
-                      <i class="fas fa-hourglass-end mt-1 inv-primary-text"></i><span class="ml-2 "> 3 hours</span> 
-                    </div>
+              <div class="col-md-6 col-lg-4 mt-2">
+                <div class="keynote-chip">
+                  <div class="qt-details-title">
+                    Visit {{forloop.counter}}
                   </div>
+                  <div class="d-flex visit-popup">
+                  <div>
+                    <i class="far fa-calendar-alt mt-1 inv-primary-text"></i><span class="ml-2 "> {{orderschedule.start_at|date:'d-m-Y'}}</span>  
                   </div>
-                    
-                    
+                  <div class="ml-10">
+                    <i class="far fa-clock mt-1 inv-primary-text"></i><span class="ml-2 "> {{orderschedule.start_at|time:'h:i A'}}</span>  
+                  </div>
+                  <div class="ml-10">
+                    <i class="fas fa-hourglass-end mt-1 inv-primary-text"></i><span class="ml-2 "> {{orderschedule.cleaning_hours}} Hours</span> 
+                  </div>
                 </div>
-                <!--Visit ends-->
-                <!--Visit begins-->
-                <div class="col-md-6 col-lg-4 mt-2">
-                
-                  <div class="keynote-chip">
-                    <div class="qt-details-title">
-                      Visit 3
-                    </div>
-                    <div class="d-flex visit-popup">
-                    <div>
-                      <i class="far fa-calendar-alt mt-1 inv-primary-text"></i><span class="ml-2 "> 12-08-2021</span>  
-                    </div>
-                    <div class="ml-10">
-                      <i class="far fa-clock mt-1 inv-primary-text"></i><span class="ml-2 "> 12:00 PM</span>  
-                    </div>
-                    <div class="ml-10">
-                      <i class="fas fa-hourglass-end mt-1 inv-primary-text"></i><span class="ml-2 "> 3 hours</span> 
-                    </div>
-                  </div>
-                  </div>
-                    
-                    
-                </div>
-                <!--Visit ends-->
-                <!--Visit begins-->
-                <div class="col-md-6 col-lg-4 mt-2">
-                
-                  <div class="keynote-chip">
-                    <div class="qt-details-title">
-                      Visit 4
-                    </div>
-                    <div class="d-flex visit-popup">
-                    <div>
-                      <i class="far fa-calendar-alt mt-1 inv-primary-text"></i><span class="ml-2 "> 12-08-2021</span>  
-                    </div>
-                    <div class="ml-10">
-                      <i class="far fa-clock mt-1 inv-primary-text"></i><span class="ml-2 "> 12:00 PM</span>  
-                    </div>
-                    <div class="ml-10">
-                      <i class="fas fa-hourglass-end mt-1 inv-primary-text"></i><span class="ml-2 "> 3 hours</span> 
-                    </div>
-                  </div>
-                  </div>
-                    
-                    
-                </div>
-                <!--Visit ends-->
+                </div>   
+              </div>
+              <!--Visit ends-->
+              {% endfor %}
               </div>
             </div>
 
