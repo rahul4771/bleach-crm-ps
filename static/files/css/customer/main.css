@@ -869,6 +869,7 @@ height: 42px;
 }
 .visit-popup{
     font-size: 12px;
+     justify-content: flex-end;
 }
   .float-left{
       float:left;
