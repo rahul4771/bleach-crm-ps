@@ -1,0 +1,786 @@
+{% load static %}
+{% load mathfilters %}
+<!DOCTYPE html>
+<html lang="en" xml:lang="en" >
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" id="viewportMeta" />
+
+    
+    <meta name="description" content="Bleach Invoice">
+    <meta name="author" content="Invoice">
+
+    
+
+   
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="{% static 'files/css/customer/main.css' %}">
+    <link rel="stylesheet" href="{% static 'files/css/colors.css' %}">
+    <title>Bleach Cleaning Services | Invoice</title>
+
+  </head>
+ 
+  <body id="printableArea">
+   <!-- Reject Modal-->
+ <div class="qt-reject-modal " id="rejectModal">
+   <div class="container">
+   <div class=" row">
+     <div class="col-md-6 mx-auto ">
+       <div class="qt-reject-modal-content p-4">
+    <div class="text-center" >
+      <i class="fa fa-times-circle qt-modal-icon" aria-hidden="true"></i>
+    </div>
+    <div class="pt-2 text-center">
+      <h4>
+      Are you sure want to reject  ?
+    </h4>
+    <p>Note : You can contact bleach 24x7 customer care for re-opening the quotation later. </p>
+    </div>
+    <div class="d-flex mt-4 mb-4 mx-auto qt-reject-btn-container">
+    <form method="post" action="" enctype= "multipart/form-data" class="mx-auto">{% csrf_token %}
+      <input type="hidden" name="order_id" value="{{order.id}}">
+      <input type="hidden" name="action_type" value="Reject">
+      <input class="inv-btn text-center text-white" id="bk-reject-yes" name="submit" type="submit" value="Yes">
+      {% comment %} <div class="inv-btn text-center text-white"  id="bk-reject-yes">
+         
+        </div> {% endcomment %}
+    </form>   
+
+        <div class="inv-btn text-center  text-white" onclick="closeRejectModal()">
+         No
+        </div>
+       
+     
+    </div>
+  </div>
+  </div>
+   </div>
+  </div>
+  
+</div>
+<!-- Keynotes modal begins here-->
+<div id="detailsModal" class="qt-details-modal">
+  <div >
+          
+    
+    <div class="container">
+      <div class="row ">
+        <div class="col-md-8 mx-auto white-bg br-10">
+          <div class="mt-2 text-right">
+            <i class="far fa-times-circle qt-details-close" onclick="closeDetailsModal()"></i>
+          </div>
+          <div class="row mb-4">
+        <div class="col-md-12">
+          <h6 class="inv-primary-text" >General Cleaning Building 1 Floor 1</h6>
+         
+        </div>
+        <div class="col-md-6 mt-2">
+          <div class="keynote-chip">
+            <div class="d-flex ">
+              <div class="w-70">
+                Bathrooms
+              </div>
+              <div class="w-30 text-right">
+                3
+              </div>
+            </div>
+           
+          </div>
+        </div>
+        <div class="col-md-6 mt-2">
+          <div  class="keynote-chip">
+            <div class="d-flex">
+              <div class="w-70">
+                Rooms
+              </div>
+              <div class="w-30 text-right">
+               4
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mt-2">
+          <div  class="keynote-chip">
+            <div class="d-flex">
+              <div class="w-70">
+                Kitchen
+              </div>
+              <div class="w-30 text-right">
+               2
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mt-2">
+          <div  class="keynote-chip">
+            <div class="d-flex">
+              <div class="w-70">
+                Wardrobe
+              </div>
+              <div class="w-30 text-right">
+               7
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mt-2">
+          <div  class="keynote-chip">
+            <div class="d-flex">
+              <div class="w-70">
+                Kitchen
+              </div>
+              <div class="w-30 text-right">
+               2
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mt-2">
+          <div  class="keynote-chip">
+            <div class="d-flex">
+              <div class="w-70">
+                Wardrobe
+              </div>
+              <div class="w-30 text-right">
+               7
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="row mt-2 m-0 qt-more-details">
+            <div class="col-md-4 mb-2 mt-2 col-6">
+              <div class="qt-details-title">
+                Wall Type
+              </div>
+              <div class="qt-details-value">
+                Glass, Ceramic, Glass, Ceramic, Glass, Ceramic, Glass, Ceramic
+              </div>
+            </div>
+            <div class="col-md-4 mb-2 mt-2 col-6">
+              <div class="qt-details-title">
+                Floor Type
+              </div>
+              <div class="qt-details-value">
+                Glass, Ceramic
+              </div>
+            </div>
+            <div class="col-md-4 mb-2 mt-2 col-6">
+              <div class="qt-details-title">
+                Ceiling Type
+              </div>
+              <div class="qt-details-value">
+                Glass, Ceramic
+              </div>
+            </div>
+            <div class="col-md-4 mb-2 mt-2 col-6">
+              <div class="qt-details-title">
+                Materials
+              </div>
+              <div class="qt-details-value">
+                Glass, Ceramic
+              </div>
+            </div>
+            <div class="col-md-4 mb-2 mt-2 col-6">
+              <div class="qt-details-title">
+                Size
+              </div>
+              <div class="qt-details-value">
+                12 Sqm
+              </div>
+            </div>
+            <div class="col-md-4 mb-2 mt-2 col-6">
+              <div class="qt-details-title">
+               Quantity
+              </div>
+              <div class="qt-details-value">
+                1
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 offset-md-8">
+          <div class="qt-net-price mt-4 p-2">
+            <div class="qt-details-title">
+              NET PRICE
+             </div>
+             <div class="qt-details-price">
+            200 KD
+             </div>
+          </div>
+        
+        </div>
+      </div>
+      </div>
+    </div>
+    </div>
+    </div>
+
+    
+</div>
+<!-- Keynotes modal ends here-->
+    <div id="termsModal" class="qt-modal" >
+
+        <!-- Modal content -->
+        <div class="qt-modal-content">
+          
+          <div class="qt-modal-header">
+              <div class="text-center p-3">
+           <h4 >Terms & Conditions</h4> 
+            </div>
+
+          </div>
+          <div class="qt-modal-desc">
+              <div class="container">
+                <div class="row text-justify">
+                    
+                    <div class="col-12">
+                        <div class="inv-modal-heading mt-4"> 1.	Warranty conditions</div>
+                        <ul class="inv-modal-points">
+                            <li>Warranty for deep cleaning services for carpets and furniture is (14) days, and it is only for one time from the date of delivering the service.</li>
+  <li>Warranty does not include general cleaning.</li>
+  <li>The warranty covers all that is agreed upon and covered in the contract by the company and the customer in case of proof of defect or decrease of the agreed service.</li>
+  <li>Monthly subscriptions Service: (14) fourteen days warranty from the moment of completion of the service on each visit, including (2) two cases of defect or decrease in the agreed service.</li>
+  
+                            </ul>
+                    </div>
+                    <div class="col-12">
+                        <div class="inv-modal-heading"> 2.	Terms of payment and refund</div>
+                        <ul class="inv-modal-points">
+                            <li>The client is obliged to pay the full amount or a bank cheque to be deducted from the total amount due at the customer.</li>
+  <li>In the case of annual or monthly contracts, a down payment of the total value of the contract to be made to consider the contract valid.</li>
+  <li>The down payment is considered a total right of the company in case the customer cancels the contract within (48) forty-eight hours of the service delivery date.</li>
+  <li>In case that the customer does not confirm the service date (48) forty-eight hours prior the date of service delivery, the company has the right to cancel, postpone or install the appointment as it deems appropriate.</li>
+  <li>In the case of the customer's delay in (paying and closing) the cleaning invoice, a delay fine of (5%) five% to be added to the original price of the service, and that is for every week of delay. </li>
+  
+                            </ul>
+                    </div>
+                    <div class="col-12">
+                        <div class="inv-modal-heading"> 3.	Terms of execution of the contract</div>
+                        <ul class="inv-modal-points">
+                            <li>In case that non- (Bleach company) workers or contractors enter during the on-site cleaning work, the customer's warranty loses the right to claim for any cleaning, or re-do the cleaning.</li>
+  <li>The client must sign for the completed stage of the cleaning works, and in case of refusal or failure to sign, it is considered an implicit approval by the client for the completion of the work done for that stage and does not have the right to request recleaning for that stage in anyway.</li>
+  <li>The client or his/her acting must attend and   sign the business statement (checklist) before and after completion.</li>
+  <li>The customer may not request the suspension of the cleaning work mentioned in the business plan after starting it, and in the event of a suspension of the work, the company is not responsible for completing the cleaning or redo it.</li> 
+  <li>The customer must check the integrity of his property before the team leaves the work site, and the company will not be responsible for any loss or damage complaint after the team leaves the site.</li>
+  <li>All the e-mails or text messages in between the customer and the company are considered official and countable.</li>
+  <li>The quote is valid for (5) five days from issue date, and additional charges are charged for any additional works that is not mentioned in the quote.</li>
+  <li>Any work mentioned within the quote that has not been executed due to an obstacle on the part of the client, will be re-inspected and a new quote will be issued. </li> 
+  <li>The client has no right to verbally or physically assault any of the employees of the company, or else he/she will be subjected to legal liability.</li>
+  
+                            </ul>
+                    </div>
+                    <div class="col-12">
+                        <div class="inv-modal-heading"> 4.	Terms of postponement</div>
+                        <ul class="inv-modal-points">
+                            <li>In case the customer requested to postpone the cleaning date within (24) forty-eight hours of the service time and with a working time of not more than (1-7 hours), the amount of (5) five KDs is paid. For every working hour.</li>
+                         <li>In case the customer requested to postpone the cleaning date within (24) forty-eight hours of the service time and with a working time of (8) eight hours and more, the amount of 70 KDs only, is collected.</li>
+                         <li>The customer has the right to postpone any service visit for not more than 30 days of the original date of the visit, and in case of more than 30 days the visit will be considered cancelled and the amount of the visiting fees is considered a total right of the company and not refundable.</li>
+                         
+                                                   </ul>
+                    </div>
+                    <div class="col-12">
+                        <div class="inv-modal-heading"> 5.	Cancellation terms</div>
+                        <ul class="inv-modal-points" class="inv-modal-points">
+                            <li>In case that the customer cancels the service in (48) forty-eight hours in advance, the amount will be kept in the customer's account with the company for a period of not more than (6) six months to be used later in the services provided by the company.</li>
+                            <li>In case the customer requests that the cleaning date be cancelled within (48) forty-eight hours of the service delivery time of no more than (1-7) hours, the full amount of the service will be collected.</li>
+                            <li>If the duration of the work is a full day (or more than (8) eight hours) the value of the first day will be collected in addition to the amount of only (50) fifty KDs, that is for every extra day.</li>
+                            
+                                                      </ul>
+                    </div>
+                    <div class="col-12">
+                        <div class="inv-modal-heading"> 6.	Quotation/Invoice Terms </div>
+                        <ul class="inv-modal-points" class="inv-modal-points">
+                            <li>The scope of Quotation/Invoices is limited to the work mentioned in the agreed-upon quotation with no further claims. If the quote is approved, the terms and conditions apply.</li>
+                            </ul>
+                    </div>
+                </div>
+              </div>
+             
+         
+          </div>
+          <div class="qt-modal-footer">
+            <div class="text-center p-2">
+                <div class="d-flex mx-auto">
+                    <div style="margin-left: auto;">
+                    <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
+                    <input type="hidden" name="order_id" value="{{order.id}}">
+                    <input type="checkbox" name="termsandconditions" checked="true" hidden>
+                    <input type="hidden" name="action_type" value="Approve">
+                    <div class="inv-btn text-center text-white mx-auto"  id="bk-approve"  style="max-width:200px" >
+                      <input class="assignButton clickable-cursor qt-input-btn" name="submit" type="submit" value="Agree" >
+                      </div>
+                    </form>
+                    </div>
+                    <div style="margin-right: auto;">
+                      <div class="inv-btn text-center  text-white ml-2" onclick="closeModal()" style="max-width:200px;margin-left:10px">
+                       Cancel
+                      </div>
+                      </div>
+
+                   
+                  </div>
+            </div>
+          </div>
+        </div>
+      
+      </div>
+   <div class="container mb-4 mt-4" id="content" >
+      <div class="row" id="printableArea">
+        <div class="col-md-8 col-print-12 mx-auto" id="canvas" >
+          
+          <div class="inv-card mb-4">
+            <div class="d-flex p-4">
+           <div >
+            <img src="{% static 'files/images/customer/logo.png' %}" class="inv-logo mr-4"/>
+          </div>
+            
+          <div class=" pt-4 inv-translator " data-html2canvas-ignore="true">
+            <div class="form-check form-switch inv-form-switch select-language">
+              <input type="checkbox"  id="lang-selector" />
+              <!--<input class="form-check-input" type="checkbox"  id="lang-selector" >--> 
+              <label class="form-check-label notranslate" for="flexSwitchCheckChecked" id="lang-label" data-html2canvas-ignore="true">English</label>
+            </div>
+           
+            
+            <div id="google_translate_element" style="display: none;"></div>
+          </div>
+          
+            </div>
+
+          <div class="container">
+          <div class="row ">
+
+          {% for orderschedule in order.orderschedules %}
+          {% if forloop.first %}
+            <div class="col-md-5 col-print-5 inv-customer-details order-2 order-md-1 mt-4 mt-md-0">
+              <div class="">
+          
+
+                <h4 class="inv-content pt-2 inv-heading-light inv-primary-text"></h4>
+                
+                <div class="d-flex pt-1 inv-invoice-details ">
+                  <div class="w-30 inv-text-left">
+                   <b>Customer</b> 
+                  </div>
+                  <div class="w-70 inv-text-right">
+                    <b>{{orderschedule.customer_address.customer.name}}</b>
+                  </div>
+                </div>
+              
+              <div class="d-flex pt-1 inv-invoice-details">
+                <div class="w-30 inv-text-left">
+                 Address
+                </div>
+                <div class="w-70 inv-text-right">
+                  {{orderschedule.customer_address.apartment}}, {% if orderschedule.customer_address.floor %}{{orderschedule.customer_address.floor}} {% else %}{% endif %} {{orderschedule.customer_address.building}},{{orderschedule.customer_address.block}}, {{orderschedule.customer_address.street}},{% if orderschedule.customer_address.avenue %}{{orderschedule.customer_address.avenue}} {% else %}{% endif %}<br>{{orderschedule.customer_address.area.name}}, {{orderschedule.customer_address.governorate.name}}
+                </div>
+              </div>
+           
+              <div class="d-flex pt-1 inv-invoice-details ">
+                <div class="w-30 inv-text-left">
+                Contact No
+                </div>
+                <div class="w-70 inv-text-right">
+                  {{orderschedule.customer_address.customer.mobile_number}}
+                </div>
+              </div>
+              <div class="d-flex pt-1 inv-invoice-details pb-4">
+                <div class="w-30 inv-text-left">
+                Email
+                </div>
+                <div class="w-70 inv-text-right">
+                  {{orderschedule.customer_address.customer.email}}
+                </div>
+              </div>
+                </div>
+              </div>
+              {% endif %}
+              {% endfor %}
+
+            
+            <div class="col-md-5 col-print-5 offset-md-2 order-md-2 order-1 inv-invoice-card" >
+              <div class="inv-content-card">
+              <h1 class="text-center qt-title inv-primary-text">QUOTATION</h1>
+              <h6 class="text-center"></h6>
+              <div>
+                <div class="d-flex pt-1 inv-invoice-details">
+                  <div class="w-70 inv-text-left">
+                      Quotation Number
+                  </div>
+                  <div class="w-50 inv-text-right">
+                    {{order.order_no}}
+                  </div>
+                </div>
+              <div class="d-flex pt-1 inv-invoice-details">
+                <div class="w-70 inv-text-left">
+                    Initiated Date
+                </div>
+                <div class="w-50 inv-text-right">
+                   {{order.evaluation.created|date:'d-m-Y'}}
+                </div>
+              </div>
+              <div class="d-flex pt-1 inv-invoice-details">
+                <div class="w-70 inv-text-left">
+                    Due Date
+                </div>
+                <div class="w-50 inv-text-right">
+                   {{order.evaluation.quatation_expiry_date|date:'d-m-Y'}}
+                </div>
+              </div>
+              <div class="d-flex pt-1 inv-invoice-details">
+                <div class="w-70 inv-text-left">
+                    Evaluator
+                </div>
+                <div class="w-50 inv-text-right">
+                   {% for orderschedule in nonduplicate_schedules %}{% if orderschedule.evaluation_details.evaluator %}{% ifchanged orderschedule.evaluation_details.evaluator.name %}{{orderschedule.evaluation_details.evaluator.name}}, {% endifchanged %}{% else %}{% if forloop.last %}{{orderschedule.evaluation_details.evaluation.call_attender.name}}{% endif %}{% endif %}{% endfor %}
+                </div>
+              </div>
+              <div class="d-flex pt-1 inv-invoice-details pb-4">
+                <div class="w-70 inv-text-left">
+                    Payment Policy
+                </div>
+                <div class="w-50 inv-text-right">
+                    {{order.evaluation.payment_method}}
+                </div>
+              </div>
+            </div>
+            </div>
+              
+              
+              
+            </div>
+
+            {% for orderschedule in nonduplicate_schedules %}            
+            {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
+            <div class="col-md-12 col-print-12 order-3">
+              <div class="inv-price-card mt-4 row">
+                <div class="col-md-8 col-print-8">
+                  <div class="inv-service-title p-2 inv-text-bold">
+                    {{orderschedule.order_scheduler_book.service_type}}-{{section.section_name}}
+                  </div>
+                  <div class="d-flex mb-10" > {% if orderschedule.order_scheduler_book.status == 'CANCELLED' %} <div class="status-dot cancel-chip-bg"></div> <div class="ml-2">Cancelled</div> {% endif %}</div>
+
+                  <div class="d-md-flex d-print-flex">
+                    <div class="p-2">
+                      Size : <span class="inv-text-bold">{{section.size}} {{section.unit|default_if_none:''}}</span>
+                    </div>
+                    <div class="p-2">
+                      Quantity : <span class="inv-text-bold">
+                      {% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{section.section_cleanings|floatformat:"-1"}}{% endif %}</span>
+                    </div>
+                    <div class="p-2">
+                      Unit Price : <span class="inv-text-bold">{{section.section_cost|floatformat:'3'}}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3 col-print-3 offset-md-1 p-2">
+                  <div class="p-2">
+                    NET PRICE
+                  </div>
+                  <div class="inv-price p-1 ">
+                   
+                    <span class="inv-text-bold" style="text-align:right"> 
+                    {% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}
+                    {{section.section_cost|floatformat:'3'}}
+                    {% else %}
+                    {{section.section_cost|mul:section.section_cleanings|floatformat:'3'}}
+                    {% endif %}
+                    </span> KD
+                 
+                  </div>
+                  <div>
+
+                  </div>
+                </div>
+                <div class="col-md-12 no-print">
+                  <div class="inv-primary-text inv-show-more p-1" onclick="openDetailsModal()">
+                    Show More
+                  </div>
+                </div>
+                
+              </div>
+            </div>
+            
+            {% endfor %}
+            {% endfor %} 
+                   
+           </div>
+          
+          
+        <!--  <hr class="mt-3 mb-3 pl-2 pr-2 inv-divider"/>-->
+          <div class="row mt-4">
+            <div class=" col-md-6 col-print-6 order-2 order-md-1">
+            {% if order.evaluation.payment_method == 'SUBSCRIPTION' %}{% else %}<div class="qt-subheading">{{order.evaluation.payment_method}} Payment Mode</div>{% endif %}
+
+                {% if order.evaluation.payment_method == 'BREAKDOWN' %}
+                <div class="d-flex mt-2 ">
+                    <div class="text-left w-70 qt-sub-text">
+                        Payment Before Cleaning
+                    </div>
+                    <div class="text-right  qt-sub-text  w-30">
+                       <b>{{order.evaluation.before_cleaning_amount|floatformat:'3'}}</b>   KD
+                    </div>
+                </div>
+
+                <div class="d-flex">
+                    <div class="text-left w-70 qt-sub-text ">
+                        Payment After Cleaning
+                    </div>
+                    <div class="text-right  qt-sub-text  w-30">
+                       <b>{{order.evaluation.after_cleaning_amount|floatformat:'3'}}</b> KD 
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if order.evaluation.payment_method == 'PREPAID' %}
+                <div class="d-flex mt-2 ">
+                    <div class="text-left w-70 qt-sub-text">
+                        Payment Before Cleaning
+                    </div>
+                    <div class="text-right  qt-sub-text  w-30">
+                       <b>{{order.total_amount|floatformat:"3"}}</b>   KD
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if order.evaluation.payment_method == 'POSTPAID' %}
+                <div class="d-flex">
+                    <div class="text-left w-70 qt-sub-text ">
+                        Payment After Cleaning
+                    </div>
+                    <div class="text-right  qt-sub-text  w-30">
+                       <b>{{order.total_amount|floatformat:"3"}}</b> KD 
+                    </div>
+                </div>
+                {% endif %}
+
+                {% comment %} {% if order.evaluation.payment_method == 'SUBSCRIPTION' %}
+                <div class="d-flex mt-2 ">
+                    <div class="text-left w-70 qt-sub-text">
+                        Subscription To Pay
+                    </div>
+                    <div class="text-right  qt-sub-text  w-30">
+                       <b>{{order.subscription_topay|floatformat:"3"}}</b>   KD
+                    </div>
+                </div>
+                {% endif %} {% endcomment %}
+                 
+               </div>
+            <div class=" col-md-5 offset-md-1 col-print-5 order-1 order-md-2">
+             <div class="d-flex pt-4">
+                <div class="inv-text-left w-50">
+                <b>Sub Total</b>  
+                </div>
+                <div class="inv-text-right w-50">
+                   
+                  <span class="inv-text-bold">{{order.evaluation.estimated_cost|floatformat:'3'}}</span> 
+                </div>
+              </div>
+
+            {% if order.evaluation.discount != 0 %}
+              <div class="d-flex pt-2">
+                <div class="inv-text-left w-50">
+                <b>Discount</b>
+                </div>
+                <div class="inv-text-right w-50">
+                   
+                  <span class="inv-text-bold">-{{order.evaluation.discount|floatformat:"3"}}</span>  
+                </div>
+              </div>
+            {% endif %}
+
+            {% if order.evaluation.cancelled_amount != 0 %}
+              <div class="d-flex pt-2">
+                <div class="inv-text-left w-50">
+                <b>Cancelled Amount</b>
+                </div>
+                <div class="inv-text-right w-50">
+                   
+                  <span class="inv-text-bold">-{{order.evaluation.cancelled_amount|floatformat:"3"}}</span>  
+                </div>
+              </div>
+            {% endif %}
+
+            {% if order.evaluation.credit_amount != 0 %}
+              <div class="d-flex pt-2">
+                <div class="inv-text-left w-50">
+                <b>Credit Added</b>
+                </div>
+                <div class="inv-text-right w-50">
+                   
+                  <span class="inv-text-bold">-{{order.evaluation.credit_amount|floatformat:"3"}}</span>  
+                </div>
+              </div>
+            {% endif %}
+
+            {% if order.evaluation.fine_amount != 0 %}
+              <div class="d-flex pt-2">
+                <div class="inv-text-left w-50">
+                <b>Fine Amount</b>
+                </div>
+                <div class="inv-text-right w-50">
+                   
+                  <span class="inv-text-bold">{{order.evaluation.fine_amount|floatformat:'3'}}</span>  
+                </div>
+              </div>
+            {% endif %}
+
+            {% if order.evaluation.writeback_amount != 0 %}
+            <div class="d-flex pt-2">
+                <div class="inv-text-left w-50">
+                <b>Write-Off Amount</b>
+                </div>
+                <div class="inv-text-right w-50">
+                   
+                  <span class="inv-text-bold">-{{order.evaluation.writeback_amount|floatformat:'3'}}</span>  
+                </div>
+              </div>
+            {% endif %}
+
+              {% if order.evaluation.is_promocode_applied == True %}
+              <div class="d-flex pt-2 inv-highlight-text ">
+                  <div class="inv-text-left w-50">
+                    Coupon Added
+                    </div>
+                    
+                    <div class="inv-text-right w-50 ">
+                      <span class="inv-text-bold inv-highlight-text couponamount">-{{order.evaluation.promocode_amount|floatformat:"3"}}</span> KD
+                    </div>
+                </div>
+              {% endif %}
+
+              <div class="inv-total-payment p-2 mt-4 mb-4">
+                <div class="inv-text-left  pt-1">
+               Total
+                </div>
+                <div class="inv-text-right inv-text-lg  ">
+                  
+                  <span class="inv-heading ">{{order.total_amount|floatformat:"3"}}</span> KD
+                </div>
+              </div>
+              
+            </div>
+            
+          </div>
+          <div class="row pt-2 pb-2" data-html2canvas-ignore="true">
+        
+              <div class="col-md-5 offset-md-7 no-print">
+
+                  {% if order.evaluation.quatation_status != 'APPROVED' and order.evaluation.quatation_status != 'REJECTED' %}
+                  <div class="d-flex mt-4 mb-4">
+                    <div class="inv-btn text-center text-white"  id="bk-approve" onclick="openModal()">
+                       Approve
+                      </div>
+                     
+
+                      <div class="inv-btn text-center  text-white"  onclick="openRejectModal()">
+                        Reject
+                      </div>
+                     
+                   
+                  </div>
+                  {% else %}
+                  <div class="inv-btn text-center text-white mt-4 mb-4"  id="bk-invoice-btn" 
+                  {% if order.customerbooking > 0 %} onclick="location.href='/customer/booking/invoice/prw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}';"
+                  {% else %}
+                  {% if order.evaluation.payment_method == 'SUBSCRIPTION' %}onclick="location.href='/customer/subscription/invoice/prw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}';"{% else %}onclick="location.href='/customer/invoice/prw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}';"{% endif %}
+                  {% endif %}>
+                    Invoice
+                   </div>
+                  {% endif %}
+                  
+                  
+              </div>
+          </div>
+        </div>
+         
+         
+          </div>
+          
+        </div>
+       
+      </div>
+      <div class="d-flex text-center no-print"> 
+        <div class="inv-white-btn text-center  mt-4 mb-4 inv-receipt-download" id="download_id">
+          <input type="hidden" class="filename" value="Quotation_{{order.order_no}}" />
+          <i class="fa fa-download" ></i>
+        <a style="text-decoration: none; color: inherit;" href="/customer/quatation/download/paw{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}">Download</a>
+        </div>
+        <div class="inv-white-btn text-center  mt-4 mb-4 inv-receipt-print  " onclick="printDiv()">
+          <i class="fa fa-print"></i>
+          Print
+        </div> 
+      </div>
+      
+   </div>
+   <div class="inv-footer ">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4">
+         <div class="d-flex pt-4 pb-4">
+           <div class="p-2">
+             <img src="{% static 'files/icons/placeholder.png' %}" class="inv-icon"/>
+           </div>
+          
+           <div class="p-2" style="text-align: justify;">
+            
+             <b>Bleach International Contracting Company<br> for Cleaning Building & Cities WLL</b>, 
+             Qibla area, Block 14 Usama Bin Mongith St. AlMashora Tower 8th Floor.
+           </div>
+         </div>
+        </div>
+        <div class="col-md-4  ">
+         <div class="d-flex pt-4 pb-4 ">
+           <div class="p-2">
+             <img src="{% static 'files/icons/contact.png' %}" class="inv-icon"/>
+           </div>
+          
+           <div class="p-2 w-100">
+            <span> Tel</span> <span class="float-right">+965 1882707</span> <br><span>Email</span><span class="float-right">customercare@bleach-kw.com</span>  <br><span>Website</span> <span class="float-right"> www.bleach-kw.com</span>
+           </div>
+         </div>
+       </div>
+       <div class="col-md-3 offset-md-1 ">
+         <div class="pt-4 pb-4 text-center">
+          <a href="https://www.facebook.com/BleachKw/" target="_blank" class="inv-link"> <i class="fab fa-facebook-f text-white p-2 inv-cp inv-social" ></i> </a>
+           <!-- https://www.facebook.com/BleachKw/ -->
+           <a href="https://twitter.com/bleachkw?lang=en" target="_blank" class="inv-link">  <i class="fab fa-twitter text-white p-2 inv-cp inv-social" ></i></a>
+           <!-- https://twitter.com/bleachkw?lang=en -->
+           <a href="https://www.instagram.com/bleachkw/?hl=en" target="_blank" class="inv-link"><i class="fab fa-instagram text-white p-2 inv-cp inv-social" ></i></a>
+           <!-- https://www.instagram.com/bleachkw/?hl=en -->
+           <a href="https://www.youtube.com/channel/UC_XhgxfirQrft_kAFRZPAOw" target="_blank" class="inv-link"> <i class="fab  fa-youtube  text-white p-2 inv-cp inv-social " ></i></a>
+           <!-- https://www.youtube.com/channel/UC_XhgxfirQrft_kAFRZPAOw -->
+           <a href="https://www.linkedin.com/company/bleachkw" target="_blank" class="inv-link"><i class="fab fa-linkedin  p-2 inv-cp text-white inv-social" ></i></a>
+           <!-- https://www.linkedin.com/company/bleachkw -->
+           
+         </div>
+       </div>
+      </div>
+    </div>
+  </div>
+
+   
+   <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>   
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.70/pdfmake.js" integrity="sha512-rn5JpU98RtYVMtZeQJfzmJ67rl4/dqDpGZ393z5f9WMYHXEU4+8Stm/PQAma2gbsLbpClmUHJzT0DaG32OmEyQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js" integrity="sha512-jzL0FvPiDtXef2o2XZJWgaEpVAihqquZT/tT89qCVaxVuHwJ/1DFcJ+8TBMXplSJXE8gLbVAUv+Lj20qHpGx+A==" crossorigin="anonymous"></script>
+    <script src="{% static 'files/js/convertToPdf.js' %}"></script>
+   
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" type="text/javascript"></script>
+        <script src="{% static 'files/js/customer/main.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
+    <script src="{% static 'files/js/modal.js' %}"> </script>
+  </body>
+</html>
