@@ -29,9 +29,11 @@ function closeCashModal(){
   $('#cash-step-2').show();
   
 }
-function openDetailsModal(){
-  $('#detailsModal').show(); 
+function openDetailsModal(elem){
+  id = $(elem).data('popup_id');
+  $('#detailsModal'+id).show(); 
 }
-function closeDetailsModal(){
-  $('#detailsModal').hide(); 
+function closeDetailsModal(elem){
+  id = $(elem).data('popup_id');
+  $('#detailsModal'+id).hide(); 
 }

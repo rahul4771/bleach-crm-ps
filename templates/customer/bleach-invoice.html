@@ -88,6 +88,167 @@
    </div>
    <div class="container mb-4 mt-4" id="content" >
       <div class="row" id="printableArea">
+          <!-- Keynotes modal begins here-->
+<div id="detailsModal" class="qt-details-modal">
+  <div >
+          
+    
+    <div class="container">
+      <div class="row ">
+        <div class="col-md-8 mx-auto white-bg br-10">
+          <div class="mt-2 text-right">
+            <i class="far fa-times-circle qt-details-close" onclick="closeDetailsModal()"></i>
+          </div>
+          <div class="row mb-4">
+        <div class="col-md-12">
+          <h6 class="inv-primary-text" >General Cleaning Building 1 Floor 1</h6>
+         
+        </div>
+        <div class="col-md-6 mt-2">
+          <div class="keynote-chip">
+            <div class="d-flex ">
+              <div class="w-70">
+                Bathrooms
+              </div>
+              <div class="w-30 text-right">
+                3
+              </div>
+            </div>
+           
+          </div>
+        </div>
+        <div class="col-md-6 mt-2">
+          <div  class="keynote-chip">
+            <div class="d-flex">
+              <div class="w-70">
+                Rooms
+              </div>
+              <div class="w-30 text-right">
+               4
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mt-2">
+          <div  class="keynote-chip">
+            <div class="d-flex">
+              <div class="w-70">
+                Kitchen
+              </div>
+              <div class="w-30 text-right">
+               2
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mt-2">
+          <div  class="keynote-chip">
+            <div class="d-flex">
+              <div class="w-70">
+                Wardrobe
+              </div>
+              <div class="w-30 text-right">
+               7
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mt-2">
+          <div  class="keynote-chip">
+            <div class="d-flex">
+              <div class="w-70">
+                Kitchen
+              </div>
+              <div class="w-30 text-right">
+               2
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mt-2">
+          <div  class="keynote-chip">
+            <div class="d-flex">
+              <div class="w-70">
+                Wardrobe
+              </div>
+              <div class="w-30 text-right">
+               7
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="row mt-2 m-0 qt-more-details">
+            <div class="col-md-4 mb-2 mt-2 col-6">
+              <div class="qt-details-title">
+                Wall Type
+              </div>
+              <div class="qt-details-value">
+                Glass, Ceramic, Glass, Ceramic, Glass, Ceramic, Glass, Ceramic
+              </div>
+            </div>
+            <div class="col-md-4 mb-2 mt-2 col-6">
+              <div class="qt-details-title">
+                Floor Type
+              </div>
+              <div class="qt-details-value">
+                Glass, Ceramic
+              </div>
+            </div>
+            <div class="col-md-4 mb-2 mt-2 col-6">
+              <div class="qt-details-title">
+                Ceiling Type
+              </div>
+              <div class="qt-details-value">
+                Glass, Ceramic
+              </div>
+            </div>
+            <div class="col-md-4 mb-2 mt-2 col-6">
+              <div class="qt-details-title">
+                Materials
+              </div>
+              <div class="qt-details-value">
+                Glass, Ceramic
+              </div>
+            </div>
+            <div class="col-md-4 mb-2 mt-2 col-6">
+              <div class="qt-details-title">
+                Size
+              </div>
+              <div class="qt-details-value">
+                12 Sqm
+              </div>
+            </div>
+            <div class="col-md-4 mb-2 mt-2 col-6">
+              <div class="qt-details-title">
+               Quantity
+              </div>
+              <div class="qt-details-value">
+                1
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 offset-md-8">
+          <div class="qt-net-price mt-4 p-2">
+            <div class="qt-details-title">
+              NET PRICE
+             </div>
+             <div class="qt-details-price">
+            200 KD
+             </div>
+          </div>
+        
+        </div>
+      </div>
+      </div>
+    </div>
+    </div>
+    </div>
+
+    
+</div>
+<!-- Keynotes modal ends here-->
         <div class="col-md-8 col-print-12" id="canvas" >
           
           <div class="inv-card mb-4">
@@ -242,6 +403,212 @@
 
                   </div>
                 </div>
+                <div class="col-md-12 no-print">
+                  <div class="inv-primary-text inv-show-more p-1" data-popup_id="{{orderschedule.order_scheduler_book.id}}{{section.id}}" onclick="openDetailsModal(this);">
+                    Show More
+                  </div>
+                </div>
+
+
+                <!-- Keynotes modal begins here-->
+                <div id="detailsModal{{orderschedule.order_scheduler_book.id}}{{section.id}}" class="qt-details-modal">
+                  <div >
+                          
+                    
+                    <div class="container">
+                      <div class="row ">
+                        <div class="col-md-8 mx-auto white-bg br-10">
+                          <div class="mt-2 text-right">
+                            <i class="far fa-times-circle qt-details-close" data-popup_id="{{orderschedule.order_scheduler_book.id}}{{section.id}}" onclick="closeDetailsModal(this)"></i>
+                          </div>
+                          <div class="row mb-4">
+                        <div class="col-md-12">
+                          <h6 class="inv-primary-text" >{{orderschedule.order_scheduler_book.service_type}}-{{section.section_name}}</h6>
+                        
+                        </div>
+
+                        {% for keynote in section.sectionkeynotes %}
+                        <div class="col-md-6 mt-2">
+                          <div class="keynote-chip">
+                            <div class="d-flex ">
+                              <div class="w-70">
+                                {{keynote.sub_area}}
+                              </div>
+                              <div class="w-30 text-right">
+                                {{keynote.quantity}}
+                              </div>
+                            </div>
+                          
+                          </div>
+                        </div>
+                        {% endfor %}
+
+                        <div class="col-md-12">
+                          <div class="row mt-2 m-0 qt-more-details">
+
+                            {% if section.age %}
+                            <div class="col-md-4 mb-2 mt-2 col-6">
+                              <div class="qt-details-title">
+                                Age
+                              </div>
+                              <div class="qt-details-value">
+                                {{section.age}}
+                              </div>
+                            </div>
+                            {% endif %}
+
+                            {% if section.floor %}
+                            <div class="col-md-4 mb-2 mt-2 col-6">
+                              <div class="qt-details-title">
+                                Floors
+                              </div>
+                              <div class="qt-details-value">
+                                {{section.floor}}
+                              </div>
+                            </div>
+                            {% endif %}
+
+                            {% if section.apartment %}
+                            <div class="col-md-4 mb-2 mt-2 col-6">
+                              <div class="qt-details-title">
+                                Apartments
+                              </div>
+                              <div class="qt-details-value">
+                                {{section.apartment}}
+                              </div>
+                            </div>
+                            {% endif %}
+
+                            {% if section.room %}
+                            <div class="col-md-4 mb-2 mt-2 col-6">
+                              <div class="qt-details-title">
+                                Rooms
+                              </div>
+                              <div class="qt-details-value">
+                                {{section.room}}
+                              </div>
+                            </div>
+                            {% endif %}
+
+                            {% if section.wall_type %}
+                            <div class="col-md-4 mb-2 mt-2 col-6">
+                              <div class="qt-details-title">
+                                Wall Type
+                              </div>
+                              <div class="qt-details-value">
+                                {{section.wall_type}}
+                              </div>
+                            </div>
+                            {% endif %}
+
+                            {% if section.floor_type %}
+                            <div class="col-md-4 mb-2 mt-2 col-6">
+                              <div class="qt-details-title">
+                                Floor Type
+                              </div>
+                              <div class="qt-details-value">
+                                {{section.floor_type}}
+                              </div>
+                            </div>
+                            {% endif %}
+
+                            {% if section.ceiling_type %}
+                            <div class="col-md-4 mb-2 mt-2 col-6">
+                              <div class="qt-details-title">
+                                Ceiling Type
+                              </div>
+                              <div class="qt-details-value">
+                                {{section.ceiling_type}}
+                              </div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if section.material %}
+                            <div class="col-md-4 mb-2 mt-2 col-6">
+                              <div class="qt-details-title">
+                                Materials
+                              </div>
+                              <div class="qt-details-value">
+                                {{section.material}}
+                              </div>
+                            </div>
+                            {% endif %}
+
+
+                            {% if section.colour %}
+                            <div class="col-md-4 mb-2 mt-2 col-6">
+                              <div class="qt-details-title">
+                                Colour
+                              </div>
+                              <div class="qt-details-value">
+                                {{section.colour}}
+                              </div>
+                            </div>
+                            {% endif %}
+
+                            {% if section.cause_of_stain %}
+                            <div class="col-md-4 mb-2 mt-2 col-6">
+                              <div class="qt-details-title">
+                                Colour
+                              </div>
+                              <div class="qt-details-value">
+                                {{section.cause_of_stain}}
+                              </div>
+                            </div>
+                            {% endif %}
+
+                            {% if section.age_of_stain %}
+                            <div class="col-md-4 mb-2 mt-2 col-6">
+                              <div class="qt-details-title">
+                                Colour
+                              </div>
+                              <div class="qt-details-value">
+                                {{section.age_of_stain}}
+                              </div>
+                            </div>
+                            {% endif %}
+
+                            <div class="col-md-4 mb-2 mt-2 col-6">
+                              <div class="qt-details-title">
+                                Size
+                              </div>
+                              <div class="qt-details-value">
+                                {{section.size}} {{section.unit|default_if_none:''}}
+                              </div>
+                            </div>
+
+                            <div class="col-md-4 mb-2 mt-2 col-6">
+                              <div class="qt-details-title">
+                              Quantity
+                              </div>
+                              <div class="qt-details-value">
+                                {% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{section.section_cleanings|floatformat:"-1"}}{% endif %}
+                              </div>
+                            </div>
+
+
+                          </div>
+                        </div>
+                        <div class="col-md-4 offset-md-8">
+                          <div class="qt-net-price mt-4 p-2">
+                            <div class="qt-details-title">
+                              NET PRICE
+                            </div>
+                            <div class="qt-details-price">
+                            {{section.section_net_cost|floatformat:'3'}} KD
+                            </div>
+                          </div>
+                        
+                        </div>
+                      </div>
+                      </div>
+                    </div>
+                    </div>
+                    </div>
+
+                    
+                </div>
+                <!-- Keynotes modal ends here-->
                 
               </div>
             </div>

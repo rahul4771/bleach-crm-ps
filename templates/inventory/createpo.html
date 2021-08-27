@@ -60,23 +60,80 @@
                     </div> -->
                 </div>
                 
-                {% if supplier != None %}
                 <div class="row mt-20">
                     <div class="col-md-12 inv-text-normal">
-                        {{supplier.address}}
+                        Initiated Date : {{purchase_order.created|date:'d-m-Y'}}
+                    </div>
+                </div>
+
+                <div class="row mt-20">
+                    <div class="col-md-12 inv-text-normal">
+                        Initiated By : {{purchase_order.initiated_by.name}}
+                    </div>
+                </div>
+                
+                {% if purchase_order.supplier != None %}
+                <div class="row mt-20">
+                    <div class="col-md-12 inv-text-normal">
+                        {{purchase_order.supplier.address}}
                     </div>
                 </div>
                 <div class="row mt-10">
                     <div class="col-md-12 inv-text-normal">
-                        {{supplier.contact}}
+                        {{purchase_order.supplier.contact}}
                     </div>
                 </div>
                  <div class="row mt-20">
                     <div class="col-md-12 inv-text-normal">
-                        {{supplier.terms}}
+                        {{purchase_order.supplier.terms}}
                     </div>
                 </div>
                 {% endif %}
+
+                <div class="row mt-20">
+                    <div class="col-md-12 ">
+                        <div class="model-input-name">Discount</div>
+
+                        <div class="inv-input-container h-30"> 
+                            <input type="text"  class="w-p-100 inv-in" name="unit_price" required readonly>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row mt-20">
+                    <div class="col-md-12 ">
+                        <div class="model-input-name">Tax</div>
+
+                        <div class="inv-input-container h-30"> 
+                            <input type="text"  class="w-p-100 inv-in" name="unit_price" required readonly>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row mt-20">
+                    <div class="col-md-12 ">
+                        <div class="model-input-name">Shipping Charges</div>
+
+                        <div class="inv-input-container h-30"> 
+                            <input type="text"  class="w-p-100 inv-in" name="unit_price" required readonly>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row mt-20">
+                    <div class="col-md-12 ">
+                        <div class="model-input-name">Other Charges</div>
+
+                        <div class="inv-input-container h-30"> 
+                            <input type="text"  class="w-p-100 inv-in" name="unit_price" required readonly>
+                        </div>
+                    </div>
+
+                </div>
+
                 <div class="row mt-10">
                     <div class="col-md-12 ">
                         <table class="inv-table footable">
@@ -89,13 +146,13 @@
                                         Product
                                     </th>
                                     <th data-hide="phone,tablet" style="width: %; ">
-                                        Unit Cost
+                                        Unit Price
                                     </th>
                                     <th data-hide="phone,tablet" style="width: %;">
                                         Number of units
                                     </th>
                                     <th data-hide="phone,tablet" style="width: %;">
-                                        Total Cost
+                                        Net Price
                                     </th>
 
                                     <th data-hide="phone,tablet" style="width: %;">Action</th>
@@ -106,9 +163,9 @@
                                 <tr>
                                     <td>{{item.product.supplier_item_id}}</td>
                                     <td>{{item.product.item}}</td>
-                                    <td>{{item.unit_price}}</td>
+                                    <td>{{item.unit_price|floatformat:3}} KD</td>
                                     <td>{{item.item_count}}</td>
-                                    <td>{{item.total_price}}</td>
+                                    <td>{{item.total_price|floatformat:3}} KD</td>
                                     <td>
                                         <button class="inv-plan-img-btn edit-item-btn" data-itemid="{{item.id}}" data-productid="{{item.product.id}}" data-productname="{{item.product.item}}" data-unitprice="{{item.unit_price}}" data-itemcount="{{item.item_count}}" data-totalprice="{{item.total_price}}"> <img
                                             src="{% static 'files/inventory/icons/edit.png' %}" alt="" onclick="openNavAddStore('edit')"> </button>
@@ -116,6 +173,8 @@
                                                 src="{% static 'files/inventory/icons/delete.png' %}" alt=""> </button>
                                     </td>
                                 </tr>
+                                {% empty %}
+                                <td></td><td></td><td>No Data</td><td></td><td></td><td></td>
                                 {% endfor %}
                                
                                 {% if purchase_order.supplier != None %}
@@ -131,6 +190,8 @@
                         </table>
                     </div>
                 </div>
+                
+                {% if purchase_order_items %}
                 <div class="row mt-20 text-center">
                     <form method="POST" action="" >{% csrf_token %}
                     <input type="hidden" name="action" value="order_close" />
@@ -140,7 +201,9 @@
                     </form>
                                   <a href=""  class="view-button2">Cancel</a></div>
                    
-                  </div>
+                </div>
+                {% endif %}
+
             </div>
         </div>
     </section>
@@ -357,7 +420,8 @@ function showAdditem(){
         {% for item in items %}
             var tempId = '{{item.id}}';
             var tempName = '{{item.item}}';
-            products.push({id:tempId,name:tempName})
+            var tempPrice = '{{item.item_price}}';
+            products.push({id:tempId,name:tempName,price:tempPrice})
         // $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
 
         {% endfor %}
@@ -376,7 +440,8 @@ function showAdditem(){
             {% for item in items %}
                 var tempId = '{{item.id}}';
                 var tempName = '{{item.item}}';
-                products.push({id:tempId,name:tempName})
+                var tempPrice = '{{item.item_price}}';
+            products.push({id:tempId,name:tempName,price:tempPrice})
             // $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
 
             {% endfor %}
@@ -466,7 +531,7 @@ function showAdditem(){
         for (var j=0; j<products.length; j++) {
             if (products[j].name.match($('#pro-name').val())){
                 console.log(products[j]);
-        $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-productprice="'+products[j].item_price+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
+        $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-productprice="'+products[j].price+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
 
             }
         }
