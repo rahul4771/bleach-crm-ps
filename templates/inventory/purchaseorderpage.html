@@ -78,13 +78,13 @@
                     Salhiya, Kuwait City, Qibla Building, Mohamed Bin Thinan Al Ghanim Street, Po.Box: 4489, Safat 13045
                 </div>
                <div class="mt-2">
-                Tel:1882707
+                Tel : 1882707
                </div>
                <div class="mt-2">
-                Fax:1882707
+                Fax : 1882707
                </div>
                <div class="mt-2">
-                Email:ayman.othman@bleach-kw.com
+                Email : supplychain@bleach-kw.com
                </div>
                 
               </div>
@@ -99,10 +99,10 @@
                 To<br>
                 {{purchase_order.supplier.address}}<br> Tel:{{purchase_order.supplier.contact}}<br> Other Tel:{{purchase_order.supplier.other_contact}}
             </div>
-            <div class="col-md-6">
+            {% comment %} <div class="col-md-6">
                 To<br>
                 Bleach Cleaning Service Co Salhiya, Kuwait City, Qibla Building, Mohamed Bin Thinan Al Ghanim Street, Po.Box: 4489, Safat 13045<br> Tel:1882707<br> Fax:188270
-            </div>
+            </div> {% endcomment %}
             <div class="col-md-12 text-center mt-4 bottom-sub-text">
                 This order has been received and therefore CLOSED
             </div>
@@ -112,14 +112,14 @@
       <table id="soa_table">
         <tr>
           <th style="text-align: center; width: 5%;">No</th>
-          <th style="width: 17%; text-align: center;">Supplier Part</th>
+          <th style="width: 17%; text-align: center;">Item</th>
           <!-- <th style="text-align: center;">Details</th> -->
-          <th style="text-align: center;">Description</th>
+          {% comment %} <th style="text-align: center;">Description</th> {% endcomment %}
           <th style="text-align: center;">Quantity</th>
-          <th style="text-align: center;">Unit</th>
-          <th style="text-align: center;">Pack</th>
-          <th style="text-align: center;">Price(KWD)</th>
-          <th style="text-align: center; width: auto;">Extension (KWD)</th>
+          <th style="text-align: center;">Unit Price (KWD)</th>
+          {% comment %} <th style="text-align: center;">Pack</th> {% endcomment %}
+          {% comment %} <th style="text-align: center;">Price(KWD)</th> {% endcomment %}
+          <th style="text-align: center; width: auto;">Net Price (KWD)</th>
         </tr>
        
         {% for item in purchase_order.purchase_order_items %}
@@ -127,18 +127,18 @@
           <td>{{forloop.counter}}</td>
           <td>{{item.product.item}}</td>
           <!-- <td>{{order.details}}</td> -->
-          <td style="text-align: right;" >Sterilization</td>
+          {% comment %} <td style="text-align: right;" >Sterilization</td> {% endcomment %}
           <td style="text-align: right;" >{{item.item_count}}</td>
 
-          <td style="text-align: right;" >{{item.unit_price|floatformat:3}}</td>
-          <td style="text-align: right;" >{{item.total_price|floatformat:3}}</td>
-          <td style="text-align: right;" >100.000</td>
+          <td style="text-align: right;" >{{item.unit_price|floatformat:3}}</td> 
+          {% comment %} <td style="text-align: right;" >{{item.total_price|floatformat:3}}</td>
+          <td style="text-align: right;" >100.000</td> {% endcomment %}
           <td style="text-align: right;" class="item_total">{{item.total_price|floatformat:3}}</td>
         </tr>
         {% empty %}
         <td></td><td></td><td></td><td>No Data</td><td></td><td></td><td></td><td></td>
         {% endfor %}
-          <td colspan="7">
+          <td colspan="4">
             Sub Total
           </td>
           
