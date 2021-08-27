@@ -37,52 +37,7 @@
   <link href="{% static 'files/css/externalusers.css' %}" rel="stylesheet" type="text/css">
   <link href="{% static 'files/css/message_wrapper.css' %}" rel="stylesheet" type="text/css">
   <link href="{% static 'files/css/template.css' %}" rel="stylesheet" type="text/css">
-    <style>
-      input:focus {
-    outline: none !important;
-    border:none !important;
-   
-  }
-      .inv-input-container {
-  display: -ms-flexbox; /* IE10 */
-  display: flex;
-  width: 60%;
-  float: right;
-  
-}
-.inv-icon-input {
-  /* border-right: none !important;
-  border-radius: 7px 0px 0px 7px;
-  border-bottom: 1px solid #707070 !important;
-  border-top: 1px solid #707070 !important;
-  border-left: 1px solid #707070 !important; */
-  border: 1px solid #2c4c82;
-  background: #2c4c82;
-  padding: 4px;
-  color: #2c4c82;
-  min-width: 20px;
-  text-align: center;
-}
-.inv-normal-btn{
-  border: none;
-  background: none;
-}
-.inv-normal-btn:hover{
-  border: none;
-  background: none;
-}
-.model-filter{
-  /* padding: 5px; */
- 
-  cursor: pointer;
-  margin: 0 auto;
-}
-.inv-border{
-  border: 1px solid #4B4B4B;
-border-radius: 2px;
-}
-
-    </style>
+    
 </head>
 
 <body style="background: #F2F2F2;">
@@ -170,10 +125,10 @@ border-radius: 2px;
         {% for item in purchase_order.purchase_order_items %}
         <tr>
           <td>{{forloop.counter}}</td>
-          <td style="text-align: center;">{{item.product.item}}</td>
+          <td>{{item.product.item}}</td>
           <!-- <td>{{order.details}}</td> -->
           {% comment %} <td style="text-align: right;" >Sterilization</td> {% endcomment %}
-          <td style="text-align: center;" >{{item.item_count}}</td>
+          <td style="text-align: right;" >{{item.item_count}}</td>
 
           <td style="text-align: right;" >{{item.unit_price|floatformat:3}}</td> 
           {% comment %} <td style="text-align: right;" >{{item.total_price|floatformat:3}}</td>
@@ -207,15 +162,7 @@ border-radius: 2px;
                     Discount %
                 </div>:
                 <div class="w-50 text-right">
-                  <div class="inv-input-container inv-border h-30">
-                    <input  style="border: none !important; width: 90%;" class="inv-in"  >
-                    <!-- <div class="inv-hr"></div> -->
-                    <div class="model-filter" >
-                      <button class="inv-icon-input" >
-                      <i class="fa fa-check fa-lg " style="color: #ffffff;" aria-hidden="true"></i>
-                      </button>
-                    </div>
-                </div>
+                    0
                 </div>
             </div>
             <div class="d-flex mt-2">
@@ -223,15 +170,7 @@ border-radius: 2px;
                    Tax
                 </div>:
                 <div class="w-50 text-right">
-                  <div class="inv-input-container inv-border h-30">
-                    <input  style="border: none !important; width: 90%;" class="inv-in"  >
-                    <!-- <div class="inv-hr"></div> -->
-                    <div class="model-filter" >
-                      <button class="inv-icon-input" >
-                      <i class="fa fa-check fa-lg " style="color: #ffffff;" aria-hidden="true"></i>
-                      </button>
-                    </div>
-                </div>
+                    0
                 </div>
             </div>
             <div class="d-flex mt-2">
@@ -239,15 +178,7 @@ border-radius: 2px;
                     Shipping Charge
                 </div>:
                 <div class="w-50 text-right">
-                  <div class="inv-input-container inv-border h-30">
-                    <input  style="border: none !important; width: 90%;" class="inv-in"  >
-                    <!-- <div class="inv-hr"></div> -->
-                    <div class="model-filter" >
-                      <button class="inv-icon-input" >
-                      <i class="fa fa-check fa-lg " style="color: #ffffff;" aria-hidden="true"></i>
-                      </button>
-                    </div>
-                </div>
+                    0
                 </div>
             </div>
             <div class="d-flex mt-2">
@@ -255,15 +186,7 @@ border-radius: 2px;
                   Other Charges
                 </div>:
                 <div class="w-50 text-right">
-                  <div class="inv-input-container inv-border h-30">
-                    <input  style="border: none !important; width: 90%;" class="inv-in"  >
-                    <!-- <div class="inv-hr"></div> -->
-                    <div class="model-filter" >
-                      <button class="inv-icon-input" >
-                      <i class="fa fa-check fa-lg " style="color: #ffffff;" aria-hidden="true"></i>
-                      </button>
-                    </div>
-                </div>
+                    0
                 </div>
             </div>
             

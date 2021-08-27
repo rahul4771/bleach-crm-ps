@@ -22,7 +22,7 @@ from django.db.models.functions import Cast,TruncDate,ExtractMonth,ExtractYear,C
 from django.db.models import Prefetch
 from django.contrib import messages
 
-
+from inventory.models import PurchaseOrder,PurchaseOrderItems
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,Promocode
@@ -865,6 +865,25 @@ def quatation_html_to_pdf_view(request,evaluation_id):
 	with fs.open('quatation.pdf') as pdf:
 		response = HttpResponse(pdf, content_type='application/pdf')
 		response['Content-Disposition'] = 'attachment; filename="'+evaluation_id+'_quatation.pdf"'
+		return response
+	return response
+
+
+def purchaseorder_html_to_pdf_view(request,purchase_order_id):
+
+	purchase_order = PurchaseOrder.objects.prefetch_related(Prefetch('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.all(),to_attr='purchase_order_items')).get(id=int(purchase_order_id))
+	
+	html_string = render_to_string('customer/downloads/purchaseorderpage.html',{"purchase_order":purchase_order})
+	
+	html     = HTML(string=html_string,base_url=request.build_absolute_uri())
+	main_doc = html.render()
+
+	main_doc.write_pdf(target='/home/pdf/tmp/quatation/quatation.pdf');
+
+	fs = FileSystemStorage('/home/pdf/tmp/purchaseorder/')
+	with fs.open('purchaseorder.pdf') as pdf:
+		response = HttpResponse(pdf, content_type='application/pdf')
+		response['Content-Disposition'] = 'attachment; filename="'+purchase_order.purchase_order_id+'_purchaseorder.pdf"'
 		return response
 	return response
 
