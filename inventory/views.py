@@ -497,7 +497,7 @@ class InventorySupplier(IsInventoryAdmin,View):
             else:
                 new_supplier_id = 'SUP9001'
 
-            supplier_name_check = Supplier.objects.filter(supplier_nmae__icontains=name).first()
+            supplier_name_check = Supplier.objects.filter(supplier_name__icontains=name).first()
 
             if supplier_name_check:
                 messages.error(request,"Supplier Name Exists !")
@@ -700,8 +700,9 @@ class InventoryInv(IsInventoryAdmin,View):
                 new_item_code = 'ITEM9001'
 
 
-            InventoryItem.objects.create(item_category=category,item_segment=segment,item_line=line,name=name,item_code=new_item_code,description=description,reserve_count=reserve)
+            inv_item = InventoryItem.objects.create(item_category=category,item_segment=segment,item_line=line,name=name,item_code=new_item_code,description=description,reserve_count=reserve)
             messages.success(request,"Item Added Successfully !")
+            return redirect('inventory:inventory-item',inv_item.id)
 
         if action == 'edit_item':
             print("edit")
