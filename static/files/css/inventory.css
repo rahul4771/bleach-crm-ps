@@ -1101,6 +1101,10 @@ select.minimal option:hover {
   background-color:#c1d7f2;
   color:#5a5a5a;
   }
+  .drop-selected {
+    background-color:#c1d7f2;
+    color:#5a5a5a;
+    }
   
   .wrap-drop.active::after {
     

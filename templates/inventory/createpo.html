@@ -117,18 +117,23 @@
                         </select> -->
                        
                        
-                          
-                         <div class="wrap-drop" id="noble-gases">
-                            <span>All Noble Gases</span>
+                          <input type="text" hidden id="supplier_id" >
+                         <div class="wrap-drop" id="noble-gases" id="supplier_id" >
+                            {% if purchase_order.supplier == None %}
+                            <span>--Select Supplier--</span>
                             <ul class="drop">
-                                <li class="selected"><a>All Noble Gases</a></li>
-                                <li><a>Helium</a></li>
-                                <li><a>Helium</a></li>
-                                <li><a>Helium</a></li>
-                                <li><a>Helium</a></li>
-                            
-                             
+                                {% for supplier in suppliers %}
+                                <li onclick="dropSelectSeller({{supplier.id}})" ><a>{{supplier.supplier_name}}</a></li>
+                                {% endfor %}
                             </ul>
+                            {% else %}
+                            <span>{{purchase_order.supplier.supplier_name}}</span>
+                            <ul class="drop">
+                               
+                                <li class="drop-selected" ><a>{{purchase_order.supplier.supplier_name}}</a></li>
+                                
+                            </ul>
+                            {% endif %}
                         </div>
                         <br><br>
                        
@@ -615,7 +620,11 @@ $(function () {
     document.addEventListener("click", closeAllSelect);
     </script> -->
 <script>
-
+function dropSelectSeller(id){
+    console.log(id)
+    $('#supplier_id').val(id);
+    set_params_go();
+}
 function showRe(){
     console.log('j')
     $('#id_c').click();
