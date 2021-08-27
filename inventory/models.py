@@ -223,6 +223,10 @@ class PurchaseOrder(models.Model):
     purchase_order_id   = models.CharField(max_length=50,blank=False,null=False)
     status              = models.BooleanField(default=True,blank=False,null=False)
     initiated_by        = models.ForeignKey(UserProfile,blank=True,null=True,related_name='initiated_by_purchase_order')
+    discount            = models.CharField(max_length=10,blank=True,null=True)
+    tax                 = models.CharField(max_length=10,blank=True,null=True)
+    shipping_charge     = models.CharField(max_length=10,blank=True,null=True)
+    other_charge        = models.CharField(max_length=10,blank=True,null=True)
     is_order_completed  = models.BooleanField(default=False,blank=False,null=False)
     created             = models.DateTimeField(auto_now_add=True)
 
