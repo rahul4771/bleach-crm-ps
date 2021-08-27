@@ -22,7 +22,16 @@
 .mt-5{
   margin-top: 5px !important;
 }
-
+.view-button2 {
+  background: #fff 0% 0% no-repeat padding-box;
+  box-shadow: 0px 3px 6px #0000003d;
+  opacity: 1;
+  color: #2c4c82;
+  border: 1px solid #2c4c82;
+  border-radius: 3px;
+  padding: 4px 40px 4px 40px;
+  margin: 3px;
+}
 
 .inv-team-head{
   font-size: 16px !important;
