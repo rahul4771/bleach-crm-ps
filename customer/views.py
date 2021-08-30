@@ -4562,7 +4562,10 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 		
 		response_dict['booking_status']     = customer_booking.is_bookingcompleted
 		response_dict['evaluation_id']      = evaluation_details.first().evaluation.id
-		response_dict['success'] = True
+		response_dict['secret_code']        = str(order_details.evaluation.evaluation_id[3:14])+str(order_details.evaluation.customer.username)
+		
+		response_dict['success']            = True
+		
 		return Response(response_dict,HTTP_200_OK)
 
 	def post(self,request,evaluation_id):
