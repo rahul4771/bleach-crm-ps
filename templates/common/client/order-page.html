@@ -1496,22 +1496,24 @@
                                     <div class="order-clean-section-header c-mb-10">
                                         <h2>Section {{forloop.counter}} : {{section.section_name}}</h2>
                                     </div>
-                                    <div class="row section-detials-text">
+                                    <div class="row section-detials-text m-0">
                                         <div class="col-md-6 c-right-border" style="padding-left: 1px;">
-                                            <div class="col-md-12">
+                                            <div class="col-md-12 order-details-content ">
                                                 <div class="row c-mb-3">
 
                                                 {% if section.age %}
                                                 
-                                                    <div class="col-md-2 col-xs-4 mt-10">Age</div>
-                                                    <div class="col-md-4 col-xs-8 mt-10"> <span class="c-text  ">: {{section.age}}</span>
+                                                  
+                                                    <div class="col-md-6 col-xs-6  mt-10"> 
+                                                        <div class="order-details-key">Age</div>
+                                                        <div class="c-text order-details-value">{{section.age}}</div>
                                                     </div>
                                                 
                                                 {% endif %}
-
-                                               
-                                                    <div class="col-md-2 col-xs-4 mt-10">Size</div>
-                                                    <div class="col-md-4 col-xs-8 mt-10"> <span class="c-text  ">: {{section.size}} 
+                                                <div class="col-md-6 col-xs-6 mt-10 mb-10"> 
+                                                <div class="order-details-key">Size</div>
+                                                <div class="c-text order-details-value">
+                                                    {{section.size}} 
                                                         {% if orderschedule.order_scheduler_book.service_type.name == 'Upholstery Cleaning' %}
                                                        
                                                         {% for price_range in price_ranges %}
@@ -1525,88 +1527,104 @@
                                                         {% endfor %}
                                                         
                                                         {% endif %}
-
-                                                    </span>
-                                                    </div>
+                                                </div>
+                                                </div>
+                                                   
                                                
 
                                                 {% if section.floor %}
-                                              
-                                                    <div class="col-md-2 col-xs-4 mt-10">Floor</div>
-                                                    <div class="col-md-4 col-xs-8 mt-10"> <span class="c-text  ">: {{section.floor}}</span>
-                                                    </div>
+                                                <div class="col-md-6 col-xs-6 mt-10 mb-10"> 
+                                                    <div class="order-details-key">Floor</div>
+                                                    <div class="c-text order-details-value">{{section.floor}}</div>
+                                                </div>
+                                                   
                                                
                                                 {% endif %}
 
                                                 {% if section.apartment %}
-                                               
-                                                    <div class="col-md-2 col-xs-4 mt-10">Apartments</div>
-                                                    <div class="col-md-4 col-xs-8 mt-10"> <span class="c-text  ">: {{section.apartment}}</span>
-                                                    </div>
+                                                <div class="col-md-6 col-xs-6 mt-10 mb-10"> 
+                                                    <div class="order-details-key">Apartments</div>
+                                                    <div class="c-text order-details-value">{{section.apartment}}</div>
+                                                </div>
+                                                   
                                                
                                                 {% endif %}
 
                                                 {% if section.room %}
-                                               
-                                                    <div class="col-md-2 col-xs-4 mt-10">Rooms</div>
-                                                    <div class="col-md-4 col-xs-8 mt-10"> <span class="c-text  ">: {{section.room}}</span>
-                                                    </div>
+                                                <div class="col-md-6 col-xs-6 mt-10 mb-10"> 
+                                                    <div class="order-details-key">Rooms</div>
+                                                    <div class="c-text order-details-value">{{section.room}}</div>
+                                                </div>
+                                                    
                                                
                                                 {% endif %}
                                             
                                                 {% if section.wall_type %}
-                                              
-                                                    <div class="col-md-2 col-xs-4 mt-10">Wall Type</div>
-                                                    <div class="col-md-4 col-xs-8 mt-10"> <span class="c-text  ">: {{section.wall_type}}</span></div>
+                                                <div class="col-md-6 col-xs-6 mt-10 mb-10"> 
+                                                    <div class="order-details-key">Wall Type</div>
+                                                    <div class="c-text order-details-value">{{section.wall_type}}</div>
+                                                </div>
+                                                   
                                                
                                                 {% endif %}
 
                                                 {% if section.ceiling_type %}
-                                               
-                                                    <div class="col-md-2 col-xs-4 mt-10">Celling Type</div>
-                                                    <div class="col-md-4 col-xs-8 mt-10"> <span class="c-text  ">: {{section.ceiling_type}}</span></div>
+                                                <div class="col-md-6 col-xs-6 mt-10 mb-10"> 
+                                                    <div class="order-details-key">Ceiling Type</div>
+                                                    <div class="c-text order-details-value"> {{section.ceiling_type}}</div>
+                                                </div>
+                                                   
                                                
                                                 {% endif %}
 
                                                 {% if section.floor_type %}
-                                               
-                                                    <div class="col-md-2 col-xs-4 mt-10">Floor Type</div>
-                                                    <div class="col-md-4 col-xs-8 mt-10"> <span class="c-text  ">: {{section.floor_type}}</span></div>
+                                                <div class="col-md-6 col-xs-6 mt-10 mb-10"> 
+                                                    <div class="order-details-key">Floor Type</div>
+                                                    <div class="c-text order-details-value"> {{section.floor_type}}</div>
+                                                </div>
+                                                   
                                                
                                                 {% endif %}
 
                                                 {% if section.material %}
-                                               
-                                                    <div class="col-md-2 col-xs-4 mt-10">Material</div>
-                                                    <div class="col-md-10 col-xs-8 mt-10"> <span class="c-text  ">: {{section.material}}</span></div>
+                                                <div class="col-md-6 col-xs-6 mt-10 mb-10"> 
+                                                    <div class="order-details-key">Material</div>
+                                                    <div class="c-text order-details-value"> {{section.material}}</div>
+                                                </div>
+                                                  
                                                
                                                 {% endif %}
 
                                                 {% if section.colour %}
-                                               
-                                                    <div class="col-md-2 col-xs-4 mt-10">Color</div>
-                                                    <div class="col-md-10 col-xs-8 mt-10"> <span class="c-text  ">: {{section.colour}}</span></div>
+                                                <div class="col-md-6 col-xs-6 mt-10 mb-10"> 
+                                                    <div class="order-details-key">Color</div>
+                                                    <div class="c-text order-details-value">{{section.colour}}</div>
+                                                </div>
+                                                   
                                               
                                                 {% endif %}
 
                                                 {% if section.cause_of_stain %}
-                                               
-                                                    <div class="col-md-3 col-xs-4 mt-10">Cause of Stain</div>
-                                                    <div class="col-md-9 col-xs-8 mt-10"> <span class="c-text  ">: {{section.cause_of_stain}}</span></div>
+                                                <div class="col-md-6 col-xs-6 mt-10 mb-10"> 
+                                                <div class="order-details-key">Cause of Stain</div>
+                                                <div class="c-text order-details-value">{{section.cause_of_stain}}</div>
+                                                  </div>
+
 
                                                 {% endif %}
                                                 {% if section.age_of_stain %}
-                                               
-                                                    <div class="col-md-2 col-xs-4 mt-10">Age of Stain</div>
-                                                    <div class="col-md-4 col-xs-8 mt-10"> <span class="c-text  ">: {{section.age_of_stain}}</span></div>
+                                                <div class="col-md-6 col-xs-6 mt-10 mb-10"> 
+                                                <div class="order-details-key">Age of Stain</div>
+                                                <div class="c-text order-details-value">{{section.age_of_stain}}</div>
+                                            </div>
 
                                                 {% endif %}
 
                                                 {% if request.user.user_type != 'SENIORTEAMLEADER' %}
-                                               
-                                                    <div class="col-md-2 col-xs-4 mt-10">Cost</div>
-                                                    <div class="col-md-4 col-xs-8 mt-10"> <span class="c-text  ">: {{section.section_cost|floatformat:'3'}} KD</span>
-                                                    </div>
+                                                <div class="col-md-6 col-xs-6 mt-10 mb-10"> 
+                                                <div class="order-details-key">Cost</div>
+                                                <div class="c-text order-details-value">{{section.section_cost|floatformat:'3'}} KD</div>
+                                                   </div>
                                                
                                                 {% endif %}
                                             </div>
