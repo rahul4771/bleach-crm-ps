@@ -385,7 +385,7 @@ class InventoryBundle(IsInventoryAdmin,View):
 
 class InventoryItems(IsInventoryAdmin,View):
     def get(self,request,item_id):
-        inventory_item = InventoryItem.objects.prefetch_related(Prefetch('image_item',queryset=InventoryItemImages.objects.all(),to_attr='item_images')).annotate(unit_count=Sum(Case(When(unit_item__status='active',then=1),default=0,output_field=IntegerField())),total_unit_price=Sum(Case(When(unit_item__status='active',then='unit_item__unit_price'),default=0,output_field=FloatField()))).get(id=item_id)
+        inventory_item = InventoryItem.objects.prefetch_related(Prefetch('image_item',queryset=InventoryItemImages.objects.all(),to_attr='item_images'),Prefetch('item_category__attribute_category',queryset=Attribute.objects.all().prefetch_related(Prefetch('value_attribute',queryset=AttributeValue.objects.all(),to_attr='attribute_values')),to_attr='attributes')).annotate(unit_count=Sum(Case(When(unit_item__status='active',then=1),default=0,output_field=IntegerField())),total_unit_price=Sum(Case(When(unit_item__status='active',then='unit_item__unit_price'),default=0,output_field=FloatField()))).get(id=item_id)
         categories = Category.objects.all()
         item_units = ItemUnit.objects.filter(item=inventory_item)
 
