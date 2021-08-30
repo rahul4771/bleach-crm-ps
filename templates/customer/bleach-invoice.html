@@ -760,13 +760,17 @@
                       <input type="text" name="merchant_defined_data3" value="{{order.order_status}}"/>
                       <input type="text" name="currency" value="KWD"/>
                       <input type="text" name="transaction_type" value="sale"/>
-                      <input type="text" name="bill_to_forename" value=""/>
-                      <input type="text" name="bill_to_surname" value=""/>
-                      <input type="text" name="bill_to_phone" value=""/>
-                      <input type="text" name="bill_to_email" value=""/>
-                      <input type="text" name="bill_to_address_country" value=""/>
-                      <input type="text" name="bill_to_address_city" value=""/>
-                      <input type="text" name="bill_to_address_line1" value=""/>
+                      <input type="text" name="bill_to_forename" value="{{firstname}}"/>
+                      <input type="text" name="bill_to_surname" value="{{lastname}}"/>
+                      <input type="text" name="bill_to_phone" value="{{order.evaluation.customer.mobile_number}}"/>
+                      <input type="text" name="bill_to_email" value="{{order.evaluation.customer.email}}"/>
+                      <input type="text" name="bill_to_address_country" value="{{order.evaluation.customer.nationality.code}}"/>
+                      {% for evaluation_detail in order.evaluation.evaluationdetails %}
+                      {% if forloop.first %}
+                      <input type="text" name="bill_to_address_city" value="{{evaluation_detail.address.area.name|default_if_none:''}}"/>
+                      <input type="text" name="bill_to_address_line1" value="{{evaluation_detail.address.governorate.name|default_if_none:''}}"/>
+                      {% endif %}
+                      {% endfor %}
                       <input type="text" name="merchant_defined_data4" value="ONLINE"/>
                       <input type="text" name="merchant_defined_data5" value="NO"/>
                       <input type="text" name="merchant_defined_data7" value="1"/>
