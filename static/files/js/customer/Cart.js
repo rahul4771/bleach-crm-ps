@@ -2083,6 +2083,7 @@ $(document).ready(function(){
       if(this.payment_status=='PENDING'){
       var dates=Object.keys(this.one_time_slots)
       this.discount=false
+      var flag=false
       for(var i=0;i<dates.length;i++){
       for(var j=1;j<=this.settings.duration;j++){
         var nextDay=moment(this.today,'YYYY-MM-DD').add(j,"days").format('YYYY-MM-DD')
