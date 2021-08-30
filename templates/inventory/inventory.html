@@ -86,8 +86,12 @@
                                 {{item.reserve_count}}
                             </td>
                             <td>
-                                <span class="inv-dot c-active ml-5"></span>
-                                        Active
+                                {% if item.status == True %}
+                                <span class="inv-dot c-active ml-5"></span>Active
+                                {% else %}
+                                <span class="inv-dot c-inactive ml-5"></span>Not Active
+                                {% endif %}
+                              
                             </td>
                             <td style="float: right;">
                                 <a href="/inventory/item/{{item.id}}">
@@ -125,7 +129,7 @@
             </div>
             <hr>
 
-            <form method="POST" action="">{% csrf_token %}
+            <form method="POST" id="myForm" action="">{% csrf_token %}
             <input type="hidden" name="action" id="item_action" value="add_item" />
             <input type="hidden" name="item_edit_id" id="id_edit_item" />
             <div class="row mt-20">
@@ -152,13 +156,23 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Category</div>
 
-                    <select class="minimal" name="item_category" id="id_category" required>
+                    <!-- <select class="minimal" name="item_category" id="id_category" required>
                         <option value="">--Select Category--</option>
                         {% for category in categories %}
                         <option value="{{category.id}}">{{category.name}}</option>
                         {% endfor %}
 
-                    </select>
+                    </select> -->
+                    <input hidden  type="text" name="item_category" id="id_category" required>
+                    <div class="wrap-drop" id="noble-gases"  >
+                        <span id="id_selectText">--Select Category--</span>
+                        <ul class="drop">
+                            {% for category in categories %}
+                            <li id="cat_id{{category.id}}" onclick="changeSelect({{category.id}})"><a>{{category.name}}</a></li>
+                   
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </div>
 
             </div>
@@ -167,10 +181,18 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Segment</div>
 
-                    <select class="minimal" name="item_segment" id="id_segment">
+                    <!-- <select class="minimal" name="item_segment" id="id_segment">
                         <option value="">--Select Segment--</option>
                     
-                    </select>
+                    </select> -->
+                    <input hidden  type="text" name="item_segment" id="id_segment" required>
+
+                    <div class="wrap-drop" id="noble-gases2" style="z-index: 5 !important;" >
+                        <span id="id_seg_text">--Select Segment--</span>
+                        <ul class="drop" id="id_ul_seg">
+                           
+                        </ul>
+                    </div>
                 </div>
 
             </div>
@@ -179,10 +201,18 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Line</div>
 
-                    <select class="minimal" name="item_line" id="id_line">
+                    <!-- <select class="minimal" name="item_line" id="id_line">
                         <option value="">--Select Line--</option>
                     
-                    </select>
+                    </select> -->
+                    <input hidden  type="text" name="item_line" id="id_line" required>
+
+                    <div class="wrap-drop" id="noble-gases3" style="z-index: 3 !important;" >
+                        <span id="id_line_text">--Select Line--</span>
+                        <ul class="drop" id="id_ul_line">
+                           
+                        </ul>
+                    </div>
                 </div>
 
             </div>
@@ -190,8 +220,8 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Description</div>
 
-                    <div class="inv-input-container h-30"> 
-                    <textarea id="id_item_description" name="item_description"></textarea>
+                    <div class="inv-input-container "> 
+                    <textarea style="width: 100%;" rows="8" id="id_item_description" name="item_description"></textarea>
                     </div>
                 </div>
 
@@ -210,11 +240,19 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Status</div>
 
-                    <select id="item_status_id" name="item_status" class="minimal">
+                    <!-- <select id="item_status_id" name="item_status" class="minimal">
                         <option value="True" selected>Active</option>
                         <option value="False">Inactive</option>
 
-                    </select>
+                    </select> -->
+                    <input hidden type="text" id="item_status_id" name="item_status" value="True">
+                    <div class="wrap-drop" id="noble-gases4" style="z-index: 2 !important;"  >
+                        <span id="id_selectText3">Active</span>
+                        <ul class="drop">
+                            <li onclick="changeSelect4('True')"><a>Active</a></li>
+                            <li onclick="changeSelect4('False')"><a>Inactive</a></li> 
+                        </ul>
+                    </div>
                 </div>
 
             </div>
@@ -270,8 +308,84 @@
 {% endblock %}
 
 {% block javascript %}
-
 <script>
+    function DropDown(el) {
+    this.dd = el;
+    this.placeholder = this.dd.children('span');
+    this.opts = this.dd.find('ul.drop li');
+    this.val = '';
+    this.index = -1;
+    this.initEvents();
+}
+
+DropDown.prototype = {
+    initEvents: function () {
+        var obj = this;
+        obj.dd.on('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $(this).toggleClass('active');
+        });
+        obj.opts.on('click', function () {
+            var opt = $(this);
+            obj.val = opt.text();
+            obj.index = opt.index();
+            obj.placeholder.text(obj.val);
+            opt.siblings().removeClass('selected');
+            opt.filter(':contains("' + obj.val + '")').addClass('selected');
+        }).change();
+    },
+    getValue: function () {
+        return this.val;
+    },
+    getIndex: function () {
+        return this.index;
+    }
+};
+
+$(function () {
+    // create new variable for each menu
+    var dd1 = new DropDown($('#noble-gases'));
+    var dd2 = new DropDown($('#noble-gases2'));
+    var dd3 = new DropDown($('#noble-gases3'));
+    var dd4 = new DropDown($('#noble-gases4'));
+
+
+
+    // var dd2 = new DropDown($('#other-gases'));
+    $(document).click(function () {
+        // close menu on document click
+        $('.wrap-drop').removeClass('active');
+    });
+});
+</script>
+<script>
+
+     
+function changeSelect4(va){
+        $('#item_status_id').val(va)
+    }
+function changeSelect(va){
+        $('#id_category').val(va);
+        $('#id_segment').val('');
+        var category_id = $('#id_category').val();
+        getsegments(category_id);
+        $('.line_dropdown').hide();
+        $('#id_line').attr("required",false);
+    }
+
+    function changeSelect2(id){
+        $('#id_line').val('');
+         $('#id_segment').val(id);
+        $('#id_seg_text').text($('#seg_id'+id).text());
+        var segment_id = $('#id_segment').val();
+        getlines(segment_id);
+    }
+    function changeSelect3(id){
+         $('#id_line').val(id);
+        $('#id_line_text').text($('#line_id'+id).text());
+       
+    }
     $(document).ready(function(){
         $('.segment_dropdown').hide();
         $('.line_dropdown').hide();
@@ -279,8 +393,18 @@
 
     function openNavAddStore(d) {
     if(d == 'add'){
+        console.log("new")
+        document.getElementById("myForm").reset();
+        $('#id_edit_item').val(' ')
+        $('#item_status_id').val('True')
+            $('#id_selectText3').text('Active');
+        $('#id_category').val('');
+        $('#id_selectText').text('--Select Category--')
             $("#itemHead").text("Add Item");
             $('.inventory-form-btn').text('Add');
+            $('.segment_dropdown').hide();
+            $('.line_dropdown').hide();
+
         }
         if(d == 'edit'){
             $("#itemHead").text("Edit Inventory");
@@ -307,13 +431,22 @@
          if(result.status == 200){
              console.log(result.data.inventory_segment,"stat")
             if (result.data.inventory_segment.length > 0){
-                $('#id_segment').find('option').remove();
-                $('#id_segment').append('<option value="">--Select Segment--</option>')
+                $('#id_seg_text').text('--Select Segment--');
+                $('#id_ul_seg').empty();
                 $('#id_segment').attr("required",true);
                 $.each(result.data.inventory_segment,function(key,value){
                     console.log(key.id,value.id,"stat")
-                        $('#id_segment').append('<option value='+value.id+'>'+value.name+'</option>')
+                    var tempName = String(value.name)
+                    console.log(tempName)
+                        $('#id_ul_seg').append(' <li id="seg_id'+value.id+'" data-id='+value.id+'  onclick="changeSelect2('+value.id+')" ><a>'+value.name+'</a></li>')
                 })
+                // $('#id_segment').find('option').remove();
+                // $('#id_segment').append('<option value="">--Select Segment--</option>')
+                // $('#id_segment').attr("required",true);
+                // $.each(result.data.inventory_segment,function(key,value){
+                //     console.log(key.id,value.id,"stat")
+                //         $('#id_segment').append('<option value='+value.id+'>'+value.name+'</option>')
+                // })
 
                 $('.segment_dropdown').show();
             }else{
@@ -332,13 +465,21 @@
          if(result.status == 200){
              console.log(result.data.inventory_line,"stat")
             if (result.data.inventory_line.length > 0 ){
-                $('#id_line').find('option').remove();
-                $('#id_line').append('<option value="">--Select Line--</option>')
-                $('#id_line').attr("required",true);
+                $('#id_line_text').text('--Select Line--');
+                $('#id_ul_line').empty();
+
                 $.each(result.data.inventory_line,function(key,value){
                     console.log(key.id,value.id,"stat")
-                        $('#id_line').append('<option value='+value.id+'>'+value.name+'</option>')
+                       
+                        $('#id_ul_line').append(' <li id="line_id'+value.id+'" data-id='+value.id+'  onclick="changeSelect3('+value.id+')" ><a>'+value.name+'</a></li>')
                 })
+                // $('#id_line').find('option').remove();
+                // $('#id_line').append('<option value="">--Select Line--</option>')
+                // $('#id_line').attr("required",true);
+                // $.each(result.data.inventory_line,function(key,value){
+                //     console.log(key.id,value.id,"stat")
+                //         $('#id_line').append('<option value='+value.id+'>'+value.name+'</option>')
+                // })
 
                 $('.line_dropdown').show();
             }else{
@@ -370,6 +511,7 @@
 
     //edit attribute
     $('.edit-item').click(async function(){
+        
         $('#id_edit_item').val($(this).data('itemid'));
         $('#item_action').val('edit_item');
         $('#id_item_name').val($(this).data('itemname'));
@@ -383,9 +525,20 @@
         document.getElementById("id_category").value = $(this).data('itemcategory');
         document.getElementById("id_line").value = $(this).data('itemline');
         document.getElementById("id_segment").value = $(this).data('itemsegment');
-        
-        document.getElementById("id_item_status").value = $(this).data('itemstatus');
+        $('#id_selectText').text($('#cat_id'+$(this).data('itemcategory')).text());
+        $('#id_seg_text').text($('#seg_id'+$(this).data('itemsegment')).text());
+       $('#id_line_text').text($('#line_id'+$(this).data('itemline')).text());
+       console.log($(this).data('itemstatus'),'s')
+        document.getElementById("item_status_id").value = $(this).data('itemstatus');
 
+        if($('#item_status_id').val() == 'True'){
+            console.log("true")
+            $('#id_selectText3').text('Active');
+        }else{
+            $('#id_selectText3').text('Inactive');
+
+        }
+        
         $('.item-form-btn').text('Update');
 
     })
