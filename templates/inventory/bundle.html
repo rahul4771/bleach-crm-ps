@@ -102,7 +102,7 @@
                                             {% if bundle.status == True %}
                                             <span class="inv-dot c-active ml-5"></span>Active
                                             {% else %}
-                                            <span class="inv-dot c-active ml-5"></span>Not Active
+                                            <span class="inv-dot c-inactive ml-5"></span>Not Active
                                             {% endif %}
                                         </td>
                                         <td>
@@ -279,7 +279,7 @@
             </div>
             <hr>
 
-            <form method="POST" action="" >{% csrf_token %}
+            <form method="POST" id="myForm" action="" >{% csrf_token %}
             <input type="hidden" name="action" id="bundle_action" value="add_bundle" />
             <input type="hidden" name="bundle_edit_id" id="id_edit_bundle" />
             <div class="row mt-20">
@@ -585,6 +585,7 @@ $(document).ready(function(){
 
 function openNavAddBundle(d) {
     if(d == 'add'){
+        document.getElementById("myForm").reset();
             $("#bundleHead").text("Add Bundle");
             $("#bundle_action").val("add_bundle");
             $('.bundle-form-btn').text('Add');

@@ -212,7 +212,7 @@
                 </div>
             </div>
             <hr>
-            <form method="POST" action="">{% csrf_token %}
+            <form method="POST" id="myForm" action="">{% csrf_token %}
             <input type="hidden" name="action" id="segment_action" value="add_segment" />
             <input type="hidden" name="segment_edit_id" id="id_edit_segment" />
             <div class="row mt-20">
@@ -282,7 +282,7 @@
                 </div>
             </div>
             <hr>
-            <form method="POST" action="" >{% csrf_token %}
+            <form method="POST" id="myForm2" action="" >{% csrf_token %}
             <input type="hidden" name="action" id="segment_action_id" value="add_line" />
             <input type="hidden" name="line_segment_id" id="line_segment_id" />
             <input type="hidden" name="edit_line_id" id="id_edit_line" />
@@ -445,6 +445,7 @@ $(function () {
     function showDrawer(d){
         console.log(d)
         if(d == 'add'){
+            document.getElementById("myForm").reset();
             $("#button_segment").text("Add");
             $(".inv-drawer-head-common").text("Add Segment");
             $('#segment_action').val('add_segment');
@@ -475,6 +476,7 @@ $(function () {
     function openNavAddLine(d) {
         console.log('cl')
         if(d == 'add'){
+            document.getElementById("myForm2").reset();
             $('#line_status_id').val('True')
             $("#lineHead").text("Add Line");
             $('.line-form-btn').text('Add');

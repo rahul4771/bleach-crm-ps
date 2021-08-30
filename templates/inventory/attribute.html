@@ -70,10 +70,20 @@
                             <tbody>
                                 {% for attribute in attributes %}
                                 <tr class="attribute_row" onclick="getvalues({{attribute.id}})" data-name="{{attribute.name}}">
+
+                                    {% if attribute.status == True %}
                                     <td class="inv-green-border">
-                                
+                                        
                                         {{attribute.name}}
-                                    </td>
+                                     </td>
+                                        {% else %}
+                                        <td class="inv-gray-border">
+                                        
+                                            {{attribute.name}}
+                                         </td>
+                                        {% endif %}
+
+                                   
                                     <td class="text-center">
                                         {{attribute.value_count}}
                                     </td>
@@ -81,7 +91,7 @@
                                         {% if attribute.status == True %}
                                         <span class="inv-dot c-active ml-5"></span>Active
                                         {% else %}
-                                        <span class="inv-dot c-active ml-5"></span>Not Active
+                                        <span class="inv-dot c-inactive ml-5"></span>Not Active
                                         {% endif %}
                                         
                                     </td>

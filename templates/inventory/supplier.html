@@ -281,7 +281,7 @@
             </div>
             <hr>
 
-            <form method="POST" action="" >{% csrf_token %}
+            <form method="POST" id="myForm" action="" >{% csrf_token %}
             <input type="hidden" name="action" id="supplier_action" value="add_supplier" />
             <input type="hidden" name="supplier_edit_id" id="id_edit_supplier" />
             <div class="row mt-20">
@@ -353,7 +353,7 @@
                         <option value="False">Inactive</option>
 
                     </select> -->
-                    <input  type="text" id="status_supplier" name="status" value="True">
+                    <input hidden  type="text" id="status_supplier" name="status" value="True">
                     <div class="wrap-drop" id="noble-gases"  >
                         <span id="id_selectText">Active</span>
                         <ul class="drop">
@@ -571,6 +571,7 @@ $(document).ready(function() {
 
 function openNavAddBundle(d) {
     if(d == 'add'){
+        document.getElementById("myForm").reset();
             $("#supHead").text("Add Supplier");
             $('.supplier-form-btn').text('Add');
             $('#supplier_action').val('add_supplier');
