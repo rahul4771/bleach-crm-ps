@@ -865,6 +865,7 @@ def quatation_html_to_pdf_view(request,evaluation_id):
 
 
 def purchaseorder_html_to_pdf_view(request,purchase_order_id):
+	print(purchase_order_id,"poid")
 
 	purchase_order = PurchaseOrder.objects.prefetch_related(Prefetch('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.all(),to_attr='purchase_order_items')).get(id=int(purchase_order_id))
 	
@@ -873,7 +874,7 @@ def purchaseorder_html_to_pdf_view(request,purchase_order_id):
 	html     = HTML(string=html_string,base_url=request.build_absolute_uri())
 	main_doc = html.render()
 
-	main_doc.write_pdf(target='/home/pdf/tmp/quatation/quatation.pdf');
+	main_doc.write_pdf(target='/home/pdf/tmp/purchaseorder/purchaseorder.pdf');
 
 	fs = FileSystemStorage('/home/pdf/tmp/purchaseorder/')
 	with fs.open('purchaseorder.pdf') as pdf:

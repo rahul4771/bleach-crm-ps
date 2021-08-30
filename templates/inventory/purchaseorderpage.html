@@ -101,7 +101,7 @@ border-radius: 2px;
         
       </div>
       <div class="row">
-          <div class="col-md-6">
+          <div class="col-md-12">
             <div id="soa-logo-div ">
                 <h1 id="soa_heading_2" class="text-left">Purchase Order : {{purchase_order.purchase_order_id}}</h1>
               
@@ -223,10 +223,10 @@ border-radius: 2px;
         <div id="soa_amount_calculation">
             <div class="d-flex">
                 <div class="w-50 ">
-                    Discount %
+                    Discount
                 </div>:
                 <div class="w-50 text-right">
-                 0
+                 {{purchase_order.discount|floatformat:3|default_if_none:0.000}}
                 </div>
             </div>
             <div class="d-flex mt-2">
@@ -234,7 +234,7 @@ border-radius: 2px;
                    Tax
                 </div>:
                 <div class="w-50 text-right">
-                  0
+                  {{purchase_order.tax|floatformat:3|default_if_none:0.000}}
                 </div>
             </div>
             <div class="d-flex mt-2">
@@ -242,7 +242,7 @@ border-radius: 2px;
                     Shipping Charge
                 </div>:
                 <div class="w-50 text-right">
-                  0
+                  {{purchase_order.shipping_charge|floatformat:3|default_if_none:0.000}}
                 </div>
             </div>
             <div class="d-flex mt-2">
@@ -250,7 +250,7 @@ border-radius: 2px;
                   Other Charges
                 </div>:
                 <div class="w-50 text-right">
-                 0
+                 {{purchase_order.other_charge|floatformat:3|default_if_none:0.000}}
                 </div>
             </div>
             
@@ -305,7 +305,7 @@ border-radius: 2px;
      
       <br>
       <div style="text-align: center;">
-        <a href="/customer/purchaseorderpage/download/{{purchase_order.id}}"><button class="soa-button" > <i class="fa fa-download mr-5" aria-hidden="true"></i> Download</button></a>
+        <a href="/customer/purchaseorder/download/{{purchase_order.id}}"><button class="soa-button" > <i class="fa fa-download mr-5" aria-hidden="true"></i> Download</button></a>
         <button class="soa-button"  data-toggle="modal" data-target="#invoiceModalCenter"> <i class="fa fa-paper-plane mr-5" aria-hidden="true"></i>Send via Email</button>
       </div>
 
@@ -503,6 +503,11 @@ function printDiv() {
             
             var sum1 = 0;
 
+            var discount = "{{purchase_order.discount|floatformat:3}}";
+            var tax = "{{purchase_order.tax|floatformat:3}}";
+            var shipping_charge = "{{purchase_order.shipping_charge|floatformat:3}}";
+            var other_charge = "{{purchase_order.other_charge|floatformat:3}}";
+
             for(var i = 0; i < tds.length; i ++) {
               console.log(tds[i].className,"mok")
                 if(tds[i].className == 'item_total') {
@@ -512,7 +517,8 @@ function printDiv() {
             
             }
             
-            document.getElementById('totalamount').innerHTML =  parseFloat(sum1).toFixed(3) ;
+            var totalamount = parseFloat(sum1) + parseFloat(tax) + parseFloat(shipping_charge) + parseFloat(other_charge) - parseFloat(discount);
+            document.getElementById('totalamount').innerHTML =  parseFloat(totalamount).toFixed(3); ;
             document.getElementById('total_order_amount').innerHTML =  parseFloat(sum1).toFixed(3) ;
             
           }
