@@ -1,6 +1,9 @@
 $(".inv-coupon").hide();
 var selectedPayment='';
 //$(".inv-coupon-error").hide();
+var ip_address=''
+getIp()
+var paymentMethod=''
 selectPayment('pay');
 var cashcounter=false;
 function addCoupon(){
@@ -81,6 +84,7 @@ function proceedBookingInvoice(){
   var custId=window.location.href.split('/')[6]
   if(selectedPayment=='pay')
   {
+    selectPaymentMethod('debit')
     openPaymentModal()
   //  $('#book_and_pay_url_id').val("https://my.bleachkw.com/customer/cart?id="+custId);
     //$('#debitpay').click();
@@ -94,6 +98,53 @@ function nextStepCash(){
  
   $('#cash-step-2').hide();
   $('#cash-step-1').show();
+}
+function selectPaymentMethod(pay){
+  if(pay=='debit'){
+    paymentMethod='debit'
+    $("#inv-popup-debit").removeClass('inv-payment-card')
+    $("#inv-popup-debit").addClass('inv-payment-card-active')
+    $("#inv-popup-credit").removeClass('inv-payment-card-active')
+    $("#inv-popup-credit").addClass('inv-payment-card')
+    $('#inv-check-popup-debit').show()
+    $('#inv-check-popup-credit').hide()
+    $("#inv-debit-popup-check-box").addClass('inv-check-box-active');
+    $("#inv-credit-popup-check-box").removeClass('inv-check-box-active');
+    
+  }
+  if(pay=='credit'){
+    paymentMethod='credit'
+    $("#inv-popup-credit").removeClass('inv-payment-card')
+    $("#inv-popup-credit").addClass('inv-payment-card-active')
+    $("#inv-popup-debit").removeClass('inv-payment-card-active')
+    $("#inv-popup-debit").addClass('inv-payment-card')
+    $('#inv-check-popup-credit').show()
+    $('#inv-check-popup-debit').hide()
+    $("#inv-credit-popup-check-box").addClass('inv-check-box-active');
+    $("#inv-debit-popup-check-box").removeClass('inv-check-box-active');
+  }
+}
+function proceedPayment(){
+  if(paymentMethod=='debit'){
+    console.log("called debit pay")
+    $('#debitpay').click();
+  }
+  else if(paymentMethod=='credit'){
+    $('#creditSubmit').click();
+  }
+}
+function getIp(){
+  axios.get('https://www.cloudflare.com/cdn-cgi/trace').then((response)=>{
+
+    response.data = response.data.trim().split('\n').reduce(function(obj, pair) {
+    pair = pair.split('=');
+    return obj[pair[0]] = pair[1], obj;
+}, {});
+    console.log(response)
+    ip_address=response.data.ip
+    $('#ip_address').val(ip_address)
+    console.log("ip is "+ip_address)
+  })
 }
 function selectPayment(pay){
   selectedPayment=pay

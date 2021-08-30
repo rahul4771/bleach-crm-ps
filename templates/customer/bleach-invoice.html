@@ -101,29 +101,29 @@
         <div class="row m-0">
           
           <div class="col-md-6 col-6">
-            <div class="inv-payment-card mt-4 text-center" id="inv-debit" ><!-- to disable click add class inv-click-disable -->
+            <div class="inv-payment-card mt-4 text-center" id="inv-popup-debit" onclick="selectPaymentMethod('debit')" ><!-- to disable click add class inv-click-disable -->
               <img src="{% static 'files/icons/knet-icon.png' %}" class="inv-card-icon" id="inv-debit-img"  /> <!-- to disable  add class inv-payment-disabled -->
               <div class="inv-payment-text"> <!-- to disable  add class inv-payment-disabled -->
                Debit
               </div>
-              <div class=" mt-2 mb-2 mx-auto" >
-                <i class="far fa-circle not-check-icon"></i>
+              <div class="inv-check-box mt-2 mb-2 mx-auto" id="inv-debit-popup-check-box">
+                <i class="fa fa-check inv-check-icon-customer " id="inv-check-popup-debit"></i>
               </div>
             </div>
           </div>
           <div class="col-md-6 col-6">
-            <div class="inv-payment-card mt-4 text-center" id="inv-credit" ><!-- to disable click add class inv-click-disable -->
+            <div class="inv-payment-card mt-4 text-center" id="inv-popup-credit" onclick="selectPaymentMethod('credit')"><!-- to disable click add class inv-click-disable -->
               <img src="{% static 'files/icons/debit-card.png' %}" class="inv-card-icon" id="inv-credit-img"  /> <!-- to disable  add class inv-payment-disabled -->
               <div class="inv-payment-text"> <!-- to disable  add class inv-payment-disabled -->
               Credit
               </div>
-              <div class="mt-2 mb-2 mx-auto" >
-                <i class="far fa-circle not-check-icon"></i>
+              <div class="inv-check-box mt-2 mb-2 mx-auto" id="inv-credit-popup-check-box">
+                <i class="fa fa-check inv-check-icon-customer " id="inv-check-popup-credit"></i>
               </div>
             </div>
           </div>
           <div class="col-md-12 mt-4 mb-4">
-            <div class="inv-btn text-center text-white" onclick="proceedPaymentInvoice()">
+            <div class="inv-btn text-center text-white" onclick="proceedPayment()">
               Proceed
             </div>
           </div>
@@ -735,23 +735,52 @@
                       </div>
                     </div>
                     </div>
+                    <!-- debit card payment gateway form-->
+                    <form method="post" action="https://payment.bleachkw.com/SendPerformREQuest.php" style="display: none;" >
+                      {% csrf_token %}
+                      <input type="hidden" name="order_status" value="{{order.order_status}}">
+                      <input type="hidden" name="price" value="{{order.evaluation.total_cost|floatformat:'3'}}">
+                      <input type="hidden" name="payment_mode" value="prepaid">
+                      <input type="hidden" name="qty" value="1">
+                      <input type="hidden" name="evaluation_id" value="{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}">
+                      <input type="hidden" id="book_and_pay_url_id" name="book_and_pay_url" value="">
+                    
+                      <input  id="debitpay" name="debitpay" type="submit">
+                     
+                    </form>
+                    <!-- debit card payment gateway form ends here-->
+                    <!-- credit card payment gateway form begins here-->
+                   
+
+                    <form method="get" action="https://testpay.bleach-kw.com/creditcard/payment_form.php" style="display: none;">
+                      <input type="text" name="merchant_defined_data1" value="{{order.order_no}}"/>
+                      <input type="text" name="reference_number" value="{{order.order_no}}1"/>
+                      <input type="text" name="amount" value="{{order.evaluation.total_cost|floatformat:'3'}}"/>
+                      <input type="text" name="merchant_defined_data2" value="prepaid"/>
+                      <input type="text" name="merchant_defined_data3" value="{{order.order_status}}"/>
+                      <input type="text" name="currency" value="KWD"/>
+                      <input type="text" name="transaction_type" value="sale"/>
+                      <input type="text" name="bill_to_forename" value=""/>
+                      <input type="text" name="bill_to_surname" value=""/>
+                      <input type="text" name="bill_to_phone" value=""/>
+                      <input type="text" name="bill_to_email" value=""/>
+                      <input type="text" name="bill_to_address_country" value=""/>
+                      <input type="text" name="bill_to_address_city" value=""/>
+                      <input type="text" name="bill_to_address_line1" value=""/>
+                      <input type="text" name="merchant_defined_data4" value="ONLINE"/>
+                      <input type="text" name="merchant_defined_data5" value="NO"/>
+                      <input type="text" name="merchant_defined_data7" value="1"/>
+                      <input type="text" name="merchant_defined_data20" value="NO"/>
+                      <input type="text" name="customer_ip_address"  id="ip_address"/>
+                      <input type="submit" id="creditSubmit" />
+                    </form>
+                    <!-- credit card payment gateway form ends here-->
                     {% endif %}
                
 
                 </div>
               </div>
-              <form method="post" action="https://payment.bleachkw.com/SendPerformREQuest.php" style="display: none;">
-                {% csrf_token %}
-                <input type="hidden" name="order_status" value="{{order.order_status}}">
-                <input type="hidden" name="price" value="{{order.evaluation.total_cost|floatformat:'3'}}">
-                <input type="hidden" name="payment_mode" value="prepaid">
-                <input type="hidden" name="qty" value="1">
-                <input type="hidden" name="evaluation_id" value="{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}">
-                <input type="hidden" id="book_and_pay_url_id" name="book_and_pay_url" value="">
-                {% if order.evaluation.quatation_status == 'APPROVED' %}
-                <input  id="debitpay" name="debitpay" type="submit">
-                {% endif %}
-              </form>
+              
               
             
               {% if order.payment_status == 'PENDING' or order.customerbooking > 0 %}
@@ -831,7 +860,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js" integrity="sha512-jzL0FvPiDtXef2o2XZJWgaEpVAihqquZT/tT89qCVaxVuHwJ/1DFcJ+8TBMXplSJXE8gLbVAUv+Lj20qHpGx+A==" crossorigin="anonymous"></script>
     <script src="{% static 'files/js/convertToPdf.js' %}"></script>
     <script src="{% static 'files/js/modal.js' %}"> </script>
- 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js" integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" type="text/javascript"></script>
         <script src="{% static 'files/js/customer/customer-invoice.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
