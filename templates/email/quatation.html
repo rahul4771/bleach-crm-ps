@@ -493,7 +493,7 @@
             font-size: 22px;">
 
             {% if evaluation.customerbooking %}
-            <b> <a href="https://my.bleachkw.com/customer/cart?id=paw{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}"><div class="button-a">Book and Pay</div></a> </b>
+            <b> <a href="https://my.bleachkw.com/customer/booking/invoice/paw{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}"><div class="button-a">Book and Pay</div></a> </b>
             {% else %}
             
             {% if evaluation.payment_method == 'SUBSCRIPTION' %}
