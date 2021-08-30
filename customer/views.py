@@ -635,11 +635,6 @@ class PaymentResponseDebit(View):
 				closing_order	= Order.objects.get(is_active=True,order_no=evaluation_id)
 				closing_order.order_status = 'ORDER_CLOSED'
 				closing_order.save()
-
-			try:
-				booking_completed = CustomerBooking.objects.filter(evaluation=evaluation).update(is_bookingcompleted=True)
-			except:
-				booking_completed = None
 				
 			#pay and book &&& others
 			pay_and_book = request.POST.get('udf4')
@@ -4888,10 +4883,15 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 			order.total_amount    -= discount
 			order.remining_amount -= discount
 
+		#update quatation status
 		evaluation.quatation_status = 'APPROVED'
 		order.order_status          = 'APPROVED_BY_CLIENT'
 		evaluation.save()
 		order.save()
+
+		#update customer booking completion
+		CustomerBooking.objects.filter(evaluation=evaluation).update(is_bookingcompleted=True)
+		
 
 		response_dict['secret_code']        = str(evaluation.evaluation_id[3:14])+str(evaluation.customer.username)
 		response_dict['order_no']           = evaluation.evaluation_id
