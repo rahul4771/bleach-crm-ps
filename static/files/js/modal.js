@@ -44,3 +44,11 @@ function closeDetailsModal(elem){
   id = $(elem).data('popup_id');
   $('#detailsModal'+id).hide(); 
 }
+function openPaymentModal(){
+  $('#paymentModal').show()
+  
+}
+function closePaymentModal(){
+  $('#paymentModal').hide()
+  
+}

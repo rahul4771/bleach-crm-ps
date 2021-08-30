@@ -508,31 +508,41 @@
           <div class="w-50">
              Sub Total
           </div>:
-          <div class="w-50 text-right">
+          <div class="w-50 text-right"  v-if="!booking_status"> 
            <b> <%payment_total_cost%> KD</b>
           </div>
+          <div class="w-50 text-right"  v-if="booking_status"> 
+            <b> <%amount_subtotal%> KD</b>
+           </div>
         </div>
         <div class="d-flex mt-2">
-          <div class="w-50">
+          <div class="w-50" >
             Discount
           </div>:
-          <div class="w-50 text-right">
+          <div class="w-50 text-right" v-if="!booking_status">
             <b> <%calculateDiscount()%> KD</b>
+          </div>
+          <div class="w-50 text-right" v-if="booking_status">
+            <b> <%amount_discount%> KD</b>
           </div>
         </div>
         <div class="d-flex mt-2">
           <div class="w-50">
               Total
           </div>:
-          <div class="w-50 text-right">
+          <div class="w-50 text-right"  v-if="!booking_status">
             <b><%payment_total_cost-calculateDiscount()%> KD</b>
+          </div>
+          <div class="w-50 text-right"  v-if="booking_status">
+            <b><%amount_payable%> KD</b>
           </div>
         </div>
       </div>
       <div class="col-md-6">
         <div class="payment-total-popup">
           <div class="p-2 text-center"> Payable Amount </div>
-         <div class="payment-total-heading p-2 text-center"><%payment_total_cost-calculateDiscount()%> KD</div>
+         <div class="payment-total-heading p-2 text-center" v-if="!booking_status"><%payment_total_cost-calculateDiscount()%> KD</div>
+         <div class="payment-total-heading p-2 text-center" v-if="booking_status"><%amount_payable%> KD</div>
         </div>
       </div>
     </div>
@@ -1269,8 +1279,18 @@ width="1000"
                   <div v-if="activeTab=='Cart'">
                     
 
-                  <div class="mt-4 text-center" v-if="payment_status=='PENDING'">
+                  <div class="mt-4 text-center" v-if="payment_status=='PENDING' && !booking_status">
                     <img src="{% static 'files/images/offer-banner.png'%}" style="max-width:400px;width:100%"/>
+                  </div>
+                  <div class="mt-4 text-center" v-if="booking_status && payment_status=='PENDING'">
+                    <v-alert
+                    dense
+                    text
+                    type="success"
+                    color="primary"
+                  >
+                    Booking Already Completed . Please continue to payment
+                  </v-alert>
                   </div>
                 
                     <div class="page-main-title">
@@ -1368,7 +1388,7 @@ width="1000"
                       </div>
                       </div>
                      
-                      <div>
+                      <div v-if="!booking_status">
                         <v-switch
                            v-model="scheduleStat"
                            inset
@@ -1518,7 +1538,7 @@ width="1000"
                        </div>
                       </v-alert>
                     </div>
-                    <div class="text-center mt-4 mb-4 d-flex justify-center"  v-if="!schedule_warning">
+                    <div class="text-center mt-4 mb-4 d-flex justify-center"  v-if="!schedule_warning && !booking_status">
                       <v-btn
       class="ma-2 "
       outlined
@@ -1556,6 +1576,17 @@ width="1000"
     </v-btn>
 
                     </div>
+                    <div class="text-center mt-4 mb-4 d-flex justify-center"  v-if="booking_status">
+                      <v-btn
+      class="ma-2 text-white"
+      @click="goToPaymentDialog()"
+     v-if="payment_status=='PENDING'"
+      color="#289bac"
+     
+    >
+      Pay
+    </v-btn>
+                      </div>
                     
                    <!--<div class="mt-4">
                       Do you want to book more services ?
