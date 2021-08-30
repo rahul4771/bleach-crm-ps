@@ -81,8 +81,9 @@ function proceedBookingInvoice(){
   var custId=window.location.href.split('/')[6]
   if(selectedPayment=='pay')
   {
-    $('#book_and_pay_url_id').val("https://my.bleachkw.com/customer/cart?id="+custId);
-    $('#debitpay').click();
+    openPaymentModal()
+  //  $('#book_and_pay_url_id').val("https://my.bleachkw.com/customer/cart?id="+custId);
+    //$('#debitpay').click();
   }
   else{
     window.location.href="/customer/cart?id="+custId

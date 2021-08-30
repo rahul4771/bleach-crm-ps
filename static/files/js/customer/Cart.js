@@ -75,6 +75,7 @@ $(document).ready(function(){
         },
       data: {
         settings:{},
+        booking_status:null,
        // success_booking_dialog:true,
        gender_pref:false,
        gender:" ",
@@ -578,7 +579,10 @@ $(document).ready(function(){
     eval_details:{},
     payment_status:'',
     discount:false,
-    discount_val:0
+    discount_val:0,
+    amount_discount:0,
+    amount_payable:0,
+    amount_subtotal:0
         },
      
 /* header data */
@@ -4478,9 +4482,19 @@ prevService(){
 getBookedServices(){
   this.multiServicesBill=[]
   axios.get(this.url+'/customer/evaluatorbookingmultiplephase3/customer/'+this.custId).then(response=>{
+
     this.bookedServiceDetails=response.data.evaluation_details
     this.payment_total_cost=this.bookedServiceDetails[0].evaluation.total_cost
     this.payment_status=response.data.order_details.payment_status
+    this.booking_status=response.data.booking_status
+    if(this.booking_status){
+      this.amount_discount=response.data.discount_details.discount
+      this.amount_payable=response.data.discount_details.total_cost
+      this.payable_amount=this.amount_payable
+      this.amount_subtotal=response.data.discount_details.estimated_cost
+      this.evaluation_id=response.data.secret_code
+    }
+
     if(this.bookedServiceDetails.length>0){
       this.multiAddress=true
     }
