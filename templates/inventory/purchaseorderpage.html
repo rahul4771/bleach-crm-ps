@@ -90,51 +90,60 @@ border-radius: 2px;
   <div id="container">
     <div class="right-statement">
 
-      <div id="soa-logo-div">
-        <img style="height: 40px;" src="{% static 'files/images/newlogo.png' %}" />
-        <svg id="barcode"></svg>
+      <div id="" class="d-flex">
+        <div style="flex-grow: 1;">
+          <img style="height: 50px;" src="{% static 'files/images/bleach-logo.png' %}" />
+
+        </div>
+        <div>
+          <svg id="barcode"></svg>
+        </div>
+        
       </div>
       <div class="row">
           <div class="col-md-6">
             <div id="soa-logo-div ">
                 <h1 id="soa_heading_2" class="text-left">Purchase Order : {{purchase_order.purchase_order_id}}</h1>
-                <div id="soa_detials" class="mt-3">
-                    <div id="soa_right">Order Date </div>
-                    <div>: {{purchase_order.created|date:'d-m-Y'}} </div>
-                  </div>
-                  <div id="soa_detials">
-                    <div id="soa_right">Sale Person </div>
-                    <div>: {{purchase_order.initiated_by.name}} </div>
-                  </div>
-                  <div id="soa_detials">
-                    <div id="soa_right">Via </div>
-                    <div>: {{purchase_order.supplier.supplier_name}} </div>
-                  </div>
-                  <!-- <div id="soa_detials">
-                    <div id="soa_right">Terms </div>
-                    <div>: {{purchase_order.supplier.terms}} </div>
-                  </div> -->
+              
               </div>
           </div>
-          <div class="col-md-6">
-              <div class="company_address">
-                Bleach Cleaning Services Co
-                <div class="mt-2">
-                    Salhiya, Kuwait City, Qibla Building, Mohamed Bin Thinan Al Ghanim Street, Po.Box: 4489, Safat 13045
-                </div>
-               <div class="mt-2">
-                Tel : 1882707
-               </div>
-               <div class="mt-2">
-                Fax : 1882707
-               </div>
-               <div class="mt-2">
-                Email : supplychain@bleach-kw.com
-               </div>
-                
-              </div>
-          </div>
+          
       </div>
+      <div class="row" style="margin-top: 20px;">
+        <div class="col-md-4">
+          <div id="">
+
+              <div id="soa_detials" class="mt-3">
+                  <div id="soa_right">Order Date </div>
+                  <div>: {{purchase_order.created|date:'d-m-Y'}} </div>
+                </div>
+                <div id="soa_detials">
+                  <div id="soa_right">Requested by </div>
+                  <div>: {{purchase_order.created|date:'d-m-Y'}}</div>
+                </div>
+                <div id="soa_detials">
+                  <div id="soa_right">Sale Person </div>
+                  <div>: {{purchase_order.initiated_by.name}} </div>
+                </div>
+                <!-- <div id="soa_detials">
+                  <div id="soa_right">Via </div>
+                  <div>: {{purchase_order.supplier.supplier_name}} </div>
+                </div> -->
+                <!-- <div id="soa_detials">
+                  <div id="soa_right">Terms </div>
+                  <div>: {{purchase_order.supplier.terms}} </div>
+                </div> -->
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="" style="margin-top: 15px;">
+              <div id="soa_detials">
+                <div id="soa_right">Terms </div>
+                <div>: {{purchase_order.supplier.terms}} </div>
+              </div>
+            </div>
+        </div>
+    </div>
      
 
       <div id="soa-customer-detials" style="margin-bottom: 10px;">
@@ -144,18 +153,18 @@ border-radius: 2px;
                 To<br>
                 {{purchase_order.supplier.address}}<br> Tel:{{purchase_order.supplier.contact}}<br> Other Tel:{{purchase_order.supplier.other_contact}}
             </div>
-            {% comment %} <div class="col-md-6">
-                To<br>
-                Bleach Cleaning Service Co Salhiya, Kuwait City, Qibla Building, Mohamed Bin Thinan Al Ghanim Street, Po.Box: 4489, Safat 13045<br> Tel:1882707<br> Fax:188270
-            </div> {% endcomment %}
-            <div class="col-md-12 text-center mt-4 bottom-sub-text">
+            <div class="col-md-6">
+                From<br>
+                Bleach Cleaning Service Co Salhiya, Kuwait City, Qibla Building, Mohamed Bin Thinan Al Ghanim Street, Po.Box: 4489, Safat 13045<br> Tel:1882707<br> Fax:188270 <br>Email:ayman.othman@bleach-kw.com
+            </div> 
+            <!-- <div class="col-md-12 text-center mt-4 bottom-sub-text">
                 This order has been received and therefore CLOSED
-            </div>
+            </div> -->
           </div>
        
       </div>
     
-        <div class="row">
+        <!-- <div class="row">
            
           <div class="col-md-12">
             <div id="soa_detials">
@@ -163,10 +172,7 @@ border-radius: 2px;
               <div>: {{purchase_order.supplier.terms}} </div>
             </div>
           </div>
-       
-       
-     
-    </div>
+    </div> -->
       <table id="soa_table">
         <tr>
           <th style="text-align: center; width: 5%;">No</th>
@@ -220,15 +226,7 @@ border-radius: 2px;
                     Discount %
                 </div>:
                 <div class="w-50 text-right">
-                  <div class="inv-input-container inv-border h-30">
-                    <input  style="border: none !important; width: 90%;" class="inv-in"  >
-                    <!-- <div class="inv-hr"></div> -->
-                    <div class="model-filter" >
-                      <button class="inv-icon-input" >
-                      <i class="fa fa-check fa-lg " style="color: #ffffff;" aria-hidden="true"></i>
-                      </button>
-                    </div>
-                </div>
+                 0
                 </div>
             </div>
             <div class="d-flex mt-2">
@@ -236,15 +234,7 @@ border-radius: 2px;
                    Tax
                 </div>:
                 <div class="w-50 text-right">
-                  <div class="inv-input-container inv-border h-30">
-                    <input  style="border: none !important; width: 90%;" class="inv-in"  >
-                    <!-- <div class="inv-hr"></div> -->
-                    <div class="model-filter" >
-                      <button class="inv-icon-input" >
-                      <i class="fa fa-check fa-lg " style="color: #ffffff;" aria-hidden="true"></i>
-                      </button>
-                    </div>
-                </div>
+                  0
                 </div>
             </div>
             <div class="d-flex mt-2">
@@ -252,15 +242,7 @@ border-radius: 2px;
                     Shipping Charge
                 </div>:
                 <div class="w-50 text-right">
-                  <div class="inv-input-container inv-border h-30">
-                    <input  style="border: none !important; width: 90%;" class="inv-in"  >
-                    <!-- <div class="inv-hr"></div> -->
-                    <div class="model-filter" >
-                      <button class="inv-icon-input" >
-                      <i class="fa fa-check fa-lg " style="color: #ffffff;" aria-hidden="true"></i>
-                      </button>
-                    </div>
-                </div>
+                  0
                 </div>
             </div>
             <div class="d-flex mt-2">
@@ -268,15 +250,7 @@ border-radius: 2px;
                   Other Charges
                 </div>:
                 <div class="w-50 text-right">
-                  <div class="inv-input-container inv-border h-30">
-                    <input  style="border: none !important; width: 90%;" class="inv-in"  >
-                    <!-- <div class="inv-hr"></div> -->
-                    <div class="model-filter" >
-                      <button class="inv-icon-input" >
-                      <i class="fa fa-check fa-lg " style="color: #ffffff;" aria-hidden="true"></i>
-                      </button>
-                    </div>
-                </div>
+                 0
                 </div>
             </div>
             
@@ -509,7 +483,9 @@ border-radius: 2px;
 <script src="{% static 'files/js/barcode.min.js' %}"></script> <!-- Axios -->
 
 <script>
-JsBarcode("#barcode", "344BA876Y89");
+JsBarcode("#barcode", "{{purchase_order.purchase_order_id}}",{
+  
+});
 function printDiv() {
   
 

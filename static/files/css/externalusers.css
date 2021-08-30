@@ -1055,7 +1055,7 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
 }
 #barcode{
   height:80px;
-  margin-top:10px;
+  margin-top:-6px;
 }
 
 #soa_heading_2{
