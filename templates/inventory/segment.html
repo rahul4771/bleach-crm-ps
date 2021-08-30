@@ -239,11 +239,19 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Status</div>
 
-                    <select class="minimal" name="status" id="status_segment" required>
+                    <!-- <select class="minimal" name="status" id="status_segment" required>
                         <option value="True" selected>Active</option>
                         <option value="False">Inactive</option>
 
-                    </select>
+                    </select> -->
+                    <input hidden type="text" name="status" id="status_segment" value="True">
+                    <div class="wrap-drop" id="noble-gases">
+                        <span id="id_selectText">&nbsp; </span>
+                        <ul class="drop">
+                            <li onclick="changeSelect('True')"><a>Active</a></li>
+                            <li onclick="changeSelect('False')"><a>Inactive</a></li> 
+                        </ul>
+                    </div>
                 </div>
 
             </div>
@@ -292,11 +300,19 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Status</div>
 
-                    <select class="minimal" id="line_status_id" name="line_status">
+                    <!-- <select class="minimal" id="line_status_id" name="line_status">
                         <option value="True" selected>Active</option>
                         <option value="False">Inactive</option>
 
-                    </select>
+                    </select> -->
+                    <input type="text" hidden id="line_status_id" name="line_status" value="True">
+                    <div class="wrap-drop" id="noble-gases2">
+                        <span id="id_selectText2">Active</span>
+                        <ul class="drop">
+                            <li onclick="changeSelect2('True')"><a>Active</a></li>
+                            <li onclick="changeSelect2('False')"><a>Inactive</a></li> 
+                        </ul>
+                    </div>
                 </div>
 
             </div>
@@ -353,8 +369,58 @@
 {% endblock %}
 
 {% block javascript %}
-
 <script>
+    function DropDown(el) {
+    this.dd = el;
+    this.placeholder = this.dd.children('span');
+    this.opts = this.dd.find('ul.drop li');
+    this.val = '';
+    this.index = -1;
+    this.initEvents();
+}
+
+DropDown.prototype = {
+    initEvents: function () {
+        var obj = this;
+        obj.dd.on('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $(this).toggleClass('active');
+        });
+        obj.opts.on('click', function () {
+            var opt = $(this);
+            obj.val = opt.text();
+            obj.index = opt.index();
+            obj.placeholder.text(obj.val);
+            opt.siblings().removeClass('selected');
+            opt.filter(':contains("' + obj.val + '")').addClass('selected');
+        }).change();
+    },
+    getValue: function () {
+        return this.val;
+    },
+    getIndex: function () {
+        return this.index;
+    }
+};
+
+$(function () {
+    // create new variable for each menu
+    var dd1 = new DropDown($('#noble-gases'));
+     var dd2 = new DropDown($('#noble-gases2'));
+    $(document).click(function () {
+        // close menu on document click
+        $('.wrap-drop').removeClass('active');
+    });
+});
+</script>
+<script>
+     function changeSelect(va){
+        $('#status_segment').val(va)
+    }
+    function changeSelect2(va){
+        $('#line_status_id').val(va)
+    }
     $(document).ready(function(){
         {% for segment in category.segments %}
         {% if forloop.first %}
@@ -382,6 +448,8 @@
             $("#button_segment").text("Add");
             $(".inv-drawer-head-common").text("Add Segment");
             $('#segment_action').val('add_segment');
+            $('#id_selectText').text('');
+            $('#status_segment').val('True')
         }
         if(d == 'edit'){
             
@@ -407,10 +475,11 @@
     function openNavAddLine(d) {
         console.log('cl')
         if(d == 'add'){
+            $('#line_status_id').val('True')
             $("#lineHead").text("Add Line");
             $('.line-form-btn').text('Add');
             $('#segment_action_id').val('add_line');
-           
+            $('#id_selectText2').text('Active');
         }
         if(d == 'edit'){
             
@@ -440,9 +509,11 @@
 
             if ($(d).data('linestatus') == true){
                 document.getElementById("line_status_id").value = 'True';
+                $('#id_selectText2').text('Active');
             }
             else{
                 document.getElementById("line_status_id").value = 'False';
+                $('#id_selectText2').text('Inactive');
             }
       
         if(screen.width<= 600){
@@ -473,6 +544,13 @@
         $('#id_edit_segment').val($(this).data('segmentid'));
         $('#name_segment').val($(this).data('segmentname'));
         $('#status_segment').val($(this).data('segmentstatus'));
+        if($('#status_segment').val() == 'True'){
+            
+            $('#id_selectText').text('Active');
+        }else{
+            $('#id_selectText').text('Inactive');
+
+        }
     })
 
     $('.add_segment').click(function(){
