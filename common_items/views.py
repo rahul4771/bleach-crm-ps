@@ -3257,7 +3257,7 @@ class MakeQuatationPhase1(IsAuthenticated,View):
 
 				url     = "https://smsapi.future-club.com/fccsms.aspx"
 
-				sms_url = "https://my.bleachkw.com/customer/cart?id=paw"+str(evaluation.evaluation_id [3:14])+str(evaluation.customer.username)
+				sms_url = "https://my.bleachkw.com/customer/booking/invoice/paw"+str(evaluation.evaluation_id [3:14])+str(evaluation.customer.username)
 
 				if language == 'ENGLISH':
 

@@ -635,11 +635,6 @@ class PaymentResponseDebit(View):
 				closing_order	= Order.objects.get(is_active=True,order_no=evaluation_id)
 				closing_order.order_status = 'ORDER_CLOSED'
 				closing_order.save()
-
-			try:
-				booking_completed = CustomerBooking.objects.filter(evaluation=evaluation).update(is_bookingcompleted=True)
-			except:
-				booking_completed = None
 				
 			#pay and book &&& others
 			pay_and_book = request.POST.get('udf4')
@@ -4559,11 +4554,18 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 		#evaluation books,sections,and keynotes
 		evaluation_details                  = EvaluationDetails.objects.select_related('evaluation').prefetch_related('evaluation_book_evaluation_details__evaluationsection_book__keynotesections').filter(evaluation__evaluation_id=evaluation_id)
 		order_details                       = Order.objects.get(evaluation__evaluation_id=evaluation_id)
+		customer_booking                    = CustomerBooking.objects.select_related('evaluation').get(evaluation__evaluation_id=evaluation_id)
+		
 		response_dict['evaluation_details'] = EvaluationDetailsSerializer(instance=evaluation_details,many=True).data
 		response_dict['order_details']      = OrderSerializer(instance=order_details).data
-
+		response_dict['discount_details']   = EvaluationSerializer(instance=order_details.evaluation).data
+		
+		response_dict['booking_status']     = customer_booking.is_bookingcompleted
 		response_dict['evaluation_id']      = evaluation_details.first().evaluation.id
-		response_dict['success'] = True
+		response_dict['secret_code']        = str(order_details.evaluation.evaluation_id[3:14])+str(order_details.evaluation.customer.username)
+		
+		response_dict['success']            = True
+		
 		return Response(response_dict,HTTP_200_OK)
 
 	def post(self,request,evaluation_id):
@@ -4885,8 +4887,15 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 			order.total_amount    -= discount
 			order.remining_amount -= discount
 
-			evaluation.save()
-			order.save()
+		#update quatation status
+		evaluation.quatation_status = 'APPROVED'
+		order.order_status          = 'APPROVED_BY_CLIENT'
+		evaluation.save()
+		order.save()
+
+		#update customer booking completion
+		CustomerBooking.objects.filter(evaluation=evaluation).update(is_bookingcompleted=True)
+		
 
 		response_dict['secret_code']        = str(evaluation.evaluation_id[3:14])+str(evaluation.customer.username)
 		response_dict['order_no']           = evaluation.evaluation_id
