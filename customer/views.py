@@ -4558,7 +4558,7 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 		
 		response_dict['evaluation_details'] = EvaluationDetailsSerializer(instance=evaluation_details,many=True).data
 		response_dict['order_details']      = OrderSerializer(instance=order_details).data
-		response_dict['evaluation_details'] = EvaluationSerializer(instance=order_details.evaluation).data
+		response_dict['discount_details']   = EvaluationSerializer(instance=order_details.evaluation).data
 		
 		response_dict['booking_status']     = customer_booking.is_bookingcompleted
 		response_dict['evaluation_id']      = evaluation_details.first().evaluation.id
