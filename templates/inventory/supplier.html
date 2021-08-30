@@ -320,11 +320,19 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Status</div>
 
-                    <select id="status_supplier" class="minimal" name="status">
+                    <!-- <select id="status_supplier" class="minimal" name="status">
                         <option value="True" selected>Active</option>
                         <option value="False">Inactive</option>
 
-                    </select>
+                    </select> -->
+                    <input  type="text" id="status_supplier" name="status" value="True">
+                    <div class="wrap-drop" id="noble-gases"  >
+                        <span id="id_selectText">Active</span>
+                        <ul class="drop">
+                            <li onclick="changeSelect('True')"><a>Active</a></li>
+                            <li onclick="changeSelect('False')"><a>Inactive</a></li> 
+                        </ul>
+                    </div>
                 </div>
 
             </div>
@@ -467,9 +475,58 @@
 {% endblock %}
 
 {% block javascript %}
+
+<script>
+    function DropDown(el) {
+    this.dd = el;
+    this.placeholder = this.dd.children('span');
+    this.opts = this.dd.find('ul.drop li');
+    this.val = '';
+    this.index = -1;
+    this.initEvents();
+}
+
+DropDown.prototype = {
+    initEvents: function () {
+        var obj = this;
+        obj.dd.on('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $(this).toggleClass('active');
+        });
+        obj.opts.on('click', function () {
+            var opt = $(this);
+            obj.val = opt.text();
+            obj.index = opt.index();
+            obj.placeholder.text(obj.val);
+            opt.siblings().removeClass('selected');
+            opt.filter(':contains("' + obj.val + '")').addClass('selected');
+        }).change();
+    },
+    getValue: function () {
+        return this.val;
+    },
+    getIndex: function () {
+        return this.index;
+    }
+};
+
+$(function () {
+    // create new variable for each menu
+    var dd1 = new DropDown($('#noble-gases'));
+    // var dd2 = new DropDown($('#other-gases'));
+    $(document).click(function () {
+        // close menu on document click
+        $('.wrap-drop').removeClass('active');
+    });
+});
+</script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
 <script>
-
+ function changeSelect(va){
+        $('#status_supplier').val(va)
+    }
 $(document).ready(function() {
     {% for supplier in suppliers %}
         {% if forloop.first %}
@@ -487,6 +544,8 @@ function openNavAddBundle(d) {
             $("#supHead").text("Add Supplier");
             $('.supplier-form-btn').text('Add');
             $('#supplier_action').val('add_supplier');
+            $('#id_selectText').text('Active');
+            $('#status_supplier').val('True');
         }
         if(d == 'edit'){
             $("#supHead").text("Edit Supplier");
@@ -597,7 +656,13 @@ function openNavAddBundle(d) {
         $('#address_supplier').val($(this).data('supplieraddress'));
         $('#terms_supplier').val($(this).data('supplierterms'));
         document.getElementById("status_supplier").value = $(this).data('supplierstatus');
+        if($('#status_supplier').val() == 'True'){
+            console.log("true")
+            $('#id_selectText').text('Active');
+        }else{
+            $('#id_selectText').text('Inactive');
 
+        }
 
     })
 

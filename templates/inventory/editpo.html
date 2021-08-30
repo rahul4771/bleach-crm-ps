@@ -42,39 +42,40 @@
                     </div>
                 </div> {% endcomment %}
                 
-                <div class="row">
+                <div class="row mt-20">
                     <div class="col-md-3">
                         <div class="inv-po-cu">
                 {% if purchase_order.supplier != None %}
                 <div class="row mt-20">
-                    <div class="col-md-12 inv-text-normal">
+                    <div class="col-md-12 inv-text-normal2" style="font-weight: 700;">
+                        Supplier : {{purchase_order.supplier.supplier_name}}
+                    </div>
+                </div>
+                <div class="row mt-20">
+                    <div class="col-md-12 inv-text-normal2">
                         Initiated Date : {{purchase_order.created|date:'d-m-Y'}}
                     </div>
                 </div>
 
                 <div class="row mt-20">
-                    <div class="col-md-12 inv-text-normal">
+                    <div class="col-md-12 inv-text-normal2">
                         Initiated By : {{purchase_order.initiated_by.name}}
                     </div>
                 </div>
+                
                 <div class="row mt-20">
-                    <div class="col-md-12 inv-text-normal">
-                        Supplier : {{purchase_order.supplier.supplier_name}}
-                    </div>
-                </div>
-                <div class="row mt-20">
-                    <div class="col-md-12 inv-text-normal">
+                    <div class="col-md-12 inv-text-normal2">
                         Supplier Address : {{purchase_order.supplier.address}}
                     </div>
                 </div>
-                <div class="row mt-10">
-                    <div class="col-md-12 inv-text-normal">
+                <div class="row mt-20">
+                    <div class="col-md-12 inv-text-normal2">
                         Supplier Contact : {{purchase_order.supplier.contact}}
                     </div>
                 </div>
             </div>
                 <div class="row mt-20">
-                    <div class="col-md-12 inv-text-normal">
+                    <div class="col-md-12 inv-text-normal2">
                         Supplier Terms : {{purchase_order.supplier.terms}}
                     </div>
                 </div>
