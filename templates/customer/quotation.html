@@ -201,8 +201,7 @@
           <div class="container">
           <div class="row ">
 
-          {% for orderschedule in order.orderschedules %}
-          {% if forloop.first %}
+
             <div class="col-md-5 col-print-5 inv-customer-details order-2 order-md-1 mt-4 mt-md-0">
               <div class="">
           
@@ -214,7 +213,7 @@
                    <b>Customer</b> 
                   </div>
                   <div class="w-70 inv-text-right">
-                    <b>{{orderschedule.customer_address.customer.name}}</b>
+                    <b>{{order_details.evaluation.customer.name}}</b>
                   </div>
                 </div>
               
@@ -223,7 +222,11 @@
                  Address
                 </div>
                 <div class="w-70 inv-text-right">
-                  {{orderschedule.customer_address.apartment}}, {% if orderschedule.customer_address.floor %}{{orderschedule.customer_address.floor}} {% else %}{% endif %} {{orderschedule.customer_address.building}},{{orderschedule.customer_address.block}}, {{orderschedule.customer_address.street}},{% if orderschedule.customer_address.avenue %}{{orderschedule.customer_address.avenue}} {% else %}{% endif %}<br>{{orderschedule.customer_address.area.name}}, {{orderschedule.customer_address.governorate.name}}
+                  {% for evaluation_detail in order_details.evaluation.evaluationdetails %}
+                  {% if forloop.first %}
+                  {{evaluation_detail.address.apartment}}, {% if evaluation_detail.address.floor %}{{evaluation_detail.address.floor}} {% else %}{% endif %} {{evaluation_detail.address.building}},{{evaluation_detail.address.block}}, {{evaluation_detail.address.street}},{% if evaluation_detail.address.avenue %}{{evaluation_detail.address.avenue}} {% else %}{% endif %}<br>{{evaluation_detail.address.area.name}}, {{evaluation_detail.address.governorate.name}}
+                  {% endif %}
+                  {% endfor %}
                 </div>
               </div>
            
@@ -232,7 +235,7 @@
                 Contact No
                 </div>
                 <div class="w-70 inv-text-right">
-                  {{orderschedule.customer_address.customer.mobile_number}}
+                  {{order_details.evaluation.customer.mobile_number}}
                 </div>
               </div>
               <div class="d-flex pt-1 inv-invoice-details pb-4">
@@ -240,13 +243,11 @@
                 Email
                 </div>
                 <div class="w-70 inv-text-right">
-                  {{orderschedule.customer_address.customer.email}}
+                  {{order_details.evaluation.customer.email}}
                 </div>
               </div>
                 </div>
               </div>
-              {% endif %}
-              {% endfor %}
 
             
             <div class="col-md-5 col-print-5 offset-md-2 order-md-2 order-1 inv-invoice-card" >
