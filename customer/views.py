@@ -299,7 +299,7 @@ class SubscriptionQuatation(View):
 		user_name     =  evaluation_id_encrypted[14:]
 
 
-		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate'),to_attr='orderschedules')).get(is_active=True,order_no=evaluation_id,evaluation__customer__username=user_name)
+		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(is_active=True,order_no=evaluation_id,evaluation__customer__username=user_name)
 
 		nonduplicate_schedules = []
 		#Remove duplicates for subscription
@@ -876,7 +876,6 @@ def quatation_html_to_pdf_view(request,evaluation_id):
 
 
 def purchaseorder_html_to_pdf_view(request,purchase_order_id):
-	print(purchase_order_id,"poid")
 
 	purchase_order = PurchaseOrder.objects.prefetch_related(Prefetch('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.all(),to_attr='purchase_order_items')).get(id=int(purchase_order_id))
 	
@@ -885,7 +884,7 @@ def purchaseorder_html_to_pdf_view(request,purchase_order_id):
 	html     = HTML(string=html_string,base_url=request.build_absolute_uri())
 	main_doc = html.render()
 
-	main_doc.write_pdf(target='/home/pdf/tmp/purchaseorder/purchaseorder.pdf');
+	main_doc.write_pdf(target='/home/pdf/tmp/quatation/quatation.pdf');
 
 	fs = FileSystemStorage('/home/pdf/tmp/purchaseorder/')
 	with fs.open('purchaseorder.pdf') as pdf:
