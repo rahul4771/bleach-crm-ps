@@ -190,7 +190,7 @@
                                             </th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody id="id_tablebody">
                                         
                                     </tbody>
                                     
@@ -337,8 +337,8 @@
                     <input hidden  type="text" id="id_bundle_status" name="bundle_status" value="True">
                     <div class="wrap-drop" id="noble-gases"  >
                         <span id="id_selectText">Active</span>
-                        <ul class="drop">
-                            <li onclick="changeSelect('True')"><a>Active</a></li>
+                        <ul class="drop" >
+                            <li  onclick="changeSelect('True')"><a>Active</a></li>
                             <li onclick="changeSelect('False')"><a>Inactive</a></li> 
                         </ul>
                     </div>
@@ -469,9 +469,9 @@
                     <input hidden  type="text" name="item" id="id_item" required>
                     <div class="wrap-drop" id="noble-gases2"  >
                         <span id="id_selectText2">--Select Item--</span>
-                        <ul class="drop">
+                        <ul class="drop" id="id_selectitems">
                             {% for item in items %}
-                            <li onclick="changeSelect2('{{item.id}}')"><a>{{item.name}}</a></li>
+                            <li  data-id="{{item.id}}" id="item{{item.id}}" onclick="changeSelect2('{{item.id}}')"><a>{{item.name}}</a></li>
                             
                             {% endfor %}
                         </ul>
@@ -634,6 +634,30 @@ function openNavAddBundle(d) {
 
         $('#id_selectText2').text('--Select Item--')
             $("#itemHead").text("Add Item");
+            console.log('item list')
+            console.log($('#item_bundle_id').val())
+
+            var tempItem = [];
+            var itemIn = []
+            $('#id_selectitems li').each(function(i) {
+                tempItem.push($(this).data("id"))
+                //console.log($(this).data("id"));
+            })
+          
+            $('#id_tablebody tr').each(function() {
+                itemIn.push($(this).data("itemid"))
+                //console.log('table',$(this).data("itemid"));
+            })
+            for(var i =0;i<tempItem.length;i++){
+                document.getElementById("item"+tempItem[i]).style.display ="block";
+                for(var j = 0;j<itemIn.length;j++){
+                    if(tempItem[i] == itemIn[j]){
+                        console.log('to be hide',tempItem[i]);
+                        document.getElementById("item"+tempItem[i]).style.display ="none";
+                    }
+                }
+            }
+            console.log(tempItem,itemIn)
         }
         if(d == 'edit'){
             $("#itemHead").text("Edit Item");
@@ -720,7 +744,7 @@ function openNavAddBundle(d) {
                 
                 $.each(result.data.inventory_item,function(key,value){
                     console.log(value.bundle_item,value.id,"eyed")
-                        $('#table2').append('<tr><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td>'+value.item_price+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavEditValue(this)" data-unitid='+value.unit_id+' data-itemid='+value.item_id+' data-itemcount='+value.item_count+' data-itemname='+value.item_name+' > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn value_delete" onclick="deleteItem('+value.unit_id+')" data-valueid='+value.unit_id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
+                        $('#table2').append('<tr data-itemid='+value.item_id+'><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td>'+value.item_price+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavEditValue(this)" data-unitid='+value.unit_id+' data-itemid='+value.item_id+' data-itemcount='+value.item_count+' data-itemname='+value.item_name+' > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn value_delete" onclick="deleteItem('+value.unit_id+')" data-valueid='+value.unit_id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
                 })
             }else{
                 $("#table2 tr:not(:first)").remove(); 
