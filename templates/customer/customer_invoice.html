@@ -234,7 +234,7 @@
             </div>
             <div class="col-md-12">
               <div class="row">
-                {% for orderschedule in order.orderschedules %}
+                {% for orderschedule in nonduplicate_schedules %}
                 <!--Visit begins-->
               <div class="col-md-6 col-lg-4 mt-2">
                 <div class="keynote-chip">
@@ -301,11 +301,7 @@
                   <div class="inv-price p-1 ">
                  
                     <span class="inv-text-bold">
-                    {% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}
-                    {{section.section_cost|floatformat:'3'}}
-                    {% else %}
-                    {{section.section_cost|mul:section.section_cleanings|floatformat:'3'}}
-                    {% endif %}
+                    {{section.section_net_cost|floatformat:'3'}}
                     </span> KD
                  
                   </div>
@@ -435,7 +431,7 @@
                             {% if section.material %}
                             <div class="col-md-4 mb-2 mt-2 col-6">
                               <div class="qt-details-title">
-                                Materials
+                                Material
                               </div>
                               <div class="qt-details-value">
                                 {{section.material}}
@@ -458,7 +454,7 @@
                             {% if section.cause_of_stain %}
                             <div class="col-md-4 mb-2 mt-2 col-6">
                               <div class="qt-details-title">
-                                Colour
+                                Cause of Stain
                               </div>
                               <div class="qt-details-value">
                                 {{section.cause_of_stain}}
@@ -469,7 +465,7 @@
                             {% if section.age_of_stain %}
                             <div class="col-md-4 mb-2 mt-2 col-6">
                               <div class="qt-details-title">
-                                Colour
+                                Age of Stain
                               </div>
                               <div class="qt-details-value">
                                 {{section.age_of_stain}}
