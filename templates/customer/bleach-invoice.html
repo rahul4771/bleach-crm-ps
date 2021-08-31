@@ -272,7 +272,7 @@
                       Size : <span class="inv-text-bold">{{book_section.size}} {{book_section.unit|default_if_none:''}}</span>
                     </div>
                     <div class="p-2">
-                      Quantity : <span class="inv-text-bold">{% if evaluation_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{book_section.section_cleanings|floatformat:"-1"}}{% endif %}</span>
+                      Quantity : <span class="inv-text-bold">1</span>
                     </div>
                     <div class="p-2">
                       Unit Price : <span class="inv-text-bold">{{book_section.section_cost|floatformat:'3'}}</span>
@@ -286,7 +286,7 @@
                   <div class="inv-price p-1 ">
                  
                     <span class="inv-text-bold">
-                    {{book_section.section_cost|floatformat:'3'}}
+                    {{book_section.section_net_cost|floatformat:'3'}}
                     </span> KD
                  
                   </div>
@@ -417,7 +417,7 @@
                             {% if book_section.material %}
                             <div class="col-md-4 mb-2 mt-2 col-6">
                               <div class="qt-details-title">
-                                Materials
+                                Material
                               </div>
                               <div class="qt-details-value">
                                 {{book_section.material}}
@@ -440,7 +440,7 @@
                             {% if book_section.cause_of_stain %}
                             <div class="col-md-4 mb-2 mt-2 col-6">
                               <div class="qt-details-title">
-                                Colour
+                                Cause of Stain
                               </div>
                               <div class="qt-details-value">
                                 {{book_section.cause_of_stain}}
@@ -451,7 +451,7 @@
                             {% if book_section.age_of_stain %}
                             <div class="col-md-4 mb-2 mt-2 col-6">
                               <div class="qt-details-title">
-                                Colour
+                                Age of Stain
                               </div>
                               <div class="qt-details-value">
                                 {{book_section.age_of_stain}}

@@ -360,6 +360,82 @@ class InventoryBundle(IsInventoryAdmin,View):
             
             messages.success(request,"Item Added successfully !")
 
+        
+        if action == 'edit_item':
+            bundle_id = request.POST.get('item_bundle_id')
+            bundle_item_id = request.POST.get('edit_item_id')
+            item = request.POST.get('item')
+            item_count = request.POST.get('item_count')
+
+            bundle = Bundle.objects.get(id=int(bundle_id))
+            inventory_item = InventoryItem.objects.get(id=int(item))
+
+            inventory_item_unit_count = ItemUnit.objects.filter(item=inventory_item).count()
+
+            total_item_price = 0
+
+            used_units = []
+
+            if int(inventory_item_unit_count) >= int(item_count) :
+                selected_units = ItemUnit.objects.filter(item=inventory_item,status='active')[:int(item_count)]
+
+                for unit in selected_units:
+                    total_item_price += float(unit.unit_price)
+                    unit.status = 'out_of_order'
+                    unit.save()
+                    used_units.append(unit)
+
+                item_count = item_count
+
+            else:
+                selected_units = ItemUnit.objects.filter(item=inventory_item,status='active')[:int(inventory_item_unit_count)]
+
+                for unit in selected_units:
+                    total_item_price += float(unit.unit_price)
+                    unit.status = 'out_of_order'
+                    unit.save()
+                    used_units.append(unit)
+
+                item_count = inventory_item_unit_count
+
+            bundleitem = BundleItems.objects.get(id=int(bundle_item_id))
+
+            #clearing old units
+            old_bundleitemunits = BundleItemUnits.objects.filter(bundle_item=bundleitem)
+            for unit in old_bundleitemunits:
+                item_unit = ItemUnit.objects.get(id=int(unit.item_unit.id))
+                item_unit.status = 'active'
+                item_unit.save()
+
+                bundle.bundle_items_count = int(bundleitem.bundle.bundle_items_count) - 1
+                bundle.bundle_price = float(bundleitem.bundle.bundle_price) - float(unit.unit_price)
+                bundle.save()
+            
+            BundleItemUnits.objects.filter(bundle_item=bundleitem).delete()
+            
+            #removing item price from bundle
+            # bundle.bundle_price = float(bundle.bundle_price) - float(bundleitem.item_price)
+            # bundle.save()
+
+            #saving new bundle item
+            bundleitem.item = inventory_item
+            bundleitem.item_price = total_item_price
+            bundleitem.item_count = item_count
+            bundleitem.save()
+
+            #creating new units
+            for unit in used_units:
+                BundleItemUnits.objects.create(bundle_item=bundleitem,item_unit=unit,unit_price=unit.unit_price)
+            
+            #updating bundle
+            bundle.bundle_items_count += int(item_count)
+            bundle_price = bundle.bundle_price
+            bundle.bundle_price = float(bundle_price)+float(total_item_price)
+            bundle.save()
+            
+            messages.success(request,"Item Updated successfully !")
+        
+        
         if action == 'delete_item':
             item_id = request.POST.get('bundle_delete_id')
             bundleitem = BundleItems.objects.prefetch_related(Prefetch('bundle_unit_bundle_item',queryset=BundleItemUnits.objects.all(),to_attr='bundle_units')).get(id=int(item_id))
@@ -871,6 +947,8 @@ class InventoryCreatePurchaseOrder(View):
             purchase_order_latest = PurchaseOrder.objects.all().last()
             if purchase_order_latest:
                 code_number  =  int(re.findall(r'(\d+)', purchase_order_latest.purchase_order_id)[0]) + 1
+                code_number = str(code_number)
+                code_number = code_number.substring(code_number.length-4, code_number.length);
                 new_item_code = 'BLPO'+str(todate.year)+''+str(todate.month)+''+str(code_number)
             else:
                 new_item_code = 'BLPO'+str(todate.year)+''+str(todate.month)+'1001'
