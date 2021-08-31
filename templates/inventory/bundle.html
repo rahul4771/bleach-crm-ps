@@ -442,9 +442,9 @@
             <hr>
 
             <form method="POST" action="" >{% csrf_token %}
-            <input type="hidden" name="action" id="value_action" value="add_item" />
+            <input type="text" name="action" id="item_action" value="add_item" />
             <input type="text" name="item_bundle_id" id="item_bundle_id" />
-            <input type="hidden" name="edit_item_id" id="id_edit_item" />
+            <input type="text" name="edit_item_id" id="id_edit_item" />
             {% comment %} <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Item Name</div>
@@ -507,7 +507,7 @@
              
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button submitbtn" >Submit</button>
+            <button class="sent-button submitbtn" type="submit" >Submit</button>
             </form>
                         <button data-dismiss="modal" onclick="closeNavAddItem()" class="view-button">Cancel</button>
         </div>
@@ -631,29 +631,32 @@ function openNavAddBundle(d) {
     }
     
     function openNavEditValue(d) {
-        $("#valueHead").text("Edit Value");
-        $(".value-form-btn").text("Update");
+        $("#itemHead").text("Edit Item");
+        $(".submitbtn").text("Update");
 
-        $('#value_action').val('edit_value');
-        $('#id_edit_value').val($(d).data('valueid'));
-        $('#value_name_id').val($(d).data('valuename'));
+        $('#item_action').val('edit_item');
+        $('#id_edit_item').val($(d).data('valueid'));
+        $('#id_unit_count').val($(d).data('unitcount'));
+        document.getElementById("id_item").value = $(this).data('item');
 
-        if ($(d).data('valuestatus') == true){
-            document.getElementById("value_status_id").value = 'True';
-        }
-        else{
-            document.getElementById("value_status_id").value = 'False';
+        document.getElementById("id_item").value = $(this).data('bundlestatus');
+        if($('#id_bundle_status').val() == 'True'){
+            
+            $('#id_selectText').text('Active');
+        }else{
+            $('#id_selectText').text('Inactive');
+
         }
       
 
         console.log(d)
         if(screen.width<= 600){
-            document.getElementById("addValue").style.width = "100%";
+            document.getElementById("addItem").style.width = "100%";
         }else if(screen.width<= 720){
-            document.getElementById("addValue").style.width = "50%";
+            document.getElementById("addItem").style.width = "50%";
         }
         else{
-            document.getElementById("addValue").style.width = "30%";
+            document.getElementById("addItem").style.width = "30%";
         }  
     }
     
@@ -706,7 +709,7 @@ function openNavAddBundle(d) {
                 
                 $.each(result.data.inventory_item,function(key,value){
                     console.log(value.bundle_item,value.id,"eyed")
-                        $('#table2').append('<tr><td>'+value.item+'</td><td>'+value.item_count+'</td><td>'+value.item_price+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavEditValue(this)" data-valueid='+value.id+' data-valuename='+value.name+' data-valuestatus='+value.status+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn value_delete" onclick="deleteItem('+value.id+')" data-valueid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
+                        $('#table2').append('<tr><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td>'+value.item_price+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavEditValue(this)" data-valueid='+value.unit_id+' data-item='+value.item_id+' data-unitcount='+value.item_count+' data-valuename='+value.item_name+' > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn value_delete" onclick="deleteItem('+value.item_id+')" data-valueid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
                 })
             }else{
                 $("#table2 tr:not(:first)").remove(); 

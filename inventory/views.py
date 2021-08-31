@@ -873,7 +873,7 @@ class InventoryCreatePurchaseOrder(View):
                 code_number  =  int(re.findall(r'(\d+)', purchase_order_latest.purchase_order_id)[0]) + 1
                 new_item_code = 'BLPO'+str(todate.year)+''+str(todate.month)+''+str(code_number)
             else:
-                new_item_code = 'BLPO'+str(todate.year())+''+str(todate.month())+'1001'
+                new_item_code = 'BLPO'+str(todate.year)+''+str(todate.month)+'1001'
             
             print(new_item_code,"ic")
             purchase_order = PurchaseOrder.objects.create(purchase_order_id=new_item_code,initiated_by=request.user)
@@ -931,7 +931,7 @@ class InventoryCreatePurchaseOrder(View):
             purchase_order.is_order_completed = True
             purchase_order.save()
             messages.success(request,"Order Completed successfully!")
-            return redirect('inventory:inventorydash-board')
+            return redirect('inventory:inventory-purchaseorderpage',purchase_order.id)
 
         if action == 'edit_item':
             purchase_order_item_id = request.POST.get('item_edit_id')
