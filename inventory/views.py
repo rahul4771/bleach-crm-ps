@@ -309,7 +309,16 @@ class InventoryBundle(IsInventoryAdmin,View):
         if action == 'delete_bundle':
             bundle_id = request.POST.get('bundle_delete_id')
 
-            bundle = Bundle.objects.get(id=int(bundle_id)).delete()
+            bundle = Bundle.objects.prefetch_related(Prefetch('item_bundle',queryset=BundleItems.objects.all().prefetch_related(Prefetch('bundle_unit_bundle_item',queryset=BundleItemUnits.objects.all(),to_attr='bundle_item_units')),to_attr='bundle_items')).get(id=int(bundle_id))
+            
+            for item in bundle.bundle_items:
+                for unit in item.bundle_item_units:
+                    item_unit = ItemUnit.objects.get(id=int(unit.item_unit.id))
+                    item_unit.status = 'active'
+                    item_unit.save()
+
+            bundle.delete()
+            
             messages.success(request,"Bundle deleted Successfully !")
 
         if action == 'add_item':
@@ -407,9 +416,9 @@ class InventoryBundle(IsInventoryAdmin,View):
                 item_unit.status = 'active'
                 item_unit.save()
 
-                bundle.bundle_items_count = int(bundleitem.bundle.bundle_items_count) - 1
-                bundle.bundle_price = float(bundleitem.bundle.bundle_price) - float(unit.unit_price)
-                bundle.save()
+            # bundle.bundle_items_count = int(bundleitem.bundle.bundle_items_count) - 1
+            bundle.bundle_price = float(bundleitem.bundle.bundle_price) - float(bundleitem.item_price)
+            bundle.save()
             
             BundleItemUnits.objects.filter(bundle_item=bundleitem).delete()
             
@@ -449,9 +458,9 @@ class InventoryBundle(IsInventoryAdmin,View):
                 # bundleitem.item_price = float(bundleitem.item_price) - float(unit.unit_price)
                 # bundleitem.item_count = int(bundleitem.item_count) - 1
 
-                bundle.bundle_items_count = int(bundleitem.bundle.bundle_items_count) - 1
-                bundle.bundle_price = float(bundleitem.bundle.bundle_price) - float(unit.unit_price)
-                bundle.save()
+            bundle.bundle_items_count = int(bundleitem.bundle.bundle_items_count) - int(bundleitem.item_count)
+            bundle.bundle_price = float(bundleitem.bundle.bundle_price) - float(bundleitem.item_price)
+            bundle.save()
 
             bundleitem.delete()
             messages.success(request,"Item Deleted successfully !")
@@ -946,10 +955,10 @@ class InventoryCreatePurchaseOrder(View):
 
             purchase_order_latest = PurchaseOrder.objects.all().last()
             if purchase_order_latest:
-                code_number  =  int(re.findall(r'(\d+)', purchase_order_latest.purchase_order_id)[0]) + 1
-                code_number = str(code_number)
-                code_number = code_number.substring(code_number.length-4, code_number.length);
-                new_item_code = 'BLPO'+str(todate.year)+''+str(todate.month)+''+str(code_number)
+                code_number =  re.findall(r'(\d+)', purchase_order_latest.purchase_order_id)[0]
+                code_number = int(code_number[-4:])+1
+                print(code_number,"coda")
+                new_item_code = 'BLPO'+str(todate.year)+''+str(todate.month)+''+ str(code_number)
             else:
                 new_item_code = 'BLPO'+str(todate.year)+''+str(todate.month)+'1001'
             

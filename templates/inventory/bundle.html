@@ -87,7 +87,7 @@
                                 </thead>
                                 <tbody>
                                     {% for bundle in bundles %}
-                                    <tr onclick="getitems({{bundle.id}})" >
+                                    <tr class="bundle_row" onclick="getitems({{bundle.id}})" data-name="{{bundle.name}}">
                                         <td class="r">
                                     
                                            {{bundle.name}}
@@ -171,6 +171,7 @@
 
                     </div>   
                     <div class="col-md-5 mt-10">
+                    <h3>Items under <span id="bundle_name"></span> </h3>
                         <div class="attribute-table-2">
                             <div class="attribute-table-div2">
                                 <table class="inv-table footable" id="table2"> 
@@ -579,6 +580,29 @@ $(function () {
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
 <script>
+
+    $(document).ready(function() {
+    {% for bundle in bundles %}
+        {% if forloop.first %}
+        getitems({{bundle.id}});
+        $('.bundle_row:first').addClass('inv-selected-row');
+        $('#bundle_name').text("{{bundle.name}}");
+        {% endif %}
+    {% endfor %}
+
+    });
+
+    //highlighting row and adding selected item name to table top
+    $('.bundle_row').click(function(){
+        console.log($(this).data('name'),"nm")
+        $('.bundle_row').each(function(i, obj) {
+            $(obj).removeClass('inv-selected-row');
+        });
+
+        $(this).addClass('inv-selected-row');
+        $('#bundle_name').text($(this).data('name'));
+    })
+
      function changeSelect(va){
         $('#id_bundle_status').val(va)
     }
@@ -591,13 +615,7 @@ $(function () {
           includeSelectAllOption: true,
         });
     });
-$(document).ready(function(){
-        {% for bundle in bundles %}
-        {% if forloop.first %}
-        getitems({{bundle.id}});
-        {% endif %}
-        {% endfor %}
-    })
+
 
 function openNavAddBundle(d) {
     if(d == 'add'){
@@ -627,11 +645,7 @@ function openNavAddBundle(d) {
     }
 
 
-
-    function openNavAddItem(d) {
-    if(d == 'add'){
-        $('#id_item').val('');
-
+    function hideselectedoptions(){
         $('#id_selectText2').text('--Select Item--')
             $("#itemHead").text("Add Item");
             console.log('item list')
@@ -658,6 +672,14 @@ function openNavAddBundle(d) {
                 }
             }
             console.log(tempItem,itemIn)
+    }
+
+
+    function openNavAddItem(d) {
+    if(d == 'add'){
+        $('#id_item').val('');
+        hideselectedoptions();
+        
         }
         if(d == 'edit'){
             $("#itemHead").text("Edit Item");
@@ -684,6 +706,8 @@ function openNavAddBundle(d) {
         document.getElementById("id_item").value = $(d).data('itemid');
         $('#id_selectText2').text($(d).data('itemname'));
         
+        hideselectedoptions();
+
         console.log(d)
         if(screen.width<= 600){
             document.getElementById("addItem").style.width = "100%";
