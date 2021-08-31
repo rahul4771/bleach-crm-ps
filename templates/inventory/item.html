@@ -317,10 +317,10 @@
                                     <td style="float: right;">
                                       
     
-                                        <button onclick="openNavAddBundle('edit')" class="inv-plan-img-btn"> <img
+                                        <button onclick="openNavAddBundle('edit')" class="inv-plan-img-btn edit-unit-btn" data-unitid="{{unit.id}}" data-unitcode="{{unit.unit_code}}" data-purchasedate="{{unit.purchase_date|date:'d-m-Y'}}" data-expirydate="{{unit.expiry_date|date:'d-m-Y'}}" data-unitprice="{{unit.unit_price|floatformat:3}}" data-status="{{unit.status}}"> <img
                                                 src="{% static 'files/inventory/icons/edit.png' %}" alt="">
                                         </button>
-                                        <button class="inv-plan-img-btn"> <img
+                                        <button class="inv-plan-img-btn delete-unit-btn" data-unitid="{{unit.id}}" data-toggle="modal" data-target="#deleteModel"> <img
                                                 src="{% static 'files/inventory/icons/delete.png' %}" alt="">
                                         </button>
     
@@ -360,6 +360,7 @@
             <form method="POST" action="" >{% csrf_token %}
             <input type="hidden" name="item_id" value="{{inventory_item.id}}">
             <input type="hidden" name="action" value="add_unit" id="unit_action" >
+            <input type="hidden" name="edit_unit_id" id="id_unit_edit" >
             <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Purchase Date</div>
@@ -651,6 +652,41 @@
     </div>
 </div>
 
+<div class="modal fade" id="deleteModel" role="dialog">
+        <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12 mt-20">
+
+                        
+                        <div class="d-flex ">
+                            <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to delete Unit</p></div>
+                            <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                                <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                            </button>
+    
+                        </div>
+                    </div>
+                </div>
+               
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                    <form method="POST" action="" >{% csrf_token %}
+                    <input type="hidden" name="action" value="delete_unit" id="delete_action_id" />
+                    <input type="hidden" name="unit_id_delete" id="id_unit_delete" />
+                        <div class="cancel-model-content">
+                            <button class="sent-button" >Delete</button>
+                            <button data-dismiss="modal" class="view-button">Cancel</button>
+                          
+                        </div>
+                    </form>
+                    </div>
+    
+                </div>
+            </div>
+        </div>
+      </div>
 
 {% endblock %}
 
@@ -841,9 +877,11 @@ function editItemDetials() {
 function openNavAddBundle(d) {
     if(d == 'add'){
             $("#supHead").text("Add Unit");
+            $("#unit_action").val("add_unit");
         }
         if(d == 'edit'){
             $("#supHead").text("Edit Unit");
+            $("#unit_action").val("edit_unit");
         }
         if(screen.width<= 600){
             document.getElementById("addBundle").style.width = "100%";
@@ -858,7 +896,18 @@ function openNavAddBundle(d) {
         document.getElementById("addBundle").style.width = "0";
     }
 
+    $('.delete-unit-btn').click(function(){
+        $('#id_unit_delete').val($(this).data('unitid'));
+    })
 
+    $('.edit-unit-btn').click(function(){
+        $('#id_unit_edit').val($(this).data('unitid'));
+        $('#id_unit_code').val($(this).data('unitcode'));
+        $('#id_purchase_date').val($(this).data('purchasedate'));
+        $('#id_expiry_date').val($(this).data('expirydate'));
+        $('#id_unit_price').val($(this).data('unitprice'));
+        document.getElementById("id_unit_status").value = $(this).data('status');
+    })
 
    
 </script>

@@ -463,6 +463,30 @@ class InventoryItems(IsInventoryAdmin,View):
             )
             messages.success(request,"Unit Added Successfully !")
 
+        if action == "edit_unit":
+            unit_id = request.POST.get('edit_unit_id')
+            purchase_date = request.POST.get('purchase_date')
+            expiry_date = request.POST.get('expiry_date')
+            unit_price = request.POST.get('unit_price')
+            status = request.POST.get('unit_status')
+
+            item = InventoryItem.objects.get(id=item_id)
+
+            unit = ItemUnit.objects.get(id=int(unit_id))
+            
+            unit.purchase_date = purchase_date
+            unit.expiry_date = expiry_date
+            unit.unit_price = unit_price
+            unit.status = status
+            unit.save()
+
+            messages.success(request,"Unit Updated Successfully !")
+
+        if action == 'delete_unit':
+            unit_id = request.POST.get('unit_id_delete')
+            unit = ItemUnit.objects.get(id=int(unit_id)).delete()
+            messages.success(request,"Unit Deleted Successfully !")
+
         if action == 'add_image':
             image = request.FILES.get('item_image')
 
