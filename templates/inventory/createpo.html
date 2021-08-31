@@ -233,7 +233,7 @@
 
                 <div class="row mt-30">
                     <div class="col-md-12 ">
-                        <table class="inv-table footable" id="item_table" style="border-top: 1px solid #c4c4c4;">
+                        <table class="inv-table footable" style="border-top: 1px solid #c4c4c4;">
                             <thead>
                                 <tr>
                                     <th style="width: 15%;">
@@ -255,7 +255,7 @@
                                     <th data-hide="phone,tablet" style="text-align: center;">Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="item_table">
                                 {% for item in purchase_order_items %}
                                 <tr data-itemid="{{item.product.id}}">
                                     <td>{{item.product.supplier_item_id}}</td>
@@ -515,10 +515,19 @@
             console.log($('#item_bundle_id').val())
 
             var tempItem = [];
-            var itemIn = []
+            var itemIn = [];
+            var div = true;
+
             $('#id_search div').each(function(i) {
-                tempItem.push($(this).data("pro"))
-                //console.log($(this).data("id"));
+                if (div == true){
+                    console.log($(this),"pro")
+                    tempItem.push($(this).data("pro"))
+                    //console.log($(this).data("id"));
+                    div = false;
+                }else{
+                    div = true;
+                }
+                
             })
           
             $('#item_table tr').each(function() {
@@ -526,14 +535,16 @@
                 //console.log('table',$(this).data("itemid"));
             })
 
+            itemIn.pop();
+
             console.log(tempItem,itemIn,"lopp")
 
             for(var i =0;i<tempItem.length;i++){
-                document.getElementById("id_product"+tempItem[i]).style.display ="block";
+                //document.getElementById("id_product"+tempItem[i]).style.display ="block";
                 for(var j = 0;j<itemIn.length;j++){
                     if(tempItem[i] == itemIn[j]){
                         console.log('to be hide',tempItem[i]);
-                        document.getElementById("id_product"+tempItem[i]).style.display ="none";
+                        //document.getElementById("id_product"+tempItem[i]).style.display ="none";
                     }
                 }
             }
@@ -675,13 +686,13 @@ function showAdditem(){
             $('#id_item_count').val(1);
             $('.count').val(1);
             $('#id_total_price').val('');
-            //hideselectedoptions();
+            hideselectedoptions();
         }
         if(d == 'edit'){
             $('#itemHead').text('Edit Item');
             $('#purchase_order_action').val('edit_item');
             $('.purchaseorder-form-btn').text('Update');
-            //hideselectedoptions();
+            hideselectedoptions();
 
         }
         document.body.style.backgroundColor = "rgba(0,0,0,0.4) !important";
