@@ -101,9 +101,9 @@ border-radius: 2px;
         
       </div>
       <div class="row">
-          <div class="col-md-6">
+          <div class="col-md-12">
             <div id="soa-logo-div ">
-                <h1 id="soa_heading_2" class="text-left">Purchase Order : {{purchase_order.purchase_order_id}}</h1>
+                <h1 id="soa_heading_2" class="text-left av-font">PURCHASE ORDER : {{purchase_order.purchase_order_id}}</h1>
               
               </div>
           </div>
@@ -114,14 +114,14 @@ border-radius: 2px;
           <div id="">
 
               <div id="soa_detials" class="mt-3">
-                  <div id="soa_right">Order Date </div>
-                  <div>: {{purchase_order.created|date:'d-m-Y'}} </div>
+                  <div id="soa_right" class="av-font">Order Date </div>
+                  <div class="av-font">: {{purchase_order.created|date:'d-m-Y'}} </div>
                 </div>
-                <div id="soa_detials">
+                <div id="soa_detials" class="av-font">
                   <div id="soa_right">Requested by </div>
                   <div>: {{purchase_order.created|date:'d-m-Y'}}</div>
                 </div>
-                <div id="soa_detials">
+                <div id="soa_detials" class="av-font">
                   <div id="soa_right">Sale Person </div>
                   <div>: {{purchase_order.initiated_by.name}} </div>
                 </div>
@@ -137,7 +137,7 @@ border-radius: 2px;
         </div>
         <div class="col-md-8">
             <div class="" style="margin-top: 15px;">
-              <div id="soa_detials">
+              <div id="soa_detials" class="av-font">
                 <div id="soa_right">Terms </div>
                 <div>: {{purchase_order.supplier.terms}} </div>
               </div>
@@ -149,11 +149,11 @@ border-radius: 2px;
       <div id="soa-customer-detials" style="margin-bottom: 10px;">
           <div class="row">
              
-            <div class="col-md-6">
+            <div class="col-md-6 av-font">
                 To<br>
                 {{purchase_order.supplier.address}}<br> Tel:{{purchase_order.supplier.contact}}<br> Other Tel:{{purchase_order.supplier.other_contact}}
             </div>
-            <div class="col-md-6">
+            <div class="col-md-6 av-font">
                 From<br>
                 Bleach Cleaning Service Co Salhiya, Kuwait City, Qibla Building, Mohamed Bin Thinan Al Ghanim Street, Po.Box: 4489, Safat 13045<br> Tel:1882707<br> Fax:188270 <br>Email:ayman.othman@bleach-kw.com
             </div> 
@@ -173,17 +173,17 @@ border-radius: 2px;
             </div>
           </div>
     </div> -->
-      <table id="soa_table">
+      <table id="soa_table" class="av-font"> 
         <tr>
-          <th style="text-align: center; width: 5%;">No</th>
-          <th style="width: 17%; text-align: center;">Item</th>
+          <th style="text-align: center; width: 8%;" class="av-font">NO</th>
+          <th style="width: 45%; text-align: center;" class="av-font">ITEM</th>
           <!-- <th style="text-align: center;">Details</th> -->
-          {% comment %} <th style="text-align: center;">Description</th> {% endcomment %}
-          <th style="text-align: center;">Quantity</th>
-          <th style="text-align: center;">Unit Price (KWD)</th>
+          {% comment %} <th style="text-align: center;">Description </th> {% endcomment %}
+          <th style="text-align: center;" class="av-font">QUANITITY</th>
+          <th style="text-align: center;" class="av-font">UNIT PRICE (KD)</th>
           {% comment %} <th style="text-align: center;">Pack</th> {% endcomment %}
           {% comment %} <th style="text-align: center;">Price(KWD)</th> {% endcomment %}
-          <th style="text-align: center; width: auto;">Net Price (KWD)</th>
+          <th style="text-align: center; width: auto;" class="av-font">NET PRICE (KD)</th>
         </tr>
        
         {% for item in purchase_order.purchase_order_items %}
@@ -197,16 +197,16 @@ border-radius: 2px;
           <td style="text-align: right;" >{{item.unit_price|floatformat:3}}</td> 
           {% comment %} <td style="text-align: right;" >{{item.total_price|floatformat:3}}</td>
           <td style="text-align: right;" >100.000</td> {% endcomment %}
-          <td style="text-align: right;" class="item_total">{{item.total_price|floatformat:3}}</td>
+          <td style="text-align: right;" class="item_total"> {{item.total_price|floatformat:3}}</td>
         </tr>
         {% empty %}
         <td></td><td></td><td></td><td>No Data</td><td></td><td></td><td></td><td></td>
         {% endfor %}
-          <td colspan="4">
+          <td colspan="4" class="av-font">
             Sub Total
           </td>
           
-          <td style="text-align: right;" id="total_order_amount">000.000</td>
+          <td style="text-align: right;" id="total_order_amount"> 000.000</td>
         </tr>
       </table>
 
@@ -219,14 +219,14 @@ border-radius: 2px;
       </script>-->
 
 
-      <div class="soa_section3">
+      <div class="soa_section3 av-font">
         <div id="soa_amount_calculation">
-            <div class="d-flex">
+            <div class="d-flex av-font">
                 <div class="w-50 ">
-                    Discount %
+                    Discount
                 </div>:
                 <div class="w-50 text-right">
-                 0
+                 {{purchase_order.discount|floatformat:3|default_if_none:0.000}}
                 </div>
             </div>
             <div class="d-flex mt-2">
@@ -234,7 +234,7 @@ border-radius: 2px;
                    Tax
                 </div>:
                 <div class="w-50 text-right">
-                  0
+                  {{purchase_order.tax|floatformat:3|default_if_none:0.000}}
                 </div>
             </div>
             <div class="d-flex mt-2">
@@ -242,7 +242,7 @@ border-radius: 2px;
                     Shipping Charge
                 </div>:
                 <div class="w-50 text-right">
-                  0
+                  {{purchase_order.shipping_charge|floatformat:3|default_if_none:0.000}}
                 </div>
             </div>
             <div class="d-flex mt-2">
@@ -250,16 +250,16 @@ border-radius: 2px;
                   Other Charges
                 </div>:
                 <div class="w-50 text-right">
-                 0
+                 {{purchase_order.other_charge|floatformat:3|default_if_none:0.000}}
                 </div>
             </div>
             
           </div>
-        <div id="po_amount_section">
+        <div id="po_amount_section" class="av-font">
           <div id="soa_balance">
            Total
           </div>
-          <h1 id="totalamount">000.000</h1>
+          <h1 id="totalamount">KD 000.000</h1>
         </div>
       </div>
     </div>
@@ -305,7 +305,7 @@ border-radius: 2px;
      
       <br>
       <div style="text-align: center;">
-        <a href="/customer/purchaseorderpage/download/{{purchase_order.id}}"><button class="soa-button" > <i class="fa fa-download mr-5" aria-hidden="true"></i> Download</button></a>
+        <a href="/customer/purchaseorder/download/{{purchase_order.id}}"><button class="soa-button" > <i class="fa fa-download mr-5" aria-hidden="true"></i> Download</button></a>
         <button class="soa-button"  data-toggle="modal" data-target="#invoiceModalCenter"> <i class="fa fa-paper-plane mr-5" aria-hidden="true"></i>Send via Email</button>
       </div>
 
@@ -503,6 +503,11 @@ function printDiv() {
             
             var sum1 = 0;
 
+            var discount = "{{purchase_order.discount|floatformat:3}}";
+            var tax = "{{purchase_order.tax|floatformat:3}}";
+            var shipping_charge = "{{purchase_order.shipping_charge|floatformat:3}}";
+            var other_charge = "{{purchase_order.other_charge|floatformat:3}}";
+
             for(var i = 0; i < tds.length; i ++) {
               console.log(tds[i].className,"mok")
                 if(tds[i].className == 'item_total') {
@@ -512,7 +517,8 @@ function printDiv() {
             
             }
             
-            document.getElementById('totalamount').innerHTML =  parseFloat(sum1).toFixed(3) ;
+            var totalamount = parseFloat(sum1) + parseFloat(tax) + parseFloat(shipping_charge) + parseFloat(other_charge) - parseFloat(discount);
+            document.getElementById('totalamount').innerHTML =  parseFloat(totalamount).toFixed(3) + ' KD'; ;
             document.getElementById('total_order_amount').innerHTML =  parseFloat(sum1).toFixed(3) ;
             
           }

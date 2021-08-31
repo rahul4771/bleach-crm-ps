@@ -459,13 +459,23 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Item</div>
 
-                    <select class="minimal" name="item" id="id_item" onchange="getunits()" required>
+                    <!-- <select class="minimal" name="item" id="id_item" onchange="getunits()" required>
                         <option value="">--Select Item--</option>
                         {% for item in items %}
                         <option value="{{item.id}}">{{item.name}}</option>
                         {% endfor %}
 
-                    </select>
+                    </select> -->
+                    <input hidden type="text" name="item" id="id_item" required>
+                    <div class="wrap-drop" id="noble-gases2"  >
+                        <span id="id_selectText2">--Select Item--</span>
+                        <ul class="drop">
+                            {% for item in items %}
+                            <li onclick="changeSelect2('{{item.id}}')"><a>{{item.name}}</a></li>
+                            
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </div>
 
             </div>
@@ -557,6 +567,8 @@ DropDown.prototype = {
 $(function () {
     // create new variable for each menu
     var dd1 = new DropDown($('#noble-gases'));
+    var dd2 = new DropDown($('#noble-gases2'));
+
     // var dd2 = new DropDown($('#other-gases'));
     $(document).click(function () {
         // close menu on document click
@@ -569,6 +581,10 @@ $(function () {
 <script>
      function changeSelect(va){
         $('#id_bundle_status').val(va)
+    }
+    function changeSelect2(va){
+        $('#id_item').val(va);
+        getunits()
     }
    $(document).ready(function() {
         $('#multiple-checkboxes').multiselect({
@@ -614,6 +630,9 @@ function openNavAddBundle(d) {
 
     function openNavAddItem(d) {
     if(d == 'add'){
+        $('#id_item').val('');
+
+        $('#id_selectText2').text('--Select Item--')
             $("#itemHead").text("Add Item");
         }
         if(d == 'edit'){

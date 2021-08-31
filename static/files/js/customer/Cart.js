@@ -589,7 +589,10 @@ $(document).ready(function(){
 
 
         methods: {
-          
+          closePaymentDialog(){
+            this.payment_dialog=false
+            location.reload()
+          },
           checkSlotSelection(){
             for(var i in  this.one_time_slots){
               if(this.one_time_slots[i].slots.length>0){

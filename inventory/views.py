@@ -4,6 +4,7 @@ from bleach_crm_ps.permissions import IsInventoryAdmin,IsInventoryAdminUser
 from inventory.models import Category,Segment,Line,Attribute,AttributeValue,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems,ServiceRecipe,PurchaseOrder,PurchaseOrderItems
 from django.contrib import messages
 import re
+from datetime import date,datetime,timedelta
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,Max,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField,CharField,Prefetch
 # Create your views here.
@@ -157,12 +158,29 @@ class InventoryAttribute(IsInventoryAdmin,View):
             attribute_id = request.POST.get('attribute_edit_id')
             name     = request.POST.get('attribute')
             attribute_type     = request.POST.get('attribute_type')
+            attribute_category = request.POST.get('attribute_category')
+            attribute_segment  = request.POST.get('attribute_segment')
+            attribute_line     = request.POST.get('attribute_line')
             status     = request.POST.get('status')
+
             print(attribute_id,name,attribute_type,status,"lop")
+
             attribute = Attribute.objects.get(id=int(attribute_id))
+            category = Category.objects.get(id=int(attribute_category))
+            segment = Segment.objects.get(id=int(attribute_segment))
+            line = Line.objects.get(id=int(attribute_line))
+
             # attribute.category = category
             attribute.name     = name
             attribute.attribute_type = attribute_type
+
+            if category:
+                attribute.attribute_category = category
+            if segment:
+                attribute.attribute_segment = segment
+            if line:
+                attribute.attribute_line = line
+
             attribute.status   = status
             attribute.save()
             messages.success(request,"Attribute Updated Successfully !")
@@ -367,7 +385,7 @@ class InventoryBundle(IsInventoryAdmin,View):
 
 class InventoryItems(IsInventoryAdmin,View):
     def get(self,request,item_id):
-        inventory_item = InventoryItem.objects.prefetch_related(Prefetch('image_item',queryset=InventoryItemImages.objects.all(),to_attr='item_images')).annotate(unit_count=Sum(Case(When(unit_item__status='active',then=1),default=0,output_field=IntegerField())),total_unit_price=Sum(Case(When(unit_item__status='active',then='unit_item__unit_price'),default=0,output_field=FloatField()))).get(id=item_id)
+        inventory_item = InventoryItem.objects.prefetch_related(Prefetch('image_item',queryset=InventoryItemImages.objects.all(),to_attr='item_images'),Prefetch('item_category__attribute_category',queryset=Attribute.objects.all().prefetch_related(Prefetch('value_attribute',queryset=AttributeValue.objects.all(),to_attr='attribute_values')),to_attr='attributes')).annotate(unit_count=Sum(Case(When(unit_item__status='active',then=1),default=0,output_field=IntegerField())),total_unit_price=Sum(Case(When(unit_item__status='active',then='unit_item__unit_price'),default=0,output_field=FloatField()))).get(id=item_id)
         categories = Category.objects.all()
         item_units = ItemUnit.objects.filter(item=inventory_item)
 
@@ -445,6 +463,30 @@ class InventoryItems(IsInventoryAdmin,View):
             )
             messages.success(request,"Unit Added Successfully !")
 
+        if action == "edit_unit":
+            unit_id = request.POST.get('edit_unit_id')
+            purchase_date = request.POST.get('purchase_date')
+            expiry_date = request.POST.get('expiry_date')
+            unit_price = request.POST.get('unit_price')
+            status = request.POST.get('unit_status')
+
+            item = InventoryItem.objects.get(id=item_id)
+
+            unit = ItemUnit.objects.get(id=int(unit_id))
+            
+            unit.purchase_date = purchase_date
+            unit.expiry_date = expiry_date
+            unit.unit_price = unit_price
+            unit.status = status
+            unit.save()
+
+            messages.success(request,"Unit Updated Successfully !")
+
+        if action == 'delete_unit':
+            unit_id = request.POST.get('unit_id_delete')
+            unit = ItemUnit.objects.get(id=int(unit_id)).delete()
+            messages.success(request,"Unit Deleted Successfully !")
+
         if action == 'add_image':
             image = request.FILES.get('item_image')
 
@@ -474,7 +516,33 @@ class InventorySupplier(IsInventoryAdmin,View):
         else:
             new_supplier_id = 'SUP9001'
 
-        return render(request,'inventory/supplier.html',{"suppliers":suppliers,"supplier_id":new_supplier_id,"items":items,"search_query":search})
+        #PAGINATION CLIENTS
+        no_of_entries = request.GET.get('no_of_entries')
+        if not no_of_entries:
+            no_of_entries = 20
+
+        page = request.GET.get('page',1)
+        paginator=Paginator(suppliers,no_of_entries)
+        try:
+            suppliers=paginator.page(page)
+        except PageNotAnInteger:
+            suppliers=paginator.page(1)
+        except EmptyPage:
+            suppliers = paginator.page(paginator.num_pages)
+
+        # Get the index of the current page
+        index = suppliers.number - 1  # edited to something easier without index
+        # This value is maximum index of your pages, so the last page - 1
+        max_index = len(paginator.page_range)
+        # You want a range of 7, so lets calculate where to slice the list
+        start_index = index - 3 if index >= 3 else 0
+        end_index = index + 3 if index <= max_index - 3 else max_index
+        # Get our new page range. In the latest versions of Django page_range returns
+        # an iterator. Thus pass it to list, to make our slice possible again.
+        page_range = list(paginator.page_range)[start_index:end_index]
+        entry_per_page=(suppliers.end_index())-(suppliers.start_index())+1
+
+        return render(request,'inventory/supplier.html',{"suppliers":suppliers,"supplier_id":new_supplier_id,"items":items,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries})
 
     def post(self,request):
         action =request.POST.get('action')
@@ -797,13 +865,17 @@ class InventoryCreatePurchaseOrder(View):
 
         if not purchase_order:
             
+            todate = datetime.now()
+            print(todate.year+todate.month,"ic")
+
             purchase_order_latest = PurchaseOrder.objects.all().last()
             if purchase_order_latest:
                 code_number  =  int(re.findall(r'(\d+)', purchase_order_latest.purchase_order_id)[0]) + 1
-                new_item_code = 'PO'+str(code_number)
+                new_item_code = 'BLPO'+str(todate.year)+''+str(todate.month)+''+str(code_number)
             else:
-                new_item_code = 'PO9001'
+                new_item_code = 'BLPO'+str(todate.year())+''+str(todate.month())+'1001'
             
+            print(new_item_code,"ic")
             purchase_order = PurchaseOrder.objects.create(purchase_order_id=new_item_code,initiated_by=request.user)
 
         suppliers = Supplier.objects.filter(status=True)
