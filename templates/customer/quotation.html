@@ -329,7 +329,7 @@
             </div>
             <div class="col-md-12">
               <div class="row">
-                {% for orderschedule in order.orderschedules %}
+                {% for orderschedule in nonduplicate_schedules %}
                   <!--Visit begins-->
                 <div class="col-md-6 col-lg-4 mt-2">
                   <div class="keynote-chip">
@@ -367,26 +367,26 @@
     </div>
     <!-- visit modal ends here-->
 
-            {% for orderschedule in nonduplicate_schedules %}            
-            {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
+            {% for evaluation_detail in order_details.evaluation.evaluationdetails %}            
+            {% for evaluation_book in evaluation_detail.evaluationbooks %}
+            {% for book_section in evaluation_book.booksections %}
             <div class="col-md-12 col-print-12 order-3">
               <div class="inv-price-card mt-4 row">
                 <div class="col-md-8 col-print-8">
                   <div class="inv-service-title p-2 inv-text-bold">
-                    {{orderschedule.order_scheduler_book.service_type}}-{{section.section_name}}
+                    {{evaluation_book.service_type}}-{{book_section.section_name}}
                   </div>
-                  <div class="d-flex mb-10" > {% if orderschedule.order_scheduler_book.status == 'CANCELLED' %} <div class="status-dot cancel-chip-bg"></div> <div class="ml-2">Cancelled</div> {% endif %}</div>
+                  <div class="d-flex mb-10" > {% if evaluation_book.status == 'CANCELLED' %} <div class="status-dot cancel-chip-bg"></div> <div class="ml-2">Cancelled</div> {% endif %}</div>
 
                   <div class="d-md-flex d-print-flex">
                     <div class="p-2">
-                      Size : <span class="inv-text-bold">{{section.size}} {{section.unit|default_if_none:''}}</span>
+                      Size : <span class="inv-text-bold">{{book_section.size}} {{book_section.unit|default_if_none:''}}</span>
                     </div>
                     <div class="p-2">
-                      Quantity : <span class="inv-text-bold">
-                      {% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{section.section_cleanings|floatformat:"-1"}}{% endif %}</span>
+                      Quantity : <span class="inv-text-bold">{% if evaluation_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{book_section.section_cleanings|floatformat:"-1"}}{% endif %}</span>
                     </div>
                     <div class="p-2">
-                      Unit Price : <span class="inv-text-bold">{{section.section_cost|floatformat:'3'}}</span>
+                      Unit Price : <span class="inv-text-bold">{{book_section.section_cost|floatformat:'3'}}</span>
                     </div>
                   </div>
                 </div>
@@ -395,13 +395,9 @@
                     NET PRICE
                   </div>
                   <div class="inv-price p-1 ">
-                   
-                    <span class="inv-text-bold" style="text-align:right"> 
-                    {% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}
-                    {{section.section_cost|floatformat:'3'}}
-                    {% else %}
-                    {{section.section_cost|mul:section.section_cleanings|floatformat:'3'}}
-                    {% endif %}
+                 
+                    <span class="inv-text-bold">
+                    {{book_section.section_net_cost|floatformat:'3'}}
                     </span> KD
                  
                   </div>
@@ -414,6 +410,7 @@
                     Show More
                   </div>
                 </div>
+
 
                 <!-- Keynotes modal begins here-->
                 <div id="detailsModal{{orderschedule.order_scheduler_book.id}}{{section.id}}" class="qt-details-modal">
@@ -428,11 +425,11 @@
                           </div>
                           <div class="row mb-4">
                         <div class="col-md-12">
-                          <h6 class="inv-primary-text" >{{orderschedule.order_scheduler_book.service_type}}-{{section.section_name}}</h6>
+                          <h6 class="inv-primary-text" >{{evaluation_book.service_type}}-{{book_section.section_name}}</h6>
                         
                         </div>
 
-                        {% for keynote in section.sectionkeynotes %}
+                        {% for keynote in book_section.sectionkeynotes %}
                         <div class="col-md-6 mt-2">
                           <div class="keynote-chip">
                             <div class="d-flex ">
@@ -451,124 +448,124 @@
                         <div class="col-md-12">
                           <div class="row mt-2 m-0 qt-more-details">
 
-                            {% if section.age %}
+                            {% if book_section.age %}
                             <div class="col-md-4 mb-2 mt-2 col-6">
                               <div class="qt-details-title">
                                 Age
                               </div>
                               <div class="qt-details-value">
-                                {{section.age}}
+                                {{book_section.age}}
                               </div>
                             </div>
                             {% endif %}
 
-                            {% if section.floor %}
+                            {% if book_section.floor %}
                             <div class="col-md-4 mb-2 mt-2 col-6">
                               <div class="qt-details-title">
                                 Floors
                               </div>
                               <div class="qt-details-value">
-                                {{section.floor}}
+                                {{book_section.floor}}
                               </div>
                             </div>
                             {% endif %}
 
-                            {% if section.apartment %}
+                            {% if book_section.apartment %}
                             <div class="col-md-4 mb-2 mt-2 col-6">
                               <div class="qt-details-title">
                                 Apartments
                               </div>
                               <div class="qt-details-value">
-                                {{section.apartment}}
+                                {{book_section.apartment}}
                               </div>
                             </div>
                             {% endif %}
 
-                            {% if section.room %}
+                            {% if book_section.room %}
                             <div class="col-md-4 mb-2 mt-2 col-6">
                               <div class="qt-details-title">
                                 Rooms
                               </div>
                               <div class="qt-details-value">
-                                {{section.room}}
+                                {{book_section.room}}
                               </div>
                             </div>
                             {% endif %}
 
-                            {% if section.wall_type %}
+                            {% if book_section.wall_type %}
                             <div class="col-md-4 mb-2 mt-2 col-6">
                               <div class="qt-details-title">
                                 Wall Type
                               </div>
                               <div class="qt-details-value">
-                                {{section.wall_type}}
+                                {{book_section.wall_type}}
                               </div>
                             </div>
                             {% endif %}
 
-                            {% if section.floor_type %}
+                            {% if book_section.floor_type %}
                             <div class="col-md-4 mb-2 mt-2 col-6">
                               <div class="qt-details-title">
                                 Floor Type
                               </div>
                               <div class="qt-details-value">
-                                {{section.floor_type}}
+                                {{book_section.floor_type}}
                               </div>
                             </div>
                             {% endif %}
 
-                            {% if section.ceiling_type %}
+                            {% if book_section.ceiling_type %}
                             <div class="col-md-4 mb-2 mt-2 col-6">
                               <div class="qt-details-title">
                                 Ceiling Type
                               </div>
                               <div class="qt-details-value">
-                                {{section.ceiling_type}}
+                                {{book_section.ceiling_type}}
                               </div>
                             </div>
                             {% endif %}
                             
-                            {% if section.material %}
+                            {% if book_section.material %}
                             <div class="col-md-4 mb-2 mt-2 col-6">
                               <div class="qt-details-title">
-                                Materials
+                                Material
                               </div>
                               <div class="qt-details-value">
-                                {{section.material}}
+                                {{book_section.material}}
                               </div>
                             </div>
                             {% endif %}
 
 
-                            {% if section.colour %}
+                            {% if book_section.colour %}
                             <div class="col-md-4 mb-2 mt-2 col-6">
                               <div class="qt-details-title">
                                 Colour
                               </div>
                               <div class="qt-details-value">
-                                {{section.colour}}
+                                {{book_section.colour}}
                               </div>
                             </div>
                             {% endif %}
 
-                            {% if section.cause_of_stain %}
+                            {% if book_section.cause_of_stain %}
                             <div class="col-md-4 mb-2 mt-2 col-6">
                               <div class="qt-details-title">
-                                Colour
+                                Cause of Stain
                               </div>
                               <div class="qt-details-value">
-                                {{section.cause_of_stain}}
+                                {{book_section.cause_of_stain}}
                               </div>
                             </div>
                             {% endif %}
 
-                            {% if section.age_of_stain %}
+                            {% if book_section.age_of_stain %}
                             <div class="col-md-4 mb-2 mt-2 col-6">
                               <div class="qt-details-title">
-                                Colour
+                                Age of Stain
                               </div>
                               <div class="qt-details-value">
-                                {{section.age_of_stain}}
+                                {{book_section.age_of_stain}}
                               </div>
                             </div>
                             {% endif %}
@@ -578,7 +575,7 @@
                                 Size
                               </div>
                               <div class="qt-details-value">
-                                {{section.size}} {{section.unit|default_if_none:''}}
+                                {{book_section.size}} {{book_section.unit|default_if_none:''}}
                               </div>
                             </div>
 
@@ -587,7 +584,7 @@
                               Quantity
                               </div>
                               <div class="qt-details-value">
-                                {% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{section.section_cleanings|floatformat:"-1"}}{% endif %}
+                                {% if evaluation_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{book_section.section_cleanings|floatformat:"-1"}}{% endif %}
                               </div>
                             </div>
 
@@ -600,7 +597,7 @@
                               NET PRICE
                             </div>
                             <div class="qt-details-price">
-                            {{section.section_net_cost|floatformat:'3'}} KD
+                            {{book_section.section_net_cost|floatformat:'3'}} KD
                             </div>
                           </div>
                         
@@ -617,9 +614,10 @@
                 
               </div>
             </div>
-            
+
             {% endfor %}
             {% endfor %} 
+            {% endfor %}
                    
            </div>
           
