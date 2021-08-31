@@ -118,7 +118,7 @@
                        
                        
                           <input type="text" hidden id="supplier_id" >
-                         <div class="wrap-drop" id="noble-gases" id="supplier_id" >
+                         <div class="wrap-drop" id="noble-gases" id="supplier_id" style="z-index: 2;">
                             {% if purchase_order.supplier == None %}
                             <span>--Select Supplier--</span>
                             <ul class="drop">
@@ -255,9 +255,9 @@
                                     <th data-hide="phone,tablet" style="text-align: center;">Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="item_table">
                                 {% for item in purchase_order_items %}
-                                <tr>
+                                <tr data-itemid="{{item.product.id}}">
                                     <td>{{item.product.supplier_item_id}}</td>
                                     <td>{{item.product.item}}</td>
                                     <td style="text-align: right;">{{item.unit_price|floatformat:3}} KD</td>
@@ -509,6 +509,9 @@
     this.initEvents();
 }
 
+
+
+   
 DropDown.prototype = {
     initEvents: function () {
         var obj = this;
@@ -546,6 +549,46 @@ $(function () {
 </script>
 
 <script>
+     function hideselectedoptions(){
+            
+
+            var tempItem = [];
+            var itemIn = [];
+            var div = true;
+
+            $('#id_search div').each(function(i) {
+                if (div == true){
+                    console.log($(this),"pro")
+                    tempItem.push($(this).data("pro"))
+                    //console.log($(this).data("id"));
+                    div = false;
+                }else{
+                    div = true;
+                }
+                
+            })
+          
+            $('#item_table tr').each(function() {
+                itemIn.push($(this).data("itemid"))
+                //console.log('table',$(this).data("itemid"));
+            })
+
+            itemIn.pop();
+
+            console.log(tempItem,itemIn,"lopp")
+
+            for(var i =0;i<tempItem.length;i++){
+                document.getElementById("id_product"+tempItem[i]).style.display ="block";
+                for(var j = 0;j<itemIn.length;j++){
+                    if(tempItem[i] == itemIn[j]){
+                        console.log('to be hide',tempItem[i]);
+                        document.getElementById("id_product"+tempItem[i]).style.display ="none";
+                    }
+                }
+            }
+            console.log(tempItem,itemIn)
+    }
+
 function dropSelectSeller(id){
     console.log(id)
     $('#supplier_id').val(id);
@@ -628,7 +671,7 @@ function showAdditem(){
     var tempName = '{{item.item}}';
     console.log(tempId,tempName)
    
-    $('#id_search').append('<div class="col-md-12" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-productprice="{{item.item_price}}" data-name="{{item.item}}"><div class="inv-search-result">{{item.item}}</div></div>');
+    $('#id_search').append('<div class="col-md-12" id="id_product{{item.id}}" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-productprice="{{item.item_price}}" data-name="{{item.item}}"><div class="inv-search-result">{{item.item}}</div></div>');
 
     {% endfor %}
 
@@ -644,11 +687,13 @@ function showAdditem(){
             $('#id_item_count').val(1);
             $('.count').val(1);
             $('#id_total_price').val('');
+            hideselectedoptions();
         }
         if(d == 'edit'){
             $('#itemHead').text('Edit Item');
             $('#purchase_order_action').val('edit_item');
             $('.purchaseorder-form-btn').text('Update');
+            hideselectedoptions();
 
         }
         document.body.style.backgroundColor = "rgba(0,0,0,0.4) !important";
@@ -676,7 +721,7 @@ function showAdditem(){
         for (var j=0; j<products.length; j++) {
             if (products[j].name.match($('#pro-name').val())){
                 console.log(products[j]);
-        $('#id_search').append('<div class="col-md-12" style="padding:0px !important;" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-productprice="'+products[j].price+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
+        $('#id_search').append('<div class="col-md-12" id="id_product'+products[j].id+'" style="padding:0px !important;" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-productprice="'+products[j].price+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
 
             }
         }
@@ -688,6 +733,7 @@ function showAdditem(){
             document.getElementById("id_search").style.display="none"
 
             }
+            hideselectedoptions();
             
         }
 

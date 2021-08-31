@@ -4,6 +4,7 @@ from bleach_crm_ps.permissions import IsInventoryAdmin,IsInventoryAdminUser
 from inventory.models import Category,Segment,Line,Attribute,AttributeValue,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems,ServiceRecipe,PurchaseOrder,PurchaseOrderItems
 from django.contrib import messages
 import re
+from datetime import date,datetime,timedelta
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,Max,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField,CharField,Prefetch
 # Create your views here.
@@ -157,12 +158,29 @@ class InventoryAttribute(IsInventoryAdmin,View):
             attribute_id = request.POST.get('attribute_edit_id')
             name     = request.POST.get('attribute')
             attribute_type     = request.POST.get('attribute_type')
+            attribute_category = request.POST.get('attribute_category')
+            attribute_segment  = request.POST.get('attribute_segment')
+            attribute_line     = request.POST.get('attribute_line')
             status     = request.POST.get('status')
+
             print(attribute_id,name,attribute_type,status,"lop")
+
             attribute = Attribute.objects.get(id=int(attribute_id))
+            category = Category.objects.get(id=int(attribute_category))
+            segment = Segment.objects.get(id=int(attribute_segment))
+            line = Line.objects.get(id=int(attribute_line))
+
             # attribute.category = category
             attribute.name     = name
             attribute.attribute_type = attribute_type
+
+            if category:
+                attribute.attribute_category = category
+            if segment:
+                attribute.attribute_segment = segment
+            if line:
+                attribute.attribute_line = line
+
             attribute.status   = status
             attribute.save()
             messages.success(request,"Attribute Updated Successfully !")
@@ -291,7 +309,16 @@ class InventoryBundle(IsInventoryAdmin,View):
         if action == 'delete_bundle':
             bundle_id = request.POST.get('bundle_delete_id')
 
-            bundle = Bundle.objects.get(id=int(bundle_id)).delete()
+            bundle = Bundle.objects.prefetch_related(Prefetch('item_bundle',queryset=BundleItems.objects.all().prefetch_related(Prefetch('bundle_unit_bundle_item',queryset=BundleItemUnits.objects.all(),to_attr='bundle_item_units')),to_attr='bundle_items')).get(id=int(bundle_id))
+            
+            for item in bundle.bundle_items:
+                for unit in item.bundle_item_units:
+                    item_unit = ItemUnit.objects.get(id=int(unit.item_unit.id))
+                    item_unit.status = 'active'
+                    item_unit.save()
+
+            bundle.delete()
+            
             messages.success(request,"Bundle deleted Successfully !")
 
         if action == 'add_item':
@@ -342,6 +369,82 @@ class InventoryBundle(IsInventoryAdmin,View):
             
             messages.success(request,"Item Added successfully !")
 
+        
+        if action == 'edit_item':
+            bundle_id = request.POST.get('item_bundle_id')
+            bundle_item_id = request.POST.get('edit_item_id')
+            item = request.POST.get('item')
+            item_count = request.POST.get('item_count')
+
+            bundle = Bundle.objects.get(id=int(bundle_id))
+            inventory_item = InventoryItem.objects.get(id=int(item))
+
+            inventory_item_unit_count = ItemUnit.objects.filter(item=inventory_item).count()
+
+            total_item_price = 0
+
+            used_units = []
+
+            if int(inventory_item_unit_count) >= int(item_count) :
+                selected_units = ItemUnit.objects.filter(item=inventory_item,status='active')[:int(item_count)]
+
+                for unit in selected_units:
+                    total_item_price += float(unit.unit_price)
+                    unit.status = 'out_of_order'
+                    unit.save()
+                    used_units.append(unit)
+
+                item_count = item_count
+
+            else:
+                selected_units = ItemUnit.objects.filter(item=inventory_item,status='active')[:int(inventory_item_unit_count)]
+
+                for unit in selected_units:
+                    total_item_price += float(unit.unit_price)
+                    unit.status = 'out_of_order'
+                    unit.save()
+                    used_units.append(unit)
+
+                item_count = inventory_item_unit_count
+
+            bundleitem = BundleItems.objects.get(id=int(bundle_item_id))
+
+            #clearing old units
+            old_bundleitemunits = BundleItemUnits.objects.filter(bundle_item=bundleitem)
+            for unit in old_bundleitemunits:
+                item_unit = ItemUnit.objects.get(id=int(unit.item_unit.id))
+                item_unit.status = 'active'
+                item_unit.save()
+
+            # bundle.bundle_items_count = int(bundleitem.bundle.bundle_items_count) - 1
+            bundle.bundle_price = float(bundleitem.bundle.bundle_price) - float(bundleitem.item_price)
+            bundle.save()
+            
+            BundleItemUnits.objects.filter(bundle_item=bundleitem).delete()
+            
+            #removing item price from bundle
+            # bundle.bundle_price = float(bundle.bundle_price) - float(bundleitem.item_price)
+            # bundle.save()
+
+            #saving new bundle item
+            bundleitem.item = inventory_item
+            bundleitem.item_price = total_item_price
+            bundleitem.item_count = item_count
+            bundleitem.save()
+
+            #creating new units
+            for unit in used_units:
+                BundleItemUnits.objects.create(bundle_item=bundleitem,item_unit=unit,unit_price=unit.unit_price)
+            
+            #updating bundle
+            bundle.bundle_items_count += int(item_count)
+            bundle_price = bundle.bundle_price
+            bundle.bundle_price = float(bundle_price)+float(total_item_price)
+            bundle.save()
+            
+            messages.success(request,"Item Updated successfully !")
+        
+        
         if action == 'delete_item':
             item_id = request.POST.get('bundle_delete_id')
             bundleitem = BundleItems.objects.prefetch_related(Prefetch('bundle_unit_bundle_item',queryset=BundleItemUnits.objects.all(),to_attr='bundle_units')).get(id=int(item_id))
@@ -355,9 +458,9 @@ class InventoryBundle(IsInventoryAdmin,View):
                 # bundleitem.item_price = float(bundleitem.item_price) - float(unit.unit_price)
                 # bundleitem.item_count = int(bundleitem.item_count) - 1
 
-                bundle.bundle_items_count = int(bundleitem.bundle.bundle_items_count) - 1
-                bundle.bundle_price = float(bundleitem.bundle.bundle_price) - float(unit.unit_price)
-                bundle.save()
+            bundle.bundle_items_count = int(bundleitem.bundle.bundle_items_count) - int(bundleitem.item_count)
+            bundle.bundle_price = float(bundleitem.bundle.bundle_price) - float(bundleitem.item_price)
+            bundle.save()
 
             bundleitem.delete()
             messages.success(request,"Item Deleted successfully !")
@@ -367,7 +470,7 @@ class InventoryBundle(IsInventoryAdmin,View):
 
 class InventoryItems(IsInventoryAdmin,View):
     def get(self,request,item_id):
-        inventory_item = InventoryItem.objects.prefetch_related(Prefetch('image_item',queryset=InventoryItemImages.objects.all(),to_attr='item_images')).annotate(unit_count=Sum(Case(When(unit_item__status='active',then=1),default=0,output_field=IntegerField())),total_unit_price=Sum(Case(When(unit_item__status='active',then='unit_item__unit_price'),default=0,output_field=FloatField()))).get(id=item_id)
+        inventory_item = InventoryItem.objects.prefetch_related(Prefetch('image_item',queryset=InventoryItemImages.objects.all(),to_attr='item_images'),Prefetch('item_category__attribute_category',queryset=Attribute.objects.all().prefetch_related(Prefetch('value_attribute',queryset=AttributeValue.objects.all(),to_attr='attribute_values')),to_attr='attributes')).annotate(unit_count=Sum(Case(When(unit_item__status='active',then=1),default=0,output_field=IntegerField())),total_unit_price=Sum(Case(When(unit_item__status='active',then='unit_item__unit_price'),default=0,output_field=FloatField()))).get(id=item_id)
         categories = Category.objects.all()
         item_units = ItemUnit.objects.filter(item=inventory_item)
 
@@ -445,6 +548,30 @@ class InventoryItems(IsInventoryAdmin,View):
             )
             messages.success(request,"Unit Added Successfully !")
 
+        if action == "edit_unit":
+            unit_id = request.POST.get('edit_unit_id')
+            purchase_date = request.POST.get('purchase_date')
+            expiry_date = request.POST.get('expiry_date')
+            unit_price = request.POST.get('unit_price')
+            status = request.POST.get('unit_status')
+
+            item = InventoryItem.objects.get(id=item_id)
+
+            unit = ItemUnit.objects.get(id=int(unit_id))
+            
+            unit.purchase_date = purchase_date
+            unit.expiry_date = expiry_date
+            unit.unit_price = unit_price
+            unit.status = status
+            unit.save()
+
+            messages.success(request,"Unit Updated Successfully !")
+
+        if action == 'delete_unit':
+            unit_id = request.POST.get('unit_id_delete')
+            unit = ItemUnit.objects.get(id=int(unit_id)).delete()
+            messages.success(request,"Unit Deleted Successfully !")
+
         if action == 'add_image':
             image = request.FILES.get('item_image')
 
@@ -474,7 +601,33 @@ class InventorySupplier(IsInventoryAdmin,View):
         else:
             new_supplier_id = 'SUP9001'
 
-        return render(request,'inventory/supplier.html',{"suppliers":suppliers,"supplier_id":new_supplier_id,"items":items,"search_query":search})
+        #PAGINATION CLIENTS
+        no_of_entries = request.GET.get('no_of_entries')
+        if not no_of_entries:
+            no_of_entries = 20
+
+        page = request.GET.get('page',1)
+        paginator=Paginator(suppliers,no_of_entries)
+        try:
+            suppliers=paginator.page(page)
+        except PageNotAnInteger:
+            suppliers=paginator.page(1)
+        except EmptyPage:
+            suppliers = paginator.page(paginator.num_pages)
+
+        # Get the index of the current page
+        index = suppliers.number - 1  # edited to something easier without index
+        # This value is maximum index of your pages, so the last page - 1
+        max_index = len(paginator.page_range)
+        # You want a range of 7, so lets calculate where to slice the list
+        start_index = index - 3 if index >= 3 else 0
+        end_index = index + 3 if index <= max_index - 3 else max_index
+        # Get our new page range. In the latest versions of Django page_range returns
+        # an iterator. Thus pass it to list, to make our slice possible again.
+        page_range = list(paginator.page_range)[start_index:end_index]
+        entry_per_page=(suppliers.end_index())-(suppliers.start_index())+1
+
+        return render(request,'inventory/supplier.html',{"suppliers":suppliers,"supplier_id":new_supplier_id,"items":items,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries})
 
     def post(self,request):
         action =request.POST.get('action')
@@ -797,13 +950,19 @@ class InventoryCreatePurchaseOrder(View):
 
         if not purchase_order:
             
+            todate = datetime.now()
+            print(todate.year+todate.month,"ic")
+
             purchase_order_latest = PurchaseOrder.objects.all().last()
             if purchase_order_latest:
-                code_number  =  int(re.findall(r'(\d+)', purchase_order_latest.purchase_order_id)[0]) + 1
-                new_item_code = 'PO'+str(code_number)
+                code_number =  re.findall(r'(\d+)', purchase_order_latest.purchase_order_id)[0]
+                code_number = int(code_number[-4:])+1
+                print(code_number,"coda")
+                new_item_code = 'BLPO'+str(todate.year)+''+str(todate.month)+''+ str(code_number)
             else:
-                new_item_code = 'PO9001'
+                new_item_code = 'BLPO'+str(todate.year)+''+str(todate.month)+'1001'
             
+            print(new_item_code,"ic")
             purchase_order = PurchaseOrder.objects.create(purchase_order_id=new_item_code,initiated_by=request.user)
 
         suppliers = Supplier.objects.filter(status=True)
@@ -859,7 +1018,7 @@ class InventoryCreatePurchaseOrder(View):
             purchase_order.is_order_completed = True
             purchase_order.save()
             messages.success(request,"Order Completed successfully!")
-            return redirect('inventory:inventorydash-board')
+            return redirect('inventory:inventory-purchaseorderpage',purchase_order.id)
 
         if action == 'edit_item':
             purchase_order_item_id = request.POST.get('item_edit_id')

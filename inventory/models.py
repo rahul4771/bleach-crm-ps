@@ -81,10 +81,10 @@ class ItemUnit(models.Model):
     # created         =   models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
-        return str(self.name)
+        return str(self.item.name)
 
     def __str__(self):
-        return self.name
+        return self.item.name
 
 
 class Attribute(models.Model):

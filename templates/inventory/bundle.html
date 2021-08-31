@@ -62,10 +62,7 @@
                                 <p>20 Entries</p>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="col-md-7 mt-10">
-                        <div class="attribute-table">
+                        <div class="attribute-table" style="border-top:1px solid #c4c4c4">
                             <table class="inv-table footable" id="table1"> 
                                 <thead>
                                     <tr >
@@ -87,7 +84,7 @@
                                 </thead>
                                 <tbody>
                                     {% for bundle in bundles %}
-                                    <tr onclick="getitems({{bundle.id}})" >
+                                    <tr class="bundle_row" onclick="getitems({{bundle.id}})" data-name="{{bundle.name}}">
                                         <td class="r">
                                     
                                            {{bundle.name}}
@@ -168,9 +165,14 @@
                         <div style="color: #928F8F;">
                             Showing {{bundles.start_index}} to {{bundles.end_index}} of {{bundles.paginator.count}} entries
                         </div>
+                    </div>
 
-                    </div>   
-                    <div class="col-md-5 mt-10">
+                    <!-- <div class="col-md-7 mt-10">
+                       
+
+                    </div>    -->
+                    <div class="col-md-5 mt-10 pt-4 ">
+                    <h3 class="av-font"> Items under <span class="av-font" id="bundle_name"></span> </h3>
                         <div class="attribute-table-2">
                             <div class="attribute-table-div2">
                                 <table class="inv-table footable" id="table2"> 
@@ -190,7 +192,7 @@
                                             </th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody id="id_tablebody">
                                         
                                     </tbody>
                                     
@@ -337,8 +339,8 @@
                     <input hidden  type="text" id="id_bundle_status" name="bundle_status" value="True">
                     <div class="wrap-drop" id="noble-gases"  >
                         <span id="id_selectText">Active</span>
-                        <ul class="drop">
-                            <li onclick="changeSelect('True')"><a>Active</a></li>
+                        <ul class="drop" >
+                            <li  onclick="changeSelect('True')"><a>Active</a></li>
                             <li onclick="changeSelect('False')"><a>Inactive</a></li> 
                         </ul>
                     </div>
@@ -377,8 +379,8 @@
                
                 <div class="row">
                     <form method="POST" action="" >{% csrf_token %}
-                    <input type="text" name="action" value="delete_bundle" id="id_delete_bundle_action" />
-                    <input type="text" name="bundle_delete_id" id="id_delete_bundle" />
+                    <input type="hidden" name="action" value="delete_bundle" id="id_delete_bundle_action" />
+                    <input type="hidden" name="bundle_delete_id" id="id_delete_bundle" />
                     <div class="col-md-12 text-center">
                         <div class="cancel-model-content">
                             <button class="sent-button" type="submit" >Delete</button>
@@ -411,8 +413,8 @@
                
                 <div class="row">
                     <form method="POST" action="" >{% csrf_token %}
-                    <input type="text" name="action" value="delete_bundle_item" />
-                    <input type="text" name="delete_item_id" id="id_delete_item" />
+                    <input type="hidden" name="action" value="delete_bundle_item" />
+                    <input type="hidden" name="delete_item_id" id="id_delete_item" />
                     <div class="col-md-12 text-center">
                         <div class="cancel-model-content">
                             <button class="sent-button" type="submit" >Delete</button>
@@ -442,8 +444,8 @@
             <hr>
 
             <form method="POST" action="" >{% csrf_token %}
-            <input type="hidden" name="action" id="value_action" value="add_item" />
-            <input type="text" name="item_bundle_id" id="item_bundle_id" />
+            <input type="hidden" name="action" id="item_action" value="add_item" />
+            <input type="hidden" name="item_bundle_id" id="item_bundle_id" />
             <input type="hidden" name="edit_item_id" id="id_edit_item" />
             {% comment %} <div class="row mt-20">
                 <div class="col-md-12 ">
@@ -459,13 +461,23 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Item</div>
 
-                    <select class="minimal" name="item" id="id_item" onchange="getunits()" required>
+                    <!-- <select class="minimal" name="item" id="id_item" onchange="getunits()" required>
                         <option value="">--Select Item--</option>
                         {% for item in items %}
                         <option value="{{item.id}}">{{item.name}}</option>
                         {% endfor %}
 
-                    </select>
+                    </select> -->
+                    <input hidden  type="text" name="item" id="id_item" required>
+                    <div class="wrap-drop" id="noble-gases2"  >
+                        <span id="id_selectText2">--Select Item--</span>
+                        <ul class="drop" id="id_selectitems">
+                            {% for item in items %}
+                            <li  data-id="{{item.id}}" id="item{{item.id}}" onclick="changeSelect2('{{item.id}}')"><a>{{item.name}}</a></li>
+                            
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </div>
 
             </div>
@@ -507,7 +519,7 @@
              
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button submitbtn" >Submit</button>
+            <button class="sent-button submitbtn" type="submit" >Submit</button>
             </form>
                         <button data-dismiss="modal" onclick="closeNavAddItem()" class="view-button">Cancel</button>
         </div>
@@ -557,6 +569,8 @@ DropDown.prototype = {
 $(function () {
     // create new variable for each menu
     var dd1 = new DropDown($('#noble-gases'));
+    var dd2 = new DropDown($('#noble-gases2'));
+
     // var dd2 = new DropDown($('#other-gases'));
     $(document).click(function () {
         // close menu on document click
@@ -567,21 +581,42 @@ $(function () {
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
 <script>
+
+    $(document).ready(function() {
+    {% for bundle in bundles %}
+        {% if forloop.first %}
+        getitems({{bundle.id}});
+        $('.bundle_row:first').addClass('inv-selected-row');
+        $('#bundle_name').text("{{bundle.name}}");
+        {% endif %}
+    {% endfor %}
+
+    });
+
+    //highlighting row and adding selected item name to table top
+    $('.bundle_row').click(function(){
+        console.log($(this).data('name'),"nm")
+        $('.bundle_row').each(function(i, obj) {
+            $(obj).removeClass('inv-selected-row');
+        });
+
+        $(this).addClass('inv-selected-row');
+        $('#bundle_name').text($(this).data('name'));
+    })
+
      function changeSelect(va){
         $('#id_bundle_status').val(va)
+    }
+    function changeSelect2(va){
+        $('#id_item').val(va);
+        getunits()
     }
    $(document).ready(function() {
         $('#multiple-checkboxes').multiselect({
           includeSelectAllOption: true,
         });
     });
-$(document).ready(function(){
-        {% for bundle in bundles %}
-        {% if forloop.first %}
-        getitems({{bundle.id}});
-        {% endif %}
-        {% endfor %}
-    })
+
 
 function openNavAddBundle(d) {
     if(d == 'add'){
@@ -611,10 +646,40 @@ function openNavAddBundle(d) {
     }
 
 
+    function hideselectedoptions(){
+            console.log($('#item_bundle_id').val())
+
+            var tempItem = [];
+            var itemIn = []
+            $('#id_selectitems li').each(function(i) {
+                tempItem.push($(this).data("id"))
+                //console.log($(this).data("id"));
+            })
+          
+            $('#id_tablebody tr').each(function() {
+                itemIn.push($(this).data("itemid"))
+                //console.log('table',$(this).data("itemid"));
+            })
+            for(var i =0;i<tempItem.length;i++){
+                document.getElementById("item"+tempItem[i]).style.display ="block";
+                for(var j = 0;j<itemIn.length;j++){
+                    if(tempItem[i] == itemIn[j]){
+                        console.log('to be hide',tempItem[i]);
+                        document.getElementById("item"+tempItem[i]).style.display ="none";
+                    }
+                }
+            }
+            console.log(tempItem,itemIn)
+    }
+
 
     function openNavAddItem(d) {
     if(d == 'add'){
-            $("#itemHead").text("Add Item");
+        $('#id_item').val('');
+        $('#id_selectText2').text('--Select Item--')
+        $("#itemHead").text("Add Item");
+        hideselectedoptions();
+        
         }
         if(d == 'edit'){
             $("#itemHead").text("Edit Item");
@@ -631,29 +696,26 @@ function openNavAddBundle(d) {
     }
     
     function openNavEditValue(d) {
-        $("#valueHead").text("Edit Value");
-        $(".value-form-btn").text("Update");
+        $("#itemHead").text("Edit Item");
+        $(".submitbtn").text("Update");
 
-        $('#value_action').val('edit_value');
-        $('#id_edit_value').val($(d).data('valueid'));
-        $('#value_name_id').val($(d).data('valuename'));
+        $('#item_action').val('edit_item');
+        $('#id_edit_item').val($(d).data('unitid'));
+        $('#id_unit_count').val($(d).data('itemcount'));
 
-        if ($(d).data('valuestatus') == true){
-            document.getElementById("value_status_id").value = 'True';
-        }
-        else{
-            document.getElementById("value_status_id").value = 'False';
-        }
-      
+        document.getElementById("id_item").value = $(d).data('itemid');
+        $('#id_selectText2').text($(d).data('itemname'));
+        
+        hideselectedoptions();
 
         console.log(d)
         if(screen.width<= 600){
-            document.getElementById("addValue").style.width = "100%";
+            document.getElementById("addItem").style.width = "100%";
         }else if(screen.width<= 720){
-            document.getElementById("addValue").style.width = "50%";
+            document.getElementById("addItem").style.width = "50%";
         }
         else{
-            document.getElementById("addValue").style.width = "30%";
+            document.getElementById("addItem").style.width = "30%";
         }  
     }
     
@@ -706,7 +768,7 @@ function openNavAddBundle(d) {
                 
                 $.each(result.data.inventory_item,function(key,value){
                     console.log(value.bundle_item,value.id,"eyed")
-                        $('#table2').append('<tr><td>'+value.item+'</td><td>'+value.item_count+'</td><td>'+value.item_price+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavEditValue(this)" data-valueid='+value.id+' data-valuename='+value.name+' data-valuestatus='+value.status+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn value_delete" onclick="deleteItem('+value.id+')" data-valueid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
+                        $('#table2').append('<tr data-itemid='+value.item_id+'><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td>'+value.item_price+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavEditValue(this)" data-unitid='+value.unit_id+' data-itemid='+value.item_id+' data-itemcount='+value.item_count+' data-itemname='+value.item_name+' > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn value_delete" onclick="deleteItem('+value.unit_id+')" data-valueid='+value.unit_id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
                 })
             }else{
                 $("#table2 tr:not(:first)").remove(); 

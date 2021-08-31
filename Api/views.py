@@ -1909,9 +1909,19 @@ class InventoryBundleItemsAPI(APIView):
 			inventory_items = None
 		
 		print(inventory_items,"invo")
-		item_serializer = InventoryBundleItemSerializer(inventory_items,many=True).data
-		print(item_serializer,"sed")	
-		response_dict['inventory_item'] = item_serializer
+		items_list = []
+		for item in inventory_items:
+			list_item = {
+				'unit_id' : item.id,
+				'item_id' : item.item.id,
+				'item_name' : item.item.name,
+				'item_price' :item.item_price,
+				'item_count' : item.item_count,
+			}
+			items_list.append(list_item)
+		# item_serializer = InventoryBundleItemSerializer(inventory_items,many=True).data
+		# print(item_serializer,"sed")	
+		response_dict['inventory_item'] = items_list
 		return Response(response_dict,HTTP_200_OK)
 
 class InventorySupplierItemsAPI(APIView):
