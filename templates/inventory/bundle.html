@@ -378,8 +378,8 @@
                
                 <div class="row">
                     <form method="POST" action="" >{% csrf_token %}
-                    <input type="text" name="action" value="delete_bundle" id="id_delete_bundle_action" />
-                    <input type="text" name="bundle_delete_id" id="id_delete_bundle" />
+                    <input type="hidden" name="action" value="delete_bundle" id="id_delete_bundle_action" />
+                    <input type="hidden" name="bundle_delete_id" id="id_delete_bundle" />
                     <div class="col-md-12 text-center">
                         <div class="cancel-model-content">
                             <button class="sent-button" type="submit" >Delete</button>
@@ -444,7 +444,7 @@
 
             <form method="POST" action="" >{% csrf_token %}
             <input type="hidden" name="action" id="item_action" value="add_item" />
-            <input type="text" name="item_bundle_id" id="item_bundle_id" />
+            <input type="hidden" name="item_bundle_id" id="item_bundle_id" />
             <input type="hidden" name="edit_item_id" id="id_edit_item" />
             {% comment %} <div class="row mt-20">
                 <div class="col-md-12 ">
@@ -646,9 +646,6 @@ function openNavAddBundle(d) {
 
 
     function hideselectedoptions(){
-        $('#id_selectText2').text('--Select Item--')
-            $("#itemHead").text("Add Item");
-            console.log('item list')
             console.log($('#item_bundle_id').val())
 
             var tempItem = [];
@@ -678,6 +675,8 @@ function openNavAddBundle(d) {
     function openNavAddItem(d) {
     if(d == 'add'){
         $('#id_item').val('');
+        $('#id_selectText2').text('--Select Item--')
+        $("#itemHead").text("Add Item");
         hideselectedoptions();
         
         }

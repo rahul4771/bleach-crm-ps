@@ -233,7 +233,7 @@
 
                 <div class="row mt-30">
                     <div class="col-md-12 ">
-                        <table class="inv-table footable" style="border-top: 1px solid #c4c4c4;">
+                        <table class="inv-table footable" id="item_table" style="border-top: 1px solid #c4c4c4;">
                             <thead>
                                 <tr>
                                     <th style="width: 15%;">
@@ -257,7 +257,7 @@
                             </thead>
                             <tbody>
                                 {% for item in purchase_order_items %}
-                                <tr>
+                                <tr data-itemid="{{item.product.id}}">
                                     <td>{{item.product.supplier_item_id}}</td>
                                     <td>{{item.product.item}}</td>
                                     <td style="text-align: right;">{{item.unit_price|floatformat:3}} KD</td>
@@ -509,6 +509,37 @@
     this.initEvents();
 }
 
+
+
+    function hideselectedoptions(){
+            console.log($('#item_bundle_id').val())
+
+            var tempItem = [];
+            var itemIn = []
+            $('#id_search div').each(function(i) {
+                tempItem.push($(this).data("pro"))
+                //console.log($(this).data("id"));
+            })
+          
+            $('#item_table tr').each(function() {
+                itemIn.push($(this).data("itemid"))
+                //console.log('table',$(this).data("itemid"));
+            })
+
+            console.log(tempItem,itemIn,"lopp")
+
+            for(var i =0;i<tempItem.length;i++){
+                document.getElementById("id_product"+tempItem[i]).style.display ="block";
+                for(var j = 0;j<itemIn.length;j++){
+                    if(tempItem[i] == itemIn[j]){
+                        console.log('to be hide',tempItem[i]);
+                        document.getElementById("id_product"+tempItem[i]).style.display ="none";
+                    }
+                }
+            }
+            console.log(tempItem,itemIn)
+    }
+
 DropDown.prototype = {
     initEvents: function () {
         var obj = this;
@@ -644,11 +675,13 @@ function showAdditem(){
             $('#id_item_count').val(1);
             $('.count').val(1);
             $('#id_total_price').val('');
+            //hideselectedoptions();
         }
         if(d == 'edit'){
             $('#itemHead').text('Edit Item');
             $('#purchase_order_action').val('edit_item');
             $('.purchaseorder-form-btn').text('Update');
+            //hideselectedoptions();
 
         }
         document.body.style.backgroundColor = "rgba(0,0,0,0.4) !important";
@@ -676,7 +709,7 @@ function showAdditem(){
         for (var j=0; j<products.length; j++) {
             if (products[j].name.match($('#pro-name').val())){
                 console.log(products[j]);
-        $('#id_search').append('<div class="col-md-12" style="padding:0px !important;" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-productprice="'+products[j].price+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
+        $('#id_search').append('<div class="col-md-12" id="id_product'+products[j].id+'" style="padding:0px !important;" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-productprice="'+products[j].price+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
 
             }
         }
