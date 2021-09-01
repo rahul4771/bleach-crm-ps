@@ -353,7 +353,7 @@
 
                     <div style="position: relative;">
                         <div class="inv-input-container inv-border h-30">
-                            <input onclick="ProductListShow()" type="text" id="pro-name" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()">
+                            <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()">
                            
                             <div onclick="ProductListShow()" class="model-filter">
                                 
@@ -512,7 +512,7 @@ function ProductListShow(){
 function showProducts(){
     $('#id_search').empty();
     for (var j=0; j<products.length; j++) {
-        if (products[j].name.match($('#pro-name').val())){
+        if (products[j].name.toUpperCase().match($('#pro-name').val().toUpperCase())){
             console.log(products[j]);
     $('#id_search').append('<div class="col-md-12" style="padding:0px !important;" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
 
@@ -564,7 +564,7 @@ function selectActive(d,id,name){
 }
 
      function openNavAddStore(d) {
-       
+        $('#id_search').empty();
         {% for item in items %}
     var tempId = '{{item.id}}';
     var tempName = '{{item.name}}';
