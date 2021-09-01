@@ -158,10 +158,10 @@
                                           </div> -->
                                           <div class="d-flex">
                                             <form method="POST" action="" >{% csrf_token %}
-                                            
-                                            <div class="inv-input-container2 inv-border h-30">
-                                                <input type="hidden" name="action" value="update_size" />
+                                            <input type="hidden" name="action" value="update_size" />
                                                 <input type="hidden" name="service_name" class="area_service" value="General Cleaning" />
+                                            <div class="inv-input-container2 inv-border h-30">
+                                                
                                                 <input type="number" step="0.1" name="area" class="service_area" style="border: none !important; width: 90%;" class="inv-in"  >
                                                 <!-- <div class="inv-hr"></div> -->
                                                 <div class="model-filter2" >
@@ -171,8 +171,8 @@
                                                 </div>
                                                 
                                             </div>
-                                            </form>
                                             <div style="margin-left: 10px; font-size: 16px; margin-top: 3px;" class="av-font">sqm</div>
+                                            </form>
                                           </div>
                                           
                                         
@@ -963,7 +963,7 @@ function selectActive(d,id,name){
         var tempName = '{{item.name}}';
         $('#id_search').append('<div class="col-md-12" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
         {% endfor %}
-        
+
         console.log(d)
         console.log($(d).data('linestatus'))
             $("#itemHead").text("Edit Item");
