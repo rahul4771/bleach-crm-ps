@@ -82,6 +82,13 @@
 
                                         </select>
                                     </div>
+                                    <div class="col-md-4">
+                                        <div class="model-input-name">Area</div>
+                                        <div style="width: 50%; " class="inv-input-container h-30"> 
+                                            <input type="number"   class="w-p-100 inv-in" name="attributes">
+                                            <div class="av-font" style="margin-left:5px; margin-top: 5px; font-size:18px;">sqm</div>
+                                          </div>
+                                    </div>
                                 </div>
                                 <div class="row mt-10">
                                     <div class="col-md-12">
@@ -140,6 +147,14 @@
 
                                         </select>
                                     </div>
+                                    <div class="col-md-4">
+                                        <div class="model-input-name">Area</div>
+                                        <div style="width: 50%; " class="inv-input-container h-30"> 
+                                            <input type="number"   class="w-p-100 inv-in" name="attributes">
+                                            <div class="av-font" style="margin-left:5px; margin-top: 5px; font-size:18px;">sqm</div>
+                                          </div>
+                                    </div>
+
                                 </div>
                                 <div class="row mt-10">
                                     <div class="col-md-12">
@@ -192,6 +207,14 @@
 
                                         </select>
                                     </div>
+                                    <div class="col-md-4">
+                                        <div class="model-input-name">Area</div>
+                                        <div style="width: 50%; " class="inv-input-container h-30"> 
+                                            <input type="number"   class="w-p-100 inv-in" name="attributes">
+                                            <div class="av-font" style="margin-left:5px; margin-top: 5px; font-size:18px;">sqm</div>
+                                          </div>
+                                    </div>
+                                    
                                 </div>
                                 <div class="row mt-10">
                                     <div class="col-md-12">
@@ -243,6 +266,13 @@
                                             <option value="Post Paid">Inactive</option>
 
                                         </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="model-input-name">Area</div>
+                                        <div style="width: 50%; " class="inv-input-container h-30"> 
+                                            <input type="number"   class="w-p-100 inv-in" name="attributes">
+                                            <div class="av-font" style="margin-left:5px; margin-top: 5px; font-size:18px;">sqm</div>
+                                          </div>
                                     </div>
                                 </div>
                                 <div class="row mt-10">
@@ -486,6 +516,14 @@
 {% block javascript %}
 
 <script>
+//     $('body').click(function(){
+//         console.log(document.getElementById("id_search").style.display)
+//   if(document.getElementById("id_search").style.display == "block"){
+//          document.getElementById("id_search").style.display == 'none'
+
+//   }
+
+// });
 var products = [];
 {% for item in items %}
     var tempId = '{{item.id}}';
