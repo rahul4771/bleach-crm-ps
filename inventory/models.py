@@ -206,19 +206,28 @@ class Store(models.Model):
         return self.store_name
 
 class ServiceRecipe(models.Model):
+    service             = models.CharField(max_length=100,blank=True,null=True)
+    area_size           = models.CharField(default=0,max_length=50,blank=True,null=True)
+
+    def __unicode__(self):
+        return str(self.service)
+
+    def __str__(self):
+        return self.service
+
+class ServiceRecipeItems(models.Model):
     service_or_person   = models.CharField(max_length=50,blank=False,null=False)
-    service_type        = models.CharField(max_length=100,blank=True,null=True)
-    area_size           = models.CharField(max_length=50,blank=True,null=True)
+    service_type        = models.ForeignKey(ServiceRecipe,blank=True,null=True,related_name='item_recipe')
     item                = models.ForeignKey(InventoryItem,blank=True,null=True,related_name='service_item')
     item_price          = models.CharField(default=0,max_length=100,blank=True,null=True)
     item_count          = models.IntegerField(default=0,null=True,blank=True)
     status              = models.BooleanField(default=True,blank=False,null=False)
 
     def __unicode__(self):
-        return str(self.item.name)
+        return str(self.service_type.service)
 
     def __str__(self):
-        return self.item.name
+        return self.service_type.service
 
 class PurchaseOrder(models.Model):
     supplier            = models.ForeignKey(Supplier,blank=True,null=True,related_name='supplier_purchase_order')
