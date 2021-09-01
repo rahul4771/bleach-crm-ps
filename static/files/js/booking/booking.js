@@ -87,6 +87,7 @@ const app=new Vue({
         
       },
     data: {
+      submit_loader:false,
       billingDataIndex:null,
       slot_msg:false,
       keynote_content:[
@@ -2846,6 +2847,7 @@ responsive:{
    
   },
   bookMultipleService(){
+    this.submit_loader=true
     const urlSearchParams = new URLSearchParams(window.location.search);
     const params = Object.fromEntries(urlSearchParams.entries());
    this.userid=window.location.href.split('/')[5]
@@ -2859,7 +2861,7 @@ responsive:{
        
       )
       .then((response) => {
-        
+        this.submit_loader=false
         console.log("booking details is "+response)
         this.phase2Result=response.data
         if(response.data.success)
@@ -2894,6 +2896,7 @@ responsive:{
     
     for(var sch in this.scheduleGroup)
     {
+      this.submit_loader=true
       var totalCost=0
     var estimatedCost=0
       var groupData={}
@@ -2914,7 +2917,7 @@ responsive:{
        
       )
       .then((response) => {
-        
+        this.submit_loader=false
         console.log("booking details is "+response)
         this.phase2Result=response.data
         groupData={}
@@ -2974,6 +2977,7 @@ responsive:{
     const urlSearchParams = new URLSearchParams(window.location.search);
     const params = Object.fromEntries(urlSearchParams.entries());
    for(var i=0;i<this.multiServiceImages.length;i++){
+    this.submit_loader=true
      var image=new FormData()
       image.append('evaluation_book_id',Object.keys(this.phase2Result.evaluation_book_ids)[i])
       for(var j=0;j<this.multiServiceImages[i].images.length;j++){
@@ -2985,6 +2989,7 @@ responsive:{
        
       )
       .then((response) => {
+        this.submit_loader=false
         
        
      window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id

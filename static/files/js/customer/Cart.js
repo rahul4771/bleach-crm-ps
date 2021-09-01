@@ -74,6 +74,9 @@ $(document).ready(function(){
           
         },
       data: {
+        duration_loader:false,
+        pref_gender:false,
+        btnLoader:false,
         settings:{},
         booking_status:null,
        // success_booking_dialog:true,
@@ -589,6 +592,10 @@ $(document).ready(function(){
 
 
         methods: {
+          resetGender(){
+            this.gender=""
+            this.getMultipleSlots()
+          },
           closePaymentDialog(){
             this.payment_dialog=false
             location.reload()
@@ -3792,6 +3799,7 @@ $(document).ready(function(){
       });
     },
     newdurationcalculation(){
+      this.duration_loader=true
       this.totalmanhour=0
        this.duration=[]
     let promises = [];
@@ -3992,6 +4000,7 @@ $(document).ready(function(){
             this.setDuration(converted_hours, total_cleaners);
           }
           this.sortDuration()
+          this.duration_loader=false
   })
     },
     sortDuration(){
@@ -4790,6 +4799,7 @@ bookLetCustService(){
 },
 sendLetCustScheduled(){
   var gender=this.gender
+  this.btnLoader=true
   var discount=this.calculateDiscount()
   this.payable_amount=this.payment_total_cost-discount
   if(this.gender==" "){
@@ -4817,6 +4827,7 @@ sendLetCustScheduled(){
         axios.post(this.url+'/customer/evaluatorbookingmultiplephase3/customer/'+this.custId,serviceDetails).then(response=>{
           this.evaluation_id=response.data.secret_code
           this.eval_details=response.data
+          this.btnLoader=false
           ch_count=ch_count+1
           if(ch_count==(Object.keys(this.scheduleGroup).length) && this.currentAddressIndex==this.bookedServiceDetails.length){
             if(this.eval_details.payment_status=='PENDING'){
@@ -4842,6 +4853,7 @@ sendLetCustScheduled(){
     axios.post(this.url+'/customer/evaluatorbookingmultiplephase3/customer/'+this.custId,this.custServiceScheduled).then(response=>{
       this.evaluation_id=response.data.secret_code
       this.eval_details=response.data
+      this.btnLoader=false
       if(this.currentAddressIndex==this.bookedServiceDetails.length){
         if(this.eval_details.payment_status=='PENDING'){
           this.goToPaymentDialog()

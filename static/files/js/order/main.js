@@ -28,6 +28,10 @@ $(document).ready(function () {
     var year=date.split('/')[2]
     var newdate=day+'-'+month+'-'+year
     app.selected_date=newdate
+    if(!app.selected_slots[app.selected_date])
+    {
+    app.selected_slots[app.selected_date]=[]
+    }
     //console.log($('#date_hidden').val().replace(/\//g, '-'))
     app.setDate($('#date_hidden').val())
     this.selected_cleaning_date=moment(date,'MM/DD/YYYY').format('DD-MM-YYYY')
@@ -216,6 +220,7 @@ function editCleaningDate(service){
   app.cleaning_start_date=data.cleaning_start_date
   app.selected_cleaning_date=data.cleaning_start_date
   app.selected_date=data.cleaning_start_date
+  app.selected_slots[app.selected_date]=[]
   app.getSlotes(app.cleaning_start_date)
   $('#date_hidden').val((moment(app.cleaning_start_date,'DD-MM-YYYY').format('MM/DD/YYYY')))
   $("#calendar").datepicker("update", moment(app.cleaning_start_date,'DD-MM-YYYY').format('MM/DD/YYYY'));
@@ -298,6 +303,7 @@ const app = new Vue({
   
   mounted() {
    this.url=api
+   
     this.getOrderId()
     this.setDate(moment().format('MM/DD/YYYY'))
     this.selected_date=moment().format('DD-MM-YYYY')
@@ -336,7 +342,7 @@ const app = new Vue({
 
   data: {
     notes:'',
-    
+    reload:true,
     all_val:false,
     reduction_status:false,
     no_of_visits:0,
@@ -415,6 +421,7 @@ const app = new Vue({
              schedule_serviceTypes:[],
              timeSlots:{},
              selectedSlots:[],
+             selected_slots:{},
              cleaning_hours:null,
              no_of_cleaners:null,
              no_of_slots:0,
@@ -725,7 +732,19 @@ setTimeout(function() {
       this.keynote_update=true
     },
     checkSlot(index){
-      if(this.selectedSlots.length>0){
+      if(!this.selected_slots[this.selected_date]){
+        this.selected_slots[this.selected_date]=[]
+      }
+      if(this.dateContCheck() && this.selected_slots[this.selected_date].length<=0){
+        if(index==0){
+          return true
+        }
+        else{
+          return false
+        }
+      }
+      
+      if(this.selected_slots[this.selected_date].length>0 ){
        
        var real_slot=this.available_slotes[index]
         var prevSlot=real_slot-1
@@ -733,13 +752,36 @@ setTimeout(function() {
         if(this.available_slotes.includes(prevSlot) || this.available_slotes.includes(nextSlot)){
           var prevSlotIndex=this.available_slotes.indexOf(prevSlot)
           var nextSlotIndex=this.available_slotes.indexOf(nextSlot)
-          if(this.selectedSlots.includes(prevSlotIndex)||this.selectedSlots.includes(nextSlotIndex)){
+          
+          if(nextSlotIndex>=0 && prevSlotIndex>=0)
+          {
+          if(this.selected_slots[this.selected_date].includes(this.findSlotIndex(prevSlotIndex))||this.selected_slots[this.selected_date].includes(this.findSlotIndex(nextSlotIndex))){
             return true
           }
           else{
             return false
           }
         }
+        else{
+          if(nextSlotIndex<0 && prevSlotIndex>0){
+            if(this.selected_slots[this.selected_date].includes(this.findSlotIndex(prevSlotIndex))){
+              return true
+            }
+            else{
+              return false
+            }
+          }
+          else if(prevSlotIndex<0 && nextSlotIndex>0){
+            if(this.selected_slots[this.selected_date].includes(this.findSlotIndex(nextSlotIndex))){
+              return true
+            }
+            else{
+              return false
+            }
+          }
+          
+        }
+      }
         else{
           return false
         }
@@ -751,11 +793,59 @@ setTimeout(function() {
       }
     },
     selectSlot(index){
+      this.reload=false
       this.selectedSlots.push(index)
+      if(!this.selected_slots[this.selected_date])
+      {
+      this.selected_slots[this.selected_date]=[]
+      }
+      this.selected_slots[this.selected_date].push(this.findSlotIndex(index))
+      this.reload=true
+    },
+    resetSlotsSelected(){
+      this.selected_slots={}
+      this.selected_slots[this.selected_date]=[]
+      console.log("inside rest")
     },
     removeSlot(index){
+      this.reload=false
       var slotindex=this.selectedSlots.indexOf(index)
+      var slotindex2=this.selected_slots[this.selected_date].indexOf(this.findSlotIndex(index))
+      this.selected_slots[this.selected_date].splice(slotindex2)
       this.selectedSlots.splice(slotindex,1)
+      this.reload=true
+    },
+    countSelection(){
+      var count=0
+      for(var i in this.selected_slots){
+        count=count+this.selected_slots[i].length
+      }
+      return count
+    },
+    findSlotIndex(index){
+      for(var i in this.slotFormat){
+        if(this.slotFormat[i].start_time==this.parsedTimeSlots[index].start_time){
+          
+          return i
+          
+        }
+      }
+    },
+    dateContCheck(){
+      var prevDate=moment(this.selected_date,'DD-MM-YYYY').subtract(1,"days").format('DD-MM-YYYY')
+     
+      if(this.selected_slots[prevDate]){
+        if(this.selected_slots[prevDate].includes("12")){
+          return true
+        }
+        else{
+          return false
+        }
+
+      }
+      else{
+        return false
+      }
     },
     parseOneTimeSlots(){
       this.parsedTimeSlots=[]
@@ -771,6 +861,21 @@ setTimeout(function() {
       }
     },
     getSlotes(date){
+      var cont_check=this.dateContCheck()
+      if(!cont_check){
+        if(this.selected_slots[date]){
+          if(!this.selected_slots[date].includes('12'))
+            {
+              this.selected_slots={}
+              this.selected_slots[this.selected_date]=[]
+            }
+        }
+        else{
+          this.selected_slots={}
+          this.selected_slots[this.selected_date]=[]
+        }
+       
+      }
       this.schedule_serviceTypes=[]
       this.selectedSlots=[]
       this.schedule_serviceTypes.push(this.service_type)
@@ -881,18 +986,18 @@ setTimeout(function() {
       }
       else{
 
-      
-      var minhour=Math.min(...this.selectedSlots)
+        var start_date=Object.keys(this.selected_slots)[0]
+        var minhour=Math.min(...this.selected_slots[start_date])
       axios.post(this.url+'/customer/editorder/'+this.orderId,{
         action_type:'add_cleaning',
         evaluation_book_id:this.evaluation_book_id,
-        cleaning_date:this.selected_date,
-       cleaning_time:this.parsedTimeSlots[minhour].start_time,
-       cleaning_hours:this.selectedSlots.length*2,
+        cleaning_date:start_date,
+        cleaning_time:this.slotFormat[minhour].start_time,
+        cleaning_hours:this.countSelection()*2,
        no_of_cleaners:parseInt(this.selected_no_of_cleaners)
       }).then(response=>{
         $('#visit-close').click()
-        location.reload()
+       // location.reload()
        
       })
     }
@@ -938,27 +1043,27 @@ setTimeout(function() {
       })
     },
     editVisit(){
-      if(this.selectedSlots.length<1){
+      if(this.countSelection()<1){
         this.visit_err='Please select atleast one slot'
       }
       else if(!this.selected_no_of_cleaners){
         this.visit_err='Please select the number of cleaners'
       }
       else{
-
+      var start_date=Object.keys(this.selected_slots)[0]
       
-      var minhour=Math.min(...this.selectedSlots)
+      var minhour=Math.min(...this.selected_slots[start_date])
       axios.post(this.url+'/customer/editorder/'+this.orderId,{
         action_type:'edit_cleaning',
         evaluation_book_id:this.evaluation_book_id,
         schedule_id:this.schedule_id,
-        cleaning_date:this.selected_date,
-       cleaning_time:this.parsedTimeSlots[minhour].start_time,
-       cleaning_hours:this.selectedSlots.length*2,
+        cleaning_date:start_date,
+       cleaning_time:this.slotFormat[minhour].start_time,
+       cleaning_hours:this.countSelection()*2,
        no_of_cleaners:parseInt(this.selected_no_of_cleaners)
       }).then(response=>{
         
-        location.reload()
+      //  location.reload()
        
       })
     }

@@ -3177,6 +3177,28 @@
                         <div class="p-10"> <b>Number of Cleaners</b></div>
                     <input  type="number" class="textBox model-text-border w-auto" placeholder="No of Cleaners"  required="required" v-model="selected_no_of_cleaners" @input="getSlotesByCleaners()">
                 </div>
+                <div class="row">
+                    <div class="col-md-12" v-if="countSelection()>0">
+                        <div class="d-flex mt-20">
+                            <div>
+                                Selected Slots
+                            </div>
+                            <div class="reset-selection-btn" style="margin-left: auto;" @click="resetSlotsSelected()">
+                                <i class="fas fa-redo"></i>
+                                Reset Selection
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mt-10" v-for="(s_date,dindex) in selected_slots" v-bind:key="dindex">
+                        <div v-if="s_date.length>0"><% dindex %></div>
+                        <div class="row">
+                            <div class="col-md-3 mt-10" v-for="(s_time,tindex) in s_date" v-bind:key="tindex">
+                                <div class="selected_slot_chip"><% slotFormat[s_time].start_time %></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
                 <div class="mt-20" v-if="!slotloader && selected_no_of_cleaners && selected_no_of_cleaners!='None'">Select Slots</div>
                 <div class="row" v-if="slotloader && selected_no_of_cleaners && selected_no_of_cleaners!='None'">
                     <div class="col-md-12 text-center mt-50">
@@ -3197,13 +3219,13 @@
                         </div>
                         </div>
                
-
-                    <div class="row model-time-solt .mt-20" v-if="!slotloader  && selected_no_of_cleaners && selected_no_of_cleaners!='None'">
+                       
+                    <div class="row model-time-solt .mt-20" v-if="!slotloader  && selected_no_of_cleaners && selected_no_of_cleaners!='None' && reload">
                         <div v-for="(slot,index) in parsedTimeSlots" v-bind:key="index" class="col-md-4">
-                            <button class="time-slot-button" v-if="!selectedSlots.includes(index) && checkSlot(index)" @click="selectSlot(index)"><% slot.start_time +' - ' + slot.end_time %></button>
-                            <button class="time-slot-button-disabled" v-if="!selectedSlots.includes(index) && !checkSlot(index)" @click="selectSlot(index)"><% slot.start_time +' - ' + slot.end_time %></button>
+                            <button class="time-slot-button" v-if="!selected_slots[selected_date].includes(findSlotIndex(index)) && checkSlot(index)" @click="selectSlot(index)"><% slot.start_time +' - ' + slot.end_time %></button>
+                            <button class="time-slot-button-disabled" v-if="!selected_slots[selected_date].includes(findSlotIndex(index)) && !checkSlot(index)" @click="selectSlot(index)"><% slot.start_time +' - ' + slot.end_time %></button>
 
-                            <button class="time-slot-button-active" v-if="selectedSlots.includes(index)" @click="removeSlot(index)"><% slot.start_time +' - ' + slot.end_time %></button>
+                            <button class="time-slot-button-active" v-if="selected_slots[selected_date].includes(findSlotIndex(index))" @click="removeSlot(index)"><% slot.start_time +' - ' + slot.end_time %></button>
                         </div>
                         
 
