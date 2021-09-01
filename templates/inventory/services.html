@@ -4,7 +4,65 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        input:focus {
+      outline: none !important;
+      border:none !important;
+     
+    }
+        .inv-input-container2 {
+    display: -ms-flexbox; /* IE10 */
+    display: flex;
+    width: 60%;
+    /* float: right;
+     */
+  }
+  .inv-icon-input2 {
+    /* border-right: none !important;
+    border-radius: 7px 0px 0px 7px;
+    border-bottom: 1px solid #707070 !important;
+    border-top: 1px solid #707070 !important;
+    border-left: 1px solid #707070 !important; */
+    border: 1px solid #2c4c82;
+    background: #2c4c82;
+    padding: 5px;
+    color: #2c4c82;
+    min-width: 20px;
+    text-align: center;
+  }
+  .inv-icon-input2:hover{
+    /* border-right: none !important;
+    border-radius: 7px 0px 0px 7px;
+    border-bottom: 1px solid #707070 !important;
+    border-top: 1px solid #707070 !important;
+    border-left: 1px solid #707070 !important; */
+    border: 1px solid #2c4c82;
+    background: #2c4c82;
+    padding: 5px;
+    color: #2c4c82;
+    min-width: 20px;
+    text-align: center;
+  }
+  .inv-normal-btn{
+    border: none;
+    background: none;
+  }
+  .inv-normal-btn:hover{
+    border: none;
+    background: none;
+  }
+  .model-filter2{
+    /* padding: 5px; */
    
+    cursor: pointer;
+    margin: 0 auto;
+  }
+  .inv-border{
+    border: 1px solid #4B4B4B;
+  border-radius: 2px;
+  }
+  
+      </style>
     <style>
   
         .headText-main{
@@ -76,18 +134,44 @@
                                     <div class="col-md-4">
                                         <div class="model-input-name">Select size</div>
 
-                                        <select id="id_recipe_type1" class="minimal" onchange="recipetype(this)">
+                                        <!-- <select id="id_recipe_type1" class="minimal" onchange="recipetype(this)">
                                             <option value="service">By Service</option>
                                             <option value="person">By Person</option>
 
-                                        </select>
+                                        </select> -->
+
+                                        <input hidden  type="text"id="id_recipe_type1" value="service">
+                                        <div class="wrap-drop" id="noble-gases3"  >
+                                            <span id="id_selectText3">By Service</span>
+                                            <ul class="drop">
+                                                <li onclick="changeSelect3('service')"><a>By Service</a></li>
+                                                <li onclick="changeSelect3('person')"><a>By Person</a></li> 
+                                            </ul>
+                                        </div>
                                     </div>
                                     <div class="col-md-4">
+                                        
                                         <div class="model-input-name">Area</div>
-                                        <div style="width: 50%; " class="inv-input-container h-30"> 
+                                        <!-- <div style="width: 50%; " class="inv-input-container h-30"> 
                                             <input type="number"   class="w-p-100 inv-in" name="attributes">
                                             <div class="av-font" style="margin-left:5px; margin-top: 5px; font-size:18px;">sqm</div>
+                                          </div> -->
+                                          <div class="d-flex">
+                                            <div class="inv-input-container2 inv-border h-30">
+                                                <input  style="border: none !important; width: 90%;" class="inv-in"  >
+                                                <!-- <div class="inv-hr"></div> -->
+                                                <div class="model-filter2" >
+                                                  <button class="inv-icon-input2" >
+                                                  <i class="fa fa-refresh fa-lg " style="color: #ffffff;" aria-hidden="true"></i>
+                                                  </button>
+                                                </div>
+                                                
+                                            </div>
+                                            <div style="margin-left: 10px; font-size: 16px; margin-top: 3px;" class="av-font">sqm</div>
                                           </div>
+                                          
+                                        
+                        
                                     </div>
                                 </div>
                                 <div class="row mt-10">
@@ -140,18 +224,43 @@
                                     <div class="col-md-4">
                                         <div class="model-input-name">Select size</div>
 
-                                        <select id="id_recipe_type2" class="minimal">
+                                        <!-- <select id="id_recipe_type2" class="minimal">
                                             <option value="service">By Service</option>
                                             <option value="person">By Person</option>
 
-                                        </select>
+                                        </select> -->
+                                        <input hidden type="text"id="id_recipe_type2" value="service">
+                                        <div class="wrap-drop" id="noble-gases4"  >
+                                            <span id="id_selectText4">By Service</span>
+                                            <ul class="drop">
+                                                <li onclick="changeSelect4('service')"><a>By Service</a></li>
+                                                <li onclick="changeSelect4('person')"><a>By Person</a></li> 
+                                            </ul>
+                                        </div>
                                     </div>
                                     <div class="col-md-4">
+                                        
                                         <div class="model-input-name">Area</div>
-                                        <div style="width: 50%; " class="inv-input-container h-30"> 
+                                        <!-- <div style="width: 50%; " class="inv-input-container h-30"> 
                                             <input type="number"   class="w-p-100 inv-in" name="attributes">
                                             <div class="av-font" style="margin-left:5px; margin-top: 5px; font-size:18px;">sqm</div>
+                                          </div> -->
+                                          <div class="d-flex">
+                                            <div class="inv-input-container2 inv-border h-30">
+                                                <input  style="border: none !important; width: 90%;" class="inv-in"  >
+                                                <!-- <div class="inv-hr"></div> -->
+                                                <div class="model-filter2" >
+                                                  <button class="inv-icon-input2" >
+                                                  <i class="fa fa-refresh fa-lg " style="color: #ffffff;" aria-hidden="true"></i>
+                                                  </button>
+                                                </div>
+                                                
+                                            </div>
+                                            <div style="margin-left: 10px; font-size: 16px; margin-top: 3px;" class="av-font">sqm</div>
                                           </div>
+                                          
+                                        
+                        
                                     </div>
 
                                 </div>
@@ -199,18 +308,43 @@
                                     <div class="col-md-4">
                                         <div class="model-input-name">Select size</div>
 
-                                        <select id="id_recipe_type3" class="minimal">
+                                        <!-- <select id="id_recipe_type3" class="minimal">
                                             <option value="service">By Service</option>
                                             <option value="person">By Person</option>
 
-                                        </select>
+                                        </select> -->
+                                        <input hidden type="text"id="id_recipe_type3" value="service">
+                                        <div class="wrap-drop" id="noble-gases5"  >
+                                            <span id="id_selectText5">By Service</span>
+                                            <ul class="drop">
+                                                <li onclick="changeSelect5('service')"><a>By Service</a></li>
+                                                <li onclick="changeSelect5('person')"><a>By Person</a></li> 
+                                            </ul>
+                                        </div>
                                     </div>
                                     <div class="col-md-4">
+                                        
                                         <div class="model-input-name">Area</div>
-                                        <div style="width: 50%; " class="inv-input-container h-30"> 
+                                        <!-- <div style="width: 50%; " class="inv-input-container h-30"> 
                                             <input type="number"   class="w-p-100 inv-in" name="attributes">
                                             <div class="av-font" style="margin-left:5px; margin-top: 5px; font-size:18px;">sqm</div>
+                                          </div> -->
+                                          <div class="d-flex">
+                                            <div class="inv-input-container2 inv-border h-30">
+                                                <input  style="border: none !important; width: 90%;" class="inv-in"  >
+                                                <!-- <div class="inv-hr"></div> -->
+                                                <div class="model-filter2" >
+                                                  <button class="inv-icon-input2" >
+                                                  <i class="fa fa-refresh fa-lg " style="color: #ffffff;" aria-hidden="true"></i>
+                                                  </button>
+                                                </div>
+                                                
+                                            </div>
+                                            <div style="margin-left: 10px; font-size: 16px; margin-top: 3px;" class="av-font">sqm</div>
                                           </div>
+                                          
+                                        
+                        
                                     </div>
                                     
                                 </div>
@@ -258,19 +392,44 @@
                                     <div class="col-md-4">
                                         <div class="model-input-name">Select size</div>
 
-                                        <select id="id_recipe_type4" class="minimal">
+                                        <!-- <select id="id_recipe_type4" class="minimal">
                                             <option value="service">By Service</option>
                                             <option value="person">By Person</option>
 
-                                        </select>
+                                        </select> -->
+                                        <input hidden type="text" id="id_recipe_type4" value="service">
+                                        <div class="wrap-drop" id="noble-gases6"  >
+                                            <span id="id_selectText6">By Service</span>
+                                            <ul class="drop">
+                                                <li onclick="changeSelect6('service')"><a>By Service</a></li>
+                                                <li onclick="changeSelect6('person')"><a>By Person</a></li> 
+                                            </ul>
+                                        </div>
                                     </div>
                                     <div class="col-md-4">
+                                        
                                         <div class="model-input-name">Area</div>
-                                        <div style="width: 50%; " class="inv-input-container h-30"> 
+                                        <!-- <div style="width: 50%; " class="inv-input-container h-30"> 
                                             <input type="number"   class="w-p-100 inv-in" name="attributes">
                                             <div class="av-font" style="margin-left:5px; margin-top: 5px; font-size:18px;">sqm</div>
+                                          </div> -->
+                                          <div class="d-flex">
+                                            <div class="inv-input-container2 inv-border h-30">
+                                                <input  style="border: none !important; width: 90%;" class="inv-in"  >
+                                                <!-- <div class="inv-hr"></div> -->
+                                                <div class="model-filter2" >
+                                                  <button class="inv-icon-input2" >
+                                                  <i class="fa fa-refresh fa-lg " style="color: #ffffff;" aria-hidden="true"></i>
+                                                  </button>
+                                                </div>
+                                                
+                                            </div>
+                                            <div style="margin-left: 10px; font-size: 16px; margin-top: 3px;" class="av-font">sqm</div>
                                           </div>
-                                    </div>
+                                          
+                                        
+                        
+                                    </div>>
                                 </div>
                                 <div class="row mt-10">
                                     <div class="col-md-12">
@@ -425,12 +584,21 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Recipe Type</div>
 
-                    <div class="inv-input-container h-30"> 
-                        <select class="w-p-100 inv-in" id="id_recipe_type" name="recipe_type" >
+                   
+                        <!-- <select class="w-p-100 inv-in" id="id_recipe_type" name="recipe_type" >
                         <option value="service">Service Items</option>
                         <option value="person">Personal Items</option>
-                        </select>
-                      </div>
+                        </select> -->
+
+                        <input hidden type="text" id="id_recipe_type" name="recipe_type" value="service">
+                        <div class="wrap-drop" id="noble-gases2" style="z-index: 2;" >
+                            <span id="id_selectText2">Service Items</span>
+                            <ul class="drop">
+                                <li onclick="changeSelect2('service')"><a>Service Items</a></li>
+                                <li onclick="changeSelect2('person')"><a>Personal Items</a></li> 
+                            </ul>
+                        </div>
+                      
                 </div>
 
             </div>
@@ -460,11 +628,19 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Status</div>
 
-                    <select id="id_item_status" name="item_status" class="minimal">
+                    <!-- <select id="id_item_status" name="item_status" class="minimal">
                         <option value="True" selected>Active</option>
                         <option value="False">Inactive</option>
 
-                    </select>
+                    </select> -->
+                    <input hidden  type="text" id="id_item_status" name="item_status" value="True">
+                    <div class="wrap-drop" id="noble-gases"  >
+                        <span id="id_selectText">Active</span>
+                        <ul class="drop">
+                            <li onclick="changeSelect('True')"><a>Active</a></li>
+                            <li onclick="changeSelect('False')"><a>Inactive</a></li> 
+                        </ul>
+                    </div>
                     
                 </div>
 
@@ -526,8 +702,81 @@
 {% endblock %}
 
 {% block javascript %}
-
 <script>
+    function DropDown(el) {
+    this.dd = el;
+    this.placeholder = this.dd.children('span');
+    this.opts = this.dd.find('ul.drop li');
+    this.val = '';
+    this.index = -1;
+    this.initEvents();
+}
+
+DropDown.prototype = {
+    initEvents: function () {
+        var obj = this;
+        obj.dd.on('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $(this).toggleClass('active');
+        });
+        obj.opts.on('click', function () {
+            var opt = $(this);
+            obj.val = opt.text();
+            obj.index = opt.index();
+            obj.placeholder.text(obj.val);
+            opt.siblings().removeClass('selected');
+            opt.filter(':contains("' + obj.val + '")').addClass('selected');
+        }).change();
+    },
+    getValue: function () {
+        return this.val;
+    },
+    getIndex: function () {
+        return this.index;
+    }
+};
+
+$(function () {
+    // create new variable for each menu
+    var dd1 = new DropDown($('#noble-gases'));
+    var dd2 = new DropDown($('#noble-gases2'));
+    var dd3 = new DropDown($('#noble-gases3'));
+    var dd4 = new DropDown($('#noble-gases4'));
+    var dd5 = new DropDown($('#noble-gases5'));
+    var dd6 = new DropDown($('#noble-gases6'));
+
+    // var dd2 = new DropDown($('#other-gases'));
+    $(document).click(function () {
+        // close menu on document click
+        $('.wrap-drop').removeClass('active');
+    });
+});
+</script>
+<script>
+
+function changeSelect(va){
+        $('#id_item_status').val(va)
+    }
+    function changeSelect2(va){
+        $('#id_recipe_type').val(va)
+    }
+    function changeSelect3(va){
+        $('#id_recipe_type1').val(va)
+        recipetype($('#id_recipe_type1').val())
+    }
+    function changeSelect4(va){
+        $('#id_recipe_type2').val(va)
+        recipetype($('#id_recipe_type2').val())
+    }
+    function changeSelect5(va){
+        $('#id_recipe_type3').val(va)
+        recipetype($('#id_recipe_type3').val())
+    }
+    function changeSelect6(va){
+        $('#id_recipe_type4').val(va)
+        recipetype($('#id_recipe_type4').val())
+    }
     var searchFlag = false;
 //     $('.inv-sidedrawer').click(function(){
 //         console.log(document.getElementById("id_search").style.display)
@@ -659,6 +908,11 @@ function selectActive(d,id,name){
             $('#id_edit_item').val('');
             $('#id_item_count').val('');
             $('#pro-name').val('');
+            $('#id_item_status').val('True');
+            $('#id_selectText').text('Active');
+            $('#id_recipe_type').val('service');
+            $('#id_selectText2').text('Service Items');
+
         }
     if(d == 'edit'){
         $("#itemHead").text("Edit Item");
@@ -699,6 +953,19 @@ function selectActive(d,id,name){
             else{
                 document.getElementById("id_item_status").value = 'False';
             }
+            if($('#id_item_status').val() == 'True'){
+           
+            $('#id_selectText').text('Active');
+            }else{
+                $('#id_selectText').text('Inactive');
+            }
+            if($('#id_recipe_type').val() == 'service'){
+           
+            $('#id_selectText2').text('Service Items');
+            }else{
+                $('#id_selectText2').text('Personal Items');
+
+            }
       
         if(screen.width<= 600){
             document.getElementById("addStore").style.width = "100%";
@@ -721,8 +988,8 @@ function selectActive(d,id,name){
     function recipetype(d){
         var cleaning = $('#id_name_cleaning').val();
         var category = $('#id_name_category').val();
-        var recipe_category = $(d).val();
-        getitems(cleaning,category,recipe_category)
+        //var recipe_category = $(d).val();
+        getitems(cleaning,category,d)
         console.log("lop")
     }
 
