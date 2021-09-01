@@ -1951,9 +1951,10 @@ class InventoryServiceRecipeAPI(APIView):
 	def get(self,request):
 		response_dict = {}
 		service_type = request.GET.get('service_type')
-		print(service_type,"attrsed2")
+		recipe_category = request.GET.get('recipe_category')
+		print(service_type,recipe_category,"attrsed2")
 		try:
-			service_items = ServiceRecipe.objects.filter(service_type=service_type)
+			service_items = ServiceRecipe.objects.filter(service_type=service_type,service_or_person=recipe_category)
 		except:
 			service_items = None
 		
@@ -1964,6 +1965,7 @@ class InventoryServiceRecipeAPI(APIView):
 		for item in service_items:
 			list_item = {
 				'service_item_id' : item.id,
+				'recipe_type' : item.service_or_person,
 				'item_name' : item.item.name,
 				'item_id' :item.item.id,
 				'item_count' : item.item_count,

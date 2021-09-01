@@ -1184,10 +1184,11 @@ class InventoryServices(IsInventoryAdmin,View):
             item_count = request.POST.get('item_count')
             unit_price = request.POST.get('unit_price')
             item_status = request.POST.get('item_status')
+            recipe_type = request.POST.get('recipe_type')
 
             inventoryitem = InventoryItem.objects.get(id=int(item))
 
-            ServiceRecipe.objects.create(service_type=service_type,item=inventoryitem,item_price=unit_price,item_count=item_count,status=item_status)
+            ServiceRecipe.objects.create(service_or_person=recipe_type,service_type=service_type,item=inventoryitem,item_price=unit_price,item_count=item_count,status=item_status)
 
             messages.success(request,"Item Added successfully!")
 
@@ -1197,11 +1198,13 @@ class InventoryServices(IsInventoryAdmin,View):
             item_count = request.POST.get('item_count')
             unit_price = request.POST.get('unit_price')
             item_status = request.POST.get('item_status')
+            recipe_type = request.POST.get('recipe_type')
 
             inventoryitem = InventoryItem.objects.get(id=int(item))
 
             serviceitem = ServiceRecipe.objects.get(id=int(service_item_id))
 
+            serviceitem.service_or_person = recipe_type
             serviceitem.item = inventoryitem
             serviceitem.item_count = item_count
             serviceitem.item_price = unit_price
