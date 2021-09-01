@@ -22,6 +22,77 @@ html{
     background: #EDF1F6 0% 0% no-repeat padding-box;
    
 }
+.banner-text{
+    color:#289bac;
+  
+}
+.banner-box-text{
+    color:#ffffff;
+    font-size:14px;
+    font-weight: 500;
+}
+.banner-main{
+    font-size:32px;
+    font-weight:500;
+}
+.banner-sub{
+    
+    font-size: 22px;
+    line-height: 0px;
+}
+.banner-inner-round{
+    height: 80px;
+    background: #ffffff;
+    width: 80px;
+    margin-left: 0px;
+    margin-top: 0px;
+   
+    border-radius: 60px;
+  
+    position: absolute;
+}
+.banner-arrow{
+    height: 22px;
+    background: #4f98aa;
+    width: 35px;
+    position: absolute;
+    top: 15px;
+    border-radius: 20px;
+    left: -25px;
+    text-align: left;
+    padding-left: 6px;
+}
+.banner-icon{
+    color:#ffffff;
+    cursor: pointer;
+}
+.banner-round{
+    height: 90px;
+    padding: 5px;
+    background: #4f98aa;
+    width: 90px;
+    border-radius: 60px;
+    margin-right: -20px;
+    margin-top: -20px;
+}
+.banner-box{
+    width: 125px;
+    padding: 6px;
+    height: 50px;
+    padding-left: 20px;
+    background: #4e98aa;
+}
+.banner-left{
+    display:none;
+}
+.banner-container{
+    position: fixed;
+    right: 0;
+    z-index: 999;
+    top:20%;
+    width:195px;
+    transition: width 1s;
+}
 .payment-total-heading{
     color:#289bac;
     font-weight: 700;

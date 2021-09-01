@@ -6,6 +6,26 @@ function openNav() {
 function closeNav() {
   document.getElementById("mobSidenav").style.width = "0";
 }  
+function toggleBanner(){
+    if($(".banner-left").is(":visible") ){
+      showBanner()
+    }
+    else{
+      hideBanner()
+    }
+}
+function hideBanner(){
+  $('.banner-container').css("width","0px")
+  $('.banner-box').hide()
+  $(".banner-left").show()
+  $(".banner-right").hide()
+}
+function showBanner(){
+  $('.banner-container').css("width","195px")
+  $('.banner-box').show()
+  $(".banner-left").hide()
+  $(".banner-right").show()
+}
 
 $(document).ready(function(){
     $('#category-carousel').owlCarousel({
