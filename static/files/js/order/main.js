@@ -997,7 +997,7 @@ setTimeout(function() {
        no_of_cleaners:parseInt(this.selected_no_of_cleaners)
       }).then(response=>{
         $('#visit-close').click()
-       // location.reload()
+        location.reload()
        
       })
     }
@@ -1063,7 +1063,7 @@ setTimeout(function() {
        no_of_cleaners:parseInt(this.selected_no_of_cleaners)
       }).then(response=>{
         
-      //  location.reload()
+        location.reload()
        
       })
     }

@@ -4399,44 +4399,48 @@ function openNav() {
   },
 
   async rearrangeSize(){
-    console.log("just called me")
+ 
     for(var i=0;i<this.multiServicesBill.length;i++){
-    
+     
       var productivity= await this.getTheProd(this.multiServicesBill[i].service)
-      console.log("productivity is"+JSON.stringify(productivity))
+     
       for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
-         /* If old bookings */
-      if(parseInt(this.multiServicesBill[i].bill[j].size)){
+        /* If old bookings */
+        if(!isNaN(this.multiServicesBill[i].bill[j].size)){
         
-        for(var p in productivity){
-           /** for kitchen Cleaning*/
-           if(this.multiServicesBill[i].service=='Kitchen Cleaning'){
-              if(multiServicesBill[i].bill[j].new_kitchen){
-                if(productivity[p].name==this.multiServicesBill[i].bill[j].size && productivity[p].is_newkitchen && parseInt(this.multiServicesBill[i].bill[j].size)>=productivity[p].min_size && parseInt(this.multiServicesBill[i].bill[j].size)<=productivity[p].max_size){
-                  this.multiServicesBill[i].bill[j].size=productivity[p]
+          for(var p in productivity){
+             /** for kitchen Cleaning*/
+             if(this.multiServicesBill[i].service=='Kitchen Cleaning'){
+                if(multiServicesBill[i].bill[j].new_kitchen){
+                  if(productivity[p].name==this.multiServicesBill[i].bill[j].size && productivity[p].is_newkitchen && parseInt(this.multiServicesBill[i].bill[j].size)>=productivity[p].min_size && parseInt(this.multiServicesBill[i].bill[j].size)<=productivity[p].max_size){
+                    this.multiServicesBill[i].bill[j].size=productivity[p]
+                  }
                 }
-              }
-           }
-           
+             }
+             
+          
+        /**  for general,deep,carparking,sterilization....... */
+        else{
+  
         
-      /**  for general,deep,carparking,sterilization....... */
-      else{
-
-      
-          if((parseInt(this.multiServicesBill[i].bill[j].size)>=productivity[p].min_size) && (parseInt(this.multiServicesBill[i].bill[j].size)<=productivity[p].max_size)){
-            
-            this.multiServicesBill[i].bill[j].size=productivity[p]
+            if((parseInt(this.multiServicesBill[i].bill[j].size)>=productivity[p].min_size) && (parseInt(this.multiServicesBill[i].bill[j].size)<=productivity[p].max_size)){
+              
+              this.multiServicesBill[i].bill[j].size=productivity[p]
+             
+            }
            
-          }
-         
-      }
-        
         }
-      }
-      /*new bookings*/
-      else{
+          
+          }
+        }
+  
+        /* new bookings */
+        else{
+          console.log("just called me"+ "i am "+this.multiServicesBill[i].service)
+          console.log("i m inside new booking")
         if(this.multiServicesBill[i].service=='Kitchen Cleaning'){
-          if(this.multiServicesBill[i].new_kitchen)
+          
+          if(this.multiServicesBill[i].bill[j].new_kitchen)
           {
             for(var p in productivity){
           if(productivity[p].name==this.multiServicesBill[i].bill[j].size && productivity[p].is_newkitchen){
@@ -4453,22 +4457,36 @@ function openNav() {
         }
         }
         else if(this.multiServicesBill[i].service=='Upholstery Cleaning'){
+          console.log("i m inside upholsetry")
+          console.log("up type is "+this.multiServicesBill[i].bill[j].upholstery_type)
           var type=""
            for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
-             if(this.multiServicesBill[i].bill[j].size.includes('Seater')){
+             if(this.multiServicesBill[i].bill[j].upholstery_type=='SOFA'){
                type="SOFA"
+               if(this.multiServicesBill[i].bill[j].size.includes('Seater')){
+                this.multiServicesBill[i].bill[j].size=this.multiServicesBill[i].bill[j].size.split(" ")[0]
+                console.log("section size is "+this.multiServicesBill[i].bill[j].size.split(" ")[0])
+                 this.multiServicesBill[i].bill[j].upholstery_type="SOFA"
+                
+               }
+               else{
+                for(var p in productivity){
+          
+        
+                  if(productivity[p].name==this.multiServicesBill[i].bill[j].size && productivity[p].upholstery_type=='SOFA'){
+                    this.multiServicesBill[i].bill[j].size=productivity[p]
+                  }
+                
+                
+              }
+               }
                //this.sections[j].size=this.this.sections[j].size.split(" ")[0]
-               this.multiServicesBill[i].bill[j].size=this.multiServicesBill[i].bill[j].size.split(" ")[0]
-               console.log("section size is "+this.multiServicesBill[i].bill[j].size.split(" ")[0])
-               this.multiServicesBill[i].bill[j].upholstery_type="SOFA"
+               
              }
-             else{
+             else if(this.multiServicesBill[i].bill[j].upholstery_type=='CHAIR'){
                type="CHAIR"
                this.multiServicesBill[i].bill[j].upholstery_type="CHAIR"
-             }
-             console.log("type is"+type)
-             if(type=="CHAIR"){
-              for(var p in productivity){
+               for(var p in productivity){
           
         
                 if(productivity[p].name==this.multiServicesBill[i].bill[j].size && productivity[p].upholstery_type=='CHAIR'){
@@ -4477,8 +4495,9 @@ function openNav() {
               
               
             }
-              
              }
+             console.log("type is"+type)
+             
             
            }
              
@@ -4525,6 +4544,7 @@ function openNav() {
         }
          }  
         else{
+          console.log("i m inside general")
         for(var p in productivity){
           
         

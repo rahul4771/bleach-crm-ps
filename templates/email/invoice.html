@@ -536,7 +536,7 @@
             width: 200px;
             font-size: 22px;">
             {% if invoice.customerbooking > 0 %}
-                <b> <a href="https://my.bleachkw.com/customer/booking/invoice/prw{{invoice.evaluation.evaluation_id|slice:'3:'}}{{invoice.evaluation.customer.username}}" class="button-a">Pay</a> </b>
+                <b> <a href="https://my.bleachkw.com/customer/booking/invoice/prw{{invoice.evaluation.evaluation_id|slice:'3:'}}{{invoice.evaluation.customer.username}}" class="button-a">Book and Pay</a> </b>
             {% else %}
                 {% if invoice.evaluation.payment_method == 'SUBSCRIPTION' %}
                     <b> <a href="https://my.bleachkw.com/customer/subscription/invoice/prw{{invoice.evaluation.evaluation_id|slice:'3:'}}{{invoice.evaluation.customer.username}}" class="button-a">Pay</a> </b>
