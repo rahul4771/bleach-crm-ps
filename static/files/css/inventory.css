@@ -189,7 +189,7 @@
   display: block;
 }
 .inv-store {
-  background: url(../inventory/icons/Warehouse.png) no-repeat left;
+  background: url(../inventory/icons/warehouse.png) no-repeat left;
   background-size: 30px 30px;
   background-position: 18px 7px;
   display: block;

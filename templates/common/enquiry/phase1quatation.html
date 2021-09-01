@@ -35,12 +35,16 @@
  
 {% for detail in evaluation_details %} 
 <div class="checkin-wrapper-row checkin-forms-boxes"><!--checkin-wrapper-row checkin-forms-boxes-->
+
       <div class="checkin-form-left"><!--checkin-form-left-->
       <i class="fa fa-lg fa-building-o green-text" aria-hidden="true"></i>
         <b>{{detail.address.apartment}}</b>: {% if detail.address.floor %}{{detail.address.floor}}, {% else %}{% endif %} {{detail.address.building}}, {{detail.address.block}}, {{detail.address.street}}, {% if detail.address.avenue %}{{detail.address.avenue}}, {% else %}{% endif %} {{detail.address.area.name}}, {{detail.address.governorate.name}} 
         <br><br>
       
-        {% if detail.attender_note %}<p><i class="fa fa-lg fa-commenting-o blue-text" aria-hidden="true"></i> {{detail.attender_note}}</p>{% endif %}
+        {% if detail.attender_note %}  
+        <i class="fa fa-lg fa-user blue-text" aria-hidden="true"></i> <b>{{detail.evaluation.call_attender.name}}</b>
+        <p><i class="fa fa-lg fa-commenting-o blue-text" aria-hidden="true"></i>{{detail.attender_note}}</p>
+        {% endif %}
       
       {% if detail.address.gps_location %}
       <br><br>
