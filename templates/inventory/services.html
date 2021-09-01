@@ -76,9 +76,9 @@
                                     <div class="col-md-4">
                                         <div class="model-input-name">Select size</div>
 
-                                        <select  id="id_payment" class="minimal">
-                                            <option  >By Service</option>
-                                            <option value="Post Paid">By Person</option>
+                                        <select id="id_recipe_type1" class="minimal" onchange="recipetype(this)">
+                                            <option value="service">By Service</option>
+                                            <option value="person">By Person</option>
 
                                         </select>
                                     </div>
@@ -140,10 +140,9 @@
                                     <div class="col-md-4">
                                         <div class="model-input-name">Select size</div>
 
-                                        <select id="id_payment" class="minimal">
-                                            <option  ></option>
-                                            <option  >Active</option>
-                                            <option value="Post Paid">Inactive</option>
+                                        <select id="id_recipe_type2" class="minimal">
+                                            <option value="service">By Service</option>
+                                            <option value="person">By Person</option>
 
                                         </select>
                                     </div>
@@ -200,10 +199,9 @@
                                     <div class="col-md-4">
                                         <div class="model-input-name">Select size</div>
 
-                                        <select id="id_payment" class="minimal">
-                                            <option  ></option>
-                                            <option  >Active</option>
-                                            <option value="Post Paid">Inactive</option>
+                                        <select id="id_recipe_type3" class="minimal">
+                                            <option value="service">By Service</option>
+                                            <option value="person">By Person</option>
 
                                         </select>
                                     </div>
@@ -260,10 +258,9 @@
                                     <div class="col-md-4">
                                         <div class="model-input-name">Select size</div>
 
-                                        <select id="id_payment" class="minimal">
-                                            <option  ></option>
-                                            <option  >Active</option>
-                                            <option value="Post Paid">Inactive</option>
+                                        <select id="id_recipe_type4" class="minimal">
+                                            <option value="service">By Service</option>
+                                            <option value="person">By Person</option>
 
                                         </select>
                                     </div>
@@ -355,11 +352,12 @@
 
             <form method="POST" action="">{% csrf_token %}
             <input type="hidden" name="action" id="item_action" value="add_item" />
-            <input type="text" name="item" id="id_pro_sel" value="" />
+            <input type="hidden" name="item" id="id_pro_sel" value="" />
 
             <input type="hidden" name="item_edit_id" id="id_edit_item" />
 
             <input type="text"  class="w-p-100 inv-in" id="id_name_cleaning" name="service_type" value="General Cleaning" readonly>
+            <input type="hidden"  class="w-p-100 inv-in" id="id_name_category" value="detailedCleaning">
             {% comment %} <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Item</div>
@@ -425,10 +423,24 @@
             </div> {% endcomment %}
             <div class="row mt-20">
                 <div class="col-md-12 ">
+                    <div class="model-input-name">Recipe Type</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <select class="w-p-100 inv-in" id="id_recipe_type" name="recipe_type" >
+                        <option value="service">Service Items</option>
+                        <option value="person">Personal Items</option>
+                        </select>
+                      </div>
+                </div>
+
+            </div>
+
+            <div class="row mt-20">
+                <div class="col-md-12 ">
                     <div class="model-input-name">Quantity</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="item_count" id="id_item_count">
+                        <input type="number" step="0.1"  class="w-p-100 inv-in" name="item_count" id="id_item_count">
                       </div>
                 </div>
 
@@ -538,7 +550,7 @@ var products = [];
     console.log(products)
 $(document).ready(function(){
     $(".country1").chosen();
-    getitems('General Cleaning','detailedCleaning');
+    getitems('General Cleaning','detailedCleaning','service');
     var a = [];
 
 
@@ -579,8 +591,21 @@ function showProducts(){
 
 function getName(name,type){
     $('#id_name_cleaning').val(name)
+    $('#id_name_category').val(type)
     console.log(type,"typ")
-    getitems(name,type);
+    if (type == 'detailedCleaning'){
+        var recipe_category = $('#id_recipe_type1').val();
+    }
+    if (type == 'specialCare'){
+        var recipe_category = $('#id_recipe_type2').val();
+    }
+    if (type == 'kitchenCleaning'){
+        var recipe_category = $('#id_recipe_type3').val();
+    }
+    if (type == 'sterilization'){
+        var recipe_category = $('#id_recipe_type4').val();
+    }
+    getitems(name,type,recipe_category);
 }
 
 function selectActive(d,id,name){
@@ -589,8 +614,22 @@ function selectActive(d,id,name){
     //console.log(a)
 
     $('#id_name_cleaning').val(name)
+    $('#id_name_category').val(id)
 
-    getitems(name,id);
+    if (id == 'detailedCleaning'){
+        var recipe_category = $('#id_recipe_type1').val();
+    }
+    if (id == 'specialCare'){
+        var recipe_category = $('#id_recipe_type2').val();
+    }
+    if (id == 'kitchenCleaning'){
+        var recipe_category = $('#id_recipe_type3').val();
+    }
+    if (id == 'sterilization'){
+        var recipe_category = $('#id_recipe_type4').val();
+    }
+
+    getitems(name,id,recipe_category);
 
     $("."+id).each(function(){
         $(this).removeClass("active")
@@ -606,7 +645,7 @@ function selectActive(d,id,name){
         {% for item in items %}
     var tempId = '{{item.id}}';
     var tempName = '{{item.name}}';
-    $('#id_search').append('<div class="col-md-12" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="12" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
+    $('#id_search').append('<div class="col-md-12" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
 
     {% endfor %}
     if(d == 'add'){
@@ -645,6 +684,7 @@ function selectActive(d,id,name){
             $('#item_action').val('edit_item');
             $('#id_edit_item').val($(d).data('serviceitemid'));
             $('#id_item_count').val($(d).data('itemcount'));
+            document.getElementById("id_recipe_type").value = $(d).data('recipetype');
             $('#id_pro_sel').val($(d).data('itemid'));
 
             $("#pro-name").val($(d).data('itemname'));
@@ -674,12 +714,20 @@ function selectActive(d,id,name){
         //$('#action_delete_id').val('delete_line');
     }
 
+    function recipetype(d){
+        var cleaning = $('#id_name_cleaning').val();
+        var category = $('#id_name_category').val();
+        var recipe_category = $(d).val();
+        getitems(cleaning,category,recipe_category)
+        console.log("lop")
+    }
+
     //get items using api
-    async function getitems(service_type,category){
+    async function getitems(service_type,category,recipe_category){
             console.log(category,"cat")
         //$('#line_segment_id').val(segment_id); //adding value to hidden input for adding line
 
-         var result = await _get('api/inventory-service-items/?service_type='+service_type);
+         var result = await _get('api/inventory-service-items/?service_type='+service_type+'&recipe_category='+recipe_category);
          if(result.status == 200){
 
             if (category == 'detailedCleaning'){
@@ -688,7 +736,7 @@ function selectActive(d,id,name){
                     $(".item-table1 tr:not(:first)").remove(); 
                     var edit = "edit";
                     $.each(result.data.service_items,function(key,value){
-                            $('.item-table1').append('<tr><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItem(this)" data-serviceitemid='+value.service_item_id+' data-itemname='+value.item_name+' data-itemid='+value.item_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.service_item_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
+                            $('.item-table1').append('<tr><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItem(this)" data-serviceitemid='+value.service_item_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.item_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.service_item_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
                     })
                 }else{
                     $(".item-table1 tr:not(:first)").remove(); 
@@ -698,7 +746,7 @@ function selectActive(d,id,name){
                     $(".item-table2 tr:not(:first)").remove(); 
                     var edit = "edit";
                     $.each(result.data.service_items,function(key,value){
-                            $('.item-table2').append('<tr><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItem(this)" data-serviceitemid='+value.service_item_id+' data-itemname='+value.item_name+' data-itemid='+value.item_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.service_item_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
+                            $('.item-table2').append('<tr><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItem(this)" data-serviceitemid='+value.service_item_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.item_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.service_item_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
                     })
                 }else{
                     $(".item-table2 tr:not(:first)").remove(); 
@@ -708,7 +756,7 @@ function selectActive(d,id,name){
                     $(".item-table3 tr:not(:first)").remove(); 
                     var edit = "edit";
                     $.each(result.data.service_items,function(key,value){
-                            $('.item-table3').append('<tr><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItem(this)" data-serviceitemid='+value.service_item_id+' data-itemname='+value.item_name+' data-itemid='+value.item_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.service_item_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
+                            $('.item-table3').append('<tr><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItem(this)" data-serviceitemid='+value.service_item_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.item_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.service_item_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
                     })
                 }else{
                     $(".item-table3 tr:not(:first)").remove(); 
@@ -718,7 +766,7 @@ function selectActive(d,id,name){
                     $(".item-table4 tr:not(:first)").remove(); 
                     var edit = "edit";
                     $.each(result.data.service_items,function(key,value){
-                            $('.item-table4').append('<tr><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItem(this)" data-serviceitemid='+value.service_item_id+' data-itemname='+value.item_name+' data-itemid='+value.item_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.service_item_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
+                            $('.item-table4').append('<tr><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItem(this)" data-serviceitemid='+value.service_item_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.item_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.service_item_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
                     })
                 }else{
                     $(".item-table4 tr:not(:first)").remove(); 
