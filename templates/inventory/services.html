@@ -82,6 +82,13 @@
 
                                         </select>
                                     </div>
+                                    <div class="col-md-4">
+                                        <div class="model-input-name">Area</div>
+                                        <div style="width: 50%; " class="inv-input-container h-30"> 
+                                            <input type="number"   class="w-p-100 inv-in" name="attributes">
+                                            <div class="av-font" style="margin-left:5px; margin-top: 5px; font-size:18px;">sqm</div>
+                                          </div>
+                                    </div>
                                 </div>
                                 <div class="row mt-10">
                                     <div class="col-md-12">
@@ -140,6 +147,14 @@
 
                                         </select>
                                     </div>
+                                    <div class="col-md-4">
+                                        <div class="model-input-name">Area</div>
+                                        <div style="width: 50%; " class="inv-input-container h-30"> 
+                                            <input type="number"   class="w-p-100 inv-in" name="attributes">
+                                            <div class="av-font" style="margin-left:5px; margin-top: 5px; font-size:18px;">sqm</div>
+                                          </div>
+                                    </div>
+
                                 </div>
                                 <div class="row mt-10">
                                     <div class="col-md-12">
@@ -192,6 +207,14 @@
 
                                         </select>
                                     </div>
+                                    <div class="col-md-4">
+                                        <div class="model-input-name">Area</div>
+                                        <div style="width: 50%; " class="inv-input-container h-30"> 
+                                            <input type="number"   class="w-p-100 inv-in" name="attributes">
+                                            <div class="av-font" style="margin-left:5px; margin-top: 5px; font-size:18px;">sqm</div>
+                                          </div>
+                                    </div>
+                                    
                                 </div>
                                 <div class="row mt-10">
                                     <div class="col-md-12">
@@ -243,6 +266,13 @@
                                             <option value="Post Paid">Inactive</option>
 
                                         </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="model-input-name">Area</div>
+                                        <div style="width: 50%; " class="inv-input-container h-30"> 
+                                            <input type="number"   class="w-p-100 inv-in" name="attributes">
+                                            <div class="av-font" style="margin-left:5px; margin-top: 5px; font-size:18px;">sqm</div>
+                                          </div>
                                     </div>
                                 </div>
                                 <div class="row mt-10">
@@ -353,7 +383,7 @@
 
                     <div style="position: relative;">
                         <div class="inv-input-container inv-border h-30">
-                            <input onclick="ProductListShow()" type="text" id="pro-name" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()">
+                            <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()">
                            
                             <div onclick="ProductListShow()" class="model-filter">
                                 
@@ -486,6 +516,14 @@
 {% block javascript %}
 
 <script>
+//     $('body').click(function(){
+//         console.log(document.getElementById("id_search").style.display)
+//   if(document.getElementById("id_search").style.display == "block"){
+//          document.getElementById("id_search").style.display == 'none'
+
+//   }
+
+// });
 var products = [];
 {% for item in items %}
     var tempId = '{{item.id}}';
@@ -512,7 +550,7 @@ function ProductListShow(){
 function showProducts(){
     $('#id_search').empty();
     for (var j=0; j<products.length; j++) {
-        if (products[j].name.match($('#pro-name').val())){
+        if (products[j].name.toUpperCase().match($('#pro-name').val().toUpperCase())){
             console.log(products[j]);
     $('#id_search').append('<div class="col-md-12" style="padding:0px !important;" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
 
@@ -564,7 +602,7 @@ function selectActive(d,id,name){
 }
 
      function openNavAddStore(d) {
-       
+        $('#id_search').empty();
         {% for item in items %}
     var tempId = '{{item.id}}';
     var tempName = '{{item.name}}';
