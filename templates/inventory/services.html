@@ -132,7 +132,7 @@
                             <div class="col-md-8 m-mt-10">
                                 <div class="row">
                                     <div class="col-md-4">
-                                        <div class="model-input-name">Select size</div>
+                                        <div class="model-input-name">Select Item Type</div>
 
                                         <!-- <select id="id_recipe_type1" class="minimal" onchange="recipetype(this)">
                                             <option value="service">By Service</option>
@@ -142,10 +142,10 @@
 
                                         <input hidden  type="text"id="id_recipe_type1" value="service">
                                         <div class="wrap-drop" id="noble-gases3"  >
-                                            <span id="id_selectText3">By Service</span>
+                                            <span id="id_selectText3">Service Items</span>
                                             <ul class="drop">
-                                                <li onclick="changeSelect3('service')"><a>By Service</a></li>
-                                                <li onclick="changeSelect3('person')"><a>By Person</a></li> 
+                                                <li onclick="changeSelect3('service')"><a>Service Items</a></li>
+                                                <li onclick="changeSelect3('person')"><a>Personal Items</a></li> 
                                             </ul>
                                         </div>
                                     </div>
@@ -157,8 +157,12 @@
                                             <div class="av-font" style="margin-left:5px; margin-top: 5px; font-size:18px;">sqm</div>
                                           </div> -->
                                           <div class="d-flex">
+                                            <form method="POST" action="" >{% csrf_token %}
+                                            
                                             <div class="inv-input-container2 inv-border h-30">
-                                                <input  style="border: none !important; width: 90%;" class="inv-in"  >
+                                                <input type="hidden" name="action" value="update_size" />
+                                                <input type="hidden" name="service_name" class="area_service" value="General Cleaning" />
+                                                <input type="number" step="0.1" name="area" class="service_area" style="border: none !important; width: 90%;" class="inv-in"  >
                                                 <!-- <div class="inv-hr"></div> -->
                                                 <div class="model-filter2" >
                                                   <button class="inv-icon-input2" >
@@ -167,6 +171,7 @@
                                                 </div>
                                                 
                                             </div>
+                                            </form>
                                             <div style="margin-left: 10px; font-size: 16px; margin-top: 3px;" class="av-font">sqm</div>
                                           </div>
                                           
@@ -222,7 +227,7 @@
                             <div class="col-md-8 m-mt-10">
                                 <div class="row">
                                     <div class="col-md-4">
-                                        <div class="model-input-name">Select size</div>
+                                        <div class="model-input-name">Select Item Type</div>
 
                                         <!-- <select id="id_recipe_type2" class="minimal">
                                             <option value="service">By Service</option>
@@ -231,10 +236,10 @@
                                         </select> -->
                                         <input hidden type="text"id="id_recipe_type2" value="service">
                                         <div class="wrap-drop" id="noble-gases4"  >
-                                            <span id="id_selectText4">By Service</span>
+                                            <span id="id_selectText4">Service Items</span>
                                             <ul class="drop">
-                                                <li onclick="changeSelect4('service')"><a>By Service</a></li>
-                                                <li onclick="changeSelect4('person')"><a>By Person</a></li> 
+                                                <li onclick="changeSelect4('service')"><a>Service Items</a></li>
+                                                <li onclick="changeSelect4('person')"><a>Person Items</a></li> 
                                             </ul>
                                         </div>
                                     </div>
@@ -246,8 +251,12 @@
                                             <div class="av-font" style="margin-left:5px; margin-top: 5px; font-size:18px;">sqm</div>
                                           </div> -->
                                           <div class="d-flex">
+                                            <form method="POST" action="" >{% csrf_token %}
+                                            
                                             <div class="inv-input-container2 inv-border h-30">
-                                                <input  style="border: none !important; width: 90%;" class="inv-in"  >
+                                            <input type="hidden" name="action" value="update_size" />
+                                            <input type="hidden" name="service_name" class="area_service" />
+                                                <input type="number" step="0.1" name="area" class="service_area" style="border: none !important; width: 90%;" class="inv-in"  >
                                                 <!-- <div class="inv-hr"></div> -->
                                                 <div class="model-filter2" >
                                                   <button class="inv-icon-input2" >
@@ -256,6 +265,7 @@
                                                 </div>
                                                 
                                             </div>
+                                            </form>
                                             <div style="margin-left: 10px; font-size: 16px; margin-top: 3px;" class="av-font">sqm</div>
                                           </div>
                                           
@@ -306,7 +316,7 @@
                             <div class="col-md-8 m-mt-10">
                                 <div class="row">
                                     <div class="col-md-4">
-                                        <div class="model-input-name">Select size</div>
+                                        <div class="model-input-name">Select Item Type</div>
 
                                         <!-- <select id="id_recipe_type3" class="minimal">
                                             <option value="service">By Service</option>
@@ -315,10 +325,10 @@
                                         </select> -->
                                         <input hidden type="text"id="id_recipe_type3" value="service">
                                         <div class="wrap-drop" id="noble-gases5"  >
-                                            <span id="id_selectText5">By Service</span>
+                                            <span id="id_selectText5">Service Items</span>
                                             <ul class="drop">
-                                                <li onclick="changeSelect5('service')"><a>By Service</a></li>
-                                                <li onclick="changeSelect5('person')"><a>By Person</a></li> 
+                                                <li onclick="changeSelect5('service')"><a>Service Items</a></li>
+                                                <li onclick="changeSelect5('person')"><a>Personal Items</a></li> 
                                             </ul>
                                         </div>
                                     </div>
@@ -330,8 +340,12 @@
                                             <div class="av-font" style="margin-left:5px; margin-top: 5px; font-size:18px;">sqm</div>
                                           </div> -->
                                           <div class="d-flex">
+                                            <form method="POST" action="" >{% csrf_token %}
+                                            
                                             <div class="inv-input-container2 inv-border h-30">
-                                                <input  style="border: none !important; width: 90%;" class="inv-in"  >
+                                            <input type="hidden" name="action" value="update_size" />
+                                            <input type="hidden" name="service_name" class="area_service" />
+                                                <input type="number" step="0.1" name="area" class="service_area" style="border: none !important; width: 90%;" class="inv-in"  >
                                                 <!-- <div class="inv-hr"></div> -->
                                                 <div class="model-filter2" >
                                                   <button class="inv-icon-input2" >
@@ -340,6 +354,7 @@
                                                 </div>
                                                 
                                             </div>
+                                            </form>
                                             <div style="margin-left: 10px; font-size: 16px; margin-top: 3px;" class="av-font">sqm</div>
                                           </div>
                                           
@@ -390,7 +405,7 @@
                             <div class="col-md-8 m-mt-10">
                                 <div class="row">
                                     <div class="col-md-4">
-                                        <div class="model-input-name">Select size</div>
+                                        <div class="model-input-name">Select Item Type</div>
 
                                         <!-- <select id="id_recipe_type4" class="minimal">
                                             <option value="service">By Service</option>
@@ -399,10 +414,10 @@
                                         </select> -->
                                         <input hidden type="text" id="id_recipe_type4" value="service">
                                         <div class="wrap-drop" id="noble-gases6"  >
-                                            <span id="id_selectText6">By Service</span>
+                                            <span id="id_selectText6">Service Items</span>
                                             <ul class="drop">
-                                                <li onclick="changeSelect6('service')"><a>By Service</a></li>
-                                                <li onclick="changeSelect6('person')"><a>By Person</a></li> 
+                                                <li onclick="changeSelect6('service')"><a>Service Items</a></li>
+                                                <li onclick="changeSelect6('person')"><a>Personal Items</a></li> 
                                             </ul>
                                         </div>
                                     </div>
@@ -414,8 +429,12 @@
                                             <div class="av-font" style="margin-left:5px; margin-top: 5px; font-size:18px;">sqm</div>
                                           </div> -->
                                           <div class="d-flex">
+                                            <form method="POST" action="" >{% csrf_token %}
+                                            
                                             <div class="inv-input-container2 inv-border h-30">
-                                                <input  style="border: none !important; width: 90%;" class="inv-in"  >
+                                            <input type="hidden" name="action" value="update_size" />
+                                            <input type="hidden" name="service_name" class="area_service" />
+                                                <input type="number" step="0.1" name="area" class="service_area" style="border: none !important; width: 90%;" class="inv-in"  >
                                                 <!-- <div class="inv-hr"></div> -->
                                                 <div class="model-filter2" >
                                                   <button class="inv-icon-input2" >
@@ -424,6 +443,7 @@
                                                 </div>
                                                 
                                             </div>
+                                            </form>
                                             <div style="margin-left: 10px; font-size: 16px; margin-top: 3px;" class="av-font">sqm</div>
                                           </div>
                                           
@@ -844,6 +864,7 @@ function showProducts(){
 
 function getName(name,type){
     $('#id_name_cleaning').val(name)
+    $('.area_service').val(name)
     $('#id_name_category').val(type)
     console.log(type,"typ")
     if (type == 'detailedCleaning'){
@@ -867,6 +888,7 @@ function selectActive(d,id,name){
     //console.log(a)
 
     $('#id_name_cleaning').val(name)
+    $('.area_service').val(name)
     $('#id_name_category').val(id)
 
     if (id == 'detailedCleaning'){
@@ -935,6 +957,13 @@ function selectActive(d,id,name){
 
     //edit item
     function openNavEditItem(d) {
+        $('#id_search').empty();
+        {% for item in items %}
+        var tempId = '{{item.id}}';
+        var tempName = '{{item.name}}';
+        $('#id_search').append('<div class="col-md-12" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
+        {% endfor %}
+        
         console.log(d)
         console.log($(d).data('linestatus'))
             $("#itemHead").text("Edit Item");
@@ -1001,6 +1030,9 @@ function selectActive(d,id,name){
          var result = await _get('api/inventory-service-items/?service_type='+service_type+'&recipe_category='+recipe_category);
          if(result.status == 200){
 
+            console.log(result.data.area_size,"arsiz")
+            $('.service_area').val(result.data.area_size);
+
             if (category == 'detailedCleaning'){
 
                 if (result.data.service_items.length > 0){
@@ -1045,7 +1077,7 @@ function selectActive(d,id,name){
             }
 
          }else{
-            showNotification('Something went wrong','error')
+            showNotification('No Data','error')
          }
     }
 </script>
