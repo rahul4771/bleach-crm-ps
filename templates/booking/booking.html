@@ -2892,6 +2892,7 @@ Fill all the details of the Buildings  to proceed
     v-if="checkScheduleStatus() && !custBookStat"
       color="primary"
      @click="arrangeData()"
+     :loading="submit_loader"
     >
       Submit
     </v-btn>
@@ -2900,6 +2901,7 @@ Fill all the details of the Buildings  to proceed
     v-if="custBookStat"
       color="primary"
      @click="arrangeCustData()"
+     :loading="submit_loader"
     >
       Submit
     </v-btn>

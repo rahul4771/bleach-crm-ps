@@ -470,7 +470,7 @@
   <v-app>
     
       
-    <section class="content">
+    <section class="content" style="margin-left:0px">
     
 
 
@@ -722,11 +722,12 @@
   <v-card style="min-height:500px">
 <div class="row mt-4 m-0">
   
-  <div class="col-md-12 m-2">
-    <!-- <div>Do you have any gender preference ? </div>
+  <div class="col-md-12 m-2 mb-0 pb-0">
+     <div>Do you have any gender preference ? </div>
     <v-radio-group
-      v-model="gender_pref"
+      v-model="pref_gender"
       row
+      @change="resetGender()"
     >
       <v-radio
         label="Yes"
@@ -737,12 +738,13 @@
         :value="false"
       ></v-radio>
 
-    </v-radio-group> -->
-    <h3>Please Select the preferred gender </h3>
+    </v-radio-group> 
+    <h3  v-if="pref_gender" class="mt-0 ">Please Select the preferred gender </h3>
     <v-radio-group
       v-model="gender"
       row
       class="mt-0"
+      v-if="pref_gender"
       @change="getMultipleSlots()"
     >
       <v-radio
@@ -772,7 +774,7 @@
   <div class="col-md-2  col-12" v-if="duration.length>0">
     <div class="text-center p-2">In Hours</div>
   </div>
-  <div class="col-md-12  danger" v-else>
+  <div class="col-md-12  danger text-center" v-else-if="duration.length<=0 && !duration_loader">
       Cleaners not available for the selected service
   </div>
   <div
@@ -1258,7 +1260,7 @@ width="1000"
 
   </div>
 </div>
-</div>
+
 </v-card>
 </v-dialog>  
 <!--- Schedule Dialog Ends-->
@@ -1568,7 +1570,7 @@ width="1000"
     <v-btn
       class="ma-2 text-white"
       @click="bookLetCustService()"
-     
+     :loading="btnLoader"
       color="#289bac"
       v-if="scheduleStatChecker()"
     >
@@ -2039,19 +2041,12 @@ width="1000"
               </div>
 
 
-            </div>
-          </div>
-        </div>
+          
 
 
-
-
-      </div>
-
-</div>
 </section>
 <!-- Footer begins here -->
-<div class="footer">
+<div class="footer" style="margin-left:0px">
   <div class="container pb-4">
       <div class="row">
           <div class="col-md-4">
@@ -2127,6 +2122,7 @@ width="1000"
           </div>
       </div>
   </div>
+</div>
 </div>
 <!-- Footer Ends Here -->
 </v-app>
