@@ -516,10 +516,13 @@
 {% block javascript %}
 
 <script>
-//     $('body').click(function(){
+    var searchFlag = false;
+//     $('.inv-sidedrawer').click(function(){
 //         console.log(document.getElementById("id_search").style.display)
+//         console.log('to be hide',searchFlag)
 //   if(document.getElementById("id_search").style.display == "block"){
-//          document.getElementById("id_search").style.display == 'none'
+//       searchFlag = false;
+//          $('#id_search').hide();
 
 //   }
 
@@ -545,6 +548,7 @@ $(document).ready(function(){
 })
 
 function ProductListShow(){
+    searchFlag = true;
     document.getElementById("id_search").style.display="block"
 }
 function showProducts(){

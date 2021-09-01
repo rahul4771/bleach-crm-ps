@@ -70,6 +70,11 @@ def generate_random_username(size=10, chars=string.ascii_uppercase + string.digi
 	except UserProfile.DoesNotExist:
 		return username
 
+
+class NewRaiseTicket(IsAuthenticated,View):
+    def get(self,request):
+        return render(request,'common/ticket/raiseticket.html',{})
+
 class OrderDetails(IsAuthenticated,View):
 	def get(self,request):
 		evaluators = UserProfile.objects.filter(is_active=True).filter(Q(user_type='EVALUATOR')|Q(user_type='AGENT')).only('id','name')
