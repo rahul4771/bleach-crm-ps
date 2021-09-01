@@ -122,3 +122,60 @@
 .tk-b-none{
     border:none !important;
 }
+
+.tk-order-card{
+    background: #EDF1F6;
+    padding: 10px;
+    width: 100%;
+}
+.tk-common-text{
+    font-family: AvenirLTStd !important;
+    font-size: 15px;
+    margin-bottom: 10px;
+    color: #434343;
+    text-align: left;
+    font-weight: 700;
+}
+.tk-common-text2{
+    font-family: AvenirLTStd !important;
+    font-size: 15px;
+    margin-bottom: 10px;
+    color: #434343;
+    text-align: left;
+}
+.tk-total-text{
+    font-family: AvenirLTStd !important;
+    font-size: 30px;
+    margin-bottom: 10px;
+    color: #434343;
+    text-align: left;
+}
+
+.tk-dot {
+    vertical-align: middle;
+    height: 11px;
+    width: 11px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 3px;
+  }
+.tk-completed-color{
+    background: #779F39;
+}
+.mt-15{
+    margin-top: 15px;
+}
+.mt-5{
+    margin-top: 5px;
+}
+.ml-20{
+    margin-left: 20px;
+}
+.tk-img-circle{
+    height: 34px;
+    width: 34px;
+    border-radius: 50%;
+}
+.tk-type-card{
+    
+}
