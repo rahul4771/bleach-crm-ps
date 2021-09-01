@@ -845,7 +845,7 @@ $(document).ready(function(){
                   "date":date,
                  "time":this.slotFormat[min_slot].start_time,
                 "no_of_cleaners":this.selectedDuration.cleaners,
-                 "cleaning_hours":this.selectedDuration.hours
+                 "cleaning_hours":this.selected_onetime_slots[k].slots.length*2
                 }
                 count=count+1
               }
@@ -908,7 +908,7 @@ $(document).ready(function(){
                   "date":this.visits[k].date,
                  "time":this.slotFormat[min_slot].start_time,
                 "no_of_cleaners":this.selectedDuration.cleaners,
-                 "cleaning_hours":this.selectedDuration.hours
+                 "cleaning_hours":this.visits[k].slots.length*2
                 }
               }
              
