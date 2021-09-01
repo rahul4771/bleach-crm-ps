@@ -177,5 +177,52 @@
     border-radius: 50%;
 }
 .tk-type-card{
-    
+    width: 100%;
+    display: flex;
+    background: #EDF1F6;
+    padding: 5px;
+border-radius: 6px;
+}
+.tk-type-cardselected{
+    border: 1px solid #528CE6;
+}
+.tk-sub{
+    border: none;
+    background: #125597 0% 0% no-repeat padding-box;
+border-radius: 6px;
+opacity: 1;
+padding: 8px 18px 8px 18px;
+color: #ffffff;
+font-family: AvenirLTStd !important;
+text-align: center;
+}
+.tk-sub:hover{
+    border: none;
+    background: #125597 0% 0% no-repeat padding-box;
+border-radius: 6px;
+opacity: 1;
+padding: 8px 18px 8px 18px;
+color: #ffffff;
+font-family: AvenirLTStd !important;
+text-align: center;
+}
+.tk-can{
+    border: 1px solid #125597;
+    background: #ffffff 0% 0% no-repeat padding-box;
+border-radius: 6px;
+opacity: 1;
+padding: 8px 18px 8px 18px;
+color: #125597;
+font-family: AvenirLTStd !important;
+text-align: center;
+}
+.tk-can:hover{
+    border: 1px solid #125597;
+    background: #ffffff 0% 0% no-repeat padding-box;
+border-radius: 6px;
+opacity: 1;
+padding: 8px 18px 8px 18px;
+color: #125597;
+font-family: AvenirLTStd !important;
+text-align: center;
 }

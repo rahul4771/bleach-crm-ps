@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.views import View
 from bleach_crm_ps.permissions import IsInventoryAdmin,IsInventoryAdminUser
-from inventory.models import Category,Segment,Line,Attribute,AttributeValue,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems,ServiceRecipe,PurchaseOrder,PurchaseOrderItems
+from inventory.models import Category,Segment,Line,Attribute,AttributeValue,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeItems,PurchaseOrder,PurchaseOrderItems
 from django.contrib import messages
 import re
 from datetime import date,datetime,timedelta
@@ -1188,9 +1188,24 @@ class InventoryServices(IsInventoryAdmin,View):
 
             inventoryitem = InventoryItem.objects.get(id=int(item))
 
-            ServiceRecipe.objects.create(service_or_person=recipe_type,service_type=service_type,item=inventoryitem,item_price=unit_price,item_count=item_count,status=item_status)
+            ServiceRecipe.objects.get_or_create(service=service_type)
+
+            get_servicetype = ServiceRecipe.objects.get(service=service_type)          
+
+            ServiceRecipeItems.objects.create(service_or_person=recipe_type,service_type=get_servicetype,item=inventoryitem,item_price=unit_price,item_count=item_count,status=item_status)
 
             messages.success(request,"Item Added successfully!")
+
+        if action == 'update_size':
+            service_name = request.POST.get('service_name')
+            area = request.POST.get('area')
+
+            ServiceRecipe.objects.get_or_create(service=service_name)
+
+            service = ServiceRecipe.objects.get(service=service_name)
+            service.area_size = area
+            service.save()
+            messages.success(request,"ServiceType Area Size updated successfully!")
 
         if action == 'edit_item':
             service_item_id = request.POST.get('item_edit_id')
@@ -1202,7 +1217,7 @@ class InventoryServices(IsInventoryAdmin,View):
 
             inventoryitem = InventoryItem.objects.get(id=int(item))
 
-            serviceitem = ServiceRecipe.objects.get(id=int(service_item_id))
+            serviceitem = ServiceRecipeItems.objects.get(id=int(service_item_id))
 
             serviceitem.service_or_person = recipe_type
             serviceitem.item = inventoryitem
@@ -1216,7 +1231,7 @@ class InventoryServices(IsInventoryAdmin,View):
         if action == 'delete_item':
             item_id = request.POST.get('object_id')
 
-            ServiceRecipe.objects.filter(id=int(item_id)).delete()
+            ServiceRecipeItems.objects.filter(id=int(item_id)).delete()
             messages.success(request,"Item Deleted successfully!")
 
         return redirect('inventory:inventory-services')
