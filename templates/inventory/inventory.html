@@ -58,8 +58,8 @@
                                 <th data-hide="phone,tablet"  class="text-center">
                                     Reserve
                                 </th>
-                                <th>
-                                    Status
+                                <th class="text-center">
+                                    Item Status
                                 </th>
     
                                 <th data-hide="phone,tablet"  style="width: %;" class="text-center">Action</th>
@@ -85,13 +85,22 @@
                             <td class="text-center">
                                 {{item.reserve_count}}
                             </td>
-                            <td>
+                            {% comment %} <td>
                                 {% if item.status == True %}
                                 <span class="inv-dot c-active ml-5"></span>Active
                                 {% else %}
                                 <span class="inv-dot c-inactive ml-5"></span>Not Active
                                 {% endif %}
                               
+                            </td> {% endcomment %}
+                            <td class="text-center">
+                                {% if item.item_status == 'available' %}
+                                Available
+                                {% elif item.item_status == 'about_to_finish' %}
+                                About to finish
+                                {% elif item.item_status == 'out_of_stock' %}
+                                Out of Stock
+                                {% endif %}
                             </td>
                             <td style="float: right;">
                                 <a href="/inventory/item/{{item.id}}">
@@ -142,7 +151,7 @@
                 </div>
 
             </div>
-            <div class="row mt-20">
+            {% comment %} <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Item code</div>
 
@@ -151,7 +160,7 @@
                       </div>
                 </div>
 
-            </div>
+            </div> {% endcomment %}
             <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Category</div>
