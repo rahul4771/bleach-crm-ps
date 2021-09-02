@@ -467,10 +467,11 @@
   </div>
 
 <!-- header ends here-->
+
   <v-app>
     
       
-    <section class="content" style="margin-left:0px">
+    <section class="content" style="margin-left:0px;">
     
 
 
@@ -723,7 +724,7 @@
 <div class="row mt-4 m-0">
   
   <div class="col-md-12 m-2 mb-0 pb-0">
-     <div>Do you have any gender preference ? </div>
+     <h3>Do you have any gender preference ? </h3>
     <v-radio-group
       v-model="pref_gender"
       row
@@ -739,7 +740,7 @@
       ></v-radio>
 
     </v-radio-group> 
-    <h3  v-if="pref_gender" class="mt-0 ">Please Select the preferred gender </h3>
+    <div  v-if="pref_gender" class="mt-0 ">Please Select the preferred gender </div>
     <v-radio-group
       v-model="gender"
       row
@@ -1269,7 +1270,12 @@ width="1000"
 
 
         <!--white-wrapper-->
-
+        <!-- <div class="page-main-title" style="background: #ffffff;">
+          <div class="container">
+            Cart
+          </div>
+         
+        </div> -->
         <div class="booking-container" style="padding:0px !important">
           
           <div class=" booking-card bg-white m-0">
@@ -1292,7 +1298,7 @@ width="1000"
                         <div class="banner-inner-round">
                           
                           <div class="banner-text">
-                            <span class="banner-main">5% </span><br>
+                            <span class="banner-main"><%settings.discount_percentage%>% </span><br>
                             <span class="banner-sub">OFF </span>
                           </div>
                         </div>
@@ -1313,10 +1319,11 @@ width="1000"
                   </v-alert>
                   </div>
                 
-                    <div class="page-main-title">
-                      Cart
-                  </div>
+                    
                   <div class="row m-0" v-if="multiAddress">
+                    <div class="col-md-12">
+                      <div class="ev-booking-title">Address</div>
+                    </div>
                     <div class="col-md-4 h-100" v-for="(item,index) in bookedServiceDetails" v-bind:key="index">
                       <div class="address-card-active"  v-if="selectedAddress==item">
                         <v-radio-group   v-model="selectedAddress" style="margin-top:0px;height:30px"  @change="reCalcAddressData()"  v-if="!completedAddress.includes(index)">
@@ -1406,6 +1413,7 @@ width="1000"
                        
                      
                       </div>
+                     
                       </div>
                      
                       <div v-if="!booking_status">
@@ -1419,7 +1427,7 @@ width="1000"
                            ></v-switch>
                       </div>
                     </div>
-                    <div class="row mt-4">
+                    <!-- <div class="row mt-4">
                       <div class="col-md-3" v-for="(service,sindex) in multiServicesBill" v-bind:key="sindex">
                         <div class="cart-item-card justify-center">
                           <div class="d-flex">
@@ -1437,19 +1445,9 @@ width="1000"
                               <div class="text-center w-100">
                                <b><% service.service %></b> 
                               </div>
-                              <!--<div class="ml-auto" @click="openDelConfirm(sindex)">
-                               <i class="far fa-trash-alt cp"></i>
-
-                              </div>-->
+                             
                           </div>
-                        <!--  <div class="d-flex" v-if="scheduleFormat.allSchedule.starting_date && scheduleStat && service.cleaning_policy=='SUBSCRIPTION'">
-                            <div>
-                              <% scheduleFormat.allSchedule.starting_date.split(' ')[0] %>
-                            </div>
-                            <div class="ml-4">
-                              <% scheduleFormat.allSchedule.visits.length %> Visits
-                            </div>
-                          </div>-->
+                       
                           <div class="d-flex" v-if="service.schedule_details && service.cleaning_policy=='SUBSCRIPTION'">
                             <div v-if='service.schedule_details[1]'>
                               <% service.schedule_details[1].date %>
@@ -1458,22 +1456,16 @@ width="1000"
                               <% Object.keys(service.schedule_details).length %> Visits
                             </div>
                           </div>
-                         <!-- <div v-if="service.schedule_details && service.cleaning_policy=='SUBSCRIPTION'" @click="viewEditSchedule(service,sindex)">
-                            <a>View Schedule</a> 
-                           </div>-->
+                       
                           <div class="d-flex" v-if="service.schedule_details && cleaningPolicy=='One Time'">
                            
                             <div v-if='service.schedule_details[1]'>
                               <% service.schedule_details[1].date %>
-                             <!--<span v-for="(slot,slindex) in onetime_scheduled[sindex].slot"> <% slindex + ' ' %> </span>-->
+                            
                              </div>
-                          <!--  <div class="ml-4">
-                              <% scheduleFormat.individual[sindex].visits.length %> Visits
-                            </div>-->
+                         
                           </div>
-                         <!-- <div v-if="service.schedule_details && service.cleaning_policy=='ONE TIME SERVICE'" @click="viewEditSchedule(service,sindex)">
-                            <a>View Schedule</a> 
-                           </div>-->
+                        
                           <div class="cart-card-items">
                           <div v-for="(bill,bindex) in service.bill" v-bind:key="bindex">
                             <div><b><% bill.section_name %></b></div>
@@ -1508,7 +1500,140 @@ width="1000"
                       </div>
                      
                    
+                    </div> -->
+                    <div class="row m-0">
+                      <div class="col-md-9">
+                    <v-expansion-panels :focusable="false" :hover="false" flat>
+                     
+                      <v-expansion-panel
+                      v-for="(service,sindex) in multiServicesBill" v-bind:key="sindex"
+                       
+                        class="elevation-0 mt-2"
+                        :elevation="0"
+
+                      >
+                        <v-expansion-panel-header @click.native="expansionPanel()">
+                          <v-checkbox
+                          v-model="schedule_serviceTypes_selected"
+                         class="expansion-checkbox"
+                         :value='sindex'
+                          @click.native="check($event)"
+                          v-if="!scheduleStat && Object.keys(service.schedule_details).length<1"
+                        ></v-checkbox>
+                          <!-- <div class="d-flex"> 
+                             <div class="service-card-text"><% service.service %></div>
+                             <div class="ml-auto primary-green-text service-card-text"><% service.total_cost %> KD</div>
+                         </div> -->
+                         <div class="row">
+                           <div class="col-md-4 pl-0">
+                            <div class="service-card-text"><% service.service %></div>
+                           </div>
+                           <div class="col-md-3 offset-md-2 p-0 mt-1 col-6">
+                             <div v-if='service.schedule_details'>
+                            <v-alert
+                           v-if="service.schedule_details[1]"
+      dense
+      text
+      type="success"
+      color="primary"
+      class="mb-0 p-1 text-center alert-label"
+      small
+    >
+      Scheduled
+    </v-alert>
+    <v-alert
+   v-else
+    dense
+    text
+    type="error"
+    color="blue-grey lighten-2"
+    class="mb-0 p-1 text-center alert-label"
+    small
+  >
+    Not Scheduled
+  </v-alert>
+  </div>
+ 
+    
+ 
+                           </div>
+                           <div class="col-md-3 col-6 text-right">
+                            <div class="service-card-text primary-green-text mr-2 text-right"> KD <% service.total_cost %></div>
+
+                          </div>
+                         </div>
+                       
+                        </v-expansion-panel-header>
+                        <v-expansion-panel-content>
+                          <div class="row">
+                            <div class="col-md-6 " v-for="(bill,bindex) in service.bill" v-bind:key="bindex">
+                              <div class="d-flex expand-card-chip p-2">
+                                
+                                <div>
+                                  <b><% bill.section_name %></b>
+                                  <div v-if="isNaN(bill.size)" class="mt-2">
+                                    <% bill.size.name %>
+                                   </div>
+                                   <div v-else>
+                                     <% bill.size %>
+                                     <span v-if="bill.upholstery_type=='SOFA'"> Seater </span>
+                                    </div>
+                                </div>
+
+                                <div>
+
+                                </div>
+                                <div class="ml-auto primary-green-text expand-card-cost">  KD <% bill.section_cost %></div>
+                              </div>
+                            </div>
+                          </div>
+                        </v-expansion-panel-content>
+                      </v-expansion-panel>
+                    </v-expansion-panels>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="payment-split p-2 mt-2">
+
+                     
+                      <div class="d-flex">
+                          <div>
+                            Total
+                          </div>
+                          <div class="text-right w-100" v-if="booking_status">
+                          <b><% amount_subtotal %> KD</b> 
+                          </div>
+                          <div class="text-right w-100" v-if="!booking_status">
+                            <b> <%payment_total_cost%> KD</b>
+                            </div>
+                      </div>
+                      <div class="d-flex">
+                        <div>
+                          Discount
+                        </div>
+                        <div class="text-right w-100" v-if="!booking_status">
+                        <b><%calculateDiscount()%> KD</b> 
+                        </div>
+                        <div class="text-right w-100" v-if="booking_status">
+                          <b><%amount_discount%> KD</b> 
+                          </div>
                     </div>
+                     
+                    
+                    </div>
+                    <div class="total-payment-box p-2 dashed-top">
+                      <div class="payment-key-text">
+                        Payable Amount
+                      </div>
+                      <div class="payment-value-text text-right primary-green-text" v-if="booking_status">
+                        
+                        <%amount_payable%> KD
+                      </div>
+                      <div v-if="!booking_status" class="payment-value-text text-right primary-green-text">
+                        <b><%payment_total_cost-calculateDiscount()%> KD</b>
+                      </div>
+                    </div>
+                  </div>
+                  </div>
                     <div class="row m-0">
                       <!-- One time cleaning selected slots-->
                       <div class="col-md-12" v-if="cleaningPolicy=='One Time'">
