@@ -8,11 +8,18 @@ UNIT_STATUS_CHOICES=(
 	('expired','expired')
 	)
 
+ITEM_STATUS_CHOICES=(
+	('available','Available'),
+	('out_of_stock','out_of_stock'),
+	('about_to_finish','about_to_finish')
+	)
+
 class Category(models.Model):
     name            =   models.CharField(max_length=100,blank=False,null=False)
     category_code   =   models.CharField(max_length=50,blank=False,null=False)
+    category_id     =   models.CharField(max_length=50,blank=False,null=False)
     status          =   models.BooleanField(default=True,blank=False,null=False)
-    # created         =   models.DateTimeField(auto_now_add=True)
+    created         =   models.DateTimeField(auto_now_add=True)
     def __unicode__(self):
         return str(self.name)
 
@@ -21,9 +28,10 @@ class Category(models.Model):
 
 class Segment(models.Model):
     category        =   models.ForeignKey(Category,blank=False,null=False,related_name='segment_category')
+    segment_id      =   models.CharField(max_length=50,blank=False,null=False)
     name            =   models.CharField(max_length=100,blank=False,null=False)
     status          =   models.BooleanField(default=True,blank=False,null=False)
-    # created         =   models.DateTimeField(auto_now_add=True)
+    created         =   models.DateTimeField(auto_now_add=True)
     def __unicode__(self):
         return str(self.name)
 
@@ -34,8 +42,9 @@ class Line(models.Model):
     category        =   models.ForeignKey(Category,blank=False,null=False,related_name='line_category')
     segment         =   models.ForeignKey(Segment,blank=False,null=False,related_name='line_segment')
     name            =   models.CharField(max_length=100,blank=False,null=False)
+    line_id         =   models.CharField(max_length=50,blank=False,null=False)
     status          =   models.BooleanField(default=True,blank=False,null=False)
-    # created         =   models.DateTimeField(auto_now_add=True)
+    created         =   models.DateTimeField(auto_now_add=True)
     def __unicode__(self):
         return str(self.name)
 
@@ -50,9 +59,9 @@ class InventoryItem(models.Model):
     item_code       =   models.CharField(max_length=50,blank=False,null=False)
     description     =   models.TextField(max_length=1000,blank=True,null=True)
     reserve_count   =   models.CharField(max_length=10,blank=True,null=True)
+    item_status     =   models.CharField(max_length=50,blank=True,null=True,choices=ITEM_STATUS_CHOICES)
     status          =   models.BooleanField(default=True,blank=False,null=False)
-
-    # created         =   models.DateTimeField(auto_now_add=True)
+    created         =   models.DateTimeField(auto_now_add=True)
     def __unicode__(self):
         return str(self.name)
 
@@ -78,7 +87,7 @@ class ItemUnit(models.Model):
     expiry_date     =   models.DateField(blank=True,null=True)
     unit_price      =   models.CharField(max_length=10,blank=False,null=False)
     status          =   models.CharField(max_length=50,default='active',blank=False,null=False,choices=UNIT_STATUS_CHOICES)
-    # created         =   models.DateTimeField(auto_now_add=True)
+    created         =   models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
         return str(self.item.name)
