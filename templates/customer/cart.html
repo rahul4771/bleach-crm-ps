@@ -1282,7 +1282,25 @@ width="1000"
                     
 
                   <div class="mt-4 text-center" v-if="payment_status=='PENDING' && !booking_status">
-                    <img src="{% static 'files/images/offer-banner.png'%}" style="max-width:400px;width:100%"/>
+                   
+                    <div class="d-flex banner-container">
+                      <div class="banner-arrow" onclick="toggleBanner()">
+                        <i class="fas fa-chevron-right banner-icon banner-right"></i>
+                        <i class="fas fa-chevron-left banner-icon banner-left"></i>
+                      </div>
+                      <div class="banner-round">
+                        <div class="banner-inner-round">
+                          
+                          <div class="banner-text">
+                            <span class="banner-main">5% </span><br>
+                            <span class="banner-sub">OFF </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="banner-box">
+                       <span class="banner-box-text">Book within next 48 hours</span> 
+                      </div>
+                    </div>
                   </div>
                   <div class="mt-4 text-center" v-if="booking_status && payment_status=='PENDING'">
                     <v-alert
