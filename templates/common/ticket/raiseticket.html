@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 {% load static %}
+<link rel="stylesheet" href="{% static 'files/css/booking/booking.css' %}">
 <style>
     .multiselect__tags {
   
@@ -125,11 +126,11 @@
                                                     <div style="margin-bottom: 0px;"  class="tk-common-text2 ml-5 mt-10">Saravan</div>
                                                 </div>
                                                 <div class="ml-20 d-flex">
-                                                    <img src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle">
-                                                    <img src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle" style="margin-left: -20px;">
-                                                    <img src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle" style="margin-left: -20px;">
-                                                    <img src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle" style="margin-left: -20px;">
-                                                    <div style="margin-bottom: 0px;"  class="tk-common-text2 ml-5 mt-10">4 Cleanaers</div>
+                                                    <img @click="showCleaners()" src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle">
+                                                    <img @click="showCleaners()" src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle" style="margin-left: -20px;">
+                                                    <img @click="showCleaners()" src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle" style="margin-left: -20px;">
+                                                    <img @click="showCleaners()" src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle" style="margin-left: -20px;">
+                                                    <div @click="showCleaners()" style="margin-bottom: 0px;"  class="tk-common-text2 ml-5 mt-10 pointer">4 Cleaners</div>
                                                 </div>
                                             </div>
 
@@ -149,14 +150,14 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="tk-common-text">Select Ticket Type</div>
-                                <multiselect @Close="selectTickets()"  label="name" track-by="name"  v-model="value"  selectLabel="Select Ticket" :showLabels='true' :multiple="true" placeholder="Select Ticket Type" :options="options"></multiselect>
+                                <multiselect @Close="selectTickets()" @remove='hideAll()' label="name" track-by="name"  v-model="value"  selectLabel="Select Ticket" :showLabels='true' :multiple="true" placeholder="Select Ticket Type" :options="options"></multiselect>
                             
                             </div>
                         </div>
                         <div class="row mt-20">
-                            <div class="col-md-2" v-for="item in value" :key="item.id" @click='changeSeleted(item)'>
+                            <div class="col-md-2" v-for="item in value" :key="item.id" >
                                 <div   class="tk-type-card pointer" v-bind:class="{ 'tk-type-cardselected': item.selected }">
-                                    <div style="margin-bottom: 0px; flex-grow: 1;" class="tk-common-text2"><% item.name %></div>
+                                    <div @click='changeSeleted(item)' style="margin-bottom: 0px; flex-grow: 1;" class="tk-common-text2"><% item.name %></div>
                                     <div @click='removeItem(item)' style="margin-right: 5px;" class="pointer">
                                         <i class="fa fa-times" aria-hidden="true"></i>
                                     </div>
@@ -164,20 +165,36 @@
                             </div>
                         </div>
                         
-                        <div v-if="dam"  >
+                        <div v-if="dam">
                             <div class="row mt-40">
                                 <div class="col-md-12">
                                     <div class="tk-common-text">Upload Media</div>
                                 </div>
     
                             </div>
-                            <!-- <div class="row">
-                                <div class="col-md-12">
-                                    <div class="tk-common-text">Upload Media</div>
-                                </div>
-    
-                            </div> -->
                             <div class="row">
+                                <div class="col-md-1" v-for="(image, imageindex) in imageData" v-bind:key="imageindex">
+                                    <div class="bk-image-upload">
+                                      <img :src="image.url" style="max-width: 100%" class="h-100 w-100"/>
+                                    </div>
+                                    <div class="image-footer">
+                                      <!-- <i class="far fa-edit img-icon"  v-on:click="editImage(imageindex)"></i>-->
+                                      <i class="far fa-trash-alt pl-2 img-icon" v-on:click="deleteImage(imageindex)"></i>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-1">
+                                    <div class="addImg">
+                                      <div class="item_image" style="background: #BEBEBE !important; border: none !important;" @click="$refs.itemfile.click()" ref="item-image"
+                                        v-on:change="onImageFileChanged">
+                                        <input type="file" ref="itemfile" name="mediabefore" style="display: none" accept="image/*"
+                                          class="itemfileselected_before" />
+                                        <i style="color: #fff !important;" class="ImageIcon fa fa-plus"></i>
+                                      </div>
+                                    </div>
+                                  </div>
+    
+                            </div>
+                            <div class="row mt-10">
                                 <div class="col-md-12">
                                     <div class="tk-common-text">Note</div>
                                 </div>
@@ -196,7 +213,9 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-3">
-                                    <div class="wrap-drop" id="noble-gases3" style="z-index: 2;">
+                                    <multiselect v-model="damacval" :options="damAc" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Select Action"></multiselect>
+
+                                    <!-- <div class="wrap-drop" id="noble-gases3" style="z-index: 2;">
                                         <span>Select Action</span>
                                         <ul class="drop">
                                             <li><a>Payback</a></li>
@@ -204,7 +223,7 @@
                                             <li><a>Assign Investigator</a></li>
                                             <li><a>Insurance Request</a></li>
                                         </ul>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                             <div class="row mt-30">
@@ -217,7 +236,7 @@
                             
                             
                         </div>
-                        <div v-if="at"  >
+                        <div v-if="at">
                             <div class="row mt-20">
                                 <div class="col-md-12">
                                     <div class="tk-common-text">Action</div>
@@ -225,16 +244,8 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-3">
-                                    <multiselect :options="ac" :searchable="false" :close-on-select="false" :show-labels="false" placeholder="Select action"></multiselect>
-                                    <!-- <div class="wrap-drop" id="noble-gases4" style="z-index: 3;">
-                                        <span>Select Action</span>
-                                        <ul class="drop">
-                                            <li><a>Gift</a></li>
-
-                                            <li><a>Internal reporting</a></li>
-                                          
-                                        </ul>
-                                    </div> -->
+                                    <multiselect  v-model="atAc" :options="ac" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Select action"></multiselect>
+                                    
                                 </div>
                             </div>
                             <div class="row mt-20">
@@ -244,14 +255,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-3">
-                                    <!-- <div class="wrap-drop" id="noble-gases5" style="z-index: 2;">
-                                        <span>Select Staff</span>
-                                        <ul class="drop">
-                                            <li><a>Internal reporting</a></li>
-                                          
-                                        </ul>
-                                    </div> -->
-                                    <multiselect :options="ac2" :searchable="false" :close-on-select="false" :show-labels="false" placeholder="Staff action"></multiselect>
+                                    <multiselect v-model="atStaff" :options="ac2" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Staff action"></multiselect>
 
                                 </div>
                             </div>
@@ -277,9 +281,194 @@
                             
                             
                         </div>
-                        
+                        <div v-if="ser">
+                            <div class="row mt-40">
+                                <div class="col-md-12">
+                                    <div class="tk-common-text">Upload Media</div>
+                                </div>
+    
+                            </div>
+                           
+                            <div class="row mt-10">
+                                <div class="col-md-1" v-for="(image2, imageindex2) in imageData2" v-bind:key="imageindex2">
+                                    <div class="bk-image-upload">
+                                      <img :src="image2.url" style="max-width: 100%" class="h-100 w-100"/>
+                                    </div>
+                                    <div class="image-footer">
+                                      <!-- <i class="far fa-edit img-icon"  v-on:click="editImage(imageindex)"></i>-->
+                                      <i class="far fa-trash-alt pl-2 img-icon" v-on:click="deleteImage2(imageindex2)"></i>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-1">
+                                    <div class="addImg">
+                                      <div class="item_image" style="background: #BEBEBE !important; border: none !important;" @click="$refs.itemfile2.click()" ref="item-image"
+                                        v-on:change="onImageFileChanged2">
+                                        <input type="file" ref="itemfile2" name="mediabefore" style="display: none" accept="image/*"
+                                          class="itemfileselected_before" />
+                                        <i style="color: #fff !important;" class="ImageIcon fa fa-plus"></i>
+                                      </div>
+                                    </div>
+                                  </div>
+    
+                            </div>
+                            <div class="row mt-10">
+                                <div class="col-md-12">
+                                    <div class="tk-common-text">Note</div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="inv-input-container "> 
+                                        <textarea style="width: 100%;" rows="8" id="id_item_description" name="item_description"></textarea>
+                                        </div>
+                                </div>
+                            </div>
+                            <div class="row mt-20">
+                                <div class="col-md-12">
+                                    <div class="tk-common-text">Action</div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <multiselect v-model="seracval" :options="damAc2" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Select Action"></multiselect>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="row mt-20">
+                                    <div class="col-md-12">
+                                        <div class="tk-sec-head av-font">
+                                        Section 1: Building 1 Floor 1 Apartment 1
+    
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-10">
+                                    <div class="col-md-6 c-right-border">
+                                        <div class="order-details-content">
+                                            <div class="row c-mb-3">
+                                                <div class="col-md-6 col-xs-6 mb-10">
+                                                    <div class="order-details-key">Size</div> 
+                                                    <div class="c-text order-details-value">300</div>
+                                                </div>
+                                                <div class="col-md-6 col-xs-6 mb-10">
+                                                    <div class="order-details-key">Wall Type</div> 
+                                                    <div class="c-text order-details-value">300</div>
+                                                </div>
+                                                <div class="col-md-6 col-xs-6 mb-10">
+                                                    <div class="order-details-key">Celling Type</div> 
+                                                    <div class="c-text order-details-value">300</div>
+                                                </div>
+                                                <div class="col-md-6 col-xs-6 mb-10">
+                                                    <div class="order-details-key">Floor Type</div> 
+                                                    <div class="c-text order-details-value">300</div>
+                                                </div>
+                                                <div class="col-md-6 col-xs-6 mb-10">
+                                                    <div class="order-details-key">Cost</div> 
+                                                    <div class="c-text order-details-value">300</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="position: relative;" class="col-md-6">
+                                        
+                                        <div class="col-md-4 ml-0 "><div style="background: #edf1f5 !important;" class="clean-section-card av-font"><p class="av-font">Bedrooms<span class="c-text2 av-font">2</span></p></div></div>
+                                        <div class="col-md-4 ml-0 "><div style="background: #edf1f5 !important;" class="clean-section-card av-font"><p class="av-font">Bedrooms<span class="c-text2 av-font">2</span></p></div></div>
+                                        <div class="col-md-4 ml-0 "><div style="background: #edf1f5 !important;" class="clean-section-card av-font"><p class="av-font">Bedrooms<span class="c-text2 av-font">2</span></p></div></div>
+                                        <div class="col-md-4 ml-0 "><div style="background: #edf1f5 !important;" class="clean-section-card av-font"><p class="av-font">Bedrooms<span class="c-text2 av-font">2</span></p></div></div>
+
+                                        <div class="tk-edit">
+                                            <img class="pointer edit-icon"  src="{% static 'files/icons/edit.png' %}">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-20">
+                                    <div class="col-md-2">
+                                        <div class="tk-common-text2">
+                                            Number of cleaners
+                                        </div>
+                                        <div class="inv-input-container h-30"> 
+                                            <input type="number"  class="w-p-100 inv-in" >
+                                          </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="tk-common-text2">
+                                            Schedule
+                                        </div>
+                                        <div class="inv-input-container h-30"> 
+                                            <input type="date"  class="w-p-100 inv-in" >
+                                          </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-30">
+                                    <div class="d-flex" style="align-items: center;
+                                    justify-content: center;">
+                                        <button class="tk-can"> Cancel</button>
+                                        <button class="ml-5 tk-sub">Submit</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
                     </div>
                 </div>
+
+                <button hidden id="id_cl" data-toggle="modal" data-target="#deleteModel2"  style="margin-top: 9px; color: #3968c6;"><i data-toggle="tooltip" title="Help" class="fa fa-question-circle fa-lg" aria-hidden="true"></i></button>
+                <div class="modal fade" id="deleteModel2" role="dialog">
+                    <div style="border: none !important;" class="modal-dialog cancel-model cancel-order-border " role="document">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-12 mt-20">
+                  
+                                    
+                                    <div class="d-flex ">
+                                        <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Cleaners</p></div>
+                                        <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+                  
+                                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                                        </button>
+                  
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-20">
+                              <div class="col-md-6 mb-10">
+                                <div class="d-flex">
+                                    <img src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle"> 
+                                    <div  class="tk-common-text2 ml-5 mt-10">Saravan</div>
+                                </div>
+                              </div>
+                              <div class="col-md-6 mb-10">
+                                <div class="d-flex">
+                                    <img src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle"> 
+                                    <div  class="tk-common-text2 ml-5 mt-10">Saravan</div>
+                                </div>
+                              </div>
+                              <div class="col-md-6 mb-10">
+                                <div class="d-flex">
+                                    <img src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle"> 
+                                    <div   class="tk-common-text2 ml-5 mt-10">Saravan</div>
+                                </div>
+                              </div>
+                              <div class="col-md-6 mb-10">
+                                <div class="d-flex">
+                                    <img src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle"> 
+                                    <div   class="tk-common-text2 ml-5 mt-10">Saravan</div>
+                                </div>
+                              </div>
+                           
+                              
+                              
+                             
+                  
+                  
+                  
+                              
+                            </div>
+                            <div class="row mt-10"></div>
+                           
+                        </div>
+                    </div>
+                  </div>
             </div>
         </section>
     </div>
@@ -287,6 +476,7 @@
 {% endblock %}
 
 {% block javascript %}
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/browser-image-compression@1.0.13/dist/browser-image-compression.js"></script>
 <script src="https://unpkg.com/vue-multiselect@2.1.0"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
 
@@ -299,24 +489,96 @@
   delimiters: ["<%", "%>"],
   data () {
         return {
+            key:1,
+            damacval:"",
+            seracval:"",
+            atAc:"",
+            atStaff:"",
+            damAc:['Payback','Gift','Assign Investigator','Insurance Request'],
+            damAc2:['Payback/ Discount','Gift','Assign Investigator','Follow-up Cleaning'],
             ac: ['Gift', 'Internal reporting'],
             ac2: ['name', 'Name'],
-
             at:false,
             dam:false,
+            ser:false,
+
             active:true,
           value: [],
           options:[
           { name: 'Damage', id: 1 , selected:false},
         { name: 'Service Quality', id: 2, selected:false },
         { name: 'Attitude & Behaviour', id: 3, selected:false },
-          ]
+          ],
+          imageData: [],
+        images:[],
+        ImageDetails: {
+            url: "",
+            file: "",
+            service:""
+        },
+        imageData2: [],
+        images2:[],
+        ImageDetails2: {
+            url: "",
+            file: "",
+            service:""
+        },
         }
       },
       methods:{
-          selectTickets(){
+          showCleaners(){
+              $('#id_cl').click();
+          },
+        hideAll(){
+            // console.log('g')
+            // for(var i =0 ;i<this.value.length;i++){        
+            //           this.value[i].selected = false;
+            //   }
+            //   this.ser = false
+            //     this.at = false
+            //     this.dam = false
+            if(this.value.length == 0){
+                this.ser = false
+                this.at = false
+                this.dam = false
+               
+            }else{
+                    if(this.value.length == 1){
+                    this.value[0].selected = true
+                }else{
+                    this.value[0].selected = true
+                }
 
-              if(this.value.length == 1){
+              if(this.value[0].id == 1){
+                  this.dam =true
+              }else{
+                  this.at = false
+                 
+              }
+              if(this.value[0].id == 3){
+                  this.at =true
+              }else{
+                  this.at = false
+              }
+              if(this.value[0].id == 2){
+                  this.ser =true
+              }else{
+                  this.ser = false
+              }
+            }
+        },
+          selectTickets(){
+              console.log(this.value)
+            if(this.value.length == 0){
+                this.ser = false
+                this.at = false
+                this.dam = false
+               
+            }else{
+                for(var i =0 ;i<this.value.length;i++){
+                  this.value[i].selected = false;
+              }
+                if(this.value.length == 1){
                   this.value[0].selected = true
               }else{
                 this.value[0].selected = true
@@ -325,6 +587,7 @@
               if(this.value[0].id == 1){
                   this.dam =true
               }else{
+                  this.at = false
                   this.dam = false
               }
               if(this.value[0].id == 3){
@@ -332,6 +595,14 @@
               }else{
                   this.at = false
               }
+              if(this.value[0].id == 2){
+                  this.ser =true
+              }else{
+                  this.ser = false
+              }
+            }
+
+             
           },
           showDam(){
               for(var i =0 ; i<this.value.length;i++){
@@ -344,7 +615,54 @@
               return false
           },
           removeItem(item){
-              console.log(item)
+            this.value.splice(this.value.indexOf(item), 1);
+            this.ser = false
+                this.at = false
+                this.dam = false
+                this.key = this.key+1;
+                console.log(this.ser,this.at,this.dam,this.key)
+            if(this.value.length == 0){
+                this.ser = false
+                this.at = false
+                this.dam = false
+               
+            }else{
+
+                for(var i =0 ;i<this.value.length;i++){
+                  this.value[i].selected = false;
+              }
+                
+                    if(this.value.length == 1){
+                    this.value[0].selected = true
+                }else{
+                    this.value[0].selected = true
+                }
+
+              if(this.value[0].id == 1){
+                  this.dam =true
+              }else{
+                  this.at = false
+                 
+              }
+              if(this.value[0].id == 3){
+                  this.at =true
+              }else{
+                  this.at = false
+              }
+              if(this.value[0].id == 2){
+                  this.ser =true
+              }else{
+                  this.ser = false
+              }
+            }
+            //   for(var i =0 ;i<this.value.length;i++){
+            //       this.value[i].selected = false;
+                  
+            //       if(this.value[i].id == item.id){
+                     
+            //           this.value[i].selected = true;
+            //       }
+            //   }
           },
           changeSeleted(item){
               
@@ -358,15 +676,124 @@
               }else{
                   this.at = false
               }
+              if(item.id == 2){
+                  this.ser =true
+              }else{
+                  this.ser = false
+              }
               for(var i =0 ;i<this.value.length;i++){
                   this.value[i].selected = false;
                   
                   if(this.value[i].id == item.id){
-                      console.log('ch')
+                     
                       this.value[i].selected = true;
                   }
               }
-          }
+          },
+          deleteImage(imageindex) {
+        this.imageData.splice(imageindex, 1);
+        },
+        uploadImgToArray(file,fileName){
+            file.lastModifiedDate = Date.now();
+        
+        var converted_file = new File([file],  fileName,{lastModified: Date.now()});
+            console.log("file size is "+converted_file.size)
+            this.ImageDetails.url = URL.createObjectURL(converted_file);
+            this.ImageDetails.file = converted_file;
+            this.imageData.push(this.ImageDetails);
+            this.images.push(converted_file);
+            this.ImageDetails = {
+            file: "",
+            url: "",
+            service:""
+            
+            };
+            console.log(this.imageData)
+        },
+        async onImageFileChanged(event) {
+        console.log(event);
+        console.log("orginal file size is" + event.target.files[0].size);
+        console.log(this.imageData,this.images,"imgd");
+        var file = event.target.files[0];
+
+        const options = {
+            maxSizeMB: 1,
+            maxWidthOrHeight: 1920,
+            useWebWorker: true,
+            onProgress: Function(2),
+        };
+        try {
+            const compressedFile = await imageCompression(
+            event.target.files[0],
+            options
+            );
+            console.log(
+            "compressedFile instanceof Blob",
+            compressedFile instanceof Blob
+            ); // true
+            console.log(
+            `compressedFile size ${compressedFile.size / 1024 / 1024} MB`
+            ); // smaller than maxSizeMB
+
+            await this.uploadImgToArray(compressedFile, event.target.files[0].name); // write your own logic
+        } catch (error) {
+            console.log(error);
+        }
+        },
+
+        deleteImage2(imageindex) {
+        this.imageData2.splice(imageindex, 1);
+        },
+        uploadImgToArray2(file,fileName){
+            file.lastModifiedDate = Date.now();
+        
+        var converted_file = new File([file],  fileName,{lastModified: Date.now()});
+            console.log("file size is "+converted_file.size)
+            this.ImageDetails2.url = URL.createObjectURL(converted_file);
+            this.ImageDetails2.file = converted_file;
+            this.imageData2.push(this.ImageDetails2);
+            this.images2.push(converted_file);
+            this.ImageDetails2 = {
+            file: "",
+            url: "",
+            service:""
+            
+            };
+            console.log(this.imageData2)
+        },
+        async onImageFileChanged2(event) {
+        console.log(event);
+        console.log("orginal file size is" + event.target.files[0].size);
+        console.log(this.imageData2,this.images2,"imgd");
+        var file = event.target.files[0];
+
+        const options = {
+            maxSizeMB: 1,
+            maxWidthOrHeight: 1920,
+            useWebWorker: true,
+            onProgress: Function(2),
+        };
+        try {
+            const compressedFile = await imageCompression(
+            event.target.files[0],
+            options
+            );
+            console.log(
+            "compressedFile instanceof Blob",
+            compressedFile instanceof Blob
+            ); // true
+            console.log(
+            `compressedFile size ${compressedFile.size / 1024 / 1024} MB`
+            ); // smaller than maxSizeMB
+
+            await this.uploadImgToArray2(compressedFile, event.target.files[0].name); // write your own logic
+        } catch (error) {
+            console.log(error);
+        }
+        },
+
+
+
       }
   });
 

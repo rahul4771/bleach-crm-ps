@@ -975,7 +975,7 @@ function selectActive(d,id,name){
         var tempName = '{{item.name}}';
         $('#id_search').append('<div class="col-md-12" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
         {% endfor %}
-        
+
         console.log(d)
         console.log($(d).data('linestatus'))
             $("#itemHead").text("Edit Item");

@@ -94,6 +94,7 @@ $(document).ready(function(){
           
         },
       data: {
+        checkbox:false,
         duration_loader:false,
         pref_gender:false,
         btnLoader:false,
@@ -612,6 +613,13 @@ $(document).ready(function(){
 
 
         methods: {
+          check: function(e) {
+            e.cancelBubble = true;
+            console.log('checkbox checked')
+          },
+          expansionPanel: function() {
+            console.log('expansion panel')
+          },
           resetGender(){
             this.gender=""
             this.getMultipleSlots()
