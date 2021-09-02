@@ -46,6 +46,7 @@ urlpatterns = [
 		url(r'^ajax/getareatypes$',views.GetAreaTypes.as_view(),name='ajax-getareatypes'),
 		url(r'^ajax/getservicesizeprice$',views.GetServiceSizePrice.as_view(),name='ajax-getservicesizeprice'),
 		url(r'^ajax/getserviceproductivity$',views.GetServiceProductivity.as_view(),name='ajax-serviceproductivity'),
+		url(r'^ajax/getserviceaddons$',views.GetServiceAddOns.as_view(),name='ajax-serviceaddons'),
 		
 		url(r'^ajax/getcleaningslotes$',views.GetCleaningSlotes.as_view(),name='ajax-cleaningslotes'),#New logic applied latest
 		url(r'^ajax/getmultipleservicecleaningslotes$',views.GetMultipleServiceCleaningSlotes.as_view(),name='ajax-multipleservicecleaningslotes'),#New logic applied latest
@@ -66,15 +67,11 @@ urlpatterns = [
 		url(r'^bookingmediasave$',views.ClientCleaningBookingMediaSave.as_view(),name='clientcleaningbookingmediasave'),
 		url(r'^evaluatorbookingmultiplephase3/customer/(?P<evaluation_id>[-\w]+)$',views.EvaluatorMultipleCleaningBookingLetCustomerPhase3.as_view(),name='evaluatorclientcleaningmultiplebookingcustomerphase3'),#New Logic Applied
 
-		#order resubmit
+		#order edits
 		url(r'^editorder/(?P<order_id>[-\w]+)$',views.EditOrderDetails.as_view(),name='edit-order'),
 		url(r'^service/cancellrequest/$',views.ServiceCancellationRequest.as_view(),name='cancell-service'),
 		url(r'^service/cancell/$',views.ServiceCancellation.as_view(),name='cancell-service-submit'),
 		url(r'^resubmitorder/(?P<order_id>[-\w]+)$',views.ReSubmitOrder.as_view(),name='resubmit-order'),
-
-		#edit order
-		url(r'^editorder/(?P<order_id>[-\w]+)$',views.EditOrderDetails.as_view(),name='edit-order'), 
-
 
 		url(r'^emailtest$',views.EmailTest.as_view(),name='email-test'),
 		url(r'^cart$',views.Cart.as_view(),name='cart'),

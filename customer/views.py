@@ -29,7 +29,7 @@ from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investi
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
-from bleachadmin.models import ServiceProductivity,ServicePriceRange
+from bleachadmin.models import ServiceProductivity,ServicePriceRange,ServiceAddOns
 from agent.forms import UserProfileForm,AddressForm
 from evaluator.forms import QuatationServiceFormCustomer
 from itertools import chain
@@ -44,6 +44,7 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK 
 
 from customer.serilizers import UserProfileSerializer,AddressSerializer,AddressSaveSerializer,EvaluationBookSerializer,EvaluationBookSectionSerializer,EvaluationSectionKeynoteSerializer,EvaluationSerializer,OrderSerializer,EvaluationDetailsSerializer,CustomerBookingSerializer
+from bleachadmin.serializers import ServiceAddOnsSerializer
 
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -1883,6 +1884,24 @@ class GetServiceProductivity(APIView):
 		service_productivity['max_cleaners'] = total_cleaners
 
 		return JsonResponse(service_productivity)
+
+
+
+class GetServiceAddOns(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+
+	def get(self,request):
+		response_dict        = {}
+		service_type         = request.GET.get('service_type')
+
+		service_addons       = ServiceAddOns.objects.select_related('service_type').filter(service_type__name=service_type)
+
+		print(service_addons)
+		response_dict['service_addons'] = ServiceAddOnsSerializer(instance=service_addons,many=True).data
+		response_dict['success']        = True
+
+		return Response(response_dict,HTTP_200_OK)
 
 
 class GetCleaningSlotes(APIView):  
