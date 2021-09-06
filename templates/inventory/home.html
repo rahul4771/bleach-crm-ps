@@ -80,7 +80,7 @@
                             <div class="col-md-4 mb-5">
                                 <div class="inv-sm-card">
                                     <p class="inv-dash-card-head">
-                                        Purchase Remainder
+                                        Purchase Reminder
                                     </p>
                                     <h1>3</h1>
                                 </div>
@@ -96,11 +96,14 @@
                         </div>
                         <div class="mt-10 row">
                             <div class="owl-carousel owl-theme">
+                                
+                                
+                                {% for item in recent_items %}
                                 <div class="col-md-12 pr-0 item">
                                     <div class="row inv-card2 ml-0 mb-10">
                                         <div class="col-xs-7 av-font p-10">
-                                            <p class="inv-item-card-head">Product Name</p>
-                                            25665665
+                                            <p class="inv-item-card-head">{{item.name}}</p>
+                                            {{item.item_code}}
                                             <div class="mt-10">
                                                 J&J Electricals
                                             </div>
@@ -115,44 +118,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-12 pr-0  item">
-                                    <div class="row inv-card2 ml-0 mb-10">
-                                        <div class="col-xs-7 av-font p-10">
-                                            <p class="inv-item-card-head">Product Name</p>
-                                            25665665
-                                            <div class="mt-10">
-                                                J&J Electricals
-                                            </div>
-
-
-                                        </div>
-                                        <div class="col-xs-5 p-10">
-                                            Machine
-                                            <div class="inv-item-am ">
-                                                25.00KD
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-12 pr-0  item">
-                                    <div class="row inv-card2 ml-0 mb-10">
-                                        <div class="col-xs-7 av-font p-10">
-                                            <p class="inv-item-card-head">Product Name</p>
-                                            25665665
-                                            <div class="mt-10">
-                                                J&J Electricals
-                                            </div>
-
-
-                                        </div>
-                                        <div class="col-xs-5 p-10">
-                                            Machine
-                                            <div class="inv-item-am ">
-                                                25.00KD
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                {% endfor %}
+                                
                             </div>
                         </div>
                     </div>
@@ -326,7 +293,7 @@
                         <div class="col-md-12">
                             <div class="white-wrapper white-wrapper-padding m-0">
                                 <div class="inv-dash-card-head">
-                                    Purchase Remainder
+                                    Purchase Reminder
                                 </div>
                                 <div class="mt-10">
                                     <table class="inv-table footable">
@@ -352,23 +319,28 @@
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            {% for item in purchase_items %}
                                             <tr>
                                                 <td class="inv-about-finish-border">
     
-                                                    BLC6464544957
+                                                    {{item.item_code}}
                                                 </td>
                                                 <td class="text-center">
-                                                    General
+                                                    {{item.item_category}}
                                                 </td>
                                                 <td class="text-center">
-                                                    20.00KD
+                                                    {% for unit in item.units %}
+                                                    {% if forloop.first %}
+                                                    {{unit.unit_price|floatformat:3}} KD
+                                                    {% endif %}
+                                                    {% endfor %}
                                                 </td>
                                                 <td class="text-center">
-                                                    Name
+                                                    {{item.name}}
                                                 </td>
                                                 <td class="">
                                                     <span class="inv-dot c-about-finish ml-5"></span>
-                                                    About to finish
+                                                    {{item.item_status}}
     
                                                 </td>
                                                 <td style="float: right;">
@@ -385,72 +357,9 @@
     
                                                 </td>
                                             </tr>
-                                            <tr>
-                                                <td class="inv-out-of-order-border">
-    
-                                                    BLC6464544957
-                                                </td>
-                                                <td class="text-center">
-                                                    Generale
-                                                </td>
-                                                <td class="text-center">
-                                                    20.00KD
-                                                </td>
-                                                <td class="text-center">
-                                                    Name
-                                                </td>
-                                                <td class="">
-                                                    <span class="inv-dot c-out-of-order ml-5"></span>
-                                                    Out of Order
-    
-                                                </td>
-                                                <td style="float: right;">
-                                                    <button class="inv-plan-img-btn"> <img class="view-img"
-                                                            src="{% static 'files/inventory/icons/view.png' %}" alt="">
-                                                    </button>
-    
-                                                    <button class="inv-plan-img-btn"> <img
-                                                            src="{% static 'files/inventory/icons/edit.png' %}" alt="">
-                                                    </button>
-                                                    <button class="inv-plan-img-btn"> <img
-                                                            src="{% static 'files/inventory/icons/delete.png' %}" alt="">
-                                                    </button>
-    
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="inv-expired-border">
-    
-                                                    BLC6464544957
-                                                </td>
-                                                <td class="text-center">
-                                                    Generale
-                                                </td>
-                                                <td class="text-center">
-                                                    20.00KD
-                                                </td>
-                                                <td class="text-center">
-                                                    Name
-                                                </td>
-                                                <td class="">
-                                                    <span class="inv-dot c-expired ml-5"></span>
-                                                    Expired
-    
-                                                </td>
-                                                <td style="float: right;">
-                                                    <button class="inv-plan-img-btn"> <img class="view-img"
-                                                            src="{% static 'files/inventory/icons/view.png' %}" alt="">
-                                                    </button>
-    
-                                                    <button class="inv-plan-img-btn"> <img
-                                                            src="{% static 'files/inventory/icons/edit.png' %}" alt="">
-                                                    </button>
-                                                    <button class="inv-plan-img-btn"> <img
-                                                            src="{% static 'files/inventory/icons/delete.png' %}" alt="">
-                                                    </button>
-    
-                                                </td>
-                                            </tr>
+                                            {% endfor %}
+                                            
+                                            
                                         </tbody>
                                        
 

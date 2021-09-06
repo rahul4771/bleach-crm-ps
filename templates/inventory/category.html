@@ -171,7 +171,7 @@
                 </div>
 
             </div>
-            <div class="row mt-20">
+            <div class="row mt-20" id="category_id_div">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Category Id</div>
 
@@ -446,6 +446,7 @@ $(function () {
     $('.add_category').click(function(){
         console.log("click")
         $('#id_edit_category').val($(this).data('categoryid'));
+        $('#category_id_div').show();
         $('#name_category').val('');
         document.getElementById("status_category").value = 'True';
         $('.category-form-btn').text('Add');
@@ -458,6 +459,7 @@ $(function () {
         $('#id_edit_category').val($(this).data('categoryid'));
         $('#name_category').val($(this).data('categoryname'));
         $('#code_category').val($(this).data('categorycode'));
+        $('#category_id_div').hide();
         document.getElementById("status_category").value = $(this).data('categorystatus');
         console.log($('#status_category').val(),'cat')
         if($('#status_category').val() == 'True'){
