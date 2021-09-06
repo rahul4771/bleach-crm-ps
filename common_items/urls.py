@@ -12,6 +12,8 @@ urlpatterns = [
 		url(r'^clients/$',views.ClientDetails.as_view(),name='clients'),
 		url(r'^client/orders/(?P<client_id>[-\w]+)$',views.ClientOrders.as_view(),name='client-orders'),
 		url(r'^client/order/details/(?P<order_id>[-\w]+)$',views.ClientOrderDetails.as_view(),name='client-orderdetails'),
+		#test
+		url(r'^client/order/details/test/(?P<order_id>[-\w]+)$',views.ClientOrderDetailsTest.as_view(),name='client-orderdetailstest'),
 		url(r'^tickets/$',views.TicketDetails.as_view(),name='tickets'),
 		url(r'^tickets/edit/(?P<ticket_id>[-\w]+)/(?P<order_id>[-\w]+)/$',views.TicketDetailsEdit.as_view(),name='tickets-edit'),
 		url(r'^ticket/details/(?P<client_id>[-\w]+)/(?P<followup_id>[-\w]+)/$',views.TicketAdvanced.as_view(),name='ticketadvanced'),

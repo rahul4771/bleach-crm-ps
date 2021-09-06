@@ -66,6 +66,58 @@ html{
     color:#ffffff;
     cursor: pointer;
 }
+.service-card-text{
+    font-size:18px;
+    font-weight: 500;
+}
+.v-expansion-panel::before {
+    box-shadow: none !important;
+   
+  }
+  .alert-label{
+      font-size:12px !important;
+      font-weight:500;
+    
+  }
+  .v-expansion-panel-header:hover {
+    background:none !important;
+  }
+  .expand-card-chip{
+    background: #DFEFF2 0% 0% no-repeat padding-box;
+    border-radius:5px;
+  }
+  .expansion-checkbox{
+    max-width: 50px !important;
+    padding-top: 0px !important;
+    margin: 0px !important;
+    margin-right: 10px !important;
+    margin-left: -10px !important;
+    max-height: 18px !important;
+  }
+  .total-payment-box{
+     background: #DFEFF2 0% 0% no-repeat padding-box;
+  }
+  .payment-key-text{
+      font-size: 12px;
+  }
+  .payment-split{
+    background: #DFEFF2;
+  }
+  .dashed-top{
+    border-top: 1px dashed #4f98aa;
+  }
+  .payment-value-text{
+    font-size: 18px;
+    font-weight:500;
+}
+  .expand-card-cost{
+      font-size:24px;
+      font-weight:500;
+  }
+  .v-expansion-panel{
+    border:1px solid #949494 !important;
+    border-radius: 5px !important;
+  }
 .banner-round{
     height: 90px;
     padding: 5px;
@@ -713,6 +765,15 @@ padding:10px;
 .bg-white{
     background:#ffffff;
 }
+.page-cart-main-title{
+    color:#289bac;
+    font-size:3rem;
+    background: #eeeeee;
+    font-weight:500;
+}
+.content{
+    margin-top: 56px !important;
+}
 .page-main-title{
     color:#289bac;
     font-size:3.5rem;
@@ -791,6 +852,12 @@ padding:10px;
 [v-cloak] {display: none}
   
 @media only screen and (max-width: 600px) {
+    .content{
+        margin-top: 0px !important;
+    }
+    .page-cart-main-title{
+        background:#ffffff;
+    }
     .cart-card-items{
         height:auto;
     }
