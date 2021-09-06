@@ -235,12 +235,12 @@
                 </div>
 
             </div>
-            <div class="row mt-20" id="segment_id">
+            <div class="row mt-20" id="segment_id_div">
                 <div class="col-md-12 ">
                     <div class="model-input-name" >Segment Code</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="segment_code" id="segment_code_id">
+                        <input type="text"  class="w-p-100 inv-in" name="segment_code" >
                       </div>
                 </div>
 
@@ -306,7 +306,7 @@
                 </div>
 
             </div>
-            <div class="row mt-20">
+            <div class="row mt-20" id="line_id_div">
                 <div class="col-md-12 ">
                     <div class="model-input-name" >Line Code</div>
 
@@ -502,6 +502,7 @@ $(function () {
             $('.line-form-btn').text('Add');
             $('#segment_action_id').val('add_line');
             $('#id_selectText2').text('Active');
+            $('#line_id_div').show();
         }
         if(d == 'edit'){
             
@@ -527,6 +528,7 @@ $(function () {
             $('#segment_action_id').val('edit_line');
             $('#id_edit_line').val($(d).data('lineid'));
             $('#line_name_id').val($(d).data('linename'));
+            $('#line_id_div').hide();
             console.log($(d).data('linename'),$(d).data('linestatus'),"stats")
 
             if ($(d).data('linestatus') == true){
@@ -566,6 +568,7 @@ $(function () {
         $('#id_edit_segment').val($(this).data('segmentid'));
         $('#name_segment').val($(this).data('segmentname'));
         $('#status_segment').val($(this).data('segmentstatus'));
+        $('#segment_id_div').hide();
         if($('#status_segment').val() == 'True'){
             
             $('#id_selectText').text('Active');
@@ -578,6 +581,7 @@ $(function () {
     $('.add_segment').click(function(){
         $('#id_edit_segment').val($(this).data('segmentid'));
         $('#name_segment').val('');
+        $('#segment_id_div').show();
         $('#status_segment').val('');
     })
 

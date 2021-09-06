@@ -11,17 +11,14 @@ from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,Max,Expressi
 
 class InventoryHome(IsInventoryAdmin,View):
     def get(self,request):
-        return render(request,'inventory/home.html',{})
+        items = InventoryItem.objects.filter(status=True)
+        recent_items = items.order_by('-id')
+        purchase_items = items.filter(Q(item_status='out_of_stock') | Q(item_status='about_to_finish')).prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.all(),to_attr='units'))
+        return render(request,'inventory/home.html',{"recent_items":recent_items,"purchase_items":purchase_items})
 
 # Category.
 class InventoryCategory(IsInventoryAdmin,View):
     def get(self,request):
-
-        # Category.objects.all().delete()
-        # Segment.objects.all().delete()
-        # Line.objects.all().delete()
-        # Attribute.objects.all().delete()
-        # AttributeValue.objects.all().delete()
 
         search = request.GET.get('search')
 
@@ -50,16 +47,21 @@ class InventoryCategory(IsInventoryAdmin,View):
             category_status = request.POST.get('category_status')
             category_id = request.POST.get('category_id')
 
-            category_latest = Category.objects.all().last()
-            if category_latest:
-                code_number  =  int(re.findall(r'(\d+)', category_latest.category_code)[0]) + 1
-                category_code = 'CAT'+str(code_number)
+            category_id_exists = Category.objects.filter(category_id=category_id).first()
+            if category_id_exists:
+                messages.error(request,"Category Id exists !")
+
             else:
-                category_code = 'CAT9001'
+                category_latest = Category.objects.all().last()
+                if category_latest:
+                    code_number  =  int(re.findall(r'(\d+)', category_latest.category_code)[0]) + 1
+                    category_code = 'CAT'+str(code_number)
+                else:
+                    category_code = 'CAT9001'
 
-            Category.objects.create(name=category_name,category_code=category_code,category_id=category_id,status=category_status)
+                Category.objects.create(name=category_name,category_code=category_code,category_id=category_id,status=category_status)
 
-            messages.success(request,"Category Added Successfully !")
+                messages.success(request,"Category Added Successfully !")
 
         if action == 'edit_category':
             print("edit")
@@ -543,13 +545,24 @@ class InventoryItems(IsInventoryAdmin,View):
 
             item = InventoryItem.objects.get(id=item_id)
 
-            units       = ItemUnit.objects.all()
-            unit_latest  = units.last()
-            if unit_latest:
-                code_number  =  int(re.findall(r'(\d+)', unit_latest.unit_code)[0]) + 1
-                new_unit_code = 'UNIT'+str(code_number)
+            item_code = item.item_code
+
+            latest_unit_code = ItemUnit.objects.filter(unit_code__contains=item_code).last()
+
+            if latest_unit_code:
+                code = latest_unit_code.unit_code.split("-")[1]
+                new_unit_code = item_code + '-' + str(int(code)+1)
             else:
-                new_unit_code = 'UNIT9001'
+                new_unit_code = item_code + '-1'
+            print(new_unit_code,"lop")
+
+            # units       = ItemUnit.objects.all()
+            # unit_latest  = units.last()
+            # if unit_latest:
+            #     code_number  =  int(re.findall(r'(\d+)', unit_latest.unit_code)[0]) + 1
+            #     new_unit_code = 'UNIT'+str(code_number)
+            # else:
+            #     new_unit_code = 'UNIT9001'
 
             ItemUnit.objects.create(
             item = item,
@@ -824,7 +837,7 @@ class InventoryInv(IsInventoryAdmin,View):
 
             if int(available_item_units) < int(reserve_units):
                 item.item_status = 'about_to_finish'
-            elif int(available_item_units) == 0 and int(reserve_units) == 0 :
+            elif int(available_item_units) == 0 :
                 item.item_status = 'out_of_stock'
             else:
                 item.item_status = 'available'
@@ -853,6 +866,7 @@ class InventoryInv(IsInventoryAdmin,View):
             description = request.POST.get('item_description')
             reserve = request.POST.get('item_reserve')
             status     = request.POST.get('item_status')
+            reusable     = request.POST.get('item_reusable')
 
             if category_id:
                 category = Category.objects.get(id=int(category_id))
@@ -886,10 +900,10 @@ class InventoryInv(IsInventoryAdmin,View):
             if latest_item_code:
                 new_item_code = item_code_series + str(int(latest_item_code.item_code[6:])+1)
             else:
-                new_item_code = item_code_series + '1001'
+                new_item_code = item_code_series + '101'
             print(new_item_code,"lop")
 
-            inv_item = InventoryItem.objects.create(item_category=category,item_segment=segment,item_line=line,name=name,item_code=new_item_code,description=description,reserve_count=reserve)
+            inv_item = InventoryItem.objects.create(item_category=category,item_segment=segment,item_line=line,name=name,item_code=new_item_code,description=description,reserve_count=reserve,is_reusable=reusable)
             messages.success(request,"Item Added Successfully !")
             return redirect('inventory:inventory-item',inv_item.id)
 
@@ -903,6 +917,7 @@ class InventoryInv(IsInventoryAdmin,View):
             description = request.POST.get('item_description')
             reserve = request.POST.get('item_reserve')
             status     = request.POST.get('item_status')
+            reusable     = request.POST.get('item_reusable')
 
             if category_id:
                 category = Category.objects.get(id=int(category_id))
@@ -948,6 +963,7 @@ class InventoryInv(IsInventoryAdmin,View):
             item.description = description
             item.reserve_count   = reserve
             item.status = status
+            item.is_reusable = reusable
             item.save()
             messages.success(request,"Item Updated Successfully !")
         
@@ -1339,8 +1355,13 @@ class InventorySegment(IsInventoryAdmin,View):
             name     = request.POST.get('segment')
             status     = request.POST.get('status')
             segment_code     = request.POST.get('segment_code')
-            Segment.objects.create(category=category,name=name,segment_id=segment_code,status=status)
-            messages.success(request,"Segment Added Successfully !")
+
+            segment_id_exists = Segment.objects.filter(segment_id=segment_code).first()
+            if segment_id_exists:
+                messages.error(request,"Segment Id exists !")
+            else:
+                Segment.objects.create(category=category,name=name,segment_id=segment_code,status=status)
+                messages.success(request,"Segment Added Successfully !")
 
         if action == 'edit_segment':
             print("edit")
@@ -1369,9 +1390,14 @@ class InventorySegment(IsInventoryAdmin,View):
 
             segment = Segment.objects.get(id=int(segment_id))
 
-            Line.objects.create(category=segment.category,segment=segment,name=line_name,line_id=line_code,status=line_status)
+            line_id_exists = Line.objects.filter(line_id=line_code).first()
+            if line_id_exists:
+                messages.error(request,"Line Id exists !")
+            else:
 
-            messages.success(request,"Line Added Successfully !")
+                Line.objects.create(category=segment.category,segment=segment,name=line_name,line_id=line_code,status=line_status)
+
+                messages.success(request,"Line Added Successfully !")
 
         if action == 'edit_line':
             line_id = request.POST.get('edit_line_id')

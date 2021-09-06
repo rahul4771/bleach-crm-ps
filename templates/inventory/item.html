@@ -97,6 +97,15 @@
                                 <div class="inv-item-head-sub mt-20">
                                     {{inventory_item.item_code}}
                                 </div>
+                                <div class="inv-item-head-sub mt-20">
+                                    {% if inventory_item.item_status == 'available' %}
+                                    Available
+                                    {% elif inventory_item.item_status == 'about_to_finish' %}
+                                    About to finish
+                                    {% elif inventory_item.item_status == 'out_of_stock' %}
+                                    Out of Stock
+                                    {% endif %}
+                                </div>
                                 
                                <div class="row" style="margin-left: 0px; margin-top: 7%;">
                                 <div class="col-md-4 pl-0">
@@ -297,7 +306,7 @@
                                     
                                     <td >
                                         
-                                        {{unit.expiry_date|date:'d-m-Y'}}
+                                        {{unit.expiry_date|date:'d-m-Y'|default_if_none:'-'}}
 
                                         
                                     </td>
@@ -310,7 +319,7 @@
                                         {{unit.status}}
     
                                     </td>
-                                    <td style="float: right;">
+                                    <td class="text-center">
                                       
     
                                         <button onclick="openNavAddBundle('edit')" class="inv-plan-img-btn edit-unit-btn" data-unitid="{{unit.id}}" data-unitcode="{{unit.unit_code}}" data-purchasedate="{{unit.purchase_date|date:'Y-m-d'}}" data-expirydate="{{unit.expiry_date|date:'Y-m-d'}}" data-unitprice="{{unit.unit_price|floatformat:3}}" data-status="{{unit.status}}"> <img
@@ -362,12 +371,12 @@
                     <div class="model-input-name">Purchase Date</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="date" class="w-p-100 inv-in" name="purchase_date" id="id_purchase_date">
+                        <input type="date" class="w-p-100 inv-in" name="purchase_date" id="id_purchase_date" required>
                       </div>
                 </div>
 
             </div>
-            <div class="row mt-20">
+            {% comment %} <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Unit Code</div>
 
@@ -376,7 +385,7 @@
                       </div>
                 </div>
 
-            </div>
+            </div> {% endcomment %}
             <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Expired Date</div>
@@ -392,7 +401,7 @@
                     <div class="model-input-name">Unit Price</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="unit_price" id="id_unit_price">
+                        <input type="number" step="0.001"  class="w-p-100 inv-in" name="unit_price" id="id_unit_price" required>
                       </div>
                 </div>
 
@@ -406,7 +415,7 @@
                         <option value="out_of_order">Out Of order</option>
                         <option value="expired">Expired</option>
                     </select> -->
-                    <input hidden type="text" id="id_unit_status" name="unit_status" value="active">
+                    <input hidden type="text" id="id_unit_status" name="unit_status" value="active" required>
                     <div class="wrap-drop" id="noble-gases"  >
                         <span id="id_selectText">Active</span>
                         <ul class="drop">
