@@ -7,6 +7,8 @@ import re
 from datetime import date,datetime,timedelta
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,Max,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField,CharField,Prefetch
+from order.models import OrderScheduler
+from senior_team_leader.models import CleaningTeam
 # Create your views here.
 
 class InventoryHome(IsInventoryAdmin,View):
@@ -976,7 +978,8 @@ class InventoryInv(IsInventoryAdmin,View):
 
 class InventoryOrder(IsInventoryAdmin,View):
     def get(self,request):
-        return render(request,'inventory/order.html',{})
+        orders = OrderScheduler.objects.filter(Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS')|Q(work_status='CLEANING_FULFILLED')).prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team'))
+        return render(request,'inventory/order.html',{"visits":orders})
 
 class InventoryUsers(IsInventoryAdmin,View):
     def get(self,request):

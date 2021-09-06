@@ -54,7 +54,7 @@
                                 <th data-hide="phone,tablet"  style="width: %;">
                                     Service Type
                                 </th>
-                                <th data-hide="phone,tablet"  style="width: %;">
+                                <th data-hide="phone,tablet"  style="text-align: center;">
                                     Check Out/IN
                                 </th>
     
@@ -66,7 +66,7 @@
                             </tr>
                         </thead>
                       <tbody>
-                        <tr>
+                        {% comment %} <tr>
                             <td>
                                 12/12/2021
                             </td>
@@ -125,21 +125,24 @@
                                 
 
                             </td>
-                        </tr>
+                        </tr> {% endcomment %}
+                        {% for visit in visits %}
                         <tr>
                             <td>
-                                12/12/2021
+                                {{visit.start_at|date:'d-m-Y'}}
                             </td>
                             <td>
-                                0000000
+                                {{visit.order.order_no}}
                             </td>
                             <td>
-                                Name
+                                {% for team in visit.cleaning_team %}
+                                {{team.team_leader.name}}
+                                {% endfor %}
                             </td>
                             <td>
-                                Name
-                            <td>
-                                Out
+                                {{visit.order_scheduler_book.service_type.name}}
+                            <td style="text-align: center;">
+                                -
                             </td>
 
                             <td>
@@ -148,7 +151,7 @@
                                 Waiting
                                
                             </td>
-                            <td style="float: right;">
+                            <td class="text-center">
                                 <button class="btn-p inv-plan-img-btn inv-btn-dis" onclick="openNav()"> <img class="btn-img2"
                                     src="{% static 'files/inventory/icons/checklist.png' %}" alt=""> Create Check-out list </button>
                                 <button class="inv-plan-img-btn" onclick="openNav()"> <img
@@ -157,7 +160,8 @@
 
                             </td>
                         </tr>
-                        <tr>
+                        {% endfor %}
+                        {% comment %} <tr>
                             <td>
                                 12/12/2021
                             </td>
@@ -186,7 +190,7 @@
                                 
 
                             </td>
-                        </tr>
+                        </tr> {% endcomment %}
 
                       </tbody>
                       

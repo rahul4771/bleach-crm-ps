@@ -321,10 +321,26 @@
                                         <tbody>
                                             {% for item in purchase_items %}
                                             <tr>
+                                                {% if item.item_status == 'available' %}
                                                 <td class="inv-about-finish-border">
     
                                                     {{item.item_code}}
                                                 </td>
+                                                    {% elif item.item_status == 'about_to_finish' %}
+                                                    <td class="inv-ab-fin">
+    
+                                                        {{item.item_code}}
+                                                    </td>
+                                                    {% elif item.item_status == 'out_of_stock' %}
+                                                    <td class="inv-out-of-order-border">
+    
+                                                        {{item.item_code}}
+                                                    </td>
+                                                    {% endif %}
+                                                <!-- <td class="inv-about-finish-border">
+    
+                                                    {{item.item_code}}
+                                                </td> -->
                                                 <td class="text-center">
                                                     {{item.item_category}}
                                                 </td>
@@ -339,8 +355,18 @@
                                                     {{item.name}}
                                                 </td>
                                                 <td class="">
-                                                    <span class="inv-dot c-about-finish ml-5"></span>
-                                                    {{item.item_status}}
+                                                    {% if item.item_status == 'available' %}
+                                                    <span class="inv-dot  c-active"></span>
+                                                    Available
+                                                    {% elif item.item_status == 'about_to_finish' %}
+                                                    <span class="inv-dot c-about-finish"></span>
+                                                    
+                                                    About to finish
+                                                    {% elif item.item_status == 'out_of_stock' %}
+                                                    <span class="inv-dot c-out-of-order"></span>
+
+                                                    Out of Stock
+                                                    {% endif %}
     
                                                 </td>
                                                 <td style="float: right;">

@@ -52,6 +52,10 @@
   color: #C91212;
 }
 
+.inv-ab-fin{
+  border-left: 5px solid #DBA03A;
+}
+
 .c-checked-out{
   background-color: #393983;
 }
