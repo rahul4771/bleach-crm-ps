@@ -322,7 +322,7 @@
                                     <td class="text-center">
                                       
     
-                                        <button onclick="openNavAddBundle('edit')" class="inv-plan-img-btn edit-unit-btn" data-unitid="{{unit.id}}" data-unitcode="{{unit.unit_code}}" data-purchasedate="{{unit.purchase_date|date:'Y-m-d'}}" data-expirydate="{{unit.expiry_date|date:'Y-m-d'}}" data-unitprice="{{unit.unit_price|floatformat:3}}" data-status="{{unit.status}}"> <img
+                                        <button onclick="openNavAddBundle('edit')" class="inv-plan-img-btn edit-unit-btn" data-unitid="{{unit.id}}" data-unitcode="{{unit.unit_code}}" data-unitstoreid="{{unit.store.id}}" data-unitstorename="{{unit.store.store_name}}" data-purchasedate="{{unit.purchase_date|date:'Y-m-d'}}" data-expirydate="{{unit.expiry_date|date:'Y-m-d'}}" data-unitprice="{{unit.unit_price|floatformat:3}}" data-status="{{unit.status}}"> <img
                                                 src="{% static 'files/inventory/icons/edit.png' %}" alt="">
                                         </button>
                                         <button class="inv-plan-img-btn delete-unit-btn" data-unitid="{{unit.id}}" data-toggle="modal" data-target="#deleteModel"> <img
@@ -365,6 +365,7 @@
             <form id="myform" method="POST" action="" >{% csrf_token %}
             <input type="hidden" name="item_id" value="{{inventory_item.id}}">
             <input type="hidden" name="action" value="add_unit" id="unit_action" >
+            <input type="text" name="store" id="id_pro_sel" value="" />
             <input type="hidden" name="edit_unit_id" id="id_unit_edit" >
             
             <div class="row mt-20">
@@ -373,7 +374,7 @@
 
                     <div style="position: relative;">
                         <div class="inv-input-container inv-border h-30">
-                            <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" name="store" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()" required>
+                            <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" name="storename" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()" required>
                             <!-- <div class="inv-hr"></div>
                             <div class="model-filter">
                                 <button class="inv-normal-btn" onclick="showDrop()">
@@ -869,6 +870,18 @@ function viewImgModel(){
     
 }
 
+
+var products = [];
+        {% for store in stores %}
+            var tempId = '{{store.id}}';
+            var tempName = '{{store.name}}';
+            var tempPrice = 'abc';
+            products.push({id:tempId,name:tempName,price:tempPrice})
+        // $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
+
+        {% endfor %}
+
+
 $('#id_cat_select').change(function(){
     var categoryid = $('#id_cat_select').val();
     getsegments(categoryid);
@@ -1007,6 +1020,18 @@ function editItemDetials() {
         document.getElementById("editExtra").style.width = "0";
     }
 function openNavAddBundle(d) {
+    $('#id_search').empty();
+    var products = [];
+        {% for store in stores %}
+        console.log("{{store.store_name}}","kkk")
+            var tempId = '{{store.id}}';
+            var tempName = '{{store.store_name}}';
+            var tempPrice = 'abc';
+            products.push({id:tempId,name:tempName,price:tempPrice})
+        $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{store.id}}" data-name="{{store.store_name}}"><div class="inv-search-result">{{store.store_name}}</div></div>');
+
+        {% endfor %}
+
     if(d == 'add'){
         document.getElementById("myform").reset();
         $('#id_unit_status').val('active');
@@ -1045,7 +1070,9 @@ function openNavAddBundle(d) {
         $('#id_purchase_date').val($(this).data('purchasedate'));
         $('#id_expiry_date').val($(this).data('expirydate'));
         $('#id_unit_price').val($(this).data('unitprice'));
+        $('#id_pro_sel').val($(this).data('unitstoreid'));
         document.getElementById("id_purchase_date").value = $(this).data('purchasedate');
+        document.getElementById("pro-name").value = $(this).data('unitstorename');
         document.getElementById("id_unit_status").value = $(this).data('status');
         
         if($('#id_unit_status').val()=='active'){
@@ -1083,6 +1110,18 @@ function openNavAddBundle(d) {
             hideselectedoptions();
             
         }
+
+        function closeProductShow(d){
+        console.log(d);
+        var proId = $(d).attr("data-pro")
+        $('#id_pro_sel').val($(d).attr("data-pro"));
+        $('#id_unit_price').val($(d).attr("data-productprice"));
+        $('#id_total_price').val($(d).attr("data-productprice"));
+        $('#pro-name').val($(d).attr("data-name"));
+
+
+        document.getElementById("id_search").style.display="none"
+    }
    
 </script>
 {% endblock %}

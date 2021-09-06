@@ -541,11 +541,13 @@ class InventoryItems(IsInventoryAdmin,View):
             messages.success(request,"Item Details Updated !")
 
         if action == "add_unit":
-            
+            store_id = request.POST.get('store')
             purchase_date = request.POST.get('purchase_date')
             expiry_date = request.POST.get('expiry_date')
             unit_price = request.POST.get('unit_price')
             status = request.POST.get('unit_status')
+
+            store = Store.objects.get(id=int(store_id))
 
             item = InventoryItem.objects.get(id=item_id)
 
@@ -571,6 +573,7 @@ class InventoryItems(IsInventoryAdmin,View):
             ItemUnit.objects.create(
             item = item,
             name='name',
+            store=store,
             unit_code = new_unit_code,
             purchase_date = purchase_date,
             expiry_date = expiry_date,
@@ -581,6 +584,7 @@ class InventoryItems(IsInventoryAdmin,View):
 
         if action == "edit_unit":
             unit_id = request.POST.get('edit_unit_id')
+            store_id = request.POST.get('store')
             purchase_date = request.POST.get('purchase_date')
             expiry_date = request.POST.get('expiry_date')
             unit_price = request.POST.get('unit_price')
