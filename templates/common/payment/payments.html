@@ -788,7 +788,7 @@
         <tbody>
         {% for invoice in neworder_due_payments %}
         
-        {% if invoice.evaluation.payment_method == 'PREPAID' or invoice.evaluation.payment_method == 'POSTPAID' %}
+        {% if invoice.evaluation.payment_method == 'PREPAID' %}
         <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
         <td data-label="BLC Number" {% if invoice.evaluation.payment_method == 'PREPAID' %}class="prepaid-line"{% else %}class="postpaid-line"{% endif %}>{{invoice.evaluation.evaluation_id}}</td>
         <td data-label="Customer" class="text-center">{{invoice.evaluation.customer.name}}</td>
@@ -806,15 +806,10 @@
         </td>
 
         <td data-label="" class="bold-text">
-        {% if invoice.evaluation.payment_method == 'PREPAID' %}
         {% if invoice.reminigdays < 0 %}
         <h3 class="red-text-h3">Exp</h3>
         {% else %}
         <h3 class="{% if invoice.reminigdays == 0 %}red-text-h3{% elif invoice.reminigdays >= 1 and invoice.reminigdays <= 3 %}orange-text-h3{% elif invoice.reminigdays >= 4 and invoice.reminigdays <= 7 %}yellow-text-h3{% elif invoice.reminigdays >= 8 %}green-text-h3{% endif %}">{{invoice.reminigdays}}</h3> Days&#11015;
-        {% endif %}
-
-        {% elif invoice.evaluation.payment_method == 'POSTPAID' %}
-        <h3 class="{% if invoice.delaydays >= 14 %}red-text-h3{% elif invoice.delaydays >= 8 and invoice.delaydays <= 13 %}orange-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 7 %}yellow-text-h3{% elif invoice.delaydays >= 0 and invoice.delaydays <= 3 %}green-text-h3{% endif %}">{{invoice.delaydays}}</h3> Days&#11014;
         {% endif %}
         </td>
 
@@ -848,27 +843,6 @@
         {% endif %}</td>
 
         <td class="align-center" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> <div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by.name|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" data-note="{{invoice.payment_notes|default_if_none:""}}" data-noteby="{{invoice.payment_note_by.name|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div> </div></td>
-        </tr>
-        {% endif %}
-
-        {% if invoice.last_completed and invoice.postamount_paid != invoice.evaluation.after_cleaning_amount %}
-        <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
-        <td data-label="BLC Number" >{{invoice.evaluation.evaluation_id}}</td>
-        <td data-label="Customer" class="text-center">{{invoice.evaluation.customer.name}}</td>
-        <td data-label="Service Type(s)">
-        {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
-        {% for book in evaluation_details.evaluation_books %}
-        {{book.service_type}}<br>
-        {% endfor %}
-        {% endfor %}
-        </td>
-        <td data-label="Contact Number" class="text-center">{{invoice.evaluation.customer.mobile_number}}</td>
-        <td data-label="Total Amount" class="text-right">{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}KD</td>
-        <td data-label="Payment Method">
-        <div class="text-center d-flex "><div class="round-marker prepaid-bg"></div><span>{{invoice.evaluation.payment_method}}</span></div>
-        </td>
-        <td data-label="" class="bold-text"><h3 class="{% if invoice.delaydays >= 14 %}green-text-h3{% elif invoice.delaydays >= 8 and invoice.delaydays <= 13 %}yellow-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 6 %}orange-text-h3{% elif invoice.delaydays >= 0 and invoice.delaydays <= 3 %}red-text-h3{% endif %}">{{invoice.delaydays}}</h3> Days&#11014;</td>
-        <td class="text-left" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a><div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by.name|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" data-note="{{invoice.payment_notes|default_if_none:""}}" data-noteby="{{invoice.payment_note_by.name|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div> </div></td>
         </tr>
         {% endif %}
         

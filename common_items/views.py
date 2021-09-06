@@ -1137,9 +1137,7 @@ class PaymentDetails(IsAuthenticated,View):
 				elif payment.evaluation.payment_method == 'BREAKDOWN' and payment.orderschedules:
 				
 					very_old_cleaning   = payment.orderschedules[0]
-					very_latest_cleaning=payment.orderschedules[payment.cleaning_count-1]
-					payment.reminigdays = (very_old_cleaning.start_at-timezone.now()).days
-					payment.delaydays   = (timezone.now()-very_latest_cleaning.start_at).days	
+					payment.reminigdays = (very_old_cleaning.start_at-timezone.now()).days	
 
 					#to check last cleaning completed for break down after payment
 					if very_latest_cleaning.work_status == 'CLEANING_FULFILLED':
@@ -1236,7 +1234,7 @@ class PaymentDetails(IsAuthenticated,View):
 		end_index3 = index3 + 3 if index3 <= max_index3 - 3 else max_index3
 
 		start_index4 = index4 - 3 if index4 >= 3 else 0
-		end_index4 = index4 + 3 if index4 <= max_index4 - 3 else max_index4
+		end_index4   = index4 + 3 if index4 <= max_index4 - 3 else max_index4
 
 		start_index5 = index4 - 3 if index5 >= 3 else 0
 		end_index5 = index4 + 3 if index5 <= max_index5 - 3 else max_index5
