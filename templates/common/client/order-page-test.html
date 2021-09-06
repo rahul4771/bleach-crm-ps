@@ -912,6 +912,8 @@
   {% include "technicalsupervisor/common/header.html" %}
 {% elif request.user.user_type == 'ACCOUNTANT' %}
   {% include "accountant/common/header.html" %}
+{% elif request.user.user_type == 'TEAMINCHARGE' %}
+  {% include "tl/common/header.html" %}
 {% endif %}
 
     <section class="content">
@@ -1129,7 +1131,7 @@
 
                         <div class="order-details-left-wrapper "><!--order details start-->
                             
-                            {% if request.user.user_type == 'ADMIN' or request.user.user_type == 'TECHNICALSUPERVISOR' or request.user.user_type == 'TEAMLEADER' or request.user.user_type == 'ACCOUNTANT' %}
+                            {% if request.user.user_type == 'ADMIN' or request.user.user_type == 'TECHNICALSUPERVISOR' or request.user.user_type == 'ACCOUNTANT' %}
                                 
                             {% elif request.user.user_type == 'AGENT' %}
                                 {% if orderschedule.evaluation_details.evaluator == None and request.user.id == orderschedule.order.evaluation.call_attender.id %}
@@ -1260,7 +1262,7 @@
                                                     <img class="pointer" src="{% static 'files/icons/edit.png' %}">
                                                 </div> -->
                                                 <ul>
-                                                    {% if request.user.user_type != 'SENIORTEAMLEADER' %}
+                                                    {% if request.user.user_type != 'SENIORTEAMLEADER' and request.user.user_type != 'TEAMINCHARGE' %}
                                                     <li><i class="fas fa-money-bill test-color c-mr-10"></i><span><b>{{orderschedule.order_scheduler_book.estimated_cost|default_if_none:'0.000'|floatformat:'3'}} KD</b></span></li>
                                                     {% endif %}
                                                     
@@ -1620,7 +1622,7 @@
 
                                                 {% endif %}
 
-                                                {% if request.user.user_type != 'SENIORTEAMLEADER' %}
+                                                {% if request.user.user_type != 'SENIORTEAMLEADER' and request.user.user_type != 'TEAMINCHARGE' %}
                                                 <div class="col-md-6 col-xs-6 mt-10 mb-10"> 
                                                 <div class="order-details-key">Cost</div>
                                                 <div class="c-text order-details-value">{{section.section_cost|floatformat:'3'}} KD</div>
@@ -1688,7 +1690,7 @@
                                 </div>
                                 {% endfor %}
 
-                                {% if request.user.user_type != 'SENIORTEAMLEADER' %}
+                                {% if request.user.user_type != 'SENIORTEAMLEADER' and request.user.user_type != 'TEAMINCHARGE' %}
                                     {% if order.evaluation.quatation_status == 'APPROVED' %}
                                         {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION' %}
                                         
@@ -2066,7 +2068,7 @@
                     </div>
                     {% endfor %}
 
-                    {% if request.user.user_type != 'SENIORTEAMLEADER' %}
+                    {% if request.user.user_type != 'SENIORTEAMLEADER' and request.user.user_type != 'TEAMINCHARGE' %}
                     <div class="row c-mt-20">
                         <div class="order-details-left-wrapper ">
                             <div class="order-payment-section">
