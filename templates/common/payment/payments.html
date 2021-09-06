@@ -73,21 +73,13 @@
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-pending-payment-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
-                <h1>Pending Payments</h1>
-            	<h2 class="blue-text"><label>Orders<span>{{total_pending_orders|default_if_none:'0'}}</span></label> </h2>
-            	<p><label>Amount <span>{{total_pending_amount|default_if_none:'0.00'|floatformat:'3'}}</span></label></p>
+                <h1>Doubtful Payments</h1>
+            	<h2 class="blue-text"><label>Orders<span>{{total_doubtful_due_orders|default_if_none:'0'}}</span></label> </h2>
+            	<p><label>Amount <span>{{total_doubtful_due_amount|default_if_none:'0.00'|floatformat:'3'}}</span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
             </div><!--card-column-->
-        
-            {% comment %} <div class="card-column whitebg green-border"><!--card-column-->
-            	<div class="card-innerwrapper"><!--card-innerwrapper-->
-                <div class="column-left"><img src="{% static 'files/images/card-pending-payment-orders-icon.png' %}"></div>
-                <div class="column-right"><!--column-right-->
-            	<h2 class="green-text"><label>Pending<br>payments<span>{{total_pending_orders|default_if_none:'0'}}</span><br><span class="orders">Orders</span></label>  </h2>
-            	</div><!--column-right-->
-            	</div><!--card-innerwrapper-->
-            </div><!--card-column--> {% endcomment %}
+
 
             <div class="card-column whitebg green-border"><!--card-column-->
             	<div class="card-innerwrapper"><!--card-innerwrapper-->
@@ -156,58 +148,6 @@
      <div class="left-box leftbox-item1"><!--left-box leftbox-item1-->
           <span class="search-wrapper"><input type="text" class="search-bar" id="search-bar" placeholder="Search BLC Number & customer Name Here..." value="{{search_query|default_if_none:''}}" onchange ="set_params_go()"><a href="#" onclick="set_params_go();"><img class="search-icon" src="{% static 'files/images/search-icon.png' %}"></a></span>
      </div><!--left-box leftbox-item1-->
-     <div class="left-box leftbox-item2 filter-box"><!--right-box leftbox-item1-->
-     {% comment %} <input name="filter" type="button" value="Filter" id="filter" class="blue-button arrow">  {% endcomment %}
-     
-     <div class="menu-filter ltgreen-border" style="display:none;"><!--menu-filter ltgreen-border-->
-      <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-  <div class="ticket-form-left"><!--ticket-form-right-->
-          <div class=" bold-text common-label"> <label>Job Status</label></div>
-                <label for="favcity">
-                <select name="status_filter" id="status_filter_id">
-                <option value=''>---ALL---</option>
-                <option value="NOT STARTED" {% if fil_order_status == 'NOT STARTED' %}selected{% endif %}>NOT STARTED</option>
-                <option value="IN PROGRESS" {% if fil_order_status == 'IN PROGRESS' %}selected{% endif %}>IN PROGRESS</option>
-                <option value="COMPLETED" {% if fil_order_status == 'COMPLETED' %}selected{% endif %}>COMPLETED</option>              
-              </select>
-                </label>
-  </div><!--ticket-form-right-->
-      </div><!--ticket-wrapper-row ticket-forms-boxes--> 
-      <hr class="hr-dashedpad"> 
-<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
-<div class="ticket-form-right"><!--ticket-form-left-->
-      <div class=" bold-text common-label"> <label>Payment Status</label></div>
-    <label for="favcity">
-            <select name="payment_status_filter" id="payment_status_filter_id">
-            <option value=''>---ALL---</option>
-            <option value="PENDING" {% if fil_payment_status == 'PENDING' %}selected{% endif %}>PENDING</option>
-            <option value="COMPLETED" {% if fil_payment_status == 'COMPLETED' %}selected{% endif %}>PAID</option>                
-          </select>
-            </label>
-</div><!--ticket-form-left-->
-<div class="ticket-form-left"><!--ticket-form-right-->
-          <div class=" bold-text common-label"> <label>Payment Policy</label></div>
-                <label for="favcity">
-                <select name="payment_policy" id="payment_policy_id">
-                <option value=''>---ALL---</option> 
-                
-                <option value='PREPAID' {% if fil_payment_policy == 'PREPAID' %}selected{% endif %}>PREPAID</option>
-                <option value='POSTPAID' {% if fil_payment_policy == 'POSTPAID' %}selected{% endif %}>POSTPAID</option>
-                <option value='BREAKDOWN' {% if fil_payment_policy == 'BREAKDOWN' %}selected{% endif %}>BREAKDOWN</option>
-                <option value='SUBSCRIPTION' {% if fil_payment_policy == 'SUBSCRIPTION' %}selected{% endif %}>SUBSCRIPTION</option>
-              </select>
-                </label>
-</div><!--ticket-form-right-->
-      </div><!--ticket-wrapper-row ticket-forms-boxes--> 
-      <div align="center"> <input class="assignButton" name="assing" type="button" onclick="set_params_go();" value="Submit"> <input class="cancel-Button close-btn arrow-close" name="cancel" type="button" value="Reset"></div>
-
-          
-          </div><!--menu-filter ltgreen-border-->
-     
-     </div><!--right-box leftbox-item1-->     
-     
-     
- 
      </div><!--white-wrapper-search-->
      
             
@@ -225,11 +165,14 @@
   <li class="nav-item" id="all_tab" role="presentation">
     <a class="nav-link active primary-text" id="all-tab" data-toggle="tab" href="#all" role="tab" aria-controls="all" aria-selected="true">Transactions</a>
   </li>
-  <li class="nav-item" id="pending_tab" role="presentation">
-    <a class="nav-link primary-text" id="paid-tab" data-toggle="tab" href="#paid" role="tab" aria-controls="paid" aria-selected="false">Pending</a>
+  <li class="nav-item" id="doubtdue_tab" role="presentation">
+    <a class="nav-link primary-doubtdue" id="doubtfuldue-tab" data-toggle="tab" href="#doubtfuldue" role="tab" aria-controls="doubtfuldue" aria-selected="false">Doubtful Due</a>
   </li>
-  <li class="nav-item" id="due_tab" role="presentation">
-    <a class="nav-link primary-text" id="due-tab" data-toggle="tab" href="#due" role="tab" aria-controls="due" aria-selected="false">Due</a>
+  <li class="nav-item" id="normaldue_tab" role="presentation">
+    <a class="nav-link primary-text" id="normaldue-tab" data-toggle="tab" href="#normaldue" role="tab" aria-controls="normaldue" aria-selected="false">Normal Due</a>
+  </li>
+  <li class="nav-item" id="subscriptiondue_tab" role="presentation">
+    <a class="nav-link primary-text" id="subscriptiondue-tab" data-toggle="tab" href="#subscriptiondue" role="tab" aria-controls="subscriptiondue" aria-selected="false">Subscription Due</a>
   </li>
 </ul>
 <div class="tab-content" id="paymentTabContent"  style="margin-top:20px">
@@ -346,197 +289,11 @@
         </div><!--white-wrapper-pagination--> 
 
    </div>
-    <!-- Paid tab begins here-->
-  <div class="tab-pane fade" id="paid" role="tabpanel" aria-labelledby="paid-tab">
-   
-<table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
- 
-      <thead>
-      <tr>
-      <th class="text-left">Order Number</th>
-      <th class="text-center" data-hide="phone,tablet">Customer</th>
-      <th class="text-left" data-hide="phone,tablet">Service Type</th>
-      <th class="text-center" data-hide="phone,tablet">Mobile</th>
-      <th class="text-right" data-hide="phone,tablet">Amount</th>
-      <th class="text-left" data-hide="phone,tablet">Payment Policy</th>
-      <th data-hide="phone">Status</th>
-      <th class="text-left" data-hide="phone">Shortcuts</th>
-      </tr>
-      </thead>
-
-      <tbody>
-        {% for invoice in pending_payments %}
-        
-        {% if invoice.evaluation.payment_method == 'PREPAID' or invoice.evaluation.payment_method == 'POSTPAID' %}
-        <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
-        <td data-label="BLC Number" {% if invoice.evaluation.payment_method == 'PREPAID' %}class="prepaid-line"{% else %}class="postpaid-line"{% endif %}>{{invoice.evaluation.evaluation_id}}</td>
-        <td data-label="Customer" class="text-center">{{invoice.evaluation.customer.name}}</td>
-        <td data-label="Service Type(s)">
-        {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
-        {% for book in evaluation_details.evaluation_books %}
-        {{book.service_type}}<br>
-        {% endfor %}
-        {% endfor %}
-        </td>
-        <td data-label="Contact Number" class="text-center">{{invoice.evaluation.customer.mobile_number}}</td>
-        <td data-label="Total Amount" class="text-right">{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}KD</td>
-        <td data-label="Payment Method">
-        <div class="text-center d-flex "><div class="round-marker {% if invoice.evaluation.payment_method == 'PREPAID' %}prepaid-bg{% else %}postpaid-bg{% endif %}"></div><span>{{invoice.evaluation.payment_method}}</span></div>
-        </td>
-        <td data-label="" class="bold-text">
-        {% if invoice.evaluation.payment_method == 'PREPAID' %}
-        {% if invoice.reminigdays < 0 %}
-        <h3 class="red-text-h3">Exp</h3>
-        {% else %}
-        <h3 class="{% if invoice.reminigdays == 0 %}red-text-h3{% elif invoice.reminigdays >= 1 and invoice.reminigdays <= 3 %}orange-text-h3{% elif invoice.reminigdays >= 4 and invoice.reminigdays <= 7 %}yellow-text-h3{% elif invoice.reminigdays >= 8 %}green-text-h3{% endif %}">{{invoice.reminigdays}}</h3> Days&#11015;
-        {% endif %}
-
-        {% elif invoice.evaluation.payment_method == 'POSTPAID' %}
-        <h3 class="{% if invoice.delaydays >= 14 %}red-text-h3{% elif invoice.delaydays >= 8 and invoice.delaydays <= 13 %}orange-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 7 %}yellow-text-h3{% elif invoice.delaydays >= 0 and invoice.delaydays <= 3 %}green-text-h3{% endif %}">{{invoice.delaydays}}</h3> Days&#11014;
-        {% endif %}
-        </td>
-        <td class="align-center" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> {% if request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'BOOKINGOFFICER' %}<div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by.name|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" data-note="{{invoice.payment_notes|default_if_none:""}}" data-noteby="{{invoice.payment_note_by.name|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div>{% endif %} </div></td>
-        </tr>
-
-        {% elif invoice.evaluation.payment_method == 'BREAKDOWN' %}
-        
-        {% if invoice.preamount_paid != invoice.evaluation.before_cleaning_amount %}
-        <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
-        <td data-label="BLC Number" class="breakdown-line">{{invoice.evaluation.evaluation_id}}</td>
-        <td data-label="Customer"class="text-center">{{invoice.evaluation.customer.name}}</td>
-        <td data-label="Service Type(s)">
-        {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
-        {% for book in evaluation_details.evaluation_books %}
-        {{book.service_type}}<br>
-        {% endfor %}
-        {% endfor %}
-        </td>
-        <td data-label="Contact Number" class="text-center">{{invoice.evaluation.customer.mobile_number}}</td>
-        <td data-label="Total Amount" class="text-right">{{invoice.evaluation.before_cleaning_amount|default_if_none:'0.000'|floatformat:'3'}}KD</td>
-        <td data-label="Payment Method">
-        <div class="text-center d-flex "><div class="round-marker breakdown-bg"></div><span>{{invoice.evaluation.payment_method}}</span></div>
-        </td>
-        <td data-label="" class="bold-text">{% if invoice.reminigdays <= 0 %}
-        <h3 class="red-text-h3">Exp</h3>
-        {% else %}
-        <h3 class="{% if invoice.reminigdays == 0 %}red-text-h3{% elif invoice.reminigdays >= 1 and invoice.reminigdays <= 3 %}orange-text-h3{% elif invoice.reminigdays >= 4 and invoice.reminigdays <= 7 %}yellow-text-h3{% elif invoice.reminigdays >= 8 %}green-text-h3{% endif %}">{{invoice.reminigdays}}</h3> Days&#11015;
-        {% endif %}</td>
-        <td class="align-center" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> {% if request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'BOOKINGOFFICER' %}<div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by.name|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" data-note="{{invoice.payment_notes|default_if_none:""}}" data-noteby="{{invoice.payment_note_by.name|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div>{% endif %} </div></td>
-        </tr>
-        {% endif %}
-
-        {% if invoice.last_completed and invoice.postamount_paid != invoice.evaluation.after_cleaning_amount %}
-        <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
-        <td data-label="BLC Number" >{{invoice.evaluation.evaluation_id}}</td>
-        <td data-label="Customer" class="text-center">{{invoice.evaluation.customer.name}}</td>
-        <td data-label="Service Type(s)">
-        {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
-        {% for book in evaluation_details.evaluation_books %}
-        {{book.service_type}}<br>
-        {% endfor %}
-        {% endfor %}
-        </td>
-        <td data-label="Contact Number" class="text-center">{{invoice.evaluation.customer.mobile_number}}</td>
-        <td data-label="Total Amount" class="text-right">{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}KD</td>
-        <td data-label="Payment Method">
-        <div class="text-center d-flex "><div class="round-marker prepaid-bg"></div><span>{{invoice.evaluation.payment_method}}</span></div>
-        </td>
-        <td data-label="" class="bold-text"><h3 class="{% if invoice.delaydays >= 14 %}green-text-h3{% elif invoice.delaydays >= 8 and invoice.delaydays <= 13 %}yellow-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 6 %}orange-text-h3{% elif invoice.delaydays >= 0 and invoice.delaydays <= 3 %}red-text-h3{% endif %}">{{invoice.delaydays}}</h3> Days&#11014;</td>
-        <td class="align-center" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> {% if request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'BOOKINGOFFICER' %}<div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by.name|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" data-note="{{invoice.payment_notes|default_if_none:""}}" data-noteby="{{invoice.payment_note_by.name|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div>{% endif %} </div></td>
-        </tr>
-        {% endif %}
 
 
-        {% elif invoice.evaluation.payment_method == 'SUBSCRIPTION' %}
-        {% if invoice.subscription_topay != 0 %}
-        <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
-        <td data-label="BLC Number" class="subscription-line">{{invoice.evaluation.evaluation_id}}</td>
-        <td data-label="Customer" class="text-center">{{invoice.evaluation.customer.name}}</td>
-        <td data-label="Service Type(s)">
-        {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
-        {% for book in evaluation_details.evaluation_books %}
-        {{book.service_type}}<br>
-        {% endfor %}
-        {% endfor %}
-        </td>
-        <td data-label="Contact Number" class="text-center">{{invoice.evaluation.customer.mobile_number}}</td>
-        <td data-label="Total Amount" class="text-right">{{invoice.subscription_topay|default_if_none:'0.000'|floatformat:'3'}}KD</td>
-        <td data-label="Payment Method">
-        <div class="text-center d-flex "><div class="round-marker subscription-bg"></div><span>{{invoice.evaluation.payment_method}}</span></div>
-        </td>
-        <td data-label="" class="bold-text">
-        <h3 class="{% if invoice.delaydays == 0 %}green-text-h3{% elif invoice.delaydays >= 1 and invoice.delaydays <= 3 %}yellow-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 7 %}orange-text-h3{% elif invoice.delaydays >= 8 %}red-text-h3{% endif %}">{{invoice.delaydays}}</h3> Days&#11014;</td>
-        <td class="text-left" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> {% if request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'BOOKINGOFFICER' %}<div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by.name|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" data-note="{{invoice.payment_notes|default_if_none:""}}" data-noteby="{{invoice.payment_note_by.name|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div>{% endif %} </div></td>
-        </tr>
-        {% endif %}
-        
-        {% endif %}
-        
-        {% endfor %}
-      </tbody>
-      <tfoot>
-      </tfoot>
-      </table>
 
-          <div class="white-wrapper-pagination"><!--white-wrapper-pagination-->   
-    <div class="pagination-containter"><!--pagination-containter-->
-    	<div class="pagination-column pagination-column-left"><!--pagination-column pagination-column-left-->
-        Showing {{pending_payments.start_index}} to {{pending_payments.end_index}} of {{pending_payments.paginator.count}} entries
-        </div><!--pagination-column pagination-column-left-->
-        
-        <div class="pagination-column pagination-column-right"><!--pagination-column pagination-column-right-->
-                <!--paginated-->
-          {% if pending_payments.has_other_pages %}
-          <nav aria-label="Page navigation example">
-          <ul class="pagination">
-            {% if pending_payments.has_previous %}
-            <li class="page-item">
-              <a class="page-link" href="?page2={{ pending_payments.previous_page_number }}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}&tab=PENDING" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-                <span class="sr-only">Previous</span>
-              </a>
-            </li>
-            {% else %}
-            <li class="page-item">
-              <a class="page-link" href="#" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-                <span class="sr-only">Previous</span>
-              </a>
-            </li>
-            {% endif %}
-            {% for pg in page_range2 %}
-            {% if vus.number == pg %}
-                    <li class="page-item"><a class="page-link active" href="?page2={{pg}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}&tab=PENDING">{{pg}}</a></li>
-            {% else %}
-                    <li class="page-item"><a class="page-link" href="?page2={{pg}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}&tab=PENDING">{{pg}}</a></li>
-            {% endif %}
-            {% endfor %}
-            {% if pending_payments.has_next %}        
-            <li class="page-item">
-              <a class="page-link" href="?page2={{ pending_payments.next_page_number}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}&tab=PENDING" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-                <span class="sr-only">Next</span>
-              </a>
-            </li>
-            {% else %}
-            <li class="page-item">
-              <a class="page-link disabled" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-                <span class="sr-only">Next</span>
-              </a>
-            </li>
-            {% endif %}
-          </ul>
-        </nav>
-            {% endif %}
-            <!--paginated-->
-                </div><!--pagination-column pagination-column-right-->
-            </div><!--pagination-containter-->         
-        </div><!--white-wrapper-pagination--> 
-
-    </div>
-    <!-- Due tab begins here-->
-    <div class="tab-pane fade" id="due" role="tabpanel" aria-labelledby="due-tab">
+    <!-- Dounbtful Due tab begins here-->
+    <div class="tab-pane fade" id="doubtfuldue" role="tabpanel" aria-labelledby="doubtfuldue-tab">
       <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
  
         <thead>
@@ -552,7 +309,7 @@
         </tr>
         </thead>
         <tbody>
-        {% for invoice in due_payments %}
+        {% for invoice in doubtful_due_payments %}
         
         {% if invoice.evaluation.payment_method == 'PREPAID' or invoice.evaluation.payment_method == 'POSTPAID' %}
         <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
@@ -673,17 +430,188 @@
         <div class="white-wrapper-pagination"><!--white-wrapper-pagination-->   
     <div class="pagination-containter"><!--pagination-containter-->
     	<div class="pagination-column pagination-column-left"><!--pagination-column pagination-column-left-->
-        Showing {{due_payments.start_index}} to {{due_payments.end_index}} of {{due_payments.paginator.count}} entries
+        Showing {{doubtful_due_payments.start_index}} to {{doubtful_due_payments.end_index}} of {{doubtful_due_payments.paginator.count}} entries
         </div><!--pagination-column pagination-column-left-->
         
         <div class="pagination-column pagination-column-right"><!--pagination-column pagination-column-right-->
                 <!--paginated-->
-          {% if due_payments.has_other_pages %}
+          {% if doubtful_due_payments.has_other_pages %}
           <nav aria-label="Page navigation example">
           <ul class="pagination">
-            {% if due_payments.has_previous %}
+            {% if doubtful_due_payments.has_previous %}
             <li class="page-item">
-              <a class="page-link" href="?page3={{ due_payments.previous_page_number }}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}&tab=DUE" aria-label="Previous">
+              <a class="page-link" href="?page2={{ doubtful_due_payments.previous_page_number }}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&tab=DOUBTFULDUE" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+                <span class="sr-only">Previous</span>
+              </a>
+            </li>
+            {% else %}
+            <li class="page-item">
+              <a class="page-link" href="#" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+                <span class="sr-only">Previous</span>
+              </a>
+            </li>
+            {% endif %}
+            {% for pg in page_range2 %}
+            {% if vus.number == pg %}
+                    <li class="page-item"><a class="page-link active" href="?page2={{pg}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&tab=DOUBTFULDUE">{{pg}}</a></li>
+            {% else %}
+                    <li class="page-item"><a class="page-link" href="?page2={{pg}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&tab=DOUBTFULDUE">{{pg}}</a></li>
+            {% endif %}
+            {% endfor %}
+            {% if doubtful_due_payments.has_next %}        
+            <li class="page-item">
+              <a class="page-link" href="?page2={{ doubtful_due_payments.next_page_number}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&tab=DOUBTFULDUE" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+                <span class="sr-only">Next</span>
+              </a>
+            </li>
+            {% else %}
+            <li class="page-item">
+              <a class="page-link disabled" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+                <span class="sr-only">Next</span>
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+        </nav>
+            {% endif %}
+            <!--paginated-->
+                </div><!--pagination-column pagination-column-right-->
+            </div><!--pagination-containter-->         
+        </div><!--white-wrapper-pagination--> 
+
+    </div>
+
+
+
+    <!-- Normal Due tab begins here-->
+    <div class="tab-pane fade" id="normaldue" role="tabpanel" aria-labelledby="normaldue-tab">
+      <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
+ 
+        <thead>
+        <tr>
+        <th class="text-left">Order Number</th>
+        <th class="text-center" data-hide="phone,tablet">Customer</th>
+        <th class="text-left" data-hide="phone,tablet">Service Type</th>
+        <th class="text-center" data-hide="phone,tablet">Mobile</th>
+        <th class="text-right" data-hide="phone,tablet">Amount</th>
+        <th class="text-left" data-hide="phone,tablet">Payment Policy</th>
+        <th class="text-left" data-hide="phone,tablet">Status</th>
+        <th class="text-left" data-hide="phone">Shortcuts</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for invoice in normal_due_payments %}
+        
+        {% if invoice.evaluation.payment_method == 'PREPAID' or invoice.evaluation.payment_method == 'POSTPAID' %}
+        <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
+        <td data-label="BLC Number" {% if invoice.evaluation.payment_method == 'PREPAID' %}class="prepaid-line"{% else %}class="postpaid-line"{% endif %}>{{invoice.evaluation.evaluation_id}}</td>
+        <td data-label="Customer" class="text-center">{{invoice.evaluation.customer.name}}</td>
+        <td data-label="Service Type(s)">
+        {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
+        {% for book in evaluation_details.evaluation_books %}
+        {{book.service_type}}<br>
+        {% endfor %}
+        {% endfor %}
+        </td>
+        <td data-label="Contact Number" class="text-center">{{invoice.evaluation.customer.mobile_number}}</td>
+        <td data-label="Total Amount" class="text-right">{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}KD</td>
+        <td data-label="Payment Method">
+        <div class="text-center d-flex "><div class="round-marker {% if invoice.evaluation.payment_method == 'PREPAID' %}prepaid-bg{% else %}postpaid-bg{% endif %}"></div><span>{{invoice.evaluation.payment_method}}</span></div>
+        </td>
+
+        <td data-label="" class="bold-text">
+        {% if invoice.evaluation.payment_method == 'PREPAID' %}
+        {% if invoice.reminigdays < 0 %}
+        <h3 class="red-text-h3">Exp</h3>
+        {% else %}
+        <h3 class="{% if invoice.reminigdays == 0 %}red-text-h3{% elif invoice.reminigdays >= 1 and invoice.reminigdays <= 3 %}orange-text-h3{% elif invoice.reminigdays >= 4 and invoice.reminigdays <= 7 %}yellow-text-h3{% elif invoice.reminigdays >= 8 %}green-text-h3{% endif %}">{{invoice.reminigdays}}</h3> Days&#11015;
+        {% endif %}
+
+        {% elif invoice.evaluation.payment_method == 'POSTPAID' %}
+        <h3 class="{% if invoice.delaydays >= 14 %}red-text-h3{% elif invoice.delaydays >= 8 and invoice.delaydays <= 13 %}orange-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 7 %}yellow-text-h3{% elif invoice.delaydays >= 0 and invoice.delaydays <= 3 %}green-text-h3{% endif %}">{{invoice.delaydays}}</h3> Days&#11014;
+        {% endif %}
+        </td>
+
+        <td class="align-center" ><div class="d-flex"><a class="dropdown-orders d-flex" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> {% if request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'BOOKINGOFFICER' %}<div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by.name|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" data-note="{{invoice.payment_notes|default_if_none:""}}" data-noteby="{{invoice.payment_note_by.name|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div>{% endif %} </div></td>
+ 
+      </tr>
+
+        {% elif invoice.evaluation.payment_method == 'BREAKDOWN' %}
+        
+        {% if invoice.preamount_paid != invoice.evaluation.before_cleaning_amount %}
+        <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
+        <td data-label="BLC Number" class="breakdown-line">{{invoice.evaluation.evaluation_id}}</td>
+        <td data-label="Customer" class="text-center">{{invoice.evaluation.customer.name}}</td>
+        <td data-label="Service Type(s)">
+        {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
+        {% for book in evaluation_details.evaluation_books %}
+        {{book.service_type}}<br>
+        {% endfor %}
+        {% endfor %}
+        </td>
+        <td data-label="Contact Number" class="text-center">{{invoice.evaluation.customer.mobile_number}}</td>
+        <td data-label="Total Amount" class="text-right">{{invoice.evaluation.before_cleaning_amount|default_if_none:'0.000'|floatformat:'3'}}KD</td>
+        <td data-label="Payment Method">
+        <div class="text-center d-flex "><div class="round-marker breakdown-bg"></div><span>{{invoice.evaluation.payment_method}}</span></div>
+        </td>
+
+        <td data-label="" class="bold-text">{% if invoice.reminigdays <= 0 %}
+        <h3 class="red-text-h3">Exp</h3>
+        {% else %}
+        <h3 class="{% if invoice.reminigdays == 0 %}red-text-h3{% elif invoice.reminigdays >= 1 and invoice.reminigdays <= 3 %}orange-text-h3{% elif invoice.reminigdays >= 4 and invoice.reminigdays <= 7 %}yellow-text-h3{% elif invoice.reminigdays >= 8 %}green-text-h3{% endif %}">{{invoice.reminigdays}}</h3> Days&#11015;
+        {% endif %}</td>
+
+        <td class="align-center" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> {% if request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'BOOKINGOFFICER' %}<div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by.name|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" data-note="{{invoice.payment_notes|default_if_none:""}}" data-noteby="{{invoice.payment_note_by.name|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div>{% endif %} </div></td>
+        </tr>
+        {% endif %}
+
+        {% if invoice.last_completed and invoice.postamount_paid != invoice.evaluation.after_cleaning_amount %}
+        <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
+        <td data-label="BLC Number" >{{invoice.evaluation.evaluation_id}}</td>
+        <td data-label="Customer" class="text-center">{{invoice.evaluation.customer.name}}</td>
+        <td data-label="Service Type(s)">
+        {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
+        {% for book in evaluation_details.evaluation_books %}
+        {{book.service_type}}<br>
+        {% endfor %}
+        {% endfor %}
+        </td>
+        <td data-label="Contact Number" class="text-center">{{invoice.evaluation.customer.mobile_number}}</td>
+        <td data-label="Total Amount" class="text-right">{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}KD</td>
+        <td data-label="Payment Method">
+        <div class="text-center d-flex "><div class="round-marker prepaid-bg"></div><span>{{invoice.evaluation.payment_method}}</span></div>
+        </td>
+        <td data-label="" class="bold-text"><h3 class="{% if invoice.delaydays >= 14 %}green-text-h3{% elif invoice.delaydays >= 8 and invoice.delaydays <= 13 %}yellow-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 6 %}orange-text-h3{% elif invoice.delaydays >= 0 and invoice.delaydays <= 3 %}red-text-h3{% endif %}">{{invoice.delaydays}}</h3> Days&#11014;</td>
+        <td class="align-center" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> {% if request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'BOOKINGOFFICER' %}<div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by.name|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" data-note="{{invoice.payment_notes|default_if_none:""}}" data-noteby="{{invoice.payment_note_by.name|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div>{% endif %} </div></td>
+        </tr>
+        {% endif %}
+        
+        {% endif %}
+        
+        {% endfor %}
+      </tbody>
+        <tfoot>
+        </tfoot>
+        </table>
+
+        <div class="white-wrapper-pagination"><!--white-wrapper-pagination-->   
+    <div class="pagination-containter"><!--pagination-containter-->
+    	<div class="pagination-column pagination-column-left"><!--pagination-column pagination-column-left-->
+        Showing {{normal_due_payments.start_index}} to {{normal_due_payments.end_index}} of {{normal_due_payments.paginator.count}} entries
+        </div><!--pagination-column pagination-column-left-->
+        
+        <div class="pagination-column pagination-column-right"><!--pagination-column pagination-column-right-->
+                <!--paginated-->
+          {% if normal_due_payments.has_other_pages %}
+          <nav aria-label="Page navigation example">
+          <ul class="pagination">
+            {% if normal_due_payments.has_previous %}
+            <li class="page-item">
+              <a class="page-link" href="?page3={{ normal_due_payments.previous_page_number }}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&tab=NORMALDUE" aria-label="Previous">
                 <span aria-hidden="true">&laquo;</span>
                 <span class="sr-only">Previous</span>
               </a>
@@ -698,14 +626,123 @@
             {% endif %}
             {% for pg in page_range3 %}
             {% if vus.number == pg %}
-                    <li class="page-item"><a class="page-link active" href="?page3={{pg}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}&tab=DUE">{{pg}}</a></li>
+                    <li class="page-item"><a class="page-link active" href="?page3={{pg}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&tab=NORMALDUE">{{pg}}</a></li>
             {% else %}
-                    <li class="page-item"><a class="page-link" href="?page3={{pg}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}&tab=DUE">{{pg}}</a></li>
+                    <li class="page-item"><a class="page-link" href="?page3={{pg}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&tab=NORMALDUE">{{pg}}</a></li>
+            {% endif %}
+            {% endfor %}
+            {% if normal_due_payments.has_next %}        
+            <li class="page-item">
+              <a class="page-link" href="?page3={{ normal_due_payments.next_page_number}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&tab=NORMALDUE" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+                <span class="sr-only">Next</span>
+              </a>
+            </li>
+            {% else %}
+            <li class="page-item">
+              <a class="page-link disabled" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+                <span class="sr-only">Next</span>
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+        </nav>
+            {% endif %}
+            <!--paginated-->
+                </div><!--pagination-column pagination-column-right-->
+            </div><!--pagination-containter-->         
+        </div><!--white-wrapper-pagination--> 
+
+    </div>
+
+
+
+    <!-- Subscription Due tab begins here-->
+    <div class="tab-pane fade" id="subscriptiondue" role="tabpanel" aria-labelledby="subscriptiondue-tab">
+      <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
+ 
+        <thead>
+        <tr>
+        <th class="text-left">Order Number</th>
+        <th class="text-center" data-hide="phone,tablet">Customer</th>
+        <th class="text-left" data-hide="phone,tablet">Service Type</th>
+        <th class="text-center" data-hide="phone,tablet">Mobile</th>
+        <th class="text-right" data-hide="phone,tablet">Amount</th>
+        <th class="text-left" data-hide="phone,tablet">Payment Policy</th>
+        <th class="text-left" data-hide="phone,tablet">Status</th>
+        <th class="text-left" data-hide="phone">Shortcuts</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for invoice in subscription_due_payments %}
+        {% if invoice.evaluation.payment_method == 'SUBSCRIPTION' %}
+        {% if invoice.subscription_topay != 0 %}
+        <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
+        <td data-label="BLC Number" class="subscription-line">{{invoice.evaluation.evaluation_id}}</td>
+        <td data-label="Customer" class="text-center">{{invoice.evaluation.customer.name}}</td>
+        <td data-label="Service Type(s)">
+        {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
+        {% for book in evaluation_details.evaluation_books %}
+        {{book.service_type}}<br>
+        {% endfor %}
+        {% endfor %}
+        </td>
+        <td data-label="Contact Number" class="text-center">{{invoice.evaluation.customer.mobile_number}}</td>
+        <td data-label="Total Amount" class="text-right">{{invoice.subscription_topay|default_if_none:'0.000'|floatformat:'3'}}KD</td>
+        <td data-label="Payment Method">
+        <div class="text-center d-flex "><div class="round-marker subscription-bg"></div><span>{{invoice.evaluation.payment_method}}</span></div>
+        </td>
+        <td data-label="" class="bold-text">
+        <h3 class="{% if invoice.delaydays == 0 %}green-text-h3{% elif invoice.delaydays >= 1 and invoice.delaydays <= 3 %}yellow-text-h3{% elif invoice.delaydays >= 4 and invoice.delaydays <= 7 %}orange-text-h3{% elif invoice.delaydays >= 8 %}red-text-h3{% endif %}">{{invoice.delaydays}}</h3> Days&#11014;</td>
+        <td class="text-left" ><div class="d-flex"><a class="d-flex dropdown-orders" {% if invoice %} href="{% url 'common_items:client-orderdetails' invoice.id %}" target="_blank" {% endif %}><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Order Details</div></a> {% if request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'BOOKINGOFFICER' %}<div class="ml-4 dropdown-text blue-tooltip" data-toggle="tooltip" data-placement="top" data-html="true" data-title="<div>{{invoice.payment_notes|default_if_none:""}}</div><div class='tooltip-subtext'> - {{invoice.payment_note_by.name|default_if_none:""}}</div>"  ><img src="{% static 'files/icons/note.png'%}" class="dropdown-icon paymentnote pr-2" data-toggle="modal" data-target="#notesModalCenter" data-note="{{invoice.payment_notes|default_if_none:""}}" data-noteby="{{invoice.payment_note_by.name|default_if_none:""}}" data-orderid="{{invoice.id}}" data-style="cursor:pointer"/> </div>{% endif %} </div></td>
+        </tr>
+        {% endif %}
+        
+        {% endif %}
+        
+        {% endfor %}
+      </tbody>
+        <tfoot>
+        </tfoot>
+        </table>
+
+        <div class="white-wrapper-pagination"><!--white-wrapper-pagination-->   
+    <div class="pagination-containter"><!--pagination-containter-->
+    	<div class="pagination-column pagination-column-left"><!--pagination-column pagination-column-left-->
+        Showing {{subscription_due_payments.start_index}} to {{subscription_due_payments.end_index}} of {{subscription_due_payments.paginator.count}} entries
+        </div><!--pagination-column pagination-column-left-->
+        
+        <div class="pagination-column pagination-column-right"><!--pagination-column pagination-column-right-->
+                <!--paginated-->
+          {% if subscription_due_payments.has_other_pages %}
+          <nav aria-label="Page navigation example">
+          <ul class="pagination">
+            {% if subscription_due_payments.has_previous %}
+            <li class="page-item">
+              <a class="page-link" href="?page4={{ subscription_due_payments.previous_page_number }}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&tab=SUBSCRIPTIONDUE" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+                <span class="sr-only">Previous</span>
+              </a>
+            </li>
+            {% else %}
+            <li class="page-item">
+              <a class="page-link" href="#" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+                <span class="sr-only">Previous</span>
+              </a>
+            </li>
+            {% endif %}
+            {% for pg in page_range4 %}
+            {% if vus.number == pg %}
+                    <li class="page-item"><a class="page-link active" href="?page4={{pg}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&tab=SUBSCRIPTIONDUE">{{pg}}</a></li>
+            {% else %}
+                    <li class="page-item"><a class="page-link" href="?page4={{pg}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&tab=SUBSCRIPTIONDUE">{{pg}}</a></li>
             {% endif %}
             {% endfor %}
             {% if due_payments.has_next %}        
             <li class="page-item">
-              <a class="page-link" href="?page3={{ due_payments.next_page_number}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}&tab=DUE" aria-label="Next">
+              <a class="page-link" href="?page4={{ subscription_due_payments.next_page_number}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&tab=SUBSCRIPTIONDUE" aria-label="Next">
                 <span aria-hidden="true">&raquo;</span>
                 <span class="sr-only">Next</span>
               </a>
@@ -730,61 +767,8 @@
 </div>
 
 
-{% comment %} <div class="white-wrapper-pagination"><!--white-wrapper-pagination-->   
-    <div class="pagination-containter"><!--pagination-containter-->
-    	<div class="pagination-column pagination-column-left"><!--pagination-column pagination-column-left-->
-        Showing {{invoices.start_index}} to {{invoices.end_index}} of {{invoices.paginator.count}} entries
-        </div><!--pagination-column pagination-column-left-->
-        
-        <div class="pagination-column pagination-column-right"><!--pagination-column pagination-column-right-->
-        <!--paginated-->
-   {% if invoices.has_other_pages %}
-   <nav aria-label="Page navigation example">
-  <ul class="pagination">
-     {% if invoices.has_previous %}
-    <li class="page-item">
-      <a class="page-link" href="?page={{ invoices.previous_page_number }}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}" aria-label="Previous">
-        <span aria-hidden="true">&laquo;</span>
-        <span class="sr-only">Previous</span>
-      </a>
-    </li>
-    {% else %}
-    <li class="page-item">
-      <a class="page-link" href="#" aria-label="Previous">
-        <span aria-hidden="true">&laquo;</span>
-        <span class="sr-only">Previous</span>
-      </a>
-    </li>
-    {% endif %}
-    {% for pg in page_range %}
-    {% if vus.number == pg %}
-            <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}">{{pg}}</a></li>
-    {% else %}
-            <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}">{{pg}}</a></li>
-    {% endif %}
-    {% endfor %}
-    {% if invoices.has_next %}        
-    <li class="page-item">
-      <a class="page-link" href="?page={{ invoices.next_page_number}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}" aria-label="Next">
-        <span aria-hidden="true">&raquo;</span>
-        <span class="sr-only">Next</span>
-      </a>
-    </li>
-    {% else %}
-    <li class="page-item">
-      <a class="page-link disabled" aria-label="Next">
-        <span aria-hidden="true">&raquo;</span>
-        <span class="sr-only">Next</span>
-      </a>
-    </li>
-    {% endif %}
-  </ul>
-</nav>
-    {% endif %}
-    <!--paginated-->
-        </div><!--pagination-column pagination-column-right-->
-    </div><!--pagination-containter-->         
-</div><!--white-wrapper-pagination-->  {% endcomment %}
+
+
 
 </div><!--white-wrapper-->      
             
@@ -868,50 +852,53 @@
       $(document).ready(function(){
         $('.footable').trigger('footable_resize');
       })
-      $("#paid-tab").click(function(){
+
+      $("#doubtfuldue-tab").click(function(){
       setTimeout(function(){ $('.footable').trigger('footable_resize'); }, 1000);
-    });
-    $("#due_tab").click(function(){
+      });
+
+      $("#normaldue_tab").click(function(){
       setTimeout(function(){ $('.footable').trigger('footable_resize'); }, 1000);
-    });
+      });
+
+      $("#subscriptiondue_tab").click(function(){
+      setTimeout(function(){ $('.footable').trigger('footable_resize'); }, 1000);
+      });
+
     </script>
     <script>
     //for tabs
     $(function () {
-  $('[data-toggle="tooltip"]').tooltip()
-})
-    //hiding filter box for pending and due tabs
-    $('#all-tab').on("click", function () {
-      $('.filter-box').show();
-    });
-
-    $('#paid-tab').on("click", function () {
-      $('.filter-box').hide();
-    });
-
-    $('#due-tab').on("click", function () {
-      $('.filter-box').hide();
-    });
-
+      $('[data-toggle="tooltip"]').tooltip()
+    })
+  
     $('#all-tab').click(function(){
       $('#tab_id').val('ALL');
     });
 
-    $('#paid-tab').click(function(){
-      $('#tab_id').val('PENDING');
-    });
+    $('#doubtfuldue-tab').click(function(){
+      $('#tab_id').val('DOUBTFULDUE');
+    })
 
-    $('#due-tab').click(function(){
-      $('#tab_id').val('DUE');
+    $('#normaldue-tab').click(function(){
+      $('#tab_id').val('NORMALDUE');
+    })
+
+    $('#subscriptiondue-tab').click(function(){
+      $('#tab_id').val('SUBSCRIPTIONDUE');
     })
 
     //keep selected tab on page reload
     {% if tab == 'ALL' %}
       $('#all-tab').click()  
-    {% elif tab == 'DUE' %}
-      $('#due-tab').click()  
+    {% elif tab == 'DOUBTFULDUE' %}
+      $('#doubtfuldue-tab').click()
+    {% elif tab == 'NORMALDUE' %}
+      $('#normaldue-tab').click()
+    {% elif tab == 'SUBSCRIPTIONDUE' %}
+      $('#subscriptiondue-tab').click()  
     {% else %}
-      $('#paid-tab').click()
+      $('#all-tab').click()
     {% endif %}
 
   //payment note popup data fill
@@ -1018,7 +1005,7 @@ function paymentfromtodatecheck() {
 function set_params_go(args)
 {
 var url='{% url 'common_items:payments' %}';
-var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),status:$('#status_filter_id').val(),payment_policy:$('#payment_policy_id').val(),payment_status:$('#payment_status_filter_id').val(),tab:$('#tab_id').val()
+var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),tab:$('#tab_id').val()
 };
 for(key in args) 
     params[key]=args[key];
