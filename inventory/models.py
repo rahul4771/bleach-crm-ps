@@ -72,6 +72,7 @@ class InventoryItem(models.Model):
 class InventoryItemImages(models.Model):
     inventory_item  = models.ForeignKey(InventoryItem,blank=False,null=False,related_name='image_item')
     item_image      = models.FileField(upload_to='inventory_item_images/',blank=True,null=True,max_length=1000)
+    is_default_image= models.BooleanField()
     created         = models.DateTimeField(auto_now_add=True)   
 
     def __unicode__(self):
