@@ -66,7 +66,7 @@
                             </tr>
                         </thead>
                       <tbody>
-                        <tr>
+                        {% comment %} <tr>
                             <td>
                                 12/12/2021
                             </td>
@@ -125,21 +125,24 @@
                                 
 
                             </td>
-                        </tr>
+                        </tr> {% endcomment %}
+                        {% for visit in visits %}
                         <tr>
                             <td>
-                                12/12/2021
+                                {{visit.start_at|date:'d-m-Y'}}
                             </td>
                             <td>
-                                0000000
+                                {{visit.order.order_no}}
                             </td>
                             <td>
-                                Name
+                                {% for team in visit.cleaning_team %}
+                                {{team.team_leader.name}}
+                                {% endfor %}
                             </td>
                             <td>
-                                Name
+                                {{visit.order_scheduler_book.service_type.name}}
                             <td>
-                                Out
+                                -
                             </td>
 
                             <td>
@@ -157,7 +160,8 @@
 
                             </td>
                         </tr>
-                        <tr>
+                        {% endfor %}
+                        {% comment %} <tr>
                             <td>
                                 12/12/2021
                             </td>
@@ -186,7 +190,7 @@
                                 
 
                             </td>
-                        </tr>
+                        </tr> {% endcomment %}
 
                       </tbody>
                       
