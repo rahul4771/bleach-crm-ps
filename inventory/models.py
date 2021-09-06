@@ -51,6 +51,21 @@ class Line(models.Model):
     def __str__(self):
         return self.name
 
+
+class Store(models.Model):
+    store_name          = models.CharField(max_length=100,blank=False,null=False)
+    store_code          = models.CharField(max_length=50,blank=False,null=False)
+    address             = models.TextField(max_length=1000,blank=False,null=False)
+    contact             = models.CharField(max_length=50,blank=False,null=False)
+    status              = models.BooleanField(default=True,blank=False,null=False)
+
+    def __unicode__(self):
+        return str(self.store_name)
+
+    def __str__(self):
+        return self.store_name
+
+
 class InventoryItem(models.Model):
     item_category   =   models.ForeignKey(Category,blank=False,null=False,related_name='item_category')
     item_segment    =   models.ForeignKey(Segment,blank=True,null=True,related_name='item_segment')
@@ -72,6 +87,7 @@ class InventoryItem(models.Model):
 class InventoryItemImages(models.Model):
     inventory_item  = models.ForeignKey(InventoryItem,blank=False,null=False,related_name='image_item')
     item_image      = models.FileField(upload_to='inventory_item_images/',blank=True,null=True,max_length=1000)
+    is_default_image= models.BooleanField()
     created         = models.DateTimeField(auto_now_add=True)   
 
     def __unicode__(self):
@@ -84,6 +100,7 @@ class ItemUnit(models.Model):
     item            =   models.ForeignKey(InventoryItem,blank=False,null=False,related_name='unit_item')
     name            =   models.CharField(max_length=100,blank=False,null=False)
     unit_code       =   models.CharField(max_length=50,blank=False,null=False)
+    store           =   models.ForeignKey(Store,blank=True,null=True,related_name='unit_store')
     purchase_date   =   models.DateField(blank=True,null=True)
     expiry_date     =   models.DateField(blank=True,null=True)
     unit_price      =   models.CharField(max_length=10,blank=False,null=False)
@@ -201,19 +218,6 @@ class SupplierItems(models.Model):
 
 #     def __str__(self):
 #         return self.supplier_item.bundle.name
-
-class Store(models.Model):
-    store_name          = models.CharField(max_length=100,blank=False,null=False)
-    store_code          = models.CharField(max_length=50,blank=False,null=False)
-    address             = models.TextField(max_length=1000,blank=False,null=False)
-    contact             = models.CharField(max_length=50,blank=False,null=False)
-    status              = models.BooleanField(default=True,blank=False,null=False)
-
-    def __unicode__(self):
-        return str(self.store_name)
-
-    def __str__(self):
-        return self.store_name
 
 class ServiceRecipe(models.Model):
     service             = models.CharField(max_length=100,blank=True,null=True)

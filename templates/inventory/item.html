@@ -366,6 +366,33 @@
             <input type="hidden" name="item_id" value="{{inventory_item.id}}">
             <input type="hidden" name="action" value="add_unit" id="unit_action" >
             <input type="hidden" name="edit_unit_id" id="id_unit_edit" >
+            
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Store</div>
+
+                    <div style="position: relative;">
+                        <div class="inv-input-container inv-border h-30">
+                            <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" name="store" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()" required>
+                            <!-- <div class="inv-hr"></div>
+                            <div class="model-filter">
+                                <button class="inv-normal-btn" onclick="showDrop()">
+                                    <i class="fa fa-angle-down fa-lg " style="color: #707070;" aria-hidden="true"></i>
+                                </button>
+
+                            </div> -->
+
+
+
+                        </div>
+                        <div id="id_search" class="row inv-result-box" style="display: none;">
+                          
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
             <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Purchase Date</div>
@@ -1032,6 +1059,30 @@ function openNavAddBundle(d) {
         }
     })
 
+    function ProductListShow(){
+        document.getElementById("id_search").style.display="block"
+    }
+
+    function showProducts(){
+        $('#id_search').empty();
+        for (var j=0; j<products.length; j++) {
+            if (products[j].name.match($('#pro-name').val())){
+                console.log(products[j]);
+        $('#id_search').append('<div class="col-md-12" id="id_product'+products[j].id+'" style="padding:0px !important;" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-productprice="'+products[j].price+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
+
+            }
+        }
+            console.log( $('#pro-name').val());
+            if($('#pro-name').val() !=""){
+            document.getElementById("id_search").style.display="block"
+
+            }else{
+            document.getElementById("id_search").style.display="none"
+
+            }
+            hideselectedoptions();
+            
+        }
    
 </script>
 {% endblock %}

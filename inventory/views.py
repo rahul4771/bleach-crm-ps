@@ -479,6 +479,8 @@ class InventoryItems(IsInventoryAdmin,View):
         categories = Category.objects.all()
         item_units = ItemUnit.objects.filter(item=inventory_item)
 
+        stores = Store.objects.filter(status=True)
+
         available_item_units = item_units.filter(status='active').count()
         reserve_units = inventory_item.reserve_count
 
@@ -500,7 +502,7 @@ class InventoryItems(IsInventoryAdmin,View):
         else:
             new_unit_code = 'UNIT9001'
 
-        return render(request,'inventory/item.html',{"inventory_item":inventory_item,"attributes":attributes,"categories":categories,"item_units":item_units,"new_unit_code":new_unit_code})
+        return render(request,'inventory/item.html',{"stores":stores,"inventory_item":inventory_item,"attributes":attributes,"categories":categories,"item_units":item_units,"new_unit_code":new_unit_code})
 
     def post(self,request,item_id):
         action =request.POST.get('action')
