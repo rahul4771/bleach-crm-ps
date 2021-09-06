@@ -973,7 +973,7 @@ class PaymentDetails(IsAuthenticated,View):
 				if payment.evaluation.payment_method == 'SUBSCRIPTION':
 					total_doubtful_due_amount += payment.subscription_topay		
 
-			total_doubtful_due_orders = due_payments.count()
+			total_doubtful_due_orders = doubtful_due_payments.count()
 		else:
 			total_doubtful_due_amount = 0
 			total_doubtful_due_orders = 0
