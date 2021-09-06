@@ -520,20 +520,30 @@
                         
                             <div class="owl-carousel owl-theme">
                             {% if inventory_item.item_images %}
+                            
                                 {% for image in inventory_item.item_images %}
                                 <div class="item" style="position: relative;">
+                                <div style="position: absolute; top: 0; left: 0; background: #e4e4e4; padding: 5px;">
+                                    <input class="form-check-input" type="radio" name="selectedImg" value="" id="CheckId">
+                                    <label class="form-check-label" for="flexCheckDefault">
+                                      Select Image
+                                    </label>
+                                </div>
+
                                     <img  style="width: 100%;" src="{{image.item_image.url}}"  alt="">
 
                                     <div style="position: absolute; top: 0; right: 0;">
-                                        <button style="border: none; background: none; color: red;"> <i class="fa fa-trash fa-lg" aria-hidden="true"></i> Remove</button>
+                                        <button data-toggle="modal" data-target="#deleteModelImg"  style="border: none; background: none; color: red;"> <i class="fa fa-trash fa-lg" aria-hidden="true"></i> Remove</button>
                                     </div>
                                 </div>
                                 {% endfor %}
+                              
                             {% else %}
                             <div class="item" style="position: relative;">
+                                <div style="position: absolute; top: 0; left: 0;">che </div>
                                 <img  style="width: 100%;" src="{% static 'files/images/dummy-profile-pic.jpg' %}"  alt="">
                                 <div style="position: absolute; top: 0; right: 0;">
-                                    <button style="border: none; background: none; color: red;"> <i class="fa fa-trash fa-lg" aria-hidden="true"></i> Remove</button>
+                                    <button data-toggle="modal" data-target="#deleteModelImg"  style="border: none; background: none; color: red;"> <i class="fa fa-trash fa-lg" aria-hidden="true"></i> Remove</button>
                                 </div>
                             </div>
                             {% endif %}
@@ -663,7 +673,39 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="deleteModelImg" role="dialog">
+    <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 mt-20">
 
+                    
+                    <div class="d-flex ">
+                        <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to delete image</p></div>
+                        <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+           
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    
+                    <div class="cancel-model-content">
+                        <button class="sent-button" type="submit" >Delete</button>
+                        <button data-dismiss="modal" class="view-button">Cancel</button>
+                      
+                    </div>
+                   
+                </div>
+
+            </div>
+        </div>
+    </div>
+  </div>
 <div class="modal fade" id="deleteModel" role="dialog">
         <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
             <div class="container-fluid">

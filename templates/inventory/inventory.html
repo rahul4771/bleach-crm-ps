@@ -95,10 +95,15 @@
                             </td> {% endcomment %}
                             <td class="text-center">
                                 {% if item.item_status == 'available' %}
+                                <span class="inv-dot  c-active"></span>
                                 Available
                                 {% elif item.item_status == 'about_to_finish' %}
+                                <span class="inv-dot c-about-finish"></span>
+                                
                                 About to finish
                                 {% elif item.item_status == 'out_of_stock' %}
+                                <span class="inv-dot c-out-of-order"></span>
+
                                 Out of Stock
                                 {% endif %}
                             </td>
@@ -253,7 +258,7 @@
                     <option value="True">Yes</option>
                     <option value="False">No</option>
                     </select> {% endcomment %}
-                    <div class="wrap-drop" id="noble-gases5" style="z-index: 2 !important;"  >
+                    <div class="wrap-drop" id="noble-gases5" style="z-index: 3 !important;"  >
                         <span id="id_selectText4">Yes</span>
                         <ul class="drop">
                             <li onclick="changeSelect5('True')"><a>Yes</a></li>
