@@ -21,6 +21,8 @@
   {% include "technicalsupervisor/common/header.html" %}
 {% elif request.user.user_type == 'ACCOUNTANT' %}
   {% include "accountant/common/header.html" %}
+{% elif request.user.user_type == 'TEAMINCHARGE' %}
+  {% include "tl/common/header.html" %}
 {% endif %}
 
 
