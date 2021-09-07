@@ -615,6 +615,13 @@ class InventoryItems(IsInventoryAdmin,View):
             InventoryItemImages.objects.create(inventory_item=inventory_item,item_image=image)
             messages.success(request,"Image Added successfully!")
 
+        if action == 'delete_image':
+            image_id = request.POST.get('item_image_id')
+
+            inventory_item = InventoryItemImages.objects.get(id=image_id).delete()
+
+            messages.success(request,"Image Deleted successfully!")
+
         return redirect('inventory:inventory-item',item_id)
 
 class InventorySupplier(IsInventoryAdmin,View):
