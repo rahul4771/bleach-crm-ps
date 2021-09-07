@@ -972,6 +972,9 @@ border-radius: 3px;
 }
 
 @media only screen and (max-width: 950px) {
+  .inv-drawer-footer{
+    position: relative;
+  }
 
   .inv-dash-card-head{
     font-size: 2vw;
@@ -982,6 +985,9 @@ border-radius: 3px;
 }
 
 @media only screen and (max-width: 600px) {
+  .inv-drawer-footer{
+    position: relative;
+  }
   .m-mt-10{
     margin-top: 10px !important;
   }
