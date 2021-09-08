@@ -1635,7 +1635,7 @@
 
                                     <!--cleaning Team start-->
                                     {% for orderschedule in order.orderschedules %}
-                                    {% if orderschedule.order_scheduler_book == evaluationbook and orderschedule.cleaning_team %}
+                                    {% if orderschedule.order_scheduler_book == evaluationbook and orderschedule.cleaning_team and forloop.first %}
                                     {% for cleaning_team in orderschedule.cleaning_team %}  
                                     <div class="clean-visit-section">
                                         
