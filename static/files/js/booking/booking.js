@@ -4135,8 +4135,10 @@ try {
           if(this.building[building].floors[floor].apartments[apartment].kitchen){
              
               for(var k=0;k<this.building[building].floors[floor].apartments[apartment].kitchens.length;k++){
+                if(this.building[building].floors[floor].apartments[apartment].kitchens[k].type=='old'){
                   this.building[building].floors[floor].apartments[apartment].section_cost=this.building[building].floors[floor].apartments[apartment].section_cost+this.building[building].floors[floor].apartments[apartment].kitchens[k].size.cost
               }
+                }
           }
       this.billingData.push({
         name:
@@ -4220,8 +4222,10 @@ try {
           if(this.building[building].floors[floor - 1].kitchen){
              
               for(var k=0;k<this.building[building].floors[floor - 1].kitchens.length;k++){
+                if(this.building[building].floors[floor - 1].kitchens[k].type=='old'){
                   this.building[building].floors[floor - 1].section_cost=this.building[building].floors[floor - 1].section_cost+this.building[building].floors[floor - 1].kitchens[k].size.cost
-              }
+                }
+                }
           }
          // this.building[building].floors[floor - 1].section_cost=
        
