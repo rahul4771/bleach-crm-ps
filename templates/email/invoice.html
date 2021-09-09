@@ -135,6 +135,9 @@
         .info-section-left {
             width: 300px;
         }
+        .info-section-left2 {
+            width: 400px;
+        }
 
         .info-section-item {
             display: flex;
@@ -480,11 +483,12 @@
                             </div>
                         </div>
                         <div class="info-section-item">
-                            <div style="font-size: 15px;" class="info-section-item-left-3">
+                            <div style="font-size: 15px;" class="info-section-item-left-2">
                                 Payable amount
                             </div>
                             <div style="font-size: 30px;" class="left text-right">
                                 <br>
+                              
                                 {% if invoice.evaluation.payment_method == 'BREAKDOWN' %}
                                 {% if invoice.evaluation.before_cleaning_amount != invoice.preamount_paid %}
                                     <b>{{invoice.evaluation.before_cleaning_amount|floatformat:'3'}}</b> &nbsp;KD
@@ -510,6 +514,10 @@
                             </div>
                         </div> -->
                         
+                    </div>
+                </div>
+                <div class="left m-mt-20">
+                    <div class="info-section-left2">
                     </div>
                 </div>
             </div>
