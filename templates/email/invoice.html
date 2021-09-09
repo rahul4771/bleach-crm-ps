@@ -447,6 +447,7 @@
                                 Sub Total
                             </div>
                             <div class="left">
+                               
                                 {{invoice.evaluation.estimated_cost|floatformat:3}} &nbsp;KD
                             </div>
                         </div>
@@ -492,6 +493,28 @@
                             <div style="font-size: 30px;" class="left text-right">
                                 <br>
                               
+                                <!-- {% if invoice.evaluation.payment_method == 'BREAKDOWN' %}
+                                {% if invoice.evaluation.before_cleaning_amount != invoice.preamount_paid %}
+                                    <b>{{invoice.evaluation.before_cleaning_amount|floatformat:'3'}}</b> &nbsp;KD
+                                {% elif invoice.evaluation.after_cleaning_amount != invoice.postamount_paid %}
+                                    <b>{{invoice.remining_amount|floatformat:'3'}}</b> &nbsp;KD
+                                {% endif %}
+        
+                            {% elif invoice.evaluation.payment_method == 'SUBSCRIPTION' %}
+                               <b> {{invoice.subscription_to_pay|floatformat:'3'}}</b> &nbsp;KD
+                            {% else %}
+                                <b>{{invoice.remining_amount|floatformat:'3'}}</b> &nbsp;KD
+                            {% endif %} -->
+                            
+                            </div>
+                        </div>
+                        <div class="info-section-item">
+                            <!-- <div style="font-size: 15px;" class="info-section-item-left-2">
+                                Payable amount
+                            </div> -->
+                            <div style="font-size: 30px;" class="left text-right">
+                               
+                              
                                 {% if invoice.evaluation.payment_method == 'BREAKDOWN' %}
                                 {% if invoice.evaluation.before_cleaning_amount != invoice.preamount_paid %}
                                     <b>{{invoice.evaluation.before_cleaning_amount|floatformat:'3'}}</b> &nbsp;KD
@@ -504,6 +527,7 @@
                             {% else %}
                                 <b>{{invoice.remining_amount|floatformat:'3'}}</b> &nbsp;KD
                             {% endif %}
+                          
                             </div>
                         </div>
                        
@@ -519,10 +543,10 @@
                         
                     </div>
                 </div>
-                <div class="left m-mt-20">
+                <!-- <div class="left m-mt-20">
                     <div class="info-section-left2">
                     </div>
-                </div>
+                </div> -->
             </div>
             <!-- <div class="info-section">
                 <div class="info-section-left">
