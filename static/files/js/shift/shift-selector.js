@@ -567,6 +567,8 @@ function addToShift1(){
                 leaveSelected['shift1']=true
                 leaveSelected['shift2']=false
                 leaveSelected['shift3']=false
+                leaveSelected['shift3_start_at']=''
+                leaveSelected['shift3_end_at']=''
                 shiftList.push(leaveSelected);
                // resourceList[i].leave.push(leaveData);
             }
@@ -726,6 +728,8 @@ function addToShift2(){
             leaveSelected['shift1']=false
             leaveSelected['shift2']=true
             leaveSelected['shift3']=false
+            leaveSelected['shift3_start_at']=''
+            leaveSelected['shift3_end_at']=''
             shiftList.push(leaveSelected);
            // resourceList[i].leave.push(leaveData);
         }
