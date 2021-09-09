@@ -937,7 +937,7 @@
                     {% elif average_feedback == 5 %}
                     <i class="fas fa-star yellow-icon"></i><i class="fas fa-star yellow-icon"></i><i class="fas fa-star yellow-icon"></i><i class="fas fa-star yellow-icon"></i><i class="fas fa-star yellow-icon"></i><span class="rating-value">5</span>
                     {% else %}
-                    <i class="fas fa-star yellow-icon"></i><i class="fas fa-star gray-icon"></i><i class="fas fa-star gray-icon"></i><i class="fas fa-star gray-icon"></i><i class="fas fa-star gray-icon"></i><span class="rating-value">1</span>
+                    <i class="fas fa-star gray-icon"></i><i class="fas fa-star gray-icon"></i><i class="fas fa-star gray-icon"></i><i class="fas fa-star gray-icon"></i><i class="fas fa-star gray-icon"></i><span class="rating-value">Not Rated</span>
                     {% endif %}
                     <!--rating section-->
                 </div>
@@ -3422,15 +3422,15 @@ $('input[name="radio"]').click(function(){
                         {
                     {% for evaluationbook2 in evaluationdetail.evaluationbooks %}
                     if("{{evaluationbook.id}}" == "{{evaluationbook2.id}}"){
-                        $("#show{{evaluationbook.id}}").text("");
-                        $("#showmore{{evaluationbook.id}}").fadeIn();
-                        $(".showmore1{{evaluationbook.id}}").fadeIn();
-                        $(".showmore2{{evaluationbook.id}}").fadeIn();
+                        $("#show{{evaluationbook2.id}}").text("");
+                        $("#showmore{{evaluationbook2.id}}").fadeIn();
+                        $(".showmore1{{evaluationbook2.id}}").fadeIn();
+                        $(".showmore2{{evaluationbook2.id}}").fadeIn();
                     }else{
-                        $("#show{{evaluationbook.id}}").text("Show More");
-                        $(".showmore1{{evaluationbook.id}}").fadeOut();
-                        $(".showmore2{{evaluationbook.id}}").fadeOut();
-                        $("#showmore{{evaluationbook.id}}").fadeOut();
+                        $("#show{{evaluationbook2.id}}").text("Show More");
+                        $(".showmore1{{evaluationbook2.id}}").fadeOut();
+                        $(".showmore2{{evaluationbook2.id}}").fadeOut();
+                        $("#showmore{{evaluationbook2.id}}").fadeOut();
                     }
                     {% endfor %}               
                         } 
