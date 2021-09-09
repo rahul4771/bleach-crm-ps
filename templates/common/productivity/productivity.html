@@ -107,6 +107,12 @@
                         <button data-toggle="modal" data-target="#editModal"  class="pricerange_edit_button" style="display:none;"></button>
                         <button data-toggle="modal" data-target="#addModal" class="pricerange_add_button" style="display:none;"></button>
                         <button data-toggle="modal" data-target="#DeleteModal" class="pricerange_delete_button" style="display:none;"></button>
+                        <button data-toggle="modal" id="id_add_add" data-target="#add-onModal"  style="display:none;"></button>
+                        <button data-toggle="modal" id="id_add_edit" data-target="#edit-onModal"  style="display:none;"></button>
+                        <button data-toggle="modal" id="id_add_delete" data-target="#delete-onModal"  style="display:none;"></button>
+
+
+
                         {% for service_type in service_types %}
                         <div class="col-md-6">
                             <div class="productivity-card">
@@ -270,6 +276,61 @@
                               <div class="addNewPrice">
                                     <button class="border-button" onclick="add_price_range(this);" data-service_type_name="{{service_type.name}}" data-service_type_id="{{service_type.id}}"><i class="fa fa-plus-circle" aria-hidden="true"></i> Price Range</button>
                               </div>
+
+                              <div class="mt-10">
+                                <h2 class="productivity-name"> Add-on</h2>
+                                <div class="productivity-card-content">
+                                    <div class="row productivity-card-items2">
+                                        <div style="font-weight: 600;" class="col-md-2 productivity-card-items-1">
+                                           Item
+                                        </div>
+                                        <div  style="font-weight: 600;" class="col-md-2 productivity-card-items-2">
+                                           Category Name
+                                        </div>
+                                        <div style="font-weight: 600;" class="col-md-2 productivity-card-items-3">
+                                           Size
+                                        </div>
+                                        <div style="font-weight: 600;" class="col-md-2 productivity-card-items-3">
+                                            Price
+                                         </div>
+                                         <div style="font-weight: 600;" class="col-md-2 productivity-card-items-3">
+                                            Productivity
+                                         </div>
+                                        <div class="col-md-2 productivity-card-items-4">
+                                    
+                                        </div>
+                                    </div>
+                                    <div class="row productivity-card-items">
+                                        <div class="col-md-2 productivity-card-items-1">
+                                            Microwave Oven
+                                        </div>
+                                        <div class="col-md-2 productivity-card-items-2">
+                                            Small
+                                        </div>
+                                        <div class="col-md-2 productivity-card-items-3">
+                                            --
+                                        </div>
+                                        <div class="col-md-2 productivity-card-items-3">
+                                            10
+                                        </div>
+                                        <div class="col-md-2 productivity-card-items-3">
+                                            10
+                                        </div>
+                                        <div class="col-md-2 productivity-card-items-4">
+                                            <button onclick="edit_add_on(this);" class="img-button" >
+                                                <img class="productivity-card-edit" src="/static/files/icons/edit.png">
+                                            </button>
+                                            <button class="img-button" onclick="delete_add_on(this);" data-id="5">
+                                                <img class="productivity-card-edit" src="/static/files/icons/delete.png">
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                              </div>
+                              <div class="addNewPrice">
+                                <button class="border-button" onclick="add_add_on(this);"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add More</button>
+                          </div>
+
                             </div>
                         </div>
                         {% endfor %}
@@ -314,7 +375,7 @@
                 <input type="hidden" name="price_range" id="delete_price_range_id">
                 <div class="col-md-12 text-center">
                     <div class="cancel-model-content">
-                        <button class="sent-button"><input type="submit" value="Yes"></button>
+                        <button class="sent-button"><input class="btn-submit" type="submit" value="Yes"></button>
                         <button data-dismiss="modal" class="view-button">No</button>
                     </div>
                 </div>
@@ -392,7 +453,7 @@
             <div class="row">
                 <div class="col-md-12 text-center">
                     <div class="cancel-model-content">
-                        <button class="sent-button"><input type="submit" value="Submit"></button>
+                        <button class="sent-button"><input type="submit" class="btn-submit" value="Submit"></button>
                         <button data-dismiss="modal" class="view-button">Cancel</button>
                     </div>
                 </div>
@@ -469,7 +530,7 @@
                 <div class="row">
                     <div class="col-md-12 text-center">
                         <div class="cancel-model-content">
-                            <button class="sent-button"><input type="submit" value="Submit"></button>
+                            <button class="sent-button"><input type="submit" class="btn-submit" value="Submit"></button>
                             <button data-dismiss="modal" class="view-button">Cancel</button>
                         </div>
                     </div>
@@ -479,7 +540,155 @@
             </div>
         </div>
       </div>
-      
+         <!-- Modal add-on -->
+    <div class="modal fade" id="add-onModal" role="dialog">
+        <div class="modal-dialog cancel-model cancel-order-border" role="document">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+    
+                        <div class="d-flex cl-modal-icons">
+                            <button data-dismiss="modal" class="img-button">
+                                <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                            </button>
+    
+                        </div>
+                    </div>
+                </div>
+                <h2 class="productivity-name"> General Clenign</h2>
+                <form method="POST" action="">
+               
+                <div class="row mt-10">
+                    <div class="col-md-6 mt-10">
+                        <label > Item</label>
+                        <input  type="text" placeholder=" " required="required" class="textBox model-text-border">
+                    </div>
+                    <div class="col-md-6 mt-10">
+                        <label > Category Name</label>
+                        <input  type="text" placeholder=" " required="required" class="textBox model-text-border">
+                    </div>
+                    <div class="col-md-6 mt-10">
+                        <label >Size</label>
+                        <input  type="text" placeholder=" " required="required" class="textBox model-text-border">
+                    </div>
+                    <div class="col-md-6 mt-10">
+                        <label >Price</label>
+                        <input  type="text" placeholder=" " required="required" class="textBox model-text-border">
+                    </div>
+                    <div class="col-md-6 mt-10">
+                        <label >Productivity</label>
+                        <input  type="text" placeholder=" " required="required" class="textBox model-text-border">
+                    </div>
+                    
+    
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <div class="cancel-model-content">
+                            <button class="sent-button"><input type="submit" class="btn-submit" value="Submit"></button>
+                            <button data-dismiss="modal" class="view-button">Cancel</button>
+                        </div>
+                    </div>
+    
+                </div>
+                </form>
+            </div>
+        </div>
+      </div>
+         <!-- Modal edit add-on -->
+    <div class="modal fade" id="edit-onModal" role="dialog">
+        <div class="modal-dialog cancel-model cancel-order-border" role="document">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+    
+                        <div class="d-flex cl-modal-icons">
+                            <button data-dismiss="modal" class="img-button">
+                                <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                            </button>
+    
+                        </div>
+                    </div>
+                </div>
+                <h2 class="productivity-name"> General Clenign</h2>
+                <form method="POST" action="">
+               
+                <div class="row mt-10">
+                    <div class="col-md-6 mt-10">
+                        <label > Item</label>
+                        <input  type="text" placeholder=" " required="required" class="textBox model-text-border">
+                    </div>
+                    <div class="col-md-6 mt-10">
+                        <label > Category Name</label>
+                        <input  type="text" placeholder=" " required="required" class="textBox model-text-border">
+                    </div>
+                    <div class="col-md-6 mt-10">
+                        <label >Size</label>
+                        <input  type="text" placeholder=" " required="required" class="textBox model-text-border">
+                    </div>
+                    <div class="col-md-6 mt-10">
+                        <label >Price</label>
+                        <input  type="text" placeholder=" " required="required" class="textBox model-text-border">
+                    </div>
+                    <div class="col-md-6 mt-10">
+                        <label >Productivity</label>
+                        <input  type="text" placeholder=" " required="required" class="textBox model-text-border">
+                    </div>
+                    
+    
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <div class="cancel-model-content">
+                            <button class="sent-button"><input type="submit" class="btn-submit" value="Submit"></button>
+                            <button data-dismiss="modal" class="view-button">Cancel</button>
+                        </div>
+                    </div>
+    
+                </div>
+                </form>
+            </div>
+        </div>
+      </div>
+      <!-- Modal Add-on delete -->
+  <div class="modal fade" id="delete-onModal" role="dialog">
+    <div class="modal-dialog cancel-model cancel-order-border" role="document">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="d-flex cl-modal-icons">
+                        <button data-dismiss="modal" class="img-button">
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="cancel-model-content">
+                        <h1>Do you want to Delete ?</h1>
+                    </div>
+                </div>
+
+            </div>
+            <form method="POST" action="">
+              
+            <div class="row">
+            
+                <div class="col-md-12 text-center">
+                    <div class="cancel-model-content">
+                        <button class="sent-button"><input class="btn-submit" type="submit" value="Yes"></button>
+                        <button data-dismiss="modal" class="view-button">No</button>
+                    </div>
+                </div>
+
+            </div>
+            </form>
+        </div>
+    </div>
+  </div>
 </section>
 
 
@@ -487,6 +696,18 @@
 {% endblock %}
 {% block javascript %}
 <script>
+    function delete_add_on(d){
+        $('#id_add_delete').click();
+
+    }
+    function add_add_on(d){
+        $('#id_add_add').click();
+        console.log("h")
+    }
+    function edit_add_on(d){
+        $('#id_add_edit').click();
+        console.log("h")
+    }
     function changeDiscountStat(){
         var stat=$('.discount-stat').text()
         console.log("stat is"+stat)

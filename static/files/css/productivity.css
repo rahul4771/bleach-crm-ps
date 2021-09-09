@@ -4,6 +4,16 @@
   cursor: pointer;
   margin-left: 3px;
 }
+
+.btn-submit{
+  background: none;
+  border: none;
+}
+.btn-submit:hover{
+  background: none;
+  border: none;
+  color: #fff;
+}
 .productivity-card {
   position: relative;
   width: 100%;
@@ -11,7 +21,7 @@
   border: 2px solid #bed0e8;
   border-radius: 8px;
   padding: 0px 3px 10px 10px;
-  height: 50vh ;
+  height: 60vh ;
   overflow: auto;
 }
 .discount-card{
@@ -134,6 +144,14 @@
 }
 .productivity-card-items {
   background: #edf1f6;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  margin-left: 0px !important;
+  margin-right: 5px !important;
+  margin-bottom: 10px;
+}
+.productivity-card-items2 {
+  background: #fff;
   padding-top: 5px;
   padding-bottom: 5px;
   margin-left: 0px !important;
