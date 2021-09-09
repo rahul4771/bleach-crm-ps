@@ -3422,15 +3422,11 @@ $('input[name="radio"]').click(function(){
                         {
                     {% for evaluationbook2 in evaluationdetail.evaluationbooks %}
                     if("{{evaluationbook.id}}" == "{{evaluationbook2.id}}"){
+                        alert("hiiiiiiii")
                         $("#show{{evaluationbook.id}}").text("");
                         $("#showmore{{evaluationbook.id}}").fadeIn();
                         $(".showmore1{{evaluationbook.id}}").fadeIn();
                         $(".showmore2{{evaluationbook.id}}").fadeIn();
-                    }else{
-                        $("#show{{evaluationbook.id}}").text("Show More");
-                        $(".showmore1{{evaluationbook.id}}").fadeOut();
-                        $(".showmore2{{evaluationbook.id}}").fadeOut();
-                        $("#showmore{{evaluationbook.id}}").fadeOut();
                     }
                     {% endfor %}               
                         } 
