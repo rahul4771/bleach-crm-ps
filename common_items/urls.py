@@ -45,7 +45,7 @@ urlpatterns = [
 		url(r'^assigncleaning/team/(?P<scheduler_id>[-\w]+)/$',views.AssigncleaningTeam.as_view(),name='assign-cleaningteam'),#New logic applied
 		url(r'^editcleaning/team/(?P<scheduler_id>[-\w]+)/$',views.EditcleaningTeam.as_view(),name='edit-cleaningteam'),#New logic applied
 		url(r'^resetcleaning/team/(?P<scheduler_id>[-\w]+)/$',views.ResetcleaningTeam.as_view(),name='reset-cleaningteam'),
-		# url(r'^resetfollowup/team/(?P<scheduler_id>[-\w]+)/$',views.ResetFollowUpTeam.as_view(),name='reset-followupteam'),#done and tested
+		# url(r'^resetfollowup/team/(?P<scheduler_id>[-\w]+)/$',views.ResetFollowUpTeam.as_view(),name='reset-followupteam'),
 		url(r'^assignfollowup/team/(?P<scheduler_id>[-\w]+)/$',views.AssignFollowupTeam.as_view(),name='assign-followupteam'),#New logic applied
 		url(r'^editfollowup/team/(?P<scheduler_id>[-\w]+)/$',views.EditFollowupTeam.as_view(),name='edit-followupteam'),#New logic applied
 

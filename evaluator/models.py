@@ -430,3 +430,21 @@ class EvaluationSectionKeynote(models.Model):
 
 	def __str__(self):
 		return str(self.evaluation_section)
+
+
+class EvaluationSectionAddons(models.Model):
+	evaluation_section = models.ForeignKey('EvaluationBookSection',blank=False,null=False,related_name='addonsections')
+	name 		       = models.CharField(max_length=100,blank=True,null=True)
+	addon_cost         = models.FloatField(blank=True,null=True)
+	quantity 		   = models.CharField(max_length=100,blank=True,null=True)
+	addon_net_cost     = models.FloatField(blank=True,null=True)
+	completion_status  = models.BooleanField(null=False,blank=True,default=False)
+
+	is_active            = models.BooleanField(null=False,blank=True,default=True)
+	created              = models.DateTimeField(auto_now_add=True)
+	updated              = models.DateTimeField(auto_now=True)
+	def __unicode__(self):
+		return str(self.evaluation_section)
+
+	def __str__(self):
+		return str(self.evaluation_section)

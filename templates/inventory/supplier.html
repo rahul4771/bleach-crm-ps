@@ -634,6 +634,8 @@ function openNavAddBundle(d) {
             }else{
                 $("#item_table tr:not(:first)").remove(); 
             }
+            $('#item_table').footable();
+            $('#item_table').trigger('footable_redraw');
          }else{
              console.log("no units")
             //showNotification('Something went wrong','error')

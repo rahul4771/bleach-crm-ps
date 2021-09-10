@@ -1,5 +1,5 @@
 from django.contrib import admin
-from evaluator.models import ServiceType,LocationType,CleaningType,CleaningMethod,AreaType,CleaningSection,Evaluation,EvaluationDetails,EvaluationMedia,EvaluationBook,EvaluationBookSection,EvaluationSectionKeynote
+from evaluator.models import ServiceType,LocationType,CleaningType,CleaningMethod,AreaType,CleaningSection,Evaluation,EvaluationDetails,EvaluationMedia,EvaluationBook,EvaluationBookSection,EvaluationSectionKeynote,EvaluationSectionAddons
 # Register your models here.
 
 admin.site.register(ServiceType)
@@ -51,6 +51,11 @@ admin.site.register(EvaluationBookSection,EvaluationBookSectionAdmin)
 class EvaluationSectionKeynoteAdmin(admin.ModelAdmin):
 	search_fields =['evaluation_section__evaluation_book__evaluation_details__evaluation__evaluation_id']
 admin.site.register(EvaluationSectionKeynote,EvaluationSectionKeynoteAdmin)
+
+class EvaluationSectionAddonsAdmin(admin.ModelAdmin):
+	search_fields =['evaluation_section__evaluation_book__evaluation_details__evaluation__evaluation_id']
+admin.site.register(EvaluationSectionAddons,EvaluationSectionAddonsAdmin)
+
 
 
 #Django Panel Customisation
