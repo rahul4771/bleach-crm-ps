@@ -43,7 +43,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response 
 from rest_framework.status import HTTP_200_OK 
 
-from customer.serilizers import UserProfileSerializer,AddressSerializer,AddressSaveSerializer,EvaluationBookSerializer,EvaluationBookSectionSerializer,EvaluationSectionKeynoteSerializer,EvaluationSerializer,OrderSerializer,EvaluationDetailsSerializer,CustomerBookingSerializer
+from customer.serilizers import UserProfileSerializer,AddressSerializer,AddressSaveSerializer,EvaluationBookSerializer,EvaluationBookSectionSerializer,EvaluationSectionKeynoteSerializer,EvaluationSerializer,OrderSerializer,EvaluationDetailsSerializer,CustomerBookingSerializer,EvaluationSectionAddonSerializer
 from bleachadmin.serializers import ServiceAddOnsSerializer
 
 def get_client_ip(request):
@@ -3627,6 +3627,26 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 
 								return Response(response_dict,HTTP_200_OK)
 
+					#create add-ons
+					addons_dict = sections_dict[key]['addons']
+					if addons_dict:
+						for key in addons_dict.keys():
+							addons_save_serializer = EvaluationSectionAddonSerializer(data=addons_dict[key])
+							if addons_save_serializer.is_valid():
+								saved_addon       = addons_save_serializer.save(evaluation_section=saved_section)
+								
+								response_dict['addon_success']       = True
+							else:
+								errors= addons_save_serializer.errors   
+								key=tuple(errors.keys())[0] 
+								error=errors[key]
+								response_dict['addon_Error']      = key +':'+ error[0]
+								response_dict['addon_Error_List'] = addons_save_serializer.errors
+
+								response_dict['addon_success']    = False
+
+								return Response(response_dict,HTTP_200_OK)
+
 				service_dict[saved_service.id] = saved_service.service_type.name				
 		
 		response_dict['evaluation_book_ids'] = service_dict
@@ -4009,6 +4029,26 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 							response_dict['keynote_success']    = False
 
 							return Response(response_dict,HTTP_200_OK)
+				
+				#create add-ons
+				addons_dict = sections_dict[key]['addons']
+				if addons_dict:
+					for key in addons_dict.keys():
+						addons_save_serializer = EvaluationSectionAddonSerializer(data=addons_dict[key])
+						if addons_save_serializer.is_valid():
+							saved_addon       = addons_save_serializer.save(evaluation_section=saved_section)
+							
+							response_dict['addon_success']       = True
+						else:
+							errors= addons_save_serializer.errors   
+							key=tuple(errors.keys())[0] 
+							error=errors[key]
+							response_dict['addon_Error']      = key +':'+ error[0]
+							response_dict['addon_Error_List'] = addons_save_serializer.errors
+
+							response_dict['addon_success']    = False
+
+							return Response(response_dict,HTTP_200_OK)
 
 			service_dict[saved_service.id] = services[service_detail]['service_type']				
 
@@ -4132,6 +4172,26 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase2(APIView):
 							response_dict['keynote_Error_List'] = keynote_save_serializer.errors
 
 							response_dict['keynote_success']    = False
+
+							return Response(response_dict,HTTP_200_OK)
+
+				#create add-ons
+				addons_dict = sections_dict[key]['addons']
+				if addons_dict:
+					for key in addons_dict.keys():
+						addons_save_serializer = EvaluationSectionAddonSerializer(data=addons_dict[key])
+						if addons_save_serializer.is_valid():
+							saved_addon       = addons_save_serializer.save(evaluation_section=saved_section)
+							
+							response_dict['addon_success']       = True
+						else:
+							errors= addons_save_serializer.errors   
+							key=tuple(errors.keys())[0] 
+							error=errors[key]
+							response_dict['addon_Error']      = key +':'+ error[0]
+							response_dict['addon_Error_List'] = addons_save_serializer.errors
+
+							response_dict['addon_success']    = False
 
 							return Response(response_dict,HTTP_200_OK)
 

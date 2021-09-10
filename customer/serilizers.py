@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from user.models import UserProfile,Address,Governorate,Area
-from evaluator.models import ServiceType,Evaluation,EvaluationDetails,EvaluationBook,EvaluationBookSection,EvaluationSectionKeynote
+from evaluator.models import ServiceType,Evaluation,EvaluationDetails,EvaluationBook,EvaluationBookSection,EvaluationSectionKeynote,EvaluationSectionAddons
 from order.models import Order
 from customer.models import CustomerBooking
 
@@ -24,6 +24,11 @@ class EvaluationSectionKeynoteSerializer(serializers.ModelSerializer):
 	class Meta:
 		model  = EvaluationSectionKeynote
 		fields = ('sub_area','quantity')
+
+class EvaluationSectionAddonSerializer(serializers.ModelSerializer):
+	class Meta:
+		model  = EvaluationSectionAddons
+		fields = ('name','addon_cost','quantity','addon_net_cost')
 
 class EvaluationBookSectionSerializer(serializers.ModelSerializer):
 	keynotesections = EvaluationSectionKeynoteSerializer(many=True,read_only=True)
