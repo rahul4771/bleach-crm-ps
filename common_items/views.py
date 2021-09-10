@@ -37,8 +37,8 @@ from customer.models import CustomerBooking
 from agent.forms import UserProfileForm,AddressForm
 from evaluator.forms import EvaluationDetailsForm,QuatationServiceForm
 from order.forms import InvestigationForm,PromocodeForm
-from bleachadmin.models import ServiceProductivity,ServicePriceRange,Settings
-from bleachadmin.forms import ServicePriceRangeForm,DiscountSettingsForm
+from bleachadmin.models import ServiceProductivity,ServicePriceRange,Settings,ServiceAddOns
+from bleachadmin.forms import ServicePriceRangeForm,ServiceAddOnsForm,DiscountSettingsForm
 from senior_team_leader.forms import CleaningTeamAssignForm,FollowupTeamAssignForm
 from django.db.models import Count
 
@@ -2382,14 +2382,28 @@ class Productivity(IsAuthenticated,View):
 		except:
 			service_productivities = None
 
+		try:
+			service_addons         = ServiceAddOns.objects.filter(is_active=True)
+		except:
+			service_addons         = None
+
 		discount_settings = Settings.objects.filter(is_active=True).first()
 
-		return render(request,'common/productivity/productivity.html',{'service_price_ranges':service_price_ranges,'service_productivities':service_productivities,'service_types':service_types,"discount_settings":discount_settings,})
+		return render(request,'common/productivity/productivity.html',{'service_price_ranges':service_price_ranges,'service_productivities':service_productivities,'service_types':service_types,"discount_settings":discount_settings,"service_addons":service_addons})
 
 	def post(self,request):
 		
 		action = request.POST.get('action_type')
-	
+
+		if action == 'add_price_range':
+			price_range_form     = ServicePriceRangeForm(request.POST)
+			if price_range_form.is_valid():
+				price_range_form.save()
+				messages.success(request,"Service Price Range Added Successfully")
+			else:
+				messages.error(request,get_error(price_range_form))
+
+
 		if action == 'edit_price_range':
 			price_range_id       = request.POST.get('price_range')
 			price_range          = ServicePriceRange.objects.get(id=price_range_id)
@@ -2400,18 +2414,39 @@ class Productivity(IsAuthenticated,View):
 			else:
 				messages.error(request,get_error(price_range_form))
 
-		if action == 'add_price_range':
-			price_range_form     = ServicePriceRangeForm(request.POST)
-			if price_range_form.is_valid():
-				price_range_form.save()
-				messages.success(request,"Service Price Range Added Successfully")
-			else:
-				messages.error(request,get_error(price_range_form))
 
 		if action == 'delete_price_range':
 			price_range_id       = request.POST.get('price_range')
 			price_range          = ServicePriceRange.objects.filter(id=price_range_id).delete()
 			messages.success(request,"Service Price Range Deleted Successfully")
+
+
+		if action == 'add_addon':
+			service_addon_form     = ServiceAddOnsForm(request.POST)
+			if service_addon_form.is_valid():
+				service_addon_form.save()
+				messages.success(request,"Service Add-On Added Successfully")
+			else:
+				messages.error(request,get_error(service_addon_form))
+
+
+		if action == 'edit_addon':
+			addon_id       		 = request.POST.get('addon')
+			print(addon_id,"addon_id")
+			addon          		 = ServiceAddOns.objects.get(id=addon_id)
+			addon_form           = ServiceAddOnsForm(request.POST,instance=addon)
+			if addon_form.is_valid():
+				addon_form.save()
+				messages.success(request,"Service Add-on Updated Successfully")
+			else:
+				messages.error(request,get_error(addon_form))
+
+
+		if action == 'delete_addon':
+			addon_id       = request.POST.get('addon')
+			addon          = ServiceAddOns.objects.filter(id=addon_id).delete()
+			messages.success(request,"Service Add-on Deleted Successfully")
+
 
 		if action == 'edit_customer_discount':
 			discount_setting_id    = request.POST.get('discount_setting_id')
