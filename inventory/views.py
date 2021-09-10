@@ -659,14 +659,12 @@ class InventoryItems(IsInventoryAdmin,View):
 
             inventory_item = InventoryItem.objects.get(id=item_id)
 
-            new_image = InventoryItemImages.objects.create(inventory_item=inventory_item,item_image=image)
-
-            default_image = InventoryItemImages.objects.filter(inventory_item__id=item_id,is_default_image=True)
-
-            if not default_image:
-                new_image.is_default_image = True
+            inventory_images = InventoryItemImages.objects.filter(inventory_item__id=item_id)
+            
+            if inventory_images:
+                InventoryItemImages.objects.create(inventory_item=inventory_item,item_image=image)
             else:
-                pass
+                InventoryItemImages.objects.create(inventory_item=inventory_item,item_image=image,is_default_image=True)
 
             messages.success(request,"Image Added successfully!")
 
