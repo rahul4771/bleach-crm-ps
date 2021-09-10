@@ -484,7 +484,7 @@ class InventoryItems(IsInventoryAdmin,View):
         available_item_units = item_units.filter(status='active').count()
         reserve_units = inventory_item.reserve_count
 
-        if int(available_item_units) < int(reserve_units):
+        if int(available_item_units) < int(reserve_units) and int(available_item_units) > 0:
             inventory_item.item_status = 'about_to_finish'
         elif int(available_item_units) == 0 :
             inventory_item.item_status = 'out_of_stock'
@@ -924,7 +924,7 @@ class InventoryInv(IsInventoryAdmin,View):
             available_item_units = ItemUnit.objects.filter(item=item,status='active').count()
             reserve_units = item.reserve_count
 
-            if int(available_item_units) < int(reserve_units):
+            if int(available_item_units) < int(reserve_units) and int(available_item_units) > 0:
                 item.item_status = 'about_to_finish'
             elif int(available_item_units) == 0 :
                 item.item_status = 'out_of_stock'
