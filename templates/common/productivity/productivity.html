@@ -114,228 +114,237 @@
 
 
                         {% for service_type in service_types %}
-                        <div class="col-md-6">
-                            <div class="productivity-card">
-                              <h2 class="productivity-name"> {{service_type.name}}</h2>
-                              <div class="productivity-card-sub">
-                                    {% for service_productivity in service_productivities %}
-                                    {% if service_productivity.service_type == service_type %}
-                                    {% if not service_productivity.is_newkitchen and not service_productivity.is_highprice_facade and not service_productivity.is_highprice_window and service_productivity.upholstery_type != 'CHAIR' and service_productivity.upholstery_type != 'CURTAIN' %}
-                                    <div class="productivity-sub-top" id="productivityhead_{{service_type.id}}1">
-                                        <div class="productivity-sub-top-item-left">
-                                          Productivity
+                        <div class="col-md-12 mt-10" >
+                            <div style="border: 2px solid #bed0e8;padding: 20px; margin-bottom: 10px;  border-radius: 8px;">
+                                <div class="row" >
+                                
+                                    <div class="col-md-6">
+                                        <h2 class="productivity-name"> {{service_type.name}}</h2>
+                                  <div class="productivity-card-sub">
+                                        {% for service_productivity in service_productivities %}
+                                        {% if service_productivity.service_type == service_type %}
+                                        {% if not service_productivity.is_newkitchen and not service_productivity.is_highprice_facade and not service_productivity.is_highprice_window and service_productivity.upholstery_type != 'CHAIR' and service_productivity.upholstery_type != 'CURTAIN' %}
+                                        <div class="productivity-sub-top" id="productivityhead_{{service_type.id}}1">
+                                            <div class="productivity-sub-top-item-left">
+                                              Productivity
+                                            </div>
+                                            <div class="productivity-sub-top-item-right"> 
+                                                <img id="id_edit_{{service_productivity.id}}" onclick="editPro({{service_productivity.id}})" class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
+                                                <button  id="id_done_{{service_productivity.id}}" onclick="doneEdit({{service_productivity.id}})" class="productivity-card-done">Done</button>
+                                            </div>
                                         </div>
-                                        <div class="productivity-sub-top-item-right"> 
-                                            <img id="id_edit_{{service_productivity.id}}" onclick="editPro({{service_productivity.id}})" class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                            <button  id="id_done_{{service_productivity.id}}" onclick="doneEdit({{service_productivity.id}})" class="productivity-card-done">Done</button>
+                                        <div class="productivity-card-sub-content" id="productivitycontent_{{service_type.id}}1">
+                                        <h1 id="id_pro_value_{{service_productivity.id}}" >{{service_productivity.perhour_cleaning}} <span class="productivity-card-sub-content-text">sqm/man/hr</span></h1>
+                                        <input  id="id_pro_{{service_productivity.id}}" type="number" class="productivity-card-sub-input" placeholder=" " required="required">
                                         </div>
-                                    </div>
-                                    <div class="productivity-card-sub-content" id="productivitycontent_{{service_type.id}}1">
-                                    <h1 id="id_pro_value_{{service_productivity.id}}" >{{service_productivity.perhour_cleaning}} <span class="productivity-card-sub-content-text">sqm/man/hr</span></h1>
-                                    <input  id="id_pro_{{service_productivity.id}}" type="number" class="productivity-card-sub-input" placeholder=" " required="required">
-                                    </div>
-                                    {% endif %}
-                                    {% endif %}
-                                    {% endfor %}
-                                    
-                                    {% for service_productivity in service_productivities %}
-                                    {% if service_productivity.service_type == service_type %}
-                                    {% if service_productivity.is_newkitchen or service_productivity.is_highprice_facade or service_productivity.is_highprice_window or service_productivity.upholstery_type == 'CHAIR' %}
-                                    <div class="productivity-sub-top" id="productivityhead_{{service_type.id}}2" style="display: none;">
-                                        <div class="productivity-sub-top-item-left">
-                                          Productivity
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}
+                                        
+                                        {% for service_productivity in service_productivities %}
+                                        {% if service_productivity.service_type == service_type %}
+                                        {% if service_productivity.is_newkitchen or service_productivity.is_highprice_facade or service_productivity.is_highprice_window or service_productivity.upholstery_type == 'CHAIR' %}
+                                        <div class="productivity-sub-top" id="productivityhead_{{service_type.id}}2" style="display: none;">
+                                            <div class="productivity-sub-top-item-left">
+                                              Productivity
+                                            </div>
+                                            <div class="productivity-sub-top-item-right"> 
+                                                <img id="id_edit_{{service_productivity.id}}" onclick="editPro({{service_productivity.id}})" class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
+                                                <button  id="id_done_{{service_productivity.id}}" onclick="doneEdit({{service_productivity.id}})" class="productivity-card-done">Done</button>
+                                            </div>
                                         </div>
-                                        <div class="productivity-sub-top-item-right"> 
-                                            <img id="id_edit_{{service_productivity.id}}" onclick="editPro({{service_productivity.id}})" class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                            <button  id="id_done_{{service_productivity.id}}" onclick="doneEdit({{service_productivity.id}})" class="productivity-card-done">Done</button>
+                                        <div class="productivity-card-sub-content" id="productivitycontent_{{service_type.id}}2" style="display: none;">
+                                        <h1 id="id_pro_value_{{service_productivity.id}}" >{{service_productivity.perhour_cleaning}} <span class="productivity-card-sub-content-text">sqm/man/hr</span></h1>
+                                        <input  id="id_pro_{{service_productivity.id}}" type="number" class="productivity-card-sub-input" placeholder=" " required="required">
                                         </div>
-                                    </div>
-                                    <div class="productivity-card-sub-content" id="productivitycontent_{{service_type.id}}2" style="display: none;">
-                                    <h1 id="id_pro_value_{{service_productivity.id}}" >{{service_productivity.perhour_cleaning}} <span class="productivity-card-sub-content-text">sqm/man/hr</span></h1>
-                                    <input  id="id_pro_{{service_productivity.id}}" type="number" class="productivity-card-sub-input" placeholder=" " required="required">
-                                    </div>
-                                    {% endif %}
-                                    {% endif %}
-                                    {% endfor %}
-
-                                    {% for service_productivity in service_productivities %}
-                                    {% if service_productivity.service_type == service_type %}
-                                    {% if service_productivity.upholstery_type == 'CURTAIN' %}
-                                    <div class="productivity-sub-top" id="productivityhead_{{service_type.id}}3" style="display: none;">
-                                        <div class="productivity-sub-top-item-left">
-                                          Productivity
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}
+    
+                                        {% for service_productivity in service_productivities %}
+                                        {% if service_productivity.service_type == service_type %}
+                                        {% if service_productivity.upholstery_type == 'CURTAIN' %}
+                                        <div class="productivity-sub-top" id="productivityhead_{{service_type.id}}3" style="display: none;">
+                                            <div class="productivity-sub-top-item-left">
+                                              Productivity
+                                            </div>
+                                            <div class="productivity-sub-top-item-right"> 
+                                                <img id="id_edit_{{service_productivity.id}}" onclick="editPro({{service_productivity.id}})" class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
+                                                <button  id="id_done_{{service_productivity.id}}" onclick="doneEdit({{service_productivity.id}})" class="productivity-card-done">Done</button>
+                                            </div>
                                         </div>
-                                        <div class="productivity-sub-top-item-right"> 
-                                            <img id="id_edit_{{service_productivity.id}}" onclick="editPro({{service_productivity.id}})" class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                            <button  id="id_done_{{service_productivity.id}}" onclick="doneEdit({{service_productivity.id}})" class="productivity-card-done">Done</button>
-                                        </div>
-                                    </div>
-                                    <div class="productivity-card-sub-content" id="productivitycontent_{{service_type.id}}3" style="display: none;">
-                                    <h1 id="id_pro_value_{{service_productivity.id}}" >{{service_productivity.perhour_cleaning}} <span class="productivity-card-sub-content-text">sqm/man/hr</span></h1>
-                                    <input  id="id_pro_{{service_productivity.id}}" type="number" class="productivity-card-sub-input" placeholder=" " required="required">
-                                   </div>
-                                    {% endif %}
-                                    {% endif %}
-                                    {% endfor %}
-                              </div>
-                              <div class="productivity-tab">
-                                  <button id="normal_button_id_{{service_type.id}}" class="productivity-tab-item productivity-tab-border"  onclick="viewNormal({{service_type.id}})">{% if service_type.name == 'Upholstery Cleaning' %}Sofa{% elif service_type.name == 'Window Cleaning' %}Old Window{% elif service_type.name == 'Facade Cleaning' %}Old Facade{%elif service_type.name == 'Kitchen Cleaning'%}Old Kitchen{% else %}Normal{% endif %}</button>
-                                  {% if service_type.name == 'Upholstery Cleaning' or service_type.name == 'Kitchen Cleaning' or service_type.name == 'Facade Cleaning' or service_type.name == 'Window Cleaning' %}
-                                  <button id="special_button_id_{{service_type.id}}" class="productivity-tab-item " onclick="viewSpecial({{service_type.id}})">{% if service_type.name == 'Upholstery Cleaning' %}Chair{% elif service_type.name == 'Window Cleaning' %}New Window{% elif service_type.name == 'Facade Cleaning' %}New Facade{%elif service_type.name == 'Kitchen Cleaning'%}New Kitchen{% endif %}</button>
-                                  {% endif %}
-                                  {% if service_type.name == 'Upholstery Cleaning' %}
-                                  <button id="veryspecial_button_id_{{service_type.id}}" class="productivity-tab-item " onclick="viewVerySpecial({{service_type.id}})">Curtain</button>
-                                  {% endif %}
-                                </div>
-
-                              <div id="normal_id_{{service_type.id}}" class="productivity-card-content"> <!--normal-->
-                              {% for service_price_range in service_price_ranges %}
-                              {% if service_price_range.service_type == service_type %}
-                              {% if not service_price_range.is_newkitchen and not service_price_range.is_highprice_facade and not service_price_range.is_highprice_window and service_price_range.upholstery_type != 'CHAIR' and service_price_range.upholstery_type != 'CURTAIN' %}
-                              <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        {{service_price_range.name}}
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        {{service_price_range.minimum_area|floatformat:'2'}}-{{service_price_range.maximum_area|floatformat:'2'}}
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        {{service_price_range.price|floatformat:'3'}} KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button onclick="edit_price_range(this);" class="img-button" data-service_type_name="{{service_price_range.service_type.name}}" data-service_type_id="{{service_price_range.service_type.id}}" data-id="{{service_price_range.id}}" data-name="{{service_price_range.name}}" data-minimum_area="{{service_price_range.minimum_area}}" data-maximum_area="{{service_price_range.maximum_area}}" data-price="{{service_price_range.price}}" data-unit_price="{{service_price_range.unit_price|default_if_none:''}}" data-is_newkitchen="{{service_price_range.is_newkitchen}}" data-is_highprice_facade="{{service_price_range.is_highprice_facade}}" data-is_highprice_window="{{service_price_range.is_highprice_window}}" data-upholstery_type="{{service_price_range.upholstery_type}}">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button class="img-button" onclick="delete_price_range(this);" data-id="{{service_price_range.id}}">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                              {% endif %}
-                              {% endif %}
-                              {% endfor %}
-                              </div>
-
-
-                              <div id="special_id_{{service_type.id}}" class="productivity-card-content none-div"> <!--Special-->
-                              {% for service_price_range in service_price_ranges %}
-                              {% if service_price_range.service_type == service_type %}
-                              {% if service_price_range.is_newkitchen or service_price_range.is_highprice_facade or service_price_range.is_highprice_window or service_price_range.upholstery_type == 'CHAIR' %}
-                              <div class="row productivity-card-items">
-                                    <div class="col-md-3 productivity-card-items-1">
-                                        {{service_price_range.name}}
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-2">
-                                        {{service_price_range.minimum_area|floatformat:'2'}}-{{service_price_range.maximum_area|floatformat:'2'}}
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-3">
-                                        {{service_price_range.price|floatformat:'3'}} KD
-                                    </div>
-                                    <div class="col-md-3 productivity-card-items-4">
-                                        <button onclick="edit_price_range(this);" class="img-button" data-service_type_name="{{service_price_range.service_type.name}}" data-service_type_id="{{service_price_range.service_type.id}}" data-id="{{service_price_range.id}}" data-name="{{service_price_range.name}}" data-minimum_area="{{service_price_range.minimum_area}}" data-maximum_area="{{service_price_range.maximum_area}}" data-price="{{service_price_range.price}}" data-unit_price="{{service_price_range.unit_price|default_if_none:''}}" data-is_newkitchen="{{service_price_range.is_newkitchen}}" data-is_highprice_facade="{{service_price_range.is_highprice_facade}}" data-is_highprice_window="{{service_price_range.is_highprice_window}}" data-upholstery_type="{{service_price_range.upholstery_type}}">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                        </button>
-                                        <button class="img-button" onclick="delete_price_range(this);" data-id="{{service_price_range.id}}">
-                                            <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                        </button>
-                                    </div>
-                                </div>
-                              {% endif %}
-                              {% endif %}
-                              {% endfor %}
-                              </div>
-
-                              <div id="veryspecial_id_{{service_type.id}}" class="productivity-card-content none-div"> <!-- very Special-->
-                                {% for service_price_range in service_price_ranges %}
-                                {% if service_price_range.service_type == service_type %}
-                                {% if service_price_range.upholstery_type == 'CURTAIN' %}
-                                  <div class="row productivity-card-items">
-                                      <div class="col-md-3 productivity-card-items-1">
-                                          {{service_price_range.name}}
-                                      </div>
-                                      <div class="col-md-3 productivity-card-items-2">
-                                          {{service_price_range.minimum_area|floatformat:'2'}}-{{service_price_range.maximum_area|floatformat:'2'}}
-                                      </div>
-                                      <div class="col-md-3 productivity-card-items-3">
-                                          {{service_price_range.price|floatformat:'3'}} KD
-                                      </div>
-                                      <div class="col-md-3 productivity-card-items-4">
-                                        <button onclick="edit_price_range(this);" class="img-button" data-service_type_name="{{service_price_range.service_type.name}}" data-service_type_id="{{service_price_range.service_type.id}}" data-id="{{service_price_range.id}}" data-name="{{service_price_range.name}}" data-minimum_area="{{service_price_range.minimum_area}}" data-maximum_area="{{service_price_range.maximum_area}}" data-price="{{service_price_range.price}}" data-unit_price="{{service_price_range.unit_price|default_if_none:''}}" data-is_newkitchen="{{service_price_range.is_newkitchen}}" data-is_highprice_facade="{{service_price_range.is_highprice_facade}}" data-is_highprice_window="{{service_price_range.is_highprice_window}}" data-upholstery_type="{{service_price_range.upholstery_type}}">
-                                              <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
-                                          </button>
-                                          <button class="img-button" onclick="delete_price_range(this);" data-id="{{service_price_range.id}}">
-                                              <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
-                                          </button>
-                                      </div>
+                                        <div class="productivity-card-sub-content" id="productivitycontent_{{service_type.id}}3" style="display: none;">
+                                        <h1 id="id_pro_value_{{service_productivity.id}}" >{{service_productivity.perhour_cleaning}} <span class="productivity-card-sub-content-text">sqm/man/hr</span></h1>
+                                        <input  id="id_pro_{{service_productivity.id}}" type="number" class="productivity-card-sub-input" placeholder=" " required="required">
+                                       </div>
+                                        {% endif %}
+                                        {% endif %}
+                                        {% endfor %}
                                   </div>
-                                {% endif %}
-                                {% endif %}
-                                {% endfor %}
-                                </div>
-
-                              <div class="addNewPrice">
-                                    <button class="border-button" onclick="add_price_range(this);" data-service_type_name="{{service_type.name}}" data-service_type_id="{{service_type.id}}"><i class="fa fa-plus-circle" aria-hidden="true"></i> Price Range</button>
-                              </div>
-
-                              <div class="mt-10">
-                                <h2 class="productivity-name"> Add-on</h2>
-                                <div class="productivity-card-content">
-                                    <div class="row productivity-card-items2">
-                                        <div style="font-weight: 600;" class="col-md-2 productivity-card-items-1">
-                                           Item
-                                        </div>
-                                        <div  style="font-weight: 600;" class="col-md-2 productivity-card-items-2">
-                                           Category Name
-                                        </div>
-                                        <div style="font-weight: 600;" class="col-md-2 productivity-card-items-3">
-                                           Size
-                                        </div>
-                                        <div style="font-weight: 600;" class="col-md-2 productivity-card-items-3">
-                                            Price
-                                         </div>
-                                         <div style="font-weight: 600;" class="col-md-2 productivity-card-items-3">
-                                            Productivity
-                                         </div>
-                                        <div class="col-md-2 productivity-card-items-4">
-                                    
-                                        </div>
+                                  <div class="productivity-tab">
+                                      <button id="normal_button_id_{{service_type.id}}" class="productivity-tab-item productivity-tab-border"  onclick="viewNormal({{service_type.id}})">{% if service_type.name == 'Upholstery Cleaning' %}Sofa{% elif service_type.name == 'Window Cleaning' %}Old Window{% elif service_type.name == 'Facade Cleaning' %}Old Facade{%elif service_type.name == 'Kitchen Cleaning'%}Old Kitchen{% else %}Normal{% endif %}</button>
+                                      {% if service_type.name == 'Upholstery Cleaning' or service_type.name == 'Kitchen Cleaning' or service_type.name == 'Facade Cleaning' or service_type.name == 'Window Cleaning' %}
+                                      <button id="special_button_id_{{service_type.id}}" class="productivity-tab-item " onclick="viewSpecial({{service_type.id}})">{% if service_type.name == 'Upholstery Cleaning' %}Chair{% elif service_type.name == 'Window Cleaning' %}New Window{% elif service_type.name == 'Facade Cleaning' %}New Facade{%elif service_type.name == 'Kitchen Cleaning'%}New Kitchen{% endif %}</button>
+                                      {% endif %}
+                                      {% if service_type.name == 'Upholstery Cleaning' %}
+                                      <button id="veryspecial_button_id_{{service_type.id}}" class="productivity-tab-item " onclick="viewVerySpecial({{service_type.id}})">Curtain</button>
+                                      {% endif %}
                                     </div>
-                                    {% for service_addon in service_addons %}
-                                    {% if service_type == service_addon.service_type %}
-                                    <div class="row productivity-card-items">
-                                        <div class="col-md-2 productivity-card-items-1">
-                                            {{service_addon.name}}
+    
+                                  <div id="normal_id_{{service_type.id}}" class="productivity-card-content"> <!--normal-->
+                                  {% for service_price_range in service_price_ranges %}
+                                  {% if service_price_range.service_type == service_type %}
+                                  {% if not service_price_range.is_newkitchen and not service_price_range.is_highprice_facade and not service_price_range.is_highprice_window and service_price_range.upholstery_type != 'CHAIR' and service_price_range.upholstery_type != 'CURTAIN' %}
+                                  <div class="row productivity-card-items">
+                                        <div class="col-md-3 productivity-card-items-1">
+                                            {{service_price_range.name}}
                                         </div>
-                                        <div class="col-md-2 productivity-card-items-2">
-                                            {{service_addon.category|default_if_none:''}}
+                                        <div class="col-md-3 productivity-card-items-2">
+                                            {{service_price_range.minimum_area|floatformat:'2'}}-{{service_price_range.maximum_area|floatformat:'2'}}
                                         </div>
-                                        <div class="col-md-2 productivity-card-items-3">
-                                            {{service_addon.size|default_if_none:''}}
+                                        <div class="col-md-3 productivity-card-items-3">
+                                            {{service_price_range.price|floatformat:'3'}} KD
                                         </div>
-                                        <div class="col-md-2 productivity-card-items-3">
-                                            {{service_addon.price|floatformat:'3'|default_if_none:''}} KD
-                                        </div>
-                                        <div class="col-md-2 productivity-card-items-3">
-                                            {{service_addon.productivity|default_if_none:''}}
-                                        </div>
-                                        <div class="col-md-2 productivity-card-items-4">
-                                            <button onclick="edit_add_on(this);" data-service_type_name="{{service_addon.service_type.name}}" data-service_type_id="{{service_addon.service_type.id}}" data-id="{{service_addon.id}}" data-name="{{service_addon.name}}" data-category="{{service_addon.category|default_if_none:''}}" data-size="{{service_addon.size|default_if_none:''}}" data-price="{{service_addon.price}}" data-productivity="{{service_addon.productivity}}" class="img-button" >
-                                                <img class="productivity-card-edit" src="/static/files/icons/edit.png">
+                                        <div class="col-md-3 productivity-card-items-4">
+                                            <button onclick="edit_price_range(this);" class="img-button" data-service_type_name="{{service_price_range.service_type.name}}" data-service_type_id="{{service_price_range.service_type.id}}" data-id="{{service_price_range.id}}" data-name="{{service_price_range.name}}" data-minimum_area="{{service_price_range.minimum_area}}" data-maximum_area="{{service_price_range.maximum_area}}" data-price="{{service_price_range.price}}" data-unit_price="{{service_price_range.unit_price|default_if_none:''}}" data-is_newkitchen="{{service_price_range.is_newkitchen}}" data-is_highprice_facade="{{service_price_range.is_highprice_facade}}" data-is_highprice_window="{{service_price_range.is_highprice_window}}" data-upholstery_type="{{service_price_range.upholstery_type}}">
+                                                <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
                                             </button>
-                                            <button class="img-button" onclick="delete_add_on(this);" data-id="{{service_addon.id}}">
-                                                <img class="productivity-card-edit" src="/static/files/icons/delete.png">
+                                            <button class="img-button" onclick="delete_price_range(this);" data-id="{{service_price_range.id}}">
+                                                <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
                                             </button>
                                         </div>
                                     </div>
+                                  {% endif %}
+                                  {% endif %}
+                                  {% endfor %}
+                                  </div>
+    
+    
+                                  <div id="special_id_{{service_type.id}}" class="productivity-card-content none-div"> <!--Special-->
+                                  {% for service_price_range in service_price_ranges %}
+                                  {% if service_price_range.service_type == service_type %}
+                                  {% if service_price_range.is_newkitchen or service_price_range.is_highprice_facade or service_price_range.is_highprice_window or service_price_range.upholstery_type == 'CHAIR' %}
+                                  <div class="row productivity-card-items">
+                                        <div class="col-md-3 productivity-card-items-1">
+                                            {{service_price_range.name}}
+                                        </div>
+                                        <div class="col-md-3 productivity-card-items-2">
+                                            {{service_price_range.minimum_area|floatformat:'2'}}-{{service_price_range.maximum_area|floatformat:'2'}}
+                                        </div>
+                                        <div class="col-md-3 productivity-card-items-3">
+                                            {{service_price_range.price|floatformat:'3'}} KD
+                                        </div>
+                                        <div class="col-md-3 productivity-card-items-4">
+                                            <button onclick="edit_price_range(this);" class="img-button" data-service_type_name="{{service_price_range.service_type.name}}" data-service_type_id="{{service_price_range.service_type.id}}" data-id="{{service_price_range.id}}" data-name="{{service_price_range.name}}" data-minimum_area="{{service_price_range.minimum_area}}" data-maximum_area="{{service_price_range.maximum_area}}" data-price="{{service_price_range.price}}" data-unit_price="{{service_price_range.unit_price|default_if_none:''}}" data-is_newkitchen="{{service_price_range.is_newkitchen}}" data-is_highprice_facade="{{service_price_range.is_highprice_facade}}" data-is_highprice_window="{{service_price_range.is_highprice_window}}" data-upholstery_type="{{service_price_range.upholstery_type}}">
+                                                <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
+                                            </button>
+                                            <button class="img-button" onclick="delete_price_range(this);" data-id="{{service_price_range.id}}">
+                                                <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
+                                            </button>
+                                        </div>
+                                    </div>
+                                  {% endif %}
+                                  {% endif %}
+                                  {% endfor %}
+                                  </div>
+    
+                                  <div id="veryspecial_id_{{service_type.id}}" class="productivity-card-content none-div"> <!-- very Special-->
+                                    {% for service_price_range in service_price_ranges %}
+                                    {% if service_price_range.service_type == service_type %}
+                                    {% if service_price_range.upholstery_type == 'CURTAIN' %}
+                                      <div class="row productivity-card-items">
+                                          <div class="col-md-3 productivity-card-items-1">
+                                              {{service_price_range.name}}
+                                          </div>
+                                          <div class="col-md-3 productivity-card-items-2">
+                                              {{service_price_range.minimum_area|floatformat:'2'}}-{{service_price_range.maximum_area|floatformat:'2'}}
+                                          </div>
+                                          <div class="col-md-3 productivity-card-items-3">
+                                              {{service_price_range.price|floatformat:'3'}} KD
+                                          </div>
+                                          <div class="col-md-3 productivity-card-items-4">
+                                            <button onclick="edit_price_range(this);" class="img-button" data-service_type_name="{{service_price_range.service_type.name}}" data-service_type_id="{{service_price_range.service_type.id}}" data-id="{{service_price_range.id}}" data-name="{{service_price_range.name}}" data-minimum_area="{{service_price_range.minimum_area}}" data-maximum_area="{{service_price_range.maximum_area}}" data-price="{{service_price_range.price}}" data-unit_price="{{service_price_range.unit_price|default_if_none:''}}" data-is_newkitchen="{{service_price_range.is_newkitchen}}" data-is_highprice_facade="{{service_price_range.is_highprice_facade}}" data-is_highprice_window="{{service_price_range.is_highprice_window}}" data-upholstery_type="{{service_price_range.upholstery_type}}">
+                                                  <img class="productivity-card-edit" src="{% static 'files/icons/edit.png' %}">
+                                              </button>
+                                              <button class="img-button" onclick="delete_price_range(this);" data-id="{{service_price_range.id}}">
+                                                  <img class="productivity-card-edit" src="{% static 'files/icons/delete.png' %}">
+                                              </button>
+                                          </div>
+                                      </div>
+                                    {% endif %}
                                     {% endif %}
                                     {% endfor %}
+                                    </div>
+    
+                                  <div class="addNewPrice">
+                                        <button class="border-button" onclick="add_price_range(this);" data-service_type_name="{{service_type.name}}" data-service_type_id="{{service_type.id}}"><i class="fa fa-plus-circle" aria-hidden="true"></i> Price Range</button>
+                                  </div>
+                                    </div>
+                                  
+    
+                                    <div class="col-md-6" style="">
+                                        <h2 class="productivity-name mt-10"> Add-on</h2>
+                                        <div class="productivity-card-content">
+                                            <div class="row productivity-card-items2">
+                                                <div style="font-weight: 600;" class="col-md-2 productivity-card-items-1">
+                                                Item
+                                                </div>
+                                                <div  style="font-weight: 600;" class="col-md-2 productivity-card-items-2">
+                                                Category Name
+                                                </div>
+                                                <div style="font-weight: 600;" class="col-md-2 productivity-card-items-3">
+                                                Size
+                                                </div>
+                                                <div style="font-weight: 600;" class="col-md-2 productivity-card-items-3">
+                                                    Price
+                                                </div>
+                                                <div style="font-weight: 600;" class="col-md-2 productivity-card-items-3">
+                                                    Productivity
+                                                </div>
+                                                <div class="col-md-2 productivity-card-items-4">
+                                            
+                                                </div>
+                                            </div>
+                                            {% for service_addon in service_addons %}
+                                            {% if service_type == service_addon.service_type %}
+                                            <div class="row productivity-card-items">
+                                                <div class="col-md-2 productivity-card-items-1">
+                                                    {{service_addon.name}}
+                                                </div>
+                                                <div class="col-md-2 productivity-card-items-2">
+                                                    {{service_addon.category|default_if_none:''}}
+                                                </div>
+                                                <div class="col-md-2 productivity-card-items-3">
+                                                    {{service_addon.size|default_if_none:''}}
+                                                </div>
+                                                <div class="col-md-2 productivity-card-items-3">
+                                                    {{service_addon.price|floatformat:'3'|default_if_none:''}} KD
+                                                </div>
+                                                <div class="col-md-2 productivity-card-items-3">
+                                                    {{service_addon.productivity|default_if_none:''}}
+                                                </div>
+                                                <div class="col-md-2 productivity-card-items-4">
+                                                    <button onclick="edit_add_on(this);" data-service_type_name="{{service_addon.service_type.name}}" data-service_type_id="{{service_addon.service_type.id}}" data-id="{{service_addon.id}}" data-name="{{service_addon.name}}" data-category="{{service_addon.category|default_if_none:''}}" data-size="{{service_addon.size|default_if_none:''}}" data-price="{{service_addon.price}}" data-productivity="{{service_addon.productivity}}" class="img-button" >
+                                                        <img class="productivity-card-edit" src="/static/files/icons/edit.png">
+                                                    </button>
+                                                    <button class="img-button" onclick="delete_add_on(this);" data-id="{{service_addon.id}}">
+                                                        <img class="productivity-card-edit" src="/static/files/icons/delete.png">
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    
+                                        <div  class="addNewPrice">
+                                            <button style="margin-left: 15px;" class="border-button" onclick="add_add_on(this);" data-service_type_name="{{service_type.name}}" data-service_type_id="{{service_type.id}}"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add More</button>
+                                        </div>
+                                    </div>
+    
+    
                                 </div>
-                              </div>
-                              <div class="addNewPrice">
-                                <button class="border-button" onclick="add_add_on(this);" data-service_type_name="{{service_type.name}}" data-service_type_id="{{service_type.id}}"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add More</button>
-                          </div>
-
                             </div>
+                           
                         </div>
                         {% endfor %}
                        
