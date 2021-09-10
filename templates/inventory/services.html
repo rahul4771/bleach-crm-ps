@@ -163,14 +163,14 @@
 
                                         <div class="d-flex inv-hide" id="id_area_edit_1">
                                             <div style="width: 50%; " class="inv-input-container h-30"> 
-                                                <input type="number"   class="w-p-100 inv-in" name="attributes">
+                                                <input type="number"   class="w-p-100 inv-in" name="area1" id="id_area1">
                                                 <div class="av-font" style="margin-left:5px; margin-top: 5px; font-size:18px;">sqm</div>
                                             </div> 
                                             <button style="margin-left: 10px;" id="id_editDone" class="inv-blue-btn " type="submit" onclick="closeditShow(1)">Done </button>
                                         </div>
                                         <div class="d-flex " id="id_area_div_1">
-                                            <div class="model-input-name" id="id_area1" >
-                                                300
+                                            <div class="model-input-name service_area" >
+                                                0
                                             </div>
                                           <div class="edit-div" style="top: 25px !important;">
                                               <img onclick="showEditModal(1)" id="id_editButton"  class="inv-edit-img"
@@ -299,14 +299,14 @@
                                           </div> -->
                                           <div class="d-flex inv-hide" id="id_area_edit_2">
                                             <div style="width: 50%; " class="inv-input-container h-30"> 
-                                                <input type="number"   class="w-p-100 inv-in" name="attributes">
+                                                <input type="number"   class="w-p-100 inv-in" name="area2" id="id_area2">
                                                 <div class="av-font" style="margin-left:5px; margin-top: 5px; font-size:18px;">sqm</div>
                                             </div> 
                                             <button style="margin-left: 10px;" id="id_editDone" class="inv-blue-btn " type="submit" onclick="closeditShow(2)">Done </button>
                                         </div>
                                         <div class="d-flex " id="id_area_div_2">
-                                            <div class="model-input-name" id="id_area1" >
-                                                300
+                                            <div class="model-input-name service_area" >
+                                                0
                                             </div>
                                           <div class="edit-div" style="top: 25px !important;">
                                               <img onclick="showEditModal(2)" id="id_editButton2"  class="inv-edit-img"
@@ -409,14 +409,14 @@
 
                                            <div class="d-flex inv-hide" id="id_area_edit_3">
                                             <div style="width: 50%; " class="inv-input-container h-30"> 
-                                                <input type="number"   class="w-p-100 inv-in" name="attributes">
+                                                <input type="number"   class="w-p-100 inv-in" name="area3" id="id_area3">
                                                 <div class="av-font" style="margin-left:5px; margin-top: 5px; font-size:18px;">sqm</div>
                                             </div> 
                                             <button style="margin-left: 10px;" id="id_editDone3" class="inv-blue-btn " type="submit" onclick="closeditShow(3)">Done </button>
                                         </div>
                                         <div class="d-flex " id="id_area_div_3">
-                                            <div class="model-input-name" id="id_area1" >
-                                                300
+                                            <div class="model-input-name service_area" >
+                                                0
                                             </div>
                                           <div class="edit-div" style="top: 25px !important;">
                                               <img onclick="showEditModal(3)" id="id_editButton3"  class="inv-edit-img"
@@ -516,14 +516,14 @@
                                           </div> -->
                                           <div class="d-flex inv-hide" id="id_area_edit_4">
                                             <div style="width: 50%; " class="inv-input-container h-30"> 
-                                                <input type="number"   class="w-p-100 inv-in" name="attributes">
+                                                <input type="number"   class="w-p-100 inv-in" name="area4" id="id_area4">
                                                 <div class="av-font" style="margin-left:5px; margin-top: 5px; font-size:18px;">sqm</div>
                                             </div> 
                                             <button style="margin-left: 10px;" id="id_editDone4" class="inv-blue-btn " type="submit" onclick="closeditShow(4)">Done </button>
                                         </div>
                                         <div class="d-flex " id="id_area_div_4">
-                                            <div class="model-input-name" id="id_area1" >
-                                                300
+                                            <div class="model-input-name service_area" >
+                                                0
                                             </div>
                                           <div class="edit-div" style="top: 25px !important;">
                                               <img onclick="showEditModal(4)" id="id_editButton4"  class="inv-edit-img"
@@ -1007,7 +1007,19 @@ function editShow(id){
 
 }
 
-function closeditShow(id){
+
+async function closeditShow(id){
+
+    var area = $('#id_area'+id+'').val();
+    var service_type = $('#id_name_cleaning').val();
+    //console.log(area,service_type,"ct")
+
+    var result = await _get('api/inventory-service-area/?service_type='+service_type+'&area='+area);
+         if(result.status == 200){
+             $('.service_area').text(result.data.area_size);
+             console.log(result.data.area_size,"cons")
+         }
+    
 
     document.getElementById('id_area_div_'+id).style.display  = "flex";
     document.getElementById('id_area_edit_'+id).style.display  = "none";
@@ -1271,9 +1283,11 @@ function selectActive(d,id,name){
          if(result.status == 200){
 
             console.log(result.data.area_size,"arsiz")
-            $('.service_area').val(result.data.area_size);
+            $('.service_area').text(result.data.area_size);
 
             if (category == 'detailedCleaning'){
+
+                $('#id_area1').val(result.data.area_size);
 
                 if (result.data.service_items.length > 0){
                     $(".item-table1 tr:not(:first)").remove(); 
@@ -1285,6 +1299,7 @@ function selectActive(d,id,name){
                     $(".item-table1 tr:not(:first)").remove(); 
                 }
             }else if(category == 'specialCare'){
+                $('#id_area2').val(result.data.area_size);
                 if (result.data.service_items.length > 0){
                     $(".item-table2 tr:not(:first)").remove(); 
                     var edit = "edit";
@@ -1295,6 +1310,7 @@ function selectActive(d,id,name){
                     $(".item-table2 tr:not(:first)").remove(); 
                 }
             }else if(category == 'kitchenCleaning'){
+                $('#id_area3').val(result.data.area_size);
                 if (result.data.service_items.length > 0){
                     $(".item-table3 tr:not(:first)").remove(); 
                     var edit = "edit";
@@ -1305,6 +1321,7 @@ function selectActive(d,id,name){
                     $(".item-table3 tr:not(:first)").remove(); 
                 }
             }else{
+                $('#id_area4').val(result.data.area_size);
                 if (result.data.service_items.length > 0){
                     $(".item-table4 tr:not(:first)").remove(); 
                     var edit = "edit";
@@ -1320,5 +1337,6 @@ function selectActive(d,id,name){
             showNotification('No Data','error')
          }
     }
+
 </script>
 {% endblock %}

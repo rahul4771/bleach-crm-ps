@@ -1985,6 +1985,33 @@ class InventoryServiceRecipeAPI(APIView):
 			response_dict['area_size'] = 0
 		return Response(response_dict,HTTP_200_OK)
 
+class InventoryServiceAreaAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+		response_dict = {}
+		service_type = request.GET.get('service_type')
+		area = request.GET.get('area')
+		
+		print(service_type,area,"attrsed3")
+		try:
+			service = ServiceRecipe.objects.get(service=service_type)
+			service.area_size = area
+			service.save()
+		except:
+			service = ServiceRecipe.objects.create(service=service_type)
+			service.area_size = area
+			service.save()
+		
+		print(service,"invo")
+
+		if service:
+			response_dict['area_size'] = service.area_size
+		else:
+			response_dict['area_size'] = 0
+		return Response(response_dict,HTTP_200_OK)
+
 
 class DiscountSettingsAPI(APIView):
 	permission_classes  	= (AllowAny,)

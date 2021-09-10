@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.views import View
 from bleach_crm_ps.permissions import IsInventoryAdmin,IsInventoryAdminUser
-from inventory.models import Category,Segment,Line,Attribute,AttributeValue,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeItems,PurchaseOrder,PurchaseOrderItems
+from inventory.models import Category,Segment,Line,Attribute,AttributeValue,ItemAttributes,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeItems,PurchaseOrder,PurchaseOrderItems
 from django.contrib import messages
 import re
 from datetime import date,datetime,timedelta
@@ -486,13 +486,18 @@ class InventoryItems(IsInventoryAdmin,View):
 
         if int(available_item_units) < int(reserve_units):
             inventory_item.item_status = 'about_to_finish'
-        elif int(available_item_units) == 0 and int(reserve_units) == 0 :
+        elif int(available_item_units) == 0 :
             inventory_item.item_status = 'out_of_stock'
         else:
             inventory_item.item_status = 'available'
         inventory_item.save()
 
         attributes = Attribute.objects.filter(attribute_category=inventory_item.item_category,attribute_segment=inventory_item.item_segment,attribute_line=inventory_item.item_line,status=True).prefetch_related(Prefetch('value_attribute',queryset=AttributeValue.objects.filter(status=True),to_attr='attribute_values'))
+
+        try:
+            item_attributes = ItemAttributes.objects.filter(item=inventory_item)
+        except:
+            item_attributes = None
 
         units       = ItemUnit.objects.all()
         unit_latest  = units.last()
@@ -502,7 +507,7 @@ class InventoryItems(IsInventoryAdmin,View):
         else:
             new_unit_code = 'UNIT9001'
 
-        return render(request,'inventory/item.html',{"stores":stores,"inventory_item":inventory_item,"attributes":attributes,"categories":categories,"item_units":item_units,"new_unit_code":new_unit_code})
+        return render(request,'inventory/item.html',{"stores":stores,"item_attributes":item_attributes,"inventory_item":inventory_item,"attributes":attributes,"categories":categories,"item_units":item_units,"new_unit_code":new_unit_code})
 
     def post(self,request,item_id):
         action =request.POST.get('action')
@@ -540,10 +545,37 @@ class InventoryItems(IsInventoryAdmin,View):
 
             messages.success(request,"Item Details Updated !")
 
+        if action == 'attribute_edit':
+            attribute_ids = request.POST.getlist('attribute_ids')
+            print(attribute_ids,"ids")
+
+            item = InventoryItem.objects.get(id=item_id)
+
+            for attr_id in attribute_ids:
+                attribute = Attribute.objects.get(id=int(attr_id))
+                attribute_value_id = request.POST.get('attribute_value'+attr_id+'')
+
+                print(attribute,attribute_value_id,"cad")
+                attribute_value = AttributeValue.objects.get(id=int(attribute_value_id))
+
+                ItemAttributes.objects.get_or_create(item=item,attribute=attribute)
+                item_attribute = ItemAttributes.objects.get(item=item,attribute=attribute)
+                item_attribute.attribute_value = attribute_value
+                item_attribute.save()
+                
+            messages.success(request,"Attributes updated !")
+
+
         if action == "add_unit":
             store_id = request.POST.get('store')
             purchase_date = request.POST.get('purchase_date')
             expiry_date = request.POST.get('expiry_date')
+            
+            no_expiry = request.POST.get('no_expiry')
+            if no_expiry == 'on':
+                expiry = True
+            else:
+                expiry = True
             unit_price = request.POST.get('unit_price')
             status = request.POST.get('unit_status')
 
@@ -562,24 +594,29 @@ class InventoryItems(IsInventoryAdmin,View):
                 new_unit_code = item_code + '-1'
             print(new_unit_code,"lop")
 
-            # units       = ItemUnit.objects.all()
-            # unit_latest  = units.last()
-            # if unit_latest:
-            #     code_number  =  int(re.findall(r'(\d+)', unit_latest.unit_code)[0]) + 1
-            #     new_unit_code = 'UNIT'+str(code_number)
-            # else:
-            #     new_unit_code = 'UNIT9001'
-
-            ItemUnit.objects.create(
-            item = item,
-            name='name',
-            store=store,
-            unit_code = new_unit_code,
-            purchase_date = purchase_date,
-            expiry_date = expiry_date,
-            unit_price = unit_price,
-            status = status
-            )
+            if not expiry_date:
+                ItemUnit.objects.create(
+                item = item,
+                name='name',
+                store=store,
+                unit_code = new_unit_code,
+                purchase_date = purchase_date,
+                no_expiry = expiry,
+                unit_price = unit_price,
+                status = status
+                )
+            else:
+                ItemUnit.objects.create(
+                item = item,
+                name='name',
+                store=store,
+                unit_code = new_unit_code,
+                purchase_date = purchase_date,
+                expiry_date = expiry_date,
+                no_expiry = expiry,
+                unit_price = unit_price,
+                status = status
+                )
             messages.success(request,"Unit Added Successfully !")
 
         if action == "edit_unit":
@@ -587,15 +624,25 @@ class InventoryItems(IsInventoryAdmin,View):
             store_id = request.POST.get('store')
             purchase_date = request.POST.get('purchase_date')
             expiry_date = request.POST.get('expiry_date')
+            no_expiry = request.POST.get('no_expiry')
+            if no_expiry == 'on':
+                expiry = True
+            else:
+                expiry = True
             unit_price = request.POST.get('unit_price')
             status = request.POST.get('unit_status')
+            print(no_expiry,"nox")
 
             item = InventoryItem.objects.get(id=item_id)
+            store = Store.objects.get(id=int(store_id))
 
             unit = ItemUnit.objects.get(id=int(unit_id))
             
+            unit.store = store
             unit.purchase_date = purchase_date
-            unit.expiry_date = expiry_date
+            if expiry_date:
+                unit.expiry_date = expiry_date
+            unit.expiry = expiry
             unit.unit_price = unit_price
             unit.status = status
             unit.save()
@@ -612,13 +659,42 @@ class InventoryItems(IsInventoryAdmin,View):
 
             inventory_item = InventoryItem.objects.get(id=item_id)
 
-            InventoryItemImages.objects.create(inventory_item=inventory_item,item_image=image)
+            new_image = InventoryItemImages.objects.create(inventory_item=inventory_item,item_image=image)
+
+            default_image = InventoryItemImages.objects.filter(inventory_item__id=item_id,is_default_image=True)
+
+            if not default_image:
+                new_image.is_default_image = True
+            else:
+                pass
+
             messages.success(request,"Image Added successfully!")
+
+        if action == 'set_default_image':
+            image_id = request.POST.get('imageid')
+
+            inventory_item_image = InventoryItemImages.objects.get(id=image_id)
+            InventoryItemImages.objects.filter(inventory_item__id=item_id).update(is_default_image=False)
+            inventory_item_image.is_default_image = True
+            inventory_item_image.save()
+
+            messages.success(request,"Image set as default!")
 
         if action == 'delete_image':
             image_id = request.POST.get('item_image_id')
 
-            inventory_item = InventoryItemImages.objects.get(id=image_id).delete()
+            delete_image = InventoryItemImages.objects.get(id=image_id)
+            if delete_image.is_default_image == True:
+                default_image = InventoryItemImages.objects.filter(inventory_item__id=item_id).first()
+                if default_image:
+                    default_image.is_default_image = True
+                    default_image.save()
+                else:
+                    pass
+            else:
+                pass
+
+            delete_image.delete()
 
             messages.success(request,"Image Deleted successfully!")
 

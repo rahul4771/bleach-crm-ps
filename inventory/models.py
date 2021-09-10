@@ -87,7 +87,7 @@ class InventoryItem(models.Model):
 class InventoryItemImages(models.Model):
     inventory_item  = models.ForeignKey(InventoryItem,blank=False,null=False,related_name='image_item')
     item_image      = models.FileField(upload_to='inventory_item_images/',blank=True,null=True,max_length=1000)
-    is_default_image= models.BooleanField()
+    is_default_image= models.BooleanField(default=False,blank=False,null=False)
     created         = models.DateTimeField(auto_now_add=True)   
 
     def __unicode__(self):
@@ -103,6 +103,7 @@ class ItemUnit(models.Model):
     store           =   models.ForeignKey(Store,blank=True,null=True,related_name='unit_store')
     purchase_date   =   models.DateField(blank=True,null=True)
     expiry_date     =   models.DateField(blank=True,null=True)
+    no_expiry       =   models.BooleanField(default=False,blank=False,null=False)
     unit_price      =   models.CharField(max_length=10,blank=False,null=False)
     status          =   models.CharField(max_length=50,default='active',blank=False,null=False,choices=UNIT_STATUS_CHOICES)
     created         =   models.DateTimeField(auto_now_add=True)
@@ -113,7 +114,6 @@ class ItemUnit(models.Model):
     def __str__(self):
         return self.item.name
 
-
 class Attribute(models.Model):
     # attribute_type      =   models.CharField(max_length=100,blank=False,null=False,choices=ATTRIBUTE_TYPE_CHOICES)
     attribute_category  =   models.ForeignKey(Category,blank=True,null=True,related_name='attribute_category')
@@ -121,7 +121,7 @@ class Attribute(models.Model):
     attribute_line      =   models.ForeignKey(Line,blank=True,null=True,related_name='attribute_line')
     name                =   models.CharField(max_length=100,blank=False,null=False)
     status              =   models.BooleanField(default=True,blank=False,null=False)
-    # created             =   models.DateTimeField(auto_now_add=True)
+    created             =   models.DateTimeField(auto_now_add=True)
     def __unicode__(self):
         return str(self.name)
 
@@ -131,13 +131,26 @@ class Attribute(models.Model):
 class AttributeValue(models.Model):
     attribute           =   models.ForeignKey(Attribute,blank=True,null=True,related_name='value_attribute')
     name                =   models.CharField(max_length=100,blank=False,null=False)
+    is_selected         =   models.BooleanField(default=False,blank=False,null=False)
     status              =   models.BooleanField(default=True,blank=False,null=False)
-    # created             =   models.DateTimeField(auto_now_add=True)
+    created             =   models.DateTimeField(auto_now_add=True)
     def __unicode__(self):
         return str(self.name)
 
     def __str__(self):
         return self.name
+
+class ItemAttributes(models.Model):
+    item                =   models.ForeignKey(InventoryItem,blank=True,null=True,related_name='inventory_item')
+    attribute           =   models.ForeignKey(Attribute,blank=True,null=True,related_name='inventory_item_attribute')
+    attribute_value     =   models.ForeignKey(AttributeValue,blank=True,null=True,related_name='inventory_item_attribute_value')
+    created             =   models.DateTimeField(auto_now_add=True)
+    def __unicode__(self):
+        return str(self.item.name)
+
+    def __str__(self):
+        return self.item.name
+
 
 class Bundle(models.Model):
     name                =   models.CharField(max_length=100,blank=False,null=False)
