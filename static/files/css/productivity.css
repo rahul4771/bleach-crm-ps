@@ -10,9 +10,9 @@
   border: none;
 }
 .btn-submit:hover{
-  background: none;
-  border: none;
-  color: #fff;
+  background: none !important;
+  border: none !important;
+  color: #fff !important;
 }
 .productivity-card {
   position: relative;
