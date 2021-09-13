@@ -1,4 +1,24 @@
 /*  */
+.addon-card{
+  border: 1px solid #BEBEBE;
+border-radius: 4px;
+padding:10px;
+}
+.addon-price{
+  background: #EDF1F6 0% 0% no-repeat padding-box;
+  padding: 8px;
+    font-size: 14px;
+}
+.addon-details{
+  color:#434343;
+  font-weight:400;
+}
+.addon-title{
+  font-size:12px;
+}
+.addon-heading{
+  font-size:16px;
+}
 .clean-img-head {
   letter-spacing: 0px;
   color: #434343;
