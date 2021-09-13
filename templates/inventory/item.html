@@ -226,6 +226,10 @@
 
                 <div class="row mt-30 " style="font-size: 16px; margin-left: 0px;">
                     <div class="col-md-6">
+                        <textarea class="inv-hide" id="id_des_text" name="description" style="width: 100%; border-radius: 5px;" rows="4">vr</textarea>
+                        <span id="id_des_val" class="av-font ">{{inventory_item.description|default_if_none:"-"}}</span> 
+                     </div>
+                     <div class="col-md-6">
                         <div class="col-md-12 inv-item-card2"  style="position: relative;">
                             <div class="edit-div" style="margin-top: 5px; margin-right: 5px;">
                                 <img id="id_editButton" onclick="editItemDetials()" class="inv-edit-img"
@@ -247,10 +251,6 @@
                             {% endfor %}
     
                         </div>
-                     </div>
-                     <div class="col-md-6">
-                        <textarea class="inv-hide" id="id_des_text" name="description" style="width: 100%; border-radius: 5px;" rows="4">vr</textarea>
-                        <span id="id_des_val" class="av-font ">{{inventory_item.description|default_if_none:"-"}}</span>
                      </div>
                     </form>
                     
