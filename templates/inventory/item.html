@@ -219,18 +219,19 @@
                 </div>
                 <div class="row mt-20">
                     <div class="col-md-12" style="position: relative;">
-                      <div class="edit-div">
-                          <img id="id_editButton" onclick="editItemDetials()" class="inv-edit-img"
-                          src="{% static 'files/icons/edit.png' %}">
-                        
-                      </div>
+                      
                     </div>
                 </div>
                 
 
                 <div class="row mt-30 " style="font-size: 16px; margin-left: 0px;">
                     <div class="col-md-6">
-                        <div class="col-md-12 inv-item-card2">
+                        <div class="col-md-12 inv-item-card2"  style="position: relative;">
+                            <div class="edit-div" style="margin-top: 5px; margin-right: 5px;">
+                                <img id="id_editButton" onclick="editItemDetials()" class="inv-edit-img"
+                                src="{% static 'files/icons/edit.png' %}">
+                              
+                            </div>
 
                             <h4><b>Attributes</b></h4>
                             {% for attribute in item_attributes %}
