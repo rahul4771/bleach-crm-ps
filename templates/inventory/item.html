@@ -109,7 +109,7 @@
                                 
                                <div class="row" style="margin-left: 0px; margin-top: 20px;">
                                 <div class="col-md-3 pl-0">
-                                    <div class="inv-item-head-sub">Category</div>
+                                    <div class="inv-item-head-sub" style="color: #707070;">Category</div>
                                     <div class="inv-item-head-sub-2 mt-20" id="id_cat" >
                                         <span id="id_cat_val"  class="av-font">  {{inventory_item.item_category.name}}</span>
                                        
@@ -123,7 +123,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-3 pl-0 m-mt-10">
-                                    <div class="inv-item-head-sub">Segment</div>
+                                    <div class="inv-item-head-sub" style="color: #707070;">Segment</div>
                                     <div class="inv-item-head-sub-2 mt-20">
                                         <span id="id_seg_val"  class="av-font">  {{inventory_item.item_segment.name|default_if_none:'-'}}</span>
                                        
@@ -136,7 +136,7 @@
                                 
                                 </div> 
                                 <div class="col-md-3 pl-0 m-mt-10">
-                                    <div class="inv-item-head-sub">Line</div>
+                                    <div class="inv-item-head-sub" style="color: #707070;"> Line</div>
                                     <div class="inv-item-head-sub-2 mt-20">
                                         <span id="id_line_val" class="av-font">  {{inventory_item.item_line.name|default_if_none:'-'}}</span>
                                        
@@ -146,8 +146,8 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-3 pl-0 m-mt-10">
-                                    <div class="inv-item-head-sub">Unit Price</div>
+                                <div class="col-md-3 pl-0 m-mt-10" >
+                                    <div class="inv-item-head-sub" style="color: #707070;">Unit Price</div>
                                     <div class="inv-item-head-sub-2 mt-20">
                                         <span style="color: #0085C9;"  class="av-font">  {{inventory_item.total_unit_price|floatformat:3}} KD </span>
                                        
