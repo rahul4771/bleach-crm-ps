@@ -3609,7 +3609,10 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 						return Response(response_dict,HTTP_200_OK)
 					
 					#create kenotes
-					keynotes_dict = sections_dict[key]['keynotes']
+					try:
+						keynotes_dict = sections_dict[key]['keynotes']
+					except:
+						keynotes_dict = None
 					if keynotes_dict:
 						for key in keynotes_dict.keys():
 							keynote_save_serializer = EvaluationSectionKeynoteSerializer(data=keynotes_dict[key])
@@ -3629,7 +3632,10 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 								return Response(response_dict,HTTP_200_OK)
 
 					#create add-ons
-					addons_dict = sections_dict[key]['addons']
+					try:
+						addons_dict = sections_dict[key]['addons']
+					except:
+						addons_dict = None
 					if addons_dict:
 						for key in addons_dict.keys():
 							addons_save_serializer = EvaluationSectionAddonSerializer(data=addons_dict[key])
@@ -4163,7 +4169,10 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase2(APIView):
 					return Response(response_dict,HTTP_200_OK)
 				
 				#create kenotes
-				keynotes_dict = sections_dict[key]['keynotes']
+				try:
+					keynotes_dict = sections_dict[key]['keynotes']
+				except:
+					keynotes_dict = None					
 				if keynotes_dict:
 					for key in keynotes_dict.keys():
 						keynote_save_serializer = EvaluationSectionKeynoteSerializer(data=keynotes_dict[key])
@@ -4183,7 +4192,10 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase2(APIView):
 							return Response(response_dict,HTTP_200_OK)
 
 				#create add-ons
-				addons_dict = sections_dict[key]['addons']
+				try:
+					addons_dict = sections_dict[key]['addons']
+				except:
+					addons_dict = None
 				if addons_dict:
 					for key in addons_dict.keys():
 						addons_save_serializer = EvaluationSectionAddonSerializer(data=addons_dict[key])
