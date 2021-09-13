@@ -1136,7 +1136,7 @@ def statement_of_account(request,client_id):
 						"invoice_no":order.order_no,
 						"details":"Cleaning Services",
 						"amount":order.total_amount,
-						"credit":order.amount_paid,
+						"credit":order.total_amount,
 						"debit":""
 					})
 
