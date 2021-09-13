@@ -438,6 +438,7 @@ class EvaluationSectionAddons(models.Model):
 	addon_cost 	         = models.FloatField(blank=True,null=True)
 	quantity 		   	 = models.CharField(max_length=100,blank=True,null=True)
 	addon_net_cost     	 = models.FloatField(blank=True,null=True)
+	size                 = models.CharField(max_length=100,blank=True,null=True)
 	other_details        = models.CharField(max_length=1000,blank=True,null=True)
 
 	is_active            = models.BooleanField(null=False,blank=True,default=True)
