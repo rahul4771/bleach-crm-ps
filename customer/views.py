@@ -1129,7 +1129,8 @@ def statement_of_account(request,client_id):
 
 		
 	for order in customer_orders:
-		if order.evaluation.payment_method != 'SUBSCRIPTION' and order.order_status == 'ORDER_CLOSED':
+		# if order.evaluation.payment_method != 'SUBSCRIPTION' and order.order_status == 'ORDER_CLOSED':
+		if order.evaluation.payment_method != 'SUBSCRIPTION' and order.completed_cleaning_count >= 1 :
 			accounts_list.append({
 						"date":order.created.date(),
 						"invoice_no":order.order_no,
