@@ -3732,9 +3732,12 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 			new_invoice_no 		 = str(timezone.now().year)+'00001'
 
 		try:
-			order              = Order.objects.get(evaluation=evaluation)
+			order           = Order.objects.get(evaluation=evaluation)
 		except:
-			order              = Order.objects.create(evaluation=evaluation,order_no=evaluation.evaluation_id,payment_status='PENDING',invoice_no=new_invoice_no)
+			order           = None
+			
+		if not order:		
+			order       = Order.objects.create(evaluation=evaluation,order_no=evaluation.evaluation_id,payment_status='PENDING',invoice_no=new_invoice_no)
 
 		###testing availability ####
 		test_schedules_dict = list(request.data.get("service_details").values())[0]['schedule_details']
