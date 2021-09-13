@@ -2908,7 +2908,7 @@ responsive:{
       groupData[i]={...this.serviceDetails.service_details[data[i]]}
       totalCost=totalCost+this.serviceDetails.service_details[data[i]].total_cost
     }
-    await this.seperateBookRequest(posturl,totalCost,groupData)
+    var res=await this.seperateBookRequest(posturl,totalCost,groupData)
 
 
   }
@@ -2942,11 +2942,13 @@ responsive:{
         this.responseText=response.data.Error
         this.snackbar=true
       }
+      return response
       
     })
      .catch((error) => {
       this.responseText=error
       console.log(error);
+      return error
     });
   },
   bookCustService(){
