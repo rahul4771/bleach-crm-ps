@@ -1188,7 +1188,6 @@ const app=  new Vue({
 
                       }
                       if(slotData.color=='not-approved-status-bg'){
-                        if(user_type!='SENIORTEAMLEADER'){
                           this.parsedSlots.push(slotData)
                           var slotFormatted=moment(slot).format('hh:mm A')
                     
@@ -1240,7 +1239,6 @@ const app=  new Vue({
                         slots.push(12)
                         this.slot["12"].slots.push(slotData)
                       }
-                        }
                       }
                       else{
                         
