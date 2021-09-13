@@ -9,6 +9,9 @@ padding:10px;
   padding: 8px;
     font-size: 14px;
 }
+.addon-qty{
+  font-size:12px;
+}
 .addon-details{
   color:#434343;
   font-weight:400;
