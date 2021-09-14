@@ -1532,3 +1532,22 @@ text-align: center;
     width: 90% !important;
 }
 }
+.payment-card{
+  float: right;
+  background: #EDF1F6 0% 0% no-repeat padding-box;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.payment-card h1{ 
+  color: #737373;
+  font-size: 22px !important;
+  font-weight: 400;
+  margin: 0 !important;
+  padding: 0 0 6px 0 !important;
+}
+.payment-card-amount{
+  color: #737373;
+  font-size: 22px !important;
+  font-weight: 400;
+}
