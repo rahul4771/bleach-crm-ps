@@ -125,7 +125,7 @@ class InventorySegmentSerializer(serializers.ModelSerializer):
 from datetime import timedelta,date,datetime
 
 from order.models import Order,FollowUp,Investigation,FollowUpSectionKeynote,FollowUpSection
-from evaluator.models import EvaluationDetails,EvaluationBook,EvaluationBookSection,EvaluationSectionKeynote
+from evaluator.models import EvaluationDetails,EvaluationBook,EvaluationBookSection,EvaluationSectionKeynote,EvaluationSectionAddons
 from senior_team_leader.models import OrderScheduler,FollowUpScheduler,CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember
 from agent.serializers import UserProfileShowSerializer,ServiceTypeShowSerializer
 from customer.serilizers import EvaluationSerializer
@@ -141,6 +141,11 @@ class KeynoteAPISerializer(serializers.ModelSerializer):
         model  = EvaluationSectionKeynote
         fields = ('id','sub_area','quantity','completion_status')
 
+class AddonAPISerializer(serializers.ModelSerializer):
+    class Meta:
+        model  = EvaluationSectionAddons
+        fields = ('id','name','quantity','addon_net_cost','size')
+
 
 
 class EvaluationDetailsAPISerializer(serializers.ModelSerializer):
@@ -152,9 +157,10 @@ class EvaluationDetailsAPISerializer(serializers.ModelSerializer):
 
 class SectionAPISerializer(serializers.ModelSerializer):
     keynotesections = KeynoteAPISerializer(read_only=True,many=True)
+    addonsections   = AddonAPISerializer(read_only=True,many=True)
     class Meta:
         model  = EvaluationBookSection
-        fields = ('section_name','category','dirt_level','size','quantity','unit','age','floor','apartment','room','wall_type','ceiling_type','floor_type','material','colour','cause_of_stain','age_of_stain','cement_residue','oil_residue','hall_size','window_side','new_kitchen','is_highprice_facade','is_highprice_window','upholstery_type','vacuuming','section_cost','section_cleanings','section_net_cost','keynotesections')
+        fields = ('section_name','category','dirt_level','size','quantity','unit','age','floor','apartment','room','wall_type','ceiling_type','floor_type','material','colour','cause_of_stain','age_of_stain','cement_residue','oil_residue','hall_size','window_side','new_kitchen','is_highprice_facade','is_highprice_window','upholstery_type','vacuuming','section_cost','section_cleanings','section_net_cost','keynotesections','addonsections')
 
 
 
