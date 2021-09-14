@@ -1462,47 +1462,27 @@
 
                                             {% if section.evaluationbooksectionkeynotes %}
 
-                                            {% for keynote in section.evaluationbooksectionkeynotes %}
-                                            
+                                            {% for keynote in section.evaluationbooksectionkeynotes %}                                            
                                             {% if forloop.counter|divisibleby:2 %}
                                             {% else %}
-                                                {% if keynote.sub_area != 'kitchen' %}
                                                 <div class="col-md-4 ml-0 ">
                                                     <div class="clean-section-card">
                                                         <p>{{keynote.sub_area}}<span class="c-text2">{{keynote.quantity}}</span></p>
                                                     </div>
                                                 </div>
-                                                {% endif %}
-
-                                            {% endif %}
-
-                                            {% if keynote.sub_area == 'kitchen' %}
-                                            {% ifchanged keynote.sub_area %}
-                                            <div class="col-md-4 ml-0 ">
-                                                <div class="clean-section-card">
-                                                    <p>Kitchen<span class="c-text2">{{section.kitchen_keynote}}</span></p>
-                                                </div>
-                                            </div>
-                                            {% endifchanged %}
-                                            {% endif %}
-                                            
+                                            {% endif %}                                            
                                             {% endfor %}
                                             
-                                            
-                                            
-                                            {% for keynote in section.evaluationbooksectionkeynotes %}
-                                            
-                                            {% if forloop.counter|divisibleby:2 %}
-                                                {% if keynote.sub_area != 'kitchen' %} 
+                                                                                        
+                                            {% for keynote in section.evaluationbooksectionkeynotes %}                                            
+                                            {% if forloop.counter|divisibleby:2 %} 
                                                 <div class="col-md-4 ml-0 ">
                                                 <div class="clean-section-card">
                                                     <p>{{keynote.sub_area}}<span class="c-text2">{{keynote.quantity}}</span></p>
                                                 </div>
-                                                </div>
-                                                {% endif %} 
+                                                </div> 
                                             {% else %}
-                                            {% endif %}
-                                            
+                                            {% endif %}                                            
                                             {% endfor %}
                                             
                                             
@@ -1510,13 +1490,13 @@
                                         </div>
                                         <!-- section keynote details ends here -->
                                          <!-- section addon details starts here--> 
-                                      {% if section.addons %}
+                                      {% if section.sectionaddons %}
                                       <div class="col-md-12 mb-20 ">
                                           <div class="mt-20 addon-heading">
                                               Add-ons
                                           </div>
                                             <div class="row mt-10">
-                                                {% for addon in section.addons %}
+                                                {% for addon in section.sectionaddons %}
                                                 <div class="col-md-3 mt-10">
                                                     <div class="addon-card">
                                                         <div class="addon-title">{{addon.name}}</div>
