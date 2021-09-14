@@ -1509,79 +1509,38 @@
                                             {% endif %}
                                         </div>
                                         <!-- section keynote details ends here -->
-                                         <!-- section addon details starts here-->
-                                      {% comment %} <div class="col-md-12 mb-20 ">
+                                         <!-- section addon details starts here--> 
+                                      {% if section.addons %}
+                                      <div class="col-md-12 mb-20 ">
                                           <div class="mt-20 addon-heading">
                                               Add-ons
                                           </div>
                                             <div class="row mt-10">
-
-                                                <!-- Card 1 Begins -->
+                                                {% for addon in section.addons %}
                                                 <div class="col-md-3 mt-10">
                                                     <div class="addon-card">
-                                                        <div class="addon-title">Refrigerator 2 door</div>
+                                                        <div class="addon-title">{{addon.name}}</div>
                                                         <div class="row">
                                                             <div class="col-md-6 addon-details mt-10">
                                                                 <div>
-                                                                    Small
+                                                                    {{addon.size|default_if_none:''}}
                                                                 </div>
                                                                 <div class="addon-qty">
-                                                                    Qty : 1
+                                                                    Qty : {{addon.quantity}}
                                                                 </div>
                                                             </div>
                                                             <div class="col-md-6 mt-10">
-                                                                <div class="addon-price ">10 KD</div>
+                                                                <div class="addon-price ">{{addon.addon_net_cost}} KD</div>
                                                                 
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                 <!-- Card 1 Ends -->
-                                                 <!-- Card 2 Begins -->
-                                                <div class="col-md-3 mt-10">
-                                                    <div class="addon-card">
-                                                        <div class="addon-title">Refrigerator 1 door</div>
-                                                        <div class="row">
-                                                            <div class="col-md-6 addon-details mt-10">
-                                                                <div>
-                                                                    Small
-                                                                </div>
-                                                                <div class="addon-qty">
-                                                                    Qty : 1
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6 mt-10">
-                                                                <div class="addon-price ">200 KD</div>
-                                                                
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                 <!-- Card 2 Ends -->
-                                                  <!-- Card 3Begins -->
-                                                <div class="col-md-3 mt-10">
-                                                    <div class="addon-card">
-                                                        <div class="addon-title">Refrigerator 1 door</div>
-                                                        <div class="row">
-                                                            <div class="col-md-6 addon-details mt-10">
-                                                                <div>
-                                                                    Small
-                                                                </div>
-                                                                <div class="addon-qty">
-                                                                    Qty : 1
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6 mt-10">
-                                                                <div class="addon-price ">200 KD</div>
-                                                                
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                 <!-- Card 3 Ends -->
+                                                {% endfor %}
                                             </div>
-                                    </div> {% endcomment %}
-                                      <!-- section addon details ends here-->
+                                    </div> 
+                                    {% endif %}
+                                    <!-- section addon details ends here-->
                                     </div>
                                     <!-- Section Details ends Here -->
                                      

@@ -882,6 +882,7 @@ label[for=favcity] select:focus {outline: 1px dotted #A9A9A9;}
 .visible{ visibility:hidden;}
 .evaluation-card-wrapper{ display:grid; grid-template-columns: repeat(auto-fit, minmax(16rem,1fr)); grid-gap:1rem; }
 .evaluation-card{ padding:5px 10px; border:1px solid #bfd1da; background:#e3eef4;}
+
 .evaluation-section{ font-size:15px; font-weight:200; color:#666; text-align:right; position:relative;}
 .evaluation-section label{ font-size:15px; width:auto; position:absolute; left:0; text-align:left; display:inline-block; font-weight:200; color:#666; }
 .category-cleaning{ margin:0; padding:2px 0; color:#c86a52; font-size:15px; font-weight:normal; }
@@ -1531,4 +1532,52 @@ text-align: center;
   .w-p-75 {
     width: 90% !important;
 }
+}
+.payment-card{
+  float: right;
+  background: #EDF1F6 0% 0% no-repeat padding-box;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.payment-card h1{ 
+  color: #737373;
+  font-size: 22px !important;
+  font-weight: 400;
+  margin: 0 !important;
+  padding: 0 0 6px 0 !important;
+}
+.payment-card-amount{
+  color: #737373;
+  font-size: 22px !important;
+  font-weight: 400;
+}
+
+
+
+/* CSS FOR ADDONS*/
+
+/*  */
+.addon-card{
+  border: 1px solid #BEBEBE;
+border-radius: 4px;
+padding:10px;
+}
+.addon-price{
+  background: #EDF1F6 0% 0% no-repeat padding-box;
+  padding: 8px;
+    font-size: 14px;
+}
+.addon-qty{
+  font-size:12px;
+}
+.addon-details{
+  color:#434343;
+  font-weight:400;
+}
+.addon-title{
+  font-size:12px;
+}
+.addon-heading{
+  font-size:16px;
 }

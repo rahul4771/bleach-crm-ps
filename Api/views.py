@@ -2133,7 +2133,7 @@ class TlCleaningDetails(APIView):
 	def get(self,request,team_id): 
 		response_dict                     = {'success':False}
 		
-		cleaning_details                  = CleaningTeam.objects.select_related('order_scheduler__order_scheduler_book__service_type','order_scheduler__order__evaluation__customer','order_scheduler__customer_address').prefetch_related(Prefetch('order_scheduler__order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='booksections')).get(id=team_id)
+		cleaning_details                  = CleaningTeam.objects.select_related('order_scheduler__order_scheduler_book__service_type','order_scheduler__order__evaluation__customer','order_scheduler__customer_address').prefetch_related(Prefetch('order_scheduler__order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='booksections')).get(id=team_id)
 		response_dict['cleaning_details'] = CleaningTeamAPISerializer(instance=cleaning_details).data
 		response_dict['success']          = True
 
@@ -2146,7 +2146,7 @@ class TlFollowupCleaningDetails(APIView):
 	def get(self,request,team_id): 
 		response_dict                             = {'success':False}
 
-		followupcleaning_details                  = FollowUpTeam.objects.select_related('followup_scheduler__follow_up__investigation__order','followup_scheduler__customer_address').prefetch_related(Prefetch('followup_scheduler__follow_up__follow_up_of_section',queryset=FollowUpSection.filter(is_active=True).prefetch_related(Prefetch('keynotesectionsfollowup',queryset=FollowUpSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='sections')).get(id=team_id)
+		followupcleaning_details                  = FollowUpTeam.objects.select_related('followup_scheduler__follow_up__investigation__order','followup_scheduler__customer_address').prefetch_related(Prefetch('followup_scheduler__follow_up__follow_up_of_section',queryset=FollowUpSection.filter(is_active=True).prefetch_related(Prefetch('keynotesectionsfollowup',queryset=FollowUpSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='sections')).get(id=team_id)
 		response_dict['followupcleaning_details'] = FollowUpTeamAPISerializer(instance=followupcleaning_details).data
 		response_dict['success']                  = True
 

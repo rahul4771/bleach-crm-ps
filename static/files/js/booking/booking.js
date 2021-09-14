@@ -1601,6 +1601,7 @@ console.log(response)
               "section_cost":this.multiServicesBill[i].bill[j].section.section_cost,
               "section_net_cost":this.multiServicesBill[i].bill[j].section.section_cost,
               "keynotes":{},
+              "addons":{},
               "is_newkitchen":false,
               "is_highprice_facade":false,
               "is_highprice_window":false,
@@ -1756,6 +1757,7 @@ console.log(response)
 
             "section_net_cost":this.multiServicesBill[i].bill[j].section.section_cost,
             "keynotes":{},
+            "addons":{},
             "is_newkitchen":false,
             "is_highprice_facade":false,
             "is_highprice_window":false,
@@ -2888,7 +2890,7 @@ responsive:{
      this.seperateMultiBook()
     }
   },
-  seperateMultiBook(){
+  async seperateMultiBook(){
     const urlSearchParams = new URLSearchParams(window.location.search);
     const params = Object.fromEntries(urlSearchParams.entries());
    this.userid=window.location.href.split('/')[5]
@@ -2906,42 +2908,48 @@ responsive:{
       groupData[i]={...this.serviceDetails.service_details[data[i]]}
       totalCost=totalCost+this.serviceDetails.service_details[data[i]].total_cost
     }
-    axios
-      .post(
-         this.url+posturl+this.userid+'/',
-         {
-           estimated_cost:totalCost,
-           total_cost:totalCost,
-           service_details:groupData
-         }
-       
-      )
-      .then((response) => {
-        this.submit_loader=false
-        console.log("booking details is "+response)
-        this.phase2Result=response.data
-        groupData={}
-        if(response.data.success)
-        {
-        this.responseText='Booking Successful'
-        this.snackbar=true
-      //  this.getBookingDetails(response.data.booking_id)
-     
-    this.uploadImages()
-    //window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
-        }
-        else{
-          this.responseText=response.data.Error
-          this.snackbar=true
-        }
-      })
-       .catch((error) => {
-        this.responseText=error
-        console.log(error);
-      });
+    var res=await this.seperateBookRequest(posturl,totalCost,groupData)
 
 
   }
+  },
+  async seperateBookRequest(posturl,totalCost,groupData){
+    axios
+    .post(
+       this.url+posturl+this.userid+'/',
+       {
+         estimated_cost:totalCost,
+         total_cost:totalCost,
+         service_details:groupData
+       }
+     
+    )
+    .then((response) => {
+      this.submit_loader=false
+      console.log("booking details is "+response)
+      this.phase2Result=response.data
+      groupData={}
+      if(response.data.success)
+      {
+      this.responseText='Booking Successful'
+      this.snackbar=true
+    //  this.getBookingDetails(response.data.booking_id)
+   
+       this.uploadImages()
+  //window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
+      }
+      else{
+        this.responseText=response.data.Error
+        this.snackbar=true
+      }
+      return response
+      
+    })
+     .catch((error) => {
+      this.responseText=error
+      console.log(error);
+      return error
+    });
   },
   bookCustService(){
     this.userid=window.location.href.split('/')[5]

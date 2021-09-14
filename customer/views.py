@@ -24,7 +24,7 @@ from django.contrib import messages
 
 from inventory.models import PurchaseOrder,PurchaseOrderItems
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule
-from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType
+from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType,EvaluationSectionAddons
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,Promocode
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
@@ -3732,9 +3732,12 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 			new_invoice_no 		 = str(timezone.now().year)+'00001'
 
 		try:
-			order              = Order.objects.get(evaluation=evaluation)
+			order           = Order.objects.get(evaluation=evaluation)
 		except:
-			order              = Order.objects.create(evaluation=evaluation,order_no=evaluation.evaluation_id,payment_status='PENDING',invoice_no=new_invoice_no)
+			order           = None
+			
+		if not order:		
+			order       = Order.objects.create(evaluation=evaluation,order_no=evaluation.evaluation_id,payment_status='PENDING',invoice_no=new_invoice_no)
 
 		###testing availability ####
 		test_schedules_dict = list(request.data.get("service_details").values())[0]['schedule_details']
@@ -5096,6 +5099,13 @@ class EditOrderDetails(APIView):
 					new_keynotes.append(EvaluationSectionKeynote(evaluation_section=saved_section,sub_area=keynote['sub_area'],quantity=keynote['quantity']))
 				EvaluationSectionKeynote.objects.bulk_create(new_keynotes)
 
+				#addons
+				addons     = request.data.get('addons')
+				new_addons = []
+				for addon in addons:
+					new_addons.append(EvaluationSectionAddons(evaluation_section=saved_section,name=addon['name'],addon_cost=addon['addon_cost'],quantity=addon['quantity'],addon_net_cost=addon['addon_net_cost'],size=addon['size'],other_details=addon['other_details']))
+				EvaluationSectionAddons.objects.bulk_create(new_keynotes)
+
 				response_dict['section_success']       = True
 				response_dict['success']  = True
 
@@ -5149,6 +5159,14 @@ class EditOrderDetails(APIView):
 				for keynote in keynotes:
 					new_keynotes.append(EvaluationSectionKeynote(evaluation_section=saved_section,sub_area=keynote['sub_area'],quantity=keynote['quantity']))
 				EvaluationSectionKeynote.objects.bulk_create(new_keynotes)
+
+				#delete and add addons
+				addons       = request.data.get('addons')
+				new_addons   = []
+				EvaluationSectionAddons.objects.filter(evaluation_section=saved_section).delete()
+				for addon in addons:
+					new_addons.append(EvaluationSectionAddons(evaluation_section=saved_section,name=addon['name'],addon_cost=addon['addon_cost'],quantity=addon['quantity'],addon_net_cost=addon['addon_net_cost'],size=addon['size'],other_details=addon['other_details']))
+				EvaluationSectionAddons.objects.bulk_create(new_addons)
 
 				response_dict['edit_success']       = True
 				response_dict['success']  = True
