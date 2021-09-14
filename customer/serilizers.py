@@ -28,7 +28,7 @@ class EvaluationSectionKeynoteSerializer(serializers.ModelSerializer):
 class EvaluationSectionAddonSerializer(serializers.ModelSerializer):
 	class Meta:
 		model  = EvaluationSectionAddons
-		fields = ('name','addon_cost','quantity','addon_net_cost')
+		fields = ('name','addon_cost','quantity','addon_net_cost','size','other_details')
 
 class EvaluationBookSectionSerializer(serializers.ModelSerializer):
 	keynotesections = EvaluationSectionKeynoteSerializer(many=True,read_only=True)

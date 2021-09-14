@@ -285,6 +285,10 @@
                                     <div class="col-md-6" style="">
                                         <h2 class="productivity-name mt-10"> Add-on</h2>
                                         <div class="productivity-card-content">
+                                            {% for service_addon in service_addons %}
+                                            
+                                            {% if service_type == service_addon.service_type %}
+                                            {% ifchanged service_addon.service_type %}
                                             <div class="row productivity-card-items2">
                                                 <div style="font-weight: 600;" class="col-md-2 productivity-card-items-1">
                                                 Item
@@ -305,7 +309,9 @@
                                             
                                                 </div>
                                             </div>
-                                            {% for service_addon in service_addons %}
+                                            {% endifchanged %}
+                                            {% endif %}
+
                                             {% if service_type == service_addon.service_type %}
                                             <div class="row productivity-card-items">
                                                 <div class="col-md-2 productivity-card-items-1">

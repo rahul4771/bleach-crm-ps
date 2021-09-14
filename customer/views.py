@@ -1129,13 +1129,14 @@ def statement_of_account(request,client_id):
 
 		
 	for order in customer_orders:
-		if order.evaluation.payment_method != 'SUBSCRIPTION' and order.order_status == 'ORDER_CLOSED':
+		# if order.evaluation.payment_method != 'SUBSCRIPTION' and order.order_status == 'ORDER_CLOSED':
+		if order.evaluation.payment_method != 'SUBSCRIPTION' and order.completed_cleaning_count >= 1 :
 			accounts_list.append({
 						"date":order.created.date(),
 						"invoice_no":order.order_no,
 						"details":"Cleaning Services",
 						"amount":order.total_amount,
-						"credit":order.amount_paid,
+						"credit":order.total_amount,
 						"debit":""
 					})
 
@@ -3608,7 +3609,10 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 						return Response(response_dict,HTTP_200_OK)
 					
 					#create kenotes
-					keynotes_dict = sections_dict[key]['keynotes']
+					try:
+						keynotes_dict = sections_dict[key]['keynotes']
+					except:
+						keynotes_dict = None
 					if keynotes_dict:
 						for key in keynotes_dict.keys():
 							keynote_save_serializer = EvaluationSectionKeynoteSerializer(data=keynotes_dict[key])
@@ -3628,7 +3632,10 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 								return Response(response_dict,HTTP_200_OK)
 
 					#create add-ons
-					addons_dict = sections_dict[key]['addons']
+					try:
+						addons_dict = sections_dict[key]['addons']
+					except:
+						addons_dict = None
 					if addons_dict:
 						for key in addons_dict.keys():
 							addons_save_serializer = EvaluationSectionAddonSerializer(data=addons_dict[key])
@@ -3725,9 +3732,12 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 			new_invoice_no 		 = str(timezone.now().year)+'00001'
 
 		try:
-			order              = Order.objects.get(evaluation=evaluation)
+			order           = Order.objects.get(evaluation=evaluation)
 		except:
-			order              = Order.objects.create(evaluation=evaluation,order_no=evaluation.evaluation_id,payment_status='PENDING',invoice_no=new_invoice_no)
+			order           = None
+			
+		if not order:		
+			order       = Order.objects.create(evaluation=evaluation,order_no=evaluation.evaluation_id,payment_status='PENDING',invoice_no=new_invoice_no)
 
 		###testing availability ####
 		test_schedules_dict = list(request.data.get("service_details").values())[0]['schedule_details']
@@ -4011,7 +4021,10 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 					return Response(response_dict,HTTP_200_OK)
 				
 				#create kenotes
-				keynotes_dict = sections_dict[key]['keynotes']
+				try:
+					keynotes_dict = sections_dict[key]['keynotes']
+				except:
+					keynotes_dict = None
 				if keynotes_dict:
 					for key in keynotes_dict.keys():
 						keynote_save_serializer = EvaluationSectionKeynoteSerializer(data=keynotes_dict[key])
@@ -4031,7 +4044,10 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 							return Response(response_dict,HTTP_200_OK)
 				
 				#create add-ons
-				addons_dict = sections_dict[key]['addons']
+				try:
+					addons_dict = sections_dict[key]['addons']
+				except:
+					addons_dict = None
 				if addons_dict:
 					for key in addons_dict.keys():
 						addons_save_serializer = EvaluationSectionAddonSerializer(data=addons_dict[key])
@@ -4156,7 +4172,10 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase2(APIView):
 					return Response(response_dict,HTTP_200_OK)
 				
 				#create kenotes
-				keynotes_dict = sections_dict[key]['keynotes']
+				try:
+					keynotes_dict = sections_dict[key]['keynotes']
+				except:
+					keynotes_dict = None					
 				if keynotes_dict:
 					for key in keynotes_dict.keys():
 						keynote_save_serializer = EvaluationSectionKeynoteSerializer(data=keynotes_dict[key])
@@ -4176,7 +4195,10 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase2(APIView):
 							return Response(response_dict,HTTP_200_OK)
 
 				#create add-ons
-				addons_dict = sections_dict[key]['addons']
+				try:
+					addons_dict = sections_dict[key]['addons']
+				except:
+					addons_dict = None
 				if addons_dict:
 					for key in addons_dict.keys():
 						addons_save_serializer = EvaluationSectionAddonSerializer(data=addons_dict[key])

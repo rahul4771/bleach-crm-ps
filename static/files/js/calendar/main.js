@@ -532,18 +532,18 @@ const app=  new Vue({
                 setTimeout(function(){ 
                   var a = [];
                   console.log("here", $("#div_8").height()) 
-                  a.push($("#div_1").height())
-                  a.push($("#div_2").height())
-                  a.push($("#div_3").height())
-                  a.push($("#div_4").height())
-                  a.push($("#slot-start").height())
-                  a.push($("#div_6").height())
-                  a.push($("#div_7").height())
-                  a.push($("#div_8").height())
-                  a.push($("#div_9").height())
-                  a.push($("#div_10").height())
-                  a.push($("#div_11").height())
-                  a.push($("#div_12").height())
+                  a.push($("#div_1").height()+10)
+                  a.push($("#div_2").height()+10)
+                  a.push($("#div_3").height()+10)
+                  a.push($("#div_4").height()+10)
+                  a.push($("#slot-start").height()+10)
+                  a.push($("#div_6").height()+10)
+                  a.push($("#div_7").height()+10)
+                  a.push($("#div_8").height()+10)
+                  a.push($("#div_9").height()+10)
+                  a.push($("#div_10").height()+10)
+                  a.push($("#div_11").height()+10)
+                  a.push($("#div_12").height()+10)
                   var m = a[0];
                   for(var q=0;q<a.length;q++){
                     if(a[q]>=m){
@@ -1188,7 +1188,6 @@ const app=  new Vue({
 
                       }
                       if(slotData.color=='not-approved-status-bg'){
-                        if(user_type!='SENIORTEAMLEADER'){
                           this.parsedSlots.push(slotData)
                           var slotFormatted=moment(slot).format('hh:mm A')
                     
@@ -1240,7 +1239,6 @@ const app=  new Vue({
                         slots.push(12)
                         this.slot["12"].slots.push(slotData)
                       }
-                        }
                       }
                       else{
                         

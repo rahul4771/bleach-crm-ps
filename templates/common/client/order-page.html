@@ -1508,9 +1508,42 @@
                                             
                                             {% endif %}
                                         </div>
-                                        <!-- section keynote details starts here -->
+                                        <!-- section keynote details ends here -->
+                                         <!-- section addon details starts here--> 
+                                      {% if section.addons %}
+                                      <div class="col-md-12 mb-20 ">
+                                          <div class="mt-20 addon-heading">
+                                              Add-ons
+                                          </div>
+                                            <div class="row mt-10">
+                                                {% for addon in section.addons %}
+                                                <div class="col-md-3 mt-10">
+                                                    <div class="addon-card">
+                                                        <div class="addon-title">{{addon.name}}</div>
+                                                        <div class="row">
+                                                            <div class="col-md-6 addon-details mt-10">
+                                                                <div>
+                                                                    {{addon.size|default_if_none:''}}
+                                                                </div>
+                                                                <div class="addon-qty">
+                                                                    Qty : {{addon.quantity}}
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6 mt-10">
+                                                                <div class="addon-price ">{{addon.addon_net_cost}} KD</div>
+                                                                
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {% endfor %}
+                                            </div>
+                                    </div> 
+                                    {% endif %}
+                                    <!-- section addon details ends here-->
                                     </div>
                                     <!-- Section Details ends Here -->
+                                     
                                     <hr class="bar">
                                 </div>
                                 {% endfor %}
