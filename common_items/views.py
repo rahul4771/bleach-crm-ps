@@ -4236,10 +4236,9 @@ class AssigncleaningTeam(IsAuthenticated,View):
 				return redirect('common_items:assign-cleaningteam',scheduler_id)	
 		
 		cleaning_calendar_date = request.GET.get('cleaning_calendar_date') or ''
-		workers_calendar_date  = request.GET.get('workers_calendar_date') or ''
 
 		if request.user.user_type == 'SENIORTEAMLEADER':
-			return redirect('/stl/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&workers_calendar_date='+workers_calendar_date)	
+			return redirect('/stl/dashboard/?cleaning_calendar_date='+cleaning_calendar_date)	
 		elif request.user.user_type == 'OPERATIONSUPERVISOR':
 			return redirect('/operation-supervisor/dashboard/?cleaning_calendar_date='+cleaning_calendar_date)
 		else:
@@ -4340,10 +4339,9 @@ class EditcleaningTeam(IsAuthenticated,View):
 			return redirect('common_items:edit-cleaningteam',schedule_id)
 		
 		cleaning_calendar_date = request.GET.get('cleaning_calendar_date') or ''
-		workers_calendar_date  = request.GET.get('workers_calendar_date') or ''
 
 		if request.user.user_type == 'SENIORTEAMLEADER':
-			return redirect('/stl/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&workers_calendar_date='+workers_calendar_date)	
+			return redirect('/stl/dashboard/?cleaning_calendar_date='+cleaning_calendar_date)	
 		elif request.user.user_type == 'OPERATIONSUPERVISOR':
 			return redirect('/operation-supervisor/dashboard/?cleaning_calendar_date='+cleaning_calendar_date)
 		else:
@@ -4445,10 +4443,9 @@ class AssignFollowupTeam(IsAuthenticated,View):
 			return render(request,'common/cleaning/followupteam_assign.html',{'follow_up_team_assign_form':follow_up_team_assign_form,'followup_schedule':followup_schedule,'cleaners':cleaners,'leaders':leaders,'drivers':drivers,})	
 
 		cleaning_calendar_date = request.GET.get('cleaning_calendar_date') or ''
-		workers_calendar_date  = request.GET.get('workers_calendar_date') or ''
 
 		if request.user.user_type == 'SENIORTEAMLEADER':
-			return redirect('/stl/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&workers_calendar_date='+workers_calendar_date)
+			return redirect('/stl/dashboard/?cleaning_calendar_date='+cleaning_calendar_date)
 		elif request.user.user_type == 'OPERATIONSUPERVISOR':
 			return redirect('/operation-supervisor/dashboard/?cleaning_calendar_date='+cleaning_calendar_date)
 		else:
@@ -4544,10 +4541,9 @@ class EditFollowupTeam(IsAuthenticated,View):
 			return redirect('common_items:edit-followupteam',schedule_id)
 
 		cleaning_calendar_date = request.GET.get('cleaning_calendar_date') or ''
-		workers_calendar_date  = request.GET.get('workers_calendar_date') or ''
 
 		if request.user.user_type == 'SENIORTEAMLEADER':
-			return redirect('/stl/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&workers_calendar_date='+workers_calendar_date)
+			return redirect('/stl/dashboard/?cleaning_calendar_date='+cleaning_calendar_date)
 		elif request.user.user_type == 'OPERATIONSUPERVISOR':
 			return redirect('/operation-supervisor/dashboard/?cleaning_calendar_date='+cleaning_calendar_date)
 		else:
