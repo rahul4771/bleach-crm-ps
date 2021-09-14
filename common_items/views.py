@@ -4156,8 +4156,8 @@ class AssigncleaningTeam(IsAuthenticated,View):
 		#same blc cleaners for excluding
 		sameblc_cleaners    = CleaningTeamMember.objects.select_related('team__order_scheduler__evaluation_details__evaluation').filter(team__order_scheduler__evaluation_details__evaluation=order_schedule.evaluation_details.evaluation).filter(Q(Q(Q(start_at__gte=start_at_datetime)&Q(start_at__lte=end_at_datetime))|Q(Q(end_at__gte=start_at_datetime)&Q(end_at__lte=end_at_datetime))|Q(Q(start_at__lte=start_at_datetime)&Q(end_at__gte=start_at_datetime)&Q(start_at__lte=end_at_datetime)&Q(end_at__gte=end_at_datetime))|Q(Q(start_at__gte=start_at_datetime)&Q(end_at__gte=start_at_datetime)&Q(start_at__lte=end_at_datetime)&Q(end_at__lte=end_at_datetime)))).values_list("member",flat=True)
 
-		active_cleaners1 	= CleaningTeamMember.objects.filter(Q(Q(Q(start_at__gte=start_at_datetime)&Q(start_at__lt=end_at_datetime))|Q(Q(end_at__gt=start_at_datetime)&Q(end_at__lte=end_at_datetime))|Q(Q(start_at__lte=start_at_datetime)&Q(end_at__gte=start_at_datetime)&Q(start_at__lte=end_at_datetime)&Q(end_at__gte=end_at_datetime))|Q(Q(start_at__gte=start_at_datetime)&Q(end_at__gte=start_at_datetime)&Q(start_at__lte=end_at_datetime)&Q(end_at__lte=end_at_datetime)))).exclude(member__id__in=sameblc_cleaners).values_list("member",flat=True)
-		active_cleaners2 	= FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=start_at_datetime)&Q(start_at__lt=end_at_datetime))|Q(Q(end_at__gt=start_at_datetime)&Q(end_at__lte=end_at_datetime))|Q(Q(start_at__lte=start_at_datetime)&Q(end_at__gte=start_at_datetime)&Q(start_at__lte=end_at_datetime)&Q(end_at__gte=end_at_datetime))|Q(Q(start_at__gte=start_at_datetime)&Q(end_at__gte=start_at_datetime)&Q(start_at__lte=end_at_datetime)&Q(end_at__lte=end_at_datetime)))).values_list("member",flat=True)
+		active_cleaners1 	= CleaningTeamMember.objects.filter(Q(Q(Q(start_at__gte=start_at_datetime)&Q(start_at__lt=end_at_datetime))|Q(Q(end_at__gt=start_at_datetime)&Q(end_at__lte=end_at_datetime))|Q(Q(start_at__lte=start_at_datetime)&Q(end_at__gte=start_at_datetime)&Q(start_at__lte=end_at_datetime)&Q(end_at__gte=end_at_datetime)) | Q(Q(start_at__gte=start_at_datetime)&Q(end_at__gte=start_at_datetime)&Q(start_at__lte=end_at_datetime)&Q(end_at__lte=end_at_datetime)))).exclude(member__id__in=sameblc_cleaners).values_list("member",flat=True)
+		active_cleaners2 	= FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=start_at_datetime)&Q(start_at__lt=end_at_datetime))|Q(Q(end_at__gt=start_at_datetime)&Q(end_at__lte=end_at_datetime))|Q(Q(start_at__lte=start_at_datetime)&Q(end_at__gte=start_at_datetime)&Q(start_at__lte=end_at_datetime)&Q(end_at__gte=end_at_datetime)) | Q(Q(start_at__gte=start_at_datetime)&Q(end_at__gte=start_at_datetime)&Q(start_at__lte=end_at_datetime)&Q(end_at__lte=end_at_datetime)))).values_list("member",flat=True)
 
 		#included shift cleaners & exclude absent cleaners & exclude active cleaners
 		shift_cleaners      = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_at_date)|Q(shift_date=end_at_date))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=start_at_time)&Q(shift1_end_at__gte=start_at_time))&Q(Q(shift1_start_at__lte=end_at_time)&Q(shift1_end_at__gte=end_at_time))) | Q(Q(Q(shift2_start_at__lte=start_at_time)&Q(shift2_end_at__gte=start_at_time))&Q(Q(shift2_start_at__lte=end_at_time)&Q(shift2_end_at__gte=end_at_time))) | Q(Q(Q(shift3_start_at__lte=start_at_datetime)&Q(shift3_end_at__gte=start_at_datetime))&Q(Q(shift3_start_at__lte=end_at_datetime)&Q(shift3_end_at__gte=end_at_datetime)))).values_list('staff',flat=True)
@@ -4228,13 +4228,13 @@ class AssigncleaningTeam(IsAuthenticated,View):
 					order_scheduler.no_of_cleaners = len(assigned_cleaners)+1
 					order_scheduler.work_status    = 'CLEANING_TEAM_ASSIGNED'
 					order_scheduler.save()
-					
+
+				messages.success(request,"Cleaning Team Succesfully Assigned")					
+			
 			else:	
 				messages.error(request,"Something Went Wrong !! Please Reupdate")
-
 				return redirect('common_items:assign-cleaningteam',scheduler_id)	
 		
-		messages.success(request,"Cleaning Team Succesfully Assigned")
 		cleaning_calendar_date = request.GET.get('cleaning_calendar_date') or ''
 		workers_calendar_date  = request.GET.get('workers_calendar_date') or ''
 
@@ -4338,10 +4338,16 @@ class EditcleaningTeam(IsAuthenticated,View):
 		else:
 			messages.error(request,"Something Went Wrong !! Please Reupdate")
 			return redirect('common_items:edit-cleaningteam',schedule_id)
+		
+		cleaning_calendar_date = request.GET.get('cleaning_calendar_date') or ''
+		workers_calendar_date  = request.GET.get('workers_calendar_date') or ''
+
 		if request.user.user_type == 'SENIORTEAMLEADER':
-			return redirect('stl:stldash-board')
+			return redirect('/stl/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&workers_calendar_date='+workers_calendar_date)	
+		elif request.user.user_type == 'OPERATIONSUPERVISOR':
+			return redirect('/operation-supervisor/dashboard/?cleaning_calendar_date='+cleaning_calendar_date)
 		else:
-			return redirect('op-supervisor:op-supervisor-dash-board')
+			pass
 
 
 class AssignFollowupTeam(IsAuthenticated,View):
@@ -4431,12 +4437,12 @@ class AssignFollowupTeam(IsAuthenticated,View):
 				followup_schedule.work_status                          = 'FOLLOW_UP_TEAM_ASSIGNED'
 				followup_schedule.follow_up.save()
 				followup_schedule.save()	
+			messages.success(request,"FollowupTeam Team Succesfully Assigned")
+
 		else:	
 			messages.error(request,"Something Went Wrong")
 
 			return render(request,'common/cleaning/followupteam_assign.html',{'follow_up_team_assign_form':follow_up_team_assign_form,'followup_schedule':followup_schedule,'cleaners':cleaners,'leaders':leaders,'drivers':drivers,})	
-
-		messages.success(request,"FollowupTeam Team Succesfully Assigned")
 
 		cleaning_calendar_date = request.GET.get('cleaning_calendar_date') or ''
 		workers_calendar_date  = request.GET.get('workers_calendar_date') or ''
@@ -4537,10 +4543,15 @@ class EditFollowupTeam(IsAuthenticated,View):
 			messages.error(request,"Something Went Wrong !! Please Refresh Page and Reupdate")
 			return redirect('common_items:edit-followupteam',schedule_id)
 
+		cleaning_calendar_date = request.GET.get('cleaning_calendar_date') or ''
+		workers_calendar_date  = request.GET.get('workers_calendar_date') or ''
+
 		if request.user.user_type == 'SENIORTEAMLEADER':
-			return redirect('stl:stldash-board')
+			return redirect('/stl/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&workers_calendar_date='+workers_calendar_date)
+		elif request.user.user_type == 'OPERATIONSUPERVISOR':
+			return redirect('/operation-supervisor/dashboard/?cleaning_calendar_date='+cleaning_calendar_date)
 		else:
-			return redirect('op-supervisor:op-supervisor-dash-board')
+			pass
 
 class ResetcleaningTeam(IsAuthenticated,View):
 	def get(self,request,scheduler_id):
