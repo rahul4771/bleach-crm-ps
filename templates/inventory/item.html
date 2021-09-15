@@ -99,10 +99,13 @@
                                 </div>
                                 <div class="inv-item-head-sub mt-20">
                                     {% if inventory_item.item_status == 'available' %}
+                                    <span class="inv-dot  c-active"></span>
                                     Available
                                     {% elif inventory_item.item_status == 'about_to_finish' %}
+                                    <span class="inv-dot c-about-finish"></span>
                                     About to finish
                                     {% elif inventory_item.item_status == 'out_of_stock' %}
+                                    <span class="inv-dot c-out-of-order"></span>
                                     Out of Stock
                                     {% endif %}
                                 </div>
@@ -666,10 +669,10 @@
                             <div class="row">
                                 <div class="col-md-7">
                                     <div class="inv-input-container h-30"> 
-                                        <input type="file"  class="w-p-100 inv-in" name="item_image">
+                                        <input type="file"  class="w-p-100 inv-in" id="file_select" onchange="showBtn()" name="item_image">
                                       </div>
                                 </div>
-                                <div class="col-md-5">
+                                <div class="col-md-5 inv-hide" id="id_btn_div">
                                     <button class="sent-button" type="submit">Add Image</button>
                                 </div>
                             </div>
@@ -865,6 +868,8 @@
 {% block javascript %}
 
 <script>
+
+    
     function DropDown(el) {
     this.dd = el;
     this.placeholder = this.dd.children('span');
@@ -916,6 +921,20 @@ $(function () {
 
 <script src="{% static '/files/externalfiles/plugins/OwlCarousel2/dist/owl.carousel.js'%}"></script>
 <script>
+
+
+    function showBtn(){
+        if($('#file_select').val() != ''){
+            console.log("ghj")
+            $("#id_btn_div").show();
+        }else{
+            $("#id_btn_div").hide();
+
+            console.log('hide')
+        }
+        
+    }
+
     function changeSelect(va){
         $('#id_unit_status').val(va)
     }
