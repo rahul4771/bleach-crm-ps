@@ -2028,6 +2028,22 @@ class DiscountSettingsAPI(APIView):
 
 		return Response(response_dict,HTTP_200_OK)
 
+##Booking Expiry
+class BookingExpiryCheckAPI(APIView):
+	permission_classes  	= (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+		response_dict                     = {}
+		order_no                          = request.GET.get('order_no')
+		order_scheduler                   = OrderScheduler.objects.select_related('order').filter(order__order_no=order_no).first()
+
+		response_dict['created']          = datetime.strftime(order_scheduler.created,'%d-%m-%Y %I:%M %p')
+		response_dict['success']          = True
+
+		return Response(response_dict,HTTP_200_OK)
+
+
 class BookingExpiryAPI(APIView):
 	permission_classes  	= (AllowAny,)
 	authentication_classes  = ()
