@@ -1,4 +1,5 @@
 $(document).ready(function(){
+  
   $('#category-carousel').owlCarousel({
     loop:false,
     
@@ -42,6 +43,11 @@ $('#service-carousel').owlCarousel({
         }
     }
 });
+
+  
+
+
+
 selectServiceOnly('General Cleaning')
 
 
@@ -62,12 +68,14 @@ app.selectService({name:item})
 }
 function selectServiceOnly(service){
   app.selectService({name:service})
+  
   $('#service-carousel').find('.active-icon').replaceWith(`
   <i class="far fa-circle inactive-icon"></i>
   `)
   $('.service-one').find('.inactive-icon').replaceWith(` <i
   class="fa fa-check-circle active-icon"
 ></i>`)
+
 
 }
 
@@ -87,6 +95,14 @@ const app=new Vue({
         
       },
     data: {
+      kitchen_max_cleaners:null,
+      new_kitchen_productivity:null,
+      old_kitchen_productivity:null,
+      absolute_cost:0,
+      added_cost:0,
+      addon_size:[],
+      add_new_kitchen:true,
+      addons_parsed:[],
       submit_loader:false,
       billingDataIndex:null,
       slot_msg:false,
@@ -264,7 +280,7 @@ const app=new Vue({
   billingData: [],
   dialogStat: "",
   sizeData: [],
-  currentItem: "",
+  currentItem: null,
   service: "test",
   dialog: false,
   dialogmsg: "",
@@ -286,7 +302,10 @@ const app=new Vue({
     hallway_size: "",
     sides: "",
     stain_age: "",
-    height:""
+    height:"",
+    addons:[],
+    section_net_cost:null,
+    section_cost:null
   },
   color: ["Blue", "Yellow", "Orange", "Red", "Black", "White"],
   material: ["Material 1", "Material 2", "Material 3", "Material 4"],
@@ -556,11 +575,75 @@ reset_building:false,
 reset_floor:false,
 building_warning:false,
 available_slotes:[],
-date_group:{}
+date_group:{},
+addons:[]
 
       },
       methods: {
-        
+        findAddonCost(){
+          var addon_cost=0
+          for(var i=0;i<this.addons_parsed.length;i++){
+            if(this.addons_parsed[i].selected){
+              if(this.addons_parsed[i].details.category){
+                addon_cost=addon_cost+(this.addons_parsed[i].selected_size.price*this.addons_parsed[i].quantity)
+              }
+              else{
+                addon_cost=addon_cost+(this.addons_parsed[i].details.price*this.addons_parsed[i].quantity)
+              }
+            }
+          }
+          return addon_cost
+        },
+        findAbsoluteCost(){
+          var total_cost = 0
+          var addon_cost=0
+          if(this.addons_parsed.length>0){
+            for(var i=0;i<this.addons_parsed.length;i++){
+              if(this.addons_parsed[i].selected){
+                if(this.addons_parsed[i].details.category){
+                  addon_cost=addon_cost+(this.addons_parsed[i].selected_size.price*this.addons_parsed[i].quantity)
+                }
+                else{
+                  addon_cost=addon_cost+(this.addons_parsed[i].details.price*this.addons_parsed[i].quantity)
+                }
+              }
+            }
+
+          }
+         total_cost=this.otherService.size.cost+addon_cost
+         if(total_cost)
+         {
+         return total_cost
+         }
+         else{
+           return 0
+         }
+        },
+        findAddedCost(){
+          var totalcost=0
+         
+          for(var i=0;i<this.billingData.length;i++){
+           
+            totalcost=totalcost+this.billingData[i].section_net_cost
+          
+
+          }
+          if(totalcost){
+            return totalcost
+          }
+          else{
+            return 0
+          }
+        },
+        findFullAmount(){
+          var fullamount=0
+          for(var i=0;i<this.multiServicesBill.length;i++){
+            for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
+              fullamount=fullamount+this.multiServicesBill[i].bill[j].section.section_net_cost
+            }
+          }
+          return fullamount
+        },
         resetAllData(){
           this.reset_building=false
           this.building_warning=false
@@ -734,8 +817,25 @@ date_group:{}
           
             for(var i=0;i<this.schedule_serviceTypes_selected.length;i++){
               this.schedule_serviceTypes.push(this.multiServicesBill[this.schedule_serviceTypes_selected[i]].service)
+              
+                // if(this.checkKitchen(this.multiServicesBill[this.schedule_serviceTypes_selected[i]].bill)){
+                //   this.schedule_serviceTypes.push('Kitchen Cleaning')
+
+                // }
             }
           
+        },
+        checkKitchen(){
+          for(var i=0;i<this.schedule_serviceTypes_selected.length;i++){
+         
+          var bills=this.multiServicesBill[this.schedule_serviceTypes_selected[i]].bill
+          for(var j=0;j<bills.length;j++){
+            if(bills[j].section.kitchen){
+              return true
+            }
+          }
+        }
+          return false
         },
         addScheduledService(service,index){
           this.schedule_serviceTypes_selected[index]={
@@ -1599,7 +1699,7 @@ console.log(response)
               "cement_residue":this.multiServicesBill[i].bill[j].section.cement_residue,
               "oil_residue":this.multiServicesBill[i].bill[j].section.residue,
               "section_cost":this.multiServicesBill[i].bill[j].section.section_cost,
-              "section_net_cost":this.multiServicesBill[i].bill[j].section.section_cost,
+              "section_net_cost":this.multiServicesBill[i].bill[j].section.section_net_cost,
               "keynotes":{},
               "addons":{},
               "is_newkitchen":false,
@@ -1686,7 +1786,9 @@ console.log(response)
             }
             keynotecounter=keynotecounter+1
            }
+         
            if(this.multiServicesBill[i].bill[j].section.keynote_data.length>0){
+             
              for(var ky=0;ky<this.multiServicesBill[i].bill[j].section.keynote_data.length;ky++){
               this.serviceDetails.service_details[i].sections[j].keynotes[keynotecounter]={
                 "sub_area":this.multiServicesBill[i].bill[j].section.keynote_data[ky].name,
@@ -1697,8 +1799,44 @@ console.log(response)
              }
 
            }
-           
+           var addoncounter=0
+           if(this.multiServicesBill[i].bill[j].section.addons){
+            
+             for(add_on=0;add_on<this.multiServicesBill[i].bill[j].section.addons.length;add_on++){
+             
+               if(this.multiServicesBill[i].bill[j].section.addons[add_on].selected)
+               {
+                addoncounter=addoncounter+1
+              this.serviceDetails.service_details[i].sections[j].addons[addoncounter]={
+                name:this.multiServicesBill[i].bill[j].section.addons[add_on].details.name,
+                addon_cost:this.multiServicesBill[i].bill[j].section.addons[add_on].details.price,
+                addon_net_cost:this.multiServicesBill[i].bill[j].section.addons[add_on].details.price*this.multiServicesBill[i].bill[j].section.addons[add_on].quantity,
+                quantity:this.multiServicesBill[i].bill[j].section.addons[add_on].quantity
+              }
+            }
+             }
+           }
            if(this.multiServicesBill[i].bill[j].section.kitchen){
+            var newindex=Object.keys(this.serviceDetails.service_details[i].sections[j].addons).length
+            for(var k=0;k<this.multiServicesBill[i].bill[j].section.kitchens.length;k++){
+              newindex=newindex+1
+              this.serviceDetails.service_details[i].sections[j].addons[newindex]={
+                name:"kitchen",
+                addon_cost:this.multiServicesBill[i].bill[j].section.kitchens[k].size.cost,
+                addon_net_cost:this.multiServicesBill[i].bill[j].section.kitchens[k].size.cost,
+                quantity:1,
+                other_details:JSON.stringify({
+                  size:this.multiServicesBill[i].bill[j].section.kitchens[k].size.name,
+                  max_size:this.multiServicesBill[i].bill[j].section.kitchens[k].size.max_size,
+                  type:this.multiServicesBill[i].bill[j].section.kitchens[k].type,
+                  residue:this.multiServicesBill[i].bill[j].section.kitchens[k].residue,
+                  
+                })
+              }
+            }
+
+           }
+          /* if(this.multiServicesBill[i].bill[j].section.kitchen){
             var newindex=Object.keys(this.serviceDetails.service_details[i].sections[j].keynotes).length
             var kitchencounter=newindex
             for(var k=0;k<this.multiServicesBill[i].bill[j].section.kitchens.length;k++){
@@ -1718,7 +1856,7 @@ console.log(response)
              keynotecounter=keynotecounter+1
             }
            
-          }
+          }*/
             }
           }
           var tc=0
@@ -1755,9 +1893,8 @@ console.log(response)
             "oil_residue":this.multiServicesBill[i].bill[j].section.residue,
             "section_cost":this.multiServicesBill[i].bill[j].section.section_cost,
 
-            "section_net_cost":this.multiServicesBill[i].bill[j].section.section_cost,
+            "section_net_cost":this.multiServicesBill[i].bill[j].section.section_net_cost,
             "keynotes":{},
-            "addons":{},
             "is_newkitchen":false,
             "is_highprice_facade":false,
             "is_highprice_window":false,
@@ -2001,6 +2138,30 @@ console.log(response)
         
        
        
+    },
+    addNewKitchenWithAddon(){
+      this.otherService = {
+        material: "",
+        color: "",
+        size: "",
+        type: "old",
+        age: "",
+        stain: false,
+        stain_reason: "",
+        wall_type: "",
+        floor_type: "",
+        ceiling_type: "",
+        residue: false,
+        hallway_size: "",
+        sides: "",
+        stain_age: "",
+        height:"",
+        keynote_data:[],
+        addons:[]
+      }
+      this.add_new_kitchen=true
+      this.currentItem=null
+      this.parseAddons()
     },
     addNewApartmentKitchen(building,floor,apartment){
       
@@ -2647,12 +2808,105 @@ removeOneTimeSlot(slot){
     this.no_of_apartments = [];
     this.buildingsCompleted=false
     this.getSize();
-    this.serviceChange=true
+    this.getAddons()
+   
     
     if(this.selectedService.name=='Kitchen Cleaning'){
-     
-      this.otherService.type="old"
+     console.log("i m coming once")
+     this.otherService.type='old'
+   /*   $('.more-services').html(`
+      <div class="owl-carousel"  id="otherServiceCarousel" v-if="serviceChange" >
+      <div class="more-service-card-active">
+        <div class="text-center">Oven</div>
+        <div class="text-center mt-2">
+        <img src='/static/files/icons/oven.png' class="service-icon"/>
+        </div>
+        <div class="text-center mt-4 mb-4 p-10">
+        <div class="input-group">
+        <span class="input-group-btn ">
+            <button type="button" class="btn btn-number cart-btn"  data-type="minus" data-field="quant[2]">
+              <span class="glyphicon glyphicon-minus"></span>
+            </button>
+        </span>
+        <input type="text" name="quant[2]" class="form-control input-number cart-input" value="10" min="1" max="100">
+        <span class="input-group-btn">
+            <button type="button" class="btn  btn-number cart-btn" data-type="plus" data-field="quant[2]">
+                <span class="glyphicon glyphicon-plus"></span>
+            </button>
+        </span>
+    </div>
+        </div>
+      </div>
+
+
+      <div class="more-service-card">
+        <div class="text-center">Oven</div>
+        <div class="text-center mt-2">
+        <img src='/static/files/icons/oven.png' class="service-icon"/>
+        </div>
+        <div class="text-center mt-2 mb-2">
+        <v-btn class="mt-2 mb-2" color="primary" type="primary">
+          Add
+        </v-btn>
+        </div>
+      </div>
+      
+
+      <div class="more-service-card">
+        <div class="text-center">Oven</div>
+        <div class="text-center mt-2">
+        <img src='/static/files/icons/oven.png' class="service-icon"/>
+        </div>
+        <div class="text-center mt-2 mb-2">
+        <v-btn class="mt-2 mb-2" color="primary" type="primary">
+          Add
+        </v-btn>
+        </div>
+      </div>
+
+     </div>
+      `)*/
+    /*  $('.more-services').html(`
+      <div class="owl-carousel"  id="otherServiceCarousel" v-if="serviceChange" >
+      <div class="more-service-card" v-for="(addon,index) in addons_parsed" v-bind:key="index">
+      <div class="text-center"><% addon.details.name %></div>
+      <div class="text-center mt-2">
+      <img src='/static/files/icons/oven.png' class="service-icon"/>
+      </div>
+      <div class="text-center mt-2 mb-2">
+      <v-btn class="mt-2 mb-2" color="primary" type="primary">
+        Add
+      </v-btn>
+      </div>
+    </div>
+      </div>
+      `)
+      console.log("i ran once")
+      $('#otherServiceCarousel').owlCarousel({
+        loop:false,
+          
+          responsiveClass:true,
+          responsive:{
+              0:{
+                  items:1,
+                  nav:false
+              },
+              600:{
+                  items:1,
+                  nav:false
+              },
+              1000:{
+                  items:6,
+                  nav:false,
+                  loop:false
+              }
+          }
+      });
+      this.otherService.type="old"*/
+      
     }
+   
+     this.serviceChange=true 
    
    
   
@@ -2787,6 +3041,7 @@ this.infectionControlServices=[]
    
     `)
     selectServiceOnly('Kitchen Cleaning')
+    
         }
         else{
            if(item=='Infection Control'){
@@ -3005,7 +3260,7 @@ responsive:{
       })
        .catch((error) => {
         console.log(error);
-        window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
+      //  window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
       });
 
    }
@@ -3030,11 +3285,169 @@ responsive:{
         console.log(error);
       });
   },
+  async getAddons(){
+    this.addons=[]
+    var ser = 'Kitchen Cleaning'
+    axios.get(this.url+'/customer/ajax/getserviceaddons?service_type='+ser).then(response=>{
+      this.addons=response.data.service_addons
+     this.parseAddons()
+     
+    }).catch((error)=>{
+      console.log(error)
+    })
+  },
+  findAddons(addon){
+  
+    for(var i=0;i<this.addons_parsed.length;i++){
+      if(this.addons_parsed[i].details.name==addon){
+        return i
+      }
+    }
+    return 'not found'
+  },
+  async parseAddons(){
+    this.addons_parsed=[]
+    for(var i=0;i<this.addons.length;i++){
+      if(this.addons[i].category){
+        if(this.addons[i].name=='New Cabinet'||this.addons[i].name=='Used Cabinet'){
+          if(this.otherService.type=='old' && this.addons[i].name=='Used Cabinet'){
+          var add_on_stat=this.findAddons('Cabinet')
+          }
+          else if(this.otherService.type=='new' && this.addons[i].name=='New Cabinet'){
+            var add_on_stat=this.findAddons('Cabinet')
+          }
+          else{
+            add_on_stat='not found'
+          }
+        }
+        else{
+        var add_on_stat=this.findAddons(this.addons[i].name)
+        }
+        if(add_on_stat!='not found'){
+          this.addons_parsed[add_on_stat].size.push({
+            size:this.addons[i].category,
+            max_size:this.addons[i].size,
+            price:this.addons[i].price
+          })
+        }
+        else{
+          if(this.addons[i].name=='Used Cabinet'||this.addons[i].name=='New Cabinet'){
+            if(this.otherService.type=='old' && this.addons[i].name=='Used Cabinet'){
+              var add_on = { ...this.addons[i] }
+              add_on.name='Cabinet'
+              this.addons_parsed.push({
+                details:add_on,
+                selected:false,
+                quantity:0,  
+                size:[{
+                  size:this.addons[i].category,
+                  max_size:this.addons[i].size,
+                  price:this.addons[i].price
+                }],
+                selected_size:{}
+              })
+            }
+            else if(this.otherService.type=='new' && this.addons[i].name=='New Cabinet'){
+              var add_on = { ...this.addons[i] }
+             
+              add_on.name='Cabinet'
+              this.addons_parsed.push({
+                details:add_on,
+                selected:false,
+                quantity:0,  
+                size:[{
+                  size:this.addons[i].category,
+                  max_size:this.addons[i].size,
+                  price:this.addons[i].price
+                }],
+                selected_size:{}
+              })
+            }
+          }
+          else{
+        this.addons_parsed.push({
+          details:this.addons[i],
+          selected:false,
+          quantity:0,  
+          size:[{
+            size:this.addons[i].category,
+            max_size:this.addons[i].size,
+            price:this.addons[i].price
+          }],
+          selected_size:{}
+        })
+      }
+      }
+      }
+      else{
+      this.addons_parsed.push({
+        details:this.addons[i],
+        selected:false,
+        quantity:0,
+        
+        size:[],
+        selected_size:{}
+      })
+    }
+      // if(this.addons[i].name=='Gas Burners/Oven/Stoves')
+      // {
+      //   this.addons_size.push(
+      //    this.add_ons[i]
+      //   )
+      // }
+     
+
+    }
+    var delayInMilliseconds = 1000; //1 second
+
+setTimeout(function() {
+  $('#otherServiceCarousel').owlCarousel({
+    loop:false,
+   
+      responsiveClass:true,
+      responsive:{
+          0:{
+              items:1,
+              nav:false
+          },
+          600:{
+              items:1,
+              nav:false
+          },
+          1000:{
+              items:5,
+              nav:false,
+              loop:false
+          }
+      }
+  });
+}, delayInMilliseconds);
+ 
+    
+    
+  },
+  selectAddons(index){
+    this.addons_parsed[index].selected=true
+    this.addons_parsed[index].quantity=1
+  },
+ increaseQty(index){
+  this.addons_parsed[index].quantity++
+ },
+ reduceQty(index){
+  this.addons_parsed[index].quantity--
+  if( this.addons_parsed[index].quantity==0){
+    this.addons_parsed[index].selected=false
+  }
+ },
   getMultipleSlots(){
     this.slot_loader=true
+    var schedule_services=this.schedule_serviceTypes
+    if(this.checkKitchen()){
+      schedule_services.push('Kitchen Cleaning')
+    }
     axios
       .post(
-         this.url+"/customer/ajax/getmultipleservicecleaningslotes",{service_types:this.schedule_serviceTypes,cleaning_date:this.slotDate,number_of_cleaners:this.selectedDuration.cleaners}
+         this.url+"/customer/ajax/getmultipleservicecleaningslotes",{service_types:schedule_services,cleaning_date:this.slotDate,number_of_cleaners:this.selectedDuration.cleaners}
        
       )
       .then((response) => {
@@ -3232,16 +3645,46 @@ try {
       sides: "",
       stain_age: "",
       height:"",
-      keynote_data:[]
+      keynote_data:[],
+      addons:[]
     };
+    this.parseAddons()
     if(this.selectedService.name=='Kitchen Cleaning'){
       this.otherService.type="old"
       this.changeKitchen()
     }
+  
     this.dialog = true;
     this.dialogmsg = "Add New";
     this.dialogStat = true;
     this.building = [];
+    var delayInMilliseconds=1000
+    var carousel = $("#otherServiceDialogCarousel");
+    carousel.owlCarousel('destroy'); 
+    $('.owl-item:empty').remove()
+    setTimeout(function() {
+      $('#otherServiceDialogCarousel').owlCarousel({
+        loop:false,
+       
+          responsiveClass:true,
+          responsive:{
+              0:{
+                  items:1,
+                  nav:false
+              },
+              600:{
+                  items:1,
+                  nav:false
+              },
+              1000:{
+                  items:3,
+                  nav:false,
+                  loop:false
+              }
+          }
+      });
+    }, delayInMilliseconds);
+    $('#otherServiceDialogCarousel').removeClass('owl-hidden')
   },
   facadeFilter(){
       this.facadeSize=[]
@@ -3263,9 +3706,14 @@ try {
       }
   },
   editItem(a, b) {
-    this.dialog = true;
-    this.dialogmsg = "Edit";
-    this.dialogStat = false;
+    this.add_new_kitchen=false
+    this.addons_parsed=[...a.addons]
+  
+      this.dialog = true;
+      this.dialogmsg = "Edit";
+      this.dialogStat = false;
+    
+  
     (this.otherService = {
       material: a.material,
       keynote_data:a.keynote_data,
@@ -3283,10 +3731,39 @@ try {
       sides: a.sides,
       stain_age: a.stain_age,
       section_cost:a.section_cost,
-      height:a.height
+      height:a.height,
+      addons:a.addons
 
     }),
-      (this.currentItem = b);
+   
+      this.currentItem = b;
+      var delayInMilliseconds=1000
+    var carousel = $("#otherServiceDialogCarousel");
+    carousel.owlCarousel('destroy'); 
+    $('.owl-item:empty').remove()
+    setTimeout(function() {
+      $('#otherServiceDialogCarousel').owlCarousel({
+        loop:false,
+       
+          responsiveClass:true,
+          responsive:{
+              0:{
+                  items:1,
+                  nav:false
+              },
+              600:{
+                  items:1,
+                  nav:false
+              },
+              1000:{
+                  items:3,
+                  nav:false,
+                  loop:false
+              }
+          }
+      });
+    }, delayInMilliseconds);
+    $('#otherServiceDialogCarousel').removeClass('owl-hidden')
   },
   async saveChanges() {
       await this.calcSize()
@@ -3414,8 +3891,12 @@ try {
 
     await this.calcSize();
     this.otherService.section_cost=this.otherService.size.cost
+    this.otherService.section_net_cost=this.otherService.size.cost+this.findAddonCost()
    if(this.otherService.stain_reason.length>0){
      this.otherService.stain_reason=this.otherService.stain_reason.join()
+   }
+   if(this.serviceType=='Kitchen Cleaning'){
+     this.otherService.addons=[...this.addons_parsed]
    }
     this.otherServices.push(this.otherService);
     if(this.serviceType=='Upholstery Cleaning')
@@ -3424,7 +3905,8 @@ try {
       name: this.serviceType + " - " + this.otherService.type,
       section_name: this.serviceType + " - " + this.otherService.type,
       section: this.otherService,
-      section_cost:this.otherService.size.cost
+      section_cost:this.otherService.section_cost,
+      section_net_cost:this.otherService.section_net_cost
     });
     }
     else{
@@ -3432,7 +3914,8 @@ try {
       name: this.serviceType ,
       section_name: this.serviceType,
       section: this.otherService,
-      section_cost:this.otherService.size.cost
+      section_cost:this.otherService.section_cost,
+      section_net_cost:this.otherService.section_net_cost
     });
     }
    
@@ -3440,7 +3923,7 @@ try {
       material: "",
       color: "",
       size: "",
-      type: "",
+      type: "old",
       age: "",
       stain: false,
       stain_reason: "",
@@ -3452,8 +3935,11 @@ try {
       hallway_size: "",
       sides: "",
       stain_age: "",
-      section_cost:null
+      section_cost:null,
+      section_net_cost:null,
+      addons:[]
     };
+    this.parseAddons()
     this.dialog = false;
      }
       this.findTempcost()
@@ -3464,8 +3950,12 @@ try {
 
     await this.calcSize();
     this.otherService.section_cost=this.otherService.size.cost
+    this.otherService.section_net_cost=this.otherService.size.cost+this.findAddonCost()
     if(this.otherService.stain_reason.length>0){
       this.otherService.stain_reason=this.otherService.stain_reason.join()
+    }
+    if(this.serviceType=='Kitchen Cleaning'){
+      this.otherService.addons=[...this.addons_parsed]
     }
     this.otherServices.push(this.otherService);
     if(this.serviceType=='Upholstery Cleaning')
@@ -3474,6 +3964,7 @@ try {
       name: this.serviceType + " - " + this.otherService.type,
       section_name: this.serviceType + " - " + this.otherService.type,
       section: this.otherService,
+      section_net_cost:this.otherService.section_net_cost
     });
     }
     else{
@@ -3481,6 +3972,7 @@ try {
       name: this.serviceType,
       section_name: this.serviceType,
       section: this.otherService,
+      section_net_cost:this.otherService.section_net_cost
     });
     }
    
@@ -3501,6 +3993,7 @@ try {
       sides: "",
       stain_age: "",
       section_cost:null,
+      section_net_cost:null,
       keynote_data:[]
     };
     this.dialog = false;
@@ -3518,8 +4011,9 @@ try {
      for(var i=0;i<this.multiServicesBill.length;i++){
          var servcost=0;
           for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
-            servcost = servcost + this.multiServicesBill[i].bill[j].section.section_cost
+            servcost = servcost + this.multiServicesBill[i].bill[j].section.section_net_cost
           }
+          console.log("serv cost is "+servcost)
           this.multiServicesBill[i]['total_cost']=servcost
      }
 
@@ -3645,7 +4139,7 @@ try {
      this.otherServices=[]
      this.otherService={
     material: "",
-
+    addons:[],
     color: "",
     size: {},
     type: "",
@@ -4139,14 +4633,15 @@ try {
     }
     if (!itemFound) {
         this.building[building].floors[floor].apartments[apartment].section_cost=this.building[building].floors[floor].apartments[apartment].size.cost
-
+        this.building[building].floors[floor].apartments[apartment].section_net_cost= this.building[building].floors[floor].apartments[apartment].section_cost
           if(this.building[building].floors[floor].apartments[apartment].kitchen){
              
               for(var k=0;k<this.building[building].floors[floor].apartments[apartment].kitchens.length;k++){
                 if(this.building[building].floors[floor].apartments[apartment].kitchens[k].type=='old'){
-                  this.building[building].floors[floor].apartments[apartment].section_cost=this.building[building].floors[floor].apartments[apartment].section_cost+this.building[building].floors[floor].apartments[apartment].kitchens[k].size.cost
+                  this.building[building].floors[floor].apartments[apartment].section_net_cost=this.building[building].floors[floor].apartments[apartment].section_net_cost+this.building[building].floors[floor].apartments[apartment].kitchens[k].size.cost
               }
-                }
+
+              }
           }
       this.billingData.push({
         name:
@@ -4226,14 +4721,16 @@ try {
     if (!floorFound) {
       if (!this.building[building].floors[floor - 1].apartment) {
          this.building[building].floors[floor-1].section_cost=this.building[building].floors[floor-1].size.cost
-
+         this.building[building].floors[floor - 1].section_net_cost=this.building[building].floors[floor-1].section_cost
           if(this.building[building].floors[floor - 1].kitchen){
              
               for(var k=0;k<this.building[building].floors[floor - 1].kitchens.length;k++){
+
                 if(this.building[building].floors[floor - 1].kitchens[k].type=='old'){
-                  this.building[building].floors[floor - 1].section_cost=this.building[building].floors[floor - 1].section_cost+this.building[building].floors[floor - 1].kitchens[k].size.cost
-                }
-                }
+                  this.building[building].floors[floor - 1].section_net_cost=this.building[building].floors[floor - 1].section_net_cost+this.building[building].floors[floor - 1].kitchens[k].size.cost
+              }
+
+              }
           }
          // this.building[building].floors[floor - 1].section_cost=
        
@@ -4294,18 +4791,21 @@ try {
 
   },
   calcTotal(){
+    console.log("i m inside total cost ")
       this.totalCost = 0;
       
       for (var i = 0; i < this.multiServicesBill.length; i++) {
         for(var j=0;j<this.multiServicesBill[i].bill.length;j++)
         {
-          if(!this.multiServicesBill[i].bill[j].section.kitchen)
+          /*if(!this.multiServicesBill[i].bill[j].section.kitchen)
           {
                         this.multiServicesBill[i].bill[j].section.section_cost=this.multiServicesBill[i].bill[j].section.size.cost
-          }
-      this.totalCost = this.totalCost + this.multiServicesBill[i].bill[j].section.section_cost;
+                        this.multiServicesBill[i].bill[j].section.section_net_cost=this.multiServicesBill[i].bill[j].section.size.cost
+          }*/
+      this.totalCost = this.totalCost + this.multiServicesBill[i].bill[j].section.section_net_cost;
         }
     }
+    console.log("i m inside total cost and it is "+this.totalCost)
   },
    recalcApartmentPrice(building,floor,apartment) {
     /*this.totalCost = 0;
@@ -4339,7 +4839,17 @@ try {
   setCost(building, floor, apartment) {
     this.building[building].floors[floor].apartments[apartment].cost = "";
   },
- 
+ getKitchenProductivity(){
+  axios
+  .get(
+    this.url+"/customer/ajax/getserviceproductivity?service_type=" +
+      'Kitchen Cleaning'
+  ).then(response=>{
+    this.new_kitchen_productivity=  response.data.newkitchen_perhour_cleaning
+    this.old_kitchen_productivity=  response.data.oldkitchen_perhour_cleaning
+    this.kitchen_max_cleaners=response.data.max_cleaners
+  })
+ },
   doSomethingAsync(k) {
    return new Promise((resolve) => {
        axios
@@ -4399,6 +4909,22 @@ try {
             parseInt(
               total_oldkitchen_size / data["oldkitchen_perhour_cleaning"]
             );
+            //To find addons man hour 
+            var addon_manhour=0
+            for(var ao=0;ao<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;ao++){
+                for(var addon=0;addon<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons.length;addon++){
+                  if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].selected){
+                    if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].details.category){
+                      addon_manhour=addon_manhour+(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].quantity*(parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].selected_size.max_size)/this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].details.productivity))
+                    }
+                    else{
+                    addon_manhour=addon_manhour+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].details.productivity*this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].quantity
+                    }
+                  }
+                }
+            
+            }
+            manhour=parseInt(manhour)+parseInt(addon_manhour)
         } else if (selected_service == "Window Cleaning") {
           for(var b=0;b<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;b++){
             if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.size.is_highprice_window){
@@ -4423,7 +4949,22 @@ try {
           var productivity = data["perhour_cleaning"];
           console.log("productivity is "+productivity)
           var manhour = parseInt(total_estimated_size / productivity);
-          
+          var new_kit_size=0
+          var old_kit_size=0
+          var kit_manhour=0
+          for(var b=0;b<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;b++){
+          if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.kitchen){
+            for(var kit=0;kit<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.kitchens.length;kit++){
+              if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.kitchens[kit].is_newkitchen){
+                new_kit_size=new_kit_size+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.kitchens[kit].size.max_size
+              }else{
+                old_kit_size=old_kit_size+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.kitchens[kit].size.max_size
+              }
+            }
+          }
+          }
+          kit_manhour=parseInt(new_kit_size/this.new_kitchen_productivity)+parseInt(old_kit_size/this.old_kitchen_productivity)
+          manhour=manhour+kit_manhour
         }
         if(manhour<2){
           manhour=2
@@ -4917,7 +5458,9 @@ try {
 },
 mounted() {
   this.url = api;
+ // this.getAddons()
   this.getServices()
+  this.getKitchenProductivity()
   this.getAreaTypes()
   this.getIp()
   this.getGovernorate()
