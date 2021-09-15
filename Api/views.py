@@ -2024,9 +2024,39 @@ class DiscountSettingsAPI(APIView):
 		
 		discount_setting_serializer       = DiscountSettingSerializer(discount_settings).data
 		response_dict['discount_details'] = discount_setting_serializer
+		response_dict['success']          = True
 
 		return Response(response_dict,HTTP_200_OK)
 
+##Booking Expiry
+class BookingExpiryCheckAPI(APIView):
+	permission_classes  	= (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+		response_dict                     = {}
+		order_no                          = request.GET.get('order_no')
+		order_scheduler                   = OrderScheduler.objects.select_related('order').filter(order__order_no=order_no).first()
+
+		response_dict['created']          = datetime.strftime(order_scheduler.created,'%d-%m-%Y %I:%M %p')
+		response_dict['success']          = True
+
+		return Response(response_dict,HTTP_200_OK)
+
+
+class BookingExpiryAPI(APIView):
+	permission_classes  	= (AllowAny,)
+	authentication_classes  = ()
+
+	def post(self,request):
+		response_dict                     = {}
+		schedule_ids                      = request.data.get('schedule_ids')
+		
+		#delete schedules
+		OrderScheduler.objects.filter(id__in=schedule_ids).delete()
+		response_dict['success']          = True
+		
+		return Response(response_dict,HTTP_200_OK)
 
 ###Team Leader Mobile app API'S
 from bleach_crm_ps.api_permissions import IsTeamInchargePermission

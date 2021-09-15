@@ -15,6 +15,9 @@ urlpatterns = [
 	url(r'^leave-scheduler/$',views.LeaveScheduleAPI.as_view(),name='api-leaveschedule'),
 	url(r'^leave-scheduler-delete/(?P<leave_id>\d+)/$',views.DeleteLeaveSchedule.as_view(),name='api-leaveschedule-delete'),
 
+	url(r'^booking-expiry-check/$',views.BookingExpiryCheckAPI.as_view(),name='api-booking-expiry-check'),
+	url(r'^booking-expiry/$',views.BookingExpiryAPI.as_view(),name='api-booking-expiry'),
+
 	url(r'^discount-settings/$',views.DiscountSettingsAPI.as_view(),name='api-discount-settings'),
 
 	url(r'^section-verification-updation/$',views.SectionVerificationUpdationAPI.as_view(),name='api-section-verification-updation'),

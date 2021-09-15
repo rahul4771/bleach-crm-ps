@@ -63,7 +63,19 @@
     {% if section.dirt_level %}
     <div class="common-gray-text align-left"><label class="common-labels">Dirt Level</label> : <strong>{{section.dirt_level}}</strong></div>
     {% endif %}
-    <div class="common-gray-text align-left"><label class="common-labels">Size</label> : <strong>{{section.size}} {{section.unit}}</strong></div>
+    <div class="common-gray-text align-left"><label class="common-labels">Size</label> : <strong>{{section.size}} 
+      {% if order_schedule.order_scheduler_book.service_type.name == 'Upholstery Cleaning' %}                                                       
+      {% for price_range in price_ranges %}
+      {% if price_range.name == section.size and price_range.service_type == order_schedule.order_scheduler_book.service_type and price_range.upholstery_type == section.upholstery_type %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}}){% endif %}
+      {% endfor %}
+        
+      {% else %}
+      {% for price_range in price_ranges %}
+      {% if price_range.name == section.size and price_range.service_type == order_schedule.order_scheduler_book.service_type and order_schedule.order_scheduler_book.service_type.name != 'Mattress Cleaning' and price_range.is_newkitchen == section.new_kitchen and price_range.is_highprice_facade == section.is_highprice_facade and price_range.is_highprice_window == section.is_highprice_window %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}}){% endif %}
+      {% endfor %}
+          
+      {% endif %}
+    </strong></div>
     {% if section.floor %}
     <div class="common-gray-text align-left"><label class="common-labels">Floors</label> : <strong>{{section.floor}}</strong></div>
     {% endif %}
@@ -102,74 +114,50 @@
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <br>
-<div class="evaluation-card-wrapper"><!--evaluation-card-wrapper-->
+
 {% if section.keynotes %}
+<div class="evaluation-card-wrapper"><!--evaluation-card-wrapper-->
 {% for keynote in section.keynotes %}
-{% if keynote.sub_area != 'kitchen' %}
 		<div class="evaluation-card"><!--evaluation-card-->
         <div class="evaluation-section"><label>{{keynote.sub_area}}</label>{{keynote.quantity}}</div> 
-        </div><!--evaluation-card-->   
-{% endif %}
-{% if keynote.sub_area == 'kitchen' %}{% ifchanged keynote.sub_area %}
-<div class="evaluation-card"><!--evaluation-card-->
-        <div class="evaluation-section"><label>Kitchen</label>{{section.kitchen_keynote}}</div> 
-        </div><!--evaluation-card-->  
-{% endifchanged %}{% endif %}
+    </div><!--evaluation-card-->   
 {% endfor %}
-{% endif %}
 </div><!--evaluation-card-wrapper-->
-<div class="row mt-10">
-  
-  
+{% endif %}
+
+{% if section.sectionaddons %}
+<!-- section addon details starts here-->
+<div class="row mt-10">  
   <div class="col-md-12 mb-20 ">
     <div class="mt-20 addon-heading">
         Add-ons
     </div>
-      <div class="row mt-10">
+    <div class="row mt-10">
           
+          {% for addon in section.sectionaddons %}
           <div class="col-md-3 mt-10">
               <div class="addon-card">
-                  <div class="addon-title">Stove</div>
+                  <div class="addon-title">{{addon.name}}</div>
                   <div class="row">
                       <div class="col-md-6 addon-details mt-10">
                           <div>
-                              Small
+                              {{addon.size|default_if_none:''}}
                           </div>
                           <div class="addon-qty">
-                              Qty : 3
+                              Qty : {{addon.quantity}}
                           </div>
-                      </div>
-                      <div class="col-md-6 mt-10">
-                          <div class="addon-price ">183 KD</div>
-                          
                       </div>
                   </div>
               </div>
           </div>
-          <div class="col-md-3 mt-10">
-            <div class="addon-card">
-                <div class="addon-title">Stove</div>
-                <div class="row">
-                    <div class="col-md-6 addon-details mt-10">
-                        <div>
-                            Small
-                        </div>
-                        <div class="addon-qty">
-                            Qty : 3
-                        </div>
-                    </div>
-                    <div class="col-md-6 mt-10">
-                        <div class="addon-price ">183 KD</div>
-                        
-                    </div>
-                </div>
-            </div>
-        </div>
+          {% endfor %}
           
-      </div>
-</div> 
-  <!-- section addon details ends here-->
+    </div>
+  </div> 
 </div>
+<!-- section addon details ends here-->
+{% endif %}
+
 <hr class="hr-dashedpad">
 {% endfor %}
 
