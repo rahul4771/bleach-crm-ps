@@ -309,6 +309,9 @@
                                     <th style="width: %;">
                                         Unit ID
                                     </th>
+                                    <th style="width: %;">
+                                        Serial No.
+                                    </th>
                                     <th data-hide="phone,tablet"  style="width: %; ">
                                         Store
                                     </th>
@@ -335,6 +338,9 @@
                                 <tr>
                                     <td>
                                         {{unit.unit_code}}
+                                    </td>
+                                    <td>
+                                        {{unit.unit_serial_number}}
                                     </td>
                                     <td>
                                         {{unit.store.store_name}}
@@ -364,7 +370,7 @@
                                     <td class="text-center">
                                       
     
-                                        <button onclick="openNavAddBundle('edit')" class="inv-plan-img-btn edit-unit-btn" data-unitid="{{unit.id}}" data-unitcode="{{unit.unit_code}}" data-unitstoreid="{{unit.store.id}}" data-unitstorename="{{unit.store.store_name}}" data-purchasedate="{{unit.purchase_date|date:'Y-m-d'}}" data-expirydate="{{unit.expiry_date|date:'Y-m-d'}}" data-noexpiry="{{unit.no_expiry}}" data-unitprice="{{unit.unit_price|floatformat:3}}" data-status="{{unit.status}}"> <img
+                                        <button onclick="openNavAddBundle('edit')" class="inv-plan-img-btn edit-unit-btn" data-unitid="{{unit.id}}" data-unitcode="{{unit.unit_code}}" data-unitstoreid="{{unit.store.id}}" data-unitstorename="{{unit.store.store_name}}" data-purchasedate="{{unit.purchase_date|date:'Y-m-d'}}" data-expirydate="{{unit.expiry_date|date:'Y-m-d'}}" data-noexpiry="{{unit.no_expiry}}" data-serialnumber="{{unit.unit_serial_number}}" data-unitprice="{{unit.unit_price|floatformat:3}}" data-status="{{unit.status}}"> <img
                                                 src="{% static 'files/inventory/icons/edit.png' %}" alt="">
                                         </button>
                                         <button class="inv-plan-img-btn delete-unit-btn" data-unitid="{{unit.id}}" data-toggle="modal" data-target="#deleteModel"> <img
@@ -432,6 +438,17 @@
                           
                         </div>
                     </div>
+                </div>
+
+            </div>
+
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Serial Number</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text" class="w-p-100 inv-in" name="serial_number" id="serial_number_id" required>
+                      </div>
                 </div>
 
             </div>
@@ -1192,6 +1209,7 @@ function openNavAddBundle(d) {
         $('#id_purchase_date').val($(this).data('purchasedate'));
         $('#id_expiry_date').val($(this).data('expirydate'));
         $('#unit_price_id').val($(this).data('unitprice'));
+        $('#serial_number_id').val($(this).data('serialnumber'));
         $('#id_pro_sel').val($(this).data('unitstoreid'));
         document.getElementById("id_purchase_date").value = $(this).data('purchasedate');
         document.getElementById("pro-name").value = $(this).data('unitstorename');

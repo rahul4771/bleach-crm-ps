@@ -14,6 +14,17 @@ ITEM_STATUS_CHOICES=(
 	('about_to_finish','about_to_finish')
 	)
 
+ITEM_ADD_TYPE_CHOICES=(
+    ('quantity','quantity'),
+	('unit','unit'),
+)
+
+MEASURING_UNIT_CHOICES=(
+    ('litre','litre'),
+	('kg','kg'),
+    ('number','number'),
+)
+
 class Category(models.Model):
     name            =   models.CharField(max_length=100,blank=False,null=False)
     category_code   =   models.CharField(max_length=50,blank=False,null=False)
@@ -76,6 +87,8 @@ class InventoryItem(models.Model):
     reserve_count   =   models.CharField(max_length=10,blank=True,null=True)
     is_reusable     =   models.BooleanField(blank=False,null=False)
     item_status     =   models.CharField(max_length=50,blank=True,null=True,choices=ITEM_STATUS_CHOICES)
+    item_add_type   =   models.CharField(max_length=50,blank=True,null=True,choices=ITEM_ADD_TYPE_CHOICES)
+    measuring_unit  =   models.CharField(max_length=50,blank=True,null=True,choices=MEASURING_UNIT_CHOICES)
     status          =   models.BooleanField(default=True,blank=False,null=False)
     created         =   models.DateTimeField(auto_now_add=True)
     def __unicode__(self):
@@ -100,6 +113,7 @@ class ItemUnit(models.Model):
     item            =   models.ForeignKey(InventoryItem,blank=False,null=False,related_name='unit_item')
     name            =   models.CharField(max_length=100,blank=False,null=False)
     unit_code       =   models.CharField(max_length=50,blank=False,null=False)
+    unit_serial_number =   models.CharField(max_length=50,blank=False,null=False)
     store           =   models.ForeignKey(Store,blank=True,null=True,related_name='unit_store')
     purchase_date   =   models.DateField(blank=True,null=True)
     expiry_date     =   models.DateField(blank=True,null=True)
@@ -266,6 +280,7 @@ class PurchaseOrder(models.Model):
     shipping_charge     = models.CharField(max_length=10,blank=True,null=True)
     other_charge        = models.CharField(max_length=10,blank=True,null=True)
     is_order_completed  = models.BooleanField(default=False,blank=False,null=False)
+    is_received         = models.BooleanField(default=False,blank=False,null=False)
     created             = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
@@ -281,6 +296,7 @@ class PurchaseOrderItems(models.Model):
     item_count          = models.IntegerField(default=0,null=True,blank=True)
     unit_price          = models.CharField(default=0,max_length=100,blank=True,null=True)
     total_price         = models.CharField(default=0,max_length=100,blank=True,null=True)
+    is_received         = models.BooleanField(default=False,blank=False,null=False)
     created             = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):

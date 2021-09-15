@@ -898,6 +898,9 @@ class PaymentDetails(IsAuthenticated,View):
 			except:
 				transactions = None
 
+		total_transactions = transactions.count()
+		total_transactions_amount = transactions.aggregate(total_paid = Sum('amount_paid'))['total_paid']
+
 		
 		
 		#Pending Payments
@@ -1253,7 +1256,7 @@ class PaymentDetails(IsAuthenticated,View):
 		entry_per_page4 = (subscription_due_payments.end_index())-(subscription_due_payments.start_index())+1
 		entry_per_page5 = (neworder_due_payments.end_index())-(neworder_due_payments.start_index())+1
 
-		return render(request,'common/payment/payments.html',{'total_due_amount':total_due_amount,'total_due_orders':total_due_orders,'total_doubtful_due_amount':total_doubtful_due_amount,'total_doubtful_due_orders':total_doubtful_due_orders,'tab':tab,'invoices':invoices,"search_query":search,"page_range1":page_range1,"page_range2":page_range2,"page_range3":page_range3,"page_range4":page_range4,"page_range5":page_range5,"entry_per_page1":entry_per_page1,"entry_per_page2":entry_per_page2,"entry_per_page3":entry_per_page3,"entry_per_page4":entry_per_page4,"entry_per_page5":entry_per_page5,"no_of_entries":no_of_entries,'transactions':transactions,"doubtful_due_payments":doubtful_due_payments,'normal_due_payments':normal_due_payments,'subscription_due_payments':subscription_due_payments,'neworder_due_payments':neworder_due_payments})
+		return render(request,'common/payment/payments.html',{'total_transactions':total_transactions,'total_transactions_amount':total_transactions_amount,'total_due_amount':total_due_amount,'total_due_orders':total_due_orders,'total_doubtful_due_amount':total_doubtful_due_amount,'total_doubtful_due_orders':total_doubtful_due_orders,'total_normal_due_amount':total_normal_due_amount,'total_normal_due_orders':total_normal_due_orders,'total_neworder_due_orders':total_neworder_due_orders,'total_neworder_due_amount':total_neworder_due_amount,'total_subscription_due_amount':total_subscription_due_amount,'total_subscription_due_orders':total_subscription_due_orders,'tab':tab,'invoices':invoices,"search_query":search,"page_range1":page_range1,"page_range2":page_range2,"page_range3":page_range3,"page_range4":page_range4,"page_range5":page_range5,"entry_per_page1":entry_per_page1,"entry_per_page2":entry_per_page2,"entry_per_page3":entry_per_page3,"entry_per_page4":entry_per_page4,"entry_per_page5":entry_per_page5,"no_of_entries":no_of_entries,'transactions':transactions,"doubtful_due_payments":doubtful_due_payments,'normal_due_payments':normal_due_payments,'subscription_due_payments':subscription_due_payments,'neworder_due_payments':neworder_due_payments})
 
 	def post(self,request):
 		order_id = request.POST.get('orderid')
