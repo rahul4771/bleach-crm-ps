@@ -15,7 +15,12 @@
 <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
 
 
-<div class="wrapper" id="app" >
+<div class="wrapper" id="app" v-cloak >
+   <div class="payment-tag">
+    <i class="fas fa-shopping-cart mr-10"></i>
+    <span class="ml-2 payment-tag-text">   <% findAddedCost()+findAbsoluteCost()+findFullAmount() %> KD</span>
+  
+ </div> 
   <!--wrapper-->
   {% if request.user.user_type == 'EVALUATOR' %}
 {% include "evaluator/common/header.html" %}
@@ -25,6 +30,7 @@
 {% include "bookingofficer/common/header.html" %}
 {% endif %} 
   <v-app v-cloak>
+
     <section class="content">
       <!--content-->
 
@@ -33,7 +39,8 @@
         <div class="welcome-wrapper">
           <!--welcome-wrapper-->
           <h1 class="dashboard-head"><% currentPageTitle %> </h1>
-
+          
+            
         </div>
         <!--welcome-wrapper-->
       </div>
@@ -798,7 +805,7 @@ width="1000"
       
           <div class="col-md-6" >
             <div>Oil Residue? <span style="color:red">*</span></div>
-            <v-radio-group v-model="kitchenData.residue" class="p-2">
+            <v-radio-group v-model="kitchenData.residue" class="p-2" row>
               
               <v-radio :value="true">
                 <template v-slot:label>
@@ -880,7 +887,7 @@ width="1000"
 
 <!-- Other Service Modal begins here -->
 <div class="text-center">
-  <v-dialog v-model="dialog" width="500">
+  <v-dialog v-model="dialog" width="700">
     <v-card>
                                 <v-form
     ref="otherServiceDialogForm"
@@ -1193,7 +1200,7 @@ width="1000"
           </div>
           <div class="col-md-6" v-if="serviceType == 'Kitchen Cleaning'">
             <div>Oil Residue? <span style="color:red">*</span></div>
-            <v-radio-group v-model="otherService.residue" class="p-2">
+            <v-radio-group v-model="otherService.residue" class="p-2" row>
              
               <v-radio :value="true">
                 <template v-slot:label>
@@ -1207,6 +1214,8 @@ width="1000"
               </v-radio>
             </v-radio-group>
           </div>
+
+         
           <!-- keynote for services other than detailed cleaning category begins here-->
           <div class="col-md-12" v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning'">
             <div>Add Keynotes</div>
@@ -1251,6 +1260,97 @@ width="1000"
             </v-btn>
           </div>
           <div class="col-md-12"></div>
+           <!--more services  only for kitchen cleaning-->
+           <div class="col-md-12 more-services" v-if="serviceType=='Kitchen Cleaning'">
+            <div class="service-content-heading">
+              Add-ons
+            </div>
+            <div class="owl-carousel"  id="otherServiceDialogCarousel"  >
+              <div class="more-service-card" v-for="(addon,index) in addons_parsed" v-bind:key="index">
+              <div class="text-center"><% addon.details.name %></div>
+              <div class="text-center mt-2">
+              <img src='/static/files/icons/oven.png' class="service-icon" v-if="addon.details.name=='Microwave Oven'"/>
+              <img src='/static/files/icons/refrigerator_single.png' class="service-icon" v-if="addon.details.name=='Refrigerator & Freezer' && addon.details.size=='One Side'"/>
+              <img src='/static/files/icons/refrigerator_double.png' class="service-icon" v-if="addon.details.name=='Refrigerator & Freezer' && addon.details.size=='Two Side'"/>
+
+              <img src='/static/files/icons/exhaust-hood.png' class="service-icon" v-if="addon.details.name=='Exhaust Filters'"/>
+              <img src='/static/files/icons/griller.png' class="service-icon" v-if="addon.details.name=='Grillers'"/>
+              <img src='/static/files/icons/deep-fryer.png' class="service-icon" v-if="addon.details.name=='Fryers'"/>
+              <img src='/static/files/icons/stove.png' class="service-icon" v-if="addon.details.name=='Gas Burners/Oven/Stoves'"/>
+              <img src='/static/files/icons/cabinet.png' class="service-icon" v-if="addon.details.name=='Cabinet'"/>
+              
+              </div>
+              <div class="mt-2 text-center primary-text" v-if="!addon.details.category || Object.keys(addon.selected_size).length>0">
+             <span v-if="Object.keys(addon.selected_size).length>0">  <b > <% addon.selected_size.price %> KD</b> </span>
+             <span v-else>  <b > <% addon.details.price %> KD</b> </span>
+              </div>
+              <v-select
+            v-if="addon.details.category"
+              dense
+              :items="addon.size"
+              item-text="size"
+             v-model="addon.selected_size"
+             return-object
+              label="Size"
+              class="mt-2"
+            ></v-select>
+              <div class="text-center  mb-2" v-if="!addon.details.category">
+              <v-btn class="mt-4 mb-2" color="primary" type="primary" small outlined @click="selectAddons(index)" v-if="!addon.selected">
+                <v-icon left>
+                  mdi-cart
+                </v-icon>
+                Add 
+              </v-btn>
+              
+              <div v-else>
+                
+          <div class="d-flex justify-center mt-2">
+            <div class="reduce-addon-qty" @click="reduceQty(index)">
+              <i class="fas fa-minus-square primary-text"></i>
+            </div>
+            <div class="input-addon-qty">
+              <input type="number" :min="0" class="input-addon" v-model="addon.quantity"/>
+            </div>
+            <div class="add-addon-qty" @click="increaseQty(index)">
+              <i class="fas fa-plus-square primary-text"></i>
+            </div>
+
+          </div>
+              </div>
+              </div>
+
+              <!-- for addons with options-->
+              <div class="text-center  mb-2" v-if="addon.details.category && Object.keys(addon.selected_size).length>0">
+                <v-btn class="mt-4 mb-2" color="primary" type="primary" small outlined @click="selectAddons(index)" v-if="!addon.selected">
+                  <v-icon left>
+                    mdi-cart
+                  </v-icon>
+                  Add 
+                </v-btn>
+                
+                <div v-else>
+                  
+            <div class="d-flex justify-center mt-2">
+              <div class="reduce-addon-qty" @click="reduceQty(index)">
+                <i class="fas fa-minus-square primary-text"></i>
+              </div>
+              <div class="input-addon-qty">
+                <input type="number" :min="0" class="input-addon" v-model="addon.quantity"/>
+              </div>
+              <div class="add-addon-qty" @click="increaseQty(index)">
+                <i class="fas fa-plus-square primary-text"></i>
+              </div>
+  
+            </div>
+                </div>
+                </div>
+                <!-- addons with option sends here-->
+
+            </div>
+              </div>
+    </div>
+
+  <!--more services  only for kitchen cleaning ends here-->
         </div>
       </v-card-text>
 
@@ -2124,6 +2224,7 @@ Fill all the details of the Buildings  to proceed
                 <!-- General, Deep, storage area, sanitization ends here-->
 
                 <!-- upholstery , carpet, mattress ... -->
+                <div>
                 <div class="row floors-card mb-4" v-for="(service, index) in otherServices" v-bind:key="index">
                   <div class="col-md-3 col-6" v-if="serviceType == 'Upholstery Cleaning'">
                     <div class="p-2">
@@ -2168,9 +2269,41 @@ Fill all the details of the Buildings  to proceed
                         </div>
                       </div>
                     </div>
-                    
+                  </div>
+                  <!-- <div v-if="serviceType=='Kitchen Cleaning'" class="row mb-4">
+                    <div class="col-md-2" v-for="(kitchen,kindex) in otherServices" v-bind:key="kindex" >
+                      <div class="kitchen-chip d-flex" @click="editItem(kitchen,kindex)" v-if="currentItem!=kindex||currentItem==null">
+                        <div> <% 'Kitchen '+(kindex+1)%></div>
+                       
+                        <div  class="kitchen-chip-icon">
+                          <i class="fas fa-times"></i>
+                        </div>
+                      </div>
+                      <div class="kitchen-chip-active d-flex" @click="editItem(kitchen,kindex)" v-if="currentItem==kindex && currentItem!=null">
+                        <div> <% 'Kitchen '+(kindex+1)%></div>
+                       
+                        <div  class="kitchen-chip-icon" @click="deleteItem(kindex)">
+                          <i class="fas fa-times"></i>
+                        </div>
+                      </div>
+                   
+                    </div>
+                    <div class="col-md-2" @click="addNewKitchenWithAddon()">
+                      <div class="kitchen-chip-active d-flex"  v-if="add_new_kitchen">
+                        <div>  Kitchen <% (otherServices.length+1) %></div>
+                       
+                        
+                      </div>
+                      <div class="kitchen-chip d-flex" v-if="!add_new_kitchen">
+                        <div> Kitchen <% (otherServices.length+1) %></div>
+                       
+                        
+                      </div>
+                    </div>
+                     
+                  </div> -->
                     <v-btn
-                v-if="otherServices.length > 0"
+                v-if="otherServices.length > 0 "
                 class="mx-2 mt-4"
                
                 dark
@@ -2180,7 +2313,7 @@ Fill all the details of the Buildings  to proceed
               >
              Add <% serviceType.split(' ')[0] %>
               </v-btn>
-                    <v-form ref="otherServiceForm" v-model="validOtherService">
+                    <v-form ref="otherServiceForm" v-model="validOtherService" v-if="otherServices.length < 1 ">
                       <div class="row items-card" v-if="
                   (serviceType == 'Upholstery Cleaning' ||
                     serviceType == 'Facade Cleaning' ||
@@ -2190,8 +2323,8 @@ Fill all the details of the Buildings  to proceed
                     serviceType == 'Kitchen Cleaning' ||
                     serviceType == 'Car Parking Umbrella' ||
                     serviceType == 'Window Cleaning' ||
-                    serviceType == 'Outdoor Cleaning') &&
-                  otherServices.length < 1
+                    serviceType == 'Outdoor Cleaning') 
+                  
                 ">
 
                         <div class="col-md-12" v-if="serviceType == 'Upholstery Cleaning'">
@@ -2359,7 +2492,7 @@ Fill all the details of the Buildings  to proceed
                         </div>
                         <div class="col-md-6" v-if="serviceType == 'Kitchen Cleaning'">
                           <div>Oil Residue? <span style="color:red">*</span></div>
-                          <v-radio-group v-model="otherService.residue" class="p-2">
+                          <v-radio-group v-model="otherService.residue" class="p-2" row>
                             
                             <v-radio :value="true">
                               <template v-slot:label>
@@ -2373,6 +2506,93 @@ Fill all the details of the Buildings  to proceed
                             </v-radio>
                           </v-radio-group>
                         </div>
+                           <!--more services  only for kitchen cleaning-->
+          <div class="col-md-12 more-services" v-if="serviceType=='Kitchen Cleaning'">
+            <div class="service-content-heading">
+              Add-ons
+            </div>
+            <div class="owl-carousel"  id="otherServiceCarousel"  >
+              <div class="more-service-card" v-for="(addon,index) in addons_parsed" v-bind:key="index">
+              <div class="text-center"><% addon.details.name %></div>
+              <div class="text-center mt-2">
+              <img src='/static/files/icons/oven.png' class="service-icon" v-if="addon.details.name=='Microwave Oven'"/>
+              <img src='/static/files/icons/refrigerator_single.png' class="service-icon" v-if="addon.details.name=='Refrigerator & Freezer' && addon.details.size=='One Side'"/>
+              <img src='/static/files/icons/refrigerator_double.png' class="service-icon" v-if="addon.details.name=='Refrigerator & Freezer' && addon.details.size=='Two Side'"/>
+
+              <img src='/static/files/icons/exhaust-hood.png' class="service-icon" v-if="addon.details.name=='Exhaust Filters'"/>
+              <img src='/static/files/icons/griller.png' class="service-icon" v-if="addon.details.name=='Grillers'"/>
+              <img src='/static/files/icons/deep-fryer.png' class="service-icon" v-if="addon.details.name=='Fryers'"/>
+              <img src='/static/files/icons/stove.png' class="service-icon" v-if="addon.details.name=='Gas Burners/Oven/Stoves'"/>
+              <img src='/static/files/icons/cabinet.png' class="service-icon" v-if="addon.details.name=='Cabinet'"/>
+              
+              </div>
+              <div class="mt-2 text-center primary-text" v-if="!addon.details.category || Object.keys(addon.selected_size).length>0">
+             <span v-if="Object.keys(addon.selected_size).length>0">  <b > <% addon.selected_size.price %> KD</b> </span>
+             <span v-else>  <b > <% addon.details.price %> KD</b> </span>
+              </div>
+              <v-select
+            v-if="addon.details.category"
+              dense
+              :items="addon.size"
+              item-text="size"
+             v-model="addon.selected_size"
+             return-object
+              label="Size"
+              class="mt-2"
+            ></v-select>
+            <div class="text-center  mb-2" v-if="!addon.details.category">
+              <v-btn class="mt-2 mb-2" color="primary" type="primary" small outlined @click="selectAddons(index)" v-if="!addon.selected">
+                <v-icon left>
+                  mdi-cart
+                </v-icon>
+                Add 
+              </v-btn>
+              <div v-else>
+                
+          <div class="d-flex justify-center mt-2">
+            <div class="reduce-addon-qty" @click="reduceQty(index)">
+              <i class="fas fa-minus-square primary-text"></i>
+            </div>
+            <div class="input-addon-qty">
+              <input type="number" :min="0" class="input-addon" v-model="addon.quantity"/>
+            </div>
+            <div class="add-addon-qty" @click="increaseQty(index)">
+              <i class="fas fa-plus-square primary-text"></i>
+            </div>
+
+          </div>
+              </div>
+              </div>
+              <!-- addons with size options-->
+              <div class="text-center  mb-2" v-if="addon.details.category && Object.keys(addon.selected_size).length>0">
+              <v-btn class="mt-2 mb-2" color="primary" type="primary" small outlined @click="selectAddons(index)" v-if="!addon.selected">
+                <v-icon left>
+                  mdi-cart
+                </v-icon>
+                Add 
+              </v-btn>
+              <div v-else>
+                
+          <div class="d-flex justify-center mt-2">
+            <div class="reduce-addon-qty" @click="reduceQty(index)">
+              <i class="fas fa-minus-square primary-text"></i>
+            </div>
+            <div class="input-addon-qty">
+              <input type="number" :min="0" class="input-addon" v-model="addon.quantity"/>
+            </div>
+            <div class="add-addon-qty" @click="increaseQty(index)">
+              <i class="fas fa-plus-square primary-text"></i>
+            </div>
+
+          </div>
+              </div>
+              </div>
+              <!-- addons without size options-->
+            </div>
+              </div>
+    </div>
+
+  <!--more services  only for kitchen cleaning ends here-->
                         <!-- keynote for services other than detailed cleaning category begins here-->
                         <div class="col-md-12" v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning'">
                           <div>Add Keynotes</div>
@@ -2418,8 +2638,14 @@ Fill all the details of the Buildings  to proceed
                         </div>
                         <!-- key note ends here-->
                         <div class="col-md-12 text-center"  >
-                          <v-btn color="primary" class="mr-4 mx-auto" v-on:click="addOtherService()">
+                          <v-btn color="primary" class="mr-4 mx-auto" v-on:click="addOtherService()" v-if="serviceType!='Kitchen Cleaning'">
                             Add
+                          </v-btn>
+                          <v-btn color="primary" class="mr-4 mx-auto" v-on:click="addOtherService()" v-if="add_new_kitchen && serviceType=='Kitchen Cleaning'">
+                            Add
+                          </v-btn>
+                           <v-btn color="primary" class="mr-4 mx-auto" v-on:click="saveChanges()" v-if="!add_new_kitchen && serviceType=='Kitchen Cleaning'">
+                           Save Changes
                           </v-btn>
                         </div>
 
@@ -2818,6 +3044,17 @@ Fill all the details of the Buildings  to proceed
                                 KD <% bill.section.section_cost %><span v-if="service.schedule_details && service.cleaning_policy=='SUBSCRIPTION'">x <% Object.keys(service.schedule_details).length %></span>
                               </div>
                             </div>
+                            <div v-for="addon in bill.section.addons" v-bind:key="addon">
+                              <div class="d-flex mt-1" v-if="addon.selected">
+                                <div >
+                                 <% addon.details.name +' x '+addon.quantity%>
+                                </div>
+                                <div class="ml-auto primary-text" >
+                                  KD <span v-if="!addon.details.category"><% addon.details.price * addon.quantity %></span><span v-else>KD <% addon.selected_size.price * addon.quantity %></span>
+                                </div>
+                              </div>
+                            </div>
+                            
                           </div>
                     
                           </div>
@@ -3389,6 +3626,7 @@ Fill all the details of the Buildings  to proceed
 
 </div>
 </section>
+
 
 </v-app>
 

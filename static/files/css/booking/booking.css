@@ -779,6 +779,109 @@ padding:10px;
     font-size:3.5rem;
     font-weight:500;
 }
+.more-service-card{
+    border: 1px solid #E6E6E6;
+    margin: 10px;
+border-radius: 6px;
+padding:5px;
+min-height:220px;
+}
+.cart-btn{
+    background: #ffffff;
+    border-color: #2d4e85;
+    color: #2d4e85 !important;
+}
+.cart-input{
+    border: 1px solid #2d4e85;
+}
+.cart-btn:hover{
+    background:#2d4e85;
+    border-color: #2d4e85;
+    color:#ffffff !important;
+}
+.cart-btn:focus{
+    background:#2d4e85;
+    border-color: #2d4e85;
+    color:#ffffff !important ;
+}
+.service-content-heading{
+    font-size:16px;
+    font-weight:500;
+}
+.input-addon-qty{
+    border: 1px solid #2d4e85;
+    border-radius: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
+    max-width: 100px;
+    
+}
+.input-addon{
+    padding: 6px;
+}
+/* Chrome, Safari, Edge, Opera */
+.input-addon::-webkit-outer-spin-button,
+.input-addon::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0 !important;
+}
+
+/* Firefox */
+.input-addon[type=number] {
+  -moz-appearance: textfield !important;
+}
+.reduce-addon-qty{
+    font-size:18px;
+    padding-top:2px;
+    cursor: pointer;
+}
+.add-addon-qty{
+    font-size:18px;
+    padding-top:2px;
+    cursor: pointer;
+}
+.kitchen-chip{
+    background: #EDF1F6 0% 0% no-repeat padding-box;
+border-radius: 6px;
+padding:6px;
+cursor:pointer;
+}
+.kitchen-chip-active{
+    background: #EDF1F6 0% 0% no-repeat padding-box;
+    border-radius: 6px;
+    padding:6px;
+    border: 2px solid #2E4E85;
+    cursor:pointer
+}
+
+.kitchen-chip-icon{
+    margin-left: auto;
+    color:#707070
+}
+.payment-tag{
+    background:#2d4e85;
+    color:#ffffff;
+    position: fixed;
+    padding:10px;
+    right:0;
+    top:50%;
+    z-index:999;
+}
+.payment-tag-text{
+    font-size: 18px;
+    font-weight:500;
+}
+.cart-btn:active{
+    background:#2d4e85;
+    border-color: #2d4e85;
+    color:#ffffff !important;
+}
+.more-service-card-active{
+    border: 1px solid #2E4E85;
+    margin: 10px;
+    border-radius: 6px;
+    padding:5px;
+}
 .schedule-heading{
     font-size:24px;
 }
