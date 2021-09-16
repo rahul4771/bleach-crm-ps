@@ -58,7 +58,7 @@
                                 <th data-hide="phone,tablet"  class="text-center">
                                     Reserve
                                 </th>
-                                <th class="text-center">
+                                <th class="text-left">
                                     Item Status
                                 </th>
     
@@ -93,7 +93,7 @@
                                 {% endif %}
                               
                             </td> {% endcomment %}
-                            <td class="text-center">
+                            <td class="text-left">
                                 {% if item.item_status == 'available' %}
                                 <span class="inv-dot  c-active"></span>
                                 Available
@@ -268,6 +268,50 @@
                 </div>
 
             </div>
+
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Add Item by</div>
+
+                    <!-- <select id="item_status_id" name="item_status" class="minimal">
+                        <option value="True" selected>Active</option>
+                        <option value="False">Inactive</option>
+
+                    </select> -->
+                    <input hidden type="text" id="itemadd_type_id" name="itemadd_type" value="unit">
+                    <div class="wrap-drop" id="noble-gases6" style="z-index: 2 !important;"  >
+                        <span id="id_selectText5">unit</span>
+                        <ul class="drop">
+                            <li onclick="changeSelect6('quantity')"><a>Quantity</a></li>
+                            <li onclick="changeSelect6('unit')"><a>Unit</a></li> 
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Unit of Measure</div>
+
+                    <!-- <select id="item_status_id" name="item_status" class="minimal">
+                        <option value="True" selected>Active</option>
+                        <option value="False">Inactive</option>
+
+                    </select> -->
+                    <input hidden type="text" id="unit_measure_id" name="unit_measure" value="number">
+                    <div class="wrap-drop" id="noble-gases7" style="z-index: 2 !important;"  >
+                        <span id="id_selectText6">Number</span>
+                        <ul class="drop">
+                            <li onclick="changeSelect7('litre')"><a>Litre</a></li>
+                            <li onclick="changeSelect7('kg')"><a>Kg</a></li> 
+                            <li onclick="changeSelect7('number')"><a>Number</a></li> 
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+
             <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Status</div>
@@ -382,6 +426,8 @@ $(function () {
     var dd3 = new DropDown($('#noble-gases3'));
     var dd4 = new DropDown($('#noble-gases4'));
     var dd5 = new DropDown($('#noble-gases5'));
+    var dd6 = new DropDown($('#noble-gases6'));
+    var dd7 = new DropDown($('#noble-gases7'));
 
 
 
@@ -401,6 +447,14 @@ function changeSelect4(va){
 
 function changeSelect5(va){
         $('#item_reusable_id').val(va)
+    }
+
+function changeSelect6(va){
+        $('#itemadd_type_id').val(va)
+    }
+
+function changeSelect7(va){
+        $('#unit_measure_id').val(va)
     }
 
 function changeSelect(va){

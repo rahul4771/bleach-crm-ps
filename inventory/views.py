@@ -568,6 +568,7 @@ class InventoryItems(IsInventoryAdmin,View):
 
         if action == "add_unit":
             store_id = request.POST.get('store')
+            serial_number = request.POST.get('serial_number')
             purchase_date = request.POST.get('purchase_date')
             expiry_date = request.POST.get('expiry_date')
             
@@ -600,6 +601,7 @@ class InventoryItems(IsInventoryAdmin,View):
                 name='name',
                 store=store,
                 unit_code = new_unit_code,
+                unit_serial_number = serial_number,
                 purchase_date = purchase_date,
                 no_expiry = expiry,
                 unit_price = unit_price,
@@ -611,6 +613,7 @@ class InventoryItems(IsInventoryAdmin,View):
                 name='name',
                 store=store,
                 unit_code = new_unit_code,
+                unit_serial_number = serial_number,
                 purchase_date = purchase_date,
                 expiry_date = expiry_date,
                 no_expiry = expiry,
@@ -622,6 +625,7 @@ class InventoryItems(IsInventoryAdmin,View):
         if action == "edit_unit":
             unit_id = request.POST.get('edit_unit_id')
             store_id = request.POST.get('store')
+            serial_number = request.POST.get('serial_number')
             purchase_date = request.POST.get('purchase_date')
             expiry_date = request.POST.get('expiry_date')
             no_expiry = request.POST.get('no_expiry')
@@ -639,6 +643,7 @@ class InventoryItems(IsInventoryAdmin,View):
             unit = ItemUnit.objects.get(id=int(unit_id))
             
             unit.store = store
+            unit.unit_serial_number = serial_number
             unit.purchase_date = purchase_date
             if expiry_date:
                 unit.expiry_date = expiry_date
@@ -1100,6 +1105,10 @@ class InventoryPurchaseOrder(IsInventoryAdmin,View):
             messages.success(request,"Purchase Order Deleted successfully!")
 
         return redirect('inventory:inventory-purchaseorder')
+
+class PurchaseOrderItems(IsInventoryAdmin,View):
+    def get(self,request):
+        return render(request,"inventory/purchaseorderitems.html")
 
 class InventoryPurchaseOrderPage(View):
     def get(self,request,purchase_order_id):

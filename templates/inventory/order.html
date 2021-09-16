@@ -61,6 +61,9 @@
                                 <th >
                                     Status
                                 </th>
+                                <th style="text-align: center;">
+                                    Cleaning Status
+                                </th>
     
                                 <th data-hide="phone,tablet"  style="width: %;" class="text-center">Action</th>
                             </tr>
@@ -141,15 +144,19 @@
                             </td>
                             <td>
                                 {{visit.order_scheduler_book.service_type.name}}
+                            </td>
                             <td style="text-align: center;">
                                 -
                             </td>
-
+                            
                             <td>
 
                                 <span class="inv-dot c-waiting-out ml-5"></span>
                                 Waiting
                                
+                            </td>
+                            <td style="text-align: center;">
+                                {{visit.work_status}}
                             </td>
                             <td class="text-center">
                                 <button class="btn-p inv-plan-img-btn inv-btn-dis" onclick="openNav()"> <img class="btn-img2"

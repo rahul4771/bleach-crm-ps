@@ -34,6 +34,7 @@ from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investi
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
+from bleachadmin.models import ServiceProductivity
 from agent.forms import UserProfileForm,AddressForm
 from evaluator.forms import EvaluationDetailsForm,QuatationServiceForm
 from order.forms import InvestigationForm
@@ -898,6 +899,14 @@ class AvailabilityCleaningCallendar(APIView):
 		response_dict['available_cleaners_count'] = available_cleaners.count()
 		response_dict['available_leaders_count']  = available_leaders.count()
 		response_dict['available_leaders']        = UserProfileShowSerializer(instance=available_leaders,many=True).data
+
+		if response_dict['available_leaders_count'] > 0:
+			hours                 = (cleaning_datetime_end-cleaning_datetime_start).seconds/3600
+			productivity          = ServiceProductivity.objects.filter(service_type__name__in=service_types).aggregate(Sum('perhour_cleaning'))['perhour_cleaning__sum'] or 0.00
+			total_cleaners		  = response_dict['available_cleaners_count']
+			response_dict['work'] = hours*productivity*total_cleaners
+		else:
+			response_dict['work'] = 0
 
 		response_dict['success'] = True
 		return Response(response_dict,HTTP_200_OK)

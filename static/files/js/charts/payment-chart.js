@@ -64,8 +64,8 @@ function initialize() {
                 // console.log(year,month,day,value.submitted_qt,value.approved_qt,"ter")
 
                 // const d2 = new Date(year,month-1,day)
-                quotations.push([monthNames[value.date],value.paid]);
-                submitted_total_month += parseInt(value.paid);
+                quotations.push([monthNames[value.date],value.total]);
+                submitted_total_month += parseInt(value.total);
                 //approved_total_month += parseInt(value.pending);
             });
             }else{
@@ -116,13 +116,13 @@ function initialize() {
                 var year = parseInt(vals[0]);
                 var month = parseInt (vals[1]);
                 var day = parseInt (vals[2]);
-                console.log(year,month,day,value.paid,value.pending,"ter")
+                console.log(year,month,day,value.total,"ter")
 
                 var payment_date = new Date(value.date+"Z")
                 //payment_date.setMonth(payment_date.getMonth()-1);
 
-            quotations.push([payment_date,value.paid]);
-                submitted_total += parseInt(value.paid);
+            quotations.push([payment_date,value.total]);
+                submitted_total += parseInt(value.total);
                 //approved_total += parseInt(value.pending);
             });
             }else{
