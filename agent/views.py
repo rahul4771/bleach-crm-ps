@@ -899,6 +899,14 @@ class AvailabilityCleaningCallendar(APIView):
 		response_dict['available_leaders_count']  = available_leaders.count()
 		response_dict['available_leaders']        = UserProfileShowSerializer(instance=available_leaders,many=True).data
 
+		if response_dict['available_leaders_count'] > 0:
+			hours                 = (cleaning_datetime_end-cleaning_datetime_start).hours
+			productivity          = ServiceProductivity.objects.filter(service_type__name__in=service_types).aggregate(Sum('perhour_cleaning'))['perhour_cleaning__sum'] or 0.00
+			total_cleaners		  = response_dict['available_cleaners_count']
+			response_dict['work'] = hours*productivity*total_cleaners
+		else:
+			response_dict['work'] = 0
+
 		response_dict['success'] = True
 		return Response(response_dict,HTTP_200_OK)
 
