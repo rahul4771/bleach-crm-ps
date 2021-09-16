@@ -4924,7 +4924,7 @@ getBookingTime(orderno){
 
       var startTime = moment(this.booking_time, "DD-MM-YYYY hh:mm A").format("hh:mm A");
       var endTime =moment(currentTime,'DD-MM-YYYY hh:mm A').format("hh:mm A")
-      startTime='07:27 PM'
+      
       console.log("start is"+startTime+"end is"+endTime)
       // calculate total duration
       
