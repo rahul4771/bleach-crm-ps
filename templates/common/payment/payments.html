@@ -74,7 +74,7 @@
                 <div class="column-left"><img src="{% static 'files/images/card-pending-payment-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->
                 <h1>Doubtful Payments</h1>
-            	<h2 class="blue-text"><label>Orders<span>{{total_doubtful_due_orders|default_if_none:'0'}}</span></label> </h2>
+            	<h2 class="blue-text"><label>Orders<span id="total_entries">{{total_doubtful_due_orders|default_if_none:'0'}}</span></label> </h2>
             	<p><label>Amount <span>{{total_doubtful_due_amount|default_if_none:'0.00'|floatformat:'3'}}</span></label></p>
             	</div><!--column-right-->
             	</div><!--card-innerwrapper-->
@@ -164,17 +164,61 @@
     </select>
     </label>
 </div>
+
 <div class="col-md-6">
-  <div class="payment-card">
-    <h1>Doubtful Payments</h1>  
+
+  <div class="payment-card transaction-card">
+    <h1>Transactions</h1>  
     <div class=" mt-10">
-      <div style="flex-grow: 1; margin-left: 0px; color: #737373;">No.of Transactions : <span class="payment-card-amount">100</span> </div>
+      <div style="flex-grow: 1; margin-left: 0px; color: #737373;">No.of entries : <span class="payment-card-amount">{{total_transactions}}</span> </div>
     </div>
     <div class=" mt-10">
-      <div style="flex-grow: 1; margin-left: 0px; color: #737373;">No.of Transactions : <span class="payment-card-amount">100</span> </div>
+      <div style="flex-grow: 1; margin-left: 0px; color: #737373;">Total amount : <span class="payment-card-amount">{{total_transactions_amount|floatformat:3}}</span> </div>
     </div>
   </div>
+
+  <div class="payment-card doubtful-card">
+    <h1>Doubtful Due</h1>  
+    <div class=" mt-10">
+      <div style="flex-grow: 1; margin-left: 0px; color: #737373;">No.of entries : <span class="payment-card-amount">{{total_doubtful_due_orders}}</span> </div>
+    </div>
+    <div class=" mt-10">
+      <div style="flex-grow: 1; margin-left: 0px; color: #737373;">Total amount : <span class="payment-card-amount">{{total_doubtful_due_amount|floatformat:3}}</span> </div>
+    </div>
+  </div>
+
+  <div class="payment-card normaldue-card">
+    <h1>Normal Due</h1>  
+    <div class=" mt-10">
+      <div style="flex-grow: 1; margin-left: 0px; color: #737373;">No.of entries : <span class="payment-card-amount">{{total_normal_due_orders}}</span> </div>
+    </div>
+    <div class=" mt-10">
+      <div style="flex-grow: 1; margin-left: 0px; color: #737373;">Total amount : <span class="payment-card-amount">{{total_normal_due_amount|floatformat:3}}</span> </div>
+    </div>
+  </div>
+
+  <div class="payment-card subscription-card">
+    <h1>Subscription Due</h1>  
+    <div class=" mt-10">
+      <div style="flex-grow: 1; margin-left: 0px; color: #737373;">No.of entries : <span class="payment-card-amount">{{total_subscription_due_orders}}</span> </div>
+    </div>
+    <div class=" mt-10">
+      <div style="flex-grow: 1; margin-left: 0px; color: #737373;">Total amount : <span class="payment-card-amount">{{total_subscription_due_amount|floatformat:3}}</span> </div>
+    </div>
+  </div>
+
+  <div class="payment-card neworderdue-card">
+    <h1>New-Order Dues</h1>  
+    <div class=" mt-10">
+      <div style="flex-grow: 1; margin-left: 0px; color: #737373;">No.of entries : <span class="payment-card-amount">{{total_neworder_due_orders}}</span> </div>
+    </div>
+    <div class=" mt-10">
+      <div style="flex-grow: 1; margin-left: 0px; color: #737373;">Total amount : <span class="payment-card-amount">{{total_neworder_due_amount|floatformat:3}}</span> </div>
+    </div>
+  </div>
+
 </div>
+
 </div>
 
 <ul class="nav nav-tabs" id="paymentTab" role="tablist" style="margin-top:-10px !important">
@@ -369,7 +413,7 @@
         {% if invoice.preamount_paid != invoice.evaluation.before_cleaning_amount %}
         <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
         <td data-label="BLC Number" class="prepaid-line">{{invoice.evaluation.evaluation_id}}</td>
-        <td data-label="Customer" class="text-center">{{invoice.evaluation.customer.name}}</td>
+        <td data-label="Customer" class="text-left">{{invoice.evaluation.customer.name}}</td>
         <td data-label="Service Type(s)">
         {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
         {% for book in evaluation_details.evaluation_books %}
@@ -396,7 +440,7 @@
         {% if invoice.last_completed and invoice.postamount_paid != invoice.evaluation.after_cleaning_amount %}
         <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
         <td data-label="BLC Number" >{{invoice.evaluation.evaluation_id}}</td>
-        <td data-label="Customer" class="text-center">{{invoice.evaluation.customer.name}}</td>
+        <td data-label="Customer" class="text-left">{{invoice.evaluation.customer.name}}</td>
         <td data-label="Service Type(s)">
         {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
         {% for book in evaluation_details.evaluation_books %}
@@ -419,7 +463,7 @@
         {% if invoice.subscription_topay != 0 %}
         <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
         <td data-label="BLC Number" class="subscription-line">{{invoice.evaluation.evaluation_id}}</td>
-        <td data-label="Customer" class="text-center">{{invoice.evaluation.customer.name}}</td>
+        <td data-label="Customer" class="text-left">{{invoice.evaluation.customer.name}}</td>
         <td data-label="Service Type(s)">
         {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
         {% for book in evaluation_details.evaluation_books %}
@@ -564,7 +608,7 @@
         {% if invoice.preamount_paid != invoice.evaluation.before_cleaning_amount %}
         <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
         <td data-label="BLC Number" class="prepaid-line">{{invoice.evaluation.evaluation_id}}</td>
-        <td data-label="Customer" class="text-center">{{invoice.evaluation.customer.name}}</td>
+        <td data-label="Customer" class="text-left">{{invoice.evaluation.customer.name}}</td>
         <td data-label="Service Type(s)">
         {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
         {% for book in evaluation_details.evaluation_books %}
@@ -591,7 +635,7 @@
         {% if invoice.last_completed and invoice.postamount_paid != invoice.evaluation.after_cleaning_amount %}
         <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
         <td data-label="BLC Number" >{{invoice.evaluation.evaluation_id}}</td>
-        <td data-label="Customer" class="text-center">{{invoice.evaluation.customer.name}}</td>
+        <td data-label="Customer" class="text-left">{{invoice.evaluation.customer.name}}</td>
         <td data-label="Service Type(s)">
         {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
         {% for book in evaluation_details.evaluation_books %}
@@ -838,7 +882,7 @@
         {% if invoice.preamount_paid != invoice.evaluation.before_cleaning_amount %}
         <tr {% if invoice.evaluation.payment_way == 'CASH/CHEQUE' %}class="green-line"{% else %}class="gray-line"{% endif %}>
         <td data-label="BLC Number" class="breakdown-line">{{invoice.evaluation.evaluation_id}}</td>
-        <td data-label="Customer" class="text-center">{{invoice.evaluation.customer.name}}</td>
+        <td data-label="Customer" class="text-left">{{invoice.evaluation.customer.name}}</td>
         <td data-label="Service Type(s)">
         {% for evaluation_details in invoice.evaluation.invoice_evaluation_details %}
         {% for book in evaluation_details.evaluation_books %}
@@ -1014,6 +1058,10 @@
     <script>
       $(document).ready(function(){
         $('.footable').trigger('footable_resize');
+        $('.doubtful-card').hide();
+        $('.normaldue-card').hide();
+        $('.subscription-card').hide();
+        $('.neworderdue-card').hide();
       })
 
       $("#doubtfuldue-tab").click(function(){
@@ -1041,22 +1089,47 @@
   
     $('#all-tab').click(function(){
       $('#tab_id').val('ALL');
+      $('.doubtful-card').hide();
+      $('.normaldue-card').hide();
+      $('.subscription-card').hide();
+      $('.neworderdue-card').hide();
+      $('.transaction-card').show();
     });
 
     $('#doubtfuldue-tab').click(function(){
       $('#tab_id').val('DOUBTFULDUE');
+      $('.doubtful-card').show();
+      $('.normaldue-card').hide();
+      $('.subscription-card').hide();
+      $('.neworderdue-card').hide();
+      $('.transaction-card').hide();
     })
 
     $('#normaldue-tab').click(function(){
       $('#tab_id').val('NORMALDUE');
+      $('.doubtful-card').hide();
+      $('.normaldue-card').show();
+      $('.subscription-card').hide();
+      $('.neworderdue-card').hide();
+      $('.transaction-card').hide();
     })
 
     $('#subscriptiondue-tab').click(function(){
       $('#tab_id').val('SUBSCRIPTIONDUE');
+      $('.doubtful-card').hide();
+      $('.normaldue-card').hide();
+      $('.subscription-card').show();
+      $('.neworderdue-card').hide();
+      $('.transaction-card').hide();
     })
 
     $('#neworderdue-tab').click(function(){
       $('#tab_id').val('NEWORDERDUE');
+      $('.doubtful-card').hide();
+      $('.normaldue-card').hide();
+      $('.subscription-card').hide();
+      $('.neworderdue-card').show();
+      $('.transaction-card').hide();
     })
 
     //keep selected tab on page reload
