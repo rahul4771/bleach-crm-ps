@@ -901,7 +901,7 @@ class AvailabilityCleaningCallendar(APIView):
 
 		if response_dict['available_leaders_count'] > 0:
 			hours                 = (cleaning_datetime_end-cleaning_datetime_start).seconds/3600
-			productivity          = ServiceProductivity.objects.filter(service_type__name__in=service_types).aggregate(Sum('perhour_cleaning'))['perhour_cleaning__sum'] or 0.00
+			productivity          = Productivity.objects.filter(service_type__name__in=service_types).aggregate(Sum('perhour_cleaning'))['perhour_cleaning__sum'] or 0.00
 			total_cleaners		  = response_dict['available_cleaners_count']
 			response_dict['work'] = hours*productivity*total_cleaners
 		else:
