@@ -2022,23 +2022,27 @@ def PaymentData(request):
 		monthdate1 = datetime(day=1,month=int(month),year=int(year),hour=0,minute=0,second=0,microsecond=0)
 		monthdate2 = datetime(day=1,month=int(month2),year=int(year2),hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
 
+		try:
+			transactions 	 = PaymentHistory.objects.filter(is_active=True).order_by('-paid_date')
+		except:
+			transactions	 = None
+		
 		sales = Order.objects.filter(is_active=True,created__range=(monthdate1,monthdate2)).filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD')|Q(payment_status='COMPLETED')))
 		print(sales,"po")
 
-		sales_month = sales.dates('created','month')
+		sales_month = transactions.dates('paid_date','month')
 		
 		for sale in sales_month:
 			month_start = datetime(day=1,month=sale.month,year=sale.year,hour=0,minute=0,second=0,microsecond=0)
 			month_end = datetime(day=1,month=sale.month,year=sale.year,hour=0,minute=0,second=0,microsecond=0)+relativedelta(months=1)
 			
-			paid_orders = Order.objects.filter(is_active=True,payment_status='COMPLETED',created__range=(monthdate1,monthdate2)).aggregate(count=Sum('evaluation__total_cost'))['count'] or 0.0
-			pending_orders = Order.objects.filter(is_active=True,created__range=(monthdate1,monthdate2)).filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))).aggregate(count2=Sum('evaluation__total_cost'))['count2'] or 0.0
-			print(paid_orders,pending_orders,"totsal")
+			total_transactions = PaymentHistory.objects.filter(is_active=True,paid_date__range=(monthdate1,monthdate2)).order_by('-paid_date').aggregate(count=Sum('amount_paid'))['count'] or 0.0
+			# pending_orders = Order.objects.filter(is_active=True,created__range=(monthdate1,monthdate2)).filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))).aggregate(count2=Sum('evaluation__total_cost'))['count2'] or 0.0
+			print(total_transactions,"totsal")
 			
 			sales_dict = {
 			"date" : sale.month,
-			"paid" : paid_orders,
-			"pending" : pending_orders,
+			"total" : total_transactions,
 			}
 			data.append(sales_dict)
 	else:
@@ -2056,14 +2060,12 @@ def PaymentData(request):
 			saletarget_date_start  = single_date.replace(hour=0,minute=0,second=0,microsecond=0)
 			saletarget_date_end    = single_date+timedelta(1)
 
-			paid_orders = Order.objects.filter(is_active=True,payment_status='COMPLETED',created__gte=saletarget_date_start,created__lte=saletarget_date_end).aggregate(count=Sum('evaluation__total_cost'))['count'] or 0.0
-			pending_orders = Order.objects.filter(is_active=True,created__gte=saletarget_date_start,created__lte=saletarget_date_end).filter(Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))).aggregate(count2=Sum('evaluation__total_cost'))['count2'] or 0.0
+			total_transactions = PaymentHistory.objects.filter(is_active=True,paid_date__gte=saletarget_date_start,paid_date__lte=saletarget_date_end).order_by('-paid_date').aggregate(count=Sum('amount_paid'))['count'] or 0.0
 			
-			print(paid_orders,pending_orders,"red2")
+			print(total_transactions,"red2")
 			sales_dict = {
 			"date" : single_date,
-			"paid" : paid_orders or 0.0,
-			"pending" : pending_orders or 0.0,
+			"total" : total_transactions or 0.0,
 			}
 			data.append(sales_dict)
 	print(data,"sdt")
