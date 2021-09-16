@@ -2038,7 +2038,7 @@ class BookingExpiryCheckAPI(APIView):
 		order_no                          = request.GET.get('order_no')
 		order_scheduler                   = OrderScheduler.objects.select_related('order').filter(order__order_no=order_no).first()
 
-		response_dict['created']          = datetime.strftime(order_scheduler.created,'%d-%m-%Y %I:%M %p')
+		response_dict['created']          = datetime.strftime((order_scheduler.created+timedelta(hours=3)),'%d-%m-%Y %I:%M %p')
 		response_dict['success']          = True
 
 		return Response(response_dict,HTTP_200_OK)
@@ -2052,7 +2052,12 @@ class BookingExpiryAPI(APIView):
 		response_dict                     = {}
 		order_no                          = request.data.get('order_no')
 
+		#delete scheduler
 		OrderScheduler.objects.select_related('order').filter(order__order_no=order_no).delete()
+
+		#update booking status
+		CustomerBooking.objects.select_related('evaluation').filter(evaluation__evaluation_id=order_no).update(is_bookingcompleted=False)
+
 		response_dict['success']          = True
 		
 		return Response(response_dict,HTTP_200_OK)
