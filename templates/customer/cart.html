@@ -597,6 +597,16 @@
                 </div>
               </div>
         </div>
+        <v-alert
+                    text
+                    dense
+                    color="primary"
+                    icon="mdi-clock-fast"
+                    border="left"
+                    v-if="booking_status"
+                  >
+                    Do the payment within <span id="timer"><% counterTime %></span> mins or the booking will be cancelled.
+                  </v-alert>
         <div class="d-flex justify-center mt-4">
             <v-btn color="primary" @click="paymentSubmit()">
                 Proceed
