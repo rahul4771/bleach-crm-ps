@@ -676,11 +676,20 @@
                     <div class="col-md-4">
                         <div style="position: relative;" class="inv-img-list">
                             <img  style="width: 100%; height: 170px;" src="{{image.item_image.url}}"  alt="">
+                            {% if image.is_default_image %}
                             <span class="inv-dot2">
                                 <i class="fa fa-check" aria-hidden="true"></i>
                             </span>
+                            {% endif %}
                             <div class="img-overlay">
-                                <div class="av-font img-text pointer">Set as default</div>
+                                {% if not image.is_default_image %}
+                                <form method="POST" action="" enctype='multipart/form-data'>{% csrf_token %}
+                                    <input type="hidden" name="action" value="set_default_image" />
+                                    <input type="hidden" name="imageid" value="{{image.id}}" >
+                                        <button class="view-button2 pointer" id="de_{{image.id}}"  hidden>  Set as default Image </button>
+                                    </form>
+                                <div class="av-font img-text pointer" onclick="defaultImg({{image.id}})">Set as default</div>
+                                {% endif %}
                                 <div style="margin-left: auto; margin-right: 5px;"><i class="fa fa-trash pointer" aria-hidden="true"></i></div>
                             </div>
                         </div>
@@ -697,7 +706,7 @@
                 </div>
                 <div class="row mt-20 text-center" style="margin-bottom: 20px;">
                     <button class="sent-button" >Submit</button>
-                                  <button  class="view-button">Cancel</button>
+                                  <button data-dismiss="modal"   class="view-button">Cancel</button>
                   </div>
                 <!-- <div class="row">
                     <div class="col-md-12 text-center">
@@ -1004,9 +1013,14 @@ $(function () {
 
 <script src="{% static '/files/externalfiles/plugins/OwlCarousel2/dist/owl.carousel.js'%}"></script>
 <script>
-
+    function defaultImg(id){
+        console.log(id)
+        $('#de_'+id).click();
+    }
 function selectFileInp(){
-    $('#id_file').click()
+   
+     document.getElementById('id_file').click();
+    console.log('cl')
 }
 
     function showBtn(){
