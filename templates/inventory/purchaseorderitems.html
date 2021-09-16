@@ -48,7 +48,18 @@
                       </div>
                    </div>
                 </div>
-               
+                <div class="row mt-20">
+                    <div class="col-md-3">
+                        <div class="wrap-drop" id="noble-gases"  style="z-index: 99; border: 2px solid #333333;">
+                          
+                            <span> Shipment completed </span>
+                            <ul class="drop">
+                                <li  ><a> Option 1 </a></li>
+                            </ul>
+                          
+                        </div>
+                    </div>
+                </div>
                 <div class="mt-20">
                     <div class="d-flex" >
                         <div class="inv-tab av-font inv-tab-active" onclick="selectTab('pen')" id="id_pen">By quantity</div>
@@ -58,6 +69,12 @@
                     <table id="id_table_pen" class="inv-table footable" style="border-top:1px solid #c4c4c4; margin-top: -2px;"> 
                         <thead>
                             <tr>
+                                <th>
+                                    <label style="padding-left: 0px !important;" class="c-container">
+                                        <input type="checkbox">
+                                        <span style="top:-4px !important;" class="c-checkmark"></span>
+                                    </label>
+                                </th>
                                 <th style="width: %;">
                                     Product
                                 </th>
@@ -80,6 +97,13 @@
                      <tbody>
                       
                         <tr>
+                            <td>
+                                <label style="padding-left: 0px !important;" class="c-container">
+                                    <input type="checkbox">
+                                    <span style="top:-4px !important;" class="c-checkmark"></span>
+                                </label>
+
+                            </td>
                             <td>
                                 0000000
                             </td>
@@ -112,6 +136,12 @@
                     <table id="id_table_rec" class="inv-table footable inv-hide" style="border-top:1px solid #c4c4c4; margin-top: -2px;"> 
                         <thead>
                             <tr>
+                                <th>
+                                    <label style="padding-left: 0px !important;" class="c-container">
+                                        <input type="checkbox">
+                                        <span style="top:-4px !important;" class="c-checkmark"></span>
+                                    </label>
+                                </th>
                                 <th style="width: %;">
                                     Product
                                 </th>
@@ -132,6 +162,12 @@
                         </thead>
                      <tbody>
                         <tr>
+                            <td>
+                                <label style="padding-left: 0px !important;" class="c-container">
+                                    <input type="checkbox">
+                                    <span style="top:-4px !important;" class="c-checkmark"></span>
+                                </label>
+                            </td>
                             <td>
                                 0000000
                             </td>
@@ -169,7 +205,7 @@
         <div class="inv-sidedrawer-inner">
             <div class="d-flex">
                 <div class="inv-drawer-head" id="itemHead">
-                    Add Item
+                    Add to Inventory
                 </div>
                 <div class="right-pos">
 
@@ -180,28 +216,32 @@
             </div>
             <hr>
             <div class="row mt-20">
-                <div class="col-md-12 ">
-                    <div class="model-input-name">Change Product</div>
-
-                    <select id="id_payment" class="minimal">
-                        <option  ></option>
-                        <option  >Active</option>
-                        <option value="Post Paid">Inactive</option>
-
-                    </select>
+                <div class="col-md-6">
+                    <div class="inv-item-head-sub" style="color: #707070;">Product</div>
+                    <br>
+                    <div class="inv-item-head-sub-2"> 0000000</div>
+                </div>
+                <div class="col-md-6">
+                    <div class="inv-item-head-sub" style="color: #707070;">Quantity</div>
+                    <br>
+                    <div class="inv-item-head-sub-2"> 0000000</div>
                 </div>
 
             </div>
             <div class="row mt-20">
-                <div class="col-md-12 ">
-                    <div class="model-input-name">Unit</div>
-
-                    <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="attributes">
-                      </div>
+                <div class="col-md-6">
+                    <div class="inv-item-head-sub" style="color: #707070;">Product</div>
+                    <br>
+                    <div class="inv-item-head-sub-2"> 0000000</div>
+                </div>
+                <div class="col-md-6">
+                    <div class="inv-item-head-sub" style="color: #707070;">Quantity</div>
+                    <br>
+                    <div class="inv-item-head-sub-2"> 0000000</div>
                 </div>
 
             </div>
+           
           
     
             
@@ -230,15 +270,9 @@
             </div>
             <hr>
             <div class="row mt-20">
-                <div class="col-md-12 ">
-                    <div class="model-input-name">Change Product</div>
-
-                    <select id="id_payment" class="minimal">
-                        <option  ></option>
-                        <option  >Active</option>
-                        <option value="Post Paid">Inactive</option>
-
-                    </select>
+                <div class="col-md-6">
+                    <div class="inv-item-head-sub" style="color: #707070;">Product</div>
+                    <div class="inv-item-head-sub-2"> 0000000</div>
                 </div>
 
             </div>
@@ -302,6 +336,54 @@
 {% endblock %}
 
 {% block javascript %}
+<script>
+    function DropDown(el) {
+    this.dd = el;
+    this.placeholder = this.dd.children('span');
+    this.opts = this.dd.find('ul.drop li');
+    this.val = '';
+    this.index = -1;
+    this.initEvents();
+}
+
+
+
+   
+DropDown.prototype = {
+    initEvents: function () {
+        var obj = this;
+        obj.dd.on('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $(this).toggleClass('active');
+        });
+        obj.opts.on('click', function () {
+            var opt = $(this);
+            obj.val = opt.text();
+            obj.index = opt.index();
+            obj.placeholder.text(obj.val);
+            opt.siblings().removeClass('selected');
+            opt.filter(':contains("' + obj.val + '")').addClass('selected');
+        }).change();
+    },
+    getValue: function () {
+        return this.val;
+    },
+    getIndex: function () {
+        return this.index;
+    }
+};
+
+$(function () {
+    // create new variable for each menu
+    var dd1 = new DropDown($('#noble-gases'));
+    // var dd2 = new DropDown($('#other-gases'));
+    $(document).click(function () {
+        // close menu on document click
+        $('.wrap-drop').removeClass('active');
+    });
+});
+</script>
 
 <script>
 function selectTab(d){

@@ -673,7 +673,7 @@
                     {% if inventory_item.item_images %}
                             
                     {% for image in inventory_item.item_images %}
-                    <div class="col-md-4">
+                    <div class="col-md-4" style="margin-bottom: 10px;">
                         <div style="position: relative;" class="inv-img-list">
                             <img  style="width: 100%; height: 170px;" src="{{image.item_image.url}}"  alt="">
                             {% if image.is_default_image %}
@@ -690,17 +690,23 @@
                                     </form>
                                 <div class="av-font img-text pointer" onclick="defaultImg({{image.id}})">Set as default</div>
                                 {% endif %}
-                                <div style="margin-left: auto; margin-right: 5px;"><i class="fa fa-trash pointer" aria-hidden="true"></i></div>
+                                <button class="delete-img-btn inv-hide" id="id_delete_{{image.id}}" data-toggle="modal" data-imageid="{{image.id}}" data-target="#deleteModelImg"  style="border: none; background: none; color: red;"> <i class="fa fa-trash fa-lg" aria-hidden="true"></i> Remove</button>
+
+                                <div style="margin-left: auto; margin-right: 5px;" onclick="deleteImg({{image.id}})"><i class="fa fa-trash pointer" aria-hidden="true"></i></div>
                             </div>
                         </div>
                     </div>
                     {% endfor %}
                     {% endif %}
-                    <div class="col-md-4 pointer" onclick="selectFileInp()">
+                    <div class="col-md-4 pointer" style="margin-bottom: 10px;" onclick="selectFileInp()">
                         <div class="select-img-div">
                             <i class="fa fa-camera fa-7x mt-30" aria-hidden="true"></i>
                         </div>
-                        <input type="file" style="display: none;" id="id_file">
+                        <form method="POST" action="" enctype='multipart/form-data'>{% csrf_token %}
+                            <input type="hidden" name="action" value="add_image" />
+                        <input type="file" style="display: none;"  id="file_select" onchange="showBtn()" name="item_image">
+                        <button class="sent-button" type="submit" id="id_submit" hidden>Add Image</button>
+                        </form>
 
                     </div>
                 </div>
@@ -1013,22 +1019,26 @@ $(function () {
 
 <script src="{% static '/files/externalfiles/plugins/OwlCarousel2/dist/owl.carousel.js'%}"></script>
 <script>
+    function deleteImg(id){
+        $('#id_delete_'+id).click();
+    }
     function defaultImg(id){
         console.log(id)
         $('#de_'+id).click();
     }
 function selectFileInp(){
    
-     document.getElementById('id_file').click();
+     document.getElementById('file_select').click();
     console.log('cl')
 }
 
     function showBtn(){
         if($('#file_select').val() != ''){
             console.log("ghj")
-            $("#id_btn_div").show();
+            $('#id_submit').click()
+            // $("#id_btn_div").show();
         }else{
-            $("#id_btn_div").hide();
+            // $("#id_btn_div").hide();
 
             console.log('hide')
         }
