@@ -3439,10 +3439,11 @@ class MakeQuatationPhase1(IsAuthenticated,View):
 		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0.000)
 		discount                = float(request.POST.get('discount')or 0.000)
 		total_cost              = float(request.POST.get('total_amount')or 0.000)
+		evaluator_note          = request.POST.get('evaluator_note')
 
 
 		#update payment method
-		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount,total_cost=total_cost,discount=discount)
+		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount,total_cost=total_cost,discount=discount,evaluator_note=evaluator_note)
 
 		##advance payment check
 		is_advance              = request.POST.get('is_advance')
