@@ -71,19 +71,25 @@
                   </div>
               </div>
                 <div class="row mt-40">
-                    <div class="col-md-8">
+                    <div class="col-md-6">
                         <div class="row" style="position: relative;">
-                            <div class="col-md-2">
-                                
-                                {% if inventory_item.item_images %}
+                            <div class="col-md-3 inv-item-img"  style="position: relative;">
+                                <div class="">
+                                    {% if   inventory_item.item_images %}
                                     {% for image in inventory_item.item_images %}
                                         {% if image.is_default_image %}
-                                            <img onclick="viewImgModel()" style="width: 100%; cursor: pointer;" src="{{image.item_image.url}}"  alt="">
+                                            <img  style="width: 100%; cursor: pointer;" src="{{image.item_image.url}}"  alt="">
                                         {% endif %}
                                     {% endfor %}
                                 {% else %}
-                                    <img onclick="viewImgModel()" style="width: 100%; cursor: pointer;" src="{% static 'files/images/dummy-profile-pic.jpg' %}"  alt="">
+                                    <img  style="width: 100%; cursor: pointer;" src="{% static 'files/images/dummy-profile-pic.jpg' %}"  alt="">
                                 {% endif %}
+                                </div>
+                                
+                                <div class="inv-img-edit-div" onclick="viewImgModel()">
+                                    <img class="inv-edit-img" style="margin-left: 45%; margin-top: 30%;"
+                                    src="{% static 'files/icons/edit.png' %}">
+                                </div>
                             </div>
                             
                             <div class="col-md-9 m-mt-30">
@@ -150,7 +156,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-3 pl-0 m-mt-10" >
-                                    <div class="inv-item-head-sub" style="color: #707070;">Unit Price</div>
+                                    <div class="inv-item-head-sub" style="color: #707070;">Price per unit</div>
                                     <div class="inv-item-head-sub-2 mt-20">
                                         <span style="color: #0085C9;"  class="av-font">  {{inventory_item.total_unit_price|floatformat:3}} KD </span>
                                        
@@ -164,75 +170,38 @@
                             
                         </div>
                     </div>
-                    <div class="col-md-2  h-100 m-mt-30">
-                       <div class="inv-item-card ">
-                        <div class="av-font text-center">
-                            Inventory
-                            <div style="text-align: center;" class=" av-font mt-40">
-                                <br>
-                                <div class="inv-item-amount2">
-                                    {{inventory_item.unit_count}} <span style="font-size: 25px;"> Unit(s) </span>
-
-                                </div>
-                                <!-- <div class="row ">
-                                    <div class="col-xs-6 text-left inv-text-1 " > Quantity</div>
-                                    <div class="col-xs-6 inv-text-1 t text-left">{{inventory_item.unit_count}} Unit(s) </div>
-
-                                </div>
+                    <div class="col-md-6">
+                        <div class="col-md-12" style="padding-right: 0px !important;">
+                            <div class="d-flex d-grid">
                                
-                                <div class="row mt-30">
-                                    <div class="col-xs-6 text-left inv-text-2"> Unit Price</div>
-                                    
-                                    <div class="col-xs-6 inv-text-2 text-left">{{inventory_item.total_unit_price|floatformat:3}} KD </div>
-
-                                </div> -->
-                               
-                            </div>
-                           </div>
-                       </div>
-                                                 
-                    </div>
-                    <div class="col-md-2  h-100 m-mt-10">
-                        <div class="inv-item-card ">
-                         <div class="av-font text-center">
-                            Reserve
-                             <div style="text-align: center;"  class=" av-font mt-40">
-                                
-                                    
-                                 <br>
-                                        <div id="id_res_text" class="inv-input-container h-30 inv-hide" > 
-                                            <input type="number"  class="w-p-100 inv-in" value="{{inventory_item.reserve_count|default_if_none:'0'}}" name="reserve">
-                                          </div>    
-                                        <!-- 135 Unit  -->
-                                        <!-- <span id="id_res_val" class="inv-item-amount2"> {{inventory_item.reserve_count|default_if_none:'0'}}  <span style="font-size: 25px;"> unit(s) </span> </span> -->
-                                        <div id="id_res_val" class="inv-item-amount2"> {{inventory_item.reserve_count|default_if_none:'0'}}  <span style="font-size: 25px;"> unit(s) </span>  </div>
-                                    
-                                   
-
-                             </div>
+                                <div class="right-pos m-mt-10">
+                                    {% comment %} <button class="inv-blue-btn" onclick="openNavAdd('add')"> <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Bundle </button> {% endcomment %}
+                                    <button class="inv-blue-btn" onclick="openNavAddBundle('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Unit </button>
+                                </div>
                             </div>
                         </div>
-                                                  
+                        <div style="margin-top: 90px;" >
+                        <textarea class="inv-hide mt-30" id="id_des_text" name="description" style="width: 100%; border-radius: 5px;" rows="4">vr</textarea>
+                        <span id="id_des_val" class="av-font ">{{inventory_item.description|default_if_none:"-"}}</span> 
+                            </div>
                      </div>
+                   
                 </div>
-                <div class="row mt-20">
+                <!-- <div class="row mt-20"> -->
                 <!-- <div class="col-md-10 av-font" style="font-size: 16px;">
                   
                 </div> -->
-                </div>
-                <div class="row mt-20">
+                <!-- </div> -->
+                <!-- <div class="row mt-20">
                     <div class="col-md-12" style="position: relative;">
                       
                     </div>
-                </div>
+                </div> -->
                 
 
                 <div class="row mt-30 " style="font-size: 16px; margin-left: 0px;">
-                    <div class="col-md-6">
-                        <textarea class="inv-hide" id="id_des_text" name="description" style="width: 100%; border-radius: 5px;" rows="4">vr</textarea>
-                        <span id="id_des_val" class="av-font ">{{inventory_item.description|default_if_none:"-"}}</span> 
-                     </div>
-                     <div class="col-md-6">
+                   
+                     <div class="col-md-6" style="padding-left: 0px;">
                         <div class="col-md-12 inv-item-card2"  style="position: relative;">
                             <div class="edit-div" style="margin-top: 5px; margin-right: 5px;">
                                 <img id="id_editButton" onclick="editItemDetials()" class="inv-edit-img"
@@ -255,6 +224,36 @@
     
                         </div>
                      </div>
+                     <div class="col-md-2  h-100 m-mt-30">
+                        <div class="inv-item-card ">
+                         <div class="av-font text-center">
+                             Inventory
+                             <div style="text-align: center;" class=" av-font mt-40">
+                                 <br>
+                                 <div class="inv-item-amount2">
+                                     {{inventory_item.unit_count}} <span style="font-size: 25px;"> Unit(s) </span>                    
+                                 </div>
+                             </div>
+                            </div>
+                        </div>           
+                     </div>
+                     <div class="col-md-2  h-100 m-mt-10">
+                         <div class="inv-item-card ">
+                          <div class="av-font text-center">
+                             Reserve
+                              <div style="text-align: center;"  class=" av-font mt-40">       
+                                  <br>
+                                         <div id="id_res_text" class="inv-input-container h-30 inv-hide" > 
+                                             <input type="number"  class="w-p-100 inv-in" value="{{inventory_item.reserve_count|default_if_none:'0'}}" name="reserve">
+                                           </div>    
+                                         <!-- 135 Unit  -->
+                                         <!-- <span id="id_res_val" class="inv-item-amount2"> {{inventory_item.reserve_count|default_if_none:'0'}}  <span style="font-size: 25px;"> unit(s) </span> </span> -->
+                                         <div id="id_res_val" class="inv-item-amount2"> {{inventory_item.reserve_count|default_if_none:'0'}}  <span style="font-size: 25px;"> unit(s) </span>  </div>
+                              </div>
+                             </div>
+                         </div>
+                                                   
+                      </div>
                     </form>
                     
                     {% comment %} <div class="col-md-3 inv-item-card2">
@@ -289,7 +288,8 @@
                    </div>
                     
                 </div> -->
-                <div class="row mt-20">
+                <!-- <div class="row mt-20">
+
                     <div class="col-md-12">
                         <div class="d-flex d-grid">
                            
@@ -377,8 +377,46 @@
 
                         </table>
                     </div>
+                </div> -->
+                <div class="row mt-20">
+                    <div class="col-md-12">
+                        <div class="inv-item-head-sub-2">
+                            Purchase History
+                        </div>
+                        <div class="mt-5" style="border-top: 1px solid #c4c4c4;">
+                            <table class="inv-table footable">
+                                <thead>
+                                    <tr>
+                                        <th style="width: %;">
+                                            Purchase date
+                                        </th>
+                                        <th data-hide="phone,tablet"  style="width: %; ">
+                                            Quantity
+                                        </th>
+                                        <th data-hide="phone,tablet"  style="width: %; ">
+                                            Added by
+                                        </th>
+                                        
+                                        <th data-hide="phone,tablet"  style="width: %;" >
+                                            PO Date
+                                        </th>
+                                      
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>12/12/2021</td>
+                                        <td>3</td>
+                                        <td>12/12/2021</td>
+                                        <td>
+                                            12/12/2021
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-
             </div>
         </div>
 
@@ -607,10 +645,44 @@
                             </button>
     
                         </div>
+                      
+                        <div style="margin-top: -20px; color: #5A5A5A !important;" class="text-center inv-item-head-sub-2">
+                            Edit image
+                        </div>
                     </div>
                 </div>
-               
-                <div class="row">
+                <div class="row mt-20" style="margin-left: 15px; margin-right: 15px;">
+                    
+                    {% if inventory_item.item_images %}
+                            
+                    {% for image in inventory_item.item_images %}
+                    <div class="col-md-4">
+                        <div style="position: relative;" class="inv-img-list">
+                            <img  style="width: 100%; height: 170px;" src="{{image.item_image.url}}"  alt="">
+                            <span class="inv-dot2">
+                                <i class="fa fa-check" aria-hidden="true"></i>
+                            </span>
+                            <div class="img-overlay">
+                                <div class="av-font img-text pointer">Set as default</div>
+                                <div style="margin-left: auto; margin-right: 5px;"><i class="fa fa-trash pointer" aria-hidden="true"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                    <div class="col-md-4 pointer" onclick="selectFileInp()">
+                        <div class="select-img-div">
+                            <i class="fa fa-camera fa-7x mt-30" aria-hidden="true"></i>
+                        </div>
+                        <input type="file" style="display: none;" id="id_file">
+
+                    </div>
+                </div>
+                <div class="row mt-20 text-center" style="margin-bottom: 20px;">
+                    <button class="sent-button" >Submit</button>
+                                  <button  class="view-button">Cancel</button>
+                  </div>
+                <!-- <div class="row">
                     <div class="col-md-12 text-center">
                         <div class="cancel-model-content">
                         
@@ -620,17 +692,10 @@
                                 {% for image in inventory_item.item_images %}
                                 <div class="item" style="position: relative;">
                                 <div style="position: absolute; top: 0; left: 0;  padding: 0px;">
-                                    <!-- <input class="form-check-input" type="radio" name="selectedImg" value="" id="CheckId">
-                                    <label class="form-check-label" for="flexCheckDefault">
-                                      Set as default image
-                                    </label> -->
                                 {% if image.is_default_image %}
                                     <div class="sent-button">Default Image </div>
                                 {% endif %}
-
-                                    
                                 </div>
-                                
                                 {% if not image.is_default_image %}
                                 <div style="position: absolute; bottom:0; left: 0;  padding: 0px;">
                                 <form method="POST" action="" enctype='multipart/form-data'>{% csrf_token %}
@@ -677,11 +742,12 @@
                                 </div>
                             </div>
                             </form>
+
                           
                         </div>
                     </div>
     
-                </div>
+                </div> -->
             </div>
         </div>
       </div>
@@ -922,6 +988,9 @@ $(function () {
 <script src="{% static '/files/externalfiles/plugins/OwlCarousel2/dist/owl.carousel.js'%}"></script>
 <script>
 
+function selectFileInp(){
+    $('#id_file').click()
+}
 
     function showBtn(){
         if($('#file_select').val() != ''){

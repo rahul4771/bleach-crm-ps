@@ -163,6 +163,12 @@
 {% endif %}
 
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<div class="mt-10">
+  <div class=" bold-text common-label"> <label>Evaluator Note</label></div>
+
+  <textarea name="evaluator_note" id="" rows="6"  style="width: 100%;"></textarea>
+</div>
 <input type="hidden" name='total_amount' id="total_amount_id" value="{{evaluation.total_cost|floatformat:'3'}}">
 <br>
 <div align="center" onclick="CheckForm(this);"><input class="assignButton" name="submit" type="button" value="Submit">
