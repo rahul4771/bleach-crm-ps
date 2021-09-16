@@ -101,6 +101,7 @@ $(document).ready(function(){
           
         },
       data: {
+        order_no:'',
         counterTime:'',
         booking_time:'',
         checkbox:false,
@@ -682,6 +683,7 @@ $(document).ready(function(){
 
            },
             goToPaymentDialog(){
+              
                 this.selectPayment('debit')
                 this.payment_dialog=true
             },
@@ -4536,6 +4538,7 @@ getBookedServices(){
     this.payment_total_cost=this.bookedServiceDetails[0].evaluation.total_cost
     this.payment_status=response.data.order_details.payment_status
     this.booking_status=response.data.booking_status
+    this.order_no=response.data.order_details.order_no
     this.getBookingTime(response.data.order_details.order_no)
     if(this.booking_status){
       this.amount_discount=response.data.discount_details.discount
@@ -4869,6 +4872,8 @@ sendLetCustScheduled(){
           ch_count=ch_count+1
           if(ch_count==(Object.keys(this.scheduleGroup).length) && this.currentAddressIndex==this.bookedServiceDetails.length){
             if(this.eval_details.payment_status=='PENDING'){
+              this.counterTime='5:00'
+              startTimer()
               this.goToPaymentDialog()
             }
             else{
@@ -4894,8 +4899,9 @@ sendLetCustScheduled(){
       this.btnLoader=false
       if(this.currentAddressIndex==this.bookedServiceDetails.length){
         if(this.eval_details.payment_status=='PENDING'){
+          startTimer()
           this.goToPaymentDialog()
-          this.getBookingTime(response.data.order_no)
+         
         }
         else{
          // this.success_booking_dialog=true
@@ -4918,7 +4924,7 @@ getBookingTime(orderno){
 
       var startTime = moment(this.booking_time, "DD-MM-YYYY hh:mm A").format("hh:mm A");
       var endTime =moment(currentTime,'DD-MM-YYYY hh:mm A').format("hh:mm A")
-      startTime='06:35 PM'
+      
       console.log("start is"+startTime+"end is"+endTime)
       // calculate total duration
       
@@ -4930,15 +4936,22 @@ getBookingTime(orderno){
       // duration in minutes
       var minutes = parseInt(duration.asMinutes());
       console.log( minutes+' minutes.');
-      if(minutes<=5){
-      
-        console.log("i called it ")
+       if(minutes>5){
+        this.cancelBooking(orderno)
+        console.log("called cancel booking")
+       }  
         this.counterTime=minutes+':00'
         startTimer()
-      }
+      
     }
 
   })
+},
+cancelBooking(orderno){
+  axios.post(this.url+'/api/booking-expiry/',{order_no:orderno}).then(response=>{
+    location.reload()
+  })
+
 }
     
   },
@@ -4996,10 +5009,12 @@ getBookingTime(orderno){
       if(m<0){
         return
       }
-      
+      if(m==0 &&s=='00'){
+        app.cancelBooking(this.order_no)
+      }
       app.counterTime =
         m + ":" + s;
-      console.log(m)
+      
       setTimeout(startTimer, 1000);
       
     }
