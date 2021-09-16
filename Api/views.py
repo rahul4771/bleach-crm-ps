@@ -2050,10 +2050,8 @@ class BookingExpiryAPI(APIView):
 
 	def post(self,request):
 		response_dict                     = {}
-		schedule_ids                      = request.data.get('schedule_ids')
-		
-		#delete schedules
-		OrderScheduler.objects.filter(id__in=schedule_ids).delete()
+
+		OrderScheduler.objects.select_related('order').filter(order__order_no=order_no).delete()
 		response_dict['success']          = True
 		
 		return Response(response_dict,HTTP_200_OK)

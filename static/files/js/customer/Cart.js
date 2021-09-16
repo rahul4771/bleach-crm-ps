@@ -14,6 +14,13 @@ function toggleBanner(){
       hideBanner()
     }
 }
+
+
+function checkSecond(sec) {
+  if (sec < 10 && sec >= 0) {sec = "0" + sec}; // add zero in front of numbers < 10
+  if (sec < 0) {sec = "59"};
+  return sec;
+}
 function hideBanner(){
   $('.banner-container').css("width","0px")
   $('.banner-box').hide()
@@ -94,12 +101,14 @@ $(document).ready(function(){
           
         },
       data: {
+        counterTime:'',
+        booking_time:'',
         checkbox:false,
         duration_loader:false,
         pref_gender:false,
         btnLoader:false,
         settings:{},
-        booking_status:null,
+        booking_status:false,
        // success_booking_dialog:true,
        gender_pref:false,
        gender:" ",
@@ -4527,6 +4536,7 @@ getBookedServices(){
     this.payment_total_cost=this.bookedServiceDetails[0].evaluation.total_cost
     this.payment_status=response.data.order_details.payment_status
     this.booking_status=response.data.booking_status
+    this.getBookingTime(response.data.order_details.order_no)
     if(this.booking_status){
       this.amount_discount=response.data.discount_details.discount
       this.amount_payable=response.data.discount_details.total_cost
@@ -4885,6 +4895,7 @@ sendLetCustScheduled(){
       if(this.currentAddressIndex==this.bookedServiceDetails.length){
         if(this.eval_details.payment_status=='PENDING'){
           this.goToPaymentDialog()
+          this.getBookingTime(response.data.order_no)
         }
         else{
          // this.success_booking_dialog=true
@@ -4895,11 +4906,45 @@ sendLetCustScheduled(){
   }
   
  
+},
+getBookingTime(orderno){
+  axios.get(this.url+'/api/booking-expiry-check/?order_no='+orderno).then(response=>{
+    this.booking_time=response.data.created
+    console.log("inside time")
+    if(this.booking_status)
+    {
+      var currentTime = moment().format('DD-MM-YYYY hh:mm A')
+     console.log("current time is"+currentTime+"booking time is"+this.booking_time)
+
+      var startTime = moment(this.booking_time, "DD-MM-YYYY hh:mm A").format("hh:mm A");
+      var endTime =moment(currentTime,'DD-MM-YYYY hh:mm A').format("hh:mm A")
+      startTime='06:35 PM'
+      console.log("start is"+startTime+"end is"+endTime)
+      // calculate total duration
+      
+      var duration = moment.duration(moment(endTime,'hh:mm A').diff(moment(startTime,'hh:mm A')));
+
+      // duration in hours
+      var hours = parseInt(duration.asHours());
+  
+      // duration in minutes
+      var minutes = parseInt(duration.asMinutes());
+      console.log( minutes+' minutes.');
+      if(minutes<=5){
+      
+        console.log("i called it ")
+        this.counterTime=minutes+':00'
+        startTimer()
+      }
+    }
+
+  })
 }
     
   },
 
   mounted() {
+    
     this.url = api;
     const urlSearchParams = new URLSearchParams(window.location.search);
     const params = Object.fromEntries(urlSearchParams.entries());
@@ -4939,7 +4984,25 @@ sendLetCustScheduled(){
      
      
     });
-    
+    function startTimer() {
+ 
+      var presentTime = app.counterTime;
+      
+      
+      var timeArray = presentTime.split(/[:]+/);
+      var m = timeArray[0];
+      var s = checkSecond((timeArray[1] - 1));
+      if(s==59){m=m-1}
+      if(m<0){
+        return
+      }
+      
+      app.counterTime =
+        m + ":" + s;
+      console.log(m)
+      setTimeout(startTimer, 1000);
+      
+    }
     
     
   
