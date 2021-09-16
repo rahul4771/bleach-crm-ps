@@ -1214,3 +1214,19 @@ height: 170px;
 
   background: rgba(0,0,0,0.5);
 }
+
+.inv-tab{
+  border-top: 1px solid #C4C4C4;
+  border-left: 1px solid #C4C4C4;
+  border-right: 1px solid #C4C4C4;
+  cursor: pointer;
+  z-index: 10;
+  background: #C4C4C4 0% 0% no-repeat padding-box;
+opacity: 1;
+padding: 7px 30px 7px 30px;
+}
+.inv-tab-active{
+  background: #EBEBEB !important;
+  color: #333333;
+  font-weight: 600;
+}
