@@ -123,7 +123,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 CRONJOBS = [
     ('0 0 * * *', 'customer.cron.quotationexpiry'),
-    ('*/10 * * * *', 'myapp.cron.booking_expiry')
+    ('*/10 * * * *', 'customer.cron.booking_expiry')
 ]
 
 # Internationalization

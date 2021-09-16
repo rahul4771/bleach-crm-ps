@@ -34,6 +34,7 @@ from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investi
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
+from bleachadmin.models import ServiceProductivity
 from agent.forms import UserProfileForm,AddressForm
 from evaluator.forms import EvaluationDetailsForm,QuatationServiceForm
 from order.forms import InvestigationForm
@@ -899,6 +900,14 @@ class AvailabilityCleaningCallendar(APIView):
 		response_dict['available_leaders_count']  = available_leaders.count()
 		response_dict['available_leaders']        = UserProfileShowSerializer(instance=available_leaders,many=True).data
 
+		if response_dict['available_leaders_count'] > 0:
+			hours                 = (cleaning_datetime_end-cleaning_datetime_start).seconds/3600
+			productivity          = ServiceProductivity.objects.filter(service_type__name__in=service_types).aggregate(Sum('perhour_cleaning'))['perhour_cleaning__sum'] or 0.00
+			total_cleaners		  = response_dict['available_cleaners_count']
+			response_dict['work'] = hours*productivity*total_cleaners
+		else:
+			response_dict['work'] = 0
+
 		response_dict['success'] = True
 		return Response(response_dict,HTTP_200_OK)
 
@@ -1383,10 +1392,6 @@ class FollowupPopupSave(APIView):
 # Create your views here.
 class AgentHome(IsAgent,View):
 	def get(self,request):
-
-		expired_schedules = OrderScheduler.objects.select_related('order__evaluation').filter(is_active=True,order__evaluation__quatation_status__is_null=False,order__payment_status='PENDING',created__lt=timezone.now()-timedelta(minutes=10)).prefetch_related('order__evaluation__booking_evaluation').annotate(customerbooking=Sum(Case(When(order__evaluation__booking_evaluation__booking_type='CLEANINGBOOKING',then=1),default=0,output_field=IntegerField()))).filter(customerbooking__gte=1)
-		expired_schedules.delete()
-	
 		#for taking today counts
 		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
 		count_today_end   = count_today_start+timedelta(1)
