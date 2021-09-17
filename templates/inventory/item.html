@@ -82,7 +82,10 @@
                                         {% endif %}
                                     {% endfor %}
                                 {% else %}
-                                    <img  style="width: 100%; cursor: pointer;" src="{% static 'files/images/dummy-profile-pic.jpg' %}"  alt="">
+                                    <!-- <img  style="width: 100%; cursor: pointer;" src="{% static 'files/images/dummy-profile-pic.jpg' %}"  alt=""> -->
+                                    <div class="select-img-div">
+                                        <i class="fa fa-camera fa-7x mt-30" aria-hidden="true"></i>
+                                    </div>
                                 {% endif %}
                                 </div>
                                 
@@ -181,8 +184,8 @@
                             </div>
                         </div>
                         <div style="margin-top: 90px;" >
-                        <textarea class="inv-hide mt-30" id="id_des_text" name="description" style="width: 100%; border-radius: 5px;" rows="4">vr</textarea>
-                        <span id="id_des_val" class="av-font ">{{inventory_item.description|default_if_none:"-"}}</span> 
+                        <textarea class="inv-hide mt-30" id="id_des_text" name="description" style="width: 100%; border-radius: 5px;" rows="4"> {{inventory_item.description|default_if_none:"-"}} </textarea>
+                        <span id="id_des_val" class="av-font "> {{inventory_item.description|default_if_none:"-"}} </span> 
                             </div>
                      </div>
                    
@@ -388,6 +391,9 @@
                     <div class="col-md-12">
                         <div class="inv-item-head-sub-2">
                             Purchase History
+                        </div>
+                        <div class="inv-item-head-sub-2">
+                           Sample Text
                         </div>
                         <div class="mt-5" style="border-top: 1px solid #c4c4c4;">
                             <table class="inv-table footable">
@@ -673,7 +679,7 @@
                     {% if inventory_item.item_images %}
                             
                     {% for image in inventory_item.item_images %}
-                    <div class="col-md-4">
+                    <div class="col-md-4" style="margin-bottom: 10px;">
                         <div style="position: relative;" class="inv-img-list">
                             <img  style="width: 100%; height: 170px;" src="{{image.item_image.url}}"  alt="">
                             {% if image.is_default_image %}
@@ -690,17 +696,23 @@
                                     </form>
                                 <div class="av-font img-text pointer" onclick="defaultImg({{image.id}})">Set as default</div>
                                 {% endif %}
-                                <div style="margin-left: auto; margin-right: 5px;"><i class="fa fa-trash pointer" aria-hidden="true"></i></div>
+                                <button class="delete-img-btn inv-hide" id="id_delete_{{image.id}}" data-toggle="modal" data-imageid="{{image.id}}" data-target="#deleteModelImg"  style="border: none; background: none; color: red;"> <i class="fa fa-trash fa-lg" aria-hidden="true"></i> Remove</button>
+
+                                <div style="margin-left: auto; margin-right: 5px;" onclick="deleteImg({{image.id}})"><i class="fa fa-trash pointer" aria-hidden="true"></i></div>
                             </div>
                         </div>
                     </div>
                     {% endfor %}
                     {% endif %}
-                    <div class="col-md-4 pointer" onclick="selectFileInp()">
+                    <div class="col-md-4 pointer" style="margin-bottom: 10px;" onclick="selectFileInp()">
                         <div class="select-img-div">
                             <i class="fa fa-camera fa-7x mt-30" aria-hidden="true"></i>
                         </div>
-                        <input type="file" style="display: none;" id="id_file">
+                        <form method="POST" action="" enctype='multipart/form-data'>{% csrf_token %}
+                            <input type="hidden" name="action" value="add_image" />
+                        <input type="file" style="display: none;"  id="file_select" onchange="showBtn()" name="item_image">
+                        <button class="sent-button" type="submit" id="id_submit" hidden>Add Image</button>
+                        </form>
 
                     </div>
                 </div>
@@ -1013,22 +1025,26 @@ $(function () {
 
 <script src="{% static '/files/externalfiles/plugins/OwlCarousel2/dist/owl.carousel.js'%}"></script>
 <script>
+    function deleteImg(id){
+        $('#id_delete_'+id).click();
+    }
     function defaultImg(id){
         console.log(id)
         $('#de_'+id).click();
     }
 function selectFileInp(){
    
-     document.getElementById('id_file').click();
+     document.getElementById('file_select').click();
     console.log('cl')
 }
 
     function showBtn(){
         if($('#file_select').val() != ''){
             console.log("ghj")
-            $("#id_btn_div").show();
+            $('#id_submit').click()
+            // $("#id_btn_div").show();
         }else{
-            $("#id_btn_div").hide();
+            // $("#id_btn_div").hide();
 
             console.log('hide')
         }
