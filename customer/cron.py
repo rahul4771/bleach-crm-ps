@@ -2,6 +2,7 @@ from evaluator.models import Evaluation,EvaluationDetails
 from order.models import Order,OrderScheduler
 from customer.models import CustomerBooking
 from datetime import datetime,timedelta,date
+from django.utils import timezone
 from django.db.models import Sum,When,Case,IntegerField
 import requests
 
