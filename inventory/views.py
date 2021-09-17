@@ -961,6 +961,8 @@ class InventoryInv(IsInventoryAdmin,View):
             reserve = request.POST.get('item_reserve')
             status     = request.POST.get('item_status')
             reusable     = request.POST.get('item_reusable')
+            item_add_type     = request.POST.get('itemadd_type')
+            unit_measure     = request.POST.get('unit_measure')
 
             if category_id:
                 category = Category.objects.get(id=int(category_id))
@@ -997,7 +999,7 @@ class InventoryInv(IsInventoryAdmin,View):
                 new_item_code = item_code_series + '101'
             print(new_item_code,"lop")
 
-            inv_item = InventoryItem.objects.create(item_category=category,item_segment=segment,item_line=line,name=name,item_code=new_item_code,description=description,reserve_count=reserve,is_reusable=reusable)
+            inv_item = InventoryItem.objects.create(item_category=category,item_segment=segment,item_line=line,name=name,item_code=new_item_code,description=description,reserve_count=reserve,is_reusable=reusable,item_add_type=item_add_type,measuring_unit=unit_measure)
             messages.success(request,"Item Added Successfully !")
             return redirect('inventory:inventory-item',inv_item.id)
 
@@ -1071,7 +1073,34 @@ class InventoryInv(IsInventoryAdmin,View):
 class InventoryOrder(IsInventoryAdmin,View):
     def get(self,request):
         orders = OrderScheduler.objects.filter(Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS')|Q(work_status='CLEANING_FULFILLED')).prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team'))
-        return render(request,'inventory/order.html',{"visits":orders})
+        
+        #PAGINATION ORDERS
+        no_of_entries = request.GET.get('no_of_entries')
+        if not no_of_entries:
+            no_of_entries = 20
+
+        page = request.GET.get('page',1)
+        paginator=Paginator(orders,no_of_entries)
+        try:
+            orders=paginator.page(page)
+        except PageNotAnInteger:
+            orders=paginator.page(1)
+        except EmptyPage:
+            orders = paginator.page(paginator.num_pages)
+
+        # Get the index of the current page
+        index = orders.number - 1  # edited to something easier without index
+        # This value is maximum index of your pages, so the last page - 1
+        max_index = len(paginator.page_range)
+        # You want a range of 7, so lets calculate where to slice the list
+        start_index = index - 3 if index >= 3 else 0
+        end_index = index + 3 if index <= max_index - 3 else max_index
+        # Get our new page range. In the latest versions of Django page_range returns
+        # an iterator. Thus pass it to list, to make our slice possible again.
+        page_range = list(paginator.page_range)[start_index:end_index]
+        entry_per_page=(orders.end_index())-(orders.start_index())+1
+
+        return render(request,'inventory/order.html',{"no_of_entries":no_of_entries,"page_range":page_range,"entry_per_page":entry_per_page,"visits":orders})
 
 class InventoryUsers(IsInventoryAdmin,View):
     def get(self,request):
