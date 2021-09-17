@@ -4232,7 +4232,7 @@ class DuplicateBookingPhase2(APIView):
 		response_dict = {}
 		
 		duplicate_evaluation         = Evaluation.objects.get(id=evaluation_id)		
-		duplicate_evaluation_details = EvaluationDetails.objects.filter(is_active=True,evaluation=duplicate_evaluation).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='schedules'),Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='booksections')),to_attr='evaluationbooks'))
+		duplicate_evaluation_details = EvaluationDetails.objects.filter(is_active=True,evaluation=duplicate_evaluation).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='schedules'),Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes'),Prefetch('addonsections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='booksections')),to_attr='evaluationbooks'))
 
 		#blc calculation
 		tracking_no  = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
@@ -4272,6 +4272,11 @@ class DuplicateBookingPhase2(APIView):
 								if duplicate_book_section.sectionkeynotes:
 									for duplicate_keynote in duplicate_book_section.sectionkeynotes:	
 										new_duplicate_keynote = EvaluationSectionKeynote.objects.create(evaluation_section=new_duplicate_section,sub_area=duplicate_keynote.sub_area,quantity=duplicate_keynote.quantity,)
+
+								#new addons
+								if duplicate_book_section.sectionaddons:
+									for duplicate_addon in duplicate_book_section.sectionaddons:	
+										new_duplicate_addon = EvaluationSectionAddons.objects.create(evaluation_section=new_duplicate_section,name=duplicate_addon.name,addon_cost=duplicate_addon.addon_cost,quantity=duplicate_addon.quantity,addon_net_cost=duplicate_addon.addon_net_cost,size=duplicate_addon.size,other_details=duplicate_addon.other_details)
 
 		response_dict['evaluation_id'] = new_order.evaluation.evaluation_id[3:14]
 		response_dict['success']       = True
