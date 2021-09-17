@@ -82,7 +82,10 @@
                                         {% endif %}
                                     {% endfor %}
                                 {% else %}
-                                    <img  style="width: 100%; cursor: pointer;" src="{% static 'files/images/dummy-profile-pic.jpg' %}"  alt="">
+                                    <!-- <img  style="width: 100%; cursor: pointer;" src="{% static 'files/images/dummy-profile-pic.jpg' %}"  alt=""> -->
+                                    <div class="select-img-div">
+                                        <i class="fa fa-camera fa-7x mt-30" aria-hidden="true"></i>
+                                    </div>
                                 {% endif %}
                                 </div>
                                 
