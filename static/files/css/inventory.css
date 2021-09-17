@@ -1166,7 +1166,7 @@ select.minimal option:hover {
     left: 10px;
     width: 90%;
     height: 100%;
-    background: #ebeaea;
+ 
     opacity: 0;
     z-index: 3;
   }
@@ -1174,6 +1174,8 @@ select.minimal option:hover {
 
 .inv-item-img:hover  .inv-img-edit-div{
     opacity: 1;
+  background: rgba(0,0,0,0.5);
+
 }
 
 

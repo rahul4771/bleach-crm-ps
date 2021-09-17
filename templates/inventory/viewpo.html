@@ -4,23 +4,27 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        .inv-table thead th {
+
+    z-index: 996 !important;
+    
+}
+    </style>
 <div class="wrapper"><!--wrapper-->
     {% include "inventory/common/header.html" %}
     <section class="content">
         <div class="container-fluid space topspace">
             <div class="welcome-wrapper">
                 <!--welcome-wrapper-->
-                <h1 class="dashboard-head av-font">Purchase Order</h1>
+                <h1 class="dashboard-head av-font">PO Number</h1>
                 <!-- <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p> -->
             </div>
         </div>
 
         <div class="main-content-holder"><!--main-content-holder-->   
             <div class="white-wrapper white-wrapper-padding">
-                <div class="row">
-                    <div class="col-md-12 inv-po-number">PO Number
-                    </div>
-                </div>
+                
                 <div class="row mt-10">
                    <div class="col-md-4">
                     <div class="row c-mb-3 ">
@@ -51,10 +55,21 @@
                       </div>
                    </div>
                 </div>
-               
+                <div class="row mt-20">
+                    <div class="col-md-3">
+                        <div class="wrap-drop" id="noble-gases"  style="z-index: 999; border: 2px solid #333333;">
+                          
+                            <span> Shipment completed </span>
+                            <ul class="drop">
+                                <li  ><a> Option 1 </a></li>
+                            </ul>
+                          
+                        </div>
+                    </div>
+                </div>
                 <div class="row mt-20">
                     <div class="col-md-12 ">
-                        <table class="inv-table footable"> 
+                        <table class="inv-table footable" style="z-index: 10;"> 
                             <thead>
                               <tr>
                                   <th style="width: %;">
@@ -81,13 +96,17 @@
                                   <td>Category 1</td>
                                   <td> 
                                     <button class="inv-plan-img-btn" onclick="editNav()"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                      <button class="inv-plan-img-btn"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td>
+                                      <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td>
                               </tr>
                            
                           </tbody>
                         </table>
                     </div>
                 </div>
+                <div class="row mt-20 text-center">
+                    <button class="sent-button" >Submit</button>
+                                  <button  class="view-button">Cancel</button>
+                  </div>
             </div>
         </div>
     </section>
@@ -173,8 +192,10 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Unit</div>
 
-                    <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="attributes">
+                    <div class="qty ">
+                        <span class="minus bg-dark">-</span>
+                        <input type="number" class="count" name="qty" value="1">
+                        <span class="plus bg-dark" style="margin-left: -5px;">+</span>
                       </div>
                 </div>
 
@@ -199,7 +220,7 @@
 
                         
                         <div class="d-flex ">
-                            <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to delete inventory</p></div>
+                            <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to delete item</p></div>
                             <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
 
                                 <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
@@ -229,9 +250,67 @@
 {% endblock %}
 
 {% block javascript %}
-
 <script>
+    function DropDown(el) {
+    this.dd = el;
+    this.placeholder = this.dd.children('span');
+    this.opts = this.dd.find('ul.drop li');
+    this.val = '';
+    this.index = -1;
+    this.initEvents();
+}
 
+
+
+   
+DropDown.prototype = {
+    initEvents: function () {
+        var obj = this;
+        obj.dd.on('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $(this).toggleClass('active');
+        });
+        obj.opts.on('click', function () {
+            var opt = $(this);
+            obj.val = opt.text();
+            obj.index = opt.index();
+            obj.placeholder.text(obj.val);
+            opt.siblings().removeClass('selected');
+            opt.filter(':contains("' + obj.val + '")').addClass('selected');
+        }).change();
+    },
+    getValue: function () {
+        return this.val;
+    },
+    getIndex: function () {
+        return this.index;
+    }
+};
+
+$(function () {
+    // create new variable for each menu
+    var dd1 = new DropDown($('#noble-gases'));
+    // var dd2 = new DropDown($('#other-gases'));
+    $(document).click(function () {
+        // close menu on document click
+        $('.wrap-drop').removeClass('active');
+    });
+});
+</script>
+<script>
+$(document).ready(function(){
+		    $('.count').prop('disabled', true);
+   			$(document).on('click','.plus',function(){
+				$('.count').val(parseInt($('.count').val()) + 1 );
+    		});
+        	$(document).on('click','.minus',function(){
+    			$('.count').val(parseInt($('.count').val()) - 1 );
+    				if ($('.count').val() == 0) {
+						$('.count').val(1);
+					}
+    	    	});
+ 		});
 
 
     function openNavAddStore() {
