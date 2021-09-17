@@ -264,6 +264,7 @@
     <div data-toggle="modal" data-target="#deleteCleaningModal" id="cleaning-delete-tigger"></div> 
     <div data-toggle="modal" data-target="#cancelCleaningModal" id="cleaning-cancel-tigger"></div>
     <div data-toggle="modal" data-target="#deleteSectionModel" id="delete-section-tigger"></div> 
+    <div data-toggle="modal" data-target="#customerNoteModel" id="customer_note-tigger"></div>
 <!-- edit section dialog begins here-->
 <div class="modal fade " id="editSectionDialog" tabindex="-1" role="dialog" aria-labelledby="editSectionDialogTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered primary-modal" role="document">
@@ -662,6 +663,29 @@
                             <div class="keynote-chip d-flex" >
                                 <input type="text" v-model="newkeynote.sub_area" class="keynote-input" placeholder="Name"/>
                                 <input type="text" v-model="newkeynote.quantity" class="keynote-input" placeholder="Value"/>
+                               <!-- <div><%keynote.sub_area%> - <%keynote.quantity%></div>-->
+                               <div class="keynote-delicon cp" @click="addToKeynote()"><i class="far fa-plus-square"></i>
+                               </div>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+                <div class="col-md-12 mt-20" v-if="service_type=='Kitchen Cleaning'">
+                    <b>Addon (s)</b> 
+                    <div class="row mt-10" v-if="keynote_update">
+                        <div class="col-md-4 mt-10" v-for="(keynote,kindex) in other_keynotes" v-bind:key="kindex">
+                            <div class="keynote-chip d-flex" v-if="keynote.sub_area!='kitchen'">
+                                <input type="text" v-model="keynote.sub_area" class="keynote-input"/>
+                                <input type="text" v-model="keynote.quantity" class="keynote-input"/>
+                               <!-- <div><%keynote.sub_area%> - <%keynote.quantity%></div>-->
+                                <div class="keynote-delicon cp" @click="delKeynote(kindex)"><i class="far fa-trash-alt"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mt-10" >
+                            <div class="keynote-chip d-flex" >
+                                <input type="text" v-model="newkeynote.sub_area" class="keynote-input" placeholder="Addon"/>
+                                <input type="text" v-model="newkeynote.quantity" class="keynote-input" placeholder="Quantity"/>
                                <!-- <div><%keynote.sub_area%> - <%keynote.quantity%></div>-->
                                <div class="keynote-delicon cp" @click="addToKeynote()"><i class="far fa-plus-square"></i>
                                </div>
@@ -1887,7 +1911,16 @@
                         <div class="order-details-left-wrapper ">
                             <div class="order-payment-section">
                                 <div class="row">
-                                    <div class="col-md-9 payment-text-order">
+                                    <div class="col-md-12">
+                                        <div><i class="far fa-file-alt"></i><span class="ml-10"><b>Note to customer</b></span>
+                                        <div class="d-flex mt-10">
+                                            {{order.evaluation.evaluator_note|default_if_none:''}}
+                                            <img src="/static/files/icons/edit.png" class="policy-time-edit pointer ml-10" onclick="editCustmerNote(this)" data-current_note="{{order.evaluation.evaluator_note|default_if_none:''}}">
+                                        </div>
+                                    </div>
+                                    </div>
+                                    
+                                    <div class="col-md-9 payment-text-order mt-10">
 
                                         <h2>Payment</h2>
                                         <div class="row">
@@ -3131,6 +3164,36 @@
         </div>
     </div>
 </div>
+
+<!-- note to customer edit modal-->
+<div class="modal fade bd-example-modal-lg" id="customerNoteModel" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog cancel-model cancel-order-border" role="document">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 c-mt-10 c-model-head">
+                    <h1> Note to the Customer </h1>
+                        <div class="mt-10">
+                        <input  type="text" placeholder="Note to Customer" required="required" class="textBox"  v-model="customer_note" >
+                    </div>
+                </div>
+            </div>
+           
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <div class="cancel-model-content">
+                        <button class="sent-button" onclick="">Submit</button>
+                        <button data-dismiss="modal" class="view-button">Cancel</button>
+                    </div>
+                </div>
+
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<!-- note to customer modal ends here-->
 <!-- 
 
     Alert Box
