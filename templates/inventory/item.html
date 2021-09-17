@@ -704,6 +704,7 @@
                     </div>
                     {% endfor %}
                     {% endif %}
+                    {% if inventory_item.item_images|length < 6 %}
                     <div class="col-md-4 pointer" style="margin-bottom: 10px;" onclick="selectFileInp()">
                         <div class="select-img-div">
                             <i class="fa fa-camera fa-7x mt-30" aria-hidden="true"></i>
@@ -715,6 +716,7 @@
                         </form>
 
                     </div>
+                    {% endif %}
                 </div>
                 <div class="row mt-20 text-center" style="margin-bottom: 20px;">
                     <button class="sent-button" >Submit</button>
