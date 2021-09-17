@@ -181,8 +181,8 @@
                             </div>
                         </div>
                         <div style="margin-top: 90px;" >
-                        <textarea class="inv-hide mt-30" id="id_des_text" name="description" style="width: 100%; border-radius: 5px;" rows="4">vr</textarea>
-                        <span id="id_des_val" class="av-font ">{{inventory_item.description|default_if_none:"-"}}</span> 
+                        <textarea class="inv-hide mt-30" id="id_des_text" name="description" style="width: 100%; border-radius: 5px;" rows="4"> {{inventory_item.description|default_if_none:"-"}} </textarea>
+                        <span id="id_des_val" class="av-font "> {{inventory_item.description|default_if_none:"-"}} </span> 
                             </div>
                      </div>
                    
@@ -388,6 +388,9 @@
                     <div class="col-md-12">
                         <div class="inv-item-head-sub-2">
                             Purchase History
+                        </div>
+                        <div class="inv-item-head-sub-2">
+                           Sample Text
                         </div>
                         <div class="mt-5" style="border-top: 1px solid #c4c4c4;">
                             <table class="inv-table footable">
