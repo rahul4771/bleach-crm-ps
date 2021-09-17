@@ -1,3 +1,4 @@
+moment.locale('ar-kw');  
 function openNav() {
   document.getElementById("mobSidenav").style.width = "100%";
   document.getElementById("mobSidenav").style.zIndex="1000";
@@ -4899,6 +4900,7 @@ sendLetCustScheduled(){
       this.btnLoader=false
       if(this.currentAddressIndex==this.bookedServiceDetails.length){
         if(this.eval_details.payment_status=='PENDING'){
+          this.counterTime='5:00'
           startTimer()
           this.goToPaymentDialog()
          
@@ -4919,16 +4921,18 @@ getBookingTime(orderno){
     console.log("inside time")
     if(this.booking_status)
     {
-      var currentTime = moment().format('DD-MM-YYYY hh:mm A')
+      var currentTime = moment().utcOffset("+03:00").format('DD-MM-YYYY hh:mm A')
+     
      console.log("current time is"+currentTime+"booking time is"+this.booking_time)
 
-      var startTime = moment(this.booking_time, "DD-MM-YYYY hh:mm A").format("hh:mm A");
-      var endTime =moment(currentTime,'DD-MM-YYYY hh:mm A').format("hh:mm A")
+      var startTime = moment(this.booking_time, "DD-MM-YYYY hh:mm A").format("DD-MM-YYYY hh:mm A");
+      var endTime =moment(currentTime,'DD-MM-YYYY hh:mm A').locale('ar-kw').format("DD-MM-YYYY hh:mm A")
+     
       
       console.log("start is"+startTime+"end is"+endTime)
       // calculate total duration
       
-      var duration = moment.duration(moment(endTime,'hh:mm A').diff(moment(startTime,'hh:mm A')));
+      var duration = moment.duration(moment(endTime,'DD-MM-YYYY hh:mm A').diff(moment(startTime,'DD-MM-YYYY hh:mm A')));
 
       // duration in hours
       var hours = parseInt(duration.asHours());
@@ -4938,9 +4942,9 @@ getBookingTime(orderno){
       console.log( minutes+' minutes.');
        if(minutes>5){
         this.cancelBooking(orderno)
-        console.log("called cancel booking")
+      //  console.log("called cancel booking")
        }  
-        this.counterTime=minutes+':00'
+        this.counterTime=(5-minutes)+':00'
         startTimer()
       
     }
@@ -4949,7 +4953,8 @@ getBookingTime(orderno){
 },
 cancelBooking(orderno){
   axios.post(this.url+'/api/booking-expiry/',{order_no:orderno}).then(response=>{
-    location.reload()
+    setTimeout(function(){ location.reload(); }, 5000);
+    
   })
 
 }
@@ -5009,7 +5014,7 @@ cancelBooking(orderno){
       if(m<0){
         return
       }
-      if(m==0 &&s=='00'){
+      if(m==0 &&s=='05'){
         app.cancelBooking(this.order_no)
       }
       app.counterTime =
