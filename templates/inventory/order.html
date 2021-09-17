@@ -22,10 +22,10 @@
                 <div class="d-flex d-grid">
                     <div>
 
-                        <div class="inv-input-container h-30">
+                        {% comment %} <div class="inv-input-container h-30">
                             <i class="fa fa-search inv-icon-input" aria-hidden="true"></i>
-                            <input type="text" placeholder="Search order" class="inv-input w-250" name="attributes">
-                        </div>
+                            <input type="text" placeholder="Search Category" id="search-bar" class="inv-input w-250" onchange ="set_params_go()" value="{{search_query|default_if_none:''}}" name="attributes">
+                        </div> {% endcomment %}
 
                         
                       
@@ -33,13 +33,13 @@
 
 
                     </div>
-                    <div class="right-pos">
+                    {% comment %} <div class="right-pos">
                         <button class="inv-plan-btn">
                             <i class="fa fa-filter mr-5" aria-hidden="true"></i>
                             Filter
                         </button>
                         <!-- <button class="inv-blue-btn" data-toggle="modal" data-target="#addModel" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Store </button> -->
-                    </div>
+                    </div> {% endcomment %}
                 </div>
                 <div class="row">
                     <div class="col-md-12 mt-20">
@@ -181,10 +181,10 @@
                                 {{visit.work_status}}
                             </td>
                             <td class="text-center">
-                                <button class="btn-p inv-plan-img-btn inv-btn-dis" onclick="openNav()"> <img class="btn-img2"
-                                    src="{% static 'files/inventory/icons/checklist.png' %}" alt=""> Create Check-out list </button>
-                                <button class="inv-plan-img-btn" onclick="openNav()"> <img
-                                        src="{% static 'files/inventory/icons/edit.png' %}" alt=""> </button>
+                                <a href="/inventory/createcheckout/{{visit.id}}"><button class="btn-p inv-plan-img-btn btn-shadow" onclick="openNav()"> <img class="btn-img2"
+                                    src="{% static 'files/inventory/icons/checklist.png' %}" alt=""> Create Check-out list </button></a>
+                                {% comment %} <button class="inv-plan-img-btn" onclick="openNav()"> <img
+                                        src="{% static 'files/inventory/icons/edit.png' %}" alt=""> </button> {% endcomment %}
                                 
 
                             </td>

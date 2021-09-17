@@ -8,7 +8,7 @@ from datetime import date,datetime,timedelta
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,Max,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField,CharField,Prefetch
 from order.models import OrderScheduler
-from senior_team_leader.models import CleaningTeam
+from senior_team_leader.models import CleaningTeam,CleaningTeamMember
 # Create your views here.
 
 class InventoryHome(IsInventoryAdmin,View):
@@ -1072,7 +1072,13 @@ class InventoryInv(IsInventoryAdmin,View):
 
 class InventoryOrder(IsInventoryAdmin,View):
     def get(self,request):
-        orders = OrderScheduler.objects.filter(Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS')|Q(work_status='CLEANING_FULFILLED')).prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team'))
+        search = request.GET.get('search')
+        print(search,"ser")
+
+        if search:
+            orders = OrderScheduler.objects.filter(Q(order_scheduler_book__service_type__icontains=search)|Q(cleaning_team_order_scheduler__team_leader__name__icontains=search)).filter(Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS')|Q(work_status='CLEANING_FULFILLED')).prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
+        else:
+            orders = OrderScheduler.objects.filter(Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS')|Q(work_status='CLEANING_FULFILLED')).prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
         
         #PAGINATION ORDERS
         no_of_entries = request.GET.get('no_of_entries')
@@ -1100,7 +1106,7 @@ class InventoryOrder(IsInventoryAdmin,View):
         page_range = list(paginator.page_range)[start_index:end_index]
         entry_per_page=(orders.end_index())-(orders.start_index())+1
 
-        return render(request,'inventory/order.html',{"no_of_entries":no_of_entries,"page_range":page_range,"entry_per_page":entry_per_page,"visits":orders})
+        return render(request,'inventory/order.html',{"no_of_entries":no_of_entries,"page_range":page_range,"entry_per_page":entry_per_page,"visits":orders,"search_query":search})
 
 class InventoryUsers(IsInventoryAdmin,View):
     def get(self,request):
@@ -1111,8 +1117,9 @@ class InventoryCheckout(IsInventoryAdmin,View):
         return render(request,'inventory/checkout.html',{})
 
 class InventoryCreateCheckout(IsInventoryAdmin,View):
-    def get(self,request):
-        return render(request,'inventory/createCheckout.html',{})
+    def get(self,request,visit_id):
+        visit = OrderScheduler.objects.prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='team_members')),to_attr='cleaning_team')).get(id=int(visit_id))
+        return render(request,'inventory/createCheckout.html',{"visit":visit})
 
 class InventoryPurchaseOrder(IsInventoryAdmin,View):
     def get(self,request):
