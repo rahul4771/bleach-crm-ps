@@ -83,6 +83,8 @@ function editCustmerNote(currentData){
   
   $('#customer_note-tigger').click()
   app.customer_note=$(currentData).data('current_note')
+  
+ 
 }
 function editSection(service){
   
@@ -98,9 +100,14 @@ function editSection(service){
  // var sectiondata=$(section).data()
  app.getSection(eval_book_id)
  app.editSectionData.section_id=sid
+ app.kitchen_addons=app.sections[index-1].addonsections
 if(app.service_type=='Kitchen Cleaning'){
   app.editSectionData.new_kitchen=app.sections[index-1].new_kitchen
   app.editSectionData.oil_residue=app.sections[index-1].oil_residue
+  
+    app.getAddons()
+  
+  
 }
 if(app.service_type=='Facade Cleaning'){
   app.editSectionData.is_highprice_facade=app.sections[index-1].is_highprice_facade
@@ -120,6 +127,7 @@ if(app.service_type=='Facade Cleaning'){
       app.recalcKeynoteCost()
   $('#edit-dialog-tigger').click()
   app.editSectionData.section_cost=app.sectionData.section_cost
+  app.editSectionData.section_net_cost=app.sectionData.section_net_cost
   app.editSectionData.section_name=app.sectionData.section_name
   app.removeInitialKitchenCost()
   if(app.sectionData.wall_type!="" && app.sectionData.wall_type!=null)
@@ -346,6 +354,9 @@ const app = new Vue({
   components: { Multiselect: window.VueMultiselect.default },
 
   data: {
+    newaddon_quantity:1,
+    selected_addon:{},
+    priceupdate:true,
     customer_note:'',
     notes:'',
     reload:true,
@@ -506,6 +517,8 @@ const app = new Vue({
             old_kitchen_size:[],
             kitchen_keynotes:[],
             other_keynotes:[],
+            addons:[],
+            kitchen_addons:[],
             final_keynotes:[],
             service_size:[],
             chair_size:[],
@@ -513,12 +526,135 @@ const app = new Vue({
            progress:20,
            slotloader:false,
             services_list:[],
-          url:''
+          url:'',
+          addons_parsed:[]
          // url:'http://localhost:8000'
       // url:'https://test.bleach-kw.com'
             //url:'http://127.0.0.1:8000'
   },
   methods:{
+    addToAddon(){
+      this.kitchen_addons.push({
+        name:this.selected_addon.details.name,
+        addon_cost:this.selected_addon.details.price,
+        addon_net_cost:this.selected_addon.details.price*this.newaddon_quantity,
+        quantity:this.newaddon_quantity
+      })
+      this.recalcAddonCost()
+      this.newaddon_quantity=1
+      this.selected_addon={}
+    },
+    updateAddon(index){
+      this.kitchen_addons[index].addon_net_cost=parseInt(this.kitchen_addons[index].quantity)*this.kitchen_addons[index].addon_cost
+      this.recalcAddonCost()
+    },
+    async getAddons(){
+      this.addons=[]
+      var ser = 'Kitchen Cleaning'
+      axios.get(this.url+'/customer/ajax/getserviceaddons?service_type='+ser).then(response=>{
+        this.addons=response.data.service_addons
+       this.parseAddons()
+       
+      }).catch((error)=>{
+        console.log(error)
+      })
+    },
+    findAddons(addon){
+  
+      for(var i=0;i<this.addons_parsed.length;i++){
+        if(this.addons_parsed[i].details.name==addon){
+          return i
+        }
+      }
+      return 'not found'
+    },
+    async parseAddons(){
+      this.addons_parsed=[]
+      for(var i=0;i<this.addons.length;i++){
+        if(this.addons[i].category){
+          if(this.addons[i].name=='New Cabinet'||this.addons[i].name=='Used Cabinet'){
+            if(!this.editSectionData.new_kitchen && this.addons[i].name=='Used Cabinet'){
+            var add_on_stat=this.findAddons('Cabinet')
+            }
+            else if(this.editSectionData.new_kitchen && this.addons[i].name=='New Cabinet'){
+              var add_on_stat=this.findAddons('Cabinet')
+            }
+            else{
+              add_on_stat='not found'
+            }
+          }
+          else{
+          var add_on_stat=this.findAddons(this.addons[i].name)
+          }
+          if(add_on_stat!='not found'){
+            this.addons_parsed[add_on_stat].size.push({
+              size:this.addons[i].category,
+              max_size:this.addons[i].size,
+              price:this.addons[i].price
+            })
+          }
+          else{
+            if(this.addons[i].name=='Used Cabinet'||this.addons[i].name=='New Cabinet'){
+              if(this.otherService.type=='old' && this.addons[i].name=='Used Cabinet'){
+                var add_on = { ...this.addons[i] }
+                add_on.name='Cabinet'
+                this.addons_parsed.push({
+                  details:add_on,
+                  selected:false,
+                  quantity:0,  
+                  size:[{
+                    size:this.addons[i].category,
+                    max_size:this.addons[i].size,
+                    price:this.addons[i].price
+                  }],
+                  selected_size:{}
+                })
+              }
+              else if(this.otherService.type=='new' && this.addons[i].name=='New Cabinet'){
+                var add_on = { ...this.addons[i] }
+               
+                add_on.name='Cabinet'
+                this.addons_parsed.push({
+                  details:add_on,
+                  selected:false,
+                  quantity:0,  
+                  size:[{
+                    size:this.addons[i].category,
+                    max_size:this.addons[i].size,
+                    price:this.addons[i].price
+                  }],
+                  selected_size:{}
+                })
+              }
+            }
+            else{
+          this.addons_parsed.push({
+            details:this.addons[i],
+            selected:false,
+            quantity:0,  
+            size:[{
+              size:this.addons[i].category,
+              max_size:this.addons[i].size,
+              price:this.addons[i].price
+            }],
+            selected_size:{}
+          })
+        }
+        }
+        }
+        else{
+        this.addons_parsed.push({
+          details:this.addons[i],
+          selected:false,
+          quantity:0,
+          
+          size:[],
+          selected_size:{}
+        })
+      }
+       
+  
+      }},
     serviceExist(id){
       for(var k=0;k<this.services.length;k++){
         if(this.services[k].id==id){
@@ -1008,6 +1144,16 @@ setTimeout(function() {
       })
     }
     },
+    saveCustomerNote(){
+      axios.post(this.url+'/customer/editorder/'+this.orderId,{
+        action_type:'evaluator_note',
+        evaluator_note:this.customer_note
+
+      }).then(response=>{
+        $('#close_customer_note').click()
+        location.reload()
+      })
+    },
    
     deleteVisit(){
       axios.post(this.url+'/customer/editorder/'+this.orderId,{
@@ -1149,6 +1295,7 @@ setTimeout(function() {
       this.service_type=$(service).data('service')
       console.log("index is"+index)
      // var sectiondata=$(section).data()
+      
      this.editSectionData.section_id=sid
       console.log("section is "+JSON.stringify(this.sections[index-1]))
       this.sectionData=this.sections[index-1]
@@ -1158,9 +1305,19 @@ setTimeout(function() {
       }
       $('#edit-dialog-tigger').click()
       this.editSectionData.section_cost=this.sectionData.section_cost
+      this.editSectionData.section_net_cost=this.sectionData.section_net_cost
       this.editSectionData.section_name=this.sectionData.section_name
       
       
+    },
+    recalcAddonCost(){
+      this.priceupdate=false
+      var addon_cost=0
+      for(var i=0;i<this.kitchen_addons.length;i++){
+       addon_cost=addon_cost+ this.kitchen_addons[i].addon_net_cost
+      }
+      this.editSectionData.section_net_cost=this.editSectionData.section_cost+addon_cost
+      this.priceupdate=true
     },
     deleteSection(index,sid){
      
@@ -1328,7 +1485,9 @@ setTimeout(function() {
           "floor_type":"",
           "cement_residue":false,
           "section_cost":this.editSectionData.section_cost,
-          "section_net_cost":this.editSectionData.section_cost,
+          
+
+          "section_net_cost":this.editSectionData.section_net_cost,
           "new_kitchen":this.editSectionData.new_kitchen,
           "oil_residue":this.editSectionData.oil_residue,
          "is_highprice_facade":false,
@@ -1375,6 +1534,7 @@ setTimeout(function() {
         "evaluation_book__id":this.eval_book_id,
         "section_details":sectionData,
         "keynotes":this.final_keynotes,
+        "addons":this.kitchen_addons,
         "section_id":this.editSectionData.section_id,
       }).then(response=>{
         console.log(response)
@@ -1397,7 +1557,7 @@ setTimeout(function() {
           "floor_type":"",
           "cement_residue":false,
           "section_cost":this.editSectionData.section_cost,
-          "section_net_cost":this.editSectionData.section_cost,
+          "section_net_cost":this.editSectionData.section_net_cost,
           "new_kitchen":this.editSectionData.is_newkitchen,
          "is_highprice_facade":false,
          "is_highprice_window":false,
@@ -1431,6 +1591,7 @@ setTimeout(function() {
               size:{},
               area_type:[],
               section_cost:0,
+              section_net_cost:0,
               section_name:'',
               floor_type:[],
               ceiling_type:[],
@@ -1487,6 +1648,7 @@ setTimeout(function() {
         axios.get(this.url+'/customer/editorder/'+this.orderId+'?evaluation_book_id='+id).then(response=>{
           this.sections=response.data.section_details.evaluationsection_book
           this.service_type=response.data.section_details.service_type.name
+          
            this.service_size=[]
            this.chair_size=[]
            this.sofa_size=[]
