@@ -389,6 +389,8 @@ $(function () {
 function selectTab(d){
     console.log(d)
     if(d =='rec'){
+        setTimeout(function(){ $('.footable').trigger('footable_resize'); }, 1000);
+
         $('#id_pen').removeClass('inv-tab-active')
         $('#id_rec').addClass('inv-tab-active')
 
@@ -396,6 +398,7 @@ function selectTab(d){
         $("#id_table_rec").show()
 
     }else{
+        setTimeout(function(){ $('.footable').trigger('footable_resize'); }, 1000);
         
         $('#id_pen').addClass('inv-tab-active')
         $('#id_rec').removeClass('inv-tab-active')
