@@ -5058,7 +5058,7 @@ class EditOrderDetails(APIView):
 	def get(self,request,order_id):
 		response_dict = {}
 		evaluation_book_id               = request.GET.get('evaluation_book_id')
-		evaluation_book                  = EvaluationBook.objects.prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes')),to_attr='sections')).get(id=evaluation_book_id)
+		evaluation_book                  = EvaluationBook.objects.prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='addons')),to_attr='sections')).get(id=evaluation_book_id)
 		response_dict['section_details'] = EvaluationBookSerializer(evaluation_book).data
 		return Response(response_dict,HTTP_200_OK)
 
@@ -5403,6 +5403,14 @@ class EditOrderDetails(APIView):
 			#update book note
 			EvaluationBook.objects.filter(id=evaluationbook_id).update(evaluator_note=note)
 
+			response_dict['success']  = True
+
+		elif action == 'evaluator_note':
+			evaluator_note                  = request.data.get('evaluator_note')
+			
+			order.evaluation.evaluator_note = evaluator_note
+			order.evaluation.save()
+			
 			response_dict['success']  = True
 
 		return Response(response_dict,HTTP_200_OK)
