@@ -28,24 +28,7 @@
                         </div>
 
                         
-                        <div class="row">
-                        <div class="col-md-7 mt-20">
-                        <div class="d-flex">
-                            <div>
-                                <label for="favcity" style="width:100%;"> 
-                                    <select style="padding: 5px 50px 5px 7px !important; " name="no_of_entries" id="no_of_entries" onchange="set_params_go();"> 
-                                    <option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
-                                    <option value="50" {% if no_of_entries == '50' %}selected{% endif %}>50 Entries</option>
-                                    <option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
-                                    </select>
-                                    </label>
-                            </div>
-                            <div class="right-pos">
-                                <p>{{no_of_entries}} Entries</p>
-                            </div>
-                        </div>
-                        </div>
-                        </div>
+                      
                         
 
 
@@ -58,6 +41,24 @@
                         <!-- <button class="inv-blue-btn" data-toggle="modal" data-target="#addModel" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Store </button> -->
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-md-12 mt-20">
+                    <div class="d-flex">
+                        <div>
+                            <label for="favcity" style="width:100%;"> 
+                                <select style="padding: 5px 50px 5px 7px !important; " name="no_of_entries" id="no_of_entries" onchange="set_params_go();"> 
+                                <option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
+                                <option value="50" {% if no_of_entries == '50' %}selected{% endif %}>50 Entries</option>
+                                <option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
+                                </select>
+                                </label>
+                        </div>
+                        <div class="right-pos">
+                            <p>{{no_of_entries}} Entries</p>
+                        </div>
+                    </div>
+                    </div>
+                    </div>
                 <div class="mt-20">
                     <table class="inv-table footable">
 
