@@ -9,6 +9,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,Max,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField,CharField,Prefetch
 from order.models import OrderScheduler
 from senior_team_leader.models import CleaningTeam,CleaningTeamMember
+from evaluator.models import EvaluationBookSection
 # Create your views here.
 
 class InventoryHome(IsInventoryAdmin,View):
@@ -1118,7 +1119,7 @@ class InventoryCheckout(IsInventoryAdmin,View):
 
 class InventoryCreateCheckout(IsInventoryAdmin,View):
     def get(self,request,visit_id):
-        visit = OrderScheduler.objects.prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='team_members')),to_attr='cleaning_team')).get(id=int(visit_id))
+        visit = OrderScheduler.objects.prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='team_members')),to_attr='cleaning_team'),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='sections')).get(id=int(visit_id))
         return render(request,'inventory/createCheckout.html',{"visit":visit})
 
 class InventoryPurchaseOrder(IsInventoryAdmin,View):
@@ -1142,7 +1143,7 @@ class InventoryPurchaseOrder(IsInventoryAdmin,View):
 
         return redirect('inventory:inventory-purchaseorder')
 
-class PurchaseOrderItems(IsInventoryAdmin,View):
+class PurchaseOrderItemsPage(IsInventoryAdmin,View):
     def get(self,request):
         return render(request,"inventory/purchaseorderitems.html")
 

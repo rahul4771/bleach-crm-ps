@@ -79,6 +79,11 @@ function onClose() {
   app.editSectionData.section_name=sectiondata.section_name
   
 }*/
+function editCustmerNote(currentData){
+  
+  $('#customer_note-tigger').click()
+  app.customer_note=$(currentData).data('current_note')
+}
 function editSection(service){
   
   
@@ -341,6 +346,7 @@ const app = new Vue({
   components: { Multiselect: window.VueMultiselect.default },
 
   data: {
+    customer_note:'',
     notes:'',
     reload:true,
     all_val:false,
