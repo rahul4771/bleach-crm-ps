@@ -1577,7 +1577,8 @@ width="1000"
                         <v-expansion-panel-content>
                           <div class="row">
                             <div class="col-md-6 " v-for="(bill,bindex) in service.bill" v-bind:key="bindex">
-                              <div class="d-flex expand-card-chip p-2">
+                              <div class="expand-card-chip p-2">
+                              <div class="d-flex">
                                 
                                 <div>
                                   <b><% bill.section_name %></b>
@@ -1595,6 +1596,16 @@ width="1000"
                                 </div>
                                 <div class="ml-auto primary-green-text expand-card-cost">  KD <% bill.section_cost %></div>
                               </div>
+                              <hr v-if="bill.addonsections.length>0"/>
+                              <div v-if="bill.addonsections.length>0"><b>Add Ons</b></div>
+                              <div class="d-flex mt-2" v-for="(addon,aindex) in bill.addonsections" v-bind:key="aindex">
+                                  <div>
+                                    <% addon.name %>
+                                    ( x <% addon.quantity %>)
+                                  </div>
+                                  <div class="ml-auto primary-green-text expand-card-addon-cost">  KD <% addon.addon_net_cost %></div>
+                              </div>
+                            </div>
                             </div>
                           </div>
                         </v-expansion-panel-content>

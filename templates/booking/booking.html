@@ -789,7 +789,7 @@ width="1000"
           </div>
           <div class="col-md-12" >
             <div>Do you want to clean the Cabinet ? <span style="color:red">*</span></div>
-            <v-radio-group v-model="kitchenData.cabinet" class="p-2" row>
+            <v-radio-group v-model="kitchenData.is_cabinet" class="p-2" row v-on:change="changeNewKitchen()">
               
               <v-radio :value="true">
                 <template v-slot:label>
@@ -982,7 +982,7 @@ width="1000"
             </div>
             <div class="col-md-12"  v-if="serviceType == 'Kitchen Cleaning'">
               <div>Do you want to clean the Cabinet ? <span style="color:red">*</span></div>
-              <v-radio-group v-model="otherService.cabinet" class="p-2" row>
+              <v-radio-group v-model="otherService.is_cabinet" class="p-2" row v-on:change="changeKitchen()">
                 
                 <v-radio :value="true">
                   <template v-slot:label>
@@ -1775,6 +1775,22 @@ width="1000"
                                         <v-form :ref="'kitchenFloor-building-'+(index-1)+'floor-'+(floor-1)"
                                         v-model="validKitchen" >
                                           <div class="row kitchen-box">
+                                            <div class="col-md-12"  v-if="building[index - 1].floors[floor - 1].kitchen">
+                                              <div>Do you want to clean the Cabinet ? <span style="color:red">*</span></div>
+                                              <v-radio-group v-model="kitchenData.is_cabinet" class="p-2" row v-on:change="changeNewKitchen()">
+                                                
+                                                <v-radio :value="true">
+                                                  <template v-slot:label>
+                                                    <div>Yes<strong class="success--text"></strong></div>
+                                                  </template>
+                                                </v-radio>
+                                                <v-radio :value="false">
+                                                  <template v-slot:label>
+                                                    <div>No <strong class="primary--text"></strong></div>
+                                                  </template>
+                                                </v-radio>
+                                              </v-radio-group>
+                                            </div>
                                             <div class="col-md-12 text-center"
                                               v-if="building[index - 1].floors[floor - 1].kitchen ">
                                               <v-radio-group v-model="kitchenData.type" row
@@ -2078,7 +2094,24 @@ width="1000"
                                                 </v-btn>
                                                 <div class="col-md-12" v-if="apartment.kitchens.length<1">
                                                   <div class="row kitchen-box">
+                                                    <div class="col-md-12"  v-if="apartment.kitchen">
+                                                      <div>Do you want to clean the Cabinet ? <span style="color:red">*</span></div>
+                                                      <v-radio-group v-model="kitchenData.is_cabinet" class="p-2" row v-on:change="changeNewKitchen()">
+                                                        
+                                                        <v-radio :value="true">
+                                                          <template v-slot:label>
+                                                            <div>Yes<strong class="success--text"></strong></div>
+                                                          </template>
+                                                        </v-radio>
+                                                        <v-radio :value="false">
+                                                          <template v-slot:label>
+                                                            <div>No <strong class="primary--text"></strong></div>
+                                                          </template>
+                                                        </v-radio>
+                                                      </v-radio-group>
+                                                    </div>
                                                     <div class="col-md-12 text-center" v-if="apartment.kitchen ">
+
                                                       <v-radio-group v-model="kitchenData.type" row
                                                         v-on:change="changeNewKitchen()">
                                                         <v-radio label="Used Kitchen" value="old"></v-radio>
@@ -2399,7 +2432,7 @@ Fill all the details of the Buildings  to proceed
                         </div>
                         <div class="col-md-12"  v-if="serviceType == 'Kitchen Cleaning'">
                           <div>Do you want to clean the Cabinet ? <span style="color:red">*</span></div>
-                          <v-radio-group v-model="otherService.cabinet" class="p-2" row>
+                          <v-radio-group v-model="otherService.is_cabinet" class="p-2" row v-on:change="changeKitchen()">
                             
                             <v-radio :value="true">
                               <template v-slot:label>
