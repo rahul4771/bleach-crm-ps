@@ -28,169 +28,9 @@
     <title>Bleach Cleaning Services | Invoice</title>
 
   </head>
-  <body id="printableArea">
-     <!-- Keynotes modal begins here-->
-<div id="detailsModal" class="qt-details-modal">
-  <div >
-          
-    
-    <div class="container">
-      <div class="row ">
-        <div class="col-md-8 mx-auto white-bg br-10">
-          <div class="mt-2 text-right">
-            <i class="far fa-times-circle qt-details-close" onclick="closeDetailsModal()"></i>
-          </div>
-          <div class="row mb-4">
-        <div class="col-md-12">
-          <h6 class="inv-primary-text" >General Cleaning Building 1 Floor 1</h6>
-         
-        </div>
-        <div class="col-md-6 mt-2">
-          <div class="keynote-chip">
-            <div class="d-flex ">
-              <div class="w-70">
-                Bathrooms
-              </div>
-              <div class="w-30 text-right">
-                3
-              </div>
-            </div>
-           
-          </div>
-        </div>
-        <div class="col-md-6 mt-2">
-          <div  class="keynote-chip">
-            <div class="d-flex">
-              <div class="w-70">
-                Rooms
-              </div>
-              <div class="w-30 text-right">
-               4
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6 mt-2">
-          <div  class="keynote-chip">
-            <div class="d-flex">
-              <div class="w-70">
-                Kitchen
-              </div>
-              <div class="w-30 text-right">
-               2
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6 mt-2">
-          <div  class="keynote-chip">
-            <div class="d-flex">
-              <div class="w-70">
-                Wardrobe
-              </div>
-              <div class="w-30 text-right">
-               7
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6 mt-2">
-          <div  class="keynote-chip">
-            <div class="d-flex">
-              <div class="w-70">
-                Kitchen
-              </div>
-              <div class="w-30 text-right">
-               2
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6 mt-2">
-          <div  class="keynote-chip">
-            <div class="d-flex">
-              <div class="w-70">
-                Wardrobe
-              </div>
-              <div class="w-30 text-right">
-               7
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-12">
-          <div class="row mt-2 m-0 qt-more-details">
-            <div class="col-md-4 mb-2 mt-2 col-6">
-              <div class="qt-details-title">
-                Wall Type
-              </div>
-              <div class="qt-details-value">
-                Glass, Ceramic, Glass, Ceramic, Glass, Ceramic, Glass, Ceramic
-              </div>
-            </div>
-            <div class="col-md-4 mb-2 mt-2 col-6">
-              <div class="qt-details-title">
-                Floor Type
-              </div>
-              <div class="qt-details-value">
-                Glass, Ceramic
-              </div>
-            </div>
-            <div class="col-md-4 mb-2 mt-2 col-6">
-              <div class="qt-details-title">
-                Ceiling Type
-              </div>
-              <div class="qt-details-value">
-                Glass, Ceramic
-              </div>
-            </div>
-            <div class="col-md-4 mb-2 mt-2 col-6">
-              <div class="qt-details-title">
-                Materials
-              </div>
-              <div class="qt-details-value">
-                Glass, Ceramic
-              </div>
-            </div>
-            <div class="col-md-4 mb-2 mt-2 col-6">
-              <div class="qt-details-title">
-                Size
-              </div>
-              <div class="qt-details-value">
-                12 Sqm
-              </div>
-            </div>
-            <div class="col-md-4 mb-2 mt-2 col-6">
-              <div class="qt-details-title">
-               Quantity
-              </div>
-              <div class="qt-details-value">
-                1
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4 offset-md-8">
-          <div class="qt-net-price mt-4 p-2">
-            <div class="qt-details-title">
-              NET PRICE
-             </div>
-             <div class="qt-details-price">
-            200 KD
-             </div>
-          </div>
-        
-        </div>
-      </div>
-      </div>
-    </div>
-    </div>
-    </div>
+<body id="printableArea">
 
-    
-</div>
-<!-- Keynotes modal ends here-->
-    <div class="qt-cash-modal " id="cashModal">
+<div class="qt-cash-modal " id="cashModal">
       <div class="container">
       <div class=" row">
         <div class="col-md-6 mx-auto " id="cash-step-1">
@@ -429,14 +269,16 @@
         
     </div>
     <!-- visit modal ends here-->
-     <!--- Note to the customer-->
+     
+    {% if order.evaluation.evaluator_note %}
+    <!--- Note to the customer-->
      <div class="col-md-12 col-print-12 order-3">
       <div class="customer-notes">
-       <b> Note :</b> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+       <b> Note :</b> {{order.evaluation.evaluator_note|default_if_none:''}}
       </div>
-  </div>
-  
-<!-- Note to the customer ends here-->
+     </div>  
+     <!-- Note to the customer ends here-->
+     {% endif %}
 
             {% for orderschedule in nonduplicate_schedules %}            
             {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}

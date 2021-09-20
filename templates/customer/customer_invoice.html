@@ -271,14 +271,16 @@
         
     </div>
     <!-- visit modal ends here-->
+
+    {% if order.evaluation.evaluator_note %}
      <!--- Note to the customer-->
      <div class="col-md-12 col-print-12 order-3">
       <div class="customer-notes">
-       <b> Note :</b> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+       <b> Note :</b> {{order.evaluation.evaluator_note|default_if_none:''}}
       </div>
-  </div>
-  
-<!-- Note to the customer ends here-->
+    </div> 
+    <!-- Note to the customer ends here-->
+    {% endif %}
 
             {% for orderschedule in nonduplicate_schedules %}            
             {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
