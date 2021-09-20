@@ -303,6 +303,7 @@ const app=new Vue({
     sides: "",
     stain_age: "",
     height:"",
+    cabinet:false,
     addons:[],
     section_net_cost:null,
     section_cost:null
@@ -3309,20 +3310,20 @@ responsive:{
     this.addons_parsed=[]
     for(var i=0;i<this.addons.length;i++){
       if(this.addons[i].category){
-        if(this.addons[i].name=='New Cabinet'||this.addons[i].name=='Used Cabinet'){
-          if(this.otherService.type=='old' && this.addons[i].name=='Used Cabinet'){
-          var add_on_stat=this.findAddons('Cabinet')
-          }
-          else if(this.otherService.type=='new' && this.addons[i].name=='New Cabinet'){
-            var add_on_stat=this.findAddons('Cabinet')
-          }
-          else{
-            add_on_stat='not found'
-          }
-        }
-        else{
+        // if(this.addons[i].name=='New Cabinet'||this.addons[i].name=='Used Cabinet'){
+        //   if(this.otherService.type=='old' && this.addons[i].name=='Used Cabinet'){
+        //   var add_on_stat=this.findAddons('Cabinet')
+        //   }
+        //   else if(this.otherService.type=='new' && this.addons[i].name=='New Cabinet'){
+        //     var add_on_stat=this.findAddons('Cabinet')
+        //   }
+        //   else{
+        //     add_on_stat='not found'
+        //   }
+        // }
+        // else{
         var add_on_stat=this.findAddons(this.addons[i].name)
-        }
+        
         if(add_on_stat!='not found'){
           this.addons_parsed[add_on_stat].size.push({
             size:this.addons[i].category,
@@ -3331,40 +3332,8 @@ responsive:{
           })
         }
         else{
-          if(this.addons[i].name=='Used Cabinet'||this.addons[i].name=='New Cabinet'){
-            if(this.otherService.type=='old' && this.addons[i].name=='Used Cabinet'){
-              var add_on = { ...this.addons[i] }
-              add_on.name='Cabinet'
-              this.addons_parsed.push({
-                details:add_on,
-                selected:false,
-                quantity:0,  
-                size:[{
-                  size:this.addons[i].category,
-                  max_size:this.addons[i].size,
-                  price:this.addons[i].price
-                }],
-                selected_size:{}
-              })
-            }
-            else if(this.otherService.type=='new' && this.addons[i].name=='New Cabinet'){
-              var add_on = { ...this.addons[i] }
-             
-              add_on.name='Cabinet'
-              this.addons_parsed.push({
-                details:add_on,
-                selected:false,
-                quantity:0,  
-                size:[{
-                  size:this.addons[i].category,
-                  max_size:this.addons[i].size,
-                  price:this.addons[i].price
-                }],
-                selected_size:{}
-              })
-            }
-          }
-          else{
+       
+          
         this.addons_parsed.push({
           details:this.addons[i],
           selected:false,
@@ -3376,7 +3345,7 @@ responsive:{
           }],
           selected_size:{}
         })
-      }
+      
       }
       }
       else{
@@ -3389,12 +3358,6 @@ responsive:{
         selected_size:{}
       })
     }
-      // if(this.addons[i].name=='Gas Burners/Oven/Stoves')
-      // {
-      //   this.addons_size.push(
-      //    this.add_ons[i]
-      //   )
-      // }
      
 
     }
@@ -3636,6 +3599,7 @@ try {
       type: "",
       age: "",
       stain: false,
+      cabinet:false,
       stain_reason: "",
       wall_type: "",
       floor_type: "",
@@ -3732,7 +3696,8 @@ try {
       stain_age: a.stain_age,
       section_cost:a.section_cost,
       height:a.height,
-      addons:a.addons
+      addons:a.addons,
+      cabinet:a.cabinet
 
     }),
    
@@ -3924,6 +3889,7 @@ try {
       color: "",
       size: "",
       type: "old",
+      cabinet:false,
       age: "",
       stain: false,
       stain_reason: "",
@@ -3936,6 +3902,7 @@ try {
       sides: "",
       stain_age: "",
       section_cost:null,
+
       section_net_cost:null,
       addons:[]
     };
@@ -3988,6 +3955,7 @@ try {
       wall_type: "",
       floor_type: "",
       ceiling_type: "",
+      cabinet:false,
       residue: false,
       hallway_size: "",
       sides: "",
@@ -4194,6 +4162,8 @@ try {
       type: "",
       age: "",
       stain: false,
+      cabinet:false,
+      addons:[],
       stain_reason: "",
       wall_type: "",
       floor_type: "",
