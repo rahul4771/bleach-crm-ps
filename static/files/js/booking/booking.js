@@ -96,8 +96,10 @@ const app=new Vue({
       },
     data: {
       kitchen_max_cleaners:null,
-      new_kitchen_productivity:null,
-      old_kitchen_productivity:null,
+      new_kitchen_cabinet_productivity:null,
+      old_kitchen_cabinet_productivity:null,
+      new_kitchen_nocabinet_productivity:null,
+      old_kitchen_nocabinet_productivity:null,
       absolute_cost:0,
       added_cost:0,
       addon_size:[],
@@ -173,7 +175,8 @@ const app=new Vue({
         ceiling_type:'',
         condition:'',
         type:'old',
-        residue:false
+        residue:false,
+        is_cabinet:false
     },
   mob_number: "",
   customerDetails: {},
@@ -303,7 +306,7 @@ const app=new Vue({
     sides: "",
     stain_age: "",
     height:"",
-    cabinet:false,
+    is_cabinet:false,
     addons:[],
     section_net_cost:null,
     section_cost:null
@@ -445,8 +448,11 @@ const app=new Vue({
   sofa_size:0,
   chair_size:0,
   caret_size:0,
-  new_kitchen_size:0,
-  old_kitchen_size:0,
+  
+  new_kitchen_cabinet_size:0,
+  old_kitchen_cabinet_size:0,
+  new_kitchen_nocabinet_size:0,
+  old_kitchen_nocabinet_size:0,
   high_facade:0,
   low_facade:0,
   serviceTypesData:[],
@@ -1704,6 +1710,7 @@ console.log(response)
               "keynotes":{},
               "addons":{},
               "is_newkitchen":false,
+              "is_cabinet":false,
               "is_highprice_facade":false,
               "is_highprice_window":false,
               "colour":'',
@@ -1723,6 +1730,9 @@ console.log(response)
               }
               if(this.multiServicesBill[i].bill[j].section.size.is_newkitchen){
                 this.serviceDetails.service_details[i].sections[j].is_newkitchen=true
+              }
+              if(this.multiServicesBill[i].bill[j].is_cabinet){
+                this.serviceDetails.service_details[i].sections[j].is_cabinet=true
               }
               if(this.multiServicesBill[i].bill[j].section.stain_age){
                 this.serviceDetails.service_details[i].sections[j].age_of_stain=this.multiServicesBill[i].bill[j].section.stain_age
@@ -1915,6 +1925,9 @@ console.log(response)
             if(this.multiServicesBill[i].bill[j].section.size.is_newkitchen){
               this.serviceDetails.service_details[i].sections[j].is_newkitchen=true
             }
+            if(this.multiServicesBill[i].bill[j].is_cabinet){
+              this.serviceDetails.service_details[i].sections[j].is_cabinet=true
+            }
             if(this.multiServicesBill[i].bill[j].section.stain_age){
               this.serviceDetails.service_details[i].sections[j].age_of_stain=this.multiServicesBill[i].bill[j].section.stain_age
             }
@@ -1989,7 +2002,23 @@ console.log(response)
            }
 
          }
-         
+         var addoncounter=0
+           if(this.multiServicesBill[i].bill[j].section.addons){
+            
+             for(add_on=0;add_on<this.multiServicesBill[i].bill[j].section.addons.length;add_on++){
+             
+               if(this.multiServicesBill[i].bill[j].section.addons[add_on].selected)
+               {
+                addoncounter=addoncounter+1
+              this.serviceDetails.service_details[i].sections[j].addons[addoncounter]={
+                name:this.multiServicesBill[i].bill[j].section.addons[add_on].details.name,
+                addon_cost:this.multiServicesBill[i].bill[j].section.addons[add_on].details.price,
+                addon_net_cost:this.multiServicesBill[i].bill[j].section.addons[add_on].details.price*this.multiServicesBill[i].bill[j].section.addons[add_on].quantity,
+                quantity:this.multiServicesBill[i].bill[j].section.addons[add_on].quantity
+              }
+            }
+             }
+           }
          if(this.multiServicesBill[i].bill[j].section.kitchen){
           var newindex=Object.keys(this.serviceDetails.service_details[i].sections[j].keynotes).length
           var kitchencounter=newindex
@@ -2040,6 +2069,7 @@ console.log(response)
         size:'',
         ceiling_type:'',
         condition:'',
+        is_cabinet:false,
         type:'old',
         residue:false
     }
@@ -2059,6 +2089,7 @@ console.log(response)
         size:'',
         ceiling_type:'',
         condition:'',
+        is_cabinet:false,
         type:'old',
         residue:false
     }
@@ -2269,20 +2300,40 @@ console.log(response)
     this.sizeFilteredData = [];
     this.otherService.size=""
     if (this.otherService.type == "new") {
+      if(this.otherService.is_cabinet)
+      {
       console.log("type test passed new");
       for (var i = 0; i < this.sizeData.length; i++) {
-        if (this.sizeData[i].is_newkitchen) {
+        if (this.sizeData[i].is_newkitchen && this.sizeData[i].is_cabinet) {
           this.sizeFilteredData.push(this.sizeData[i]);
         }
       }
     }
-    if (this.otherService.type == "old") {
-      console.log("type test passed old");
+    else{
       for (var i = 0; i < this.sizeData.length; i++) {
-        if (!this.sizeData[i].is_newkitchen) {
+        if (this.sizeData[i].is_newkitchen && !this.sizeData[i].is_cabinet) {
           this.sizeFilteredData.push(this.sizeData[i]);
         }
       }
+    }
+    }
+    if (this.otherService.type == "old") {
+      if(this.otherService.is_cabinet)
+      {
+      console.log("type test passed old");
+      for (var i = 0; i < this.sizeData.length; i++) {
+        if (!this.sizeData[i].is_newkitchen && this.sizeData[i].is_cabinet) {
+          this.sizeFilteredData.push(this.sizeData[i]);
+        }
+      }
+    }
+    else{
+      for (var i = 0; i < this.sizeData.length; i++) {
+        if (!this.sizeData[i].is_newkitchen && !this.sizeData[i].is_cabinet) {
+          this.sizeFilteredData.push(this.sizeData[i]);
+        }
+      }
+    }
     }
   },
   changeNewKitchen(){
@@ -2307,20 +2358,40 @@ console.log(response)
     }
     this.serviceSize = {};
          if (this.kitchenData.type == "new") {
+          if(this.kitchenData.is_cabinet)
+          {
       console.log("type test passed new");
       for (var i = 0; i < this.kitchenSizeData.length; i++) {
-        if (this.kitchenSizeData[i].is_newkitchen) {
+        if (this.kitchenSizeData[i].is_newkitchen && this.kitchenSizeData[i].is_cabinet) {
           this.sizeFilteredData.push(this.kitchenSizeData[i]);
         }
       }
     }
-    if (this.kitchenData.type == "old") {
-      console.log("type test passed old");
+    else{
       for (var i = 0; i < this.kitchenSizeData.length; i++) {
-        if (!this.kitchenSizeData[i].is_newkitchen) {
+        if (this.kitchenSizeData[i].is_newkitchen && !this.kitchenSizeData[i].is_cabinet) {
           this.sizeFilteredData.push(this.kitchenSizeData[i]);
         }
       }
+    }
+    }
+    if (this.kitchenData.type == "old") {
+      console.log("type test passed old");
+      if(this.kitchenData.is_cabinet)
+      {
+      for (var i = 0; i < this.kitchenSizeData.length; i++) {
+        if (!this.kitchenSizeData[i].is_newkitchen && this.kitchenSizeData[i].is_cabinet) {
+          this.sizeFilteredData.push(this.kitchenSizeData[i]);
+        }
+      }
+    }
+    else{
+      for (var i = 0; i < this.kitchenSizeData.length; i++) {
+        if (!this.kitchenSizeData[i].is_newkitchen && !this.kitchenSizeData[i].is_cabinet) {
+          this.sizeFilteredData.push(this.kitchenSizeData[i]);
+        }
+      }
+    }
     }
       })
       .catch((error) => {
@@ -2738,11 +2809,22 @@ removeOneTimeSlot(slot){
         console.log("i m inside kitchen")
          for (var i=0;i < this.multiServicesBill[serIndex].bill.length; i++) {
                 if(this.multiServicesBill[serIndex].bill[i].section.type=='old'){
-                  this.old_kitchen_size=this.old_kitchen_size+ parseInt(this.multiServicesBill[serIndex].bill[i].section.size.max_size)
+                  if(this.multiServicesBill[serIndex].bill[i].is_cabinet){
+                    this.old_kitchen_cabinet_size=this.old_kitchen_cabinet_size+ parseInt(this.multiServicesBill[serIndex].bill[i].section.size.max_size)
+                  }
+                  else{
+                    this.old_kitchen_nocabinet_size=this.old_kitchen_nocabinet_size+ parseInt(this.multiServicesBill[serIndex].bill[i].section.size.max_size)
+                  }
+                  
                 }
                 if(this.multiServicesBill[serIndex].bill[i].section.type=='new'){
-                  this.new_kitchen_size=this.new_kitchen_size+ parseInt(this.multiServicesBill[serIndex].bill[i].section.size.max_size)
+                  if(this.multiServicesBill[serIndex].bill[i].is_cabinet){
+                    this.new_kitchen_cabinet_size=this.new_kitchen_cabinet_size+ parseInt(this.multiServicesBill[serIndex].bill[i].section.size.max_size)
+                  }
+                  else{
+                  this.new_kitchen_nocabinet_size=this.new_kitchen_nocabinet_size+ parseInt(this.multiServicesBill[serIndex].bill[i].section.size.max_size)
                 }
+              }
           }
        }
        else{
@@ -2774,14 +2856,25 @@ removeOneTimeSlot(slot){
           }
        }
        else if(this.multiServicesBill[j].service=='Kitchen Cleaning'){
-         for (var i=0;i < this.multiServicesBill[j].bill.length; i++) {
-                if(this.multiServicesBill[j].bill[i].section.type=='old'){
-                  this.old_kitchen_size=this.old_kitchen_size+ parseInt(this.multiServicesBill[j].bill[i].section.size.max_size)
-                }
-                if(this.multiServicesBill[j].bill[i].section.type=='new'){
-                  this.new_kitchen_size=this.new_kitchen_size+ parseInt(this.multiServicesBill[j].bill[i].section.size.max_size)
-                }
+        for (var i=0;i < this.multiServicesBill[j].bill.length; i++) {
+          if(this.multiServicesBill[j].bill[i].section.type=='old'){
+            if(this.multiServicesBill[j].bill[i].is_cabinet){
+              this.old_kitchen_cabinet_size=this.old_kitchen_cabinet_size+ parseInt(this.multiServicesBill[j].bill[i].section.size.max_size)
+            }
+            else{
+              this.old_kitchen_nocabinet_size=this.old_kitchen_nocabinet_size+ parseInt(this.multiServicesBill[j].bill[i].section.size.max_size)
+            }
+            
           }
+          if(this.multiServicesBill[j].bill[i].section.type=='new'){
+            if(this.multiServicesBill[j].bill[i].is_cabinet){
+              this.new_kitchen_cabinet_size=this.new_kitchen_cabinet_size+ parseInt(this.multiServicesBill[j].bill[i].section.size.max_size)
+            }
+            else{
+            this.new_kitchen_nocabinet_size=this.new_kitchen_nocabinet_size+ parseInt(this.multiServicesBill[j].bill[i].section.size.max_size)
+          }
+        }
+    }
        }
        else{
 
@@ -3256,7 +3349,7 @@ responsive:{
         this.submit_loader=false
         
        
-     window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
+    // window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
        
       })
        .catch((error) => {
@@ -3599,7 +3692,7 @@ try {
       type: "",
       age: "",
       stain: false,
-      cabinet:false,
+      is_cabinet:false,
       stain_reason: "",
       wall_type: "",
       floor_type: "",
@@ -3697,7 +3790,7 @@ try {
       section_cost:a.section_cost,
       height:a.height,
       addons:a.addons,
-      cabinet:a.cabinet
+      is_cabinet:a.is_cabinet
 
     }),
    
@@ -3889,7 +3982,7 @@ try {
       color: "",
       size: "",
       type: "old",
-      cabinet:false,
+      is_cabinet:false,
       age: "",
       stain: false,
       stain_reason: "",
@@ -3955,7 +4048,7 @@ try {
       wall_type: "",
       floor_type: "",
       ceiling_type: "",
-      cabinet:false,
+      is_cabinet:false,
       residue: false,
       hallway_size: "",
       sides: "",
@@ -4162,7 +4255,7 @@ try {
       type: "",
       age: "",
       stain: false,
-      cabinet:false,
+      is_cabinet:false,
       addons:[],
       stain_reason: "",
       wall_type: "",
@@ -4815,9 +4908,10 @@ try {
     this.url+"/customer/ajax/getserviceproductivity?service_type=" +
       'Kitchen Cleaning'
   ).then(response=>{
-    this.new_kitchen_productivity=  response.data.newkitchen_perhour_cleaning
-    this.old_kitchen_productivity=  response.data.oldkitchen_perhour_cleaning
-    this.kitchen_max_cleaners=response.data.max_cleaners
+    this.new_kitchen_cabinet_productivity=  response.data.newkitchenwithcabinet_perhour_cleaning
+    this.new_kitchen_nocabinet_productivity=  response.data.newkitchenwithout_perhour_cleaning
+    this.old_kitchen_cabinet_productivity=  response.data.oldkitchenwithcabinet_perhour_cleaning
+    this.old_kitchen_nocabinet_productivity=  response.data.oldkitchenwithoutcabinet_perhour_cleaning
   })
  },
   doSomethingAsync(k) {
@@ -4870,15 +4964,20 @@ try {
                 data["lowpricefacade_perhour_cleaning"]
             );
         } else if (selected_service == "Kitchen Cleaning") {
-          var total_newkitchen_size = this.new_kitchen_size;
-          var total_oldkitchen_size = this.old_kitchen_size;
+          
           var manhour =
             parseInt(
-              total_newkitchen_size / data["newkitchen_perhour_cleaning"]
+              this.new_kitchen_cabinet_size / data["newkitchenwithcabinet_perhour_cleaning"]
             ) +
             parseInt(
-              total_oldkitchen_size / data["oldkitchen_perhour_cleaning"]
-            );
+              this.new_kitchen_nocabinet_size / data["newkitchenwithout_perhour_cleaning"]
+            )+
+            parseInt(
+              this.old_kitchen_cabinet_size / data["oldkitchenwithcabinet_perhour_cleaning"]
+            )+
+            parseInt(
+              this.old_kitchen_nocabinet_size / data["oldkitchenwithoutcabinet_perhour_cleaning"]
+            )
             //To find addons man hour 
             var addon_manhour=0
             for(var ao=0;ao<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;ao++){
@@ -4894,6 +4993,7 @@ try {
                 }
             
             }
+            console.log("addon manhour is"+addon_manhour)
             manhour=parseInt(manhour)+parseInt(addon_manhour)
         } else if (selected_service == "Window Cleaning") {
           for(var b=0;b<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;b++){
@@ -4919,21 +5019,35 @@ try {
           var productivity = data["perhour_cleaning"];
           console.log("productivity is "+productivity)
           var manhour = parseInt(total_estimated_size / productivity);
-          var new_kit_size=0
-          var old_kit_size=0
+          var new_kit_cab_size=0
+          var new_kit_nocab_size=0
+          var old_kit_cab_size=0
+          var old_kit_nocab_size=0
           var kit_manhour=0
           for(var b=0;b<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;b++){
           if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.kitchen){
             for(var kit=0;kit<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.kitchens.length;kit++){
               if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.kitchens[kit].is_newkitchen){
-                new_kit_size=new_kit_size+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.kitchens[kit].size.max_size
+                if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.kitchens[kit].is_cabinet){
+                  new_kit_cab_size=new_kit_cab_size+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.kitchens[kit].size.max_size
+                }
+                else{
+                  new_kit_nocab_size=new_kit_nocab_size+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.kitchens[kit].size.max_size
+                }
+               
               }else{
-                old_kit_size=old_kit_size+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.kitchens[kit].size.max_size
+                if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.kitchens[kit].is_cabinet){
+                old_kit_cab_size=old_kit_cab_size+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.kitchens[kit].size.max_size
+                }
+                else{
+                  old_kit_nocab_size=old_kit_nocab_size+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.kitchens[kit].size.max_size
+                }
               }
             }
           }
           }
-          kit_manhour=parseInt(new_kit_size/this.new_kitchen_productivity)+parseInt(old_kit_size/this.old_kitchen_productivity)
+          kit_manhour=parseInt(new_kit_cab_size/this.new_kitchen_cabinet_productivity)+parseInt(old_kit_cab_size/this.old_kitchen_cabinet_productivity)
+          +parseInt(old_kit_nocab_size/this.old_kitchen_nocabinet_productivity)+parseInt(new_kit_nocab_size/this.new_kitchen_nocabinet_productivity)
           manhour=manhour+kit_manhour
         }
         if(manhour<2){

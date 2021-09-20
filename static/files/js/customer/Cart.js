@@ -102,6 +102,7 @@ $(document).ready(function(){
           
         },
       data: {
+        addons:[],
         order_no:'',
         counterTime:'',
         booking_time:'',
@@ -3715,6 +3716,17 @@ $(document).ready(function(){
                console.log("old kitchen"+old_kitchen_manhour+' new kicthen : '+new_kitchen_manhour)
                var manhour= old_kitchen_manhour+new_kitchen_manhour
                console.log("kicthen amhr is"+manhour)
+               //Addons Manhour
+               for(var add=0;add<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;add++){
+                 var addons_available=this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[add].addonsections
+                 var addons_manhour=0
+                 for(var addon=0;addon<addons_available.length;addon++){
+                    addons_manhour=addons_manhour+parseInt(this.getProductivityAddonByName(addons_available[addon]))*addons_available[addon].quantity
+                 }
+              }
+              console.log("addons manhour is "+addons_manhour)
+              manhour=manhour+addons_manhour
+
                
              }
              else if(selected_service=='Upholstery Cleaning'){
@@ -4957,6 +4969,36 @@ cancelBooking(orderno){
     
   })
 
+},
+async getAddons(){
+  this.addons=[]
+  var ser = 'Kitchen Cleaning'
+  axios.get(this.url+'/customer/ajax/getserviceaddons?service_type='+ser).then(response=>{
+    this.addons=response.data.service_addons
+   
+   
+  }).catch((error)=>{
+    console.log(error)
+  })
+},
+getProductivityAddonByName(addon){
+var name=addon.name
+if(addon.other_details){
+  var size=JSON.stringify(addon.other_details)
+}
+
+  for(var i=0;i<this.addons.length;i++){
+    if(this.addons[i].name==name){
+      if(this.addons[i].category){
+        if(this.addons[i].category==size){
+          return this.addons[i].productivity
+        }
+      }
+      else{
+        return this.addons[i].productivity
+      }
+    }
+  }
 }
     
   },

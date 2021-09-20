@@ -114,6 +114,10 @@ html{
       font-size:24px;
       font-weight:500;
   }
+  .expand-card-addon-cost{
+    font-size:16px;
+    font-weight:500;
+}
   .v-expansion-panel{
     border:1px solid #949494 !important;
     border-radius: 5px !important;
