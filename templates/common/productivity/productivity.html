@@ -201,6 +201,10 @@
                                         {% endif %}
                                         {% endfor %}
                                   </div>
+                                  {% if service_type.name == 'Kitchen Cleaning' %}
+                                  <br><br><br>
+                                  {% endif %}
+
                                   <div class="productivity-tab">
                                       <button id="normal_button_id_{{service_type.id}}" class="productivity-tab-item productivity-tab-border"  onclick="viewNormal({{service_type.id}})">{% if service_type.name == 'Upholstery Cleaning' %}Sofa{% elif service_type.name == 'Window Cleaning' %}Old Window{% elif service_type.name == 'Facade Cleaning' %}Old Facade{%elif service_type.name == 'Kitchen Cleaning'%}Old Kitchen(No Cabinet){% else %}Normal{% endif %}</button>
                                       {% if service_type.name == 'Upholstery Cleaning' or service_type.name == 'Kitchen Cleaning' or service_type.name == 'Facade Cleaning' or service_type.name == 'Window Cleaning' %}
