@@ -15,7 +15,7 @@ class ProductivityForm(forms.ModelForm):
 class ServicePriceRangeForm(forms.ModelForm):
 	class Meta:
 		model = ServicePriceRange
-		fields= ('service_type','name','minimum_area','maximum_area','price','unit_price','is_newkitchen','is_highprice_facade','is_highprice_window','upholstery_type')
+		fields= ('service_type','name','minimum_area','maximum_area','price','unit_price','is_newkitchen','is_cabinet','is_highprice_facade','is_highprice_window','upholstery_type')
 
 class ServiceAddOnsForm(forms.ModelForm):
 	class Meta:

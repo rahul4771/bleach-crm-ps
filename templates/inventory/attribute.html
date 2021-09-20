@@ -97,8 +97,8 @@
                                     </td>
                                     <td>
                                   
-                                        <button class="inv-plan-img-btn edit_attribute" data-attributeid="{{attribute.id}}" data-attributename="{{attribute.name}}" data-attributecategory="{{attribute.attribute_category.id}}" data-attributesegment="{{attribute.attribute_segment.id}}" data-attributeline="{{attribute.attribute_line.id}}" data-attributestatus="{{attribute.status}}" onclick="showDrawer('edit')" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                        <button class="inv-plan-img-btn delete_attribute" data-attributeid="{{attribute.id}}" data-attributename="{{attribute.name}}" data-attributestatus="{{attribute.status}}" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                                        <button class="inv-plan-img-btn edit_attribute" data-attributeid="{{attribute.id}}" data-attributename="{{attribute.name}}" data-attributecategory="{{attribute.attribute_category.id}}" data-attributesegment="{{attribute.attribute_segment.id}}" data-attributeline="{{attribute.attribute_line.id}}" data-attributestatus="{{attribute.status}}" onclick="showDrawer('edit')" > <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>
+                                        <button class="inv-plan-img-btn delete_attribute" data-attributeid="{{attribute.id}}" data-attributename="{{attribute.name}}" data-attributestatus="{{attribute.status}}" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
         
                                     </td>
                                 </tr>
@@ -166,7 +166,7 @@
                         
                     </div> -->
                     <div class="col-md-5 mt-10 pt-4 ">
-                        <h3 class="av-font">Lines under <span class="av-font" id="attribute_name"></span> </h3>
+                        <h3 class="av-font">Values under <span class="av-font" id="attribute_name"></span> </h3>
                         <div class="attribute-table-2 " >
                         
                             <div class="attribute-table-div2">
@@ -779,7 +779,7 @@ $(function () {
                 $(".value_table tr:not(:first)").remove(); 
                 var edit = "edit";
                 $.each(result.data.inventory_value,function(key,value){
-                        $('.value_table').append('<tr><td>'+value.name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavEditValue(this)" data-valueid='+value.id+' data-valuename='+value.name+' data-valuestatus='+value.status+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn value_delete" onclick="deleteValue('+value.id+')" data-valueid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
+                        $('.value_table').append('<tr><td>'+value.name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavEditValue(this)" data-valueid='+value.id+' data-valuename='+value.name+' data-valuestatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn value_delete" onclick="deleteValue('+value.id+')" data-valueid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
                 })
             }else{
                 $(".value_table tr:not(:first)").remove(); 
