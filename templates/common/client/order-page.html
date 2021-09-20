@@ -673,22 +673,41 @@
                 <div class="col-md-12 mt-20" v-if="service_type=='Kitchen Cleaning'">
                     <b>Addon (s)</b> 
                     <div class="row mt-10" v-if="keynote_update">
-                        <div class="col-md-4 mt-10" v-for="(keynote,kindex) in other_keynotes" v-bind:key="kindex">
-                            <div class="keynote-chip d-flex" v-if="keynote.sub_area!='kitchen'">
-                                <input type="text" v-model="keynote.sub_area" class="keynote-input"/>
-                                <input type="text" v-model="keynote.quantity" class="keynote-input"/>
+                        <div class="col-md-4 mt-10" v-for="(addon,kindex) in kitchen_addons" v-bind:key="kindex">
+                            <div class="keynote-chip" >
+                                <div class="d-flex">
+                                <input type="text" v-model="addon.name" class="keynote-input"/>
+                                <input type="number" v-model="addon.quantity" class="keynote-input" @change="updateAddon(kindex)"/>
                                <!-- <div><%keynote.sub_area%> - <%keynote.quantity%></div>-->
                                 <div class="keynote-delicon cp" @click="delKeynote(kindex)"><i class="far fa-trash-alt"></i>
                                 </div>
                             </div>
+                            <div class="addon-price addon-popup-price mt-10 text-center primary-text">
+                                <span v-if="addon.quantity">  <% addon.addon_cost*parseInt(addon.quantity) %> KD</span>
+                                <span v-else> 0 KD</span>
+                            </div>
+                            </div>
                         </div>
+                      
+                    </div>
+                    <div class="row">
                         <div class="col-md-4 mt-10" >
-                            <div class="keynote-chip d-flex" >
-                                <input type="text" v-model="newkeynote.sub_area" class="keynote-input" placeholder="Addon"/>
-                                <input type="text" v-model="newkeynote.quantity" class="keynote-input" placeholder="Quantity"/>
+                            <div class="keynote-chip text-center" >
+                                <div >
+                                <select class="addon-input " placeholder="Addon" v-model="selected_addon">
+                                    <option v-for="(parsed_addons,aindex) in addons_parsed" v-bind:key="aindex" :value="parsed_addons"><% parsed_addons.details.name %></option>
+                                    
+                                </select>
+                               
+                                <input type="number" v-model="newaddon_quantity" class="addon-input w-100 mt-10" placeholder="Quantity"/>
                                <!-- <div><%keynote.sub_area%> - <%keynote.quantity%></div>-->
-                               <div class="keynote-delicon cp" @click="addToKeynote()"><i class="far fa-plus-square"></i>
-                               </div>
+                               
+                            </div>
+                            <div class="addon-price addon-popup-price mt-10 text-center primary-text">
+                                <span v-if="selected_addon.details"><% selected_addon.details.price*newaddon_quantity %> KD</span>
+                                <span v-else>0 KD</span>
+                            </div>
+                            <button type="submit" class="btn primary-btn mt-10 mx-auto" @click="addToAddon()">Add </button>
                                 </div>
                             </div>
                     </div>
@@ -814,8 +833,8 @@
                <div class="col-md-12">
                 <div class="section-cost">
                     Section Cost
-                    <div class="text-center section-cost-price">
-                       <% editSectionData.section_cost +' KD'%>
+                    <div class="text-center section-cost-price" v-if="priceupdate">
+                       <% editSectionData.section_net_cost +' KD'%>
                     </div>
                  </div>
                </div>
@@ -1915,7 +1934,7 @@
                                         <div><i class="far fa-file-alt"></i><span class="ml-10"><b>Note to customer</b></span>
                                         <div class="d-flex mt-10">
                                             {{order.evaluation.evaluator_note|default_if_none:''}}
-                                            <img src="/static/files/icons/edit.png" class="policy-time-edit pointer ml-10" onclick="editCustmerNote(this)" data-current_note="{{order.evaluation.evaluator_note|default_if_none:''}}">
+                                            <img src="/static/files/icons/edit.png" class="policy-time-edit pointer ml-10" onclick="editCustmerNote(this)" data-current_note="{{order.evaluation.evaluator_note|default_if_none:''}}" >
                                         </div>
                                     </div>
                                     </div>
@@ -3182,8 +3201,8 @@
             <div class="row">
                 <div class="col-md-12 text-center">
                     <div class="cancel-model-content">
-                        <button class="sent-button" onclick="">Submit</button>
-                        <button data-dismiss="modal" class="view-button">Cancel</button>
+                        <button class="sent-button" @click="saveCustomerNote()">Submit</button>
+                        <button data-dismiss="modal" class="view-button" id="close_customer_note">Cancel</button>
                     </div>
                 </div>
 

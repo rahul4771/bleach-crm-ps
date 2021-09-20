@@ -22,26 +22,35 @@
         <div class="row av-font">
           <div class="col-md-3">
             <div class="inv-check-orderhead">
-              BLC6464544957
+              {{visit.order.order_no}}
             </div>
             <div class="inv-text-normal">
-              General cleaning
+              {{visit.order_scheduler_book.service_type}}
             </div>
+            
+            {% if visit.evaluation_details.evaluator %}
             <div class="mt-10 inv-text-normal">
-              Evaluation not' Walter Whites
+              Evaluator Note - {{visit.evaluation_details.evaluator.name}}
             </div>
             <div class="inv-evaluation-note">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas convallis massa tincidunt dictum tempus.
-              accumsan tristique dui. Aenean luctus, leo ac euismod
+              {{visit.evaluation_details.evaluator_note|default_if_none:'-'}}
             </div>
+            {% else %}
+            <div class="mt-10 inv-text-normal">
+              Attender note - {{visit.evaluation_details.evaluation.call_attender.name}}
+            </div>
+            <div class="inv-evaluation-note">
+              {{visit.evaluation_details.attender_note|default_if_none:'-'}}
+            </div>
+            {% endif %}
           </div>
           <div class="col-md-2 m-mt30">
 
             <ul class="inv-ul">
-              <li><i class="fas fa-check-circle yellow-tick "></i> Method</li>
-              <li><i class="fas fa-check-circle yellow-tick "></i> Outdoor Area</li>
-              <li><i class="fas fa-check-circle yellow-tick "></i> Post Cunstruction</li>
-              <li><i class="fas fa-check-circle yellow-tick "></i> Bayan</li>
+              <li><i class="fas fa-check-circle yellow-tick "></i> {{visit.order_scheduler_book.cleaning_method}}</li>
+              <li><i class="fas fa-check-circle yellow-tick "></i> {{visit.order_scheduler_book.area_type}}</li>
+              <li><i class="fas fa-check-circle yellow-tick "></i> {{visit.order_scheduler_book.location_type}}</li>
+              <li><i class="fas fa-check-circle yellow-tick "></i> {{visit.evaluation_details.address.customer.name}}</li>
 
             </ul>
           </div>
@@ -49,10 +58,10 @@
 
             <ul class="inv-ul">
               
-              <li><i class="fas  test-color fa-users c-mr-10"></i> 3 cleaner</li>
-              <li><i class="fas  test-color fa-clock-o c-mr-10"></i> 3 Hours</li>
-              <li><i class="fas  test-color fa-calendar c-mr-10"></i> 12/12/2021</li>
-              <li><i class="fas  test-color fa-map-marker c-mr-10"></i>&nbsp;  Address </li>
+              <li><i class="fas  test-color fa-users c-mr-10"></i> {{visit.no_of_cleaners}} cleaner(s)</li>
+              <li><i class="fas  test-color fa-clock-o c-mr-10"></i> {{visit.cleaning_hours}} Hours</li>
+              <li><i class="fas  test-color fa-calendar c-mr-10"></i> {{visit.start_at|date:'d-m-Y'}}</li>
+              <li><i class="fas  test-color fa-map-marker c-mr-10"></i>&nbsp;<b>{{visit.evaluation_details.address.apartment}}</b>: {% if visit.evaluation_details.address.floor %}{{visit.evaluation_details.address.floor}}, {% else %}{% endif %} {{visit.evaluation_details.address.building}}, {{visit.evaluation_details.address.block}}, {{visit.evaluation_details.address.street}},<br> {% if visit.evaluation_details.address.avenue %}{{visit.evaluation_details.address.avenue}}, {% else %}{% endif %} {{visit.evaluation_details.address.area.name}}, {{visit.evaluation_details.address.governorate.name}}</li>
 
 
 
@@ -62,10 +71,16 @@
 
             <ul class="inv-ul">
               <li>Team Leader <br></li>
-              <li class="mt-5 inv-team-head">Name</li>
+              <li class="mt-5 inv-team-head">{% for teamleader in visit.cleaning_team %} {{teamleader.team_leader.name}} {% endfor %}</li>
             
               <li  class="mt-10">Cleaners</li>
-              <li class="mt-5 inv-team-head">Name , Name</li>
+              <li class="mt-5 inv-team-head">
+              {% for cleaning in visit.cleaning_team %}
+              {% for cleaner in cleaning.team_members %}
+                {% if forloop.last %}{{cleaner.member.name}}{% else %}{{cleaner.member.name}},{% endif %}
+              {% endfor %}
+              {% endfor %}
+              </li>
 
 
 
@@ -73,6 +88,8 @@
             </ul>
           </div>
         </div>
+
+        {% for section in visit.sections %}
 
         <div class="row mt-20">
           <div class="col-md-12 pl-0">
@@ -144,77 +161,11 @@
            </div>
           </div>
          </div>
-         <div class="row mt-20">
-           <div class="col-md-12 pl-0">
-            <div class="inv-check-section">
-              <div class="d-flex ">
-                <div class="inv-check-section-head">
-                  Section 2
-                  
-                </div>
-                <div id="id_sec_item_1" style="margin-left: 20px;">
-                <p class="inv-section-in">
-                  Size : <span class="red2-text inv-section-in">Divided area</span>
-                </p>
-                </div>
-                <div class="right-pos">
-                  <button class="inv-normal-btn" data-toggle="collapse" data-target="#demo" id="id_section_btn_1" onclick="showOf(1)">
-                    <i style="color: #000000 !important;" class="fa fa-chevron-right action-icon" aria-hidden="true"></i>
-                  </button>
-  
-                </div>
-              </div>
-              <div id="demo" class="row mt-10 collapse ">
-                <div class="col-md-6 c-right-border">
-                  <div class="order-details-content">
-                    <div class="row c-mb-3">
-                        <div class="col-md-6 col-xs-6 mb-10">
-                            <div class="order-details-key">Size</div> 
-                            <div class="c-text order-details-value">300</div>
-                        </div>
-                        <div class="col-md-6 col-xs-6 mb-10">
-                            <div class="order-details-key">Wall Type</div> 
-                            <div class="c-text order-details-value">300</div>
-                        </div>
-                        <div class="col-md-6 col-xs-6 mb-10">
-                            <div class="order-details-key">Celling Type</div> 
-                            <div class="c-text order-details-value">300</div>
-                        </div>
-                        <div class="col-md-6 col-xs-6 mb-10">
-                            <div class="order-details-key">Floor Type</div> 
-                            <div class="c-text order-details-value">300</div>
-                        </div>
-                        <div class="col-md-6 col-xs-6 mb-10">
-                            <div class="order-details-key">Cost</div> 
-                            <div class="c-text order-details-value">300</div>
-                        </div>
-                    </div>
-                </div>
-                  
-  
-  
-                </div>
-                <div class="col-md-6 m-mt-10">
-                  <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
-                  <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
-                  <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
-                  <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
-                  <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
-                  <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
-                  <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
-                  <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
-                  <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
-                  <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
-                  <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
-                  <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
-  
-                </div>
-  
-              </div>
-            </div>
-           </div>
-          </div>
-        <div class="row mt-20">
+
+          {% endfor %}
+
+         
+        {% comment %} <div class="row mt-20">
           <div class="col-md-12">
             <div class="inv-check-orderhead">
               Recommended List
@@ -267,9 +218,9 @@
         </div>
         <div class="row mt-20 text-center">
           <button class="sent-button" >Submit</button>
-                        <button  class="view-button">Cancel</button>
+                        <button class="view-button">Cancel</button>
         </div>
-      </div>
+      </div> {% endcomment %}
 
 
     </div>
