@@ -104,8 +104,8 @@
                                         </td>
                                         <td>
                                       
-                                            <button class="inv-plan-img-btn edit_bundle" onclick="openNavAddBundle('edit')" data-bundleid="{{bundle.id}}" data-bundlename="{{bundle.name}}" data-bundlecode="{{bundle.bundle_code}}" data-bundleprice="{{bundle.bundle_price|floatformat:3}}" data-bundlestatus="{{bundle.status}}"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                            <button class="inv-plan-img-btn delete_bundle" data-bundleid="{{bundle.id}}" data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                                            <button class="inv-plan-img-btn edit_bundle" onclick="openNavAddBundle('edit')" data-bundleid="{{bundle.id}}" data-bundlename="{{bundle.name}}" data-bundlecode="{{bundle.bundle_code}}" data-bundleprice="{{bundle.bundle_price|floatformat:3}}" data-bundlestatus="{{bundle.status}}"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>
+                                            <button class="inv-plan-img-btn delete_bundle" data-bundleid="{{bundle.id}}" data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
             
                                         </td>
                                          
@@ -768,7 +768,7 @@ function openNavAddBundle(d) {
                 
                 $.each(result.data.inventory_item,function(key,value){
                     console.log(value.bundle_item,value.id,"eyed")
-                        $('#table2').append('<tr data-itemid='+value.item_id+'><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td>'+value.item_price+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavEditValue(this)" data-unitid='+value.unit_id+' data-itemid='+value.item_id+' data-itemcount='+value.item_count+' data-itemname='+value.item_name+' > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn value_delete" onclick="deleteItem('+value.unit_id+')" data-valueid='+value.unit_id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
+                        $('#table2').append('<tr data-itemid='+value.item_id+'><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td>'+value.item_price+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavEditValue(this)" data-unitid='+value.unit_id+' data-itemid='+value.item_id+' data-itemcount='+value.item_count+' data-itemname='+value.item_name+' > <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn value_delete" onclick="deleteItem('+value.unit_id+')" data-valueid='+value.unit_id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
                 })
             }else{
                 $("#table2 tr:not(:first)").remove(); 

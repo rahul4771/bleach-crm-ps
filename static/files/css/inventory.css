@@ -111,8 +111,8 @@
 }
 
 .btn-img2{
-  height: 26px !important;
-  width: 26px !important;
+  height: 22px !important;
+  width: 22px !important;
 }
 
 .inv-selected-row{
@@ -296,7 +296,7 @@
   border: 2px solid #2e4e85;
   border-radius: 6px;
   opacity: 1;
-  padding: 7px 15px 7px 15px;
+  padding: 8px 15px 9px 15px;
   color: #2e4e85;
   font-family: AvenirLTStd !important;
 }
@@ -307,14 +307,31 @@
   border-radius: 6px;
   opacity: 1;
   color: #2e4e85;
+  height: 34px;
+  width: 44px;
+}
+.inv-plan-img-btn2 {
+  font-family: AvenirLTStd !important;
+  background: #ffffff 0% 0% no-repeat padding-box;
+  border: 2px solid #2e4e85;
+  border-radius: 6px;
+  opacity: 1;
+  color: #2e4e85;
+  height: 34px;
+
+ 
 }
 .inv-plan-img-btn:hover {
   background: #ffffff 0% 0% no-repeat padding-box;
   
 }
+.inv-plan-img-btn2:hover {
+  background: #ffffff 0% 0% no-repeat padding-box;
+  
+}
 .inv-plan-img-btn img {
   width: 23px;
-  height: 28px;
+  height: 23px;
 }
 .inv-blue-btn:hover {
   background: #2e4e85 0% 0% no-repeat padding-box;
