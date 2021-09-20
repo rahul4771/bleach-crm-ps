@@ -1774,8 +1774,6 @@ class GetServiceSizePrice(APIView):
 		service_type         = request.GET.get('service_type')
 		response_dict        = {}
 		service_price_ranges = ServicePriceRange.objects.filter(service_type__name=service_type)
-		print(service_type,"service_type")
-		print(service_price_ranges)
 
 		counter = 1
 		for service_price_range in service_price_ranges:
@@ -1799,6 +1797,7 @@ class GetServiceSizePrice(APIView):
 				service_price_range_dict['is_highprice_facade'] = service_price_range.is_highprice_facade 
 			elif service_price_range.service_type.name == 'Kitchen Cleaning':
 				service_price_range_dict['is_newkitchen']       = service_price_range.is_newkitchen
+				service_price_range_dict['is_cabinet']          = service_price_range.is_cabinet
 
 			response_dict[counter] = service_price_range_dict
 
@@ -1844,10 +1843,14 @@ class GetServiceProductivity(APIView):
 		elif service_type         == 'Kitchen Cleaning':
 			serviceproductivities = ServiceProductivity.objects.select_related('service_type').filter(service_type__name=service_type)
 			for serviceproductivity in serviceproductivities:
-				if serviceproductivity.is_newkitchen:
-					service_productivity['newkitchen_perhour_cleaning'] = serviceproductivity.perhour_cleaning
-				else:
-					service_productivity['oldkitchen_perhour_cleaning']  = serviceproductivity.perhour_cleaning
+				if serviceproductivity.is_newkitchen and not serviceproductivity.is_cabinet:
+					service_productivity['newkitchenwithout_perhour_cleaning'] = serviceproductivity.perhour_cleaning
+				elif serviceproductivity.is_oldkitchen and not serviceproductivity.is_cabinet:
+					service_productivity['oldkitchenwithoutcabinet_perhour_cleaning'] = serviceproductivity.perhour_cleaning
+				elif serviceproductivity.is_newkitchen and serviceproductivity.is_cabinet:
+					service_productivity['newkitchenwithcabinet_perhour_cleaning'] = serviceproductivity.perhour_cleaning
+				elif serviceproductivity.is_oldkitchen and serviceproductivity.is_cabinet:
+					service_productivity['oldkitchenwithcabinet_perhour_cleaning'] = serviceproductivity.perhour_cleaning	
 
 		else:
 			serviceproductivity = ServiceProductivity.objects.select_related('service_type').get(service_type__name=service_type)
