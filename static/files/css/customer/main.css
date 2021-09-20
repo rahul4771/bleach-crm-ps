@@ -6,6 +6,9 @@
     font-family: FarCasablanca;
     src: url(../../font/Far_Casablanca.otf);
   }
+  .customer-notes{
+      font-size:12px;
+  }
 .inv-primary-text{
     color:#289BAC !important;
 }
