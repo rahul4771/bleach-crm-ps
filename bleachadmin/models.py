@@ -11,6 +11,7 @@ class ServiceProductivity(models.Model):
 	perhour_cleaning = models.CharField(max_length=100,blank=True,null=True)
 
 	is_newkitchen       = models.BooleanField(null=False,blank=True,default=False)
+	is_cabinet          = models.BooleanField(null=False,blank=True,default=False)
 	is_highprice_facade = models.BooleanField(null=False,blank=True,default=False)
 	is_highprice_window = models.BooleanField(null=False,blank=True,default=False)
 	upholstery_type     = models.CharField(max_length=50,blank=True,null=True,choices=SERVICEDIVISION_CHOICES)
@@ -34,6 +35,7 @@ class ServicePriceRange(models.Model):
 	unit_price       = models.FloatField(blank=True,null=True)
 
 	is_newkitchen       = models.BooleanField(null=False,blank=True,default=False)
+	is_cabinet          = models.BooleanField(null=False,blank=True,default=False)
 	is_highprice_facade = models.BooleanField(null=False,blank=True,default=False)
 	is_highprice_window = models.BooleanField(null=False,blank=True,default=False)
 	upholstery_type     = models.CharField(max_length=50,blank=True,null=True,choices=SERVICEDIVISION_CHOICES)
