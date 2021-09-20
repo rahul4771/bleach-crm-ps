@@ -502,9 +502,13 @@
             {% endif %}
             </div>
         </div>
+        
+        {% if evaluation.evaluator_note %}
         <div style="padding-bottom: 30px; padding-top: 30px;">
-            <b>NOTE:</b> qwertyu 3456789 23456789 34rtyuio wertyuiop sertyuio rtyuio ertyuiop wertyuio tyuiop hjkl; tfyguhj tfyguhij drftyguhij truyghljk
+            <b>NOTE:</b> {{evaluation.evaluator_note|default_if_none:''}}
         </div>
+        {% endif %}
+
     </div>
     <div style=" width: auto;
     color: #707070; text-align: center; background: #EEEEEE; padding: 2%;">

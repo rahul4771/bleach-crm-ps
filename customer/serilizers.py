@@ -35,7 +35,7 @@ class EvaluationBookSectionSerializer(serializers.ModelSerializer):
 	addonsections   = EvaluationSectionAddonSerializer(many=True,read_only=True)
 	class Meta:
 		model  = EvaluationBookSection
-		fields = ('section_name','size','age','wall_type','ceiling_type','floor_type','material','colour','cause_of_stain','cement_residue','oil_residue','hall_size','window_side','new_kitchen','is_highprice_facade','is_highprice_window','vacuuming','section_cost','section_net_cost','upholstery_type','age_of_stain','keynotesections','addonsections')
+		fields = ('section_name','size','age','wall_type','ceiling_type','floor_type','material','colour','cause_of_stain','cement_residue','oil_residue','hall_size','window_side','new_kitchen','is_cabinet','is_highprice_facade','is_highprice_window','vacuuming','section_cost','section_net_cost','upholstery_type','age_of_stain','keynotesections','addonsections')
 
 class EvaluationBookSerializer(serializers.ModelSerializer):
 	evaluationsection_book = EvaluationBookSectionSerializer(many=True,read_only=True)

@@ -377,6 +377,7 @@ class EvaluationBookSection(models.Model):
 	hall_size           = models.CharField(max_length=100,blank=True,null=True)
 	window_side         = models.CharField(max_length=100,blank=True,null=True)
 	new_kitchen         = models.BooleanField(null=False,blank=True,default=False)
+	is_cabinet          = models.BooleanField(null=False,blank=True,default=False)
 	is_highprice_facade = models.BooleanField(null=False,blank=True,default=False)
 	is_highprice_window = models.BooleanField(null=False,blank=True,default=False)
 	upholstery_type     = models.CharField(max_length=50,blank=True,null=True,choices=SERVICEDIVISION_CHOICES)

@@ -1845,11 +1845,11 @@ class GetServiceProductivity(APIView):
 			for serviceproductivity in serviceproductivities:
 				if serviceproductivity.is_newkitchen and not serviceproductivity.is_cabinet:
 					service_productivity['newkitchenwithout_perhour_cleaning'] = serviceproductivity.perhour_cleaning
-				elif serviceproductivity.is_oldkitchen and not serviceproductivity.is_cabinet:
+				elif not serviceproductivity.is_newkitchen and not serviceproductivity.is_cabinet:
 					service_productivity['oldkitchenwithoutcabinet_perhour_cleaning'] = serviceproductivity.perhour_cleaning
 				elif serviceproductivity.is_newkitchen and serviceproductivity.is_cabinet:
 					service_productivity['newkitchenwithcabinet_perhour_cleaning'] = serviceproductivity.perhour_cleaning
-				elif serviceproductivity.is_oldkitchen and serviceproductivity.is_cabinet:
+				elif not serviceproductivity.is_newkitchen and serviceproductivity.is_cabinet:
 					service_productivity['oldkitchenwithcabinet_perhour_cleaning'] = serviceproductivity.perhour_cleaning	
 
 		else:
