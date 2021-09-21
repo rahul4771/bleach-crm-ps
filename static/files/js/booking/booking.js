@@ -1828,7 +1828,12 @@ console.log(response)
                 name:this.multiServicesBill[i].bill[j].section.addons[add_on].details.name,
                 addon_cost:this.multiServicesBill[i].bill[j].section.addons[add_on].details.price,
                 addon_net_cost:this.multiServicesBill[i].bill[j].section.addons[add_on].details.price*this.multiServicesBill[i].bill[j].section.addons[add_on].quantity,
-                quantity:this.multiServicesBill[i].bill[j].section.addons[add_on].quantity
+                quantity:this.multiServicesBill[i].bill[j].section.addons[add_on].quantity,
+                size:'',
+                other_details:''
+              }
+              if(this.multiServicesBill[i].bill[j].section.addons[add_on].details.category){
+                this.serviceDetails.service_details[i].sections[j].addons[addoncounter].size=this.multiServicesBill[i].bill[j].section.addons[add_on].selected_size.size
               }
             }
              }
@@ -1922,6 +1927,10 @@ console.log(response)
             "upholstery_type":'',
             "age":''
             
+            }
+            if(this.serviceDetails.service_details[i].cleaning_policy=='SUBSCRIPTION'){
+              this.serviceDetails.service_details[i].sections[j].sectiononly_net_cost=this.serviceDetails.service_details[i].sections[j].sectiononly_net_cost*parseInt(visits)
+              this.serviceDetails.service_details[i].sections[j].section_net_cost=this.serviceDetails.service_details[i].sections[j].section_net_cost*parseInt(visits)
             }
             if(this.multiServicesBill[i].bill[j].section.size.is_highprice_facade){
               this.serviceDetails.service_details[i].sections[j].is_highprice_facade=true
@@ -2023,30 +2032,32 @@ console.log(response)
                 addon_net_cost:this.multiServicesBill[i].bill[j].section.addons[add_on].details.price*this.multiServicesBill[i].bill[j].section.addons[add_on].quantity,
                 quantity:this.multiServicesBill[i].bill[j].section.addons[add_on].quantity
               }
+              if(this.multiServicesBill[i].bill[j].section.addons[add_on].details.category){
+                this.serviceDetails.service_details[i].sections[j].addons[addoncounter].size=this.multiServicesBill[i].bill[j].section.addons[add_on].selected_size.size
+              }
             }
              }
            }
-         if(this.multiServicesBill[i].bill[j].section.kitchen){
-          var newindex=Object.keys(this.serviceDetails.service_details[i].sections[j].keynotes).length
-          var kitchencounter=newindex
-          for(var k=0;k<this.multiServicesBill[i].bill[j].section.kitchens.length;k++){
-           this.serviceDetails.service_details[i].sections[j].keynotes[kitchencounter]={
-             "sub_area":'kitchen',
-             "quantity":JSON.stringify({
-               size:this.multiServicesBill[i].bill[j].section.kitchens[k].size.name,
-               max_size:this.multiServicesBill[i].bill[j].section.kitchens[k].size.max_size,
-               type:this.multiServicesBill[i].bill[j].section.kitchens[k].type,
-               residue:this.multiServicesBill[i].bill[j].section.kitchens[k].residue,
-               cost:this.multiServicesBill[i].bill[j].section.kitchens[k].size.cost
-             })
-             
-           
+           if(this.multiServicesBill[i].bill[j].section.kitchen){
+            var newindex=Object.keys(this.serviceDetails.service_details[i].sections[j].addons).length
+            for(var k=0;k<this.multiServicesBill[i].bill[j].section.kitchens.length;k++){
+              newindex=newindex+1
+              this.serviceDetails.service_details[i].sections[j].addons[newindex]={
+                name:"kitchen",
+                addon_cost:this.multiServicesBill[i].bill[j].section.kitchens[k].size.cost,
+                addon_net_cost:this.multiServicesBill[i].bill[j].section.kitchens[k].size.cost,
+                quantity:1,
+                other_details:JSON.stringify({
+                  size:this.multiServicesBill[i].bill[j].section.kitchens[k].size.name,
+                  max_size:this.multiServicesBill[i].bill[j].section.kitchens[k].size.max_size,
+                  type:this.multiServicesBill[i].bill[j].section.kitchens[k].type,
+                  residue:this.multiServicesBill[i].bill[j].section.kitchens[k].residue,
+                  
+                })
+              }
+            }
+
            }
-           kitchencounter=kitchencounter+1
-           keynotecounter=keynotecounter+1
-          }
-         
-        }
           }
       }
    

@@ -56,7 +56,14 @@ $(document).ready(function () {
 
 
 
+function limit(element)
+{
+    var max_chars = 300;
 
+    if(element.value.length > max_chars) {
+        element.value = element.value.substr(0, max_chars);
+    }
+}
 function myFunction(book_id) {
   document.getElementById("visti-section"+book_id+"").classList.toggle("not-show");
   document.getElementById("myDropdown"+book_id+"").classList.toggle("show");
@@ -104,6 +111,7 @@ function editSection(service){
 if(app.service_type=='Kitchen Cleaning'){
   app.editSectionData.new_kitchen=app.sections[index-1].new_kitchen
   app.editSectionData.oil_residue=app.sections[index-1].oil_residue
+  app.editSectionData.is_cabinet=app.sections[index-1].is_cabinet
   
     app.getAddons()
   
@@ -128,6 +136,8 @@ if(app.service_type=='Facade Cleaning'){
   $('#edit-dialog-tigger').click()
   app.editSectionData.section_cost=app.sectionData.section_cost
   app.editSectionData.section_net_cost=app.sectionData.section_net_cost
+  app.editSectionData.sectiononly_cost=app.sectionData.sectiononly_cost
+  app.editSectionData.sectiononly_net_cost=app.sectionData.sectiononly_net_cost
   app.editSectionData.section_name=app.sectionData.section_name
   app.removeInitialKitchenCost()
   if(app.sectionData.wall_type!="" && app.sectionData.wall_type!=null)
@@ -291,14 +301,19 @@ function addSection(service){
       "cement_residue":false,
       "section_cost":"",
       "section_net_cost":"",
+      "sectiononly_cost":"",
+      "sectiononly_net_cost":"",
       "keynotes":[],
+      "addons":[],
       "new_kitchen":false,
+      "is_cabinet":false,
      "is_highprice_facade":false,
      "is_highprice_window":false,
   }
  app.kitchen_keynotes=[]
  app.other_keynotes=[]
   app.action_type="Add"
+  app.getAddons()
   app.getProductivity()
   $('#edit-dialog-tigger').click()
 }
@@ -354,8 +369,10 @@ const app = new Vue({
   components: { Multiselect: window.VueMultiselect.default },
 
   data: {
-    newaddon_quantity:1,
-    selected_addon:{},
+    addon_size_data:{},
+    newaddon_quantity:'',
+    selected_addon:'',
+    
     priceupdate:true,
     customer_note:'',
     notes:'',
@@ -515,6 +532,10 @@ const app = new Vue({
             kitchen_size:[],
             new_kitchen_size:[],
             old_kitchen_size:[],
+            new_kitchen_cabinet_size:[],
+            old_kitchen_cabinet_size:[],
+            new_kitchen_nocabinet_size:[],
+            old_kitchen_nocabinet_size:[],
             kitchen_keynotes:[],
             other_keynotes:[],
             addons:[],
@@ -533,16 +554,22 @@ const app = new Vue({
             //url:'http://127.0.0.1:8000'
   },
   methods:{
+    changeCurrentAddons(){
+      this.selected_addon.details.price=this.selected_addon.selected_size.price
+      this.selected_addon.details.category=this.selected_addon.selected_size.size
+    },
     addToAddon(){
       this.kitchen_addons.push({
         name:this.selected_addon.details.name,
         addon_cost:this.selected_addon.details.price,
-        addon_net_cost:this.selected_addon.details.price*this.newaddon_quantity,
-        quantity:this.newaddon_quantity
+        addon_net_cost:this.selected_addon.details.price*parseInt(this.newaddon_quantity),
+        quantity:parseInt(this.newaddon_quantity),
+        size:'',
+        other_details:''
       })
       this.recalcAddonCost()
-      this.newaddon_quantity=1
-      this.selected_addon={}
+      this.newaddon_quantity=''
+      this.selected_addon=''
     },
     updateAddon(index){
       this.kitchen_addons[index].addon_net_cost=parseInt(this.kitchen_addons[index].quantity)*this.kitchen_addons[index].addon_cost
@@ -572,19 +599,13 @@ const app = new Vue({
       this.addons_parsed=[]
       for(var i=0;i<this.addons.length;i++){
         if(this.addons[i].category){
-          if(this.addons[i].name=='New Cabinet'||this.addons[i].name=='Used Cabinet'){
-            if(!this.editSectionData.new_kitchen && this.addons[i].name=='Used Cabinet'){
-            var add_on_stat=this.findAddons('Cabinet')
-            }
-            else if(this.editSectionData.new_kitchen && this.addons[i].name=='New Cabinet'){
-              var add_on_stat=this.findAddons('Cabinet')
-            }
-            else{
-              add_on_stat='not found'
-            }
-          }
-          else{
+          
+        
           var add_on_stat=this.findAddons(this.addons[i].name)
+          if(!this.addon_size_data[this.addons[i].name]){
+            
+          
+            this.addon_size_data[this.addons[i].name]=[]
           }
           if(add_on_stat!='not found'){
             this.addons_parsed[add_on_stat].size.push({
@@ -592,42 +613,16 @@ const app = new Vue({
               max_size:this.addons[i].size,
               price:this.addons[i].price
             })
+            this.addon_size_data[this.addons[i].name].push({
+              size:this.addons[i].category,
+              max_size:this.addons[i].size,
+              price:this.addons[i].price
+            
+          })
           }
           else{
-            if(this.addons[i].name=='Used Cabinet'||this.addons[i].name=='New Cabinet'){
-              if(this.otherService.type=='old' && this.addons[i].name=='Used Cabinet'){
-                var add_on = { ...this.addons[i] }
-                add_on.name='Cabinet'
-                this.addons_parsed.push({
-                  details:add_on,
-                  selected:false,
-                  quantity:0,  
-                  size:[{
-                    size:this.addons[i].category,
-                    max_size:this.addons[i].size,
-                    price:this.addons[i].price
-                  }],
-                  selected_size:{}
-                })
-              }
-              else if(this.otherService.type=='new' && this.addons[i].name=='New Cabinet'){
-                var add_on = { ...this.addons[i] }
-               
-                add_on.name='Cabinet'
-                this.addons_parsed.push({
-                  details:add_on,
-                  selected:false,
-                  quantity:0,  
-                  size:[{
-                    size:this.addons[i].category,
-                    max_size:this.addons[i].size,
-                    price:this.addons[i].price
-                  }],
-                  selected_size:{}
-                })
-              }
-            }
-            else{
+          
+            
           this.addons_parsed.push({
             details:this.addons[i],
             selected:false,
@@ -637,9 +632,15 @@ const app = new Vue({
               max_size:this.addons[i].size,
               price:this.addons[i].price
             }],
-            selected_size:{}
+            selected_size:""
           })
-        }
+          this.addon_size_data[this.addons[i].name].push({
+              size:this.addons[i].category,
+              max_size:this.addons[i].size,
+              price:this.addons[i].price
+            
+          })
+        
         }
         }
         else{
@@ -649,7 +650,7 @@ const app = new Vue({
           quantity:0,
           
           size:[],
-          selected_size:{}
+          selected_size:""
         })
       }
        
@@ -808,18 +809,29 @@ setTimeout(function() {
     },
     formatKitchenSize(){
       
-      this.new_kitchen_size=[]
-      this.old_kitchen_size=[]
+      this.new_kitchen_cabinet_size=[]
+      this.new_kitchen_nocabinet_size=[]
+      this.old_kitchen_cabinet_size=[]
+      this.old_kitchen_nocabinet_size=[]
       
         for(var i=0;i<this.kitchen_size.length;i++){
           this.kitchen_size[i].combined_size=this.kitchen_size[i].name+' ( '+this.kitchen_size[i].min_size+' sq.m - '+this.kitchen_size[i].max_size+' sq.m )'
 
           if(this.kitchen_size[i].is_newkitchen){
-
-            this.new_kitchen_size.push(this.kitchen_size[i])
+            if(this.kitchen_size[i].is_cabinet){
+              this.new_kitchen_cabinet_size.push(this.kitchen_size[i])
+            }else{
+              this.new_kitchen_nocabinet_size.push(this.kitchen_size[i])
+            }
+         
           }
           else{
-            this.old_kitchen_size.push(this.kitchen_size[i])
+            if(this.kitchen_size[i].is_cabinet){
+             this.old_kitchen_cabinet_size.push(this.kitchen_size[i])
+            }
+            else{
+              this.old_kitchen_nocabinet_size.push(this.kitchen_size[i])
+            }
           }
         }
         
@@ -1306,6 +1318,8 @@ setTimeout(function() {
       $('#edit-dialog-tigger').click()
       this.editSectionData.section_cost=this.sectionData.section_cost
       this.editSectionData.section_net_cost=this.sectionData.section_net_cost
+      this.editSectionData.sectiononly_cost=this.sectionData.sectiononly_cost
+      this.editSectionData.sectiononly_net_cost=this.sectionData.sectiononly_net_cost
       this.editSectionData.section_name=this.sectionData.section_name
       
       
@@ -1316,7 +1330,9 @@ setTimeout(function() {
       for(var i=0;i<this.kitchen_addons.length;i++){
        addon_cost=addon_cost+ this.kitchen_addons[i].addon_net_cost
       }
-      this.editSectionData.section_net_cost=this.editSectionData.section_cost+addon_cost
+      var sectiononlycost=this.editSectionData.sectiononly_cost||0
+      this.editSectionData.section_cost=sectiononlycost+addon_cost
+      
       this.priceupdate=true
     },
     deleteSection(index,sid){
@@ -1469,6 +1485,7 @@ setTimeout(function() {
     },
     resetKitchenSize(){
       this.editSectionData.size={}
+      this.calcSectionCost()
     },
     resetFacadeSize(){
       this.editSectionData.size={}
@@ -1485,11 +1502,13 @@ setTimeout(function() {
           "floor_type":"",
           "cement_residue":false,
           "section_cost":this.editSectionData.section_cost,
-          
+          "sectiononly_cost":this.editSectionData.sectiononly_cost,
+          "sectiononly_net_cost":this.editSectionData.sectiononly_net_cost,
 
-          "section_net_cost":this.editSectionData.section_net_cost,
+          "section_net_cost":this.editSectionData.section_cost,
           "new_kitchen":this.editSectionData.new_kitchen,
           "oil_residue":this.editSectionData.oil_residue,
+          "is_cabinet":this.editSectionData.is_cabinet,
          "is_highprice_facade":false,
          "is_highprice_window":false,
       }
@@ -1557,7 +1576,9 @@ setTimeout(function() {
           "floor_type":"",
           "cement_residue":false,
           "section_cost":this.editSectionData.section_cost,
-          "section_net_cost":this.editSectionData.section_net_cost,
+          "section_net_cost":this.editSectionData.section_cost,
+          "sectiononly_cost":this.editSectionData.sectiononly_cost,
+          "sectiononly_net_cost":this.editSectionData.sectiononly_net_cost,
           "new_kitchen":this.editSectionData.is_newkitchen,
          "is_highprice_facade":false,
          "is_highprice_window":false,
@@ -1575,7 +1596,8 @@ setTimeout(function() {
         "action_type":'add_section',
         "evaluation_book__id":this.eval_book_id,
         "section_details":sectionData,
-        "keynotes":this.final_keynotes
+        "keynotes":this.final_keynotes,
+        "addons":this.kitchen_addons
        
       }).then(response=>{
         console.log(response)
@@ -1599,6 +1621,7 @@ setTimeout(function() {
               material:[],
               category:'Floor',
               age:null,
+              is_cabinet:false,
               newkitchen:false
              },
              this.section_cost=0
@@ -1887,10 +1910,13 @@ setTimeout(function() {
       console.log(this.amount)
   },
   calcSectionCost(){
-   
-    this.editSectionData.section_cost=this.editSectionData.size.cost
+    this.priceupdate=false
+    this.editSectionData.sectiononly_cost=this.editSectionData.size.cost||0
+    this.editSectionData.sectiononly_net_cost=this.editSectionData.size.cost||0
     this.fixed_section_cost=this.editSectionData.section_cost
     this.recalcKeynoteCost()
+    this.recalcAddonCost()
+    this.priceupdate=true
   },
     setDate(d){
     

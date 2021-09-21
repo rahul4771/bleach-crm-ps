@@ -357,6 +357,23 @@
                     </div>
                 </div>
                 </div>
+                <div class="col-md-12 mt-10 mb-10" v-if="service_type=='Kitchen Cleaning'">
+                    <div class=" bold-text common-label required-field"> <label>Do you want to clean the cabinet ?</label></div>
+                    <div class="d-flex">
+                    <div>
+                <input class="form-check-input" type="radio" name="cabinetRadios" id="cabinetRadios1" :value="true"  v-model="editSectionData.is_cabinet" @change="resetKitchenSize" >
+                    <label class="form-check-label" for="exampleRadios1">
+                        Yes
+                    </label>
+                </div>
+                <div>
+                    <input class="form-check-input ml-10" type="radio" name="cabinetRadios" id="cabinetRadios1" :value="false" checked v-model="editSectionData.is_cabinet" @change="resetKitchenSize" >
+                        <label class="form-check-label" for="exampleRadios1">
+                            No
+                        </label>
+                    </div>
+                </div>
+                </div>
                <!-- <div class="col-md-6 mt-10"  v-if="service_type=='General Cleaning'">
                     
                     <div class=" bold-text common-label required-field"> <label>Category</label></div>
@@ -490,11 +507,11 @@
                     
                     <div class=" bold-text common-label required-field"> <label>Size</label></div>
                     <multiselect
-                    v-if="editSectionData.new_kitchen"
+                    v-if="editSectionData.new_kitchen && editSectionData.is_cabinet"
                       v-model="editSectionData.size"
                       placeholder="Select a Size"
                       
-                      :options="new_kitchen_size"
+                      :options="new_kitchen_cabinet_size"
 
                       :multiple="false"
                       :taggable="false"
@@ -507,11 +524,11 @@
 
                     ></multiselect>
                     <multiselect
-                    v-else
+                    v-else-if="editSectionData.new_kitchen && !editSectionData.is_cabinet"
                       v-model="editSectionData.size"
                       placeholder="Select a Size"
                       
-                      :options="old_kitchen_size"
+                      :options="old_kitchen_nocabinet_size"
 
                       :multiple="false"
                       :taggable="false"
@@ -519,9 +536,34 @@
                       track-by="name"
                       label="combined_size"
                       @input="calcSectionCost()"
+                    ></multiselect>
+                    <multiselect
+                    v-else-if="!editSectionData.new_kitchen && editSectionData.is_cabinet"
+                      v-model="editSectionData.size"
+                      placeholder="Select a Size"
+                      
+                      :options="old_kitchen_cabinet_size"
 
+                      :multiple="false"
+                      :taggable="false"
+                      :show-labels="false"
+                      track-by="name"
+                      label="combined_size"
+                      @input="calcSectionCost()"
+                    ></multiselect>
+                    <multiselect
+                    v-else-if="!editSectionData.new_kitchen && !editSectionData.is_cabinet"
+                      v-model="editSectionData.size"
+                      placeholder="Select a Size"
+                      
+                      :options="old_kitchen_nocabinet_size"
 
-
+                      :multiple="false"
+                      :taggable="false"
+                      :show-labels="false"
+                      track-by="name"
+                      label="combined_size"
+                      @input="calcSectionCost()"
                     ></multiselect>
                   
                         
@@ -695,15 +737,23 @@
                             <div class="keynote-chip text-center" >
                                 <div >
                                 <select class="addon-input " placeholder="Addon" v-model="selected_addon">
+                                    <option :value="''" disabled>Select Addon</option>
                                     <option v-for="(parsed_addons,aindex) in addons_parsed" v-bind:key="aindex" :value="parsed_addons"><% parsed_addons.details.name %></option>
                                     
                                 </select>
+                                <div v-if="selected_addon">
+                                <select class="addon-input mt-10" placeholder="Addon" v-model="selected_addon.selected_size" v-if="selected_addon.details.category" @change="changeCurrentAddons()">
+                                    <option :value="''" disabled>Select Size</option>
+                                    <option v-for="(aon,aoindex) in selected_addon.size" v-bind:key="aoindex" :value="aon"><% aon.size %></option>
+                                    
+                                </select>
+                            </div>
                                
                                 <input type="number" v-model="newaddon_quantity" class="addon-input w-100 mt-10" placeholder="Quantity"/>
                                <!-- <div><%keynote.sub_area%> - <%keynote.quantity%></div>-->
                                
                             </div>
-                            <div class="addon-price addon-popup-price mt-10 text-center primary-text">
+                            <div class="addon-price addon-popup-price mt-10 text-center primary-text" >
                                 <span v-if="selected_addon.details"><% selected_addon.details.price*newaddon_quantity %> KD</span>
                                 <span v-else>0 KD</span>
                             </div>
@@ -834,7 +884,7 @@
                 <div class="section-cost">
                     Section Cost
                     <div class="text-center section-cost-price" v-if="priceupdate">
-                       <% editSectionData.section_net_cost +' KD'%>
+                       <% editSectionData.section_cost +' KD'%>
                     </div>
                  </div>
                </div>
@@ -3193,7 +3243,7 @@
                 <div class="col-md-12 c-mt-10 c-model-head">
                     <h1> Note to the Customer </h1>
                         <div class="mt-10">
-                        <input  type="text" placeholder="Note to Customer" required="required" class="textBox"  v-model="customer_note" >
+                        <input  type="text" placeholder="Note to Customer" required="required" class="textBox"  v-model="customer_note"  onkeyup="limit(this);">
                     </div>
                 </div>
             </div>
