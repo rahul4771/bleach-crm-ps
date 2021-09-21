@@ -5002,6 +5002,10 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 					cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,member=leaders.first(),start_at=start_date_time,end_at=end_date_time,start_time=start_time,end_time=end_time))
 
 					CleaningTeamMember.objects.bulk_create(cleaning_team_member_array)
+
+					#cleaning team assigned status in scheduler
+					order_schedule.work_status = 'CLEANING_TEAM_ASSIGNED'
+					order_schedule.save()
 		
 		#update cost details
 		discount = float(request.data.get('discount'))
