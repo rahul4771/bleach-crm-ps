@@ -529,6 +529,7 @@ const app = new Vue({
               residue:false
             },
             keynote_update:true,
+            addon_update:true,
             kitchen_size:[],
             new_kitchen_size:[],
             old_kitchen_size:[],
@@ -884,6 +885,12 @@ setTimeout(function() {
       this.keynote_update=false
       this.other_keynotes.splice(index,1)
       this.keynote_update=true
+    },
+    delAddon(index){
+      this.addon_update=false
+      this.kitchen_addons.splice(index,1)
+      this.addon_update=true
+      this.recalcAddonCost()
     },
     checkSlot(index){
       if(!this.selected_slots[this.selected_date]){

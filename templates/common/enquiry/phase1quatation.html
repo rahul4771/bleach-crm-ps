@@ -167,7 +167,7 @@
 <div class="mt-10">
   <div class=" bold-text common-label"> <label>Evaluator Note</label></div>
 
-  <textarea name="evaluator_note" id="" rows="6"  style="width: 100%;"></textarea>
+  <textarea name="evaluator_note" id="" rows="6"  style="width: 100%;" max-length="300" onkeyup="limit(this);"></textarea>
 </div>
 <input type="hidden" name='total_amount' id="total_amount_id" value="{{evaluation.total_cost|floatformat:'3'}}">
 <br>
@@ -236,7 +236,14 @@ $('.footable').footable({
 //# sourceURL=pen.js
 </script>
 <script>
+function limit(element)
+{
+    var max_chars = 300;
 
+    if(element.value.length > max_chars) {
+        element.value = element.value.substr(0, max_chars);
+    }
+}
 $('.cancelevaluation').click(function(){
   $('#detail').val($(this).data('evaluationdetail'));
   console.log($(this).data('evaluationdetail'),"mass")
