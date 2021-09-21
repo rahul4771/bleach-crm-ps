@@ -387,6 +387,9 @@ class EvaluationBookSection(models.Model):
 	section_cleanings= models.FloatField(blank=True,null=True)
 	section_net_cost = models.FloatField(blank=True,null=True)
 
+	sectiononly_cost    = models.FloatField(blank=True,null=True)
+	sectiononly_net_cost= models.FloatField(blank=True,null=True)
+
 	section_verified_by		 = models.CharField(max_length=50,null=True,blank=True)
 	section_updated_by		 = models.CharField(max_length=50,null=True,blank=True)
 
