@@ -89,7 +89,7 @@
                 <th style="width: 40%;">Service</th>
                 <th >Size</th>
               
-                <th>Quantity</th>
+                <th>Visit</th>
                 <th >Unit Price</th>
                 <th >Net Price</th>
               </tr>
@@ -127,7 +127,7 @@
 
                 </td>
                 <td>
-                  {{addon.size|default_if_none:''}}
+                  {{addon.size|default_if_none:'-'}}
                 </td>
                 <td style="text-align: right;">
                   {% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{section.section_cleanings|floatformat:"-1"}}{% endif %}
