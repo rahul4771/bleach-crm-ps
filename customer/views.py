@@ -4095,7 +4095,7 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase2(APIView):
 			booking_id               = CustomerBooking.objects.filter(is_active=True).aggregate(t=Max('booking_id'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
 			current_booking_starting = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2))
 
-			if current_booking_starting == int(str(booking_id)[:4]):
+			if current_booking_starting == int(str(booking_id)[4:]):
 				new_booking_id = int(booking_id)+1
 			else:
 				new_booking_id = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10001')
