@@ -714,14 +714,14 @@
                 </div>
                 <div class="col-md-12 mt-20" v-if="service_type=='Kitchen Cleaning'">
                     <b>Addon (s)</b> 
-                    <div class="row mt-10" v-if="keynote_update">
+                    <div class="row mt-10" v-if="addon_update">
                         <div class="col-md-4 mt-10" v-for="(addon,kindex) in kitchen_addons" v-bind:key="kindex">
                             <div class="keynote-chip" >
                                 <div class="d-flex">
                                 <input type="text" v-model="addon.name" class="keynote-input"/>
                                 <input type="number" v-model="addon.quantity" class="keynote-input" @change="updateAddon(kindex)"/>
                                <!-- <div><%keynote.sub_area%> - <%keynote.quantity%></div>-->
-                                <div class="keynote-delicon cp" @click="delKeynote(kindex)"><i class="far fa-trash-alt"></i>
+                                <div class="keynote-delicon cp" @click="delAddon(kindex)"><i class="far fa-trash-alt"></i>
                                 </div>
                             </div>
                             <div class="addon-price addon-popup-price mt-10 text-center primary-text">
