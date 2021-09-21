@@ -1907,6 +1907,7 @@ console.log(response)
           for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
             this.serviceDetails.service_details[i].sections[j]={
               "section_name":this.multiServicesBill[i].bill[j].section_name,
+            
             "size":this.multiServicesBill[i].bill[j].section.size.name,
             "wall_type":"",
             "floor_type":'',
@@ -1918,6 +1919,7 @@ console.log(response)
             "sectiononly_net_cost":this.multiServicesBill[i].bill[j].section.section_cost,
             "section_net_cost":this.multiServicesBill[i].bill[j].section.section_net_cost,
             "keynotes":{},
+            "addons":{},
             "is_newkitchen":false,
             "is_highprice_facade":false,
             "is_highprice_window":false,
