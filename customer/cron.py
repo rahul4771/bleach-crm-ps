@@ -37,7 +37,5 @@ def quotationexpiry():
 def booking_expiry():
     expired_schedules = OrderScheduler.objects.select_related('order__evaluation').filter(is_active=True,order__evaluation__quatation_status__isnull=False,order__payment_status='PENDING',created__lt=timezone.now()-timedelta(minutes=5),work_status='CLEANING_TEAM_ASSIGNED').prefetch_related(Prefetch('order__evaluation__booking_evaluation',queryset=CustomerBooking.objects.filter(is_active=True),to_attr='bookings'))
     for expired_schedule in expired_schedules:
-        print("chance of delete",expired_schedule.start_at)
         if expired_schedule.order.evaluation.bookings:
-            print("delete",expired_schedule.id)
             expired_schedule.delete()
