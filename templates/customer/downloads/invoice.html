@@ -110,12 +110,39 @@
                   
                 </td>
                 <td style="text-align: right;">
-                  {{section.section_cost|floatformat:'3'}}
+                  {{section.sectiononly_cost|floatformat:'3'}}
                 </td>
                 <td style="text-align: right;">
-                  {{section.section_net_cost|floatformat:'3'}}
+                  {{section.sectiononly_net_cost|floatformat:'3'}}
                 </td>
               </tr>
+
+              {% if section.sectionaddons %}
+              {% for addon in section.sectionaddons %}
+              <!-- ADDONS BEGINS HERE -->
+              <tr>
+                <td>
+                  {{section.section_name}}-{{addon.name}}(x{{addon.quantity|default_if_none:'1'}})
+                  <div class="d-flex mb-10" > {% if orderschedule.order_scheduler_book.status == 'CANCELLED' %} <div class="status-dot cancel-chip-bg"></div> <div class="ml-2">Cancelled</div> {% endif %}</div>
+
+                </td>
+                <td>
+                  {{addon.size|default_if_none:''}}
+                </td>
+                <td style="text-align: right;">
+                  {% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{section.section_cleanings|floatformat:"-1"}}{% endif %}
+                </td>
+                <td style="text-align: right;">
+                  {{addon.addon_cost|floatformat:'3'}}
+                </td>
+                <td style="text-align: right;">
+                  {{addon.addon_net_cost|floatformat:'3'}}
+                </td>
+              </tr>
+              <!-- ADDONS ENDS HERE -->
+              {% endfor %}
+              {% endif %}
+
               {% endfor %}
               {% endfor %}
            

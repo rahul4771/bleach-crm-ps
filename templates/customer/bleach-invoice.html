@@ -282,10 +282,10 @@
                       Size : <span class="inv-text-bold">{{book_section.size}} {{book_section.unit|default_if_none:''}}</span>
                     </div>
                     <div class="p-2">
-                      Quantity : <span class="inv-text-bold">1</span>
+                      Visit : <span class="inv-text-bold">1</span>
                     </div>
                     <div class="p-2">
-                      Unit Price : <span class="inv-text-bold">{{book_section.section_cost|floatformat:'3'}}</span>
+                      Unit Price : <span class="inv-text-bold">{{book_section.sectiononly_cost|floatformat:'3'}}</span>
                     </div>
                   </div>
                 </div>
@@ -296,7 +296,7 @@
                   <div class="inv-price p-1 ">
                  
                     <span class="inv-text-bold">
-                    {{book_section.section_net_cost|floatformat:'3'}}
+                    {{book_section.sectiononly_net_cost|floatformat:'3'}}
                     </span> KD
                  
                   </div>
@@ -480,7 +480,7 @@
 
                             <div class="col-md-4 mb-2 mt-2 col-6">
                               <div class="qt-details-title">
-                              Quantity
+                              Visit
                               </div>
                               <div class="qt-details-value">
                                 1
@@ -496,7 +496,7 @@
                               NET PRICE
                             </div>
                             <div class="qt-details-price">
-                            {{book_section.section_net_cost|floatformat:'3'}} KD
+                            {{book_section.sectiononly_net_cost|floatformat:'3'}} KD
                             </div>
                           </div>
                         
