@@ -545,7 +545,7 @@
                           Size : <span class="inv-text-bold">{{addon.size|default_if_none:'-'}}</span>
                         </div>
                         <div class="p-2">
-                          Visit : <span class="inv-text-bold">{% if evaluation_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{section.section_cleanings|floatformat:"-1"}}{% endif %}</span>
+                          Visit : <span class="inv-text-bold">{% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{section.section_cleanings|floatformat:"-1"}}{% endif %}</span>
                         </div>
                         <div class="p-2">
                           Unit Price : <span class="inv-text-bold">{{addon.addon_cost|floatformat:'3'}}</span>
