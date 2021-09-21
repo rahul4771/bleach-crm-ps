@@ -1705,7 +1705,9 @@ console.log(response)
               "ceiling_type":'',
               "cement_residue":this.multiServicesBill[i].bill[j].section.cement_residue,
               "oil_residue":this.multiServicesBill[i].bill[j].section.residue,
-              "section_cost":this.multiServicesBill[i].bill[j].section.section_cost,
+              "section_cost":this.multiServicesBill[i].bill[j].section.section_net_cost,
+              "sectiononly_cost":this.multiServicesBill[i].bill[j].section.section_cost,
+              "sectiononly_net_cost":this.multiServicesBill[i].bill[j].section.section_cost,
               "section_net_cost":this.multiServicesBill[i].bill[j].section.section_net_cost,
               "keynotes":{},
               "addons":{},
@@ -1720,6 +1722,10 @@ console.log(response)
               "age":'',
               "age_of_stain":''
               
+              }
+              if(this.serviceDetails.service_details[i].cleaning_policy=='SUBSCRIPTION'){
+                this.serviceDetails.service_details[i].sections[j].sectiononly_net_cost=this.serviceDetails.service_details[i].sections[j].sectiononly_net_cost*parseInt(visits)
+                this.serviceDetails.service_details[i].sections[j].section_net_cost=this.serviceDetails.service_details[i].sections[j].section_net_cost*parseInt(visits)
               }
               if(this.multiServicesBill[i].bill[j].section.size.is_highprice_facade){
                 this.serviceDetails.service_details[i].sections[j].is_highprice_facade=true
@@ -1902,8 +1908,9 @@ console.log(response)
             "ceiling_type":'',
             "cement_residue":this.multiServicesBill[i].bill[j].section.cement_residue,
             "oil_residue":this.multiServicesBill[i].bill[j].section.residue,
-            "section_cost":this.multiServicesBill[i].bill[j].section.section_cost,
-
+            "section_cost":this.multiServicesBill[i].bill[j].section.section_net_cost,
+            "sectiononly_cost":this.multiServicesBill[i].bill[j].section.section_cost,
+            "sectiononly_net_cost":this.multiServicesBill[i].bill[j].section.section_cost,
             "section_net_cost":this.multiServicesBill[i].bill[j].section.section_net_cost,
             "keynotes":{},
             "is_newkitchen":false,
