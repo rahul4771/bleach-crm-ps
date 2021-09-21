@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from .models import Order,OrderScheduler,EvaluationBook
-from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationBookSection
+from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationBookSection,EvaluationSectionAddons
 from datetime import datetime,date,timedelta,timezone
 from django.http import JsonResponse
 import pandas as pd
@@ -155,7 +155,7 @@ def sendinvoice(request):
     
     address = evaluationdetails.address
 
-    evaluationbooks = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='sections'))
+    evaluationbooks = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='sections'))
     evaluationbook = evaluationbooks.first()
 
     if address.floor == None and address.avenue == None:
@@ -246,7 +246,7 @@ def sendquotation(request):
     else:
         evaluator = evaluation.call_attender.name
 
-    evaluationbooks = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='sections'))
+    evaluationbooks = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='sections'))
 
     evaluationbook = evaluationbooks.first()
 
