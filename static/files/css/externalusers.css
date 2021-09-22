@@ -1272,7 +1272,7 @@ h2{ font-size:14px; font-weight:bold; text-align:left; margin-top:10px;color:#26
 #soa_table2 th {
   padding-top: 10px;
   padding-bottom: 10px;
-  padding-left: 8px;
+  /* padding-left: 8px; */
   text-align: center;
   background-color: #EDF1F6;
   color: #303030;
