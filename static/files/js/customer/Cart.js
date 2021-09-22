@@ -4992,30 +4992,31 @@ getBookingTime(orderno){
     console.log("inside time")
     if(this.booking_status)
     {
-      var currentTime = moment().utcOffset("+03:00").format('DD-MM-YYYY hh:mm A')
+      var currentTime = moment().utcOffset("+03:00").format('DD-MM-YYYY hh:mm:ss A')
      
      console.log("current time is"+currentTime+"booking time is"+this.booking_time)
 
-      var startTime = moment(this.booking_time, "DD-MM-YYYY hh:mm A").format("DD-MM-YYYY hh:mm A");
-      var endTime =moment(currentTime,'DD-MM-YYYY hh:mm A').locale('ar-kw').format("DD-MM-YYYY hh:mm A")
+      var startTime = moment(this.booking_time, "DD-MM-YYYY hh:mm:ss A").format("DD-MM-YYYY hh:mm:ss A");
+      var endTime =moment(currentTime,'DD-MM-YYYY hh:mm:ss A').locale('ar-kw').format("DD-MM-YYYY hh:mm:ss A")
      
       
       console.log("start is"+startTime+"end is"+endTime)
       // calculate total duration
       
-      var duration = moment.duration(moment(endTime,'DD-MM-YYYY hh:mm A').diff(moment(startTime,'DD-MM-YYYY hh:mm A')));
+      var duration = moment.duration(moment(endTime,'DD-MM-YYYY hh:mm:ss A').diff(moment(startTime,'DD-MM-YYYY hh:mm:ss A')));
 
       // duration in hours
       var hours = parseInt(duration.asHours());
-  
+      var seconds=(300-parseInt(duration.asSeconds()))%60;
+      
       // duration in minutes
       var minutes = parseInt(duration.asMinutes());
-      console.log( minutes+' minutes.');
+      console.log( minutes+' minutes.  seconds'+seconds);
        if(minutes>5){
         this.cancelBooking(orderno)
       //  console.log("called cancel booking")
        }  
-        this.counterTime=(5-minutes)+':00'
+        this.counterTime=(5-minutes)+':'+seconds
         startTimer()
       
     }
