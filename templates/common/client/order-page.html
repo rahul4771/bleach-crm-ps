@@ -765,21 +765,31 @@
                 <div class="col-md-12 mt-20" v-if="service_type=='General Cleaning' || service_type=='Deep Cleaning'">
                     <b>Kitchen (s)</b> 
                      <div class="row mt-10" v-if="keynote_update">
-                         <div class="col-md-4 mt-10" v-for="(kitchenkeynote,kindex) in kitchen_keynotes" v-bind:key="kindex">
-                             <div class="keynote-chip " v-if="kitchenkeynote.sub_area=='kitchen'">
+                         <div class="col-md-4 mt-10" v-for="(kitchenkeynote,kindex) in kitchen_addons" v-bind:key="kindex">
+                             <div class="keynote-chip ">
                                 <div class="d-flex kitchen-details">
                                     <div><b>Kitchen <% kindex+1 %></b></div>
-                                   <div class="keynote-delicon cp" @click="removeKitchen()"><i class="far fa-trash-alt"></i>
+                                   <div class="keynote-delicon cp" @click="deleteKitchenFromAddon(kindex)"><i class="far fa-trash-alt"></i>
                                 </div>
                                 </div>
                                  <div class="d-flex justify-center">
-                                    <select  v-model="kitchenkeynote.quantity.size" class="pl-10" placeholder="Select Size" v-if="kitchenkeynote.quantity.type=='new'" @change="recalcKeynoteCost()">
-                                        <option :value="kitchen" v-for="(kitchen,kitindex) in new_kitchen_size" v-bind:key="kitindex">
+                                    <select  v-model="kitchenkeynote.other_details.size" class="pl-10" placeholder="Select Size" v-if="kitchenkeynote.other_details.type=='new' && kitchenkeynote.other_details.is_cabinet" @change="changeKitchenSize(kindex)">
+                                        <option :value="kitchen" v-for="(kitchen,kitindex) in new_kitchen_cabinet_size" v-bind:key="kitindex">
                                          <% kitchen.name %>
                                         </option>
                                     </select>
-                                    <select  v-model="kitchenkeynote.quantity.size" class="pl-10" placeholder="Select Size" v-if="kitchenkeynote.quantity.type=='old'" @change="recalcKeynoteCost()">
-                                        <option :value="kitchen" v-for="(kitchen,kitindex) in old_kitchen_size" v-bind:key="kitindex">
+                                    <select  v-model="kitchenkeynote.other_details.size" class="pl-10" placeholder="Select Size" v-if="kitchenkeynote.other_details.type=='new' && !kitchenkeynote.other_details.is_cabinet" @change="changeKitchenSize(kindex)">
+                                        <option :value="kitchen" v-for="(kitchen,kitindex) in new_kitchen_nocabinet_size" v-bind:key="kitindex">
+                                         <% kitchen.name %>
+                                        </option>
+                                    </select>
+                                    <select  v-model="kitchenkeynote.other_details.size" class="pl-10" placeholder="Select Size" v-if="kitchenkeynote.other_details.type=='old' && kitchenkeynote.other_details.is_cabinet" @change="changeKitchenSize(kindex)">
+                                        <option :value="kitchen" v-for="(kitchen,kitindex) in old_kitchen_cabinet_size" v-bind:key="kitindex">
+                                         <% kitchen.name %>
+                                        </option>
+                                    </select>
+                                    <select  v-model="kitchenkeynote.other_details.size" class="pl-10" placeholder="Select Size" v-if="kitchenkeynote.other_details.type=='old' && !kitchenkeynote.other_details.is_cabinet" @change="changeKitchenSize(kindex)">
+                                        <option :value="kitchen" v-for="(kitchen,kitindex) in old_kitchen_nocabinet_size" v-bind:key="kitindex">
                                          <% kitchen.name %>
                                         </option>
                                     </select>
@@ -787,16 +797,32 @@
                                  
                                 
                                 </div>
+
                                  <div class="d-flex  mt-10">
                                     <div>
                                         Is it a new kitchen ?
-                                <input class="form-check-input" type="radio" :name="'typeRadios'+kindex" id="typeRadios" value="new"  v-model="kitchenkeynote.quantity.type" @change='changeCategory()'>
+                                <input class="form-check-input" type="radio" :name="'typeRadios'+kindex" id="typeRadios" value="new"  v-model="kitchenkeynote.other_details.type" @change='resetKitchenAddonSize(kindex)'>
                                     <label class="form-check-label" for="exampleRadios1">
                                         Yes
                                     </label>
                                 </div>
                                 <div>
-                                    <input class="form-check-input ml-10" type="radio" :name="'typeRadios'+kindex" id="typeRadios" value="old" v-model="kitchenkeynote.quantity.type" @change='changeCategory()'>
+                                    <input class="form-check-input ml-10" type="radio" :name="'typeRadios'+kindex" id="typeRadios" value="old" v-model="kitchenkeynote.other_details.type" @change='resetKitchenAddonSize(kindex)'>
+                                        <label class="form-check-label" for="exampleRadios1">
+                                            No
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="d-flex  mt-10">
+                                    <div>
+                                        Cabinet
+                                <input class="form-check-input" type="radio" :name="'cabinetRadios'+kindex" id="cabinetRadios" :value="true"  v-model="kitchenkeynote.other_details.is_cabinet" @change='resetKitchenAddonSize(kindex)'>
+                                    <label class="form-check-label" for="exampleRadios1">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div>
+                                    <input class="form-check-input ml-10" type="radio" :name="'cabinetRadios'+kindex" id="cabinetRadios" :value="false" v-model="kitchenkeynote.other_details.is_cabinet" @change='resetKitchenAddonSize(kindex)'>
                                         <label class="form-check-label" for="exampleRadios1">
                                             No
                                         </label>
@@ -805,13 +831,13 @@
                                 <div class="d-flex  mt-10">
                                     <div>
                                         Is there any oil residue ?
-                                <input class="form-check-input" type="radio" :name="'residueRadios'+kindex" id="residueRadios" :value="true"  v-model="kitchenkeynote.quantity.residue" @change='changeCategory()'>
+                                <input class="form-check-input" type="radio" :name="'residueRadios'+kindex" id="residueRadios" :value="true"  v-model="kitchenkeynote.other_details.residue" @change='changeCategory()'>
                                     <label class="form-check-label" for="exampleRadios1">
                                         Yes
                                     </label>
                                 </div>
                                 <div>
-                                    <input class="form-check-input ml-10" type="radio" :name="'residueRadios'+kindex" id="residueRadios" :value="false" v-model="kitchenkeynote.quantity.residue" @change='changeCategory()'>
+                                    <input class="form-check-input ml-10" type="radio" :name="'residueRadios'+kindex" id="residueRadios" :value="false" v-model="kitchenkeynote.other_details.residue" @change='changeCategory()'>
                                         <label class="form-check-label" for="exampleRadios1">
                                             No
                                         </label>
@@ -824,17 +850,26 @@
                          <div class="col-md-4 mt-10" >
                              <div class="keynote-chip ">
                                 <div class="d-flex justify-center">
-                                    <select  v-model="newkitchenkeynote.size" class="pl-10" placeholder="Select Size" v-if="newkitchenkeynote.type=='new'">
-                                        <option :value="kitchen" v-for="(kitchen,kitindex) in new_kitchen_size" v-bind:key="kitindex">
+                                    <select  v-model="newkitchenkeynote.size" class="pl-10" placeholder="Select Size" v-if="newkitchenkeynote.type=='new' && newkitchenkeynote.is_cabinet">
+                                        <option :value="kitchen" v-for="(kitchen,kitindex) in new_kitchen_cabinet_size" v-bind:key="kitindex">
                                          <% kitchen.name %>
                                         </option>
                                     </select>
-                                    <select  v-model="newkitchenkeynote.size" class="pl-10" placeholder="Select Size" v-if="newkitchenkeynote.type=='old'">
-                                        <option :value="kitchen" v-for="(kitchen,kitindex) in old_kitchen_size" v-bind:key="kitindex">
+                                    <select  v-model="newkitchenkeynote.size" class="pl-10" placeholder="Select Size" v-if="newkitchenkeynote.type=='new' && !newkitchenkeynote.is_cabinet">
+                                        <option :value="kitchen" v-for="(kitchen,kitindex) in new_kitchen_nocabinet_size" v-bind:key="kitindex">
                                          <% kitchen.name %>
                                         </option>
                                     </select>
-                             
+                                    <select  v-model="newkitchenkeynote.size" class="pl-10" placeholder="Select Size" v-if="newkitchenkeynote.type=='old' && newkitchenkeynote.is_cabinet">
+                                        <option :value="kitchen" v-for="(kitchen,kitindex) in old_kitchen_cabinet_size" v-bind:key="kitindex">
+                                         <% kitchen.name %>
+                                        </option>
+                                    </select>
+                                    <select  v-model="newkitchenkeynote.size" class="pl-10" placeholder="Select Size" v-if="newkitchenkeynote.type=='old' && !newkitchenkeynote.is_cabinet">
+                                        <option :value="kitchen" v-for="(kitchen,kitindex) in old_kitchen_nocabinet_size" v-bind:key="kitindex">
+                                         <% kitchen.name %>
+                                        </option>
+                                    </select>
                                
                                 <!-- <div><%keynote.sub_area%> - <%keynote.quantity%></div>-->
                              <!--  <div class="keynote-delicon cp" @click="addToKeynote()"><i class="far fa-plus-square"></i>
@@ -857,6 +892,21 @@
                                 </div>
                                 <div class="d-flex  mt-10">
                                     <div>
+                                        Cabinet
+                                <input class="form-check-input" type="radio" :name="'cabinetRadios'" id="cabinetRadios" :value="true"  v-model="newkitchenkeynote.is_cabinet" @change='changeCategory()'>
+                                    <label class="form-check-label" for="exampleRadios1">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div>
+                                    <input class="form-check-input ml-10" type="radio" :name="'cabinetRadios'" id="cabinetRadios" :value="false" v-model="newkitchenkeynote.is_cabinet" @change='changeCategory()'>
+                                        <label class="form-check-label" for="exampleRadios1">
+                                            No
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="d-flex  mt-10">
+                                    <div>
                                         Is there any oil residue ?
                                 <input class="form-check-input" type="radio" name="exampleRadios2" id="exampleRadios2" :value="true"  v-model="newkitchenkeynote.residue" >
                                     <label class="form-check-label" for="exampleRadios1">
@@ -871,7 +921,7 @@
                                     </div>
                                 </div>
                                 <div class="text-center mt-10">
-                                    <button type="submit" class="btn primary-btn" @click="addKitchenToKeynote()">Add </button>
+                                    <button type="submit" class="btn primary-btn" @click="addKitchenToAddon()">Add </button>
                                 </div>
                                  </div>
                              </div>

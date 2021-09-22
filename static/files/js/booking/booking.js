@@ -1898,7 +1898,7 @@ console.log(response)
                   max_size:this.multiServicesBill[i].bill[j].section.kitchens[k].size.max_size,
                   type:this.multiServicesBill[i].bill[j].section.kitchens[k].type,
                   residue:this.multiServicesBill[i].bill[j].section.kitchens[k].residue,
-                  
+                  is_cabinet:this.multiServicesBill[i].bill[j].section.kitchens[k].is_cabinet
                 })
               }
             }
@@ -2097,6 +2097,7 @@ console.log(response)
                   max_size:this.multiServicesBill[i].bill[j].section.kitchens[k].size.max_size,
                   type:this.multiServicesBill[i].bill[j].section.kitchens[k].type,
                   residue:this.multiServicesBill[i].bill[j].section.kitchens[k].residue,
+                  is_cabinet:this.multiServicesBill[i].bill[j].section.kitchens[k].is_cabinet
                   
                 })
               }

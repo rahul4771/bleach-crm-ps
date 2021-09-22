@@ -107,7 +107,15 @@ function editSection(service){
  // var sectiondata=$(section).data()
  app.getSection(eval_book_id)
  app.editSectionData.section_id=sid
+ //app.editSectionData.addons=app.sections[index-1].addonsections
  app.kitchen_addons=app.sections[index-1].addonsections
+ if(app.service_type=='General Cleaning' || app.service_type=='Deep Cleaning'){
+   for(var i=0;i<app.kitchen_addons.length;i++){
+    app.kitchen_addons[i].other_details=JSON.parse( app.kitchen_addons[i].other_details)
+    app.kitchen_addons[i].other_details.size=app.findKitchenSize(app.kitchen_addons[i].other_details.size,app.kitchen_addons[i].other_details.is_cabinet,app.kitchen_addons[i].other_details.type)
+   }
+ }
+ 
 if(app.service_type=='Kitchen Cleaning'){
   app.editSectionData.new_kitchen=app.sections[index-1].new_kitchen
   app.editSectionData.oil_residue=app.sections[index-1].oil_residue
@@ -526,7 +534,8 @@ const app = new Vue({
               
               size:'',
               type:'old',
-              residue:false
+              residue:false,
+              is_cabinet:false,
             },
             keynote_update:true,
             addon_update:true,
@@ -555,6 +564,45 @@ const app = new Vue({
             //url:'http://127.0.0.1:8000'
   },
   methods:{
+    findKitchenSize(name,cabinet,type){
+      console.log("name is"+name+"cabinet is"+cabinet+"type is"+type)
+      if(type=='new' && cabinet){
+        
+        for(var i=0;i<this.new_kitchen_cabinet_size.length;i++){
+          if(this.new_kitchen_cabinet_size[i].name==name){
+           
+            return this.new_kitchen_cabinet_size[i]
+          }
+        }
+      }
+      else if(type=='new' && !cabinet){
+       
+        for(var i=0;i<this.new_kitchen_nocabinet_size.length;i++){
+          if(this.new_kitchen_nocabinet_size[i].name==name){
+          
+            return this.new_kitchen_nocabinet_size[i]
+          }
+        }
+      }
+      else if(type=='old' && cabinet){
+       
+        for(var i=0;i<this.old_kitchen_cabinet_size.length;i++){
+          if(this.old_kitchen_cabinet_size[i].name==name){
+            
+            return this.old_kitchen_cabinet_size[i]
+          }
+        }
+      }
+      else if(type=='old' && !cabinet){
+       
+        for(var i=0;i<this.old_kitchen_nocabinet_size.length;i++){
+          if(this.old_kitchen_nocabinet_size[i].name==name){
+            
+            return this.old_kitchen_nocabinet_size[i]
+          }
+        }
+      }
+    },
     changeCurrentAddons(){
       this.selected_addon.details.price=this.selected_addon.selected_size.price
       this.selected_addon.details.category=this.selected_addon.selected_size.size
@@ -803,6 +851,41 @@ setTimeout(function() {
       this.recalcKeynoteCost()
       
       
+    },
+    addKitchenToAddon(){
+      this.kitchen_addons.push({
+        addon_cost:this.newkitchenkeynote.size.cost,
+        addon_net_cost:this.newkitchenkeynote.size.cost,
+        name:'kitchen',
+        quantity:"1",
+        size:null,
+        other_details:{
+          is_cabinet:false,
+          max_size:null,
+          residue:this.newkitchenkeynote.residue,
+          size:this.newkitchenkeynote.size,
+          type:this.newkitchenkeynote.type
+
+        }
+      })
+      this.newkitchenkeynote={
+            residue:false,
+            type:"old",
+            is_cabinet:false,
+            other_details:{},
+            size:{}
+        }
+      
+      this.recalcAddonCost()
+    },
+    deleteKitchenFromAddon(index){
+      this.kitchen_addons.splice(index,1)
+      this.recalcAddonCost()
+    },
+    changeKitchenSize(index){
+      this.kitchen_addons[index].addon_cost= this.kitchen_addons[index].other_details.size.cost
+      this.kitchen_addons[index].addon_net_cost= this.kitchen_addons[index].other_details.size.cost
+      this.recalcAddonCost()
     },
     removeKitchen(index){
       this.kitchen_keynotes.splice(index,1)
@@ -1362,6 +1445,12 @@ setTimeout(function() {
         location.reload();
       })
     },
+    resetKitchenAddonSize(index){
+      this.kitchen_addons[index].size={}
+      this.kitchen_addons[index].addon_cost=0
+      this.kitchen_addons[index].addon_net_cost=0
+      this.recalcAddonCost()
+    },
 
     
     changeCategory(){
@@ -1555,6 +1644,13 @@ setTimeout(function() {
         sectionData.colour=this.editSectionData.colour.join()   
       }
     }
+    if(this.service_type=='General Cleaning'||this.service_type=='Deep Cleaning'){
+      for(var i=0;i<this.kitchen_addons.length;i++){
+        this.kitchen_addons[i].quantity=parseInt(this.kitchen_addons[i].quantity)
+        this.kitchen_addons[i].other_details.size=this.kitchen_addons[i].other_details.size.name
+        this.kitchen_addons[i].other_details=JSON.stringify(this.kitchen_addons[i].other_details)
+      }
+    }
       axios.post(this.url+'/customer/editorder/'+this.orderId,{
         "action_type":'edit_section',
         "evaluation_book__id":this.eval_book_id,
@@ -1598,6 +1694,13 @@ setTimeout(function() {
       }
       if(this.editSectionData.ceiling_type.length>0){
         sectionData.ceiling_type=this.editSectionData.ceiling_type.join()   
+      }
+      if(this.service_type=='General Cleaning'||this.service_type=='Deep Cleaning'){
+        for(var i=0;i<this.kitchen_addons.length;i++){
+          this.kitchen_addons[i].quantity=parseInt(this.kitchen_addons[i].quantity)
+          this.kitchen_addons[i].other_details.size=this.kitchen_addons[i].other_details.size.name
+          this.kitchen_addons[i].other_details=JSON.stringify(this.kitchen_addons[i].other_details)
+        }
       }
       axios.post(this.url+'/customer/editorder/'+this.orderId,{
         "action_type":'add_section',
