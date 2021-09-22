@@ -114,6 +114,9 @@ html{
       font-size:24px;
       font-weight:500;
   }
+  .strike-text{
+    text-decoration: line-through;
+  }
   .expand-card-addon-cost{
     font-size:16px;
     font-weight:500;
