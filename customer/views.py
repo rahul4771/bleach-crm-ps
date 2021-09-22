@@ -116,7 +116,7 @@ class Quatation(View):
 
 		#service details
 		try:
-			order_details = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='booksections')),to_attr='evaluationbooks')),to_attr='evaluationdetails')).annotate(customerbooking=Sum(Case(When(Q( Q(evaluation__booking_evaluation__booking_type='CLEANINGBOOKING')&Q(evaluation__booking_evaluation__is_bookingcompleted=False) ),then=1),default=0,output_field=IntegerField()))).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
+			order_details = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='booksections')),to_attr='evaluationbooks')),to_attr='evaluationdetails')).annotate(customerbooking=Sum(Case(When(Q( Q(evaluation__booking_evaluation__booking_type='CLEANINGBOOKING')&Q(evaluation__booking_evaluation__is_bookingcompleted=False) ),then=1),default=0,output_field=IntegerField()))).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
 		except:
 			order_details = None
 
@@ -351,7 +351,7 @@ class SubscriptionQuatation(View):
 
 		#service details
 		try:
-			order_details = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='booksections')),to_attr='evaluationbooks')),to_attr='evaluationdetails')).annotate(customerbooking=Sum(Case(When(Q( Q(evaluation__booking_evaluation__booking_type='CLEANINGBOOKING')&Q(evaluation__booking_evaluation__is_bookingcompleted=False) ),then=1),default=0,output_field=IntegerField()))).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
+			order_details = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='booksections')),to_attr='evaluationbooks')),to_attr='evaluationdetails')).annotate(customerbooking=Sum(Case(When(Q( Q(evaluation__booking_evaluation__booking_type='CLEANINGBOOKING')&Q(evaluation__booking_evaluation__is_bookingcompleted=False) ),then=1),default=0,output_field=IntegerField()))).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
 		except:
 			order_details = None
 
@@ -402,7 +402,7 @@ class BleachCustomerInvoice(View):
 		evaluation_id = 'BLC'+evaluation_id_encrypted[3:14]
 		user_name     =  evaluation_id_encrypted[14:]
 
-		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='booksections')),to_attr='evaluationbooks')),to_attr='evaluationdetails')).annotate(customerbooking=Sum(Case(When(Q( Q(evaluation__booking_evaluation__booking_type='CLEANINGBOOKING')&Q(evaluation__booking_evaluation__is_bookingcompleted=False) ),then=1),default=0,output_field=IntegerField()))).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
+		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='booksections')),to_attr='evaluationbooks')),to_attr='evaluationdetails')).annotate(customerbooking=Sum(Case(When(Q( Q(evaluation__booking_evaluation__booking_type='CLEANINGBOOKING')&Q(evaluation__booking_evaluation__is_bookingcompleted=False) ),then=1),default=0,output_field=IntegerField()))).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
 
 		#for credit card
 		full_name_array = UserProfile.objects.get(username=user_name).name.split()
@@ -442,7 +442,7 @@ class CustomerInvoice(View):
 		evaluation_id = 'BLC'+evaluation_id_encrypted[3:14]
 		user_name     =  evaluation_id_encrypted[14:]
 
-		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
+		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
 
 		nonduplicate_schedules = []
 		#Remove duplicates for subscription
@@ -493,7 +493,7 @@ class CustomerSubscriptionInvoice(View):
 		evaluation_id = 'BLC'+evaluation_id_encrypted[3:14]
 		user_name     =  evaluation_id_encrypted[14:]
 
-		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
+		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
 
 		nonduplicate_schedules = []
 		#Remove duplicates for subscription
@@ -838,7 +838,7 @@ def quatation_html_to_pdf_view(request,evaluation_id):
 	user_name     =  evaluation_id_encrypted[14:]
 
 
-	order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(is_active=True,order_no=evaluation_id,evaluation__customer__username=user_name)
+	order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(is_active=True,order_no=evaluation_id,evaluation__customer__username=user_name)
 
 	nonduplicate_schedules = []
 	#Remove duplicates for subscription
@@ -931,7 +931,7 @@ def invoice_html_to_pdf_view(request,evaluation_id):
 	evaluation_id = 'BLC'+evaluation_id_encrypted[3:14]
 	user_name     =  evaluation_id_encrypted[14:]
 
-	order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
+	order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
 
 	nonduplicate_schedules = []
 	
@@ -4094,7 +4094,7 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase2(APIView):
 		except:
 			booking_id               = CustomerBooking.objects.filter(is_active=True).aggregate(t=Max('booking_id'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
 			current_booking_starting = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2))
-
+	
 			if current_booking_starting == int(str(booking_id)[:4]):
 				new_booking_id = int(booking_id)+1
 			else:
@@ -5002,6 +5002,10 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 					cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,member=leaders.first(),start_at=start_date_time,end_at=end_date_time,start_time=start_time,end_time=end_time))
 
 					CleaningTeamMember.objects.bulk_create(cleaning_team_member_array)
+
+					#cleaning team assigned status in scheduler
+					order_schedule.work_status = 'CLEANING_TEAM_ASSIGNED'
+					order_schedule.save()
 		
 		#update cost details
 		discount = float(request.data.get('discount'))

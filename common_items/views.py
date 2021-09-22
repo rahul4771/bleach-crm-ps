@@ -3466,7 +3466,7 @@ class MakeQuatationPhase1(IsAuthenticated,View):
 		else:
 			evaluator = evaluation.call_attender.name
 
-		evaluationbooks = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='sections'))
+		evaluationbooks = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='sections'))
 		evaluationbook  = evaluationbooks.first()
 		language        = evaluation.customer.sms_preference
 
