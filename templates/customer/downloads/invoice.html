@@ -97,7 +97,7 @@
               {% for orderschedule in nonduplicate_schedules %}            
               {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
               <tr>
-                <td>{{orderschedule.order_scheduler_book.service_type}}-{{section.section_name}}
+                <td>{{orderschedule.order_scheduler_book.service_type}} - {{section.section_name}}
                   <div class="d-flex mb-10" > {% if orderschedule.order_scheduler_book.status == 'CANCELLED' %} <div class="status-dot cancel-chip-bg"></div> <div class="ml-2">Cancelled</div> {% endif %}</div>
 
 
@@ -122,7 +122,7 @@
               <!-- ADDONS BEGINS HERE -->
               <tr>
                 <td>
-                  {{section.section_name}}-{{addon.name}}(x{{addon.quantity|default_if_none:'1'}})
+                  {{section.section_name}} - {{addon.name}} (x{{addon.quantity|default_if_none:'1'}})
                   <div class="d-flex mb-10" > {% if orderschedule.order_scheduler_book.status == 'CANCELLED' %} <div class="status-dot cancel-chip-bg"></div> <div class="ml-2">Cancelled</div> {% endif %}</div>
 
                 </td>
