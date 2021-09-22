@@ -109,7 +109,7 @@
           <div class="d-flex mb-10" > {% if evaluation_book.status == 'CANCELLED' %} <div class="status-dot cancel-chip-bg"></div> <div class="ml-2">Cancelled</div> {% endif %}</div>
 
         </td>
-        <td>
+        <td style="text-align: center;">
           {{book_section.size}} {{book_section.unit|default_if_none:''}}
         </td>
         <td style="text-align: center;">
