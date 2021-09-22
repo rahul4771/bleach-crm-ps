@@ -3052,7 +3052,7 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 			order      = Order.objects.create(evaluation=evaluation,order_no=evaluation.evaluation_id,payment_status='PENDING',invoice_no=new_invoice_no,order_status='APPROVED_BY_CLIENT',total_amount=evaluation.total_cost,remining_amount=evaluation.total_cost)
 
 			#create booking
-			booking_id               = CustomerBooking.objects.filter(is_active=True).aggregate(t=Max('booking_id'))['t']
+			booking_id               = CustomerBooking.objects.filter(is_active=True).aggregate(t=Max('booking_id'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
 			current_booking_starting = int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2))
 
 			if current_booking_starting == int(str(booking_id)[:4]):
