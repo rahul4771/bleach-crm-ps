@@ -9,7 +9,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,Max,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField,CharField,Prefetch
 from order.models import OrderScheduler
 from senior_team_leader.models import CleaningTeam,CleaningTeamMember
-from evaluator.models import EvaluationBookSection
+from evaluator.models import EvaluationBookSection,EvaluationSectionKeynote,EvaluationSectionAddons
 # Create your views here.
 
 class InventoryHome(IsInventoryAdmin,View):
@@ -812,8 +812,9 @@ class InventorySupplier(IsInventoryAdmin,View):
             messages.success(request,"Supplier Deleted Successfully !")
 
         if action == 'add_item':
+            print("pop")
             supplier_id = request.POST.get('item_supplier_id')
-            item = request.POST.get('supplier_item')
+            item = request.POST.get('item')
             item_price = request.POST.get('supplier_item_price')
             item_count = request.POST.get('supplier_item_count')
 
@@ -827,19 +828,26 @@ class InventorySupplier(IsInventoryAdmin,View):
 
             supplier = Supplier.objects.get(id=int(supplier_id))
 
-            SupplierItems.objects.create(supplier=supplier,item=item,item_price=item_price,supplier_item_id=new_supplier_item_id,item_count=item_count)
+            product = InventoryItem.objects.get(id=int(item))
+
+            SupplierItems.objects.create(supplier=supplier,item=product,item_price=item_price,supplier_item_id=new_supplier_item_id,item_count=item_count)
 
             messages.success(request,"Item Added Successfully !")
 
         if action == 'edit_item':
+            print("ppp")
             supplier_item_id = request.POST.get('item_edit_id')
-            item = request.POST.get('supplier_item')
+            item = request.POST.get('item')
             item_price = request.POST.get('supplier_item_price')
             item_count = request.POST.get('supplier_item_count')
 
             supplieritem = SupplierItems.objects.get(id=int(supplier_item_id))
 
-            supplieritem.item = item
+            product = InventoryItem.objects.get(id=int(item))
+
+            print(supplieritem,product,"kop")
+
+            supplieritem.item = product
             supplieritem.item_price = item_price
             supplieritem.item_count = item_count
             supplieritem.save()
@@ -1119,7 +1127,7 @@ class InventoryCheckout(IsInventoryAdmin,View):
 
 class InventoryCreateCheckout(IsInventoryAdmin,View):
     def get(self,request,visit_id):
-        visit = OrderScheduler.objects.prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='team_members')),to_attr='cleaning_team'),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='sections')).get(id=int(visit_id))
+        visit = OrderScheduler.objects.select_related('order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='team_members')),to_attr='cleaning_team'),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes')),to_attr='sections')).get(id=int(visit_id))
         return render(request,'inventory/createCheckout.html',{"visit":visit})
 
 class InventoryPurchaseOrder(IsInventoryAdmin,View):
@@ -1144,8 +1152,9 @@ class InventoryPurchaseOrder(IsInventoryAdmin,View):
         return redirect('inventory:inventory-purchaseorder')
 
 class PurchaseOrderItemsPage(IsInventoryAdmin,View):
-    def get(self,request):
-        return render(request,"inventory/purchaseorderitems.html")
+    def get(self,request,purchase_order_id):
+        purchase_order = PurchaseOrder.objects.prefetch_related(Prefetch('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.all(),to_attr='purchase_order_items')).get(id=int(purchase_order_id))
+        return render(request,"inventory/purchaseorderitems.html",{"purchase_order":purchase_order})
 
 class InventoryPurchaseOrderPage(View):
     def get(self,request,purchase_order_id):
@@ -1184,8 +1193,7 @@ class InventoryCreatePurchaseOrder(View):
         else:
             supplier = None
 
-        items = SupplierItems.objects.filter(supplier=purchase_order.supplier)
-
+        items = SupplierItems.objects.all()
         purchase_order_items = PurchaseOrderItems.objects.filter(purchase_order=purchase_order,purchase_order__supplier=purchase_order.supplier)
 
         return render(request,'inventory/createpo.html',{"items":items,"suppliers":suppliers,"supplier":supplier,"purchase_order":purchase_order,"purchase_order_items":purchase_order_items})

@@ -82,26 +82,23 @@
               {% endfor %}
               </li>
 
-
-
-
             </ul>
           </div>
         </div>
 
-        {% for section in visit.sections %}
+        {% for section in visit.order_scheduler_book.sections %}
 
         <div class="row mt-20">
           <div class="col-md-12 pl-0">
            <div class="inv-check-section">
              <div class="d-flex ">
                <div class="inv-check-section-head">
-                 Section 1
+                 Section {{forloop.counter}} : {{section.section_name}}
                  
                </div>
                <div id="id_sec_item_1" style="margin-left: 20px;">
                <p class="inv-section-in">
-                 Size : <span class="red2-text inv-section-in">Divided area</span>
+                 Size : <span class="red2-text inv-section-in">{{section.size}} </span>
                </p>
                </div>
                <div class="right-pos">
@@ -117,23 +114,23 @@
                   <div class="row c-mb-3">
                       <div class="col-md-6 col-xs-6 mb-10">
                           <div class="order-details-key">Size</div> 
-                          <div class="c-text order-details-value">300</div>
+                          <div class="c-text order-details-value">{{section.size}} </div>
                       </div>
                       <div class="col-md-6 col-xs-6 mb-10">
                           <div class="order-details-key">Wall Type</div> 
-                          <div class="c-text order-details-value">300</div>
+                          <div class="c-text order-details-value">{{section.wall_type|default_if_none:'-'}}</div>
                       </div>
                       <div class="col-md-6 col-xs-6 mb-10">
                           <div class="order-details-key">Celling Type</div> 
-                          <div class="c-text order-details-value">300</div>
+                          <div class="c-text order-details-value">{{section.ceiling_type|default_if_none:'-'}}</div>
                       </div>
                       <div class="col-md-6 col-xs-6 mb-10">
                           <div class="order-details-key">Floor Type</div> 
-                          <div class="c-text order-details-value">300</div>
+                          <div class="c-text order-details-value">{{section.floor_type|default_if_none:'-'}}</div>
                       </div>
                       <div class="col-md-6 col-xs-6 mb-10">
                           <div class="order-details-key">Cost</div> 
-                          <div class="c-text order-details-value">300</div>
+                          <div class="c-text order-details-value">{{section.section_cost|floatformat:'3'}} KD</div>
                       </div>
                   </div>
               </div>
@@ -142,18 +139,9 @@
  
                </div>
                <div class="col-md-6 m-mt-10">
-                 <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
-                 <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
-                 <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
-                 <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
-                 <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
-                 <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
-                 <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
-                 <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
-                 <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
-                 <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
-                 <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
-                 <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">All Switch Board<span class="c-text2">2</span></p></div></div>
+                 {% for keynote in section.keynotes %}
+                 <div class="col-md-3 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in">{{keynote.sub_area}}<span class="c-text2">{{keynote.quantity}}</span></p></div></div>
+                 {% endfor %}
  
                </div>
  

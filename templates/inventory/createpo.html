@@ -605,7 +605,7 @@ function showAdditem(){
         var products = [];
         {% for item in items %}
             var tempId = '{{item.id}}';
-            var tempName = '{{item.item}}';
+            var tempName = '{{item.item.name}}';
             var tempPrice = '{{item.item_price}}';
             products.push({id:tempId,name:tempName,price:tempPrice})
         // $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
@@ -625,7 +625,7 @@ function showAdditem(){
             var products = [];
             {% for item in items %}
                 var tempId = '{{item.id}}';
-                var tempName = '{{item.item}}';
+                var tempName = '{{item.item.name}}';
                 var tempPrice = '{{item.item_price}}';
             products.push({id:tempId,name:tempName,price:tempPrice})
             // $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
@@ -668,7 +668,7 @@ function showAdditem(){
         {% for item in items %}
 
     var tempId = '{{item.id}}';
-    var tempName = '{{item.item}}';
+    var tempName = '{{item.item.name}}';
     console.log(tempId,tempName)
    
     $('#id_search').append('<div class="col-md-12" id="id_product{{item.id}}" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-productprice="{{item.item_price}}" data-name="{{item.item}}"><div class="inv-search-result">{{item.item}}</div></div>');

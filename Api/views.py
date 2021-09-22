@@ -1938,10 +1938,16 @@ class InventorySupplierItemsAPI(APIView):
 		except:
 			supplier_items = None
 		
-		print(supplier_items,"invo")
-		item_serializer = InventorySupplierItemSerializer(supplier_items,many=True).data
-		print(item_serializer,"sed")	
-		response_dict['inventory_item'] = item_serializer
+		
+		items = []
+		for item in supplier_items:
+			item_dict = {}
+			item_dict['item_id'] = item.id
+			item_dict['product_id'] = item.item.id
+			item_dict['product_name'] = item.item.name
+			item_dict['item_price'] = item.item_price
+			items.append(item_dict)
+		response_dict['items']=items
 		return Response(response_dict,HTTP_200_OK)
 
 

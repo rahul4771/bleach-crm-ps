@@ -180,7 +180,7 @@
                                
                                 <div class="right-pos m-mt-10">
                                     {% comment %} <button class="inv-blue-btn" onclick="openNavAdd('add')"> <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Bundle </button> {% endcomment %}
-                                    <button class="inv-blue-btn" onclick="openNavAddBundle('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Unit </button>
+                                    <button class="inv-blue-btn" type="button" onclick="openNavAddBundle('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Unit </button>
                                 </div>
                             </div>
                         </div>
@@ -292,14 +292,22 @@
                    </div>
                     
                 </div> -->
-                <!-- <div class="row mt-20">
+
+
+                {% if inventory_item.item_add_type == 'unit' %}
+                <div class="row mt-20">
 
                     <div class="col-md-12">
+                    <div class="inv-item-head-sub-2">
+                            
+                            Units
+                            
+                        </div>
                         <div class="d-flex d-grid">
                            
                             <div class="right-pos m-mt-10">
                                 {% comment %} <button class="inv-blue-btn" onclick="openNavAdd('add')"> <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Bundle </button> {% endcomment %}
-                                <button class="inv-blue-btn" onclick="openNavAddBundle('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Unit </button>
+                                {% comment %} <button class="inv-blue-btn" onclick="openNavAddBundle('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Unit </button> {% endcomment %}
                             </div>
                         </div>
                     </div>
@@ -387,14 +395,17 @@
 
                         </table>
                     </div>
-                </div> -->
+                </div>
+
+                {% else %}
+
+
                 <div class="row mt-20">
                     <div class="col-md-12">
                         <div class="inv-item-head-sub-2">
+                            
                             Purchase History
-                        </div>
-                        <div class="inv-item-head-sub-2">
-                           Sample Text
+                            
                         </div>
                         <div class="mt-5" style="border-top: 1px solid #c4c4c4;">
                             <table class="inv-table footable">
@@ -430,6 +441,7 @@
                         </div>
                     </div>
                 </div>
+                {% endif %}
             </div>
         </div>
 

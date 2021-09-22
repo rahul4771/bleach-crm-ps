@@ -22,29 +22,29 @@
                    <div class="col-md-4">
                     <div class="row c-mb-3 ">
                         <div class="col-xs-5  inv-section-in">Initiated date</div>
-                        <div class="col-xs-7   ">: <span class="inv-section-in">12/12/2021</span></div>
+                        <div class="col-xs-7   ">: <span class="inv-section-in">{{purchase_order.created|date:'d-m-Y'}}</span></div>
                       </div>
                       <div class="row mt-10 ">
                         <div class="col-xs-5  inv-section-in">Initiated by</div>
-                        <div class="col-xs-7   ">: <span class="inv-section-in">Name</span></div>
+                        <div class="col-xs-7   ">: <span class="inv-section-in">{{purchase_order.initiated_by.name}}</span></div>
                       </div>
-                      <div class="row mt-10 ">
+                      {% comment %} <div class="row mt-10 ">
                         <div class="col-xs-5  inv-section-in">Supplier contact</div>
                         <div class="col-xs-7   ">: <span class="inv-section-in">12/12/2021</span></div>
-                      </div>
+                      </div> {% endcomment %}
                    </div>
                    <div class="col-md-4">
                     <div class="row c-mb-3 ">
-                        <div class="col-xs-5  inv-section-in">Seller</div>
-                        <div class="col-xs-7   ">: <span class="inv-section-in">Name</span></div>
+                        <div class="col-xs-5  inv-section-in">Supplier</div>
+                        <div class="col-xs-7   ">: <span class="inv-section-in">{{purchase_order.supplier.supplier_name}}</span></div>
                       </div>
                       <div class="row mt-10 ">
                         <div class="col-xs-5  inv-section-in">Supplier Address</div>
-                        <div class="col-xs-7   ">: <span class="inv-section-in">Address</span></div>
+                        <div class="col-xs-7   ">: <span class="inv-section-in">{{purchase_order.supplier.address}}</span></div>
                       </div>
                       <div class="row mt-10 ">
                         <div class="col-xs-5  inv-section-in">Supplier contact</div>
-                        <div class="col-xs-7   ">: <span class="inv-section-in">00000000000</span></div>
+                        <div class="col-xs-7   ">: <span class="inv-section-in">{{purchase_order.supplier.contact}}</span></div>
                       </div>
                    </div>
                 </div>
@@ -54,7 +54,8 @@
                           
                             <span> Shipment completed </span>
                             <ul class="drop">
-                                <li  ><a> Option 1 </a></li>
+                                <li  ><a> Shipment completed </a></li>
+                                 <li  ><a> Shipment not completed </a></li>
                             </ul>
                           
                         </div>
@@ -96,6 +97,8 @@
                         </thead>
                      <tbody>
                       
+                        {% for item in purchase_order.purchase_order_items %}
+                        {% if item.product.item.item_add_type == 'quantity' %}
                         <tr>
                             <td>
                                 <label style="padding-left: 0px !important;" class="c-container">
@@ -105,26 +108,29 @@
 
                             </td>
                             <td>
-                                0000000
+                                {{item.product.item.name}}
                             </td>
                             <td class="text-center">
-                              Cat 1
+                              {{item.product.item.item_category.name}}
                             </td>
                             <td class="text-left">
-                              222
+                              {{item.item_count}}
                               </td>
 
                             <td class="text-left">
-                               232
+                               {{item.unit_price|floatformat:3}}
                             </td>
                           
                             <td>
-                                
+                                {% if item.is_received == True %}
                                 <span class="inv-dot c-active ml-5"></span>Added
-                               
+                                {% else %}
+                                <span class="inv-dot c-active ml-5"></span>Waiting
+                                {% endif %}
                             </td>
-                            </tr>
-                           
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
         
                       
                      </tbody>
@@ -161,33 +167,40 @@
                             </tr>
                         </thead>
                      <tbody>
+                        {% for item in purchase_order.purchase_order_items %}
+                        {% if item.product.item.item_add_type == 'unit' %}
                         <tr>
                             <td>
                                 <label style="padding-left: 0px !important;" class="c-container">
-                                    <input type="checkbox">
+                                    <input class="item_select" type="checkbox" >
                                     <span style="top:-4px !important;" class="c-checkmark"></span>
                                 </label>
+
                             </td>
                             <td>
-                                0000000
+                                {{item.product.item.name}}
                             </td>
                             <td class="text-center">
-                              Cat 3
+                              {{item.product.item.item_category.name}}
                             </td>
                             <td class="text-left">
-                              222
+                              {{item.item_count}}
                               </td>
 
                             <td class="text-left">
-                               232
+                               {{item.unit_price|floatformat:3}}
                             </td>
                           
                             <td>
-                                
+                                {% if item.is_received == True %}
                                 <span class="inv-dot c-active ml-5"></span>Added
-                               
+                                {% else %}
+                                <span class="inv-dot c-active ml-5"></span>Waiting
+                                {% endif %}
                             </td>
-                            </tr>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
         
                       
                      </tbody>

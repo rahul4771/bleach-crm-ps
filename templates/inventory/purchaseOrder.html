@@ -98,7 +98,10 @@
                                 {% endif %}
                             </td>
                             <td style="float: right;">
-                                <a href="/inventory/purchaseorderpage/{{order.id}}/"><button class="inv-plan-img-btn"> <img class="view-img"
+                                {% comment %} <a href="/inventory/purchaseorderpage/{{order.id}}/"><button class="inv-plan-img-btn"> <img class="view-img"
+                                    src="{% static 'files/inventory/view.png' %}" alt="">
+                        </button></a> {% endcomment %}
+                        <a href="/inventory/purchaseOrder/items/{{order.id}}/"><button class="inv-plan-img-btn"> <img class="view-img"
                                     src="{% static 'files/inventory/view.png' %}" alt="">
                         </button></a>
                                 <a href="/inventory/editpo/{{order.id}}"><button class="inv-plan-img-btn" > <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button></a>
@@ -171,7 +174,10 @@
                                 {% endif %}
                             </td>
                             <td style="float: right;">
-                                <a href="/inventory/purchaseorderpage/{{order.id}}/"><button class="inv-plan-img-btn"> <img class="view-img"
+                                {% comment %} <a href="/inventory/purchaseorderpage/{{order.id}}/"><button class="inv-plan-img-btn"> <img class="view-img"
+                                    src="{% static 'files/inventory/icons/view.png' %}" alt="">
+                        </button></a> {% endcomment %}
+                        <a href="/inventory/purchaseOrder/items/{{order.id}}/"><button class="inv-plan-img-btn"> <img class="view-img"
                                     src="{% static 'files/inventory/icons/view.png' %}" alt="">
                         </button></a>
                                 <a href="/inventory/editpo/{{order.id}}"><button class="inv-plan-img-btn" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button></a>
