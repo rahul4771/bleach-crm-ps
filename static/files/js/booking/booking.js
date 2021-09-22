@@ -1961,8 +1961,8 @@ console.log(response)
             "cement_residue":this.multiServicesBill[i].bill[j].section.cement_residue,
             "oil_residue":this.multiServicesBill[i].bill[j].section.residue,
             "section_cost":this.multiServicesBill[i].bill[j].section_net_cost,
-            "sectiononly_cost":this.multiServicesBill[i].bill[j].section_cost,
-            "sectiononly_net_cost":this.multiServicesBill[i].bill[j].section_cost,
+            "sectiononly_cost":this.multiServicesBill[i].bill[j].sectiononly_cost,
+            "sectiononly_net_cost":this.multiServicesBill[i].bill[j].sectiononly_cost,
             "section_net_cost":this.multiServicesBill[i].bill[j].section_net_cost,
             "keynotes":{},
             "addons":{},
@@ -3424,7 +3424,7 @@ responsive:{
       })
        .catch((error) => {
         console.log(error);
-      //  window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
+        window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
       });
 
    }
