@@ -157,6 +157,7 @@ const app=new Vue({
     validOtherService:true,
     validOtherServiceDialog:true,
     hallway_check:false,
+    window_check:false,
     scheduleGroup:{},
    
     selectedCategory:'Detailed Cleaning',
@@ -432,6 +433,7 @@ const app=new Vue({
   kitchenSize:{},
   kitchenSizeData:[],
   facadeSize:[],
+  windowSize:[],
   durationData:{},
   billSample:{
     name:'',
@@ -617,7 +619,11 @@ addons:[]
             }
 
           }
+          
          total_cost=this.otherService.size.cost+addon_cost
+         if(this.edit_item){
+           total_cost=total_cost-this.billingData[this.currentItem].section_cost
+         }
          if(total_cost)
          {
          return total_cost
@@ -626,12 +632,37 @@ addons:[]
            return 0
          }
         },
+        closeEditDialog(){
+          this.edit_item=false,
+          this.otherService={
+            material: "",
+            addons:[],
+            color: "",
+            size: {},
+            type: "",
+            age: "",
+            stain: false,
+            stain_reason: "",
+            wall_type: "",
+            floor_type: "",
+            ceiling_type: "",
+            residue: false,
+            hallway_size: "",
+            sides: "",
+            stain_age: "",
+            height:"",
+            keynote_data:[],
+            section_cost:0,
+            sectiononly_cost:0
+          },
+          this.dialog=false
+        },
         findAddedCost(){
           var totalcost=0
          
           for(var i=0;i<this.billingData.length;i++){
            
-            totalcost=totalcost+this.billingData[i].section_net_cost
+            totalcost=totalcost+this.billingData[i].section_cost
           
 
           }
@@ -644,10 +675,25 @@ addons:[]
         },
         findFullAmount(){
           var fullamount=0
+          var section_cost=0
           for(var i=0;i<this.multiServicesBill.length;i++){
             for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
-              fullamount=fullamount+this.multiServicesBill[i].bill[j].section.section_net_cost
+              section_cost=section_cost+this.multiServicesBill[i].bill[j].section_cost
             }
+            
+            
+            if(this.multiServicesBill[i].cleaning_policy=='SUBSCRIPTION' && this.multiServicesBill[i].schedule_details){
+              if(Object.keys(this.multiServicesBill[i].schedule_details).length>0){
+                fullamount=fullamount+(section_cost*(Object.keys(this.multiServicesBill[i].schedule_details).length))
+              }
+              else{
+                fullamount=fullamount+section_cost
+              }
+            }
+            else{
+              fullamount=fullamount+section_cost
+            }
+          
           }
           return fullamount
         },
@@ -1705,10 +1751,10 @@ console.log(response)
               "ceiling_type":'',
               "cement_residue":this.multiServicesBill[i].bill[j].section.cement_residue,
               "oil_residue":this.multiServicesBill[i].bill[j].section.residue,
-              "section_cost":this.multiServicesBill[i].bill[j].section.section_net_cost,
-              "sectiononly_cost":this.multiServicesBill[i].bill[j].section.section_cost,
-              "sectiononly_net_cost":this.multiServicesBill[i].bill[j].section.section_cost,
-              "section_net_cost":this.multiServicesBill[i].bill[j].section.section_net_cost,
+              "section_cost":this.multiServicesBill[i].bill[j].section_cost,
+              "sectiononly_cost":this.multiServicesBill[i].bill[j].sectiononly_cost,
+              "sectiononly_net_cost":this.multiServicesBill[i].bill[j].sectiononly_cost,
+              "section_net_cost":this.multiServicesBill[i].bill[j].section_net_cost,
               "keynotes":{},
               "addons":{},
               "is_newkitchen":false,
@@ -1914,10 +1960,10 @@ console.log(response)
             "ceiling_type":'',
             "cement_residue":this.multiServicesBill[i].bill[j].section.cement_residue,
             "oil_residue":this.multiServicesBill[i].bill[j].section.residue,
-            "section_cost":this.multiServicesBill[i].bill[j].section.section_net_cost,
-            "sectiononly_cost":this.multiServicesBill[i].bill[j].section.section_cost,
-            "sectiononly_net_cost":this.multiServicesBill[i].bill[j].section.section_cost,
-            "section_net_cost":this.multiServicesBill[i].bill[j].section.section_net_cost,
+            "section_cost":this.multiServicesBill[i].bill[j].section_net_cost,
+            "sectiononly_cost":this.multiServicesBill[i].bill[j].section_cost,
+            "sectiononly_net_cost":this.multiServicesBill[i].bill[j].section_cost,
+            "section_net_cost":this.multiServicesBill[i].bill[j].section_net_cost,
             "keynotes":{},
             "addons":{},
             "is_newkitchen":false,
@@ -1930,10 +1976,7 @@ console.log(response)
             "age":''
             
             }
-            if(this.serviceDetails.service_details[i].cleaning_policy=='SUBSCRIPTION'){
-              this.serviceDetails.service_details[i].sections[j].sectiononly_net_cost=this.serviceDetails.service_details[i].sections[j].sectiononly_net_cost*parseInt(visits)
-              this.serviceDetails.service_details[i].sections[j].section_net_cost=this.serviceDetails.service_details[i].sections[j].section_net_cost*parseInt(visits)
-            }
+          
             if(this.multiServicesBill[i].bill[j].section.size.is_highprice_facade){
               this.serviceDetails.service_details[i].sections[j].is_highprice_facade=true
             }
@@ -2320,6 +2363,8 @@ console.log(response)
     this.sizeFilteredData = [];
     this.otherService.size=""
     if (this.otherService.type == "new") {
+      this.parseAddons()
+      $('.more-services').hide()
       if(this.otherService.is_cabinet)
       {
       console.log("type test passed new");
@@ -2338,6 +2383,7 @@ console.log(response)
     }
     }
     if (this.otherService.type == "old") {
+      $('.more-services').show()
       if(this.otherService.is_cabinet)
       {
       console.log("type test passed old");
@@ -2378,7 +2424,10 @@ console.log(response)
     }
     this.serviceSize = {};
          if (this.kitchenData.type == "new") {
+          $('.more-services').hide()
+          this.parseAddons()
           if(this.kitchenData.is_cabinet)
+
           {
       console.log("type test passed new");
       for (var i = 0; i < this.kitchenSizeData.length; i++) {
@@ -2396,6 +2445,7 @@ console.log(response)
     }
     }
     if (this.kitchenData.type == "old") {
+      $('.more-services').show()
       console.log("type test passed old");
       if(this.kitchenData.is_cabinet)
       {
@@ -3620,6 +3670,7 @@ getAreaTypes() {
         this.serviceSize = response.data;
         this.parseSize();
          this.facadeFilter();
+         this.windowFilter();
       })
       .catch((error) => {
         console.log(error);
@@ -3782,7 +3833,28 @@ try {
       
       }
   },
+  windowFilter(){
+    this.windowSize=[]
+    this.otherService.size={}
+    if(this.window_check){
+        for(var i=0;i<this.sizeData.length;i++){
+            if(this.sizeData[i].is_highprice_window){
+                this.windowSize.push(this.sizeData[i])
+            }
+        }
+    }
+    else{
+       
+        for(var i=0;i<this.sizeData.length;i++){
+            if(!this.sizeData[i].is_highprice_window){
+                this.windowSize.push(this.sizeData[i])
+            }
+        }
+    
+    }
+},
   editItem(a, b) {
+    this.edit_item=true
     this.add_new_kitchen=false
     this.addons_parsed=[...a.addons]
   
@@ -3844,14 +3916,42 @@ try {
     $('#otherServiceDialogCarousel').removeClass('owl-hidden')
   },
   async saveChanges() {
+    this.edit_item=false
       await this.calcSize()
-       this.otherService.section_cost=this.otherService.size.cost
+      
        if(this.otherService.stain_reason.length>0){
          this.otherService.stain_reason=this.otherService.stain_reason.join()
        }
-    this.otherServices[this.currentItem] = this.otherService;
-    this.billingData[this.currentItem].section=this.otherService
+       this.otherService.sectiononly_cost=this.otherService.size.cost
+       this.otherService.section_cost=this.otherService.size.cost+this.findAddonCost()
+    this.otherServices[this.currentItem] = { ...this.otherService };
+    this.billingData[this.currentItem].section_cost=this.otherService.section_cost
+    this.billingData[this.currentItem].section_net_cost=this.otherService.section_cost
+    this.billingData[this.currentItem].sectiononly_cost=this.otherService.sectiononly_cost
+    this.billingData[this.currentItem].sectiononly_net_cost=this.otherService.sectiononly_cost
+    this.billingData[this.currentItem].section={ ...this.otherService }
     this.dialog = false;
+    this.otherService={
+      material: "",
+      addons:[],
+      color: "",
+      size: {},
+      type: "",
+      age: "",
+      stain: false,
+      stain_reason: "",
+      wall_type: "",
+      floor_type: "",
+      ceiling_type: "",
+      residue: false,
+      hallway_size: "",
+      sides: "",
+      stain_age: "",
+      height:"",
+      keynote_data:[],
+      section_cost:0,
+      sectiononly_cost:0
+    },
    this.recalcCost();
   },
   calcSize() {
@@ -3968,8 +4068,8 @@ try {
      { 
 
     await this.calcSize();
-    this.otherService.section_cost=this.otherService.size.cost
-    this.otherService.section_net_cost=this.otherService.size.cost+this.findAddonCost()
+    this.otherService.section_cost=this.otherService.size.cost+this.findAddonCost()
+    this.otherService.sectiononly_cost=this.otherService.size.cost
    if(this.otherService.stain_reason.length>0){
      this.otherService.stain_reason=this.otherService.stain_reason.join()
    }
@@ -3984,7 +4084,10 @@ try {
       section_name: this.serviceType + " - " + this.otherService.type,
       section: this.otherService,
       section_cost:this.otherService.section_cost,
-      section_net_cost:this.otherService.section_net_cost
+      section_net_cost:this.otherService.section_cost,
+     
+      sectiononly_cost:this.otherService.sectiononly_cost,
+      sectiononly_net_cost:this.otherService.sectiononly_cost
     });
     }
     else{
@@ -3993,7 +4096,9 @@ try {
       section_name: this.serviceType,
       section: this.otherService,
       section_cost:this.otherService.section_cost,
-      section_net_cost:this.otherService.section_net_cost
+      section_net_cost:this.otherService.section_cost,
+      sectiononly_cost:this.otherService.sectiononly_cost,
+      sectiononly_net_cost:this.otherService.sectiononly_cost
     });
     }
    
@@ -4015,8 +4120,9 @@ try {
       sides: "",
       stain_age: "",
       section_cost:null,
+      sectiononly_cost:null,
 
-      section_net_cost:null,
+    
       addons:[]
     };
     this.parseAddons()
@@ -4029,8 +4135,8 @@ try {
      { 
 
     await this.calcSize();
-    this.otherService.section_cost=this.otherService.size.cost
-    this.otherService.section_net_cost=this.otherService.size.cost+this.findAddonCost()
+    this.otherService.section_cost=this.otherService.size.cost+this.findAddonCost()
+    this.otherService.sectiononly_cost=this.otherService.size.cost
     if(this.otherService.stain_reason.length>0){
       this.otherService.stain_reason=this.otherService.stain_reason.join()
     }
@@ -4044,7 +4150,10 @@ try {
       name: this.serviceType + " - " + this.otherService.type,
       section_name: this.serviceType + " - " + this.otherService.type,
       section: this.otherService,
-      section_net_cost:this.otherService.section_net_cost
+      sectiononly_cost:this.otherService.sectiononly_cost,
+      sectiononly_net_cost:this.otherService.sectiononly_cost,
+      section_cost:this.otherService.section_cost,
+      section_net_cost:this.otherService.section_cost
     });
     }
     else{
@@ -4052,7 +4161,9 @@ try {
       name: this.serviceType,
       section_name: this.serviceType,
       section: this.otherService,
-      section_net_cost:this.otherService.section_net_cost
+      sectiononly_cost:this.otherService.sectiononly_cost,
+      section_cost:this.otherService.section_cost,
+      section_net_cost:this.otherService.section_cost
     });
     }
    
@@ -4075,6 +4186,8 @@ try {
       stain_age: "",
       section_cost:null,
       section_net_cost:null,
+      sectiononly_cost:null,
+      sectiononly_net_cost:null,
       keynote_data:[]
     };
     this.dialog = false;
@@ -4092,7 +4205,7 @@ try {
      for(var i=0;i<this.multiServicesBill.length;i++){
          var servcost=0;
           for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
-            servcost = servcost + this.multiServicesBill[i].bill[j].section.section_net_cost
+            servcost = servcost + this.multiServicesBill[i].bill[j].section_cost
           }
           console.log("serv cost is "+servcost)
           this.multiServicesBill[i]['total_cost']=servcost
@@ -4223,6 +4336,8 @@ try {
     addons:[],
     color: "",
     size: {},
+    section_cost:0,
+    sectiononly_cost:0,
     type: "",
     age: "",
     stain: false,
@@ -4726,6 +4841,7 @@ try {
 
               }
           }
+       
       this.billingData.push({
         name:
           "Building " +
@@ -4741,6 +4857,10 @@ try {
           " Apartment " +
           (apartment + 1),
         section: this.building[building].floors[floor].apartments[apartment],
+        section_cost:this.building[building].floors[floor].apartments[apartment].section_net_cost,
+           section_net_cost:this.building[building].floors[floor].apartments[apartment].section_net_cost,
+           sectiononly_cost:this.building[building].floors[floor].apartments[apartment].size.cost,
+           sectiononly_net_cost:this.building[building].floors[floor].apartments[apartment].size.cost,
       });
     }
   if(apartment==(parseInt(this.building[building].floors[floor].no_of_apartments)-1)){
@@ -4816,7 +4936,10 @@ try {
               }
           }
          // this.building[building].floors[floor - 1].section_cost=
-       
+         this.billSample.sectiononly_cost=this.building[building].floors[floor-1].size.cost
+         this.billSample.sectiononly_net_cost=this.building[building].floors[floor-1].size.cost
+         this.billSample.section_cost=this.building[building].floors[floor - 1].section_net_cost
+         this.billSample.section_net_cost=this.building[building].floors[floor - 1].section_net_cost
          this.billSample.name= "Building " + (building + 1) + " Floor " + floor
          this.billSample.section_name= "Building " + (building + 1) + " Floor " + floor
          this.billSample.serviceNo=this.serviceCount
@@ -4827,6 +4950,10 @@ try {
      section_name:'',     
     name:'',
     section:{},
+    section_cost:"",
+    section_net_cost:"",
+    sectiononly_cost:"",
+    sectiononly_net_cost:"",
     serviceNo:this.serviceCount,
   }
        
@@ -4885,7 +5012,7 @@ try {
                         this.multiServicesBill[i].bill[j].section.section_cost=this.multiServicesBill[i].bill[j].section.size.cost
                         this.multiServicesBill[i].bill[j].section.section_net_cost=this.multiServicesBill[i].bill[j].section.size.cost
           }*/
-      this.totalCost = this.totalCost + this.multiServicesBill[i].bill[j].section.section_net_cost;
+      this.totalCost = this.totalCost + this.multiServicesBill[i].bill[j].section_net_cost;
         }
     }
     console.log("i m inside total cost and it is "+this.totalCost)
