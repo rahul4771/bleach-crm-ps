@@ -105,7 +105,7 @@
                 <td>
                   {{section.size}} {{section.unit|default_if_none:''}}
                 </td>
-                <td style="text-align: right;">
+                <td style="text-align: center;">
                   {% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{section.section_cleanings|floatformat:"-1"}}{% endif %}
                   
                 </td>
