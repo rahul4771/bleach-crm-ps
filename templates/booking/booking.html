@@ -3151,7 +3151,23 @@ Fill all the details of the Buildings  to proceed
                                <% bill.section.size.name %>
                               </div>
                               <div class="ml-auto primary-text" >
-                                KD <% bill.section.sectiononly_cost %><span v-if="service.schedule_details && service.cleaning_policy=='SUBSCRIPTION'">x <% Object.keys(service.schedule_details).length %></span>
+                                KD <% bill.sectiononly_cost %><span v-if="service.schedule_details && service.cleaning_policy=='SUBSCRIPTION'">x <% Object.keys(service.schedule_details).length %></span>
+                              </div>
+                            </div>
+                            <div v-for="(kitchen,kindex) in bill.section.kitchens" v-bind:key="kindex">
+                              <div class="d-flex mt-1">
+                                <div >
+                                Kitchen <% kindex+1 %> (    <% kitchen.size.name %> )<br>
+                             
+                                </div>
+                                <div class="ml-auto primary-text strike-text" v-if="kitchen.type=='new'">
+                                  KD <span><% kitchen.size.cost  %></span>
+                                  <span v-if="service.schedule_details && service.cleaning_policy=='SUBSCRIPTION'">x <% Object.keys(service.schedule_details).length %></span>
+                                </div>
+                                <div class="ml-auto primary-text" v-else>
+                                  KD <span><% kitchen.size.cost  %></span>
+                                  <span v-if="service.schedule_details && service.cleaning_policy=='SUBSCRIPTION'">x <% Object.keys(service.schedule_details).length %></span>
+                                </div>
                               </div>
                             </div>
                             <div v-for="addon in bill.section.addons" v-bind:key="addon">
