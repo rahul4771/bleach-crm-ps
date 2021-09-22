@@ -163,7 +163,7 @@
     
                                         {% for service_productivity in service_productivities %}
                                         {% if service_productivity.service_type == service_type %}
-                                        {% if service_productivity.upholstery_type == 'CURTAIN' or not service_productivity.is_newkitchen and service_productivity.is_cabinet %}
+                                        {% if not service_productivity.is_newkitchen and service_productivity.is_cabinet %}
                                         <div class="productivity-sub-top" id="productivityhead_{{service_type.id}}3" style="display: none;">
                                             <div class="productivity-sub-top-item-left">
                                               Productivity
@@ -210,8 +210,8 @@
                                       {% if service_type.name == 'Upholstery Cleaning' or service_type.name == 'Kitchen Cleaning' or service_type.name == 'Facade Cleaning' or service_type.name == 'Window Cleaning' %}
                                       <button id="special_button_id_{{service_type.id}}" class="productivity-tab-item " onclick="viewSpecial({{service_type.id}})">{% if service_type.name == 'Upholstery Cleaning' %}Chair{% elif service_type.name == 'Window Cleaning' %}New Window{% elif service_type.name == 'Facade Cleaning' %}New Facade{%elif service_type.name == 'Kitchen Cleaning'%}New Kitchen(No Cabinet){% endif %}</button>
                                       {% endif %}
-                                      {% if service_type.name == 'Upholstery Cleaning' or service_type.name == 'Kitchen Cleaning' %}
-                                      <button id="veryspecial_button_id_{{service_type.id}}" class="productivity-tab-item " onclick="viewVerySpecial({{service_type.id}})">{% if service_type.name == 'Upholstery Cleaning' %}Curtain{% elif service_type.name == 'Kitchen Cleaning' %}Old Kitchen(Cabinet){% endif %}</button>
+                                      {% if service_type.name == 'Kitchen Cleaning' %}
+                                      <button id="veryspecial_button_id_{{service_type.id}}" class="productivity-tab-item " onclick="viewVerySpecial({{service_type.id}})">{% if service_type.name == 'Kitchen Cleaning' %}Old Kitchen(Cabinet){% endif %}</button>
                                       {% endif %}
                                       {% if service_type.name == 'Kitchen Cleaning' %}
                                       <button id="veryveryspecial_button_id_{{service_type.id}}" class="productivity-tab-item " onclick="viewVeryVerySpecial({{service_type.id}})">New Kitchen(Cabinet)</button>
@@ -278,7 +278,7 @@
                                   <div id="veryspecial_id_{{service_type.id}}" class="productivity-card-content none-div"> <!-- very Special-->
                                     {% for service_price_range in service_price_ranges %}
                                     {% if service_price_range.service_type == service_type %}
-                                    {% if service_price_range.upholstery_type == 'CURTAIN' or not service_price_range.is_newkitchen and service_price_range.is_cabinet %}
+                                    {% if not service_price_range.is_newkitchen and service_price_range.is_cabinet %}
                                       <div class="row productivity-card-items">
                                           <div class="col-md-3 productivity-card-items-1">
                                               {{service_price_range.name}}
@@ -339,12 +339,12 @@
                                   
     
                                     <div class="col-md-6" style="">
-                                        <h2 class="productivity-name mt-10"> Add-on</h2>
-                                        <div class="productivity-card-content">
                                             {% for service_addon in service_addons %}
                                             
                                             {% if service_type == service_addon.service_type %}
                                             {% ifchanged service_addon.service_type %}
+                                            <h2 class="productivity-name mt-10"> Add-on</h2>
+                                            <div class="productivity-card-content">
                                             <div class="row productivity-card-items2">
                                                 <div style="font-weight: 600;" class="col-md-2 productivity-card-items-1">
                                                 Item
@@ -396,11 +396,19 @@
                                             </div>
                                             {% endif %}
                                             {% endfor %}
+
+                                        {% if service_type == service_addon.service_type %}
+                                        {% ifchanged service_addon.service_type %}
                                         </div>
-                                    
+                                        {% endifchanged %}
+                                        {% endif %}
+
+                                        {% comment %}
                                         <div  class="addNewPrice">
                                             <button  class="border-button" onclick="add_add_on(this);" data-service_type_name="{{service_type.name}}" data-service_type_id="{{service_type.id}}"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add More</button>
                                         </div>
+                                        {% endcomment %}
+                                
                                     </div>
     
     
@@ -524,7 +532,6 @@
                     <select name="upholstery_type" id="edit_upholstery_type_id" class="textBox model-text-border">
                         <option value="SOFA">SOFA</option>
                         <option value="CHAIR">CHAIR</option>
-                        <option value="CURTAIN">CURTAIN</option>
                     </select>
                 </div>
 
@@ -605,7 +612,6 @@
                         <select name="upholstery_type" id="add_upholstery_type_id" class="textBox model-text-border">
                             <option value="SOFA" selected>SOFA</option>
                             <option value="CHAIR">CHAIR</option>
-                            <option value="CURTAIN">CURTAIN</option>
                         </select>
                     </div>
     

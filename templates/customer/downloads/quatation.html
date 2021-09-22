@@ -35,25 +35,25 @@
    </section>
 
    <section id="customer_container">
-    {% for orderschedule in order.orderschedules %}
-    {% if forloop.first %}
+    {% for evaluation_detail in order.evaluation.evaluationdetails %}
+    {% if forloop.first %}              
      <div id="left_id">
        <div>
          <span id="contact-text">Customer</span>
-         <span id="customer-name">{{orderschedule.customer_address.customer.name}}</span>
+         <span id="customer-name">{{evaluation_detail.evaluation.customer.name}}</span>
        </div>
       
        <div>
          <span id="contact-text">Contact No</span>
-         <span id="contact-number">{{orderschedule.customer_address.customer.mobile_number}}</span>
+         <span id="contact-number">{{evaluation_detail.evaluation.customer.mobile_number}}</span>
        </div>
        <div>
          <span id="contact-text">Email</span>
-         <span id="contact-number">{{orderschedule.customer_address.customer.email}}</span>
+         <span id="contact-number">{{evaluation_detail.evaluation.customer.email}}</span>
        </div>
        <div>
          <span id="address-text">Address </span>
-         <span id="customer-address">{{orderschedule.customer_address.apartment}}, {% if orderschedule.customer_address.floor %}{{orderschedule.customer_address.floor}} {% else %}{% endif %} {{orderschedule.customer_address.building}},{{orderschedule.customer_address.block}}, {{orderschedule.customer_address.street}},{% if orderschedule.customer_address.avenue %}{{orderschedule.customer_address.avenue}} {% else %}{% endif %}<br>{{orderschedule.customer_address.area.name}}, {{orderschedule.customer_address.governorate.name}}</span>
+         <span id="customer-address">{{evaluation_detail.address.apartment}}, {% if evaluation_detail.address.floor %}{{evaluation_detail.address.floor}} {% else %}{% endif %} {{evaluation_detail.address.building}},{{evaluation_detail.address.block}}, {{evaluation_detail.address.street}},{% if evaluation_detail.address.avenue %}{{evaluation_detail.address.avenue}} {% else %}{% endif %}<br>{{evaluation_detail.address.area.name}}, {{evaluation_detail.address.governorate.name}}</span>
        </div><br>
      </div>
    {% endif %}
@@ -93,49 +93,51 @@
     <table id="soa_table2">
       <tr>
         <th style="width: 40%;">Service</th>
-        <th >Size</th>
+        <th>Size</th>
       
         <th>Visit</th>
-        <th >Unit Price</th>
-        <th >Net Price</th>
+        <th>Unit Price</th>
+        <th>Net Price</th>
       </tr>
 
-      {% for orderschedule in nonduplicate_schedules %}            
-      {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
+      {% for evaluation_detail in order.evaluation.evaluationdetails %}            
+      {% for evaluation_book in evaluation_detail.evaluationbooks %}
+      {% for book_section in evaluation_book.booksections %}
       <tr>
         <td>
-          {{orderschedule.order_scheduler_book.service_type}}-{{section.section_name}}
-          <div class="d-flex mb-10" > {% if orderschedule.order_scheduler_book.status == 'CANCELLED' %} <div class="status-dot cancel-chip-bg"></div> <div class="ml-2">Cancelled</div> {% endif %}</div>
+          {{evaluation_book.service_type}} - {{book_section.section_name}}
+          <div class="d-flex mb-10" > {% if evaluation_book.status == 'CANCELLED' %} <div class="status-dot cancel-chip-bg"></div> <div class="ml-2">Cancelled</div> {% endif %}</div>
 
         </td>
-        <td>
-          {{section.size}} {{section.unit|default_if_none:''}}
+        <td style="text-align: center;">
+          {{book_section.size}} {{book_section.unit|default_if_none:''}}
+        </td>
+        <td style="text-align: center;">
+          {% if evaluation_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{book_section.section_cleanings|floatformat:"-1"}}{% endif %}
         </td>
         <td style="text-align: right;">
-          {% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{section.section_cleanings|floatformat:"-1"}}{% endif %}
+          {{book_section.sectiononly_cost|floatformat:'3'}}
         </td>
         <td style="text-align: right;">
-          {{section.sectiononly_cost|floatformat:'3'}}
-        </td>
-        <td style="text-align: right;">
-          {{section.sectiononly_net_cost|floatformat:'3'}}
+          {{book_section.sectiononly_net_cost|floatformat:'3'}}
         </td>
       </tr>
 
-      {% if section.sectionaddons %}
-      {% for addon in section.sectionaddons %}
+
+      {% if book_section.sectionaddons %}
+      {% for addon in book_section.sectionaddons %}
       <!-- ADDONS BEGINS HERE -->
       <tr>
         <td>
-          {{section.section_name}}-{{addon.name}}(x{{addon.quantity|default_if_none:'1'}})
-          <div class="d-flex mb-10" > {% if orderschedule.order_scheduler_book.status == 'CANCELLED' %} <div class="status-dot cancel-chip-bg"></div> <div class="ml-2">Cancelled</div> {% endif %}</div>
+          {{book_section.section_name}} - {{addon.name}} (x{{addon.quantity|default_if_none:'1'}})
+          <div class="d-flex mb-10" > {% if evaluation_book.status == 'CANCELLED' %} <div class="status-dot cancel-chip-bg"></div> <div class="ml-2">Cancelled</div> {% endif %}</div>
 
         </td>
         <td>
           {{addon.size|default_if_none:'-'}}
         </td>
         <td style="text-align: right;">
-          {% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{section.section_cleanings|floatformat:"-1"}}{% endif %}
+          {% if evaluation_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{book_section.section_cleanings|floatformat:"-1"}}{% endif %}
         </td>
         <td style="text-align: right;">
           {{addon.addon_cost|floatformat:'3'}}
@@ -148,6 +150,8 @@
       {% endfor %}
       {% endif %}
 
+
+      {% endfor %}
       {% endfor %}
       {% endfor %}
    
