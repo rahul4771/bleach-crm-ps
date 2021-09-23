@@ -3411,6 +3411,7 @@ $(document).ready(function () {
     {% for evaluationbook in evaluationdetail.evaluationbooks %}
     {% if evaluationbook.service_type.name == 'Kitchen Cleaning' %}
     $('.reorder-hide').css("display", "none");
+    {% endif %}
     {% endfor %}
     {% endfor %}
 })
