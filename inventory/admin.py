@@ -1,5 +1,5 @@
 from django.contrib import admin
-from inventory.models import ItemHistory,PurchaseOrder,PurchaseOrderItems,Category,Line,Segment,Attribute,AttributeValue,ItemAttributes,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems,BundleItemUnits,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeItems
+from inventory.models import ItemHistory,PurchaseOrder,PurchaseOrderItems,Category,Line,Segment,Attribute,AttributeValue,ItemAttributes,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems,BundleItemUnits,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems
 # Register your models here.
 
 admin.site.register(Category)
@@ -21,3 +21,4 @@ admin.site.register(ServiceRecipe)
 admin.site.register(ServiceRecipeItems)
 admin.site.register(ItemAttributes)
 admin.site.register(ItemHistory)
+admin.site.register(ServiceRecipeIngredients)

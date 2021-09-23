@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.views import View
 from bleach_crm_ps.permissions import IsInventoryAdmin,IsInventoryAdminUser
-from inventory.models import ItemHistory,Category,Segment,Line,Attribute,AttributeValue,ItemAttributes,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeItems,PurchaseOrder,PurchaseOrderItems
+from inventory.models import ItemHistory,Category,Segment,Line,Attribute,AttributeValue,ItemAttributes,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,PurchaseOrder,PurchaseOrderItems
 from django.contrib import messages
 import re
 from datetime import date,datetime,timedelta
@@ -1426,24 +1426,24 @@ class InventoryServices(IsInventoryAdmin,View):
     def post(self,request):
         action =request.POST.get('action')
 
-        if action == 'add_item':
+        if action == 'add_ingredient':
             service_type = request.POST.get('service_type')
-            item = request.POST.get('item')
-            print(item,"itm")
+            ingredient = request.POST.get('ingredient')
+            print(ingredient,"itm")
             item_count = request.POST.get('item_count')
-            unit_price = request.POST.get('unit_price')
+            # unit_price = request.POST.get('unit_price')
             item_status = request.POST.get('item_status')
             recipe_type = request.POST.get('recipe_type')
 
-            inventoryitem = InventoryItem.objects.get(id=int(item))
+            # inventoryitem = InventoryItem.objects.get(id=int(item))
 
             ServiceRecipe.objects.get_or_create(service=service_type)
 
             get_servicetype = ServiceRecipe.objects.get(service=service_type)          
 
-            ServiceRecipeItems.objects.create(service_or_person=recipe_type,service_type=get_servicetype,item=inventoryitem,item_price=unit_price,item_count=item_count,status=item_status)
+            ServiceRecipeIngredients.objects.create(service_or_person=recipe_type,service_type=get_servicetype,ingredient=ingredient,quantity=item_count,status=item_status)
 
-            messages.success(request,"Item Added successfully!")
+            messages.success(request,"Ingredient Added successfully!")
 
         if action == 'update_size':
             service_name = request.POST.get('service_name')
