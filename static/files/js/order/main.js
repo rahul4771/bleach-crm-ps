@@ -129,6 +129,10 @@ if(app.service_type=='Facade Cleaning'){
   app.editSectionData.is_highprice_facade=app.sections[index-1].is_highprice_facade
   
 }
+if(app.service_type=='Window Cleaning'){
+  app.editSectionData.is_highprice_window=app.sections[index-1].is_highprice_window
+  
+}
  app.editSectionData.keynotes=app.sections[index-1].keynotesections
   console.log("section is "+JSON.stringify(app.sections[index-1]))
   app.sectionData=app.sections[index-1]
@@ -299,6 +303,11 @@ function cancelCleaningDate(service){
 }
 function addSection(service){
   app.service_type=$(service).data('service')
+  console.log("called add section"+app.service_type)
+
+  if(app.service_type=='Window Cleaning'){
+    app.getTheSize('Window Cleaning')
+  }
   app.editSectionData=
     {
       "section_name":"",
@@ -345,6 +354,7 @@ const app = new Vue({
     this.selected_date=moment().format('DD-MM-YYYY')
     $('#date_hidden').val(moment().format('MM/DD/YYYY'))
     this.getTheSize('Kitchen Cleaning')
+    
     console.log("service is"+$('.service-name'))
     var service=$('.service-name')
     var book_ids=$('.service_id')
@@ -377,6 +387,7 @@ const app = new Vue({
   components: { Multiselect: window.VueMultiselect.default },
 
   data: {
+    window_size:[],
     addon_size_data:{},
     newaddon_quantity:'',
     selected_addon:'',
@@ -802,6 +813,10 @@ setTimeout(function() {
             this.kitchen_size=service_productivity
             this.formatKitchenSize()
           }
+          if(service=='Window Cleaning'){
+            this.window_size=service_productivity
+            this.formatWindowSize()
+          }
           
           
       })
@@ -921,6 +936,7 @@ setTimeout(function() {
         
       
     },
+
    /* formatFacadeSize(){
       
       this.highprice_facade=[]
@@ -938,23 +954,23 @@ setTimeout(function() {
         
       
     },*/
-   /* formatWindowSize(){
-      
-      this.new_kitchen_size=[]
-      this.old_kitchen_size=[]
-      
-        for(var i=0;i<this.kitchen_size.length;i++){
-         
-          if(this.kitchen_size[i].is_newkitchen){
-            this.new_kitchen_size.push(this.kitchen_size[i])
-          }
-          else{
-            this.old_kitchen_size.push(this.kitchen_size[i])
-          }
+    formatWindowSize(){
+      this.highprice_window=[]
+      this.lowprice_window=[]
+      for(var i=0;i<this.window_size.length;i++){
+        
+        if(this.window_size[i].is_highprice_window){
+          this.window_size[i].combined_size=this.window_size[i].name+' ( '+this.window_size[i].min_size+' sq.m - '+this.window_size[i].max_size+' sq.m )'
+          this.highprice_window.push(this.window_size[i])
         }
+        else{
+          this.window_size[i].combined_size=this.window_size[i].name+' ( '+this.window_size[i].min_size+' sq.m - '+this.window_size[i].max_size+' sq.m )'
+          this.lowprice_window.push(this.window_size[i])
+        }
+      }
         
       
-    },*/
+    },
     addToKeynote(){
       this.keynote_update=false
       this.other_keynotes.push(this.newkeynote)
@@ -1583,6 +1599,11 @@ setTimeout(function() {
       this.editSectionData.size={}
       this.calcSectionCost()
     },
+    resetWindowSize(){
+      this.editSectionData.size={}
+      this.calcSectionCost()
+      
+    },
     resetFacadeSize(){
       this.editSectionData.size={}
     },
@@ -1607,6 +1628,11 @@ setTimeout(function() {
           "is_cabinet":this.editSectionData.is_cabinet,
          "is_highprice_facade":false,
          "is_highprice_window":false,
+      }
+      if(this.service_type=='Window Cleaning'){
+      
+          sectionData.is_highprice_window=this.editSectionData.is_highprice_window
+        
       }
       if(this.service_type=='Upholstery Cleaning'){
         if(!this.editSectionData.size.name){
@@ -1686,6 +1712,11 @@ setTimeout(function() {
          "is_highprice_facade":false,
          "is_highprice_window":false,
       }
+      if(this.service_type=='Window Cleaning'){
+      
+        sectionData.is_highprice_window=this.editSectionData.is_highprice_window
+      
+    }
       if(this.editSectionData.wall_type.length>0){
         sectionData.wall_type=this.editSectionData.wall_type.join()   
       }
@@ -1972,7 +2003,8 @@ setTimeout(function() {
         if(this.service_type=='Window Cleaning'){
         
           for(var j=0;j<this.sections.length;j++){
-           
+            this.highprice_window=[]
+            this.lowprice_window=[]
             
            
             if(this.sections[j].is_highprice_window){
@@ -1982,7 +2014,7 @@ setTimeout(function() {
                   this.sections[j].size=this.service_size[i]
                  
                 }
-                if(this.service_size.is_highprice_window){
+                if(this.service_size[i].is_highprice_window){
                   this.service_size[i].combined_size=this.service_size[i].name+' ( '+this.service_size[i].min_size+' sq.m - '+this.service_size[i].max_size+' sq.m )'
                   this.highprice_window.push(this.service_size[i])
                 }
@@ -2062,6 +2094,7 @@ setTimeout(function() {
           for(var i in size){
             this.service_size.push(size[i])
           }
+         
          
          
       }
