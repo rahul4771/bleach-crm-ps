@@ -107,7 +107,15 @@ function editSection(service){
  // var sectiondata=$(section).data()
  app.getSection(eval_book_id)
  app.editSectionData.section_id=sid
+ //app.editSectionData.addons=app.sections[index-1].addonsections
  app.kitchen_addons=app.sections[index-1].addonsections
+ if(app.service_type=='General Cleaning' || app.service_type=='Deep Cleaning'){
+   for(var i=0;i<app.kitchen_addons.length;i++){
+    app.kitchen_addons[i].other_details=JSON.parse( app.kitchen_addons[i].other_details)
+    app.kitchen_addons[i].other_details.size=app.findKitchenSize(app.kitchen_addons[i].other_details.size,app.kitchen_addons[i].other_details.is_cabinet,app.kitchen_addons[i].other_details.type)
+   }
+ }
+ 
 if(app.service_type=='Kitchen Cleaning'){
   app.editSectionData.new_kitchen=app.sections[index-1].new_kitchen
   app.editSectionData.oil_residue=app.sections[index-1].oil_residue
@@ -119,6 +127,10 @@ if(app.service_type=='Kitchen Cleaning'){
 }
 if(app.service_type=='Facade Cleaning'){
   app.editSectionData.is_highprice_facade=app.sections[index-1].is_highprice_facade
+  
+}
+if(app.service_type=='Window Cleaning'){
+  app.editSectionData.is_highprice_window=app.sections[index-1].is_highprice_window
   
 }
  app.editSectionData.keynotes=app.sections[index-1].keynotesections
@@ -291,6 +303,11 @@ function cancelCleaningDate(service){
 }
 function addSection(service){
   app.service_type=$(service).data('service')
+  console.log("called add section"+app.service_type)
+
+  if(app.service_type=='Window Cleaning'){
+    app.getTheSize('Window Cleaning')
+  }
   app.editSectionData=
     {
       "section_name":"",
@@ -337,6 +354,7 @@ const app = new Vue({
     this.selected_date=moment().format('DD-MM-YYYY')
     $('#date_hidden').val(moment().format('MM/DD/YYYY'))
     this.getTheSize('Kitchen Cleaning')
+    
     console.log("service is"+$('.service-name'))
     var service=$('.service-name')
     var book_ids=$('.service_id')
@@ -369,6 +387,7 @@ const app = new Vue({
   components: { Multiselect: window.VueMultiselect.default },
 
   data: {
+    window_size:[],
     addon_size_data:{},
     newaddon_quantity:'',
     selected_addon:'',
@@ -526,7 +545,8 @@ const app = new Vue({
               
               size:'',
               type:'old',
-              residue:false
+              residue:false,
+              is_cabinet:false,
             },
             keynote_update:true,
             addon_update:true,
@@ -555,6 +575,45 @@ const app = new Vue({
             //url:'http://127.0.0.1:8000'
   },
   methods:{
+    findKitchenSize(name,cabinet,type){
+      console.log("name is"+name+"cabinet is"+cabinet+"type is"+type)
+      if(type=='new' && cabinet){
+        
+        for(var i=0;i<this.new_kitchen_cabinet_size.length;i++){
+          if(this.new_kitchen_cabinet_size[i].name==name){
+           
+            return this.new_kitchen_cabinet_size[i]
+          }
+        }
+      }
+      else if(type=='new' && !cabinet){
+       
+        for(var i=0;i<this.new_kitchen_nocabinet_size.length;i++){
+          if(this.new_kitchen_nocabinet_size[i].name==name){
+          
+            return this.new_kitchen_nocabinet_size[i]
+          }
+        }
+      }
+      else if(type=='old' && cabinet){
+       
+        for(var i=0;i<this.old_kitchen_cabinet_size.length;i++){
+          if(this.old_kitchen_cabinet_size[i].name==name){
+            
+            return this.old_kitchen_cabinet_size[i]
+          }
+        }
+      }
+      else if(type=='old' && !cabinet){
+       
+        for(var i=0;i<this.old_kitchen_nocabinet_size.length;i++){
+          if(this.old_kitchen_nocabinet_size[i].name==name){
+            
+            return this.old_kitchen_nocabinet_size[i]
+          }
+        }
+      }
+    },
     changeCurrentAddons(){
       this.selected_addon.details.price=this.selected_addon.selected_size.price
       this.selected_addon.details.category=this.selected_addon.selected_size.size
@@ -754,6 +813,10 @@ setTimeout(function() {
             this.kitchen_size=service_productivity
             this.formatKitchenSize()
           }
+          if(service=='Window Cleaning'){
+            this.window_size=service_productivity
+            this.formatWindowSize()
+          }
           
           
       })
@@ -804,6 +867,41 @@ setTimeout(function() {
       
       
     },
+    addKitchenToAddon(){
+      this.kitchen_addons.push({
+        addon_cost:this.newkitchenkeynote.size.cost,
+        addon_net_cost:this.newkitchenkeynote.size.cost,
+        name:'kitchen',
+        quantity:"1",
+        size:null,
+        other_details:{
+          is_cabinet:false,
+          max_size:null,
+          residue:this.newkitchenkeynote.residue,
+          size:this.newkitchenkeynote.size,
+          type:this.newkitchenkeynote.type
+
+        }
+      })
+      this.newkitchenkeynote={
+            residue:false,
+            type:"old",
+            is_cabinet:false,
+            other_details:{},
+            size:{}
+        }
+      
+      this.recalcAddonCost()
+    },
+    deleteKitchenFromAddon(index){
+      this.kitchen_addons.splice(index,1)
+      this.recalcAddonCost()
+    },
+    changeKitchenSize(index){
+      this.kitchen_addons[index].addon_cost= this.kitchen_addons[index].other_details.size.cost
+      this.kitchen_addons[index].addon_net_cost= this.kitchen_addons[index].other_details.size.cost
+      this.recalcAddonCost()
+    },
     removeKitchen(index){
       this.kitchen_keynotes.splice(index,1)
       this.recalcKeynoteCost()
@@ -838,6 +936,7 @@ setTimeout(function() {
         
       
     },
+
    /* formatFacadeSize(){
       
       this.highprice_facade=[]
@@ -855,23 +954,23 @@ setTimeout(function() {
         
       
     },*/
-   /* formatWindowSize(){
-      
-      this.new_kitchen_size=[]
-      this.old_kitchen_size=[]
-      
-        for(var i=0;i<this.kitchen_size.length;i++){
-         
-          if(this.kitchen_size[i].is_newkitchen){
-            this.new_kitchen_size.push(this.kitchen_size[i])
-          }
-          else{
-            this.old_kitchen_size.push(this.kitchen_size[i])
-          }
+    formatWindowSize(){
+      this.highprice_window=[]
+      this.lowprice_window=[]
+      for(var i=0;i<this.window_size.length;i++){
+        
+        if(this.window_size[i].is_highprice_window){
+          this.window_size[i].combined_size=this.window_size[i].name+' ( '+this.window_size[i].min_size+' sq.m - '+this.window_size[i].max_size+' sq.m )'
+          this.highprice_window.push(this.window_size[i])
         }
+        else{
+          this.window_size[i].combined_size=this.window_size[i].name+' ( '+this.window_size[i].min_size+' sq.m - '+this.window_size[i].max_size+' sq.m )'
+          this.lowprice_window.push(this.window_size[i])
+        }
+      }
         
       
-    },*/
+    },
     addToKeynote(){
       this.keynote_update=false
       this.other_keynotes.push(this.newkeynote)
@@ -1362,6 +1461,12 @@ setTimeout(function() {
         location.reload();
       })
     },
+    resetKitchenAddonSize(index){
+      this.kitchen_addons[index].size={}
+      this.kitchen_addons[index].addon_cost=0
+      this.kitchen_addons[index].addon_net_cost=0
+      this.recalcAddonCost()
+    },
 
     
     changeCategory(){
@@ -1494,6 +1599,11 @@ setTimeout(function() {
       this.editSectionData.size={}
       this.calcSectionCost()
     },
+    resetWindowSize(){
+      this.editSectionData.size={}
+      this.calcSectionCost()
+      
+    },
     resetFacadeSize(){
       this.editSectionData.size={}
     },
@@ -1518,6 +1628,11 @@ setTimeout(function() {
           "is_cabinet":this.editSectionData.is_cabinet,
          "is_highprice_facade":false,
          "is_highprice_window":false,
+      }
+      if(this.service_type=='Window Cleaning'){
+      
+          sectionData.is_highprice_window=this.editSectionData.is_highprice_window
+        
       }
       if(this.service_type=='Upholstery Cleaning'){
         if(!this.editSectionData.size.name){
@@ -1555,6 +1670,13 @@ setTimeout(function() {
         sectionData.colour=this.editSectionData.colour.join()   
       }
     }
+    if(this.service_type=='General Cleaning'||this.service_type=='Deep Cleaning'){
+      for(var i=0;i<this.kitchen_addons.length;i++){
+        this.kitchen_addons[i].quantity=parseInt(this.kitchen_addons[i].quantity)
+        this.kitchen_addons[i].other_details.size=this.kitchen_addons[i].other_details.size.name
+        this.kitchen_addons[i].other_details=JSON.stringify(this.kitchen_addons[i].other_details)
+      }
+    }
       axios.post(this.url+'/customer/editorder/'+this.orderId,{
         "action_type":'edit_section',
         "evaluation_book__id":this.eval_book_id,
@@ -1590,6 +1712,11 @@ setTimeout(function() {
          "is_highprice_facade":false,
          "is_highprice_window":false,
       }
+      if(this.service_type=='Window Cleaning'){
+      
+        sectionData.is_highprice_window=this.editSectionData.is_highprice_window
+      
+    }
       if(this.editSectionData.wall_type.length>0){
         sectionData.wall_type=this.editSectionData.wall_type.join()   
       }
@@ -1598,6 +1725,13 @@ setTimeout(function() {
       }
       if(this.editSectionData.ceiling_type.length>0){
         sectionData.ceiling_type=this.editSectionData.ceiling_type.join()   
+      }
+      if(this.service_type=='General Cleaning'||this.service_type=='Deep Cleaning'){
+        for(var i=0;i<this.kitchen_addons.length;i++){
+          this.kitchen_addons[i].quantity=parseInt(this.kitchen_addons[i].quantity)
+          this.kitchen_addons[i].other_details.size=this.kitchen_addons[i].other_details.size.name
+          this.kitchen_addons[i].other_details=JSON.stringify(this.kitchen_addons[i].other_details)
+        }
       }
       axios.post(this.url+'/customer/editorder/'+this.orderId,{
         "action_type":'add_section',
@@ -1869,7 +2003,8 @@ setTimeout(function() {
         if(this.service_type=='Window Cleaning'){
         
           for(var j=0;j<this.sections.length;j++){
-           
+            this.highprice_window=[]
+            this.lowprice_window=[]
             
            
             if(this.sections[j].is_highprice_window){
@@ -1879,7 +2014,7 @@ setTimeout(function() {
                   this.sections[j].size=this.service_size[i]
                  
                 }
-                if(this.service_size.is_highprice_window){
+                if(this.service_size[i].is_highprice_window){
                   this.service_size[i].combined_size=this.service_size[i].name+' ( '+this.service_size[i].min_size+' sq.m - '+this.service_size[i].max_size+' sq.m )'
                   this.highprice_window.push(this.service_size[i])
                 }
@@ -1959,6 +2094,7 @@ setTimeout(function() {
           for(var i in size){
             this.service_size.push(size[i])
           }
+         
          
          
       }

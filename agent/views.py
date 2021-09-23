@@ -116,91 +116,91 @@ def GetArea(request):
 #Ajax for get feedback Order Information
 def GetFeedbackOrderInfo(request):
 
-		dropdown_order_info = {}
+	dropdown_order_info = {}
 
-		order_id            = request.GET.get('order_id')
+	order_id            = request.GET.get('order_id')
 
-		order = Order.objects.select_related('evaluation__customer','evaluation__call_attender').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('customer_address__area','customer_address','order_scheduler_book__service_type'),to_attr='order_secheduler_feedback')).annotate(total_cleaners=Sum('order_scheduler_order__order_scheduler_book__number_of_cleaners')).get(id=order_id,is_active=True)
-		dropdown_order_info['order_id']      = order.id
+	order = Order.objects.select_related('evaluation__customer','evaluation__call_attender').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('customer_address__area','customer_address','order_scheduler_book__service_type'),to_attr='order_secheduler_feedback')).annotate(total_cleaners=Sum('order_scheduler_order__order_scheduler_book__number_of_cleaners')).get(id=order_id,is_active=True)
+	dropdown_order_info['order_id']      = order.id
 
-		##order information
-		dropdown_order_info['blc_no']           = order.order_no
-		dropdown_order_info['name']          	= order.evaluation.customer.name
-		dropdown_order_info['mobile_number'] 	= order.evaluation.customer.mobile_number
-		dropdown_order_info['total_cost']    	= order.evaluation.total_cost
-		dropdown_order_info['date']          	= order.evaluation.created.strftime('%b %d %Y,%I:%M %p')
-		dropdown_order_info['order_status']  	= order.order_status
-		dropdown_order_info['payment_status']	= order.payment_status
-		dropdown_order_info['payment_policy']	= order.evaluation.payment_method
-		dropdown_order_info['agent_image_url']	= order.evaluation.call_attender.profile_image.url or None
-		dropdown_order_info['agent_name']       = order.evaluation.call_attender.name or None
-		dropdown_order_info['total_cleaners'] 	= order.total_cleaners
+	##order information
+	dropdown_order_info['blc_no']           = order.order_no
+	dropdown_order_info['name']          	= order.evaluation.customer.name
+	dropdown_order_info['mobile_number'] 	= order.evaluation.customer.mobile_number
+	dropdown_order_info['total_cost']    	= order.evaluation.total_cost
+	dropdown_order_info['date']          	= order.evaluation.created.strftime('%b %d %Y,%I:%M %p')
+	dropdown_order_info['order_status']  	= order.order_status
+	dropdown_order_info['payment_status']	= order.payment_status
+	dropdown_order_info['payment_policy']	= order.evaluation.payment_method
+	dropdown_order_info['agent_image_url']	= order.evaluation.call_attender.profile_image.url or None
+	dropdown_order_info['agent_name']       = order.evaluation.call_attender.name or None
+	dropdown_order_info['total_cleaners'] 	= order.total_cleaners
 
-		dropdown_order_info['remining_amount']     = order.remining_amount
-		dropdown_order_info['before_amount']       = order.evaluation.before_cleaning_amount 
-		dropdown_order_info['after_amount']        = order.evaluation.after_cleaning_amount
-		dropdown_order_info['before_amount_paid']  = order.preamount_paid 
-		dropdown_order_info['after_amount_paid']   = order.postamount_paid
+	dropdown_order_info['remining_amount']     = order.remining_amount
+	dropdown_order_info['before_amount']       = order.evaluation.before_cleaning_amount 
+	dropdown_order_info['after_amount']        = order.evaluation.after_cleaning_amount
+	dropdown_order_info['before_amount_paid']  = order.preamount_paid 
+	dropdown_order_info['after_amount_paid']   = order.postamount_paid
 
-		#for subscription
-		if order.evaluation.payment_method == 'SUBSCRIPTION':
-			dropdown_order_info['subscription_amount'] = order.remining_amount
-
-
-		#for multiple order addresses
-		dropdown_order_info['order_address']   = []
-		for scheduler in order.order_secheduler_feedback:
-			customer_order_address = []
-
-			customer_order_address.append(scheduler.customer_address.area.name)
-			customer_order_address.append(scheduler.order_scheduler_book.service_type.name)
-			customer_order_address.append(scheduler.order_scheduler_book.cleaning_policy)
-			customer_order_address.append(scheduler.work_status)
-			dropdown_order_info['order_address'].append(customer_order_address)
+	#for subscription
+	if order.evaluation.payment_method == 'SUBSCRIPTION':
+		dropdown_order_info['subscription_amount'] = order.remining_amount
 
 
-		##customer information
-		customer_information = {}
-		try:
-			client_details = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(is_active=True,id=order.evaluation.customer_id)
-		except:
-			client_details = None
+	#for multiple order addresses
+	dropdown_order_info['order_address']   = []
+	for scheduler in order.order_secheduler_feedback:
+		customer_order_address = []
 
-		customer_information['name']          = client_details.name
-		customer_information['email']         = client_details.email
-		customer_information['mobile']        = client_details.mobile_number
-		customer_information['other_number']  = client_details.phone_number
-		customer_information['nationality']   = client_details.nationality.code
-		customer_information['company']       = client_details.company
-
-		#for multiple customer addresses
-		customer_information['customer_address']   = []
-		for address in client_details.customer_addresses:
-			customer_address = {}
-
-			customer_address['governorate'] 	= address.governorate.name
-			customer_address['area'] 			= address.area.name
-			customer_address['block'] 			= address.block
-			customer_address['avenue'] 			= address.avenue
-			customer_address['building'] 		= address.building
-			customer_address['street'] 			= address.street
-			customer_address['floor'] 			= address.floor
-			customer_address['apartment'] 		= address.apartment
-
-			customer_information['customer_address'].append(customer_address)
-
-		dropdown_order_info['customer_details'] = customer_information
-
-		##previous order informations
-		#orders count
-		orders 				= Order.objects.filter(is_active=True,evaluation__customer_id=order.evaluation.customer_id)
-		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
-		total_orders_count  = orders.count()
-		dropdown_order_info['active_orders_count'] = active_orders_count
-		dropdown_order_info['total_orders_count']  = total_orders_count
+		customer_order_address.append(scheduler.customer_address.area.name)
+		customer_order_address.append(scheduler.order_scheduler_book.service_type.name)
+		customer_order_address.append(scheduler.order_scheduler_book.cleaning_policy)
+		customer_order_address.append(scheduler.work_status)
+		dropdown_order_info['order_address'].append(customer_order_address)
 
 
-		return JsonResponse(dropdown_order_info)
+	##customer information
+	customer_information = {}
+	try:
+		client_details = UserProfile.objects.prefetch_related(Prefetch('address_customer',queryset=Address.objects.filter(is_active=True).select_related('area','governorate'),to_attr='customer_addresses')).get(is_active=True,id=order.evaluation.customer_id)
+	except:
+		client_details = None
+
+	customer_information['name']          = client_details.name
+	customer_information['email']         = client_details.email
+	customer_information['mobile']        = client_details.mobile_number
+	customer_information['other_number']  = client_details.phone_number
+	customer_information['nationality']   = client_details.nationality.code
+	customer_information['company']       = client_details.company
+
+	#for multiple customer addresses
+	customer_information['customer_address']   = []
+	for address in client_details.customer_addresses:
+		customer_address = {}
+
+		customer_address['governorate'] 	= address.governorate.name
+		customer_address['area'] 			= address.area.name
+		customer_address['block'] 			= address.block
+		customer_address['avenue'] 			= address.avenue
+		customer_address['building'] 		= address.building
+		customer_address['street'] 			= address.street
+		customer_address['floor'] 			= address.floor
+		customer_address['apartment'] 		= address.apartment
+
+		customer_information['customer_address'].append(customer_address)
+
+	dropdown_order_info['customer_details'] = customer_information
+
+	##previous order informations
+	#orders count
+	orders 				= Order.objects.filter(is_active=True,evaluation__customer_id=order.evaluation.customer_id)
+	active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
+	total_orders_count  = orders.count()
+	dropdown_order_info['active_orders_count'] = active_orders_count
+	dropdown_order_info['total_orders_count']  = total_orders_count
+
+
+	return JsonResponse(dropdown_order_info)
 
 def GetCleaningInfo(request):
 	cleaning_dict = {}
@@ -1390,7 +1390,9 @@ class FollowupPopupSave(APIView):
 # Create your views here.
 class AgentHome(IsAgent,View):
 	def get(self,request):
-				
+
+		booking_id               = CustomerBooking.objects.filter(is_active=True).aggregate(t=Max('booking_id'))['t']	
+
 		#for taking today counts
 		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
 		count_today_end   = count_today_start+timedelta(1)
@@ -1547,8 +1549,8 @@ class AgentHome(IsAgent,View):
 
 		#followup confirmation for special user
 		followup_to_be_closed = FollowUp.objects.filter(is_active=True,status='FOLLOWUP_IN_PROGRESS').select_related('investigation','investigation__order_schedule__customer_address__area','investigation__order_schedule__order_scheduler_book__service_type','investigation__investigator','investigation__order__evaluation__customer').prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True),to_attr='followupschedulers'),Prefetch('investigation__paybackdiscount_investigation',queryset=PaybackDiscount.objects.filter(is_active=True),to_attr='paybackdiscount'),Prefetch('investigation__reporting_investigation',queryset=Reporting.objects.filter(is_active=True),to_attr='internalreports'),Prefetch('investigation__buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.filter(is_active=True),to_attr='buybackpromocodegift')).annotate(followupcount=Sum(Case(When(follow_up_of_scheduler__is_active=True,then=1),default=0,output_field=IntegerField())), followupcompletedcount=Sum(Case(When(follow_up_of_scheduler__work_status='FOLLOW_UP_CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())), paybackcount=Sum(Case(When(investigation__paybackdiscount_investigation__is_active=True,then=1),default=0,output_field=IntegerField())), paybackcompletedcount=Sum(Case(When(investigation__paybackdiscount_investigation__is_completed=True,then=1),default=0,output_field=IntegerField())), buybackpromocodecount=Sum(Case(When(investigation__buybackpromocodegift_investigation__is_active=True,then=1),default=0,output_field=IntegerField())), buybackpromocodecompletedcount=Sum(Case(When(investigation__buybackpromocodegift_investigation__is_completed=True,then=1),default=0,output_field=IntegerField())) ,internalreportcount=Sum(Case(When(investigation__reporting_investigation__is_active=True,then=1),default=0,output_field=IntegerField())))
-				
-		return render(request,'agent/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'month_average_feedback':month_average_feedback,'lastmonth_average_feedback':lastmonth_average_feedback,'cleaning_job':cleaning_job,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'follow_up_job':follow_up_job,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'workers':workers,"customer_addresses":customer_addresses,"followup_to_be_closed":followup_to_be_closed,"calendar_notapprovedorder_schedules":calendar_notapprovedorder_schedules,"sp_calendar_notapprovedorder_schedules":sp_calendar_notapprovedorder_schedules,"spp_calendar_notapprovedorder_schedules":spp_calendar_notapprovedorder_schedules})
+		
+		return render(request,'agent/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'month_average_feedback':month_average_feedback,'lastmonth_average_feedback':lastmonth_average_feedback,'cleaning_job':cleaning_job,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'follow_up_job':follow_up_job,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'workers':workers,"customer_addresses":customer_addresses,"followup_to_be_closed":followup_to_be_closed,"calendar_notapprovedorder_schedules":calendar_notapprovedorder_schedules,"sp_calendar_notapprovedorder_schedules":sp_calendar_notapprovedorder_schedules,"spp_calendar_notapprovedorder_schedules":spp_calendar_notapprovedorder_schedules,"booking_id":booking_id})
 
 
 	def post(self,request):

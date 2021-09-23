@@ -114,6 +114,9 @@ html{
       font-size:24px;
       font-weight:500;
   }
+  .strike-text{
+    text-decoration: line-through;
+  }
   .expand-card-addon-cost{
     font-size:16px;
     font-weight:500;
@@ -788,7 +791,7 @@ padding:10px;
     margin: 10px;
 border-radius: 6px;
 padding:5px;
-min-height:220px;
+
 }
 .cart-btn{
     background: #ffffff;
@@ -901,12 +904,49 @@ cursor:pointer;
     padding:10px;
     min-height:112px;
 }
-
 .owl-prev {
   
     position: absolute;
     top: 50px;
     left: -40px;
+    display: block !important;
+    border: 0px solid black;
+    
+   
+    height: 35px !important;
+    width: 35px !important;
+    background: #2f4e8596 !important;
+ 
+  
+    border-radius: 35px !important;
+}
+#otherServiceCarousel .owl-prev:hover{
+    background: #2f4e85 !important;
+}
+#otherServiceCarousel .owl-prev {
+  
+    position: absolute;
+    top: 70px !important;
+    left: -40px;
+    display: block !important;
+    border: 0px solid black;
+    
+   
+    height: 35px !important;
+    width: 35px !important;
+    background: #2f4e8596 !important;
+ 
+  
+    border-radius: 35px !important;
+}
+#otherServiceDialogCarousel .owl-prev:hover{
+    background: #2f4e85 !important;
+}
+#otherServiceDialogCarousel .owl-prev {
+  
+    position: absolute;
+    top: 70px !important;
+    left: -14px;
     display: block !important;
     border: 0px solid black;
     
@@ -935,7 +975,38 @@ cursor:pointer;
 
 .owl-prev i, .owl-next i { color: #dee2e6;}
 
-
+#otherServiceCarousel .owl-next{
+    position: absolute;
+    top: 70px !important;
+    right: -40px;
+    display: block !important;
+    border:0px solid black;
+    height: 35px !important;
+    width: 35px !important;
+    background: #2f4e8596 !important;
+    
+    
+    border-radius: 35px !important;
+}
+#otherServiceCarousel .owl-next:hover{
+    background: #2f4e85 !important;
+}
+#otherServiceDialogCarousel .owl-next{
+    position: absolute;
+    top: 70px !important;
+    right: -14px;
+    display: block !important;
+    border:0px solid black;
+    height: 35px !important;
+    width: 35px !important;
+    background: #2f4e8596 !important;
+    
+    
+    border-radius: 35px !important;
+}
+#otherServiceDialogCarousel .owl-next:hover{
+    background: #2f4e85 !important;
+}
 .owl-next {
    
     position: absolute;

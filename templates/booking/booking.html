@@ -967,6 +967,12 @@ width="1000"
               v-model="otherService.age"
             ></v-text-field>
           </div>
+          <div class="col-md-12 text-center" v-if="serviceType == 'Window Cleaning'">
+            <v-radio-group v-model="window_check" row v-on:change="windowFilter()">
+              <v-radio label="Old Window" :value="true"></v-radio>
+              <v-radio label="New Window" :value="false"></v-radio>
+            </v-radio-group>
+          </div>
           <div
               class="col-md-12 text-center"
               v-if="serviceType == 'Kitchen Cleaning'"
@@ -1118,7 +1124,18 @@ width="1000"
                   v-model="otherService.size"
                 ></v-select>
               </div>
-              <div v-if="serviceType == 'Car Parking Umbrella' || serviceType == 'Outdoor Cleaning' || serviceType == 'Window Cleaning'">
+              <div v-if="serviceType == 'Window Cleaning'">
+                <v-select
+                  :items="windowSize"
+                  item-text="combinedSize"
+                  return-object
+                  label="Size"
+                  :rules="[v => !!v || 'Size is required']"
+                required
+                  v-model="otherService.size"
+                ></v-select>
+              </div>
+              <div v-if="serviceType == 'Car Parking Umbrella' || serviceType == 'Outdoor Cleaning'">
                 <v-select
                   :items="sizeData"
                   item-text="combinedSize"
@@ -1390,7 +1407,7 @@ width="1000"
       <v-divider></v-divider>
 
       <v-card-actions>
-        <v-btn @click="dialog=false">
+        <v-btn @click="closeEditDialog()">
           Close
         </v-btn>
         <v-spacer></v-spacer>
@@ -2430,6 +2447,12 @@ Fill all the details of the Buildings  to proceed
                             <v-radio label="New Kitchen" value="new"></v-radio>
                           </v-radio-group>
                         </div>
+                        <div class="col-md-12 text-center" v-if="serviceType == 'Window Cleaning'">
+                          <v-radio-group v-model="window_check" row v-on:change="windowFilter()">
+                            <v-radio label="Old Window" :value="true"></v-radio>
+                            <v-radio label="New Window" :value="false"></v-radio>
+                          </v-radio-group>
+                        </div>
                         <div class="col-md-12"  v-if="serviceType == 'Kitchen Cleaning'">
                           <div>Do you want to clean the Cabinet ? <span style="color:red">*</span></div>
                           <v-radio-group v-model="otherService.is_cabinet" class="p-2" row v-on:change="changeKitchen()">
@@ -2490,6 +2513,11 @@ Fill all the details of the Buildings  to proceed
                               :rules="[v => !!v || 'Size is required']" required v-model="otherService.size"
                               :attach="true"></v-select>
                           </div>
+                          <div v-if="serviceType == 'Window Cleaning'">
+                            <v-select :items="windowSize" item-text="combinedSize" return-object label="Size"
+                              :rules="[v => !!v || 'Size is required']" required v-model="otherService.size"
+                              :attach="true"></v-select>
+                          </div>
                           <div v-if="serviceType == 'Mattress Cleaning'">
                             <v-select :items="sizeData" item-text="name" return-object label="Size"
                               :rules="[v => !!v || 'Size is required']" required v-model="otherService.size"
@@ -2501,7 +2529,7 @@ Fill all the details of the Buildings  to proceed
                               :attach="true"></v-select>
                           </div>
                           <div
-                            v-if="serviceType == 'Car Parking Umbrella' || serviceType == 'Outdoor Cleaning' || serviceType == 'Window Cleaning'">
+                            v-if="serviceType == 'Car Parking Umbrella' || serviceType == 'Outdoor Cleaning'">
                             <v-select :items="sizeData" item-text="combinedSize" return-object label="Size "
                               :rules="[v => !!v || 'Size is required']" required v-model="otherService.size"
                               :attach="true"></v-select>
@@ -3123,7 +3151,23 @@ Fill all the details of the Buildings  to proceed
                                <% bill.section.size.name %>
                               </div>
                               <div class="ml-auto primary-text" >
-                                KD <% bill.section.section_cost %><span v-if="service.schedule_details && service.cleaning_policy=='SUBSCRIPTION'">x <% Object.keys(service.schedule_details).length %></span>
+                                KD <% bill.sectiononly_cost %><span v-if="service.schedule_details && service.cleaning_policy=='SUBSCRIPTION'">x <% Object.keys(service.schedule_details).length %></span>
+                              </div>
+                            </div>
+                            <div v-for="(kitchen,kindex) in bill.section.kitchens" v-bind:key="kindex">
+                              <div class="d-flex mt-1">
+                                <div >
+                                Kitchen <% kindex+1 %> (    <% kitchen.size.name %> )<br>
+                             
+                                </div>
+                                <div class="ml-auto primary-text strike-text" v-if="kitchen.type=='new'">
+                                  KD <span><% kitchen.size.cost  %></span>
+                                  <span v-if="service.schedule_details && service.cleaning_policy=='SUBSCRIPTION'">x <% Object.keys(service.schedule_details).length %></span>
+                                </div>
+                                <div class="ml-auto primary-text" v-else>
+                                  KD <span><% kitchen.size.cost  %></span>
+                                  <span v-if="service.schedule_details && service.cleaning_policy=='SUBSCRIPTION'">x <% Object.keys(service.schedule_details).length %></span>
+                                </div>
                               </div>
                             </div>
                             <div v-for="addon in bill.section.addons" v-bind:key="addon">
@@ -3133,6 +3177,7 @@ Fill all the details of the Buildings  to proceed
                                 </div>
                                 <div class="ml-auto primary-text" >
                                   KD <span v-if="!addon.details.category"><% addon.details.price * addon.quantity %></span><span v-else>KD <% addon.selected_size.price * addon.quantity %></span>
+                                  <span v-if="service.schedule_details && service.cleaning_policy=='SUBSCRIPTION'">x <% Object.keys(service.schedule_details).length %></span>
                                 </div>
                               </div>
                             </div>

@@ -20,6 +20,9 @@ padding:10px;
   color:#434343;
   font-weight:400;
 }
+.strike-text{
+  text-decoration: line-through;
+}
 .addon-title{
   font-size:12px;
 }

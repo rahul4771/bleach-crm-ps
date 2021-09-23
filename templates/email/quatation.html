@@ -401,7 +401,7 @@
             <div class="order-items">
                 <div class="order-item-in">
                     <div id="item-left">
-                        <b>{{book.service_type.name}}-{{section.section_name}}</b>
+                        <b>{{book.service_type.name}} - {{section.section_name}}</b>
                         <p style="font-size: 15px; margin-top: 10px; line-height: 2;">Size : <b>{{section.size}}</b>
                             &nbsp; Visit : <b>{{section.section_cleanings|default_if_none:'1'}}</b> &nbsp; Unit Price : <b>{{section.sectiononly_cost|default_if_none:''}}</b></p>
                     </div>
@@ -421,7 +421,7 @@
             <div class="order-items">
                 <div class="order-item-in">
                     <div id="item-left">
-                        <b>{{section.section_name}}-{{addon.name}}(x{{addon.quantity|default_if_none:'-'}})</b>
+                        <b>{{section.section_name}} - {{addon.name}} (x{{addon.quantity|default_if_none:'-'}})</b>
                         <p style="font-size: 15px; margin-top: 10px; line-height: 2;">Size : <b>{{addon.size|default_if_none:'-'}}</b>
                             &nbsp; Visit : <b>{{section.section_cleanings|default_if_none:'1'}}</b> &nbsp; Unit Price : <b>{{addon.addon_cost|default_if_none:''}}</b></p>
                     </div>

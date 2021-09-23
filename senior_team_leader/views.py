@@ -568,9 +568,6 @@ class StlHome(IsSeniorTeamLeader,View):
 		week_active_teams_count  = week_cleaning_active_teams.count()+week_followup_active_teams.count() 	
 				
 
-
-
-
 		#cleaning team assignment task
 		teamassign_to_date         = (timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)).replace(tzinfo=None)
 		
