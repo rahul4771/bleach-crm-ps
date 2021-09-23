@@ -1290,6 +1290,7 @@ width="1000"
           </div>
           </div>
           </div>
+          
           <div class="col-md-4"  v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning' || serviceType=='Window Cleaning' || serviceType=='Carpet Cleaning'">
             <v-combobox
             v-model="keynote_name"
@@ -1309,6 +1310,7 @@ width="1000"
               Add
             </v-btn>
           </div>
+       
           <div class="col-md-12"></div>
            <!--more services  only for kitchen cleaning-->
            <div class="col-md-12 more-services" v-if="serviceType=='Kitchen Cleaning'">

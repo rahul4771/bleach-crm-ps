@@ -103,6 +103,13 @@
         <button  data-toggle="modal" data-target="#editModel3" id="id_model_button_3" hidden>Done </button>
         <button  data-toggle="modal" data-target="#editModel4" id="id_model_button_4" hidden>Done </button>
 
+        <button  data-toggle="modal" data-target="#editNo1" id="id_model_button_person1" hidden>Done </button>
+        <button  data-toggle="modal" data-target="#editNo2" id="id_model_button_person2" hidden>Done </button>
+        <button  data-toggle="modal" data-target="#editNo3" id="id_model_button_person3" hidden>Done </button>
+        <button  data-toggle="modal" data-target="#editNo4" id="id_model_button_person4" hidden>Done </button>
+
+
+
 
 
 
@@ -174,11 +181,8 @@
                                             </ul>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
-                                        
+                                    <div class="col-md-3" id="id_ser_1">
                                         <div class="model-input-name">Area</div>
-
-
                                         <div class="d-flex inv-hide" id="id_area_edit_1">
                                             <div style="width: 50%; " class="inv-input-container h-30"> 
                                                 <input type="number"   class="w-p-100 inv-in" name="area1" id="id_area1">
@@ -197,32 +201,27 @@
                                               src="{% static 'files/icons/edit.png' %}">
                                               </div>
                                         </div>
-
-                                          <!-- <div class="d-flex">
-                                            <form method="POST" action="" >{% csrf_token %}
-                                            <div class="d-flex">
-                                                <div class="inv-input-container2 inv-border h-30">
-                                                    <input type="hidden" name="action" value="update_size" />
-                                                    <input type="hidden" name="service_name" class="area_service" value="General Cleaning" />
-                                                    <input type="number" step="0.1" name="area" class="service_area" style="border: none !important; width: 90%;" class="inv-in"  >
-                                                   
-                                                    <div class="model-filter2" >
-                                                      <button class="inv-icon-input2" >
-                                                      <i class="fa fa-refresh fa-lg " style="color: #ffffff;" aria-hidden="true"></i>
-                                                      </button>
-                                                    </div>
-                                                    
-                                                </div>
-                                            <div style="margin-left: 10px; font-size: 16px; margin-top: 3px;" class="av-font">sqm</div>
-
+                                    </div>
+                                    <div class="col-md-3" id="id_per_1">
+                                        <div class="model-input-name">No.of Persons</div>
+                                        <div class="d-flex inv-hide" id="id_person_edit_1">
+                                            <div style="width: 50%; " class="inv-input-container h-30"> 
+                                                <input type="number"   class="w-p-100 inv-in" >
+                                                
+                                            </div> 
+                                            <button style="margin-left: 10px;" id="id_editDone" class="inv-blue-btn " type="submit" onclick="closeditShow2(1)">Done </button>
+                                        </div>
+                                        <div class="d-flex " id="id_person_div_1">
+                                            <div class="model-input-name service_area" >
+                                                0
                                             </div>
-                                           
-                                            </form>
-                                          </div> -->
-                                          
-                                          
-                                        
-                        
+                                            
+
+                                          <div class="edit-div" style="top: 25px !important;">
+                                              <img onclick="showEditModal2(1)" id="id_editButton"  class="inv-edit-img"
+                                              src="{% static 'files/icons/edit.png' %}">
+                                              </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row mt-10">
@@ -331,7 +330,7 @@
                                             </ul>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-3" id="id_ser_2">
                                         
                                         <div class="model-input-name">Area</div>
                                         <!-- <div style="width: 50%; " class="inv-input-container h-30"> 
@@ -380,6 +379,27 @@
                                           
                                         
                         
+                                    </div>
+                                    <div class="col-md-3" id="id_per_2">
+                                        <div class="model-input-name">No.of Persons</div>
+                                        <div class="d-flex inv-hide" id="id_person_edit_2">
+                                            <div style="width: 50%; " class="inv-input-container h-30"> 
+                                                <input type="number"   class="w-p-100 inv-in" >
+                                                
+                                            </div> 
+                                            <button style="margin-left: 10px;" id="id_editDone" class="inv-blue-btn " type="submit" onclick="closeditShow2(2)">Done </button>
+                                        </div>
+                                        <div class="d-flex " id="id_person_div_2">
+                                            <div class="model-input-name service_area" >
+                                                0
+                                            </div>
+                                            
+
+                                          <div class="edit-div" style="top: 25px !important;">
+                                              <img onclick="showEditModal2(2)" id="id_editButton"  class="inv-edit-img"
+                                              src="{% static 'files/icons/edit.png' %}">
+                                              </div>
+                                        </div>
                                     </div>
 
                                 </div>
@@ -483,7 +503,7 @@
                                             </ul>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-3" id="id_ser_3" >
                                         
                                         <div class="model-input-name">Area</div>
                                         <!-- <div style="width: 50%; " class="inv-input-container h-30"> 
@@ -533,6 +553,27 @@
                                         </div>
                                         
                         
+                                    </div>
+                                    <div class="col-md-3" id="id_per_3">
+                                        <div class="model-input-name">No.of Persons</div>
+                                        <div class="d-flex inv-hide" id="id_person_edit_3">
+                                            <div style="width: 50%; " class="inv-input-container h-30"> 
+                                                <input type="number"   class="w-p-100 inv-in" >
+                                                
+                                            </div> 
+                                            <button style="margin-left: 10px;" id="id_editDone" class="inv-blue-btn " type="submit" onclick="closeditShow2(3)">Done </button>
+                                        </div>
+                                        <div class="d-flex " id="id_person_div_3">
+                                            <div class="model-input-name service_area" >
+                                                0
+                                            </div>
+                                            
+
+                                          <div class="edit-div" style="top: 25px !important;">
+                                              <img onclick="showEditModal2(3)" id="id_editButton"  class="inv-edit-img"
+                                              src="{% static 'files/icons/edit.png' %}">
+                                              </div>
+                                        </div>
                                     </div>
                                     
                                 </div>
@@ -637,7 +678,7 @@
                                             </ul>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-3" id="id_ser_4">
                                         
                                         <div class="model-input-name">Area</div>
                                         <!-- <div style="width: 50%; " class="inv-input-container h-30"> 
@@ -686,6 +727,27 @@
                                           
                                         
                         
+                                    </div>
+                                    <div class="col-md-3" id="id_per_4">
+                                        <div class="model-input-name">No.of Persons</div>
+                                        <div class="d-flex inv-hide" id="id_person_edit_4">
+                                            <div style="width: 50%; " class="inv-input-container h-30"> 
+                                                <input type="number"   class="w-p-100 inv-in" >
+                                                
+                                            </div> 
+                                            <button style="margin-left: 10px;" id="id_editDone" class="inv-blue-btn " type="submit" onclick="closeditShow2(4)">Done </button>
+                                        </div>
+                                        <div class="d-flex " id="id_person_div_4">
+                                            <div class="model-input-name service_area" >
+                                                0
+                                            </div>
+                                            
+
+                                          <div class="edit-div" style="top: 25px !important;">
+                                              <img onclick="showEditModal2(4)" id="id_editButton"  class="inv-edit-img"
+                                              src="{% static 'files/icons/edit.png' %}">
+                                              </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row mt-10">
@@ -1206,6 +1268,138 @@
         </div>
     </div>
   </div>
+  <div class="modal fade" id="editNo1" role="dialog">
+    <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 mt-20">
+
+                    
+                    <div class="d-flex ">
+                        <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to edit  No.of persons?</p></div>
+                        <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+           
+            <div class="row">
+                <div class="col-md-12 text-center">
+               
+                    <div class="cancel-model-content">
+                        <button class="sent-button" onclick="editShow2(1)" >Edit</button>
+                        <button data-dismiss="modal" id="id_cancel_per_1" class="view-button">Cancel</button>
+                      
+                    </div>
+                  
+                </div>
+
+            </div>
+        </div>
+    </div>
+  </div>
+  <div class="modal fade" id="editNo2" role="dialog">
+    <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 mt-20">
+
+                    
+                    <div class="d-flex ">
+                        <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to edit  No.of persons?</p></div>
+                        <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+           
+            <div class="row">
+                <div class="col-md-12 text-center">
+               
+                    <div class="cancel-model-content">
+                        <button class="sent-button" onclick="editShow2(2)" >Edit</button>
+                        <button data-dismiss="modal" id="id_cancel_per_2" class="view-button">Cancel</button>
+                      
+                    </div>
+                  
+                </div>
+
+            </div>
+        </div>
+    </div>
+  </div>
+  <div class="modal fade" id="editNo3" role="dialog">
+    <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 mt-20">
+
+                    
+                    <div class="d-flex ">
+                        <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to edit  No.of persons?</p></div>
+                        <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+           
+            <div class="row">
+                <div class="col-md-12 text-center">
+               
+                    <div class="cancel-model-content">
+                        <button class="sent-button" onclick="editShow2(3)" >Edit</button>
+                        <button data-dismiss="modal" id="id_cancel_per_3" class="view-button">Cancel</button>
+                      
+                    </div>
+                  
+                </div>
+
+            </div>
+        </div>
+    </div>
+  </div>
+  <div class="modal fade" id="editNo4" role="dialog">
+    <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 mt-20">
+
+                    
+                    <div class="d-flex ">
+                        <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to edit  No.of persons?</p></div>
+                        <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+           
+            <div class="row">
+                <div class="col-md-12 text-center">
+               
+                    <div class="cancel-model-content">
+                        <button class="sent-button" onclick="editShow2(4)" >Edit</button>
+                        <button data-dismiss="modal" id="id_cancel_per_4" class="view-button">Cancel</button>
+                      
+                    </div>
+                  
+                </div>
+
+            </div>
+        </div>
+    </div>
+  </div>
 
 </div>
 
@@ -1275,9 +1469,23 @@ $(function () {
 </script>
 <script>
 
+$(document).ready(function(){
+        $('#id_per_1').hide();
+        $('#id_per_2').hide();
+        $('#id_per_3').hide();
+        $('#id_per_4').hide();
+
+        
+    })
+
+
 function showEditModal(id){
     console.log(id)
     $('#id_model_button_'+id).click()
+}
+function showEditModal2(id){
+    console.log(id)
+    $('#id_model_button_person'+id).click()
 }
 function editShow(id){
     console.log(id)
@@ -1286,6 +1494,25 @@ function editShow(id){
 
     document.getElementById('id_area_div_'+id).style.display  = "none";
     document.getElementById('id_area_edit_'+id).style.display  = "flex";
+
+}
+function editShow2(id){
+    console.log(id)
+    $("#id_cancel_per_"+id).click();
+    
+
+    document.getElementById('id_person_div_'+id).style.display  = "none";
+    document.getElementById('id_person_edit_'+id).style.display  = "flex";
+
+}
+
+async function closeditShow2(id){
+
+
+
+
+document.getElementById('id_person_div_'+id).style.display  = "flex";
+document.getElementById('id_person_edit_'+id).style.display  = "none";
 
 }
 
@@ -1316,18 +1543,46 @@ function changeSelect(va){
         $('#id_recipe_type').val(va)
     }
     function changeSelect3(va){
+        if(va == 'person'){
+            $('#id_ser_1').hide()
+            $('#id_per_1').show()
+        }else{
+            $('#id_ser_1').show()
+            $('#id_per_1').hide()
+        }
         $('#id_recipe_type1').val(va)
         recipetype($('#id_recipe_type1').val())
     }
     function changeSelect4(va){
+        if(va == 'person'){
+            $('#id_ser_2').hide()
+            $('#id_per_2').show()
+        }else{
+            $('#id_ser_2').show()
+            $('#id_per_2').hide()
+        }
         $('#id_recipe_type2').val(va)
         recipetype($('#id_recipe_type2').val())
     }
     function changeSelect5(va){
+        if(va == 'person'){
+            $('#id_ser_3').hide()
+            $('#id_per_3').show()
+        }else{
+            $('#id_ser_3').show()
+            $('#id_per_3').hide()
+        }
         $('#id_recipe_type3').val(va)
         recipetype($('#id_recipe_type3').val())
     }
     function changeSelect6(va){
+        if(va == 'person'){
+            $('#id_ser_4').hide()
+            $('#id_per_4').show()
+        }else{
+            $('#id_ser_4').show()
+            $('#id_per_4').hide()
+        }
         $('#id_recipe_type4').val(va)
         recipetype($('#id_recipe_type4').val())
     }
