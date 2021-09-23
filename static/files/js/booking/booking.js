@@ -154,6 +154,7 @@ const app=new Vue({
     validApartment:true,
     validKitchen:true,
     validKitchenDialog:true,
+  
     validOtherService:true,
     validOtherServiceDialog:true,
     hallway_check:false,
@@ -833,20 +834,26 @@ addons:[]
 
         },
         addKeynote(building,floor){
+          if(this.keynote_name && this.keynote_value)
+          {
           this.building[building].floors[floor].keynote_data.push({
             name:this.keynote_name,
             value:this.keynote_value
           })
           this.keynote_name=''
           this.keynote_value=''
+        }
         },
         addOthersKeynote(){
+          if(this.keynote_name && this.keynote_value)
+          {
           this.otherService.keynote_data.push({
             name:this.keynote_name,
             value:this.keynote_value
           })
           this.keynote_name=''
           this.keynote_value=''
+        }
         },
         removeOthersKeynote(keynote){
           this.otherService.keynote_data.splice(keynote,1)
@@ -855,12 +862,15 @@ addons:[]
             this.building[building].floors[floor].keynote_data.splice(keynote,1)
         },
         addApartmentKeynote(building,floor,apartment){
+          if(this.keynote_name && this.keynote_value)
+          {
           this.building[building].floors[floor].apartments[apartment].keynote_data.push({
             name:this.keynote_name,
             value:this.keynote_value
           })
           this.keynote_name=''
           this.keynote_value=''
+        }
         },
         removeApartmentKeynote(building,floor,apartment,keynote){
             this.building[building].floors[floor].apartments[apartment].keynote_data.splice(keynote,1)
