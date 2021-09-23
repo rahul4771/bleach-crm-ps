@@ -412,7 +412,10 @@
                                 <thead>
                                     <tr>
                                         <th style="width: %;">
-                                            Purchase date
+                                            Purchase Order ID
+                                        </th>
+                                        <th data-hide="phone,tablet"  style="width: %; ">
+                                            Purchase Date
                                         </th>
                                         <th data-hide="phone,tablet"  style="width: %; ">
                                             Quantity
@@ -428,14 +431,15 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    {% for history in item_history %}
                                     <tr>
-                                        <td>12/12/2021</td>
-                                        <td>3</td>
-                                        <td>12/12/2021</td>
-                                        <td>
-                                            12/12/2021
-                                        </td>
+                                        <td>{{history.purchase_order.purchase_order_id}}</td>
+                                        <td>{{history.purchase_order.created|date:'d-m-Y'}}</td>
+                                        <td>{{history.quantity}}</td>
+                                        <td>{{history.added_by}}</td>
+                                        <td>{{history.purchase_order.created|date:'d-m-Y'}}</td>
                                     </tr>
+                                    {% endfor %}
                                 </tbody>
                             </table>
                         </div>
@@ -453,7 +457,7 @@
         <div class="inv-sidedrawer-inner">
             <div class="d-flex">
                 <div class="inv-drawer-head" id="supHead">
-                    Add Supplier
+                    Add Unit
                 </div>
                 <div class="right-pos">
 
@@ -527,7 +531,7 @@
                 </div>
 
             </div> {% endcomment %}
-            <div class="row mt-20 expiry_date_div">
+            <div class="row mt-20 expiry_date_div" hidden>
                 <div class="col-md-12 ">
                     <div class="model-input-name">Expiry Date</div>
 
@@ -540,7 +544,7 @@
             <div class="row mt-20">
                 <div class="col-md-12 ">
                 
-                    <div class="model-input-name"><input type="checkbox" name="no_expiry" id="id_no_expiry"> No Expiry</div>   
+                    <div class="model-input-name"><input type="checkbox" name="no_expiry" id="id_no_expiry" checked> No Expiry</div>   
                 </div>
 
             </div>

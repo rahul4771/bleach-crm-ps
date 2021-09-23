@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.views import View
 from bleach_crm_ps.permissions import IsInventoryAdmin,IsInventoryAdminUser
-from inventory.models import Category,Segment,Line,Attribute,AttributeValue,ItemAttributes,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeItems,PurchaseOrder,PurchaseOrderItems
+from inventory.models import ItemHistory,Category,Segment,Line,Attribute,AttributeValue,ItemAttributes,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeItems,PurchaseOrder,PurchaseOrderItems
 from django.contrib import messages
 import re
 from datetime import date,datetime,timedelta
@@ -479,6 +479,7 @@ class InventoryItems(IsInventoryAdmin,View):
         inventory_item = InventoryItem.objects.prefetch_related(Prefetch('image_item',queryset=InventoryItemImages.objects.all(),to_attr='item_images')).annotate(unit_count=Sum(Case(When(unit_item__status='active',then=1),default=0,output_field=IntegerField())),total_unit_price=Sum(Case(When(unit_item__status='active',then='unit_item__unit_price'),default=0,output_field=FloatField()))).get(id=item_id)
         categories = Category.objects.all()
         item_units = ItemUnit.objects.filter(item=inventory_item)
+        item_history = ItemHistory.objects.filter(item=inventory_item)
 
         stores = Store.objects.filter(status=True)
 
@@ -508,7 +509,7 @@ class InventoryItems(IsInventoryAdmin,View):
         else:
             new_unit_code = 'UNIT9001'
 
-        return render(request,'inventory/item.html',{"stores":stores,"item_attributes":item_attributes,"inventory_item":inventory_item,"attributes":attributes,"categories":categories,"item_units":item_units,"new_unit_code":new_unit_code})
+        return render(request,'inventory/item.html',{"stores":stores,"item_attributes":item_attributes,"inventory_item":inventory_item,"attributes":attributes,"categories":categories,"item_units":item_units,"item_history":item_history,"new_unit_code":new_unit_code})
 
     def post(self,request,item_id):
         action =request.POST.get('action')
@@ -1153,8 +1154,39 @@ class InventoryPurchaseOrder(IsInventoryAdmin,View):
 
 class PurchaseOrderItemsPage(IsInventoryAdmin,View):
     def get(self,request,purchase_order_id):
+        stores = Store.objects.filter(status=True)
         purchase_order = PurchaseOrder.objects.prefetch_related(Prefetch('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.all(),to_attr='purchase_order_items')).get(id=int(purchase_order_id))
-        return render(request,"inventory/purchaseorderitems.html",{"purchase_order":purchase_order})
+        shipment_status = request.GET.get('shipment_status')
+        if shipment_status == 'complete':
+            purchase_order.is_received = True
+            purchase_order.save()
+
+            for item in purchase_order.purchase_order_items:
+                item.is_received = True
+                item.save()
+
+        if shipment_status == 'incomplete':
+            purchase_order.is_received = False
+            purchase_order.save()       
+
+        print(shipment_status,"ship")
+        return render(request,"inventory/purchaseorderitems.html",{"purchase_order":purchase_order,"stores":stores})
+
+    def post(self,request,purchase_order_id):
+        purchase_order = PurchaseOrder.objects.get(id=purchase_order_id)
+        action = request.POST.get('action')
+        if action == 'add_quantity_to_inventory':
+            products = request.POST.getlist('product_id')
+            item_counts = request.POST.getlist('item_count')
+            print(products,item_counts,"cts")
+
+            loopcount = 0
+            for product in products:
+                item = InventoryItem.objects.get(id=int(product))
+                print(item,item_counts[loopcount], "itm")
+                ItemHistory.objects.create(purchase_order=purchase_order,item=item,quantity=item_counts[loopcount],added_by=request.user)
+                loopcount += 1
+        return redirect('inventory:inventory-purchaseorderitems', purchase_order_id)
 
 class InventoryPurchaseOrderPage(View):
     def get(self,request,purchase_order_id):
