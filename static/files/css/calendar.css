@@ -511,9 +511,12 @@ width:100% !important;
 .cl-radio-row{
     margin-top: 0px !important;
 }
+.red-msg{
+    color:red;
+}
 .cl-slot-card{
-    min-height: 600px;
-    
+    /* min-height: 600px; */
+    height:auto;
     background: #EDF1F6 0% 0% no-repeat padding-box;
    
     border-radius: 4px;
