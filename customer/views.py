@@ -5377,6 +5377,22 @@ class EditOrderDetails(APIView):
 			
 			response_dict['success']  = True
 
+		elif action == 'evaluation_media':
+			evaluationbook_id = request.data.get('evaluationbook_id')
+			taken_status      = request.data.get('taken_status')
+			medias            = request.FILES.getlist('media')
+
+			if not medias==['']:
+				for media in medias:
+					EvaluationMedia.objects.create(
+							evaluation_book_id=evaluation_book_id,
+							media=media,
+							media_type='PHOTO',
+							taken_status=taken_status
+							)
+			
+			response_dict['success'] = True
+
 		return Response(response_dict,HTTP_200_OK)
 
 class ServiceCancellationRequest(APIView):
