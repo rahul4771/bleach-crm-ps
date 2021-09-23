@@ -4,7 +4,7 @@ var selectedPayment='';
 var ip_address=''
 getIp()
 var paymentMethod=''
-selectPayment('pay');
+selectPayment('paynbook');
 var cashcounter=false;
 function addCoupon(){
   console.log($('.couponcode').val(),$('.orderId').val(),"runnns")

@@ -3068,7 +3068,9 @@ $(document).ready(function(){
         if(this.scheduleStat){
             for(var i=0;i<this.multiServicesBill.length;i++){
                 this.multiServicesBill[i].schedule_details={}
+                this.multiServicesBill[i].discount=false
             }
+
            
         }
         this.one_time_slots[this.oneTimeDateSelected]={
@@ -4612,8 +4614,9 @@ getBookedServices(){
     this.booking_status=response.data.booking_status
     this.order_no=response.data.order_details.order_no
     this.getBookingTime(response.data.order_details.order_no)
+    this.amount_discount=response.data.discount_details.discount
     if(this.booking_status){
-      this.amount_discount=response.data.discount_details.discount
+     
       this.amount_payable=response.data.discount_details.total_cost
       this.payable_amount=this.amount_payable
       this.amount_subtotal=response.data.discount_details.estimated_cost
@@ -5119,10 +5122,14 @@ if(addon.other_details){
       if(m==0 &&s=='05'){
         app.cancelBooking(this.order_no)
       }
+      if(m>=0 && parseInt(s)>=0)
+      {
       app.counterTime =
         m + ":" + s;
       
       setTimeout(startTimer, 1000);
+      }
+      
       
     }
     
