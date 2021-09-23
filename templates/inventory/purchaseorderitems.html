@@ -51,7 +51,7 @@
                 <div class="row mt-20">
                     <div class="col-md-3">
                         <input type="hidden" name="status" id="id_shipment_status" >
-                        <div class="wrap-drop" id="noble-gases" style="z-index: 2 !important;"  >
+                        <div class="wrap-drop" id="noble-gases" style="z-index: 9999 !important;"  >
                             <span id="id_selectText">{% if purchase_order.is_received == True %}Shipment completed{% else %}Shipment not completed{% endif %}</span>
                             <ul class="drop">
                                 <li onclick="changeSelect('complete')"><a>Shipment completed</a></li>
@@ -67,14 +67,15 @@
                         {% if purchase_order.is_received == True %}
                         <button style="margin-left: auto; margin-bottom: 5px;" class="inv-blue-btn" onclick="openNavAddStore()" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add to inventory</button>
                         {% endif %}
+
                     </div>
-                    <table id="id_table_pen" class="inv-table footable" style="border-top:1px solid #c4c4c4; margin-top: -2px;"> 
+                    <table id="id_table_pen" class="inv-table footable" style="border-top:1px solid #c4c4c4; margin-top: -2px; z-index: 10 !important;"> 
                         <thead>
                             <tr>
                                 <th>
-                                    <label style="padding-left: 0px !important;" class="c-container">
-                                        <input type="checkbox">
-                                        <span style="top:-4px !important;" class="c-checkmark"></span>
+                                    <label style="padding-left: 0px !important;"  class="c-container">
+                                        <input type="checkbox" id="id_select_all" onclick="selectAllQua()" value="checked"  >
+                                        <span style="top:-4px !important;"  class="c-checkmark"></span>
                                     </label>
                                 </th>
                                 <th style="width: %;">
@@ -103,7 +104,7 @@
                         <tr>
                             <td>
                                 <label style="padding-left: 0px !important;" class="c-container">
-                                    <input class="item_select" type="checkbox" data-itemid="{{item.product.item.id}}" data-itemname="{{item.product.item.name}}" data-itemcount="{{item.item_count}}" >
+                                    <input class="item_select selectCheckBox" type="checkbox" data-itemid="{{item.product.item.id}}" name="select-qua-item"  id="id_select_{{item.product.item.id}}"  data-itemname="{{item.product.item.name}}" data-itemcount="{{item.item_count}}" >
                                     <span style="top:-4px !important;" class="c-checkmark"></span>
                                 </label>
 
@@ -140,14 +141,14 @@
                      
                         
                     </table>
-                    <table id="id_table_rec" class="inv-table footable inv-hide" style="border-top:1px solid #c4c4c4; margin-top: -2px;"> 
+                    <table id="id_table_rec" class="inv-table footable inv-hide" style="border-top:1px solid #c4c4c4; margin-top: -2px; z-index: 10 !important; "> 
                         <thead>
                             <tr>
                                 <th>
-                                    <label style="padding-left: 0px !important;" class="c-container">
+                                    <!-- <label style="padding-left: 0px !important;" class="c-container">
                                         <input type="checkbox">
                                         <span style="top:-4px !important;" class="c-checkmark"></span>
-                                    </label>
+                                    </label> -->
                                 </th>
                                 <th style="width: %;">
                                     Product ID
@@ -173,7 +174,7 @@
                         <tr>
                             <td>
                                 <label style="padding-left: 0px !important;" class="c-container">
-                                    <input class="item_select" type="checkbox" data-itemid="{{item.product.item.id}}" data-itemname="{{item.product.item.name}}" data-itemcount="{{item.item_count}}" >
+                                    <input class="item_select" type="radio" name="radio-select" data-itemid="{{item.product.item.id}}" data-itemname="{{item.product.item.name}}" data-itemcount="{{item.item_count}}" >
                                     <span style="top:-4px !important;" class="c-checkmark"></span>
                                 </label>
 
@@ -540,6 +541,38 @@ $(function () {
 </script>
 
 <script>
+var c = true
+var selectedTab = 'pen'
+function deSelect(){  
+                var ele=document.getElementsByName('select-qua-item');  
+                for(var i=0; i<ele.length; i++){  
+                    if(ele[i].type=='checkbox')  
+                        ele[i].checked=false;  
+                      
+                }  
+            } 
+function selectAllQua(){
+    if(c){
+        c = false
+        var ele=document.getElementsByName('select-qua-item');  
+            for(var i=0; i<ele.length; i++){  
+                if(ele[i].type=='checkbox')  
+                    ele[i].checked=true;  
+            } 
+    }
+    else{
+        c = true
+        var ele=document.getElementsByName('select-qua-item');  
+                for(var i=0; i<ele.length; i++){  
+                    if(ele[i].type=='checkbox')  
+                        ele[i].checked=false;  
+                      
+                }  
+
+    }
+    
+}
+
 function selectTab(d){
     console.log(d)
     if(d =='rec'){
@@ -550,6 +583,7 @@ function selectTab(d){
 
         $("#id_table_pen").hide()
         $("#id_table_rec").show()
+        selectedTab = 'rec';
 
     }else{
         setTimeout(function(){ $('.footable').trigger('footable_resize'); }, 1000);
@@ -559,6 +593,8 @@ function selectTab(d){
 
         $("#id_table_pen").show()
         $("#id_table_rec").hide()
+        selectedTab = 'pen';
+
 
     }
 }
@@ -566,26 +602,46 @@ function selectTab(d){
 
     function openNavAddStore() {
 
-        $('.item_select').each(function() {
-            console.log($(this),"lis")
-            //$('#id_item_list').remove();
+        console.log(selectedTab)
 
-            if($(this).prop("checked") == true){
-                $('#id_item_list').append('<input type="hidden" name="product_id" value="'+$(this).data('itemid')+'" ><input type="hidden" name="item_count" value="'+$(this).data('itemcount')+'" ><div class="col-md-6 item_inventory"><div class="inv-item-head-sub-2">'+$(this).data('itemname')+'</div></div><div class="col-md-6"><div class="inv-item-head-sub-2">'+$(this).data('itemcount')+'</div></div>');
-            }
-        });
-    
-        if(screen.width<= 600){
-            document.getElementById("addStore").style.width = "100%";
-        }else if(screen.width<= 720){
-            document.getElementById("addStore").style.width = "50%";
+        if(selectedTab == 'pen'){
+                    $('.item_select').each(function() {
+                    console.log($(this),"lis")
+                    //$('#id_item_list').remove();
+
+                    if($(this).prop("checked") == true){
+                        $('#id_item_list').append('<input type="hidden" name="product_id" value="'+$(this).data('itemid')+'" ><input type="hidden" name="item_count" value="'+$(this).data('itemcount')+'" ><div class="col-md-6 item_inventory"><div class="inv-item-head-sub-2">'+$(this).data('itemname')+'</div></div><div class="col-md-6"><div class="inv-item-head-sub-2">'+$(this).data('itemcount')+'</div></div>');
+                    }
+                });
+            
+                if(screen.width<= 600){
+                    document.getElementById("addStore").style.width = "100%";
+                }else if(screen.width<= 720){
+                    document.getElementById("addStore").style.width = "50%";
+                }
+                else{
+                    document.getElementById("addStore").style.width = "30%";
+                } 
+        }else if(selectedTab == 'rec'){
+
+            if(screen.width<= 600){
+                    document.getElementById("addBundle").style.width = "100%";
+                }else if(screen.width<= 720){
+                    document.getElementById("addBundle").style.width = "50%";
+                }
+                else{
+                    document.getElementById("addBundle").style.width = "30%";
+                } 
+
         }
-        else{
-            document.getElementById("addStore").style.width = "30%";
-        }  
+
+         
     }
     function closeNavAddStore() {
         document.getElementById("addStore").style.width = "0";
+    }
+    function closeNavAddBundle() {
+        document.getElementById("addBundle").style.width = "0";
     }
 
 
