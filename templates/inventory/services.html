@@ -244,7 +244,7 @@
                                                
                                             </table>
                                             <div class="attribute-footer p-5">
-                                                <button class="inv-plan-btn" onclick="openNavAddStore('add')"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add</button>
+                                                <button class="inv-plan-btn" onclick="openNavAddStore('add')"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Ingredients</button>
                 
                                             </div>
                                         </div>
@@ -261,7 +261,15 @@
                                                         Action
                                                     </th>
                                                 </tr>
-                                                
+                                                <tr>
+                                                    <td>
+                                                        item 1
+                                                    </td>
+                                                    <td>
+                                                        <button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('edit')" > <img src="/static/files/inventory/pencil.png" alt=""> </button>
+                                                        <button class="inv-plan-img-btn "  data-toggle="modal" data-target="#deleteModel2"> <img src="/static/files/inventory/bin.png" alt=""> </button>
+                                                    </td>
+                                                </tr>
                                                
                                             </table>
                                             <div class="attribute-footer p-5">
@@ -394,7 +402,7 @@
                                                
                                             </table>
                                             <div class="attribute-footer p-5">
-                                                <button class="inv-plan-btn" onclick="openNavAddStore('add')"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Item</button>
+                                                <button class="inv-plan-btn" onclick="openNavAddStore('add')"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Ingredients</button>
                 
                                             </div>
                                         </div>
@@ -412,6 +420,15 @@
                                                     </th>
                                                 </tr>
                                                 
+                                                <tr>
+                                                    <td>
+                                                        item 1
+                                                    </td>
+                                                    <td>
+                                                        <button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('edit')" > <img src="/static/files/inventory/pencil.png" alt=""> </button>
+                                                        <button class="inv-plan-img-btn "  data-toggle="modal" data-target="#deleteModel2"> <img src="/static/files/inventory/bin.png" alt=""> </button>
+                                                    </td>
+                                                </tr>
                                                
                                             </table>
                                             <div class="attribute-footer p-5">
@@ -538,7 +555,7 @@
                                                
                                             </table>
                                             <div class="attribute-footer p-5">
-                                                <button class="inv-plan-btn" onclick="openNavAddStore('add')"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Item</button>
+                                                <button class="inv-plan-btn" onclick="openNavAddStore('add')"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Ingredients</button>
                 
                                             </div>
                                         </div>
@@ -555,7 +572,15 @@
                                                         Action
                                                     </th>
                                                 </tr>
-                                                
+                                                <tr>
+                                                    <td>
+                                                        item 1
+                                                    </td>
+                                                    <td>
+                                                        <button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('edit')" > <img src="/static/files/inventory/pencil.png" alt=""> </button>
+                                                        <button class="inv-plan-img-btn "  data-toggle="modal" data-target="#deleteModel2"> <img src="/static/files/inventory/bin.png" alt=""> </button>
+                                                    </td>
+                                                </tr>
                                                
                                             </table>
                                             <div class="attribute-footer p-5">
@@ -682,7 +707,7 @@
                                                
                                             </table>
                                             <div class="attribute-footer p-5">
-                                                <button class="inv-plan-btn" onclick="openNavAddStore('add')"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Item</button>
+                                                <button class="inv-plan-btn" onclick="openNavAddStore('add')"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Ingredients</button>
                 
                                             </div>
                                         </div>
@@ -698,6 +723,15 @@
                                                     <th style="width: %;">
                                                         Action
                                                     </th>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        item 1
+                                                    </td>
+                                                    <td>
+                                                        <button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('edit')" > <img src="/static/files/inventory/pencil.png" alt=""> </button>
+                                                        <button class="inv-plan-img-btn "  data-toggle="modal" data-target="#deleteModel2"> <img src="/static/files/inventory/bin.png" alt=""> </button>
+                                                    </td>
                                                 </tr>
                                                 
                                                
@@ -979,7 +1013,7 @@
 
                         
                         <div class="d-flex ">
-                            <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to delete item ?</p></div>
+                            <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to delete Ingredient ?</p></div>
                             <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
 
                                 <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
@@ -1000,6 +1034,39 @@
                           
                         </div>
                         </form>
+                    </div>
+    
+                </div>
+            </div>
+        </div>
+      </div>
+      <div class="modal fade" id="deleteModel2" role="dialog">
+        <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12 mt-20">
+
+                        
+                        <div class="d-flex ">
+                            <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to delete item ?</p></div>
+                            <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                                <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                            </button>
+    
+                        </div>
+                    </div>
+                </div>
+               
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                   
+                        <div class="cancel-model-content">
+                            <button class="sent-button" >Delete</button>
+                            <button data-dismiss="modal" class="view-button">Cancel</button>
+                          
+                        </div>
+                        
                     </div>
     
                 </div>
