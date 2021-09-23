@@ -529,7 +529,7 @@ const app=  new Vue({
                     this.combineSlots.push({type:'followup',class:'followup-cleaning-status-bg',slots:slot})
                 }
                  this.parseSlots()
-                $(".cl-slot-card").css('min-height',600);
+                // $(".cl-slot-card").css('min-height',600);
                 setTimeout(function(){ 
                   var a = [];
                   console.log("here", $("#div_8").height()) 
@@ -555,7 +555,7 @@ const app=  new Vue({
                   console.log("a is"+a)
                   // m=Math.max( ...a )
                   console.log("m is"+m)
-                  $(".cl-slot-card").css('min-height',m);
+                  // $(".cl-slot-card").css('min-height',m);
                 //   $('#cleaningCalendar-carousel').css('height'm+1)
                 // //   $('.cleaningCalendar-carousel').trigger('destroy.owl.carousel');
                 // //   $('#cleaningCalendar-carousel').owlCarousel({
