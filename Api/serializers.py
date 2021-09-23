@@ -3,7 +3,7 @@ from rest_framework import serializers
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule
 from evaluator.models import Evaluation,EvaluationDetails
 from order.models import Promocode
-# from inventory.models import Line,Segment,Category,Attribute,AttributeValue,BundleItems,InventoryItem,ItemUnit,SupplierItems
+from inventory.models import Line,Segment,Category,Attribute,AttributeValue,BundleItems,InventoryItem,ItemUnit,SupplierItems
 from bleachadmin.models import Settings
 
 class DiscountSettingSerializer(serializers.ModelSerializer):
@@ -82,41 +82,41 @@ class EvaluationSerializer(serializers.ModelSerializer):
         model = Evaluation
         fields = ('evaluation_id','customer__mobile','evaluation_details__evaluator','evaluation_details__proposed_time','evaluation_details__address')
 
-# class InventoryLineSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Line
-#         fields = ('id','name','status')
+class InventoryLineSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Line
+        fields = ('id','name','status')
 
-# class InventoryValueSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = AttributeValue
-#         fields = ('id','name','status')
+class InventoryValueSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AttributeValue
+        fields = ('id','name','status')
 
-# class InventoryItemSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = InventoryItem
-#         fields = ('id','name','status')
+class InventoryItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InventoryItem
+        fields = ('id','name','status')
        
-# class InventorySupplierItemSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = SupplierItems
-#         fields = ('id','item','item_price','item_count')
+class InventorySupplierItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SupplierItems
+        fields = ('id','item','item_price','item_count')
 
-# class InventoryItemUnitSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = ItemUnit
-#         fields = ('id','item','unit_code','status')
+class InventoryItemUnitSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ItemUnit
+        fields = ('id','item','unit_code','status')
 
-# class InventoryBundleItemSerializer(serializers.ModelSerializer):
-#     bundleitem     = InventoryItemSerializer(read_only=True)
-#     class Meta:
-#         model = BundleItems
-#         fields = ('id','bundleitem','item_price','item_count')
+class InventoryBundleItemSerializer(serializers.ModelSerializer):
+    bundleitem     = InventoryItemSerializer(read_only=True)
+    class Meta:
+        model = BundleItems
+        fields = ('id','bundleitem','item_price','item_count')
 
-# class InventorySegmentSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Segment
-#         fields = ('id','name')
+class InventorySegmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Segment
+        fields = ('id','name')
 
 
 
