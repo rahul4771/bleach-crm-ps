@@ -10,7 +10,7 @@ from bleachadmin.models import ServicePriceRange,Settings
 from django.core.mail import send_mail,EmailMultiAlternatives
 from Api.serializers import DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, LeaveUsersSerializer,ShiftScheduleSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
 from agent.views import generate_random_username
-from inventory.models import Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,ItemUnit,SupplierItems,ServiceRecipe,ServiceRecipeItems
+from inventory.models import Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,ItemUnit,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems
 import re
 import random
 import string
@@ -1960,31 +1960,36 @@ class InventoryServiceRecipeAPI(APIView):
 		service_type = request.GET.get('service_type')
 		recipe_category = request.GET.get('recipe_category')
 		print(service_type,recipe_category,"attrsed2")
+		# try:
+		# 	service_items = ServiceRecipeItems.objects.filter(service_type__service=service_type,service_or_person=recipe_category)
+		# 	service = ServiceRecipe.objects.get(service=service_type)
+		# except:
+		# 	service_items = None
+		# 	service = None
+
 		try:
-			service_items = ServiceRecipeItems.objects.filter(service_type__service=service_type,service_or_person=recipe_category)
+			service_ingredients = ServiceRecipeIngredients.objects.filter(service_type__service=service_type,service_or_person=recipe_category)
 			service = ServiceRecipe.objects.get(service=service_type)
 		except:
-			service_items = None
+			service_ingredients = None
 			service = None
 		
-		print(service_items,"invo")
+		print(service_ingredients,"invo")
 
 		items_list = []
 
-		if service_items:
-			for item in service_items:
+		if service_ingredients:
+			for item in service_ingredients:
 				list_item = {
-					'service_item_id' : item.id,
-					'recipe_type' : item.service_or_person,
-					'item_name' : item.item.name,
-					'item_id' :item.item.id,
-					'item_count' : item.item_count,
+					'ingredient_id' : item.id,
+					'item_name' : item.ingredient,
+					'item_count' : item.quantity,
 					'status' : item.status
 				}
 
 				items_list.append(list_item)
 	
-		response_dict['service_items'] = items_list
+		response_dict['service_ingredients'] = items_list
 
 		if service:
 			response_dict['area_size'] = service.area_size

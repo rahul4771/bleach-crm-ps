@@ -103,6 +103,13 @@
         <button  data-toggle="modal" data-target="#editModel3" id="id_model_button_3" hidden>Done </button>
         <button  data-toggle="modal" data-target="#editModel4" id="id_model_button_4" hidden>Done </button>
 
+        <button  data-toggle="modal" data-target="#editNo1" id="id_model_button_person1" hidden>Done </button>
+        <button  data-toggle="modal" data-target="#editNo2" id="id_model_button_person2" hidden>Done </button>
+        <button  data-toggle="modal" data-target="#editNo3" id="id_model_button_person3" hidden>Done </button>
+        <button  data-toggle="modal" data-target="#editNo4" id="id_model_button_person4" hidden>Done </button>
+
+
+
 
 
 
@@ -174,11 +181,8 @@
                                             </ul>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
-                                        
+                                    <div class="col-md-3" id="id_ser_1">
                                         <div class="model-input-name">Area</div>
-
-
                                         <div class="d-flex inv-hide" id="id_area_edit_1">
                                             <div style="width: 50%; " class="inv-input-container h-30"> 
                                                 <input type="number"   class="w-p-100 inv-in" name="area1" id="id_area1">
@@ -197,32 +201,27 @@
                                               src="{% static 'files/icons/edit.png' %}">
                                               </div>
                                         </div>
-
-                                          <!-- <div class="d-flex">
-                                            <form method="POST" action="" >{% csrf_token %}
-                                            <div class="d-flex">
-                                                <div class="inv-input-container2 inv-border h-30">
-                                                    <input type="hidden" name="action" value="update_size" />
-                                                    <input type="hidden" name="service_name" class="area_service" value="General Cleaning" />
-                                                    <input type="number" step="0.1" name="area" class="service_area" style="border: none !important; width: 90%;" class="inv-in"  >
-                                                   
-                                                    <div class="model-filter2" >
-                                                      <button class="inv-icon-input2" >
-                                                      <i class="fa fa-refresh fa-lg " style="color: #ffffff;" aria-hidden="true"></i>
-                                                      </button>
-                                                    </div>
-                                                    
-                                                </div>
-                                            <div style="margin-left: 10px; font-size: 16px; margin-top: 3px;" class="av-font">sqm</div>
-
+                                    </div>
+                                    <div class="col-md-3" id="id_per_1">
+                                        <div class="model-input-name">No.of Persons</div>
+                                        <div class="d-flex inv-hide" id="id_person_edit_1">
+                                            <div style="width: 50%; " class="inv-input-container h-30"> 
+                                                <input type="number"   class="w-p-100 inv-in" >
+                                                
+                                            </div> 
+                                            <button style="margin-left: 10px;" id="id_editDone" class="inv-blue-btn " type="submit" onclick="closeditShow2(1)">Done </button>
+                                        </div>
+                                        <div class="d-flex " id="id_person_div_1">
+                                            <div class="model-input-name service_area" >
+                                                0
                                             </div>
-                                           
-                                            </form>
-                                          </div> -->
-                                          
-                                          
-                                        
-                        
+                                            
+
+                                          <div class="edit-div" style="top: 25px !important;">
+                                              <img onclick="showEditModal2(1)" id="id_editButton"  class="inv-edit-img"
+                                              src="{% static 'files/icons/edit.png' %}">
+                                              </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row mt-10">
@@ -331,7 +330,7 @@
                                             </ul>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-3" id="id_ser_2">
                                         
                                         <div class="model-input-name">Area</div>
                                         <!-- <div style="width: 50%; " class="inv-input-container h-30"> 
@@ -380,6 +379,27 @@
                                           
                                         
                         
+                                    </div>
+                                    <div class="col-md-3" id="id_per_2">
+                                        <div class="model-input-name">No.of Persons</div>
+                                        <div class="d-flex inv-hide" id="id_person_edit_2">
+                                            <div style="width: 50%; " class="inv-input-container h-30"> 
+                                                <input type="number"   class="w-p-100 inv-in" >
+                                                
+                                            </div> 
+                                            <button style="margin-left: 10px;" id="id_editDone" class="inv-blue-btn " type="submit" onclick="closeditShow2(2)">Done </button>
+                                        </div>
+                                        <div class="d-flex " id="id_person_div_2">
+                                            <div class="model-input-name service_area" >
+                                                0
+                                            </div>
+                                            
+
+                                          <div class="edit-div" style="top: 25px !important;">
+                                              <img onclick="showEditModal2(2)" id="id_editButton"  class="inv-edit-img"
+                                              src="{% static 'files/icons/edit.png' %}">
+                                              </div>
+                                        </div>
                                     </div>
 
                                 </div>
@@ -483,7 +503,7 @@
                                             </ul>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-3" id="id_ser_3" >
                                         
                                         <div class="model-input-name">Area</div>
                                         <!-- <div style="width: 50%; " class="inv-input-container h-30"> 
@@ -533,6 +553,27 @@
                                         </div>
                                         
                         
+                                    </div>
+                                    <div class="col-md-3" id="id_per_3">
+                                        <div class="model-input-name">No.of Persons</div>
+                                        <div class="d-flex inv-hide" id="id_person_edit_3">
+                                            <div style="width: 50%; " class="inv-input-container h-30"> 
+                                                <input type="number"   class="w-p-100 inv-in" >
+                                                
+                                            </div> 
+                                            <button style="margin-left: 10px;" id="id_editDone" class="inv-blue-btn " type="submit" onclick="closeditShow2(3)">Done </button>
+                                        </div>
+                                        <div class="d-flex " id="id_person_div_3">
+                                            <div class="model-input-name service_area" >
+                                                0
+                                            </div>
+                                            
+
+                                          <div class="edit-div" style="top: 25px !important;">
+                                              <img onclick="showEditModal2(3)" id="id_editButton"  class="inv-edit-img"
+                                              src="{% static 'files/icons/edit.png' %}">
+                                              </div>
+                                        </div>
                                     </div>
                                     
                                 </div>
@@ -637,7 +678,7 @@
                                             </ul>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-3" id="id_ser_4">
                                         
                                         <div class="model-input-name">Area</div>
                                         <!-- <div style="width: 50%; " class="inv-input-container h-30"> 
@@ -686,6 +727,27 @@
                                           
                                         
                         
+                                    </div>
+                                    <div class="col-md-3" id="id_per_4">
+                                        <div class="model-input-name">No.of Persons</div>
+                                        <div class="d-flex inv-hide" id="id_person_edit_4">
+                                            <div style="width: 50%; " class="inv-input-container h-30"> 
+                                                <input type="number"   class="w-p-100 inv-in" >
+                                                
+                                            </div> 
+                                            <button style="margin-left: 10px;" id="id_editDone" class="inv-blue-btn " type="submit" onclick="closeditShow2(4)">Done </button>
+                                        </div>
+                                        <div class="d-flex " id="id_person_div_4">
+                                            <div class="model-input-name service_area" >
+                                                0
+                                            </div>
+                                            
+
+                                          <div class="edit-div" style="top: 25px !important;">
+                                              <img onclick="showEditModal2(4)" id="id_editButton"  class="inv-edit-img"
+                                              src="{% static 'files/icons/edit.png' %}">
+                                              </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row mt-10">
@@ -838,7 +900,7 @@
         <div class="inv-sidedrawer-inner">
             <div class="d-flex">
                 <div class="inv-drawer-head" id="itemHead">
-                    Add Item
+                    Add Ingredient
                 </div>
                 <div class="right-pos">
 
@@ -850,7 +912,7 @@
             <hr>
 
             <form method="POST" action="">{% csrf_token %}
-            <input type="hidden" name="action" id="item_action" value="add_item" />
+            <input type="hidden" name="action" id="item_action" value="add_ingredient" />
             <input type="hidden" name="item" id="id_pro_sel" value="" />
 
             <input type="hidden" name="item_edit_id" id="id_edit_item" />
@@ -876,7 +938,7 @@
 
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Item</div>
+                    <div class="model-input-name">Ingredient</div>
 
                     <!-- <div style="position: relative;">
                         <div class="inv-input-container inv-border h-30">
@@ -897,7 +959,7 @@
                         </div>
                     </div> -->
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" >
+                        <input type="text" name="ingredient" class="w-p-100 inv-in" >
                       </div>
 
 
@@ -1206,6 +1268,138 @@
         </div>
     </div>
   </div>
+  <div class="modal fade" id="editNo1" role="dialog">
+    <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 mt-20">
+
+                    
+                    <div class="d-flex ">
+                        <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to edit  No.of persons?</p></div>
+                        <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+           
+            <div class="row">
+                <div class="col-md-12 text-center">
+               
+                    <div class="cancel-model-content">
+                        <button class="sent-button" onclick="editShow2(1)" >Edit</button>
+                        <button data-dismiss="modal" id="id_cancel_per_1" class="view-button">Cancel</button>
+                      
+                    </div>
+                  
+                </div>
+
+            </div>
+        </div>
+    </div>
+  </div>
+  <div class="modal fade" id="editNo2" role="dialog">
+    <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 mt-20">
+
+                    
+                    <div class="d-flex ">
+                        <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to edit  No.of persons?</p></div>
+                        <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+           
+            <div class="row">
+                <div class="col-md-12 text-center">
+               
+                    <div class="cancel-model-content">
+                        <button class="sent-button" onclick="editShow2(2)" >Edit</button>
+                        <button data-dismiss="modal" id="id_cancel_per_2" class="view-button">Cancel</button>
+                      
+                    </div>
+                  
+                </div>
+
+            </div>
+        </div>
+    </div>
+  </div>
+  <div class="modal fade" id="editNo3" role="dialog">
+    <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 mt-20">
+
+                    
+                    <div class="d-flex ">
+                        <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to edit  No.of persons?</p></div>
+                        <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+           
+            <div class="row">
+                <div class="col-md-12 text-center">
+               
+                    <div class="cancel-model-content">
+                        <button class="sent-button" onclick="editShow2(3)" >Edit</button>
+                        <button data-dismiss="modal" id="id_cancel_per_3" class="view-button">Cancel</button>
+                      
+                    </div>
+                  
+                </div>
+
+            </div>
+        </div>
+    </div>
+  </div>
+  <div class="modal fade" id="editNo4" role="dialog">
+    <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 mt-20">
+
+                    
+                    <div class="d-flex ">
+                        <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to edit  No.of persons?</p></div>
+                        <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+           
+            <div class="row">
+                <div class="col-md-12 text-center">
+               
+                    <div class="cancel-model-content">
+                        <button class="sent-button" onclick="editShow2(4)" >Edit</button>
+                        <button data-dismiss="modal" id="id_cancel_per_4" class="view-button">Cancel</button>
+                      
+                    </div>
+                  
+                </div>
+
+            </div>
+        </div>
+    </div>
+  </div>
 
 </div>
 
@@ -1275,9 +1469,23 @@ $(function () {
 </script>
 <script>
 
+$(document).ready(function(){
+        $('#id_per_1').hide();
+        $('#id_per_2').hide();
+        $('#id_per_3').hide();
+        $('#id_per_4').hide();
+
+        
+    })
+
+
 function showEditModal(id){
     console.log(id)
     $('#id_model_button_'+id).click()
+}
+function showEditModal2(id){
+    console.log(id)
+    $('#id_model_button_person'+id).click()
 }
 function editShow(id){
     console.log(id)
@@ -1286,6 +1494,25 @@ function editShow(id){
 
     document.getElementById('id_area_div_'+id).style.display  = "none";
     document.getElementById('id_area_edit_'+id).style.display  = "flex";
+
+}
+function editShow2(id){
+    console.log(id)
+    $("#id_cancel_per_"+id).click();
+    
+
+    document.getElementById('id_person_div_'+id).style.display  = "none";
+    document.getElementById('id_person_edit_'+id).style.display  = "flex";
+
+}
+
+async function closeditShow2(id){
+
+
+
+
+document.getElementById('id_person_div_'+id).style.display  = "flex";
+document.getElementById('id_person_edit_'+id).style.display  = "none";
 
 }
 
@@ -1316,18 +1543,46 @@ function changeSelect(va){
         $('#id_recipe_type').val(va)
     }
     function changeSelect3(va){
+        if(va == 'person'){
+            $('#id_ser_1').hide()
+            $('#id_per_1').show()
+        }else{
+            $('#id_ser_1').show()
+            $('#id_per_1').hide()
+        }
         $('#id_recipe_type1').val(va)
         recipetype($('#id_recipe_type1').val())
     }
     function changeSelect4(va){
+        if(va == 'person'){
+            $('#id_ser_2').hide()
+            $('#id_per_2').show()
+        }else{
+            $('#id_ser_2').show()
+            $('#id_per_2').hide()
+        }
         $('#id_recipe_type2').val(va)
         recipetype($('#id_recipe_type2').val())
     }
     function changeSelect5(va){
+        if(va == 'person'){
+            $('#id_ser_3').hide()
+            $('#id_per_3').show()
+        }else{
+            $('#id_ser_3').show()
+            $('#id_per_3').hide()
+        }
         $('#id_recipe_type3').val(va)
         recipetype($('#id_recipe_type3').val())
     }
     function changeSelect6(va){
+        if(va == 'person'){
+            $('#id_ser_4').hide()
+            $('#id_per_4').show()
+        }else{
+            $('#id_ser_4').show()
+            $('#id_per_4').hide()
+        }
         $('#id_recipe_type4').val(va)
         recipetype($('#id_recipe_type4').val())
     }
@@ -1356,7 +1611,7 @@ var products = [];
     console.log(products)
 $(document).ready(function(){
     $(".country1").chosen();
-    getitems('General Cleaning','detailedCleaning','service');
+    getingredients('General Cleaning','detailedCleaning','service');
     var a = [];
 
 
@@ -1421,7 +1676,7 @@ function getName(name,type){
     if (type == 'sterilization'){
         var recipe_category = $('#id_recipe_type4').val();
     }
-    getitems(name,type,recipe_category);
+    getingredients(name,type,recipe_category);
 }
 
 function selectActive(d,id,name){
@@ -1446,7 +1701,7 @@ function selectActive(d,id,name){
         var recipe_category = $('#id_recipe_type4').val();
     }
 
-    getitems(name,id,recipe_category);
+    getingredients(name,id,recipe_category);
 
     $("."+id).each(function(){
         $(this).removeClass("active")
@@ -1495,9 +1750,9 @@ function openNavAddStore2(d) {
 
     {% endfor %}
     if(d == 'add'){
-            $("#itemHead").text("Add Item");
+            $("#itemHead").text("Add Ingredient");
             $('.item-form-btn').text('Add');
-            $('#item_action').val('add_item');
+            $('#item_action').val('add_ingredient');
             $('#id_edit_item').val('');
             $('#id_item_count').val('');
             $('#pro-name').val('');
@@ -1592,12 +1847,12 @@ function openNavAddStore2(d) {
         var cleaning = $('#id_name_cleaning').val();
         var category = $('#id_name_category').val();
         //var recipe_category = $(d).val();
-        getitems(cleaning,category,d)
+        getingredients(cleaning,category,d)
         console.log("lop")
     }
 
     //get items using api
-    async function getitems(service_type,category,recipe_category){
+    async function getingredients(service_type,category,recipe_category){
             console.log(category,"cat")
         //$('#line_segment_id').val(segment_id); //adding value to hidden input for adding line
 
@@ -1611,10 +1866,10 @@ function openNavAddStore2(d) {
 
                 $('#id_area1').val(result.data.area_size);
 
-                if (result.data.service_items.length > 0){
+                if (result.data.service_ingredients.length > 0){
                     $(".item-table1 tr:not(:first)").remove(); 
                     var edit = "edit";
-                    $.each(result.data.service_items,function(key,value){
+                    $.each(result.data.service_ingredients,function(key,value){
                             $('.item-table1').append('<tr><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItem(this)" data-serviceitemid='+value.service_item_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.item_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.service_item_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
                     })
                 }else{
@@ -1622,10 +1877,10 @@ function openNavAddStore2(d) {
                 }
             }else if(category == 'specialCare'){
                 $('#id_area2').val(result.data.area_size);
-                if (result.data.service_items.length > 0){
+                if (result.data.service_ingredients.length > 0){
                     $(".item-table2 tr:not(:first)").remove(); 
                     var edit = "edit";
-                    $.each(result.data.service_items,function(key,value){
+                    $.each(result.data.service_ingredients,function(key,value){
                             $('.item-table2').append('<tr><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItem(this)" data-serviceitemid='+value.service_item_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.item_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.service_item_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
                     })
                 }else{
@@ -1633,10 +1888,10 @@ function openNavAddStore2(d) {
                 }
             }else if(category == 'kitchenCleaning'){
                 $('#id_area3').val(result.data.area_size);
-                if (result.data.service_items.length > 0){
+                if (result.data.service_ingredients.length > 0){
                     $(".item-table3 tr:not(:first)").remove(); 
                     var edit = "edit";
-                    $.each(result.data.service_items,function(key,value){
+                    $.each(result.data.service_ingredients,function(key,value){
                             $('.item-table3').append('<tr><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItem(this)" data-serviceitemid='+value.service_item_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.item_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.service_item_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
                     })
                 }else{
@@ -1644,10 +1899,10 @@ function openNavAddStore2(d) {
                 }
             }else{
                 $('#id_area4').val(result.data.area_size);
-                if (result.data.service_items.length > 0){
+                if (result.data.service_ingredients.length > 0){
                     $(".item-table4 tr:not(:first)").remove(); 
                     var edit = "edit";
-                    $.each(result.data.service_items,function(key,value){
+                    $.each(result.data.service_ingredients,function(key,value){
                             $('.item-table4').append('<tr><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItem(this)" data-serviceitemid='+value.service_item_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.item_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.service_item_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
                     })
                 }else{
