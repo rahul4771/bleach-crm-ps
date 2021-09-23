@@ -718,13 +718,17 @@
                             </div>
                         </div>
                         <div class="col-md-4 mt-10" >
-                            <div class="keynote-chip d-flex" >
+                            <div class="keynote-chip" >
+                                <div class="d-flex">
                                 <input type="text" v-model="newkeynote.sub_area" class="keynote-input" placeholder="Name"/>
                                 <input type="text" v-model="newkeynote.quantity" class="keynote-input" placeholder="Value"/>
                                <!-- <div><%keynote.sub_area%> - <%keynote.quantity%></div>-->
                                <div class="keynote-delicon cp" @click="addToKeynote()"><i class="far fa-plus-square"></i>
                                </div>
+                            </div>
+                               <div class="red-msg text-center mt-10" v-if="keynote_msg">Please fill the required fields</div>
                                 </div>
+                               
                             </div>
                     </div>
                 </div>
@@ -773,6 +777,7 @@
                                 <span v-if="selected_addon.details"><% selected_addon.details.price*newaddon_quantity %> KD</span>
                                 <span v-else>0 KD</span>
                             </div>
+                            <div class="red-msg text-center mt-10" v-if="addon_msg">Please fill the required fields</div>
                             <button type="submit" class="btn primary-btn mt-10 mx-auto" @click="addToAddon()">Add </button>
                                 </div>
                             </div>
@@ -859,6 +864,7 @@
                                         </label>
                                     </div>
                                 </div>
+                               
                                 <!-- <div><%keynote.sub_area%> - <%keynote.quantity%></div>-->
                                  
                              </div>
@@ -936,6 +942,7 @@
                                         </label>
                                     </div>
                                 </div>
+                                <div class="red-msg text-center" v-if="kitchen_msg">Please fill the required fields</div>
                                 <div class="text-center mt-10">
                                     <button type="submit" class="btn primary-btn" @click="addKitchenToAddon()">Add </button>
                                 </div>

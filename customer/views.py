@@ -3192,8 +3192,8 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 					#create kenotes
 					keynotes_dict = sections_dict[key]['keynotes']
 					if keynotes_dict:
-						for key in keynotes_dict.keys():
-							keynote_save_serializer = EvaluationSectionKeynoteSerializer(data=keynotes_dict[key])
+						for key1 in keynotes_dict.keys():
+							keynote_save_serializer = EvaluationSectionKeynoteSerializer(data=keynotes_dict[key1])
 							if keynote_save_serializer.is_valid():
 								saved_keynote       = keynote_save_serializer.save(evaluation_section=saved_section)
 								
@@ -3206,6 +3206,29 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 								response_dict['keynote_Error_List'] = keynote_save_serializer.errors
 
 								response_dict['keynote_success']    = False
+
+								return Response(response_dict,HTTP_200_OK)
+					
+					#create add-ons
+					try:
+						addons_dict = sections_dict[key]['addons']
+					except:
+						addons_dict = None
+					if addons_dict:
+						for key2 in addons_dict.keys():
+							addons_save_serializer = EvaluationSectionAddonSerializer(data=addons_dict[key2])
+							if addons_save_serializer.is_valid():
+								saved_addon       = addons_save_serializer.save(evaluation_section=saved_section)
+								
+								response_dict['addon_success']       = True
+							else:
+								errors= addons_save_serializer.errors   
+								key=tuple(errors.keys())[0] 
+								error=errors[key]
+								response_dict['addon_Error']      = key +':'+ error[0]
+								response_dict['addon_Error_List'] = addons_save_serializer.errors
+
+								response_dict['addon_success']    = False
 
 								return Response(response_dict,HTTP_200_OK)
 				
@@ -3574,8 +3597,8 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 					except:
 						keynotes_dict = None
 					if keynotes_dict:
-						for key in keynotes_dict.keys():
-							keynote_save_serializer = EvaluationSectionKeynoteSerializer(data=keynotes_dict[key])
+						for key1 in keynotes_dict.keys():
+							keynote_save_serializer = EvaluationSectionKeynoteSerializer(data=keynotes_dict[key1])
 							if keynote_save_serializer.is_valid():
 								saved_keynote       = keynote_save_serializer.save(evaluation_section=saved_section)
 								
@@ -3597,8 +3620,8 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 					except:
 						addons_dict = None
 					if addons_dict:
-						for key in addons_dict.keys():
-							addons_save_serializer = EvaluationSectionAddonSerializer(data=addons_dict[key])
+						for key2 in addons_dict.keys():
+							addons_save_serializer = EvaluationSectionAddonSerializer(data=addons_dict[key2])
 							if addons_save_serializer.is_valid():
 								saved_addon       = addons_save_serializer.save(evaluation_section=saved_section)
 								
@@ -3986,8 +4009,8 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 				except:
 					keynotes_dict = None
 				if keynotes_dict:
-					for key in keynotes_dict.keys():
-						keynote_save_serializer = EvaluationSectionKeynoteSerializer(data=keynotes_dict[key])
+					for key1 in keynotes_dict.keys():
+						keynote_save_serializer = EvaluationSectionKeynoteSerializer(data=keynotes_dict[key1])
 						if keynote_save_serializer.is_valid():
 							saved_keynote       = keynote_save_serializer.save(evaluation_section=saved_section)
 							
@@ -4009,8 +4032,8 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 				except:
 					addons_dict = None
 				if addons_dict:
-					for key in addons_dict.keys():
-						addons_save_serializer = EvaluationSectionAddonSerializer(data=addons_dict[key])
+					for key2 in addons_dict.keys():
+						addons_save_serializer = EvaluationSectionAddonSerializer(data=addons_dict[key2])
 						if addons_save_serializer.is_valid():
 							saved_addon       = addons_save_serializer.save(evaluation_section=saved_section)
 							
@@ -4137,8 +4160,8 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase2(APIView):
 				except:
 					keynotes_dict = None					
 				if keynotes_dict:
-					for key in keynotes_dict.keys():
-						keynote_save_serializer = EvaluationSectionKeynoteSerializer(data=keynotes_dict[key])
+					for key1 in keynotes_dict.keys():
+						keynote_save_serializer = EvaluationSectionKeynoteSerializer(data=keynotes_dict[key1])
 						if keynote_save_serializer.is_valid():
 							saved_keynote       = keynote_save_serializer.save(evaluation_section=saved_section)
 							
@@ -4160,8 +4183,8 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase2(APIView):
 				except:
 					addons_dict = None
 				if addons_dict:
-					for key in addons_dict.keys():
-						addons_save_serializer = EvaluationSectionAddonSerializer(data=addons_dict[key])
+					for key2 in addons_dict.keys():
+						addons_save_serializer = EvaluationSectionAddonSerializer(data=addons_dict[key2])
 						if addons_save_serializer.is_valid():
 							saved_addon       = addons_save_serializer.save(evaluation_section=saved_section)
 							
@@ -5376,6 +5399,22 @@ class EditOrderDetails(APIView):
 			order.evaluation.save()
 			
 			response_dict['success']  = True
+
+		elif action == 'evaluation_media':
+			evaluationbook_id = request.data.get('evaluationbook_id')
+			taken_status      = request.data.get('taken_status')
+			medias            = request.FILES.getlist('media')
+
+			if not medias==['']:
+				for media in medias:
+					EvaluationMedia.objects.create(
+							evaluation_book_id=evaluation_book_id,
+							media=media,
+							media_type='PHOTO',
+							taken_status=taken_status
+							)
+			
+			response_dict['success'] = True
 
 		return Response(response_dict,HTTP_200_OK)
 
