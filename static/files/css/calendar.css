@@ -512,7 +512,7 @@ width:100% !important;
     margin-top: 0px !important;
 }
 .cl-slot-card{
-    min-height: 600px;
+    min-height: 1200px;
     height:100%;
     background: #EDF1F6 0% 0% no-repeat padding-box;
    
@@ -533,7 +533,7 @@ width:100% !important;
 
 }
 .cl-slot-card-subtitle{
-    font-size:14px;
+    font-size:12px;
     color: #434343;
     font-weight:300;
 }
