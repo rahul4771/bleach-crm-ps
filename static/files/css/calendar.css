@@ -513,7 +513,7 @@ width:100% !important;
 }
 .cl-slot-card{
     min-height: 600px;
-    
+    height:100%;
     background: #EDF1F6 0% 0% no-repeat padding-box;
    
     border-radius: 4px;

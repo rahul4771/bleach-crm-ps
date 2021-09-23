@@ -10,7 +10,7 @@ $(document).ready(function(){
         startPosition:4,
         nav:true,
         dots:false,
-        autoHeight: true,
+      
         navText:[`<i class='fa fa-chevron-left service-control' @click='prevService()'></i>`,
       `<i class='fa fa-chevron-right service-control'></i>`], 
         responsive:{
@@ -456,7 +456,7 @@ const app=  new Vue({
             $('#cl_cleaning_calendar').val(this.cleaningDate)
             
           },
-          getSlots(){
+          async getSlots(){
            // console.log($('#cl_cleaning_calendar').val())
            this.services=[]
             this.cleaningDate=$('#cl_cleaning_calendar').val()
@@ -528,8 +528,8 @@ const app=  new Vue({
                     slot.order={order_no:slot.follow_up.ticket_no}
                     this.combineSlots.push({type:'followup',class:'followup-cleaning-status-bg',slots:slot})
                 }
-                this.parseSlots()
-               // $(".cl-slot-card").css('min-height',600);
+                 this.parseSlots()
+                $(".cl-slot-card").css('min-height',600);
                 setTimeout(function(){ 
                   var a = [];
                   console.log("here", $("#div_8").height()) 
@@ -545,18 +545,42 @@ const app=  new Vue({
                   a.push($("#div_10").height()+10)
                   a.push($("#div_11").height()+10)
                   a.push($("#div_12").height()+10)
-                 // var m = a[0];
-                  // for(var q=0;q<a.length;q++){
-                  //   if(a[q]>=m){
-                  //     m = a[q]
-                  //   }
-                  // }
+                 var m = a[0];
+                  for(var q=0;q<a.length;q++){
+                    console.log(a[q],'height')
+                    if(a[q]>=m){
+                      m = a[q]
+                    }
+                  }
                   console.log("a is"+a)
-                  m=Math.max( ...a )
+                  // m=Math.max( ...a )
                   console.log("m is"+m)
                   $(".cl-slot-card").css('min-height',m);
+                //   $('#cleaningCalendar-carousel').css('height'm+1)
+                // //   $('.cleaningCalendar-carousel').trigger('destroy.owl.carousel');
+                // //   $('#cleaningCalendar-carousel').owlCarousel({
+                // //     loop:false,
+                // //     margin:10,
+                // //     startPosition:4,
+                // //     nav:true,
+                // //     dots:false,
+                // //     autoHeight: true,
+                // //     navText:[`<i class='fa fa-chevron-left service-control' @click='prevService()'></i>`,
+                // //   `<i class='fa fa-chevron-right service-control'></i>`], 
+                // //     responsive:{
+                // //         0:{
+                // //             items:2
+                // //         },
+                // //         600:{
+                // //             items:4
+                // //         },
+                // //         1000:{
+                // //             items:6
+                // //         }
+                // //     }
+                // // })
               
-                }, 5000);
+                }, 500);
                 
               })
           },
@@ -1072,7 +1096,7 @@ const app=  new Vue({
             this.selected_cleaning_duration.no_of_cleaners=parseInt(this.followup_cleaners)
             this.editFollowupCleaning()
           },
-          parseSlots(){
+          async parseSlots(){
             for(var i=0;i<this.combineSlots.length;i++){
                 var startdate=this.combineSlots[i].slots.start_at.split(' ')[0]
                 var enddate=this.combineSlots[i].slots.end_at.split(' ')[0]
