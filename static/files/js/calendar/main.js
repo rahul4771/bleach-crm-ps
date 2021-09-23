@@ -10,6 +10,7 @@ $(document).ready(function(){
         startPosition:4,
         nav:true,
         dots:false,
+        autoHeight: true,
         navText:[`<i class='fa fa-chevron-left service-control' @click='prevService()'></i>`,
       `<i class='fa fa-chevron-right service-control'></i>`], 
         responsive:{
@@ -528,7 +529,7 @@ const app=  new Vue({
                     this.combineSlots.push({type:'followup',class:'followup-cleaning-status-bg',slots:slot})
                 }
                 this.parseSlots()
-                $(".cl-slot-card").css('min-height',600);
+               // $(".cl-slot-card").css('min-height',600);
                 setTimeout(function(){ 
                   var a = [];
                   console.log("here", $("#div_8").height()) 
@@ -544,16 +545,18 @@ const app=  new Vue({
                   a.push($("#div_10").height()+10)
                   a.push($("#div_11").height()+10)
                   a.push($("#div_12").height()+10)
-                  var m = a[0];
-                  for(var q=0;q<a.length;q++){
-                    if(a[q]>=m){
-                      m = a[q]
-                    }
-                  }
-                  
+                 // var m = a[0];
+                  // for(var q=0;q<a.length;q++){
+                  //   if(a[q]>=m){
+                  //     m = a[q]
+                  //   }
+                  // }
+                  console.log("a is"+a)
+                  m=Math.max( ...a )
+                  console.log("m is"+m)
                   $(".cl-slot-card").css('min-height',m);
               
-                }, 500);
+                }, 5000);
                 
               })
           },

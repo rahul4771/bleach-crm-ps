@@ -76,7 +76,6 @@ class Store(models.Model):
     def __str__(self):
         return self.store_name
 
-
 class InventoryItem(models.Model):
     item_category   =   models.ForeignKey(Category,blank=False,null=False,related_name='item_category')
     item_segment    =   models.ForeignKey(Segment,blank=True,null=True,related_name='item_segment')
@@ -109,11 +108,77 @@ class InventoryItemImages(models.Model):
     def __str__(self):
         return self.inventory_item.name
 
+class Supplier(models.Model):
+    supplier_name       = models.CharField(max_length=100,blank=False,null=False)
+    supplier_id         = models.CharField(max_length=50,blank=False,null=False)
+    contact             = models.CharField(max_length=50,blank=False,null=False)
+    other_contact       = models.CharField(max_length=50,blank=False,null=False)
+    address             = models.TextField(max_length=500,blank=False,null=False)
+    terms               = models.TextField(max_length=1000,blank=False,null=False)
+    status              = models.BooleanField(default=True,blank=False,null=False)
+
+    def __unicode__(self):
+        return str(self.supplier_name)
+
+    def __str__(self):
+        return self.supplier_name
+
+
+class SupplierItems(models.Model):
+    supplier            = models.ForeignKey(Supplier,blank=True,null=True,related_name='item_supplier')
+    item                = models.ForeignKey(InventoryItem,blank=True,null=True,related_name='product_supplier')
+    supplier_item_id    = models.CharField(max_length=50,blank=False,null=False)
+    item_price          = models.CharField(default=0,max_length=100,blank=True,null=True)
+    item_count          = models.IntegerField(default=0,null=True,blank=True)
+    created             = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return str(self.supplier.supplier_name)
+
+    def __str__(self):
+        return self.supplier.supplier_name
+
+class PurchaseOrder(models.Model):
+    supplier            = models.ForeignKey(Supplier,blank=True,null=True,related_name='supplier_purchase_order')
+    purchase_order_id   = models.CharField(max_length=50,blank=False,null=False)
+    status              = models.BooleanField(default=True,blank=False,null=False)
+    initiated_by        = models.ForeignKey(UserProfile,blank=True,null=True,related_name='initiated_by_purchase_order')
+    discount            = models.CharField(max_length=10,blank=True,null=True)
+    tax                 = models.CharField(max_length=10,blank=True,null=True)
+    shipping_charge     = models.CharField(max_length=10,blank=True,null=True)
+    other_charge        = models.CharField(max_length=10,blank=True,null=True)
+    is_order_completed  = models.BooleanField(default=False,blank=False,null=False)
+    is_received         = models.BooleanField(default=False,blank=False,null=False)
+    created             = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return str(self.purchase_order_id)
+
+    def __str__(self):
+        return self.purchase_order_id
+
+
+class PurchaseOrderItems(models.Model):
+    purchase_order      = models.ForeignKey(PurchaseOrder,blank=True,null=True,related_name='purchase_order_purchase_order_item')
+    product             = models.ForeignKey(SupplierItems,blank=True,null=True,related_name='product_purchase_order_item')
+    item_count          = models.IntegerField(default=0,null=True,blank=True)
+    unit_price          = models.CharField(default=0,max_length=100,blank=True,null=True)
+    total_price         = models.CharField(default=0,max_length=100,blank=True,null=True)
+    is_received         = models.BooleanField(default=False,blank=False,null=False)
+    created             = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return str(self.purchase_order.purchase_order_id)
+
+    def __str__(self):
+        return self.purchase_order.purchase_order_id
+
 class ItemUnit(models.Model):
+    purchase_order  =   models.ForeignKey(PurchaseOrder,blank=False,null=False,related_name='purchase_order_unit')
     item            =   models.ForeignKey(InventoryItem,blank=False,null=False,related_name='unit_item')
     name            =   models.CharField(max_length=100,blank=False,null=False)
     unit_code       =   models.CharField(max_length=50,blank=False,null=False)
-    unit_serial_number =   models.CharField(max_length=50,blank=False,null=False)
+    unit_serial_number =  models.CharField(max_length=50,blank=False,null=False)
     store           =   models.ForeignKey(Store,blank=True,null=True,related_name='unit_store')
     purchase_date   =   models.DateField(blank=True,null=True)
     expiry_date     =   models.DateField(blank=True,null=True)
@@ -127,6 +192,24 @@ class ItemUnit(models.Model):
 
     def __str__(self):
         return self.item.name
+
+class ItemHistory(models.Model):
+    purchase_order  =   models.ForeignKey(PurchaseOrder,blank=False,null=False,related_name='purchase_order_item_history')
+    item            =   models.ForeignKey(InventoryItem,blank=False,null=False,related_name='unit_item_history')
+    purchase_date   =   models.DateField(blank=True,null=True)
+    # expiry_date     =   models.DateField(blank=True,null=True)
+    # no_expiry       =   models.BooleanField(default=False,blank=False,null=False)
+    # unit_price      =   models.CharField(max_length=10,blank=False,null=False)
+    quantity        =   models.CharField(max_length=50,blank=False,null=False)
+    added_by        =   models.ForeignKey(UserProfile,blank=False,null=False,related_name='addedby_item_history')
+    created         =   models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return str(self.item.name)
+
+    def __str__(self):
+        return self.item.name
+
 
 class Attribute(models.Model):
     # attribute_type      =   models.CharField(max_length=100,blank=False,null=False,choices=ATTRIBUTE_TYPE_CHOICES)
@@ -205,46 +288,6 @@ class BundleItemUnits(models.Model):
     def __str__(self):
         return self.bundle_item.bundle.name
 
-class Supplier(models.Model):
-    supplier_name       = models.CharField(max_length=100,blank=False,null=False)
-    supplier_id         = models.CharField(max_length=50,blank=False,null=False)
-    contact             = models.CharField(max_length=50,blank=False,null=False)
-    other_contact       = models.CharField(max_length=50,blank=False,null=False)
-    address             = models.TextField(max_length=500,blank=False,null=False)
-    terms               = models.TextField(max_length=1000,blank=False,null=False)
-    status              = models.BooleanField(default=True,blank=False,null=False)
-
-    def __unicode__(self):
-        return str(self.supplier_name)
-
-    def __str__(self):
-        return self.supplier_name
-
-class SupplierItems(models.Model):
-    supplier            = models.ForeignKey(Supplier,blank=True,null=True,related_name='item_supplier')
-    item                = models.CharField(max_length=100,blank=False,null=False)
-    supplier_item_id    = models.CharField(max_length=50,blank=False,null=False)
-    item_price          = models.CharField(default=0,max_length=100,blank=True,null=True)
-    item_count          = models.IntegerField(default=0,null=True,blank=True)
-    created             = models.DateTimeField(auto_now_add=True)
-
-    def __unicode__(self):
-        return str(self.supplier.supplier_name)
-
-    def __str__(self):
-        return self.supplier.supplier_name
-
-# class SupplierItemUnits(models.Model):
-#     supplier_item         = models.ForeignKey(SupplierItems,blank=True,null=True,related_name='supplier_unit_supplier_item')
-#     item_unit           = models.ForeignKey(ItemUnit,blank=True,null=True,related_name='unit_item_supplier')
-#     unit_price          = models.CharField(default=0,max_length=100,blank=False,null=False)
-#     created             = models.DateTimeField(auto_now_add=True)
-
-#     def __unicode__(self):
-#         return str(self.supplier_item.bundle.name)
-
-#     def __str__(self):
-#         return self.supplier_item.bundle.name
 
 class ServiceRecipe(models.Model):
     service             = models.CharField(max_length=100,blank=True,null=True)
@@ -270,38 +313,5 @@ class ServiceRecipeItems(models.Model):
     def __str__(self):
         return self.service_type.service
 
-class PurchaseOrder(models.Model):
-    supplier            = models.ForeignKey(Supplier,blank=True,null=True,related_name='supplier_purchase_order')
-    purchase_order_id   = models.CharField(max_length=50,blank=False,null=False)
-    status              = models.BooleanField(default=True,blank=False,null=False)
-    initiated_by        = models.ForeignKey(UserProfile,blank=True,null=True,related_name='initiated_by_purchase_order')
-    discount            = models.CharField(max_length=10,blank=True,null=True)
-    tax                 = models.CharField(max_length=10,blank=True,null=True)
-    shipping_charge     = models.CharField(max_length=10,blank=True,null=True)
-    other_charge        = models.CharField(max_length=10,blank=True,null=True)
-    is_order_completed  = models.BooleanField(default=False,blank=False,null=False)
-    is_received         = models.BooleanField(default=False,blank=False,null=False)
-    created             = models.DateTimeField(auto_now_add=True)
 
-    def __unicode__(self):
-        return str(self.purchase_order_id)
-
-    def __str__(self):
-        return self.purchase_order_id
-
-
-class PurchaseOrderItems(models.Model):
-    purchase_order      = models.ForeignKey(PurchaseOrder,blank=True,null=True,related_name='purchase_order_purchase_order_item')
-    product             = models.ForeignKey(SupplierItems,blank=True,null=True,related_name='product_purchase_order_item')
-    item_count          = models.IntegerField(default=0,null=True,blank=True)
-    unit_price          = models.CharField(default=0,max_length=100,blank=True,null=True)
-    total_price         = models.CharField(default=0,max_length=100,blank=True,null=True)
-    is_received         = models.BooleanField(default=False,blank=False,null=False)
-    created             = models.DateTimeField(auto_now_add=True)
-
-    def __unicode__(self):
-        return str(self.purchase_order.purchase_order_id)
-
-    def __str__(self):
-        return self.purchase_order.purchase_order_id
 

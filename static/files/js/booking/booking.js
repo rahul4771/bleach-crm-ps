@@ -1898,7 +1898,7 @@ console.log(response)
                   max_size:this.multiServicesBill[i].bill[j].section.kitchens[k].size.max_size,
                   type:this.multiServicesBill[i].bill[j].section.kitchens[k].type,
                   residue:this.multiServicesBill[i].bill[j].section.kitchens[k].residue,
-                  
+                  is_cabinet:this.multiServicesBill[i].bill[j].section.kitchens[k].is_cabinet
                 })
               }
             }
@@ -2097,6 +2097,7 @@ console.log(response)
                   max_size:this.multiServicesBill[i].bill[j].section.kitchens[k].size.max_size,
                   type:this.multiServicesBill[i].bill[j].section.kitchens[k].type,
                   residue:this.multiServicesBill[i].bill[j].section.kitchens[k].residue,
+                  is_cabinet:this.multiServicesBill[i].bill[j].section.kitchens[k].is_cabinet
                   
                 })
               }
@@ -3531,18 +3532,21 @@ setTimeout(function() {
     loop:false,
    
       responsiveClass:true,
+     
+      navText:["<i class='fa fa-chevron-left service-control' @click='prevService()'></i>",
+      "<i class='fa fa-chevron-right service-control'></i>"],
       responsive:{
           0:{
               items:1,
-              nav:false
+              nav:true
           },
           600:{
               items:1,
-              nav:false
+              nav:true
           },
           1000:{
               items:5,
-              nav:false,
+              nav:true,
               loop:false
           }
       }
@@ -3795,18 +3799,20 @@ try {
         loop:false,
        
           responsiveClass:true,
+          navText:["<i class='fa fa-chevron-left service-control' @click='prevService()'></i>",
+          "<i class='fa fa-chevron-right service-control'></i>"],
           responsive:{
               0:{
                   items:1,
-                  nav:false
+                  nav:true
               },
               600:{
                   items:1,
-                  nav:false
+                  nav:true
               },
               1000:{
                   items:3,
-                  nav:false,
+                  nav:true,
                   loop:false
               }
           }
@@ -3894,20 +3900,21 @@ try {
     setTimeout(function() {
       $('#otherServiceDialogCarousel').owlCarousel({
         loop:false,
-       
+        navText:["<i class='fa fa-chevron-left service-control' @click='prevService()'></i>",
+      "<i class='fa fa-chevron-right service-control'></i>"],
           responsiveClass:true,
           responsive:{
               0:{
                   items:1,
-                  nav:false
+                  nav:true
               },
               600:{
                   items:1,
-                  nav:false
+                  nav:true
               },
               1000:{
                   items:3,
-                  nav:false,
+                  nav:true,
                   loop:false
               }
           }
