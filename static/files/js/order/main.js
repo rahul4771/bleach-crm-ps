@@ -387,6 +387,9 @@ const app = new Vue({
   components: { Multiselect: window.VueMultiselect.default },
 
   data: {
+    kitchen_msg:false,
+    keynote_msg:false,
+    addon_msg:false,
     window_size:[],
     addon_size_data:{},
     newaddon_quantity:'',
@@ -619,6 +622,9 @@ const app = new Vue({
       this.selected_addon.details.category=this.selected_addon.selected_size.size
     },
     addToAddon(){
+      if(this.newaddon_quantity && this.selected_addon)
+      {
+        this.addon_msg=false
       this.kitchen_addons.push({
         name:this.selected_addon.details.name,
         addon_cost:this.selected_addon.details.price,
@@ -630,6 +636,10 @@ const app = new Vue({
       this.recalcAddonCost()
       this.newaddon_quantity=''
       this.selected_addon=''
+    }
+    else{
+      this.addon_msg=true
+    }
     },
     updateAddon(index){
       this.kitchen_addons[index].addon_net_cost=parseInt(this.kitchen_addons[index].quantity)*this.kitchen_addons[index].addon_cost
@@ -868,6 +878,9 @@ setTimeout(function() {
       
     },
     addKitchenToAddon(){
+      if(this.newkitchenkeynote.size)
+      {
+        this.kitchen_msg=false
       this.kitchen_addons.push({
         addon_cost:this.newkitchenkeynote.size.cost,
         addon_net_cost:this.newkitchenkeynote.size.cost,
@@ -882,6 +895,7 @@ setTimeout(function() {
           type:this.newkitchenkeynote.type
 
         }
+      
       })
       this.newkitchenkeynote={
             residue:false,
@@ -892,6 +906,10 @@ setTimeout(function() {
         }
       
       this.recalcAddonCost()
+      }
+      else{
+        this.kitchen_msg=true
+      }
     },
     deleteKitchenFromAddon(index){
       this.kitchen_addons.splice(index,1)
@@ -972,6 +990,9 @@ setTimeout(function() {
       
     },
     addToKeynote(){
+      if(this.newkeynote.sub_area && this.newkeynote.quantity)
+      {
+        this.keynote_msg=false
       this.keynote_update=false
       this.other_keynotes.push(this.newkeynote)
       this.keynote_update=true
@@ -979,6 +1000,10 @@ setTimeout(function() {
         sub_area:'',
         quantity:''
       }
+    }
+    else{
+      this.keynote_msg=true
+    }
     },
     delKeynote(index){
       this.keynote_update=false
