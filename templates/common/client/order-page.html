@@ -2263,7 +2263,7 @@
                                         <!--reorder -->    
                                         {% for schedule in order.orderschedules|slice:"1" %}
                                         {% if forloop.first and schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' or order.order_status == 'ORDER_CLOSED'%}
-                                        <div class="row">
+                                        <div class="row" class="reorder-hide">
                                             <button style="width: 153px !important;" data-toggle="modal" data-target="#reorderModel" class="view-button">Re-order</button>
                                         </div>
                                         {% endif %}
@@ -3334,10 +3334,19 @@ $(document).ready(function () {
         app.contacts.push('SMS');
     {% endif %}
 
+    //for loading first cleaning team
     {% for schedule in order.orderschedules %}
     {% if forloop.first %}
     load_cleaning_team(1,"{{schedule.id}}")
     {% endif %}{% endfor %}
+
+    //for hiding reorder when kitchen service included
+    {% for evaluationdetail in order.evaluation.evaluationdetails %}
+    {% for evaluationbook in evaluationdetail.evaluationbooks %}
+    {% if evaluationbook.service_type.name == 'Kitchen Cleaning' %}
+    $('.reorder-hide').css("display", "none");
+    {% endfor %}
+    {% endfor %}
 })
 
 
