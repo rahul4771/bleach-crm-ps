@@ -38,7 +38,7 @@ class Category(models.Model):
         return self.name
 
 class Segment(models.Model):
-    category        =   models.ForeignKey(Category,blank=False,null=False,related_name='segment_category')
+    category        =   models.ForeignKey('Category',blank=False,null=False,related_name='segment_category')
     segment_id      =   models.CharField(max_length=50,blank=False,null=False)
     name            =   models.CharField(max_length=100,blank=False,null=False)
     status          =   models.BooleanField(default=True,blank=False,null=False)
@@ -50,8 +50,8 @@ class Segment(models.Model):
         return self.name
 
 class Line(models.Model):
-    category        =   models.ForeignKey(Category,blank=False,null=False,related_name='line_category')
-    segment         =   models.ForeignKey(Segment,blank=False,null=False,related_name='line_segment')
+    category        =   models.ForeignKey('Category',blank=False,null=False,related_name='line_category')
+    segment         =   models.ForeignKey('Segment',blank=False,null=False,related_name='line_segment')
     name            =   models.CharField(max_length=100,blank=False,null=False)
     line_id         =   models.CharField(max_length=50,blank=False,null=False)
     status          =   models.BooleanField(default=True,blank=False,null=False)
@@ -77,9 +77,9 @@ class Store(models.Model):
         return self.store_name
 
 class InventoryItem(models.Model):
-    item_category   =   models.ForeignKey(Category,blank=False,null=False,related_name='item_category')
-    item_segment    =   models.ForeignKey(Segment,blank=True,null=True,related_name='item_segment')
-    item_line       =   models.ForeignKey(Line,blank=True,null=True,related_name='item_line')
+    item_category   =   models.ForeignKey('Category',blank=False,null=False,related_name='item_category')
+    item_segment    =   models.ForeignKey('Segment',blank=True,null=True,related_name='item_segment')
+    item_line       =   models.ForeignKey('Line',blank=True,null=True,related_name='item_line')
     name            =   models.CharField(max_length=100,blank=False,null=False)
     item_code       =   models.CharField(max_length=50,blank=False,null=False)
     description     =   models.TextField(max_length=1000,blank=True,null=True)
@@ -97,7 +97,7 @@ class InventoryItem(models.Model):
         return self.name
 
 class InventoryItemImages(models.Model):
-    inventory_item  = models.ForeignKey(InventoryItem,blank=False,null=False,related_name='image_item')
+    inventory_item  = models.ForeignKey('InventoryItem',blank=False,null=False,related_name='image_item')
     item_image      = models.FileField(upload_to='inventory_item_images/',blank=True,null=True,max_length=1000)
     is_default_image= models.BooleanField(default=False,blank=False,null=False)
     created         = models.DateTimeField(auto_now_add=True)   
@@ -125,8 +125,8 @@ class Supplier(models.Model):
 
 
 class SupplierItems(models.Model):
-    supplier            = models.ForeignKey(Supplier,blank=True,null=True,related_name='item_supplier')
-    item                = models.ForeignKey(InventoryItem,blank=True,null=True,related_name='product_supplier')
+    supplier            = models.ForeignKey('Supplier',blank=True,null=True,related_name='item_supplier')
+    item                = models.ForeignKey('InventoryItem',blank=True,null=True,related_name='product_supplier')
     supplier_item_id    = models.CharField(max_length=50,blank=False,null=False)
     item_price          = models.CharField(default=0,max_length=100,blank=True,null=True)
     item_count          = models.IntegerField(default=0,null=True,blank=True)
@@ -139,7 +139,7 @@ class SupplierItems(models.Model):
         return self.supplier.supplier_name
 
 class PurchaseOrder(models.Model):
-    supplier            = models.ForeignKey(Supplier,blank=True,null=True,related_name='supplier_purchase_order')
+    supplier            = models.ForeignKey('Supplier',blank=True,null=True,related_name='supplier_purchase_order')
     purchase_order_id   = models.CharField(max_length=50,blank=False,null=False)
     status              = models.BooleanField(default=True,blank=False,null=False)
     initiated_by        = models.ForeignKey(UserProfile,blank=True,null=True,related_name='initiated_by_purchase_order')
@@ -159,8 +159,8 @@ class PurchaseOrder(models.Model):
 
 
 class PurchaseOrderItems(models.Model):
-    purchase_order      = models.ForeignKey(PurchaseOrder,blank=True,null=True,related_name='purchase_order_purchase_order_item')
-    product             = models.ForeignKey(SupplierItems,blank=True,null=True,related_name='product_purchase_order_item')
+    purchase_order      = models.ForeignKey('PurchaseOrder',blank=True,null=True,related_name='purchase_order_purchase_order_item')
+    product             = models.ForeignKey('SupplierItems',blank=True,null=True,related_name='product_purchase_order_item')
     item_count          = models.IntegerField(default=0,null=True,blank=True)
     unit_price          = models.CharField(default=0,max_length=100,blank=True,null=True)
     total_price         = models.CharField(default=0,max_length=100,blank=True,null=True)
@@ -174,12 +174,12 @@ class PurchaseOrderItems(models.Model):
         return self.purchase_order.purchase_order_id
 
 class ItemUnit(models.Model):
-    purchase_order  =   models.ForeignKey(PurchaseOrder,blank=False,null=False,related_name='purchase_order_unit')
-    item            =   models.ForeignKey(InventoryItem,blank=False,null=False,related_name='unit_item')
+    purchase_order  =   models.ForeignKey('PurchaseOrder',blank=False,null=False,related_name='purchase_order_unit')
+    item            =   models.ForeignKey('InventoryItem',blank=False,null=False,related_name='unit_item')
     name            =   models.CharField(max_length=100,blank=False,null=False)
     unit_code       =   models.CharField(max_length=50,blank=False,null=False)
     unit_serial_number =  models.CharField(max_length=50,blank=False,null=False)
-    store           =   models.ForeignKey(Store,blank=True,null=True,related_name='unit_store')
+    store           =   models.ForeignKey('Store',blank=True,null=True,related_name='unit_store')
     purchase_date   =   models.DateField(blank=True,null=True)
     expiry_date     =   models.DateField(blank=True,null=True)
     no_expiry       =   models.BooleanField(default=False,blank=False,null=False)
@@ -194,8 +194,8 @@ class ItemUnit(models.Model):
         return self.item.name
 
 class ItemHistory(models.Model):
-    purchase_order  =   models.ForeignKey(PurchaseOrder,blank=False,null=False,related_name='purchase_order_item_history')
-    item            =   models.ForeignKey(InventoryItem,blank=False,null=False,related_name='unit_item_history')
+    purchase_order  =   models.ForeignKey('PurchaseOrder',blank=False,null=False,related_name='purchase_order_item_history')
+    item            =   models.ForeignKey('InventoryItem',blank=False,null=False,related_name='unit_item_history')
     purchase_date   =   models.DateField(blank=True,null=True)
     # expiry_date     =   models.DateField(blank=True,null=True)
     # no_expiry       =   models.BooleanField(default=False,blank=False,null=False)
@@ -213,9 +213,9 @@ class ItemHistory(models.Model):
 
 class Attribute(models.Model):
     # attribute_type      =   models.CharField(max_length=100,blank=False,null=False,choices=ATTRIBUTE_TYPE_CHOICES)
-    attribute_category  =   models.ForeignKey(Category,blank=True,null=True,related_name='attribute_category')
-    attribute_segment   =   models.ForeignKey(Segment,blank=True,null=True,related_name='attribute_segment')
-    attribute_line      =   models.ForeignKey(Line,blank=True,null=True,related_name='attribute_line')
+    attribute_category  =   models.ForeignKey('Category',blank=True,null=True,related_name='attribute_category')
+    attribute_segment   =   models.ForeignKey('Segment',blank=True,null=True,related_name='attribute_segment')
+    attribute_line      =   models.ForeignKey('Line',blank=True,null=True,related_name='attribute_line')
     name                =   models.CharField(max_length=100,blank=False,null=False)
     status              =   models.BooleanField(default=True,blank=False,null=False)
     created             =   models.DateTimeField(auto_now_add=True)
@@ -226,7 +226,7 @@ class Attribute(models.Model):
         return self.name
 
 class AttributeValue(models.Model):
-    attribute           =   models.ForeignKey(Attribute,blank=True,null=True,related_name='value_attribute')
+    attribute           =   models.ForeignKey('Attribute',blank=True,null=True,related_name='value_attribute')
     name                =   models.CharField(max_length=100,blank=False,null=False)
     is_selected         =   models.BooleanField(default=False,blank=False,null=False)
     status              =   models.BooleanField(default=True,blank=False,null=False)
@@ -238,9 +238,9 @@ class AttributeValue(models.Model):
         return self.name
 
 class ItemAttributes(models.Model):
-    item                =   models.ForeignKey(InventoryItem,blank=True,null=True,related_name='inventory_item')
-    attribute           =   models.ForeignKey(Attribute,blank=True,null=True,related_name='inventory_item_attribute')
-    attribute_value     =   models.ForeignKey(AttributeValue,blank=True,null=True,related_name='inventory_item_attribute_value')
+    item                =   models.ForeignKey('InventoryItem',blank=True,null=True,related_name='inventory_item')
+    attribute           =   models.ForeignKey('Attribute',blank=True,null=True,related_name='inventory_item_attribute')
+    attribute_value     =   models.ForeignKey('AttributeValue',blank=True,null=True,related_name='inventory_item_attribute_value')
     created             =   models.DateTimeField(auto_now_add=True)
     def __unicode__(self):
         return str(self.item.name)
@@ -264,8 +264,8 @@ class Bundle(models.Model):
         return self.name
 
 class BundleItems(models.Model):
-    bundle              = models.ForeignKey(Bundle,blank=True,null=True,related_name='item_bundle')
-    item                = models.ForeignKey(InventoryItem,blank=True,null=True,related_name='inventory_item_bundle')
+    bundle              = models.ForeignKey('Bundle',blank=True,null=True,related_name='item_bundle')
+    item                = models.ForeignKey('InventoryItem',blank=True,null=True,related_name='inventory_item_bundle')
     item_price          = models.CharField(default=0,max_length=100,blank=True,null=True)
     item_count          = models.IntegerField(default=0,null=True,blank=True)
     created             = models.DateTimeField(auto_now_add=True)
@@ -277,8 +277,8 @@ class BundleItems(models.Model):
         return self.bundle.name
 
 class BundleItemUnits(models.Model):
-    bundle_item         = models.ForeignKey(BundleItems,blank=True,null=True,related_name='bundle_unit_bundle_item')
-    item_unit           = models.ForeignKey(ItemUnit,blank=True,null=True,related_name='unit_item_bundle')
+    bundle_item         = models.ForeignKey('BundleItems',blank=True,null=True,related_name='bundle_unit_bundle_item')
+    item_unit           = models.ForeignKey('ItemUnit',blank=True,null=True,related_name='unit_item_bundle')
     unit_price          = models.CharField(default=0,max_length=100,blank=False,null=False)
     created             = models.DateTimeField(auto_now_add=True)
 
@@ -301,8 +301,8 @@ class ServiceRecipe(models.Model):
 
 class ServiceRecipeItems(models.Model):
     service_or_person   = models.CharField(max_length=50,blank=False,null=False)
-    service_type        = models.ForeignKey(ServiceRecipe,blank=True,null=True,related_name='item_recipe')
-    item                = models.ForeignKey(InventoryItem,blank=True,null=True,related_name='service_item')
+    service_type        = models.ForeignKey('ServiceRecipe',blank=True,null=True,related_name='item_recipe')
+    item                = models.ForeignKey('InventoryItem',blank=True,null=True,related_name='service_item')
     item_price          = models.CharField(default=0,max_length=100,blank=True,null=True)
     item_count          = models.IntegerField(default=0,null=True,blank=True)
     status              = models.BooleanField(default=True,blank=False,null=False)
