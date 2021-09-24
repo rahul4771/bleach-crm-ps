@@ -1982,6 +1982,7 @@ class InventoryServiceRecipeAPI(APIView):
 			for item in service_ingredients:
 				list_item = {
 					'ingredient_id' : item.id,
+					'recipe_type' : item.service_or_person,
 					'item_name' : item.ingredient,
 					'item_count' : item.quantity,
 					'status' : item.status
@@ -1993,7 +1994,9 @@ class InventoryServiceRecipeAPI(APIView):
 
 		if service:
 			response_dict['area_size'] = service.area_size
+			response_dict['area_size'] = service.staff_count
 		else:
+			response_dict['area_size'] = 0
 			response_dict['area_size'] = 0
 		return Response(response_dict,HTTP_200_OK)
 
@@ -2005,23 +2008,28 @@ class InventoryServiceAreaAPI(APIView):
 		response_dict = {}
 		service_type = request.GET.get('service_type')
 		area = request.GET.get('area')
+		staffcount = request.GET.get('staffcount')
 		
 		print(service_type,area,"attrsed3")
 		try:
 			service = ServiceRecipe.objects.get(service=service_type)
 			service.area_size = area
+			service.staff_count = staffcount
 			service.save()
 		except:
 			service = ServiceRecipe.objects.create(service=service_type)
 			service.area_size = area
+			service.staff_count = staffcount
 			service.save()
 		
 		print(service,"invo")
 
 		if service:
 			response_dict['area_size'] = service.area_size
+			response_dict['staff_count'] = service.staff_count
 		else:
 			response_dict['area_size'] = 0
+			response_dict['staff_count'] = 0
 		return Response(response_dict,HTTP_200_OK)
 
 
