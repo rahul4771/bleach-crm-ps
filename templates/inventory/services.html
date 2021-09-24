@@ -862,12 +862,12 @@
                         <div class="inv-input-container inv-border h-30">
                             <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()">
                            
-                            <div onclick="ProductListShow()" class="model-filter">
+                            <!-- <div onclick="ProductListShow()" class="model-filter">
                                 
                                     <i class="fa fa-angle-down fa-lg " style="color: #707070;" aria-hidden="true"></i>
                                 
 
-                            </div>
+                            </div> -->
 
 
 
@@ -1626,7 +1626,7 @@ function showProducts(){
     for (var j=0; j<products.length; j++) {
         if (products[j].name.toUpperCase().match($('#pro-name').val().toUpperCase())){
             console.log(products[j]);
-    $('#id_search').append('<div class="col-md-12" style="padding:0px !important;" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
+    $('#id_search').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
 
         }
     }
@@ -1717,7 +1717,7 @@ function openNavAddStore2(d) {
         {% for item in items %}
     var tempId = '{{item.id}}';
     var tempName = '{{item.name}}';
-    $('#id_search').append('<div class="col-md-12" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
+    $('#id_search').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
 
     {% endfor %}
     if(d == 'add'){
@@ -1746,7 +1746,7 @@ function openNavAddStore2(d) {
         {% for item in items %}
     var tempId = '{{item.id}}';
     var tempName = '{{item.name}}';
-    $('#id_search').append('<div class="col-md-12" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
+    $('#id_search').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
 
     {% endfor %}
     if(d == 'add'){
@@ -1790,7 +1790,7 @@ function openNavAddStore2(d) {
         {% for item in items %}
         var tempId = '{{item.id}}';
         var tempName = '{{item.name}}';
-        $('#id_search').append('<div class="col-md-12" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
+        $('#id_search').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
         {% endfor %}
 
         console.log(d)
