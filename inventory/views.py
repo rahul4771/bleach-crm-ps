@@ -1482,6 +1482,13 @@ class InventoryServices(IsInventoryAdmin,View):
             ServiceRecipeIngredients.objects.filter(id=int(ingredient_id)).delete()
             messages.success(request,"Ingredient Deleted successfully!")
 
+        if action == 'add_item':
+            ingredient_id = request.POST.get('ingredient_id')
+            item_id = request.POST.get('item')
+
+            ingredient = ServiceRecipeIngredients.objects.get(id=int(ingredient_id))
+            item = InventoryItem.objects.get(id=int(item_id))
+
         return redirect('inventory:inventory-services')
 
 class InventorySegment(IsInventoryAdmin,View):
