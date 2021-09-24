@@ -510,7 +510,7 @@
              Sub Total
           </div>:
           <div class="w-50 text-right"  v-if="!booking_status"> 
-           <b> <%payment_total_cost%> KD</b>
+           <b> <%payment_total_cost+amount_discount%> KD</b>
           </div>
           <div class="w-50 text-right"  v-if="booking_status"> 
             <b> <%amount_subtotal%> KD</b>
@@ -521,7 +521,7 @@
             Discount
           </div>:
           <div class="w-50 text-right" v-if="!booking_status">
-            <b> <%calculateDiscount()%> KD</b>
+            <b> <%calculateDiscount()+amount_discount%> KD</b>
           </div>
           <div class="w-50 text-right" v-if="booking_status">
             <b> <%amount_discount%> KD</b>
@@ -1624,7 +1624,7 @@ width="1000"
                           <b><% amount_subtotal %> KD</b> 
                           </div>
                           <div class="text-right w-100" v-if="!booking_status">
-                            <b> <%payment_total_cost%> KD</b>
+                            <b> <%payment_total_cost+amount_discount%> KD</b>
                             </div>
                       </div>
                       <div class="d-flex">
@@ -1632,7 +1632,7 @@ width="1000"
                           Discount
                         </div>
                         <div class="text-right w-100" v-if="!booking_status">
-                        <b><%calculateDiscount()%> KD</b> 
+                        <b><%calculateDiscount()+amount_discount%> KD</b> 
                         </div>
                         <div class="text-right w-100" v-if="booking_status">
                           <b><%amount_discount%> KD</b> 

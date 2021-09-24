@@ -1249,3 +1249,10 @@ padding: 7px 30px 7px 30px;
   color: #333333;
   font-weight: 600;
 }
+.inv-search-drop{
+  border-top: 1px solid #ececec;
+  color: #695d52;
+  display: block;
+  padding: .5rem;
+ 
+}

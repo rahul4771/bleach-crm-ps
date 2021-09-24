@@ -514,6 +514,13 @@ const app=  new Vue({
                   this.combineSlots.push({type:'approved',class:'onetime-cleaning-status-bg',slots:this.slots.appoved_cleanings[j]})
                   
                   }
+                  for(var k=0;k<this.slots.followup_cleanings.length;k++){
+                    var slot=this.slots.followup_cleanings[k]
+                    //this.slots.followup_cleanings[k]['cleaning_hours']=this.slots.followup_cleanings[k].follow_up.cleaning_hours
+                    slot.cleaning_hours=slot.follow_up.cleaning_hours
+                    slot.order={order_no:slot.follow_up.ticket_no}
+                    this.combineSlots.push({type:'followup',class:'followup-cleaning-status-bg',slots:slot})
+                }
                 for(var i=0;i<this.slots.notapproved_cleanings.length;i++){
 
                   this.combineSlots.push({type:'not approved',class:'subscription-cleaning-bg',slots:this.slots.notapproved_cleanings[i]})
@@ -521,13 +528,7 @@ const app=  new Vue({
                 }
                 
                  
-                for(var k=0;k<this.slots.followup_cleanings.length;k++){
-                    var slot=this.slots.followup_cleanings[k]
-                    //this.slots.followup_cleanings[k]['cleaning_hours']=this.slots.followup_cleanings[k].follow_up.cleaning_hours
-                    slot.cleaning_hours=slot.follow_up.cleaning_hours
-                    slot.order={order_no:slot.follow_up.ticket_no}
-                    this.combineSlots.push({type:'followup',class:'followup-cleaning-status-bg',slots:slot})
-                }
+                
                  this.parseSlots()
                 // $(".cl-slot-card").css('min-height',600);
                 setTimeout(function(){ 
