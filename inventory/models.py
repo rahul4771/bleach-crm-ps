@@ -276,13 +276,13 @@ class ServiceRecipeItems(models.Model):
     item                = models.ForeignKey(InventoryItem,blank=True,null=True,related_name='service_item')
     item_price          = models.CharField(default=0,max_length=100,blank=True,null=True)
     item_count          = models.IntegerField(default=0,null=True,blank=True)
-    status              = models.BooleanField(default=True,blank=False,null=False)
+    # status              = models.BooleanField(default=True,blank=False,null=False)
 
     def __unicode__(self):
-        return str(self.ingredient.ingredient)
+        return str('car')
 
     def __str__(self):
-        return self.ingredient.ingredient
+        return 'car'
 
 class PurchaseOrder(models.Model):
     supplier            = models.ForeignKey(Supplier,blank=True,null=True,related_name='supplier_purchase_order')
