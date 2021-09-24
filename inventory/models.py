@@ -276,6 +276,7 @@ class ServiceRecipeItems(models.Model):
     item                = models.ForeignKey(InventoryItem,blank=True,null=True,related_name='service_item')
     item_price          = models.CharField(default=0,max_length=100,blank=True,null=True)
     item_count          = models.IntegerField(default=0,null=True,blank=True)
+    service_or_person   = models.CharField(max_length=50,blank=True,null=True)
     # status              = models.BooleanField(default=True,blank=False,null=False)
 
     def __unicode__(self):
