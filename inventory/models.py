@@ -110,7 +110,6 @@ class InventoryItemImages(models.Model):
         return self.inventory_item.name
 
 class ItemUnit(models.Model):
-    purchase_order  =   models.ForeignKey('PurchaseOrder',blank=False,null=False,related_name='purchase_order_unit')
     item            =   models.ForeignKey(InventoryItem,blank=False,null=False,related_name='unit_item')
     name            =   models.CharField(max_length=100,blank=False,null=False)
     unit_code       =   models.CharField(max_length=50,blank=False,null=False)
@@ -305,23 +304,6 @@ class PurchaseOrderItems(models.Model):
 
     def __str__(self):
         return self.purchase_order.purchase_order_id
-
-class ItemHistory(models.Model):
-    purchase_order  =   models.ForeignKey(PurchaseOrder,blank=False,null=False,related_name='purchase_order_item_history')
-    item            =   models.ForeignKey(InventoryItem,blank=False,null=False,related_name='unit_item_history')
-    purchase_date   =   models.DateField(blank=True,null=True)
-    # expiry_date     =   models.DateField(blank=True,null=True)
-    # no_expiry       =   models.BooleanField(default=False,blank=False,null=False)
-    # unit_price      =   models.CharField(max_length=10,blank=False,null=False)
-    quantity        =   models.CharField(max_length=50,blank=False,null=False)
-    added_by        =   models.ForeignKey(UserProfile,blank=False,null=False,related_name='addedby_item_history')
-    created         =   models.DateTimeField(auto_now_add=True)
-
-    def __unicode__(self):
-        return str(self.item.name)
-
-    def __str__(self):
-        return self.item.name
 
 
 
