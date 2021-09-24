@@ -1,7 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
 {% load static %}
-<div class="wrapper"><!--wrapper-->
+<link rel="stylesheet" href="{% static 'files/css/booking/booking.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+<div class="wrapper" id="app"><!--wrapper-->
 {% include "tl/common/header.html" %}
     
     <section class="content"><!--content-->
@@ -34,13 +38,13 @@
         <div class="email"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{cleaning_team_detail.order_scheduler.order_scheduler_book.location_type}}</div>
   	</div><!--ticket-form-left-->
 	<div class="ticket-form-right"><!--ticket-form-right-->
-        <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> {{cleaning_team_detail.order_scheduler.start_at}}</div>
+        <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> {{cleaning_team_detail.order_scheduler.start_at|date:'d-m-Y'}}</div>
         <br>
         <div class="common-gray-text align-left"><i class="fa fa-lg fa-clock-o orange-text" aria-hidden="true"></i> {{cleaning_team_detail.order_scheduler.start_at|date:'h:i A'}}</div>
         <br>
-        <div class="common-gray-text align-left"><i class="fa fa-lg fa-hourglass-o yellow-text" aria-hidden="true"></i> {{cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_hours}} Hours</div>
+        <div class="common-gray-text align-left"><i class="fa fa-lg fa-hourglass yellow-text" aria-hidden="true"></i> {% if cleaning_team_detail.order_scheduler.cleaning_hours %}{{cleaning_team_detail.order_scheduler.cleaning_hours}}{% else %}{{cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_hours}}{% endif %} Hours</div>
 	      <br> 
-         <div class="common-gray-text align-left"><i class="fa fa-lg fa-building-o green-text" aria-hidden="true"></i> <b>{{cleaning_team_detail.order_scheduler.customer_address.apartment}}</b>: {% if cleaning_team_detail.order_scheduler.customer_address.floor %}{{cleaning_team_detail.order_scheduler.customer_address.floor}}, {% else %}{% endif %} {{cleaning_team_detail.order_scheduler.customer_address.building}}, {{cleaning_team_detail.order_scheduler.customer_address.block}}, {{cleaning_team_detail.order_scheduler.customer_address.street}}, {% if cleaning_team_detail.order_scheduler.customer_address.avenue %}{{cleaning_team_detail.order_scheduler.customer_address.avenue}}, {% else %}{% endif %} {{cleaning_team_detail.order_scheduler.customer_address.area.name}}, {{cleaning_team_detail.order_scheduler.customer_address.governorate.name}}</div>
+         <div class="common-gray-text align-left"><i class="fa fa-lg fa-building green-text" aria-hidden="true"></i> <b>{{cleaning_team_detail.order_scheduler.customer_address.apartment}}</b>: {% if cleaning_team_detail.order_scheduler.customer_address.floor %}{{cleaning_team_detail.order_scheduler.customer_address.floor}}, {% else %}{% endif %} {{cleaning_team_detail.order_scheduler.customer_address.building}}, {{cleaning_team_detail.order_scheduler.customer_address.block}}, {{cleaning_team_detail.order_scheduler.customer_address.street}}, {% if cleaning_team_detail.order_scheduler.customer_address.avenue %}{{cleaning_team_detail.order_scheduler.customer_address.avenue}}, {% else %}{% endif %} {{cleaning_team_detail.order_scheduler.customer_address.area.name}}, {{cleaning_team_detail.order_scheduler.customer_address.governorate.name}}</div>
         <br>
 
         {% if cleaning_team_detail.order_scheduler.customer_address.gps_location %}
@@ -48,7 +52,7 @@
         <br>
         {% endif %}
 
-        <div class="common-gray-text align-left"><i class="fa fa-lg fa-users blue-text" aria-hidden="true"></i> {{cleaning_team_detail.order_scheduler.order_scheduler_book.number_of_cleaners}} Cleaners</div>
+        <div class="common-gray-text align-left"><i class="fa fa-lg fa-users blue-text" aria-hidden="true"></i> {% if cleaning_team_detail.order_scheduler.no_of_cleaners %}{{cleaning_team_detail.order_scheduler.no_of_cleaners}}{% else %}{{cleaning_team_detail.order_scheduler.order_scheduler_book.number_of_cleaners}}{% endif %} Cleaners</div>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
@@ -74,12 +78,39 @@
     {% if section.dirt_level %}
     <div class="common-gray-text align-left"><label class="common-labels">Dirt Level</label> : <strong>{{section.dirt_level}}</strong></div>
     {% endif %}
-    <div class="common-gray-text align-left"><label class="common-labels">Size</label> : <strong>{{section.size}} {% for price_range in price_ranges %}{% if price_range.name == section.size and price_range.service_type == cleaning_team_detail.order_scheduler.order_scheduler_book.service_type and  price_range.is_newkitchen == section.new_kitchen and price_range.is_highprice_facade == section.is_highprice_facade and price_range.is_highprice_window == section.is_highprice_window %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}}){% endif %}{% endfor %}</strong></div>
+    <div class="common-gray-text align-left d-flex"><label class="common-labels">Size</label> &nbsp;: <span id="id_size"> <strong class="size_text{{section.id}}">{{section.size}}</strong> 
+    <strong>
+      {% if cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.name == 'Upholstery Cleaning' %}
+                                                       
+      {% for price_range in price_ranges %}
+      {% if price_range.name == section.size and price_range.service_type == cleaning_team_detail.order_scheduler.order_scheduler_book.service_type and price_range.upholstery_type == section.upholstery_type %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}}){% endif %}
+      {% endfor %}
+    
+      {% else %}
+      
+      {% for price_range in price_ranges %}
+      {% if price_range.name == section.size and price_range.service_type == cleaning_team_detail.order_scheduler.order_scheduler_book.service_type and cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.name != 'Mattress Cleaning' and price_range.is_newkitchen == section.new_kitchen and price_range.is_cabinet == section.is_cabinet and price_range.is_highprice_facade == section.is_highprice_facade and price_range.is_highprice_window == section.is_highprice_window %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}}){% endif %}
+      {{evaluationbook.service_type.name}}
+      {% endfor %}
+      
+      {% endif %}
+    </strong> </span>
+        {% if cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.name == 'Upholstery Cleaning' %}
+        <input type="text" id="id_sizelist" name="size" class="minimal size-edit-select price{{section.id}}" placeholder="Enter area size" style="display: none;" />
+        {% else %}
+        <select id="id_sizelist" class="minimal size-edit-select price{{section.id}}" style="display: none; height: 28px;" >
+            {% for range in price_ranges_change %}
+            <option value="{{range.id}}" >{{range.minimum_area}}-{{range.maximum_area}} Square meter</option>
+            {% endfor %}
+        </select>
+        {% endif %}
+    
+    </div>
     {% if section.floor %}
     <div class="common-gray-text align-left"><label class="common-labels">Floors</label> : <strong>{{section.floor}}</strong></div>
     {% endif %}
     {% if section.apartment %}
-    <div class="common-gray-text align-left"><label class="common-labels">Appartments</label> : <strong>{{section.apartment}}</strong></div>
+    <div class="common-gray-text align-left"><label class="common-labels">Apartments</label> : <strong>{{section.apartment}}</strong></div>
     {% endif %}
     {% if section.room %}
     <div class="common-gray-text align-left"><label class="common-labels">Rooms</label> : <strong>{{section.room}}</strong></div>
@@ -111,17 +142,133 @@
     <div class="common-gray-text align-left"><label class="common-labels">Age</label> : <strong>{{section.age}}</strong></div>
   {% endif %}  
   </div><!--ticket-form-right-->
+
+
+  {% if cleaning_team_detail.check_in and cleaning_team_detail.check_out == None %}
+  {% else %}
+
+  {% if is_customer_booking %}
+    <div class="ticket-form-right">
+        <div class="cleaning-button-section">
+        {% if cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' and section.section_verified_by != '' %}
+          <div id="id_verified" class="mb-5">
+              <button class="cleaning-status-button-1" > <i class="fa fa-check cleaning-status-button-round ml-5" aria-hidden="true"></i> Verifed</button>
+          </div>
+        {% else %}
+            <div id="id_verify" class="verify{{section.id}}" class="mb-5">
+              <button data-toggle="modal" data-target="#verifyModal"   class="cleaning-status-button-1" > Verified OK</button>
+            </div>
+            <div id="id_verified" style="display: none;"  class="mb-5">
+              <button class="cleaning-status-button-1" > <i class="fa fa-check cleaning-status-button-round ml-5" aria-hidden="true"></i> Verifed</button>
+          </div>
+
+          <div id="id_done_update" style="display: none;"   class="mb-5">
+              <button class="cleaning-status-button-1" > <i class="fa fa-check cleaning-status-button-round ml-5" aria-hidden="true"></i> Updated</button>
+          </div>
+          
+          <div id="id_update" class="mb-5">
+          <button onclick="editSize()" class="cleaning-status-button-1" > Update</button>
+          </div>
+          <div onclick="doneSizeEdit()" style="display: none;" id="id_done">
+              <button class="cleaning-status-button-done" onclick="sectionupdate({{section.id}},'updated')">Done</button>
+          </div>
+          
+        {% endif %}
+
+          
+        </div>
+    </div>
+  {% else %}
+  {% endif %}
+
+  {% endif %}
+
+  <!--section verification popup-->
+  <div class="modal fade" id="verifyModal" role="dialog">
+        <div class="modal-dialog cancel-model cancel-order-border" role="document">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+    
+                        <div class="d-flex cl-modal-icons">
+                            <button data-dismiss="modal" class="img-button">
+                                <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                            </button>
+    
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="cancel-model-content">
+                            <h1>Do you want to verify ?</h1>
+                        </div>
+                    </div>
+    
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <div class="cancel-model-content">
+                            <button class="sent-button" onclick="sectionupdate({{section.id}},'verified')">Yes</button>
+                            <button data-dismiss="modal" class="view-button">No</button>
+                            <button style="display: none;" id="modal_close" data-dismiss="modal" class="view-button">No</button>
+                        </div>
+                    </div>
+    
+                </div>
+            </div>
+        </div>
+      </div>
+
+
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 <br>
-<div class="evaluation-card-wrapper"><!--evaluation-card-wrapper-->
 {% if section.sectionkeynotes %}
+<div class="evaluation-card-wrapper"><!--evaluation-card-wrapper-->
 {% for keynote in section.sectionkeynotes %}
+
 		<div class="evaluation-card"><!--evaluation-card-->
         <div class="evaluation-section"><label>{{keynote.sub_area}}</label>{{keynote.quantity}}</div> 
-        </div><!--evaluation-card-->        
+    </div><!--evaluation-card-->  
+
 {% endfor %}
-{% endif %}
 </div><!--evaluation-card-wrapper-->
+{% endif %}
+
+
+{% if section.sectionaddons %}
+<!-- section addon details starts here-->
+<div class="row mt-10">  
+  <div class="col-md-12 mb-20 ">
+    <div class="mt-20 addon-heading">
+        Add-ons
+    </div>
+    <div class="row mt-10">
+          
+          {% for addon in section.sectionaddons %}
+          <div class="col-md-3 mt-10">
+              <div class="addon-card">
+                  <div class="addon-title">{{addon.name}}</div>
+                  <div class="row">
+                      <div class="col-md-6 addon-details mt-10">
+                          <div>
+                              {{addon.size|default_if_none:''}}
+                          </div>
+                          <div class="addon-qty">
+                              Qty : {{addon.quantity}}
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          {% endfor %}
+          
+    </div>
+  </div> 
+</div>
+<!-- section addon details ends here-->
+{% endif %}
+
 <hr class="hr-dashedpad">
 {% endfor %}
    
@@ -162,87 +309,151 @@
 
 
  </div><!--commnDiv-border--> 
-{% comment %} <div align="center"><input class="assignButton expandbutton" name="submit" type="button" value="Check-in"> </div> {% endcomment %}
 
     <br><br>
 
-<div class="checklist">
 
-{% if cleaning_team_detail.order_scheduler.order_scheduler_book.sections %} 
-<div class="common-sub-head align-left">Check List</div> 
-    <div class="commnDiv-border ltyellow-border"><!--commnDiv-border-->          
+    <div class="checklist">
 
-{% for section in  cleaning_team_detail.order_scheduler.order_scheduler_book.sections %} 
-<div class="narrow-head align-left cleaningsection">Section {{forloop.counter}} : {{section.section_name}}</div>
-<div class="ticket-wrapper-row ticket-forms-boxes cleaningkeynotes"><!--ticket-wrapper-row ticket-forms-boxes-->
-  <div class="ticket-form-left"><!--ticket-form-left-->
-  {% for keynote in section.sectionkeynotes %}  
-  {% if not forloop.counter|divisibleby:2 %}
-  <div class="narrow-label"><input class="keynote" name="keynote{{keynote.id}}" type="checkbox" value="{{keynote.id}}" {% if keynote.completion_status %}checked{% endif %}> {{keynote.sub_area}} {{keynote.quantity}}</div>
-  {% endif %}
-  {% endfor %}
-  </div><!--ticket-form-left-->
-  <div class="ticket-form-right"><!--ticket-form-right-->
-  {% for keynote in section.sectionkeynotes %}  
-  {% if forloop.counter|divisibleby:2 %}
-  <div class="narrow-label"><input class="keynote" name="keynote{{keynote.id}}" type="checkbox" value="{{keynote.id}}" {% if keynote.completion_status %}checked{% endif %}> {{keynote.sub_area}} {{keynote.quantity}}</div>
-  {% endif %}
-  {% endfor %}
-  </div><!--ticket-form-right-->
-</div><!--ticket-wrapper-row ticket-forms-boxes-->
+        {% if cleaning_team_detail.order_scheduler.order_scheduler_book.sections %} 
+        <div class="common-sub-head align-left">Check List</div> 
+            <div class="commnDiv-border ltyellow-border"><!--commnDiv-border-->          
+        
+        {% for section in  cleaning_team_detail.order_scheduler.order_scheduler_book.sections %} 
+        <div class="narrow-head align-left cleaningsection">Section {{forloop.counter}} : {{section.section_name}}</div>
+        <div class="ticket-wrapper-row ticket-forms-boxes cleaningkeynotes"><!--ticket-wrapper-row ticket-forms-boxes-->
+          <div class="ticket-form-left"><!--ticket-form-left-->
+          {% for keynote in section.sectionkeynotes %}  
+          {% if not forloop.counter|divisibleby:2 and keynote.sub_area != 'kitchen' %}
+          <div class="narrow-label"><input class="keynote" name="keynote{{keynote.id}}" type="checkbox" value="{{keynote.id}}" {% if cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}{% if keynote.completion_status %}checked{% endif %}{% endif %}> {{keynote.sub_area}} {{keynote.quantity}}</div>
+          {% endif %}
+          <!-- hidden kitchen checkboxes -->
+          {% if keynote.sub_area == 'kitchen' %}
+          <div hidden><input class="keynote_kitchen" name="keynote{{keynote.id}}" type="checkbox" value="{{keynote.id}}" {% if cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}{% if keynote.completion_status %}checked{% endif %}{% endif %} > </div>
+          {% ifchanged keynote.sub_area %}<div class="narrow-label"><input class="keynote" type="checkbox" data-subarea="Kitchen" value="{{keynote.id}}" {% if cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}{% if keynote.completion_status %}checked{% endif %}{% endif %}> Kitchen {{section.kitchen_keynote}}</div>{% endifchanged %}
+          {% endif %}
+          {% endfor %}
+   
 
-<hr class="hr-dashedpad hr1">
-{% endfor %}
+          
+          </div><!--ticket-form-left-->
 
-{% endif %}
+          <div class="ticket-form-right"><!--ticket-form-right-->
+          {% for keynote in section.sectionkeynotes %}  
+          {% if forloop.counter|divisibleby:2 and keynote.sub_area != 'kitchen' %}
+          <div class="narrow-label"><input class="keynote" name="keynote{{keynote.id}}" type="checkbox" value="{{keynote.id}}" {% if cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}{% if keynote.completion_status %}checked{% endif %}{% endif %}> {{keynote.sub_area}} {{keynote.quantity}}</div>
+          {% endif %}
+          {% endfor %}
+          </div><!--ticket-form-right-->
+        </div><!--ticket-wrapper-row ticket-forms-boxes-->
+        
+        <hr class="hr-dashedpad hr1">
+        {% endfor %}
+        
+        {% endif %}
+        
+        <form method="POST" action="" id="check_in_out_form" enctype= "multipart/form-data">{% csrf_token %}
+        
+        <div class="ticket-wrapper-row ticket-forms-boxes beforecleaning"><!--ticket-wrapper-row ticket-forms-boxes-->
+          <div class="ticket-form-left"><!--ticket-form-left--> 
+          <div class="details-notes align-left">Before Cleaning Photos</div>        
+          <div class="row" >
+            <div class="col-md-3" v-for="(image, imageindex) in imageData" v-bind:key="imageindex">
+              <div class="bk-image-upload">
+                <img :src="image.url" style="max-width: 100%" class="h-100 w-100"/>
+              </div>
+              <div class="image-footer">
+                <!-- <i class="far fa-edit img-icon"  v-on:click="editImage(imageindex)"></i>-->
+                <i class="far fa-trash-alt pl-2 img-icon" v-on:click="deleteImage(imageindex)"></i>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="addImg">
+                <div class="item_image" @click="$refs.itemfile.click()" ref="item-image"
+                  v-on:change="onImageFileChanged">
+                  <input type="file" ref="itemfile" name="mediabefore" style="display: none" accept="image/*"
+                    class="itemfileselected_before" />
+                  <i class="ImageIcon fa fa-plus"></i>
+                </div>
+              </div>
+            </div>
+          </div>      
+          </div><!--ticket-form-left--> 
 
-<form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
+          <div class="ticket-form-right"><!--ticket-form-right--> 
+          <div class="details-notes align-left">Check-In Notes</div>        
+          <div class="row" >
+          <textarea name="check_in_notes" id="check_in_notes" class="textArea" cols="" rows=""></textarea>
+          </div>
+          </div><!--ticket-form-right-->
 
-<div class="ticket-wrapper-row ticket-forms-boxes beforecleaning"><!--ticket-wrapper-row ticket-forms-boxes-->
-  <div class="ticket-form-left"><!--ticket-form-left--> 
-  <div class="details-notes align-left">Before Cleaning Photos</div>        
-        <div class="row"><!--row-->
-            <div class="col-sm-2 imgUp"><!--col-sm-2 imgUp-->
-                <div class="imagePreview"></div>
-                <label class="btn btn-primary paddding">Upload<input type="file" name="mediabefore" class="uploadFile img" value="Upload Photo" style="width: 0px;height: 0px;overflow: hidden;" required></label>
-                </div><!--col-sm-2 imgUp-->
-                <i class="fa fa-plus imgAdd" data-name='mediabefore'></i>
-        </div><!--row-->          
-  </div><!--ticket-form-left--> 
-  </div><!--ticket-wrapper-row ticket-forms-boxes-->
+          </div><!--ticket-wrapper-row ticket-forms-boxes-->
+          
+        
+        <div class="ticket-wrapper-row ticket-forms-boxes aftercleaning"><!--ticket-wrapper-row ticket-forms-boxes-->
+          <div class="ticket-form-left"><!--ticket-form-left--> 
+          <div class="details-notes align-left">After Cleaning Photos</div>        
+          <div class="row" >
+            <div class="col-md-3" v-for="(image, imageindex) in imageData" v-bind:key="imageindex">
+              <div class="bk-image-upload">
+                <img :src="image.url" style="max-width: 100%" class="h-100 w-100"/>
+              </div>
+              <div class="image-footer">
+                <!-- <i class="far fa-edit img-icon"  v-on:click="editImage(imageindex)"></i>-->
+                <i class="far fa-trash-alt pl-2 img-icon" v-on:click="deleteImage(imageindex)"></i>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="addImg">
+                <div class="item_image" @click="$refs.itemfile.click()" ref="item-image"
+                  v-on:change="onImageFileChanged">
+                  <input type="file" ref="itemfile" name="mediaafter" style="display: none" accept="image/*"
+                    class="itemfileselected_after" />
+                  <i class="ImageIcon fa fa-plus"></i>
+                </div>
+              </div>
+            </div>
+          </div>          
+          </div><!--ticket-form-left--> 
 
-<div class="ticket-wrapper-row ticket-forms-boxes aftercleaning"><!--ticket-wrapper-row ticket-forms-boxes-->
-  <div class="ticket-form-left"><!--ticket-form-left--> 
-  <div class="details-notes align-left">After Cleaning Photos</div>        
-        <div class="row"><!--row-->
-            <div class="col-sm-2 imgUp"><!--col-sm-2 imgUp-->
-                <div class="imagePreview"></div>
-                <label class="btn btn-primary paddding">Upload<input type="file" name="mediaafter" class="uploadFile img" value="Upload Photo" style="width: 0px;height: 0px;overflow: hidden;" required></label>
-                </div><!--col-sm-2 imgUp-->
-                <i class="fa fa-plus imgAdd" data-name='mediaafter'></i>
-        </div><!--row-->          
-  </div><!--ticket-form-left--> 
-  </div><!--ticket-wrapper-row ticket-forms-boxes-->
- 
-</div><!--order-clean-outer-wrapper-->
+          <div class="ticket-form-right"><!--ticket-form-right--> 
+          <div class="details-notes align-left">Check-Out Notes</div>        
+          <div class="row" >
+          <textarea name="check_out_notes" id="check_out_notes" class="textArea" cols="" rows=""></textarea>
+          </div>
+          </div><!--ticket-form-right-->
 
-</div>
+          </div><!--ticket-wrapper-row ticket-forms-boxes-->
+         
+        </div><!--order-clean-outer-wrapper-->
+        
+        </div>
+
+        <br>
+        <br>
+    
+
+
 
 
  </div><!--commnDiv-border--> 
 <br>
- 
- <div align="center"><input class="assignButton checkoutbutton" name="assign" type="submit" value="Check Out">
- <input class="assignButton checkinbutton" name="assign" type="submit" value="Check In">
+ <div align="center"><input class="assignButton checkoutbutton" name="assign" type="button" v-on:click="submitform({{cleaning_team_detail.id}},'check-out')" value="Check Out">
+ <input class="assignButton checkinbutton" id="checkin_id" name="assign" type="button" v-on:click="submitform({{cleaning_team_detail.id}},'check-in')" value="Check In">
   <!-- <input class="cancel-Button" name="assign" type="submit" value="Submit"></div> --> </form>    	
-<br> <br>      
-        
+<br> <br>             
         </div><!--center-formDiv-->
 </div><!--white-wrapper-->      
              
             
             
       </div><!--main-content-holder-->
+
+
+      
+
+
+
         </div><!--container-fluid space-->
     </section><!--content-->
 {% include 'tl/common/footer.html' %}
@@ -250,8 +461,66 @@
 {% endblock %}
 
 {% block javascript %} 
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/browser-image-compression@1.0.13/dist/browser-image-compression.js"></script>
+
+
+
 
 <script>
+//verify and update section
+function sectionupdate(section_id,action_type){
+
+  if (action_type == 'updated'){
+    var price_id = $('.price'+section_id+'').val();
+  }else{
+    console.log("act")
+    var section_size = 0;
+    $('#modal_close').click();
+    document.getElementById("id_verify").style.display = "none";
+    document.getElementById("id_verified").style.display = "block";
+    document.getElementById("id_update").style.display = "none";
+  }
+  axios.post(url+'/api/section-verification-updation/',{ params: { 'section_id': section_id, 'action_type':action_type, 'price_id':price_id,'cleaning_team_id':{{cleaning_team_detail.id}} } })
+    .then(function (response) {
+      if (response.data.success == true){
+        alert("Action completed successfully !")
+        if (response.data.action_type == 'updated'){
+          $('.size_text'+section_id+'').text(response.data.section_size);
+          $('.verify'+section_id+'').hide();
+        }
+      }
+    })
+}
+
+
+function submitform(){
+  var testarray = $('.itemfileselected_before').val();
+  console.log(testarray,"testtt")
+  console.log("fromm")
+
+  
+}
+
+
+</script>
+
+<script>
+
+    function editSize() {
+        //after integration use dymanic id's to enable edit
+        document.getElementById("id_size").style.display = "none";
+        document.getElementById("id_update").style.display = "none";
+        document.getElementById("id_done").style.display = "block";
+        document.getElementById("id_sizelist").style.display = "block";
+    }
+    function doneSizeEdit() {
+        //after integration use dymanic id'
+        document.getElementById("id_done").style.display = "none";
+        document.getElementById("id_sizelist").style.display = "none";
+        document.getElementById("id_size").style.display = "block";
+        document.getElementById("id_done_update").style.display = "block";
+    }
+    
 $(document).ready(function(){
 
   {% if cleaning_team_detail.order_scheduler.work_status == 'CLEANING_IN_PROGRESS' %}
@@ -283,9 +552,40 @@ $(document).ready(function(){
   //});
 
   //update address status
+
 $(".keynote").change(function(){
 
-  $.ajax({
+//checking kitchen keynotes by looping
+  if ($(this).data('subarea') == 'Kitchen'){
+    var kitchen_keynotes = document.getElementsByClassName("keynote_kitchen");
+    for (var i = 0; i < kitchen_keynotes.length; i++) {
+
+      kitchen_keynotes.item(i).click();
+
+      $.ajax({
+
+        url: "{% url 'tl:ajax-updatekeynote' %}",
+
+        data: {'keynote_id':kitchen_keynotes.item(i).value,'status':kitchen_keynotes.item(i).checked,'keynote_type':"cleaning"}, 
+
+        dataType: 'json',
+
+        success: function (data) { 
+
+          console.log(data);
+
+                                }
+          }); 
+
+
+    }
+    console.log("checked")
+
+//updating other keynotes
+  }else{
+    console.log("not checked")
+
+    $.ajax({
 
         url: "{% url 'tl:ajax-updatekeynote' %}",
 
@@ -298,9 +598,11 @@ $(".keynote").change(function(){
           console.log(data);
 
                                 }
-          });                       
+          }); 
 
-    })
+  }                      
+
+  })
 
 
 })
@@ -316,6 +618,7 @@ $(".imgAdd").click(function () {
 $(document).on("click", "i.del", function () {
   $(this).parent().remove();
 });
+
 $(function () {
   $(document).on("change", ".uploadFile", function ()
   {
@@ -337,4 +640,7 @@ $(function () {
 });
 //# sourceURL=pen.js
     </script>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+<script type="text/javascript" src="{% static 'files/js/checkin.js' %}"></script>
 {% endblock %}

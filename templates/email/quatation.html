@@ -395,27 +395,50 @@
             </div>
 
             {% for book in evaluationbooks %}
+            {% if book.sections %}
+            {% for section in book.sections %}
             <!-- item-->
             <div class="order-items">
                 <div class="order-item-in">
                     <div id="item-left">
-                        <b>{{book.service_type.name}}</b>
-                        {% for section in book.sections %}
+                        <b>{{book.service_type.name}} - {{section.section_name}}</b>
                         <p style="font-size: 15px; margin-top: 10px; line-height: 2;">Size : <b>{{section.size}}</b>
-                            &nbsp; Quantity : <b>{{section.section_cleanings|default_if_none:'1'}}</b> &nbsp; Unit Price : <b>{{section.section_cost|default_if_none:'0.000'}}</b></p>
-                        {% endfor %}
+                            &nbsp; Visit : <b>{{section.section_cleanings|default_if_none:'1'}}</b> &nbsp; Unit Price : <b>{{section.sectiononly_cost|default_if_none:''}}</b></p>
                     </div>
-                    {% for section in book.sections %}
                     <div style="flex-grow: 1;" class="m-mt-10 left">
                         <b>NET PRICE</b>
                         <p style="font-size: 15px; margin-top: 10px; line-height: 2;" class="amount-text m-mt-10">
-                            <b>{{section.section_net_cost|default_if_none:'0.000'}}</b> KD
+                            <b>{{section.sectiononly_net_cost|default_if_none:''}}</b> KD
                         </p>
                     </div>
-                    {% endfor %}
                 </div>
             </div>
             <!-- item-->
+
+            {% if section.sectionaddons %}
+            {% for addon in section.sectionaddons %}
+            <!-- addon begins-->
+            <div class="order-items">
+                <div class="order-item-in">
+                    <div id="item-left">
+                        <b>{{section.section_name}} - {{addon.name}} (x{{addon.quantity|default_if_none:'-'}})</b>
+                        <p style="font-size: 15px; margin-top: 10px; line-height: 2;">Size : <b>{{addon.size|default_if_none:'-'}}</b>
+                            &nbsp; Visit : <b>{{section.section_cleanings|default_if_none:'1'}}</b> &nbsp; Unit Price : <b>{{addon.addon_cost|default_if_none:''}}</b></p>
+                    </div>
+                    <div style="flex-grow: 1;" class="m-mt-10 left">
+                        <b>NET PRICE</b>
+                        <p style="font-size: 15px; margin-top: 10px; line-height: 2;" class="amount-text m-mt-10">
+                            <b>{{addon.addon_net_cost|default_if_none:'0.000'}}</b> KD
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <!-- addon ends-->
+            {% endfor %}
+            {% endif %}
+
+            {% endfor %}
+            {% endif %}
             {% endfor %}
 
             <div class="info-section">
@@ -502,6 +525,13 @@
             {% endif %}
             </div>
         </div>
+        
+        {% if evaluation.evaluator_note %}
+        <div style="padding-bottom: 30px; padding-top: 30px;">
+            <b>NOTE:</b> {{evaluation.evaluator_note|default_if_none:''}}
+        </div>
+        {% endif %}
+
     </div>
     <div style=" width: auto;
     color: #707070; text-align: center; background: #EEEEEE; padding: 2%;">

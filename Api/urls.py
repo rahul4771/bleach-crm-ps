@@ -15,6 +15,9 @@ urlpatterns = [
 	url(r'^leave-scheduler/$',views.LeaveScheduleAPI.as_view(),name='api-leaveschedule'),
 	url(r'^leave-scheduler-delete/(?P<leave_id>\d+)/$',views.DeleteLeaveSchedule.as_view(),name='api-leaveschedule-delete'),
 
+	url(r'^booking-expiry-check/$',views.BookingExpiryCheckAPI.as_view(),name='api-booking-expiry-check'),
+	url(r'^booking-expiry/$',views.BookingExpiryAPI.as_view(),name='api-booking-expiry'),
+
 	url(r'^discount-settings/$',views.DiscountSettingsAPI.as_view(),name='api-discount-settings'),
 
 	url(r'^section-verification-updation/$',views.SectionVerificationUpdationAPI.as_view(),name='api-section-verification-updation'),
@@ -40,8 +43,9 @@ urlpatterns = [
 	url(r'^inventory-items/$',views.InventoryItemsAPI.as_view(),name='api-inventory-items'),
 	url(r'^inventory-supplier-items/$',views.InventorySupplierItemsAPI.as_view(),name='api-inventory-supplier-items'),
 	url(r'^inventory-bundle-items/$',views.InventoryBundleItemsAPI.as_view(),name='api-inventory-bundle-items'),
-	url(r'^inventory-service-items/$',views.InventoryServiceRecipeAPI.as_view(),name='api-inventory-service-items'),
+	url(r'^inventory-service-ingredients/$',views.InventoryServiceRecipeAPI.as_view(),name='api-inventory-service-ingredients'),
 	url(r'^inventory-service-area/$',views.InventoryServiceAreaAPI.as_view(),name='api-inventory-service-area'),
+	url(r'^inventory-service-items/$',views.InventoryServiceItemsAPI.as_view(),name='api-inventory-service-items'),
 
 	###Team Leader Mobile app API'S
 	url(r'^login/$',views.LoginAPI.as_view(),name='api-login'),

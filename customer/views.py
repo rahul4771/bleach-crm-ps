@@ -24,7 +24,7 @@ from django.contrib import messages
 
 from inventory.models import PurchaseOrder,PurchaseOrderItems
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule
-from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType
+from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType,EvaluationSectionAddons
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,Promocode
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia
 from accountant.models import PaymentHistory
@@ -116,7 +116,7 @@ class Quatation(View):
 
 		#service details
 		try:
-			order_details = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='booksections')),to_attr='evaluationbooks')),to_attr='evaluationdetails')).annotate(customerbooking=Sum(Case(When(Q( Q(evaluation__booking_evaluation__booking_type='CLEANINGBOOKING')&Q(evaluation__booking_evaluation__is_bookingcompleted=False) ),then=1),default=0,output_field=IntegerField()))).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
+			order_details = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='booksections')),to_attr='evaluationbooks')),to_attr='evaluationdetails')).annotate(customerbooking=Sum(Case(When(Q( Q(evaluation__booking_evaluation__booking_type='CLEANINGBOOKING')&Q(evaluation__booking_evaluation__is_bookingcompleted=False) ),then=1),default=0,output_field=IntegerField()))).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
 		except:
 			order_details = None
 
@@ -351,7 +351,7 @@ class SubscriptionQuatation(View):
 
 		#service details
 		try:
-			order_details = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='booksections')),to_attr='evaluationbooks')),to_attr='evaluationdetails')).annotate(customerbooking=Sum(Case(When(Q( Q(evaluation__booking_evaluation__booking_type='CLEANINGBOOKING')&Q(evaluation__booking_evaluation__is_bookingcompleted=False) ),then=1),default=0,output_field=IntegerField()))).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
+			order_details = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='booksections')),to_attr='evaluationbooks')),to_attr='evaluationdetails')).annotate(customerbooking=Sum(Case(When(Q( Q(evaluation__booking_evaluation__booking_type='CLEANINGBOOKING')&Q(evaluation__booking_evaluation__is_bookingcompleted=False) ),then=1),default=0,output_field=IntegerField()))).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
 		except:
 			order_details = None
 
@@ -402,7 +402,7 @@ class BleachCustomerInvoice(View):
 		evaluation_id = 'BLC'+evaluation_id_encrypted[3:14]
 		user_name     =  evaluation_id_encrypted[14:]
 
-		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='booksections')),to_attr='evaluationbooks')),to_attr='evaluationdetails')).annotate(customerbooking=Sum(Case(When(Q( Q(evaluation__booking_evaluation__booking_type='CLEANINGBOOKING')&Q(evaluation__booking_evaluation__is_bookingcompleted=False) ),then=1),default=0,output_field=IntegerField()))).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
+		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='booksections')),to_attr='evaluationbooks')),to_attr='evaluationdetails')).annotate(customerbooking=Sum(Case(When(Q( Q(evaluation__booking_evaluation__booking_type='CLEANINGBOOKING')&Q(evaluation__booking_evaluation__is_bookingcompleted=False) ),then=1),default=0,output_field=IntegerField()))).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
 
 		#for credit card
 		full_name_array = UserProfile.objects.get(username=user_name).name.split()
@@ -442,7 +442,7 @@ class CustomerInvoice(View):
 		evaluation_id = 'BLC'+evaluation_id_encrypted[3:14]
 		user_name     =  evaluation_id_encrypted[14:]
 
-		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
+		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
 
 		nonduplicate_schedules = []
 		#Remove duplicates for subscription
@@ -493,7 +493,7 @@ class CustomerSubscriptionInvoice(View):
 		evaluation_id = 'BLC'+evaluation_id_encrypted[3:14]
 		user_name     =  evaluation_id_encrypted[14:]
 
-		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
+		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
 
 		nonduplicate_schedules = []
 		#Remove duplicates for subscription
@@ -836,33 +836,11 @@ def quatation_html_to_pdf_view(request,evaluation_id):
 	evaluation_id_encrypted = evaluation_id
 	evaluation_id = 'BLC'+evaluation_id_encrypted[3:14]
 	user_name     =  evaluation_id_encrypted[14:]
-
-
-	order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(is_active=True,order_no=evaluation_id,evaluation__customer__username=user_name)
-
-	nonduplicate_schedules = []
-	#Remove duplicates for subscription
-	duplicate_schedules    = []
-	for orderschedule in order.orderschedules:
-		if orderschedule.order_scheduler_book in duplicate_schedules:
-			pass
-		else:	
-			nonduplicate_schedules.append(orderschedule)	
-
-		duplicate_schedules.append(orderschedule.order_scheduler_book)
-    
-	#Main Content
-	if order.evaluation.payment_method == 'SUBSCRIPTION':
-		#per job cost
-		per_job_cost = 0
-		for orderschedule in nonduplicate_schedules:            
-			for section in orderschedule.order_scheduler_book.evaluationbooksection:
-				per_job_cost += section.section_cost
-
-		html_string = render_to_string("customer/downloads/quatation.html",{"order":order,"nonduplicate_schedules":nonduplicate_schedules,"per_job_cost":per_job_cost})
-	else:
-		html_string = render_to_string('customer/downloads/quatation.html',{"order":order,"nonduplicate_schedules":nonduplicate_schedules})
 	
+	order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='booksections')),to_attr='evaluationbooks')),to_attr='evaluationdetails')).get(is_active=True,order_no=evaluation_id,evaluation__customer__username=user_name)
+	
+	html_string = render_to_string("customer/downloads/quatation.html",{"order":order})
+
 	html     = HTML(string=html_string,base_url=request.build_absolute_uri())
 	main_doc = html.render()
 
@@ -931,28 +909,7 @@ def invoice_html_to_pdf_view(request,evaluation_id):
 	evaluation_id = 'BLC'+evaluation_id_encrypted[3:14]
 	user_name     =  evaluation_id_encrypted[14:]
 
-	order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection')),to_attr='orderschedules')).get(is_active=True,evaluation__evaluation_id=evaluation_id,evaluation__customer__username=user_name)
-
-	nonduplicate_schedules = []
-	
-	#Remove duplicates for subscription
-	duplicate_schedules    = []
-	for orderschedule in order.orderschedules:
-		if orderschedule.order_scheduler_book in duplicate_schedules:
-			pass
-		else:	
-			nonduplicate_schedules.append(orderschedule)	
-
-		duplicate_schedules.append(orderschedule.order_scheduler_book)
-
-	#per completed jobs count
-	completed_jobs_count = 0 
-	for schedule in order.orderschedules:
-		if schedule.work_status == 'CLEANING_FULFILLED':
-			completed_jobs_count += 1
-
-	# return render(request,"customer/customer_invoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,})
-    
+	order       = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='booksections')),to_attr='evaluationbooks')),to_attr='evaluationdetails')).get(is_active=True,order_no=evaluation_id,evaluation__customer__username=user_name)
 
 	html_string = render_to_string("customer/downloads/invoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'completed_jobs_count':completed_jobs_count})
 
@@ -1774,8 +1731,6 @@ class GetServiceSizePrice(APIView):
 		service_type         = request.GET.get('service_type')
 		response_dict        = {}
 		service_price_ranges = ServicePriceRange.objects.filter(service_type__name=service_type)
-		print(service_type,"service_type")
-		print(service_price_ranges)
 
 		counter = 1
 		for service_price_range in service_price_ranges:
@@ -1799,6 +1754,7 @@ class GetServiceSizePrice(APIView):
 				service_price_range_dict['is_highprice_facade'] = service_price_range.is_highprice_facade 
 			elif service_price_range.service_type.name == 'Kitchen Cleaning':
 				service_price_range_dict['is_newkitchen']       = service_price_range.is_newkitchen
+				service_price_range_dict['is_cabinet']          = service_price_range.is_cabinet
 
 			response_dict[counter] = service_price_range_dict
 
@@ -1844,10 +1800,14 @@ class GetServiceProductivity(APIView):
 		elif service_type         == 'Kitchen Cleaning':
 			serviceproductivities = ServiceProductivity.objects.select_related('service_type').filter(service_type__name=service_type)
 			for serviceproductivity in serviceproductivities:
-				if serviceproductivity.is_newkitchen:
-					service_productivity['newkitchen_perhour_cleaning'] = serviceproductivity.perhour_cleaning
-				else:
-					service_productivity['oldkitchen_perhour_cleaning']  = serviceproductivity.perhour_cleaning
+				if serviceproductivity.is_newkitchen and not serviceproductivity.is_cabinet:
+					service_productivity['newkitchenwithout_perhour_cleaning'] = serviceproductivity.perhour_cleaning
+				elif not serviceproductivity.is_newkitchen and not serviceproductivity.is_cabinet:
+					service_productivity['oldkitchenwithoutcabinet_perhour_cleaning'] = serviceproductivity.perhour_cleaning
+				elif serviceproductivity.is_newkitchen and serviceproductivity.is_cabinet:
+					service_productivity['newkitchenwithcabinet_perhour_cleaning'] = serviceproductivity.perhour_cleaning
+				elif not serviceproductivity.is_newkitchen and serviceproductivity.is_cabinet:
+					service_productivity['oldkitchenwithcabinet_perhour_cleaning'] = serviceproductivity.perhour_cleaning	
 
 		else:
 			serviceproductivity = ServiceProductivity.objects.select_related('service_type').get(service_type__name=service_type)
@@ -3232,8 +3192,8 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 					#create kenotes
 					keynotes_dict = sections_dict[key]['keynotes']
 					if keynotes_dict:
-						for key in keynotes_dict.keys():
-							keynote_save_serializer = EvaluationSectionKeynoteSerializer(data=keynotes_dict[key])
+						for key1 in keynotes_dict.keys():
+							keynote_save_serializer = EvaluationSectionKeynoteSerializer(data=keynotes_dict[key1])
 							if keynote_save_serializer.is_valid():
 								saved_keynote       = keynote_save_serializer.save(evaluation_section=saved_section)
 								
@@ -3246,6 +3206,29 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 								response_dict['keynote_Error_List'] = keynote_save_serializer.errors
 
 								response_dict['keynote_success']    = False
+
+								return Response(response_dict,HTTP_200_OK)
+					
+					#create add-ons
+					try:
+						addons_dict = sections_dict[key]['addons']
+					except:
+						addons_dict = None
+					if addons_dict:
+						for key2 in addons_dict.keys():
+							addons_save_serializer = EvaluationSectionAddonSerializer(data=addons_dict[key2])
+							if addons_save_serializer.is_valid():
+								saved_addon       = addons_save_serializer.save(evaluation_section=saved_section)
+								
+								response_dict['addon_success']       = True
+							else:
+								errors= addons_save_serializer.errors   
+								key=tuple(errors.keys())[0] 
+								error=errors[key]
+								response_dict['addon_Error']      = key +':'+ error[0]
+								response_dict['addon_Error_List'] = addons_save_serializer.errors
+
+								response_dict['addon_success']    = False
 
 								return Response(response_dict,HTTP_200_OK)
 				
@@ -3614,8 +3597,8 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 					except:
 						keynotes_dict = None
 					if keynotes_dict:
-						for key in keynotes_dict.keys():
-							keynote_save_serializer = EvaluationSectionKeynoteSerializer(data=keynotes_dict[key])
+						for key1 in keynotes_dict.keys():
+							keynote_save_serializer = EvaluationSectionKeynoteSerializer(data=keynotes_dict[key1])
 							if keynote_save_serializer.is_valid():
 								saved_keynote       = keynote_save_serializer.save(evaluation_section=saved_section)
 								
@@ -3637,8 +3620,8 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 					except:
 						addons_dict = None
 					if addons_dict:
-						for key in addons_dict.keys():
-							addons_save_serializer = EvaluationSectionAddonSerializer(data=addons_dict[key])
+						for key2 in addons_dict.keys():
+							addons_save_serializer = EvaluationSectionAddonSerializer(data=addons_dict[key2])
 							if addons_save_serializer.is_valid():
 								saved_addon       = addons_save_serializer.save(evaluation_section=saved_section)
 								
@@ -3732,9 +3715,12 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 			new_invoice_no 		 = str(timezone.now().year)+'00001'
 
 		try:
-			order              = Order.objects.get(evaluation=evaluation)
+			order           = Order.objects.get(evaluation=evaluation)
 		except:
-			order              = Order.objects.create(evaluation=evaluation,order_no=evaluation.evaluation_id,payment_status='PENDING',invoice_no=new_invoice_no)
+			order           = None
+			
+		if not order:		
+			order       = Order.objects.create(evaluation=evaluation,order_no=evaluation.evaluation_id,payment_status='PENDING',invoice_no=new_invoice_no)
 
 		###testing availability ####
 		test_schedules_dict = list(request.data.get("service_details").values())[0]['schedule_details']
@@ -4023,8 +4009,8 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 				except:
 					keynotes_dict = None
 				if keynotes_dict:
-					for key in keynotes_dict.keys():
-						keynote_save_serializer = EvaluationSectionKeynoteSerializer(data=keynotes_dict[key])
+					for key1 in keynotes_dict.keys():
+						keynote_save_serializer = EvaluationSectionKeynoteSerializer(data=keynotes_dict[key1])
 						if keynote_save_serializer.is_valid():
 							saved_keynote       = keynote_save_serializer.save(evaluation_section=saved_section)
 							
@@ -4046,8 +4032,8 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 				except:
 					addons_dict = None
 				if addons_dict:
-					for key in addons_dict.keys():
-						addons_save_serializer = EvaluationSectionAddonSerializer(data=addons_dict[key])
+					for key2 in addons_dict.keys():
+						addons_save_serializer = EvaluationSectionAddonSerializer(data=addons_dict[key2])
 						if addons_save_serializer.is_valid():
 							saved_addon       = addons_save_serializer.save(evaluation_section=saved_section)
 							
@@ -4174,8 +4160,8 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase2(APIView):
 				except:
 					keynotes_dict = None					
 				if keynotes_dict:
-					for key in keynotes_dict.keys():
-						keynote_save_serializer = EvaluationSectionKeynoteSerializer(data=keynotes_dict[key])
+					for key1 in keynotes_dict.keys():
+						keynote_save_serializer = EvaluationSectionKeynoteSerializer(data=keynotes_dict[key1])
 						if keynote_save_serializer.is_valid():
 							saved_keynote       = keynote_save_serializer.save(evaluation_section=saved_section)
 							
@@ -4197,8 +4183,8 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase2(APIView):
 				except:
 					addons_dict = None
 				if addons_dict:
-					for key in addons_dict.keys():
-						addons_save_serializer = EvaluationSectionAddonSerializer(data=addons_dict[key])
+					for key2 in addons_dict.keys():
+						addons_save_serializer = EvaluationSectionAddonSerializer(data=addons_dict[key2])
 						if addons_save_serializer.is_valid():
 							saved_addon       = addons_save_serializer.save(evaluation_section=saved_section)
 							
@@ -4229,7 +4215,7 @@ class DuplicateBookingPhase2(APIView):
 		response_dict = {}
 		
 		duplicate_evaluation         = Evaluation.objects.get(id=evaluation_id)		
-		duplicate_evaluation_details = EvaluationDetails.objects.filter(is_active=True,evaluation=duplicate_evaluation).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='schedules'),Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='booksections')),to_attr='evaluationbooks'))
+		duplicate_evaluation_details = EvaluationDetails.objects.filter(is_active=True,evaluation=duplicate_evaluation).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='schedules'),Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes'),Prefetch('addonsections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='booksections')),to_attr='evaluationbooks'))
 
 		#blc calculation
 		tracking_no  = Evaluation.objects.filter(is_active=True,tracking_no__isnull=False).aggregate(t=Max('tracking_no'))['t'] or int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
@@ -4269,6 +4255,11 @@ class DuplicateBookingPhase2(APIView):
 								if duplicate_book_section.sectionkeynotes:
 									for duplicate_keynote in duplicate_book_section.sectionkeynotes:	
 										new_duplicate_keynote = EvaluationSectionKeynote.objects.create(evaluation_section=new_duplicate_section,sub_area=duplicate_keynote.sub_area,quantity=duplicate_keynote.quantity,)
+
+								#new addons
+								if duplicate_book_section.sectionaddons:
+									for duplicate_addon in duplicate_book_section.sectionaddons:	
+										new_duplicate_addon = EvaluationSectionAddons.objects.create(evaluation_section=new_duplicate_section,name=duplicate_addon.name,addon_cost=duplicate_addon.addon_cost,quantity=duplicate_addon.quantity,addon_net_cost=duplicate_addon.addon_net_cost,size=duplicate_addon.size,other_details=duplicate_addon.other_details)
 
 		response_dict['evaluation_id'] = new_order.evaluation.evaluation_id[3:14]
 		response_dict['success']       = True
@@ -4991,6 +4982,10 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 					cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,member=leaders.first(),start_at=start_date_time,end_at=end_date_time,start_time=start_time,end_time=end_time))
 
 					CleaningTeamMember.objects.bulk_create(cleaning_team_member_array)
+
+					#cleaning team assigned status in scheduler
+					order_schedule.work_status = 'CLEANING_TEAM_ASSIGNED'
+					order_schedule.save()
 		
 		#update cost details
 		discount = float(request.data.get('discount'))
@@ -5050,7 +5045,7 @@ class EditOrderDetails(APIView):
 	def get(self,request,order_id):
 		response_dict = {}
 		evaluation_book_id               = request.GET.get('evaluation_book_id')
-		evaluation_book                  = EvaluationBook.objects.prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes')),to_attr='sections')).get(id=evaluation_book_id)
+		evaluation_book                  = EvaluationBook.objects.prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='addons')),to_attr='sections')).get(id=evaluation_book_id)
 		response_dict['section_details'] = EvaluationBookSerializer(evaluation_book).data
 		return Response(response_dict,HTTP_200_OK)
 
@@ -5069,9 +5064,9 @@ class EditOrderDetails(APIView):
 				total_cleanings                        = evaluation_book.order_scheduler_book_details.count()
 
 				if evaluation_book.cleaning_policy == 'SUBSCRIPTION':
-					saved_section                          = section_save_serializer.save(evaluation_book_id=evaluation_book__id,section_cleanings=total_cleanings,section_net_cost=section_save_serializer.validated_data['section_cost']*total_cleanings)
+					saved_section                          = section_save_serializer.save(evaluation_book_id=evaluation_book__id,section_cleanings=total_cleanings)
 				else:
-					saved_section                          = section_save_serializer.save(evaluation_book_id=evaluation_book__id,section_cleanings=total_cleanings,section_net_cost=section_save_serializer.validated_data['section_cost'])
+					saved_section                          = section_save_serializer.save(evaluation_book_id=evaluation_book__id,section_cleanings=total_cleanings)
 
 				evaluation_book.estimated_cost     				  += saved_section.section_net_cost
 				evaluation_book.total_cost         				  += saved_section.section_net_cost
@@ -5095,6 +5090,13 @@ class EditOrderDetails(APIView):
 				for keynote in keynotes:
 					new_keynotes.append(EvaluationSectionKeynote(evaluation_section=saved_section,sub_area=keynote['sub_area'],quantity=keynote['quantity']))
 				EvaluationSectionKeynote.objects.bulk_create(new_keynotes)
+
+				#addons
+				addons     = request.data.get('addons')
+				new_addons = []
+				for addon in addons:
+					new_addons.append(EvaluationSectionAddons(evaluation_section=saved_section,name=addon['name'],addon_cost=addon['addon_cost'],quantity=addon['quantity'],addon_net_cost=addon['addon_net_cost'],size=addon['size'],other_details=addon['other_details']))
+				EvaluationSectionAddons.objects.bulk_create(new_keynotes)
 
 				response_dict['section_success']       = True
 				response_dict['success']  = True
@@ -5122,9 +5124,9 @@ class EditOrderDetails(APIView):
 				total_cleanings                        = evaluation_book.order_scheduler_book_details.count()
 
 				if evaluation_book.cleaning_policy == 'SUBSCRIPTION':
-					saved_section                          = section_save_serializer.save(evaluation_book_id=evaluation_book__id,section_cleanings=total_cleanings,section_net_cost=section_save_serializer.validated_data['section_cost']*total_cleanings)
+					saved_section                          = section_save_serializer.save(evaluation_book_id=evaluation_book__id,section_cleanings=total_cleanings)
 				else:
-					saved_section                          = section_save_serializer.save(evaluation_book_id=evaluation_book__id,section_cleanings=total_cleanings,section_net_cost=section_save_serializer.validated_data['section_cost'])
+					saved_section                          = section_save_serializer.save(evaluation_book_id=evaluation_book__id,section_cleanings=total_cleanings)
 
 				evaluation_book.estimated_cost     				  += (saved_section.section_net_cost-old_section_cost)
 				evaluation_book.total_cost         				  += (saved_section.section_net_cost-old_section_cost)
@@ -5149,6 +5151,14 @@ class EditOrderDetails(APIView):
 				for keynote in keynotes:
 					new_keynotes.append(EvaluationSectionKeynote(evaluation_section=saved_section,sub_area=keynote['sub_area'],quantity=keynote['quantity']))
 				EvaluationSectionKeynote.objects.bulk_create(new_keynotes)
+
+				#delete and add addons
+				addons       = request.data.get('addons')
+				new_addons   = []
+				EvaluationSectionAddons.objects.filter(evaluation_section=saved_section).delete()
+				for addon in addons:
+					new_addons.append(EvaluationSectionAddons(evaluation_section=saved_section,name=addon['name'],addon_cost=addon['addon_cost'],quantity=addon['quantity'],addon_net_cost=addon['addon_net_cost'],size=addon['size'],other_details=addon['other_details']))
+				EvaluationSectionAddons.objects.bulk_create(new_addons)
 
 				response_dict['edit_success']       = True
 				response_dict['success']  = True
@@ -5381,6 +5391,30 @@ class EditOrderDetails(APIView):
 			EvaluationBook.objects.filter(id=evaluationbook_id).update(evaluator_note=note)
 
 			response_dict['success']  = True
+
+		elif action == 'evaluator_note':
+			evaluator_note                  = request.data.get('evaluator_note')
+			
+			order.evaluation.evaluator_note = evaluator_note
+			order.evaluation.save()
+			
+			response_dict['success']  = True
+
+		elif action == 'evaluation_media':
+			evaluationbook_id = request.data.get('evaluationbook_id')
+			taken_status      = request.data.get('taken_status')
+			medias            = request.FILES.getlist('media')
+
+			if not medias==['']:
+				for media in medias:
+					EvaluationMedia.objects.create(
+							evaluation_book_id=evaluation_book_id,
+							media=media,
+							media_type='PHOTO',
+							taken_status=taken_status
+							)
+			
+			response_dict['success'] = True
 
 		return Response(response_dict,HTTP_200_OK)
 

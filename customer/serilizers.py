@@ -28,13 +28,14 @@ class EvaluationSectionKeynoteSerializer(serializers.ModelSerializer):
 class EvaluationSectionAddonSerializer(serializers.ModelSerializer):
 	class Meta:
 		model  = EvaluationSectionAddons
-		fields = ('name','addon_cost','quantity','addon_net_cost','other_details')
+		fields = ('name','addon_cost','quantity','addon_net_cost','size','other_details')
 
 class EvaluationBookSectionSerializer(serializers.ModelSerializer):
 	keynotesections = EvaluationSectionKeynoteSerializer(many=True,read_only=True)
+	addonsections   = EvaluationSectionAddonSerializer(many=True,read_only=True)
 	class Meta:
 		model  = EvaluationBookSection
-		fields = ('section_name','size','age','wall_type','ceiling_type','floor_type','material','colour','cause_of_stain','cement_residue','oil_residue','hall_size','window_side','new_kitchen','is_highprice_facade','is_highprice_window','vacuuming','section_cost','section_net_cost','upholstery_type','age_of_stain','keynotesections')
+		fields = ('section_name','size','age','wall_type','ceiling_type','floor_type','material','colour','cause_of_stain','cement_residue','oil_residue','hall_size','window_side','new_kitchen','is_cabinet','is_highprice_facade','is_highprice_window','vacuuming','section_cost','section_net_cost','sectiononly_cost','sectiononly_net_cost','upholstery_type','age_of_stain','keynotesections','addonsections')
 
 class EvaluationBookSerializer(serializers.ModelSerializer):
 	evaluationsection_book = EvaluationBookSectionSerializer(many=True,read_only=True)

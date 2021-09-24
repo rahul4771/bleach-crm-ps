@@ -265,9 +265,9 @@
                                     <td style="text-align: right;">{{item.total_price|floatformat:3}} KD</td>
                                     <td style="float: right;"> 
                                         <button type="button" class="inv-plan-img-btn edit-item-btn" data-itemid="{{item.id}}" data-productid="{{item.product.id}}" data-productname="{{item.product.item}}" data-unitprice="{{item.unit_price}}" data-itemcount="{{item.item_count}}" data-totalprice="{{item.total_price}}"> <img
-                                            src="{% static 'files/inventory/icons/edit.png' %}" alt="" onclick="openNavAddStore('edit')"> </button>
+                                            src="{% static 'files/inventory/pencil.png' %}" alt="" onclick="openNavAddStore('edit')"> </button>
                                         <button type="button" data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}"  class="inv-plan-img-btn delete-item-btn"> <img
-                                                src="{% static 'files/inventory/icons/delete.png' %}" alt=""> </button>
+                                                src="{% static 'files/inventory/bin.png' %}" alt=""> </button>
                                     </td>
                                 </tr>
                                 {% empty %}
@@ -605,7 +605,7 @@ function showAdditem(){
         var products = [];
         {% for item in items %}
             var tempId = '{{item.id}}';
-            var tempName = '{{item.item}}';
+            var tempName = '{{item.item.name}}';
             var tempPrice = '{{item.item_price}}';
             products.push({id:tempId,name:tempName,price:tempPrice})
         // $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
@@ -625,7 +625,7 @@ function showAdditem(){
             var products = [];
             {% for item in items %}
                 var tempId = '{{item.id}}';
-                var tempName = '{{item.item}}';
+                var tempName = '{{item.item.name}}';
                 var tempPrice = '{{item.item_price}}';
             products.push({id:tempId,name:tempName,price:tempPrice})
             // $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
@@ -668,10 +668,10 @@ function showAdditem(){
         {% for item in items %}
 
     var tempId = '{{item.id}}';
-    var tempName = '{{item.item}}';
+    var tempName = '{{item.item.name}}';
     console.log(tempId,tempName)
    
-    $('#id_search').append('<div class="col-md-12" id="id_product{{item.id}}" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-productprice="{{item.item_price}}" data-name="{{item.item}}"><div class="inv-search-result">{{item.item}}</div></div>');
+    $('#id_search').append('<div class="col-md-12 inv-search-drop" id="id_product{{item.id}}" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-productprice="{{item.item_price}}" data-name="{{item.item}}"><div class="inv-search-result">{{item.item}}</div></div>');
 
     {% endfor %}
 
@@ -719,9 +719,9 @@ function showAdditem(){
     function showProducts(){
         $('#id_search').empty();
         for (var j=0; j<products.length; j++) {
-            if (products[j].name.match($('#pro-name').val())){
+            if (products[j].name.toUpperCase().match($('#pro-name').val().toUpperCase())){
                 console.log(products[j]);
-        $('#id_search').append('<div class="col-md-12" id="id_product'+products[j].id+'" style="padding:0px !important;" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-productprice="'+products[j].price+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
+        $('#id_search').append('<div class="col-md-12 inv-search-drop" id="id_product'+products[j].id+'" style="padding:0px !important;" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-productprice="'+products[j].price+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
 
             }
         }

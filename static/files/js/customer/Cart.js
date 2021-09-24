@@ -1,3 +1,4 @@
+moment.locale('ar-kw');  
 function openNav() {
   document.getElementById("mobSidenav").style.width = "100%";
   document.getElementById("mobSidenav").style.zIndex="1000";
@@ -13,6 +14,13 @@ function toggleBanner(){
     else{
       hideBanner()
     }
+}
+
+
+function checkSecond(sec) {
+  if (sec < 10 && sec >= 0) {sec = "0" + sec}; // add zero in front of numbers < 10
+  if (sec < 0) {sec = "59"};
+  return sec;
 }
 function hideBanner(){
   $('.banner-container').css("width","0px")
@@ -94,12 +102,16 @@ $(document).ready(function(){
           
         },
       data: {
+        addons:[],
+        order_no:'',
+        counterTime:'',
+        booking_time:'',
         checkbox:false,
         duration_loader:false,
         pref_gender:false,
         btnLoader:false,
         settings:{},
-        booking_status:null,
+        booking_status:false,
        // success_booking_dialog:true,
        gender_pref:false,
        gender:" ",
@@ -673,6 +685,7 @@ $(document).ready(function(){
 
            },
             goToPaymentDialog(){
+              
                 this.selectPayment('debit')
                 this.payment_dialog=true
             },
@@ -3055,7 +3068,9 @@ $(document).ready(function(){
         if(this.scheduleStat){
             for(var i=0;i<this.multiServicesBill.length;i++){
                 this.multiServicesBill[i].schedule_details={}
+                this.multiServicesBill[i].discount=false
             }
+
            
         }
         this.one_time_slots[this.oneTimeDateSelected]={
@@ -3657,6 +3672,10 @@ $(document).ready(function(){
            var chair_size=0
            var new_kitchen_size=0
            var old_kitchen_size=0
+           var new_kitchen_cabinet_size=0
+           var old_kitchen_nocabinet_size=0
+           var new_kitchen_nocabinet_size=0
+           var old_kitchen_cabinet_size=0
            var new_kitchen_productivity=0
            var old_kitchen_productivity=0
            var old_kitchen_manhour=0
@@ -3676,7 +3695,7 @@ $(document).ready(function(){
             
             
              if(selected_service=='Kitchen Cleaning'){
-               console.log("inside kitchen")
+              /* console.log("inside kitchen")
                var new_kitchen_productivity = data["newkitchen_perhour_cleaning"];
                var old_kitchen_productivity = data["oldkitchen_perhour_cleaning"];
 
@@ -3703,6 +3722,72 @@ $(document).ready(function(){
                console.log("old kitchen"+old_kitchen_manhour+' new kicthen : '+new_kitchen_manhour)
                var manhour= old_kitchen_manhour+new_kitchen_manhour
                console.log("kicthen amhr is"+manhour)
+               //Addons Manhour
+               for(var add=0;add<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;add++){
+                 var addons_available=this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[add].addonsections
+                 var addons_manhour=0
+                 for(var addon=0;addon<addons_available.length;addon++){
+                    addons_manhour=addons_manhour+parseInt(this.getProductivityAddonByName(addons_available[addon]))*addons_available[addon].quantity
+                 }
+              }
+              console.log("addons manhour is "+addons_manhour)
+              manhour=manhour+addons_manhour*/
+              for(var b=0;b<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;b++){
+                 
+                if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].new_kitchen){
+                 if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].is_cabinet)
+                  {
+                    new_kitchen_cabinet_size=new_kitchen_size+parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].size.max_size)   
+                  }
+                  else{
+                    new_kitchen_nocabinet_size=new_kitchen_size+parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].size.max_size) 
+                  }               
+                }
+                else if(!this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].new_kitchen){
+                  console.log("inside old kitchen")
+                  if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].is_cabinet)
+                  {
+                 
+                  old_kitchen_cabinet_size= old_kitchen_cabinet_size+parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].size.max_size)   
+                  }
+                  else{
+                    old_kitchen_nocabinet_size= old_kitchen_nocabinet_size+parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].size.max_size) 
+                  }
+                                  
+                }
+
+              }
+          var manhour =
+          parseInt(
+            new_kitchen_cabinet_size / data["newkitchenwithcabinet_perhour_cleaning"]
+          ) +
+          parseInt(
+            new_kitchen_nocabinet_size / data["newkitchenwithout_perhour_cleaning"]
+          )+
+          parseInt(
+            old_kitchen_cabinet_size / data["oldkitchenwithcabinet_perhour_cleaning"]
+          )+
+          parseInt(
+            old_kitchen_nocabinet_size / data["oldkitchenwithoutcabinet_perhour_cleaning"]
+          )
+          //To find addons man hour 
+          var addon_manhour=0
+          for(var ao=0;ao<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;ao++){
+              for(var addon=0;addon<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].addonsections.length;addon++){
+                if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].addonsections[addon].selected){
+                  if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].addonsections[addon].details.category){
+                    addon_manhour=addon_manhour+(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].addonsections[addon].quantity*(parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].addonsections[addon].selected_size.max_size)/this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addonsections[addon].details.productivity))
+                  }
+                  else{
+                  addon_manhour=addon_manhour+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].addonsections[addon].details.productivity*this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].addonsections[addon].quantity
+                  }
+                }
+              }
+          
+          }
+          console.log("addon manhour is"+addon_manhour)
+          manhour=parseInt(manhour)+parseInt(addon_manhour)
+
                
              }
              else if(selected_service=='Upholstery Cleaning'){
@@ -4527,8 +4612,11 @@ getBookedServices(){
     this.payment_total_cost=this.bookedServiceDetails[0].evaluation.total_cost
     this.payment_status=response.data.order_details.payment_status
     this.booking_status=response.data.booking_status
+    this.order_no=response.data.order_details.order_no
+    this.getBookingTime(response.data.order_details.order_no)
+    this.amount_discount=response.data.discount_details.discount
     if(this.booking_status){
-      this.amount_discount=response.data.discount_details.discount
+     
       this.amount_payable=response.data.discount_details.total_cost
       this.payable_amount=this.amount_payable
       this.amount_subtotal=response.data.discount_details.estimated_cost
@@ -4859,6 +4947,8 @@ sendLetCustScheduled(){
           ch_count=ch_count+1
           if(ch_count==(Object.keys(this.scheduleGroup).length) && this.currentAddressIndex==this.bookedServiceDetails.length){
             if(this.eval_details.payment_status=='PENDING'){
+              this.counterTime='5:00'
+              startTimer()
               this.goToPaymentDialog()
             }
             else{
@@ -4884,7 +4974,10 @@ sendLetCustScheduled(){
       this.btnLoader=false
       if(this.currentAddressIndex==this.bookedServiceDetails.length){
         if(this.eval_details.payment_status=='PENDING'){
+          this.counterTime='5:00'
+          startTimer()
           this.goToPaymentDialog()
+         
         }
         else{
          // this.success_booking_dialog=true
@@ -4895,11 +4988,86 @@ sendLetCustScheduled(){
   }
   
  
+},
+getBookingTime(orderno){
+  axios.get(this.url+'/api/booking-expiry-check/?order_no='+orderno).then(response=>{
+    this.booking_time=response.data.created
+    console.log("inside time")
+    if(this.booking_status)
+    {
+      var currentTime = moment().utcOffset("+03:00").format('DD-MM-YYYY hh:mm:ss A')
+     
+     console.log("current time is"+currentTime+"booking time is"+this.booking_time)
+
+      var startTime = moment(this.booking_time, "DD-MM-YYYY hh:mm:ss A").format("DD-MM-YYYY hh:mm:ss A");
+      var endTime =moment(currentTime,'DD-MM-YYYY hh:mm:ss A').locale('ar-kw').format("DD-MM-YYYY hh:mm:ss A")
+     
+      
+      console.log("start is"+startTime+"end is"+endTime)
+      // calculate total duration
+      
+      var duration = moment.duration(moment(endTime,'DD-MM-YYYY hh:mm:ss A').diff(moment(startTime,'DD-MM-YYYY hh:mm:ss A')));
+
+      // duration in hours
+      var hours = parseInt(duration.asHours());
+      var seconds=(300-parseInt(duration.asSeconds()))%60;
+      
+      // duration in minutes
+      var minutes = parseInt(duration.asMinutes());
+      console.log( minutes+' minutes.  seconds'+seconds);
+       if(minutes>5){
+        this.cancelBooking(orderno)
+      //  console.log("called cancel booking")
+       }  
+        this.counterTime=(5-minutes)+':'+seconds
+        startTimer()
+      
+    }
+
+  })
+},
+cancelBooking(orderno){
+  axios.post(this.url+'/api/booking-expiry/',{order_no:orderno}).then(response=>{
+    setTimeout(function(){ location.reload(); }, 5000);
+    
+  })
+
+},
+async getAddons(){
+  this.addons=[]
+  var ser = 'Kitchen Cleaning'
+  axios.get(this.url+'/customer/ajax/getserviceaddons?service_type='+ser).then(response=>{
+    this.addons=response.data.service_addons
+   
+   
+  }).catch((error)=>{
+    console.log(error)
+  })
+},
+getProductivityAddonByName(addon){
+var name=addon.name
+if(addon.other_details){
+  var size=JSON.stringify(addon.other_details)
+}
+
+  for(var i=0;i<this.addons.length;i++){
+    if(this.addons[i].name==name){
+      if(this.addons[i].category){
+        if(this.addons[i].category==size){
+          return this.addons[i].productivity
+        }
+      }
+      else{
+        return this.addons[i].productivity
+      }
+    }
+  }
 }
     
   },
 
   mounted() {
+    
     this.url = api;
     const urlSearchParams = new URLSearchParams(window.location.search);
     const params = Object.fromEntries(urlSearchParams.entries());
@@ -4939,7 +5107,31 @@ sendLetCustScheduled(){
      
      
     });
-    
+    function startTimer() {
+ 
+      var presentTime = app.counterTime;
+      
+      
+      var timeArray = presentTime.split(/[:]+/);
+      var m = timeArray[0];
+      var s = checkSecond((timeArray[1] - 1));
+      if(s==59){m=m-1}
+      if(m<0){
+        return
+      }
+      if(m==0 &&s=='05'){
+        app.cancelBooking(this.order_no)
+      }
+      if(m>=0 && parseInt(s)>=0)
+      {
+      app.counterTime =
+        m + ":" + s;
+      
+      setTimeout(startTimer, 1000);
+      }
+      
+      
+    }
     
     
   

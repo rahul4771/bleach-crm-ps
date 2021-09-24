@@ -10,6 +10,7 @@
     font-weight:400;
     padding:2px;
     
+    
 }
 .cl-evaluator{
     background: #EDF1F6 0% 0% no-repeat padding-box;
@@ -511,11 +512,14 @@ width:100% !important;
 .cl-radio-row{
     margin-top: 0px !important;
 }
+.red-msg{
+    color:red;
+}
 .cl-slot-card{
-    min-height: 1200px;
-    height:100%;
+    /* min-height: 600px; */
+    height:auto;
     background: #EDF1F6 0% 0% no-repeat padding-box;
-   
+    min-height:1200px;
     border-radius: 4px;
     opacity: 1;
 }
@@ -768,6 +772,8 @@ width:100% !important;
      display: none !important;
  }
   @media only screen and (max-width: 600px) {
+    .cl-slot-card-subtitle {
+        font-size: 12px;}
     #eval-calendar-mobile{
         display: flex !important;
     }

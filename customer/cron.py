@@ -1,5 +1,9 @@
 from evaluator.models import Evaluation,EvaluationDetails
+from order.models import Order,OrderScheduler
+from customer.models import CustomerBooking
 from datetime import datetime,timedelta,date
+from django.utils import timezone
+from django.db.models import Prefetch
 import requests
 
 def quotationexpiry():
@@ -30,3 +34,8 @@ def quotationexpiry():
 
         response = requests.request("GET", url, headers=headers, params=querystring)
   
+def booking_expiry():
+    expired_schedules = OrderScheduler.objects.select_related('order__evaluation').filter(is_active=True,order__evaluation__quatation_status__isnull=False,order__payment_status='PENDING',created__lt=timezone.now()-timedelta(minutes=5),work_status='CLEANING_TEAM_ASSIGNED').prefetch_related(Prefetch('order__evaluation__booking_evaluation',queryset=CustomerBooking.objects.filter(is_active=True),to_attr='bookings'))
+    for expired_schedule in expired_schedules:
+        if expired_schedule.order.evaluation.bookings:
+            expired_schedule.delete()

@@ -1,14 +1,15 @@
 from django.shortcuts import render,redirect
 from django.views import View
 from bleach_crm_ps.permissions import IsInventoryAdmin,IsInventoryAdminUser
-from inventory.models import Category,Segment,Line,Attribute,AttributeValue,ItemAttributes,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeItems,PurchaseOrder,PurchaseOrderItems
+from inventory.models import ItemHistory,Category,Segment,Line,Attribute,AttributeValue,ItemAttributes,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,PurchaseOrder,PurchaseOrderItems
 from django.contrib import messages
 import re
 from datetime import date,datetime,timedelta
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,Max,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField,CharField,Prefetch
 from order.models import OrderScheduler
-from senior_team_leader.models import CleaningTeam
+from senior_team_leader.models import CleaningTeam,CleaningTeamMember
+from evaluator.models import EvaluationBookSection,EvaluationSectionKeynote,EvaluationSectionAddons
 # Create your views here.
 
 class InventoryHome(IsInventoryAdmin,View):
@@ -478,6 +479,7 @@ class InventoryItems(IsInventoryAdmin,View):
         inventory_item = InventoryItem.objects.prefetch_related(Prefetch('image_item',queryset=InventoryItemImages.objects.all(),to_attr='item_images')).annotate(unit_count=Sum(Case(When(unit_item__status='active',then=1),default=0,output_field=IntegerField())),total_unit_price=Sum(Case(When(unit_item__status='active',then='unit_item__unit_price'),default=0,output_field=FloatField()))).get(id=item_id)
         categories = Category.objects.all()
         item_units = ItemUnit.objects.filter(item=inventory_item)
+        item_history = ItemHistory.objects.filter(item=inventory_item)
 
         stores = Store.objects.filter(status=True)
 
@@ -507,7 +509,7 @@ class InventoryItems(IsInventoryAdmin,View):
         else:
             new_unit_code = 'UNIT9001'
 
-        return render(request,'inventory/item.html',{"stores":stores,"item_attributes":item_attributes,"inventory_item":inventory_item,"attributes":attributes,"categories":categories,"item_units":item_units,"new_unit_code":new_unit_code})
+        return render(request,'inventory/item.html',{"stores":stores,"item_attributes":item_attributes,"inventory_item":inventory_item,"attributes":attributes,"categories":categories,"item_units":item_units,"item_history":item_history,"new_unit_code":new_unit_code})
 
     def post(self,request,item_id):
         action =request.POST.get('action')
@@ -568,6 +570,7 @@ class InventoryItems(IsInventoryAdmin,View):
 
         if action == "add_unit":
             store_id = request.POST.get('store')
+            serial_number = request.POST.get('serial_number')
             purchase_date = request.POST.get('purchase_date')
             expiry_date = request.POST.get('expiry_date')
             
@@ -600,6 +603,7 @@ class InventoryItems(IsInventoryAdmin,View):
                 name='name',
                 store=store,
                 unit_code = new_unit_code,
+                unit_serial_number = serial_number,
                 purchase_date = purchase_date,
                 no_expiry = expiry,
                 unit_price = unit_price,
@@ -611,6 +615,7 @@ class InventoryItems(IsInventoryAdmin,View):
                 name='name',
                 store=store,
                 unit_code = new_unit_code,
+                unit_serial_number = serial_number,
                 purchase_date = purchase_date,
                 expiry_date = expiry_date,
                 no_expiry = expiry,
@@ -622,6 +627,7 @@ class InventoryItems(IsInventoryAdmin,View):
         if action == "edit_unit":
             unit_id = request.POST.get('edit_unit_id')
             store_id = request.POST.get('store')
+            serial_number = request.POST.get('serial_number')
             purchase_date = request.POST.get('purchase_date')
             expiry_date = request.POST.get('expiry_date')
             no_expiry = request.POST.get('no_expiry')
@@ -639,6 +645,7 @@ class InventoryItems(IsInventoryAdmin,View):
             unit = ItemUnit.objects.get(id=int(unit_id))
             
             unit.store = store
+            unit.unit_serial_number = serial_number
             unit.purchase_date = purchase_date
             if expiry_date:
                 unit.expiry_date = expiry_date
@@ -806,8 +813,9 @@ class InventorySupplier(IsInventoryAdmin,View):
             messages.success(request,"Supplier Deleted Successfully !")
 
         if action == 'add_item':
+            print("pop")
             supplier_id = request.POST.get('item_supplier_id')
-            item = request.POST.get('supplier_item')
+            item = request.POST.get('item')
             item_price = request.POST.get('supplier_item_price')
             item_count = request.POST.get('supplier_item_count')
 
@@ -821,19 +829,26 @@ class InventorySupplier(IsInventoryAdmin,View):
 
             supplier = Supplier.objects.get(id=int(supplier_id))
 
-            SupplierItems.objects.create(supplier=supplier,item=item,item_price=item_price,supplier_item_id=new_supplier_item_id,item_count=item_count)
+            product = InventoryItem.objects.get(id=int(item))
+
+            SupplierItems.objects.create(supplier=supplier,item=product,item_price=item_price,supplier_item_id=new_supplier_item_id,item_count=item_count)
 
             messages.success(request,"Item Added Successfully !")
 
         if action == 'edit_item':
+            print("ppp")
             supplier_item_id = request.POST.get('item_edit_id')
-            item = request.POST.get('supplier_item')
+            item = request.POST.get('item')
             item_price = request.POST.get('supplier_item_price')
             item_count = request.POST.get('supplier_item_count')
 
             supplieritem = SupplierItems.objects.get(id=int(supplier_item_id))
 
-            supplieritem.item = item
+            product = InventoryItem.objects.get(id=int(item))
+
+            print(supplieritem,product,"kop")
+
+            supplieritem.item = product
             supplieritem.item_price = item_price
             supplieritem.item_count = item_count
             supplieritem.save()
@@ -956,6 +971,8 @@ class InventoryInv(IsInventoryAdmin,View):
             reserve = request.POST.get('item_reserve')
             status     = request.POST.get('item_status')
             reusable     = request.POST.get('item_reusable')
+            item_add_type     = request.POST.get('itemadd_type')
+            unit_measure     = request.POST.get('unit_measure')
 
             if category_id:
                 category = Category.objects.get(id=int(category_id))
@@ -992,7 +1009,7 @@ class InventoryInv(IsInventoryAdmin,View):
                 new_item_code = item_code_series + '101'
             print(new_item_code,"lop")
 
-            inv_item = InventoryItem.objects.create(item_category=category,item_segment=segment,item_line=line,name=name,item_code=new_item_code,description=description,reserve_count=reserve,is_reusable=reusable)
+            inv_item = InventoryItem.objects.create(item_category=category,item_segment=segment,item_line=line,name=name,item_code=new_item_code,description=description,reserve_count=reserve,is_reusable=reusable,item_add_type=item_add_type,measuring_unit=unit_measure)
             messages.success(request,"Item Added Successfully !")
             return redirect('inventory:inventory-item',inv_item.id)
 
@@ -1065,8 +1082,41 @@ class InventoryInv(IsInventoryAdmin,View):
 
 class InventoryOrder(IsInventoryAdmin,View):
     def get(self,request):
-        orders = OrderScheduler.objects.filter(Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS')|Q(work_status='CLEANING_FULFILLED')).prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team'))
-        return render(request,'inventory/order.html',{"visits":orders})
+        search = request.GET.get('search')
+        print(search,"ser")
+
+        if search:
+            orders = OrderScheduler.objects.filter(Q(order_scheduler_book__service_type__icontains=search)|Q(cleaning_team_order_scheduler__team_leader__name__icontains=search)).filter(Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS')|Q(work_status='CLEANING_FULFILLED')).prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
+        else:
+            orders = OrderScheduler.objects.filter(Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS')|Q(work_status='CLEANING_FULFILLED')).prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
+        
+        #PAGINATION ORDERS
+        no_of_entries = request.GET.get('no_of_entries')
+        if not no_of_entries:
+            no_of_entries = 20
+
+        page = request.GET.get('page',1)
+        paginator=Paginator(orders,no_of_entries)
+        try:
+            orders=paginator.page(page)
+        except PageNotAnInteger:
+            orders=paginator.page(1)
+        except EmptyPage:
+            orders = paginator.page(paginator.num_pages)
+
+        # Get the index of the current page
+        index = orders.number - 1  # edited to something easier without index
+        # This value is maximum index of your pages, so the last page - 1
+        max_index = len(paginator.page_range)
+        # You want a range of 7, so lets calculate where to slice the list
+        start_index = index - 3 if index >= 3 else 0
+        end_index = index + 3 if index <= max_index - 3 else max_index
+        # Get our new page range. In the latest versions of Django page_range returns
+        # an iterator. Thus pass it to list, to make our slice possible again.
+        page_range = list(paginator.page_range)[start_index:end_index]
+        entry_per_page=(orders.end_index())-(orders.start_index())+1
+
+        return render(request,'inventory/order.html',{"no_of_entries":no_of_entries,"page_range":page_range,"entry_per_page":entry_per_page,"visits":orders,"search_query":search})
 
 class InventoryUsers(IsInventoryAdmin,View):
     def get(self,request):
@@ -1077,8 +1127,9 @@ class InventoryCheckout(IsInventoryAdmin,View):
         return render(request,'inventory/checkout.html',{})
 
 class InventoryCreateCheckout(IsInventoryAdmin,View):
-    def get(self,request):
-        return render(request,'inventory/createCheckout.html',{})
+    def get(self,request,visit_id):
+        visit = OrderScheduler.objects.select_related('order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='team_members')),to_attr='cleaning_team'),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes')),to_attr='sections')).get(id=int(visit_id))
+        return render(request,'inventory/createCheckout.html',{"visit":visit})
 
 class InventoryPurchaseOrder(IsInventoryAdmin,View):
     def get(self,request):
@@ -1100,6 +1151,42 @@ class InventoryPurchaseOrder(IsInventoryAdmin,View):
             messages.success(request,"Purchase Order Deleted successfully!")
 
         return redirect('inventory:inventory-purchaseorder')
+
+class PurchaseOrderItemsPage(IsInventoryAdmin,View):
+    def get(self,request,purchase_order_id):
+        stores = Store.objects.filter(status=True)
+        purchase_order = PurchaseOrder.objects.prefetch_related(Prefetch('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.all(),to_attr='purchase_order_items')).get(id=int(purchase_order_id))
+        shipment_status = request.GET.get('shipment_status')
+        if shipment_status == 'complete':
+            purchase_order.is_received = True
+            purchase_order.save()
+
+            for item in purchase_order.purchase_order_items:
+                item.is_received = True
+                item.save()
+
+        if shipment_status == 'incomplete':
+            purchase_order.is_received = False
+            purchase_order.save()       
+
+        print(shipment_status,"ship")
+        return render(request,"inventory/purchaseorderitems.html",{"purchase_order":purchase_order,"stores":stores})
+
+    def post(self,request,purchase_order_id):
+        purchase_order = PurchaseOrder.objects.get(id=purchase_order_id)
+        action = request.POST.get('action')
+        if action == 'add_quantity_to_inventory':
+            products = request.POST.getlist('product_id')
+            item_counts = request.POST.getlist('item_count')
+            print(products,item_counts,"cts")
+
+            loopcount = 0
+            for product in products:
+                item = InventoryItem.objects.get(id=int(product))
+                print(item,item_counts[loopcount], "itm")
+                ItemHistory.objects.create(purchase_order=purchase_order,item=item,quantity=item_counts[loopcount],added_by=request.user)
+                loopcount += 1
+        return redirect('inventory:inventory-purchaseorderitems', purchase_order_id)
 
 class InventoryPurchaseOrderPage(View):
     def get(self,request,purchase_order_id):
@@ -1138,8 +1225,7 @@ class InventoryCreatePurchaseOrder(View):
         else:
             supplier = None
 
-        items = SupplierItems.objects.filter(supplier=purchase_order.supplier)
-
+        items = SupplierItems.objects.all()
         purchase_order_items = PurchaseOrderItems.objects.filter(purchase_order=purchase_order,purchase_order__supplier=purchase_order.supplier)
 
         return render(request,'inventory/createpo.html',{"items":items,"suppliers":suppliers,"supplier":supplier,"purchase_order":purchase_order,"purchase_order_items":purchase_order_items})
@@ -1340,24 +1426,24 @@ class InventoryServices(IsInventoryAdmin,View):
     def post(self,request):
         action =request.POST.get('action')
 
-        if action == 'add_item':
+        if action == 'add_ingredient':
             service_type = request.POST.get('service_type')
-            item = request.POST.get('item')
-            print(item,"itm")
+            ingredient = request.POST.get('ingredient')
+            print(ingredient,"itm")
             item_count = request.POST.get('item_count')
-            unit_price = request.POST.get('unit_price')
+            # unit_price = request.POST.get('unit_price')
             item_status = request.POST.get('item_status')
             recipe_type = request.POST.get('recipe_type')
 
-            inventoryitem = InventoryItem.objects.get(id=int(item))
+            # inventoryitem = InventoryItem.objects.get(id=int(item))
 
             ServiceRecipe.objects.get_or_create(service=service_type)
 
             get_servicetype = ServiceRecipe.objects.get(service=service_type)          
 
-            ServiceRecipeItems.objects.create(service_or_person=recipe_type,service_type=get_servicetype,item=inventoryitem,item_price=unit_price,item_count=item_count,status=item_status)
+            ServiceRecipeIngredients.objects.create(service_or_person=recipe_type,service_type=get_servicetype,ingredient=ingredient,quantity=item_count,status=item_status)
 
-            messages.success(request,"Item Added successfully!")
+            messages.success(request,"Ingredient Added successfully!")
 
         if action == 'update_size':
             service_name = request.POST.get('service_name')
@@ -1370,32 +1456,38 @@ class InventoryServices(IsInventoryAdmin,View):
             service.save()
             messages.success(request,"ServiceType Area Size updated successfully!")
 
-        if action == 'edit_item':
-            service_item_id = request.POST.get('item_edit_id')
-            item = request.POST.get('item')
+        if action == 'edit_ingredient':
+            service_ingredient_id = request.POST.get('item_edit_id')
+            ingredient = request.POST.get('ingredient')
             item_count = request.POST.get('item_count')
-            unit_price = request.POST.get('unit_price')
+            # unit_price = request.POST.get('unit_price')
             item_status = request.POST.get('item_status')
             recipe_type = request.POST.get('recipe_type')
 
-            inventoryitem = InventoryItem.objects.get(id=int(item))
+            # inventoryitem = InventoryItem.objects.get(id=int(item))
 
-            serviceitem = ServiceRecipeItems.objects.get(id=int(service_item_id))
+            serviceingredient = ServiceRecipeIngredients.objects.get(id=int(service_ingredient_id))
 
-            serviceitem.service_or_person = recipe_type
-            serviceitem.item = inventoryitem
-            serviceitem.item_count = item_count
-            serviceitem.item_price = unit_price
-            serviceitem.status = item_status
-            serviceitem.save()
+            serviceingredient.service_or_person = recipe_type
+            serviceingredient.ingredient = ingredient
+            serviceingredient.quantity = item_count
+            serviceingredient.status = item_status
+            serviceingredient.save()
 
-            messages.success(request,"Item Updated successfully!")
+            messages.success(request,"Ingredient Updated successfully!")
 
-        if action == 'delete_item':
-            item_id = request.POST.get('object_id')
+        if action == 'delete_ingredient':
+            ingredient_id = request.POST.get('object_id')
 
-            ServiceRecipeItems.objects.filter(id=int(item_id)).delete()
-            messages.success(request,"Item Deleted successfully!")
+            ServiceRecipeIngredients.objects.filter(id=int(ingredient_id)).delete()
+            messages.success(request,"Ingredient Deleted successfully!")
+
+        if action == 'add_item':
+            ingredient_id = request.POST.get('ingredient_id')
+            item_id = request.POST.get('item')
+
+            ingredient = ServiceRecipeIngredients.objects.get(id=int(ingredient_id))
+            item = InventoryItem.objects.get(id=int(item_id))
 
         return redirect('inventory:inventory-services')
 

@@ -163,6 +163,12 @@
 {% endif %}
 
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
+
+<div class="mt-10">
+  <div class=" bold-text common-label"> <label>Note to the Customer</label></div>
+
+  <textarea name="evaluator_note" id="" rows="6"  style="width: 100%;" max-length="300" onkeyup="limit(this);"></textarea>
+</div>
 <input type="hidden" name='total_amount' id="total_amount_id" value="{{evaluation.total_cost|floatformat:'3'}}">
 <br>
 <div align="center" onclick="CheckForm(this);"><input class="assignButton" name="submit" type="button" value="Submit">
@@ -230,7 +236,14 @@ $('.footable').footable({
 //# sourceURL=pen.js
 </script>
 <script>
+function limit(element)
+{
+    var max_chars = 300;
 
+    if(element.value.length > max_chars) {
+        element.value = element.value.substr(0, max_chars);
+    }
+}
 $('.cancelevaluation').click(function(){
   $('#detail').val($(this).data('evaluationdetail'));
   console.log($(this).data('evaluationdetail'),"mass")
@@ -267,32 +280,32 @@ $('.payment_method').change(function(){
   }
 
 
-  // if(payment_method == 'SUBSCRIPTION')
-  // {
-  //   $('.advance_track1').show();
-  // }
-  // else{
-  //   $('.advance_track1').hide();
-  //   $('.advance_track2').hide();
-  //   $('#advance_amount_id').val('');
-  //   $('#is_advance_id').prop('checked', false);
-  // }
+  if(payment_method == 'SUBSCRIPTION')
+  {
+    $('.advance_track1').show();
+  }
+  else{
+    $('.advance_track1').hide();
+    $('.advance_track2').hide();
+    $('#advance_amount_id').val('');
+    $('#is_advance_id').prop('checked', false);
+  }
 
   });
 
 //advance amount hide show
-// $('#is_advance_id').click(function(){
-//     if($('#is_advance_id').is(":checked") == true)
-//     {
-//       $('.advance_track2').show();
-//     }
-//     else
-//     {
-//       $('#advance_amount_id').val('');
-//       $('.advance_track2').hide();
-//     }
+$('#is_advance_id').click(function(){
+    if($('#is_advance_id').is(":checked") == true)
+    {
+      $('.advance_track2').show();
+    }
+    else
+    {
+      $('#advance_amount_id').val('');
+      $('.advance_track2').hide();
+    }
 
-// });
+});
 
 //total adjustment
 total_cost = parseFloat("{{evaluation.total_cost|floatformat:'3'}}")

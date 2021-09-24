@@ -10,7 +10,7 @@ from bleachadmin.models import ServicePriceRange,Settings
 from django.core.mail import send_mail,EmailMultiAlternatives
 from Api.serializers import DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, LeaveUsersSerializer,ShiftScheduleSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
 from agent.views import generate_random_username
-from inventory.models import Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,ItemUnit,SupplierItems,ServiceRecipe,ServiceRecipeItems
+from inventory.models import Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems
 import re
 import random
 import string
@@ -1938,10 +1938,16 @@ class InventorySupplierItemsAPI(APIView):
 		except:
 			supplier_items = None
 		
-		print(supplier_items,"invo")
-		item_serializer = InventorySupplierItemSerializer(supplier_items,many=True).data
-		print(item_serializer,"sed")	
-		response_dict['inventory_item'] = item_serializer
+		
+		items = []
+		for item in supplier_items:
+			item_dict = {}
+			item_dict['item_id'] = item.id
+			item_dict['product_id'] = item.item.id
+			item_dict['product_name'] = item.item.name
+			item_dict['item_price'] = item.item_price
+			items.append(item_dict)
+		response_dict['items']=items
 		return Response(response_dict,HTTP_200_OK)
 
 
@@ -1954,35 +1960,43 @@ class InventoryServiceRecipeAPI(APIView):
 		service_type = request.GET.get('service_type')
 		recipe_category = request.GET.get('recipe_category')
 		print(service_type,recipe_category,"attrsed2")
+		# try:
+		# 	service_items = ServiceRecipeItems.objects.filter(service_type__service=service_type,service_or_person=recipe_category)
+		# 	service = ServiceRecipe.objects.get(service=service_type)
+		# except:
+		# 	service_items = None
+		# 	service = None
+
 		try:
-			service_items = ServiceRecipeItems.objects.filter(service_type__service=service_type,service_or_person=recipe_category)
+			service_ingredients = ServiceRecipeIngredients.objects.filter(service_type__service=service_type,service_or_person=recipe_category)
 			service = ServiceRecipe.objects.get(service=service_type)
 		except:
-			service_items = None
+			service_ingredients = None
 			service = None
 		
-		print(service_items,"invo")
+		print(service_ingredients,"invo")
 
 		items_list = []
 
-		if service_items:
-			for item in service_items:
+		if service_ingredients:
+			for item in service_ingredients:
 				list_item = {
-					'service_item_id' : item.id,
+					'ingredient_id' : item.id,
 					'recipe_type' : item.service_or_person,
-					'item_name' : item.item.name,
-					'item_id' :item.item.id,
-					'item_count' : item.item_count,
+					'item_name' : item.ingredient,
+					'item_count' : item.quantity,
 					'status' : item.status
 				}
 
 				items_list.append(list_item)
 	
-		response_dict['service_items'] = items_list
+		response_dict['service_ingredients'] = items_list
 
 		if service:
 			response_dict['area_size'] = service.area_size
+			response_dict['area_size'] = service.staff_count
 		else:
+			response_dict['area_size'] = 0
 			response_dict['area_size'] = 0
 		return Response(response_dict,HTTP_200_OK)
 
@@ -1994,23 +2008,78 @@ class InventoryServiceAreaAPI(APIView):
 		response_dict = {}
 		service_type = request.GET.get('service_type')
 		area = request.GET.get('area')
+		staffcount = request.GET.get('staffcount')
 		
 		print(service_type,area,"attrsed3")
 		try:
 			service = ServiceRecipe.objects.get(service=service_type)
 			service.area_size = area
+			service.staff_count = staffcount
 			service.save()
 		except:
 			service = ServiceRecipe.objects.create(service=service_type)
 			service.area_size = area
+			service.staff_count = staffcount
 			service.save()
 		
 		print(service,"invo")
 
 		if service:
 			response_dict['area_size'] = service.area_size
+			response_dict['staff_count'] = service.staff_count
 		else:
 			response_dict['area_size'] = 0
+			response_dict['staff_count'] = 0
+		return Response(response_dict,HTTP_200_OK)
+
+class InventoryServiceItemsAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+		response_dict = {}
+		ingredient_id = request.GET.get('ingredient_id')
+		item_id = request.GET.get('item_id')
+		ingredient_item_id = request.GET.get('ingredient_item_id')
+		action = request.GET.get('action')
+		
+		print(ingredient_id,"attrsed3")
+		try:
+			ingredient = ServiceRecipeIngredients.objects.get(id=int(ingredient_id))
+
+			if action == 'add_item':
+				print("add")
+				item = InventoryItem.objects.get(id=int(item_id))
+				ServiceRecipeItems.objects.create(ingredient=ingredient,item=item)
+
+
+			if action == 'edit_item':
+				ingredient_item = ServiceRecipeItems.objects.get(id=int(ingredient_item_id))
+				item = InventoryItem.objects.get(id=int(item_id))
+				ingredient_item.item = item
+				ingredient_item.save()
+
+			if action == 'delete_item':
+				ServiceRecipeItems.objects.get(id=int(ingredient_item_id)).delete()
+
+			response_dict['ingredient'] = ingredient.ingredient
+			items = ServiceRecipeItems.objects.filter(ingredient=ingredient)
+		except:
+			ingredient = None
+			items = None
+
+		items_list = []
+		if items:
+			for item in items:
+				list_item = {
+					'item_id' : item.id,
+					'item_name' : item.item.name,
+				}
+
+				items_list.append(list_item)
+	
+		response_dict['service_items'] = items_list
+		
 		return Response(response_dict,HTTP_200_OK)
 
 
@@ -2024,9 +2093,43 @@ class DiscountSettingsAPI(APIView):
 		
 		discount_setting_serializer       = DiscountSettingSerializer(discount_settings).data
 		response_dict['discount_details'] = discount_setting_serializer
+		response_dict['success']          = True
 
 		return Response(response_dict,HTTP_200_OK)
 
+##Booking Expiry
+class BookingExpiryCheckAPI(APIView):
+	permission_classes  	= (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+		response_dict                     = {}
+		order_no                          = request.GET.get('order_no')
+		order_scheduler                   = OrderScheduler.objects.select_related('order').filter(order__order_no=order_no).first()
+
+		response_dict['created']          = datetime.strftime((order_scheduler.created+timedelta(hours=3)),'%d-%m-%Y %I:%M:%S %p')
+		response_dict['success']          = True
+
+		return Response(response_dict,HTTP_200_OK)
+
+
+class BookingExpiryAPI(APIView):
+	permission_classes  	= (AllowAny,)
+	authentication_classes  = ()
+
+	def post(self,request):
+		response_dict                     = {}
+		order_no                          = request.data.get('order_no')
+
+		#delete scheduler
+		OrderScheduler.objects.select_related('order').filter(order__order_no=order_no).delete()
+
+		#update booking status
+		CustomerBooking.objects.select_related('evaluation').filter(evaluation__evaluation_id=order_no).update(is_bookingcompleted=False)
+
+		response_dict['success']          = True
+		
+		return Response(response_dict,HTTP_200_OK)
 
 ###Team Leader Mobile app API'S
 from bleach_crm_ps.api_permissions import IsTeamInchargePermission
@@ -2133,7 +2236,7 @@ class TlCleaningDetails(APIView):
 	def get(self,request,team_id): 
 		response_dict                     = {'success':False}
 		
-		cleaning_details                  = CleaningTeam.objects.select_related('order_scheduler__order_scheduler_book__service_type','order_scheduler__order__evaluation__customer','order_scheduler__customer_address').prefetch_related(Prefetch('order_scheduler__order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='booksections')).get(id=team_id)
+		cleaning_details                  = CleaningTeam.objects.select_related('order_scheduler__order_scheduler_book__service_type','order_scheduler__order__evaluation__customer','order_scheduler__customer_address').prefetch_related(Prefetch('order_scheduler__order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='booksections')).get(id=team_id)
 		response_dict['cleaning_details'] = CleaningTeamAPISerializer(instance=cleaning_details).data
 		response_dict['success']          = True
 
@@ -2146,7 +2249,7 @@ class TlFollowupCleaningDetails(APIView):
 	def get(self,request,team_id): 
 		response_dict                             = {'success':False}
 
-		followupcleaning_details                  = FollowUpTeam.objects.select_related('followup_scheduler__follow_up__investigation__order','followup_scheduler__customer_address').prefetch_related(Prefetch('followup_scheduler__follow_up__follow_up_of_section',queryset=FollowUpSection.filter(is_active=True).prefetch_related(Prefetch('keynotesectionsfollowup',queryset=FollowUpSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='sections')).get(id=team_id)
+		followupcleaning_details                  = FollowUpTeam.objects.select_related('followup_scheduler__follow_up__investigation__order','followup_scheduler__customer_address').prefetch_related(Prefetch('followup_scheduler__follow_up__follow_up_of_section',queryset=FollowUpSection.filter(is_active=True).prefetch_related(Prefetch('keynotesectionsfollowup',queryset=FollowUpSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='sections')).get(id=team_id)
 		response_dict['followupcleaning_details'] = FollowUpTeamAPISerializer(instance=followupcleaning_details).data
 		response_dict['success']                  = True
 

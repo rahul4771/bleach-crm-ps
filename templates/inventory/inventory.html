@@ -58,7 +58,7 @@
                                 <th data-hide="phone,tablet"  class="text-center">
                                     Reserve
                                 </th>
-                                <th class="text-center">
+                                <th class="text-left">
                                     Item Status
                                 </th>
     
@@ -93,7 +93,7 @@
                                 {% endif %}
                               
                             </td> {% endcomment %}
-                            <td class="text-center">
+                            <td class="text-left">
                                 {% if item.item_status == 'available' %}
                                 <span class="inv-dot  c-active"></span>
                                 Available
@@ -109,10 +109,10 @@
                             </td>
                             <td class="text-center">
                                 <a href="/inventory/item/{{item.id}}">
-                                <button class="inv-plan-img-btn"> <img style="width: auto;" src="{% static 'files/inventory/icons/view.png' %}"  alt=""> </button>
+                                <button class="inv-plan-img-btn"> <img class="view-img" src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
                                 </a>
-                                <button class="inv-plan-img-btn edit-item" onclick="openNavAddStore('edit')" data-itemid="{{item.id}}" data-itemname="{{item.name}}" data-itemcode="{{item.item_code}}" data-itemcategory="{{item.item_category.id}}" data-itemsegment="{{item.item_segment.id}}" data-itemline="{{item.item_line.id}}" data-itemdescription="{{item.description}}" data-itemreserve="{{item.reserve_count}}" data-itemstatus="{{item.status}}" data-itemreusbale="{{item.is_reusable}}"> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                                <button class="inv-plan-img-btn delete-item"  data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                                <button class="inv-plan-img-btn edit-item" onclick="openNavAddStore('edit')" data-itemid="{{item.id}}" data-itemname="{{item.name}}" data-itemcode="{{item.item_code}}" data-itemcategory="{{item.item_category.id}}" data-itemsegment="{{item.item_segment.id}}" data-itemline="{{item.item_line.id}}" data-itemdescription="{{item.description}}" data-itemreserve="{{item.reserve_count}}" data-itemaddtype="{{item.item_add_type}}" data-unitmeasure="{{item.measuring_unit}}" data-itemstatus="{{item.status}}" data-itemreusbale="{{item.is_reusable}}"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>
+                                <button class="inv-plan-img-btn delete-item"  data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
 
                             </td>
                         </tr>
@@ -221,7 +221,7 @@
                     </select> -->
                     <input hidden  type="text" name="item_line" id="id_line" required>
 
-                    <div class="wrap-drop" id="noble-gases3" style="z-index: 3 !important;" >
+                    <div class="wrap-drop" id="noble-gases3" style="z-index: 5 !important;" >
                         <span id="id_line_text">--Select Line--</span>
                         <ul class="drop" id="id_ul_line">
                            
@@ -258,7 +258,7 @@
                     <option value="True">Yes</option>
                     <option value="False">No</option>
                     </select> {% endcomment %}
-                    <div class="wrap-drop" id="noble-gases5" style="z-index: 3 !important;"  >
+                    <div class="wrap-drop" id="noble-gases5" style="z-index: 4 !important;"  >
                         <span id="id_selectText4">Yes</span>
                         <ul class="drop">
                             <li onclick="changeSelect5('True')"><a>Yes</a></li>
@@ -268,6 +268,50 @@
                 </div>
 
             </div>
+
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Add Item by</div>
+
+                    <!-- <select id="item_status_id" name="item_status" class="minimal">
+                        <option value="True" selected>Active</option>
+                        <option value="False">Inactive</option>
+
+                    </select> -->
+                    <input hidden type="text" id="itemadd_type_id" name="itemadd_type" value="unit">
+                    <div class="wrap-drop" id="noble-gases6" style="z-index: 3 !important;"  >
+                        <span id="id_selectText5">unit</span>
+                        <ul class="drop">
+                            <li onclick="changeSelect6('quantity')"><a>Quantity</a></li>
+                            <li onclick="changeSelect6('unit')"><a>Unit</a></li> 
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Unit of Measure</div>
+
+                    <!-- <select id="item_status_id" name="item_status" class="minimal">
+                        <option value="True" selected>Active</option>
+                        <option value="False">Inactive</option>
+
+                    </select> -->
+                    <input hidden type="text" id="unit_measure_id" name="unit_measure" value="number">
+                    <div class="wrap-drop" id="noble-gases7" style="z-index: 2 !important;"  >
+                        <span id="id_selectText6">Number</span>
+                        <ul class="drop">
+                            <li onclick="changeSelect7('litre')"><a>Litre</a></li>
+                            <li onclick="changeSelect7('kg')"><a>Kg</a></li> 
+                            <li onclick="changeSelect7('number')"><a>Number</a></li> 
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+
             <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Status</div>
@@ -278,7 +322,7 @@
 
                     </select> -->
                     <input hidden type="text" id="item_status_id" name="item_status" value="True">
-                    <div class="wrap-drop" id="noble-gases4" style="z-index: 2 !important;"  >
+                    <div class="wrap-drop" id="noble-gases4" style="z-index: 1 !important;"  >
                         <span id="id_selectText3">Active</span>
                         <ul class="drop">
                             <li onclick="changeSelect4('True')"><a>Active</a></li>
@@ -291,7 +335,7 @@
             
   
         </div>
-        <div class="inv-drawer-footer">
+        <div class="inv-drawer-footer" style="position: relative !important;">
             <button class="sent-button inventory-form-btn" type="submit" >Submit</button>
             </form>
                         <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
@@ -382,6 +426,8 @@ $(function () {
     var dd3 = new DropDown($('#noble-gases3'));
     var dd4 = new DropDown($('#noble-gases4'));
     var dd5 = new DropDown($('#noble-gases5'));
+    var dd6 = new DropDown($('#noble-gases6'));
+    var dd7 = new DropDown($('#noble-gases7'));
 
 
 
@@ -401,6 +447,14 @@ function changeSelect4(va){
 
 function changeSelect5(va){
         $('#item_reusable_id').val(va)
+    }
+
+function changeSelect6(va){
+        $('#itemadd_type_id').val(va)
+    }
+
+function changeSelect7(va){
+        $('#unit_measure_id').val(va)
     }
 
 function changeSelect(va){
@@ -572,6 +626,8 @@ function changeSelect(va){
        console.log($(this).data('itemstatus'),'s')
         document.getElementById("item_status_id").value = $(this).data('itemstatus');
         document.getElementById("item_reusable_id").value = $(this).data('itemreusbale');
+        document.getElementById("itemadd_type_id").value = $(this).data('itemaddtype');
+        document.getElementById("unit_measure_id").value = $(this).data('unitmeasure');
 
         if($('#item_status_id').val() == 'True'){
             console.log("true")
@@ -586,6 +642,22 @@ function changeSelect(va){
             $('#id_selectText4').text('Yes');
         }else{
            $('#id_selectText4').text('No');
+
+        }
+
+        if($('#itemadd_type_id').val() == 'True'){
+            console.log("true")
+            $('#id_selectText5').text('Yes');
+        }else{
+           $('#id_selectText5').text('No');
+
+        }
+
+        if($('#unit_measure_id').val() == 'True'){
+            console.log("true")
+            $('#id_selectText6').text('Yes');
+        }else{
+           $('#id_selectText6').text('No');
 
         }
         

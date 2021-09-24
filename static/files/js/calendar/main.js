@@ -10,6 +10,7 @@ $(document).ready(function(){
         startPosition:4,
         nav:true,
         dots:false,
+      
         navText:[`<i class='fa fa-chevron-left service-control' @click='prevService()'></i>`,
       `<i class='fa fa-chevron-right service-control'></i>`], 
         responsive:{
@@ -303,7 +304,7 @@ const app=  new Vue({
           }
         },
         editCleaningTeam(slot){          
-          window.location.href='/common/editcleaning/team/'+slot         
+          window.location.href='/common/editcleaning/team/'+slot+'?cleaning_calendar_date='+app.cleaningDate         
         },
         resetCleaningTeam(slot){          
           window.location.href='/common/resetcleaning/team/'+slot         
@@ -312,13 +313,13 @@ const app=  new Vue({
         //   window.location.href='/operation-supervisor/editcleaning/team/'+slot  
         // },
         addCleaningTeam(slot){          
-          window.location.href='/common/assigncleaning/team/'+slot
+          window.location.href='/common/assigncleaning/team/'+slot+'?cleaning_calendar_date='+app.cleaningDate
         },
         // addCleaningTeamOpSupervisor(slot){
         //   window.location.href='/operation-supervisor/assigncleaning/team/'+slot
         // },
         editFollowupTeam(slot){          
-          window.location.href='/common/editfollowup/team/'+slot         
+          window.location.href='/common/editfollowup/team/'+slot+'?cleaning_calendar_date='+app.cleaningDate         
         },
         // resetFollowupTeam(slot){          
         //   window.location.href='/common/resetfollowup/team/'+slot         
@@ -327,7 +328,7 @@ const app=  new Vue({
         //   window.location.href='/operation-supervisor/editfollowup/team/'+slot  
         // },
         addFollowupTeam(slot){          
-          window.location.href='/common/assignfollowup/team/'+slot
+          window.location.href='/common/assignfollowup/team/'+slot+'?cleaning_calendar_date='+app.cleaningDate
         },
         // addFollowupTeamOpSupervisor(slot){
         //   window.location.href='/operation-supervisor/assignfollowup/team/'+slot
@@ -455,7 +456,7 @@ const app=  new Vue({
             $('#cl_cleaning_calendar').val(this.cleaningDate)
             
           },
-          getSlots(){
+          async getSlots(){
            // console.log($('#cl_cleaning_calendar').val())
            this.services=[]
             this.cleaningDate=$('#cl_cleaning_calendar').val()
@@ -513,22 +514,22 @@ const app=  new Vue({
                   this.combineSlots.push({type:'approved',class:'onetime-cleaning-status-bg',slots:this.slots.appoved_cleanings[j]})
                   
                   }
-                for(var i=0;i<this.slots.notapproved_cleanings.length;i++){
-
-                  this.combineSlots.push({type:'not approved',class:'subscription-cleaning-bg',slots:this.slots.notapproved_cleanings[i]})
-
-                }
-                
-                 
-                for(var k=0;k<this.slots.followup_cleanings.length;k++){
+                  for(var k=0;k<this.slots.followup_cleanings.length;k++){
                     var slot=this.slots.followup_cleanings[k]
                     //this.slots.followup_cleanings[k]['cleaning_hours']=this.slots.followup_cleanings[k].follow_up.cleaning_hours
                     slot.cleaning_hours=slot.follow_up.cleaning_hours
                     slot.order={order_no:slot.follow_up.ticket_no}
                     this.combineSlots.push({type:'followup',class:'followup-cleaning-status-bg',slots:slot})
                 }
-                this.parseSlots()
-                //$(".cl-slot-card").css('min-height',600);
+                for(var i=0;i<this.slots.notapproved_cleanings.length;i++){
+
+                  this.combineSlots.push({type:'not approved',class:'subscription-cleaning-bg',slots:this.slots.notapproved_cleanings[i]})
+
+                }
+
+                 this.parseSlots()
+                // $(".cl-slot-card").css('min-height',600);
+
                 setTimeout(function(){ 
                   var a = [];
                   console.log("here", $("#div_8").height()) 
@@ -544,14 +545,41 @@ const app=  new Vue({
                   a.push($("#div_10").height()+10)
                   a.push($("#div_11").height()+10)
                   a.push($("#div_12").height()+10)
-                  var m = a[0];
+                 var m = a[0];
                   for(var q=0;q<a.length;q++){
+                    console.log(a[q],'height')
                     if(a[q]>=m){
                       m = a[q]
                     }
                   }
-                  
-                  //$(".cl-slot-card").css('min-height',m);
+
+                  console.log("a is"+a)
+                  // m=Math.max( ...a )
+                  console.log("m is"+m)
+                  // $(".cl-slot-card").css('min-height',m);
+                //   $('#cleaningCalendar-carousel').css('height'm+1)
+                // //   $('.cleaningCalendar-carousel').trigger('destroy.owl.carousel');
+                // //   $('#cleaningCalendar-carousel').owlCarousel({
+                // //     loop:false,
+                // //     margin:10,
+                // //     startPosition:4,
+                // //     nav:true,
+                // //     dots:false,
+                // //     autoHeight: true,
+                // //     navText:[`<i class='fa fa-chevron-left service-control' @click='prevService()'></i>`,
+                // //   `<i class='fa fa-chevron-right service-control'></i>`], 
+                // //     responsive:{
+                // //         0:{
+                // //             items:2
+                // //         },
+                // //         600:{
+                // //             items:4
+                // //         },
+                // //         1000:{
+                // //             items:6
+                // //         }
+                // //     }
+                // // })
               
                 }, 500);
                 
@@ -1069,7 +1097,7 @@ const app=  new Vue({
             this.selected_cleaning_duration.no_of_cleaners=parseInt(this.followup_cleaners)
             this.editFollowupCleaning()
           },
-          parseSlots(){
+          async parseSlots(){
             for(var i=0;i<this.combineSlots.length;i++){
                 var startdate=this.combineSlots[i].slots.start_at.split(' ')[0]
                 var enddate=this.combineSlots[i].slots.end_at.split(' ')[0]

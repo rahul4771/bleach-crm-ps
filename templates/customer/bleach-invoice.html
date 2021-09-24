@@ -256,10 +256,20 @@
               
             </div>
 
+            {% if order.evaluation.evaluator_note %}
+            <!--- Note to the customer-->
+            <div class="col-md-12 col-print-12 order-3">
+              <div class="customer-notes">
+              <b> Note :</b> {{order.evaluation.evaluator_note|default_if_none:''}}
+              </div>
+            </div>  
+            <!-- Note to the customer ends here-->
+           {% endif %}
+
             {% for evaluation_detail in order.evaluation.evaluationdetails %}            
             {% for evaluation_book in evaluation_detail.evaluationbooks %}
             {% for book_section in evaluation_book.booksections %}
-            <div class="col-md-12 col-print-12 order-3">
+            <div class="col-md-12 col-print-12 order-4">
               <div class="inv-price-card mt-4 row">
                 <div class="col-md-8 col-print-8">
                   <div class="inv-service-title p-2 inv-text-bold">
@@ -272,10 +282,10 @@
                       Size : <span class="inv-text-bold">{{book_section.size}} {{book_section.unit|default_if_none:''}}</span>
                     </div>
                     <div class="p-2">
-                      Quantity : <span class="inv-text-bold">1</span>
+                      Visit : <span class="inv-text-bold">1</span>
                     </div>
                     <div class="p-2">
-                      Unit Price : <span class="inv-text-bold">{{book_section.section_cost|floatformat:'3'}}</span>
+                      Unit Price : <span class="inv-text-bold">{{book_section.sectiononly_cost|floatformat:'3'}}</span>
                     </div>
                   </div>
                 </div>
@@ -286,7 +296,7 @@
                   <div class="inv-price p-1 ">
                  
                     <span class="inv-text-bold">
-                    {{book_section.section_net_cost|floatformat:'3'}}
+                    {{book_section.sectiononly_net_cost|floatformat:'3'}}
                     </span> KD
                  
                   </div>
@@ -314,7 +324,7 @@
                           </div>
                           <div class="row mb-4">
                         <div class="col-md-12">
-                          <h6 class="inv-primary-text" >{{evaluation_book.service_type}}-{{book_section.section_name}}</h6>
+                          <h6 class="inv-primary-text" >{{evaluation_book.service_type}} - {{book_section.section_name}}</h6>
                         
                         </div>
 
@@ -470,7 +480,7 @@
 
                             <div class="col-md-4 mb-2 mt-2 col-6">
                               <div class="qt-details-title">
-                              Quantity
+                              Visit
                               </div>
                               <div class="qt-details-value">
                                 1
@@ -486,7 +496,7 @@
                               NET PRICE
                             </div>
                             <div class="qt-details-price">
-                            {{book_section.section_net_cost|floatformat:'3'}} KD
+                            {{book_section.sectiononly_net_cost|floatformat:'3'}} KD
                             </div>
                           </div>
                         
@@ -503,6 +513,52 @@
                 
               </div>
             </div>
+            
+            {% if book_section.sectionaddons %}
+            {% for addon in book_section.sectionaddons %}
+            
+            <!--Addons loads here-->
+            <div class="col-md-12 col-print-12 order-4">
+              <div class="inv-price-card mt-4 row">
+                <div class="col-md-8 col-print-8">
+                  <div class="inv-service-title p-2 inv-text-bold">
+                    {{book_section.section_name}} - {{addon.name}} (x{{addon.quantity|default_if_none:'1'}})
+                  </div>
+                  <div class="d-flex mb-10" > {% if evaluation_book.status == 'CANCELLED' %} <div class="status-dot cancel-chip-bg"></div> <div class="ml-2">Cancelled</div> {% endif %}</div>
+
+                  <div class="d-md-flex d-print-flex">
+                    <div class="p-2">
+                      Size : <span class="inv-text-bold">{{addon.size|default_if_none:'-'}}</span>
+                    </div>
+                    <div class="p-2">
+                      Visit : <span class="inv-text-bold">{% if evaluation_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{book_section.section_cleanings|floatformat:"-1"}}{% endif %}</span>
+                    </div>
+                    <div class="p-2">
+                      Unit Price : <span class="inv-text-bold">{{addon.addon_cost|floatformat:'3'}}</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3 col-print-3 offset-md-1 p-2">
+                  <div class="p-2">
+                    NET PRICE
+                  </div>
+                  <div class="inv-price p-1 ">
+                 
+                    <span class="inv-text-bold">
+                    {{addon.addon_net_cost|floatformat:'3'}}
+                    </span> KD
+                 
+                  </div>
+                  <div>
+
+                  </div>
+                </div>
+
+                </div>
+                </div>
+                <!--Addons ends here-->
+                {% endfor %}
+                {% endif %}
 
             {% endfor %}
             {% endfor %} 

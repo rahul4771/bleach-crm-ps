@@ -5,11 +5,11 @@
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
-        input:focus {
+        /* input:focus {
       outline: none !important;
       border:none !important;
      
-    }
+    } */
         .inv-input-container2 {
     display: -ms-flexbox; /* IE10 */
     display: flex;
@@ -103,6 +103,13 @@
         <button  data-toggle="modal" data-target="#editModel3" id="id_model_button_3" hidden>Done </button>
         <button  data-toggle="modal" data-target="#editModel4" id="id_model_button_4" hidden>Done </button>
 
+        <button  data-toggle="modal" data-target="#editNo1" id="id_model_button_person1" hidden>Done </button>
+        <button  data-toggle="modal" data-target="#editNo2" id="id_model_button_person2" hidden>Done </button>
+        <button  data-toggle="modal" data-target="#editNo3" id="id_model_button_person3" hidden>Done </button>
+        <button  data-toggle="modal" data-target="#editNo4" id="id_model_button_person4" hidden>Done </button>
+
+
+
 
 
 
@@ -119,7 +126,7 @@
                     <div id="menu" class="tab-pane fade in active">
 
                         <div class="row mt-20">
-                            <div class="col-md-4">
+                            <!-- <div class="col-md-4">
                                
                                 
                                     <ul id="=" class="nav nav-pills nav-stacked inv-service-border">
@@ -135,10 +142,28 @@
 
                                     </ul>
                                   
-                            </div>
-                            <div class="col-md-8 m-mt-10">
+                            </div> -->
+                            <div class="col-md-12 m-mt-10">
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
+                                        <div class="model-input-name">Select Service</div>
+                                        <div class="wrap-drop" id="dgeneral" style="z-index: 2;" >
+                                            <span id="id_head1">General Cleaning</span>
+                                            <ul class="drop">
+                                        
+                                                
+                                                <li onclick="selectActive(this,'detailedCleaning','General Cleaning')" ><a>General Cleaning</a></li>
+                                                <li  onclick="selectActive(this,'detailedCleaning','Deep Cleaning')"><a >Deep Cleaning</a></li>
+                                                <li onclick="selectActive(this,'detailedCleaning','Facade Cleaning')" ><a >Facade Cleaning</a></li>
+                                                <li onclick="selectActive(this,'detailedCleaning','Storage Area')" ><a >Storage Area</a></li>
+                                                <li onclick="selectActive(this,'detailedCleaning','Outdoor Cleaning')" ><a >Outdoor Cleaning</a></li>
+                                                <li onclick="selectActive(this,'detailedCleaning','Window Cleaning')" ><a >Window Cleaning</a></li>
+                                                <li onclick="selectActive(this,'detailedCleaning','Car Parking Umbrella')" ><a >Carparking Umbrella</a></li>
+                                            </ul>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-3">
                                         <div class="model-input-name">Select Item Type</div>
 
                                         <!-- <select id="id_recipe_type1" class="minimal" onchange="recipetype(this)">
@@ -156,11 +181,8 @@
                                             </ul>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
-                                        
+                                    <div class="col-md-3" id="id_ser_1">
                                         <div class="model-input-name">Area</div>
-
-
                                         <div class="d-flex inv-hide" id="id_area_edit_1">
                                             <div style="width: 50%; " class="inv-input-container h-30"> 
                                                 <input type="number"   class="w-p-100 inv-in" name="area1" id="id_area1">
@@ -179,36 +201,31 @@
                                               src="{% static 'files/icons/edit.png' %}">
                                               </div>
                                         </div>
-
-                                          <!-- <div class="d-flex">
-                                            <form method="POST" action="" >{% csrf_token %}
-                                            <div class="d-flex">
-                                                <div class="inv-input-container2 inv-border h-30">
-                                                    <input type="hidden" name="action" value="update_size" />
-                                                    <input type="hidden" name="service_name" class="area_service" value="General Cleaning" />
-                                                    <input type="number" step="0.1" name="area" class="service_area" style="border: none !important; width: 90%;" class="inv-in"  >
-                                                   
-                                                    <div class="model-filter2" >
-                                                      <button class="inv-icon-input2" >
-                                                      <i class="fa fa-refresh fa-lg " style="color: #ffffff;" aria-hidden="true"></i>
-                                                      </button>
-                                                    </div>
-                                                    
-                                                </div>
-                                            <div style="margin-left: 10px; font-size: 16px; margin-top: 3px;" class="av-font">sqm</div>
-
+                                    </div>
+                                    <div class="col-md-3" id="id_per_1">
+                                        <div class="model-input-name">No.of Persons</div>
+                                        <div class="d-flex inv-hide" id="id_person_edit_1">
+                                            <div style="width: 50%; " class="inv-input-container h-30"> 
+                                                <input type="number" class="w-p-100 inv-in" name="staffcount1" id="staffcount1">
+                                                
+                                            </div> 
+                                            <button style="margin-left: 10px;" id="id_editDone" class="inv-blue-btn " type="submit" onclick="closeditShow2(1)">Done </button>
+                                        </div>
+                                        <div class="d-flex " id="id_person_div_1">
+                                            <div class="model-input-name service_area" >
+                                                0
                                             </div>
-                                           
-                                            </form>
-                                          </div> -->
-                                          
-                                          
-                                        
-                        
+                                            
+
+                                          <div class="edit-div" style="top: 25px !important;">
+                                              <img onclick="showEditModal2(1)" id="id_editButton"  class="inv-edit-img"
+                                              src="{% static 'files/icons/edit.png' %}">
+                                              </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row mt-10">
-                                    <div class="col-md-12">
+                                    <div class="col-md-7">
                                         <div class="attribute-table-2">
                                             <table class="inv-table item-table1"> 
                                                 <tr>
@@ -226,7 +243,36 @@
                                                
                                             </table>
                                             <div class="attribute-footer p-5">
-                                                <button class="inv-plan-btn" onclick="openNavAddStore('add')"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Item</button>
+                                                <button class="inv-plan-btn" onclick="openNavAddStore('add')"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Ingredients</button>
+                
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="attribute-table-2">
+                                            <table class="inv-table item-table5"> 
+                                                <tr>
+                                                    <th style="width: %;">
+                                                       Item Name
+                                                    </th>
+                                                    
+                                                    <th style="width: %;">
+                                                        Action
+                                                    </th>
+                                                </tr>
+                                                {% comment %} <tr>
+                                                    <td>
+                                                        item 1
+                                                    </td>
+                                                    <td>
+                                                        <button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('edit')" > <img src="/static/files/inventory/pencil.png" alt=""> </button>
+                                                        <button class="inv-plan-img-btn "  data-toggle="modal" data-target="#deleteModel2"> <img src="/static/files/inventory/bin.png" alt=""> </button>
+                                                    </td>
+                                                </tr> {% endcomment %}
+                                               
+                                            </table>
+                                            <div class="attribute-footer p-5">
+                                                <button class="inv-plan-btn" onclick="openNavAddStore2('add')"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Item</button>
                 
                                             </div>
                                         </div>
@@ -238,7 +284,7 @@
                     </div>
                     <div id="menu1" class="tab-pane fade">
                         <div class="row mt-20">
-                            <div class="col-md-4">
+                            <!-- <div class="col-md-4">
                                
                                 
                                     <ul  class="nav nav-pills nav-stacked inv-service-border">
@@ -251,10 +297,23 @@
 
                                     </ul>
                                   
-                            </div>
-                            <div class="col-md-8 m-mt-10">
+                            </div> -->
+                            <div class="col-md-12 m-mt-10">
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
+                                        <div class="model-input-name">Select Service</div>
+                                        <div class="wrap-drop" id="dsp" style="z-index: 2;" >
+                                            <span id="id_head2">Upholstery Cleaning</span>
+                                            <ul class="drop">
+                                        
+                                                <li onclick="selectActive(this,'specialCare','Upholstery Cleaning')"><a >Upholstery Cleaning</a></li>
+                                      <li onclick="selectActive(this,'specialCare','Carpet Cleaning')" ><a >Carpet Cleaning</a></li>
+                                      <li onclick="selectActive(this,'specialCare','Mattress Cleaning')" ><a >Mattress Cleaning</a></li>
+                                            </ul>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-3">
                                         <div class="model-input-name">Select Item Type</div>
 
                                         <!-- <select id="id_recipe_type2" class="minimal">
@@ -271,7 +330,7 @@
                                             </ul>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-3" id="id_ser_2">
                                         
                                         <div class="model-input-name">Area</div>
                                         <!-- <div style="width: 50%; " class="inv-input-container h-30"> 
@@ -321,10 +380,31 @@
                                         
                         
                                     </div>
+                                    <div class="col-md-3" id="id_per_2">
+                                        <div class="model-input-name">No.of Persons</div>
+                                        <div class="d-flex inv-hide" id="id_person_edit_2">
+                                            <div style="width: 50%; " class="inv-input-container h-30"> 
+                                                <input type="number" class="w-p-100 inv-in" name="staffcount2" id="staffcount2">
+                                                
+                                            </div> 
+                                            <button style="margin-left: 10px;" id="id_editDone" class="inv-blue-btn " type="submit" onclick="closeditShow2(2)">Done </button>
+                                        </div>
+                                        <div class="d-flex " id="id_person_div_2">
+                                            <div class="model-input-name service_area" >
+                                                0
+                                            </div>
+                                            
+
+                                          <div class="edit-div" style="top: 25px !important;">
+                                              <img onclick="showEditModal2(2)" id="id_editButton"  class="inv-edit-img"
+                                              src="{% static 'files/icons/edit.png' %}">
+                                              </div>
+                                        </div>
+                                    </div>
 
                                 </div>
                                 <div class="row mt-10">
-                                    <div class="col-md-12">
+                                    <div class="col-md-7">
                                         <div class="attribute-table-2">
                                             <table class="inv-table item-table2"> 
                                                 <tr>
@@ -342,7 +422,27 @@
                                                
                                             </table>
                                             <div class="attribute-footer p-5">
-                                                <button class="inv-plan-btn" onclick="openNavAddStore('add')"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Item</button>
+                                                <button class="inv-plan-btn" onclick="openNavAddStore('add')"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Ingredients</button>
+                
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="attribute-table-2">
+                                            <table class="inv-table item-table6"> 
+                                                <tr>
+                                                    <th style="width: %;">
+                                                       Item Name
+                                                    </th>
+                                                   
+                                                    <th style="width: %;">
+                                                        Action
+                                                    </th>
+                                                </tr>
+                                               
+                                            </table>
+                                            <div class="attribute-footer p-5">
+                                                <button class="inv-plan-btn" onclick="openNavAddStore2('add')"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Item</button>
                 
                                             </div>
                                         </div>
@@ -353,7 +453,7 @@
                     </div>
                     <div id="menu2" class="tab-pane fade">
                         <div class="row mt-20">
-                            <div class="col-md-4">
+                            <!-- <div class="col-md-4">
                                
                                 
                                     <ul id="kitchenCleaning" class="nav nav-pills nav-stacked inv-service-border">
@@ -361,10 +461,22 @@
 
                                     </ul>
                                   
-                            </div>
-                            <div class="col-md-8 m-mt-10">
+                            </div> -->
+                            <div class="col-md-12 m-mt-10">
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
+                                        <div class="model-input-name">Select Service</div>
+                                        <div class="wrap-drop" id="dkc" style="z-index: 2;" >
+                                            <span id="id_head3">Kitchen Cleaning</span>
+                                            <ul class="drop">
+                                                <li onchange="getName('Kitchen Cleaning','kitchenCleaning')" ><a >Kitchen Cleaning</a></li>
+
+
+                                            </ul>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-3">
                                         <div class="model-input-name">Select Item Type</div>
 
                                         <!-- <select id="id_recipe_type3" class="minimal">
@@ -381,7 +493,7 @@
                                             </ul>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-3" id="id_ser_3" >
                                         
                                         <div class="model-input-name">Area</div>
                                         <!-- <div style="width: 50%; " class="inv-input-container h-30"> 
@@ -432,10 +544,31 @@
                                         
                         
                                     </div>
+                                    <div class="col-md-3" id="id_per_3">
+                                        <div class="model-input-name">No.of Persons</div>
+                                        <div class="d-flex inv-hide" id="id_person_edit_3">
+                                            <div style="width: 50%; " class="inv-input-container h-30"> 
+                                                <input type="number" class="w-p-100 inv-in" name="staffcount3" id="staffcount3">
+                                                
+                                            </div> 
+                                            <button style="margin-left: 10px;" id="id_editDone" class="inv-blue-btn " type="submit" onclick="closeditShow2(3)">Done </button>
+                                        </div>
+                                        <div class="d-flex " id="id_person_div_3">
+                                            <div class="model-input-name service_area" >
+                                                0
+                                            </div>
+                                            
+
+                                          <div class="edit-div" style="top: 25px !important;">
+                                              <img onclick="showEditModal2(3)" id="id_editButton"  class="inv-edit-img"
+                                              src="{% static 'files/icons/edit.png' %}">
+                                              </div>
+                                        </div>
+                                    </div>
                                     
                                 </div>
                                 <div class="row mt-10">
-                                    <div class="col-md-12">
+                                    <div class="col-md-7">
                                         <div class="attribute-table-2">
                                             <table class="inv-table item-table3"> 
                                                 <tr>
@@ -453,7 +586,27 @@
                                                
                                             </table>
                                             <div class="attribute-footer p-5">
-                                                <button class="inv-plan-btn" onclick="openNavAddStore('add')"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Item</button>
+                                                <button class="inv-plan-btn" onclick="openNavAddStore('add')"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Ingredients</button>
+                
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="attribute-table-2">
+                                            <table class="inv-table item-table7"> 
+                                                <tr>
+                                                    <th style="width: %;">
+                                                       Item Name
+                                                    </th>
+                                                   
+                                                    <th style="width: %;">
+                                                        Action
+                                                    </th>
+                                                </tr>
+                                               
+                                            </table>
+                                            <div class="attribute-footer p-5">
+                                                <button class="inv-plan-btn" onclick="openNavAddStore2('add')"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Item</button>
                 
                                             </div>
                                         </div>
@@ -464,7 +617,7 @@
                     </div>
                     <div id="menu3" class="tab-pane fade">
                         <div class="row mt-20">
-                            <div class="col-md-4">
+                            <!-- <div class="col-md-4">
                                
                                 
                                     <ul id="infectionControl" class="nav nav-pills nav-stacked inv-service-border">
@@ -472,10 +625,24 @@
 
                                     </ul>
                                   
-                            </div>
-                            <div class="col-md-8 m-mt-10">
+                            </div> -->
+                            <div class="col-md-12 m-mt-10">
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
+                                        <div class="model-input-name">Select Service</div>
+                                        <div class="wrap-drop" id="dic" style="z-index: 2;" >
+                                            <span id="id_head4">Sanitization & Disinfection</span>
+                                            <ul class="drop">
+                                               
+                                      <li class="active" onclick="getName('Sterilization','sterilization')"><a >Sanitization & Disinfection</a></li>
+
+
+
+                                            </ul>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-3">
                                         <div class="model-input-name">Select Item Type</div>
 
                                         <!-- <select id="id_recipe_type4" class="minimal">
@@ -492,7 +659,7 @@
                                             </ul>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-3" id="id_ser_4">
                                         
                                         <div class="model-input-name">Area</div>
                                         <!-- <div style="width: 50%; " class="inv-input-container h-30"> 
@@ -542,9 +709,30 @@
                                         
                         
                                     </div>
+                                    <div class="col-md-3" id="id_per_4">
+                                        <div class="model-input-name">No.of Persons</div>
+                                        <div class="d-flex inv-hide" id="id_person_edit_4">
+                                            <div style="width: 50%; " class="inv-input-container h-30"> 
+                                                <input type="number" class="w-p-100 inv-in" name="staffcount4" id="staffcount4">
+                                                
+                                            </div> 
+                                            <button style="margin-left: 10px;" id="id_editDone" class="inv-blue-btn " type="submit" onclick="closeditShow2(4)">Done </button>
+                                        </div>
+                                        <div class="d-flex " id="id_person_div_4">
+                                            <div class="model-input-name service_area" >
+                                                0
+                                            </div>
+                                            
+
+                                          <div class="edit-div" style="top: 25px !important;">
+                                              <img onclick="showEditModal2(4)" id="id_editButton"  class="inv-edit-img"
+                                              src="{% static 'files/icons/edit.png' %}">
+                                              </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="row mt-10">
-                                    <div class="col-md-12">
+                                    <div class="col-md-7">
                                         <div class="attribute-table-2">
                                             <table class="inv-table item-table4"> 
                                                 <tr>
@@ -562,7 +750,28 @@
                                                
                                             </table>
                                             <div class="attribute-footer p-5">
-                                                <button class="inv-plan-btn" onclick="openNavAddStore('add')"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Item</button>
+                                                <button class="inv-plan-btn" onclick="openNavAddStore('add')"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Ingredients</button>
+                
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="attribute-table-2">
+                                            <table class="inv-table item-table8"> 
+                                                <tr>
+                                                    <th style="width: %;">
+                                                       Item Name
+                                                    </th>
+                                                   
+                                                    <th style="width: %;">
+                                                        Action
+                                                    </th>
+                                                </tr>
+                                                
+                                               
+                                            </table>
+                                            <div class="attribute-footer p-5">
+                                                <button class="inv-plan-btn" onclick="openNavAddStore2('add')"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Item</button>
                 
                                             </div>
                                         </div>
@@ -601,6 +810,81 @@
 
 
 
+    <div id="addItemDrawer" class="inv-sidedrawer">
+
+        <div class="inv-sidedrawer-inner">
+            <div class="d-flex">
+                <div class="inv-drawer-head" id="itemHead2">
+                    Add Item
+                </div>
+                <div class="right-pos">
+
+                    <button onclick="closeNavAddStore2()" class="img-button">
+                        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                    </button>
+                </div>
+            </div>
+            <hr>
+
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in id_name_cleaning" id="id_name_cleaning2" readonly>
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text" id="id_ingredient_name" class="w-p-100 inv-in"  readonly>
+                        <input type="hidden" name="ingredient_id" id="ingredient_id" class="w-p-100 inv-in">
+                      </div>
+                </div>
+
+            </div>
+
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Item</div>
+                    <input type="text" name="item" id="id_pro_sel" value="" />
+                    <div style="position: relative;">
+                        <div class="inv-input-container inv-border h-30">
+                            <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()">
+                           
+                            <!-- <div onclick="ProductListShow()" class="model-filter">
+                                
+                                    <i class="fa fa-angle-down fa-lg " style="color: #707070;" aria-hidden="true"></i>
+                                
+
+                            </div> -->
+
+
+
+                        </div>
+                        <div id="id_search" class="row inv-result-box" style="display: none;">
+                          
+                        </div>
+                    </div>
+                   
+
+
+                </div>
+
+            </div>
+            
+    </div>
+    <div class="inv-drawer-footer">
+        <button class="sent-button item-form-btn" type="button" onclick="serviceitemaction('add_item')" >Add</button>
+        </form>
+                    <button data-dismiss="modal" onclick="closeNavAddStore2()" class="view-button">Cancel</button>
+    </div>
+    </div>
+
 
 
 
@@ -610,7 +894,7 @@
         <div class="inv-sidedrawer-inner">
             <div class="d-flex">
                 <div class="inv-drawer-head" id="itemHead">
-                    Add Item
+                    Add Ingredient
                 </div>
                 <div class="right-pos">
 
@@ -622,13 +906,12 @@
             <hr>
 
             <form method="POST" action="">{% csrf_token %}
-            <input type="hidden" name="action" id="item_action" value="add_item" />
-            <input type="hidden" name="item" id="id_pro_sel" value="" />
+            <input type="hidden" name="action" id="item_action" value="add_ingredient" />
 
             <input type="hidden" name="item_edit_id" id="id_edit_item" />
 
-            <input type="text"  class="w-p-100 inv-in" id="id_name_cleaning" name="service_type" value="General Cleaning" readonly>
-            <input type="hidden"  class="w-p-100 inv-in" id="id_name_category" value="detailedCleaning">
+            <input type="text"  class="w-p-100 inv-in" class="id_name_cleaning" id="id_name_cleaning" name="service_type" value="General Cleaning" readonly>
+            <input   class="w-p-100 inv-in" id="id_name_category" value="detailedCleaning">
             {% comment %} <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Item</div>
@@ -648,9 +931,9 @@
 
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Item</div>
+                    <div class="model-input-name">Ingredient</div>
 
-                    <div style="position: relative;">
+                    <!-- <div style="position: relative;">
                         <div class="inv-input-container inv-border h-30">
                             <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()">
                            
@@ -667,7 +950,12 @@
                         <div id="id_search" class="row inv-result-box" style="display: none;">
                           
                         </div>
-                    </div>
+                    </div> -->
+                    <div class="inv-input-container h-30"> 
+                        <input type="text" name="ingredient" id="id_ingredient" class="w-p-100 inv-in" >
+                      </div>
+
+
                 </div>
 
             </div>
@@ -780,7 +1068,7 @@
 
                         
                         <div class="d-flex ">
-                            <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to delete item ?</p></div>
+                            <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to delete Ingredient ?</p></div>
                             <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
 
                                 <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
@@ -793,7 +1081,7 @@
                 <div class="row">
                     <div class="col-md-12 text-center">
                     <form method="POST" action="" >{% csrf_token %}
-                        <input type="hidden" id="action_delete_id" name="action" value="delete_item" />
+                        <input type="hidden" id="action_delete_id" name="action" value="delete_ingredient" />
                         <input type="hidden" name="object_id" id="object_id" />
                         <div class="cancel-model-content">
                             <button class="sent-button" >Delete</button>
@@ -801,6 +1089,39 @@
                           
                         </div>
                         </form>
+                    </div>
+    
+                </div>
+            </div>
+        </div>
+      </div>
+      <div class="modal fade" id="deleteModel2" role="dialog">
+        <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12 mt-20">
+
+                        
+                        <div class="d-flex ">
+                            <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to delete item ?</p></div>
+                            <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                                <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                            </button>
+    
+                        </div>
+                    </div>
+                </div>
+               
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                   
+                        <div class="cancel-model-content">
+                            <button class="sent-button" >Delete</button>
+                            <button data-dismiss="modal" class="view-button">Cancel</button>
+                          
+                        </div>
+                        
                     </div>
     
                 </div>
@@ -940,6 +1261,138 @@
         </div>
     </div>
   </div>
+  <div class="modal fade" id="editNo1" role="dialog">
+    <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 mt-20">
+
+                    
+                    <div class="d-flex ">
+                        <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to edit  No.of persons?</p></div>
+                        <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+           
+            <div class="row">
+                <div class="col-md-12 text-center">
+               
+                    <div class="cancel-model-content">
+                        <button class="sent-button" onclick="editShow2(1)" >Edit</button>
+                        <button data-dismiss="modal" id="id_cancel_per_1" class="view-button">Cancel</button>
+                      
+                    </div>
+                  
+                </div>
+
+            </div>
+        </div>
+    </div>
+  </div>
+  <div class="modal fade" id="editNo2" role="dialog">
+    <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 mt-20">
+
+                    
+                    <div class="d-flex ">
+                        <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to edit  No.of persons?</p></div>
+                        <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+           
+            <div class="row">
+                <div class="col-md-12 text-center">
+               
+                    <div class="cancel-model-content">
+                        <button class="sent-button" onclick="editShow2(2)" >Edit</button>
+                        <button data-dismiss="modal" id="id_cancel_per_2" class="view-button">Cancel</button>
+                      
+                    </div>
+                  
+                </div>
+
+            </div>
+        </div>
+    </div>
+  </div>
+  <div class="modal fade" id="editNo3" role="dialog">
+    <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 mt-20">
+
+                    
+                    <div class="d-flex ">
+                        <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to edit  No.of persons?</p></div>
+                        <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+           
+            <div class="row">
+                <div class="col-md-12 text-center">
+               
+                    <div class="cancel-model-content">
+                        <button class="sent-button" onclick="editShow2(3)" >Edit</button>
+                        <button data-dismiss="modal" id="id_cancel_per_3" class="view-button">Cancel</button>
+                      
+                    </div>
+                  
+                </div>
+
+            </div>
+        </div>
+    </div>
+  </div>
+  <div class="modal fade" id="editNo4" role="dialog">
+    <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 mt-20">
+
+                    
+                    <div class="d-flex ">
+                        <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to edit  No.of persons?</p></div>
+                        <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+           
+            <div class="row">
+                <div class="col-md-12 text-center">
+               
+                    <div class="cancel-model-content">
+                        <button class="sent-button" onclick="editShow2(4)" >Edit</button>
+                        <button data-dismiss="modal" id="id_cancel_per_4" class="view-button">Cancel</button>
+                      
+                    </div>
+                  
+                </div>
+
+            </div>
+        </div>
+    </div>
+  </div>
 
 </div>
 
@@ -992,6 +1445,14 @@ $(function () {
     var dd5 = new DropDown($('#noble-gases5'));
     var dd6 = new DropDown($('#noble-gases6'));
 
+    var dgeneral = new DropDown($('#dgeneral'));
+    var dsp = new DropDown($('#dsp'));
+    var dkc = new DropDown($('#dkc'));
+    var dic = new DropDown($('#dic'));
+
+ 
+
+
     // var dd2 = new DropDown($('#other-gases'));
     $(document).click(function () {
         // close menu on document click
@@ -1001,9 +1462,23 @@ $(function () {
 </script>
 <script>
 
+$(document).ready(function(){
+        $('#id_per_1').hide();
+        $('#id_per_2').hide();
+        $('#id_per_3').hide();
+        $('#id_per_4').hide();
+
+        
+    })
+
+
 function showEditModal(id){
     console.log(id)
     $('#id_model_button_'+id).click()
+}
+function showEditModal2(id){
+    console.log(id)
+    $('#id_model_button_person'+id).click()
 }
 function editShow(id){
     console.log(id)
@@ -1012,6 +1487,33 @@ function editShow(id){
 
     document.getElementById('id_area_div_'+id).style.display  = "none";
     document.getElementById('id_area_edit_'+id).style.display  = "flex";
+
+}
+function editShow2(id){
+    console.log(id)
+    $("#id_cancel_per_"+id).click();
+    
+
+    document.getElementById('id_person_div_'+id).style.display  = "none";
+    document.getElementById('id_person_edit_'+id).style.display  = "flex";
+
+}
+
+async function closeditShow2(id){
+
+    var staffcount = $('#staffcount'+id+'').val();
+    var service_type = $('#id_name_cleaning').val();
+    //console.log(area,service_type,"ct")
+
+    var result = await _get('api/inventory-service-area/?service_type='+service_type+'&staffcount='+staffcount);
+         if(result.status == 200){
+             $('.service_area').text(result.data.staff_count);
+             console.log(result.data.staff_count,"cons")
+         }
+
+
+document.getElementById('id_person_div_'+id).style.display  = "flex";
+document.getElementById('id_person_edit_'+id).style.display  = "none";
 
 }
 
@@ -1042,18 +1544,46 @@ function changeSelect(va){
         $('#id_recipe_type').val(va)
     }
     function changeSelect3(va){
+        if(va == 'person'){
+            $('#id_ser_1').hide()
+            $('#id_per_1').show()
+        }else{
+            $('#id_ser_1').show()
+            $('#id_per_1').hide()
+        }
         $('#id_recipe_type1').val(va)
         recipetype($('#id_recipe_type1').val())
     }
     function changeSelect4(va){
+        if(va == 'person'){
+            $('#id_ser_2').hide()
+            $('#id_per_2').show()
+        }else{
+            $('#id_ser_2').show()
+            $('#id_per_2').hide()
+        }
         $('#id_recipe_type2').val(va)
         recipetype($('#id_recipe_type2').val())
     }
     function changeSelect5(va){
+        if(va == 'person'){
+            $('#id_ser_3').hide()
+            $('#id_per_3').show()
+        }else{
+            $('#id_ser_3').show()
+            $('#id_per_3').hide()
+        }
         $('#id_recipe_type3').val(va)
         recipetype($('#id_recipe_type3').val())
     }
     function changeSelect6(va){
+        if(va == 'person'){
+            $('#id_ser_4').hide()
+            $('#id_per_4').show()
+        }else{
+            $('#id_ser_4').show()
+            $('#id_per_4').hide()
+        }
         $('#id_recipe_type4').val(va)
         recipetype($('#id_recipe_type4').val())
     }
@@ -1082,7 +1612,8 @@ var products = [];
     console.log(products)
 $(document).ready(function(){
     $(".country1").chosen();
-    getitems('General Cleaning','detailedCleaning','service');
+    selectActive(this,'detailedCleaning','General Cleaning');
+    getingredients('General Cleaning','detailedCleaning','service');
     var a = [];
 
 
@@ -1097,7 +1628,7 @@ function showProducts(){
     for (var j=0; j<products.length; j++) {
         if (products[j].name.toUpperCase().match($('#pro-name').val().toUpperCase())){
             console.log(products[j]);
-    $('#id_search').append('<div class="col-md-12" style="padding:0px !important;" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
+    $('#id_search').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
 
         }
     }
@@ -1123,7 +1654,17 @@ function showProducts(){
     }
 
 function getName(name,type){
+console.log('calling funcation', name, type)
+    if(type == 'detailedCleaning'){
+        $('#id_head1').text(name)
+    }
+    if(type == 'specialCare'){
+        $('#id_head2').text(name)
+    }
+
     $('#id_name_cleaning').val(name)
+    $('#id_name_cleaning2').val(name)
+
     $('.area_service').val(name)
     $('#id_name_category').val(type)
     console.log(type,"typ")
@@ -1139,15 +1680,19 @@ function getName(name,type){
     if (type == 'sterilization'){
         var recipe_category = $('#id_recipe_type4').val();
     }
-    getitems(name,type,recipe_category);
+    getingredients(name,type,recipe_category);
 }
 
 function selectActive(d,id,name){
+
+    console.log(d,id,name,'here')
     
     console.log(id,"kop")
     //console.log(a)
 
     $('#id_name_cleaning').val(name)
+    $('#id_name_cleaning2').val(name)
+
     $('.area_service').val(name)
     $('#id_name_category').val(id)
 
@@ -1164,7 +1709,7 @@ function selectActive(d,id,name){
         var recipe_category = $('#id_recipe_type4').val();
     }
 
-    getitems(name,id,recipe_category);
+    getingredients(name,id,recipe_category);
 
     $("."+id).each(function(){
         $(this).removeClass("active")
@@ -1175,18 +1720,47 @@ function selectActive(d,id,name){
     $(d).addClass("active");
 }
 
+function openNavAddStore2(d) {
+        $('#id_search').empty();
+        {% for item in items %}
+    var tempId = '{{item.id}}';
+    var tempName = '{{item.name}}';
+    $('#id_search').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
+
+    {% endfor %}
+    if(d == 'add'){
+            $("#itemHead2").text("Add Item");
+           
+        }
+    if(d == 'edit'){
+        $("#itemHead2").text("Edit Item");
+    }
+    if(screen.width<= 600){
+            document.getElementById("addItemDrawer").style.width = "100%";
+          
+        }else if(screen.width<= 720){
+            document.getElementById("addItemDrawer").style.width = "50%";
+           
+        }
+        else{
+            document.getElementById("addItemDrawer").style.width = "30%";
+          
+        } 
+
+}
+
      function openNavAddStore(d) {
         $('#id_search').empty();
         {% for item in items %}
     var tempId = '{{item.id}}';
     var tempName = '{{item.name}}';
-    $('#id_search').append('<div class="col-md-12" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
+    $('#id_search').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
 
     {% endfor %}
     if(d == 'add'){
-            $("#itemHead").text("Add Item");
+            $("#itemHead").text("Add Ingredient");
             $('.item-form-btn').text('Add');
-            $('#item_action').val('add_item');
+            $('#item_action').val('add_ingredient');
             $('#id_edit_item').val('');
             $('#id_item_count').val('');
             $('#pro-name').val('');
@@ -1214,27 +1788,30 @@ function selectActive(d,id,name){
     function closeNavAddStore() {
         document.getElementById("addStore").style.width = "0";
     }
+    function closeNavAddStore2() {
+        document.getElementById("addItemDrawer").style.width = "0";
+    }
 
     //edit item
-    function openNavEditItem(d) {
+    function openNavEditItngredient(d) {
         $('#id_search').empty();
         {% for item in items %}
         var tempId = '{{item.id}}';
         var tempName = '{{item.name}}';
-        $('#id_search').append('<div class="col-md-12" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
+        $('#id_search').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
         {% endfor %}
 
         console.log(d)
         console.log($(d).data('linestatus'))
             $("#itemHead").text("Edit Item");
             $('.item-form-btn').text('Update');
-            $('#item_action').val('edit_item');
+            $('#item_action').val('edit_ingredient');
             $('#id_edit_item').val($(d).data('serviceitemid'));
             $('#id_item_count').val($(d).data('itemcount'));
             document.getElementById("id_recipe_type").value = $(d).data('recipetype');
             $('#id_pro_sel').val($(d).data('itemid'));
 
-            $("#pro-name").val($(d).data('itemname'));
+            $("#id_ingredient").val($(d).data('itemname'));
 
             if ($(d).data('itemstatus') == true){
                 document.getElementById("id_item_status").value = 'True';
@@ -1275,66 +1852,82 @@ function selectActive(d,id,name){
     }
 
     function recipetype(d){
-        var cleaning = $('#id_name_cleaning').val();
+        var cleaning = $('.id_name_cleaning').val();
         var category = $('#id_name_category').val();
         //var recipe_category = $(d).val();
-        getitems(cleaning,category,d)
+        getingredients(cleaning,category,d)
         console.log("lop")
     }
 
-    //get items using api
-    async function getitems(service_type,category,recipe_category){
+    //list items using api
+    async function getingredients(service_type,category,recipe_category){
             console.log(category,"cat")
         //$('#line_segment_id').val(segment_id); //adding value to hidden input for adding line
 
-         var result = await _get('api/inventory-service-items/?service_type='+service_type+'&recipe_category='+recipe_category);
+         var result = await _get('api/inventory-service-ingredients/?service_type='+service_type+'&recipe_category='+recipe_category);
          if(result.status == 200){
 
             console.log(result.data.area_size,"arsiz")
-            $('.service_area').text(result.data.area_size);
+            if (recipe_category == 'service'){
+                $('.service_area').text(result.data.area_size);
+            }else{
+                $('.service_area').text(result.data.staff_count);
+            }
 
             if (category == 'detailedCleaning'){
 
                 $('#id_area1').val(result.data.area_size);
+                $('#staffcount1').val(result.data.staff_count);
 
-                if (result.data.service_items.length > 0){
+                if (result.data.service_ingredients.length > 0){
                     $(".item-table1 tr:not(:first)").remove(); 
                     var edit = "edit";
-                    $.each(result.data.service_items,function(key,value){
-                            $('.item-table1').append('<tr><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItem(this)" data-serviceitemid='+value.service_item_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.item_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.service_item_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
+                    $.each(result.data.service_ingredients,function(key,value){
+                        if (key == 0){
+                            getitems(value.ingredient_id);
+                        }
+                        $('.item-table1').append('<tr onclick="getitems('+value.ingredient_id+')"><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
                     })
                 }else{
                     $(".item-table1 tr:not(:first)").remove(); 
                 }
             }else if(category == 'specialCare'){
                 $('#id_area2').val(result.data.area_size);
-                if (result.data.service_items.length > 0){
+                $('#staffcount2').val(result.data.staff_count);
+                if (result.data.service_ingredients.length > 0){
                     $(".item-table2 tr:not(:first)").remove(); 
                     var edit = "edit";
-                    $.each(result.data.service_items,function(key,value){
-                            $('.item-table2').append('<tr><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItem(this)" data-serviceitemid='+value.service_item_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.item_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.service_item_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
+                    $.each(result.data.service_ingredients,function(key,value){
+                        if (key == 0){
+                            getitems(value.ingredient_id);
+                        }
+                            $('.item-table2').append('<tr onclick="getitems('+value.ingredient_id+')"><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
                     })
                 }else{
                     $(".item-table2 tr:not(:first)").remove(); 
                 }
             }else if(category == 'kitchenCleaning'){
                 $('#id_area3').val(result.data.area_size);
-                if (result.data.service_items.length > 0){
+                $('#staffcount3').val(result.data.staff_count);
+
+                if (result.data.service_ingredients.length > 0){
                     $(".item-table3 tr:not(:first)").remove(); 
                     var edit = "edit";
-                    $.each(result.data.service_items,function(key,value){
-                            $('.item-table3').append('<tr><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItem(this)" data-serviceitemid='+value.service_item_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.item_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.service_item_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
+                    $.each(result.data.service_ingredients,function(key,value){
+                            $('.item-table3').append('<tr onclick="getitems('+value.ingredient_id+')"><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
                     })
                 }else{
                     $(".item-table3 tr:not(:first)").remove(); 
                 }
             }else{
                 $('#id_area4').val(result.data.area_size);
-                if (result.data.service_items.length > 0){
+                $('#staffcount4').val(result.data.staff_count);
+
+                if (result.data.service_ingredients.length > 0){
                     $(".item-table4 tr:not(:first)").remove(); 
                     var edit = "edit";
-                    $.each(result.data.service_items,function(key,value){
-                            $('.item-table4').append('<tr><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItem(this)" data-serviceitemid='+value.service_item_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.item_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.service_item_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button></td></tr>')
+                    $.each(result.data.service_ingredients,function(key,value){
+                            $('.item-table4').append('<tr onclick="getitems('+value.ingredient_id+')"><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
                     })
                 }else{
                     $(".item-table4 tr:not(:first)").remove(); 
@@ -1344,6 +1937,96 @@ function selectActive(d,id,name){
          }else{
             showNotification('No Data','error')
          }
+    }
+
+
+    //list items using api
+    async function getitems(ingredient_id){
+            console.log(ingredient_id,"cat")
+        var category = $('#id_name_category').val();
+
+         var result = await _get('api/inventory-service-items/?ingredient_id='+ingredient_id);
+         if(result.status == 200){
+             console.log(result.data.ingredient,"ing")
+             $('#id_ingredient_name').val(result.data.ingredient);
+             $('#ingredient_id').val(ingredient_id);
+
+            if (category == 'detailedCleaning'){
+                if (result.data.service_items.length > 0){
+                    $(".item-table5 tr:not(:first)").remove(); 
+                    var edit = "edit";
+                    $.each(result.data.service_items,function(key,value){
+                        console.log(value.item_name,"lo")
+                        $('.item-table5').append('<tr><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('+edit+')"><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
+                    })
+                }else{
+                    $(".item-table5 tr:not(:first)").remove(); 
+                }
+            
+            }else if(category=='specialCare'){
+                if (result.data.service_items.length > 0){
+                    $(".item-table6 tr:not(:first)").remove(); 
+                    var edit = "edit";
+                    $.each(result.data.service_items,function(key,value){
+                        console.log(value.item_name,"lo")
+                        $('.item-table6').append('<tr><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('+edit+')"><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
+                    })
+                }else{
+                    $(".item-table6 tr:not(:first)").remove(); 
+                }
+            }
+            else if(category=='kitchenCleaning'){
+                if (result.data.service_items.length > 0){
+                    $(".item-table7 tr:not(:first)").remove(); 
+                    var edit = "edit";
+                    $.each(result.data.service_items,function(key,value){
+                        console.log(value.item_name,"lo")
+                        $('.item-table7').append('<tr><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('+edit+')"><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
+                    })
+                }else{
+                    $(".item-table7 tr:not(:first)").remove(); 
+                }              
+            }else{
+                if (result.data.service_items.length > 0){
+                    $(".item-table8 tr:not(:first)").remove(); 
+                    var edit = "edit";
+                    $.each(result.data.service_items,function(key,value){
+                        console.log(value.item_name,"lo")
+                        $('.item-table8').append('<tr><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('+edit+')"><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
+                    })
+                }else{
+                    $(".item-table8 tr:not(:first)").remove(); 
+                }
+            }
+            
+
+         }else{
+            showNotification('No Data','error')
+         }
+    }
+
+    //add items using api
+    async function serviceitemaction(action){
+        var item_id = $('#id_pro_sel').val();
+        var ingredient_id = $('#ingredient_id').val();
+        var result = await _get('api/inventory-service-items/?ingredient_id='+ingredient_id+'&item_id='+item_id+'&action='+action);
+        if(result.status == 200){
+            console.log("yah")
+            $('#id_ingredient_name').val(result.data.ingredient);
+             $('#ingredient_id').val(ingredient_id);
+
+             showNotification('Item Added !','success')
+
+            if (result.data.service_items.length > 0){
+                $(".item-table5 tr:not(:first)").remove(); 
+                var edit = "edit";
+                $.each(result.data.service_items,function(key,value){
+                    $('.item-table5').append('<tr><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('+edit+')"><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
+                })
+            }else{
+                $(".item-table5 tr:not(:first)").remove(); 
+            }
+        }
     }
 
 </script>

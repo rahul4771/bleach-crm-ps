@@ -210,6 +210,7 @@ class Evaluation(models.Model):
 	tracking_no         = models.CharField(max_length=20,blank=False,null=False)
 
 	call_attender 		= models.ForeignKey(UserProfile,blank=True,null=True,related_name='attender_evaluation')
+	evaluator_note      = models.CharField(max_length=1000,blank=False,null=False)
 	customer			= models.ForeignKey(UserProfile,blank=True,null=True,related_name='customer_evaluation')
 
 	estimated_cost		= models.FloatField(blank=True,null=True,default=0)
@@ -376,6 +377,7 @@ class EvaluationBookSection(models.Model):
 	hall_size           = models.CharField(max_length=100,blank=True,null=True)
 	window_side         = models.CharField(max_length=100,blank=True,null=True)
 	new_kitchen         = models.BooleanField(null=False,blank=True,default=False)
+	is_cabinet          = models.BooleanField(null=False,blank=True,default=False)
 	is_highprice_facade = models.BooleanField(null=False,blank=True,default=False)
 	is_highprice_window = models.BooleanField(null=False,blank=True,default=False)
 	upholstery_type     = models.CharField(max_length=50,blank=True,null=True,choices=SERVICEDIVISION_CHOICES)
@@ -384,6 +386,9 @@ class EvaluationBookSection(models.Model):
 	section_cost     = models.FloatField(blank=True,null=True)
 	section_cleanings= models.FloatField(blank=True,null=True)
 	section_net_cost = models.FloatField(blank=True,null=True)
+
+	sectiononly_cost    = models.FloatField(blank=True,null=True)
+	sectiononly_net_cost= models.FloatField(blank=True,null=True)
 
 	section_verified_by		 = models.CharField(max_length=50,null=True,blank=True)
 	section_updated_by		 = models.CharField(max_length=50,null=True,blank=True)
@@ -438,6 +443,7 @@ class EvaluationSectionAddons(models.Model):
 	addon_cost 	         = models.FloatField(blank=True,null=True)
 	quantity 		   	 = models.CharField(max_length=100,blank=True,null=True)
 	addon_net_cost     	 = models.FloatField(blank=True,null=True)
+	size                 = models.CharField(max_length=100,blank=True,null=True)
 	other_details        = models.CharField(max_length=1000,blank=True,null=True)
 
 	is_active            = models.BooleanField(null=False,blank=True,default=True)

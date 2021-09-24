@@ -29,7 +29,7 @@ from django.db.models import Prefetch
 from django.contrib import messages
 
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule
-from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType
+from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,EvaluationSectionAddons,CleaningMethod,CleaningSection,ServiceType,AreaType
 from order.models import Promocode,OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,Reporting,ReportingMedia
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
@@ -898,6 +898,9 @@ class PaymentDetails(IsAuthenticated,View):
 			except:
 				transactions = None
 
+		total_transactions = transactions.count()
+		total_transactions_amount = transactions.aggregate(total_paid = Sum('amount_paid'))['total_paid']
+
 		
 		
 		#Pending Payments
@@ -1253,7 +1256,7 @@ class PaymentDetails(IsAuthenticated,View):
 		entry_per_page4 = (subscription_due_payments.end_index())-(subscription_due_payments.start_index())+1
 		entry_per_page5 = (neworder_due_payments.end_index())-(neworder_due_payments.start_index())+1
 
-		return render(request,'common/payment/payments.html',{'total_due_amount':total_due_amount,'total_due_orders':total_due_orders,'total_doubtful_due_amount':total_doubtful_due_amount,'total_doubtful_due_orders':total_doubtful_due_orders,'tab':tab,'invoices':invoices,"search_query":search,"page_range1":page_range1,"page_range2":page_range2,"page_range3":page_range3,"page_range4":page_range4,"page_range5":page_range5,"entry_per_page1":entry_per_page1,"entry_per_page2":entry_per_page2,"entry_per_page3":entry_per_page3,"entry_per_page4":entry_per_page4,"entry_per_page5":entry_per_page5,"no_of_entries":no_of_entries,'transactions':transactions,"doubtful_due_payments":doubtful_due_payments,'normal_due_payments':normal_due_payments,'subscription_due_payments':subscription_due_payments,'neworder_due_payments':neworder_due_payments})
+		return render(request,'common/payment/payments.html',{'total_transactions':total_transactions,'total_transactions_amount':total_transactions_amount,'total_due_amount':total_due_amount,'total_due_orders':total_due_orders,'total_doubtful_due_amount':total_doubtful_due_amount,'total_doubtful_due_orders':total_doubtful_due_orders,'total_normal_due_amount':total_normal_due_amount,'total_normal_due_orders':total_normal_due_orders,'total_neworder_due_orders':total_neworder_due_orders,'total_neworder_due_amount':total_neworder_due_amount,'total_subscription_due_amount':total_subscription_due_amount,'total_subscription_due_orders':total_subscription_due_orders,'tab':tab,'invoices':invoices,"search_query":search,"page_range1":page_range1,"page_range2":page_range2,"page_range3":page_range3,"page_range4":page_range4,"page_range5":page_range5,"entry_per_page1":entry_per_page1,"entry_per_page2":entry_per_page2,"entry_per_page3":entry_per_page3,"entry_per_page4":entry_per_page4,"entry_per_page5":entry_per_page5,"no_of_entries":no_of_entries,'transactions':transactions,"doubtful_due_payments":doubtful_due_payments,'normal_due_payments':normal_due_payments,'subscription_due_payments':subscription_due_payments,'neworder_due_payments':neworder_due_payments})
 
 	def post(self,request):
 		order_id = request.POST.get('orderid')
@@ -1402,7 +1405,7 @@ class ClientOrderDetails(IsAuthenticated,View):
 
 		order = Order.objects.select_related('evaluation__customer','evaluation__call_attender').prefetch_related(
 			Prefetch('evaluation__booking_evaluation',queryset=CustomerBooking.objects.filter(is_active=True,booking_type='CLEANINGBOOKING'),to_attr='customer_booking'),
-			Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('evaluator','address__governorate','address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').prefetch_related(Prefetch('evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr='evaluationbookmedias'),Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='evaluationbooksectionkeynotes')).annotate(kitchen_keynote=Sum( Case( When(keynotesections__sub_area='kitchen',then=1),default=0,output_field=IntegerField()))),to_attr='evaluationbooksections')),to_attr='evaluationbooks')),to_attr='evaluationdetails'),
+			Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('evaluator','address__governorate','address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').prefetch_related(Prefetch('evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr='evaluationbookmedias'),Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='evaluationbooksectionkeynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='evaluationbooksections')),to_attr='evaluationbooks')),to_attr='evaluationdetails'),
 			Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book','customer_address__area','customer_address__governorate').order_by('start_at').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).select_related('team_leader','drop_off_driver','pick_up_driver').prefetch_related(Prefetch('media_cleaningteam',queryset=CleaningTeamMedia.objects.filter(is_active=True),to_attr='cleaning_team_medias'),Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_team'),Prefetch('investigations_orderschedule',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('investigation_media',queryset=InvestigationMedia.objects.filter(is_active=True),to_attr='investigationmedias'),Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.filter(is_active=True),to_attr='paybackdiscounts'),Prefetch('buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.filter(is_active=True),to_attr='buybackpromocodegift'),Prefetch('followup_investigation',queryset = FollowUp.objects.filter(is_active=True).prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True).prefetch_related(Prefetch('followup_member_team',queryset=FollowUpTeamMember.objects.filter(is_active=True),to_attr='followupmembers')),to_attr='followupteams')),to_attr='follow_up_schedules')),to_attr='followups')),to_attr='investigations')),to_attr='orderschedules'),
 			Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),
 			Prefetch('feed_backs_order',FeedBack.objects.filter(is_active=True).select_related('question'),to_attr='feedbacks')).get(is_active=True,id=order_id)
@@ -3439,10 +3442,11 @@ class MakeQuatationPhase1(IsAuthenticated,View):
 		after_cleaning_amount	= float(request.POST.get('after_cleaning_amount')or 0.000)
 		discount                = float(request.POST.get('discount')or 0.000)
 		total_cost              = float(request.POST.get('total_amount')or 0.000)
+		evaluator_note          = request.POST.get('evaluator_note')
 
 
 		#update payment method
-		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount,total_cost=total_cost,discount=discount)
+		Evaluation.objects.filter(id=evaluation_id,is_active=True).update(payment_method=payment_method,quatation_status='PENDING',before_cleaning_amount=before_cleaning_amount,after_cleaning_amount=after_cleaning_amount,total_cost=total_cost,discount=discount,evaluator_note=evaluator_note)
 
 		##advance payment check
 		is_advance              = request.POST.get('is_advance')
@@ -3462,7 +3466,7 @@ class MakeQuatationPhase1(IsAuthenticated,View):
 		else:
 			evaluator = evaluation.call_attender.name
 
-		evaluationbooks = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='sections'))
+		evaluationbooks = EvaluationBook.objects.filter(evaluation_details=evaluationdetails).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='sections'))
 		evaluationbook  = evaluationbooks.first()
 		language        = evaluation.customer.sms_preference
 
@@ -4142,7 +4146,7 @@ class AssigncleaningTeam(IsAuthenticated,View):
 	def get(self,request,scheduler_id):
 
 		#shceduled order details
-		order_schedule    = OrderScheduler.objects.select_related('evaluation_details__evaluation','order_scheduler_book__service_type').prefetch_related(Prefetch('order_scheduler_book__evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr="evaluationmedias"),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes')).annotate(kitchen_keynote=Sum( Case( When(keynotesections__sub_area='kitchen',then=1),default=0,output_field=IntegerField()))),to_attr='sections')).get(is_active=True,id=scheduler_id)
+		order_schedule    = OrderScheduler.objects.select_related('evaluation_details__evaluation','order_scheduler_book__service_type').prefetch_related(Prefetch('order_scheduler_book__evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr="evaluationmedias"),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes')),to_attr='sections')).get(is_active=True,id=scheduler_id)
 		start_at_datetime = order_schedule.start_at
 		end_at_datetime   = order_schedule.end_at
 		start_at_date     = (order_schedule.start_at+timedelta(hours=3)).date()
@@ -4151,13 +4155,13 @@ class AssigncleaningTeam(IsAuthenticated,View):
 		end_at_time       = (order_schedule.end_at+timedelta(hours=3)).time()
 		
 		#same time schedules
-		order_schedules = OrderScheduler.objects.filter(start_at=start_at_datetime,end_at=end_at_datetime,evaluation_details__evaluation=order_schedule.evaluation_details.evaluation).select_related('evaluation_details__evaluation','order_scheduler_book__service_type').prefetch_related(Prefetch('order_scheduler_book__evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr="evaluationmedias"),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes')),to_attr='sections'))		
+		order_schedules = OrderScheduler.objects.filter(start_at=start_at_datetime,end_at=end_at_datetime,evaluation_details__evaluation=order_schedule.evaluation_details.evaluation).select_related('evaluation_details__evaluation','order_scheduler_book__service_type').prefetch_related(Prefetch('order_scheduler_book__evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr="evaluationmedias"),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='sections'))		
 
 		#same blc cleaners for excluding
 		sameblc_cleaners    = CleaningTeamMember.objects.select_related('team__order_scheduler__evaluation_details__evaluation').filter(team__order_scheduler__evaluation_details__evaluation=order_schedule.evaluation_details.evaluation).filter(Q(Q(Q(start_at__gte=start_at_datetime)&Q(start_at__lte=end_at_datetime))|Q(Q(end_at__gte=start_at_datetime)&Q(end_at__lte=end_at_datetime))|Q(Q(start_at__lte=start_at_datetime)&Q(end_at__gte=start_at_datetime)&Q(start_at__lte=end_at_datetime)&Q(end_at__gte=end_at_datetime))|Q(Q(start_at__gte=start_at_datetime)&Q(end_at__gte=start_at_datetime)&Q(start_at__lte=end_at_datetime)&Q(end_at__lte=end_at_datetime)))).values_list("member",flat=True)
 
-		active_cleaners1 	= CleaningTeamMember.objects.filter(Q(Q(Q(start_at__gte=start_at_datetime)&Q(start_at__lt=end_at_datetime))|Q(Q(end_at__gt=start_at_datetime)&Q(end_at__lte=end_at_datetime))|Q(Q(start_at__lte=start_at_datetime)&Q(end_at__gte=start_at_datetime)&Q(start_at__lte=end_at_datetime)&Q(end_at__gte=end_at_datetime))|Q(Q(start_at__gte=start_at_datetime)&Q(end_at__gte=start_at_datetime)&Q(start_at__lte=end_at_datetime)&Q(end_at__lte=end_at_datetime)))).exclude(member__id__in=sameblc_cleaners).values_list("member",flat=True)
-		active_cleaners2 	= FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=start_at_datetime)&Q(start_at__lt=end_at_datetime))|Q(Q(end_at__gt=start_at_datetime)&Q(end_at__lte=end_at_datetime))|Q(Q(start_at__lte=start_at_datetime)&Q(end_at__gte=start_at_datetime)&Q(start_at__lte=end_at_datetime)&Q(end_at__gte=end_at_datetime))|Q(Q(start_at__gte=start_at_datetime)&Q(end_at__gte=start_at_datetime)&Q(start_at__lte=end_at_datetime)&Q(end_at__lte=end_at_datetime)))).values_list("member",flat=True)
+		active_cleaners1 	= CleaningTeamMember.objects.filter(Q(Q(Q(start_at__gte=start_at_datetime)&Q(start_at__lt=end_at_datetime))|Q(Q(end_at__gt=start_at_datetime)&Q(end_at__lte=end_at_datetime))|Q(Q(start_at__lte=start_at_datetime)&Q(end_at__gte=start_at_datetime)&Q(start_at__lte=end_at_datetime)&Q(end_at__gte=end_at_datetime)) | Q(Q(start_at__gte=start_at_datetime)&Q(end_at__gte=start_at_datetime)&Q(start_at__lte=end_at_datetime)&Q(end_at__lte=end_at_datetime)))).exclude(member__id__in=sameblc_cleaners).values_list("member",flat=True)
+		active_cleaners2 	= FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=start_at_datetime)&Q(start_at__lt=end_at_datetime))|Q(Q(end_at__gt=start_at_datetime)&Q(end_at__lte=end_at_datetime))|Q(Q(start_at__lte=start_at_datetime)&Q(end_at__gte=start_at_datetime)&Q(start_at__lte=end_at_datetime)&Q(end_at__gte=end_at_datetime)) | Q(Q(start_at__gte=start_at_datetime)&Q(end_at__gte=start_at_datetime)&Q(start_at__lte=end_at_datetime)&Q(end_at__lte=end_at_datetime)))).values_list("member",flat=True)
 
 		#included shift cleaners & exclude absent cleaners & exclude active cleaners
 		shift_cleaners      = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_at_date)|Q(shift_date=end_at_date))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=start_at_time)&Q(shift1_end_at__gte=start_at_time))&Q(Q(shift1_start_at__lte=end_at_time)&Q(shift1_end_at__gte=end_at_time))) | Q(Q(Q(shift2_start_at__lte=start_at_time)&Q(shift2_end_at__gte=start_at_time))&Q(Q(shift2_start_at__lte=end_at_time)&Q(shift2_end_at__gte=end_at_time))) | Q(Q(Q(shift3_start_at__lte=start_at_datetime)&Q(shift3_end_at__gte=start_at_datetime))&Q(Q(shift3_start_at__lte=end_at_datetime)&Q(shift3_end_at__gte=end_at_datetime)))).values_list('staff',flat=True)
@@ -4172,7 +4176,9 @@ class AssigncleaningTeam(IsAuthenticated,View):
 		leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_leaders))).filter(Q(id__in=shift_leaders)|Q(id__in=super_shift_leaders))
 		cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_cleaners))).filter(Q(id__in=shift_cleaners)|Q(id__in=super_shift_cleaners))
 
-		return render(request,'common/cleaning/cleaningteam_assign.html',{'order_schedule':order_schedule,'order_schedules':order_schedules,'cleaners':cleaners,'leaders':leaders})
+		price_ranges 		= ServicePriceRange.objects.filter(is_active=True)
+
+		return render(request,'common/cleaning/cleaningteam_assign.html',{'order_schedule':order_schedule,'order_schedules':order_schedules,'cleaners':cleaners,'leaders':leaders,'price_ranges':price_ranges})
 
 	def post(self,request,scheduler_id):
 		
@@ -4228,18 +4234,17 @@ class AssigncleaningTeam(IsAuthenticated,View):
 					order_scheduler.no_of_cleaners = len(assigned_cleaners)+1
 					order_scheduler.work_status    = 'CLEANING_TEAM_ASSIGNED'
 					order_scheduler.save()
-					
+
+				messages.success(request,"Cleaning Team Succesfully Assigned")					
+			
 			else:	
 				messages.error(request,"Something Went Wrong !! Please Reupdate")
-
 				return redirect('common_items:assign-cleaningteam',scheduler_id)	
 		
-		messages.success(request,"Cleaning Team Succesfully Assigned")
 		cleaning_calendar_date = request.GET.get('cleaning_calendar_date') or ''
-		workers_calendar_date  = request.GET.get('workers_calendar_date') or ''
 
 		if request.user.user_type == 'SENIORTEAMLEADER':
-			return redirect('/stl/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&workers_calendar_date='+workers_calendar_date)	
+			return redirect('/stl/dashboard/?cleaning_calendar_date='+cleaning_calendar_date)	
 		elif request.user.user_type == 'OPERATIONSUPERVISOR':
 			return redirect('/operation-supervisor/dashboard/?cleaning_calendar_date='+cleaning_calendar_date)
 		else:
@@ -4249,7 +4254,7 @@ class AssigncleaningTeam(IsAuthenticated,View):
 class EditcleaningTeam(IsAuthenticated,View):
 	def get(self,request,scheduler_id):
 		#shceduled order details
-		order_schedule  = OrderScheduler.objects.select_related('evaluation_details__evaluation','order_scheduler_book__service_type').prefetch_related(Prefetch('order_scheduler_book__evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr="evaluationmedias"),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes')).annotate(kitchen_keynote=Sum( Case( When(keynotesections__sub_area='kitchen',then=1),default=0,output_field=IntegerField()))),to_attr='sections')).get(is_active=True,id=scheduler_id)
+		order_schedule  = OrderScheduler.objects.select_related('evaluation_details__evaluation','order_scheduler_book__service_type').prefetch_related(Prefetch('order_scheduler_book__evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr="evaluationmedias"),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='sections')).get(is_active=True,id=scheduler_id)
 		start_at_datetime = order_schedule.start_at
 		end_at_datetime   = order_schedule.end_at
 		start_at_date     = (order_schedule.start_at+timedelta(hours=3)).date()
@@ -4258,7 +4263,7 @@ class EditcleaningTeam(IsAuthenticated,View):
 		end_at_time       = (order_schedule.end_at+timedelta(hours=3)).time()
 
 		#same time schedules
-		order_schedules = OrderScheduler.objects.filter(start_at=start_at_datetime,end_at=end_at_datetime,evaluation_details__evaluation=order_schedule.evaluation_details.evaluation).select_related('evaluation_details__evaluation','order_scheduler_book__service_type').prefetch_related(Prefetch('order_scheduler_book__evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr="evaluationmedias"),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes')),to_attr='sections'))
+		order_schedules = OrderScheduler.objects.filter(start_at=start_at_datetime,end_at=end_at_datetime,evaluation_details__evaluation=order_schedule.evaluation_details.evaluation).select_related('evaluation_details__evaluation','order_scheduler_book__service_type').prefetch_related(Prefetch('order_scheduler_book__evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr="evaluationmedias"),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='sections'))
 
 		#same blc cleaners for excluding
 		sameblc_cleaners    = CleaningTeamMember.objects.select_related('team__order_scheduler__evaluation_details__evaluation').filter(team__order_scheduler__evaluation_details__evaluation=order_schedule.evaluation_details.evaluation).filter(Q(Q(Q(start_at__gte=start_at_datetime)&Q(start_at__lte=end_at_datetime))|Q(Q(end_at__gte=start_at_datetime)&Q(end_at__lte=end_at_datetime))|Q(Q(start_at__lte=start_at_datetime)&Q(end_at__gte=start_at_datetime)&Q(start_at__lte=end_at_datetime)&Q(end_at__gte=end_at_datetime))|Q(Q(start_at__gte=start_at_datetime)&Q(end_at__gte=start_at_datetime)&Q(start_at__lte=end_at_datetime)&Q(end_at__lte=end_at_datetime)))).values_list("member",flat=True)
@@ -4283,7 +4288,9 @@ class EditcleaningTeam(IsAuthenticated,View):
 		current_leader      = CleaningTeam.objects.select_related('team_leader','order_scheduler').get(order_scheduler=order_schedule).team_leader
 		current_cleaners    = CleaningTeamMember.objects.select_related('team__order_scheduler').filter(team__order_scheduler=order_schedule).exclude(member_id=current_leader.id)
 
-		return render(request,'common/cleaning/cleaningteam_edit.html',{'order_schedule':order_schedule,'order_schedules':order_schedules,'cleaners':cleaners,'leaders':leaders,'current_leader':current_leader,'current_cleaners':current_cleaners,})		
+		price_ranges 		= ServicePriceRange.objects.filter(is_active=True)
+
+		return render(request,'common/cleaning/cleaningteam_edit.html',{'order_schedule':order_schedule,'order_schedules':order_schedules,'cleaners':cleaners,'leaders':leaders,'current_leader':current_leader,'current_cleaners':current_cleaners,'price_ranges':price_ranges})		
 
 	def post(self,request,scheduler_id):
 		schedule_id         = request.POST.get('cleaningschedule_id')	
@@ -4338,10 +4345,15 @@ class EditcleaningTeam(IsAuthenticated,View):
 		else:
 			messages.error(request,"Something Went Wrong !! Please Reupdate")
 			return redirect('common_items:edit-cleaningteam',schedule_id)
+		
+		cleaning_calendar_date = request.GET.get('cleaning_calendar_date') or ''
+
 		if request.user.user_type == 'SENIORTEAMLEADER':
-			return redirect('stl:stldash-board')
+			return redirect('/stl/dashboard/?cleaning_calendar_date='+cleaning_calendar_date)	
+		elif request.user.user_type == 'OPERATIONSUPERVISOR':
+			return redirect('/operation-supervisor/dashboard/?cleaning_calendar_date='+cleaning_calendar_date)
 		else:
-			return redirect('op-supervisor:op-supervisor-dash-board')
+			pass
 
 
 class AssignFollowupTeam(IsAuthenticated,View):
@@ -4431,18 +4443,17 @@ class AssignFollowupTeam(IsAuthenticated,View):
 				followup_schedule.work_status                          = 'FOLLOW_UP_TEAM_ASSIGNED'
 				followup_schedule.follow_up.save()
 				followup_schedule.save()	
+			messages.success(request,"FollowupTeam Team Succesfully Assigned")
+
 		else:	
 			messages.error(request,"Something Went Wrong")
 
 			return render(request,'common/cleaning/followupteam_assign.html',{'follow_up_team_assign_form':follow_up_team_assign_form,'followup_schedule':followup_schedule,'cleaners':cleaners,'leaders':leaders,'drivers':drivers,})	
 
-		messages.success(request,"FollowupTeam Team Succesfully Assigned")
-
 		cleaning_calendar_date = request.GET.get('cleaning_calendar_date') or ''
-		workers_calendar_date  = request.GET.get('workers_calendar_date') or ''
 
 		if request.user.user_type == 'SENIORTEAMLEADER':
-			return redirect('/stl/dashboard/?cleaning_calendar_date='+cleaning_calendar_date+'&workers_calendar_date='+workers_calendar_date)
+			return redirect('/stl/dashboard/?cleaning_calendar_date='+cleaning_calendar_date)
 		elif request.user.user_type == 'OPERATIONSUPERVISOR':
 			return redirect('/operation-supervisor/dashboard/?cleaning_calendar_date='+cleaning_calendar_date)
 		else:
@@ -4537,10 +4548,14 @@ class EditFollowupTeam(IsAuthenticated,View):
 			messages.error(request,"Something Went Wrong !! Please Refresh Page and Reupdate")
 			return redirect('common_items:edit-followupteam',schedule_id)
 
+		cleaning_calendar_date = request.GET.get('cleaning_calendar_date') or ''
+
 		if request.user.user_type == 'SENIORTEAMLEADER':
-			return redirect('stl:stldash-board')
+			return redirect('/stl/dashboard/?cleaning_calendar_date='+cleaning_calendar_date)
+		elif request.user.user_type == 'OPERATIONSUPERVISOR':
+			return redirect('/operation-supervisor/dashboard/?cleaning_calendar_date='+cleaning_calendar_date)
 		else:
-			return redirect('op-supervisor:op-supervisor-dash-board')
+			pass
 
 class ResetcleaningTeam(IsAuthenticated,View):
 	def get(self,request,scheduler_id):

@@ -22,23 +22,27 @@
                      
                         <div class="inv-input-container h-30">
                             <i class="fa fa-search inv-icon-input" aria-hidden="true"></i>
-                            <input type="text" id="search-bar" placeholder="Search Segments" class="inv-input w-250" onchange="set_params_go();" name="attributes" value="{{search_query|default_if_none:''}}">
+                            <input type="text" id="search-bar" placeholder="Search" class="inv-input w-250" onchange="set_params_go();" name="attributes" value="{{search_query|default_if_none:''}}">
                           </div>
                     
                     
                     </div>
                     <div class="right-pos">
-                        <button class="inv-plan-btn">
+                        {% comment %} <button class="inv-plan-btn">
                             <i class="fa fa-filter mr-5" aria-hidden="true"></i>
                             Filter
-                        </button>
+                        </button> {% endcomment %}
                         <a href="/inventory/createpo/"><button class="inv-blue-btn" onclick="showDrawer('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Create PO</button></a>
 
                         <!-- <button class="inv-blue-btn" data-toggle="modal" data-target="#addModel" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Store </button> -->
                     </div>
                 </div>
                 <div class="mt-20">
-                    <table class="inv-table footable" style="border-top:1px solid #c4c4c4"> 
+                    <div class="d-flex" >
+                        <div class="inv-tab av-font inv-tab-active" onclick="selectTab('pen')" id="id_pen">Pending</div>
+                        <div class="inv-tab av-font" onclick="selectTab('rec')" id="id_rec">Received</div>
+                    </div>
+                    <table id="id_table_pen" class="inv-table footable" style="border-top:1px solid #c4c4c4; margin-top: -2px;"> 
                         <thead>
                             <tr>
                                 <th style="width: %;">
@@ -68,6 +72,7 @@
                         </thead>
                      <tbody>
                         {% for order in purchase_orders %}
+                        {% if order.is_received == False %}
                         <tr>
                             <td>
                                 {{order.purchase_order_id}}
@@ -94,14 +99,98 @@
                                 {% endif %}
                             </td>
                             <td style="float: right;">
-                                <a href="/inventory/purchaseorderpage/{{order.id}}/"><button class="inv-plan-img-btn"> <img class="view-img"
+                               
+                        <a href="/inventory/purchaseOrder/items/{{order.id}}/"><button class="inv-plan-img-btn"> <img class="view-img"
+                                    src="{% static 'files/inventory/view.png' %}" alt="">
+                        </button></a>
+                        <a href="/inventory/purchaseorderpage/{{order.id}}/"><button class="inv-plan-img-btn"> <img class=""
+                            src="{% static 'files/inventory/invoice.png' %}" alt="">
+                </button></a>
+                                <a href="/inventory/editpo/{{order.id}}"><button class="inv-plan-img-btn" > <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button></a>
+                                <button class="inv-plan-img-btn delete-order" data-id="{{order.id}}"  data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
+
+                            </td>
+                        </tr>
+                        {% endif %}
+                        {% endfor %}
+        
+                      
+                     </tbody>
+                       
+                      
+                     
+                        
+                    </table>
+                    <table id="id_table_rec" class="inv-table footable inv-hide" style="border-top:1px solid #c4c4c4; margin-top: -2px;"> 
+                        <thead>
+                            <tr>
+                                <th style="width: %;">
+                                    PO ID
+                                </th>
+                                <th data-hide="phone,tablet"  style="width: %; text-align: center;">
+                                    Initiated Date
+                                </th>
+                                <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                    Initiated by
+                                </th>
+                                <th  data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                    Supplier
+                                </th>
+                                <th data-hide="phone,tablet"  class="text-center">
+                                    Number Of units
+                                </th>
+                                <th data-hide="phone,tablet"  class="text-center">
+                                    Total cost
+                                </th>
+                                <th>
+                                    Status
+                                </th>
+    
+                                <th data-hide="phone,tablet"  style="width: %;" class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                     <tbody>
+                        {% for order in purchase_orders %}
+                        {% if order.is_received == True %}
+                        <tr>
+                            <td>
+                                {{order.purchase_order_id}}
+                            </td>
+                            <td class="text-center">
+                                {{order.created|date:'d-m-Y'}}
+                            </td>
+                            <td class="text-center">
+                                {{order.initiated_by}}
+                            <td class="text-center">
+                                {{order.supplier.supplier_name}}
+                            </td>
+                            <td class="text-center">
+                                {{order.total_units}}
+                            </td>
+                            <td class="text-center">
+                               {{order.total_price}}
+                            </td>
+                            <td>
+                                {% if order.status == True %}
+                                <span class="inv-dot c-active ml-5"></span>Active
+                                {% else %}
+                                <span class="inv-dot c-active ml-5"></span>Not Active
+                                {% endif %}
+                            </td>
+                            <td style="float: right;">
+                               
+                        <a href="/inventory/purchaseOrder/items/{{order.id}}/"><button class="inv-plan-img-btn"> <img class="view-img"
                                     src="{% static 'files/inventory/icons/view.png' %}" alt="">
                         </button></a>
+                        <a href="/inventory/purchaseorderpage/{{order.id}}/"><button class="inv-plan-img-btn"> <img 
+                            src="{% static 'files/inventory/icons/invoice.png' %}" alt="">
+                </button></a>
                                 <a href="/inventory/editpo/{{order.id}}"><button class="inv-plan-img-btn" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button></a>
                                 <button class="inv-plan-img-btn delete-order" data-id="{{order.id}}"  data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
 
                             </td>
                         </tr>
+                        {% endif %}
                         {% endfor %}
         
                       
@@ -213,7 +302,7 @@
 
                         
                         <div class="d-flex ">
-                            <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to delete inventory</p></div>
+                            <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to delete this purchase order ?</p></div>
                             <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
 
                                 <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
@@ -253,7 +342,26 @@
 {% block javascript %}
 
 <script>
+function selectTab(d){
+    console.log(d)
+    if(d =='rec'){
+        setTimeout(function(){ $('.footable').trigger('footable_resize'); }, 100);
+        $('#id_pen').removeClass('inv-tab-active')
+        $('#id_rec').addClass('inv-tab-active')
 
+        $("#id_table_pen").hide()
+        $("#id_table_rec").show()
+
+    }else{
+        setTimeout(function(){ $('.footable').trigger('footable_resize'); }, 100);
+        $('#id_pen').addClass('inv-tab-active')
+        $('#id_rec').removeClass('inv-tab-active')
+
+        $("#id_table_pen").show()
+        $("#id_table_rec").hide()
+
+    }
+}
 
 
     function openNavAddStore(d) {

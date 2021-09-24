@@ -14,6 +14,17 @@ ITEM_STATUS_CHOICES=(
 	('about_to_finish','about_to_finish')
 	)
 
+ITEM_ADD_TYPE_CHOICES=(
+    ('quantity','quantity'),
+	('unit','unit'),
+)
+
+MEASURING_UNIT_CHOICES=(
+    ('litre','litre'),
+	('kg','kg'),
+    ('number','number'),
+)
+
 class Category(models.Model):
     name            =   models.CharField(max_length=100,blank=False,null=False)
     category_code   =   models.CharField(max_length=50,blank=False,null=False)
@@ -76,6 +87,8 @@ class InventoryItem(models.Model):
     reserve_count   =   models.CharField(max_length=10,blank=True,null=True)
     is_reusable     =   models.BooleanField(blank=False,null=False)
     item_status     =   models.CharField(max_length=50,blank=True,null=True,choices=ITEM_STATUS_CHOICES)
+    item_add_type   =   models.CharField(max_length=50,blank=True,null=True,choices=ITEM_ADD_TYPE_CHOICES)
+    measuring_unit  =   models.CharField(max_length=50,blank=True,null=True,choices=MEASURING_UNIT_CHOICES)
     status          =   models.BooleanField(default=True,blank=False,null=False)
     created         =   models.DateTimeField(auto_now_add=True)
     def __unicode__(self):
@@ -97,9 +110,11 @@ class InventoryItemImages(models.Model):
         return self.inventory_item.name
 
 class ItemUnit(models.Model):
+    purchase_order  =   models.ForeignKey('PurchaseOrder',blank=False,null=False,related_name='purchase_order_unit')
     item            =   models.ForeignKey(InventoryItem,blank=False,null=False,related_name='unit_item')
     name            =   models.CharField(max_length=100,blank=False,null=False)
     unit_code       =   models.CharField(max_length=50,blank=False,null=False)
+    unit_serial_number =   models.CharField(max_length=50,blank=False,null=False)
     store           =   models.ForeignKey(Store,blank=True,null=True,related_name='unit_store')
     purchase_date   =   models.DateField(blank=True,null=True)
     expiry_date     =   models.DateField(blank=True,null=True)
@@ -208,7 +223,7 @@ class Supplier(models.Model):
 
 class SupplierItems(models.Model):
     supplier            = models.ForeignKey(Supplier,blank=True,null=True,related_name='item_supplier')
-    item                = models.CharField(max_length=100,blank=False,null=False)
+    item                = models.ForeignKey(InventoryItem,blank=True,null=True,related_name='product_supplier')
     supplier_item_id    = models.CharField(max_length=50,blank=False,null=False)
     item_price          = models.CharField(default=0,max_length=100,blank=True,null=True)
     item_count          = models.IntegerField(default=0,null=True,blank=True)
@@ -235,6 +250,7 @@ class SupplierItems(models.Model):
 class ServiceRecipe(models.Model):
     service             = models.CharField(max_length=100,blank=True,null=True)
     area_size           = models.CharField(default=0,max_length=50,blank=True,null=True)
+    staff_count         = models.CharField(default=0,max_length=50,blank=True,null=True)
 
     def __unicode__(self):
         return str(self.service)
@@ -242,12 +258,11 @@ class ServiceRecipe(models.Model):
     def __str__(self):
         return self.service
 
-class ServiceRecipeItems(models.Model):
-    service_or_person   = models.CharField(max_length=50,blank=False,null=False)
+class ServiceRecipeIngredients(models.Model):
     service_type        = models.ForeignKey(ServiceRecipe,blank=True,null=True,related_name='item_recipe')
-    item                = models.ForeignKey(InventoryItem,blank=True,null=True,related_name='service_item')
-    item_price          = models.CharField(default=0,max_length=100,blank=True,null=True)
-    item_count          = models.IntegerField(default=0,null=True,blank=True)
+    ingredient          = models.CharField(max_length=100,blank=True,null=True)
+    service_or_person   = models.CharField(max_length=50,blank=False,null=False)
+    quantity            = models.IntegerField(default=0,null=True,blank=True)
     status              = models.BooleanField(default=True,blank=False,null=False)
 
     def __unicode__(self):
@@ -255,6 +270,19 @@ class ServiceRecipeItems(models.Model):
 
     def __str__(self):
         return self.service_type.service
+
+class ServiceRecipeItems(models.Model):
+    ingredient          = models.ForeignKey(ServiceRecipeIngredients,blank=True,null=True,related_name='item_ingredient')
+    item                = models.ForeignKey(InventoryItem,blank=True,null=True,related_name='service_item')
+    item_price          = models.CharField(default=0,max_length=100,blank=True,null=True)
+    item_count          = models.IntegerField(default=0,null=True,blank=True)
+    # status              = models.BooleanField(default=True,blank=False,null=False)
+
+    def __unicode__(self):
+        return str('car')
+
+    def __str__(self):
+        return 'car'
 
 class PurchaseOrder(models.Model):
     supplier            = models.ForeignKey(Supplier,blank=True,null=True,related_name='supplier_purchase_order')
@@ -266,6 +294,7 @@ class PurchaseOrder(models.Model):
     shipping_charge     = models.CharField(max_length=10,blank=True,null=True)
     other_charge        = models.CharField(max_length=10,blank=True,null=True)
     is_order_completed  = models.BooleanField(default=False,blank=False,null=False)
+    is_received         = models.BooleanField(default=False,blank=False,null=False)
     created             = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
@@ -281,6 +310,7 @@ class PurchaseOrderItems(models.Model):
     item_count          = models.IntegerField(default=0,null=True,blank=True)
     unit_price          = models.CharField(default=0,max_length=100,blank=True,null=True)
     total_price         = models.CharField(default=0,max_length=100,blank=True,null=True)
+    is_received         = models.BooleanField(default=False,blank=False,null=False)
     created             = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
@@ -288,4 +318,23 @@ class PurchaseOrderItems(models.Model):
 
     def __str__(self):
         return self.purchase_order.purchase_order_id
+
+class ItemHistory(models.Model):
+    purchase_order  =   models.ForeignKey(PurchaseOrder,blank=False,null=False,related_name='purchase_order_item_history')
+    item            =   models.ForeignKey(InventoryItem,blank=False,null=False,related_name='unit_item_history')
+    purchase_date   =   models.DateField(blank=True,null=True)
+    # expiry_date     =   models.DateField(blank=True,null=True)
+    # no_expiry       =   models.BooleanField(default=False,blank=False,null=False)
+    # unit_price      =   models.CharField(max_length=10,blank=False,null=False)
+    quantity        =   models.CharField(max_length=50,blank=False,null=False)
+    added_by        =   models.ForeignKey(UserProfile,blank=False,null=False,related_name='addedby_item_history')
+    created         =   models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return str(self.item.name)
+
+    def __str__(self):
+        return self.item.name
+
+
 

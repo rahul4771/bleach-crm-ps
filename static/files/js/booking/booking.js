@@ -1,4 +1,5 @@
 $(document).ready(function(){
+  
   $('#category-carousel').owlCarousel({
     loop:false,
     
@@ -42,6 +43,11 @@ $('#service-carousel').owlCarousel({
         }
     }
 });
+
+  
+
+
+
 selectServiceOnly('General Cleaning')
 
 
@@ -62,12 +68,14 @@ app.selectService({name:item})
 }
 function selectServiceOnly(service){
   app.selectService({name:service})
+  
   $('#service-carousel').find('.active-icon').replaceWith(`
   <i class="far fa-circle inactive-icon"></i>
   `)
   $('.service-one').find('.inactive-icon').replaceWith(` <i
   class="fa fa-check-circle active-icon"
 ></i>`)
+
 
 }
 
@@ -87,6 +95,16 @@ const app=new Vue({
         
       },
     data: {
+      kitchen_max_cleaners:null,
+      new_kitchen_cabinet_productivity:null,
+      old_kitchen_cabinet_productivity:null,
+      new_kitchen_nocabinet_productivity:null,
+      old_kitchen_nocabinet_productivity:null,
+      absolute_cost:0,
+      added_cost:0,
+      addon_size:[],
+      add_new_kitchen:true,
+      addons_parsed:[],
       submit_loader:false,
       billingDataIndex:null,
       slot_msg:false,
@@ -136,9 +154,11 @@ const app=new Vue({
     validApartment:true,
     validKitchen:true,
     validKitchenDialog:true,
+  
     validOtherService:true,
     validOtherServiceDialog:true,
     hallway_check:false,
+    window_check:false,
     scheduleGroup:{},
    
     selectedCategory:'Detailed Cleaning',
@@ -157,7 +177,8 @@ const app=new Vue({
         ceiling_type:'',
         condition:'',
         type:'old',
-        residue:false
+        residue:false,
+        is_cabinet:false
     },
   mob_number: "",
   customerDetails: {},
@@ -264,7 +285,7 @@ const app=new Vue({
   billingData: [],
   dialogStat: "",
   sizeData: [],
-  currentItem: "",
+  currentItem: null,
   service: "test",
   dialog: false,
   dialogmsg: "",
@@ -286,7 +307,11 @@ const app=new Vue({
     hallway_size: "",
     sides: "",
     stain_age: "",
-    height:""
+    height:"",
+    is_cabinet:false,
+    addons:[],
+    section_net_cost:null,
+    section_cost:null
   },
   color: ["Blue", "Yellow", "Orange", "Red", "Black", "White"],
   material: ["Material 1", "Material 2", "Material 3", "Material 4"],
@@ -409,6 +434,7 @@ const app=new Vue({
   kitchenSize:{},
   kitchenSizeData:[],
   facadeSize:[],
+  windowSize:[],
   durationData:{},
   billSample:{
     name:'',
@@ -425,8 +451,11 @@ const app=new Vue({
   sofa_size:0,
   chair_size:0,
   caret_size:0,
-  new_kitchen_size:0,
-  old_kitchen_size:0,
+  
+  new_kitchen_cabinet_size:0,
+  old_kitchen_cabinet_size:0,
+  new_kitchen_nocabinet_size:0,
+  old_kitchen_nocabinet_size:0,
   high_facade:0,
   low_facade:0,
   serviceTypesData:[],
@@ -556,11 +585,120 @@ reset_building:false,
 reset_floor:false,
 building_warning:false,
 available_slotes:[],
-date_group:{}
+date_group:{},
+addons:[]
 
       },
       methods: {
-        
+        findAddonCost(){
+          var addon_cost=0
+          for(var i=0;i<this.addons_parsed.length;i++){
+            if(this.addons_parsed[i].selected){
+              if(this.addons_parsed[i].details.category){
+                addon_cost=addon_cost+(this.addons_parsed[i].selected_size.price*this.addons_parsed[i].quantity)
+              }
+              else{
+                addon_cost=addon_cost+(this.addons_parsed[i].details.price*this.addons_parsed[i].quantity)
+              }
+            }
+          }
+          return addon_cost
+        },
+        findAbsoluteCost(){
+          var total_cost = 0
+          var addon_cost=0
+          if(this.addons_parsed.length>0){
+            for(var i=0;i<this.addons_parsed.length;i++){
+              if(this.addons_parsed[i].selected){
+                if(this.addons_parsed[i].details.category){
+                  addon_cost=addon_cost+(this.addons_parsed[i].selected_size.price*this.addons_parsed[i].quantity)
+                }
+                else{
+                  addon_cost=addon_cost+(this.addons_parsed[i].details.price*this.addons_parsed[i].quantity)
+                }
+              }
+            }
+
+          }
+          
+         total_cost=this.otherService.size.cost+addon_cost
+         if(this.edit_item){
+           total_cost=total_cost-this.billingData[this.currentItem].section_cost
+         }
+         if(total_cost)
+         {
+         return total_cost
+         }
+         else{
+           return 0
+         }
+        },
+        closeEditDialog(){
+          this.edit_item=false,
+          this.otherService={
+            material: "",
+            addons:[],
+            color: "",
+            size: {},
+            type: "",
+            age: "",
+            stain: false,
+            stain_reason: "",
+            wall_type: "",
+            floor_type: "",
+            ceiling_type: "",
+            residue: false,
+            is_cabinet:false,
+            hallway_size: "",
+            sides: "",
+            stain_age: "",
+            height:"",
+            keynote_data:[],
+            section_cost:0,
+            sectiononly_cost:0
+          },
+          this.dialog=false
+        },
+        findAddedCost(){
+          var totalcost=0
+         
+          for(var i=0;i<this.billingData.length;i++){
+           
+            totalcost=totalcost+this.billingData[i].section_cost
+          
+
+          }
+          if(totalcost){
+            return totalcost
+          }
+          else{
+            return 0
+          }
+        },
+        findFullAmount(){
+          var fullamount=0
+          var section_cost=0
+          for(var i=0;i<this.multiServicesBill.length;i++){
+            for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
+              section_cost=section_cost+this.multiServicesBill[i].bill[j].section_cost
+            }
+            
+            
+            if(this.multiServicesBill[i].cleaning_policy=='SUBSCRIPTION' && this.multiServicesBill[i].schedule_details){
+              if(Object.keys(this.multiServicesBill[i].schedule_details).length>0){
+                fullamount=fullamount+(section_cost*(Object.keys(this.multiServicesBill[i].schedule_details).length))
+              }
+              else{
+                fullamount=fullamount+section_cost
+              }
+            }
+            else{
+              fullamount=fullamount+section_cost
+            }
+          
+          }
+          return fullamount
+        },
         resetAllData(){
           this.reset_building=false
           this.building_warning=false
@@ -697,20 +835,26 @@ date_group:{}
 
         },
         addKeynote(building,floor){
+          if(this.keynote_name && this.keynote_value)
+          {
           this.building[building].floors[floor].keynote_data.push({
             name:this.keynote_name,
             value:this.keynote_value
           })
           this.keynote_name=''
           this.keynote_value=''
+        }
         },
         addOthersKeynote(){
+          if(this.keynote_name && this.keynote_value)
+          {
           this.otherService.keynote_data.push({
             name:this.keynote_name,
             value:this.keynote_value
           })
           this.keynote_name=''
           this.keynote_value=''
+        }
         },
         removeOthersKeynote(keynote){
           this.otherService.keynote_data.splice(keynote,1)
@@ -719,12 +863,15 @@ date_group:{}
             this.building[building].floors[floor].keynote_data.splice(keynote,1)
         },
         addApartmentKeynote(building,floor,apartment){
+          if(this.keynote_name && this.keynote_value)
+          {
           this.building[building].floors[floor].apartments[apartment].keynote_data.push({
             name:this.keynote_name,
             value:this.keynote_value
           })
           this.keynote_name=''
           this.keynote_value=''
+        }
         },
         removeApartmentKeynote(building,floor,apartment,keynote){
             this.building[building].floors[floor].apartments[apartment].keynote_data.splice(keynote,1)
@@ -734,8 +881,25 @@ date_group:{}
           
             for(var i=0;i<this.schedule_serviceTypes_selected.length;i++){
               this.schedule_serviceTypes.push(this.multiServicesBill[this.schedule_serviceTypes_selected[i]].service)
+              
+                // if(this.checkKitchen(this.multiServicesBill[this.schedule_serviceTypes_selected[i]].bill)){
+                //   this.schedule_serviceTypes.push('Kitchen Cleaning')
+
+                // }
             }
           
+        },
+        checkKitchen(){
+          for(var i=0;i<this.schedule_serviceTypes_selected.length;i++){
+         
+          var bills=this.multiServicesBill[this.schedule_serviceTypes_selected[i]].bill
+          for(var j=0;j<bills.length;j++){
+            if(bills[j].section.kitchen){
+              return true
+            }
+          }
+        }
+          return false
         },
         addScheduledService(service,index){
           this.schedule_serviceTypes_selected[index]={
@@ -1598,10 +1762,14 @@ console.log(response)
               "ceiling_type":'',
               "cement_residue":this.multiServicesBill[i].bill[j].section.cement_residue,
               "oil_residue":this.multiServicesBill[i].bill[j].section.residue,
-              "section_cost":this.multiServicesBill[i].bill[j].section.section_cost,
-              "section_net_cost":this.multiServicesBill[i].bill[j].section.section_cost,
+              "section_cost":this.multiServicesBill[i].bill[j].section_cost,
+              "sectiononly_cost":this.multiServicesBill[i].bill[j].sectiononly_cost,
+              "sectiononly_net_cost":this.multiServicesBill[i].bill[j].sectiononly_cost,
+              "section_net_cost":this.multiServicesBill[i].bill[j].section_net_cost,
               "keynotes":{},
+              "addons":{},
               "is_newkitchen":false,
+              "is_cabinet":false,
               "is_highprice_facade":false,
               "is_highprice_window":false,
               "colour":'',
@@ -1612,6 +1780,10 @@ console.log(response)
               "age_of_stain":''
               
               }
+              if(this.serviceDetails.service_details[i].cleaning_policy=='SUBSCRIPTION'){
+                this.serviceDetails.service_details[i].sections[j].sectiononly_net_cost=this.serviceDetails.service_details[i].sections[j].sectiononly_net_cost*parseInt(visits)
+                this.serviceDetails.service_details[i].sections[j].section_net_cost=this.serviceDetails.service_details[i].sections[j].section_net_cost*parseInt(visits)
+              }
               if(this.multiServicesBill[i].bill[j].section.size.is_highprice_facade){
                 this.serviceDetails.service_details[i].sections[j].is_highprice_facade=true
               }
@@ -1621,6 +1793,9 @@ console.log(response)
               }
               if(this.multiServicesBill[i].bill[j].section.size.is_newkitchen){
                 this.serviceDetails.service_details[i].sections[j].is_newkitchen=true
+              }
+              if(this.multiServicesBill[i].bill[j].is_cabinet){
+                this.serviceDetails.service_details[i].sections[j].is_cabinet=true
               }
               if(this.multiServicesBill[i].bill[j].section.stain_age){
                 this.serviceDetails.service_details[i].sections[j].age_of_stain=this.multiServicesBill[i].bill[j].section.stain_age
@@ -1685,7 +1860,9 @@ console.log(response)
             }
             keynotecounter=keynotecounter+1
            }
+         
            if(this.multiServicesBill[i].bill[j].section.keynote_data.length>0){
+             
              for(var ky=0;ky<this.multiServicesBill[i].bill[j].section.keynote_data.length;ky++){
               this.serviceDetails.service_details[i].sections[j].keynotes[keynotecounter]={
                 "sub_area":this.multiServicesBill[i].bill[j].section.keynote_data[ky].name,
@@ -1696,8 +1873,50 @@ console.log(response)
              }
 
            }
-           
+           var addoncounter=0
+           if(this.multiServicesBill[i].bill[j].section.addons){
+            
+             for(add_on=0;add_on<this.multiServicesBill[i].bill[j].section.addons.length;add_on++){
+             
+               if(this.multiServicesBill[i].bill[j].section.addons[add_on].selected)
+               {
+                addoncounter=addoncounter+1
+              this.serviceDetails.service_details[i].sections[j].addons[addoncounter]={
+                name:this.multiServicesBill[i].bill[j].section.addons[add_on].details.name,
+                addon_cost:this.multiServicesBill[i].bill[j].section.addons[add_on].details.price,
+                addon_net_cost:this.multiServicesBill[i].bill[j].section.addons[add_on].details.price*this.multiServicesBill[i].bill[j].section.addons[add_on].quantity,
+                quantity:this.multiServicesBill[i].bill[j].section.addons[add_on].quantity,
+                size:'',
+                other_details:''
+              }
+              if(this.multiServicesBill[i].bill[j].section.addons[add_on].details.category){
+                this.serviceDetails.service_details[i].sections[j].addons[addoncounter].size=this.multiServicesBill[i].bill[j].section.addons[add_on].selected_size.size
+              }
+            }
+             }
+           }
            if(this.multiServicesBill[i].bill[j].section.kitchen){
+            var newindex=Object.keys(this.serviceDetails.service_details[i].sections[j].addons).length
+            for(var k=0;k<this.multiServicesBill[i].bill[j].section.kitchens.length;k++){
+              newindex=newindex+1
+              this.serviceDetails.service_details[i].sections[j].addons[newindex]={
+                name:"kitchen",
+                addon_cost:this.multiServicesBill[i].bill[j].section.kitchens[k].size.cost,
+                addon_net_cost:this.multiServicesBill[i].bill[j].section.kitchens[k].size.cost,
+                quantity:1,
+                size:this.multiServicesBill[i].bill[j].section.kitchens[k].size.name,
+                other_details:JSON.stringify({
+                  size:this.multiServicesBill[i].bill[j].section.kitchens[k].size.name,
+                  max_size:this.multiServicesBill[i].bill[j].section.kitchens[k].size.max_size,
+                  type:this.multiServicesBill[i].bill[j].section.kitchens[k].type,
+                  residue:this.multiServicesBill[i].bill[j].section.kitchens[k].residue,
+                  is_cabinet:this.multiServicesBill[i].bill[j].section.kitchens[k].is_cabinet
+                })
+              }
+            }
+
+           }
+          /* if(this.multiServicesBill[i].bill[j].section.kitchen){
             var newindex=Object.keys(this.serviceDetails.service_details[i].sections[j].keynotes).length
             var kitchencounter=newindex
             for(var k=0;k<this.multiServicesBill[i].bill[j].section.kitchens.length;k++){
@@ -1717,7 +1936,7 @@ console.log(response)
              keynotecounter=keynotecounter+1
             }
            
-          }
+          }*/
             }
           }
           var tc=0
@@ -1746,16 +1965,19 @@ console.log(response)
           for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
             this.serviceDetails.service_details[i].sections[j]={
               "section_name":this.multiServicesBill[i].bill[j].section_name,
+            
             "size":this.multiServicesBill[i].bill[j].section.size.name,
             "wall_type":"",
             "floor_type":'',
             "ceiling_type":'',
             "cement_residue":this.multiServicesBill[i].bill[j].section.cement_residue,
             "oil_residue":this.multiServicesBill[i].bill[j].section.residue,
-            "section_cost":this.multiServicesBill[i].bill[j].section.section_cost,
-
-            "section_net_cost":this.multiServicesBill[i].bill[j].section.section_cost,
+            "section_cost":this.multiServicesBill[i].bill[j].section_net_cost,
+            "sectiononly_cost":this.multiServicesBill[i].bill[j].sectiononly_cost,
+            "sectiononly_net_cost":this.multiServicesBill[i].bill[j].sectiononly_cost,
+            "section_net_cost":this.multiServicesBill[i].bill[j].section_net_cost,
             "keynotes":{},
+            "addons":{},
             "is_newkitchen":false,
             "is_highprice_facade":false,
             "is_highprice_window":false,
@@ -1766,6 +1988,7 @@ console.log(response)
             "age":''
             
             }
+          
             if(this.multiServicesBill[i].bill[j].section.size.is_highprice_facade){
               this.serviceDetails.service_details[i].sections[j].is_highprice_facade=true
             }
@@ -1774,6 +1997,9 @@ console.log(response)
             }
             if(this.multiServicesBill[i].bill[j].section.size.is_newkitchen){
               this.serviceDetails.service_details[i].sections[j].is_newkitchen=true
+            }
+            if(this.multiServicesBill[i].bill[j].is_cabinet){
+              this.serviceDetails.service_details[i].sections[j].is_cabinet=true
             }
             if(this.multiServicesBill[i].bill[j].section.stain_age){
               this.serviceDetails.service_details[i].sections[j].age_of_stain=this.multiServicesBill[i].bill[j].section.stain_age
@@ -1849,28 +2075,48 @@ console.log(response)
            }
 
          }
-         
-         if(this.multiServicesBill[i].bill[j].section.kitchen){
-          var newindex=Object.keys(this.serviceDetails.service_details[i].sections[j].keynotes).length
-          var kitchencounter=newindex
-          for(var k=0;k<this.multiServicesBill[i].bill[j].section.kitchens.length;k++){
-           this.serviceDetails.service_details[i].sections[j].keynotes[kitchencounter]={
-             "sub_area":'kitchen',
-             "quantity":JSON.stringify({
-               size:this.multiServicesBill[i].bill[j].section.kitchens[k].size.name,
-               max_size:this.multiServicesBill[i].bill[j].section.kitchens[k].size.max_size,
-               type:this.multiServicesBill[i].bill[j].section.kitchens[k].type,
-               residue:this.multiServicesBill[i].bill[j].section.kitchens[k].residue,
-               cost:this.multiServicesBill[i].bill[j].section.kitchens[k].size.cost
-             })
+         var addoncounter=0
+           if(this.multiServicesBill[i].bill[j].section.addons){
+            
+             for(add_on=0;add_on<this.multiServicesBill[i].bill[j].section.addons.length;add_on++){
              
-           
+               if(this.multiServicesBill[i].bill[j].section.addons[add_on].selected)
+               {
+                addoncounter=addoncounter+1
+              this.serviceDetails.service_details[i].sections[j].addons[addoncounter]={
+                name:this.multiServicesBill[i].bill[j].section.addons[add_on].details.name,
+                addon_cost:this.multiServicesBill[i].bill[j].section.addons[add_on].details.price,
+                addon_net_cost:this.multiServicesBill[i].bill[j].section.addons[add_on].details.price*this.multiServicesBill[i].bill[j].section.addons[add_on].quantity,
+                quantity:this.multiServicesBill[i].bill[j].section.addons[add_on].quantity
+              }
+              if(this.multiServicesBill[i].bill[j].section.addons[add_on].details.category){
+                this.serviceDetails.service_details[i].sections[j].addons[addoncounter].size=this.multiServicesBill[i].bill[j].section.addons[add_on].selected_size.size
+              }
+            }
+             }
            }
-           kitchencounter=kitchencounter+1
-           keynotecounter=keynotecounter+1
-          }
-         
-        }
+           if(this.multiServicesBill[i].bill[j].section.kitchen){
+            var newindex=Object.keys(this.serviceDetails.service_details[i].sections[j].addons).length
+            for(var k=0;k<this.multiServicesBill[i].bill[j].section.kitchens.length;k++){
+              newindex=newindex+1
+              this.serviceDetails.service_details[i].sections[j].addons[newindex]={
+                name:"kitchen",
+                addon_cost:this.multiServicesBill[i].bill[j].section.kitchens[k].size.cost,
+                addon_net_cost:this.multiServicesBill[i].bill[j].section.kitchens[k].size.cost,
+                quantity:1,
+                size:this.multiServicesBill[i].bill[j].section.kitchens[k].size.name,
+                other_details:JSON.stringify({
+                  size:this.multiServicesBill[i].bill[j].section.kitchens[k].size.name,
+                  max_size:this.multiServicesBill[i].bill[j].section.kitchens[k].size.max_size,
+                  type:this.multiServicesBill[i].bill[j].section.kitchens[k].type,
+                  residue:this.multiServicesBill[i].bill[j].section.kitchens[k].residue,
+                  is_cabinet:this.multiServicesBill[i].bill[j].section.kitchens[k].is_cabinet
+                  
+                })
+              }
+            }
+
+           }
           }
       }
    
@@ -1900,6 +2146,7 @@ console.log(response)
         size:'',
         ceiling_type:'',
         condition:'',
+        is_cabinet:false,
         type:'old',
         residue:false
     }
@@ -1919,6 +2166,7 @@ console.log(response)
         size:'',
         ceiling_type:'',
         condition:'',
+        is_cabinet:false,
         type:'old',
         residue:false
     }
@@ -1999,6 +2247,30 @@ console.log(response)
         
        
        
+    },
+    addNewKitchenWithAddon(){
+      this.otherService = {
+        material: "",
+        color: "",
+        size: "",
+        type: "old",
+        age: "",
+        stain: false,
+        stain_reason: "",
+        wall_type: "",
+        floor_type: "",
+        ceiling_type: "",
+        residue: false,
+        hallway_size: "",
+        sides: "",
+        stain_age: "",
+        height:"",
+        keynote_data:[],
+        addons:[]
+      }
+      this.add_new_kitchen=true
+      this.currentItem=null
+      this.parseAddons()
     },
     addNewApartmentKitchen(building,floor,apartment){
       
@@ -2105,20 +2377,43 @@ console.log(response)
     this.sizeFilteredData = [];
     this.otherService.size=""
     if (this.otherService.type == "new") {
+      this.parseAddons()
+      $('.more-services').hide()
+      if(this.otherService.is_cabinet)
+      {
       console.log("type test passed new");
       for (var i = 0; i < this.sizeData.length; i++) {
-        if (this.sizeData[i].is_newkitchen) {
+        if (this.sizeData[i].is_newkitchen && this.sizeData[i].is_cabinet) {
           this.sizeFilteredData.push(this.sizeData[i]);
         }
       }
     }
-    if (this.otherService.type == "old") {
-      console.log("type test passed old");
+    else{
       for (var i = 0; i < this.sizeData.length; i++) {
-        if (!this.sizeData[i].is_newkitchen) {
+        if (this.sizeData[i].is_newkitchen && !this.sizeData[i].is_cabinet) {
           this.sizeFilteredData.push(this.sizeData[i]);
         }
       }
+    }
+    }
+    if (this.otherService.type == "old") {
+      $('.more-services').show()
+      if(this.otherService.is_cabinet)
+      {
+      console.log("type test passed old");
+      for (var i = 0; i < this.sizeData.length; i++) {
+        if (!this.sizeData[i].is_newkitchen && this.sizeData[i].is_cabinet) {
+          this.sizeFilteredData.push(this.sizeData[i]);
+        }
+      }
+    }
+    else{
+      for (var i = 0; i < this.sizeData.length; i++) {
+        if (!this.sizeData[i].is_newkitchen && !this.sizeData[i].is_cabinet) {
+          this.sizeFilteredData.push(this.sizeData[i]);
+        }
+      }
+    }
     }
   },
   changeNewKitchen(){
@@ -2143,20 +2438,44 @@ console.log(response)
     }
     this.serviceSize = {};
          if (this.kitchenData.type == "new") {
+          $('.more-services').hide()
+          this.parseAddons()
+          if(this.kitchenData.is_cabinet)
+
+          {
       console.log("type test passed new");
       for (var i = 0; i < this.kitchenSizeData.length; i++) {
-        if (this.kitchenSizeData[i].is_newkitchen) {
+        if (this.kitchenSizeData[i].is_newkitchen && this.kitchenSizeData[i].is_cabinet) {
           this.sizeFilteredData.push(this.kitchenSizeData[i]);
         }
       }
     }
-    if (this.kitchenData.type == "old") {
-      console.log("type test passed old");
+    else{
       for (var i = 0; i < this.kitchenSizeData.length; i++) {
-        if (!this.kitchenSizeData[i].is_newkitchen) {
+        if (this.kitchenSizeData[i].is_newkitchen && !this.kitchenSizeData[i].is_cabinet) {
           this.sizeFilteredData.push(this.kitchenSizeData[i]);
         }
       }
+    }
+    }
+    if (this.kitchenData.type == "old") {
+      $('.more-services').show()
+      console.log("type test passed old");
+      if(this.kitchenData.is_cabinet)
+      {
+      for (var i = 0; i < this.kitchenSizeData.length; i++) {
+        if (!this.kitchenSizeData[i].is_newkitchen && this.kitchenSizeData[i].is_cabinet) {
+          this.sizeFilteredData.push(this.kitchenSizeData[i]);
+        }
+      }
+    }
+    else{
+      for (var i = 0; i < this.kitchenSizeData.length; i++) {
+        if (!this.kitchenSizeData[i].is_newkitchen && !this.kitchenSizeData[i].is_cabinet) {
+          this.sizeFilteredData.push(this.kitchenSizeData[i]);
+        }
+      }
+    }
     }
       })
       .catch((error) => {
@@ -2574,11 +2893,22 @@ removeOneTimeSlot(slot){
         console.log("i m inside kitchen")
          for (var i=0;i < this.multiServicesBill[serIndex].bill.length; i++) {
                 if(this.multiServicesBill[serIndex].bill[i].section.type=='old'){
-                  this.old_kitchen_size=this.old_kitchen_size+ parseInt(this.multiServicesBill[serIndex].bill[i].section.size.max_size)
+                  if(this.multiServicesBill[serIndex].bill[i].is_cabinet){
+                    this.old_kitchen_cabinet_size=this.old_kitchen_cabinet_size+ parseInt(this.multiServicesBill[serIndex].bill[i].section.size.max_size)
+                  }
+                  else{
+                    this.old_kitchen_nocabinet_size=this.old_kitchen_nocabinet_size+ parseInt(this.multiServicesBill[serIndex].bill[i].section.size.max_size)
+                  }
+                  
                 }
                 if(this.multiServicesBill[serIndex].bill[i].section.type=='new'){
-                  this.new_kitchen_size=this.new_kitchen_size+ parseInt(this.multiServicesBill[serIndex].bill[i].section.size.max_size)
+                  if(this.multiServicesBill[serIndex].bill[i].is_cabinet){
+                    this.new_kitchen_cabinet_size=this.new_kitchen_cabinet_size+ parseInt(this.multiServicesBill[serIndex].bill[i].section.size.max_size)
+                  }
+                  else{
+                  this.new_kitchen_nocabinet_size=this.new_kitchen_nocabinet_size+ parseInt(this.multiServicesBill[serIndex].bill[i].section.size.max_size)
                 }
+              }
           }
        }
        else{
@@ -2610,14 +2940,25 @@ removeOneTimeSlot(slot){
           }
        }
        else if(this.multiServicesBill[j].service=='Kitchen Cleaning'){
-         for (var i=0;i < this.multiServicesBill[j].bill.length; i++) {
-                if(this.multiServicesBill[j].bill[i].section.type=='old'){
-                  this.old_kitchen_size=this.old_kitchen_size+ parseInt(this.multiServicesBill[j].bill[i].section.size.max_size)
-                }
-                if(this.multiServicesBill[j].bill[i].section.type=='new'){
-                  this.new_kitchen_size=this.new_kitchen_size+ parseInt(this.multiServicesBill[j].bill[i].section.size.max_size)
-                }
+        for (var i=0;i < this.multiServicesBill[j].bill.length; i++) {
+          if(this.multiServicesBill[j].bill[i].section.type=='old'){
+            if(this.multiServicesBill[j].bill[i].is_cabinet){
+              this.old_kitchen_cabinet_size=this.old_kitchen_cabinet_size+ parseInt(this.multiServicesBill[j].bill[i].section.size.max_size)
+            }
+            else{
+              this.old_kitchen_nocabinet_size=this.old_kitchen_nocabinet_size+ parseInt(this.multiServicesBill[j].bill[i].section.size.max_size)
+            }
+            
           }
+          if(this.multiServicesBill[j].bill[i].section.type=='new'){
+            if(this.multiServicesBill[j].bill[i].is_cabinet){
+              this.new_kitchen_cabinet_size=this.new_kitchen_cabinet_size+ parseInt(this.multiServicesBill[j].bill[i].section.size.max_size)
+            }
+            else{
+            this.new_kitchen_nocabinet_size=this.new_kitchen_nocabinet_size+ parseInt(this.multiServicesBill[j].bill[i].section.size.max_size)
+          }
+        }
+    }
        }
        else{
 
@@ -2645,12 +2986,105 @@ removeOneTimeSlot(slot){
     this.no_of_apartments = [];
     this.buildingsCompleted=false
     this.getSize();
-    this.serviceChange=true
+    this.getAddons()
+   
     
     if(this.selectedService.name=='Kitchen Cleaning'){
-     
-      this.otherService.type="old"
+     console.log("i m coming once")
+     this.otherService.type='old'
+   /*   $('.more-services').html(`
+      <div class="owl-carousel"  id="otherServiceCarousel" v-if="serviceChange" >
+      <div class="more-service-card-active">
+        <div class="text-center">Oven</div>
+        <div class="text-center mt-2">
+        <img src='/static/files/icons/oven.png' class="service-icon"/>
+        </div>
+        <div class="text-center mt-4 mb-4 p-10">
+        <div class="input-group">
+        <span class="input-group-btn ">
+            <button type="button" class="btn btn-number cart-btn"  data-type="minus" data-field="quant[2]">
+              <span class="glyphicon glyphicon-minus"></span>
+            </button>
+        </span>
+        <input type="text" name="quant[2]" class="form-control input-number cart-input" value="10" min="1" max="100">
+        <span class="input-group-btn">
+            <button type="button" class="btn  btn-number cart-btn" data-type="plus" data-field="quant[2]">
+                <span class="glyphicon glyphicon-plus"></span>
+            </button>
+        </span>
+    </div>
+        </div>
+      </div>
+
+
+      <div class="more-service-card">
+        <div class="text-center">Oven</div>
+        <div class="text-center mt-2">
+        <img src='/static/files/icons/oven.png' class="service-icon"/>
+        </div>
+        <div class="text-center mt-2 mb-2">
+        <v-btn class="mt-2 mb-2" color="primary" type="primary">
+          Add
+        </v-btn>
+        </div>
+      </div>
+      
+
+      <div class="more-service-card">
+        <div class="text-center">Oven</div>
+        <div class="text-center mt-2">
+        <img src='/static/files/icons/oven.png' class="service-icon"/>
+        </div>
+        <div class="text-center mt-2 mb-2">
+        <v-btn class="mt-2 mb-2" color="primary" type="primary">
+          Add
+        </v-btn>
+        </div>
+      </div>
+
+     </div>
+      `)*/
+    /*  $('.more-services').html(`
+      <div class="owl-carousel"  id="otherServiceCarousel" v-if="serviceChange" >
+      <div class="more-service-card" v-for="(addon,index) in addons_parsed" v-bind:key="index">
+      <div class="text-center"><% addon.details.name %></div>
+      <div class="text-center mt-2">
+      <img src='/static/files/icons/oven.png' class="service-icon"/>
+      </div>
+      <div class="text-center mt-2 mb-2">
+      <v-btn class="mt-2 mb-2" color="primary" type="primary">
+        Add
+      </v-btn>
+      </div>
+    </div>
+      </div>
+      `)
+      console.log("i ran once")
+      $('#otherServiceCarousel').owlCarousel({
+        loop:false,
+          
+          responsiveClass:true,
+          responsive:{
+              0:{
+                  items:1,
+                  nav:false
+              },
+              600:{
+                  items:1,
+                  nav:false
+              },
+              1000:{
+                  items:6,
+                  nav:false,
+                  loop:false
+              }
+          }
+      });
+      this.otherService.type="old"*/
+      
     }
+   
+     this.serviceChange=true 
    
    
   
@@ -2785,6 +3219,7 @@ this.infectionControlServices=[]
    
     `)
     selectServiceOnly('Kitchen Cleaning')
+    
         }
         else{
            if(item=='Infection Control'){
@@ -2888,7 +3323,7 @@ responsive:{
      this.seperateMultiBook()
     }
   },
-  seperateMultiBook(){
+  async seperateMultiBook(){
     const urlSearchParams = new URLSearchParams(window.location.search);
     const params = Object.fromEntries(urlSearchParams.entries());
    this.userid=window.location.href.split('/')[5]
@@ -2906,42 +3341,48 @@ responsive:{
       groupData[i]={...this.serviceDetails.service_details[data[i]]}
       totalCost=totalCost+this.serviceDetails.service_details[data[i]].total_cost
     }
-    axios
-      .post(
-         this.url+posturl+this.userid+'/',
-         {
-           estimated_cost:totalCost,
-           total_cost:totalCost,
-           service_details:groupData
-         }
-       
-      )
-      .then((response) => {
-        this.submit_loader=false
-        console.log("booking details is "+response)
-        this.phase2Result=response.data
-        groupData={}
-        if(response.data.success)
-        {
-        this.responseText='Booking Successful'
-        this.snackbar=true
-      //  this.getBookingDetails(response.data.booking_id)
-     
-    this.uploadImages()
-    //window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
-        }
-        else{
-          this.responseText=response.data.Error
-          this.snackbar=true
-        }
-      })
-       .catch((error) => {
-        this.responseText=error
-        console.log(error);
-      });
+    var res=await this.seperateBookRequest(posturl,totalCost,groupData)
 
 
   }
+  },
+  async seperateBookRequest(posturl,totalCost,groupData){
+    axios
+    .post(
+       this.url+posturl+this.userid+'/',
+       {
+         estimated_cost:totalCost,
+         total_cost:totalCost,
+         service_details:groupData
+       }
+     
+    )
+    .then((response) => {
+      this.submit_loader=false
+      console.log("booking details is "+response)
+      this.phase2Result=response.data
+      groupData={}
+      if(response.data.success)
+      {
+      this.responseText='Booking Successful'
+      this.snackbar=true
+    //  this.getBookingDetails(response.data.booking_id)
+   
+       this.uploadImages()
+  //window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
+      }
+      else{
+        this.responseText=response.data.Error
+        this.snackbar=true
+      }
+      return response
+      
+    })
+     .catch((error) => {
+      this.responseText=error
+      console.log(error);
+      return error
+    });
   },
   bookCustService(){
     this.userid=window.location.href.split('/')[5]
@@ -3022,11 +3463,134 @@ responsive:{
         console.log(error);
       });
   },
+  async getAddons(){
+    this.addons=[]
+    var ser = 'Kitchen Cleaning'
+    axios.get(this.url+'/customer/ajax/getserviceaddons?service_type='+ser).then(response=>{
+      this.addons=response.data.service_addons
+     this.parseAddons()
+     
+    }).catch((error)=>{
+      console.log(error)
+    })
+  },
+  findAddons(addon){
+  
+    for(var i=0;i<this.addons_parsed.length;i++){
+      if(this.addons_parsed[i].details.name==addon){
+        return i
+      }
+    }
+    return 'not found'
+  },
+  async parseAddons(){
+    this.addons_parsed=[]
+    for(var i=0;i<this.addons.length;i++){
+      if(this.addons[i].category){
+        // if(this.addons[i].name=='New Cabinet'||this.addons[i].name=='Used Cabinet'){
+        //   if(this.otherService.type=='old' && this.addons[i].name=='Used Cabinet'){
+        //   var add_on_stat=this.findAddons('Cabinet')
+        //   }
+        //   else if(this.otherService.type=='new' && this.addons[i].name=='New Cabinet'){
+        //     var add_on_stat=this.findAddons('Cabinet')
+        //   }
+        //   else{
+        //     add_on_stat='not found'
+        //   }
+        // }
+        // else{
+        var add_on_stat=this.findAddons(this.addons[i].name)
+        
+        if(add_on_stat!='not found'){
+          this.addons_parsed[add_on_stat].size.push({
+            size:this.addons[i].category,
+            max_size:this.addons[i].size,
+            price:this.addons[i].price
+          })
+        }
+        else{
+       
+          
+        this.addons_parsed.push({
+          details:this.addons[i],
+          selected:false,
+          quantity:0,  
+          size:[{
+            size:this.addons[i].category,
+            max_size:this.addons[i].size,
+            price:this.addons[i].price
+          }],
+          selected_size:{}
+        })
+      
+      }
+      }
+      else{
+      this.addons_parsed.push({
+        details:this.addons[i],
+        selected:false,
+        quantity:0,
+        
+        size:[],
+        selected_size:{}
+      })
+    }
+     
+
+    }
+    var delayInMilliseconds = 1000; //1 second
+
+setTimeout(function() {
+  $('#otherServiceCarousel').owlCarousel({
+    loop:false,
+   
+      responsiveClass:true,
+     
+      navText:["<i class='fa fa-chevron-left service-control' @click='prevService()'></i>",
+      "<i class='fa fa-chevron-right service-control'></i>"],
+      responsive:{
+          0:{
+              items:1,
+              nav:true
+          },
+          600:{
+              items:1,
+              nav:true
+          },
+          1000:{
+              items:5,
+              nav:true,
+              loop:false
+          }
+      }
+  });
+}, delayInMilliseconds);
+ 
+    
+    
+  },
+  selectAddons(index){
+    this.addons_parsed[index].selected=true
+    this.addons_parsed[index].quantity=1
+  },
+ increaseQty(index){
+  this.addons_parsed[index].quantity++
+ },
+ reduceQty(index){
+  this.addons_parsed[index].quantity--
+  if( this.addons_parsed[index].quantity==0){
+    this.addons_parsed[index].selected=false
+  }
+ },
   getMultipleSlots(){
     this.slot_loader=true
+    var schedule_services=this.schedule_serviceTypes
+    if(this.checkKitchen()){
+      schedule_services.push('Kitchen Cleaning')
+    }
     axios
       .post(
-         this.url+"/customer/ajax/getmultipleservicecleaningslotes",{service_types:this.schedule_serviceTypes,cleaning_date:this.slotDate,number_of_cleaners:this.selectedDuration.cleaners}
+         this.url+"/customer/ajax/getmultipleservicecleaningslotes",{service_types:schedule_services,cleaning_date:this.slotDate,number_of_cleaners:this.selectedDuration.cleaners}
        
       )
       .then((response) => {
@@ -3123,6 +3687,7 @@ getAreaTypes() {
         this.serviceSize = response.data;
         this.parseSize();
          this.facadeFilter();
+         this.windowFilter();
       })
       .catch((error) => {
         console.log(error);
@@ -3215,6 +3780,7 @@ try {
       type: "",
       age: "",
       stain: false,
+      is_cabinet:false,
       stain_reason: "",
       wall_type: "",
       floor_type: "",
@@ -3224,16 +3790,48 @@ try {
       sides: "",
       stain_age: "",
       height:"",
-      keynote_data:[]
+      keynote_data:[],
+      addons:[]
     };
+    this.parseAddons()
     if(this.selectedService.name=='Kitchen Cleaning'){
       this.otherService.type="old"
       this.changeKitchen()
     }
+  
     this.dialog = true;
     this.dialogmsg = "Add New";
     this.dialogStat = true;
     this.building = [];
+    var delayInMilliseconds=1000
+    var carousel = $("#otherServiceDialogCarousel");
+    carousel.owlCarousel('destroy'); 
+    $('.owl-item:empty').remove()
+    setTimeout(function() {
+      $('#otherServiceDialogCarousel').owlCarousel({
+        loop:false,
+       
+          responsiveClass:true,
+          navText:["<i class='fa fa-chevron-left service-control' @click='prevService()'></i>",
+          "<i class='fa fa-chevron-right service-control'></i>"],
+          responsive:{
+              0:{
+                  items:1,
+                  nav:true
+              },
+              600:{
+                  items:1,
+                  nav:true
+              },
+              1000:{
+                  items:3,
+                  nav:true,
+                  loop:false
+              }
+          }
+      });
+    }, delayInMilliseconds);
+    $('#otherServiceDialogCarousel').removeClass('owl-hidden')
   },
   facadeFilter(){
       this.facadeSize=[]
@@ -3254,10 +3852,36 @@ try {
       
       }
   },
+  windowFilter(){
+    this.windowSize=[]
+    this.otherService.size={}
+    if(this.window_check){
+        for(var i=0;i<this.sizeData.length;i++){
+            if(this.sizeData[i].is_highprice_window){
+                this.windowSize.push(this.sizeData[i])
+            }
+        }
+    }
+    else{
+       
+        for(var i=0;i<this.sizeData.length;i++){
+            if(!this.sizeData[i].is_highprice_window){
+                this.windowSize.push(this.sizeData[i])
+            }
+        }
+    
+    }
+},
   editItem(a, b) {
-    this.dialog = true;
-    this.dialogmsg = "Edit";
-    this.dialogStat = false;
+    this.edit_item=true
+    this.add_new_kitchen=false
+    this.addons_parsed=[...a.addons]
+  
+      this.dialog = true;
+      this.dialogmsg = "Edit";
+      this.dialogStat = false;
+    
+  
     (this.otherService = {
       material: a.material,
       keynote_data:a.keynote_data,
@@ -3275,20 +3899,80 @@ try {
       sides: a.sides,
       stain_age: a.stain_age,
       section_cost:a.section_cost,
-      height:a.height
+      height:a.height,
+      addons:a.addons,
+      is_cabinet:a.is_cabinet
 
     }),
-      (this.currentItem = b);
+   
+      this.currentItem = b;
+      var delayInMilliseconds=1000
+    var carousel = $("#otherServiceDialogCarousel");
+    carousel.owlCarousel('destroy'); 
+    $('.owl-item:empty').remove()
+    setTimeout(function() {
+      $('#otherServiceDialogCarousel').owlCarousel({
+        loop:false,
+        navText:["<i class='fa fa-chevron-left service-control' @click='prevService()'></i>",
+      "<i class='fa fa-chevron-right service-control'></i>"],
+          responsiveClass:true,
+          responsive:{
+              0:{
+                  items:1,
+                  nav:true
+              },
+              600:{
+                  items:1,
+                  nav:true
+              },
+              1000:{
+                  items:3,
+                  nav:true,
+                  loop:false
+              }
+          }
+      });
+    }, delayInMilliseconds);
+    $('#otherServiceDialogCarousel').removeClass('owl-hidden')
   },
   async saveChanges() {
+    this.edit_item=false
       await this.calcSize()
-       this.otherService.section_cost=this.otherService.size.cost
+      
        if(this.otherService.stain_reason.length>0){
          this.otherService.stain_reason=this.otherService.stain_reason.join()
        }
-    this.otherServices[this.currentItem] = this.otherService;
-    this.billingData[this.currentItem].section=this.otherService
+       this.otherService.sectiononly_cost=this.otherService.size.cost
+       this.otherService.section_cost=this.otherService.size.cost+this.findAddonCost()
+    this.otherServices[this.currentItem] = { ...this.otherService };
+    this.billingData[this.currentItem].section_cost=this.otherService.section_cost
+    this.billingData[this.currentItem].section_net_cost=this.otherService.section_cost
+    this.billingData[this.currentItem].sectiononly_cost=this.otherService.sectiononly_cost
+    this.billingData[this.currentItem].sectiononly_net_cost=this.otherService.sectiononly_cost
+    this.billingData[this.currentItem].section={ ...this.otherService }
     this.dialog = false;
+    this.otherService={
+      material: "",
+      addons:[],
+      color: "",
+      size: {},
+      type: "",
+      age: "",
+      stain: false,
+      stain_reason: "",
+      wall_type: "",
+      floor_type: "",
+      ceiling_type: "",
+      residue: false,
+      is_cabinet:false,
+      hallway_size: "",
+      sides: "",
+      stain_age: "",
+      height:"",
+      keynote_data:[],
+      section_cost:0,
+      sectiononly_cost:0
+    },
    this.recalcCost();
   },
   calcSize() {
@@ -3405,9 +4089,13 @@ try {
      { 
 
     await this.calcSize();
-    this.otherService.section_cost=this.otherService.size.cost
+    this.otherService.section_cost=this.otherService.size.cost+this.findAddonCost()
+    this.otherService.sectiononly_cost=this.otherService.size.cost
    if(this.otherService.stain_reason.length>0){
      this.otherService.stain_reason=this.otherService.stain_reason.join()
+   }
+   if(this.serviceType=='Kitchen Cleaning'){
+     this.otherService.addons=[...this.addons_parsed]
    }
     this.otherServices.push(this.otherService);
     if(this.serviceType=='Upholstery Cleaning')
@@ -3416,7 +4104,11 @@ try {
       name: this.serviceType + " - " + this.otherService.type,
       section_name: this.serviceType + " - " + this.otherService.type,
       section: this.otherService,
-      section_cost:this.otherService.size.cost
+      section_cost:this.otherService.section_cost,
+      section_net_cost:this.otherService.section_cost,
+     
+      sectiononly_cost:this.otherService.sectiononly_cost,
+      sectiononly_net_cost:this.otherService.sectiononly_cost
     });
     }
     else{
@@ -3424,7 +4116,10 @@ try {
       name: this.serviceType ,
       section_name: this.serviceType,
       section: this.otherService,
-      section_cost:this.otherService.size.cost
+      section_cost:this.otherService.section_cost,
+      section_net_cost:this.otherService.section_cost,
+      sectiononly_cost:this.otherService.sectiononly_cost,
+      sectiononly_net_cost:this.otherService.sectiononly_cost
     });
     }
    
@@ -3432,7 +4127,8 @@ try {
       material: "",
       color: "",
       size: "",
-      type: "",
+      type: "old",
+      is_cabinet:false,
       age: "",
       stain: false,
       stain_reason: "",
@@ -3444,8 +4140,13 @@ try {
       hallway_size: "",
       sides: "",
       stain_age: "",
-      section_cost:null
+      section_cost:null,
+      sectiononly_cost:null,
+
+    
+      addons:[]
     };
+    this.parseAddons()
     this.dialog = false;
      }
       this.findTempcost()
@@ -3455,9 +4156,13 @@ try {
      { 
 
     await this.calcSize();
-    this.otherService.section_cost=this.otherService.size.cost
+    this.otherService.section_cost=this.otherService.size.cost+this.findAddonCost()
+    this.otherService.sectiononly_cost=this.otherService.size.cost
     if(this.otherService.stain_reason.length>0){
       this.otherService.stain_reason=this.otherService.stain_reason.join()
+    }
+    if(this.serviceType=='Kitchen Cleaning'){
+      this.otherService.addons=[...this.addons_parsed]
     }
     this.otherServices.push(this.otherService);
     if(this.serviceType=='Upholstery Cleaning')
@@ -3466,6 +4171,10 @@ try {
       name: this.serviceType + " - " + this.otherService.type,
       section_name: this.serviceType + " - " + this.otherService.type,
       section: this.otherService,
+      sectiononly_cost:this.otherService.sectiononly_cost,
+      sectiononly_net_cost:this.otherService.sectiononly_cost,
+      section_cost:this.otherService.section_cost,
+      section_net_cost:this.otherService.section_cost
     });
     }
     else{
@@ -3473,6 +4182,9 @@ try {
       name: this.serviceType,
       section_name: this.serviceType,
       section: this.otherService,
+      sectiononly_cost:this.otherService.sectiononly_cost,
+      section_cost:this.otherService.section_cost,
+      section_net_cost:this.otherService.section_cost
     });
     }
    
@@ -3488,11 +4200,15 @@ try {
       wall_type: "",
       floor_type: "",
       ceiling_type: "",
+      is_cabinet:false,
       residue: false,
       hallway_size: "",
       sides: "",
       stain_age: "",
       section_cost:null,
+      section_net_cost:null,
+      sectiononly_cost:null,
+      sectiononly_net_cost:null,
       keynote_data:[]
     };
     this.dialog = false;
@@ -3510,8 +4226,9 @@ try {
      for(var i=0;i<this.multiServicesBill.length;i++){
          var servcost=0;
           for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
-            servcost = servcost + this.multiServicesBill[i].bill[j].section.section_cost
+            servcost = servcost + this.multiServicesBill[i].bill[j].section_cost
           }
+          console.log("serv cost is "+servcost)
           this.multiServicesBill[i]['total_cost']=servcost
      }
 
@@ -3637,9 +4354,11 @@ try {
      this.otherServices=[]
      this.otherService={
     material: "",
-
+    addons:[],
     color: "",
     size: {},
+    section_cost:0,
+    sectiononly_cost:0,
     type: "",
     age: "",
     stain: false,
@@ -3648,6 +4367,7 @@ try {
     floor_type: "",
     ceiling_type: "",
     residue: false,
+    is_cabinet:false,
     hallway_size: "",
     sides: "",
     stain_age: "",
@@ -3692,6 +4412,8 @@ try {
       type: "",
       age: "",
       stain: false,
+      is_cabinet:false,
+      addons:[],
       stain_reason: "",
       wall_type: "",
       floor_type: "",
@@ -4131,15 +4853,17 @@ try {
     }
     if (!itemFound) {
         this.building[building].floors[floor].apartments[apartment].section_cost=this.building[building].floors[floor].apartments[apartment].size.cost
-
+        this.building[building].floors[floor].apartments[apartment].section_net_cost= this.building[building].floors[floor].apartments[apartment].section_cost
           if(this.building[building].floors[floor].apartments[apartment].kitchen){
              
               for(var k=0;k<this.building[building].floors[floor].apartments[apartment].kitchens.length;k++){
                 if(this.building[building].floors[floor].apartments[apartment].kitchens[k].type=='old'){
-                  this.building[building].floors[floor].apartments[apartment].section_cost=this.building[building].floors[floor].apartments[apartment].section_cost+this.building[building].floors[floor].apartments[apartment].kitchens[k].size.cost
+                  this.building[building].floors[floor].apartments[apartment].section_net_cost=this.building[building].floors[floor].apartments[apartment].section_net_cost+this.building[building].floors[floor].apartments[apartment].kitchens[k].size.cost
               }
-                }
+
+              }
           }
+       
       this.billingData.push({
         name:
           "Building " +
@@ -4155,6 +4879,10 @@ try {
           " Apartment " +
           (apartment + 1),
         section: this.building[building].floors[floor].apartments[apartment],
+        section_cost:this.building[building].floors[floor].apartments[apartment].section_net_cost,
+           section_net_cost:this.building[building].floors[floor].apartments[apartment].section_net_cost,
+           sectiononly_cost:this.building[building].floors[floor].apartments[apartment].size.cost,
+           sectiononly_net_cost:this.building[building].floors[floor].apartments[apartment].size.cost,
       });
     }
   if(apartment==(parseInt(this.building[building].floors[floor].no_of_apartments)-1)){
@@ -4218,17 +4946,22 @@ try {
     if (!floorFound) {
       if (!this.building[building].floors[floor - 1].apartment) {
          this.building[building].floors[floor-1].section_cost=this.building[building].floors[floor-1].size.cost
-
+         this.building[building].floors[floor - 1].section_net_cost=this.building[building].floors[floor-1].section_cost
           if(this.building[building].floors[floor - 1].kitchen){
              
               for(var k=0;k<this.building[building].floors[floor - 1].kitchens.length;k++){
+
                 if(this.building[building].floors[floor - 1].kitchens[k].type=='old'){
-                  this.building[building].floors[floor - 1].section_cost=this.building[building].floors[floor - 1].section_cost+this.building[building].floors[floor - 1].kitchens[k].size.cost
-                }
-                }
+                  this.building[building].floors[floor - 1].section_net_cost=this.building[building].floors[floor - 1].section_net_cost+this.building[building].floors[floor - 1].kitchens[k].size.cost
+              }
+
+              }
           }
          // this.building[building].floors[floor - 1].section_cost=
-       
+         this.billSample.sectiononly_cost=this.building[building].floors[floor-1].size.cost
+         this.billSample.sectiononly_net_cost=this.building[building].floors[floor-1].size.cost
+         this.billSample.section_cost=this.building[building].floors[floor - 1].section_net_cost
+         this.billSample.section_net_cost=this.building[building].floors[floor - 1].section_net_cost
          this.billSample.name= "Building " + (building + 1) + " Floor " + floor
          this.billSample.section_name= "Building " + (building + 1) + " Floor " + floor
          this.billSample.serviceNo=this.serviceCount
@@ -4239,6 +4972,10 @@ try {
      section_name:'',     
     name:'',
     section:{},
+    section_cost:"",
+    section_net_cost:"",
+    sectiononly_cost:"",
+    sectiononly_net_cost:"",
     serviceNo:this.serviceCount,
   }
        
@@ -4286,18 +5023,21 @@ try {
 
   },
   calcTotal(){
+    console.log("i m inside total cost ")
       this.totalCost = 0;
       
       for (var i = 0; i < this.multiServicesBill.length; i++) {
         for(var j=0;j<this.multiServicesBill[i].bill.length;j++)
         {
-          if(!this.multiServicesBill[i].bill[j].section.kitchen)
+          /*if(!this.multiServicesBill[i].bill[j].section.kitchen)
           {
                         this.multiServicesBill[i].bill[j].section.section_cost=this.multiServicesBill[i].bill[j].section.size.cost
-          }
-      this.totalCost = this.totalCost + this.multiServicesBill[i].bill[j].section.section_cost;
+                        this.multiServicesBill[i].bill[j].section.section_net_cost=this.multiServicesBill[i].bill[j].section.size.cost
+          }*/
+      this.totalCost = this.totalCost + this.multiServicesBill[i].bill[j].section_net_cost;
         }
     }
+    console.log("i m inside total cost and it is "+this.totalCost)
   },
    recalcApartmentPrice(building,floor,apartment) {
     /*this.totalCost = 0;
@@ -4331,7 +5071,18 @@ try {
   setCost(building, floor, apartment) {
     this.building[building].floors[floor].apartments[apartment].cost = "";
   },
- 
+ getKitchenProductivity(){
+  axios
+  .get(
+    this.url+"/customer/ajax/getserviceproductivity?service_type=" +
+      'Kitchen Cleaning'
+  ).then(response=>{
+    this.new_kitchen_cabinet_productivity=  response.data.newkitchenwithcabinet_perhour_cleaning
+    this.new_kitchen_nocabinet_productivity=  response.data.newkitchenwithout_perhour_cleaning
+    this.old_kitchen_cabinet_productivity=  response.data.oldkitchenwithcabinet_perhour_cleaning
+    this.old_kitchen_nocabinet_productivity=  response.data.oldkitchenwithoutcabinet_perhour_cleaning
+  })
+ },
   doSomethingAsync(k) {
    return new Promise((resolve) => {
        axios
@@ -4382,15 +5133,37 @@ try {
                 data["lowpricefacade_perhour_cleaning"]
             );
         } else if (selected_service == "Kitchen Cleaning") {
-          var total_newkitchen_size = this.new_kitchen_size;
-          var total_oldkitchen_size = this.old_kitchen_size;
+          
           var manhour =
             parseInt(
-              total_newkitchen_size / data["newkitchen_perhour_cleaning"]
+              this.new_kitchen_cabinet_size / data["newkitchenwithcabinet_perhour_cleaning"]
             ) +
             parseInt(
-              total_oldkitchen_size / data["oldkitchen_perhour_cleaning"]
-            );
+              this.new_kitchen_nocabinet_size / data["newkitchenwithout_perhour_cleaning"]
+            )+
+            parseInt(
+              this.old_kitchen_cabinet_size / data["oldkitchenwithcabinet_perhour_cleaning"]
+            )+
+            parseInt(
+              this.old_kitchen_nocabinet_size / data["oldkitchenwithoutcabinet_perhour_cleaning"]
+            )
+            //To find addons man hour 
+            var addon_manhour=0
+            for(var ao=0;ao<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;ao++){
+                for(var addon=0;addon<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons.length;addon++){
+                  if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].selected){
+                    if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].details.category){
+                      addon_manhour=addon_manhour+(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].quantity*(parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].selected_size.max_size)/this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].details.productivity))
+                    }
+                    else{
+                    addon_manhour=addon_manhour+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].details.productivity*this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].quantity
+                    }
+                  }
+                }
+            
+            }
+            console.log("addon manhour is"+addon_manhour)
+            manhour=parseInt(manhour)+parseInt(addon_manhour)
         } else if (selected_service == "Window Cleaning") {
           for(var b=0;b<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;b++){
             if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.size.is_highprice_window){
@@ -4415,7 +5188,36 @@ try {
           var productivity = data["perhour_cleaning"];
           console.log("productivity is "+productivity)
           var manhour = parseInt(total_estimated_size / productivity);
-          
+          var new_kit_cab_size=0
+          var new_kit_nocab_size=0
+          var old_kit_cab_size=0
+          var old_kit_nocab_size=0
+          var kit_manhour=0
+          for(var b=0;b<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;b++){
+          if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.kitchen){
+            for(var kit=0;kit<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.kitchens.length;kit++){
+              if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.kitchens[kit].is_newkitchen){
+                if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.kitchens[kit].is_cabinet){
+                  new_kit_cab_size=new_kit_cab_size+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.kitchens[kit].size.max_size
+                }
+                else{
+                  new_kit_nocab_size=new_kit_nocab_size+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.kitchens[kit].size.max_size
+                }
+               
+              }else{
+                if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.kitchens[kit].is_cabinet){
+                old_kit_cab_size=old_kit_cab_size+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.kitchens[kit].size.max_size
+                }
+                else{
+                  old_kit_nocab_size=old_kit_nocab_size+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.kitchens[kit].size.max_size
+                }
+              }
+            }
+          }
+          }
+          kit_manhour=parseInt(new_kit_cab_size/this.new_kitchen_cabinet_productivity)+parseInt(old_kit_cab_size/this.old_kitchen_cabinet_productivity)
+          +parseInt(old_kit_nocab_size/this.old_kitchen_nocabinet_productivity)+parseInt(new_kit_nocab_size/this.new_kitchen_nocabinet_productivity)
+          manhour=manhour+kit_manhour
         }
         if(manhour<2){
           manhour=2
@@ -4909,7 +5711,9 @@ try {
 },
 mounted() {
   this.url = api;
+ // this.getAddons()
   this.getServices()
+  this.getKitchenProductivity()
   this.getAreaTypes()
   this.getIp()
   this.getGovernorate()
