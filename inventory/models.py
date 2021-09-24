@@ -250,6 +250,7 @@ class SupplierItems(models.Model):
 class ServiceRecipe(models.Model):
     service             = models.CharField(max_length=100,blank=True,null=True)
     area_size           = models.CharField(default=0,max_length=50,blank=True,null=True)
+    staff_count         = models.CharField(default=0,max_length=50,blank=True,null=True)
 
     def __unicode__(self):
         return str(self.service)
