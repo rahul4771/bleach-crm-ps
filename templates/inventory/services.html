@@ -831,7 +831,7 @@
                     
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in id_name_cleaning" readonly>
+                        <input type="text"  class="w-p-100 inv-in id_name_cleaning" id="id_name_cleaning2" readonly>
                       </div>
                 </div>
 
@@ -910,8 +910,8 @@
 
             <input type="hidden" name="item_edit_id" id="id_edit_item" />
 
-            <input type="text"  class="w-p-100 inv-in" class="id_name_cleaning" name="service_type" value="General Cleaning" readonly>
-            <input type="hidden"  class="w-p-100 inv-in" id="id_name_category" value="detailedCleaning">
+            <input type="text"  class="w-p-100 inv-in" class="id_name_cleaning" id="id_name_cleaning" name="service_type" value="General Cleaning" readonly>
+            <input   class="w-p-100 inv-in" id="id_name_category" value="detailedCleaning">
             {% comment %} <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Item</div>
@@ -1502,7 +1502,7 @@ function editShow2(id){
 async function closeditShow2(id){
 
     var staffcount = $('#staffcount'+id+'').val();
-    var service_type = $('.id_name_cleaning').val();
+    var service_type = $('#id_name_cleaning').val();
     //console.log(area,service_type,"ct")
 
     var result = await _get('api/inventory-service-area/?service_type='+service_type+'&staffcount='+staffcount);
@@ -1521,7 +1521,7 @@ document.getElementById('id_person_edit_'+id).style.display  = "none";
 async function closeditShow(id){
 
     var area = $('#id_area'+id+'').val();
-    var service_type = $('.id_name_cleaning').val();
+    var service_type = $('#id_name_cleaning').val();
     //console.log(area,service_type,"ct")
 
     var result = await _get('api/inventory-service-area/?service_type='+service_type+'&area='+area);
@@ -1662,7 +1662,9 @@ console.log('calling funcation', name, type)
         $('#id_head2').text(name)
     }
 
-    $('.id_name_cleaning').val(name)
+    $('#id_name_cleaning').val(name)
+    $('#id_name_cleaning2').val(name)
+
     $('.area_service').val(name)
     $('#id_name_category').val(type)
     console.log(type,"typ")
@@ -1682,11 +1684,15 @@ console.log('calling funcation', name, type)
 }
 
 function selectActive(d,id,name){
+
+    console.log(d,id,name,'here')
     
     console.log(id,"kop")
     //console.log(a)
 
-    $('.id_name_cleaning').val(name)
+    $('#id_name_cleaning').val(name)
+    $('#id_name_cleaning2').val(name)
+
     $('.area_service').val(name)
     $('#id_name_category').val(id)
 
