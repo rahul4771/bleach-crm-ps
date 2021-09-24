@@ -10,7 +10,7 @@ from bleachadmin.models import ServicePriceRange,Settings
 from django.core.mail import send_mail,EmailMultiAlternatives
 from Api.serializers import DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, LeaveUsersSerializer,ShiftScheduleSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
 from agent.views import generate_random_username
-from inventory.models import Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,ItemUnit,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems
+from inventory.models import Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems
 import re
 import random
 import string
@@ -2030,6 +2030,56 @@ class InventoryServiceAreaAPI(APIView):
 		else:
 			response_dict['area_size'] = 0
 			response_dict['staff_count'] = 0
+		return Response(response_dict,HTTP_200_OK)
+
+class InventoryServiceItemsAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+		response_dict = {}
+		ingredient_id = request.GET.get('ingredient_id')
+		item_id = request.GET.get('item_id')
+		ingredient_item_id = request.GET.get('ingredient_item_id')
+		action = request.GET.get('action')
+		
+		print(ingredient_id,"attrsed3")
+		try:
+			ingredient = ServiceRecipeIngredients.objects.get(id=int(ingredient_id))
+
+			if action == 'add_item':
+				print("add")
+				item = InventoryItem.objects.get(id=int(item_id))
+				ServiceRecipeItems.objects.create(ingredient=ingredient,item=item)
+
+
+			if action == 'edit_item':
+				ingredient_item = ServiceRecipeItems.objects.get(id=int(ingredient_item_id))
+				item = InventoryItem.objects.get(id=int(item_id))
+				ingredient_item.item = item
+				ingredient_item.save()
+
+			if action == 'delete_item':
+				ServiceRecipeItems.objects.get(id=int(ingredient_item_id)).delete()
+
+			response_dict['ingredient'] = ingredient.ingredient
+			items = ServiceRecipeItems.objects.filter(ingredient=ingredient)
+		except:
+			ingredient = None
+			items = None
+
+		items_list = []
+		if items:
+			for item in items:
+				list_item = {
+					'item_id' : item.id,
+					'item_name' : item.item.name,
+				}
+
+				items_list.append(list_item)
+	
+		response_dict['service_items'] = items_list
+		
 		return Response(response_dict,HTTP_200_OK)
 
 

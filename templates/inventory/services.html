@@ -250,7 +250,7 @@
                                     </div>
                                     <div class="col-md-5">
                                         <div class="attribute-table-2">
-                                            <table class="inv-table"> 
+                                            <table class="inv-table item-table5"> 
                                                 <tr>
                                                     <th style="width: %;">
                                                        Item Name
@@ -260,7 +260,7 @@
                                                         Action
                                                     </th>
                                                 </tr>
-                                                <tr>
+                                                {% comment %} <tr>
                                                     <td>
                                                         item 1
                                                     </td>
@@ -268,7 +268,7 @@
                                                         <button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('edit')" > <img src="/static/files/inventory/pencil.png" alt=""> </button>
                                                         <button class="inv-plan-img-btn "  data-toggle="modal" data-target="#deleteModel2"> <img src="/static/files/inventory/bin.png" alt=""> </button>
                                                     </td>
-                                                </tr>
+                                                </tr> {% endcomment %}
                                                
                                             </table>
                                             <div class="attribute-footer p-5">
@@ -429,7 +429,7 @@
                                     </div>
                                     <div class="col-md-5">
                                         <div class="attribute-table-2">
-                                            <table class="inv-table "> 
+                                            <table class="inv-table item-table6"> 
                                                 <tr>
                                                     <th style="width: %;">
                                                        Item Name
@@ -438,16 +438,6 @@
                                                     <th style="width: %;">
                                                         Action
                                                     </th>
-                                                </tr>
-                                                
-                                                <tr>
-                                                    <td>
-                                                        item 1
-                                                    </td>
-                                                    <td>
-                                                        <button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('edit')" > <img src="/static/files/inventory/pencil.png" alt=""> </button>
-                                                        <button class="inv-plan-img-btn "  data-toggle="modal" data-target="#deleteModel2"> <img src="/static/files/inventory/bin.png" alt=""> </button>
-                                                    </td>
                                                 </tr>
                                                
                                             </table>
@@ -603,7 +593,7 @@
                                     </div>
                                     <div class="col-md-5">
                                         <div class="attribute-table-2">
-                                            <table class="inv-table"> 
+                                            <table class="inv-table item-table7"> 
                                                 <tr>
                                                     <th style="width: %;">
                                                        Item Name
@@ -612,15 +602,6 @@
                                                     <th style="width: %;">
                                                         Action
                                                     </th>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        item 1
-                                                    </td>
-                                                    <td>
-                                                        <button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('edit')" > <img src="/static/files/inventory/pencil.png" alt=""> </button>
-                                                        <button class="inv-plan-img-btn "  data-toggle="modal" data-target="#deleteModel2"> <img src="/static/files/inventory/bin.png" alt=""> </button>
-                                                    </td>
                                                 </tr>
                                                
                                             </table>
@@ -776,7 +757,7 @@
                                     </div>
                                     <div class="col-md-5">
                                         <div class="attribute-table-2">
-                                            <table class="inv-table "> 
+                                            <table class="inv-table item-table8"> 
                                                 <tr>
                                                     <th style="width: %;">
                                                        Item Name
@@ -785,15 +766,6 @@
                                                     <th style="width: %;">
                                                         Action
                                                     </th>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        item 1
-                                                    </td>
-                                                    <td>
-                                                        <button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('edit')" > <img src="/static/files/inventory/pencil.png" alt=""> </button>
-                                                        <button class="inv-plan-img-btn "  data-toggle="modal" data-target="#deleteModel2"> <img src="/static/files/inventory/bin.png" alt=""> </button>
-                                                    </td>
                                                 </tr>
                                                 
                                                
@@ -853,12 +825,13 @@
                 </div>
             </div>
             <hr>
+
             <div class="row mt-20">
                 <div class="col-md-12 ">
                     
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" readonly>
+                        <input type="text"  class="w-p-100 inv-in id_name_cleaning" readonly>
                       </div>
                 </div>
 
@@ -868,7 +841,8 @@
                     
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in"  readonly>
+                        <input type="text" id="id_ingredient_name" class="w-p-100 inv-in"  readonly>
+                        <input type="hidden" name="ingredient_id" id="ingredient_id" class="w-p-100 inv-in">
                       </div>
                 </div>
 
@@ -877,7 +851,7 @@
             <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Item</div>
-
+                    <input type="text" name="item" id="id_pro_sel" value="" />
                     <div style="position: relative;">
                         <div class="inv-input-container inv-border h-30">
                             <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()">
@@ -905,8 +879,8 @@
             
     </div>
     <div class="inv-drawer-footer">
-        <button class="sent-button item-form-btn" type="submit" >Add</button>
-        
+        <button class="sent-button item-form-btn" type="button" onclick="serviceitemaction('add_item')" >Add</button>
+        </form>
                     <button data-dismiss="modal" onclick="closeNavAddStore2()" class="view-button">Cancel</button>
     </div>
     </div>
@@ -933,11 +907,10 @@
 
             <form method="POST" action="">{% csrf_token %}
             <input type="hidden" name="action" id="item_action" value="add_ingredient" />
-            <input type="hidden" name="item" id="id_pro_sel" value="" />
 
             <input type="hidden" name="item_edit_id" id="id_edit_item" />
 
-            <input type="text"  class="w-p-100 inv-in" id="id_name_cleaning" name="service_type" value="General Cleaning" readonly>
+            <input type="text"  class="w-p-100 inv-in" class="id_name_cleaning" name="service_type" value="General Cleaning" readonly>
             <input type="hidden"  class="w-p-100 inv-in" id="id_name_category" value="detailedCleaning">
             {% comment %} <div class="row mt-20">
                 <div class="col-md-12 ">
@@ -1529,7 +1502,7 @@ function editShow2(id){
 async function closeditShow2(id){
 
     var staffcount = $('#staffcount'+id+'').val();
-    var service_type = $('#id_name_cleaning').val();
+    var service_type = $('.id_name_cleaning').val();
     //console.log(area,service_type,"ct")
 
     var result = await _get('api/inventory-service-area/?service_type='+service_type+'&staffcount='+staffcount);
@@ -1548,7 +1521,7 @@ document.getElementById('id_person_edit_'+id).style.display  = "none";
 async function closeditShow(id){
 
     var area = $('#id_area'+id+'').val();
-    var service_type = $('#id_name_cleaning').val();
+    var service_type = $('.id_name_cleaning').val();
     //console.log(area,service_type,"ct")
 
     var result = await _get('api/inventory-service-area/?service_type='+service_type+'&area='+area);
@@ -1639,6 +1612,7 @@ var products = [];
     console.log(products)
 $(document).ready(function(){
     $(".country1").chosen();
+    selectActive(this,'detailedCleaning','General Cleaning');
     getingredients('General Cleaning','detailedCleaning','service');
     var a = [];
 
@@ -1688,7 +1662,7 @@ console.log('calling funcation', name, type)
         $('#id_head2').text(name)
     }
 
-    $('#id_name_cleaning').val(name)
+    $('.id_name_cleaning').val(name)
     $('.area_service').val(name)
     $('#id_name_category').val(type)
     console.log(type,"typ")
@@ -1712,7 +1686,7 @@ function selectActive(d,id,name){
     console.log(id,"kop")
     //console.log(a)
 
-    $('#id_name_cleaning').val(name)
+    $('.id_name_cleaning').val(name)
     $('.area_service').val(name)
     $('#id_name_category').val(id)
 
@@ -1872,19 +1846,19 @@ function openNavAddStore2(d) {
     }
 
     function recipetype(d){
-        var cleaning = $('#id_name_cleaning').val();
+        var cleaning = $('.id_name_cleaning').val();
         var category = $('#id_name_category').val();
         //var recipe_category = $(d).val();
         getingredients(cleaning,category,d)
         console.log("lop")
     }
 
-    //get items using api
+    //list items using api
     async function getingredients(service_type,category,recipe_category){
             console.log(category,"cat")
         //$('#line_segment_id').val(segment_id); //adding value to hidden input for adding line
 
-         var result = await _get('api/inventory-service-items/?service_type='+service_type+'&recipe_category='+recipe_category);
+         var result = await _get('api/inventory-service-ingredients/?service_type='+service_type+'&recipe_category='+recipe_category);
          if(result.status == 200){
 
             console.log(result.data.area_size,"arsiz")
@@ -1903,7 +1877,10 @@ function openNavAddStore2(d) {
                     $(".item-table1 tr:not(:first)").remove(); 
                     var edit = "edit";
                     $.each(result.data.service_ingredients,function(key,value){
-                            $('.item-table1').append('<tr><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
+                        if (key == 0){
+                            getitems(value.ingredient_id);
+                        }
+                        $('.item-table1').append('<tr onclick="getitems('+value.ingredient_id+')"><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
                     })
                 }else{
                     $(".item-table1 tr:not(:first)").remove(); 
@@ -1915,7 +1892,10 @@ function openNavAddStore2(d) {
                     $(".item-table2 tr:not(:first)").remove(); 
                     var edit = "edit";
                     $.each(result.data.service_ingredients,function(key,value){
-                            $('.item-table2').append('<tr><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
+                        if (key == 0){
+                            getitems(value.ingredient_id);
+                        }
+                            $('.item-table2').append('<tr onclick="getitems('+value.ingredient_id+')"><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
                     })
                 }else{
                     $(".item-table2 tr:not(:first)").remove(); 
@@ -1928,7 +1908,7 @@ function openNavAddStore2(d) {
                     $(".item-table3 tr:not(:first)").remove(); 
                     var edit = "edit";
                     $.each(result.data.service_ingredients,function(key,value){
-                            $('.item-table3').append('<tr><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
+                            $('.item-table3').append('<tr onclick="getitems('+value.ingredient_id+')"><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
                     })
                 }else{
                     $(".item-table3 tr:not(:first)").remove(); 
@@ -1941,7 +1921,7 @@ function openNavAddStore2(d) {
                     $(".item-table4 tr:not(:first)").remove(); 
                     var edit = "edit";
                     $.each(result.data.service_ingredients,function(key,value){
-                            $('.item-table4').append('<tr><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
+                            $('.item-table4').append('<tr onclick="getitems('+value.ingredient_id+')"><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
                     })
                 }else{
                     $(".item-table4 tr:not(:first)").remove(); 
@@ -1951,6 +1931,96 @@ function openNavAddStore2(d) {
          }else{
             showNotification('No Data','error')
          }
+    }
+
+
+    //list items using api
+    async function getitems(ingredient_id){
+            console.log(ingredient_id,"cat")
+        var category = $('#id_name_category').val();
+
+         var result = await _get('api/inventory-service-items/?ingredient_id='+ingredient_id);
+         if(result.status == 200){
+             console.log(result.data.ingredient,"ing")
+             $('#id_ingredient_name').val(result.data.ingredient);
+             $('#ingredient_id').val(ingredient_id);
+
+            if (category == 'detailedCleaning'){
+                if (result.data.service_items.length > 0){
+                    $(".item-table5 tr:not(:first)").remove(); 
+                    var edit = "edit";
+                    $.each(result.data.service_items,function(key,value){
+                        console.log(value.item_name,"lo")
+                        $('.item-table5').append('<tr><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('+edit+')"><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
+                    })
+                }else{
+                    $(".item-table5 tr:not(:first)").remove(); 
+                }
+            
+            }else if(category=='specialCare'){
+                if (result.data.service_items.length > 0){
+                    $(".item-table6 tr:not(:first)").remove(); 
+                    var edit = "edit";
+                    $.each(result.data.service_items,function(key,value){
+                        console.log(value.item_name,"lo")
+                        $('.item-table6').append('<tr><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('+edit+')"><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
+                    })
+                }else{
+                    $(".item-table6 tr:not(:first)").remove(); 
+                }
+            }
+            else if(category=='kitchenCleaning'){
+                if (result.data.service_items.length > 0){
+                    $(".item-table7 tr:not(:first)").remove(); 
+                    var edit = "edit";
+                    $.each(result.data.service_items,function(key,value){
+                        console.log(value.item_name,"lo")
+                        $('.item-table7').append('<tr><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('+edit+')"><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
+                    })
+                }else{
+                    $(".item-table7 tr:not(:first)").remove(); 
+                }              
+            }else{
+                if (result.data.service_items.length > 0){
+                    $(".item-table8 tr:not(:first)").remove(); 
+                    var edit = "edit";
+                    $.each(result.data.service_items,function(key,value){
+                        console.log(value.item_name,"lo")
+                        $('.item-table8').append('<tr><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('+edit+')"><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
+                    })
+                }else{
+                    $(".item-table8 tr:not(:first)").remove(); 
+                }
+            }
+            
+
+         }else{
+            showNotification('No Data','error')
+         }
+    }
+
+    //add items using api
+    async function serviceitemaction(action){
+        var item_id = $('#id_pro_sel').val();
+        var ingredient_id = $('#ingredient_id').val();
+        var result = await _get('api/inventory-service-items/?ingredient_id='+ingredient_id+'&item_id='+item_id+'&action='+action);
+        if(result.status == 200){
+            console.log("yah")
+            $('#id_ingredient_name').val(result.data.ingredient);
+             $('#ingredient_id').val(ingredient_id);
+
+             showNotification('Item Added !','success')
+
+            if (result.data.service_items.length > 0){
+                $(".item-table5 tr:not(:first)").remove(); 
+                var edit = "edit";
+                $.each(result.data.service_items,function(key,value){
+                    $('.item-table5').append('<tr><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('+edit+')"><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
+                })
+            }else{
+                $(".item-table5 tr:not(:first)").remove(); 
+            }
+        }
     }
 
 </script>

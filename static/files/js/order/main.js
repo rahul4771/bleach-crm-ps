@@ -886,7 +886,7 @@ setTimeout(function() {
         addon_net_cost:this.newkitchenkeynote.size.cost,
         name:'kitchen',
         quantity:"1",
-        size:null,
+        size:this.newkitchenkeynote.size.name,
         other_details:{
           is_cabinet:false,
           max_size:null,
@@ -918,6 +918,8 @@ setTimeout(function() {
     changeKitchenSize(index){
       this.kitchen_addons[index].addon_cost= this.kitchen_addons[index].other_details.size.cost
       this.kitchen_addons[index].addon_net_cost= this.kitchen_addons[index].other_details.size.cost
+      
+      this.kitchen_addons[index].size=this.kitchen_addons[index].other_details.size.name
       this.recalcAddonCost()
     },
     removeKitchen(index){
