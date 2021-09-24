@@ -1903,6 +1903,7 @@ console.log(response)
                 addon_cost:this.multiServicesBill[i].bill[j].section.kitchens[k].size.cost,
                 addon_net_cost:this.multiServicesBill[i].bill[j].section.kitchens[k].size.cost,
                 quantity:1,
+                size:this.multiServicesBill[i].bill[j].section.kitchens[k].size.name,
                 other_details:JSON.stringify({
                   size:this.multiServicesBill[i].bill[j].section.kitchens[k].size.name,
                   max_size:this.multiServicesBill[i].bill[j].section.kitchens[k].size.max_size,
@@ -2102,6 +2103,7 @@ console.log(response)
                 addon_cost:this.multiServicesBill[i].bill[j].section.kitchens[k].size.cost,
                 addon_net_cost:this.multiServicesBill[i].bill[j].section.kitchens[k].size.cost,
                 quantity:1,
+                size:this.multiServicesBill[i].bill[j].section.kitchens[k].size.name,
                 other_details:JSON.stringify({
                   size:this.multiServicesBill[i].bill[j].section.kitchens[k].size.name,
                   max_size:this.multiServicesBill[i].bill[j].section.kitchens[k].size.max_size,
