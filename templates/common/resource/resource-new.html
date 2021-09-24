@@ -775,7 +775,8 @@
         busy_slotesdetails={};
         
         {% for cleaning_details in worker.cleaning_member_details %}
-
+	console.log({{cleaning_details.id}});
+	console.log({{cleaning_details.start_at}});
         //attendance
         $('#attendance_{{worker.id}}').removeClass('dot-gray');
         $('#attendance_{{worker.id}}').removeClass('dot-red');
