@@ -206,7 +206,7 @@
                                         <div class="model-input-name">No.of Persons</div>
                                         <div class="d-flex inv-hide" id="id_person_edit_1">
                                             <div style="width: 50%; " class="inv-input-container h-30"> 
-                                                <input type="number"   class="w-p-100 inv-in" >
+                                                <input type="number" class="w-p-100 inv-in" name="staffcount1" id="staffcount1">
                                                 
                                             </div> 
                                             <button style="margin-left: 10px;" id="id_editDone" class="inv-blue-btn " type="submit" onclick="closeditShow2(1)">Done </button>
@@ -384,7 +384,7 @@
                                         <div class="model-input-name">No.of Persons</div>
                                         <div class="d-flex inv-hide" id="id_person_edit_2">
                                             <div style="width: 50%; " class="inv-input-container h-30"> 
-                                                <input type="number"   class="w-p-100 inv-in" >
+                                                <input type="number" class="w-p-100 inv-in" name="staffcount2" id="staffcount2">
                                                 
                                             </div> 
                                             <button style="margin-left: 10px;" id="id_editDone" class="inv-blue-btn " type="submit" onclick="closeditShow2(2)">Done </button>
@@ -558,7 +558,7 @@
                                         <div class="model-input-name">No.of Persons</div>
                                         <div class="d-flex inv-hide" id="id_person_edit_3">
                                             <div style="width: 50%; " class="inv-input-container h-30"> 
-                                                <input type="number"   class="w-p-100 inv-in" >
+                                                <input type="number" class="w-p-100 inv-in" name="staffcount3" id="staffcount3">
                                                 
                                             </div> 
                                             <button style="margin-left: 10px;" id="id_editDone" class="inv-blue-btn " type="submit" onclick="closeditShow2(3)">Done </button>
@@ -732,7 +732,7 @@
                                         <div class="model-input-name">No.of Persons</div>
                                         <div class="d-flex inv-hide" id="id_person_edit_4">
                                             <div style="width: 50%; " class="inv-input-container h-30"> 
-                                                <input type="number"   class="w-p-100 inv-in" >
+                                                <input type="number" class="w-p-100 inv-in" name="staffcount4" id="staffcount4">
                                                 
                                             </div> 
                                             <button style="margin-left: 10px;" id="id_editDone" class="inv-blue-btn " type="submit" onclick="closeditShow2(4)">Done </button>
@@ -959,7 +959,7 @@
                         </div>
                     </div> -->
                     <div class="inv-input-container h-30"> 
-                        <input type="text" name="ingredient" class="w-p-100 inv-in" >
+                        <input type="text" name="ingredient" id="id_ingredient" class="w-p-100 inv-in" >
                       </div>
 
 
@@ -1088,7 +1088,7 @@
                 <div class="row">
                     <div class="col-md-12 text-center">
                     <form method="POST" action="" >{% csrf_token %}
-                        <input type="hidden" id="action_delete_id" name="action" value="delete_item" />
+                        <input type="hidden" id="action_delete_id" name="action" value="delete_ingredient" />
                         <input type="hidden" name="object_id" id="object_id" />
                         <div class="cancel-model-content">
                             <button class="sent-button" >Delete</button>
@@ -1508,7 +1508,15 @@ function editShow2(id){
 
 async function closeditShow2(id){
 
+    var staffcount = $('#staffcount'+id+'').val();
+    var service_type = $('#id_name_cleaning').val();
+    //console.log(area,service_type,"ct")
 
+    var result = await _get('api/inventory-service-area/?service_type='+service_type+'&staffcount='+staffcount);
+         if(result.status == 200){
+             $('.service_area').text(result.data.staff_count);
+             console.log(result.data.staff_count,"cons")
+         }
 
 
 document.getElementById('id_person_div_'+id).style.display  = "flex";
@@ -1785,7 +1793,7 @@ function openNavAddStore2(d) {
     }
 
     //edit item
-    function openNavEditItem(d) {
+    function openNavEditItngredient(d) {
         $('#id_search').empty();
         {% for item in items %}
         var tempId = '{{item.id}}';
@@ -1797,13 +1805,13 @@ function openNavAddStore2(d) {
         console.log($(d).data('linestatus'))
             $("#itemHead").text("Edit Item");
             $('.item-form-btn').text('Update');
-            $('#item_action').val('edit_item');
+            $('#item_action').val('edit_ingredient');
             $('#id_edit_item').val($(d).data('serviceitemid'));
             $('#id_item_count').val($(d).data('itemcount'));
             document.getElementById("id_recipe_type").value = $(d).data('recipetype');
             $('#id_pro_sel').val($(d).data('itemid'));
 
-            $("#pro-name").val($(d).data('itemname'));
+            $("#id_ingredient").val($(d).data('itemname'));
 
             if ($(d).data('itemstatus') == true){
                 document.getElementById("id_item_status").value = 'True';
@@ -1860,50 +1868,60 @@ function openNavAddStore2(d) {
          if(result.status == 200){
 
             console.log(result.data.area_size,"arsiz")
-            $('.service_area').text(result.data.area_size);
+            if (recipe_category == 'service'){
+                $('.service_area').text(result.data.area_size);
+            }else{
+                $('.service_area').text(result.data.staff_count);
+            }
 
             if (category == 'detailedCleaning'){
 
                 $('#id_area1').val(result.data.area_size);
+                $('#staffcount1').val(result.data.staff_count);
 
                 if (result.data.service_ingredients.length > 0){
                     $(".item-table1 tr:not(:first)").remove(); 
                     var edit = "edit";
                     $.each(result.data.service_ingredients,function(key,value){
-                            $('.item-table1').append('<tr><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItem(this)" data-serviceitemid='+value.service_item_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.item_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.service_item_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
+                            $('.item-table1').append('<tr><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
                     })
                 }else{
                     $(".item-table1 tr:not(:first)").remove(); 
                 }
             }else if(category == 'specialCare'){
                 $('#id_area2').val(result.data.area_size);
+                $('#staffcount2').val(result.data.staff_count);
                 if (result.data.service_ingredients.length > 0){
                     $(".item-table2 tr:not(:first)").remove(); 
                     var edit = "edit";
                     $.each(result.data.service_ingredients,function(key,value){
-                            $('.item-table2').append('<tr><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItem(this)" data-serviceitemid='+value.service_item_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.item_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.service_item_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
+                            $('.item-table2').append('<tr><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
                     })
                 }else{
                     $(".item-table2 tr:not(:first)").remove(); 
                 }
             }else if(category == 'kitchenCleaning'){
                 $('#id_area3').val(result.data.area_size);
+                $('#staffcount3').val(result.data.staff_count);
+
                 if (result.data.service_ingredients.length > 0){
                     $(".item-table3 tr:not(:first)").remove(); 
                     var edit = "edit";
                     $.each(result.data.service_ingredients,function(key,value){
-                            $('.item-table3').append('<tr><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItem(this)" data-serviceitemid='+value.service_item_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.item_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.service_item_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
+                            $('.item-table3').append('<tr><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
                     })
                 }else{
                     $(".item-table3 tr:not(:first)").remove(); 
                 }
             }else{
                 $('#id_area4').val(result.data.area_size);
+                $('#staffcount4').val(result.data.staff_count);
+
                 if (result.data.service_ingredients.length > 0){
                     $(".item-table4 tr:not(:first)").remove(); 
                     var edit = "edit";
                     $.each(result.data.service_ingredients,function(key,value){
-                            $('.item-table4').append('<tr><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItem(this)" data-serviceitemid='+value.service_item_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.item_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.service_item_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
+                            $('.item-table4').append('<tr><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
                     })
                 }else{
                     $(".item-table4 tr:not(:first)").remove(); 

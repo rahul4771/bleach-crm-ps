@@ -1456,32 +1456,31 @@ class InventoryServices(IsInventoryAdmin,View):
             service.save()
             messages.success(request,"ServiceType Area Size updated successfully!")
 
-        if action == 'edit_item':
-            service_item_id = request.POST.get('item_edit_id')
-            item = request.POST.get('item')
+        if action == 'edit_ingredient':
+            service_ingredient_id = request.POST.get('item_edit_id')
+            ingredient = request.POST.get('ingredient')
             item_count = request.POST.get('item_count')
-            unit_price = request.POST.get('unit_price')
+            # unit_price = request.POST.get('unit_price')
             item_status = request.POST.get('item_status')
             recipe_type = request.POST.get('recipe_type')
 
-            inventoryitem = InventoryItem.objects.get(id=int(item))
+            # inventoryitem = InventoryItem.objects.get(id=int(item))
 
-            serviceitem = ServiceRecipeItems.objects.get(id=int(service_item_id))
+            serviceingredient = ServiceRecipeIngredients.objects.get(id=int(service_ingredient_id))
 
-            serviceitem.service_or_person = recipe_type
-            serviceitem.item = inventoryitem
-            serviceitem.item_count = item_count
-            serviceitem.item_price = unit_price
-            serviceitem.status = item_status
-            serviceitem.save()
+            serviceingredient.service_or_person = recipe_type
+            serviceingredient.ingredient = ingredient
+            serviceingredient.quantity = item_count
+            serviceingredient.status = item_status
+            serviceingredient.save()
 
-            messages.success(request,"Item Updated successfully!")
+            messages.success(request,"Ingredient Updated successfully!")
 
-        if action == 'delete_item':
-            item_id = request.POST.get('object_id')
+        if action == 'delete_ingredient':
+            ingredient_id = request.POST.get('object_id')
 
-            ServiceRecipeItems.objects.filter(id=int(item_id)).delete()
-            messages.success(request,"Item Deleted successfully!")
+            ServiceRecipeIngredients.objects.filter(id=int(ingredient_id)).delete()
+            messages.success(request,"Ingredient Deleted successfully!")
 
         return redirect('inventory:inventory-services')
 
