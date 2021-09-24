@@ -44,8 +44,8 @@ urlpatterns = [
     url(r'^customer/',include('customer.urls',namespace='customer')),
     url(r'^order-data/',include('order.urls',namespace='order_data')),
 
-    # url(r'^api/',include('Api.urls',namespace='api')),
+    url(r'^api/',include('Api.urls',namespace='api')),
 
-    # url(r'^inventory/',include('inventory.urls',namespace='inventory')),
+    url(r'^inventory/',include('inventory.urls',namespace='inventory')),
 
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
