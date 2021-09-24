@@ -29,7 +29,7 @@ from django.db.models import Prefetch
 from django.contrib import messages
 
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule
-from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType
+from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,EvaluationSectionAddons,CleaningMethod,CleaningSection,ServiceType,AreaType
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,Reporting,ReportingMedia
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
@@ -1204,12 +1204,6 @@ class CleaningPopupSave(APIView):
 		if action == 'edit_cleaning_withautofix':
 			for cleaning_schedule in cleaning_schedules:
 
-				#delete cleaning team members if exist
-				try:
-					existing_members = CleaningTeamMember.objects.filter(team=cleaning_team).delete()	
-				except:
-					existing_members = None
-
 				cleaning_date1   = schedule_start_at.date()
 				cleaning_date2   = schedule_end_at.date()
 				slote_start_time = schedule_start_at.time()
@@ -1288,12 +1282,15 @@ class CleaningPopupSave(APIView):
 					#update cleaning team or create
 					try:
 						cleaning_team                = CleaningTeam.objects.get(order_scheduler=cleaning_schedule)
-						cleaning_team.team_leader=leaders.first()
-						cleaning_team.save()
+						cleaning_team.team_leader    = leaders.first()
+						cleaning_team.save()	
 					except:
 						cleaning_team                = CleaningTeam.objects.create(order_scheduler=cleaning_schedule,start_at=schedule_start_at,end_at=schedule_end_at,no_of_cleaners=no_of_cleaners,team_leader=leaders.first())
-					
-					#cleaning team members
+
+					#delete cleaning team members if exist
+					CleaningTeamMember.objects.filter(team=cleaning_team).delete()
+
+					#update cleaning team members
 					cleaning_team_member_array = []
 					for i in range(no_of_cleaners-1):
 						cleaning_team_member_array.append(CleaningTeamMember(team=cleaning_team,member=cleaners[i],start_at=schedule_start_at,end_at=schedule_end_at,start_time=schedule_start_at.time(),end_time=schedule_end_at.time()))
@@ -1387,9 +1384,24 @@ class FollowupPopupSave(APIView):
 		return Response(response_dict,HTTP_200_OK)
 
 
+import json
+
 # Create your views here.
 class AgentHome(IsAgent,View):
 	def get(self,request):
+		#update keynotes to Addons
+		# keynotes = EvaluationSectionKeynote.objects.filter(sub_area='kitchen')
+		# for keynote in keynotes:
+		# 	x = '"'+str(keynote.quantity)+'"'
+		# 	y = json.loads(json.loads(x))
+
+		# 	if y != None and type(y) != int:
+		# 		y['is_cabinet'] = False
+		# 		z = json.dumps(y).replace('"','\\"') 			 
+		# 		if y['size']:
+		# 			EvaluationSectionAddons.objects.create(evaluation_section=keynote.evaluation_section,name='kitchen',addon_cost=y['cost'],addon_net_cost=y['cost'],quantity=1,size=y['size'],other_details=z)
+		# 			keynote.delete()
+
 		#for taking today counts
 		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
 		count_today_end   = count_today_start+timedelta(1)
