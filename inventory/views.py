@@ -1083,12 +1083,19 @@ class InventoryInv(IsInventoryAdmin,View):
 class InventoryOrder(IsInventoryAdmin,View):
     def get(self,request):
         search = request.GET.get('search')
-        print(search,"ser")
+        order_date = request.GET.get('order_date')          
+
+        if order_date:
+            order_date = datetime.strptime(order_date,'%d-%m-%Y')
+        else:
+            order_date = date.today()
+
+        print(search,order_date,"ser")
 
         if search:
-            orders = OrderScheduler.objects.filter(Q(order_scheduler_book__service_type__icontains=search)|Q(cleaning_team_order_scheduler__team_leader__name__icontains=search)).filter(Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS')|Q(work_status='CLEANING_FULFILLED')).prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
+            orders = OrderScheduler.objects.filter(start_at__date=order_date).filter(Q(order_scheduler_book__service_type__icontains=search)|Q(cleaning_team_order_scheduler__team_leader__name__icontains=search)).filter(Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS')|Q(work_status='CLEANING_FULFILLED')).prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
         else:
-            orders = OrderScheduler.objects.filter(Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS')|Q(work_status='CLEANING_FULFILLED')).prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
+            orders = OrderScheduler.objects.filter(start_at__date=order_date).filter(Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS')|Q(work_status='CLEANING_FULFILLED')).prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
         
         #PAGINATION ORDERS
         no_of_entries = request.GET.get('no_of_entries')
@@ -1116,7 +1123,7 @@ class InventoryOrder(IsInventoryAdmin,View):
         page_range = list(paginator.page_range)[start_index:end_index]
         entry_per_page=(orders.end_index())-(orders.start_index())+1
 
-        return render(request,'inventory/order.html',{"no_of_entries":no_of_entries,"page_range":page_range,"entry_per_page":entry_per_page,"visits":orders,"search_query":search})
+        return render(request,'inventory/order.html',{"no_of_entries":no_of_entries,"page_range":page_range,"entry_per_page":entry_per_page,"visits":orders,"search_query":search,"order_date":order_date})
 
 class InventoryUsers(IsInventoryAdmin,View):
     def get(self,request):
