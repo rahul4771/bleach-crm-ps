@@ -851,7 +851,7 @@
             <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Item</div>
-                    <input type="text" name="item" id="id_pro_sel" value="" />
+                    <input type="hidden" name="item" id="id_pro_sel" value="" />
                     <div style="position: relative;">
                         <div class="inv-input-container inv-border h-30">
                             <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()">
@@ -911,7 +911,7 @@
             <input type="hidden" name="item_edit_id" id="id_edit_item" />
 
             <input type="text"  class="w-p-100 inv-in" class="id_name_cleaning" id="id_name_cleaning" name="service_type" value="General Cleaning" readonly>
-            <input   class="w-p-100 inv-in" id="id_name_category" value="detailedCleaning">
+            <input type="hidden" class="w-p-100 inv-in" id="id_name_category" value="detailedCleaning">
             {% comment %} <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Item</div>
@@ -1115,10 +1115,10 @@
                
                 <div class="row">
                     <div class="col-md-12 text-center">
-                   
+                    <input type="hidden" id="item_delete_id" />
                         <div class="cancel-model-content">
-                            <button class="sent-button" >Delete</button>
-                            <button data-dismiss="modal" class="view-button">Cancel</button>
+                            <button class="sent-button" type="button" onclick="serviceitemaction('delete_item')" >Delete</button>
+                            <button data-dismiss="modal" class="view-button"  id="id_delete_close">Cancel</button>
                           
                         </div>
                         
@@ -1553,6 +1553,12 @@ function changeSelect(va){
         }
         $('#id_recipe_type1').val(va)
         recipetype($('#id_recipe_type1').val())
+
+        var cleaning = $('.id_name_cleaning').val();
+        var category = $('#id_name_category').val();
+        var service_person = $('#id_recipe_type1').val();
+
+        getingredients(cleaning,category,service_person);
     }
     function changeSelect4(va){
         if(va == 'person'){
@@ -1564,6 +1570,12 @@ function changeSelect(va){
         }
         $('#id_recipe_type2').val(va)
         recipetype($('#id_recipe_type2').val())
+
+        var cleaning = $('.id_name_cleaning').val();
+        var category = $('#id_name_category').val();
+        var service_person = $('#id_recipe_type2').val();
+
+        getingredients(cleaning,category,service_person);
     }
     function changeSelect5(va){
         if(va == 'person'){
@@ -1575,6 +1587,12 @@ function changeSelect(va){
         }
         $('#id_recipe_type3').val(va)
         recipetype($('#id_recipe_type3').val())
+
+        var cleaning = $('.id_name_cleaning').val();
+        var category = $('#id_name_category').val();
+        var service_person = $('#id_recipe_type3').val();
+
+        getingredients(cleaning,category,service_person);
     }
     function changeSelect6(va){
         if(va == 'person'){
@@ -1586,6 +1604,12 @@ function changeSelect(va){
         }
         $('#id_recipe_type4').val(va)
         recipetype($('#id_recipe_type4').val())
+
+        var cleaning = $('.id_name_cleaning').val();
+        var category = $('#id_name_category').val();
+        var service_person = $('#id_recipe_type4').val();
+
+        getingredients(cleaning,category,service_person);
     }
     var searchFlag = false;
 //     $('.inv-sidedrawer').click(function(){
@@ -1616,8 +1640,17 @@ $(document).ready(function(){
     getingredients('General Cleaning','detailedCleaning','service');
     var a = [];
 
+    
+
+
 
 })
+
+    $('.bundle_row').click(function(){
+        console.log('add clas')
+       
+        
+    })
 
 function ProductListShow(){
     searchFlag = true;
@@ -1859,6 +1892,20 @@ function openNavAddStore2(d) {
         console.log("lop")
     }
 
+    function deleteItem(id){
+        console.log(id,"lo")
+        $('#item_delete_id').val(id);
+    }
+
+    function selectedRow(d){
+        console.log(d,'sele')
+        $('.bundle_row').each(function(i, obj) {
+            $(obj).removeClass('inv-selected-row');
+        });
+        $(d).addClass('inv-selected-row');
+    }
+   
+   
     //list items using api
     async function getingredients(service_type,category,recipe_category){
             console.log(category,"cat")
@@ -1886,7 +1933,7 @@ function openNavAddStore2(d) {
                         if (key == 0){
                             getitems(value.ingredient_id);
                         }
-                        $('.item-table1').append('<tr onclick="getitems('+value.ingredient_id+')"><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
+                        $('.item-table1').append('<tr class="bundle_row" onclick="getitems('+value.ingredient_id+');selectedRow(this);"><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
                     })
                 }else{
                     $(".item-table1 tr:not(:first)").remove(); 
@@ -1901,7 +1948,7 @@ function openNavAddStore2(d) {
                         if (key == 0){
                             getitems(value.ingredient_id);
                         }
-                            $('.item-table2').append('<tr onclick="getitems('+value.ingredient_id+')"><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
+                            $('.item-table2').append('<tr class="bundle_row" onclick="getitems('+value.ingredient_id+');selectedRow(this);"><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
                     })
                 }else{
                     $(".item-table2 tr:not(:first)").remove(); 
@@ -1914,7 +1961,7 @@ function openNavAddStore2(d) {
                     $(".item-table3 tr:not(:first)").remove(); 
                     var edit = "edit";
                     $.each(result.data.service_ingredients,function(key,value){
-                            $('.item-table3').append('<tr onclick="getitems('+value.ingredient_id+')"><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
+                            $('.item-table3').append('<tr class="bundle_row" onclick="getitems('+value.ingredient_id+');selectedRow(this);"><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
                     })
                 }else{
                     $(".item-table3 tr:not(:first)").remove(); 
@@ -1927,7 +1974,7 @@ function openNavAddStore2(d) {
                     $(".item-table4 tr:not(:first)").remove(); 
                     var edit = "edit";
                     $.each(result.data.service_ingredients,function(key,value){
-                            $('.item-table4').append('<tr onclick="getitems('+value.ingredient_id+')"><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
+                            $('.item-table4').append('<tr class="bundle_row" onclick="getitems('+value.ingredient_id+');selectedRow(this);"><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
                     })
                 }else{
                     $(".item-table4 tr:not(:first)").remove(); 
@@ -1942,7 +1989,7 @@ function openNavAddStore2(d) {
 
     //list items using api
     async function getitems(ingredient_id){
-            console.log(ingredient_id,"cat")
+            console.log(ingredient_id,"catoo")
         var category = $('#id_name_category').val();
 
          var result = await _get('api/inventory-service-items/?ingredient_id='+ingredient_id);
@@ -1957,7 +2004,7 @@ function openNavAddStore2(d) {
                     var edit = "edit";
                     $.each(result.data.service_items,function(key,value){
                         console.log(value.item_name,"lo")
-                        $('.item-table5').append('<tr><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('+edit+')"><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
+                        $('.item-table5').append('<tr><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('+edit+')"><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn delete_item" data-toggle="modal" onclick="deleteItem('+value.item_id+')" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
                     })
                 }else{
                     $(".item-table5 tr:not(:first)").remove(); 
@@ -1969,7 +2016,7 @@ function openNavAddStore2(d) {
                     var edit = "edit";
                     $.each(result.data.service_items,function(key,value){
                         console.log(value.item_name,"lo")
-                        $('.item-table6').append('<tr><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('+edit+')"><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
+                        $('.item-table6').append('<tr><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('+edit+')"><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn delete_item" data-toggle="modal" onclick="deleteItem('+value.item_id+')" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
                     })
                 }else{
                     $(".item-table6 tr:not(:first)").remove(); 
@@ -1981,7 +2028,7 @@ function openNavAddStore2(d) {
                     var edit = "edit";
                     $.each(result.data.service_items,function(key,value){
                         console.log(value.item_name,"lo")
-                        $('.item-table7').append('<tr><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('+edit+')"><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
+                        $('.item-table7').append('<tr><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('+edit+')"><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn delete_item" data-toggle="modal" onclick="deleteItem('+value.item_id+')" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
                     })
                 }else{
                     $(".item-table7 tr:not(:first)").remove(); 
@@ -1992,12 +2039,14 @@ function openNavAddStore2(d) {
                     var edit = "edit";
                     $.each(result.data.service_items,function(key,value){
                         console.log(value.item_name,"lo")
-                        $('.item-table8').append('<tr><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('+edit+')"><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
+                        $('.item-table8').append('<tr><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('+edit+')"><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn delete_item" data-toggle="modal" onclick="deleteItem('+value.item_id+')" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
                     })
                 }else{
                     $(".item-table8 tr:not(:first)").remove(); 
                 }
             }
+
+
             
 
          }else{
@@ -2009,22 +2058,66 @@ function openNavAddStore2(d) {
     async function serviceitemaction(action){
         var item_id = $('#id_pro_sel').val();
         var ingredient_id = $('#ingredient_id').val();
+        var category = $('#id_name_category').val();
+
         var result = await _get('api/inventory-service-items/?ingredient_id='+ingredient_id+'&item_id='+item_id+'&action='+action);
         if(result.status == 200){
             console.log("yah")
             $('#id_ingredient_name').val(result.data.ingredient);
              $('#ingredient_id').val(ingredient_id);
 
-             showNotification('Item Added !','success')
-
-            if (result.data.service_items.length > 0){
-                $(".item-table5 tr:not(:first)").remove(); 
-                var edit = "edit";
-                $.each(result.data.service_items,function(key,value){
-                    $('.item-table5').append('<tr><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('+edit+')"><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
-                })
+            if (action == 'add_item'){
+                showNotification('Item Added !','success')
+                closeNavAddStore2()
             }else{
-                $(".item-table5 tr:not(:first)").remove(); 
+                $('#id_delete_close').click()
+                showNotification('Item Deleted !','success');
+
+            }
+
+            if (category == 'detailedCleaning'){
+                if (result.data.service_items.length > 0){
+                    $(".item-table5 tr:not(:first)").remove(); 
+                    var edit = "edit";
+                    $.each(result.data.service_items,function(key,value){
+                        $('.item-table5').append('<tr><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('+edit+')"><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
+                    })
+                }else{
+                    $(".item-table5 tr:not(:first)").remove(); 
+                }
+            }else if(category == 'specialCare'){
+                if (result.data.service_items.length > 0){
+                    $(".item-table6 tr:not(:first)").remove(); 
+                    var edit = "edit";
+                    $.each(result.data.service_items,function(key,value){
+                        $('.item-table6').append('<tr><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('+edit+')"><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
+                    })
+                }else{
+                    $(".item-table6 tr:not(:first)").remove(); 
+                }
+
+            }else if(category == 'kitchenCleaning'){
+                if (result.data.service_items.length > 0){
+                    $(".item-table7 tr:not(:first)").remove(); 
+                    var edit = "edit";
+                    $.each(result.data.service_items,function(key,value){
+                        $('.item-table7').append('<tr><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('+edit+')"><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
+                    })
+                }else{
+                    $(".item-table7 tr:not(:first)").remove(); 
+                }
+                
+            }else{
+                if (result.data.service_items.length > 0){
+                    $(".item-table8 tr:not(:first)").remove(); 
+                    var edit = "edit";
+                    $.each(result.data.service_items,function(key,value){
+                        $('.item-table8').append('<tr><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('+edit+')"><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
+                    })
+                }else{
+                    $(".item-table8 tr:not(:first)").remove(); 
+                }
+
             }
         }
     }
