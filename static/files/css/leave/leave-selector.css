@@ -3,7 +3,7 @@
     margin-left: 10px !important;
     padding: 12px;
     cursor: pointer;
-    background-color:#3cbbb1;
+    background-color:#12a72f;
     color: #ffffff;
     border-radius: 20px;
     font-size: 14px;
@@ -11,9 +11,9 @@
     border: none;
 }
 .lv-shift-btn:hover {
-    border:1px solid #3cbbb1;
+    border:1px solid #12a72f;
     background-color:#ffffff;
-    color: #3cbbb1;
+    color: #12a72f;
 
 }
 .mt-10{
@@ -28,7 +28,7 @@
     margin-left: 10px !important;
     padding: 12px;
     cursor: pointer;
-    background-color: #3968c6;
+    background-color: #0e87c5;
     color: #ffffff;
     border-radius: 20px;
     font-size: 14px;
@@ -37,9 +37,9 @@
 }
 .lv-shift2-btn:hover {
 
-    border:1px solid #3968c6;
+    border:1px solid #0e87c5;
     background-color:#ffffff;
-    color: #3968c6;
+    color: #0e87c5;
 
 }
 .lv-shift3-btn{
@@ -52,13 +52,13 @@
     font-size: 14px;
     height: 100%;
     border: none;
-    background-color: #ff8c56;
+    background-color: #db9f3a;
 }
 .lv-shift3-btn:hover {
 
-    border:1px solid #ff8c56;
+    border:1px solid #db9f3a;
     background-color:#ffffff;
-    color: #ff8c56;
+    color: #db9f3a;
 
 }
 /*Styling Selectbox*/
