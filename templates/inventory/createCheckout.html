@@ -96,19 +96,19 @@
                  Section {{forloop.counter}} : {{section.section_name}}
                  
                </div>
-               <div id="id_sec_item_1" style="margin-left: 20px;">
+               <div id="id_sec_item_{{forloop.counter}}" style="margin-left: 20px;">
                <p class="inv-section-in">
                  Size : <span class="red2-text inv-section-in">{{section.size}} </span>
                </p>
                </div>
                <div class="right-pos">
-                 <button class="inv-normal-btn" data-toggle="collapse" data-target="#demo" id="id_section_btn_1" onclick="showOf(1)">
+                 <button class="inv-normal-btn" data-toggle="collapse" data-target="#demo{{forloop.counter}}" id="id_section_btn_{{forloop.counter}}" onclick="showOf({{forloop.counter}})">
                    <i style="color: #000000 !important;" class="fa fa-chevron-right action-icon" aria-hidden="true"></i>
                  </button>
  
                </div>
              </div>
-             <div id="demo" class="row mt-10 collapse ">
+             <div id="demo{{forloop.counter}}" class="row mt-10 collapse ">
                <div class="col-md-6 c-right-border">
                 <div class="order-details-content">
                   <div class="row c-mb-3">

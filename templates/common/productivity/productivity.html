@@ -206,15 +206,15 @@
                                   {% endif %}
 
                                   <div class="productivity-tab">
-                                      <button id="normal_button_id_{{service_type.id}}" class="productivity-tab-item productivity-tab-border"  onclick="viewNormal({{service_type.id}})">{% if service_type.name == 'Upholstery Cleaning' %}Sofa{% elif service_type.name == 'Window Cleaning' %}Old Window{% elif service_type.name == 'Facade Cleaning' %}Old Facade{%elif service_type.name == 'Kitchen Cleaning'%}Old Kitchen(No Cabinet){% else %}Normal{% endif %}</button>
+                                      <button id="normal_button_id_{{service_type.id}}" class="productivity-tab-item productivity-tab-border"  onclick="viewNormal({{service_type.id}})">{% if service_type.name == 'Upholstery Cleaning' %}Sofa{% elif service_type.name == 'Window Cleaning' %}Old Window{% elif service_type.name == 'Facade Cleaning' %}Old Facade{%elif service_type.name == 'Kitchen Cleaning'%}Old Kitchen{% else %}Normal{% endif %}</button>
                                       {% if service_type.name == 'Upholstery Cleaning' or service_type.name == 'Kitchen Cleaning' or service_type.name == 'Facade Cleaning' or service_type.name == 'Window Cleaning' %}
-                                      <button id="special_button_id_{{service_type.id}}" class="productivity-tab-item " onclick="viewSpecial({{service_type.id}})">{% if service_type.name == 'Upholstery Cleaning' %}Chair{% elif service_type.name == 'Window Cleaning' %}New Window{% elif service_type.name == 'Facade Cleaning' %}New Facade{%elif service_type.name == 'Kitchen Cleaning'%}New Kitchen(No Cabinet){% endif %}</button>
+                                      <button id="special_button_id_{{service_type.id}}" class="productivity-tab-item " onclick="viewSpecial({{service_type.id}})">{% if service_type.name == 'Upholstery Cleaning' %}Chair{% elif service_type.name == 'Window Cleaning' %}New Window{% elif service_type.name == 'Facade Cleaning' %}New Facade{%elif service_type.name == 'Kitchen Cleaning'%}New Kitchen{% endif %}</button>
                                       {% endif %}
                                       {% if service_type.name == 'Kitchen Cleaning' %}
-                                      <button id="veryspecial_button_id_{{service_type.id}}" class="productivity-tab-item " onclick="viewVerySpecial({{service_type.id}})">{% if service_type.name == 'Kitchen Cleaning' %}Old Kitchen(Cabinet){% endif %}</button>
+                                      <button id="veryspecial_button_id_{{service_type.id}}" class="productivity-tab-item " onclick="viewVerySpecial({{service_type.id}})">{% if service_type.name == 'Kitchen Cleaning' %}Old Kitchen (with cabinet){% endif %}</button>
                                       {% endif %}
                                       {% if service_type.name == 'Kitchen Cleaning' %}
-                                      <button id="veryveryspecial_button_id_{{service_type.id}}" class="productivity-tab-item " onclick="viewVeryVerySpecial({{service_type.id}})">New Kitchen(Cabinet)</button>
+                                      <button id="veryveryspecial_button_id_{{service_type.id}}" class="productivity-tab-item " onclick="viewVeryVerySpecial({{service_type.id}})">New Kitchen (with Cabinet)</button>
                                       {% endif %}
                                     </div>
     
@@ -403,9 +403,11 @@
                                         {% endifchanged %}
                                         {% endif %}
 
+                                        {% comment %}
                                         <div  class="addNewPrice">
                                             <button  class="border-button" onclick="add_add_on(this);" data-service_type_name="{{service_type.name}}" data-service_type_id="{{service_type.id}}"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add More</button>
                                         </div>
+                                        {% endcomment %}
                                 
                                     </div>
     
