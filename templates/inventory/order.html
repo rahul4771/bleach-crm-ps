@@ -41,6 +41,36 @@
                         <!-- <button class="inv-blue-btn" data-toggle="modal" data-target="#addModel" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Store </button> -->
                     </div> {% endcomment %}
                 </div>
+
+               
+                <div class="row">
+                    <div class="col-md-12 mt-20">
+                    <div class="d-flex">
+                        <div>
+                          
+                        </div>
+                        <div class="right-pos">
+                            <div class="d-flex" style="z-index: 4;">
+                                <div onclick="invPrevDay()" class="inv-day-round text-center pointer">
+                                 <i class="fa fa-angle-left fa-sm" style="margin-top: 5px; color: #707070;" aria-hidden="true"></i>
+                                </div>
+                                <div onclick="viewPicker()" class="av-font inv-date-text text-center pointer" style="margin-left: -10px;">
+                                    <div id="id_day_text" class="av-font" style="margin-top: 2px; font-size: 14px;">
+                                     Today
+                                    </div>
+                                </div>
+                                <div onclick="invNextDay()" class="inv-day-round text-center pointer" style="margin-left: -10px;">
+                                 <i class="fa fa-angle-right fa-sm" style="margin-top: 5px; color: #707070;" aria-hidden="true"></i>
+                                </div>
+                               
+                            </div>
+                            <div style="margin-top: -22px;">
+                                <input style="width: 20px; margin-left: 15px;" type="text" id="id_date_pick"  class=" date-box date_pick "> 
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col-md-12 mt-20">
                     <div class="d-flex">
@@ -58,7 +88,8 @@
                         </div>
                     </div>
                     </div>
-                    </div>
+                </div>
+
                 <div class="mt-20" style="border-top: 1px solid #c4c4c4;">
                     <table class="inv-table footable">
 
@@ -403,6 +434,42 @@
     {% block javascript %}
 
     <script>
+
+    $(document).ready(function(){
+        var $tmpSelectedDay     = new Date();
+        var a = moment($tmpSelectedDay).format('DD-MM-YYYY')
+        $('#id_date_pick').val(a)
+        $('#id_day_text').text(a)
+
+ 	});
+
+        function viewPicker(){
+            $('#id_date_pick').click();
+        }
+
+        function invNextDay(){
+           
+            $selectedDay            = $('#id_date_pick').val()
+            var a =  $selectedDay.split('-')
+            var $tmpSelectedDay     = new Date(a[1]+'/'+ a[0]+'/' +a[2]);
+            $tmpSelectedDay.setDate($tmpSelectedDay.getDate() + 1);
+            var d = moment($tmpSelectedDay).format('DD-MM-YYYY');
+            $('#id_date_pick').val(d)
+            $('#id_day_text').text(d)
+
+        }
+        function invPrevDay(){
+         
+           $selectedDay            = $('#id_date_pick').val()
+           var a =  $selectedDay.split('-')
+           var $tmpSelectedDay     = new Date(a[1]+'/'+ a[0]+'/' +a[2]);
+           $tmpSelectedDay.setDate($tmpSelectedDay.getDate() - 1);
+           var d = moment($tmpSelectedDay).format('DD-MM-YYYY');
+           $('#id_date_pick').val(d)
+           $('#id_day_text').text(d)
+
+
+       }
         function openNav() {
             
             if(screen.width<= 600){

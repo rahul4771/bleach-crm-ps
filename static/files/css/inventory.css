@@ -1256,3 +1256,25 @@ padding: 7px 30px 7px 30px;
   padding: .5rem;
  
 }
+
+.inv-day-round{
+  background: var(--unnamed-color-ffffff) 0% 0% no-repeat padding-box;
+  background: #FFFFFF 0% 0% no-repeat padding-box;
+  border: 1px solid #B8B8B8;
+  opacity: 1;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  z-index: 10;
+ }
+
+.inv-date-text{
+  color: #2C4C82;
+  background: #FFFFFF 0% 0% no-repeat padding-box;
+  border: 1px solid #B8B8B8;
+  height: 24px;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-size: 14px;
+  z-index: 8;
+}
