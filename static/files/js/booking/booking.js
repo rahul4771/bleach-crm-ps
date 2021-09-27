@@ -627,6 +627,7 @@ addons:[]
          }
          if(total_cost)
          {
+          console.log("absolute amount is "+total_cost)
          return total_cost
          }
          else{
@@ -669,6 +670,7 @@ addons:[]
 
           }
           if(totalcost){
+            console.log("added amount is "+totalcost)
             return totalcost
           }
           else{
@@ -677,12 +679,13 @@ addons:[]
         },
         findFullAmount(){
           var fullamount=0
-          var section_cost=0
+         
           for(var i=0;i<this.multiServicesBill.length;i++){
+            var section_cost=0
             for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
               section_cost=section_cost+this.multiServicesBill[i].bill[j].section_cost
             }
-            
+            console.log("section cost"+i+" is "+section_cost)
             
             if(this.multiServicesBill[i].cleaning_policy=='SUBSCRIPTION' && this.multiServicesBill[i].schedule_details){
               if(Object.keys(this.multiServicesBill[i].schedule_details).length>0){
@@ -697,6 +700,7 @@ addons:[]
             }
           
           }
+          console.log("full amount is "+fullamount)
           return fullamount
         },
         resetAllData(){
