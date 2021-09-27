@@ -1118,7 +1118,7 @@
                     <input type="hidden" id="item_delete_id" />
                         <div class="cancel-model-content">
                             <button class="sent-button" type="button" onclick="serviceitemaction('delete_item')" >Delete</button>
-                            <button data-dismiss="modal" class="view-button">Cancel</button>
+                            <button data-dismiss="modal" class="view-button"  id="id_delete_close">Cancel</button>
                           
                         </div>
                         
@@ -1640,8 +1640,17 @@ $(document).ready(function(){
     getingredients('General Cleaning','detailedCleaning','service');
     var a = [];
 
+    
+
+
 
 })
+
+    $('.bundle_row').click(function(){
+        console.log('add clas')
+       
+        
+    })
 
 function ProductListShow(){
     searchFlag = true;
@@ -1888,6 +1897,15 @@ function openNavAddStore2(d) {
         $('#item_delete_id').val(id);
     }
 
+    function selectedRow(d){
+        console.log(d,'sele')
+        $('.bundle_row').each(function(i, obj) {
+            $(obj).removeClass('inv-selected-row');
+        });
+        $(d).addClass('inv-selected-row');
+    }
+   
+   
     //list items using api
     async function getingredients(service_type,category,recipe_category){
             console.log(category,"cat")
@@ -1915,7 +1933,7 @@ function openNavAddStore2(d) {
                         if (key == 0){
                             getitems(value.ingredient_id);
                         }
-                        $('.item-table1').append('<tr onclick="getitems('+value.ingredient_id+')"><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
+                        $('.item-table1').append('<tr class="bundle_row" onclick="getitems('+value.ingredient_id+');selectedRow(this);"><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
                     })
                 }else{
                     $(".item-table1 tr:not(:first)").remove(); 
@@ -1930,7 +1948,7 @@ function openNavAddStore2(d) {
                         if (key == 0){
                             getitems(value.ingredient_id);
                         }
-                            $('.item-table2').append('<tr onclick="getitems('+value.ingredient_id+')"><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
+                            $('.item-table2').append('<tr class="bundle_row" onclick="getitems('+value.ingredient_id+');selectedRow(this);"><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
                     })
                 }else{
                     $(".item-table2 tr:not(:first)").remove(); 
@@ -1943,7 +1961,7 @@ function openNavAddStore2(d) {
                     $(".item-table3 tr:not(:first)").remove(); 
                     var edit = "edit";
                     $.each(result.data.service_ingredients,function(key,value){
-                            $('.item-table3').append('<tr onclick="getitems('+value.ingredient_id+')"><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
+                            $('.item-table3').append('<tr class="bundle_row" onclick="getitems('+value.ingredient_id+');selectedRow(this);"><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
                     })
                 }else{
                     $(".item-table3 tr:not(:first)").remove(); 
@@ -1956,7 +1974,7 @@ function openNavAddStore2(d) {
                     $(".item-table4 tr:not(:first)").remove(); 
                     var edit = "edit";
                     $.each(result.data.service_ingredients,function(key,value){
-                            $('.item-table4').append('<tr onclick="getitems('+value.ingredient_id+')"><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
+                            $('.item-table4').append('<tr class="bundle_row" onclick="getitems('+value.ingredient_id+');selectedRow(this);"><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
                     })
                 }else{
                     $(".item-table4 tr:not(:first)").remove(); 
@@ -2027,6 +2045,8 @@ function openNavAddStore2(d) {
                     $(".item-table8 tr:not(:first)").remove(); 
                 }
             }
+
+
             
 
          }else{
@@ -2048,8 +2068,11 @@ function openNavAddStore2(d) {
 
             if (action == 'add_item'){
                 showNotification('Item Added !','success')
+                closeNavAddStore2()
             }else{
-                showNotification('Item Deleted !','success')
+                $('#id_delete_close').click()
+                showNotification('Item Deleted !','success');
+
             }
 
             if (category == 'detailedCleaning'){
