@@ -232,35 +232,65 @@
     
 }
 .lv-annual{
-    background-color:#3cbbb1;
+    background-color:#10a82f;
+    color:#ffffff;
+    
+}
+.lv-covid{
+    background-color:#AAA8A7;
+    color:#ffffff;
+    
+}
+.lv-covid-text{
+    color:#AAA8A7 !important;
+}
+.lv-absent-text{
+    color:#c91212 !important;
+}
+.lv-absent{
+    background-color:#c91212;
     color:#ffffff;
     
 }
 .lv-annual-text{
-    color:#3cbbb1 !important;
+    color:#10a82f !important;
 }
 .lv-maternity{
-    background-color:#ff8c56;
+    background-color:#dba03a;
     color:#ffffff;
 }
 .lv-maternity-text{
-    color:#ff8c56 !important;
+    color:#db9f3a !important;
   
 }
 .lv-weekly{
-    background-color:#528ce6;
+    background-color:#0D87C5;
     color:#ffffff;
 }
 .lv-weekly-text{
-    color:#528ce6 !important;
+    color:#0D87C5 !important;
     
 }
+.lv-item-label{
+   
+    width:10px;
+    height:10px;
+    border-radius:10px;
+    margin:5px;
+}
+
+.justify-end{
+    justify-content:end;
+}
+.lv-label{
+    font-size: 12px;
+}
 .lv-sick{
-    background-color:#ec6262;
+    background-color:#393983;
     color:#ffffff;
 }
 .lv-sick-text{
-    color:#ec6262 !important;
+    color:#393983 !important;
   
 }
 .lv-holiday{
