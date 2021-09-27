@@ -391,7 +391,7 @@ class LeaveUsersList(APIView):
 		response_dict = {"success":False}
 
 		try:
-			staffs = UserProfile.objects.filter(is_active=True).filter(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))
+			staffs = UserProfile.objects.filter(is_active=True).filter(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER')).order_by('name')
 		except:
 			staffs = None
 		
@@ -412,9 +412,9 @@ class LeaveScheduleAPI(APIView):
 		except:
 			leaveschedules = None
 
-		print(leaveschedules,"lvsched")
 		leaveschedule_serializer = LeaveScheduleSerializer(leaveschedules,many=True).data
 		response_dict["staffs"]=leaveschedule_serializer
+
 		return Response(response_dict,HTTP_200_OK)
 	
 	def post(self,request):
