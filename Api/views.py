@@ -10,7 +10,7 @@ from bleachadmin.models import ServicePriceRange,Settings
 from django.core.mail import send_mail,EmailMultiAlternatives
 from Api.serializers import DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, LeaveUsersSerializer,ShiftScheduleSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
 from agent.views import generate_random_username
-from inventory.models import Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems
+# from inventory.models import Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems
 import re
 import random
 import string
@@ -1820,267 +1820,267 @@ class ResourceSkillsAPI(APIView):
 
 		return Response(data,HTTP_200_OK)
 
-class InventorySegmentsAPI(APIView):
-	permission_classes  	=   (AllowAny,)
-	authentication_classes  = ()
+# class InventorySegmentsAPI(APIView):
+# 	permission_classes  	=   (AllowAny,)
+# 	authentication_classes  = ()
 
-	def get(self,request):
-		response_dict = {}
-		category_id = request.GET.get('category_id')
-		print(category_id,"sed")
-		try:
-			inventory_segments = Segment.objects.filter(category__id=int(category_id))
-		except:
-			inventory_segments = None
+# 	def get(self,request):
+# 		response_dict = {}
+# 		category_id = request.GET.get('category_id')
+# 		print(category_id,"sed")
+# 		try:
+# 			inventory_segments = Segment.objects.filter(category__id=int(category_id))
+# 		except:
+# 			inventory_segments = None
 		
-		segment_serializer = InventorySegmentSerializer(inventory_segments,many=True).data
-		print(segment_serializer,"sed")	
-		response_dict['inventory_segment'] = segment_serializer
-		return Response(response_dict,HTTP_200_OK)
+# 		segment_serializer = InventorySegmentSerializer(inventory_segments,many=True).data
+# 		print(segment_serializer,"sed")	
+# 		response_dict['inventory_segment'] = segment_serializer
+# 		return Response(response_dict,HTTP_200_OK)
 
 
-class InventoryLinesAPI(APIView):
-	permission_classes  	=   (AllowAny,)
-	authentication_classes  = ()
+# class InventoryLinesAPI(APIView):
+# 	permission_classes  	=   (AllowAny,)
+# 	authentication_classes  = ()
 
-	def get(self,request):
-		response_dict = {}
-		segment_id = request.GET.get('segment_id')
-		print(segment_id,"sed")
-		try:
-			inventory_lines = Line.objects.filter(segment__id=int(segment_id))
-		except:
-			inventory_lines = None
+# 	def get(self,request):
+# 		response_dict = {}
+# 		segment_id = request.GET.get('segment_id')
+# 		print(segment_id,"sed")
+# 		try:
+# 			inventory_lines = Line.objects.filter(segment__id=int(segment_id))
+# 		except:
+# 			inventory_lines = None
 		
-		line_serializer = InventoryLineSerializer(inventory_lines,many=True).data
-		print(line_serializer,"sed")	
-		response_dict['inventory_line'] = line_serializer
-		return Response(response_dict,HTTP_200_OK)
+# 		line_serializer = InventoryLineSerializer(inventory_lines,many=True).data
+# 		print(line_serializer,"sed")	
+# 		response_dict['inventory_line'] = line_serializer
+# 		return Response(response_dict,HTTP_200_OK)
 
-class InventoryValuesAPI(APIView):
-	permission_classes  	=   (AllowAny,)
-	authentication_classes  = ()
+# class InventoryValuesAPI(APIView):
+# 	permission_classes  	=   (AllowAny,)
+# 	authentication_classes  = ()
 
-	def get(self,request):
-		response_dict = {}
-		attribute_id = request.GET.get('attribute_id')
-		print(attribute_id,"attrsed")
-		try:
-			inventory_values = AttributeValue.objects.filter(attribute__id=int(attribute_id))
-		except:
-			inventory_values = None
+# 	def get(self,request):
+# 		response_dict = {}
+# 		attribute_id = request.GET.get('attribute_id')
+# 		print(attribute_id,"attrsed")
+# 		try:
+# 			inventory_values = AttributeValue.objects.filter(attribute__id=int(attribute_id))
+# 		except:
+# 			inventory_values = None
 		
-		print(inventory_values,"invo")
-		value_serializer = InventoryValueSerializer(inventory_values,many=True).data
-		print(value_serializer,"sed")	
-		response_dict['inventory_value'] = value_serializer
-		return Response(response_dict,HTTP_200_OK)
+# 		print(inventory_values,"invo")
+# 		value_serializer = InventoryValueSerializer(inventory_values,many=True).data
+# 		print(value_serializer,"sed")	
+# 		response_dict['inventory_value'] = value_serializer
+# 		return Response(response_dict,HTTP_200_OK)
 
-class InventoryItemsAPI(APIView):
-	permission_classes  	=   (AllowAny,)
-	authentication_classes  = ()
+# class InventoryItemsAPI(APIView):
+# 	permission_classes  	=   (AllowAny,)
+# 	authentication_classes  = ()
 
-	def get(self,request):
-		response_dict = {}
-		item_id = request.GET.get('item_id')
-		print(item_id,"attrsed")
-		try:
-			item_units = ItemUnit.objects.filter(item__id=int(item_id),status='active')
-			unit_count = item_units.count()
-		except:
-			item_units = None
-			unit_count = 0
+# 	def get(self,request):
+# 		response_dict = {}
+# 		item_id = request.GET.get('item_id')
+# 		print(item_id,"attrsed")
+# 		try:
+# 			item_units = ItemUnit.objects.filter(item__id=int(item_id),status='active')
+# 			unit_count = item_units.count()
+# 		except:
+# 			item_units = None
+# 			unit_count = 0
 		
-		print(unit_count,"invo")
+# 		print(unit_count,"invo")
 		
-		response_dict['inventory_item_unit_count'] = unit_count
-		return Response(response_dict,HTTP_200_OK)
+# 		response_dict['inventory_item_unit_count'] = unit_count
+# 		return Response(response_dict,HTTP_200_OK)
 
-class InventoryBundleItemsAPI(APIView):
-	permission_classes  	=   (AllowAny,)
-	authentication_classes  = ()
+# class InventoryBundleItemsAPI(APIView):
+# 	permission_classes  	=   (AllowAny,)
+# 	authentication_classes  = ()
 
-	def get(self,request):
-		response_dict = {}
-		bundle_id = request.GET.get('bundle_id')
-		print(bundle_id,"attrsed")
-		try:
-			inventory_items = BundleItems.objects.filter(bundle__id=int(bundle_id))
-		except:
-			inventory_items = None
+# 	def get(self,request):
+# 		response_dict = {}
+# 		bundle_id = request.GET.get('bundle_id')
+# 		print(bundle_id,"attrsed")
+# 		try:
+# 			inventory_items = BundleItems.objects.filter(bundle__id=int(bundle_id))
+# 		except:
+# 			inventory_items = None
 		
-		print(inventory_items,"invo")
-		items_list = []
-		for item in inventory_items:
-			list_item = {
-				'unit_id' : item.id,
-				'item_id' : item.item.id,
-				'item_name' : item.item.name,
-				'item_price' :item.item_price,
-				'item_count' : item.item_count,
-			}
-			items_list.append(list_item)
-		# item_serializer = InventoryBundleItemSerializer(inventory_items,many=True).data
-		# print(item_serializer,"sed")	
-		response_dict['inventory_item'] = items_list
-		return Response(response_dict,HTTP_200_OK)
+# 		print(inventory_items,"invo")
+# 		items_list = []
+# 		for item in inventory_items:
+# 			list_item = {
+# 				'unit_id' : item.id,
+# 				'item_id' : item.item.id,
+# 				'item_name' : item.item.name,
+# 				'item_price' :item.item_price,
+# 				'item_count' : item.item_count,
+# 			}
+# 			items_list.append(list_item)
+# 		# item_serializer = InventoryBundleItemSerializer(inventory_items,many=True).data
+# 		# print(item_serializer,"sed")	
+# 		response_dict['inventory_item'] = items_list
+# 		return Response(response_dict,HTTP_200_OK)
 
-class InventorySupplierItemsAPI(APIView):
-	permission_classes  	=   (AllowAny,)
-	authentication_classes  = ()
+# class InventorySupplierItemsAPI(APIView):
+# 	permission_classes  	=   (AllowAny,)
+# 	authentication_classes  = ()
 
-	def get(self,request):
-		response_dict = {}
-		supplier_id = request.GET.get('supplier_id')
-		print(supplier_id,"attrsed2")
-		try:
-			supplier_items = SupplierItems.objects.filter(supplier__id=int(supplier_id))
-		except:
-			supplier_items = None
+# 	def get(self,request):
+# 		response_dict = {}
+# 		supplier_id = request.GET.get('supplier_id')
+# 		print(supplier_id,"attrsed2")
+# 		try:
+# 			supplier_items = SupplierItems.objects.filter(supplier__id=int(supplier_id))
+# 		except:
+# 			supplier_items = None
 		
 		
-		items = []
-		for item in supplier_items:
-			item_dict = {}
-			item_dict['item_id'] = item.id
-			item_dict['product_id'] = item.item.id
-			item_dict['product_name'] = item.item.name
-			item_dict['item_price'] = item.item_price
-			items.append(item_dict)
-		response_dict['items']=items
-		return Response(response_dict,HTTP_200_OK)
+# 		items = []
+# 		for item in supplier_items:
+# 			item_dict = {}
+# 			item_dict['item_id'] = item.id
+# 			item_dict['product_id'] = item.item.id
+# 			item_dict['product_name'] = item.item.name
+# 			item_dict['item_price'] = item.item_price
+# 			items.append(item_dict)
+# 		response_dict['items']=items
+# 		return Response(response_dict,HTTP_200_OK)
 
 
-class InventoryServiceRecipeAPI(APIView):
-	permission_classes  	=   (AllowAny,)
-	authentication_classes  = ()
+# class InventoryServiceRecipeAPI(APIView):
+# 	permission_classes  	=   (AllowAny,)
+# 	authentication_classes  = ()
 
-	def get(self,request):
-		response_dict = {}
-		service_type = request.GET.get('service_type')
-		recipe_category = request.GET.get('recipe_category')
-		print(service_type,recipe_category,"attrsed2")
-		# try:
-		# 	service_items = ServiceRecipeItems.objects.filter(service_type__service=service_type,service_or_person=recipe_category)
-		# 	service = ServiceRecipe.objects.get(service=service_type)
-		# except:
-		# 	service_items = None
-		# 	service = None
+# 	def get(self,request):
+# 		response_dict = {}
+# 		service_type = request.GET.get('service_type')
+# 		recipe_category = request.GET.get('recipe_category')
+# 		print(service_type,recipe_category,"attrsed2")
+# 		# try:
+# 		# 	service_items = ServiceRecipeItems.objects.filter(service_type__service=service_type,service_or_person=recipe_category)
+# 		# 	service = ServiceRecipe.objects.get(service=service_type)
+# 		# except:
+# 		# 	service_items = None
+# 		# 	service = None
 
-		try:
-			service_ingredients = ServiceRecipeIngredients.objects.filter(service_type__service=service_type,service_or_person=recipe_category)
-			service = ServiceRecipe.objects.get(service=service_type)
-		except:
-			service_ingredients = None
-			service = None
+# 		try:
+# 			service_ingredients = ServiceRecipeIngredients.objects.filter(service_type__service=service_type,service_or_person=recipe_category)
+# 			service = ServiceRecipe.objects.get(service=service_type)
+# 		except:
+# 			service_ingredients = None
+# 			service = None
 		
-		print(service_ingredients,"invo")
+# 		print(service_ingredients,"invo")
 
-		items_list = []
+# 		items_list = []
 
-		if service_ingredients:
-			for item in service_ingredients:
-				list_item = {
-					'ingredient_id' : item.id,
-					'recipe_type' : item.service_or_person,
-					'item_name' : item.ingredient,
-					'item_count' : item.quantity,
-					'status' : item.status
-				}
+# 		if service_ingredients:
+# 			for item in service_ingredients:
+# 				list_item = {
+# 					'ingredient_id' : item.id,
+# 					'recipe_type' : item.service_or_person,
+# 					'item_name' : item.ingredient,
+# 					'item_count' : item.quantity,
+# 					'status' : item.status
+# 				}
 
-				items_list.append(list_item)
+# 				items_list.append(list_item)
 	
-		response_dict['service_ingredients'] = items_list
+# 		response_dict['service_ingredients'] = items_list
 
-		if service:
-			response_dict['area_size'] = service.area_size
-			response_dict['area_size'] = service.staff_count
-		else:
-			response_dict['area_size'] = 0
-			response_dict['area_size'] = 0
-		return Response(response_dict,HTTP_200_OK)
+# 		if service:
+# 			response_dict['area_size'] = service.area_size
+# 			response_dict['area_size'] = service.staff_count
+# 		else:
+# 			response_dict['area_size'] = 0
+# 			response_dict['area_size'] = 0
+# 		return Response(response_dict,HTTP_200_OK)
 
-class InventoryServiceAreaAPI(APIView):
-	permission_classes  	=   (AllowAny,)
-	authentication_classes  = ()
+# class InventoryServiceAreaAPI(APIView):
+# 	permission_classes  	=   (AllowAny,)
+# 	authentication_classes  = ()
 
-	def get(self,request):
-		response_dict = {}
-		service_type = request.GET.get('service_type')
-		area = request.GET.get('area')
-		staffcount = request.GET.get('staffcount')
+# 	def get(self,request):
+# 		response_dict = {}
+# 		service_type = request.GET.get('service_type')
+# 		area = request.GET.get('area')
+# 		staffcount = request.GET.get('staffcount')
 		
-		print(service_type,area,"attrsed3")
-		try:
-			service = ServiceRecipe.objects.get(service=service_type)
-			service.area_size = area
-			service.staff_count = staffcount
-			service.save()
-		except:
-			service = ServiceRecipe.objects.create(service=service_type)
-			service.area_size = area
-			service.staff_count = staffcount
-			service.save()
+# 		print(service_type,area,"attrsed3")
+# 		try:
+# 			service = ServiceRecipe.objects.get(service=service_type)
+# 			service.area_size = area
+# 			service.staff_count = staffcount
+# 			service.save()
+# 		except:
+# 			service = ServiceRecipe.objects.create(service=service_type)
+# 			service.area_size = area
+# 			service.staff_count = staffcount
+# 			service.save()
 		
-		print(service,"invo")
+# 		print(service,"invo")
 
-		if service:
-			response_dict['area_size'] = service.area_size
-			response_dict['staff_count'] = service.staff_count
-		else:
-			response_dict['area_size'] = 0
-			response_dict['staff_count'] = 0
-		return Response(response_dict,HTTP_200_OK)
+# 		if service:
+# 			response_dict['area_size'] = service.area_size
+# 			response_dict['staff_count'] = service.staff_count
+# 		else:
+# 			response_dict['area_size'] = 0
+# 			response_dict['staff_count'] = 0
+# 		return Response(response_dict,HTTP_200_OK)
 
-class InventoryServiceItemsAPI(APIView):
-	permission_classes  	=   (AllowAny,)
-	authentication_classes  = ()
+# class InventoryServiceItemsAPI(APIView):
+# 	permission_classes  	=   (AllowAny,)
+# 	authentication_classes  = ()
 
-	def get(self,request):
-		response_dict = {}
-		ingredient_id = request.GET.get('ingredient_id')
-		item_id = request.GET.get('item_id')
-		ingredient_item_id = request.GET.get('ingredient_item_id')
-		action = request.GET.get('action')
+# 	def get(self,request):
+# 		response_dict = {}
+# 		ingredient_id = request.GET.get('ingredient_id')
+# 		item_id = request.GET.get('item_id')
+# 		ingredient_item_id = request.GET.get('ingredient_item_id')
+# 		action = request.GET.get('action')
 		
-		print(ingredient_id,"attrsed3")
-		try:
-			ingredient = ServiceRecipeIngredients.objects.get(id=int(ingredient_id))
+# 		print(ingredient_id,"attrsed3")
+# 		try:
+# 			ingredient = ServiceRecipeIngredients.objects.get(id=int(ingredient_id))
 
-			if action == 'add_item':
-				print("add")
-				item = InventoryItem.objects.get(id=int(item_id))
-				ServiceRecipeItems.objects.create(ingredient=ingredient,item=item)
+# 			if action == 'add_item':
+# 				print("add")
+# 				item = InventoryItem.objects.get(id=int(item_id))
+# 				ServiceRecipeItems.objects.create(ingredient=ingredient,item=item)
 
 
-			if action == 'edit_item':
-				ingredient_item = ServiceRecipeItems.objects.get(id=int(ingredient_item_id))
-				item = InventoryItem.objects.get(id=int(item_id))
-				ingredient_item.item = item
-				ingredient_item.save()
+# 			if action == 'edit_item':
+# 				ingredient_item = ServiceRecipeItems.objects.get(id=int(ingredient_item_id))
+# 				item = InventoryItem.objects.get(id=int(item_id))
+# 				ingredient_item.item = item
+# 				ingredient_item.save()
 
-			if action == 'delete_item':
-				ServiceRecipeItems.objects.get(id=int(ingredient_item_id)).delete()
+# 			if action == 'delete_item':
+# 				ServiceRecipeItems.objects.get(id=int(ingredient_item_id)).delete()
 
-			response_dict['ingredient'] = ingredient.ingredient
-			items = ServiceRecipeItems.objects.filter(ingredient=ingredient)
-		except:
-			ingredient = None
-			items = None
+# 			response_dict['ingredient'] = ingredient.ingredient
+# 			items = ServiceRecipeItems.objects.filter(ingredient=ingredient)
+# 		except:
+# 			ingredient = None
+# 			items = None
 
-		items_list = []
-		if items:
-			for item in items:
-				list_item = {
-					'item_id' : item.id,
-					'item_name' : item.item.name,
-				}
+# 		items_list = []
+# 		if items:
+# 			for item in items:
+# 				list_item = {
+# 					'item_id' : item.id,
+# 					'item_name' : item.item.name,
+# 				}
 
-				items_list.append(list_item)
+# 				items_list.append(list_item)
 	
-		response_dict['service_items'] = items_list
+# 		response_dict['service_items'] = items_list
 		
-		return Response(response_dict,HTTP_200_OK)
+# 		return Response(response_dict,HTTP_200_OK)
 
 
 class DiscountSettingsAPI(APIView):
