@@ -5,6 +5,7 @@ from evaluator.models import Evaluation,EvaluationDetails
 from order.models import Promocode
 from inventory.models import Line,Segment,Category,Attribute,AttributeValue,BundleItems,InventoryItem,ItemUnit,SupplierItems
 from bleachadmin.models import Settings
+from senior_team_leader.models import CleaningTeamMember
 
 class DiscountSettingSerializer(serializers.ModelSerializer):
     class Meta:
@@ -26,7 +27,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         self.fields['mobile_number'].required = True
         self.fields['nationality'].required   = True  
 
-class LeaveUsersSerializer(serializers.ModelSerializer):
+class UsersListSerializer(serializers.ModelSerializer):
     photo_url = serializers.SerializerMethodField()
 
     class Meta:
@@ -45,6 +46,18 @@ class LeaveScheduleSerializer(serializers.ModelSerializer):
     class Meta:
         model = LeaveSchedule
         fields = ('id','staff','leave_date','leave_type')
+
+class OccupiedMembersSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CleaningTeamMember
+        fields = ('member','start_at','end_at')
+    
+    def to_representation(self,obj):
+        td = super(OccupiedMembersSerializer,self).to_representation(obj)
+        if obj.start_at and obj.end_at:
+            td['start_at']  = ((obj.start_at)+timedelta(hours=3)).strftime("%Y-%m-%d")
+            td['end_at']    = ((obj.end_at)+timedelta(hours=3)).strftime("%Y-%m-%d")
+        return(td)
 
 class ShiftScheduleSerializer(serializers.ModelSerializer):
     shift3_start_at = serializers.DateTimeField(required=False,input_formats=["%d-%m-%Y %I:%M %p"])
