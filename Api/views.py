@@ -8,7 +8,7 @@ from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
 from bleachadmin.models import ServicePriceRange,Settings
 from django.core.mail import send_mail,EmailMultiAlternatives
-from Api.serializers import DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, LeaveUsersSerializer,ShiftScheduleSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
+from Api.serializers import DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer,OccupiedMembersSerializer, UsersListSerializer,ShiftScheduleSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
 from agent.views import generate_random_username
 # from inventory.models import Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems
 import re
@@ -383,7 +383,7 @@ class PaymentResponseCredit(APIView):
 		return Response(HTTP_200_OK)	
 
 #get list of staff for leave scheduler
-class LeaveUsersList(APIView):
+class UsersList(APIView):
 	permission_classes  	=   (AllowAny,)
 	authentication_classes  = ()
 
@@ -395,8 +395,11 @@ class LeaveUsersList(APIView):
 		except:
 			staffs = None
 		
-		staff_serializer = LeaveUsersSerializer(staffs,many=True).data
+		staff_serializer       = UsersListSerializer(staffs,many=True).data
 		response_dict["staffs"]=staff_serializer
+
+		response_dict['success'] = True
+
 		return Response(response_dict,HTTP_200_OK)
 
 #get existing leave schedules and add new leaveschedules
@@ -411,9 +414,15 @@ class LeaveScheduleAPI(APIView):
 			leaveschedules = LeaveSchedule.objects.filter(is_active=True)
 		except:
 			leaveschedules = None
+		leaveschedule_serializer   = LeaveScheduleSerializer(leaveschedules,many=True).data
 
-		leaveschedule_serializer = LeaveScheduleSerializer(leaveschedules,many=True).data
-		response_dict["staffs"]=leaveschedule_serializer
+		occupied_members   = CleaningTeamMember.objects.select_related('team__order_scheduler').filter(is_active=True)
+		occupied_member_serializer = OccupiedMembersSerializer(occupied_members,many=True).data
+
+		response_dict["staffs"]    = leaveschedule_serializer
+		response_dict["occupied"]  = occupied_member_serializer
+
+		response_dict['success'] = True
 
 		return Response(response_dict,HTTP_200_OK)
 	
@@ -437,7 +446,40 @@ class LeaveScheduleAPI(APIView):
 
 		return Response(response_dict,HTTP_200_OK)
 
-#Get Existing Shift
+class LeaveSchedulePopupAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+		response_dict = {}
+		
+		staff_id  	    = request.GET.get('staff_id')
+		try:
+			occupied_date   = datetime.strptime(request.GET.get('occupied_date'),'%Y-%m-%d')
+		except:
+			occupied_date   = None
+
+		try:
+			cleaning_members = CleaningTeamMember.objects.select_related('team__order_scheduler__order').filter(Q(Q(start_at__date=occupied_date)|Q(end_at__date=occupied_date))&Q(member__id=staff_id))
+		except:
+			cleaning_members = None
+
+		if cleaning_members:
+			response_dict['detials']      = []
+			for cleaning_member in cleaning_members:
+				details                   = {}
+				details['id']             = cleaning_member.team.order_scheduler.id
+				details['blc']            = cleaning_member.team.order_scheduler.order.order_no
+				details['start_at']       = datetime.strftime(cleaning_member.team.order_scheduler.start_at,'%d-%m-%Y %H:%M %p')
+				details['cleaning_hours'] = cleaning_member.team.order_scheduler.cleaning_hours
+
+				response_dict['detials'].append(details)
+
+		response_dict['success'] = True
+
+		return Response(response_dict,HTTP_200_OK)
+
+#Get Existing Shift and add new shift
 class ShiftScheduleAPI(APIView):
 	permission_classes  	=   (AllowAny,)
 	authentication_classes  = ()
