@@ -425,11 +425,11 @@ class ItemUnit(models.Model):
     item            =   models.ForeignKey(InventoryItem,blank=False,null=False,related_name='unit_item')
     name            =   models.CharField(max_length=100,blank=False,null=False)
     unit_code       =   models.CharField(max_length=50,blank=False,null=False)
-    unit_serial_number =   models.CharField(max_length=50,blank=False,null=False)
+    # unit_serial_number =   models.CharField(max_length=50,blank=False,null=False)
     store           =   models.ForeignKey(Store,blank=True,null=True,related_name='unit_store')
     purchase_date   =   models.DateField(blank=True,null=True)
     expiry_date     =   models.DateField(blank=True,null=True)
-    no_expiry       =   models.BooleanField(default=False,blank=False,null=False)
+    # no_expiry       =   models.BooleanField(default=False,blank=False,null=False)
     unit_price      =   models.CharField(max_length=10,blank=False,null=False)
     status          =   models.CharField(max_length=50,default='active',blank=False,null=False,choices=UNIT_STATUS_CHOICES)
     created         =   models.DateTimeField(auto_now_add=True)
@@ -561,7 +561,7 @@ class SupplierItems(models.Model):
 class ServiceRecipe(models.Model):
     service             = models.CharField(max_length=100,blank=True,null=True)
     area_size           = models.CharField(default=0,max_length=50,blank=True,null=True)
-    staff_count         = models.CharField(default=0,max_length=50,blank=True,null=True)
+    # staff_count         = models.CharField(default=0,max_length=50,blank=True,null=True)
 
     def __unicode__(self):
         return str(self.service)
