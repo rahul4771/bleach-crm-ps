@@ -67,11 +67,13 @@ for (var j=0;j<resourceList.length;j++){
     for(var i=1;i<=noOfDays;i++){
         found=false;
         var today = i.toString()+'-'+currentMonth.toString()+'-'+currentYear.toString();
+
+        
         if(resourceList[j].leave.length>0)
         {
             for(var rs=0;rs<resourceList[j].leave.length;rs++){
                
-                if(resourceList[j].leave[rs].date==today){
+               
                     if(resourceList[j].leave[rs].date==today){
                        
                         if(resourceList[j].leave[rs].type=='ANNUAL LEAVE'){
@@ -108,7 +110,7 @@ for (var j=0;j<resourceList.length;j++){
                         found=true;
                         noOfLeave=noOfLeave+1;
                      }
-                }
+                
               
                 
             }
@@ -116,8 +118,33 @@ for (var j=0;j<resourceList.length;j++){
            
 
         }
+        /* To set occupied dates*/
+        if(resourceList[j].occupied.length>0)
+        {
+            for(var rs=0;rs<resourceList[j].occupied.length;rs++){
+               
+                if(resourceList[j].occupied[rs].start_at==today || resourceList[j].occupied[rs].end_at==today){
+                   
+                        console.log('yes i m in that day & id is #lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear )
+                        if ($('#lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear)[0]){
+                           console.log("id exists")
+                        } else {
+                            $('#row-'+rsid).append('<td class="noBorder text-center lv-date"  id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date lv-occupied" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');    
+                        }
+                        
+                                 
+                     
+                     found=true;  
+                     
+                }
+              
+                
+            }
+    
+        } 
         if(found==false)
         {
+           
             $('#row-'+rsid).append('<td class="noBorder text-center lv-date" onclick="selectDay(this)" id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
             
         }
@@ -133,6 +160,7 @@ for (var j=0;j<resourceList.length;j++){
 
 }
 }
+
 function nextMonth(){
     currentMonth=currentMonth+1;
     if(currentMonth>12){
@@ -228,6 +256,30 @@ for (var j=0;j<resourceList.length;j++){
            
 
         }
+         /* To set occupied dates*/
+         if(resourceList[j].occupied.length>0)
+         {
+             for(var rs=0;rs<resourceList[j].occupied.length;rs++){
+                
+                 if(resourceList[j].occupied[rs].start_at==today || resourceList[j].occupied[rs].end_at==today){
+                    
+                         console.log('yes i m in that day & id is #lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear )
+                         if ($('#lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear)[0]){
+                            console.log("id exists")
+                         } else {
+                             $('#row-'+rsid).append('<td class="noBorder text-center lv-date"   id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date lv-occupied" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');    
+                         }
+                         
+                                  
+                      
+                      found=true;  
+                      
+                 }
+               
+                 
+             }
+     
+         } 
         if(found==false)
         {
             $('#row-'+rsid).append('<td class="noBorder text-center lv-date" onclick="selectDay(this)" id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
@@ -492,6 +544,7 @@ function getUsers(){
     staffData['user_type']=response.data.staffs[i].user_type;
     staffData['photo_url']=response.data.staffs[i].photo_url;
     staffData['leave']=[];
+    staffData['occupied']=[]
   
     
      
@@ -583,6 +636,44 @@ function getLeave(){
    
     
     }
+    for(var i=0;i<response.data.occupied.length;i++){
+       
+        var userIndex=userSearch(response.data.occupied[i].member)
+      
+        // resourceList[userIndex].leave.push({date:'2-2-2021',type:'Annual Leave'});
+      
+        var gt_start_year=response.data.occupied[i].start_at.split('-')[0];
+        var gt_start_month=response.data.occupied[i].start_at.split('-')[1];
+        var gt_start_day=response.data.occupied[i].start_at.split('-')[2];
+        var gt_end_year=response.data.occupied[i].end_at.split('-')[0];
+        var gt_end_month=response.data.occupied[i].end_at.split('-')[1];
+        var gt_end_day=response.data.occupied[i].end_at.split('-')[2];
+        if(gt_start_day[0]=='0'){
+            gt_start_day=gt_start_day.substring(1);
+        }
+        if(gt_start_month[0]=='0'){
+         gt_start_month=gt_start_month.substring(1);
+     }
+     if(gt_end_day[0]=='0'){
+        gt_end_day=gt_end_day.substring(1);
+    }
+    if(gt_end_month[0]=='0'){
+     gt_end_month=gt_end_month.substring(1);
+ }
+     /*if(!userIndex){
+         var day=gt_year+'-'+gt_month+'-'+gt_day
+         console.log("error leave is "+day +"id is"+response.data.staffs[i].id)
+     }*/
+     console.log("user index is"+userIndex +"staff is "+response.data.occupied[i].member+"date is"+gt_day+'-'+gt_month+'-'+gt_year)
+     
+     
+    if(userIndex != undefined ){
+     resourceList[userIndex].occupied.push({date:gt_start_day+'-'+gt_start_month+'-'+gt_start_year,start_at:gt_start_day+'-'+gt_start_month+'-'+gt_start_year,end_at:gt_end_day+'-'+gt_end_month+'-'+gt_end_year,member:response.data.occupied[i].member});
+    }
+    
+     
+     }
+     console.log("occupied data is"+JSON.stringify(resourceList))
     getInitDatas();
    
     $('.lv-loader').hide()

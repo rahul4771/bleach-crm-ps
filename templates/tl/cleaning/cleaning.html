@@ -38,21 +38,22 @@
         <div class="email"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{cleaning_team_detail.order_scheduler.order_scheduler_book.location_type}}</div>
   	</div><!--ticket-form-left-->
 	<div class="ticket-form-right"><!--ticket-form-right-->
-        <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> {{cleaning_team_detail.order_scheduler.start_at|date:'d-m-Y'}}</div>
+        <div class="common-gray-text align-left"><i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i> <span class="ml-10">{{cleaning_team_detail.order_scheduler.start_at|date:'d-m-Y'}}</span></div>
         <br>
-        <div class="common-gray-text align-left"><i class="fa fa-lg fa-clock-o orange-text" aria-hidden="true"></i> {{cleaning_team_detail.order_scheduler.start_at|date:'h:i A'}}</div>
+        <div class="common-gray-text align-left"><i class="fa fa-lg fa-clock-o orange-text" aria-hidden="true"></i> <span class="ml-10">{{cleaning_team_detail.order_scheduler.start_at|date:'h:i A'}}</span></div>
         <br>
-        <div class="common-gray-text align-left"><i class="fa fa-lg fa-hourglass yellow-text" aria-hidden="true"></i> {% if cleaning_team_detail.order_scheduler.cleaning_hours %}{{cleaning_team_detail.order_scheduler.cleaning_hours}}{% else %}{{cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_hours}}{% endif %} Hours</div>
-	      <br> 
-         <div class="common-gray-text align-left"><i class="fa fa-lg fa-building green-text" aria-hidden="true"></i> <b>{{cleaning_team_detail.order_scheduler.customer_address.apartment}}</b>: {% if cleaning_team_detail.order_scheduler.customer_address.floor %}{{cleaning_team_detail.order_scheduler.customer_address.floor}}, {% else %}{% endif %} {{cleaning_team_detail.order_scheduler.customer_address.building}}, {{cleaning_team_detail.order_scheduler.customer_address.block}}, {{cleaning_team_detail.order_scheduler.customer_address.street}}, {% if cleaning_team_detail.order_scheduler.customer_address.avenue %}{{cleaning_team_detail.order_scheduler.customer_address.avenue}}, {% else %}{% endif %} {{cleaning_team_detail.order_scheduler.customer_address.area.name}}, {{cleaning_team_detail.order_scheduler.customer_address.governorate.name}}</div>
+        <div class="common-gray-text align-left"><i class="fa fa-lg fa-hourglass yellow-text" aria-hidden="true"></i> <span class="ml-10">{% if cleaning_team_detail.order_scheduler.cleaning_hours %}{{cleaning_team_detail.order_scheduler.cleaning_hours}}{% else %}{{cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_hours}}{% endif %} Hours</span></div>
+	      <br>
+        <div class="common-gray-text align-left"><i class="fa fa-lg fa-mobile blue-text" aria-hidden="true"></i><span class="ml-10">{{cleaning_team_detail.order_scheduler.customer_address.customer.mobile_number|default_if_none:''}}</span></div>
+        <br> 
+         <div class="common-gray-text align-left"><i class="fa fa-lg fa-building green-text" aria-hidden="true"></i> <span class="ml-10"><b>{{cleaning_team_detail.order_scheduler.customer_address.apartment}}</b>: {% if cleaning_team_detail.order_scheduler.customer_address.floor %}{{cleaning_team_detail.order_scheduler.customer_address.floor}}, {% else %}{% endif %} {{cleaning_team_detail.order_scheduler.customer_address.building}}, {{cleaning_team_detail.order_scheduler.customer_address.block}}, {{cleaning_team_detail.order_scheduler.customer_address.street}}, {% if cleaning_team_detail.order_scheduler.customer_address.avenue %}{{cleaning_team_detail.order_scheduler.customer_address.avenue}}, {% else %}{% endif %} {{cleaning_team_detail.order_scheduler.customer_address.area.name}}, {{cleaning_team_detail.order_scheduler.customer_address.governorate.name}}</span></div>
         <br>
-
         {% if cleaning_team_detail.order_scheduler.customer_address.gps_location %}
-        <div class="common-gray-text align-left"><i class="fa fa-globe fa-lg" aria-hidden="true" style="color:blue;"></i> <a href="{{cleaning_team_detail.order_scheduler.customer_address.gps_location}}">GPS Location</a></div>
+        <div class="common-gray-text align-left"><i class="fa fa-globe fa-lg" aria-hidden="true" style="color:blue;"></i> <span class="ml-10"><a href="{{cleaning_team_detail.order_scheduler.customer_address.gps_location}}">GPS Location</a></span></div>
         <br>
         {% endif %}
 
-        <div class="common-gray-text align-left"><i class="fa fa-lg fa-users blue-text" aria-hidden="true"></i> {% if cleaning_team_detail.order_scheduler.no_of_cleaners %}{{cleaning_team_detail.order_scheduler.no_of_cleaners}}{% else %}{{cleaning_team_detail.order_scheduler.order_scheduler_book.number_of_cleaners}}{% endif %} Cleaners</div>
+        <div class="common-gray-text align-left"><i class="fa fa-lg fa-users blue-text" aria-hidden="true"></i> <span class="ml-10">{% if cleaning_team_detail.order_scheduler.no_of_cleaners %}{{cleaning_team_detail.order_scheduler.no_of_cleaners}}{% else %}{{cleaning_team_detail.order_scheduler.order_scheduler_book.number_of_cleaners}}{% endif %} Cleaners<span class="ml-10"></span></div>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
@@ -292,6 +293,7 @@
             <p>{{cleaning_team_detail.order_scheduler.order_scheduler_book.evaluator_note|default_if_none:''}}</p>
         </div><!--eval-note-columns-middle-->
 </div><!--eval-note-columns-->
+
 
 {% if cleaning_team_detail.order_scheduler.order_scheduler_book.evaluationmedias %}
 <div class="details-sub-head align-left">Media</div>
@@ -615,6 +617,7 @@ $(".imgAdd").click(function () {
   console.log(name)
   $(this).closest(".row").find('.imgAdd').before('<div class="col-sm-2 imgUp"><div class="imagePreview"></div><label class="btn btn-primary">Upload<input type="file" name="'+name+'" class="uploadFile img" value="Upload Photo" style="width:0px;height:0px;overflow:hidden;"></label><i class="fa fa-times del"></i></div>');
 });
+
 $(document).on("click", "i.del", function () {
   $(this).parent().remove();
 });
