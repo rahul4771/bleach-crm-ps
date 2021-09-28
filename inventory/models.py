@@ -398,8 +398,8 @@ class InventoryItem(models.Model):
     reserve_count   =   models.CharField(max_length=10,blank=True,null=True)
     is_reusable     =   models.BooleanField(blank=False,null=False)
     item_status     =   models.CharField(max_length=50,blank=True,null=True,choices=ITEM_STATUS_CHOICES)
-    item_add_type   =   models.CharField(max_length=50,blank=True,null=True,choices=ITEM_ADD_TYPE_CHOICES)
-    measuring_unit  =   models.CharField(max_length=50,blank=True,null=True,choices=MEASURING_UNIT_CHOICES)
+    # item_add_type   =   models.CharField(max_length=50,blank=True,null=True,choices=ITEM_ADD_TYPE_CHOICES)
+    # measuring_unit  =   models.CharField(max_length=50,blank=True,null=True,choices=MEASURING_UNIT_CHOICES)
     status          =   models.BooleanField(default=True,blank=False,null=False)
     created         =   models.DateTimeField(auto_now_add=True)
     def __unicode__(self):
