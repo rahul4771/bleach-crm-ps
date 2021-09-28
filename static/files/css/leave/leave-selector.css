@@ -275,7 +275,7 @@
    
     width:10px;
     height:10px;
-    border-radius:10px;
+    
     margin:5px;
 }
 
@@ -395,6 +395,9 @@
   .modal-dialog{
     border: 1px solid #000000 !important;
     border-radius: 5px !important;
+  }
+  .lv-occupied{
+      background: #D1DEF3 !important;
   }
   .modal:before {
     content: '';
