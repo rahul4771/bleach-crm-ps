@@ -436,8 +436,14 @@
     <script>
 
     $(document).ready(function(){
-        //var $tmpSelectedDay     = new Date();
-        //var a = moment($tmpSelectedDay).format('DD-MM-YYYY')
+        var $tmpSelectedDay     = new Date();
+        var a = moment($tmpSelectedDay).format('DD-MM-YYYY')
+        var b = "{{order_date|date:'d-m-Y'}}"
+        if(a == b ){
+            console.log('tr')
+            $('#id_day_text').text('Today')
+        }
+        console.log(b,'reci da')
         //$('#id_date_pick').val(a)
         //$('#id_day_text').text(a)
 
@@ -469,6 +475,8 @@
            $('#id_date_pick').val(d)
            $('#id_day_text').text(d)
            set_params_go();
+
+           
 
 
        }
