@@ -457,7 +457,7 @@ class Attribute(models.Model):
 class AttributeValue(models.Model):
     attribute           =   models.ForeignKey(Attribute,blank=True,null=True,related_name='value_attribute')
     name                =   models.CharField(max_length=100,blank=False,null=False)
-    is_selected         =   models.BooleanField(default=False,blank=False,null=False)
+    # is_selected         =   models.BooleanField(default=False,blank=False,null=False)
     status              =   models.BooleanField(default=True,blank=False,null=False)
     # created             =   models.DateTimeField(auto_now_add=True)
     def __unicode__(self):
@@ -620,7 +620,7 @@ class PurchaseOrder(models.Model):
     shipping_charge     = models.CharField(max_length=10,blank=True,null=True)
     other_charge        = models.CharField(max_length=10,blank=True,null=True)
     is_order_completed  = models.BooleanField(default=False,blank=False,null=False)
-    is_received         = models.BooleanField(default=False,blank=False,null=False)
+    # is_received         = models.BooleanField(default=False,blank=False,null=False)
     created             = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
@@ -636,7 +636,7 @@ class PurchaseOrderItems(models.Model):
     item_count          = models.IntegerField(default=0,null=True,blank=True)
     unit_price          = models.CharField(default=0,max_length=100,blank=True,null=True)
     total_price         = models.CharField(default=0,max_length=100,blank=True,null=True)
-    is_received         = models.BooleanField(default=False,blank=False,null=False)
+    # is_received         = models.BooleanField(default=False,blank=False,null=False)
     created             = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
