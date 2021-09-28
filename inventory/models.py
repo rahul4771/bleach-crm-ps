@@ -447,7 +447,7 @@ class Attribute(models.Model):
     attribute_line      =   models.ForeignKey(Line,blank=True,null=True,related_name='attribute_line')
     name                =   models.CharField(max_length=100,blank=False,null=False)
     status              =   models.BooleanField(default=True,blank=False,null=False)
-    created             =   models.DateTimeField(auto_now_add=True)
+    # created             =   models.DateTimeField(auto_now_add=True)
     def __unicode__(self):
         return str(self.name)
 
@@ -459,7 +459,7 @@ class AttributeValue(models.Model):
     name                =   models.CharField(max_length=100,blank=False,null=False)
     is_selected         =   models.BooleanField(default=False,blank=False,null=False)
     status              =   models.BooleanField(default=True,blank=False,null=False)
-    created             =   models.DateTimeField(auto_now_add=True)
+    # created             =   models.DateTimeField(auto_now_add=True)
     def __unicode__(self):
         return str(self.name)
 
