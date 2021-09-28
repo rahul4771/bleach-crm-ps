@@ -163,6 +163,30 @@
 <script src="{% static 'files/js/calendar/main.js' %}"></script>
 
 <script type="text/javascript">
+$('.next-day').on('click', function () {
+       console.log("next day")
+       $selectedDay            = $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").getDate();
+       var $tmpSelectedDay     = new Date($selectedDay) 
+       $tmpSelectedDay.setDate($tmpSelectedDay.getDate() + 1);
+       $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
+           
+    });
+
+
+   $('.prev-day').on('click', function () {
+    console.log("prev day");
+       $selectedDay            = $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").getDate();
+       var $tmpSelectedDay     = new Date($selectedDay) 
+       $tmpSelectedDay.setDate($tmpSelectedDay.getDate() - 1);
+       $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
+   
+   });
+
+   $('.today-date').on('click', function () {
+       var $tmpSelectedDay     = new Date();
+       $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
+   });
+
     $('document').ready(function(){
         //hiding ticket closing tab if empty
     var ticketcount = $('.ticketcount').length ;

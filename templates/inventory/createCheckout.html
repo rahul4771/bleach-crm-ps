@@ -145,26 +145,31 @@
  
                </div>
                <div class="col-md-12 mt-10">
+                 {% if section.sectionaddons %}
                  <div class="av-font mt-20" style="font-size: 18px;">
                    Add-ons
                  </div>
+                 {% endif %}
                  <div class="row mt-10">
+                  
+                   {% for addon in section.sectionaddons%}
                    <div class="col-md-3 mt-10">
-                     <div class="addon-card">
-                       <div class="addon-title av-font">kitchen</div> 
-                       <div class="row">
-                         <div class="col-md-6 addon-details mt-10">
-                           <div>
+                    <div class="addon-card">
+                      <div class="addon-title av-font">{{addon.name}}</div> 
+                        <div class="row">
+                          <div class="col-md-6 addon-details mt-10">
+                            <div>
 
-                           </div> 
-                           <div class="addon-qty av-font">Qty : 1</div>
+                            </div> 
+                            <div class="addon-qty av-font">Qty : {{addon.quantity}}</div>
                           </div> 
                           <div class="col-md-6 mt-10">
-                            <div class="addon-price av-font">180.0 KD</div>
+                            <div class="addon-price av-font">{{addon.addon_net_cost|floatformat:3}} KD</div>
                           </div>
                         </div>
                       </div>
                     </div>
+                    {% endfor %}
                   </div>
                </div>
  

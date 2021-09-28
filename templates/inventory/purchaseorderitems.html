@@ -174,7 +174,7 @@
                         <tr>
                             <td>
                                 <label style="padding-left: 0px !important;" class="c-container">
-                                    <input class="item_select" type="radio" name="radio-select" data-itemid="{{item.product.item.id}}" data-itemname="{{item.product.item.name}}" data-itemcount="{{item.item_count}}" >
+                                    <input class="item_select" type="radio" name="radio-select" data-itemid="{{item.product.item.id}}" data-itemname="{{item.product.item.name}}" data-itemcount="{{item.item_count}}" data-itemunitprice="{{item.unit_price}}" >
                                     <span style="top:-4px !important;" class="c-checkmark"></span>
                                 </label>
 
@@ -237,10 +237,9 @@
             <hr>
 
             <form id="myform" method="POST" action="" >{% csrf_token %}
-            <input type="hidden" name="item_id" value="{{inventory_item.id}}">
-            <input type="hidden" name="action" value="add_unit" id="unit_action" >
+            <input type="text" name="item_id" id="add_item_id" >
+            <input type="hidden" name="action" id="order_item_action" value="add_unit_to_inventory" />
             <input type="hidden" name="store" id="id_pro_sel" value="" />
-            <input type="hidden" name="edit_unit_id" id="id_unit_edit" >
             
             <div class="row mt-20">
                 <div class="col-md-12 ">
@@ -336,12 +335,12 @@
                         <option value="expired">Expired</option>
                     </select> -->
                     <input hidden type="text" id="id_unit_status" name="unit_status" value="active" required>
-                    <div class="wrap-drop" id="noble-gases"  >
+                    <div class="wrap-drop" id="noble-gases2"  >
                         <span id="id_selectText">Active</span>
                         <ul class="drop">
-                            <li onclick="changeSelect('active')"><a>Active</a></li>
-                            <li onclick="changeSelect('out_of_order')"><a>Out Of order</a></li> 
-                            <li onclick="changeSelect('expired')"><a>Expired</a></li> 
+                            <li onclick="changeSelect2('active')"><a>Active</a></li>
+                            <li onclick="changeSelect2('out_of_order')"><a>Out Of order</a></li> 
+                            <li onclick="changeSelect2('expired')"><a>Expired</a></li> 
 
                         </ul>
                     </div>
@@ -532,6 +531,7 @@ DropDown.prototype = {
 $(function () {
     // create new variable for each menu
     var dd1 = new DropDown($('#noble-gases'));
+    var dd2 = new DropDown($('#noble-gases2'));
     // var dd2 = new DropDown($('#other-gases'));
     $(document).click(function () {
         // close menu on document click
@@ -599,13 +599,39 @@ function selectTab(d){
     }
 }
 
+function ProductListShow(){
+        document.getElementById("id_search").style.display="block"
+    }
+
+function closeProductShow(d){
+        console.log(d);
+        var proId = $(d).attr("data-pro")
+        $('#id_pro_sel').val($(d).attr("data-pro"));
+        //$('#unit_price_id').val($(d).attr("data-productprice"));
+        //$('#id_total_price').val($(d).attr("data-productprice"));
+        $('#pro-name').val($(d).attr("data-name"));
+
+
+        document.getElementById("id_search").style.display="none"
+    }
 
     function openNavAddStore() {
+
+        var products = [];
+        {% for store in stores %}
+        console.log("{{store.store_name}}","kkk")
+            var tempId = '{{store.id}}';
+            var tempName = '{{store.store_name}}';
+            var tempPrice = 'abc';
+            products.push({id:tempId,name:tempName,price:tempPrice})
+        $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{store.id}}" data-name="{{store.store_name}}"><div class="inv-search-result">{{store.store_name}}</div></div>');
+
+        {% endfor %}
 
         console.log(selectedTab)
 
         if(selectedTab == 'pen'){
-                    $('.item_select').each(function() {
+                    $('.item_select').each(function() { 
                     console.log($(this),"lis")
                     //$('#id_item_list').remove();
 
@@ -623,6 +649,18 @@ function selectTab(d){
                     document.getElementById("addStore").style.width = "30%";
                 } 
         }else if(selectedTab == 'rec'){
+
+            if($('.item_select').prop("checked") == true){
+                console.log("log")
+            }
+
+            var getSelectedValue = $( 'input[name="radio-select"]:checked');   
+            if(getSelectedValue != null) {   
+                $('#add_item_id').val($( 'input[name="radio-select"]:checked').data('itemid'));
+                $('#unit_price_id').val($( 'input[name="radio-select"]:checked').data('itemunitprice'));
+                    //alert("Selected radio button values is: " + $( 'input[name="radio-select"]:checked').data('itemname'));  
+            }  
+
 
             if(screen.width<= 600){
                     document.getElementById("addBundle").style.width = "100%";
@@ -664,6 +702,10 @@ function changeSelect(va){
     $('#id_shipment_status').val(va);
     set_params_go();
 }
+
+function changeSelect2(va){
+        $('#id_unit_status').val(va)
+    }
 
 function set_params_go(args)
     {

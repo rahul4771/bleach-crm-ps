@@ -56,7 +56,7 @@
                                 </div>
                                 <div onclick="viewPicker()" class="av-font inv-date-text text-center pointer" style="margin-left: -10px;">
                                     <div id="id_day_text" class="av-font" style="margin-top: 2px; font-size: 14px;">
-                                     Today
+                                     {{order_date|date:'d-m-Y'}}
                                     </div>
                                 </div>
                                 <div onclick="invNextDay()" class="inv-day-round text-center pointer" style="margin-left: -10px;">
@@ -65,7 +65,7 @@
                                
                             </div>
                             <div style="margin-top: -22px;">
-                                <input style="width: 20px; margin-left: 15px;" type="text" id="id_date_pick"  class=" date-box date_pick "> 
+                                <input style="width: 20px; margin-left: 15px;" type="text" id="id_date_pick" value="{{order_date|date:'d-m-Y'}}" onchange="set_params_go();"  class=" date-box date_pick "> 
                             </div>
                         </div>
                     </div>
@@ -438,8 +438,11 @@
     $(document).ready(function(){
         var $tmpSelectedDay     = new Date();
         var a = moment($tmpSelectedDay).format('DD-MM-YYYY')
-        $('#id_date_pick').val(a)
-        $('#id_day_text').text(a)
+        var b = "{{order_date|date:'d-m-Y'}}"
+        if(a == b ){
+            $('#id_day_text').text('Today')
+        }
+       
 
  	});
 
@@ -456,6 +459,7 @@
             var d = moment($tmpSelectedDay).format('DD-MM-YYYY');
             $('#id_date_pick').val(d)
             $('#id_day_text').text(d)
+            set_params_go();
 
         }
         function invPrevDay(){
@@ -467,6 +471,9 @@
            var d = moment($tmpSelectedDay).format('DD-MM-YYYY');
            $('#id_date_pick').val(d)
            $('#id_day_text').text(d)
+           set_params_go();
+
+           
 
 
        }
@@ -490,7 +497,7 @@
         function set_params_go(args)
         {
         var url='{% url 'inventory:inventory-order' %}';
-        var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),
+        var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),order_date:$('#id_date_pick').val()
         };
         for(key in args) 
             params[key]=args[key];
