@@ -561,7 +561,7 @@ class SupplierItems(models.Model):
 class ServiceRecipe(models.Model):
     service             = models.CharField(max_length=100,blank=True,null=True)
     area_size           = models.CharField(default=0,max_length=50,blank=True,null=True)
-    # staff_count         = models.CharField(default=0,max_length=50,blank=True,null=True)
+    staff_count         = models.CharField(default=0,max_length=50,blank=True,null=True)
 
     def __unicode__(self):
         return str(self.service)
@@ -620,7 +620,7 @@ class PurchaseOrder(models.Model):
     shipping_charge     = models.CharField(max_length=10,blank=True,null=True)
     other_charge        = models.CharField(max_length=10,blank=True,null=True)
     is_order_completed  = models.BooleanField(default=False,blank=False,null=False)
-    is_received         = models.BooleanField(default=False,blank=False,null=False)
+    # is_received         = models.BooleanField(default=False,blank=False,null=False)
     created             = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
