@@ -87,24 +87,11 @@
               <div class="modal-content">
                 <div class="modal-header">
                   <button type="button" class="close" onclick="closeOccupiedModal()">&times;</button>
-                  <h4 class="modal-title primary-text">Al Yarmouk  <span class="ml-20 occupied-date">12/03/2021</span></h4>
+                  <h4 class="modal-title primary-text" ><span id="occupied_staff_name"></span>   <span class="ml-20 occupied-date" id="occupied_date"></span></h4>
                 </div>
-                <div class="modal-body">
-                  <div class="occupied-blc">
-                   <span class="occupied-blc-text primary-text" >BLC00000000000</span>
-                   <span class="occupied-blc-time ml-20"><i class="far fa-clock mr-10 primary-text"></i>03.00 pm <i class="fas fa-hourglass-start ml-20 mr-10 primary-text"></i>2 h</span>
-                    <i class="far fa-edit ml-20 occupied-edit" @click="resetCleaning()"></i>
-                  </div>
-                  <div class="occupied-blc mt-10">
-                    <span class="occupied-blc-text primary-text" @click="resetCleaning()">BLC00000000000</span>
-                    <span class="occupied-blc-time ml-20"><i class="far fa-clock mr-10 primary-text"></i>03.00 pm <i class="fas fa-hourglass-start ml-20 mr-10 primary-text"></i>2 h</span> 
-                    <i class="far fa-edit ml-20 occupied-edit" @click="resetCleaning()"></i>
-                   </div>
-                   <div class="occupied-blc mt-10">
-                    <span class="occupied-blc-text primary-text" @click="resetCleaning()">BLC00000000000</span>
-                    <span class="occupied-blc-time ml-20"><i class="far fa-clock mr-10 primary-text"></i>03.00 pm <i class="fas fa-hourglass-start ml-20 mr-10 primary-text"></i> 2 h</span> 
-                    <i class="far fa-edit ml-20 occupied-edit" @click="resetCleaning()"></i>
-                   </div>
+                <div class="modal-body occupied-modal-body">
+                 
+                 
 
                 </div>
                
