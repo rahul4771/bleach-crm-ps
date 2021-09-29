@@ -129,7 +129,7 @@ for (var j=0;j<resourceList.length;j++){
                         if ($('#lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear)[0]){
                            console.log("id exists")
                         } else {
-                            $('#row-'+rsid).append('<td class="noBorder text-center lv-date"  id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date lv-occupied" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');    
+                            $('#row-'+rsid).append('<td class="noBorder text-center lv-date" onclick="openOccupied(this)" data-staff="'+j+'" data-date="'+today+'"  id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date lv-occupied" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');    
                         }
                         
                                  
@@ -267,7 +267,7 @@ for (var j=0;j<resourceList.length;j++){
                          if ($('#lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear)[0]){
                             console.log("id exists")
                          } else {
-                             $('#row-'+rsid).append('<td class="noBorder text-center lv-date"   id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date lv-occupied" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');    
+                             $('#row-'+rsid).append('<td class="noBorder text-center lv-date"  onclick="openOccupied(this)" data-staff="'+j+'" data-date="'+today+'" id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date lv-occupied" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');    
                          }
                          
                                   
@@ -444,6 +444,26 @@ function selectDay(el){
     
     $('#select-counter').text(dateCounter);
 }
+function openOccupied(occ_data){
+    var date=$(occ_data).data('date')
+    var staff=$(occ_data).data('staff')
+    date=moment(date,'D-MM-YYYY').format('YYYY-MM-DD')
+    console.log("occupie ddate is"+date+"staff is "+resourceList[staff].id)
+    axios.get(url+'/api/leave-scheduler/popup/?staff_id='+resourceList[staff].id+'&occupied_date='+date)
+    .then(function (response) {
+        $('#occupiedModal').show()
+   
+      
+     
+    
+   // getInitDatas();
+    })
+    .catch(function (error) {
+      // handle error
+      console.log(error);
+    })
+   
+}
 function clearAll(){
     
     dateCounter=0;
@@ -459,6 +479,11 @@ function openForm(){
   
     $(".lv-result-box").show();
   
+}
+function closeOccupiedModal(){
+    $('#occupiedModal').hide();
+   
+
 }
 function closeForm(){
   
