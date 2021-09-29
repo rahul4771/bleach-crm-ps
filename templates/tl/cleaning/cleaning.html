@@ -7,6 +7,13 @@
     crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/assets/owl.carousel.css' %}" rel="stylesheet">
 <style>
+  @media screen and (max-width: 600px){
+    .eval-note-columns-middle {
+    width: 100% !important;
+    order: 3;
+}
+  }
+
     .owl-theme .owl-nav {
         margin-top: 10px;
         text-align: center;
@@ -326,7 +333,7 @@
 
         <div class="eval-note-columns-middle"><!--eval-note-columns-middle-->
             <div class="notes">Evaluation Notes</div>
-            <p>{{cleaning_team_detail.order_scheduler.order_scheduler_book.evaluator_note|default_if_none:''}}</p>
+            <p style="overflow: hidden;" >{{cleaning_team_detail.order_scheduler.order_scheduler_book.evaluator_note|default_if_none:''}}</p>
         </div><!--eval-note-columns-middle-->
 </div><!--eval-note-columns-->
 
