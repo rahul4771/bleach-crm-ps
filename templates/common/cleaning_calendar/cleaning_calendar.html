@@ -6,8 +6,16 @@
 
   <div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
   
-    <div class="filter-column-boxes filter-columns-left"><!--filter-column-boxes filter-columns-left-->
+    <div class="filter-column-boxes filter-columns-left "><!--filter-column-boxes filter-columns-left-->
     <h2 class="h2">Cleaning Calendar</h2>
+    
+    {% if request.user.user_type == 'SENIORTEAMLEADER' %}
+      <form method="GET" action="{% url 'stl:cleaning-export' %}" >{% csrf_token %}
+      <input type="hidden" name="cleaning_ids" id="id_cleaningids" />
+      <button style="margin-bottom: 10px;"  class="export-excel-btn" onclick="load_cleaning_data()"> <i class="fa fa-file-excel mr-5" aria-hidden="true"></i> Export to excel</button>
+      </form>
+    {% endif %}
+
     </div>
     
     <div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->

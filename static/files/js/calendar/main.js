@@ -1561,4 +1561,38 @@ $('.today-date').on('click', function () {
     $(this).parent('.date-wrapper-inner').children('.date_pick').data("DateTimePicker").setDate(moment($tmpSelectedDay).format('DD-MM-YYYY'));
 });
 
+function load_cleaning_data(){
+  
+  console.log(JSON.stringify(app.slots.appoved_cleanings),"cln data")
+  
+  var approved_cleaning_ids=[]
+
+  for(var i=0;i<app.slots.appoved_cleanings.length;i++){
+
+    approved_cleaning_ids.push(app.slots.appoved_cleanings[i].id)
+
+  }
+
+  console.log(approved_cleaning_ids,"clnids")
+
+  $('#id_cleaningids').val(approved_cleaning_ids);
+  
+  // let json=JSON.stringify(approved_cleaning_ids)
+  // post_data={json_data:approved_cleaning_ids}
+  // console.log(post_data,"pos")
+
+  // axios.post(this.url+"/api/cleaning-export/",post_data )
+  //   .then((response) => {
+  //       console.log(response,"gone")
+  //       if(response.data['ERROR']){
+  //         this.errMsg=response.data['ERROR']
+  //       }
+ 
+  //     //this.parseSize();
+  //   })
+  //     .catch((error) => {
+  //     console.log(error);
+  //   });
+}
+
 

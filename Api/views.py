@@ -1,5 +1,7 @@
 from django.shortcuts import render
+import json
 from django.template.loader import render_to_string
+from django.http import HttpResponse,JsonResponse,HttpResponseRedirect
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule,Shift
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote
@@ -8,7 +10,7 @@ from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
 from bleachadmin.models import ServicePriceRange,Settings
 from django.core.mail import send_mail,EmailMultiAlternatives
-from Api.serializers import DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, UsersListSerializer,ShiftScheduleSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
+from Api.serializers import DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, UsersListSerializer,ShiftScheduleSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer,OccupiedMembersSerializer
 from agent.views import generate_random_username
 from inventory.models import Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems
 import re
@@ -16,6 +18,7 @@ import random
 import string
 import functools
 import operator
+import xlwt
 import requests
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils import timezone
@@ -383,7 +386,7 @@ class PaymentResponseCredit(APIView):
 		return Response(HTTP_200_OK)	
 
 #get list of staff for leave scheduler
-class LeaveUsersList(APIView):
+class UsersList(APIView):
 	permission_classes  	=   (AllowAny,)
 	authentication_classes  = ()
 
@@ -411,9 +414,13 @@ class LeaveScheduleAPI(APIView):
 			leaveschedules = LeaveSchedule.objects.filter(is_active=True)
 		except:
 			leaveschedules = None
-
 		leaveschedule_serializer = LeaveScheduleSerializer(leaveschedules,many=True).data
-		response_dict["staffs"]=leaveschedule_serializer
+
+		occupied_members           = CleaningTeamMember.objects.select_related('team__order_scheduler').filter(is_active=True)
+		occupied_member_serializer = OccupiedMembersSerializer(occupied_members,many=True).data
+
+		response_dict["staffs"]    = leaveschedule_serializer
+		response_dict["occupied"]  = occupied_member_serializer
 
 		return Response(response_dict,HTTP_200_OK)
 	
@@ -437,7 +444,41 @@ class LeaveScheduleAPI(APIView):
 
 		return Response(response_dict,HTTP_200_OK)
 
-#Get Existing Shift
+class LeaveSchedulePopupAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request):
+		response_dict = {}
+		
+		staff_id  	    = request.GET.get('staff_id')
+		try:
+			occupied_date   = datetime.strptime(request.GET.get('occupied_date'),'%Y-%m-%d')
+		except:
+			occupied_date   = None
+
+		try:
+			cleaning_members = CleaningTeamMember.objects.select_related('team__order_scheduler__order').filter(Q(Q(start_at__date=occupied_date)|Q(end_at__date=occupied_date))&Q(member__id=staff_id))
+		except:
+			cleaning_members = None
+
+		if cleaning_members:
+			response_dict['detials']      = []
+			for cleaning_member in cleaning_members:
+				details                   = {}
+				details['id']             = cleaning_member.team.order_scheduler.id
+				details['blc']            = cleaning_member.team.order_scheduler.order.order_no
+				details['start_at']       = datetime.strftime(cleaning_member.team.order_scheduler.start_at,'%d-%m-%Y %H:%M %p')
+				details['cleaning_hours'] = cleaning_member.team.order_scheduler.cleaning_hours
+
+				response_dict['detials'].append(details)
+
+		response_dict['success'] = True
+
+		return Response(response_dict,HTTP_200_OK)
+
+
+#Get Existing Shift and add new shift
 class ShiftScheduleAPI(APIView):
 	permission_classes  	=   (AllowAny,)
 	authentication_classes  = ()
@@ -2349,4 +2390,77 @@ class CheckinChecklist(APIView):
 		response_dict['success'] = True
 
 		return Response(response_dict, HTTP_200_OK)
+
+# class CleaningsExport(APIView):
+# 	permission_classes  	=   (AllowAny,)
+# 	authentication_classes  = ()
+
+# 	def post(self,request):
+# 		response_dict = {'success':False}
+
+# 		cleaning_ids = request.data.get('json_data')
+# 		# cleaning_ids = cleaning_ids.split(",")
+# 		print(cleaning_ids[0],"jio")
+
+# 		row_num = 0
+
+# 		font_style = xlwt.XFStyle()
+# 		font_style.font.bold = True
+
+# 		response = HttpResponse(content_type='application/ms-excel')
+# 		response['Content-Disposition'] = 'attachment; filename="Cleanings.xls"'
+
+# 		wb = xlwt.Workbook(encoding='utf-8')
+# 		ws = wb.add_sheet('CLEANING LIST')
+
+# 		columns = ['BLC No.','Customer','Location','Starting Time','Duration','Cleaning Agent','Cleaners']
+		
+# 		for col_num in range(len(columns)):
+# 			ws.write(row_num, col_num, columns[col_num], font_style)
+
+# 		rows = []
+
+# 		for cid in cleaning_ids:
+# 			print(cid,"idee")
+# 			cleaning_data = OrderScheduler.objects.prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).select_related('team_leader','drop_off_driver','pick_up_driver').prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_team')).get(is_active=True,id=int(cid))
+# 			cleaning_list = OrderScheduler.objects.values_list('order__order_no','customer_address__customer__name','customer_address__area','start_at' , 'cleaning_hours', 'cleaning_hours', 'cleaning_hours').get(is_active=True,id=int(cid))
+			
+# 			print(cleaning_data,"dat")
+
+# 			cleaning_list = list(cleaning_list)
+# 			print(cleaning_list[2],"lis")
+
+			
+# 			for team in cleaning_data.cleaning_team:
+# 				cleaning_list[5] = team.team_leader.name
+
+# 				members = ''
+
+# 				for member in team.cleaning_team_members:
+# 					members += str(member.member.name) + ','
+				
+# 				cleaning_list[6] = members
+
+# 			print(members,"mem")
+# 			cleaning_list = tuple(cleaning_list)
+
+# 			rows.append(cleaning_list)
+
+# 			print(rows,"rose")
+
+# 		rows = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows ]
+
+# 		for row in rows:
+# 			row_num += 1
+# 			for col_num in range(len(row)):
+# 				ws.write(row_num, col_num, row[col_num], font_style)
+
+# 		wb.save(response)
+
+# 		return response
+
+		# response_dict['response'] = response
+		# responsedata = json.dumps(response_dict)
+
+		# return Response(responsedata,HTTP_200_OK)
 	

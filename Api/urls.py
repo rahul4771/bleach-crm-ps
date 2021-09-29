@@ -11,9 +11,13 @@ urlpatterns = [
 	url(r'^evaluation-details/(?P<evaluation_detail_id>\d+)/$',views.EvaluationDetailsList.as_view(),name='api-evaluation-details'),
 	url(r'^evaluation-cancel/(?P<evaluation_detail_id>\d+)/$',views.CancelEvaluation.as_view(),name='api-evaluation-cancel'),
 	
-	url(r'^leave-users-list/$',views.LeaveUsersList.as_view(),name='api-leave-users-list'),
+	url(r'^leave-users-list/$',views.UsersList.as_view(),name='api-leave-users-list'),
+
 	url(r'^leave-scheduler/$',views.LeaveScheduleAPI.as_view(),name='api-leaveschedule'),
+	url(r'^leave-scheduler/popup/$',views.LeaveSchedulePopupAPI.as_view(),name='api-leaveschedulepopup'),
 	url(r'^leave-scheduler-delete/(?P<leave_id>\d+)/$',views.DeleteLeaveSchedule.as_view(),name='api-leaveschedule-delete'),
+	url(r'^shift-scheduler/$',views.ShiftScheduleAPI.as_view(),name='api-shiftschedule'),
+	url(r'^shift-scheduler-delete/(?P<shift_id>\d+)/$',views.DeleteShiftSchedule.as_view(),name='api-shiftschedule-delete'),
 
 	url(r'^booking-expiry-check/$',views.BookingExpiryCheckAPI.as_view(),name='api-booking-expiry-check'),
 	url(r'^booking-expiry/$',views.BookingExpiryAPI.as_view(),name='api-booking-expiry'),
@@ -26,15 +30,13 @@ urlpatterns = [
 	url(r'^soa-mail/$',views.SOAMailAPI.as_view(),name='api-soa-mail'),
 	url(r'^invoice-mail-sms/$',views.InvoiceSMSMailAPI.as_view(),name='api-invoice-mail'),
 
-	url(r'^shift-scheduler/$',views.ShiftScheduleAPI.as_view(),name='api-shiftschedule'),
-	url(r'^shift-scheduler-delete/(?P<shift_id>\d+)/$',views.DeleteShiftSchedule.as_view(),name='api-shiftschedule-delete'),
-
 	url(r'^payment/response/credit/$',views.PaymentResponseCredit.as_view(),name='api-responsecredit'),
 	url(r'^daily-sales-list/$',views.DailySalesAPI.as_view(),name='api-daily-sales'),
 	url(r'^daily-sales-breakdown-list/$',views.DailySalesBreakDownAPI.as_view(),name='api-daily-sales-breakdown'),
 	url(r'^daily-sales-chart/$',views.DailySalesChartAPI.as_view(),name='api-daily-sales-chart'),
 	url(r'^payment-policy-edit/$',views.PaymentPolicyEditAPI.as_view(),name='api-payment-policy-edit'),
 	url(r'^cleaning-team-data/$',views.CleaningTeamAPI.as_view(),name='api-cleaning-team-data'),
+	# url(r'^cleaning-export/$',views.CleaningsExport.as_view(),name='api-cleaning-export'),
 
 	#inventory
 	url(r'^inventory-lines/$',views.InventoryLinesAPI.as_view(),name='api-inventory-lines'),

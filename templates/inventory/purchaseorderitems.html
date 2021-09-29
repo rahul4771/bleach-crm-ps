@@ -62,13 +62,74 @@
                 </div>
                 <div class="mt-20">
                     <div class="d-flex" >
+                        {% if purchase_order.is_received == True %}
                         <div class="inv-tab av-font inv-tab-active" onclick="selectTab('pen')" id="id_pen">By quantity</div>
                         <div class="inv-tab av-font" onclick="selectTab('rec')" id="id_rec">By unit</div>
-                        {% if purchase_order.is_received == True %}
                         <button style="margin-left: auto; margin-bottom: 5px;" class="inv-blue-btn" onclick="openNavAddStore()" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add to inventory</button>
                         {% endif %}
 
                     </div>
+                    
+                    {% if purchase_order.is_received == False %}
+                    <table id="id_table_common" class="inv-table footable" style="border-top:1px solid #c4c4c4; margin-top: -2px; z-index: 10 !important;"> 
+                        <thead>
+                            <tr>
+                                
+                                <th style="width: %;">
+                                    Product ID
+                                </th>
+                                <th data-hide="phone,tablet"  style="width: %; text-align: center;">
+                                    Product Name
+                                </th>
+                                <th data-hide="phone,tablet"  style="width: %;" class="text-left">
+                                    Number of units
+                                </th>
+                                <th  data-hide="phone,tablet"  style="width: %;" class="text-left">
+                                    Unit Cost
+                                </th>
+                               
+                                <th>
+                                    Status
+                                </th>
+    
+                            </tr>
+                        </thead>
+                     <tbody>
+                      
+                        {% for item in purchase_order.purchase_order_items %}
+                        <tr>
+                            
+                            <td>
+                                {{item.product.item.item_code}}
+                            </td>
+                            <td class="text-center">
+                              {{item.product.item.name}}
+                            </td>
+                            <td class="text-left">
+                              {{item.item_count}}
+                              </td>
+
+                            <td class="text-left">
+                               {{item.unit_price|floatformat:3}}
+                            </td>
+                          
+                            <td>
+                                {% if item.is_received == True %}
+                                <span class="inv-dot c-active ml-5"></span>Added
+                                {% else %}
+                                <span class="inv-dot c-active ml-5"></span>Waiting
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+        
+                      
+                     </tbody>
+    
+                    </table>
+
+                    {% else %}
+
                     <table id="id_table_pen" class="inv-table footable" style="border-top:1px solid #c4c4c4; margin-top: -2px; z-index: 10 !important;"> 
                         <thead>
                             <tr>
@@ -103,10 +164,12 @@
                         {% if item.product.item.item_add_type == 'quantity' %}
                         <tr>
                             <td>
+                                {% if item.is_received == False %}
                                 <label style="padding-left: 0px !important;" class="c-container">
                                     <input class="item_select selectCheckBox" type="checkbox" data-itemid="{{item.product.item.id}}" name="select-qua-item"  id="id_select_{{item.product.item.id}}"  data-itemname="{{item.product.item.name}}" data-itemcount="{{item.item_count}}" >
                                     <span style="top:-4px !important;" class="c-checkmark"></span>
                                 </label>
+                                {% endif %}
 
                             </td>
                             <td>
@@ -136,11 +199,9 @@
         
                       
                      </tbody>
-                       
-                      
-                     
-                        
+    
                     </table>
+
                     <table id="id_table_rec" class="inv-table footable inv-hide" style="border-top:1px solid #c4c4c4; margin-top: -2px; z-index: 10 !important; "> 
                         <thead>
                             <tr>
@@ -173,11 +234,12 @@
                         {% if item.product.item.item_add_type == 'unit' %}
                         <tr>
                             <td>
+                                {% if item.is_received == False %}
                                 <label style="padding-left: 0px !important;" class="c-container">
                                     <input class="item_select" type="radio" name="radio-select" data-itemid="{{item.product.item.id}}" data-itemname="{{item.product.item.name}}" data-itemcount="{{item.item_count}}" data-itemunitprice="{{item.unit_price}}" >
                                     <span style="top:-4px !important;" class="c-checkmark"></span>
                                 </label>
-
+                                {% endif %}
                             </td>
                             <td>
                                 {{item.product.item.item_code}}
@@ -206,11 +268,9 @@
         
                       
                      </tbody>
-                       
-                      
-                     
-                        
+    
                     </table>
+                    {% endif %}
                 </div>
                 
             </div>
