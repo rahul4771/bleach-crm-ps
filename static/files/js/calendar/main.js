@@ -1575,25 +1575,24 @@ function load_cleaning_data(){
 
   console.log(approved_cleaning_ids,"clnids")
 
-  approved_cleaning_id = [10,11,12,13,14]
-  console.log(approved_cleaning_id,"98")
+  $('#id_cleaningids').val(approved_cleaning_ids);
   
   // let json=JSON.stringify(approved_cleaning_ids)
-  post_data={json_data:approved_cleaning_ids}
-  console.log(post_data,"pos")
+  // post_data={json_data:approved_cleaning_ids}
+  // console.log(post_data,"pos")
 
-  axios.post(this.url+"/api/cleaning-export/",post_data )
-    .then((response) => {
-        console.log("gone")
-        if(response.data['ERROR']){
-          this.errMsg=response.data['ERROR']
-        }
+  // axios.post(this.url+"/api/cleaning-export/",post_data )
+  //   .then((response) => {
+  //       console.log(response,"gone")
+  //       if(response.data['ERROR']){
+  //         this.errMsg=response.data['ERROR']
+  //       }
  
-      //this.parseSize();
-    })
-      .catch((error) => {
-      console.log(error);
-    });
+  //     //this.parseSize();
+  //   })
+  //     .catch((error) => {
+  //     console.log(error);
+  //   });
 }
 
 
