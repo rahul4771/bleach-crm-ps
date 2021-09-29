@@ -8,8 +8,11 @@
   
     <div class="filter-column-boxes filter-columns-left "><!--filter-column-boxes filter-columns-left-->
     <h2 class="h2">Cleaning Calendar</h2>
-    <button style="margin-bottom: 10px;"  class="export-excel-btn"> <i class="fa fa-file-excel" aria-hidden="true"></i> Export to excel</button>
     
+    {% if request.user.user_type == 'SENIORTEAMLEADER' %}
+      <button style="margin-bottom: 10px;"  class="export-excel-btn" onclick="load_cleaning_data()"> <i class="fa fa-file-excel mr-5" aria-hidden="true"></i> Export to excel</button>
+    {% endif %}
+
     </div>
     
     <div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
