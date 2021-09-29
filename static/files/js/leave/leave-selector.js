@@ -3,12 +3,7 @@
 //var url = 'https://test.bleach-kw.com';
 //var url = 'http://127.0.0.1:8000';
 var url=api;
-const urlSearchParams = new URLSearchParams(window.location.search);
-const params = Object.fromEntries(urlSearchParams.entries());
-console.log("params is"+JSON.stringify(params) )
-if(Object.keys(params).length>0){
-    openOccupiedByUrl(params.date,params.staff)
-}
+
 var resourceList=[];
 var cleanerList=[];
 var teamLeaderList=[];
@@ -35,6 +30,7 @@ $('#lv-month-select').text(DateTime.local().monthLong+' '+ DateTime.local().year
 var resources=[];
 var selectedDates=[];
 var resourceLeave=[];
+
 
 function getInitDatas(){
    
@@ -457,6 +453,7 @@ function openOccupied(occ_data){
     console.log("occupie ddate is"+date+"staff is "+resourceList[staff].id+ JSON.stringify(resourceList[staff]))
 
     $('#occupied_staff_name').text(resourceList[staff].name)
+    $('#occupied_date').text(moment(date,'YYYY-MM-DD').format('DD-MM-YYYY'))
     axios.get(url+'/api/leave-scheduler/popup/?staff_id='+resourceList[staff].id+'&occupied_date='+date)
     .then(function (response) {
 
@@ -485,7 +482,11 @@ function openOccupied(occ_data){
 function openOccupiedByUrl(occ_date,staff){
     $('.occupied-modal-body').html('')
     var date=moment(occ_date,'DD-MM-YYYY').format('YYYY-MM-DD')
-    
+    var staff_index=userSearch(staff)
+    if(staff_index){
+    $('#occupied_staff_name').text(resourceList[staff_index].name)
+    }
+    $('#occupied_date').text(occ_date)
     axios.get(url+'/api/leave-scheduler/popup/?staff_id='+staff+'&occupied_date='+date)
     .then(function (response) {
 
@@ -631,7 +632,15 @@ function getUsers(){
 
     
 }
+
+
+
 getLeave();
+const urlSearchParams = new URLSearchParams(window.location.search);
+const params = Object.fromEntries(urlSearchParams.entries());
+if(Object.keys(params).length>0){
+    openOccupiedByUrl(params.date,params.staff)
+}
 
 })
 .catch(function (error) {

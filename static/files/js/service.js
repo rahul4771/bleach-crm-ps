@@ -13,7 +13,7 @@
 
 //var api='https://test.bleach-kw.com';
 //var api = 'http://localhost:8000'
-// var api = 'http://localhost:8000'
+ 
 
 
 async function _post(url,data){
