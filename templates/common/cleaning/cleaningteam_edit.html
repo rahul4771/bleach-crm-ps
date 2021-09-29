@@ -57,9 +57,10 @@
 {% for order_schedule in order_schedules %}
 <hr class="hr-dashedpad">
 <div class="customer-name">{{forloop.counter}}){{order_schedule.order_scheduler_book.service_type.name}}</div>
-        <div class="email"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{order_schedule.order_scheduler_book.cleaning_method}}</div>
-        <div class="email"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{order_schedule.order_scheduler_book.area_type}}</div>
-        <div class="email"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{order_schedule.order_scheduler_book.location_type}}</div>
+<br>        
+<div class="email"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{order_schedule.order_scheduler_book.cleaning_method}}</div>
+<div class="email"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{order_schedule.order_scheduler_book.area_type}}</div>
+<div class="email"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{order_schedule.order_scheduler_book.location_type}}</div>
 <br>        
 {% for section in  order_schedule.order_scheduler_book.sections %}
 <div class="narrow-head align-left">Section {{forloop.counter}} : {{section.section_name}}</div>
