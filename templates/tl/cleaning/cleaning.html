@@ -5,6 +5,41 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/assets/owl.carousel.css' %}" rel="stylesheet">
+<style>
+    .owl-theme .owl-nav {
+        margin-top: 10px;
+        text-align: center;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .owl-prev {
+        position: absolute;
+        top: 45%;
+        left: -5px;
+
+        display: block !important;
+        border: 0px solid black;
+        height: 30px;
+        width: 30px;
+       
+    }
+
+    .owl-next {
+        position: absolute;
+        top: 45%;   
+        right: -5px;
+
+        display: block !important;
+        border: 0px solid black;
+        height: 30px;
+        width: 30px;
+       
+        
+
+       
+    }
+</style>
 <div class="wrapper" id="app"><!--wrapper-->
 {% include "tl/common/header.html" %}
     
@@ -33,6 +68,7 @@
         <div class="green-bg-lg">{% if cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}One-Time{% else %}Subscription{% endif %}</div><div class="blue-bg-lg">{% if cleaning_team_detail.order_scheduler.order.payment_status == 'COMPLETED' %}Paid{% elif cleaning_team_detail.order_scheduler.order.payment_status == 'ON_HOLD' %}ON HOLD<{% else %}Pending{% endif %}</div>
 
         <div class="customer-name"> {{cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.name}}</div>
+        <br>
         <div class="email"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_method}}</div>
         <div class="email"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{cleaning_team_detail.order_scheduler.order_scheduler_book.area_type}}</div>
         <div class="email"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> {{cleaning_team_detail.order_scheduler.order_scheduler_book.location_type}}</div>
@@ -295,18 +331,33 @@
 </div><!--eval-note-columns-->
 
 
+
+
 {% if cleaning_team_detail.order_scheduler.order_scheduler_book.evaluationmedias %}
 <div class="details-sub-head align-left">Media</div>
 <div class="order-clean-outer-wrapper"><!--order-clean-outer-wrapper-->
-<div class="gallery-wrapper"><!--gallery-wrapper-->
-  <div class="gallery-widget-column-column1"><!--gallery-widget-column-column1-->
+<!-- <div class="gallery-wrapper">
+  <div class="gallery-widget-column-column1">
     <div class="media-heading align-left">Evaluation</div>
         <section>
         <div id="data-pn-1" data-pn="1" data-src="{% for media in  cleaning_team_detail.order_scheduler.order_scheduler_book.evaluationmedias %}{{media.media.url}},{% endfor %}"></div>
     </section>
     
-    </div><!--gallery-widget-column-column1-->    
-</div><!--gallery-wrapper-->
+    </div> 
+</div> -->
+<div class="media-heading align-left">Evaluation</div>
+
+<div class="owl-carousel owl-theme">
+  {% for media in  cleaning_team_detail.order_scheduler.order_scheduler_book.evaluationmedias %}
+  <div class="item" >
+
+    <img onclick="onClick(this)" style="width: 100%; height: 350px;" class="pointer" src="{{media.media.url}}"  alt="">
+  </div>
+
+  {% endfor %}
+
+
+</div>  
 {% endif %}
 
 
@@ -459,12 +510,29 @@
         </div><!--container-fluid space-->
     </section><!--content-->
 {% include 'tl/common/footer.html' %}
+<div id="modal01" class="w3-modal" onclick="this.style.display='none'">
+  <div class="topright">
+      <button class="img-close-button" onclick="onClose()"><i
+              class="fa fa-times fa-lg"></i></button>
+  </div>
+  <div class="w3-modal-content w3-animate-zoom">
+      <img id="img01" style="width:100%;max-height: 400px;">
+  </div>
+</div>
 </div><!--wrapper-->
 {% endblock %}
 
 {% block javascript %} 
+<script src="{% static '/files/externalfiles/plugins/OwlCarousel2/dist/owl.carousel.js'%}"></script>
+
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/browser-image-compression@1.0.13/dist/browser-image-compression.js"></script>
 <script>
+function onClick(element) {
+  console.log(element)
+  document.getElementById("img01").src = element.src;
+  document.getElementById("modal01").style.display = "block";
+}
+  
 //verify and update section
 function sectionupdate(section_id,action_type){
 
