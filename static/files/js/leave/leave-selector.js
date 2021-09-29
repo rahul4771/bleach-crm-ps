@@ -635,7 +635,7 @@ function getUsers(){
 
 
 
-getLeave();
+getLeave(moment().format('MM-YYYY'));
 const urlSearchParams = new URLSearchParams(window.location.search);
 const params = Object.fromEntries(urlSearchParams.entries());
 if(Object.keys(params).length>0){
@@ -687,9 +687,11 @@ function resetResources(category){
   
    
 }
-function getLeave(){
-    
-    axios.get(url+'/api/leave-scheduler/')
+function getLeave(current_date){
+    console.log("current date is "+current_date)
+    var month=current_date.split('-')[0]
+    var year=current_date.split('-')[1]
+    axios.get(url+'/api/leave-scheduler/?month='+month+'&year='+year)
 .then(function (response) {
   // handle success
     for(var i=0;i<response.data.staffs.length;i++){
