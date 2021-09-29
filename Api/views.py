@@ -409,14 +409,16 @@ class LeaveScheduleAPI(APIView):
 
 	def get(self,request):
 		response_dict = {"success":False}
+		month = int(request.GET.get('month'))
+		year  = int(request.GET.get('year'))
 
 		try:
-			leaveschedules = LeaveSchedule.objects.filter(is_active=True)
+			leaveschedules = LeaveSchedule.objects.filter(is_active=True,leave_date__month=month,leave_date__year=year)
 		except:
 			leaveschedules = None
 		leaveschedule_serializer = LeaveScheduleSerializer(leaveschedules,many=True).data
 
-		occupied_members           = CleaningTeamMember.objects.select_related('team__order_scheduler').filter(is_active=True)
+		occupied_members           = CleaningTeamMember.objects.select_related('team__order_scheduler').filter( Q(Q(is_active=True) & Q(Q(Q(start_at__month=month)&Q(start_at__year=year)) | Q(Q(end_at__month=month)&Q(end_at__year=year))) ) )
 		occupied_member_serializer = OccupiedMembersSerializer(occupied_members,many=True).data
 
 		response_dict["staffs"]    = leaveschedule_serializer
