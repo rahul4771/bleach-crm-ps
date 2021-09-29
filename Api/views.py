@@ -1,4 +1,5 @@
 from django.shortcuts import render
+import json
 from django.template.loader import render_to_string
 from django.http import HttpResponse,JsonResponse,HttpResponseRedirect
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule,Shift
@@ -408,14 +409,16 @@ class LeaveScheduleAPI(APIView):
 
 	def get(self,request):
 		response_dict = {"success":False}
+		month = int(request.GET.get('month'))
+		year  = int(request.GET.get('year'))
 
 		try:
-			leaveschedules = LeaveSchedule.objects.filter(is_active=True)
+			leaveschedules = LeaveSchedule.objects.filter(is_active=True,leave_date__month=month,leave_date__year=year)
 		except:
 			leaveschedules = None
 		leaveschedule_serializer = LeaveScheduleSerializer(leaveschedules,many=True).data
 
-		occupied_members           = CleaningTeamMember.objects.select_related('team__order_scheduler').filter(is_active=True)
+		occupied_members           = CleaningTeamMember.objects.select_related('team__order_scheduler').filter( Q(Q(is_active=True) & Q(Q(Q(start_at__month=month)&Q(start_at__year=year)) | Q(Q(end_at__month=month)&Q(end_at__year=year))) ) )
 		occupied_member_serializer = OccupiedMembersSerializer(occupied_members,many=True).data
 
 		response_dict["staffs"]    = leaveschedule_serializer
@@ -2390,60 +2393,76 @@ class CheckinChecklist(APIView):
 
 		return Response(response_dict, HTTP_200_OK)
 
-class CleaningsExport(APIView):
-	permission_classes  	=   (AllowAny,)
-	authentication_classes  = ()
+# class CleaningsExport(APIView):
+# 	permission_classes  	=   (AllowAny,)
+# 	authentication_classes  = ()
 
-	def post(self,request):
-		response_dict = {'success':False}
+# 	def post(self,request):
+# 		response_dict = {'success':False}
 
-		cleaning_ids = request.data.get('json_data')
-		# cleaning_ids = cleaning_ids.split(",")
-		print(cleaning_ids[0],"jio")
+# 		cleaning_ids = request.data.get('json_data')
+# 		# cleaning_ids = cleaning_ids.split(",")
+# 		print(cleaning_ids[0],"jio")
 
-		row_num = 0
+# 		row_num = 0
 
-		font_style = xlwt.XFStyle()
-		font_style.font.bold = True
+# 		font_style = xlwt.XFStyle()
+# 		font_style.font.bold = True
 
-		response = HttpResponse(content_type='application/ms-excel')
-		response['Content-Disposition'] = 'attachment; filename="Cleanings.xls"'
+# 		response = HttpResponse(content_type='application/ms-excel')
+# 		response['Content-Disposition'] = 'attachment; filename="Cleanings.xls"'
 
-		wb = xlwt.Workbook(encoding='utf-8')
-		ws = wb.add_sheet('CLEANING LIST')
+# 		wb = xlwt.Workbook(encoding='utf-8')
+# 		ws = wb.add_sheet('CLEANING LIST')
 
-		columns = ['BLC No.','Customer','Location','Starting Time','Duration','Cleaning Agent','Cleaners']
+# 		columns = ['BLC No.','Customer','Location','Starting Time','Duration','Cleaning Agent','Cleaners']
 		
-		for col_num in range(len(columns)):
-			ws.write(row_num, col_num, columns[col_num], font_style)
+# 		for col_num in range(len(columns)):
+# 			ws.write(row_num, col_num, columns[col_num], font_style)
 
-		rows = []
+# 		rows = []
 
-		for cid in cleaning_ids:
-			print(cid,"idee")
-			cleaning_data = OrderScheduler.objects.filter(is_active=True,id=int(cid)).prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).select_related('team_leader','drop_off_driver','pick_up_driver').prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_team'))
-			cleaning_list = cleaning_data.values_list('order__order_no','customer_address__customer__name','customer_address__area','start_at' , 'cleaning_hours', 'cleaning_hours', 'cleaning_hours').order_by('-start_at')
+# 		for cid in cleaning_ids:
+# 			print(cid,"idee")
+# 			cleaning_data = OrderScheduler.objects.prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).select_related('team_leader','drop_off_driver','pick_up_driver').prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_team')).get(is_active=True,id=int(cid))
+# 			cleaning_list = OrderScheduler.objects.values_list('order__order_no','customer_address__customer__name','customer_address__area','start_at' , 'cleaning_hours', 'cleaning_hours', 'cleaning_hours').get(is_active=True,id=int(cid))
 			
-			print(cleaning_data,"dat")
+# 			print(cleaning_data,"dat")
 
-			cleaning_list = list(cleaning_list)
+# 			cleaning_list = list(cleaning_list)
+# 			print(cleaning_list[2],"lis")
 
-			for team in cleaning_data.cleaning_team:
-				cleaning[5] = team.team_leader.name
-
-			members = ''
-
-			for member in cleaning_data.cleaning_team.cleaning_team_members:
-				if cleaning_data.cleaning_team.cleaning_team_members.last:
-					members += str(member.member.name)
-				else:
-					members += str(member.member.name) + ','
-
-			print(members,"mem")
-			cleaning_list = tuple(cleaning_list)
 			
+# 			for team in cleaning_data.cleaning_team:
+# 				cleaning_list[5] = team.team_leader.name
 
-		response_dict['reason'] = 'Invalid Id' 
+# 				members = ''
 
-		return Response(response_dict,HTTP_200_OK)
+# 				for member in team.cleaning_team_members:
+# 					members += str(member.member.name) + ','
+				
+# 				cleaning_list[6] = members
+
+# 			print(members,"mem")
+# 			cleaning_list = tuple(cleaning_list)
+
+# 			rows.append(cleaning_list)
+
+# 			print(rows,"rose")
+
+# 		rows = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows ]
+
+# 		for row in rows:
+# 			row_num += 1
+# 			for col_num in range(len(row)):
+# 				ws.write(row_num, col_num, row[col_num], font_style)
+
+# 		wb.save(response)
+
+# 		return response
+
+		# response_dict['response'] = response
+		# responsedata = json.dumps(response_dict)
+
+		# return Response(responsedata,HTTP_200_OK)
 	
