@@ -43,6 +43,10 @@
         <br> 
          <div class="common-gray-text align-left"><i class="fa fa-lg fa-building-o green-text" aria-hidden="true"></i> <span class="ml-10"><b>{{order_schedule.customer_address.apartment}}</b>: {% if order_schedule.customer_address.floor %}{{order_schedule.customer_address.floor}}, {% else %}{% endif %} {{order_schedule.customer_address.building}}, {{order_schedule.customer_address.block}}, {{order_schedule.customer_address.street}}, {% if order_schedule.customer_address.avenue %}{{order_schedule.customer_address.avenue}}, {% else %}{% endif %} {{order_schedule.customer_address.area.name}}, {{order_schedule.customer_address.governorate.name}}</span></div>
         <br>
+        {% if order_schedule.customer_address.gps_location %}
+        <div class="common-gray-text align-left"><i class="fa fa-globe fa-lg" aria-hidden="true" style="color:blue;"></i> <span class="ml-10"><a href="{{order_schedule.customer_address.gps_location}}">GPS Location</a></span></div>
+        <br>
+        {% endif %}
         <div class="common-gray-text align-left"><i class="fa fa-lg fa-users blue-text" aria-hidden="true"></i><span class="ml-10">{% if order_schedule.no_of_cleaners %}{{order_schedule.no_of_cleaners}}{% else %}{{order_schedule.order_scheduler_book.number_of_cleaners}}{% endif %} Cleaners</span></div>
   </div><!--ticket-form-right-->
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
