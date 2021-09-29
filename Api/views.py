@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.template.loader import render_to_string
+from django.http import HttpResponse,JsonResponse,HttpResponseRedirect
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule,Shift
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote
@@ -16,6 +17,7 @@ import random
 import string
 import functools
 import operator
+import xlwt
 import requests
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.utils import timezone
@@ -2387,4 +2389,61 @@ class CheckinChecklist(APIView):
 		response_dict['success'] = True
 
 		return Response(response_dict, HTTP_200_OK)
+
+class CleaningsExport(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def post(self,request):
+		response_dict = {'success':False}
+
+		cleaning_ids = request.data.get('json_data')
+		# cleaning_ids = cleaning_ids.split(",")
+		print(cleaning_ids[0],"jio")
+
+		row_num = 0
+
+		font_style = xlwt.XFStyle()
+		font_style.font.bold = True
+
+		response = HttpResponse(content_type='application/ms-excel')
+		response['Content-Disposition'] = 'attachment; filename="Cleanings.xls"'
+
+		wb = xlwt.Workbook(encoding='utf-8')
+		ws = wb.add_sheet('CLEANING LIST')
+
+		columns = ['BLC No.','Customer','Location','Starting Time','Duration','Cleaning Agent','Cleaners']
+		
+		for col_num in range(len(columns)):
+			ws.write(row_num, col_num, columns[col_num], font_style)
+
+		rows = []
+
+		for cid in cleaning_ids:
+			print(cid,"idee")
+			cleaning_data = OrderScheduler.objects.filter(is_active=True,id=int(cid)).prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).select_related('team_leader','drop_off_driver','pick_up_driver').prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_team'))
+			cleaning_list = cleaning_data.values_list('order__order_no','customer_address__customer__name','customer_address__area','start_at' , 'cleaning_hours', 'cleaning_hours', 'cleaning_hours').order_by('-start_at')
+			
+			print(cleaning_data,"dat")
+
+			cleaning_list = list(cleaning_list)
+
+			for team in cleaning_data.cleaning_team:
+				cleaning[5] = team.team_leader.name
+
+			members = ''
+
+			for member in cleaning_data.cleaning_team.cleaning_team_members:
+				if cleaning_data.cleaning_team.cleaning_team_members.last:
+					members += str(member.member.name)
+				else:
+					members += str(member.member.name) + ','
+
+			print(members,"mem")
+			cleaning_list = tuple(cleaning_list)
+			
+
+		response_dict['reason'] = 'Invalid Id' 
+
+		return Response(response_dict,HTTP_200_OK)
 	
