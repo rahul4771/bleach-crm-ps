@@ -3,7 +3,12 @@
 //var url = 'https://test.bleach-kw.com';
 //var url = 'http://127.0.0.1:8000';
 var url=api;
-
+const urlSearchParams = new URLSearchParams(window.location.search);
+const params = Object.fromEntries(urlSearchParams.entries());
+console.log("params is"+JSON.stringify(params) )
+if(Object.keys(params).length>0){
+    openOccupiedByUrl(params.date,params.staff)
+}
 var resourceList=[];
 var cleanerList=[];
 var teamLeaderList=[];
@@ -445,12 +450,25 @@ function selectDay(el){
     $('#select-counter').text(dateCounter);
 }
 function openOccupied(occ_data){
+    $('.occupied-modal-body').html('')
     var date=$(occ_data).data('date')
     var staff=$(occ_data).data('staff')
     date=moment(date,'D-MM-YYYY').format('YYYY-MM-DD')
-    console.log("occupie ddate is"+date+"staff is "+resourceList[staff].id)
+    console.log("occupie ddate is"+date+"staff is "+resourceList[staff].id+ JSON.stringify(resourceList[staff]))
+
+    $('#occupied_staff_name').text(resourceList[staff].name)
     axios.get(url+'/api/leave-scheduler/popup/?staff_id='+resourceList[staff].id+'&occupied_date='+date)
     .then(function (response) {
+
+        for(var i=0;i<response.data.detials.length;i++){
+            $('.occupied-modal-body').append(`
+            <div class="occupied-blc mt-10">
+            <span class="occupied-blc-text primary-text" >`+response.data.detials[i].blc+`</span>
+            <span class="occupied-blc-time ml-20"><i class="far fa-clock mr-10 primary-text"></i>`+response.data.detials[i].start_at.split(' ')[1]+' '+ response.data.detials[i].start_at.split(' ')[2]+`<i class="fas fa-hourglass-start ml-20 mr-10 primary-text"></i>`+response.data.detials[i].cleaning_hours+`hrs </span>
+             <i class="far fa-edit ml-20 occupied-edit" onclick="resetCleaning(`+response.data.detials[i].id+`,'`+response.data.detials[i].start_at.split(' ')[0]+`',`+resourceList[staff].id+`)"></i>
+           </div>
+            `)
+        }
         $('#occupiedModal').show()
    
       
@@ -463,6 +481,38 @@ function openOccupied(occ_data){
       console.log(error);
     })
    
+}
+function openOccupiedByUrl(occ_date,staff){
+    $('.occupied-modal-body').html('')
+    var date=moment(occ_date,'DD-MM-YYYY').format('YYYY-MM-DD')
+    
+    axios.get(url+'/api/leave-scheduler/popup/?staff_id='+staff+'&occupied_date='+date)
+    .then(function (response) {
+
+        for(var i=0;i<response.data.detials.length;i++){
+            $('.occupied-modal-body').append(`
+            <div class="occupied-blc mt-10">
+            <span class="occupied-blc-text primary-text" >`+response.data.detials[i].blc+`</span>
+            <span class="occupied-blc-time ml-20"><i class="far fa-clock mr-10 primary-text"></i>`+response.data.detials[i].start_at.split(' ')[1]+' '+ response.data.detials[i].start_at.split(' ')[2]+`<i class="fas fa-hourglass-start ml-20 mr-10 primary-text"></i>`+response.data.detials[i].cleaning_hours+`hrs </span>
+             <i class="far fa-edit ml-20 occupied-edit" onclick="resetCleaning(`+response.data.detials[i].id+`,'`+response.data.detials[i].start_at.split(' ')[0]+`',`+staff+`)"></i>
+           </div>
+            `)
+        }
+        $('#occupiedModal').show()
+   
+      
+     
+    
+   // getInitDatas();
+    })
+    .catch(function (error) {
+      // handle error
+      console.log(error);
+    })
+   
+}
+function resetCleaning(id,occ_date,staff){
+ window.location.href="/common/editcleaning/team/"+id+"/?cleaning_calendar_date="+occ_date+"&from=leave_scheduler&staff="+staff
 }
 function clearAll(){
     
