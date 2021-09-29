@@ -170,8 +170,9 @@ function nextMonth(){
        
     }
     $('#lv-month-select').text(DateTime.local(currentYear,currentMonth).monthLong+' '+ currentYear);
-    //reCalc();
+    resetLeaves()
     getLeave(currentMonth+'-'+currentYear)
+   
 }
 function previousMonth(){
     currentMonth=currentMonth-1;
@@ -181,8 +182,9 @@ function previousMonth(){
        
     }
     $('#lv-month-select').text(DateTime.local(currentYear,currentMonth).monthLong+' '+ currentYear);
-   
-    reCalc();
+    resetLeaves()
+    getLeave(currentMonth+'-'+currentYear)
+  
     
 }
 function reCalc(){
@@ -686,13 +688,19 @@ function resetResources(category){
   
    
 }
+function resetLeaves(){
+    for(var i=0;i<resourceList.length;i++){
+        resourceList[i].leave=[]
+    }
+}
 function getLeave(current_date){
-  
+    $('.lv-loader').show()
     var month=current_date.split('-')[0]
     var year=current_date.split('-')[1]
     axios.get(url+'/api/leave-scheduler/?month='+month+'&year='+year)
 .then(function (response) {
   // handle success
+  
     for(var i=0;i<response.data.staffs.length;i++){
        
        var userIndex=userSearch(response.data.staffs[i].staff)
