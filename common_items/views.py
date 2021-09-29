@@ -4248,10 +4248,10 @@ class EditcleaningTeam(IsAuthenticated,View):
 			return redirect('common_items:edit-cleaningteam',schedule_id)
 		
 		url = request.GET.get('from')
-		if url:
-			date = request.GET.get('date')
+		if url == 'leave_scheduler':
+			date = request.GET.get('cleaning_calendar_date')
 			staff= request.GET.get('staff')
-			return redirect('common/leave-scheduler/?date='+date+'&staff='+staff)
+			return redirect('/common/leave-scheduler/?cleaning_calendar_date='+date+'&staff='+staff)
 		else: 
 			cleaning_calendar_date = request.GET.get('cleaning_calendar_date') or ''
 
