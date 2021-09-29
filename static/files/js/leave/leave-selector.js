@@ -639,7 +639,7 @@ getLeave();
 const urlSearchParams = new URLSearchParams(window.location.search);
 const params = Object.fromEntries(urlSearchParams.entries());
 if(Object.keys(params).length>0){
-    openOccupiedByUrl(params.date,params.staff)
+    openOccupiedByUrl(params.cleaning_calendar_date,params.staff)
 }
 
 })
