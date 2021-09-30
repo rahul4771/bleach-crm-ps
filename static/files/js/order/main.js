@@ -224,6 +224,7 @@ function openSubmit(payment){
   app.paymentData.payment_method='PREPAID'
   app.paymentData.total_amount=paymentDetails.total_amount
   app.paymentData.final_amount=paymentDetails.final_amount
+  app.paymentData.additional_charge=paymentDetails.additional_charge
   app.total_amount=paymentDetails.total_amount
   app.paymentData.discount=paymentDetails.discount
   app.paymentData.amount_before_cleaning=paymentDetails.amount_before_cleaning
@@ -1461,11 +1462,17 @@ setTimeout(function() {
       this.paymentData.amount_after_cleaning=''
       this.paymentData.amount_before_cleaning=''
     },
+    calAdditionalCharge(){
+     
+      this.paymentData.final_amount=parseFloat(this.total_amount)+parseFloat(this.paymentData.additional_charge)||0
+      this.paymentData.amount_after_cleaning=''
+      this.paymentData.amount_before_cleaning=''
+    },
     calcBreakdownBefore(){
-      this.paymentData.amount_after_cleaning=this.paymentData.total_amount-this.paymentData.amount_before_cleaning
+      this.paymentData.amount_after_cleaning=this.paymentData.final_amount-this.paymentData.amount_before_cleaning
     },
     calcBreakdownAfter(){
-      this.paymentData.amount_before_cleaning=this.paymentData.total_amount-this.paymentData.amount_after_cleaning
+      this.paymentData.amount_before_cleaning=this.paymentData.final_amount-this.paymentData.amount_after_cleaning
     },
     openPayment(){
       $('#edit-payment-tigger').click()
@@ -1609,6 +1616,7 @@ setTimeout(function() {
         "action_type":'submit_quatation',
        "payment_method":this.paymentData.payment_method,
        "discount_amount":parseInt(this.paymentData.discount),
+       "additional_charge":parseFloat(this.paymentData.additional_charge),
        "before_cleaning_amount":parseInt(this.paymentData.amount_before_cleaning),
        "after_cleaning_amount":parseInt(this.paymentData.amount_after_cleaning),
        
@@ -1625,6 +1633,7 @@ setTimeout(function() {
         "action_type":'submit_quatation',
        "payment_method":this.paymentData.payment_method,
        "discount_amount":parseInt(this.paymentData.discount),
+       "additional_charge":parseFloat(this.paymentData.additional_charge)
        
        
       }).then(response=>{
