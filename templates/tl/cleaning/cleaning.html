@@ -115,24 +115,24 @@
 {% endfor %}
 
 <hr class="hr-dashedpad">
-
+{% for section in  cleaning_team_detail.order_scheduler.order_scheduler_book.sections %}
 <div class="row mt-20">
   <div class="col-md-12 pl-0">
    <div class="inv-check-section">
      <div class="d-flex ">
        <div class="inv-check-section-head san-font">
-         Section 1 : Kitchen
+        Section {{forloop.counter}} : {{section.section_name}}
          
        </div>
        
        <div class="right-pos">
-         <button class="inv-normal-btn" data-toggle="collapse" data-target="#demo1" id="id_section_btn_1" >
+         <button class="inv-normal-btn" data-toggle="collapse" data-target="#demo{{forloop.counter}}"  >
            <i style="color: #000000 !important;" class="fa fa-chevron-right action-icon" aria-hidden="true"></i>
          </button>
 
        </div>
      </div>
-     <div id="demo1" class="row mt-10 collapse ">
+     <div id="demo{{forloop.counter}}" class="row mt-10 collapse ">
        <div class="col-md-6 c-right-border">
         <div class="order-details-content">
           <div class="row c-mb-3">
@@ -202,12 +202,14 @@
    </div>
   </div>
  </div>
+{% endfor %}
 
-{% for section in  cleaning_team_detail.order_scheduler.order_scheduler_book.sections %}
+
+<!-- {% for section in  cleaning_team_detail.order_scheduler.order_scheduler_book.sections %}
 <div class="narrow-head align-left">Section {{forloop.counter}} : {{section.section_name}}</div>
-<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+<div class="ticket-wrapper-row ticket-forms-boxes">
 
-  <div class="ticket-form-left"><!--ticket-form-left-->
+  <div class="ticket-form-left">
     {% if section.category %}
   	<div class="common-gray-text align-left"><label class="common-labels">Category</label> :<strong> {{section.category}}</strong></div>
     {% endif %}
@@ -251,8 +253,8 @@
     {% if section.room %}
     <div class="common-gray-text align-left"><label class="common-labels">Rooms</label> : <strong>{{section.room}}</strong></div>
     {% endif %}
-  </div><!--ticket-form-left-->
-  <div class="ticket-form-right"><!--ticket-form-right-->
+  </div>
+  <div class="ticket-form-right">
 	{% if section.wall_type %}
   <div class="common-gray-text align-left"><label class="common-labels">Wall Type</label> : <strong>{{section.wall_type}}</strong></div>
   {% endif %}
@@ -277,8 +279,7 @@
   {% if section.age %}  
     <div class="common-gray-text align-left"><label class="common-labels">Age</label> : <strong>{{section.age}}</strong></div>
   {% endif %}  
-  </div><!--ticket-form-right-->
-
+  </div>
 
   {% if cleaning_team_detail.check_in and cleaning_team_detail.check_out == None %}
   {% else %}
@@ -357,23 +358,23 @@
       </div>
 
 
-</div><!--ticket-wrapper-row ticket-forms-boxes-->
+</div>
 <br>
 {% if section.sectionkeynotes %}
-<div class="evaluation-card-wrapper"><!--evaluation-card-wrapper-->
+<div class="evaluation-card-wrapper">
 {% for keynote in section.sectionkeynotes %}
 
-		<div class="evaluation-card"><!--evaluation-card-->
+		<div class="evaluation-card">
         <div class="evaluation-section"><label>{{keynote.sub_area}}</label>{{keynote.quantity}}</div> 
-    </div><!--evaluation-card-->  
+    </div>
 
 {% endfor %}
-</div><!--evaluation-card-wrapper-->
+</div>
 {% endif %}
 
 
 {% if section.sectionaddons %}
-<!-- section addon details starts here-->
+
 <div class="row mt-10">  
   <div class="col-md-12 mb-20 ">
     <div class="mt-20 addon-heading">
@@ -402,11 +403,11 @@
     </div>
   </div> 
 </div>
-<!-- section addon details ends here-->
+
 {% endif %}
 
 <hr class="hr-dashedpad">
-{% endfor %}
+{% endfor %} -->
    
 <div class="eval-note-columns border"><!--eval-note-columns-->
     	<div class="eval-note-columns-left"><!--eval-note-columns-left-->
