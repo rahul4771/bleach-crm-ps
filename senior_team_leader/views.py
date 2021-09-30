@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 from django.views import View
-
+import xlwt
 from django.conf import settings
 from bleach_crm_ps.permissions import IsSeniorTeamLeader
 from bleach_crm_ps.utils import get_error
@@ -925,3 +925,74 @@ class TicketAdvanced(IsSeniorTeamLeader,View):
 class LeaveScheduler(IsSeniorTeamLeader,View):
 	def get(self,request):
 		return render(request,'stl/leavescheduler/leave.html',{})
+
+class CleaningsExport(IsSeniorTeamLeader,View):
+	def get(self,request):
+
+		cleaning_ids = request.GET.get('cleaning_ids')
+		cleaning_ids = cleaning_ids.split(",")
+		cleaning_date = request.GET.get('cleanings_date')
+		print(cleaning_ids,"jio")
+
+		row_num = 0
+
+		font_style = xlwt.XFStyle()
+		font_style.font.bold = True
+
+		response = HttpResponse(content_type='application/ms-excel')
+		response['Content-Disposition'] = 'attachment; filename="Daily_cleaning_schedule_'+cleaning_date+'.xls"'
+
+		wb = xlwt.Workbook(encoding='utf-8')
+		ws = wb.add_sheet('Daily Cleaning Schedule')
+
+		columns = ['BLC No.','Customer','Location','Starting Time','Duration (in Hours)','Cleaning Agent','Cleaners']
+		
+		for col_num in range(len(columns)):
+			ws.write(row_num, col_num, columns[col_num], font_style)
+
+		rows = []
+
+		for cid in cleaning_ids:
+			print(cid,"idee")
+			cleaning_data = OrderScheduler.objects.prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).select_related('team_leader','drop_off_driver','pick_up_driver').prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_team')).get(is_active=True,id=int(cid))
+			cleaning_list = OrderScheduler.objects.values_list('order__order_no','customer_address__customer__name','customer_address__area__name','start_at' , 'cleaning_hours', 'cleaning_hours', 'cleaning_hours').get(is_active=True,id=int(cid))
+			
+			print(cleaning_data,"dat")
+
+			if cleaning_data.work_status != 'CLEANING_CANCELLED':
+				cleaning_list = list(cleaning_list)
+				print(cleaning_list[3].strftime("%H:%M:%S"),"lis")
+
+				
+				cleaning_list[3] = cleaning_list[3].strftime("%H:%M:%S")    #str(cleaning_data.start_at.time())
+				cleaning_list[5] = '-'
+				cleaning_list[6] = '-'
+
+				for team in cleaning_data.cleaning_team:
+					cleaning_list[5] = team.team_leader.name
+
+					members = ''
+
+					
+					for member in team.cleaning_team_members:
+						members += str(member.member.name) + ','
+					
+					cleaning_list[6] = members
+
+					print(members,"mem")
+				cleaning_list = tuple(cleaning_list)
+
+				rows.append(cleaning_list)
+
+				print(rows,"rose")
+
+		# rows = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows ]
+
+		for row in rows:
+			row_num += 1
+			for col_num in range(len(row)):
+				ws.write(row_num, col_num, row[col_num], font_style)
+
+		wb.save(response)
+
+		return response

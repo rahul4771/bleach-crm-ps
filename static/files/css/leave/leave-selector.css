@@ -247,6 +247,7 @@
 #occupied-modal-dialog{
     border:1px solid #707070 !important;
     border-bottom:6px solid #2C4C82 !important;
+    width: auto;
 }
 .occupied-date{
     font-size:14px;

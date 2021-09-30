@@ -31,6 +31,7 @@ var resources=[];
 var selectedDates=[];
 var resourceLeave=[];
 
+
 function getInitDatas(){
    
  
@@ -125,9 +126,9 @@ for (var j=0;j<resourceList.length;j++){
                
                 if(resourceList[j].occupied[rs].start_at==today || resourceList[j].occupied[rs].end_at==today){
                    
-                        console.log('yes i m in that day & id is #lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear )
+                    
                         if ($('#lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear)[0]){
-                           console.log("id exists")
+                          
                         } else {
                             $('#row-'+rsid).append('<td class="noBorder text-center lv-date" onclick="openOccupied(this)" data-staff="'+j+'" data-date="'+today+'"  id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date lv-occupied" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');    
                         }
@@ -169,8 +170,9 @@ function nextMonth(){
        
     }
     $('#lv-month-select').text(DateTime.local(currentYear,currentMonth).monthLong+' '+ currentYear);
-    reCalc();
-
+    resetLeaves()
+    getLeave(currentMonth+'-'+currentYear)
+   
 }
 function previousMonth(){
     currentMonth=currentMonth-1;
@@ -180,8 +182,9 @@ function previousMonth(){
        
     }
     $('#lv-month-select').text(DateTime.local(currentYear,currentMonth).monthLong+' '+ currentYear);
-   
-    reCalc();
+    resetLeaves()
+    getLeave(currentMonth+'-'+currentYear)
+  
     
 }
 function reCalc(){
@@ -263,9 +266,9 @@ for (var j=0;j<resourceList.length;j++){
                 
                  if(resourceList[j].occupied[rs].start_at==today || resourceList[j].occupied[rs].end_at==today){
                     
-                         console.log('yes i m in that day & id is #lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear )
+                        
                          if ($('#lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear)[0]){
-                            console.log("id exists")
+                         
                          } else {
                              $('#row-'+rsid).append('<td class="noBorder text-center lv-date"  onclick="openOccupied(this)" data-staff="'+j+'" data-date="'+today+'" id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date lv-occupied" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');    
                          }
@@ -291,8 +294,7 @@ for (var j=0;j<resourceList.length;j++){
 
         }
       
-       // console.log('i am running')
-       // $('#row-1').append('<p>testing</p>')
+      
     }
     $('#no-leave-'+j).text(noOfLeave);
 
@@ -445,12 +447,26 @@ function selectDay(el){
     $('#select-counter').text(dateCounter);
 }
 function openOccupied(occ_data){
+    $('.occupied-modal-body').html('')
     var date=$(occ_data).data('date')
     var staff=$(occ_data).data('staff')
     date=moment(date,'D-MM-YYYY').format('YYYY-MM-DD')
-    console.log("occupie ddate is"+date+"staff is "+resourceList[staff].id)
+  
+
+    $('#occupied_staff_name').text(resourceList[staff].name)
+    $('#occupied_date').text(moment(date,'YYYY-MM-DD').format('DD-MM-YYYY'))
     axios.get(url+'/api/leave-scheduler/popup/?staff_id='+resourceList[staff].id+'&occupied_date='+date)
     .then(function (response) {
+
+        for(var i=0;i<response.data.detials.length;i++){
+            $('.occupied-modal-body').append(`
+            <div class="occupied-blc mt-10">
+            <span class="occupied-blc-text primary-text" >`+response.data.detials[i].blc+`</span>
+            <span class="occupied-blc-time ml-20"><i class="far fa-clock mr-10 primary-text"></i>`+response.data.detials[i].start_at.split(' ')[1]+' '+ response.data.detials[i].start_at.split(' ')[2]+`<i class="fas fa-hourglass-start ml-20 mr-10 primary-text"></i>`+response.data.detials[i].cleaning_hours+`hrs </span>
+             <i class="far fa-edit ml-20 occupied-edit" onclick="resetCleaning(`+response.data.detials[i].id+`,'`+response.data.detials[i].start_at.split(' ')[0]+`',`+resourceList[staff].id+`)"></i>
+           </div>
+            `)
+        }
         $('#occupiedModal').show()
    
       
@@ -463,6 +479,42 @@ function openOccupied(occ_data){
       console.log(error);
     })
    
+}
+function openOccupiedByUrl(occ_date,staff){
+    $('.occupied-modal-body').html('')
+    var date=moment(occ_date,'DD-MM-YYYY').format('YYYY-MM-DD')
+    var staff_index=userSearch(staff)
+    if(staff_index){
+    $('#occupied_staff_name').text(resourceList[staff_index].name)
+    }
+    $('#occupied_date').text(occ_date)
+    axios.get(url+'/api/leave-scheduler/popup/?staff_id='+staff+'&occupied_date='+date)
+    .then(function (response) {
+
+        for(var i=0;i<response.data.detials.length;i++){
+            $('.occupied-modal-body').append(`
+            <div class="occupied-blc mt-10">
+            <span class="occupied-blc-text primary-text" >`+response.data.detials[i].blc+`</span>
+            <span class="occupied-blc-time ml-20"><i class="far fa-clock mr-10 primary-text"></i>`+response.data.detials[i].start_at.split(' ')[1]+' '+ response.data.detials[i].start_at.split(' ')[2]+`<i class="fas fa-hourglass-start ml-20 mr-10 primary-text"></i>`+response.data.detials[i].cleaning_hours+`hrs </span>
+             <i class="far fa-edit ml-20 occupied-edit" onclick="resetCleaning(`+response.data.detials[i].id+`,'`+response.data.detials[i].start_at.split(' ')[0]+`',`+staff+`)"></i>
+           </div>
+            `)
+        }
+        $('#occupiedModal').show()
+   
+      
+     
+    
+   // getInitDatas();
+    })
+    .catch(function (error) {
+      // handle error
+      console.log(error);
+    })
+   
+}
+function resetCleaning(id,occ_date,staff){
+ window.location.href="/common/editcleaning/team/"+id+"/?cleaning_calendar_date="+occ_date+"&from=leave_scheduler&staff="+staff
 }
 function clearAll(){
     
@@ -581,7 +633,15 @@ function getUsers(){
 
     
 }
-getLeave();
+
+
+
+getLeave(moment().format('M-YYYY'));
+const urlSearchParams = new URLSearchParams(window.location.search);
+const params = Object.fromEntries(urlSearchParams.entries());
+if(Object.keys(params).length>0){
+    openOccupiedByUrl(params.cleaning_calendar_date,params.staff)
+}
 
 })
 .catch(function (error) {
@@ -590,7 +650,7 @@ getLeave();
 })
 }
 function resetResources(category){
-    console.log("called me")
+   
     var newResource=[];
     if(category=='ALL')
         {  
@@ -628,11 +688,19 @@ function resetResources(category){
   
    
 }
-function getLeave(){
-    
-    axios.get(url+'/api/leave-scheduler/')
+function resetLeaves(){
+    for(var i=0;i<resourceList.length;i++){
+        resourceList[i].leave=[]
+    }
+}
+function getLeave(current_date){
+    $('.lv-loader').show()
+    var month=current_date.split('-')[0]
+    var year=current_date.split('-')[1]
+    axios.get(url+'/api/leave-scheduler/?month='+month+'&year='+year)
 .then(function (response) {
   // handle success
+  
     for(var i=0;i<response.data.staffs.length;i++){
        
        var userIndex=userSearch(response.data.staffs[i].staff)
@@ -648,11 +716,7 @@ function getLeave(){
        if(gt_month[0]=='0'){
         gt_month=gt_month.substring(1);
     }
-    /*if(!userIndex){
-        var day=gt_year+'-'+gt_month+'-'+gt_day
-        console.log("error leave is "+day +"id is"+response.data.staffs[i].id)
-    }*/
-    //console.log("user index is"+userIndex +"staff is "+response.data.staffs[i].staff+"date is"+gt_day+'-'+gt_month+'-'+gt_year)
+ 
     
     
    if(userIndex != undefined ){
@@ -685,11 +749,7 @@ function getLeave(){
     if(gt_end_month[0]=='0'){
      gt_end_month=gt_end_month.substring(1);
  }
-     /*if(!userIndex){
-         var day=gt_year+'-'+gt_month+'-'+gt_day
-         console.log("error leave is "+day +"id is"+response.data.staffs[i].id)
-     }*/
-     console.log("user index is"+userIndex +"staff is "+response.data.occupied[i].member+"date is"+gt_day+'-'+gt_month+'-'+gt_year)
+   
      
      
     if(userIndex != undefined ){
@@ -698,7 +758,6 @@ function getLeave(){
     
      
      }
-     console.log("occupied data is"+JSON.stringify(resourceList))
     getInitDatas();
    
     $('.lv-loader').hide()
@@ -739,8 +798,9 @@ function cancelLeave(){
         resourceLeave=[];
         selectedDates=[];
         resourceList=[];
-        reinitVal();
-        getUsers();
+        location.reload();
+        //reinitVal();
+       // getUsers();
        
        
       leaveId='';

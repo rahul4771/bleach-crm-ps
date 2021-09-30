@@ -294,7 +294,7 @@ class EvaluationBook(models.Model):
 	discount            = models.FloatField(blank=True,null=True,default=0)
 	total_cost          = models.FloatField(blank=True,null=True)
 	cleaning_hours 		= models.FloatField(blank=True,null=True)
-	evaluator_note		= models.TextField(max_length=5000,blank=True,null=True)
+	evaluator_note		= models.CharField(max_length=5000,blank=True,null=True)
 	
 	status              = models.CharField(max_length=20,blank=True,null=True,choices=BOOK_CHOICES)
 	cancell_requester   = models.ForeignKey(UserProfile,blank=True,null=True,related_name='cancell_requester')
