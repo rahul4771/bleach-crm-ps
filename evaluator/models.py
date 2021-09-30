@@ -218,6 +218,7 @@ class Evaluation(models.Model):
 	extra_discount		= models.FloatField(blank=True,null=True,default=0)
 	credit_amount       = models.FloatField(blank=True,null=True,default=0)
 	cancelled_amount    = models.FloatField(blank=True,null=True,default=0)
+	additional_charge   = models.FloatField(blank=True,null=True,default=0)
 	total_cost          = models.FloatField(blank=True,null=True,default=0)
 	
 	fine_amount         = models.FloatField(blank=True,null=True,default=0)
