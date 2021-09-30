@@ -205,9 +205,9 @@
 {% endfor %}
 
 
-<!-- {% for section in  cleaning_team_detail.order_scheduler.order_scheduler_book.sections %}
-<div class="narrow-head align-left">Section {{forloop.counter}} : {{section.section_name}}</div>
-<div class="ticket-wrapper-row ticket-forms-boxes">
+{% for section in  cleaning_team_detail.order_scheduler.order_scheduler_book.sections %}
+<div class="narrow-head align-left inv-hide">Section {{forloop.counter}} : {{section.section_name}}</div>
+<div class="ticket-wrapper-row ticket-forms-boxes inv-hide">
 
   <div class="ticket-form-left">
     {% if section.category %}
@@ -320,7 +320,9 @@
 
   {% endif %}
 
-  <!--section verification popup-->
+ 
+
+  
   <div class="modal fade" id="verifyModal" role="dialog">
         <div class="modal-dialog cancel-model cancel-order-border" role="document">
             <div class="container-fluid">
@@ -361,7 +363,7 @@
 </div>
 <br>
 {% if section.sectionkeynotes %}
-<div class="evaluation-card-wrapper">
+<div class="evaluation-card-wrapper inv-hide">
 {% for keynote in section.sectionkeynotes %}
 
 		<div class="evaluation-card">
@@ -375,7 +377,7 @@
 
 {% if section.sectionaddons %}
 
-<div class="row mt-10">  
+<div class="row mt-10 inv-hide">  
   <div class="col-md-12 mb-20 ">
     <div class="mt-20 addon-heading">
         Add-ons
@@ -407,7 +409,7 @@
 {% endif %}
 
 <hr class="hr-dashedpad">
-{% endfor %} -->
+{% endfor %}
    
 <div class="eval-note-columns border"><!--eval-note-columns-->
     	<div class="eval-note-columns-left"><!--eval-note-columns-left-->
