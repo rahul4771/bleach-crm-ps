@@ -964,7 +964,7 @@ class CleaningsExport(IsSeniorTeamLeader,View):
 				print(cleaning_list[3].strftime("%H:%M:%S"),"lis")
 
 				
-				cleaning_list[3] = cleaning_list[3].strftime("%H:%M:%S")+timedelta(hours=3)   #str(cleaning_data.start_at.time())
+				cleaning_list[3] = str(cleaning_data.start_at.time())  #str(cleaning_data.start_at.time())
 				cleaning_list[5] = '-'
 				cleaning_list[6] = '-'
 

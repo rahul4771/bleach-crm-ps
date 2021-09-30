@@ -64,6 +64,11 @@ function limit(element)
         element.value = element.value.substr(0, max_chars);
     }
 }
+function proceedImage(order){
+  var eval_id=$(order).data('eval_id')
+  console.log("eval_id is "+eval_id)
+  app.uploadImage(eval_id)
+}
 function myFunction(book_id) {
   document.getElementById("visti-section"+book_id+"").classList.toggle("not-show");
   document.getElementById("myDropdown"+book_id+"").classList.toggle("show");
@@ -387,6 +392,7 @@ const app = new Vue({
   components: { Multiselect: window.VueMultiselect.default },
 
   data: {
+    taken_status:'AGENT_TAKEN',
     kitchen_msg:false,
     keynote_msg:false,
     addon_msg:false,
@@ -572,12 +578,27 @@ const app = new Vue({
            slotloader:false,
             services_list:[],
           url:'',
-          addons_parsed:[]
+          addons_parsed:[],
+          image_url:'',
+          media_file:'',
+          imageForm:new FormData()
          // url:'http://localhost:8000'
       // url:'https://test.bleach-kw.com'
             //url:'http://127.0.0.1:8000'
   },
   methods:{
+    async onImageFileChanged(event) {
+    
+  
+    
+      var file=event.target.files[0]
+     this.image_url=URL.createObjectURL(file)
+     this.media_file=file
+   
+  
+    
+    
+    },
     findKitchenSize(name,cabinet,type){
       console.log("name is"+name+"cabinet is"+cabinet+"type is"+type)
       if(type=='new' && cabinet){
@@ -1297,6 +1318,18 @@ setTimeout(function() {
       }).then(response=>{
         $('#close_customer_note').click()
         location.reload()
+      })
+    },
+    
+    uploadImage(eval_id){
+     
+      this.imageForm.append('action_type','evaluation_media')
+      this.imageForm.append('evaluationbook_id',eval_id)
+      this.imageForm.append('taken_status',this.taken_status)
+      this.imageForm.append('media',this.media_file)
+      axios.post(this.url+'/customer/editorder/'+this.orderId,this.imageForm).then(response=>{
+       
+       
       })
     },
    
