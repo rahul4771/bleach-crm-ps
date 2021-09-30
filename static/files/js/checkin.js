@@ -138,3 +138,8 @@ $('.stop').on('click',function(){
 })
 
 
+
+$(".action-icon").click(function(){
+  console.log("celd")
+  $(this).toggleClass("down2")  ; 
+})

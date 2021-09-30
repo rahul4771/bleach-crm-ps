@@ -931,6 +931,7 @@ class CleaningsExport(IsSeniorTeamLeader,View):
 
 		cleaning_ids = request.GET.get('cleaning_ids')
 		cleaning_ids = cleaning_ids.split(",")
+		cleaning_date = request.GET.get('cleanings_date')
 		print(cleaning_ids,"jio")
 
 		row_num = 0
@@ -939,12 +940,12 @@ class CleaningsExport(IsSeniorTeamLeader,View):
 		font_style.font.bold = True
 
 		response = HttpResponse(content_type='application/ms-excel')
-		response['Content-Disposition'] = 'attachment; filename="Cleanings.xls"'
+		response['Content-Disposition'] = 'attachment; filename="Daily_cleaning_schedule_'+cleaning_date+'.xls"'
 
 		wb = xlwt.Workbook(encoding='utf-8')
-		ws = wb.add_sheet('CLEANING LIST')
+		ws = wb.add_sheet('Daily Cleaning Schedule')
 
-		columns = ['BLC No.','Customer','Location','Starting Time','Duration','Cleaning Agent','Cleaners']
+		columns = ['BLC No.','Customer','Location','Starting Time','Duration (in Hours)','Cleaning Agent','Cleaners']
 		
 		for col_num in range(len(columns)):
 			ws.write(row_num, col_num, columns[col_num], font_style)
@@ -958,34 +959,34 @@ class CleaningsExport(IsSeniorTeamLeader,View):
 			
 			print(cleaning_data,"dat")
 
-			cleaning_list = list(cleaning_list)
-			print(cleaning_list[2],"lis")
+			if cleaning_data.work_status != 'CLEANING_CANCELLED':
+				cleaning_list = list(cleaning_list)
+				print(cleaning_list[3].strftime("%H:%M:%S"),"lis")
 
-			
-			for team in cleaning_data.cleaning_team:
-				if team.team_leader.name:
+				
+				cleaning_list[3] = cleaning_list[3].strftime("%H:%M:%S")    #str(cleaning_data.start_at.time())
+				cleaning_list[5] = '-'
+				cleaning_list[6] = '-'
+
+				for team in cleaning_data.cleaning_team:
 					cleaning_list[5] = team.team_leader.name
-				else:
-					cleaning_list[5] = '-'
 
-				members = ''
+					members = ''
 
-				if team.cleaning_team_members:
+					
 					for member in team.cleaning_team_members:
 						members += str(member.member.name) + ','
-				else:
-					members = '-'
-				
-				cleaning_list[6] = members
+					
+					cleaning_list[6] = members
 
-			print(members,"mem")
-			cleaning_list = tuple(cleaning_list)
+					print(members,"mem")
+				cleaning_list = tuple(cleaning_list)
 
-			rows.append(cleaning_list)
+				rows.append(cleaning_list)
 
-			print(rows,"rose")
+				print(rows,"rose")
 
-		rows = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows ]
+		# rows = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows ]
 
 		for row in rows:
 			row_num += 1
