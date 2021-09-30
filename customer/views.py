@@ -5203,9 +5203,9 @@ class EditOrderDetails(APIView):
 		
 		elif action == 'edit_discount':
 			#update payment policy and discount
-			payment_method      = request.data.get('payment_method')
-			discount_amount     = request.data.get('discount_amount')
-			old_discount_amount = order.evaluation.discount 
+			payment_method        = request.data.get('payment_method')
+			discount_amount       = request.data.get('discount_amount')
+			additional_charge     = request.data.get('additional_charge')
 			if order.amount_paid == 0:
 				if payment_method == 'PREPAID':
 					order.evaluation.before_cleaning_amount = 0
@@ -5213,9 +5213,10 @@ class EditOrderDetails(APIView):
 					order.evaluation.payment_method         = 'PREPAID'
 
 					order.evaluation.discount               = discount_amount
-					order.evaluation.total_cost             = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
-					order.total_amount                      = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
-					order.remining_amount                   = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
+					order.evaluation.additional_charge      = additional_charge
+					order.evaluation.total_cost             = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
+					order.total_amount                      = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
+					order.remining_amount                   = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
 				
 				elif payment_method == 'BREAKDOWN':
 					before_cleaning_amount                  = request.data.get('before_cleaning_amount')
@@ -5225,10 +5226,11 @@ class EditOrderDetails(APIView):
 					order.evaluation.payment_method         = 'BREAKDOWN'
 
 					order.evaluation.discount                = discount_amount
-					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
-					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
-					order.total_amount                       = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
-					order.remining_amount                    = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
+					order.evaluation.additional_charge       = additional_charge
+					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
+					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
+					order.total_amount                       = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
+					order.remining_amount                    = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
 
 				elif payment_method == 'POSTPAID':
 					order.evaluation.before_cleaning_amount = 0
@@ -5236,17 +5238,19 @@ class EditOrderDetails(APIView):
 					order.evaluation.payment_method         = 'POSTPAID'
 
 					order.evaluation.discount                = discount_amount
-					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
-					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
-					order.total_amount                       = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
-					order.remining_amount                    = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
+					order.evaluation.additional_charge       = additional_charge
+					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
+					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
+					order.total_amount                       = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
+					order.remining_amount                    = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
 				
 				else:
 					order.evaluation.discount                = discount_amount
-					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
-					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
-					order.total_amount                       = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
-					order.remining_amount                    = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
+					order.evaluation.additional_charge       = additional_charge
+					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
+					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
+					order.total_amount                       = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
+					order.remining_amount                    = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
 
 
 				#to check payment completed
@@ -5262,7 +5266,7 @@ class EditOrderDetails(APIView):
 			#update payment policy and discount
 			payment_method      = request.data.get('payment_method')
 			discount_amount     = request.data.get('discount_amount')
-			old_discount_amount = order.evaluation.discount 
+			additional_charge   = request.data.get('additional_charge') 
 			if order.amount_paid == 0:
 				if payment_method == 'PREPAID':
 					order.evaluation.before_cleaning_amount = 0
@@ -5271,9 +5275,10 @@ class EditOrderDetails(APIView):
 					order.evaluation.quatation_status       = 'PENDING'
 
 					order.evaluation.discount               = discount_amount
-					order.evaluation.total_cost             = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
-					order.total_amount                      = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
-					order.remining_amount                   = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
+					order.evaluation.additional_charge      = additional_charge
+					order.evaluation.total_cost             = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
+					order.total_amount                      = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
+					order.remining_amount                   = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
 				
 				elif payment_method == 'BREAKDOWN':
 					before_cleaning_amount                  = request.data.get('before_cleaning_amount')
@@ -5284,10 +5289,11 @@ class EditOrderDetails(APIView):
 					order.evaluation.quatation_status       = 'PENDING'
 
 					order.evaluation.discount                = discount_amount
-					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
-					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
-					order.total_amount                       = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
-					order.remining_amount                    = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
+					order.evaluation.additional_charge       = additional_charge
+					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
+					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
+					order.total_amount                       = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
+					order.remining_amount                    = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
 
 				elif payment_method == 'POSTPAID':
 					order.evaluation.before_cleaning_amount = 0
@@ -5296,10 +5302,11 @@ class EditOrderDetails(APIView):
 					order.evaluation.quatation_status       = 'PENDING'
 
 					order.evaluation.discount                = discount_amount
-					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
-					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
-					order.total_amount                       = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
-					order.remining_amount                    = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount)
+					order.evaluation.additional_charge       = additional_charge
+					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
+					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
+					order.total_amount                       = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
+					order.remining_amount                    = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
 				
 				#to check payment completed
 				if order.remining_amount == 0:

@@ -230,6 +230,17 @@
       </div>
       {% endif %}
 
+      {% if order.evaluation.additional_charge != 0 %}
+      <div>
+        <span id="paymenttime">
+          <b>Additional Charge</b>
+        </span>
+        <span id="paymenttime-amount">
+          <b>{{order.evaluation.additional_charge|floatformat:"3"}}</b>
+        </span>
+      </div>
+      {% endif %}
+
       {% if order.evaluation.credit_amount != 0 %}
       <div>
         <span id="paymenttime">
