@@ -759,7 +759,13 @@ class AvailabilityCleaningCallendar(APIView):
 
 		active_cleaners1 	= CleaningTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=cleaning_datetime_start)&Q(start_at__lt=cleaning_datetime_end))|Q(Q(end_at__gt=cleaning_datetime_start)&Q(end_at__lte=cleaning_datetime_end))|Q(Q(start_at__lte=cleaning_datetime_start)&Q(end_at__gte=cleaning_datetime_start)&Q(start_at__lte=cleaning_datetime_end)&Q(end_at__gte=cleaning_datetime_end))|Q(Q(start_at__gte=cleaning_datetime_start)&Q(end_at__gte=cleaning_datetime_start)&Q(start_at__lte=cleaning_datetime_end)&Q(end_at__lte=cleaning_datetime_end))))
 		active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=cleaning_datetime_start)&Q(start_at__lt=cleaning_datetime_end))|Q(Q(end_at__gt=cleaning_datetime_start)&Q(end_at__lte=cleaning_datetime_end))|Q(Q(start_at__lte=cleaning_datetime_start)&Q(end_at__gte=cleaning_datetime_start)&Q(start_at__lte=cleaning_datetime_end)&Q(end_at__gte=cleaning_datetime_end))|Q(Q(start_at__gte=cleaning_datetime_start)&Q(end_at__gte=cleaning_datetime_start)&Q(start_at__lte=cleaning_datetime_end)&Q(end_at__lte=cleaning_datetime_end))))		
-		
+
+		print(shift_cleaners,"shift_cleaners")
+		print(shift_leaders,"shift_cleaners")
+		print(active_cleaners1,"active_cleaners1")
+		print(active_cleaners2,"active_cleaners2")
+		print(new_absent_cleaners,"new_absent_cleaners")
+		print(new_absent_leaders,"new_absent_leaders")		
 		for service_type in service_types:
 					
 			if service_type == 'General Cleaning':
