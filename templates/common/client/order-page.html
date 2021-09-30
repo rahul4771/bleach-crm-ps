@@ -2032,6 +2032,39 @@
                                         {% endif %}
 
                                     </div>
+                                    <div class="row mt-20">
+                                        <div class="col-md-2" v-if="image_url">
+                                            <img :src="image_url" class="order-details-img"/>
+                                        </div>
+                                        <div class="col-md-2" v-if="!image_url">
+                                            <div class="order-img-box" @click="$refs.itemfile.click()" ref="item-image"
+                                            v-on:change="onImageFileChanged">
+                                                <i class="fas fa-plus order-img-icon"></i>
+                                                <input type="file" ref="itemfile" style="display: none" accept="image/*"
+                                                id="itemfileselected" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-10" v-if="image_url">
+                                        <multiselect
+                      v-model="taken_status"
+                      placeholder="Image Taken By"
+                      style="max-width:200px;"
+                      :options="['CUSTOMER_SEND','AGENT_TAKEN']"
+
+                      :multiple="false"
+                      :taggable="false"
+                      :show-labels="false"
+                   
+                      
+
+
+
+                    ></multiselect>
+                                    </div>
+                                    <div class="mt-10" v-if="image_url">
+                                        <button  class="order-upload-btn" onclick="proceedImage(this)"  data-eval_id="{{evaluationbook.id}}">Upload</button>
+                                    </div>
                                     <!-- Other Media end-->
                                    
                                 </div>
