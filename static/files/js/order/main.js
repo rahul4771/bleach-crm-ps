@@ -1584,11 +1584,11 @@ setTimeout(function() {
        "discount_amount":parseInt(this.paymentData.discount),
        "before_cleaning_amount":parseInt(this.paymentData.amount_before_cleaning),
        "after_cleaning_amount":parseInt(this.paymentData.amount_after_cleaning),
-       
+       "additional_charge":parseFloat(this.paymentData.additional_charge),
       }).then(response=>{
         console.log(response)
         $('#edit-payment-close').click()
-        window.location.reload()
+       window.location.reload()
         
       })
     }
@@ -1598,7 +1598,7 @@ setTimeout(function() {
         "action_type":'edit_discount',
        "payment_method":this.paymentData.payment_method,
        "discount_amount":parseInt(this.paymentData.discount),
-       
+       "additional_charge":parseFloat(this.paymentData.additional_charge),
        
       }).then(response=>{
         console.log(response)
