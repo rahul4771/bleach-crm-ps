@@ -1331,7 +1331,7 @@ setTimeout(function() {
       this.imageForm.append('taken_status',this.taken_status)
       this.imageForm.append('media',this.media_file)
       axios.post(this.url+'/customer/editorder/'+this.orderId,this.imageForm).then(response=>{
-       
+       location.reload()
        
       })
     },
