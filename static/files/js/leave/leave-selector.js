@@ -798,8 +798,9 @@ function cancelLeave(){
         resourceLeave=[];
         selectedDates=[];
         resourceList=[];
-        reinitVal();
-        getUsers();
+        location.reload();
+        //reinitVal();
+       // getUsers();
        
        
       leaveId='';

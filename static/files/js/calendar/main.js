@@ -1576,6 +1576,7 @@ function load_cleaning_data(){
   console.log(approved_cleaning_ids,"clnids")
 
   $('#id_cleaningids').val(approved_cleaning_ids);
+  $('#id_cleaningsdate').val($('#cl_cleaning_calendar').val());
   
   // let json=JSON.stringify(approved_cleaning_ids)
   // post_data={json_data:approved_cleaning_ids}
