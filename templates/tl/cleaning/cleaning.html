@@ -7,6 +7,11 @@
     crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/assets/owl.carousel.css' %}" rel="stylesheet">
 <style>
+  .san-font {
+    font-family: sans-serif !important;
+    
+    
+}
   @media screen and (max-width: 600px){
     .eval-note-columns-middle {
     width: 100% !important;
@@ -110,6 +115,93 @@
 {% endfor %}
 
 <hr class="hr-dashedpad">
+
+<div class="row mt-20">
+  <div class="col-md-12 pl-0">
+   <div class="inv-check-section">
+     <div class="d-flex ">
+       <div class="inv-check-section-head san-font">
+         Section 1 : Kitchen
+         
+       </div>
+       
+       <div class="right-pos">
+         <button class="inv-normal-btn" data-toggle="collapse" data-target="#demo1" id="id_section_btn_1" >
+           <i style="color: #000000 !important;" class="fa fa-chevron-right action-icon" aria-hidden="true"></i>
+         </button>
+
+       </div>
+     </div>
+     <div id="demo1" class="row mt-10 collapse ">
+       <div class="col-md-6 c-right-border">
+        <div class="order-details-content">
+          <div class="row c-mb-3">
+              <div class="col-md-6 col-xs-6 mb-10">
+                  <div class="order-details-key san-font">Size</div> 
+                  <div class="c-text order-details-value san-font">section.size </div>
+              </div>
+              <div class="col-md-6 col-xs-6 mb-10">
+                  <div class="order-details-key san-font">Wall Type</div> 
+                  <div class="c-text order-details-value san-font">section.wall_type</div>
+              </div>
+              <div class="col-md-6 col-xs-6 mb-10">
+                  <div class="order-details-key san-font">Celling Type</div> 
+                  <div class="c-text order-details-value san-font">section.ceiling_type</div>
+              </div>
+              <div class="col-md-6 col-xs-6 mb-10 ">
+                  <div class="order-details-key san-font">Floor Type</div> 
+                  <div class="c-text order-details-value san-font">section.floor_type</div>
+              </div>
+              <div class="col-md-6 col-xs-6 mb-10">
+                  <div class="order-details-key san-font">Cost</div> 
+                  <div class="c-text order-details-value san-font">150 KD</div>
+              </div>
+          </div>
+      </div>
+         
+
+
+       </div>
+       <div class="col-md-6 m-mt-10">
+       
+         <div class="col-md-4 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in san-font">Area<span class="c-text2 san-font">1</span></p></div></div>
+         <div class="col-md-4 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in san-font">Area<span class="c-text2 san-font">1</span></p></div></div>
+
+        
+
+       </div>
+       <div class="col-md-12 mt-10">
+        
+         <div class="mt-20 san-font" style="font-size: 18px;">
+           Add-ons
+         </div>
+       
+         <div class="row mt-10">
+          
+           <div class="col-md-3 mt-10">
+            <div class="addon-card">
+              <div class="addon-title san-font">add on anme</div> 
+                <div class="row">
+                  <div class="col-md-6 addon-details mt-10">
+                    <div>
+
+                    </div> 
+                    <div class="addon-qty san-font">Qty : 1</div>
+                  </div> 
+                  <div class="col-md-6 mt-10">
+                    <div class="addon-price san-font">150 KD</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+       </div>
+
+     </div>
+   </div>
+  </div>
+ </div>
 
 {% for section in  cleaning_team_detail.order_scheduler.order_scheduler_book.sections %}
 <div class="narrow-head align-left">Section {{forloop.counter}} : {{section.section_name}}</div>
@@ -534,6 +626,7 @@
 
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/browser-image-compression@1.0.13/dist/browser-image-compression.js"></script>
 <script>
+ 
 function onClick(element) {
   console.log(element)
   document.getElementById("img01").src = element.src;
