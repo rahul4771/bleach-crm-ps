@@ -214,6 +214,7 @@ function openPaymentEdit(payment){
  app.paymentData.final_amount=paymentDetails.final_amount
  app.total_amount=paymentDetails.total_amount
  app.paymentData.discount=paymentDetails.discount
+ app.paymentData.additional_charge=paymentDetails.additional_charge
  app.paymentData.amount_before_cleaning=paymentDetails.amount_before_cleaning
  app.paymentData.amount_after_cleaning=paymentDetails.amount_after_cleaning
  app.openPayment()
@@ -470,6 +471,7 @@ const app = new Vue({
              action_type:'',
              paymentData:{
                discount:'',
+               additional_charge:'',
                amount_before_cleaning:'',
                amount_after_cleaning:'',
                amount:'',
