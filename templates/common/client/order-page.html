@@ -117,7 +117,8 @@
         </div>
       </div>
     <!-- Edit notes MODAL ENDS HERE-->
-     <!--  SUBMIT EVALUATION MODAL BEGINS HERE-->
+    
+    <!--  SUBMIT EVALUATION MODAL BEGINS HERE-->
      <div class="modal fade " id="submitModal" tabindex="-1" role="dialog" aria-labelledby="submitModal" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered primary-modal" role="document">
           <div class="modal-content primary-modal-border">
@@ -185,6 +186,8 @@
         </div>
       </div>
     <!-- SUBMIT EVALUATION MODAL ENDS HERE-->
+
+
     <!-- CHANGE PAYMENT MODAL BEGINS HERE-->
     <div class="modal fade " id="editPaymentModal" tabindex="-1" role="dialog" aria-labelledby="editPaymentModal" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered primary-modal" role="document">
@@ -199,6 +202,10 @@
                     <div class="col-md-12 mt-10">
                         <div class=" bold-text common-label required-field"> <label>Discount</label></div>
                       <input  id="id_name" type="text" class="textBox OnlyNumber" placeholder="Discount" required="" v-model="paymentData.discount" @input="calDiscount()" >
+                    </div>
+                    <div class="col-md-12 mt-10">
+                        <div class=" bold-text common-label required-field"> <label>Additional Charge</label></div>
+                      <input  id="id_name" type="text" class="textBox OnlyNumber" placeholder="Additional Charge" required="" v-model="paymentData.additional_charge" @input="calDiscount()" >
                     </div>
 
                     {% if order.evaluation.payment_method != 'SUBSCRIPTION' %}
@@ -2074,6 +2081,10 @@
                                                 <div class="row c-mb-3">
                                                     <div class="col-xs-6">Discount</div>
                                                     <div class="col-xs-6">: <span class="c-text">{{order.evaluation.discount|default_if_none:'0.000'|floatformat:'3'}} KD</span></div>
+                                                </div>
+                                                <div class="row c-mb-3">
+                                                    <div class="col-xs-6">Additional Charge</div>
+                                                    <div class="col-xs-6">: <span class="c-text">{{order.evaluation.additional_charge|default_if_none:'0.000'|floatformat:'3'}} KD</span></div>
                                                 </div>
                                                 
                                                 {% if order.evaluation.cancelled_amount %}
