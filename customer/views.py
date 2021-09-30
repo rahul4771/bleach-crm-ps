@@ -5408,7 +5408,7 @@ class EditOrderDetails(APIView):
 			if not medias==['']:
 				for media in medias:
 					EvaluationMedia.objects.create(
-							evaluation_book_id=evaluation_book_id,
+							evaluation_book_id=evaluationbook_id,
 							media=media,
 							media_type='PHOTO',
 							taken_status=taken_status

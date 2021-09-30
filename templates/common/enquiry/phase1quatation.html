@@ -155,12 +155,14 @@
                 <input name="after_cleaning_amount" id="after_cleaning_amount_id" type="number" step="0.001" class="textBox" placeholder=" "  >
   </div><!--ticket-form-right-->
 
-  {% if request.user.user_type != 'AGENT' %}
   <div class="ticket-form-right"><!--ticket-form-right-->
     <div class=" bold-text common-label"> <label>Discount</label></div>
           <input name="discount" id="discount_id" type="number" step="0.001" class="textBox" placeholder=" "  >
 </div><!--ticket-form-right-->
-{% endif %}
+<div class="ticket-form-right"><!--ticket-form-right-->
+  <div class=" bold-text common-label"> <label>Additional Charge</label></div>
+        <input name="additional_charge" id="additional_id" type="number" step="0.001" class="textBox" placeholder=" "  >
+</div><!--ticket-form-right-->
 
 </div><!--ticket-wrapper-row ticket-forms-boxes-->
 
@@ -338,8 +340,53 @@ $("#before_cleaning_amount_id").keyup(function(){
 })
 
 $("#discount_id").keyup(function(){
-  discount   = $("#discount_id").val();
-  total_cost = parseFloat("{{evaluation.total_cost|floatformat:'3'}}")-discount
+  discount            = parseFloat($("#discount_id").val());
+  additional_amount   = parseFloat($("#additional_id").val());
+  
+  if(discount && additional_amount)
+  {
+    total_cost = parseFloat("{{evaluation.total_cost|floatformat:'3'}}")+additional_amount-discount
+  }
+  else if(discount && !additional_amount)
+  {
+    total_cost = parseFloat("{{evaluation.total_cost|floatformat:'3'}}")-discount
+  }
+  else if(!discount && additional_amount)
+  {
+    total_cost = parseFloat("{{evaluation.total_cost|floatformat:'3'}}")+additional_amount
+  }
+  else
+  {
+    total_cost = parseFloat("{{evaluation.total_cost|floatformat:'3'}}")
+  }
+
+  $("#total_amount").html(total_cost+' KD');
+  $("#total_amount_id").val(total_cost);
+  $("#before_cleaning_amount_id").val('');
+  $("#after_cleaning_amount_id").val('');
+})
+
+$("#additional_id").keyup(function(){
+  additional_amount   = parseFloat($("#additional_id").val());
+  discount            = parseFloat($("#discount_id").val());
+  
+  if(discount && additional_amount)
+  {
+    total_cost = parseFloat("{{evaluation.total_cost|floatformat:'3'}}")+additional_amount-discount
+  }
+  else if(discount && !additional_amount)
+  {
+    total_cost = parseFloat("{{evaluation.total_cost|floatformat:'3'}}")-discount
+  }
+  else if(!discount && additional_amount)
+  {
+    total_cost = parseFloat("{{evaluation.total_cost|floatformat:'3'}}")+additional_amount
+  }
+  else
+  {
+    total_cost = parseFloat("{{evaluation.total_cost|floatformat:'3'}}")
+  }
+
   $("#total_amount").html(total_cost+' KD');
   $("#total_amount_id").val(total_cost);
   $("#before_cleaning_amount_id").val('');
