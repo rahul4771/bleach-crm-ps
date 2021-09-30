@@ -139,23 +139,40 @@
           <div class="row c-mb-3">
               <div class="col-md-6 col-xs-6 mb-10">
                   <div class="order-details-key san-font">Size</div> 
-                  <div class="c-text order-details-value san-font">section.size </div>
+                  <div class="c-text order-details-value san-font"><span id="id_size"> <span class="size_text{{section.id}}">{{section.size}}  
+                  {% comment %} <strong>
+                    {% if cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.name == 'Upholstery Cleaning' %}
+                                                                    
+                    {% for price_range in price_ranges %}
+                    {% if price_range.name == section.size and price_range.service_type == cleaning_team_detail.order_scheduler.order_scheduler_book.service_type and price_range.upholstery_type == section.upholstery_type %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}}){% endif %}
+                    {% endfor %}
+                  
+                    {% else %}
+                    
+                    {% for price_range in price_ranges %}
+                    {% if price_range.name == section.size and price_range.service_type == cleaning_team_detail.order_scheduler.order_scheduler_book.service_type and cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.name != 'Mattress Cleaning' and price_range.is_newkitchen == section.new_kitchen and price_range.is_cabinet == section.is_cabinet and price_range.is_highprice_facade == section.is_highprice_facade and price_range.is_highprice_window == section.is_highprice_window %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}}){% endif %}
+                    {{evaluationbook.service_type.name}}
+                    {% endfor %}
+                    
+                    {% endif %}
+                  </strong>  {% endcomment %}
+                  </span> </div>
               </div>
               <div class="col-md-6 col-xs-6 mb-10">
                   <div class="order-details-key san-font">Wall Type</div> 
-                  <div class="c-text order-details-value san-font">section.wall_type</div>
+                  <div class="c-text order-details-value san-font">{{section.wall_type|default_if_none:'-'}}</div>
               </div>
               <div class="col-md-6 col-xs-6 mb-10">
                   <div class="order-details-key san-font">Celling Type</div> 
-                  <div class="c-text order-details-value san-font">section.ceiling_type</div>
+                  <div class="c-text order-details-value san-font">{{section.ceiling_type|default_if_none:'-'}}</div>
               </div>
               <div class="col-md-6 col-xs-6 mb-10 ">
                   <div class="order-details-key san-font">Floor Type</div> 
-                  <div class="c-text order-details-value san-font">section.floor_type</div>
+                  <div class="c-text order-details-value san-font">{{section.floor_type|default_if_none:'-'}}</div>
               </div>
               <div class="col-md-6 col-xs-6 mb-10">
                   <div class="order-details-key san-font">Cost</div> 
-                  <div class="c-text order-details-value san-font">150 KD</div>
+                  <div class="c-text order-details-value san-font">{{section.section_net_cost|floatformat:3}} KD</div>
               </div>
           </div>
       </div>
@@ -165,37 +182,42 @@
        </div>
        <div class="col-md-6 m-mt-10">
        
-         <div class="col-md-4 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in san-font">Area<span class="c-text2 san-font">1</span></p></div></div>
-         <div class="col-md-4 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in san-font">Area<span class="c-text2 san-font">1</span></p></div></div>
+       {% for keynote in section.keynotes %}
+         <div class="col-md-4 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in san-font">{{keynote.sub_area}}<span class="c-text2 san-font">{{keynote.quantity}}</span></p></div></div>
+        {% endfor %}
 
         
 
        </div>
        <div class="col-md-12 mt-10">
         
+        {% if section.sectionaddons %}
          <div class="mt-20 san-font" style="font-size: 18px;">
            Add-ons
          </div>
-       
+        {% endif %}
+
          <div class="row mt-10">
           
+          {% for addon in section.sectionaddons%}
            <div class="col-md-3 mt-10">
             <div class="addon-card">
-              <div class="addon-title san-font">add on anme</div> 
+              <div class="addon-title san-font">{{addon.name}}</div> 
                 <div class="row">
                   <div class="col-md-6 addon-details mt-10">
                     <div>
 
                     </div> 
-                    <div class="addon-qty san-font">Qty : 1</div>
+                    <div class="addon-qty san-font">Qty : {{addon.quantity}}</div>
                   </div> 
                   <div class="col-md-6 mt-10">
-                    <div class="addon-price san-font">150 KD</div>
+                    <div class="addon-price san-font">{{addon.addon_net_cost|floatformat:3}} KD</div>
                   </div>
                 </div>
               </div>
             </div>
-            
+          {% endfor %}
+
           </div>
        </div>
 
