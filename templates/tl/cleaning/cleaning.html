@@ -108,6 +108,7 @@
 <div class="common-gray-text align-left"><strong>{{cleaner.member.name}}</strong></div>
 {% endif %}
 {% endfor %}
+<div class="common-gray-text align-left"><strong>{{cleaning_team_detail.team_leader.name}}</strong></div>
 
 <hr class="hr-dashedpad">
 
@@ -376,7 +377,7 @@
     <div class="checklist">
 
         {% if cleaning_team_detail.order_scheduler.order_scheduler_book.sections %} 
-        <div class="common-sub-head align-left">Check List</div> 
+        <div class="common-sub-head align-left checklisttitle">Check List</div> 
             <div class="commnDiv-border ltyellow-border"><!--commnDiv-border-->          
         
         {% for section in  cleaning_team_detail.order_scheduler.order_scheduler_book.sections %} 
@@ -604,6 +605,7 @@ $(document).ready(function(){
     $('.aftercleaning').attr("hidden",false);
     $('.beforecleaning').attr("hidden",true);
     $('.cleaningsection').attr("hidden",false);
+    $('.checklisttitle').attr("hidden",false);
     $('.cleaningkeynotes').attr("hidden",false);
     $('.hr1').attr("hidden",false);
   {% else %}
@@ -613,6 +615,7 @@ $(document).ready(function(){
     $('.checkoutbutton').attr("hidden",true);
     $('.beforecleaning').attr("hidden",false);
     $('.aftercleaning').attr("hidden",true);
+    $('.checklisttitle').attr("hidden",true);
     $('.cleaningsection').attr("hidden",true);
     $('.cleaningkeynotes').attr("hidden",true);
     $('.hr1').attr("hidden",true);
