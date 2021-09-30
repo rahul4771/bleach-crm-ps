@@ -137,4 +137,7 @@ $('.stop').on('click',function(){
   owl.trigger('stop.owl.autoplay')
 })
 
-
+$(".action-icon").click(function(){
+  console.log("celd")
+$(this).toggleClass("down2")  ; 
+})

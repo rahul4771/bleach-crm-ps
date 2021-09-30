@@ -7,6 +7,11 @@
     crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/assets/owl.carousel.css' %}" rel="stylesheet">
 <style>
+  .san-font {
+    font-family: sans-serif !important;
+    
+    
+}
   @media screen and (max-width: 600px){
     .eval-note-columns-middle {
     width: 100% !important;
@@ -111,12 +116,101 @@
 <div class="common-gray-text align-left"><strong>{{cleaning_team_detail.team_leader.name}}</strong></div>
 
 <hr class="hr-dashedpad">
+{% for section in  cleaning_team_detail.order_scheduler.order_scheduler_book.sections %}
+<div class="row mt-20">
+  <div class="col-md-12 pl-0">
+   <div class="inv-check-section">
+     <div class="d-flex ">
+       <div class="inv-check-section-head san-font">
+        Section {{forloop.counter}} : {{section.section_name}}
+         
+       </div>
+       
+       <div class="right-pos">
+         <button class="inv-normal-btn" data-toggle="collapse" data-target="#demo{{forloop.counter}}"  >
+           <i style="color: #000000 !important;" class="fa fa-chevron-right action-icon" aria-hidden="true"></i>
+         </button>
+
+       </div>
+     </div>
+     <div id="demo{{forloop.counter}}" class="row mt-10 collapse ">
+       <div class="col-md-6 c-right-border">
+        <div class="order-details-content">
+          <div class="row c-mb-3">
+              <div class="col-md-6 col-xs-6 mb-10">
+                  <div class="order-details-key san-font">Size</div> 
+                  <div class="c-text order-details-value san-font">section.size </div>
+              </div>
+              <div class="col-md-6 col-xs-6 mb-10">
+                  <div class="order-details-key san-font">Wall Type</div> 
+                  <div class="c-text order-details-value san-font">section.wall_type</div>
+              </div>
+              <div class="col-md-6 col-xs-6 mb-10">
+                  <div class="order-details-key san-font">Celling Type</div> 
+                  <div class="c-text order-details-value san-font">section.ceiling_type</div>
+              </div>
+              <div class="col-md-6 col-xs-6 mb-10 ">
+                  <div class="order-details-key san-font">Floor Type</div> 
+                  <div class="c-text order-details-value san-font">section.floor_type</div>
+              </div>
+              <div class="col-md-6 col-xs-6 mb-10">
+                  <div class="order-details-key san-font">Cost</div> 
+                  <div class="c-text order-details-value san-font">150 KD</div>
+              </div>
+          </div>
+      </div>
+         
+
+
+       </div>
+       <div class="col-md-6 m-mt-10">
+       
+         <div class="col-md-4 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in san-font">Area<span class="c-text2 san-font">1</span></p></div></div>
+         <div class="col-md-4 ml-0 pr-0 m-pl0"><div class="clean-section-card"><p class="inv-section-in san-font">Area<span class="c-text2 san-font">1</span></p></div></div>
+
+        
+
+       </div>
+       <div class="col-md-12 mt-10">
+        
+         <div class="mt-20 san-font" style="font-size: 18px;">
+           Add-ons
+         </div>
+       
+         <div class="row mt-10">
+          
+           <div class="col-md-3 mt-10">
+            <div class="addon-card">
+              <div class="addon-title san-font">add on anme</div> 
+                <div class="row">
+                  <div class="col-md-6 addon-details mt-10">
+                    <div>
+
+                    </div> 
+                    <div class="addon-qty san-font">Qty : 1</div>
+                  </div> 
+                  <div class="col-md-6 mt-10">
+                    <div class="addon-price san-font">150 KD</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+       </div>
+
+     </div>
+   </div>
+  </div>
+ </div>
+{% endfor %}
+
 
 {% for section in  cleaning_team_detail.order_scheduler.order_scheduler_book.sections %}
-<div class="narrow-head align-left">Section {{forloop.counter}} : {{section.section_name}}</div>
-<div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+<div class="narrow-head align-left inv-hide">Section {{forloop.counter}} : {{section.section_name}}</div>
+<div class="ticket-wrapper-row ticket-forms-boxes inv-hide">
 
-  <div class="ticket-form-left"><!--ticket-form-left-->
+  <div class="ticket-form-left">
     {% if section.category %}
   	<div class="common-gray-text align-left"><label class="common-labels">Category</label> :<strong> {{section.category}}</strong></div>
     {% endif %}
@@ -160,8 +254,8 @@
     {% if section.room %}
     <div class="common-gray-text align-left"><label class="common-labels">Rooms</label> : <strong>{{section.room}}</strong></div>
     {% endif %}
-  </div><!--ticket-form-left-->
-  <div class="ticket-form-right"><!--ticket-form-right-->
+  </div>
+  <div class="ticket-form-right">
 	{% if section.wall_type %}
   <div class="common-gray-text align-left"><label class="common-labels">Wall Type</label> : <strong>{{section.wall_type}}</strong></div>
   {% endif %}
@@ -186,8 +280,7 @@
   {% if section.age %}  
     <div class="common-gray-text align-left"><label class="common-labels">Age</label> : <strong>{{section.age}}</strong></div>
   {% endif %}  
-  </div><!--ticket-form-right-->
-
+  </div>
 
   {% if cleaning_team_detail.check_in and cleaning_team_detail.check_out == None %}
   {% else %}
@@ -228,7 +321,9 @@
 
   {% endif %}
 
-  <!--section verification popup-->
+ 
+
+  
   <div class="modal fade" id="verifyModal" role="dialog">
         <div class="modal-dialog cancel-model cancel-order-border" role="document">
             <div class="container-fluid">
@@ -266,24 +361,24 @@
       </div>
 
 
-</div><!--ticket-wrapper-row ticket-forms-boxes-->
+</div>
 <br>
 {% if section.sectionkeynotes %}
-<div class="evaluation-card-wrapper"><!--evaluation-card-wrapper-->
+<div class="evaluation-card-wrapper inv-hide">
 {% for keynote in section.sectionkeynotes %}
 
-		<div class="evaluation-card"><!--evaluation-card-->
+		<div class="evaluation-card">
         <div class="evaluation-section"><label>{{keynote.sub_area}}</label>{{keynote.quantity}}</div> 
-    </div><!--evaluation-card-->  
+    </div>
 
 {% endfor %}
-</div><!--evaluation-card-wrapper-->
+</div>
 {% endif %}
 
 
 {% if section.sectionaddons %}
-<!-- section addon details starts here-->
-<div class="row mt-10">  
+
+<div class="row mt-10 inv-hide">  
   <div class="col-md-12 mb-20 ">
     <div class="mt-20 addon-heading">
         Add-ons
@@ -311,7 +406,7 @@
     </div>
   </div> 
 </div>
-<!-- section addon details ends here-->
+
 {% endif %}
 
 <hr class="hr-dashedpad">
@@ -535,6 +630,7 @@
 
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/browser-image-compression@1.0.13/dist/browser-image-compression.js"></script>
 <script>
+ 
 function onClick(element) {
   console.log(element)
   document.getElementById("img01").src = element.src;
