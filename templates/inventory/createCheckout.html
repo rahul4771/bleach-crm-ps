@@ -206,9 +206,14 @@
                       <th data-hide="phone,tablet"  style="width: %;">Action</th>
                   </tr>
               </thead>
-              <tbody>
+              <tbody id="id_table">
                 {% for ingredient in service_recipe_ingredients %}
-                <tr>
+                {% for item in ingredient.service_recipe_items %}
+                  {% if forloop.first %}
+                  <tr data-itemid="{{item.item.id}}">
+                  {% endif %}
+                  {% endfor %}
+               
                   <td>{{ingredient.ingredient}}</td>
                   {% for item in ingredient.service_recipe_items %}
                   {% if forloop.first %}
@@ -328,6 +333,48 @@
 
 <script>
 
+
+function hideselectedoptions(){
+            
+
+            var tempItem = [];
+            var itemIn = [];
+            var div = true;
+
+            $('#id_search div').each(function(i) {
+                if (div == true){
+                    console.log($(this),"pro")
+                    tempItem.push($(this).data("pro"))
+                    //console.log($(this).data("id"));
+                    div = false;
+                }else{
+                    div = true;
+                }
+                
+            })
+          
+            $('#id_table tr').each(function() {
+                itemIn.push($(this).data("itemid"))
+                //console.log('table',$(this).data("itemid"));
+            })
+
+            itemIn.pop();
+
+            console.log(tempItem,itemIn,"lopp")
+
+            for(var i =0;i<tempItem.length;i++){
+                document.getElementById("id_product"+tempItem[i]).style.display ="block";
+                for(var j = 0;j<itemIn.length;j++){
+                    if(tempItem[i] == itemIn[j]){
+                        console.log('to be hide',tempItem[i]);
+                        document.getElementById("id_product"+tempItem[i]).style.display ="none";
+                    }
+                }
+            }
+            console.log(tempItem,itemIn)
+    }
+
+
 function increment(id){
   console.log(id)
   $('#id_qty_'+id).val(parseInt($('#id_qty_'+id).val()) + 1 );
@@ -348,6 +395,7 @@ var products = [];
    // $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
 
     {% endfor %}
+    
 
 
         $(document).ready(function(){
@@ -359,7 +407,7 @@ var products = [];
     for (var j=0; j<products.length; j++) {
         if (products[j].name.toUpperCase().match($('#pro-name').val().toUpperCase())){
             console.log(products[j]);
-    $('#id_search').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
+    $('#id_search').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeProductShow(this)"  data-pro="'+products[j].id+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
 
         }
     }
@@ -394,9 +442,13 @@ var products = [];
         {% for item in items %}
     var tempId = '{{item.id}}';
     var tempName = '{{item.name}}';
-    $('#id_search').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
+    console.log(tempName,'gh')
+    $('#id_search').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" id="id_product{{item.id}}"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
 
     {% endfor %}
+
+   
+    
     if(screen.width<= 600){
         document.getElementById("addStore").style.width = "100%";
     }else if(screen.width<= 720){
@@ -405,6 +457,7 @@ var products = [];
     else{
         document.getElementById("addStore").style.width = "30%";
     }  
+    hideselectedoptions();
 }
 function closeNavAddStore() {
     document.getElementById("addStore").style.width = "0";
