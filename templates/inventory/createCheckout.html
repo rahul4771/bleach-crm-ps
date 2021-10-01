@@ -219,7 +219,7 @@
                   {% endfor %}
                     <div class="qty ">
                       <span class="minus bg-dark" onclick="decrement({{forloop.counter}})" >-</span>
-                      <input type="text" class="count" id="id_qty_{{forloop.counter}}" name="qty" value="1">
+                      <input type="text" class="count" id="id_qty_{{forloop.counter}}" name="qty" value="{{ingredient.quantity}}">
                       <span class="plus bg-dark" onclick="increment({{forloop.counter}})">+</span>
                   </div>
                   </td>
