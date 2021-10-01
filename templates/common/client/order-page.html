@@ -135,7 +135,7 @@
                     </div>
                     <div class="col-md-12 mt-10">
                         <div class=" bold-text common-label required-field"> <label>Additional Charge</label></div>
-                      <input  id="id_additional_charge" type="text" class="textBox OnlyNumber" placeholder="Discount" required="" v-model="paymentData.additional_charge" @input="calAdditionalCharge()" >
+                      <input  id="id_additional_charge" type="text" class="textBox OnlyNumber" placeholder="Discount" required="" v-model="paymentData.additional_charge" @input="calDiscount()" >
                     </div>
                     <div class="col-md-12 mt-10"  >
                     
@@ -209,7 +209,7 @@
                     </div>
                     <div class="col-md-12 mt-10">
                         <div class=" bold-text common-label required-field"> <label>Additional Charge</label></div>
-                      <input  id="id_name" type="text" class="textBox OnlyNumber" placeholder="Additional Charge" required="" v-model="paymentData.additional_charge" @input="calAdditionalCharge()" >
+                      <input  id="id_name" type="text" class="textBox OnlyNumber" placeholder="Additional Charge" required="" v-model="paymentData.additional_charge" @input="calDiscount()" >
                     </div>
 
                     {% if order.evaluation.payment_method != 'SUBSCRIPTION' %}

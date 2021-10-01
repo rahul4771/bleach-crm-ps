@@ -1458,16 +1458,16 @@ setTimeout(function() {
       this.other_keynotes= others
     },
     calDiscount(){
-      this.paymentData.final_amount=this.total_amount-this.paymentData.discount
+      this.paymentData.final_amount=parseFloat(this.total_amount)-parseFloat(this.paymentData.discount)+(parseFloat(this.paymentData.additional_charge)||0)
       this.paymentData.amount_after_cleaning=''
       this.paymentData.amount_before_cleaning=''
     },
-    calAdditionalCharge(){
+    // calAdditionalCharge(){
      
-      this.paymentData.final_amount=parseFloat(this.total_amount)+parseFloat(this.paymentData.additional_charge)||0
-      this.paymentData.amount_after_cleaning=''
-      this.paymentData.amount_before_cleaning=''
-    },
+    //   this.paymentData.final_amount=parseFloat(this.total_amount)+parseFloat(this.paymentData.additional_charge)||0
+    //   this.paymentData.amount_after_cleaning=''
+    //   this.paymentData.amount_before_cleaning=''
+    // },
     calcBreakdownBefore(){
       this.paymentData.amount_after_cleaning=this.paymentData.final_amount-this.paymentData.amount_before_cleaning
     },
