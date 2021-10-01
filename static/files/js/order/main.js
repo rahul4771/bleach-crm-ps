@@ -1458,7 +1458,7 @@ setTimeout(function() {
       this.other_keynotes= others
     },
     calDiscount(){
-      this.paymentData.final_amount=parseFloat(this.total_amount)-parseFloat(this.paymentData.discount)+(parseFloat(this.paymentData.additional_charge)||0)
+      this.paymentData.final_amount=parseFloat(this.total_amount)-(parseFloat(this.paymentData.discount)||0)+(parseFloat(this.paymentData.additional_charge)||0)
       this.paymentData.amount_after_cleaning=''
       this.paymentData.amount_before_cleaning=''
     },
