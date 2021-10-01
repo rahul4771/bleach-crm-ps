@@ -65,9 +65,14 @@ function limit(element)
     }
 }
 function proceedImage(order){
+ 
+ 
+}
+function addImage(order){
   var eval_id=$(order).data('eval_id')
-  console.log("eval_id is "+eval_id)
-  app.uploadImage(eval_id)
+  $('#upload-image-tigger').click()
+  app.image_eval_id=eval_id
+
 }
 function myFunction(book_id) {
   document.getElementById("visti-section"+book_id+"").classList.toggle("not-show");
@@ -214,6 +219,7 @@ function openPaymentEdit(payment){
  app.paymentData.final_amount=paymentDetails.final_amount
  app.total_amount=paymentDetails.total_amount
  app.paymentData.discount=paymentDetails.discount
+ app.paymentData.additional_charge=paymentDetails.additional_charge
  app.paymentData.amount_before_cleaning=paymentDetails.amount_before_cleaning
  app.paymentData.amount_after_cleaning=paymentDetails.amount_after_cleaning
  app.openPayment()
@@ -223,6 +229,7 @@ function openSubmit(payment){
   app.paymentData.payment_method='PREPAID'
   app.paymentData.total_amount=paymentDetails.total_amount
   app.paymentData.final_amount=paymentDetails.final_amount
+  app.paymentData.additional_charge=paymentDetails.additional_charge
   app.total_amount=paymentDetails.total_amount
   app.paymentData.discount=paymentDetails.discount
   app.paymentData.amount_before_cleaning=paymentDetails.amount_before_cleaning
@@ -393,6 +400,7 @@ const app = new Vue({
 
   data: {
     taken_status:'AGENT_TAKEN',
+    image_eval_id:null,
     kitchen_msg:false,
     keynote_msg:false,
     addon_msg:false,
@@ -470,6 +478,7 @@ const app = new Vue({
              action_type:'',
              paymentData:{
                discount:'',
+               additional_charge:'',
                amount_before_cleaning:'',
                amount_after_cleaning:'',
                amount:'',
@@ -580,7 +589,9 @@ const app = new Vue({
           url:'',
           addons_parsed:[],
           image_url:'',
+          image_urls:[],
           media_file:'',
+          media_files:[],
           imageForm:new FormData()
          // url:'http://localhost:8000'
       // url:'https://test.bleach-kw.com'
@@ -591,13 +602,22 @@ const app = new Vue({
     
   
     
-      var file=event.target.files[0]
-     this.image_url=URL.createObjectURL(file)
-     this.media_file=file
+      
+      var files=event.target.files
+  
+    
+     for(var i=0;i<files.length;i++){
+       this.image_urls.push(URL.createObjectURL(files[i]))
+      this.media_files.push(files[i])
+      }
    
   
     
     
+    },
+    delImage(index){
+      this.image_urls.splice(index,1)
+      this.media_files.splice(index,1)
     },
     findKitchenSize(name,cabinet,type){
       console.log("name is"+name+"cabinet is"+cabinet+"type is"+type)
@@ -1321,15 +1341,20 @@ setTimeout(function() {
       })
     },
     
-    uploadImage(eval_id){
-     
+    uploadImage(){
+
+      for(var i=0;i<this.media_files.length;i++){
+        this.imageForm.append('media',this.media_files[i])
+      }
       this.imageForm.append('action_type','evaluation_media')
-      this.imageForm.append('evaluationbook_id',eval_id)
+      this.imageForm.append('evaluationbook_id',this.image_eval_id)
       this.imageForm.append('taken_status',this.taken_status)
-      this.imageForm.append('media',this.media_file)
+    
       axios.post(this.url+'/customer/editorder/'+this.orderId,this.imageForm).then(response=>{
-       
-       
+       window.location.reload()
+       this.imageForm=new FormData()
+      }).catch(err=>{
+        this.imageForm=new FormData()
       })
     },
    
@@ -1455,15 +1480,21 @@ setTimeout(function() {
       this.other_keynotes= others
     },
     calDiscount(){
-      this.paymentData.final_amount=this.total_amount-this.paymentData.discount
+      this.paymentData.final_amount=parseFloat(this.total_amount)-(parseFloat(this.paymentData.discount)||0)+(parseFloat(this.paymentData.additional_charge)||0)
       this.paymentData.amount_after_cleaning=''
       this.paymentData.amount_before_cleaning=''
     },
+    // calAdditionalCharge(){
+     
+    //   this.paymentData.final_amount=parseFloat(this.total_amount)+parseFloat(this.paymentData.additional_charge)||0
+    //   this.paymentData.amount_after_cleaning=''
+    //   this.paymentData.amount_before_cleaning=''
+    // },
     calcBreakdownBefore(){
-      this.paymentData.amount_after_cleaning=this.paymentData.total_amount-this.paymentData.amount_before_cleaning
+      this.paymentData.amount_after_cleaning=this.paymentData.final_amount-this.paymentData.amount_before_cleaning
     },
     calcBreakdownAfter(){
-      this.paymentData.amount_before_cleaning=this.paymentData.total_amount-this.paymentData.amount_after_cleaning
+      this.paymentData.amount_before_cleaning=this.paymentData.final_amount-this.paymentData.amount_after_cleaning
     },
     openPayment(){
       $('#edit-payment-tigger').click()
@@ -1575,11 +1606,11 @@ setTimeout(function() {
        "discount_amount":parseInt(this.paymentData.discount),
        "before_cleaning_amount":parseInt(this.paymentData.amount_before_cleaning),
        "after_cleaning_amount":parseInt(this.paymentData.amount_after_cleaning),
-       
+       "additional_charge":parseFloat(this.paymentData.additional_charge),
       }).then(response=>{
         console.log(response)
         $('#edit-payment-close').click()
-        window.location.reload()
+       window.location.reload()
         
       })
     }
@@ -1589,7 +1620,7 @@ setTimeout(function() {
         "action_type":'edit_discount',
        "payment_method":this.paymentData.payment_method,
        "discount_amount":parseInt(this.paymentData.discount),
-       
+       "additional_charge":parseFloat(this.paymentData.additional_charge),
        
       }).then(response=>{
         console.log(response)
@@ -1607,6 +1638,7 @@ setTimeout(function() {
         "action_type":'submit_quatation',
        "payment_method":this.paymentData.payment_method,
        "discount_amount":parseInt(this.paymentData.discount),
+       "additional_charge":parseFloat(this.paymentData.additional_charge),
        "before_cleaning_amount":parseInt(this.paymentData.amount_before_cleaning),
        "after_cleaning_amount":parseInt(this.paymentData.amount_after_cleaning),
        
@@ -1623,6 +1655,7 @@ setTimeout(function() {
         "action_type":'submit_quatation',
        "payment_method":this.paymentData.payment_method,
        "discount_amount":parseInt(this.paymentData.discount),
+       "additional_charge":parseFloat(this.paymentData.additional_charge)
        
        
       }).then(response=>{

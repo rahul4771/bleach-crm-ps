@@ -243,7 +243,7 @@
 <hr class="hr-dashedpad">
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-right-->
-          <div class=" bold-text common-label"> <label>Team Incharge</label></div>
+          <div class=" bold-text common-label"> <label>Cleaning Agent</label></div>
         <label for="favcity">
                 <select id="team_leader" name="team_leader" class="team_leader">
                 </select>
@@ -336,7 +336,7 @@
 <hr class="hr-dashedpad">
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-right-->
-          <div class=" bold-text common-label"> <label>Team Incharge</label></div>
+          <div class=" bold-text common-label"> <label>Cleaning Agent</label></div>
         <label for="favcity">
                 <select id="followup_leader" name="team_leader" class="followup_leader">
                 </select>
@@ -1419,10 +1419,10 @@ $('document').ready(function(){
                     
                   $('#order_url').attr('href',order_url);
 
-                  //Append Team Incharge and team members Based on Conditions
+                  //Append Cleaning Agent and team members Based on Conditions
                   if(data['team_leader'] || data['stl'])
                   {
-                    $('#team_leader_cleaning_id').html('<td colspan="3">Team Incharge:<strong><span class="blue-text">'+data['team_leader']+'</span></strong> <br> Senior Team Leader:<strong><span class="blue-text">'+data['stl']+'</span></strong> &nbsp;</strong> &nbsp;</td>');
+                    $('#team_leader_cleaning_id').html('<td colspan="3">Cleaning Agent:<strong><span class="blue-text">'+data['team_leader']+'</span></strong> <br> Senior Team Leader:<strong><span class="blue-text">'+data['stl']+'</span></strong> &nbsp;</strong> &nbsp;</td>');
                   }     
                   else
                   {
@@ -1629,10 +1629,10 @@ $('.collapsible1-close').click(function(){
 
                   datetimecheck(data['start_at_time'],data['start_at_date'],'followupcleaning');
 
-                  //Append Team Incharge and team members Based on Conditions
+                  //Append Cleaning Agent and team members Based on Conditions
                   if(data['team_leader'] || data['stl'])
                   {
-                    $('#team_leader_followup_id').html('<td colspan="3">Team Incharge:<strong><span class="blue-text">'+data['team_leader']+'</span></strong> <br> Senior Team Leader:<strong><span class="blue-text">'+data['stl']+'</span></strong> &nbsp;</strong> &nbsp;</td>');
+                    $('#team_leader_followup_id').html('<td colspan="3">Cleaning Agent:<strong><span class="blue-text">'+data['team_leader']+'</span></strong> <br> Senior Team Leader:<strong><span class="blue-text">'+data['stl']+'</span></strong> &nbsp;</strong> &nbsp;</td>');
                   }     
                   else
                   {

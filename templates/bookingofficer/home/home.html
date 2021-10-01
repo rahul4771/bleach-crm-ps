@@ -1435,10 +1435,10 @@ $('document').ready(function(){
                     
                     $('#order_url').attr('href',order_url);
 
-                  //Append Team Incharge and team members Based on Conditions
+                  //Append Cleaning Agent and team members Based on Conditions
                   if(data['team_leader'] || data['stl'])
                   {
-                    $('#team_leader_cleaning_id').html('<td colspan="3">Team Incharge:<strong><span class="blue-text">'+data['team_leader']+'</span></strong> <br> Senior Team Leader:<strong><span class="blue-text">'+data['stl']+'</span></strong> &nbsp;</strong> &nbsp;</td>');
+                    $('#team_leader_cleaning_id').html('<td colspan="3">Cleaning Agent:<strong><span class="blue-text">'+data['team_leader']+'</span></strong> <br> Senior Team Leader:<strong><span class="blue-text">'+data['stl']+'</span></strong> &nbsp;</strong> &nbsp;</td>');
                   }     
                   else
                   {
@@ -1523,10 +1523,10 @@ $('.collapsible1-close').click(function(){
                   $('#starting_time_followup_id').html(data['start_at_time']);
                   $('#duration_followup_id').html(data['duration']+' Hours');
 
-                  //Append Team Incharge and team members Based on Conditions
+                  //Append Cleaning Agent and team members Based on Conditions
                   if(data['team_leader'] || data['stl'])
                   {
-                    $('#team_leader_followup_id').html('<td colspan="3">Team Incharge:<strong><span class="blue-text">'+data['team_leader']+'</span></strong> <br> Senior Team Leader:<strong><span class="blue-text">'+data['stl']+'</span></strong> &nbsp;</strong> &nbsp;</td>');
+                    $('#team_leader_followup_id').html('<td colspan="3">Cleaning Agent:<strong><span class="blue-text">'+data['team_leader']+'</span></strong> <br> Senior Team Leader:<strong><span class="blue-text">'+data['stl']+'</span></strong> &nbsp;</strong> &nbsp;</td>');
                   }     
                   else
                   {

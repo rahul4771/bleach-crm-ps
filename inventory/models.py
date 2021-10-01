@@ -1,6 +1,6 @@
 from django.db import models
 from user.models import UserProfile
-from order.models import Order
+from order.models import OrderScheduler
 # Create your models here.
 
 UNIT_STATUS_CHOICES=(
@@ -281,10 +281,10 @@ class ServiceRecipeItems(models.Model):
     # status              = models.BooleanField(default=True,blank=False,null=False)
 
     def __unicode__(self):
-        return str('car')
+        return str(self.item.name)
 
     def __str__(self):
-        return 'car'
+        return self.item.name
 
 class PurchaseOrder(models.Model):
     supplier            = models.ForeignKey(Supplier,blank=True,null=True,related_name='supplier_purchase_order')
@@ -339,7 +339,7 @@ class ItemHistory(models.Model):
         return self.item.name
 
 class CheckOutItems(models.Model):
-    order                = models.ForeignKey(Order,blank=False,null=False,related_name='order_checkout')
+    visit                = models.ForeignKey(OrderScheduler,blank=False,null=False,related_name='visit_checkout')
     item                 = models.ForeignKey(ServiceRecipeItems,blank=False,null=False,related_name='item_checkout')
     units                = models.CharField(max_length=10,blank=False,null=False)
     created              = models.DateTimeField(auto_now_add=True)
