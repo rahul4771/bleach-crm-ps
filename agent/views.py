@@ -1390,10 +1390,10 @@ import json
 class AgentHome(IsAgent,View):
 	def get(self,request):
 		#update keynotes to Addons
-		# keynotes = EvaluationSectionKeynote.objects.filter(sub_area='kitchen')
-		# for keynote in keynotes:
-		# 	x = '"'+str(keynote.quantity)+'"'
-		# 	y = json.loads(json.loads(x))
+		keynotes = EvaluationSectionKeynote.objects.filter(sub_area='kitchen')
+		for keynote in keynotes:
+			x = '"'+str(keynote.quantity)+'"'
+			y = json.loads(json.loads(x))
 
 		# 	if y != None and type(y) != int:
 		# 		y['is_cabinet'] = False
