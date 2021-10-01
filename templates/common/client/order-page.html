@@ -2092,10 +2092,13 @@
                                     </div>
                                   
                                     <!-- Other Media end-->
+                                    
+                                    {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR' %}
                                     <!--add more images begins-->
                                     <button  class="order-upload-btn mt-20" onclick="addImage(this)"  data-eval_id="{{evaluationbook.id}}">Upload More Images</button>
                                     <!-- add more images end-->
-                                   
+                                    {% endif %}
+
                                 </div>
                                 <!-- service details part3 ends here -->
 

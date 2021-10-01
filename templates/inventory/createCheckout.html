@@ -191,13 +191,13 @@
                 <thead>
                   <tr>
                       <th style="width: %;">
-                        Item
+                        Ingredient
+                      </th>
+                      <th data-hide="phone,tablet"  style="width: %; ">
+                          Item
                       </th>
                       <th data-hide="phone,tablet"  style="width: %; ">
                           Item Code
-                      </th>
-                      <th data-hide="phone,tablet"  style="width: %;">
-                        Category
                       </th>
                       <th data-hide="phone,tablet"  style="width: %;" >
                           Unit
@@ -207,12 +207,16 @@
                   </tr>
               </thead>
               <tbody>
+                {% for ingredient in service_recipe_ingredients %}
                 <tr>
-                  <td>0000000</td>
-                  <td>0000000</td>
-                  <td>Category 1</td>
+                  <td>{{ingredient.ingredient}}</td>
+                  {% for item in ingredient.service_recipe_items %}
+                  {% if forloop.first %}
+                  <td>{{item.item.name}}</td>
+                  <td>{{item.item.item_code}}</td>
                   <td>
-
+                  {% endif %}
+                  {% endfor %}
                     <div class="qty ">
                       <span class="minus bg-dark">-</span>
                       <input type="number" class="count" name="qty" value="1">
@@ -223,7 +227,8 @@
                     <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
                   </td>
                 </tr>
-                
+                {% endfor %}
+
                 <tr>
                   <td>           <button class="inv-plan-btn" onclick="openNavAddStore()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="" > Add Item</button></td>
                 </tr>
@@ -408,6 +413,11 @@ function closeNavAddStore() {
     console.log("celd")
  $(this).toggleClass("down2")  ; 
 })
+
+function ProductListShow(){
+    searchFlag = true;
+    document.getElementById("id_search").style.display="block"
+}
 
 function showOf(id){
   var a = document.getElementById("id_sec_item_"+id);

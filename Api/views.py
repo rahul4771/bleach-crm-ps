@@ -2037,10 +2037,11 @@ class InventoryServiceRecipeAPI(APIView):
 
 		if service:
 			response_dict['area_size'] = service.area_size
-			response_dict['area_size'] = service.staff_count
+			response_dict['staff_count'] = service.staff_count
 		else:
+			print('pp')
 			response_dict['area_size'] = 0
-			response_dict['area_size'] = 0
+			response_dict['staff_count'] = 0
 		return Response(response_dict,HTTP_200_OK)
 
 class InventoryServiceAreaAPI(APIView):
@@ -2053,16 +2054,22 @@ class InventoryServiceAreaAPI(APIView):
 		area = request.GET.get('area')
 		staffcount = request.GET.get('staffcount')
 		
-		print(service_type,area,"attrsed3")
+		print(service_type,area,staffcount,"attrsed3")
 		try:
 			service = ServiceRecipe.objects.get(service=service_type)
-			service.area_size = area
-			service.staff_count = staffcount
+			if area != 'false' :
+				print("do")
+				service.area_size = area
+			if staffcount != 'false' :
+				print("dont")
+				service.staff_count = staffcount
 			service.save()
 		except:
 			service = ServiceRecipe.objects.create(service=service_type)
-			service.area_size = area
-			service.staff_count = staffcount
+			if area != 'false' :
+				service.area_size = area
+			if staffcount != 'false' :
+				service.staff_count = staffcount
 			service.save()
 		
 		print(service,"invo")
