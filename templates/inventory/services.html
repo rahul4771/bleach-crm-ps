@@ -182,10 +182,10 @@
                                         </div>
                                     </div>
                                     <div class="col-md-3" id="id_ser_1">
-                                        <div class="model-input-name">Area</div>
+                                        <div class="model-input-name">Measurement</div>
                                         <div class="d-flex inv-hide" id="id_area_edit_1">
                                             <div style="width: 50%; " class="inv-input-container h-30"> 
-                                                <input type="number"   class="w-p-100 inv-in" name="area1" id="id_area1">
+                                                <input type="number" class="w-p-100 inv-in" name="area1" id="id_area1">
                                                 <div class="av-font" style="margin-left:5px; margin-top: 5px; font-size:18px;">sqm</div>
                                             </div> 
                                             <button style="margin-left: 10px;" id="id_editDone" class="inv-blue-btn " type="submit" onclick="closeditShow(1)">Done </button>
@@ -196,7 +196,7 @@
                                             </div>
                                             <div class="av-font" style="margin-left:10px; margin-top: 0px; font-size:18px; color: #5a5a5a;">sqm</div>
 
-                                          <div class="edit-div" style="top: 25px !important;">
+                                          <div   class="edit-div" style="top: 0px !important; position: relative; margin-left: 15px;">
                                               <img onclick="showEditModal(1)" id="id_editButton"  class="inv-edit-img"
                                               src="{% static 'files/icons/edit.png' %}">
                                               </div>
@@ -217,7 +217,7 @@
                                             </div>
                                             
 
-                                          <div class="edit-div" style="top: 25px !important;">
+                                            <div   class="edit-div" style="top: 0px !important; position: relative; margin-left: 15px;">
                                               <img onclick="showEditModal2(1)" id="id_editButton"  class="inv-edit-img"
                                               src="{% static 'files/icons/edit.png' %}">
                                               </div>
@@ -226,6 +226,7 @@
                                 </div>
                                 <div class="row mt-10">
                                     <div class="col-md-7">
+                                        <br><br>
                                         <div class="attribute-table-2">
                                             <table class="inv-table item-table1"> 
                                                 <tr>
@@ -233,7 +234,7 @@
                                                        Item Name
                                                     </th>
                                                     <th style="width: %;">
-                                                       Count
+                                                       Quantity
                                                      </th>
                                                     <th style="width: %;">
                                                         Action
@@ -249,6 +250,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-5">
+                                        <h3 class="av-font">Ingredients under <span class="av-font" id="id_ingredient_1"></span> </h3>
                                         <div class="attribute-table-2">
                                             <table class="inv-table item-table5"> 
                                                 <tr>
@@ -332,7 +334,7 @@
                                     </div>
                                     <div class="col-md-3" id="id_ser_2">
                                         
-                                        <div class="model-input-name">Area</div>
+                                        <div class="model-input-name">Measurement</div>
                                         <!-- <div style="width: 50%; " class="inv-input-container h-30"> 
                                             <input type="number"   class="w-p-100 inv-in" name="attributes">
                                             <div class="av-font" style="margin-left:5px; margin-top: 5px; font-size:18px;">sqm</div>
@@ -371,7 +373,7 @@
                                             </div>
                                             <div class="av-font" style="margin-left:10px; margin-top: 0px; font-size:18px; color: #5a5a5a;">sqm</div>
 
-                                          <div class="edit-div" style="top: 25px !important;">
+                                            <div   class="edit-div" style="top: 0px !important; position: relative; margin-left: 15px;">
                                               <img onclick="showEditModal(2)" id="id_editButton2"  class="inv-edit-img"
                                               src="{% static 'files/icons/edit.png' %}">
                                               </div>
@@ -395,7 +397,7 @@
                                             </div>
                                             
 
-                                          <div class="edit-div" style="top: 25px !important;">
+                                            <div   class="edit-div" style="top: 0px !important; position: relative; margin-left: 15px;">
                                               <img onclick="showEditModal2(2)" id="id_editButton"  class="inv-edit-img"
                                               src="{% static 'files/icons/edit.png' %}">
                                               </div>
@@ -405,6 +407,8 @@
                                 </div>
                                 <div class="row mt-10">
                                     <div class="col-md-7">
+                                        <br>
+                                        <br>
                                         <div class="attribute-table-2">
                                             <table class="inv-table item-table2"> 
                                                 <tr>
@@ -428,6 +432,8 @@
                                         </div>
                                     </div>
                                     <div class="col-md-5">
+                                        <h3 class="av-font">Ingredients under <span class="av-font" id="id_ingredient_1"></span> </h3>
+
                                         <div class="attribute-table-2">
                                             <table class="inv-table item-table6"> 
                                                 <tr>
@@ -495,7 +501,7 @@
                                     </div>
                                     <div class="col-md-3" id="id_ser_3" >
                                         
-                                        <div class="model-input-name">Area</div>
+                                        <div class="model-input-name">Measurement</div>
                                         <!-- <div style="width: 50%; " class="inv-input-container h-30"> 
                                             <input type="number"   class="w-p-100 inv-in" name="attributes">
                                             <div class="av-font" style="margin-left:5px; margin-top: 5px; font-size:18px;">sqm</div>
@@ -536,7 +542,7 @@
                                             </div>
                                             <div class="av-font" style="margin-left:10px; margin-top: 0px; font-size:18px; color: #5a5a5a;">sqm</div>
 
-                                          <div class="edit-div" style="top: 25px !important;">
+                                            <div   class="edit-div" style="top: 0px !important; position: relative; margin-left: 15px;">
                                               <img onclick="showEditModal(3)" id="id_editButton3"  class="inv-edit-img"
                                               src="{% static 'files/icons/edit.png' %}">
                                               </div>
@@ -559,7 +565,7 @@
                                             </div>
                                             
 
-                                          <div class="edit-div" style="top: 25px !important;">
+                                            <div   class="edit-div" style="top: 0px !important; position: relative; margin-left: 15px;">
                                               <img onclick="showEditModal2(3)" id="id_editButton"  class="inv-edit-img"
                                               src="{% static 'files/icons/edit.png' %}">
                                               </div>
@@ -569,6 +575,7 @@
                                 </div>
                                 <div class="row mt-10">
                                     <div class="col-md-7">
+                                        <br><br>
                                         <div class="attribute-table-2">
                                             <table class="inv-table item-table3"> 
                                                 <tr>
@@ -592,6 +599,8 @@
                                         </div>
                                     </div>
                                     <div class="col-md-5">
+                                        <h3 class="av-font">Ingredients under <span class="av-font" id="id_ingredient_1"></span> </h3>
+
                                         <div class="attribute-table-2">
                                             <table class="inv-table item-table7"> 
                                                 <tr>
@@ -661,7 +670,7 @@
                                     </div>
                                     <div class="col-md-3" id="id_ser_4">
                                         
-                                        <div class="model-input-name">Area</div>
+                                        <div class="model-input-name">Measurement</div>
                                         <!-- <div style="width: 50%; " class="inv-input-container h-30"> 
                                             <input type="number"   class="w-p-100 inv-in" name="attributes">
                                             <div class="av-font" style="margin-left:5px; margin-top: 5px; font-size:18px;">sqm</div>
@@ -700,7 +709,7 @@
                                             </div>
                                             <div class="av-font" style="margin-left:10px; margin-top: 0px; font-size:18px; color: #5a5a5a;">sqm</div>
 
-                                          <div class="edit-div" style="top: 25px !important;">
+                                            <div   class="edit-div" style="top: 0px !important; position: relative; margin-left: 15px;">
                                               <img onclick="showEditModal(4)" id="id_editButton4"  class="inv-edit-img"
                                               src="{% static 'files/icons/edit.png' %}">
                                               </div>
@@ -724,7 +733,7 @@
                                             </div>
                                             
 
-                                          <div class="edit-div" style="top: 25px !important;">
+                                            <div   class="edit-div" style="top: 0px !important; position: relative; margin-left: 15px;">
                                               <img onclick="showEditModal2(4)" id="id_editButton"  class="inv-edit-img"
                                               src="{% static 'files/icons/edit.png' %}">
                                               </div>
@@ -733,6 +742,7 @@
                                 </div>
                                 <div class="row mt-10">
                                     <div class="col-md-7">
+                                        <br><br>
                                         <div class="attribute-table-2">
                                             <table class="inv-table item-table4"> 
                                                 <tr>
@@ -756,6 +766,8 @@
                                         </div>
                                     </div>
                                     <div class="col-md-5">
+                                        <h3 class="av-font">Ingredients under <span class="av-font" id="id_ingredient_1"></span> </h3>
+
                                         <div class="attribute-table-2">
                                             <table class="inv-table item-table8"> 
                                                 <tr>
@@ -1137,7 +1149,7 @@
 
                     
                     <div class="d-flex ">
-                        <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to edit  area?</p></div>
+                        <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to edit measurement?</p></div>
                         <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
 
                             <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
@@ -1170,7 +1182,7 @@
 
                     
                     <div class="d-flex ">
-                        <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to edit  area?</p></div>
+                        <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to edit measurement?</p></div>
                         <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
 
                             <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
@@ -1203,7 +1215,7 @@
 
                     
                     <div class="d-flex ">
-                        <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to edit  area?</p></div>
+                        <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to edit measurement?</p></div>
                         <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
 
                             <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
@@ -1236,7 +1248,7 @@
 
                     
                     <div class="d-flex ">
-                        <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to edit  area?</p></div>
+                        <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to edit measurement?</p></div>
                         <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
 
                             <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
@@ -1505,7 +1517,7 @@ async function closeditShow2(id){
     var service_type = $('#id_name_cleaning').val();
     //console.log(area,service_type,"ct")
 
-    var result = await _get('api/inventory-service-area/?service_type='+service_type+'&staffcount='+staffcount);
+    var result = await _get('api/inventory-service-area/?service_type='+service_type+'&staffcount='+staffcount+'&area=false');
          if(result.status == 200){
              $('.service_area').text(result.data.staff_count);
              console.log(result.data.staff_count,"cons")
@@ -1524,7 +1536,7 @@ async function closeditShow(id){
     var service_type = $('#id_name_cleaning').val();
     //console.log(area,service_type,"ct")
 
-    var result = await _get('api/inventory-service-area/?service_type='+service_type+'&area='+area);
+    var result = await _get('api/inventory-service-area/?service_type='+service_type+'&area='+area+'&staffcount=false');
          if(result.status == 200){
              $('.service_area').text(result.data.area_size);
              console.log(result.data.area_size,"cons")
@@ -1879,7 +1891,7 @@ function openNavAddStore2(d) {
     
 
     //Delete line
-    function deleteItem(itemid){
+    function deleteIngredient(itemid){
         $('#object_id').val(itemid);
         //$('#action_delete_id').val('delete_line');
     }
@@ -1916,8 +1928,10 @@ function openNavAddStore2(d) {
 
             console.log(result.data.area_size,"arsiz")
             if (recipe_category == 'service'){
+                console.log("ll")
                 $('.service_area').text(result.data.area_size);
             }else{
+                console.log("wl")
                 $('.service_area').text(result.data.staff_count);
             }
 
@@ -1933,7 +1947,7 @@ function openNavAddStore2(d) {
                         if (key == 0){
                             getitems(value.ingredient_id);
                         }
-                        $('.item-table1').append('<tr class="bundle_row" onclick="getitems('+value.ingredient_id+');selectedRow(this);"><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
+                        $('.item-table1').append('<tr class="bundle_row" onclick="getitems('+value.ingredient_id+');selectedRow(this);"><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteIngredient('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
                     })
                 }else{
                     $(".item-table1 tr:not(:first)").remove(); 

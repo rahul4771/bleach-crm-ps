@@ -1136,7 +1136,13 @@ class InventoryCheckout(IsInventoryAdmin,View):
 class InventoryCreateCheckout(IsInventoryAdmin,View):
     def get(self,request,visit_id):
         visit = OrderScheduler.objects.select_related('order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='team_members')),to_attr='cleaning_team'),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='sections')).get(id=int(visit_id))
-        return render(request,'inventory/createCheckout.html',{"visit":visit})
+        items = InventoryItem.objects.filter(Q(item_status='available')|Q(item_status='about_to_finish'))
+        print(items,"its")
+        service = visit.order_scheduler_book.service_type
+        cleaners = visit.no_of_cleaners
+        service_recipe_ingredients = ServiceRecipeIngredients.objects.filter(service_type__service=service).prefetch_related(Prefetch('item_ingredient',queryset=ServiceRecipeItems.objects.all(),to_attr='service_recipe_items'))
+        print(service_recipe_ingredients,"itt")
+        return render(request,'inventory/createCheckout.html',{"visit":visit,"items":items,"service_recipe_ingredients":service_recipe_ingredients})
 
 class InventoryPurchaseOrder(IsInventoryAdmin,View):
     def get(self,request):
@@ -1168,9 +1174,9 @@ class PurchaseOrderItemsPage(IsInventoryAdmin,View):
             purchase_order.is_received = True
             purchase_order.save()
 
-            for item in purchase_order.purchase_order_items:
-                item.is_received = True
-                item.save()
+            # for item in purchase_order.purchase_order_items:
+            #     item.is_received = True
+            #     item.save()
 
         if shipment_status == 'incomplete':
             purchase_order.is_received = False
@@ -1190,8 +1196,11 @@ class PurchaseOrderItemsPage(IsInventoryAdmin,View):
             loopcount = 0
             for product in products:
                 item = InventoryItem.objects.get(id=int(product))
+                purchase_order_item = PurchaseOrderItems.objects.get(purchase_order=purchase_order,product__item__id=int(product))
                 print(item,item_counts[loopcount], "itm")
                 ItemHistory.objects.create(purchase_order=purchase_order,item=item,quantity=item_counts[loopcount],added_by=request.user)
+                purchase_order_item.is_received = True
+                purchase_order_item.save()
                 loopcount += 1
 
             messages.success(request,"Quantity added to Inventory")
@@ -1255,6 +1264,10 @@ class PurchaseOrderItemsPage(IsInventoryAdmin,View):
                 unit_price = unit_price,
                 status = unit_status
                 )
+
+            purchase_order_item = PurchaseOrderItems.objects.get(purchase_order=purchase_order,product__item__id=int(item_id))
+            purchase_order_item.is_received = True
+            purchase_order_item.save()
 
             messages.success(request,"Unit added to Inventory")
 

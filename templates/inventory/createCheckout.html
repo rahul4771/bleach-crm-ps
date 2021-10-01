@@ -181,7 +181,7 @@
           {% endfor %}
 
          
-        {% comment %} <div class="row mt-20">
+        <div class="row mt-20">
           <div class="col-md-12">
             <div class="inv-check-orderhead">
               Recommended List
@@ -191,13 +191,13 @@
                 <thead>
                   <tr>
                       <th style="width: %;">
-                        Item
+                        Ingredient
+                      </th>
+                      <th data-hide="phone,tablet"  style="width: %; ">
+                          Item
                       </th>
                       <th data-hide="phone,tablet"  style="width: %; ">
                           Item Code
-                      </th>
-                      <th data-hide="phone,tablet"  style="width: %;">
-                        Category
                       </th>
                       <th data-hide="phone,tablet"  style="width: %;" >
                           Unit
@@ -207,12 +207,16 @@
                   </tr>
               </thead>
               <tbody>
+                {% for ingredient in service_recipe_ingredients %}
                 <tr>
-                  <td>0000000</td>
-                  <td>0000000</td>
-                  <td>Category 1</td>
+                  <td>{{ingredient.ingredient}}</td>
+                  {% for item in ingredient.service_recipe_items %}
+                  {% if forloop.first %}
+                  <td>{{item.item.name}}</td>
+                  <td>{{item.item.item_code}}</td>
                   <td>
-
+                  {% endif %}
+                  {% endfor %}
                     <div class="qty ">
                       <span class="minus bg-dark">-</span>
                       <input type="number" class="count" name="qty" value="1">
@@ -223,7 +227,8 @@
                     <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
                   </td>
                 </tr>
-                
+                {% endfor %}
+
                 <tr>
                   <td>           <button class="inv-plan-btn" onclick="openNavAddStore()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="" > Add Item</button></td>
                 </tr>
@@ -236,7 +241,7 @@
           <button class="sent-button" >Submit</button>
                         <button class="view-button">Cancel</button>
         </div>
-      </div> {% endcomment %}
+      </div>  
 
 
     </div>
@@ -260,86 +265,34 @@
       </div>
       <hr>
       <div class="row mt-20">
-          <div class="col-md-12 ">
-              <div class="model-input-name">Product</div>
+        <div class="col-md-12 ">
+          <div class="model-input-name">Item</div>
+          <input type="hidden" name="item" id="id_pro_sel" value="" />
+          <div style="position: relative;">
+              <div class="inv-input-container inv-border h-30">
+                  <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()">
+                 
+                  <!-- <div onclick="ProductListShow()" class="model-filter">
+                      
+                          <i class="fa fa-angle-down fa-lg " style="color: #707070;" aria-hidden="true"></i>
+                      
 
-              <div style="position: relative;">
-                  <div class="inv-input-container inv-border h-30">
-                      <input type="text" id="pro-name" style="border: none !important; width: 90%;" class=" inv-in"
-                          name="attributes">
-                      <div class="inv-hr"></div>
-                      <div class="model-filter">
-                          <button class="inv-normal-btn" onclick="showDrop()">
-                              <i class="fa fa-angle-down fa-lg " style="color: #707070;" aria-hidden="true"></i>
-                          </button>
-
-                      </div>
-
+                  </div> -->
 
 
-                  </div>
-                  <div id="id_search" class="row inv-result-box" style="display: none;">
-                      <div class="col-md-12">
-                          <div class="inv-search-result">
-                              ! fri
-                          </div>
-                      </div>
-                      <div class="col-md-12">
-                          <div class="inv-search-result">
-                              ! fri
-                          </div>
-                      </div>
-                      <div class="col-md-12">
-                          <div class="inv-search-result">
-                              ! fri
-                          </div>
-                      </div>
-                  </div>
-                  <div id="id_cat" class="row inv-result-box" style="display: none;">
-                      <div class="col-md-12">
-                          <div class="inv-search-result">
-                              
-                              <label class="c-container">cat 1
-                                  <input type="checkbox">
-                                  <span style="top:2px !important;" class="c-checkmark"></span>
-                              </label>
-                          </div>
-                      </div>
-                      <div class="col-md-12">
-                          <div class="inv-search-result">
-                              
-                              <label class="c-container">cat 1
-                                  <input type="checkbox">
-                                  <span style="top:2px !important;" class="c-checkmark"></span>
-                              </label>
-                          </div>
-                      </div>
-                      <div class="col-md-12">
-                          <div class="inv-search-result">
-                              
-                              <label class="c-container">cat 1
-                                  <input type="checkbox">
-                                  <span style="top:2px !important;" class="c-checkmark"></span>
-                              </label>
-                          </div>
-                      </div>
-                      <div class="col-md-12">
-                          <div class="inv-search-result">
-                              
-                              <label class="c-container">cat 1
-                                  <input type="checkbox">
-                                  <span style="top:2px !important;" class="c-checkmark"></span>
-                              </label>
-                          </div>
-                      </div>
-                    
-                     
-                  </div>
+
+              </div>
+              <div id="id_search" class="row inv-result-box" style="display: none;">
+                
               </div>
           </div>
+         
+
 
       </div>
-      <div class="row mt-20">
+
+      </div>
+      <!-- <div class="row mt-20">
           <div class="col-md-12 ">
               <div class="model-input-name">Unit</div>
 
@@ -350,7 +303,7 @@
               </div>
           </div>
 
-      </div>
+      </div> -->
 
 
 
@@ -374,6 +327,49 @@
 {% block javascript %}
 
 <script>
+var products = [];
+{% for item in items %}
+    var tempId = '{{item.id}}';
+    var tempName = '{{item.name}}';
+    products.push({id:tempId,name:tempName})
+   // $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
+
+    {% endfor %}
+
+
+        $(document).ready(function(){
+
+        });
+
+        function showProducts(){
+    $('#id_search').empty();
+    for (var j=0; j<products.length; j++) {
+        if (products[j].name.toUpperCase().match($('#pro-name').val().toUpperCase())){
+            console.log(products[j]);
+    $('#id_search').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
+
+        }
+    }
+        console.log( $('#pro-name').val());
+        if($('#pro-name').val() !=""){
+        document.getElementById("id_search").style.display="block"
+
+        }else{
+        document.getElementById("id_search").style.display="none"
+
+        }
+        
+    }
+
+    function closeProductShow(d){
+        console.log(d);
+        var proId = $(d).attr("data-pro")
+        $('#id_pro_sel').val($(d).attr("data-pro"));
+        $('#pro-name').val($(d).attr("data-name"));
+
+
+        document.getElementById("id_search").style.display="none"
+    }
    $("#pro-name").click(function(){
         document.getElementById("id_cat").style.display="none"
     });
@@ -381,7 +377,13 @@
        document.getElementById("id_cat").style.display="block"
     }
    function openNavAddStore() {
-    
+     $('#id_search').empty();
+        {% for item in items %}
+    var tempId = '{{item.id}}';
+    var tempName = '{{item.name}}';
+    $('#id_search').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
+
+    {% endfor %}
     if(screen.width<= 600){
         document.getElementById("addStore").style.width = "100%";
     }else if(screen.width<= 720){
@@ -411,6 +413,11 @@ function closeNavAddStore() {
     console.log("celd")
  $(this).toggleClass("down2")  ; 
 })
+
+function ProductListShow(){
+    searchFlag = true;
+    document.getElementById("id_search").style.display="block"
+}
 
 function showOf(id){
   var a = document.getElementById("id_sec_item_"+id);
