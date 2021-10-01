@@ -1168,9 +1168,9 @@ class PurchaseOrderItemsPage(IsInventoryAdmin,View):
             purchase_order.is_received = True
             purchase_order.save()
 
-            for item in purchase_order.purchase_order_items:
-                item.is_received = True
-                item.save()
+            # for item in purchase_order.purchase_order_items:
+            #     item.is_received = True
+            #     item.save()
 
         if shipment_status == 'incomplete':
             purchase_order.is_received = False
@@ -1190,8 +1190,11 @@ class PurchaseOrderItemsPage(IsInventoryAdmin,View):
             loopcount = 0
             for product in products:
                 item = InventoryItem.objects.get(id=int(product))
+                purchase_order_item = PurchaseOrderItems.objects.get(purchase_order=purchase_order,product__item__id=int(product))
                 print(item,item_counts[loopcount], "itm")
                 ItemHistory.objects.create(purchase_order=purchase_order,item=item,quantity=item_counts[loopcount],added_by=request.user)
+                purchase_order_item.is_received = True
+                purchase_order_item.save()
                 loopcount += 1
 
             messages.success(request,"Quantity added to Inventory")
@@ -1255,6 +1258,10 @@ class PurchaseOrderItemsPage(IsInventoryAdmin,View):
                 unit_price = unit_price,
                 status = unit_status
                 )
+
+            purchase_order_item = PurchaseOrderItems.objects.get(purchase_order=purchase_order,product__item__id=int(item_id))
+            purchase_order_item.is_received = True
+            purchase_order_item.save()
 
             messages.success(request,"Unit added to Inventory")
 

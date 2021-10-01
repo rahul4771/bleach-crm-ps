@@ -1,5 +1,6 @@
 from django.db import models
 from user.models import UserProfile
+from order.models import Order
 # Create your models here.
 
 UNIT_STATUS_CHOICES=(
@@ -285,20 +286,6 @@ class ServiceRecipeItems(models.Model):
     def __str__(self):
         return 'car'
 
-# class ServiceRecipeItems(models.Model):
-#     service_or_person   = models.CharField(max_length=50,blank=False,null=False)
-#     service_type        = models.ForeignKey(ServiceRecipe,blank=True,null=True,related_name='item_recipe')
-#     item                = models.ForeignKey(InventoryItem,blank=True,null=True,related_name='service_item')
-#     item_price          = models.CharField(default=0,max_length=100,blank=True,null=True)
-#     item_count          = models.IntegerField(default=0,null=True,blank=True)
-#     status              = models.BooleanField(default=True,blank=False,null=False)
-
-#     def __unicode__(self):
-#         return str(self.service_type.service)
-
-#     def __str__(self):
-#         return self.service_type.service
-
 class PurchaseOrder(models.Model):
     supplier            = models.ForeignKey(Supplier,blank=True,null=True,related_name='supplier_purchase_order')
     purchase_order_id   = models.CharField(max_length=50,blank=False,null=False)
@@ -351,5 +338,14 @@ class ItemHistory(models.Model):
     def __str__(self):
         return self.item.name
 
+class CheckOutItems(models.Model):
+    order                = models.ForeignKey(Order,blank=False,null=False,related_name='order_checkout')
+    item                 = models.ForeignKey(ServiceRecipeItems,blank=False,null=False,related_name='item_checkout')
+    units                = models.CharField(max_length=10,blank=False,null=False)
+    created              = models.DateTimeField(auto_now_add=True)
 
+    def __unicode__(self):
+        return str(self.order.order_no)
 
+    def __str__(self):
+        return self.order.order_no
