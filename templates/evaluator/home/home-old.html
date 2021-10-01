@@ -713,7 +713,7 @@ class="cl-service-list"
 
    </div>
    <div class="col-md-4 ">
-    <div class="cl-slot-card-title2">Available Team Incharge</div>
+    <div class="cl-slot-card-title2">Available Cleaning Agent</div>
     <div class="row">
       <div class="col-md-3 text-center" v-for="(cleaner,index) in cleaningDetails.available_leaders" >
         <img :src="url+cleaner.profile_image" class="cl-profile-pic"  data-toggle="tooltip" data-placement="bottom" title="Amanadiel"/>
@@ -829,7 +829,7 @@ class="cl-service-list"
             </div>
             <div v-else class="cl-highlight cl-modal-text-title "> Not Assigned </div>
             <div class="cl-modal-text-content cl-mt-20">
-              Team Incharge
+              Cleaning Agent
             </div>
             <div class="cl-modal-text-title">
               <div v-if="currentSlotDetails.cleaning_team_order_scheduler[0]"><% currentSlotDetails.cleaning_team_order_scheduler[0].team_leader.name %></div>
@@ -1020,7 +1020,7 @@ class="cl-service-list"
             
           </div>
           <div class="cl-modal-text-content cl-mt-20">
-            Team Incharge
+            Cleaning Agent
           </div>
           <div class="cl-modal-text-title">
             <div v-if="currentSlotDetails.followupteam_followupschedule[0]">
@@ -1723,10 +1723,10 @@ $('document').ready(function(){
                     
                   $('#order_url').attr('href',order_url);
 
-                  //Append Team Incharge and team members Based on Conditions
+                  //Append Cleaning Agent and team members Based on Conditions
                   if(data['team_leader'] || data['stl'])
                   {
-                    $('#team_leader_cleaning_id').html('<td colspan="3">Team Incharge:<strong><span class="blue-text">'+data['team_leader']+'</span></strong> <br> Senior Team Leader:<strong><span class="blue-text">'+data['stl']+'</span></strong> &nbsp;</strong> &nbsp;</td>');
+                    $('#team_leader_cleaning_id').html('<td colspan="3">Cleaning Agent:<strong><span class="blue-text">'+data['team_leader']+'</span></strong> <br> Senior Team Leader:<strong><span class="blue-text">'+data['stl']+'</span></strong> &nbsp;</strong> &nbsp;</td>');
                   }     
                   else
                   {
@@ -1851,10 +1851,10 @@ $('.collapsible1-close').click(function(){
                   $('#starting_time_followup_id').html(data['start_at_time']);
                   $('#duration_followup_id').html(data['duration']+' Hours');
 
-                  //Append Team Incharge and team members Based on Conditions
+                  //Append Cleaning Agent and team members Based on Conditions
                   if(data['team_leader'] || data['stl'])
                   {
-                    $('#team_leader_followup_id').html('<td colspan="3">Team Incharge:<strong><span class="blue-text">'+data['team_leader']+'</span></strong> <br> Senior Team Leader:<strong><span class="blue-text">'+data['stl']+'</span></strong> &nbsp;</strong> &nbsp;</td>');
+                    $('#team_leader_followup_id').html('<td colspan="3">Cleaning Agent:<strong><span class="blue-text">'+data['team_leader']+'</span></strong> <br> Senior Team Leader:<strong><span class="blue-text">'+data['stl']+'</span></strong> &nbsp;</strong> &nbsp;</td>');
                   }     
                   else
                   {
