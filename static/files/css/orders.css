@@ -34,6 +34,11 @@ padding:10px;
   height:150px;
   width:150px;
 }
+.image-bottom{
+  background: #2c4c82;
+  color:#ffffff;
+  padding: 5px; 
+}
 .order-upload-btn{
   background: #2c4c82 0% 0% no-repeat padding-box;
     box-shadow: 0px 3px 6px #0000003d;

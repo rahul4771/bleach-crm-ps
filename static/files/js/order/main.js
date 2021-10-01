@@ -65,9 +65,14 @@ function limit(element)
     }
 }
 function proceedImage(order){
+ 
+ 
+}
+function addImage(order){
   var eval_id=$(order).data('eval_id')
-  console.log("eval_id is "+eval_id)
-  app.uploadImage(eval_id)
+  $('#upload-image-tigger').click()
+  app.image_eval_id=eval_id
+
 }
 function myFunction(book_id) {
   document.getElementById("visti-section"+book_id+"").classList.toggle("not-show");
@@ -395,6 +400,7 @@ const app = new Vue({
 
   data: {
     taken_status:'AGENT_TAKEN',
+    image_eval_id:null,
     kitchen_msg:false,
     keynote_msg:false,
     addon_msg:false,
@@ -583,7 +589,9 @@ const app = new Vue({
           url:'',
           addons_parsed:[],
           image_url:'',
+          image_urls:[],
           media_file:'',
+          media_files:[],
           imageForm:new FormData()
          // url:'http://localhost:8000'
       // url:'https://test.bleach-kw.com'
@@ -594,13 +602,22 @@ const app = new Vue({
     
   
     
-      var file=event.target.files[0]
-     this.image_url=URL.createObjectURL(file)
-     this.media_file=file
+      
+      var files=event.target.files
+  
+    
+     for(var i=0;i<files.length;i++){
+       this.image_urls.push(URL.createObjectURL(files[i]))
+      this.media_files.push(files[i])
+      }
    
   
     
     
+    },
+    delImage(index){
+      this.image_urls.splice(index,1)
+      this.media_files.splice(index,1)
     },
     findKitchenSize(name,cabinet,type){
       console.log("name is"+name+"cabinet is"+cabinet+"type is"+type)
@@ -1324,15 +1341,20 @@ setTimeout(function() {
       })
     },
     
-    uploadImage(eval_id){
-     
+    uploadImage(){
+
+      for(var i=0;i<this.media_files.length;i++){
+        this.imageForm.append('media',this.media_files[i])
+      }
       this.imageForm.append('action_type','evaluation_media')
-      this.imageForm.append('evaluationbook_id',eval_id)
+      this.imageForm.append('evaluationbook_id',this.image_eval_id)
       this.imageForm.append('taken_status',this.taken_status)
-      this.imageForm.append('media',this.media_file)
+    
       axios.post(this.url+'/customer/editorder/'+this.orderId,this.imageForm).then(response=>{
        window.location.reload()
-       
+       this.imageForm=new FormData()
+      }).catch(err=>{
+        this.imageForm=new FormData()
       })
     },
    

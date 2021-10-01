@@ -190,8 +190,54 @@
         </div>
       </div>
     <!-- SUBMIT EVALUATION MODAL ENDS HERE-->
+      <!--- Image Upload modal-->
+      <div class="modal fade " id="uploadImageModal" tabindex="-1" role="dialog" aria-labelledby="editPaymentModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered primary-modal" role="document">
+          <div class="modal-content primary-modal-border">
+            
+           
+            <div class="modal-body">
+              <div class="container">
+                <div class="row">
+                        <div class="col-md-12">
+                            <div>Add New Images</div>
+                        </div>
+                        <div class="col-md-12 mt-20">
+                            <div class="row ">
+                                <div class="col-md-2 mt-10" v-for="(image,index) in image_urls" v-bind:key="index">
+                                   
+                                    <img :src="image" class="order-details-img w-100"/>
+                                    <div class="text-center image-bottom" @click="delImage(index)"><i class="fas fa-trash-alt cp"></i></div>
+                                </div>
+                                <div class="col-md-2 mt-20" >
+                                   
+                                    <div class="order-img-box" @click="$refs.itemfile.click()" ref="item-image"
+                                    v-on:change="onImageFileChanged">
+                                        <i class="fas fa-plus order-img-icon"></i>
+                                        <input type="file" ref="itemfile" style="display: none" accept="image/*"
+                                        multiple id="itemfileselected" />
+                                    </div>
+                                </div>
+                            </div>
+                         
+                           
+                        </div>
+
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer text-center">
+              
+              <button type="submit"  class="btn primary-btn"  @click="uploadImage()">Submit</button>
+              <button type="button" class="btn primary-btn-bordered" data-dismiss="modal"  id="upload-image-close">Cancel</button>
+            </div>
+           
+          </div>
+        </div>
+      </div>
 
 
+ <!--- Image Upload modal ends here-->
     <!-- CHANGE PAYMENT MODAL BEGINS HERE-->
     <div class="modal fade " id="editPaymentModal" tabindex="-1" role="dialog" aria-labelledby="editPaymentModal" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered primary-modal" role="document">
@@ -267,6 +313,7 @@
         </div>
       </div>
     <!-- EDIT PAYMENT MODAL ENDS HERE-->
+    <div data-toggle="modal" data-target="#uploadImageModal" id="upload-image-tigger"></div>
     <div data-toggle="modal" data-target="#notesModal" id="notes-tigger"></div>
     <div data-toggle="modal" data-target="#editPaymentModal" id="edit-payment-tigger"></div>
 
@@ -2043,40 +2090,11 @@
                                         {% endif %}
 
                                     </div>
-                                    <div class="row mt-20">
-                                        <div class="col-md-2" v-if="image_url">
-                                            <img :src="image_url" class="order-details-img"/>
-                                        </div>
-                                        <div class="col-md-2" v-if="!image_url">
-                                            <div class="order-img-box" @click="$refs.itemfile.click()" ref="item-image"
-                                            v-on:change="onImageFileChanged">
-                                                <i class="fas fa-plus order-img-icon"></i>
-                                                <input type="file" ref="itemfile" style="display: none" accept="image/*"
-                                                id="itemfileselected" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="mt-10" v-if="image_url">
-                                        <multiselect
-                      v-model="taken_status"
-                      placeholder="Image Taken By"
-                      style="max-width:200px;"
-                      :options="['CUSTOMER_SEND','AGENT_TAKEN']"
-
-                      :multiple="false"
-                      :taggable="false"
-                      :show-labels="false"
-                   
-                      
-
-
-
-                    ></multiselect>
-                                    </div>
-                                    <div class="mt-10" v-if="image_url">
-                                        <button  class="order-upload-btn" onclick="proceedImage(this)"  data-eval_id="{{evaluationbook.id}}">Upload</button>
-                                    </div>
+                                  
                                     <!-- Other Media end-->
+                                    <!--add more images begins-->
+                                    <button  class="order-upload-btn mt-20" onclick="addImage(this)"  data-eval_id="{{evaluationbook.id}}">Upload More Images</button>
+                                    <!-- add more images end-->
                                    
                                 </div>
                                 <!-- service details part3 ends here -->
