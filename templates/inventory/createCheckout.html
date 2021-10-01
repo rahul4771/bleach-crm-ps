@@ -218,9 +218,9 @@
                   {% endif %}
                   {% endfor %}
                     <div class="qty ">
-                      <span class="minus bg-dark">-</span>
-                      <input type="number" class="count" name="qty" value="1">
-                      <span class="plus bg-dark">+</span>
+                      <span class="minus bg-dark" onclick="decrement({{forloop.counter}})" >-</span>
+                      <input type="text" class="count" id="id_qty_{{forloop.counter}}" name="qty" value="1">
+                      <span class="plus bg-dark" onclick="increment({{forloop.counter}})">+</span>
                   </div>
                   </td>
                   <td>
@@ -327,6 +327,19 @@
 {% block javascript %}
 
 <script>
+
+function increment(id){
+  console.log(id)
+  $('#id_qty_'+id).val(parseInt($('#id_qty_'+id).val()) + 1 );
+}
+function decrement(id){
+  $('#id_qty_'+id).val(parseInt($('#id_qty_'+id).val()) - 1 );
+    				if ($('#id_qty_'+id).val() == 0) {
+						$('#id_qty_'+id).val(1);
+					}
+}
+
+
 var products = [];
 {% for item in items %}
     var tempId = '{{item.id}}';
@@ -399,15 +412,15 @@ function closeNavAddStore() {
 
   	$(document).ready(function(){
 		    $('.count').prop('disabled', true);
-   			$(document).on('click','.plus',function(){
-				$('.count').val(parseInt($('.count').val()) + 1 );
-    		});
-        	$(document).on('click','.minus',function(){
-    			$('.count').val(parseInt($('.count').val()) - 1 );
-    				if ($('.count').val() == 0) {
-						$('.count').val(1);
-					}
-    	    	});
+   			// $(document).on('click','.plus',function(){
+			  // 	$('.count').val(parseInt($('.count').val()) + 1 );
+    		// });
+        // 	$(document).on('click','.minus',function(){
+    		// 	$('.count').val(parseInt($('.count').val()) - 1 );
+    		// 		if ($('.count').val() == 0) {
+				// 		$('.count').val(1);
+				// 	}
+    	  //   	});
  		});
   $(".action-icon").click(function(){
     console.log("celd")
