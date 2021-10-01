@@ -1397,12 +1397,12 @@ class AgentHome(IsAgent,View):
 				y = json.loads(json.loads(x))
 			except:
 				y = None
-		# 	if y != None and type(y) != int:
-		# 		y['is_cabinet'] = False
-		# 		z = json.dumps(y).replace('"','\\"') 			 
-		# 		if y['size']:
-		# 			EvaluationSectionAddons.objects.create(evaluation_section=keynote.evaluation_section,name='kitchen',addon_cost=y['cost'],addon_net_cost=y['cost'],quantity=1,size=y['size'],other_details=z)
-		# 			keynote.delete()
+			if y != None and type(y) != int:
+				y['is_cabinet'] = False
+				z = json.dumps(y).replace('"','\\"') 			 
+				if y['size']:
+					EvaluationSectionAddons.objects.create(evaluation_section=keynote.evaluation_section,name='kitchen',addon_cost=y['cost'],addon_net_cost=y['cost'],quantity=1,size=y['size'],other_details=z)
+					keynote.delete()
 
 		#for taking today counts
 		count_today_start = timezone.now().replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
