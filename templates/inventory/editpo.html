@@ -276,12 +276,18 @@
                 <div class="col-md-12 ">
                     <div class="model-input-name">Unit</div>
 
-                    <div class="qty ">
+                    <!-- <div class="qty ">
                         <span style="color: #4B4B4B;"  class="minus bg-dark qty-border-two" >-</span>
                         <input style="color: #4B4B4B;"  type="text" class="count qty-border-two"   >
                         <input style="color: #4B4B4B;"   type="hidden" class="count qty-border-two" value="1" id="id_item_count" name="item_count"  >
 
                         <span style="color: #4B4B4B; margin-left: -5px !important;" class="plus bg-dark qty-border-two" >+</span>
+                    </div> -->
+
+                    <div class="quantity">
+                      <a class="quantity__minus pointer" ><span>-</span></a>
+                      <input  type="text" class="quantity__input"   value="1" id="id_item_count" name="item_count" >
+                      <a  class="quantity__plus pointer" ><span>+</span></a>
                     </div>
                 </div>
 
@@ -409,6 +415,29 @@ function showAdditem(){
         {% endfor %}
 
     	$(document).ready(function(){
+
+            const minus = $('.quantity__minus');
+            const plus = $('.quantity__plus');
+            const input = $('.quantity__input');
+            minus.click(function(e) {
+                e.preventDefault();
+                var value = input.val();
+                if (value > 1) {
+                value--;
+                }
+                input.val(value);
+                calc_total_price();
+                e.preventDefault();
+
+            });
+            
+            plus.click(function(e) {
+                e.preventDefault();
+                var value = input.val();
+                value++;
+                input.val(value);
+                calc_total_price();
+            })
 
             
             var urlc = window.location.href;
