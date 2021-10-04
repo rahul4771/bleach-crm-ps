@@ -279,7 +279,21 @@
 
                   <div class="d-md-flex d-print-flex">
                     <div class="p-2">
-                      Size : <span class="inv-text-bold">{{book_section.size}} {{book_section.unit|default_if_none:''}}</span>
+                      Size : <span class="inv-text-bold">{{book_section.size}} 
+                        {% if evaluation_book.service_type.name == 'Upholstery Cleaning' %}
+                                                       
+                        {% for price_range in price_ranges %}
+                        {% if price_range.name == book_section.size and price_range.service_type == evaluation_book.service_type and price_range.upholstery_type == section.upholstery_type %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}} Seater){% endif %}
+                        {% endfor %}
+                          
+                        {% else %}
+                            
+                        {% for price_range in price_ranges %}
+                        {% if price_range.name == book_section.size and price_range.service_type == evaluation_book.service_type and evaluation_book.service_type.name != 'Mattress Cleaning' and price_range.is_newkitchen == book_section.new_kitchen and price_range.is_cabinet == book_section.is_cabinet and price_range.is_highprice_facade == book_section.is_highprice_facade and price_range.is_highprice_window == book_section.is_highprice_window %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}} Sqm){% endif %}
+                        {% endfor %}
+                            
+                        {% endif %}
+                      </span>
                     </div>
                     <div class="p-2">
                       Visit : <span class="inv-text-bold">1</span>
@@ -474,7 +488,20 @@
                                 Size
                               </div>
                               <div class="qt-details-value">
-                                {{book_section.size}} {{book_section.unit|default_if_none:''}}
+                                {{book_section.size}} 
+                                {% if evaluation_book.service_type.name == 'Upholstery Cleaning' %}
+                                                       
+                                {% for price_range in price_ranges %}
+                                {% if price_range.name == book_section.size and price_range.service_type == evaluation_book.service_type and price_range.upholstery_type == section.upholstery_type %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}} Seater){% endif %}
+                                {% endfor %}
+                                  
+                                {% else %}
+                                    
+                                {% for price_range in price_ranges %}
+                                {% if price_range.name == book_section.size and price_range.service_type == evaluation_book.service_type and evaluation_book.service_type.name != 'Mattress Cleaning' and price_range.is_newkitchen == book_section.new_kitchen and price_range.is_cabinet == book_section.is_cabinet and price_range.is_highprice_facade == book_section.is_highprice_facade and price_range.is_highprice_window == book_section.is_highprice_window %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}} Sqm){% endif %}
+                                {% endfor %}
+                                    
+                                {% endif %}
                               </div>
                             </div>
 
