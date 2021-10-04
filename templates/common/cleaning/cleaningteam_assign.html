@@ -30,7 +30,8 @@
     <div class="ticket-form-left"><!--ticket-form-left-->
     <div class="blc-number-big">{{order_schedule.evaluation_details.evaluation.evaluation_id}}</div>
     <br>        
-        <div class="green-bg-lg">{% if order_schedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}One-Time{% else %}Subscription{% endif %}</div><div class="blue-bg-lg">{% if order_schedule.order.payment_status == 'COMPLETED' %}Paid{% elif order_schedule.order.payment_status == 'ON_HOLD' %}ON HOLD<{% else %}Pending{% endif %}</div>
+        <div class="green-bg-lg">{% if order_schedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}One-Time{% else %}Subscription{% endif %}</div>
+        <!-- <div class="blue-bg-lg">{% if order_schedule.order.payment_status == 'COMPLETED' %}Paid{% elif order_schedule.order.payment_status == 'ON_HOLD' %}ON HOLD<{% else %}Pending{% endif %}</div> -->
         <div class="customer-name"> {{order_schedule.evaluation_details.evaluation.customer.name}}</div>
         <br>
         <div class="common-gray-text align-left"><i class="fa fa-lg fa-envelope-o red-text" aria-hidden="true"></i> <span class="ml-10">{{order_schedule.evaluation_details.evaluation.customer.email}}</span></div>
@@ -75,12 +76,12 @@
     <div class="common-gray-text align-left"><label class="common-labels">Size</label> : <strong>{{section.size}} 
       {% if order_schedule.order_scheduler_book.service_type.name == 'Upholstery Cleaning' %}                                                       
       {% for price_range in price_ranges %}
-      {% if price_range.name == section.size and price_range.service_type == order_schedule.order_scheduler_book.service_type and price_range.upholstery_type == section.upholstery_type %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}}){% endif %}
+      {% if price_range.name == section.size and price_range.service_type == order_schedule.order_scheduler_book.service_type and price_range.upholstery_type == section.upholstery_type %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}} Seater){% endif %}
       {% endfor %}
         
       {% else %}
       {% for price_range in price_ranges %}
-      {% if price_range.name == section.size and price_range.service_type == order_schedule.order_scheduler_book.service_type and order_schedule.order_scheduler_book.service_type.name != 'Mattress Cleaning' and price_range.is_newkitchen == section.new_kitchen and price_range.is_cabinet == section.is_cabinet and price_range.is_highprice_facade == section.is_highprice_facade and price_range.is_highprice_window == section.is_highprice_window %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}}){% endif %}
+      {% if price_range.name == section.size and price_range.service_type == order_schedule.order_scheduler_book.service_type and order_schedule.order_scheduler_book.service_type.name != 'Mattress Cleaning' and price_range.is_newkitchen == section.new_kitchen and price_range.is_cabinet == section.is_cabinet and price_range.is_highprice_facade == section.is_highprice_facade and price_range.is_highprice_window == section.is_highprice_window %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}} Sqm){% endif %}
       {% endfor %}
           
       {% endif %}

@@ -111,7 +111,7 @@ class InventoryItemImages(models.Model):
         return self.inventory_item.name
 
 class ItemUnit(models.Model):
-    purchase_order  =   models.ForeignKey('PurchaseOrder',blank=False,null=False,related_name='purchase_order_unit')
+    purchase_order  =   models.ForeignKey('PurchaseOrder',blank=True,null=True,related_name='purchase_order_unit')
     item            =   models.ForeignKey(InventoryItem,blank=False,null=False,related_name='unit_item')
     name            =   models.CharField(max_length=100,blank=False,null=False)
     unit_code       =   models.CharField(max_length=50,blank=False,null=False)

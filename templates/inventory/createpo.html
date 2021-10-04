@@ -366,7 +366,7 @@
 
             </div>
 
-            <div class="row mt-20">
+            <!-- <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Unit</div>
 
@@ -379,8 +379,8 @@
                     </div>
                 </div>
 
-            </div>
-            <!-- <div class="row mt-20">
+            </div> -->
+            <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Unit</div>
 
@@ -390,14 +390,14 @@
                         
                         <div class="quantity">
                           <a class="quantity__minus pointer"><span>-</span></a>
-                          <input name="quantity" type="text" class="quantity__input" value="1">
+                          <input  type="text" class="quantity__input" value="1" id="id_item_count" name="item_count" onkeyup="calc_total_price()">
                           <a  class="quantity__plus pointer"><span>+</span></a>
                         </div>
                         
                       </div>
                 </div>
 
-            </div> -->
+            </div>
 
             <div class="row mt-20">
                 <div class="col-md-12 ">
@@ -643,6 +643,7 @@ function showAdditem(){
                 value--;
                 }
                 input.val(value);
+                calc_total_price();
                 e.preventDefault();
 
             });
@@ -652,6 +653,7 @@ function showAdditem(){
                 var value = input.val();
                 value++;
                 input.val(value);
+                calc_total_price();
             })
 
             $('.active-right').hide();

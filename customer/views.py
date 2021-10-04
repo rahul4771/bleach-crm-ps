@@ -120,7 +120,9 @@ class Quatation(View):
 		except:
 			order_details = None
 
-		return render(request,"customer/quotation.html",{"order":order,"order_details":order_details,"nonduplicate_schedules":nonduplicate_schedules})
+		price_ranges 		= ServicePriceRange.objects.filter(is_active=True)
+
+		return render(request,"customer/quotation.html",{"order":order,"order_details":order_details,"nonduplicate_schedules":nonduplicate_schedules,"price_ranges":price_ranges})
 
 	def post(self,request,evaluation_id):
 
@@ -249,9 +251,11 @@ class Quatation(View):
 						pass
 
 					if evaluaation.customer.is_email == True :
-						print("emailp")
+
+						price_ranges 		= ServicePriceRange.objects.filter(is_active=True)
+						
 						#send mail
-						msg_html = render_to_string('email/invoice.html',{"invoice":order,"address_list":separator.join(address_list),"evaluationbooks":evaluationbooks})
+						msg_html = render_to_string('email/invoice.html',{"invoice":order,"address_list":separator.join(address_list),"evaluationbooks":evaluationbooks,"price_ranges":price_ranges})
 						msg = EmailMultiAlternatives('Bleach Invoice', '', 'notification@bleach-kw.com', [evaluaation.customer.email])
 						msg.attach_alternative(msg_html, "text/html")
 						msg.send(fail_silently=False)
@@ -355,7 +359,9 @@ class SubscriptionQuatation(View):
 		except:
 			order_details = None
 
-		return render(request,"customer/quotation.html",{"order":order,"order_details":order_details,"nonduplicate_schedules":nonduplicate_schedules,"per_job_cost":per_job_cost})
+		price_ranges 		= ServicePriceRange.objects.filter(is_active=True)
+
+		return render(request,"customer/quotation.html",{"order":order,"order_details":order_details,"nonduplicate_schedules":nonduplicate_schedules,"per_job_cost":per_job_cost,"price_ranges":price_ranges,})
  
 	def post(self,request,evaluation_id):
 		order_id 		  = request.POST.get('order_id')
@@ -417,7 +423,11 @@ class BleachCustomerInvoice(View):
 		
 		customer_ip_address = get_client_ip(request)
 
-		return render(request,"customer/bleach-invoice.html",{'order':order,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,})		
+		price_ranges 		= ServicePriceRange.objects.filter(is_active=True)
+
+		price_ranges 		= ServicePriceRange.objects.filter(is_active=True)
+
+		return render(request,"customer/bleach-invoice.html",{'order':order,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,"price_ranges":price_ranges,"price_ranges":price_ranges,})		
 
 	def post(self,request,evaluation_id):
 
@@ -468,7 +478,9 @@ class CustomerInvoice(View):
 		
 		customer_ip_address = get_client_ip(request)
 
-		return render(request,"customer/customer_invoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,})		
+		price_ranges 		= ServicePriceRange.objects.filter(is_active=True)
+
+		return render(request,"customer/customer_invoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,"price_ranges":price_ranges})		
 
 	def post(self,request,evaluation_id):
 
@@ -524,8 +536,10 @@ class CustomerSubscriptionInvoice(View):
 			count += 1
 		
 		customer_ip_address = get_client_ip(request)
+		
+		price_ranges 		= ServicePriceRange.objects.filter(is_active=True)
 
-		return render(request,"customer/customer_invoice_subscription.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,"completed_jobs_count":completed_jobs_count})
+		return render(request,"customer/customer_invoice_subscription.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,"completed_jobs_count":completed_jobs_count,"price_ranges":price_ranges,})
 
 	def post(self,request,evaluation_id):
 		action            = request.POST.get('action_type')
@@ -837,9 +851,9 @@ def quatation_html_to_pdf_view(request,evaluation_id):
 	evaluation_id = 'BLC'+evaluation_id_encrypted[3:14]
 	user_name     =  evaluation_id_encrypted[14:]
 	
-	order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='booksections')),to_attr='evaluationbooks')),to_attr='evaluationdetails')).get(is_active=True,order_no=evaluation_id,evaluation__customer__username=user_name)
-	
-	html_string = render_to_string("customer/downloads/quatation.html",{"order":order})
+	order 			= Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='booksections')),to_attr='evaluationbooks')),to_attr='evaluationdetails')).get(is_active=True,order_no=evaluation_id,evaluation__customer__username=user_name)
+	price_ranges 	= ServicePriceRange.objects.filter(is_active=True)	
+	html_string = render_to_string("customer/downloads/quatation.html",{"order":order,"price_ranges":price_ranges})
 
 	html     = HTML(string=html_string,base_url=request.build_absolute_uri())
 	main_doc = html.render()
@@ -875,8 +889,8 @@ def quatation_html_to_pdf_view(request,evaluation_id):
 
 def orderdetail_html_to_pdf_view(request,order_id,service_id,section_id):
 
-	order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr='evaluationmedia'),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection'),Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).select_related('team_leader','drop_off_driver','pick_up_driver').prefetch_related(Prefetch('media_cleaningteam',queryset=CleaningTeamMedia.objects.filter(is_active=True),to_attr='cleaning_team_medias'),Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True,member__user_type='CLEANER'),to_attr='cleaning_team_members')),to_attr='cleaning_team'),Prefetch('investigations_orderschedule',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('investigation_media',queryset=InvestigationMedia.objects.filter(is_active=True),to_attr='investigationmedias'),Prefetch('followup_investigation',queryset = FollowUp.objects.filter(is_active=True).prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True).prefetch_related(Prefetch('followup_member_team',queryset=FollowUpTeamMember.objects.filter(is_active=True),to_attr='followupmembers')),to_attr='followupteams')),to_attr='follow_up_schedules')),to_attr='followups')),to_attr='investigations')),to_attr='orderschedules'),Prefetch('feed_backs_order',FeedBack.objects.filter(is_active=True).select_related('question'),to_attr='feedbacks')).get(is_active=True,id=order_id)
-
+	order           = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr='evaluationmedia'),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection'),Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).select_related('team_leader','drop_off_driver','pick_up_driver').prefetch_related(Prefetch('media_cleaningteam',queryset=CleaningTeamMedia.objects.filter(is_active=True),to_attr='cleaning_team_medias'),Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True,member__user_type='CLEANER'),to_attr='cleaning_team_members')),to_attr='cleaning_team'),Prefetch('investigations_orderschedule',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('investigation_media',queryset=InvestigationMedia.objects.filter(is_active=True),to_attr='investigationmedias'),Prefetch('followup_investigation',queryset = FollowUp.objects.filter(is_active=True).prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True).prefetch_related(Prefetch('followup_member_team',queryset=FollowUpTeamMember.objects.filter(is_active=True),to_attr='followupmembers')),to_attr='followupteams')),to_attr='follow_up_schedules')),to_attr='followups')),to_attr='investigations')),to_attr='orderschedules'),Prefetch('feed_backs_order',FeedBack.objects.filter(is_active=True).select_related('question'),to_attr='feedbacks')).get(is_active=True,id=order_id)
+	
 	html_string = render_to_string('customer/content-page.html', {"order":order,"sectionid":int(section_id),"serviceid":int(service_id)})
 
 	html = HTML(string=html_string,base_url=request.build_absolute_uri())
@@ -909,9 +923,9 @@ def invoice_html_to_pdf_view(request,evaluation_id):
 	evaluation_id = 'BLC'+evaluation_id_encrypted[3:14]
 	user_name     =  evaluation_id_encrypted[14:]
 
-	order       = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='booksections')),to_attr='evaluationbooks')),to_attr='evaluationdetails')).get(is_active=True,order_no=evaluation_id,evaluation__customer__username=user_name)
-
-	html_string = render_to_string("customer/downloads/invoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'completed_jobs_count':completed_jobs_count})
+	order           = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).prefetch_related(Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='booksections')),to_attr='evaluationbooks')),to_attr='evaluationdetails')).get(is_active=True,order_no=evaluation_id,evaluation__customer__username=user_name)
+	price_ranges 	= ServicePriceRange.objects.filter(is_active=True)
+	html_string = render_to_string("customer/downloads/invoice.html",{'order':order,'price_ranges':price_ranges})
 
 	html = HTML(string=html_string,base_url=request.build_absolute_uri())
 	html.write_pdf(target='/home/pdf/tmp/invoice/invoice.pdf');
