@@ -186,7 +186,7 @@
             <div class="inv-check-orderhead">
               Recommended List
             </div>
-            <div class="mt-20">
+            <div class="mt-20" style="border-top: 1px solid #c4c4c4;">
               <table class="inv-table footable"> 
                 <thead>
                   <tr>
@@ -206,9 +206,14 @@
                       <th data-hide="phone,tablet"  style="width: %;">Action</th>
                   </tr>
               </thead>
-              <tbody>
+              <tbody id="id_table">
                 {% for ingredient in service_recipe_ingredients %}
-                <tr>
+                {% for item in ingredient.service_recipe_items %}
+                  {% if forloop.first %}
+                  <tr data-itemid="{{item.item.id}}">
+                  {% endif %}
+                  {% endfor %}
+               
                   <td>{{ingredient.ingredient}}</td>
                   {% for item in ingredient.service_recipe_items %}
                   {% if forloop.first %}
@@ -229,8 +234,33 @@
                 </tr>
                 {% endfor %}
 
+                {% for checkout_item in check_out_items %}
+                {% for item in ingredient.service_recipe_items %}
+                  {% if forloop.first %}
+                  <tr data-itemid="{{item.item.id}}">
+                  {% endif %}
+                  {% endfor %}
+               
+                  <td>-</td>
+                  
+                  <td>{{checkout_item.item.name}}</td>
+                  <td>{{checkout_item.item.item_code}}</td>
+                  <td>
+                  
+                    <div class="qty ">
+                      <span class="minus bg-dark" onclick="decrement({{forloop.counter}})" >-</span>
+                      <input type="text" class="count" id="id_qty_{{forloop.counter}}" name="qty" value="{{ingredient.quantity}}">
+                      <span class="plus bg-dark" onclick="increment({{forloop.counter}})">+</span>
+                  </div>
+                  </td>
+                  <td>
+                    <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                  </td>
+                </tr>
+                {% endfor %}
+
                 <tr>
-                  <td>           <button class="inv-plan-btn" onclick="openNavAddStore()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="" > Add Item</button></td>
+                  <td> <button class="inv-plan-btn" onclick="openNavAddStore()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="" > Add Item</button></td>
                 </tr>
               </tbody>
               </table>
@@ -264,13 +294,16 @@
           </div>
       </div>
       <hr>
+
+      <form method="POST" action="" >{% csrf_token %}
+      <input type="hidden" name="action" id="item_action" value="add_item" />
       <div class="row mt-20">
         <div class="col-md-12 ">
           <div class="model-input-name">Item</div>
           <input type="hidden" name="item" id="id_pro_sel" value="" />
           <div style="position: relative;">
               <div class="inv-input-container inv-border h-30">
-                  <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()">
+                  <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" style="border: none !important; width: 90%;" class=" inv-in" name="service_item"  oninput="showProducts()">
                  
                   <!-- <div onclick="ProductListShow()" class="model-filter">
                       
@@ -313,6 +346,7 @@
   </div>
   <div class="inv-drawer-footer">
       <button class="sent-button">Submit</button>
+      </form>
       <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
   </div>
 </div>
@@ -327,6 +361,48 @@
 {% block javascript %}
 
 <script>
+
+
+function hideselectedoptions(){
+            
+
+            var tempItem = [];
+            var itemIn = [];
+            var div = true;
+
+            $('#id_search div').each(function(i) {
+                if (div == true){
+                    console.log($(this),"pro")
+                    tempItem.push($(this).data("pro"))
+                    //console.log($(this).data("id"));
+                    div = false;
+                }else{
+                    div = true;
+                }
+                
+            })
+          
+            $('#id_table tr').each(function() {
+                itemIn.push($(this).data("itemid"))
+                //console.log('table',$(this).data("itemid"));
+            })
+
+            itemIn.pop();
+
+            console.log(tempItem,itemIn,"lopp")
+
+            for(var i =0;i<tempItem.length;i++){
+                document.getElementById("id_product"+tempItem[i]).style.display ="block";
+                for(var j = 0;j<itemIn.length;j++){
+                    if(tempItem[i] == itemIn[j]){
+                        console.log('to be hide',tempItem[i]);
+                        document.getElementById("id_product"+tempItem[i]).style.display ="none";
+                    }
+                }
+            }
+            console.log(tempItem,itemIn)
+    }
+
 
 function increment(id){
   console.log(id)
@@ -348,6 +424,7 @@ var products = [];
    // $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
 
     {% endfor %}
+    
 
 
         $(document).ready(function(){
@@ -359,7 +436,7 @@ var products = [];
     for (var j=0; j<products.length; j++) {
         if (products[j].name.toUpperCase().match($('#pro-name').val().toUpperCase())){
             console.log(products[j]);
-    $('#id_search').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
+    $('#id_search').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeProductShow(this)"  data-pro="'+products[j].id+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
 
         }
     }
@@ -394,9 +471,13 @@ var products = [];
         {% for item in items %}
     var tempId = '{{item.id}}';
     var tempName = '{{item.name}}';
-    $('#id_search').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
+    console.log(tempName,'gh')
+    $('#id_search').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" id="id_product{{item.id}}"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
 
     {% endfor %}
+
+   
+    
     if(screen.width<= 600){
         document.getElementById("addStore").style.width = "100%";
     }else if(screen.width<= 720){
@@ -405,6 +486,7 @@ var products = [];
     else{
         document.getElementById("addStore").style.width = "30%";
     }  
+    hideselectedoptions();
 }
 function closeNavAddStore() {
     document.getElementById("addStore").style.width = "0";

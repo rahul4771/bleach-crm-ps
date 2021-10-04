@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.views import View
 from bleach_crm_ps.permissions import IsInventoryAdmin,IsInventoryAdminUser
-from inventory.models import ItemHistory,Category,Segment,Line,Attribute,AttributeValue,ItemAttributes,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,PurchaseOrder,PurchaseOrderItems
+from inventory.models import CheckOutItems,ItemHistory,Category,Segment,Line,Attribute,AttributeValue,ItemAttributes,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,PurchaseOrder,PurchaseOrderItems
 from django.contrib import messages
 import re
 from datetime import date,datetime,timedelta
@@ -1141,8 +1141,24 @@ class InventoryCreateCheckout(IsInventoryAdmin,View):
         service = visit.order_scheduler_book.service_type
         cleaners = visit.no_of_cleaners
         service_recipe_ingredients = ServiceRecipeIngredients.objects.filter(service_type__service=service).prefetch_related(Prefetch('item_ingredient',queryset=ServiceRecipeItems.objects.all(),to_attr='service_recipe_items'))
+        check_out_items = CheckOutItems.objects.filter(visit=visit)
         print(service_recipe_ingredients,"itt")
-        return render(request,'inventory/createCheckout.html',{"visit":visit,"items":items,"service_recipe_ingredients":service_recipe_ingredients})
+        return render(request,'inventory/createCheckout.html',{"visit":visit,"items":items,"service_recipe_ingredients":service_recipe_ingredients,"check_out_items":check_out_items})
+
+    def post(self,request,visit_id):
+        visit = OrderScheduler.objects.select_related('order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='team_members')),to_attr='cleaning_team'),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='sections')).get(id=int(visit_id))
+        service = visit.order_scheduler_book.service_type
+        action = request.POST.get('action')
+        if action == 'add_item':
+            service_item = request.POST.get('item')
+            item = InventoryItem.objects.get(id=int(service_item))
+            service_recipe_item = ServiceRecipeItems.objects.get(ingredient__service_type__service=service,item=item)
+            if item.item_status == 'available' or item.item_status == 'about_to_finish':
+                CheckOutItems.objects.create(visit=visit,item=service_recipe_item)
+                messages.success(request,"Item added!")
+            else:
+                messages.error(request,"Item out of stock!")
+        return redirect('inventory:inventory-createcheckout')
 
 class InventoryPurchaseOrder(IsInventoryAdmin,View):
     def get(self,request):
