@@ -608,6 +608,10 @@ class StlHome(IsSeniorTeamLeader,View):
 		except:
 			investigations  = 	None
 
+		#add days left
+		for investigation in investigations:
+			investigation.days_left = (timezone.now()-investigation.scheduled_at).days
+
 		return render(request,'stl/home/home.html',{'investigations':investigations,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams,'assign_order_schedules':assign_order_schedules,'assign_followup_schedules':assign_followup_schedules})
 
 	def post(self,request):
