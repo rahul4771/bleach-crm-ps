@@ -242,6 +242,8 @@ class EvaluationDetailsList(APIView):
 		response_dict["evaluation_slot"]=proposed_time.strftime('%H:%M')
 		response_dict["agent_evaluation_notes"]=evaluation_details.attender_note 
 		
+		response_dict['success'] = True
+		
 		return Response(response_dict,HTTP_200_OK)
 
 
