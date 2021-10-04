@@ -341,7 +341,8 @@ class ItemHistory(models.Model):
 class CheckOutItems(models.Model):
     visit                = models.ForeignKey(OrderScheduler,blank=False,null=False,related_name='visit_checkout')
     item                 = models.ForeignKey(ServiceRecipeItems,blank=False,null=False,related_name='item_checkout')
-    units                = models.CharField(max_length=10,blank=False,null=False)
+    units                = models.CharField(default=0,max_length=10,blank=False,null=False)
+    is_checked_out       = models.BooleanField(default=False,blank=False,null=False)
     created              = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):

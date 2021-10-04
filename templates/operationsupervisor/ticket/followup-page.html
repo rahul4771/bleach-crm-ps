@@ -2,7 +2,7 @@
 {% block content %}
 {% load static %}
 <div class="wrapper"><!--wrapper-->
-{% include "operationsupervisor/common/header.html" %}
+{% include "stl/common/header.html" %}
     
 <section class="content"><!--content-->
     <div class="container-fluid space topspace"><!--container-fluid space topspace-->
@@ -122,7 +122,7 @@
             </div><!--order-left-stretch-->
             
         <div class="order-right-fixed"><!--order-right-fixed-->
-            <div class="order-card-column whitebg red-border clickable-row-list" data-href="{% url 'op-supervisor:op-supervisor-client-orders' client_details.id %}"><!--order-card-column-->
+            <div class="order-card-column whitebg red-border clickable-row-list" data-href="{% url 'stl:stl-client-orders' client_details.id %}"><!--order-card-column-->
                 <div class="card-innerwrapper"><!--card-innerwrapper-->
                 <div class="column-left"><img src="{% static 'files/images/card-orders-icon.png' %}"></div>
                 <div class="column-right"><!--column-right-->

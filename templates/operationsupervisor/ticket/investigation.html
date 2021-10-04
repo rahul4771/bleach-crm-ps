@@ -3,7 +3,7 @@
 {% block content %}
 {% load static %}
 <div class="wrapper"><!--wrapper-->
-{% include "operationsupervisor/common/header.html" %}    
+{% include "stl/common/header.html" %}    
     <section class="content"><!--content-->
         <div class="container-fluid space topspace"><!--container-fluid space-->
             <div class="welcome-wrapper"><!--welcome-wrapper-->
@@ -30,7 +30,7 @@
                     {% endfor %}
                     </div>
                     <div class="mobile-number">
-                    <a href="{% url 'op-supervisor:op-supervisor-order-details' investigation_details.order.id %}" target="_blank">{{investigation_details.order.evaluation.evaluation_id}}</a>
+                    <a href="{% url 'stl:stl-order-details' investigation_details.order.id %}" target="_blank">{{investigation_details.order.evaluation.evaluation_id}}</a>
                     </div>
                     <div class="customer-name"><i class="fa blue-text fa-user-circle-o" aria-hidden="true"></i> {{investigation_details.order.evaluation.customer.name}}</div>
                     <div class="mobile-number"><i class="fa green-text fa-lg fa-phone" aria-hidden="true"></i> &nbsp;  {{investigation_details.order.evaluation.customer.mobile_number}}</div>
@@ -210,8 +210,8 @@
     <td>
     {% if followup_cleaning_teams_exists == True %}
     {% else %}
-    <a href="{% url 'op-supervisor:follow-up-edit' investigation_details.id %}"><input type="button" class="checkonButton" value="Edit" /></a>
-    <a href="{% url 'op-supervisor:follow-up-delete' investigation_details.id %}"><input type="button" class="checkonDeleteButton" value="Delete" /></a>
+    <a href="{% url 'stl:follow-up-edit' investigation_details.id %}"><input type="button" class="checkonButton" value="Edit" /></a>
+    <a href="{% url 'stl:follow-up-delete' investigation_details.id %}"><input type="button" class="checkonDeleteButton" value="Delete" /></a>
     {% endif %}
     </td>
     {% endfor %}
@@ -232,8 +232,8 @@
 
     <td>
     {% if investigation_details.is_paybackdiscount_approved == False %}
-    <a href="{% url 'op-supervisor:cash-back-edit' investigation_details.id %}"><input type="button" class="checkonButton" value="Edit" /></a>
-    <a href="{% url 'op-supervisor:cash-back-delete' investigation_details.id %}"><input type="button" class="checkonDeleteButton" value="Delete" /></a>
+    <a href="{% url 'stl:cash-back-edit' investigation_details.id %}"><input type="button" class="checkonButton" value="Edit" /></a>
+    <a href="{% url 'stl:cash-back-delete' investigation_details.id %}"><input type="button" class="checkonDeleteButton" value="Delete" /></a>
     {% endif %}
     </td>
 </tr>
@@ -256,8 +256,8 @@
 
     <td>
     {% if investigation_details.is_buybackgiftpromo_approved == False %}
-    <a href="{% url 'op-supervisor:buy-back-promo-code-edit' investigation_details.id %}"><input type="button" class="checkonButton" value="Edit" /></a>
-    <a href="{% url 'op-supervisor:buy-back-promo-code-delete' investigation_details.id %}"><input type="button" class="checkonDeleteButton" value="Delete" /></a>
+    <a href="{% url 'stl:buy-back-promo-code-edit' investigation_details.id %}"><input type="button" class="checkonButton" value="Edit" /></a>
+    <a href="{% url 'stl:buy-back-promo-code-delete' investigation_details.id %}"><input type="button" class="checkonDeleteButton" value="Delete" /></a>
     {% endif %}
     </td>
 </tr>
@@ -273,8 +273,8 @@
     </td>
 
     <td>
-    <a href="{% url 'op-supervisor:internal-report-edit' investigation_details.id %}"><input type="button" class="checkonButton" value="Edit" /></a>
-    <a href="{% url 'op-supervisor:internal-report-delete' investigation_details.id %}"><input type="button" class="checkonDeleteButton" value="Delete" /></a>
+    <a href="{% url 'stl:internal-report-edit' investigation_details.id %}"><input type="button" class="checkonButton" value="Edit" /></a>
+    <a href="{% url 'stl:internal-report-delete' investigation_details.id %}"><input type="button" class="checkonDeleteButton" value="Delete" /></a>
     </td>
 </tr>
 {% endif %}
