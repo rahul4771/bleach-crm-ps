@@ -50,7 +50,7 @@ class CleaningTeamShowSerializer(serializers.ModelSerializer):
 	created_by                      = UserProfileShowSerializer(read_only=True)
 	class Meta:
 		model = CleaningTeam
-		fields= ('team_leader','created_by','cleaning_member_team')
+		fields= ('team_leader','created_by','check_in','check_out','cleaning_member_team')
 
 
 class CleaningScheduleSerializer(serializers.ModelSerializer):
