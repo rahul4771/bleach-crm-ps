@@ -958,9 +958,13 @@ class="cl-service-list"
    <div class="col-md-4 ">
     <div class="cl-slot-card-title2">Available Cleaning Agent(s)</div>
     <div class="row">
-      <div class="col-md-3 col-6 text-center" v-for="(cleaner,index) in cleaningDetails.available_leaders" >
-        <img :src="url+cleaner.profile_image" class="cl-profile-pic"  data-toggle="tooltip" data-placement="bottom" title="Amanadiel"/>
-        <div><% cleaner.name %></div>
+      
+      <div class="col-md-2 col-4 text-center" v-for="(cleaner,index) in cleaningDetails.available_leaders" >
+        <div class="cl-tooltip">
+        <img :src="url+cleaner.profile_image" class="cl-profile-pic"   />
+        <span class="tooltiptext"><% cleaner.name %></span>
+      </div>
+        <!-- <div><% cleaner.name %></div> -->
       </div>
       <div v-if="cleaningDetails.available_leaders.length<1" class="mt-4 cl-slot-card-title2">
           No Cleaners Available
