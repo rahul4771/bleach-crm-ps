@@ -16,12 +16,17 @@ from django.db.models.functions import Cast,TruncDate,ExtractMonth,ExtractYear,C
 from django.db.models import Prefetch
 from django.contrib import messages
 
+from evaluator.forms import EvaluationDetailsForm,QuatationServiceForm
+
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationBookSection,EvaluationSectionKeynote,EvaluationMedia,ServiceType
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowUp,Investigation,InvestigationMedia,FollowUpSection,FollowUpSectionKeynote,BuybackPromocodeGift,BuybackPromocodeGiftDetails,BuybackPromocodeGiftDetailsMedia,PaybackDiscount,PaybackDiscountDetails,PaybackDiscountDetailsMedia,Reporting,ReportingMedia
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
 from senior_team_leader.forms import CleaningTeamAssignForm,FollowupTeamAssignForm
+from django.forms import formset_factory,modelformset_factory
+from django.core.mail import send_mail,EmailMultiAlternatives
+from django.template.loader import render_to_string
 # Create your views here.
 
 
@@ -593,8 +598,12 @@ class StlHome(IsSeniorTeamLeader,View):
 			for followupschedule in assign_followup_schedules:
 				followupschedule.days_left_coming = (followupschedule.start_at-timezone.now()).days
 
+		try:	
+			investigations  = Investigation.objects.filter(is_active=True,investigator=request.user,is_casesandcomplaints_submit=False).select_related('order__evaluation__customer','order_schedule__customer_address__area','order_schedule__order_scheduler_book').prefetch_related(Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team_details'),Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'))
+		except:
+			investigations  = 	None
 
-		return render(request,'stl/home/home.html',{'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams,'assign_order_schedules':assign_order_schedules,'assign_followup_schedules':assign_followup_schedules})
+		return render(request,'stl/home/home.html',{'investigations':investigations,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams,'assign_order_schedules':assign_order_schedules,'assign_followup_schedules':assign_followup_schedules})
 
 	def post(self,request):
 		action = request.POST.get('action_type')
@@ -997,3 +1006,745 @@ class CleaningsExport(IsSeniorTeamLeader,View):
 		wb.save(response)
 
 		return response
+
+
+class InvestigationTask(IsSeniorTeamLeader,View):
+	def get(self,request,investigation_id):
+		
+		try:
+			investigation_details = Investigation.objects.select_related('order_schedule__customer_address__area','order_schedule__order_scheduler_book__service_type','order_schedule__evaluation_details__evaluator','investigator','order__evaluation__customer','order__evaluation__call_attender').prefetch_related(Prefetch('investigation_media',queryset=InvestigationMedia.objects.filter(is_active=True),to_attr='investigationmedias'),Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True).prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True),to_attr='followup_teams')),to_attr='followupschedulers')),to_attr='followup'),Prefetch('reporting_investigation',queryset=Reporting.objects.filter(is_active=True),to_attr='internalreport'), Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.filter(is_active=True),to_attr='paybackdiscount'),Prefetch('buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.filter(is_active=True),to_attr='buybackpromocodegift'),Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_teams')).get(id=investigation_id)
+			orderschedules_count = OrderScheduler.objects.filter(is_active=True,order_scheduler_book__id=investigation_details.order_schedule.order_scheduler_book.id).count()
+		except:
+			orderschedules_count = 1
+			investigation_details = None
+
+		ticket_types_list = []
+		if investigation_details.ticket_types:
+			ticket_types = investigation_details.ticket_types.split(",")
+			for type in ticket_types:
+				ticket_types_list.append(type)
+		print(ticket_types_list,"typo")
+
+		follow_up_scheduler = FollowUpScheduler.objects.filter(is_active=True,follow_up__investigation__id=investigation_id).first()
+		
+		if follow_up_scheduler:
+			follow_up_scheduler_exists = True
+		else:
+			follow_up_scheduler_exists = False
+
+		followup_cleaning_teams = FollowUpTeam.objects.filter(is_active=True,followup_scheduler__follow_up__investigation__id=investigation_id)
+		if followup_cleaning_teams:
+			followup_cleaning_teams_exists = True
+		else:
+			followup_cleaning_teams_exists = False
+		
+		#save checkin_time
+		investigation_details.check_in = timezone.now()
+		investigation_details.save()
+
+		#get technical supervisors
+		technicalsupervisors = UserProfile.objects.filter(is_active=True,user_type='TECHNICALSUPERVISOR')
+
+		return render(request,'operationsupervisor/ticket/investigation.html',{'investigation_details':investigation_details,"followup_scheduler_exists":follow_up_scheduler_exists,"orderschedules_count":orderschedules_count,"ticket_types":ticket_types_list,"followup_cleaning_teams_exists":followup_cleaning_teams_exists,"technicalsupervisors":technicalsupervisors})
+
+	def post(self,request,investigation_id):
+
+		form_action = request.POST.get('action')
+		if form_action == "followup":
+			return redirect('stl:follow-up', investigation_id)
+		if form_action == "discount":
+			return redirect('stl:cash-back', investigation_id)
+		if form_action == "gift":
+			return redirect('stl:buy-back-promo-code', investigation_id)
+		if form_action == "internal":
+			return redirect('stl:internal-report',investigation_id)
+		if form_action == "assign_investigator":
+			secondary_investigator = request.POST.get('secondary_investigator')
+			
+			investigator = UserProfile.objects.get(id=int(secondary_investigator))
+
+			investigationdata = Investigation.objects.select_related('investigator','assigned_by','secondary_investigator','order__evaluation__customer').get(id=investigation_id,is_active=True)
+			investigationdata.secondary_investigator = investigator
+			investigationdata.secondary_investigation_created = datetime.now()
+			investigationdata.save()
+			
+			msg_html = render_to_string('email/rise_ticket_request2.html',{'investigationdata':investigationdata})
+			msg      = EmailMultiAlternatives('Ticket Rised', '', 'notification@bleach-kw.com', [investigationdata.secondary_investigator.email])
+			msg.attach_alternative(msg_html, "text/html")
+			msg.send(fail_silently=False)
+
+			messages.success(request,"Investigator Assigned !")
+			return redirect('stl:stldash-board')
+		if form_action == "final_submit":
+			investigation                              = Investigation.objects.prefetch_related(Prefetch('reporting_investigation',queryset=Reporting.objects.filter(is_active=True),to_attr='internalreportings'),Prefetch('followup_investigation',queryset=FollowUp.objects.filter(no_of_cleaners__gte=1),to_attr="followups")).get(id=investigation_id)
+			investigation.check_out                    = timezone.now()
+			investigation.is_casesandcomplaints_submit = True
+			
+			# if investigation.internalreportings:
+			# 	investigation.is_internalreporting_approved = True
+			if investigation.followups:
+				investigation.is_followup_approved  = True 
+
+			investigation.save()
+
+			messages.success(request,"All Investigation Tasks Submitted Successfully !!")
+			return redirect('stl:stldash-board')
+
+		return redirect('stl:investigation', investigation_id)
+
+class Followup(IsSeniorTeamLeader,View):
+	service_formset_define    = formset_factory(QuatationServiceForm)
+	def get(self,request,investigation_id):
+		investigation = Investigation.objects.get(is_active=True,id=int(investigation_id))
+		evaluation_details = EvaluationDetails.objects.select_related('evaluation__customer','address__area').get(is_active=True,id=investigation.order_schedule.evaluation_details.id)
+
+		service_type = investigation.order_schedule.order_scheduler_book.service_type
+		
+		# followup status change
+		follow_up = FollowUp.objects.get(investigation_id=investigation_id,is_active=True)
+		follow_up.status = 'FOLLOWUP_IN_PROGRESS'
+		follow_up.save()
+
+		return render(request,"operationsupervisor/ticket/follow-up.html",{'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_type':service_type,'follow_up':follow_up,})
+
+	def post(self,request,investigation_id):
+		investigation = Investigation.objects.get(is_active=True,id=int(investigation_id))
+		evaluation_details 	  = EvaluationDetails.objects.select_related('evaluation__customer','address__area').get(is_active=True,id=investigation.order_schedule.evaluation_details.id)
+
+		followup_schedule_array          = []
+
+		total_cost	= request.POST.get('total_cost')
+		no_of_cleaners = request.POST.get('number_of_cleaners')
+		cleaning_hours = request.POST.get('cleaning_hours')
+		
+		tendative_date = request.POST.get('tendative_date').split(',')
+
+		tendative_time = request.POST.get('tendative_time')
+
+		print(tendative_time,"tendative")
+		
+		follow_up = FollowUp.objects.select_related('investigation__order__evaluation__customer').get(investigation_id=investigation_id,is_active=True)
+		follow_up.status         = 'FOLLOWUP_IN_PROGRESS'
+		follow_up.followup_notes = request.POST.get('investigator_notes')
+		follow_up.no_of_cleaners = no_of_cleaners
+		follow_up.cleaning_hours = cleaning_hours
+		follow_up.total_cost = total_cost
+		follow_up.save()
+		
+		for date in tendative_date:
+			print(date)
+			start_date_time = datetime.strptime(date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
+			end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))
+			followup_schedule_array.append(FollowUpScheduler(follow_up=follow_up,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address))
+		# follow_up_scheduler = FollowUpScheduler.objects.create(follow_up=follow_up,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address)
+		
+		
+		#To Save Media
+		medias = request.FILES.getlist('media')
+		if not medias==['']:
+			for media in medias:
+				InvestigationMedia.objects.create(
+				        investigation_id=investigation_id,
+				        media=media,
+						taken_status = 'CUSTOMER_SEND'
+				        )
+
+		#to save sections
+		no_of_sections         = int(request.POST.get('section_counter'))
+		section_array          = []
+		for i in range(no_of_sections):
+			section_name  = request.POST.get('section'+str(i))
+			category      = request.POST.get('category'+str(i))
+			dirt_level    = request.POST.get('dirt_level'+str(i))
+			quantity      = request.POST.get('quantity'+str(i))
+			size          = request.POST.get('size'+str(i))
+			unit          = request.POST.get('unit'+str(i))
+			age           = request.POST.get('age'+str(i))
+			floor         = request.POST.get('floor'+str(i))
+			apartment     = request.POST.get('apartment'+str(i))
+			room          = request.POST.get('room'+str(i))
+			wall_type     = request.POST.get('walltype'+str(i))
+			ceiling_type  = request.POST.get('ceilingtype'+str(i))
+			floor_type    = request.POST.get('floortype'+str(i))
+			material      = request.POST.get('material'+str(i))
+			colour        = request.POST.get('colour'+str(i))
+			cause_of_stain=request.POST.get('staincause'+str(i))
+			section_cost  = request.POST.get('sectioncost'+str(i))
+
+			try:
+				section_name_arabic = Translator().translate(section_name,src='en', dest='ar').text
+			except:
+				section_name_arabic = section_name
+			
+			section = FollowUpSection.objects.create(follow_up=follow_up,section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_cost=section_cost,section_cleanings=1,section_net_cost=section_cost)
+
+			#to save keynotes
+			try:
+				no_of_keynotes = int(request.POST.get('section'+str(i)+'-keynote_counter'))
+			except:
+				no_of_keynotes = None
+
+			keynote_array = []
+			if no_of_keynotes:
+				for j in range(no_of_keynotes):
+					keynote = request.POST.get('section'+str(i)+'_keynote'+str(j))
+					quantity= request.POST.get('section'+str(i)+'_quantity'+str(j))
+					if keynote and quantity:
+						keynote_array.append(FollowUpSectionKeynote(followup_section=section,sub_area=keynote,quantity=quantity))
+				#bulk_create keynote
+				FollowUpSectionKeynote.objects.bulk_create(keynote_array)
+
+		FollowUpScheduler.objects.bulk_create(followup_schedule_array)
+
+		messages.success(request,"Follow Up Cleaning Succesfully Added")
+
+		return redirect('stl:investigation', investigation_id)
+
+class FollowupEdit(IsSeniorTeamLeader,View):
+	service_formset_define    = formset_factory(QuatationServiceForm)
+	def get(self,request,investigation_id):
+		investigation = Investigation.objects.get(is_active=True,id=int(investigation_id))
+		print(investigation.order_schedule.evaluation_details.id,"evs")
+		evaluation_details = EvaluationDetails.objects.select_related('evaluation__customer','address__area').get(is_active=True,id=investigation.order_schedule.evaluation_details.id)
+
+		service_type = investigation.order_schedule.order_scheduler_book.service_type
+
+		followupscheduler = FollowUpScheduler.objects.filter(follow_up__investigation__id = int(investigation_id),is_active=True)
+		
+		# followup status change
+		follow_up = FollowUp.objects.get(investigation_id=investigation_id,is_active=True)
+		follow_up.status = 'FOLLOWUP_IN_PROGRESS'
+		follow_up.save()
+		
+		followup_sections = FollowUpSection.objects.filter(follow_up__investigation__id=int(investigation_id),is_active=True).prefetch_related(Prefetch('keynotesectionsfollowup',queryset=FollowUpSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes'))
+		followup_medias = InvestigationMedia.objects.filter(investigation__id=investigation_id,is_active=True)
+		return render(request,"operationsupervisor/ticket/follow-up-edit.html",{"followupmedias":followup_medias,'service_formset':self.service_formset_define(),'evaluation_details':evaluation_details,'service_type':service_type,"followupscheduler":followupscheduler,"followupsections":followup_sections,"follow_up":follow_up,})
+
+	def post(self,request,investigation_id):
+		investigation = Investigation.objects.get(is_active=True,id=int(investigation_id))
+		evaluation_details 	  = EvaluationDetails.objects.select_related('evaluation__customer','address__area').get(is_active=True,id=investigation.order_schedule.evaluation_details.id)
+
+		followup_schedule_array          = []
+
+		total_cost	   = request.POST.get('total_cost')
+		no_of_cleaners = request.POST.get('number_of_cleaners')
+		cleaning_hours = request.POST.get('cleaning_hours')
+		
+		tendative_date = request.POST.get('tendative_date').split(',')
+		tendative_time = request.POST.get('tendative_time')
+		# start_date_time = datetime.strptime(tendative_date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
+		# end_date_time   = start_date_time + timedelta(hours=int(cleaning_hours))
+
+		Investigation.objects.filter(id=investigation_id).update(is_followup_approved=True)
+		
+		follow_up = FollowUp.objects.get(investigation_id=investigation_id,is_active=True)
+		follow_up.status         = 'FOLLOWUP_IN_PROGRESS'
+		follow_up.no_of_cleaners = no_of_cleaners
+		follow_up.cleaning_hours = cleaning_hours
+		follow_up.followup_notes = request.POST.get('investigator_notes')
+		follow_up.total_cost     = total_cost
+		follow_up.save()
+		
+		for date in tendative_date:
+			print(date+' '+tendative_time,"dt")
+			start_date_time = datetime.strptime(date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
+			end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))
+			followup_schedule_array.append(FollowUpScheduler(follow_up=follow_up,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address))
+
+		# follow_up_scheduler = FollowUpScheduler.objects.filter(follow_up=follow_up,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address)
+		
+		
+		#To Save Media
+		medias = request.FILES.getlist('media')
+		if not medias==['']:
+			for media in medias:
+				InvestigationMedia.objects.create(
+				        investigation_id=investigation_id,
+				        media=media,
+						taken_status = 'CUSTOMER_SEND'
+				        )
+
+		#to save sections
+		no_of_sections         = int(request.POST.get('section_counter'))
+		section_array          = []
+		for i in range(no_of_sections):
+			section_name  = request.POST.get('section'+str(i))
+			category      = request.POST.get('category'+str(i))
+			dirt_level    = request.POST.get('dirt_level'+str(i))
+			quantity      = request.POST.get('quantity'+str(i))
+			size          = request.POST.get('size'+str(i))
+			unit          = request.POST.get('unit'+str(i))
+			age           = request.POST.get('age'+str(i))
+			floor         = request.POST.get('floor'+str(i))
+			apartment     = request.POST.get('apartment'+str(i))
+			room          = request.POST.get('room'+str(i))
+			wall_type     = request.POST.get('walltype'+str(i))
+			ceiling_type  = request.POST.get('ceilingtype'+str(i))
+			floor_type    = request.POST.get('floortype'+str(i))
+			material      = request.POST.get('material'+str(i))
+			colour        = request.POST.get('colour'+str(i))
+			cause_of_stain=request.POST.get('staincause'+str(i))
+			section_cost  = request.POST.get('sectioncost'+str(i))
+
+			old_section_id=request.POST.get('editform_section'+str(i))
+			print(old_section_id,"oisd")
+			try:
+				section_name_arabic = Translator().translate(section_name,src='en', dest='ar').text
+			except:
+				section_name_arabic = section_name
+			
+			if old_section_id:
+				print("old")
+				section = FollowUpSection.objects.filter(id=old_section_id).update(section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_cost=section_cost,section_cleanings=len(tendative_date),section_net_cost=section_cost)
+			else:
+				print("new")
+				section = FollowUpSection.objects.create(follow_up=follow_up,section_name=section_name,section_name_arabic=section_name_arabic,category=category,dirt_level=dirt_level,quantity=quantity,size=size,unit=unit,age=age,floor=floor,apartment=apartment,room=room,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,material=material,colour=colour,cause_of_stain=cause_of_stain,section_cost=section_cost,section_cleanings=1,section_net_cost=section_cost)
+
+			#to save keynotes
+			try:
+				no_of_keynotes = int(request.POST.get('section'+str(i)+'-keynote_counter'))
+			except:
+				no_of_keynotes = None
+
+			keynote_array = []
+			if no_of_keynotes:
+				for j in range(no_of_keynotes):
+					old_keynote_id=request.POST.get('editform_section'+str(i)+'_keynote'+str(j))
+
+					keynote = request.POST.get('section'+str(i)+'_keynote'+str(j))
+					quantity= request.POST.get('section'+str(i)+'_quantity'+str(j))
+
+					if old_keynote_id:
+						if keynote and quantity:
+							FollowUpSectionKeynote.objects.filter(id=old_keynote_id).update(id=old_keynote_id,sub_area=keynote,quantity=quantity)
+					else:
+						if keynote and quantity:
+							keynote_array.append(FollowUpSectionKeynote(followup_section=section,sub_area=keynote,quantity=quantity))
+				#bulk_create keynote
+				FollowUpSectionKeynote.objects.bulk_create(keynote_array)
+
+		#delete old followup schedules
+		FollowUpScheduler.objects.filter(follow_up=follow_up).delete()
+
+		FollowUpScheduler.objects.bulk_create(followup_schedule_array)
+
+		messages.success(request,"Follow Up Cleaning Succesfully Updated !")
+
+		return redirect('stl:investigation', investigation_id)
+
+class FollowupDelete(IsSeniorTeamLeader,View):
+	def get(self,request,investigation_id):
+		FollowUpScheduler.objects.filter(follow_up__investigation__id=investigation_id).delete()
+		InvestigationMedia.objects.filter(investigation__id=investigation_id).delete()
+		FollowUpSection.objects.filter(follow_up__investigation__id=investigation_id).delete()
+		FollowUpSectionKeynote.objects.filter(followup_section__follow_up__investigation__id=investigation_id).delete()
+
+		follow_up = FollowUp.objects.get(investigation_id=investigation_id,is_active=True)
+		follow_up.no_of_cleaners = 0
+		follow_up.cleaning_hours = 0
+		follow_up.total_cost = 0
+		follow_up.save()
+
+		Investigation.objects.filter(id=investigation_id).update(is_followup_approved=False)
+		
+		messages.success(request,"Follow Up Cleaning Deleted !")
+		return redirect('stl:investigation', investigation_id)
+
+class Cashback(IsSeniorTeamLeader,View):
+	def get(self,request,investigation_id):
+		# followup status change
+		follow_up = FollowUp.objects.get(investigation_id=investigation_id,is_active=True)
+		follow_up.status = 'FOLLOWUP_IN_PROGRESS'
+		follow_up.save()
+		return render(request,"operationsupervisor/ticket/cash-back.html")
+
+	def post(self,request,investigation_id):
+
+		paybackdiscount = PaybackDiscount.objects.create(investigation=Investigation.objects.get(is_active=True,id=int(investigation_id)),
+		is_active=True
+		)
+
+		#to save sections
+		no_of_sections         = int(request.POST.get('section_counter'))
+		print(no_of_sections,"nose")
+		section_array          = []
+
+		total_cost = 0
+		section_items_total_cost = 0
+		for i in range(no_of_sections):
+			section_name  = request.POST.get('section'+str(i))
+
+			#to save keynotes
+			try:
+				no_of_keynotes = int(request.POST.get('section'+str(i)+'-keynote_counter'))
+			except:
+				no_of_keynotes = None
+
+			items_total_cost = 0
+			keynote_array = []
+			if no_of_keynotes:
+				for j in range(no_of_keynotes):
+					keynote = request.POST.get('section'+str(i)+'_keynote'+str(j))
+					quantity= request.POST.get('section'+str(i)+'_quantity'+str(j))
+					if keynote and quantity:
+						keynote_array.append(PaybackDiscountDetails(paybackdiscount=paybackdiscount,category=section_name,name=keynote,cost=quantity,is_active=True))
+					
+					items_total_cost += float(quantity)
+				#bulk_create keynote
+				PaybackDiscountDetails.objects.bulk_create(keynote_array)
+
+			section_items_total_cost += float(items_total_cost)
+
+		total_cost += float(section_items_total_cost)
+
+		paybackdiscount.total_cost = total_cost
+		paybackdiscount.save()
+
+		medias = request.FILES.getlist('media')
+
+		if not medias==['']:
+			for img in medias:
+				PaybackDiscountDetailsMedia.objects.create(
+					paybackdiscount = paybackdiscount,
+					media = img,
+					is_active = True
+				)
+
+		#Email
+		salesadmin_list = UserProfile.objects.filter(is_active=True).filter(is_active=True,user_type='SALESADMIN').values_list('email',flat=True)
+		msg_html = render_to_string('email/ticketapprove.html',{'paybackdiscount':paybackdiscount,'email_user':'salesadmin'})
+		msg      = EmailMultiAlternatives('Cash Back Approval', '', 'notification@bleach-kw.com', salesadmin_list)
+		msg.attach_alternative(msg_html, "text/html")
+		msg.send(fail_silently=False)
+
+		admin_list = UserProfile.objects.filter(is_active=True).filter(is_active=True,user_type='ADMIN').values_list('email',flat=True)
+		msg_html = render_to_string('email/ticketapprove.html',{'paybackdiscount':paybackdiscount,'email_user':'admin'})
+		msg      = EmailMultiAlternatives('Cash Back Approval', '', 'notification@bleach-kw.com', admin_list)
+		msg.attach_alternative(msg_html, "text/html")
+		msg.send(fail_silently=False)
+
+		messages.success(request,"Cash Back Added !")
+		return redirect('stl:investigation', investigation_id)
+
+class CashbackEdit(IsSeniorTeamLeader,View):
+	def get(self,request,investigation_id):
+		paybackdiscount = PaybackDiscount.objects.get(is_active=True,investigation__id=investigation_id)
+		paybackdiscount_details = PaybackDiscountDetails.objects.filter(is_active=True,paybackdiscount=paybackdiscount)
+		payback_servicequality = paybackdiscount_details.filter(category='SERVICEQUALITY')
+		payback_damage = paybackdiscount_details.filter(category='DAMAGE')
+		payback_other = paybackdiscount_details.filter(category='OTHER')
+		paybackdiscountmedias = PaybackDiscountDetailsMedia.objects.filter(paybackdiscount=paybackdiscount,is_active=True)
+		return render(request,"operationsupervisor/ticket/cash-back-edit.html",{"paybackdiscountmedias":paybackdiscountmedias,"paybackdiscount":paybackdiscount,"paybackdiscount_details":paybackdiscount_details,"payback_servicequality":payback_servicequality,"payback_damage":payback_damage,"payback_other":payback_other})
+
+	def post(self,request,investigation_id):
+
+		paybackdiscount = PaybackDiscount.objects.get(investigation_id=int(investigation_id),is_active=True)
+		
+		#To Save Media
+		medias = request.FILES.getlist('media')
+		if not medias==['']:
+			for media in medias:
+				PaybackDiscountDetailsMedia.objects.create(
+				        paybackdiscount=paybackdiscount,
+				        media=media,
+				        )
+
+		#to save sections
+		sections = request.POST.getlist('section')
+		total_cost = 0
+		section_items_total_cost = 0
+		for section in sections:
+			if section == 'SERVICEQUALITY':
+				section_no = 1
+			elif section == 'DAMAGE':
+				section_no = 2
+			else:
+				section_no = 3
+
+			print(section_no,"sectionno")
+			#to save keynotes
+			try:
+				no_of_keynotes = int(request.POST.get('section'+str(section_no)+'-keynote_counter'))
+			except:
+				no_of_keynotes = None
+			print(no_of_keynotes,"keyss")
+			items_total_cost = 0
+			keynote_array = []
+			if no_of_keynotes:
+				for j in range(no_of_keynotes):
+					old_keynote_id=request.POST.get('editform_section'+str(section_no)+'_keynote'+str(j))
+					print(old_keynote_id,str(section_no),str(j),"lop")
+					keynote = request.POST.get('section'+str(section_no)+'_keynote'+str(j))
+					quantity= request.POST.get('section'+str(section_no)+'_quantity'+str(j))
+
+					print(old_keynote_id,keynote,quantity,"datt")
+
+					if old_keynote_id:
+						if keynote and quantity:
+							PaybackDiscountDetails.objects.filter(is_active=True,id=int(old_keynote_id)).update(id=int(old_keynote_id),name=keynote,cost=quantity)
+					else:
+						if keynote and quantity:
+							keynote_array.append(PaybackDiscountDetails(paybackdiscount=paybackdiscount,category=section,name=keynote,cost=quantity,is_active=True))
+					
+					items_total_cost += float(quantity)				
+
+				#bulk_create keynote
+				PaybackDiscountDetails.objects.bulk_create(keynote_array)
+
+			section_items_total_cost += float(items_total_cost)
+
+		total_cost += float(section_items_total_cost)
+
+		paybackdiscount.total_cost = total_cost
+		paybackdiscount.save()
+
+		messages.success(request,"Cash Back Updated !")
+		return redirect('stl:investigation', investigation_id)
+
+class CashbackDelete(IsSeniorTeamLeader,View):
+	def get(self,request,investigation_id):
+		PaybackDiscount.objects.filter(investigation__id=investigation_id).delete()
+		# PaybackDiscountDetails.objects.filter(paybackdiscount__investigation__id=investigation_id).delete()
+		# PaybackDiscountDetailsMedia.objects.filter(paybackdiscount__investigation__id=investigation_id).delete()
+		Investigation.objects.filter(id=investigation_id).update(is_paybackdiscount_approved=False)
+		messages.success(request,"Cash Back Deleted !")
+		return redirect('stl:investigation', investigation_id)
+
+class InternalReport(IsSeniorTeamLeader,View):
+	def get(self,request,investigation_id):
+		# followup status change
+		follow_up = FollowUp.objects.get(investigation_id=investigation_id,is_active=True)
+		follow_up.status = 'FOLLOWUP_IN_PROGRESS'
+		follow_up.save()
+		return render(request,"operationsupervisor/ticket/internal-report.html")
+
+	def post(self,request,investigation_id):
+		report_title = request.POST.get('title')
+		report_notes = request.POST.get('notes')
+
+		internal_report = Reporting.objects.create(
+			investigation = Investigation.objects.get(is_active=True,id=int(investigation_id)),
+			title = report_title,
+			notes = report_notes,
+			is_active = True
+		)
+
+		medias = request.FILES.getlist('media')
+
+		print(medias,"medis")
+		if not medias==['']:
+			for img in medias:
+				ReportingMedia.objects.create(
+					reporting = internal_report,
+					media = img,
+					is_active = True
+				)
+		
+		messages.success(request,"Internal Report Submitted !")
+		return redirect('stl:investigation', investigation_id)
+
+class InternalReportEdit(IsSeniorTeamLeader,View):
+	def get(self,request,investigation_id):
+		internalreport = Reporting.objects.get(is_active=True,investigation__id=investigation_id)
+		internalreport_media = ReportingMedia.objects.filter(is_active=True,reporting=internalreport)
+		return render(request,"operationsupervisor/ticket/internal-report-edit.html",{"internal_report":internalreport,"report_medias":internalreport_media})
+
+	def post(self,request,investigation_id):
+		report_title = request.POST.get('title')
+		report_notes = request.POST.get('notes')
+
+		internal_report = Reporting.objects.get(is_active = True,investigation__id=investigation_id)
+		internal_report.title = report_title
+		internal_report.notes = report_notes
+		internal_report.investigation.is_internalreporting_approved = True
+		internal_report.save()
+		
+		medias = request.FILES.getlist('media')
+
+		print(medias,"medis")
+		if not medias==['']:
+			for img in medias:
+				ReportingMedia.objects.create(
+					reporting = internal_report,
+					media = img,
+					is_active = True
+				)
+		
+		messages.success(request,"Internal Report Updated !")
+		return redirect('stl:investigation', investigation_id)
+
+class InternalReportDelete(IsSeniorTeamLeader,View):
+	def get(self,request,investigation_id):
+		Reporting.objects.filter(investigation__id=investigation_id).delete()
+		# ReportingMedia.objects.filter(reporting__investigation__id=investigation_id).delete()
+		Investigation.objects.filter(id=investigation_id).update(is_internalreporting_approved=False)
+		messages.success(request,"Internal Report Deleted !")
+		return redirect('stl:investigation', investigation_id)
+
+class BuyBackPromoCode(IsSeniorTeamLeader,View):
+	def get(self,request,investigation_id):
+		# followup status change
+		follow_up = FollowUp.objects.get(investigation_id=investigation_id,is_active=True)
+		follow_up.status = 'FOLLOWUP_IN_PROGRESS'
+		follow_up.save()
+		return render(request,"operationsupervisor/ticket/promocode.html")
+
+	def post(self,request,investigation_id):
+
+		buybackpromocodegift = BuybackPromocodeGift.objects.create(investigation=Investigation.objects.get(is_active=True,id=int(investigation_id)),
+		is_active=True
+		)
+
+		#to save sections
+		no_of_sections         = int(request.POST.get('section_counter'))
+		
+		section_array          = []
+
+		total_cost = 0
+		section_items_total_cost = 0
+		for i in range(no_of_sections):
+			section_name  = request.POST.get('section'+str(i))
+
+			#to save keynotes
+			try:
+				no_of_keynotes = int(request.POST.get('section'+str(i)+'-keynote_counter'))
+			except:
+				no_of_keynotes = None
+
+			items_total_cost = 0
+			keynote_array = []
+			if no_of_keynotes:
+				for j in range(no_of_keynotes):
+					keynote = request.POST.get('section'+str(i)+'_keynote'+str(j))
+					quantity= request.POST.get('section'+str(i)+'_quantity'+str(j))
+					if keynote and quantity:
+						keynote_array.append(BuybackPromocodeGiftDetails(buybackpromocodegift=buybackpromocodegift,category=section_name,name=keynote,cost=quantity,is_active=True))
+					
+					items_total_cost += float(quantity)
+				#bulk_create keynote
+				BuybackPromocodeGiftDetails.objects.bulk_create(keynote_array)
+
+			section_items_total_cost += float(items_total_cost)
+
+		total_cost += float(section_items_total_cost)
+
+		buybackpromocodegift.total_cost = total_cost
+		buybackpromocodegift.save()
+
+		medias = request.FILES.getlist('media')
+
+		if not medias==['']:
+			for img in medias:
+				BuybackPromocodeGiftDetailsMedia.objects.create(
+					buybackpromocodegift = buybackpromocodegift,
+					media = img,
+					is_active = True
+				)
+
+		#Email
+		salesadmin_list = UserProfile.objects.filter(is_active=True).filter(is_active=True,user_type='SALESADMIN').values_list('email',flat=True)
+		msg_html = render_to_string('email/ticketapprove.html',{'buybackpromocodegift':buybackpromocodegift,'email_user':'salesadmin'})
+		msg      = EmailMultiAlternatives('Buback/Promocode/Gift Approval', '', 'notification@bleach-kw.com', salesadmin_list)
+		msg.attach_alternative(msg_html, "text/html")
+		msg.send(fail_silently=False)
+
+		admin_list = UserProfile.objects.filter(is_active=True).filter(is_active=True,user_type='ADMIN').values_list('email',flat=True)
+		msg_html = render_to_string('email/ticketapprove.html',{'buybackpromocodegift':buybackpromocodegift,'email_user':'admin'})
+		msg      = EmailMultiAlternatives('Buback/Promocode/Gift Approval', '', 'notification@bleach-kw.com', admin_list)
+		msg.attach_alternative(msg_html, "text/html")
+		msg.send(fail_silently=False)
+		
+		messages.success(request,"Buy Back / Promo Code Added !")
+		return redirect('stl:investigation', investigation_id)
+
+class BuyBackPromoCodeEdit(IsSeniorTeamLeader,View):
+	def get(self,request,investigation_id):
+		buybackpromogift = BuybackPromocodeGift.objects.get(is_active=True,investigation__id=investigation_id)
+		buybackpromogift_details = BuybackPromocodeGiftDetails.objects.filter(is_active=True,buybackpromocodegift=buybackpromogift)
+		buybackpromogift_servicequality = buybackpromogift_details.filter(category='SERVICEQUALITY')
+		buybackpromogift_damage = buybackpromogift_details.filter(category='DAMAGE')
+		buybackpromogift_other = buybackpromogift_details.filter(category='OTHER')
+		buybackpromocodemedias = BuybackPromocodeGiftDetailsMedia.objects.filter(is_active=True,buybackpromocodegift=buybackpromogift)
+		return render(request,"operationsupervisor/ticket/promocode-edit.html",{"buybackpromocodemedias":buybackpromocodemedias,"buybackpromogift":buybackpromogift,"buybackpromogift_details":buybackpromogift_details,"buybackpromogift_servicequality":buybackpromogift_servicequality,"buybackpromogift_damage":buybackpromogift_damage,"buybackpromogift_other":buybackpromogift_other})
+
+	def post(self,request,investigation_id):
+
+		buybackpromocodegift = BuybackPromocodeGift.objects.get(investigation=Investigation.objects.get(is_active=True,id=int(investigation_id)),
+		is_active=True
+		)
+
+		#to save sections
+		sections = request.POST.getlist('section')
+		total_cost = 0
+		section_items_total_cost = 0
+		for section in sections:
+			if section == 'SERVICEQUALITY':
+				section_no = 1
+			elif section == 'DAMAGE':
+				section_no = 2
+			else:
+				section_no = 3
+				
+			print(section_no,"sectionno")
+			#to save keynotes
+			try:
+				no_of_keynotes = int(request.POST.get('section'+str(section_no)+'-keynote_counter'))
+			except:
+				no_of_keynotes = None
+			print(no_of_keynotes,"keyss")
+			items_total_cost = 0
+			keynote_array = []
+			if no_of_keynotes:
+				for j in range(no_of_keynotes):
+					old_keynote_id=request.POST.get('editform_section'+str(section_no)+'_keynote'+str(j))
+					print(old_keynote_id,str(section_no),str(j),"lop")
+					keynote = request.POST.get('section'+str(section_no)+'_keynote'+str(j))
+					quantity= request.POST.get('section'+str(section_no)+'_quantity'+str(j))
+
+					print(old_keynote_id,keynote,quantity,"datt")
+
+					if old_keynote_id:
+						if keynote and quantity:
+							BuybackPromocodeGiftDetails.objects.filter(is_active=True,id=int(old_keynote_id)).update(id=int(old_keynote_id),name=keynote,cost=quantity)
+					else:
+						if keynote and quantity:
+							keynote_array.append(BuybackPromocodeGiftDetails(buybackpromocodegift=buybackpromocodegift,category=section,name=keynote,cost=quantity,is_active=True))
+					
+					items_total_cost += float(quantity)				
+
+				#bulk_create keynote
+				BuybackPromocodeGiftDetails.objects.bulk_create(keynote_array)
+
+			section_items_total_cost += float(items_total_cost)
+
+		total_cost += float(section_items_total_cost)
+
+		buybackpromocodegift.total_cost = total_cost
+		buybackpromocodegift.save()
+
+		messages.success(request,"Cash Back Updated !")
+		return redirect('stl:investigation', investigation_id)
+
+class BuyBackPromoCodeDelete(IsSeniorTeamLeader,View):
+	def get(self,request,investigation_id):
+		BuybackPromocodeGift.objects.filter(investigation__id=investigation_id).delete()
+		# BuybackPromocodeGiftDetails.objects.filter(buybackpromocodegift__investigation__id=investigation_id).delete()
+		# BuybackPromocodeGiftDetailsMedia.objects.filter(buybackpromocodegift__investigation__id=investigation_id).delete()
+		Investigation.objects.filter(id=investigation_id).update(is_buybackgiftpromo_approved=False)
+		messages.success(request,"Cash Back Deleted !")
+		return redirect('stl:investigation', investigation_id)
+
+def RemoveFollowupSection(request):
+
+	data ={}
+
+	section_id = request.GET.get('section_id')
+	print(section_id,"jor")
+	try:
+		section         = FollowUpSection.objects.get(id=section_id)
+		section.delete()
+		data['success'] = True
+	except:
+		data['success'] = False
+
+	return JsonResponse(data)

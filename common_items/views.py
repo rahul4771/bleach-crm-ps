@@ -2654,7 +2654,7 @@ class TicketDetailsEdit(IsAuthenticated,View):
 
 		order = Order.objects.filter(id=int(order_id)).prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True,work_status='CLEANING_FULFILLED').select_related('customer_address__area','order_scheduler_book').prefetch_related(Prefetch('investigations_orderschedule',queryset=Investigation.objects.filter(check_out__isnull=True),to_attr='assigned_investigations')),to_attr='orderschedules')).first()
 		ticket = FollowUp.objects.filter(is_active=True,id=int(ticket_id)).first()
-		investigators = UserProfile.objects.filter(Q(Q(user_type='QUALITYCONTROLL')|Q(user_type='OPERATIONSUPERVISOR')),is_active=True)
+		investigators = UserProfile.objects.filter(Q(Q(user_type='QUALITYCONTROLL')|Q(user_type='OPERATIONSUPERVISOR')|Q(user_type='SENIORTEAMLEADER')),is_active=True)
 		investigationmedias = InvestigationMedia.objects.filter(investigation__id=ticket.investigation.id,taken_status = 'CUSTOMER_SEND',is_active=True)
 		
 		return render(request,"common/ticket/ticket_registration_edit.html",{'order':order,'investigators':investigators,"ticket":ticket,"investigationmedias":investigationmedias})
@@ -4509,7 +4509,7 @@ class TicketRegistration(IsAuthenticated,View):
 		except:
 			orders = None
 
-		investigators = UserProfile.objects.filter(Q(Q(user_type='QUALITYCONTROLL')|Q(user_type='OPERATIONSUPERVISOR')),is_active=True)
+		investigators = UserProfile.objects.filter(Q(Q(user_type='QUALITYCONTROLL')|Q(user_type='OPERATIONSUPERVISOR')|Q(user_type='SENIORTEAMLEADER')),is_active=True)
 
 		return render(request,'agent/ticket/ticket_registration.html',{'orders':orders,'investigators':investigators})
 
@@ -4557,7 +4557,7 @@ class OrderTicketRegistration(IsAuthenticated,View):
 
 		order = Order.objects.filter(id=int(orderid)).first()
 
-		investigators = UserProfile.objects.filter(Q(Q(user_type='QUALITYCONTROLL')|Q(user_type='OPERATIONSUPERVISOR')),is_active=True)
+		investigators = UserProfile.objects.filter(Q(Q(user_type='QUALITYCONTROLL')|Q(user_type='OPERATIONSUPERVISOR')|Q(user_type='SENIORTEAMLEADER')),is_active=True)
 
 		return render(request,'agent/ticket/ticket_registration.html',{'order':order,'investigators':investigators})
 
