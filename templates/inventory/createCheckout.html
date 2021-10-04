@@ -224,32 +224,7 @@
                   {% endfor %}
                     <!-- <div class="qty ">
                       <span class="minus bg-dark" onclick="decrement({{forloop.counter}})" >-</span>
-                      <input type="text" class="count" id="id_qty_{{forloop.counter}}" name="qty" value="{{ingredient.quantity}}">
-                      <span class="plus bg-dark" onclick="increment({{forloop.counter}})">+</span>
-                  </div>
-                  </td>
-                  <td>
-                    <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-                  </td>
-                </tr>
-                {% endfor %}
-
-                {% for checkout_item in check_out_items %}
-                {% for item in ingredient.service_recipe_items %}
-                  {% if forloop.first %}
-                  <tr data-itemid="{{item.item.id}}">
-                  {% endif %}
-                  {% endfor %}
-               
-                  <td>-</td>
-                  
-                  <td>{{checkout_item.item.name}}</td>
-                  <td>{{checkout_item.item.item_code}}</td>
-                  <td>
-                  
-                    <div class="qty ">
-                      <span class="minus bg-dark" onclick="decrement({{forloop.counter}})" >-</span>
-                      <input type="text" class="count" id="id_qty_{{forloop.counter}}" name="qty" value="{{ingredient.quantity}}">
+                      <input type="text" class="count" id="id_qty_{{forloop.counter}}" name="qty" value="1">
                       <span class="plus bg-dark" onclick="increment({{forloop.counter}})">+</span>
                   </div> -->
                   <div class="qty-container">
@@ -271,7 +246,7 @@
                 {% endfor %}
 
                 <tr>
-                  <td> <button class="inv-plan-btn" onclick="openNavAddStore()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="" > Add Item</button></td>
+                  <td>           <button class="inv-plan-btn" onclick="openNavAddStore()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="" > Add Item</button></td>
                 </tr>
               </tbody>
               </table>
@@ -305,16 +280,13 @@
           </div>
       </div>
       <hr>
-
-      <form method="POST" action="" >{% csrf_token %}
-      <input type="hidden" name="action" id="item_action" value="add_item" />
       <div class="row mt-20">
         <div class="col-md-12 ">
           <div class="model-input-name">Item</div>
           <input type="hidden" name="item" id="id_pro_sel" value="" />
           <div style="position: relative;">
               <div class="inv-input-container inv-border h-30">
-                  <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" style="border: none !important; width: 90%;" class=" inv-in" name="service_item"  oninput="showProducts()">
+                  <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()">
                  
                   <!-- <div onclick="ProductListShow()" class="model-filter">
                       
@@ -357,7 +329,6 @@
   </div>
   <div class="inv-drawer-footer">
       <button class="sent-button">Submit</button>
-      </form>
       <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
   </div>
 </div>
