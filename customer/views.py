@@ -120,7 +120,9 @@ class Quatation(View):
 		except:
 			order_details = None
 
-		return render(request,"customer/quotation.html",{"order":order,"order_details":order_details,"nonduplicate_schedules":nonduplicate_schedules})
+		price_ranges 		= ServicePriceRange.objects.filter(is_active=True)
+
+		return render(request,"customer/quotation.html",{"order":order,"order_details":order_details,"nonduplicate_schedules":nonduplicate_schedules,"price_ranges":price_ranges})
 
 	def post(self,request,evaluation_id):
 
@@ -249,9 +251,11 @@ class Quatation(View):
 						pass
 
 					if evaluaation.customer.is_email == True :
-						print("emailp")
+
+						price_ranges 		= ServicePriceRange.objects.filter(is_active=True)
+						
 						#send mail
-						msg_html = render_to_string('email/invoice.html',{"invoice":order,"address_list":separator.join(address_list),"evaluationbooks":evaluationbooks})
+						msg_html = render_to_string('email/invoice.html',{"invoice":order,"address_list":separator.join(address_list),"evaluationbooks":evaluationbooks,"price_ranges":price_ranges})
 						msg = EmailMultiAlternatives('Bleach Invoice', '', 'notification@bleach-kw.com', [evaluaation.customer.email])
 						msg.attach_alternative(msg_html, "text/html")
 						msg.send(fail_silently=False)
@@ -355,7 +359,9 @@ class SubscriptionQuatation(View):
 		except:
 			order_details = None
 
-		return render(request,"customer/quotation.html",{"order":order,"order_details":order_details,"nonduplicate_schedules":nonduplicate_schedules,"per_job_cost":per_job_cost})
+		price_ranges 		= ServicePriceRange.objects.filter(is_active=True)
+
+		return render(request,"customer/quotation.html",{"order":order,"order_details":order_details,"nonduplicate_schedules":nonduplicate_schedules,"per_job_cost":per_job_cost,"price_ranges":price_ranges,})
  
 	def post(self,request,evaluation_id):
 		order_id 		  = request.POST.get('order_id')
@@ -417,7 +423,11 @@ class BleachCustomerInvoice(View):
 		
 		customer_ip_address = get_client_ip(request)
 
-		return render(request,"customer/bleach-invoice.html",{'order':order,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,})		
+		price_ranges 		= ServicePriceRange.objects.filter(is_active=True)
+
+		price_ranges 		= ServicePriceRange.objects.filter(is_active=True)
+
+		return render(request,"customer/bleach-invoice.html",{'order':order,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,"price_ranges":price_ranges,"price_ranges":price_ranges,})		
 
 	def post(self,request,evaluation_id):
 
@@ -468,7 +478,9 @@ class CustomerInvoice(View):
 		
 		customer_ip_address = get_client_ip(request)
 
-		return render(request,"customer/customer_invoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,})		
+		price_ranges 		= ServicePriceRange.objects.filter(is_active=True)
+
+		return render(request,"customer/customer_invoice.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,"price_ranges":price_ranges})		
 
 	def post(self,request,evaluation_id):
 
@@ -524,8 +536,10 @@ class CustomerSubscriptionInvoice(View):
 			count += 1
 		
 		customer_ip_address = get_client_ip(request)
+		
+		price_ranges 		= ServicePriceRange.objects.filter(is_active=True)
 
-		return render(request,"customer/customer_invoice_subscription.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,"completed_jobs_count":completed_jobs_count})
+		return render(request,"customer/customer_invoice_subscription.html",{'order':order,'nonduplicate_schedules':nonduplicate_schedules,'firstname':firstname,'lastname':lastname,'customer_ip_address':customer_ip_address,"completed_jobs_count":completed_jobs_count,"price_ranges":price_ranges,})
 
 	def post(self,request,evaluation_id):
 		action            = request.POST.get('action_type')
