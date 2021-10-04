@@ -574,7 +574,7 @@ class StlHome(IsSeniorTeamLeader,View):
 				
 
 		#cleaning team assignment task
-		teamassign_to_date         = (timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)).replace(tzinfo=None)
+		teamassign_to_date             = (timezone.now().replace(hour=0,minute=0,second=0,microsecond=0)).replace(tzinfo=None)
 		
 		calendar_order_schedules_list       = []
 		calendar_order_schedules_duplicates = []
@@ -583,14 +583,19 @@ class StlHome(IsSeniorTeamLeader,View):
 			if not calendar_order_schedules_all.duplicate in calendar_order_schedules_duplicates:
 				calendar_order_schedules_list.append(calendar_order_schedules_all.id)
 				calendar_order_schedules_duplicates.append(calendar_order_schedules_all.duplicate)
-		assign_order_schedules     = OrderScheduler.objects.filter(id__in=calendar_order_schedules_list).select_related('evaluation_details__evaluator','evaluation_details__evaluation','order_scheduler_book').prefetch_related('evaluation_details__evaluation__booking_evaluation','cleaning_team_order_scheduler__team_leader')
+		
+		#cleaning team assignment task
+		try:
+			assign_order_schedules     = OrderScheduler.objects.filter(id__in=calendar_order_schedules_list).select_related('evaluation_details__evaluator','evaluation_details__evaluation','order_scheduler_book').prefetch_related('evaluation_details__evaluation__booking_evaluation','cleaning_team_order_scheduler__team_leader')
+		except:
+			assign_order_schedules     = None
 
 		try:
 			assign_followup_schedules = FollowUpScheduler.objects.filter(work_status__isnull=True,status='CONFIRMED',is_active=True,start_at__lt=teamassign_to_date+timedelta(14)).select_related('follow_up__investigation__order__evaluation__customer','customer_address')
 		except:
 			assign_followup_schedules = None
 
-			##add days left
+		##add days left
 		if assign_order_schedules:
 			for schedule in assign_order_schedules:
 				schedule.days_left_coming = (schedule.start_at-timezone.now()).days

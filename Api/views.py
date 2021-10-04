@@ -242,6 +242,8 @@ class EvaluationDetailsList(APIView):
 		response_dict["evaluation_slot"]=proposed_time.strftime('%H:%M')
 		response_dict["agent_evaluation_notes"]=evaluation_details.attender_note 
 		
+		response_dict['success'] = True
+		
 		return Response(response_dict,HTTP_200_OK)
 
 
@@ -1775,8 +1777,9 @@ class InvoiceSMSMailAPI(APIView):
 				data=True
 
 			if evaluation.customer.is_email == True or 'EMAIL' in options:
+				price_ranges 		= ServicePriceRange.objects.filter(is_active=True)
 				#send mail
-				msg_html = render_to_string('email/invoice.html',{"invoice":order,"address_list":separator.join(address_list),"evaluationbooks":evaluationbooks})
+				msg_html = render_to_string('email/invoice.html',{"invoice":order,"address_list":separator.join(address_list),"evaluationbooks":evaluationbooks,"price_ranges":price_ranges})
 				msg = EmailMultiAlternatives('Bleach Invoice', '', 'notification@bleach-kw.com', [evaluation.customer.email])
 				msg.attach_alternative(msg_html, "text/html")
 				msg.send(fail_silently=False)

@@ -1389,8 +1389,9 @@ class ActiveSubscriptions(IsAuthenticated,View):
 			print(message,response.text,"respo")
 
 		if evaluaation.customer.is_email == True and invoice_type == "invoice" :
+			price_ranges 		= ServicePriceRange.objects.filter(is_active=True)
 			#Email Send
-			msg_html = render_to_string('email/invoice.html',{"invoice":order,"address_list":separator.join(address_list),"evaluationbooks":evaluationbooks})
+			msg_html = render_to_string('email/invoice.html',{"invoice":order,"address_list":separator.join(address_list),"evaluationbooks":evaluationbooks,"price_ranges":price_ranges})
 			msg = EmailMultiAlternatives('Bleach Invoice', '', 'notification@bleach-kw.com', [evaluaation.customer.email])
 			msg.attach_alternative(msg_html, "text/html")
 			msg.send(fail_silently=False)
@@ -3552,13 +3553,14 @@ class MakeQuatationPhase1(IsAuthenticated,View):
 
 		#Different Email FOR LET CUSTOMER BOOKING AND DIRECT BOOKING
 		if evaluation.customer.is_email == True :
+			price_ranges 		= ServicePriceRange.objects.filter(is_active=True)
 			if evaluation.customerbooking:				
-				msg_html = render_to_string('email/invoice.html',{"invoice":order,"address_list":separator.join(address_list),"evaluationbooks":evaluationbooks})
+				msg_html = render_to_string('email/invoice.html',{"invoice":order,"address_list":separator.join(address_list),"evaluationbooks":evaluationbooks,"price_ranges":price_ranges})
 				msg = EmailMultiAlternatives('Bleach Invoice', '', 'notification@bleach-kw.com', [evaluation.customer.email])
 				msg.attach_alternative(msg_html, "text/html")
 				msg.send(fail_silently=False)
 			else:
-				msg_html = render_to_string('email/quatation.html',{"evaluator":evaluator,"evaluation":evaluation,"evaluationbooks":evaluationbooks,"address_list":separator.join(address_list)})
+				msg_html = render_to_string('email/quatation.html',{"evaluator":evaluator,"evaluation":evaluation,"evaluationbooks":evaluationbooks,"address_list":separator.join(address_list),"price_ranges":price_ranges})
 				msg = EmailMultiAlternatives('Bleach Quotation', '', 'notification@bleach-kw.com', [evaluation.customer.email])
 				msg.attach_alternative(msg_html, "text/html")
 				msg.send(fail_silently=False)

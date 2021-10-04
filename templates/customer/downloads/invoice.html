@@ -105,7 +105,20 @@
 
                 </td>
                 <td style="text-align: center;">
-                  {{book_section.size}} {{book_section.unit|default_if_none:''}}
+                  {{book_section.size}} 
+                  {% if evaluation_book.service_type.name == 'Upholstery Cleaning' %}
+                                                       
+                  {% for price_range in price_ranges %}
+                  {% if price_range.name == book_section.size and price_range.service_type == evaluation_book.service_type and price_range.upholstery_type == book_section.upholstery_type %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}} Seater){% endif %}
+                  {% endfor %}
+                    
+                  {% else %}
+                      
+                  {% for price_range in price_ranges %}
+                  {% if price_range.name == book_section.size and price_range.service_type == evaluation_book.service_type and evaluation_book.service_type.name != 'Mattress Cleaning' and price_range.is_newkitchen == book_section.new_kitchen and price_range.is_cabinet == book_section.is_cabinet and price_range.is_highprice_facade == book_section.is_highprice_facade and price_range.is_highprice_window == book_section.is_highprice_window %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}} Sqm){% endif %}
+                  {% endfor %}
+                      
+                  {% endif %}
                 </td>
                 <td style="text-align: center;">
                   {% if evaluation_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{book_section.section_cleanings|floatformat:"-1"}}{% endif %}
@@ -343,89 +356,6 @@
               {% endif %}
     </section>
     {% endif %}
-  
-
-    <!-- {% for orderschedule in nonduplicate_schedules %}            
-    {% for section in orderschedule.order_scheduler_book.evaluationbooksection %}
-   
-    <section id="order-items">
-      <span id="order-item-name">{{orderschedule.order_scheduler_book.service_type}}-{{section.section_name}}</span>
-      <span id="netprice-text">NET PRICE</span>
-      <div>
-        <span>Size : <b>{{section.size}} {{section.unit|default_if_none:''}}</b> Quantity : <b>{% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{section.section_cleanings|floatformat:"-1"}}{% endif %}</b> Unit Price : <b>{{section.section_cost|floatformat:'3'}}</b> </span>
-        <span id="netprice"><b>
-          {{section.section_net_cost|floatformat:'3'}}
-          </b> KD</span>
-      </div>
-    </section>
- 
-    {% endfor %}
-    {% endfor %}
-
-
-    {% if  order.evaluation.payment_method == 'BREAKDOWN' %}
-    <section id="new-customer-info_1">
-
-      <div>
-        <span id="contact-text">Payment Before Cleaning</span>
-        <span id="contact-number"><b>{{order.evaluation.before_cleaning_amount|floatformat:'3'}}</b> KD</span>
-      </div>
-      <br>
-      <div>
-        <span id="contact-text">Payment After Cleaning</span>
-        <span id="contact-number"><b>{{order.evaluation.after_cleaning_amount|floatformat:'3'}}</b> KD</span>
-      </div>
-    </section>
-    {% endif %}
-   
-    <section id="invoice_total">
-      <div>
-        <span id="contact-text">Sub Total</span>
-        <span id="contact-number"><b>{{order.evaluation.estimated_cost|floatformat:'3'}}</b> KD</span>
-      </div>
-      <br>
-      {% if order.evaluation.discount != 0 %}
-      <div>
-        <span id="contact-text" style="color: #0BA300;">Discount</span>
-        <span id="contact-number" style="color: #0BA300;"><b>-{{order.evaluation.discount|floatformat:"3"}}</b> KD</span>
-      </div>
-      {% endif %}
-
-      <div id="invoice_total_amount">
-        <span id="contact-text">Grand Total</span>
-        <span id="contact-number"><b>{{order.total_amount|floatformat:"3"}}</b> KD</span>
-      </div>
-      <div>
-        <span id="contact-text">Paid till date</span>
-        <span id="contact-number">{{order.amount_paid|floatformat:'3'}}</span>
-      </div>
-      <div>
-        <span id="contact-text">Balance till date</span>
-        <span id="contact-number">{{order.remining_amount|floatformat:'3'}}</span>
-      </div>
-
-      {% if order.evaluation.cleaning_policy == 'ONE TIME SERVICE' %}
-      <div>
-        <span id="total_id">Payable Amount</span>
-      <h1 id="total_amount">
-        {{order.remining_amount|floatformat:'3'}}<span id="kd-font">KD</span>
-      </h1>
-      </div>
-      {% else %}
-      <div>
-        <span id="total_id">Payable Amount</span>
-      <h1 id="total_amount">
-        {{order.subscription_topay|floatformat:'3'}}<span id="kd-font">KD</span>
-      </h1>
-      </div>
-      {% endif %}
-      
-    
-    </section>
-    <section id="payment-section-invoice">
-      
-    </section> -->
-    
   
   </div>
 </body>

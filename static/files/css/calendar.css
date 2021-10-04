@@ -2,7 +2,42 @@
     z-index:9999 !important;
 }
 /* Evaluation Calendar */
-
+.cl-tooltip {
+    position: relative;
+    display: inline-block;
+    
+  }
+  .cl-tooltip .tooltiptext::after {
+    content: " ";
+    position: absolute;
+    top: 100%; /* At the bottom of the tooltip */
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #2C4C82 transparent transparent transparent;
+  }
+  
+  .cl-tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: #2C4C82;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -60px;
+  }
+  
+  .cl-tooltip:hover .tooltiptext {
+    visibility: visible;
+  }
 .cl-slot{
     width: 8.33%;
     color: #434343;

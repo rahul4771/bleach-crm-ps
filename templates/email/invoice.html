@@ -391,7 +391,20 @@
                 <div class="order-item-in">
                     <div id="item-left">
                         <b>{{book.service_type.name}} - {{section.section_name}}</b>
-                        <p style="font-size: 15px; margin-top: 10px; line-height: 2;">Size : <b>{{section.size}}</b>
+                        <p style="font-size: 15px; margin-top: 10px; line-height: 2;">Size : <b>{{section.size}} 
+                            {% if book.service_type.name == 'Upholstery Cleaning' %}
+                                                       
+                            {% for price_range in price_ranges %}
+                            {% if price_range.name == section.size and price_range.service_type == book.service_type and price_range.upholstery_type == section.upholstery_type %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}} Seater){% endif %}
+                            {% endfor %}
+                              
+                            {% else %}
+                                
+                            {% for price_range in price_ranges %}
+                            {% if price_range.name == section.size and price_range.service_type == book.service_type and book.service_type.name != 'Mattress Cleaning' and price_range.is_newkitchen == section.new_kitchen and price_range.is_cabinet == section.is_cabinet and price_range.is_highprice_facade == section.is_highprice_facade and price_range.is_highprice_window == section.is_highprice_window %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}} Sqm){% endif %}
+                            {% endfor %}
+                                
+                            {% endif %}</b>
                             &nbsp; Visit : <b>{{section.section_cleanings|default_if_none:'1'}}</b> &nbsp; Unit Price : <b>{{section.sectiononly_cost|default_if_none:''}}</b></p>
                     </div>
                     <div style="flex-grow: 1;" class="m-mt-10 left">
