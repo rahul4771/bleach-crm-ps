@@ -240,7 +240,9 @@
                   </div>
                   </td>
                   <td>
-                    <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                    <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
+                    <button class="inv-plan-img-btn" onclick="swapModal({{ingredient.id}})" > <img src="{% static 'files/inventory/swap.png' %}"  alt=""> </button>
+
                   </td>
                 </tr>
                 {% endfor %}
@@ -332,6 +334,75 @@
       <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
   </div>
 </div>
+<div id="addStore2" class="inv-sidedrawer">
+
+  <div class="inv-sidedrawer-inner">
+      <div class="d-flex">
+          <div class="inv-drawer-head" id="itemHead">
+              Swap Item
+          </div>
+          <div class="right-pos">
+
+              <button onclick="closeNavAddStore2()" class="img-button">
+                  <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+              </button>
+          </div>
+      </div>
+      <hr>
+      <div class="row mt-20">
+        <div class="col-md-12 ">
+          <div class="model-input-name">Item</div>
+          <input type="hidden" name="item" id="id_pro_sel2" value="" />
+          <input type="hidden" name="ingredient" id="id_ingredient" value="" />
+
+          <div style="position: relative;">
+              <div class="inv-input-container inv-border h-30">
+                  <input autocomplete="off" onclick="ProductListShow2()" type="text" id="pro-name2" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts2()">
+                 
+                  <!-- <div onclick="ProductListShow()" class="model-filter">
+                      
+                          <i class="fa fa-angle-down fa-lg " style="color: #707070;" aria-hidden="true"></i>
+                      
+
+                  </div> -->
+
+
+
+              </div>
+              <div id="id_search2" class="row inv-result-box" style="display: none;">
+                
+              </div>
+          </div>
+         
+
+
+      </div>
+
+      </div>
+      <!-- <div class="row mt-20">
+          <div class="col-md-12 ">
+              <div class="model-input-name">Unit</div>
+
+              <div class="qty ">
+                  <span style="color: #4B4B4B;"  class="minus bg-dark qty-border-two">-</span>
+                  <input style="color: #4B4B4B;"  type="" class="count qty-border-two" name="qty" value="1" >
+                  <span style="color: #4B4B4B; margin-left: -4px !important;" class="plus bg-dark qty-border-two">+</span>
+              </div>
+          </div>
+
+      </div> -->
+
+
+
+
+
+
+  </div>
+  <div class="inv-drawer-footer">
+      <button class="sent-button">Submit</button>
+      <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
+  </div>
+</div>
 
 
 
@@ -343,7 +414,32 @@
 {% block javascript %}
 
 <script>
+function swapModal(id){
+  console.log(id)
+  $('#id_ingredient').val(id);
+  $('#id_search2').empty();
+     
+        {% for item in items %}
+    var tempId = '{{item.id}}';
+    var tempName = '{{item.name}}';
 
+    $('#id_search2').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" id="id_product{{item.id}}"  onclick="closeProductShow2(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
+
+    {% endfor %}
+
+   
+    
+    if(screen.width<= 600){
+        document.getElementById("addStore2").style.width = "100%";
+    }else if(screen.width<= 720){
+        document.getElementById("addStore2").style.width = "50%";
+    }
+    else{
+        document.getElementById("addStore2").style.width = "30%";
+    }  
+    //hideselectedoptions2();
+  
+}
 
 function hideselectedoptions(){
             
@@ -386,6 +482,7 @@ function hideselectedoptions(){
     }
 
 
+
 function increment(id){
   console.log(id)
   $('#id_qty_'+id).val(parseInt($('#id_qty_'+id).val()) + 1 );
@@ -403,6 +500,15 @@ var products = [];
     var tempId = '{{item.id}}';
     var tempName = '{{item.name}}';
     products.push({id:tempId,name:tempName})
+   // $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
+
+    {% endfor %}
+    
+    var products2 = [];
+{% for item in items %}
+    var tempId = '{{item.id}}';
+    var tempName = '{{item.name}}';
+    products2.push({id:tempId,name:tempName})
    // $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
 
     {% endfor %}
@@ -432,6 +538,25 @@ var products = [];
         }
         
     }
+    function showProducts2(){
+    $('#id_search2').empty();
+    for (var j=0; j<products2.length; j++) {
+        if (products2[j].name.toUpperCase().match($('#pro-name2').val().toUpperCase())){
+            
+    $('#id_search2').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeProductShow(this)"  data-pro="'+products2[j].id+'" data-name="'+products2[j].name+'"><div class="inv-search-result">'+products2[j].name+'</div></div>');
+
+        }
+    }
+        console.log( $('#pro-name2').val());
+        if($('#pro-name2').val() !=""){
+        document.getElementById("id_search2").style.display="block"
+
+        }else{
+        document.getElementById("id_search2").style.display="none"
+
+        }
+        
+    }
 
     function closeProductShow(d){
         console.log(d);
@@ -442,6 +567,15 @@ var products = [];
 
         document.getElementById("id_search").style.display="none"
     }
+    function closeProductShow2(d){
+        console.log(d);
+        var proId = $(d).attr("data-pro")
+        $('#id_pro_sel2').val($(d).attr("data-pro"));
+        $('#pro-name2').val($(d).attr("data-name"));
+
+
+        document.getElementById("id_search2").style.display="none"
+    }
    $("#pro-name").click(function(){
         document.getElementById("id_cat").style.display="none"
     });
@@ -450,10 +584,11 @@ var products = [];
     }
    function openNavAddStore() {
      $('#id_search').empty();
+     
         {% for item in items %}
     var tempId = '{{item.id}}';
     var tempName = '{{item.name}}';
-    console.log(tempName,'gh')
+
     $('#id_search').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" id="id_product{{item.id}}"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
 
     {% endfor %}
@@ -472,6 +607,9 @@ var products = [];
 }
 function closeNavAddStore() {
     document.getElementById("addStore").style.width = "0";
+}
+function closeNavAddStore2() {
+    document.getElementById("addStore2").style.width = "0";
 }
 
   	$(document).ready(function(){
@@ -494,6 +632,10 @@ function closeNavAddStore() {
 function ProductListShow(){
     searchFlag = true;
     document.getElementById("id_search").style.display="block"
+}
+function ProductListShow2(){
+    searchFlag = true;
+    document.getElementById("id_search2").style.display="block"
 }
 
 function showOf(id){
