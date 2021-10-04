@@ -396,7 +396,7 @@
                         {% if evaluation_book.service_type.name == 'Upholstery Cleaning' %}
                                                        
                         {% for price_range in price_ranges %}
-                        {% if price_range.name == book_section.size and price_range.service_type == evaluation_book.service_type and price_range.upholstery_type == section.upholstery_type %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}} Seater){% endif %}
+                        {% if price_range.name == book_section.size and price_range.service_type == evaluation_book.service_type and price_range.upholstery_type == book_section.upholstery_type %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}} Seater){% endif %}
                         {% endfor %}
                           
                         {% else %}
