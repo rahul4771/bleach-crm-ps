@@ -830,6 +830,7 @@ const app=  new Vue({
               "21":[3,6,9,12]
 
             }*/
+            
            
           },
           saveEdit(){
