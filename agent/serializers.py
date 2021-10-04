@@ -52,6 +52,13 @@ class CleaningTeamShowSerializer(serializers.ModelSerializer):
 		model = CleaningTeam
 		fields= ('team_leader','created_by','check_in','check_out','cleaning_member_team')
 
+	def to_representation(self,obj):
+		td = super(CleaningTeamShowSerializer,self).to_representation(obj)	
+		td['check_in']  = ((obj.check_in)+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
+		td['check_out'] = ((obj.check_out)+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
+		return(td)
+
+
 
 class CleaningScheduleSerializer(serializers.ModelSerializer):
 	customer_address     = AddressSerializer(read_only=True)
