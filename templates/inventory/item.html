@@ -1294,7 +1294,7 @@ function openNavAddBundle(d) {
             var tempName = '{{store.store_name}}';
             var tempPrice = 'abc';
             products.push({id:tempId,name:tempName,price:tempPrice})
-        $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{store.id}}" data-name="{{store.store_name}}"><div class="inv-search-result">{{store.store_name}}</div></div>');
+        $('#id_search').append('<div class="col-md-12 inv-search-drop" onclick="closeProductShow(this)" style="padding:0px !important;" data-pro="{{store.id}}" data-name="{{store.store_name}}"><div class="inv-search-result">{{store.store_name}}</div></div>');
 
         {% endfor %}
 
@@ -1374,9 +1374,9 @@ function openNavAddBundle(d) {
         $('#id_search').empty();
         console.log(products,"prd")
         for (var j=0; j<products.length; j++) {
-            if (products[j].name.match($('#pro-name').val())){
+            if (products[j].name.toUpperCase().match($('#pro-name').val().toUpperCase())){
                 console.log(products[j]);
-        $('#id_search').append('<div class="col-md-12" id="id_product'+products[j].id+'" style="padding:0px !important;" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-productprice="'+products[j].price+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
+        $('#id_search').append('<div class="col-md-12 inv-search-drop" id="id_product'+products[j].id+'" style="padding:0px !important;" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-productprice="'+products[j].price+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
 
             }
         }

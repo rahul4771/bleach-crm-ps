@@ -222,7 +222,7 @@
                   <td>
                   {% endif %}
                   {% endfor %}
-                    <div class="qty ">
+                    <!-- <div class="qty ">
                       <span class="minus bg-dark" onclick="decrement({{forloop.counter}})" >-</span>
                       <input type="text" class="count" id="id_qty_{{forloop.counter}}" name="qty" value="{{ingredient.quantity}}">
                       <span class="plus bg-dark" onclick="increment({{forloop.counter}})">+</span>
@@ -251,6 +251,17 @@
                       <span class="minus bg-dark" onclick="decrement({{forloop.counter}})" >-</span>
                       <input type="text" class="count" id="id_qty_{{forloop.counter}}" name="qty" value="{{ingredient.quantity}}">
                       <span class="plus bg-dark" onclick="increment({{forloop.counter}})">+</span>
+                  </div> -->
+                  <div class="qty-container">
+  
+       
+                        
+                    <div class="quantity">
+                      <a class="quantity__minus pointer" onclick="decrement({{forloop.counter}})"><span>-</span></a>
+                      <input  type="text" class="quantity__input"  id="id_qty_{{forloop.counter}}" name="qty" value="1">
+                      <a  class="quantity__plus pointer" onclick="increment({{forloop.counter}})"><span>+</span></a>
+                    </div>
+                    
                   </div>
                   </td>
                   <td>
