@@ -49,7 +49,7 @@ class Signin(View):
 				return redirect('booking-officer:bookingofficerdash-board')
 
 			if request.user.user_type == 'INVENTORYADMIN' or request.user.user_type == 'INVENTORYUSER':	
-				return redirect('inventory:inventorydash-board')
+				return redirect('bleach-inventory:inventorydash-board')
 		else:		
 			return render(request,'user/login.html',{})
 

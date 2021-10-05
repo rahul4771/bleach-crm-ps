@@ -587,7 +587,7 @@ $(function () {
 
     function set_params_go(args)
     {
-    var url='{% url 'inventory:inventory-segment' category.id %}';
+    var url='{% url 'bleach-inventory:inventory-segment' category.id %}';
     var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),
     };
     for(key in args) 
