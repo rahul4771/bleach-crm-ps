@@ -46,6 +46,6 @@ urlpatterns = [
 
     url(r'^api/',include('Api.urls',namespace='api')),
 
-    url(r'^inventory/',include('inventory.urls',namespace='inventory')),
+    url(r'^inventory/',include('bleachinventory.urls',namespace='inventory')),
 
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

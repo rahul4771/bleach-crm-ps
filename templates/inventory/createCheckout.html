@@ -70,7 +70,7 @@
           <div class="col-md-5 m-mt30">
 
             <ul class="inv-ul">
-              <li>Team Leader <br></li>
+              <li>Cleaning Agent <br></li>
               <li class="mt-5 inv-team-head">{% for teamleader in visit.cleaning_team %} {{teamleader.team_leader.name}} {% endfor %}</li>
             
               <li  class="mt-10">Cleaners</li>
@@ -98,7 +98,9 @@
                </div>
                <div id="id_sec_item_{{forloop.counter}}" style="margin-left: 20px;">
                <p class="inv-section-in">
-                 Size : <span class="red2-text inv-section-in">{{section.size}} </span>
+                 Size : <span class="red2-text inv-section-in">
+                 {{section.size}} 
+                 </span>
                </p>
                </div>
                <div class="right-pos">
@@ -114,7 +116,23 @@
                   <div class="row c-mb-3">
                       <div class="col-md-6 col-xs-6 mb-10">
                           <div class="order-details-key">Size</div> 
-                          <div class="c-text order-details-value">{{section.size}} </div>
+                          <div class="c-text order-details-value">
+                          {{section.size}} (
+                            {% if section.evaluation_book.service_type.name == 'Upholstery Cleaning' %}
+                                                                    
+                              {% for price_range in price_ranges %}
+                              {% if price_range.name == section.size and price_range.service_type == section.evaluation_book.service_type and price_range.upholstery_type == section.upholstery_type %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}} Seater){% endif %}
+                              {% endfor %}
+                            
+                              {% else %}
+                              
+                              {% for price_range in price_ranges %}
+                              {% if price_range.name == section.size and price_range.service_type == section.evaluation_book.service_type and section.evaluation_book.service_type.name != 'Mattress Cleaning' and price_range.is_newkitchen == section.new_kitchen and price_range.is_cabinet == section.is_cabinet and price_range.is_highprice_facade == section.is_highprice_facade and price_range.is_highprice_window == section.is_highprice_window %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}} Sqm){% endif %}
+                              {{evaluationbook.service_type.name}}
+                              {% endfor %}
+                    
+                            {% endif %}
+                            ) </div>
                       </div>
                       <div class="col-md-6 col-xs-6 mb-10">
                           <div class="order-details-key">Wall Type</div> 

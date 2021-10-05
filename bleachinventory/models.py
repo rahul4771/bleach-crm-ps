@@ -350,3 +350,4 @@ class CheckOutItems(models.Model):
 
     def __str__(self):
         return self.order.order_no
+
