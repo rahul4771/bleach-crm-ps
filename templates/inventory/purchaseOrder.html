@@ -390,7 +390,7 @@ function selectTab(d){
 
     function set_params_go(args)
     {
-    var url='{% url 'inventory:inventory-purchaseorder' %}';
+    var url='{% url 'bleach-inventory:inventory-purchaseorder' %}';
     var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),
     };
     for(key in args) 

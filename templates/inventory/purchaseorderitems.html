@@ -769,7 +769,7 @@ function changeSelect2(va){
 
 function set_params_go(args)
     {
-    var url='{% url 'inventory:inventory-purchaseorderitems' purchase_order.id %}';
+    var url='{% url 'bleach-inventory:inventory-purchaseorderitems' purchase_order.id %}';
     var params={shipment_status:$('#id_shipment_status').val()
     };
     for(key in args) 

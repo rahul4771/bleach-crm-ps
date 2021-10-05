@@ -83,7 +83,7 @@ class InventoryCategory(IsInventoryAdmin,View):
             Category.objects.get(id=int(category_id)).delete()
             messages.success(request,"Category Deleted Successfully !")
 
-        return redirect('inventory:inventory-category')
+        return redirect('bleach-inventory:inventory-category')
 
 # Attribute.
 class InventoryAttribute(IsInventoryAdmin,View):
@@ -225,7 +225,7 @@ class InventoryAttribute(IsInventoryAdmin,View):
             AttributeValue.objects.get(id=int(value_id)).delete()
             messages.success(request,"Value Deleted Successfully !")
 
-        return redirect('inventory:inventory-attribute')
+        return redirect('bleach-inventory:inventory-attribute')
 # value.
 class InventoryValue(IsInventoryAdmin,View):
     def get(self,request):
@@ -472,7 +472,7 @@ class InventoryBundle(IsInventoryAdmin,View):
             messages.success(request,"Item Deleted successfully !")
 
 
-        return redirect('inventory:inventory-bundle')
+        return redirect('bleach-inventory:inventory-bundle')
 
 class InventoryItems(IsInventoryAdmin,View):
     def get(self,request,item_id):
@@ -703,7 +703,7 @@ class InventoryItems(IsInventoryAdmin,View):
 
             messages.success(request,"Image Deleted successfully!")
 
-        return redirect('inventory:inventory-item',item_id)
+        return redirect('bleach-inventory:inventory-item',item_id)
 
 class InventorySupplier(IsInventoryAdmin,View):
     def get(self,request):
@@ -862,7 +862,7 @@ class InventorySupplier(IsInventoryAdmin,View):
 
             messages.success(request,"Item Deleted Successfully !")
 
-        return redirect('inventory:inventory-supplier')
+        return redirect('bleach-inventory:inventory-supplier')
 
 class InventoryStore(IsInventoryAdmin,View):
     def get(self,request):
@@ -924,7 +924,7 @@ class InventoryStore(IsInventoryAdmin,View):
             store_id = request.POST.get('store_id_delete')
             Store.objects.get(id=int(store_id)).delete()
             messages.success(request,"Store Deleted Successfully !")
-        return redirect('inventory:inventory-store')
+        return redirect('bleach-inventory:inventory-store')
 
 class InventoryInv(IsInventoryAdmin,View):
     def get(self,request):
@@ -1011,7 +1011,7 @@ class InventoryInv(IsInventoryAdmin,View):
 
             inv_item = InventoryItem.objects.create(item_category=category,item_segment=segment,item_line=line,name=name,item_code=new_item_code,description=description,reserve_count=reserve,is_reusable=reusable,item_add_type=item_add_type,measuring_unit=unit_measure)
             messages.success(request,"Item Added Successfully !")
-            return redirect('inventory:inventory-item',inv_item.id)
+            return redirect('bleach-inventory:inventory-item',inv_item.id)
 
         if action == 'edit_item':
             print("edit")
@@ -1078,7 +1078,7 @@ class InventoryInv(IsInventoryAdmin,View):
             InventoryItem.objects.get(id=int(item_id)).delete()
             messages.success(request,"Item Deleted Successfully !")
 
-        return redirect('inventory:inventory-inv')
+        return redirect('bleach-inventory:inventory-inv')
 
 class InventoryOrder(IsInventoryAdmin,View):
     def get(self,request):
@@ -1158,7 +1158,7 @@ class InventoryCreateCheckout(IsInventoryAdmin,View):
                 messages.success(request,"Item added!")
             else:
                 messages.error(request,"Item out of stock!")
-        return redirect('inventory:inventory-createcheckout')
+        return redirect('bleach-inventory:inventory-createcheckout')
 
 class InventoryPurchaseOrder(IsInventoryAdmin,View):
     def get(self,request):
@@ -1179,7 +1179,7 @@ class InventoryPurchaseOrder(IsInventoryAdmin,View):
             PurchaseOrder.objects.get(id=int(order_id)).delete()
             messages.success(request,"Purchase Order Deleted successfully!")
 
-        return redirect('inventory:inventory-purchaseorder')
+        return redirect('bleach-inventory:inventory-purchaseorder')
 
 class PurchaseOrderItemsPage(IsInventoryAdmin,View):
     def get(self,request,purchase_order_id):
@@ -1287,7 +1287,7 @@ class PurchaseOrderItemsPage(IsInventoryAdmin,View):
 
             messages.success(request,"Unit added to Inventory")
 
-        return redirect('inventory:inventory-purchaseorderitems', purchase_order_id)
+        return redirect('bleach-inventory:inventory-purchaseorderitems', purchase_order_id)
 
 class InventoryPurchaseOrderPage(View):
     def get(self,request,purchase_order_id):
@@ -1368,7 +1368,7 @@ class InventoryCreatePurchaseOrder(View):
             purchase_order.is_order_completed = True
             purchase_order.save()
             messages.success(request,"Order Completed successfully!")
-            return redirect('inventory:inventory-purchaseorderpage',purchase_order.id)
+            return redirect('bleach-inventory:inventory-purchaseorderpage',purchase_order.id)
 
         if action == 'edit_item':
             purchase_order_item_id = request.POST.get('item_edit_id')
@@ -1415,7 +1415,7 @@ class InventoryCreatePurchaseOrder(View):
             messages.success(request,"Purchase Order Reset successfully!")
 
 
-        return redirect('inventory:inventory-createpurchaseorder')
+        return redirect('bleach-inventory:inventory-createpurchaseorder')
 
 class InventoryEditPurchaseOrder(IsInventoryAdmin,View):
     def get(self,request,purchase_order_id):
@@ -1503,9 +1503,9 @@ class InventoryEditPurchaseOrder(IsInventoryAdmin,View):
                 purchase_order.is_order_completed = True
                 purchase_order.save()
                 messages.success(request,"Order Updated successfully!")
-                return redirect('inventory:inventory-purchaseorder')
+                return redirect('bleach-inventory:inventory-purchaseorder')
 
-            return redirect('inventory:inventory-editpurchaseorder',purchase_order_id)
+            return redirect('bleach-inventory:inventory-editpurchaseorder',purchase_order_id)
 
 class InventoryViewPurchaseOrder(IsInventoryAdmin,View):
     def get(self,request):
@@ -1590,7 +1590,7 @@ class InventoryServices(IsInventoryAdmin,View):
             ingredient = ServiceRecipeIngredients.objects.get(id=int(ingredient_id))
             item = InventoryItem.objects.get(id=int(item_id))
 
-        return redirect('inventory:inventory-services')
+        return redirect('bleach-inventory:inventory-services')
 
 class InventorySegment(IsInventoryAdmin,View):
     def get(self,request,category_id):
@@ -1700,5 +1700,5 @@ class InventorySegment(IsInventoryAdmin,View):
             Line.objects.get(id=int(line_id)).delete()
             messages.success(request,"Line Deleted Successfully !")
             
-        return redirect('inventory:inventory-segment', category_id)
+        return redirect('bleach-inventory:inventory-segment', category_id)
 
