@@ -108,7 +108,7 @@
                                 {% endif %}
                             </td>
                             <td class="text-center">
-                                <a href="/inventory/item/{{item.id}}">
+                                <a href="/bleach-inventory/item/{{item.id}}">
                                 <button class="inv-plan-img-btn"> <img class="view-img" src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
                                 </a>
                                 <button class="inv-plan-img-btn edit-item" onclick="openNavAddStore('edit')" data-itemid="{{item.id}}" data-itemname="{{item.name}}" data-itemcode="{{item.item_code}}" data-itemcategory="{{item.item_category.id}}" data-itemsegment="{{item.item_segment.id}}" data-itemline="{{item.item_line.id}}" data-itemdescription="{{item.description}}" data-itemreserve="{{item.reserve_count}}" data-itemaddtype="{{item.item_add_type}}" data-unitmeasure="{{item.measuring_unit}}" data-itemstatus="{{item.status}}" data-itemreusbale="{{item.is_reusable}}"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>

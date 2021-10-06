@@ -85,7 +85,7 @@
                                 {% endif %}
                             </td>
                             <td>
-                                <a href="/inventory/segment/"><a href="/inventory/segment/{{category.id}}/" target="_blank"<button class="inv-plan-btn" onclick="openNavaddSegment2()"> <img class="view-img2" src="{% static 'files/inventory/view.png' %}" alt=""> View Segment</button></a>
+                                <a href="/bleach-inventory/segment/{{category.id}}/" target="_blank"<button class="inv-plan-btn" onclick="openNavaddSegment2()"> <img class="view-img2" src="{% static 'files/inventory/view.png' %}" alt=""> View Segment</button></a>
                                 <button class="inv-plan-img-btn edit_category" onclick="showDrawer('edit')" data-categoryid="{{category.id}}" data-categoryname="{{category.name}}" data-categorycode="{{category.category_code}}" data-categorystatus="{{category.status}}" > <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>
                                 <button class="inv-plan-img-btn delete_category" data-categoryid="{{category.id}}" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
                             </td>
