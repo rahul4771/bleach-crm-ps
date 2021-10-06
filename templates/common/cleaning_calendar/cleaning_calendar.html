@@ -8,6 +8,7 @@
   
     <div class="filter-column-boxes filter-columns-left "><!--filter-column-boxes filter-columns-left-->
     <h2 class="h2">Cleaning Calendar</h2>
+
     
     {% if request.user.user_type == 'SENIORTEAMLEADER' %}
       <form method="GET" action="{% url 'stl:cleaning-export' %}" >{% csrf_token %}
@@ -69,11 +70,17 @@
                     <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
   
                 </div>
+                
   
                 </div>
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
 
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'"><span v-if="item.slots.order.order_no"> <% item.slots.order.order_no %></span>   </div>
+                <div class="cl-marker-progress" v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
+                  <lottie-player src="{% static 'files/animations/cleaning_white.json'%}" background="transparent"  speed="1" class="progress-animation" loop autoplay v-if="item.slots.work_status=='CLEANING_IN_PROGRESS'"></lottie-player>
+
+                </div>
+               
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
                   <div v-if="item.color!='followup-cleaning-status-bg'">
@@ -143,6 +150,10 @@
                 </div>
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
+                <div class="cl-marker-progress" v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
+                  <lottie-player src="{% static 'files/animations/cleaning_white.json'%}" background="transparent"  speed="1" class="progress-animation" loop autoplay v-if="item.slots.work_status=='CLEANING_IN_PROGRESS'"></lottie-player>
+
+                </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
                   <div v-if="item.color!='followup-cleaning-status-bg'">
@@ -209,6 +220,10 @@
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
                 
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
+                <div class="cl-marker-progress" v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
+                  <lottie-player src="{% static 'files/animations/cleaning_white.json'%}" background="transparent"  speed="1" class="progress-animation" loop autoplay v-if="item.slots.work_status=='CLEANING_IN_PROGRESS'"></lottie-player>
+
+                </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
                   <div v-if="item.color!='followup-cleaning-status-bg'">
@@ -275,6 +290,10 @@
                 </div>
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
+                <div class="cl-marker-progress" v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
+                  <lottie-player src="{% static 'files/animations/cleaning_white.json'%}" background="transparent"  speed="1" class="progress-animation" loop autoplay v-if="item.slots.work_status=='CLEANING_IN_PROGRESS'"></lottie-player>
+
+                </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
                   <div v-if="item.color!='followup-cleaning-status-bg'">
@@ -333,13 +352,19 @@
                       <img src="{% static 'files/icons/check-white.png'%}" class="cl-marker-check-icon"/>
     
                   </div>
+                  
   
                
   
                 </div>
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
+                <div class="cl-marker-progress" v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
+                  <lottie-player src="{% static 'files/animations/cleaning_white.json'%}" background="transparent"  speed="1" class="progress-animation" loop autoplay v-if="item.slots.work_status=='CLEANING_IN_PROGRESS'"></lottie-player>
+
+                </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
+                  
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
                   <div v-if="item.color!='followup-cleaning-status-bg'">
                   <span  v-if="item.slots.cleaning_team_order_scheduler.length>0"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
@@ -351,6 +376,7 @@
                   <span  v-else-if="item.color!='not-approved-status-bg' && item.color!='approved-notpaid-status-bg' && item.color!='rejected-status-bg'" @click="addFollowupTeam(item.slots.id)">+</span>
                   <span v-else class="disabled-plus"><i class="fas fa-users-slash"></i></span>
                 </div>
+               
                   {% else %}
                   <div v-if="item.color!='followup-cleaning-status-bg'">
                   <span  v-if="item.slots.cleaning_team_order_scheduler.length>0 && item.color!='rejected-status-bg'"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
@@ -406,7 +432,12 @@
                 </div>
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
-                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
+                <div class="cl-marker-progress" v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
+                  <lottie-player src="{% static 'files/animations/cleaning_white.json'%}" background="transparent"  speed="1" class="progress-animation" loop autoplay v-if="item.slots.work_status=='CLEANING_IN_PROGRESS'"></lottie-player>
+
+                </div>
+                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only' ">
+                  
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
                   <div v-if="item.color!='followup-cleaning-status-bg'">
                   <span  v-if="item.slots.cleaning_team_order_scheduler.length>0"><% item.slots.cleaning_team_order_scheduler[0].cleaning_member_team.length %></span>
@@ -471,6 +502,10 @@
                 </div>
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
+                <div class="cl-marker-progress" v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
+                  <lottie-player src="{% static 'files/animations/cleaning_white.json'%}" background="transparent"  speed="1" class="progress-animation" loop autoplay v-if="item.slots.work_status=='CLEANING_IN_PROGRESS'"></lottie-player>
+
+                </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
                   <div v-if="item.color!='followup-cleaning-status-bg'">
@@ -535,6 +570,10 @@
                 </div>
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
+                <div class="cl-marker-progress" v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
+                  <lottie-player src="{% static 'files/animations/cleaning_white.json'%}" background="transparent"  speed="1" class="progress-animation" loop autoplay v-if="item.slots.work_status=='CLEANING_IN_PROGRESS'"></lottie-player>
+
+                </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
                   <div v-if="item.color!='followup-cleaning-status-bg'">
@@ -600,6 +639,10 @@
                 </div>
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
+                <div class="cl-marker-progress" v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
+                  <lottie-player src="{% static 'files/animations/cleaning_white.json'%}" background="transparent"  speed="1" class="progress-animation" loop autoplay v-if="item.slots.work_status=='CLEANING_IN_PROGRESS'"></lottie-player>
+
+                </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
                   <div v-if="item.color!='followup-cleaning-status-bg'">
@@ -665,6 +708,10 @@
                 </div>
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
+                <div class="cl-marker-progress" v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
+                  <lottie-player src="{% static 'files/animations/cleaning_white.json'%}" background="transparent"  speed="1" class="progress-animation" loop autoplay v-if="item.slots.work_status=='CLEANING_IN_PROGRESS'"></lottie-player>
+
+                </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
                   <div v-if="item.color!='followup-cleaning-status-bg'">
@@ -730,6 +777,10 @@
                 </div>
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
+                <div class="cl-marker-progress" v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
+                  <lottie-player src="{% static 'files/animations/cleaning_white.json'%}" background="transparent"  speed="1" class="progress-animation" loop autoplay v-if="item.slots.work_status=='CLEANING_IN_PROGRESS'"></lottie-player>
+
+                </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
                   <div v-if="item.color!='followup-cleaning-status-bg'">
@@ -795,6 +846,10 @@
                 </div>
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
                 <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
+                <div class="cl-marker-progress" v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
+                  <lottie-player src="{% static 'files/animations/cleaning_white.json'%}" background="transparent"  speed="1" class="progress-animation" loop autoplay v-if="item.slots.work_status=='CLEANING_IN_PROGRESS'"></lottie-player>
+
+                </div>
                 <div class="cl-marker-count"  v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' %}
                   <div v-if="item.color!='followup-cleaning-status-bg'">
@@ -1104,10 +1159,24 @@ class="cl-service-list"
           <% currentSlotDetails.evaluation_details.evaluation.customer.mobile_number %>
          </div>
          <div class="cl-modal-text-title cl-mt-20 ">
-           <span v-for="(service,sindex) in currentServices" v-bind:key="sindex"><span v-if="sindex!=0">, </span><% service.order_scheduler_book.service_type.name %></span>
+           <div v-for="(service,sindex) in currentServices" v-bind:key="sindex" class="cl-mb-10"><% service.order_scheduler_book.service_type.name %>
+            <div v-if="service.cleaning_team_order_scheduler.length>0" class="row m-0">
+              <div v-if="service.cleaning_team_order_scheduler[0].check_in" class="cl-checkin col-md-6 p-0">
+                <i class="fas fa-sign-in-alt mr-2 checkinout_icon"></i>
+                <% service.cleaning_team_order_scheduler[0].check_in %>
+              </div>
+              <div v-if="service.cleaning_team_order_scheduler[0].check_out" class="cl-checkin col-md-6 p-0">
+                <i class="fas fa-sign-out-alt mr-2 checkinout_icon"></i>
+                <% service.cleaning_team_order_scheduler[0].check_out %>
+              </div>
+            </div>
+          </div>
+
+          
          
         </div>
-         <div class="cl-modal-text-content cl-mt-5">
+        
+         <div class="cl-modal-text-content cl-mt-10">
            Apartment : <% currentSlotDetails.customer_address.apartment %>,
            Building : <% currentSlotDetails.customer_address.building %>
            Block : <% currentSlotDetails.customer_address.block %>,
@@ -1583,7 +1652,8 @@ class="cl-service-list"
         </div>
     </div>
   </div>
-  
+  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
   <script>
   console.log($('#cleaning_calendar_date').val(),"calodate")
 
