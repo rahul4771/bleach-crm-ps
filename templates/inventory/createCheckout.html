@@ -234,12 +234,13 @@
                
                   <td>{{ingredient.ingredient}}</td>
                   {% for item in ingredient.service_recipe_items %}
-                  {% if forloop.first %}
-                  <td>{{item.item.name}}</td>
-                  <td>{{item.item.item_code}}</td>
-                  <td>
-                  {% endif %}
+                    {% if item.is_swapped_item == True %}
+                      <td>{{item.item.name}}</td>
+                      <td>{{item.item.item_code}}</td>
+                    {% endif %}
                   {% endfor %}
+                  <td>
+                  
                     <!-- <div class="qty ">
                       <span class="minus bg-dark" onclick="decrement({{forloop.counter}})" >-</span>
                       <input type="text" class="count" id="id_qty_{{forloop.counter}}" name="qty" value="1">
@@ -262,6 +263,28 @@
                     <button class="inv-plan-img-btn" onclick="swapModal({{ingredient.id}})" > <img src="{% static 'files/inventory/swap.png' %}"  alt=""> </button>
 
                   </td>
+                </tr>
+                {% endfor %}
+
+                {% for item in check_out_items %}
+                <tr data-itemid="{{item.item.id}}">
+                <td>-</td>
+                <td>{{item.item.name}}</td>
+                <td>{{item.item.item_code}}</td>
+                <td>
+                <div class="qty-container">
+        
+                  <div class="quantity">
+                    <a class="quantity__minus pointer" onclick="decrement(4{{forloop.counter}})"><span>-</span></a>
+                    <input  type="text" class="quantity__input"  id="id_qty_4{{forloop.counter}}" name="qty" value="1">
+                    <a  class="quantity__plus pointer" onclick="increment(4{{forloop.counter}})"><span>+</span></a>
+                  </div>
+                    
+                </div>
+                </td>
+                <td>
+                    <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
+                </td>
                 </tr>
                 {% endfor %}
 
@@ -300,6 +323,10 @@
           </div>
       </div>
       <hr>
+
+      <form method="POST" action="" >{% csrf_token %}
+      <input type="hidden" name="action" value="add_item" />
+      
       <div class="row mt-20">
         <div class="col-md-12 ">
           <div class="model-input-name">Item</div>
@@ -342,13 +369,10 @@
       </div> -->
 
 
-
-
-
-
   </div>
   <div class="inv-drawer-footer">
       <button class="sent-button">Submit</button>
+      </form>
       <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
   </div>
 </div>
@@ -367,11 +391,14 @@
           </div>
       </div>
       <hr>
+
+      <form method="POST" action="" >{% csrf_token %}
       <div class="row mt-20">
         <div class="col-md-12 ">
           <div class="model-input-name">Item</div>
           <input type="hidden" name="item" id="id_pro_sel2" value="" />
-          <input type="hidden" name="ingredient" id="id_ingredient" value="" />
+          <input type="hidden" name="action" value="swap_item" />
+          <input type="hidden" name="ingredient_id" id="id_ingredient" value="" />
 
           <div style="position: relative;">
               <div class="inv-input-container inv-border h-30">
@@ -411,13 +438,10 @@
       </div> -->
 
 
-
-
-
-
   </div>
   <div class="inv-drawer-footer">
-      <button class="sent-button">Submit</button>
+      <button class="sent-button" type="submit">Submit</button>
+      </form>
       <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
   </div>
 </div>
@@ -432,18 +456,37 @@
 {% block javascript %}
 
 <script>
-function swapModal(id){
+async function swapModal(id){
   console.log(id)
   $('#id_ingredient').val(id);
   $('#id_search2').empty();
+
+  //list items using api    
+
+    var result = await _get('api/inventory-service-items/?ingredient_id='+id);
+    if(result.status == 200){
+        console.log(result.data.ingredient,"ing")
+                    
+              $.each(result.data.service_items,function(key,value){
+                  console.log(value.item_name,"lo")
+                  var tempId = value.item_id;
+                  var tempName = value.item_name;
+
+                  $('#id_search2').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" id="id_product'+value.item_id+'"  onclick="closeProductShow2(this)" data-pro="'+value.item_id+'" data-name="'+value.item_name+'"><div class="inv-search-result">'+value.item_name+'</div></div>');
+              })     
+
+    }else{
+      showNotification('No Data','error')
+    }
+    
      
-        {% for item in items %}
-    var tempId = '{{item.id}}';
-    var tempName = '{{item.name}}';
+        //{% for item in items %}
+    //var tempId = '{{item.id}}';
+    //var tempName = '{{item.name}}';
 
-    $('#id_search2').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" id="id_product{{item.id}}"  onclick="closeProductShow2(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
+    //$('#id_search2').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" id="id_product{{item.id}}"  onclick="closeProductShow2(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
 
-    {% endfor %}
+    //{% endfor %}
 
    
     
