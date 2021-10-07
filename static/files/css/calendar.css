@@ -47,6 +47,15 @@
     
     
 }
+.m-0{
+    margin:0px !important;
+}
+.p-0{
+    padding: 0px !important;
+}
+.checkinout_icon{
+    color:#2e4e85;
+}
 .cl-evaluator{
     background: #EDF1F6 0% 0% no-repeat padding-box;
     padding: 5px;
@@ -389,13 +398,22 @@ width:100% !important;
     margin-top:2px;
 }
 .cl-mt-10{
-    margin-top:2px;
+    margin-top:10px;
 }
 .cl-mt-5{
     margin-top: 5px;
 }
 .cl-mt-20{
     margin-top:20px;
+}
+.cl-mb-10{
+    margin-bottom:2px;
+}
+.cl-mb-5{
+    margin-bottom: 5px;
+}
+.cl-mb-20{
+    margin-bottom:20px;
 }
 .cl-modal-icon{
     height:30px;
@@ -780,6 +798,21 @@ width:100% !important;
     left: 22px;
     font-size: 16px;
     text-align: left;
+}
+.cl-marker-progress{
+    color: #ffffff;
+    margin-left: auto;
+   
+    font-size: 16px;
+    text-align: left;
+}
+.progress-animation{
+    width:28px;
+    height:28px;
+}
+.cl-checkin{
+    font-size:14px;
+    font-weight:400;
 }
 .cl-marker-check-icon{
     height:14px;
