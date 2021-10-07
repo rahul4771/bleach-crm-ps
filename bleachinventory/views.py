@@ -1152,13 +1152,37 @@ class InventoryCreateCheckout(IsInventoryAdmin,View):
         if action == 'add_item':
             service_item = request.POST.get('item')
             item = InventoryItem.objects.get(id=int(service_item))
-            service_recipe_item = ServiceRecipeItems.objects.get(ingredient__service_type__service=service,item=item)
+            # service_recipe_item = ServiceRecipeItems.objects.get(ingredient__service_type__service=service,item=item)
             if item.item_status == 'available' or item.item_status == 'about_to_finish':
-                CheckOutItems.objects.create(visit=visit,item=service_recipe_item)
+                CheckOutItems.objects.create(visit=visit,item=item)
                 messages.success(request,"Item added!")
             else:
                 messages.error(request,"Item out of stock!")
-        return redirect('bleach-inventory:inventory-createcheckout')
+
+        if action == 'swap_item':
+            checkout_item = request.POST.get('item')
+            ingredient_id = request.POST.get('ingredient_id')
+            ingredient = ServiceRecipeIngredients.objects.get(id=int(ingredient_id))
+
+            ingredient_items = ServiceRecipeItems.objects.filter(ingredient=ingredient)
+
+            swap_item = ServiceRecipeItems.objects.get(id=int(checkout_item))
+
+            is_swapped_item = ingredient_items.filter(is_swapped_item=True).first()
+
+            if is_swapped_item:
+                is_swapped_item.is_swapped_item = False
+                is_swapped_item.save()
+
+                swap_item.is_swapped_item = True
+                swap_item.save()
+            else:
+                swap_item.is_swapped_item = True
+                swap_item.save()
+
+            messages.success(request,"Item Swapped!")
+            
+        return redirect('bleach-inventory:inventory-createcheckout',visit_id)
 
 class InventoryPurchaseOrder(IsInventoryAdmin,View):
     def get(self,request):
@@ -1224,7 +1248,7 @@ class PurchaseOrderItemsPage(IsInventoryAdmin,View):
         if action == 'add_unit_to_inventory':
             item_id = request.POST.get('item_id')
             store_id = request.POST.get('store')
-            serial_number = request.POST.get('store')
+            serial_number = request.POST.get('serial_number')
             purchase_date = request.POST.get('purchase_date')
             expiry_date = request.POST.get('expiry_date')
             
