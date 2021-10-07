@@ -2112,10 +2112,14 @@ class InventoryServiceItemsAPI(APIView):
 			ingredient = ServiceRecipeIngredients.objects.get(id=int(ingredient_id))
 
 			if action == 'add_item':
+				ingredient_items_exist = ServiceRecipeItems.objects.filter(ingredient=ingredient)
 				print("add")
 				item = InventoryItem.objects.get(id=int(item_id))
-				ServiceRecipeItems.objects.create(ingredient=ingredient,item=item)
-
+				
+				if ingredient_items_exist:
+					ServiceRecipeItems.objects.create(ingredient=ingredient,item=item)
+				else:
+					ServiceRecipeItems.objects.create(ingredient=ingredient,item=item,is_swapped_item=True)
 
 			if action == 'edit_item':
 				ingredient_item = ServiceRecipeItems.objects.get(id=int(ingredient_item_id))

@@ -611,17 +611,17 @@ addons:[]
             for(var i=0;i<this.addons_parsed.length;i++){
               if(this.addons_parsed[i].selected){
                 if(this.addons_parsed[i].details.category){
-                  addon_cost=addon_cost+(this.addons_parsed[i].selected_size.price*this.addons_parsed[i].quantity)
+                  addon_cost=addon_cost+((this.addons_parsed[i].selected_size.price||0)*this.addons_parsed[i].quantity)
                 }
                 else{
-                  addon_cost=addon_cost+(this.addons_parsed[i].details.price*this.addons_parsed[i].quantity)
+                  addon_cost=addon_cost+((this.addons_parsed[i].details.price||0)*this.addons_parsed[i].quantity)
                 }
               }
             }
 
           }
           
-         total_cost=this.otherService.size.cost+addon_cost
+         total_cost=(this.otherService.size.cost||0)+addon_cost
          if(this.edit_item){
            total_cost=total_cost-this.billingData[this.currentItem].section_cost
          }
@@ -674,6 +674,7 @@ addons:[]
             return totalcost
           }
           else{
+            console.log("added amount is "+totalcost)
             return 0
           }
         },
@@ -3219,6 +3220,13 @@ this.infectionControlServices=[]
     <div class="text-center pt-2 service-title">
     Kitchen Cleaning
   </div></div>
+
+  <div class="sr-service-card m-2 p-2 "   onclick="selectService('Kitchen Appliances',this)">
+  <i class="far fa-circle inactive-icon"></i>
+  <img src="/static/files/icons/booking/icons/kitchen.png" class="service-icon"> 
+  <div class="text-center pt-2 service-title">
+  Kitchen Appliances
+</div></div>
   
    
     `)
@@ -4321,7 +4329,47 @@ try {
    
   },
    goToCart(){
-
+    if(this.serviceType=='Kitchen Appliances'){
+      var otherService={
+        material: "",
+        addons:[],
+        color: "",
+        size: {},
+        section_cost:this.findAddonCost(),
+        sectiononly_cost:0,
+        type: "",
+        age: "",
+        stain: false,
+        stain_reason: "",
+        wall_type: "",
+        floor_type: "",
+        ceiling_type: "",
+        residue: false,
+        is_cabinet:false,
+        hallway_size: "",
+        sides: "",
+        stain_age: "",
+        height:"",
+        keynote_data:[]
+      }
+      otherService.addons=[...this.addons_parsed]
+      var serviceData={
+        name:'',
+        section_cost:'',
+        section_net_cost:'',
+        sectiononly_cost:'',
+        sectiononly_net_cost:'',
+        section:otherService
+      }
+      serviceData.name='Kitchen Appliances'
+      serviceData.section_name='Kitchen Appliances'
+      serviceData.section_cost=this.findAddonCost()
+      serviceData.section_net_cost=this.findAddonCost()
+      serviceData.sectiononly_cost=0
+      serviceData.sectiononly_net_cost=0
+      this.billingData.push(serviceData)
+      this.parseAddons()
+    }
      var sampleServicesBill={
        service:'',
        bill:[],
@@ -5089,10 +5137,16 @@ try {
  },
   doSomethingAsync(k) {
    return new Promise((resolve) => {
+     if(this.schedule_serviceTypes[k]=='Kitchen Appliances'){
+      var service_to_select='Kitchen Cleaning'
+     }
+     else{
+     var service_to_select=this.schedule_serviceTypes[k]
+     }
        axios
       .get(
         this.url+"/customer/ajax/getserviceproductivity?service_type=" +
-          this.schedule_serviceTypes[k]
+        service_to_select
       )
       .then((response) => {
         var total_highpricewindow_size = 0;
@@ -5168,7 +5222,27 @@ try {
             }
             console.log("addon manhour is"+addon_manhour)
             manhour=parseInt(manhour)+parseInt(addon_manhour)
-        } else if (selected_service == "Window Cleaning") {
+        }
+        else if(selected_service =='Kitchen Appliances'){
+          var addon_manhour=0
+          for(var ao=0;ao<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;ao++){
+            for(var addon=0;addon<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons.length;addon++){
+              if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].selected){
+                if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].details.category){
+                  addon_manhour=addon_manhour+(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].quantity*(parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].selected_size.max_size)/this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].details.productivity))
+                }
+                else{
+                addon_manhour=addon_manhour+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].details.productivity*this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].quantity
+                }
+              }
+            }
+        
+        }
+        console.log("addon manhour is"+addon_manhour)
+        var manhour=parseInt(addon_manhour)
+        }
+        
+        else if (selected_service == "Window Cleaning") {
           for(var b=0;b<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;b++){
             if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.size.is_highprice_window){
               total_highpricewindow_size=total_highpricewindow_size+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.size.max_size

@@ -297,7 +297,7 @@
             <hr>
 
             <form id="myform" method="POST" action="" >{% csrf_token %}
-            <input type="text" name="item_id" id="add_item_id" >
+            <input type="hidden" name="item_id" id="add_item_id" >
             <input type="hidden" name="action" id="order_item_action" value="add_unit_to_inventory" />
             <input type="hidden" name="store" id="id_pro_sel" value="" />
             
@@ -769,7 +769,7 @@ function changeSelect2(va){
 
 function set_params_go(args)
     {
-    var url='{% url 'inventory:inventory-purchaseorderitems' purchase_order.id %}';
+    var url='{% url 'bleach-inventory:inventory-purchaseorderitems' purchase_order.id %}';
     var params={shipment_status:$('#id_shipment_status').val()
     };
     for(key in args) 

@@ -212,7 +212,7 @@
                                 {{visit.work_status}}
                             </td>
                             <td class="text-center">
-                                <a href="/inventory/createcheckout/{{visit.id}}"><button class="btn-p inv-plan-img-btn2 btn-shadow" > <img class="btn-img2"
+                                <a href="/bleach-inventory/createcheckout/{{visit.id}}"><button class="btn-p inv-plan-img-btn2 btn-shadow" > <img class="btn-img2"
                                     src="{% static 'files/inventory/icons/checklist.png' %}" alt=""> Create Check-out list </button></a>
                                 {% comment %} <button class="inv-plan-img-btn2" onclick="openNav()"> <img
                                         src="{% static 'files/inventory/icons/edit.png' %}" alt=""> </button> {% endcomment %}
@@ -496,7 +496,7 @@
 
         function set_params_go(args)
         {
-        var url='{% url 'inventory:inventory-order' %}';
+        var url='{% url 'bleach-inventory:inventory-order' %}';
         var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),order_date:$('#id_date_pick').val()
         };
         for(key in args) 

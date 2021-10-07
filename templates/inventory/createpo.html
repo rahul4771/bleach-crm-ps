@@ -826,7 +826,7 @@ function showAdditem(){
         // else{
         //      document.getElementById("id_search").style.display="block"
         //  }
-    var url='{% url 'inventory:inventory-createpurchaseorder' %}';
+    var url='{% url 'bleach-inventory:inventory-createpurchaseorder' %}';
     var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),supplier_id:$('#supplier_id').val()
     };
     for(key in args) 

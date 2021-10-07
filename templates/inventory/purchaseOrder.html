@@ -32,7 +32,7 @@
                             <i class="fa fa-filter mr-5" aria-hidden="true"></i>
                             Filter
                         </button> {% endcomment %}
-                        <a href="/inventory/createpo/"><button class="inv-blue-btn" onclick="showDrawer('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Create PO</button></a>
+                        <a href="/bleach-inventory/createpo/"><button class="inv-blue-btn" onclick="showDrawer('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Create PO</button></a>
 
                         <!-- <button class="inv-blue-btn" data-toggle="modal" data-target="#addModel" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Store </button> -->
                     </div>
@@ -100,13 +100,13 @@
                             </td>
                             <td style="float: right;">
                                
-                        <a href="/inventory/purchaseOrder/items/{{order.id}}/"><button class="inv-plan-img-btn"> <img class="view-img"
+                        <a href="/bleach-inventory/purchaseOrder/items/{{order.id}}/"><button class="inv-plan-img-btn"> <img class="view-img"
                                     src="{% static 'files/inventory/view.png' %}" alt="">
                         </button></a>
-                        <a href="/inventory/purchaseorderpage/{{order.id}}/"><button class="inv-plan-img-btn"> <img class=""
+                        <a href="/bleach-inventory/purchaseorderpage/{{order.id}}/"><button class="inv-plan-img-btn"> <img class=""
                             src="{% static 'files/inventory/invoice.png' %}" alt="">
                 </button></a>
-                                <a href="/inventory/editpo/{{order.id}}"><button class="inv-plan-img-btn" > <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button></a>
+                                <a href="/bleach-inventory/editpo/{{order.id}}"><button class="inv-plan-img-btn" > <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button></a>
                                 <button class="inv-plan-img-btn delete-order" data-id="{{order.id}}"  data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
 
                             </td>
@@ -179,13 +179,13 @@
                             </td>
                             <td style="float: right;">
                                
-                        <a href="/inventory/purchaseOrder/items/{{order.id}}/"><button class="inv-plan-img-btn"> <img class="view-img"
+                        <a href="/bleach-inventory/purchaseOrder/items/{{order.id}}/"><button class="inv-plan-img-btn"> <img class="view-img"
                                     src="{% static 'files/inventory/icons/view.png' %}" alt="">
                         </button></a>
-                        <a href="/inventory/purchaseorderpage/{{order.id}}/"><button class="inv-plan-img-btn"> <img 
+                        <a href="/bleach-inventory/purchaseorderpage/{{order.id}}/"><button class="inv-plan-img-btn"> <img 
                             src="{% static 'files/inventory/invoice.png' %}" alt="">
                 </button></a>
-                                <a href="/inventory/editpo/{{order.id}}"><button class="inv-plan-img-btn" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button></a>
+                                <a href="/bleach-inventory/editpo/{{order.id}}"><button class="inv-plan-img-btn" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button></a>
                                 <button class="inv-plan-img-btn delete-order" data-id="{{order.id}}"  data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
 
                             </td>
@@ -390,7 +390,7 @@ function selectTab(d){
 
     function set_params_go(args)
     {
-    var url='{% url 'inventory:inventory-purchaseorder' %}';
+    var url='{% url 'bleach-inventory:inventory-purchaseorder' %}';
     var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),
     };
     for(key in args) 

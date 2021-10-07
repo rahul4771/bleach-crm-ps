@@ -334,7 +334,7 @@ function changeSelect(va){
 
     function set_params_go(args)
     {
-    var url='{% url 'inventory:inventory-store' %}';
+    var url='{% url 'bleach-inventory:inventory-store' %}';
     var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),
     };
     for(key in args) 
