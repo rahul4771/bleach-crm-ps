@@ -4941,7 +4941,7 @@ bookLetCustService(){
   
   
 },
-sendLetCustScheduled(){
+async sendLetCustScheduled(){
   var gender=this.gender
   this.btnLoader=true
   var discount=this.calculateDiscount()
@@ -4985,6 +4985,7 @@ sendLetCustScheduled(){
            
             
           }
+        
           
         
         })
