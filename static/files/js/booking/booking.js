@@ -1009,12 +1009,13 @@ addons:[]
           for(var k=0;k<this.schedule_serviceTypes_selected;k++)
           {
             for(var sch in this.scheduleGroup){
-              
+              // if(Array.isArray(this.scheduleGroup[sch])){
              if(this.scheduleGroup[sch].includes(this.schedule_serviceTypes_selected[k])){
                var index=this.scheduleGroup[sch].indexOf(this.schedule_serviceTypes_selected[k])
                console.log("index is"+index)
                this.scheduleGroup[sch].splice(index,1)
              }
+              // }
              }
             }
           var groundid=Object.keys(this.scheduleGroup).length
@@ -1164,16 +1165,17 @@ addons:[]
           for(var k=0;k<this.schedule_serviceTypes_selected;k++)
           {
             for(var sch in this.scheduleGroup){
-              
+              // if(Array.isArray(this.scheduleGroup[sch])){
              if(this.scheduleGroup[sch].includes(this.schedule_serviceTypes_selected[k])){
                var index=this.scheduleGroup[sch].indexOf(this.schedule_serviceTypes_selected[k])
                console.log("index is"+index)
                this.scheduleGroup[sch].splice(1,index)
              }
+            // }
              }
             }
           var groundid=Object.keys(this.scheduleGroup).length
-          this.scheduleGroup[groundid]={ ...this.schedule_serviceTypes_selected }
+          this.scheduleGroup[groundid]=[ ...this.schedule_serviceTypes_selected ]
 
           this.visits=[]
           this.selected_double_slots=[]
@@ -1189,7 +1191,7 @@ addons:[]
           cleaningPolicy='',
           no_of_visits='',
           this.visits=[]
-          
+          this.schedule_serviceTypes_selected=[]
           this.scheduleDateSat=false
           this.activeTab='Cart'
         },
@@ -3353,11 +3355,52 @@ responsive:{
       groupData[i]={...this.serviceDetails.service_details[data[i]]}
       totalCost=totalCost+this.serviceDetails.service_details[data[i]].total_cost
     }
-    var res=await this.seperateBookRequest(posturl,totalCost,groupData)
+   // var res=await this.seperateBookRequest(posturl,totalCost,groupData)
+   var res=await axios
+   .post(
+      this.url+posturl+this.userid+'/',
+      {
+        estimated_cost:totalCost,
+        total_cost:totalCost,
+        service_details:groupData
+      }
+    
+   )
+   .then((response) => {
+     this.submit_loader=false
+     console.log("booking details is "+response)
+     this.phase2Result=response.data
+     groupData={}
+     if(response.data.success)
+     {
+     this.responseText='Booking Successful'
+     this.snackbar=true
+  
+   console.log("got response")
+  
+      this.uploadImages()
+     return response
+ 
+     }
+     else{
+       this.responseText=response.data.Error
+       this.snackbar=true
+     }
+     
+     
+   })
+    .catch((error) => {
+     this.responseText=error
+     console.log(error);
+     return error
+   });
+    console.log("firing next ")
 
 
   }
   },
+
+  /* This function is deprecated -> keeping it for future purpose*/
   async seperateBookRequest(posturl,totalCost,groupData){
     axios
     .post(
@@ -3378,16 +3421,18 @@ responsive:{
       {
       this.responseText='Booking Successful'
       this.snackbar=true
-    //  this.getBookingDetails(response.data.booking_id)
+    
+    console.log("got response")
    
        this.uploadImages()
-  //window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
+       return response
+  
       }
       else{
         this.responseText=response.data.Error
         this.snackbar=true
       }
-      return response
+      
       
     })
      .catch((error) => {
@@ -3396,6 +3441,8 @@ responsive:{
       return error
     });
   },
+   /* Deprecated function ends here */
+
   bookCustService(){
     this.userid=window.location.href.split('/')[5]
     const urlSearchParams = new URLSearchParams(window.location.search);
@@ -3450,7 +3497,7 @@ responsive:{
       })
        .catch((error) => {
         console.log(error);
-        window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
+       window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
       });
 
    }
