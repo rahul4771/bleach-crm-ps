@@ -626,6 +626,9 @@ def CleaningExistingDates(request):
 	elif service_type == 'Kitchen Cleaning':
 		active_cleaners1 	= CleaningTeamMember.objects.select_related('member').filter(member__is_kitchen_skill=True).filter(Q(Q(Q(start_time__gte=start_at)&Q(start_time__lte=end_at))|Q(Q(end_time__gte=start_at)&Q(end_time__lte=end_at))|Q(Q(start_time__lte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__gte=end_at))|Q(Q(start_time__gte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__lte=end_at)))).extra({'start_at' : "date(start_at)"}).values('start_at').annotate(created_count=Count('id'))
 		active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(member__is_kitchen_skill=True).filter(Q(Q(Q(start_time__gte=start_at)&Q(start_time__lte=end_at))|Q(Q(end_time__gte=start_at)&Q(end_time__lte=end_at))|Q(Q(start_time__lte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__gte=end_at))|Q(Q(start_time__gte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__lte=end_at)))).extra({'start_at' : "date(start_at)"}).values('start_at').annotate(created_count=Count('id'))
+	elif service_type == 'Kitchen Appliances':
+		active_cleaners1 	= CleaningTeamMember.objects.select_related('member').filter(member__is_kitchen_skill=True).filter(Q(Q(Q(start_time__gte=start_at)&Q(start_time__lte=end_at))|Q(Q(end_time__gte=start_at)&Q(end_time__lte=end_at))|Q(Q(start_time__lte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__gte=end_at))|Q(Q(start_time__gte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__lte=end_at)))).extra({'start_at' : "date(start_at)"}).values('start_at').annotate(created_count=Count('id'))
+		active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(member__is_kitchen_skill=True).filter(Q(Q(Q(start_time__gte=start_at)&Q(start_time__lte=end_at))|Q(Q(end_time__gte=start_at)&Q(end_time__lte=end_at))|Q(Q(start_time__lte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__gte=end_at))|Q(Q(start_time__gte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__lte=end_at)))).extra({'start_at' : "date(start_at)"}).values('start_at').annotate(created_count=Count('id'))
 	elif service_type == 'Carpet Cleaning':
 		active_cleaners1 	= CleaningTeamMember.objects.select_related('member').filter(member__is_carpet_skill=True).filter(Q(Q(Q(start_time__gte=start_at)&Q(start_time__lte=end_at))|Q(Q(end_time__gte=start_at)&Q(end_time__lte=end_at))|Q(Q(start_time__lte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__gte=end_at))|Q(Q(start_time__gte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__lte=end_at)))).extra({'start_at' : "date(start_at)"}).values('start_at').annotate(created_count=Count('id'))
 		active_cleaners2 	= FollowUpTeamMember.objects.select_related('member').filter(member__is_carpet_skill=True).filter(Q(Q(Q(start_time__gte=start_at)&Q(start_time__lte=end_at))|Q(Q(end_time__gte=start_at)&Q(end_time__lte=end_at))|Q(Q(start_time__lte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__gte=end_at))|Q(Q(start_time__gte=start_at)&Q(end_time__gte=start_at)&Q(start_time__lte=end_at)&Q(end_time__lte=end_at)))).extra({'start_at' : "date(start_at)"}).values('start_at').annotate(created_count=Count('id'))
@@ -697,6 +700,9 @@ def CleaningExistingDates(request):
 		total_cleaners = UserProfile.objects.filter(is_active=True,user_type='CLEANER',is_upholstery_skill=True).count()
 		total_leaders  = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE',is_upholstery_skill=True).count()
 	elif service_type == 'Kitchen Cleaning':
+		total_cleaners = UserProfile.objects.filter(is_active=True,user_type='CLEANER',is_kitchen_skill=True).count()
+		total_leaders  = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE',is_kitchen_skill=True).count()
+	elif service_type == 'Kitchen Appliances':
 		total_cleaners = UserProfile.objects.filter(is_active=True,user_type='CLEANER',is_kitchen_skill=True).count()
 		total_leaders  = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE',is_kitchen_skill=True).count()
 	elif service_type == 'Carpet Cleaning':
@@ -777,6 +783,11 @@ class AvailabilityCleaningCallendar(APIView):
 				new_absent_cleaners = new_absent_cleaners.filter(is_upholstery_skill=True)
 				new_absent_leaders  = new_absent_leaders.filter(is_upholstery_skill=True)
 			elif service_type == 'Kitchen Cleaning':
+				active_cleaners1 	= active_cleaners1.filter(member__is_kitchen_skill=True)
+				active_cleaners2 	= active_cleaners2.filter(member__is_kitchen_skill=True)
+				new_absent_cleaners = new_absent_cleaners.filter(is_kitchen_skill=True)
+				new_absent_leaders  = new_absent_leaders.filter(is_kitchen_skill=True)
+			elif service_type == 'Kitchen Appliances':
 				active_cleaners1 	= active_cleaners1.filter(member__is_kitchen_skill=True)
 				active_cleaners2 	= active_cleaners2.filter(member__is_kitchen_skill=True)
 				new_absent_cleaners = new_absent_cleaners.filter(is_kitchen_skill=True)
@@ -868,6 +879,9 @@ class AvailabilityCleaningCallendar(APIView):
 				total_cleaners 	= total_cleaners.filter(is_upholstery_skill=True)
 				total_leaders 	= total_leaders.filter(is_upholstery_skill=True)
 			elif service_type == 'Kitchen Cleaning':
+				total_cleaners 	= total_cleaners.filter(is_kitchen_skill=True)
+				total_leaders 	= total_leaders.filter(is_kitchen_skill=True)
+			elif service_type == 'Kitchen Appliances':
 				total_cleaners 	= total_cleaners.filter(is_kitchen_skill=True)
 				total_leaders 	= total_leaders.filter(is_kitchen_skill=True)
 			elif service_type == 'Carpet Cleaning':
@@ -1028,6 +1042,9 @@ class CleaningPopupMultipleServiceCleaningSlotes(APIView):
 			elif service_type == 'Kitchen Cleaning':
 				total_cleaners 	= total_cleaners.filter(is_kitchen_skill=True)
 				total_leaders 	= total_leaders.filter(is_kitchen_skill=True)
+			elif service_type == 'Kitchen Appliances':
+				total_cleaners 	= total_cleaners.filter(is_kitchen_skill=True)
+				total_leaders 	= total_leaders.filter(is_kitchen_skill=True)
 			elif service_type == 'Carpet Cleaning':
 				total_cleaners 	= total_cleaners.filter(is_carpet_skill=True)
 				total_leaders 	= total_leaders.filter(is_carpet_skill=True)
@@ -1113,6 +1130,11 @@ class CleaningPopupMultipleServiceCleaningSlotes(APIView):
 						new_absent_cleaners = new_absent_cleaners.filter(is_upholstery_skill=True)
 						new_absent_leaders  = new_absent_leaders.filter(is_upholstery_skill=True)
 					elif service_type == 'Kitchen Cleaning':
+						active_cleaners1 	= active_cleaners1.filter(member__is_kitchen_skill=True)
+						active_cleaners2 	= active_cleaners2.filter(member__is_kitchen_skill=True)
+						new_absent_cleaners = new_absent_cleaners.filter(is_kitchen_skill=True)
+						new_absent_leaders  = new_absent_leaders.filter(is_kitchen_skill=True)
+					elif service_type == 'Kitchen Appliances':
 						active_cleaners1 	= active_cleaners1.filter(member__is_kitchen_skill=True)
 						active_cleaners2 	= active_cleaners2.filter(member__is_kitchen_skill=True)
 						new_absent_cleaners = new_absent_cleaners.filter(is_kitchen_skill=True)
@@ -1277,6 +1299,9 @@ class CleaningPopupSave(APIView):
 						leaders = leaders.filter(is_upholstery_skill=True)
 						cleaners= cleaners.filter(is_upholstery_skill=True).order_by('user_type')
 					elif service_type == 'Kitchen Cleaning':
+						leaders = leaders.filter(is_kitchen_skill=True)
+						cleaners= cleaners.filter(is_kitchen_skill=True).order_by('user_type')
+					elif service_type == 'Kitchen Appliances':
 						leaders = leaders.filter(is_kitchen_skill=True)
 						cleaners= cleaners.filter(is_kitchen_skill=True).order_by('user_type')
 					elif service_type == 'Carpet Cleaning':

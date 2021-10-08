@@ -1836,6 +1836,8 @@ class GetServiceProductivity(APIView):
 			total_cleaners = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).filter(is_active=True,is_upholstery_skill=True).count()
 		elif service_type == 'Kitchen Cleaning':
 			total_cleaners = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).filter(is_active=True,is_kitchen_skill=True).count()
+		elif service_type == 'Kitchen Appliances':
+			total_cleaners = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).filter(is_active=True,is_kitchen_skill=True).count()
 		elif service_type == 'Carpet Cleaning':
 			total_cleaners = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).filter(is_active=True,is_carpet_skill=True).count()
 		elif service_type == 'Sterilization':
@@ -1912,6 +1914,9 @@ class GetMultipleServiceCleaningSlotes(APIView):
 				total_cleaners 	= total_cleaners.filter(is_upholstery_skill=True)
 				total_leaders 	= total_leaders.filter(is_upholstery_skill=True)
 			elif service_type == 'Kitchen Cleaning':
+				total_cleaners 	= total_cleaners.filter(is_kitchen_skill=True)
+				total_leaders 	= total_leaders.filter(is_kitchen_skill=True)
+			elif service_type == 'Kitchen Appliances':
 				total_cleaners 	= total_cleaners.filter(is_kitchen_skill=True)
 				total_leaders 	= total_leaders.filter(is_kitchen_skill=True)
 			elif service_type == 'Carpet Cleaning':
@@ -2015,6 +2020,11 @@ class GetMultipleServiceCleaningSlotes(APIView):
 						new_absent_cleaners = new_absent_cleaners.filter(is_upholstery_skill=True)
 						new_absent_leaders  = new_absent_leaders.filter(is_upholstery_skill=True)
 					elif service_type == 'Kitchen Cleaning':
+						active_cleaners1 	= active_cleaners1.filter(member__is_kitchen_skill=True)
+						active_cleaners2 	= active_cleaners2.filter(member__is_kitchen_skill=True)
+						new_absent_cleaners = new_absent_cleaners.filter(is_kitchen_skill=True)
+						new_absent_leaders  = new_absent_leaders.filter(is_kitchen_skill=True)
+					elif service_type == 'Kitchen Appliances':
 						active_cleaners1 	= active_cleaners1.filter(member__is_kitchen_skill=True)
 						active_cleaners2 	= active_cleaners2.filter(member__is_kitchen_skill=True)
 						new_absent_cleaners = new_absent_cleaners.filter(is_kitchen_skill=True)
@@ -2131,6 +2141,9 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
 			elif service_type == 'Kitchen Cleaning':
 				total_cleaners 	= total_cleaners.filter(is_kitchen_skill=True)
 				total_leaders 	= total_leaders.filter(is_kitchen_skill=True)
+			elif service_type == 'Kitchen Appliances':
+				total_cleaners 	= total_cleaners.filter(is_kitchen_skill=True)
+				total_leaders 	= total_leaders.filter(is_kitchen_skill=True)
 			elif service_type == 'Carpet Cleaning':
 				total_cleaners 	= total_cleaners.filter(is_carpet_skill=True)
 				total_leaders 	= total_leaders.filter(is_carpet_skill=True)
@@ -2220,6 +2233,11 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
 					new_absent_cleaners = new_absent_cleaners.filter(is_upholstery_skill=True)
 					new_absent_leaders  = new_absent_leaders.filter(is_upholstery_skill=True)
 				elif service_type == 'Kitchen Cleaning':
+					active_cleaners1 	= active_cleaners1.filter(member__is_kitchen_skill=True)
+					active_cleaners2 	= active_cleaners2.filter(member__is_kitchen_skill=True)
+					new_absent_cleaners = new_absent_cleaners.filter(is_kitchen_skill=True)
+					new_absent_leaders  = new_absent_leaders.filter(is_kitchen_skill=True)
+				elif service_type == 'Kitchen Appliances':
 					active_cleaners1 	= active_cleaners1.filter(member__is_kitchen_skill=True)
 					active_cleaners2 	= active_cleaners2.filter(member__is_kitchen_skill=True)
 					new_absent_cleaners = new_absent_cleaners.filter(is_kitchen_skill=True)
@@ -2340,6 +2358,9 @@ class GetMultipleServiceDateCleaningSlotesAutofix(APIView):
 			elif service_type == 'Kitchen Cleaning':
 				total_cleaners 	= total_cleaners.filter(is_kitchen_skill=True)
 				total_leaders 	= total_leaders.filter(is_kitchen_skill=True)
+			elif service_type == 'Kitchen Appliances':
+				total_cleaners 	= total_cleaners.filter(is_kitchen_skill=True)
+				total_leaders 	= total_leaders.filter(is_kitchen_skill=True)
 			elif service_type == 'Carpet Cleaning':
 				total_cleaners 	= total_cleaners.filter(is_carpet_skill=True)
 				total_leaders 	= total_leaders.filter(is_carpet_skill=True)
@@ -2436,6 +2457,11 @@ class GetMultipleServiceDateCleaningSlotesAutofix(APIView):
 							new_absent_cleaners = new_absent_cleaners.filter(is_upholstery_skill=True)
 							new_absent_leaders  = new_absent_leaders.filter(is_upholstery_skill=True)
 						elif service_type == 'Kitchen Cleaning':
+							active_cleaners1 	= active_cleaners1.filter(member__is_kitchen_skill=True)
+							active_cleaners2 	= active_cleaners2.filter(member__is_kitchen_skill=True)
+							new_absent_cleaners = new_absent_cleaners.filter(is_kitchen_skill=True)
+							new_absent_leaders  = new_absent_leaders.filter(is_kitchen_skill=True)
+						elif service_type == 'Kitchen Appliances':
 							active_cleaners1 	= active_cleaners1.filter(member__is_kitchen_skill=True)
 							active_cleaners2 	= active_cleaners2.filter(member__is_kitchen_skill=True)
 							new_absent_cleaners = new_absent_cleaners.filter(is_kitchen_skill=True)
@@ -2636,6 +2662,9 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 				elif service_type == 'Kitchen Cleaning':
 					total_cleaners 	= total_cleaners.filter(is_kitchen_skill=True)
 					total_leaders 	= total_leaders.filter(is_kitchen_skill=True)
+				elif service_type == 'Kitchen Appliances':
+					total_cleaners 	= total_cleaners.filter(is_kitchen_skill=True)
+					total_leaders 	= total_leaders.filter(is_kitchen_skill=True)
 				elif service_type == 'Carpet Cleaning':
 					total_cleaners 	= total_cleaners.filter(is_carpet_skill=True)
 					total_leaders 	= total_leaders.filter(is_carpet_skill=True)
@@ -2736,6 +2765,11 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 							new_absent_cleaners = new_absent_cleaners.filter(is_upholstery_skill=True)
 							new_absent_leaders  = new_absent_leaders.filter(is_upholstery_skill=True)
 						elif service_type == 'Kitchen Cleaning':
+							active_cleaners1 	= active_cleaners1.filter(member__is_kitchen_skill=True)
+							active_cleaners2 	= active_cleaners2.filter(member__is_kitchen_skill=True)
+							new_absent_cleaners = new_absent_cleaners.filter(is_kitchen_skill=True)
+							new_absent_leaders  = new_absent_leaders.filter(is_kitchen_skill=True)
+						elif service_type == 'Kitchen Appliances':
 							active_cleaners1 	= active_cleaners1.filter(member__is_kitchen_skill=True)
 							active_cleaners2 	= active_cleaners2.filter(member__is_kitchen_skill=True)
 							new_absent_cleaners = new_absent_cleaners.filter(is_kitchen_skill=True)
@@ -3033,6 +3067,9 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 							elif service_type == 'Kitchen Cleaning':
 								leaders = leaders.filter(is_kitchen_skill=True)
 								cleaners= cleaners.filter(is_kitchen_skill=True).order_by('user_type')
+							elif service_type == 'Kitchen Appliances':
+								leaders = leaders.filter(is_kitchen_skill=True)
+								cleaners= cleaners.filter(is_kitchen_skill=True).order_by('user_type')
 							elif service_type == 'Carpet Cleaning':
 								leaders = leaders.filter(is_carpet_skill=True)
 								cleaners= cleaners.filter(is_carpet_skill=True).order_by('user_type')
@@ -3195,6 +3232,11 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 							new_absent_cleaners = new_absent_cleaners.filter(is_upholstery_skill=True)
 							new_absent_leaders  = new_absent_leaders.filter(is_upholstery_skill=True)
 						elif service_type == 'Kitchen Cleaning':
+							active_cleaners1 	= active_cleaners1.filter(member__is_kitchen_skill=True)
+							active_cleaners2 	= active_cleaners2.filter(member__is_kitchen_skill=True)
+							new_absent_cleaners = new_absent_cleaners.filter(is_kitchen_skill=True)
+							new_absent_leaders  = new_absent_leaders.filter(is_kitchen_skill=True)
+						elif service_type == 'Kitchen Appliances':
 							active_cleaners1 	= active_cleaners1.filter(member__is_kitchen_skill=True)
 							active_cleaners2 	= active_cleaners2.filter(member__is_kitchen_skill=True)
 							new_absent_cleaners = new_absent_cleaners.filter(is_kitchen_skill=True)
@@ -3456,6 +3498,9 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 							elif service_type == 'Kitchen Cleaning':
 								leaders = leaders.filter(is_kitchen_skill=True)
 								cleaners= cleaners.filter(is_kitchen_skill=True).order_by('user_type')
+							elif service_type == 'Kitchen Appliances':
+								leaders = leaders.filter(is_kitchen_skill=True)
+								cleaners= cleaners.filter(is_kitchen_skill=True).order_by('user_type')
 							elif service_type == 'Carpet Cleaning':
 								leaders = leaders.filter(is_carpet_skill=True)
 								cleaners= cleaners.filter(is_carpet_skill=True).order_by('user_type')
@@ -3592,6 +3637,9 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 				elif service_type == 'Kitchen Cleaning':
 					total_cleaners 	= total_cleaners.filter(is_kitchen_skill=True)
 					total_leaders 	= total_leaders.filter(is_kitchen_skill=True)
+				elif service_type == 'Kitchen Appliances':
+					total_cleaners 	= total_cleaners.filter(is_kitchen_skill=True)
+					total_leaders 	= total_leaders.filter(is_kitchen_skill=True)
 				elif service_type == 'Carpet Cleaning':
 					total_cleaners 	= total_cleaners.filter(is_carpet_skill=True)
 					total_leaders 	= total_leaders.filter(is_carpet_skill=True)
@@ -3705,6 +3753,11 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 						new_absent_cleaners = new_absent_cleaners.filter(is_upholstery_skill=True)
 						new_absent_leaders  = new_absent_leaders.filter(is_upholstery_skill=True)
 					elif service_type == 'Kitchen Cleaning':
+						active_cleaners1 	= active_cleaners1.filter(member__is_kitchen_skill=True)
+						active_cleaners2 	= active_cleaners2.filter(member__is_kitchen_skill=True)
+						new_absent_cleaners = new_absent_cleaners.filter(is_kitchen_skill=True)
+						new_absent_leaders  = new_absent_leaders.filter(is_kitchen_skill=True)
+					elif service_type == 'Kitchen Appliances':
 						active_cleaners1 	= active_cleaners1.filter(member__is_kitchen_skill=True)
 						active_cleaners2 	= active_cleaners2.filter(member__is_kitchen_skill=True)
 						new_absent_cleaners = new_absent_cleaners.filter(is_kitchen_skill=True)
@@ -4157,6 +4210,9 @@ class DuplicateBookingPhase2(APIView):
 				elif service_type == 'Kitchen Cleaning':
 					total_cleaners 	= total_cleaners.filter(is_kitchen_skill=True)
 					total_leaders 	= total_leaders.filter(is_kitchen_skill=True)
+				elif service_type == 'Kitchen Appliances':
+					total_cleaners 	= total_cleaners.filter(is_kitchen_skill=True)
+					total_leaders 	= total_leaders.filter(is_kitchen_skill=True)
 				elif service_type == 'Carpet Cleaning':
 					total_cleaners 	= total_cleaners.filter(is_carpet_skill=True)
 					total_leaders 	= total_leaders.filter(is_carpet_skill=True)
@@ -4247,6 +4303,11 @@ class DuplicateBookingPhase2(APIView):
 						new_absent_cleaners = new_absent_cleaners.filter(is_upholstery_skill=True)
 						new_absent_leaders  = new_absent_leaders.filter(is_upholstery_skill=True)
 					elif service_type == 'Kitchen Cleaning':
+						active_cleaners1 	= active_cleaners1.filter(member__is_kitchen_skill=True)
+						active_cleaners2 	= active_cleaners2.filter(member__is_kitchen_skill=True)
+						new_absent_cleaners = new_absent_cleaners.filter(is_kitchen_skill=True)
+						new_absent_leaders  = new_absent_leaders.filter(is_kitchen_skill=True)
+					elif service_type == 'Kitchen Appliances':
 						active_cleaners1 	= active_cleaners1.filter(member__is_kitchen_skill=True)
 						active_cleaners2 	= active_cleaners2.filter(member__is_kitchen_skill=True)
 						new_absent_cleaners = new_absent_cleaners.filter(is_kitchen_skill=True)
@@ -4516,6 +4577,9 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 				elif service_type == 'Kitchen Cleaning':
 					total_cleaners 	= total_cleaners.filter(is_kitchen_skill=True)
 					total_leaders 	= total_leaders.filter(is_kitchen_skill=True)
+				elif service_type == 'Kitchen Appliances':
+					total_cleaners 	= total_cleaners.filter(is_kitchen_skill=True)
+					total_leaders 	= total_leaders.filter(is_kitchen_skill=True)
 				elif service_type == 'Carpet Cleaning':
 					total_cleaners 	= total_cleaners.filter(is_carpet_skill=True)
 					total_leaders 	= total_leaders.filter(is_carpet_skill=True)
@@ -4622,6 +4686,11 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 						new_absent_cleaners = new_absent_cleaners.filter(is_upholstery_skill=True)
 						new_absent_leaders  = new_absent_leaders.filter(is_upholstery_skill=True)
 					elif service_type == 'Kitchen Cleaning':
+						active_cleaners1 	= active_cleaners1.filter(member__is_kitchen_skill=True)
+						active_cleaners2 	= active_cleaners2.filter(member__is_kitchen_skill=True)
+						new_absent_cleaners = new_absent_cleaners.filter(is_kitchen_skill=True)
+						new_absent_leaders  = new_absent_leaders.filter(is_kitchen_skill=True)
+					elif service_type == 'Kitchen Appliances':
 						active_cleaners1 	= active_cleaners1.filter(member__is_kitchen_skill=True)
 						active_cleaners2 	= active_cleaners2.filter(member__is_kitchen_skill=True)
 						new_absent_cleaners = new_absent_cleaners.filter(is_kitchen_skill=True)
@@ -4771,6 +4840,9 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 								leaders = leaders.filter(is_upholstery_skill=True)
 								cleaners= cleaners.filter(is_upholstery_skill=True).order_by('user_type')
 							elif service_type == 'Kitchen Cleaning':
+								leaders = leaders.filter(is_kitchen_skill=True)
+								cleaners= cleaners.filter(is_kitchen_skill=True).order_by('user_type')
+							elif service_type == 'Kitchen Appliances':
 								leaders = leaders.filter(is_kitchen_skill=True)
 								cleaners= cleaners.filter(is_kitchen_skill=True).order_by('user_type')
 							elif service_type == 'Carpet Cleaning':
