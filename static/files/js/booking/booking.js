@@ -3225,7 +3225,7 @@ this.infectionControlServices=[]
 
   <div class="sr-service-card m-2 p-2 "   onclick="selectService('Kitchen Appliances',this)">
   <i class="far fa-circle inactive-icon"></i>
-  <img src="/static/files/icons/booking/icons/kitchen.png" class="service-icon"> 
+  <img src="/static/files/icons/appliances.png" class="service-icon"> 
   <div class="text-center pt-2 service-title">
   Kitchen Appliances
 </div></div>
@@ -3647,6 +3647,7 @@ setTimeout(function() {
     if(this.checkKitchen()){
       schedule_services.push('Kitchen Cleaning')
     }
+    
     axios
       .post(
          this.url+"/customer/ajax/getmultipleservicecleaningslotes",{service_types:schedule_services,cleaning_date:this.slotDate,number_of_cleaners:this.selectedDuration.cleaners}
