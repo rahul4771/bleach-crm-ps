@@ -451,7 +451,7 @@
                         
                  </div>-->
                 
-                <div class="col-md-6 mt-10" v-if="service_type!='Upholstery Cleaning' && service_type!='Kitchen Cleaning' && service_type!='Facade Cleaning' && service_type!='Window Cleaning' ">
+                <div class="col-md-6 mt-10" v-if="service_type!='Upholstery Cleaning' && service_type!='Kitchen Cleaning' && service_type!='Facade Cleaning' && service_type!='Window Cleaning' && service_type!='Kitchen Appliances' ">
                     
                     <div class=" bold-text common-label required-field"> <label>Size</label></div>
                     <multiselect
@@ -763,7 +763,7 @@
                   ></multiselect>
                 </div>
               
-                <div class="col-md-12 mt-20">
+                <div class="col-md-12 mt-20" v-if="service_type!='Kitchen Appliances'">
                    <b>Key Notes</b> 
                     <div class="row mt-10" v-if="keynote_update">
                         <div class="col-md-4 mt-10" v-for="(keynote,kindex) in other_keynotes" v-bind:key="kindex">
@@ -790,7 +790,7 @@
                             </div>
                     </div>
                 </div>
-                <div class="col-md-12 mt-20" v-if="service_type=='Kitchen Cleaning'">
+                <div class="col-md-12 mt-20" v-if="service_type=='Kitchen Cleaning' || service_type=='Kitchen Appliances'">
                     <b>Addon (s)</b> 
                     <div class="row mt-10" v-if="addon_update">
                         <div class="col-md-4 mt-10" v-for="(addon,kindex) in kitchen_addons" v-bind:key="kindex">

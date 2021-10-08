@@ -135,6 +135,9 @@ if(app.service_type=='Kitchen Cleaning'){
   
   
 }
+if(app.service_type=='Kitchen Appliances'){
+  app.getAddons()
+}
 if(app.service_type=='Facade Cleaning'){
   app.editSectionData.is_highprice_facade=app.sections[index-1].is_highprice_facade
   
@@ -146,8 +149,10 @@ if(app.service_type=='Window Cleaning'){
  app.editSectionData.keynotes=app.sections[index-1].keynotesections
   console.log("section is "+JSON.stringify(app.sections[index-1]))
   app.sectionData=app.sections[index-1]
+  if(app.sections[index-1].size){
   app.editSectionData.size=app.sections[index-1].size
   app.editSectionData.size['combined_size']=app.sections[index-1].size.name+' ('+app.sections[index-1].size.min_size+' sq.m - '+app.sections[index-1].size.max_size+' sq.m )'
+  }
   if(app.sections[index-1].upholstery_type){
     app.editSectionData.upholstery_type=app.sections[index-1].upholstery_type
   }
