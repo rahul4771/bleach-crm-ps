@@ -3244,8 +3244,8 @@ Fill all the details of the Buildings  to proceed
                            </div>
                           <div class="cart-card-items">
                           <div v-for="(bill,bindex) in service.bill" v-bind:key="bindex">
-                            <div v-if="serviceType!='Kitchen Appliances'"><b><% bill.section_name%></b></div>
-                            <div class="d-flex mt-1" v-if="serviceType!='Kitchen Appliances'">
+                            <div v-if="service.service!='Kitchen Appliances'"><b><% bill.section_name%></b></div>
+                            <div class="d-flex mt-1" v-if="service.service!='Kitchen Appliances'">
                               <div >
                                <% bill.section.size.name %>
                               </div>

@@ -586,7 +586,8 @@ reset_floor:false,
 building_warning:false,
 available_slotes:[],
 date_group:{},
-addons:[]
+addons:[],
+last_image_stat:false
 
       },
       methods: {
@@ -2918,13 +2919,20 @@ removeOneTimeSlot(slot){
               }
           }
        }
+       else if(this.multiServicesBill[serIndex].service=='Kitchen Appliances')
+       {
+
+       }
        else{
 
        console.log("i m inside")
     for (var i=0;i < this.multiServicesBill[serIndex].bill.length; i++) {
+      if(this.multiServicesBill[serIndex].bill[i].section.size)
+      {
      console.log("section sixze is"+this.multiServicesBill[serIndex].bill[i].section.size.max_size)
       this.total_size=this.total_size + parseInt(this.multiServicesBill[serIndex].bill[i].section.size.max_size);
       console.log("section total sixze is"+this.total_size)
+      }
     }
     }
     }
@@ -3318,7 +3326,7 @@ responsive:{
         this.responseText='Booking Successful'
         this.snackbar=true
        // this.getBookingDetails(response.data.booking_id)
-     
+     this.last_image_stat=true
     this.uploadImages()
     //window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
 
@@ -3377,7 +3385,14 @@ responsive:{
      this.snackbar=true
   
    console.log("got response")
-  
+      var schedule_keys=Object.keys(this.scheduleGroup)
+      if(sch==this.scheduleGroup[schedule_keys[schedule_keys.length-1]])
+      {
+        this.last_image_stat=true
+      }
+      else{
+        this.last_image_stat=false
+      }
       this.uploadImages()
      return response
  
@@ -3491,13 +3506,17 @@ responsive:{
       .then((response) => {
         this.submit_loader=false
         
-       
-     window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
+       if(this.last_image_stat){
+        window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
+       }
+     
        
       })
        .catch((error) => {
         console.log(error);
-       window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
+        if(this.last_image_stat){
+          window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
+         }
       });
 
    }
