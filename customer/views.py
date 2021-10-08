@@ -3006,7 +3006,7 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 						leavestart_at_datetime2  = end_date_time.replace(hour=8,minute=0,second=0,microsecond=0)
 						leaveend_at_datetime2    = end_date_time.replace(hour=22,minute=0,second=0,microsecond=0)
 
-						if (leavestart_at_datetime1 <= start_date_time  and leaveend_at_datetime1 >= start_date_time) or (leavestart_at_datetime2 <= end_date_time and leaveend_at_datetime2 >= end_date_time):
+						if (leavestart_at_datetime1 <= start_date_time  and leaveend_at_datetime1 > start_date_time) or (leavestart_at_datetime2 < end_date_time and leaveend_at_datetime2 >= end_date_time):
 							leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_leaders))).filter(Q(id__in=shift_leaders)|Q(id__in=super_shift_leaders))
 							cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_cleaners))).filter(Q(id__in=shift_cleaners)|Q(id__in=super_shift_cleaners))
 						else:
@@ -3430,7 +3430,7 @@ class ClientMultipleCleaningBookingPhase2(APIView):
 						leavestart_at_datetime2  = end_date_time.replace(hour=8,minute=0,second=0,microsecond=0)
 						leaveend_at_datetime2    = end_date_time.replace(hour=22,minute=0,second=0,microsecond=0)
 
-						if (leavestart_at_datetime1 <= start_date_time  and leaveend_at_datetime1 >= start_date_time) or (leavestart_at_datetime2 <= end_date_time and leaveend_at_datetime2 >= end_date_time):
+						if (leavestart_at_datetime1 <= start_date_time  and leaveend_at_datetime1 > start_date_time) or (leavestart_at_datetime2 < end_date_time and leaveend_at_datetime2 >= end_date_time):
 							leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_leaders))).filter(Q(id__in=shift_leaders)|Q(id__in=super_shift_leaders))
 							cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_cleaners))).filter(Q(id__in=shift_cleaners)|Q(id__in=super_shift_cleaners))
 						else:
@@ -4747,7 +4747,7 @@ class EvaluatorMultipleCleaningBookingLetCustomerPhase3(APIView):
 						super_shift_leaders = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(id__in=today_shifts).filter(Q(Q(universal_shift_start__lte=start_time)&Q(universal_shift_end__gte=start_time))&Q(Q(universal_shift_start__lte=end_time)&Q(universal_shift_end__gte=end_time))).values_list('id',flat=True)
 
 						#(applying leave logic of 8 to 22)
-						if (leavestart_at_datetime1 <= start_date_time  and leaveend_at_datetime1 >= start_date_time) or (leavestart_at_datetime2 <= end_date_time and leaveend_at_datetime2 >= end_date_time):
+						if (leavestart_at_datetime1 <= start_date_time  and leaveend_at_datetime1 > start_date_time) or (leavestart_at_datetime2 < end_date_time and leaveend_at_datetime2 >= end_date_time):
 							leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_leaders))).filter(Q(id__in=shift_leaders)|Q(id__in=super_shift_leaders))
 							cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_cleaners))).filter(Q(id__in=shift_cleaners)|Q(id__in=super_shift_cleaners))
 						else:

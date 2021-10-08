@@ -1256,7 +1256,7 @@ class CleaningPopupSave(APIView):
 				leavestart_at_datetime2  = schedule_end_at.replace(hour=8,minute=0,second=0,microsecond=0)
 				leaveend_at_datetime2    = schedule_end_at.replace(hour=22,minute=0,second=0,microsecond=0)
 
-				if (leavestart_at_datetime1 <= schedule_start_at  and leaveend_at_datetime1 >= schedule_start_at) or (leavestart_at_datetime2 <= schedule_end_at and leaveend_at_datetime2 >= schedule_end_at):				
+				if (leavestart_at_datetime1 <= schedule_start_at  and leaveend_at_datetime1 > schedule_start_at) or (leavestart_at_datetime2 < schedule_end_at and leaveend_at_datetime2 >= schedule_end_at):				
 					leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_leaders))).filter(Q(id__in=shift_leaders)|Q(id__in=super_shift_leaders))
 					cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_cleaners))).filter(Q(id__in=shift_cleaners)|Q(id__in=super_shift_leaders))	
 				else:

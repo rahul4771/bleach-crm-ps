@@ -4073,7 +4073,7 @@ class AssigncleaningTeam(IsAuthenticated,View):
 		today_shifts        = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=start_at_date)|Q(shift_date=end_at_date)|Q(Q(shift3_start_at__lte=end_at_datetime)&Q(shift3_end_at__gte=end_at_datetime)))).values_list('staff',flat=True)
 		super_shift_cleaners= UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(id__in=today_shifts).filter( Q(Q(universal_shift_start__lte=start_at_time)&Q(universal_shift_end__gte=start_at_time))&Q(Q(universal_shift_start__lte=end_at_time)&Q(universal_shift_end__gte=end_at_time)) ).values_list('id',flat=True)
 		super_shift_leaders = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(id__in=today_shifts).filter(Q(Q(universal_shift_start__lte=start_at_time)&Q(universal_shift_end__gte=start_at_time))&Q(Q(universal_shift_start__lte=end_at_time)&Q(universal_shift_end__gte=end_at_time))).values_list('id',flat=True)
-
+		
 		absent_cleaners = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=start_at_date)|Q(leave_date=end_at_date))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
 		absent_leaders  = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=start_at_date)|Q(leave_date=end_at_date))).filter(staff__user_type='TEAMINCHARGE').values_list('staff',flat=True)
 		
@@ -4083,7 +4083,7 @@ class AssigncleaningTeam(IsAuthenticated,View):
 		leavestart_at_datetime2  = end_at_datetime.replace(hour=5,minute=0,second=0,microsecond=0)
 		leaveend_at_datetime2    = end_at_datetime.replace(hour=19,minute=0,second=0,microsecond=0)
 		
-		if (leavestart_at_datetime1 <= start_at_datetime and leaveend_at_datetime1 >= start_at_datetime) or (leavestart_at_datetime2 <= end_at_datetime and leaveend_at_datetime2 >= end_at_datetime):  
+		if (leavestart_at_datetime1 <= start_at_datetime and leaveend_at_datetime1 > start_at_datetime) or (leavestart_at_datetime2 < end_at_datetime and leaveend_at_datetime2 >= end_at_datetime):  
 			leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_leaders))).filter(Q(id__in=shift_leaders)|Q(id__in=super_shift_leaders))
 			cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_cleaners))).filter(Q(id__in=shift_cleaners)|Q(id__in=super_shift_cleaners))
 		else:
@@ -4201,7 +4201,7 @@ class EditcleaningTeam(IsAuthenticated,View):
 		leavestart_at_datetime2  = end_at_datetime.replace(hour=5,minute=0,second=0,microsecond=0)
 		leaveend_at_datetime2    = end_at_datetime.replace(hour=19,minute=0,second=0,microsecond=0)
 				
-		if (leavestart_at_datetime1 <= start_at_datetime and leaveend_at_datetime1 >= start_at_datetime) or (leavestart_at_datetime2 <= end_at_datetime and leaveend_at_datetime2 >= end_at_datetime):  
+		if (leavestart_at_datetime1 <= start_at_datetime and leaveend_at_datetime1 > start_at_datetime) or (leavestart_at_datetime2 < end_at_datetime and leaveend_at_datetime2 >= end_at_datetime):  
 			leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_leaders))).filter(Q(id__in=shift_leaders)|Q(id__in=super_shift_leaders))
 			cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_cleaners))).filter(Q(id__in=shift_cleaners)|Q(id__in=super_shift_cleaners))
 		else:
@@ -4326,7 +4326,7 @@ class AssignFollowupTeam(IsAuthenticated,View):
 		leavestart_at_datetime2  = end_at_datetime.replace(hour=5,minute=0,second=0,microsecond=0)
 		leaveend_at_datetime2    = end_at_datetime.replace(hour=19,minute=0,second=0,microsecond=0)
 				
-		if (leavestart_at_datetime1 <= start_at_datetime and leaveend_at_datetime1 >= start_at_datetime) or (leavestart_at_datetime2 <= end_at_datetime and leaveend_at_datetime2 >= end_at_datetime):  
+		if (leavestart_at_datetime1 <= start_at_datetime and leaveend_at_datetime1 > start_at_datetime) or (leavestart_at_datetime2 < end_at_datetime and leaveend_at_datetime2 >= end_at_datetime):  
 			leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_leaders))).filter(Q(id__in=shift_leaders)|Q(id__in=super_shift_leaders))
 			cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_cleaners))).filter(Q(id__in=shift_cleaners)|Q(id__in=super_shift_cleaners))
 		else:
@@ -4438,7 +4438,7 @@ class EditFollowupTeam(IsAuthenticated,View):
 		leavestart_at_datetime2  = end_at_datetime.replace(hour=5,minute=0,second=0,microsecond=0)
 		leaveend_at_datetime2    = end_at_datetime.replace(hour=19,minute=0,second=0,microsecond=0)
 				
-		if (leavestart_at_datetime1 <= start_at_datetime and leaveend_at_datetime1 >= start_at_datetime) or (leavestart_at_datetime2 <= end_at_datetime and leaveend_at_datetime2 >= end_at_datetime):  
+		if (leavestart_at_datetime1 <= start_at_datetime and leaveend_at_datetime1 > start_at_datetime) or (leavestart_at_datetime2 < end_at_datetime and leaveend_at_datetime2 >= end_at_datetime):  
 			leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_leaders))).filter(Q(id__in=shift_leaders)|Q(id__in=super_shift_leaders))
 			cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2)|Q(id__in=absent_cleaners))).filter(Q(id__in=shift_cleaners)|Q(id__in=super_shift_cleaners))
 		else:
