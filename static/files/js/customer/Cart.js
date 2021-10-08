@@ -886,7 +886,8 @@ $(document).ready(function(){
                   "date":date,
                  "time":this.slotFormat[min_slot].start_time,
                 "no_of_cleaners":this.selectedDuration.cleaners,
-                 "cleaning_hours":this.selected_onetime_slots[k].slots.length*2
+                 //"cleaning_hours":this.selected_onetime_slots[k].slots.length*2
+                 "cleaning_hours":this.selectedDuration.hours
                 }
                 count=count+1
               }
