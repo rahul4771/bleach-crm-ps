@@ -886,7 +886,8 @@ $(document).ready(function(){
                   "date":date,
                  "time":this.slotFormat[min_slot].start_time,
                 "no_of_cleaners":this.selectedDuration.cleaners,
-                 "cleaning_hours":this.selected_onetime_slots[k].slots.length*2
+                 //"cleaning_hours":this.selected_onetime_slots[k].slots.length*2
+                 "cleaning_hours":this.selectedDuration.hours
                 }
                 count=count+1
               }
@@ -3646,10 +3647,16 @@ $(document).ready(function(){
    
     doSomethingAsync(k) {
       return new Promise((resolve) => {
+        if(this.schedule_serviceTypes[k]=='Kitchen Appliances'){
+          var service_to_select='Kitchen Cleaning'
+         }
+         else{
+         var service_to_select=this.schedule_serviceTypes[k]
+         }
           axios
          .get(
            this.url+"/customer/ajax/getserviceproductivity?service_type=" +
-             this.schedule_serviceTypes[k]
+           service_to_select
          )
          .then((response) => {
              
@@ -3690,7 +3697,10 @@ $(document).ready(function(){
            var lowprice_window_manhour=0
              for(var i=0;i<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;i++)
              {
+               if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[i].size)
+               {
                total_estimated_size = total_estimated_size+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[i].size.max_size;
+               }
              }
             
             
@@ -3790,6 +3800,24 @@ $(document).ready(function(){
 
                
              }
+             else if(selected_service =='Kitchen Appliances'){
+              var addon_manhour=0
+              for(var ao=0;ao<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;ao++){
+                for(var addon=0;addon<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].addonsections.length;addon++){
+                  if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].addonsections[addon].selected){
+                    if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].addonsections[addon].details.category){
+                      addon_manhour=addon_manhour+(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].addonsections[addon].quantity*(parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].addonsections[addon].selected_size.max_size)/this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addonsections[addon].details.productivity))
+                    }
+                    else{
+                    addon_manhour=addon_manhour+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].addonsections[addon].details.productivity*this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].addonsections[addon].quantity
+                    }
+                  }
+                }
+            
+            }
+            console.log("addon manhour is"+addon_manhour)
+            var manhour=parseInt(addon_manhour)
+            }
              else if(selected_service=='Upholstery Cleaning'){
                 sofa_productivity = data["chair_perhour_cleaning"];
                 chair_productivity = data["sofa_perhour_cleaning"];
