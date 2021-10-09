@@ -156,7 +156,7 @@
                     <div class="model-input-name">Category Name</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text" id="name_category" class="w-p-100 inv-in" name="category_name">
+                        <input type="text" id="name_category" class="w-p-100 inv-in" name="category_name" required>
                       </div>
                 </div>
 
@@ -176,7 +176,7 @@
                     <div class="model-input-name">Category Id</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in"  name="category_id" maxlength="2"  minlength="2">
+                        <input type="text"  class="w-p-100 inv-in"  name="category_id" maxlength="2"  minlength="2" required>
                       </div>
                 </div>
 
@@ -206,7 +206,7 @@
           
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button category-form-btn" >Submit</button>
+            <button class="sent-button category-form-btn" type="submit" >Submit</button>
             </form>
                         <button data-dismiss="modal" onclick="closeNavAddCategory()" class="view-button">Cancel</button>
         </div>

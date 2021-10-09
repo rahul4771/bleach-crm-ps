@@ -71,24 +71,7 @@
                     </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-12 mt-20">
-                    <div class="d-flex">
-                        <div>
-                            <label for="favcity" style="width:100%;"> 
-                                <select style="padding: 5px 50px 5px 7px !important; " name="no_of_entries" id="no_of_entries" onchange="set_params_go();"> 
-                                <option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
-                                <option value="50" {% if no_of_entries == '50' %}selected{% endif %}>50 Entries</option>
-                                <option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
-                                </select>
-                                </label>
-                        </div>
-                        <div class="right-pos">
-                            <p>{{no_of_entries}} Entries</p>
-                        </div>
-                    </div>
-                    </div>
-                </div>
+                
 
                 <div class="mt-20" style="border-top: 1px solid #c4c4c4;">
                     <table class="inv-table footable">
@@ -257,62 +240,6 @@
 
 
                     </table>
-
-                    <div class="white-wrapper-pagination"><!--white-wrapper-pagination-->   
-                    <div class="pagination-containter"><!--pagination-containter-->
-                        <div class="pagination-column pagination-column-left"><!--pagination-column pagination-column-left-->
-                        Showing {{visits.start_index}} to {{visits.end_index}} of {{visits.paginator.count}} entries
-                        </div><!--pagination-column pagination-column-left-->
-                        
-                        <div class="pagination-column pagination-column-right"><!--pagination-column pagination-column-right-->
-                                <!--paginated-->
-                        {% if visits.has_other_pages %}
-                        <nav aria-label="Page navigation example">
-                        <ul class="pagination">
-                            {% if visits.has_previous %}
-                            <li class="page-item">
-                            <a class="page-link" href="?page={{ visits.previous_page_number }}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}&tab=ALL" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                                <span class="sr-only">Previous</span>
-                            </a>
-                            </li>
-                            {% else %}
-                            <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                                <span class="sr-only">Previous</span>
-                            </a>
-                            </li>
-                            {% endif %}
-                            {% for pg in page_range %}
-                            {% if vus.number == pg %}
-                                    <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}&tab=ALL">{{pg}}</a></li>
-                            {% else %}
-                                    <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}&tab=ALL">{{pg}}</a></li>
-                            {% endif %}
-                            {% endfor %}
-                            {% if visits.has_next %}        
-                            <li class="page-item">
-                            <a class="page-link" href="?page={{ visits.next_page_number}}&search={{request.GET.search}}&no_of_entries={{request.GET.no_of_entries}}&status={{request.GET.status}}&payment_policy={{request.GET.payment_policy}}&payment_status={{request.GET.payment_status}}&tab=ALL" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                                <span class="sr-only">Next</span>
-                            </a>
-                            </li>
-                            {% else %}
-                            <li class="page-item">
-                            <a class="page-link disabled" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                                <span class="sr-only">Next</span>
-                            </a>
-                            </li>
-                            {% endif %}
-                        </ul>
-                        </nav>
-                            {% endif %}
-                            <!--paginated-->
-                                </div><!--pagination-column pagination-column-right-->
-                            </div><!--pagination-containter-->         
-                        </div><!--white-wrapper-pagination--> 
 
                 </div>
             </div>

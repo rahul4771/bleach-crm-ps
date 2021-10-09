@@ -347,8 +347,8 @@ class CheckOutItems(models.Model):
     created              = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
-        return str(self.order.order_no)
+        return str(self.visit.order.order_no)
 
     def __str__(self):
-        return self.order.order_no
+        return self.visit.order.order_no
 
