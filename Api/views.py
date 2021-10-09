@@ -489,16 +489,28 @@ class ShiftScheduleAPI(APIView):
 
 	def get(self,request):
 		response_dict = {"success":False}
+		# month = int(request.GET.get('month'))
+		# year  = int(request.GET.get('year'))
+		month = 10
+		year  = 2021
 
 		try:
-			shiftschedules = ShiftSchedule.objects.filter(is_active=True)
+			shiftschedules = ShiftSchedule.objects.filter(is_active=True).filter(Q(Q(shift_date__month=month)&Q(shift_date__year=year))|Q(Q(shift3_start_at__month=month)&Q(shift3_start_at__year=year)))
 		except:
 			shiftschedules = None
 
 		shiftschedule_serializer = ShiftScheduleSerializer(shiftschedules,many=True).data
 
-		response_dict["staffs"]  = shiftschedule_serializer
-		response_dict["success"]  = True
+		try:
+			leaveschedules           = LeaveSchedule.objects.filter( Q(Q(is_active=True) & ~Q(leave_type='ANNUAL LEAVE') & Q(Q(leave_date__month=month)&Q(leave_date__year=year)) ) )
+		except:
+			leaveschedules           = None
+
+		leaveschedule_serializer   = LeaveScheduleSerializer(leaveschedules,many=True).data
+
+		response_dict["staffs"]    = shiftschedule_serializer
+		response_dict["leaves"]    = leaveschedule_serializer
+		response_dict["success"]   = True
 
 		return Response(response_dict,HTTP_200_OK)
 
@@ -536,6 +548,7 @@ class ShiftScheduleAPI(APIView):
 		response_dict['success']  = True  
 
 		return Response(response_dict,HTTP_200_OK)
+
 
 class CancelEvaluation(APIView):
 	permission_classes  	=   (AllowAny,)
@@ -2101,10 +2114,14 @@ class InventoryServiceItemsAPI(APIView):
 			ingredient = ServiceRecipeIngredients.objects.get(id=int(ingredient_id))
 
 			if action == 'add_item':
+				ingredient_items_exist = ServiceRecipeItems.objects.filter(ingredient=ingredient)
 				print("add")
 				item = InventoryItem.objects.get(id=int(item_id))
-				ServiceRecipeItems.objects.create(ingredient=ingredient,item=item)
-
+				
+				if ingredient_items_exist:
+					ServiceRecipeItems.objects.create(ingredient=ingredient,item=item)
+				else:
+					ServiceRecipeItems.objects.create(ingredient=ingredient,item=item,is_swapped_item=True)
 
 			if action == 'edit_item':
 				ingredient_item = ServiceRecipeItems.objects.get(id=int(ingredient_item_id))

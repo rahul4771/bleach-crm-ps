@@ -225,7 +225,7 @@
                   </tr>
               </thead>
               <tbody id="id_table">
-                {% for ingredient in service_recipe_ingredients %}
+                {% comment %} {% for ingredient in service_recipe_ingredients %}
                 {% for item in ingredient.service_recipe_items %}
                   {% if forloop.first %}
                   <tr data-itemid="{{item.item.id}}">
@@ -234,12 +234,13 @@
                
                   <td>{{ingredient.ingredient}}</td>
                   {% for item in ingredient.service_recipe_items %}
-                  {% if forloop.first %}
-                  <td>{{item.item.name}}</td>
-                  <td>{{item.item.item_code}}</td>
-                  <td>
-                  {% endif %}
+                    {% if item.is_swapped_item == True %}
+                      <td>{{item.item.name}}</td>
+                      <td>{{item.item.item_code}}</td>
+                    {% endif %}
                   {% endfor %}
+                  <td>
+                  
                     <!-- <div class="qty ">
                       <span class="minus bg-dark" onclick="decrement({{forloop.counter}})" >-</span>
                       <input type="text" class="count" id="id_qty_{{forloop.counter}}" name="qty" value="1">
@@ -263,6 +264,29 @@
 
                   </td>
                 </tr>
+                {% endfor %} {% endcomment %}
+
+                {% for item in check_out_items %}
+                <tr data-itemid="{{item.item.id}}">
+                <td>{% if item.service_item %}{{item.service_item.ingredient.ingredient}}{% else %}-{% endif %}</td>
+                <td>{% if item.service_item %}{{item.service_item.item.name}}{% else %}{{item.item.name}}{% endif %}</td>
+                <td>{% if item.service_item %}{{item.service_item.item.item_code}}{% else %}{{item.item.item_code}}{% endif %}</td>
+                <td>
+                <div class="qty-container">
+        
+                  <div class="quantity">
+                    <a class="quantity__minus pointer" onclick="decrement(4{{forloop.counter}})"><span>-</span></a>
+                    <input  type="text" class="quantity__input"  id="id_qty_4{{forloop.counter}}" name="qty" value="1">
+                    <a  class="quantity__plus pointer" onclick="increment(4{{forloop.counter}})"><span>+</span></a>
+                  </div>
+                    
+                </div>
+                </td>
+                <td>
+                    <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
+                    {% if item.service_item %}<button class="inv-plan-img-btn" onclick="swapModal({{item.service_item.ingredient.id}})" > <img src="{% static 'files/inventory/swap.png' %}"  alt=""> </button>{% endif %}
+                </td>
+                </tr>
                 {% endfor %}
 
                 <tr>
@@ -285,6 +309,40 @@
 
 
 </section>
+<div class="modal fade" id="deleteModel" role="dialog">
+  <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
+      <div class="container-fluid">
+          <div class="row">
+              <div class="col-md-12 mt-20">
+
+                  
+                  <div class="d-flex ">
+                      <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to delete item</p></div>
+                      <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                          <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                      </button>
+
+                  </div>
+              </div>
+          </div>
+         
+          <div class="row">
+              <div class="col-md-12 text-center">
+                 
+                  <div class="cancel-model-content">
+                      <button class="sent-button" type="submit" >Delete</button>
+                      <button data-dismiss="modal" class="view-button">Cancel</button>
+                    
+                  </div>
+                  
+              </div>
+
+          </div>
+      </div>
+  </div>
+</div>
+
 <div id="addStore" class="inv-sidedrawer">
 
   <div class="inv-sidedrawer-inner">
@@ -300,6 +358,10 @@
           </div>
       </div>
       <hr>
+
+      <form method="POST" action="" >{% csrf_token %}
+      <input type="hidden" name="action" value="add_item" />
+      
       <div class="row mt-20">
         <div class="col-md-12 ">
           <div class="model-input-name">Item</div>
@@ -342,13 +404,10 @@
       </div> -->
 
 
-
-
-
-
   </div>
   <div class="inv-drawer-footer">
       <button class="sent-button">Submit</button>
+      </form>
       <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
   </div>
 </div>
@@ -367,11 +426,14 @@
           </div>
       </div>
       <hr>
+
+      <form method="POST" action="" >{% csrf_token %}
       <div class="row mt-20">
         <div class="col-md-12 ">
           <div class="model-input-name">Item</div>
           <input type="hidden" name="item" id="id_pro_sel2" value="" />
-          <input type="hidden" name="ingredient" id="id_ingredient" value="" />
+          <input type="hidden" name="action" value="swap_item" />
+          <input type="hidden" name="ingredient_id" id="id_ingredient" value="" />
 
           <div style="position: relative;">
               <div class="inv-input-container inv-border h-30">
@@ -411,13 +473,10 @@
       </div> -->
 
 
-
-
-
-
   </div>
   <div class="inv-drawer-footer">
-      <button class="sent-button">Submit</button>
+      <button class="sent-button" type="submit">Submit</button>
+      </form>
       <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
   </div>
 </div>
@@ -432,18 +491,37 @@
 {% block javascript %}
 
 <script>
-function swapModal(id){
+async function swapModal(id){
   console.log(id)
   $('#id_ingredient').val(id);
   $('#id_search2').empty();
+
+  //list items using api    
+
+    var result = await _get('api/inventory-service-items/?ingredient_id='+id);
+    if(result.status == 200){
+        console.log(result.data.ingredient,"ing")
+                    
+              $.each(result.data.service_items,function(key,value){
+                  console.log(value.item_name,"lo")
+                  var tempId = value.item_id;
+                  var tempName = value.item_name;
+
+                  $('#id_search2').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" id="id_product'+value.item_id+'"  onclick="closeProductShow2(this)" data-pro="'+value.item_id+'" data-name="'+value.item_name+'"><div class="inv-search-result">'+value.item_name+'</div></div>');
+              })     
+
+    }else{
+      showNotification('No Data','error')
+    }
+    
      
-        {% for item in items %}
-    var tempId = '{{item.id}}';
-    var tempName = '{{item.name}}';
+        //{% for item in items %}
+    //var tempId = '{{item.id}}';
+    //var tempName = '{{item.name}}';
 
-    $('#id_search2').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" id="id_product{{item.id}}"  onclick="closeProductShow2(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
+    //$('#id_search2').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" id="id_product{{item.id}}"  onclick="closeProductShow2(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
 
-    {% endfor %}
+    //{% endfor %}
 
    
     

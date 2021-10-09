@@ -4,10 +4,10 @@ from agent import views
 urlpatterns = [
 
 	url(r'^cleaningcallendar/$',views.CleaningCallendar.as_view(),name='cleaning-callendar'),
-	url(r'^cleaningcallendar/availability/$',views.AvailabilityCleaningCallendar.as_view(),name='cleaning-callendar-availability'),#New logic applied
+	url(r'^cleaningcallendar/availability/$',views.AvailabilityCleaningCallendar.as_view(),name='cleaning-callendar-availability'),#New logic applied 8 to 22 logic
 	url(r'^cleaningcallendar/cleaning/popup/$',views.CleaningCallendarCleaningPopup.as_view(),name='cleaning-callendar-cleaningpopup'),
-	url(r'^cleaningcallendar/cleaning/edit/slotes/$',views.CleaningPopupMultipleServiceCleaningSlotes.as_view(),name='cleaning-callendar-cleaningedit-slotes'),#New logic applied
-	url(r'^cleaningcallendar/cleaning/edit/save/$',views.CleaningPopupSave.as_view(),name='cleaning-callendar-cleaningedit-save'),#New logic applied
+	url(r'^cleaningcallendar/cleaning/edit/slotes/$',views.CleaningPopupMultipleServiceCleaningSlotes.as_view(),name='cleaning-callendar-cleaningedit-slotes'),#New logic applied 8-22 logic
+	url(r'^cleaningcallendar/cleaning/edit/save/$',views.CleaningPopupSave.as_view(),name='cleaning-callendar-cleaningedit-save'),#New logic applied 8 to 22 logic
 	url(r'^cleaningcallendar/followupcleaning/popup/$',views.CleaningCallendarFollowupPopup.as_view(),name='cleaning-callendar-followupcleaningpopup'),
 	url(r'^cleaningcallendar/followup/edit/save/$',views.FollowupPopupSave.as_view(),name='cleaning-callendar-followupedit-save'),
 

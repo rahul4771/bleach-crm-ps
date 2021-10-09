@@ -1493,6 +1493,8 @@ width="1000"
                       v-if="item == 'Special Care'" />
                     <img src="{% static 'files/icons/booking/icons/kitchen.png' %}" class="service-icon"
                       v-if="item == 'Kitchen Cleaning'" />
+                      <img src="{% static 'files/icons/booking/icons/kitchen.png' %}" class="service-icon"
+                      v-if="item == 'Kitchen Appliances'" />
                     <img src="{% static 'files/icons/booking/icons/sanitisation.png' %}" class="service-icon"
                       v-if="item == 'Infection Control'" />
 
@@ -1509,6 +1511,101 @@ width="1000"
                 <div class="owl-carousel" id="service-carousel" :key="'serv_count'+serviceCount" v-if="serviceChange">
             
                 </div>
+                            <!--more services  only for kitchen Appliances cleaning-->
+          <div class="col-md-12 more-services" v-if="serviceType=='Kitchen Appliances'">
+            <div class="service-content-heading">
+              Add-ons
+            </div>
+            <div class="owl-carousel"  id="otherServiceCarousel"  >
+              <div class="more-service-card" v-for="(addon,index) in addons_parsed" v-bind:key="index">
+              <div class="text-center"><% addon.details.name %></div>
+              <div class="text-center mt-2">
+              <img src='/static/files/icons/oven.png' class="service-icon" v-if="addon.details.name=='Microwave Oven'"/>
+              <img src='/static/files/icons/refrigerator_single.png' class="service-icon" v-if="addon.details.name=='Refrigerator & Freezer' && addon.details.size=='One Side'"/>
+              <img src='/static/files/icons/refrigerator_double.png' class="service-icon" v-if="addon.details.name=='Refrigerator & Freezer' && addon.details.size=='Two Side'"/>
+
+              <img src='/static/files/icons/exhaust-hood.png' class="service-icon" v-if="addon.details.name=='Exhaust Filters'"/>
+              <img src='/static/files/icons/griller.png' class="service-icon" v-if="addon.details.name=='Grillers'"/>
+              <img src='/static/files/icons/deep-fryer.png' class="service-icon" v-if="addon.details.name=='Fryers'"/>
+              <img src='/static/files/icons/stove.png' class="service-icon" v-if="addon.details.name=='Gas Burners / Oven / Stoves'"/>
+              <img src='/static/files/icons/cabinet.png' class="service-icon" v-if="addon.details.name=='Cabinet'"/>
+              
+              </div>
+              <div class="mt-2 text-center primary-text" v-if="!addon.details.category || Object.keys(addon.selected_size).length>0">
+             <span v-if="Object.keys(addon.selected_size).length>0">  <b > <% addon.selected_size.price %> KD</b> </span>
+             <span v-else>  <b > <% addon.details.price %> KD</b> </span>
+              </div>
+              <v-select
+            v-if="addon.details.category"
+              dense
+              :items="addon.size"
+              item-text="size"
+             v-model="addon.selected_size"
+             return-object
+              label="Size"
+              class="mt-2"
+            ></v-select>
+            <div class="text-center  mb-2" v-if="!addon.details.category">
+              <v-btn class="mt-2 mb-2" color="primary" type="primary" small outlined @click="selectAddons(index)" v-if="!addon.selected">
+                <v-icon left>
+                  mdi-cart
+                </v-icon>
+                Add 
+              </v-btn>
+              <div v-else>
+                
+          <div class="d-flex justify-center mt-2">
+            <div class="reduce-addon-qty" @click="reduceQty(index)">
+              <i class="fas fa-minus-square primary-text"></i>
+            </div>
+            <div class="input-addon-qty">
+              <input type="number" :min="0" class="input-addon" v-model="addon.quantity"/>
+            </div>
+            <div class="add-addon-qty" @click="increaseQty(index)">
+              <i class="fas fa-plus-square primary-text"></i>
+            </div>
+
+          </div>
+              </div>
+              </div>
+              <!-- addons with size options-->
+              <div class="text-center  mb-2" v-if="addon.details.category && Object.keys(addon.selected_size).length>0">
+              <v-btn class="mt-2 mb-2" color="primary" type="primary" small outlined @click="selectAddons(index)" v-if="!addon.selected">
+                <v-icon left>
+                  mdi-cart
+                </v-icon>
+                Add 
+              </v-btn>
+              <div v-else>
+                
+          <div class="d-flex justify-center mt-2">
+            <div class="reduce-addon-qty" @click="reduceQty(index)">
+              <i class="fas fa-minus-square primary-text"></i>
+            </div>
+            <div class="input-addon-qty">
+              <input type="number" :min="0" class="input-addon" v-model="addon.quantity"/>
+            </div>
+            <div class="add-addon-qty" @click="increaseQty(index)">
+              <i class="fas fa-plus-square primary-text"></i>
+            </div>
+
+          </div>
+              </div>
+              </div>
+              <!-- addons without size options-->
+            </div>
+              </div>
+              <div class="text-center" >
+              <v-btn depressed color="primary" class="mx-auto" @click="goToCart()" v-if="findAbsoluteCost()>0">
+                Proceed
+              </v-btn>
+              <v-btn depressed color="primary" class="mx-auto"  v-else disabled>
+                Proceed
+              </v-btn>
+            </div>
+    </div>
+     <!-- kitchen Appliances cleaning ends here-->
+
 
                 <div>
                   <h5 class="pt-2 questions">What's your place like ?</h5>
@@ -1524,8 +1621,8 @@ width="1000"
                       :items="location_types" v-model="location_type" label="Location Type" >
                     </v-select>
                   </div>
-                  <div class="col-md-4 mt-2" id="field-no-of-buildings">
-                    <v-select :items="area_types" v-model="area_type" item-text="name" label="Area Type">
+                  <div class="col-md-4 mt-2" id="field-no-of-buildings" v-if="serviceType!='Kitchen Appliances'">
+                    <v-select :items="area_types" v-model="area_type" item-text="name" label="Area Type" >
                     </v-select>
                   </div>
                   <div class="col-md-4 mt-2" id="field-wall-type" v-if="
@@ -3147,8 +3244,8 @@ Fill all the details of the Buildings  to proceed
                            </div>
                           <div class="cart-card-items">
                           <div v-for="(bill,bindex) in service.bill" v-bind:key="bindex">
-                            <div><b><% bill.section_name%></b></div>
-                            <div class="d-flex mt-1">
+                            <div v-if="service.service!='Kitchen Appliances'"><b><% bill.section_name%></b></div>
+                            <div class="d-flex mt-1" v-if="service.service!='Kitchen Appliances'">
                               <div >
                                <% bill.section.size.name %>
                               </div>

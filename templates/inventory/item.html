@@ -474,23 +474,13 @@
             <input type="hidden" name="store" id="id_pro_sel" value="" />
             <input type="hidden" name="edit_unit_id" id="id_unit_edit" >
             
-            <div class="row mt-20">
+            <!-- <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Store</div>
 
                     <div style="position: relative;">
                         <div class="inv-input-container inv-border h-30">
                             <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" name="storename" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()" required>
-                            <!-- <div class="inv-hr"></div>
-                            <div class="model-filter">
-                                <button class="inv-normal-btn" onclick="showDrop()">
-                                    <i class="fa fa-angle-down fa-lg " style="color: #707070;" aria-hidden="true"></i>
-                                </button>
-
-                            </div> -->
-
-
-
                         </div>
                         <div id="id_search" class="row inv-result-box" style="display: none;">
                           
@@ -557,23 +547,17 @@
                       </div>
                 </div>
 
-            </div>
+            </div> -->
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Status</div>
-
-                    <!-- <select id="id_unit_status" name="unit_status" class="minimal">
-                        <option value="active">Active</option>
-                        <option value="out_of_order">Out Of order</option>
-                        <option value="expired">Expired</option>
-                    </select> -->
+                    <div class="model-input-name">Purchase Order</div>
                     <input hidden type="text" id="id_unit_status" name="unit_status" value="active" required>
                     <div class="wrap-drop" id="noble-gases"  >
-                        <span id="id_selectText">Active</span>
+                        <span id="id_selectText">Selelct PO</span>
                         <ul class="drop">
-                            <li onclick="changeSelect('active')"><a>Active</a></li>
-                            <li onclick="changeSelect('out_of_order')"><a>Out Of order</a></li> 
-                            <li onclick="changeSelect('expired')"><a>Expired</a></li> 
+                            <li onclick="changeSelect('active')"><a>PO1</a></li>
+                            <li onclick="changeSelect('out_of_order')"><a>PO2</a></li> 
+                            <li onclick="changeSelect('expired')"><a>PO3</a></li> 
 
                         </ul>
                     </div>
@@ -1301,7 +1285,7 @@ function openNavAddBundle(d) {
     if(d == 'add'){
         document.getElementById("myform").reset();
         $('#id_unit_status').val('active');
-        $("#id_selectText").text("Active");
+        $("#id_selectText").text("Select PO");
             $("#supHead").text("Add Unit");
             $("#unit_action").val("add_unit");
         }
