@@ -240,7 +240,7 @@
                     <div class="model-input-name" >Segment Code</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text" required class="w-p-100 inv-in" name="segment_code" minlength="2" maxlength="2">
+                        <input type="text"  class="w-p-100 inv-in" name="segment_code" minlength="2" maxlength="2" id="id_seg_code" required >
                       </div>
                 </div>
 
@@ -311,7 +311,7 @@
                     <div class="model-input-name" >Line Code</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="line_code" maxlength="2" minlength="2" id="line_name_id" required>
+                        <input type="text"  class="w-p-100 inv-in" name="line_code" maxlength="2" minlength="2" id="line_name2_id" required>
                       </div>
                 </div>
 
@@ -503,6 +503,7 @@ $(function () {
             $('#segment_action_id').val('add_line');
             $('#id_selectText2').text('Active');
             $('#line_id_div').show();
+            document.getElementById('line_name2_id').required = true
         }
         if(d == 'edit'){
             
@@ -528,6 +529,7 @@ $(function () {
             $('#segment_action_id').val('edit_line');
             $('#id_edit_line').val($(d).data('lineid'));
             $('#line_name_id').val($(d).data('linename'));
+            document.getElementById('line_name2_id').required = false
             $('#line_id_div').hide();
             console.log($(d).data('linename'),$(d).data('linestatus'),"stats")
 
@@ -568,6 +570,7 @@ $(function () {
         $('#id_edit_segment').val($(this).data('segmentid'));
         $('#name_segment').val($(this).data('segmentname'));
         $('#status_segment').val($(this).data('segmentstatus'));
+        document.getElementById('id_seg_code').required = false
         $('#segment_id_div').hide();
         if($('#status_segment').val() == 'True'){
             
@@ -582,6 +585,8 @@ $(function () {
         $('#id_edit_segment').val($(this).data('segmentid'));
         $('#name_segment').val('');
         $('#segment_id_div').show();
+        document.getElementById('id_seg_code').required = true
+
         //$('#status_segment').val('');
     })
 

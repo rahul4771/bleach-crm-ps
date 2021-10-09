@@ -176,7 +176,7 @@
                     <div class="model-input-name">Category Id</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in"  name="category_id" maxlength="2"  minlength="2" required>
+                        <input type="text"  class="w-p-100 inv-in"  name="category_id" id="id_cat_id" maxlength="2"  minlength="2" required>
                       </div>
                 </div>
 
@@ -390,12 +390,16 @@ $(function () {
             $('#category_action').val('add_category');
             $('#id_selectText').text('Active');
             $('#status_category').val('True');
+            // $('#addCategory').show()
+
             openNavAddCategory()
         }
         if(d == 'edit'){
 
             $(".inv-drawer-head").text("Edit Category");
             $('#category_action').val('edit_category');
+
+            // $('#addCategory').hide()
             openNavAddCategory()
         }
         
@@ -446,7 +450,10 @@ $(function () {
     $('.add_category').click(function(){
         console.log("click")
         $('#id_edit_category').val($(this).data('categoryid'));
+
         $('#category_id_div').show();
+        document.getElementById("id_cat_id").required = true;
+
         $('#name_category').val('');
         document.getElementById("status_category").value = 'True';
         $('.category-form-btn').text('Add');
@@ -459,6 +466,7 @@ $(function () {
         $('#id_edit_category').val($(this).data('categoryid'));
         $('#name_category').val($(this).data('categoryname'));
         $('#code_category').val($(this).data('categorycode'));
+        document.getElementById("id_cat_id").required = false;
         $('#category_id_div').hide();
         document.getElementById("status_category").value = $(this).data('categorystatus');
         console.log($('#status_category').val(),'cat')

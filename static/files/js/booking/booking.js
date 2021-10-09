@@ -586,7 +586,8 @@ reset_floor:false,
 building_warning:false,
 available_slotes:[],
 date_group:{},
-addons:[]
+addons:[],
+last_image_stat:false
 
       },
       methods: {
@@ -611,17 +612,17 @@ addons:[]
             for(var i=0;i<this.addons_parsed.length;i++){
               if(this.addons_parsed[i].selected){
                 if(this.addons_parsed[i].details.category){
-                  addon_cost=addon_cost+(this.addons_parsed[i].selected_size.price*this.addons_parsed[i].quantity)
+                  addon_cost=addon_cost+((this.addons_parsed[i].selected_size.price||0)*this.addons_parsed[i].quantity)
                 }
                 else{
-                  addon_cost=addon_cost+(this.addons_parsed[i].details.price*this.addons_parsed[i].quantity)
+                  addon_cost=addon_cost+((this.addons_parsed[i].details.price||0)*this.addons_parsed[i].quantity)
                 }
               }
             }
 
           }
           
-         total_cost=this.otherService.size.cost+addon_cost
+         total_cost=(this.otherService.size.cost||0)+addon_cost
          if(this.edit_item){
            total_cost=total_cost-this.billingData[this.currentItem].section_cost
          }
@@ -674,6 +675,7 @@ addons:[]
             return totalcost
           }
           else{
+            console.log("added amount is "+totalcost)
             return 0
           }
         },
@@ -1008,12 +1010,13 @@ addons:[]
           for(var k=0;k<this.schedule_serviceTypes_selected;k++)
           {
             for(var sch in this.scheduleGroup){
-              
+              // if(Array.isArray(this.scheduleGroup[sch])){
              if(this.scheduleGroup[sch].includes(this.schedule_serviceTypes_selected[k])){
                var index=this.scheduleGroup[sch].indexOf(this.schedule_serviceTypes_selected[k])
                console.log("index is"+index)
                this.scheduleGroup[sch].splice(index,1)
              }
+              // }
              }
             }
           var groundid=Object.keys(this.scheduleGroup).length
@@ -1163,16 +1166,17 @@ addons:[]
           for(var k=0;k<this.schedule_serviceTypes_selected;k++)
           {
             for(var sch in this.scheduleGroup){
-              
+              // if(Array.isArray(this.scheduleGroup[sch])){
              if(this.scheduleGroup[sch].includes(this.schedule_serviceTypes_selected[k])){
                var index=this.scheduleGroup[sch].indexOf(this.schedule_serviceTypes_selected[k])
                console.log("index is"+index)
                this.scheduleGroup[sch].splice(1,index)
              }
+            // }
              }
             }
           var groundid=Object.keys(this.scheduleGroup).length
-          this.scheduleGroup[groundid]={ ...this.schedule_serviceTypes_selected }
+          this.scheduleGroup[groundid]=[ ...this.schedule_serviceTypes_selected ]
 
           this.visits=[]
           this.selected_double_slots=[]
@@ -1188,7 +1192,7 @@ addons:[]
           cleaningPolicy='',
           no_of_visits='',
           this.visits=[]
-          
+          this.schedule_serviceTypes_selected=[]
           this.scheduleDateSat=false
           this.activeTab='Cart'
         },
@@ -2915,13 +2919,20 @@ removeOneTimeSlot(slot){
               }
           }
        }
+       else if(this.multiServicesBill[serIndex].service=='Kitchen Appliances')
+       {
+
+       }
        else{
 
        console.log("i m inside")
     for (var i=0;i < this.multiServicesBill[serIndex].bill.length; i++) {
+      if(this.multiServicesBill[serIndex].bill[i].section.size)
+      {
      console.log("section sixze is"+this.multiServicesBill[serIndex].bill[i].section.size.max_size)
       this.total_size=this.total_size + parseInt(this.multiServicesBill[serIndex].bill[i].section.size.max_size);
       console.log("section total sixze is"+this.total_size)
+      }
     }
     }
     }
@@ -3219,6 +3230,13 @@ this.infectionControlServices=[]
     <div class="text-center pt-2 service-title">
     Kitchen Cleaning
   </div></div>
+
+  <div class="sr-service-card m-2 p-2 "   onclick="selectService('Kitchen Appliances',this)">
+  <i class="far fa-circle inactive-icon"></i>
+  <img src="/static/files/icons/appliances.png" class="service-icon"> 
+  <div class="text-center pt-2 service-title">
+  Kitchen Appliances
+</div></div>
   
    
     `)
@@ -3308,7 +3326,7 @@ responsive:{
         this.responseText='Booking Successful'
         this.snackbar=true
        // this.getBookingDetails(response.data.booking_id)
-     
+     this.last_image_stat=true
     this.uploadImages()
     //window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
 
@@ -3345,11 +3363,59 @@ responsive:{
       groupData[i]={...this.serviceDetails.service_details[data[i]]}
       totalCost=totalCost+this.serviceDetails.service_details[data[i]].total_cost
     }
-    var res=await this.seperateBookRequest(posturl,totalCost,groupData)
+   // var res=await this.seperateBookRequest(posturl,totalCost,groupData)
+   var res=await axios
+   .post(
+      this.url+posturl+this.userid+'/',
+      {
+        estimated_cost:totalCost,
+        total_cost:totalCost,
+        service_details:groupData
+      }
+    
+   )
+   .then((response) => {
+     this.submit_loader=false
+     console.log("booking details is "+response)
+     this.phase2Result=response.data
+     groupData={}
+     if(response.data.success)
+     {
+     this.responseText='Booking Successful'
+     this.snackbar=true
+  
+   console.log("got response")
+      var schedule_keys=Object.keys(this.scheduleGroup)
+      if(sch==this.scheduleGroup[schedule_keys[schedule_keys.length-1]])
+      {
+        this.last_image_stat=true
+      }
+      else{
+        this.last_image_stat=false
+      }
+      this.uploadImages()
+     return response
+ 
+     }
+     else{
+       this.responseText=response.data.Error
+       this.snackbar=true
+     }
+     
+     
+   })
+    .catch((error) => {
+     this.responseText=error
+     console.log(error);
+     return error
+   });
+    console.log("firing next ")
 
 
   }
   },
+
+  /* This function is deprecated -> keeping it for future purpose*/
   async seperateBookRequest(posturl,totalCost,groupData){
     axios
     .post(
@@ -3370,16 +3436,18 @@ responsive:{
       {
       this.responseText='Booking Successful'
       this.snackbar=true
-    //  this.getBookingDetails(response.data.booking_id)
+    
+    console.log("got response")
    
        this.uploadImages()
-  //window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
+       return response
+  
       }
       else{
         this.responseText=response.data.Error
         this.snackbar=true
       }
-      return response
+      
       
     })
      .catch((error) => {
@@ -3388,6 +3456,8 @@ responsive:{
       return error
     });
   },
+   /* Deprecated function ends here */
+
   bookCustService(){
     this.userid=window.location.href.split('/')[5]
     const urlSearchParams = new URLSearchParams(window.location.search);
@@ -3408,6 +3478,7 @@ responsive:{
          this.responseText='Booking Successful'
          this.snackbar=true
         // this.getBookingDetails(response.data.booking_id)
+        this.last_image_stat=true
       
      this.uploadImages()
     // window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
@@ -3436,13 +3507,17 @@ responsive:{
       .then((response) => {
         this.submit_loader=false
         
-       
-     window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
+       if(this.last_image_stat){
+        window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
+       }
+     
        
       })
        .catch((error) => {
         console.log(error);
-        window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
+        if(this.last_image_stat){
+          window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
+         }
       });
 
    }
@@ -3592,6 +3667,7 @@ setTimeout(function() {
     if(this.checkKitchen()){
       schedule_services.push('Kitchen Cleaning')
     }
+    
     axios
       .post(
          this.url+"/customer/ajax/getmultipleservicecleaningslotes",{service_types:schedule_services,cleaning_date:this.slotDate,number_of_cleaners:this.selectedDuration.cleaners}
@@ -4321,7 +4397,47 @@ try {
    
   },
    goToCart(){
-
+    if(this.serviceType=='Kitchen Appliances'){
+      var otherService={
+        material: "",
+        addons:[],
+        color: "",
+        size: {},
+        section_cost:this.findAddonCost(),
+        sectiononly_cost:0,
+        type: "",
+        age: "",
+        stain: false,
+        stain_reason: "",
+        wall_type: "",
+        floor_type: "",
+        ceiling_type: "",
+        residue: false,
+        is_cabinet:false,
+        hallway_size: "",
+        sides: "",
+        stain_age: "",
+        height:"",
+        keynote_data:[]
+      }
+      otherService.addons=[...this.addons_parsed]
+      var serviceData={
+        name:'',
+        section_cost:'',
+        section_net_cost:'',
+        sectiononly_cost:'',
+        sectiononly_net_cost:'',
+        section:otherService
+      }
+      serviceData.name='Kitchen Appliances'
+      serviceData.section_name='Kitchen Appliances'
+      serviceData.section_cost=this.findAddonCost()
+      serviceData.section_net_cost=this.findAddonCost()
+      serviceData.sectiononly_cost=0
+      serviceData.sectiononly_net_cost=0
+      this.billingData.push(serviceData)
+      this.parseAddons()
+    }
      var sampleServicesBill={
        service:'',
        bill:[],
@@ -5089,10 +5205,16 @@ try {
  },
   doSomethingAsync(k) {
    return new Promise((resolve) => {
+     if(this.schedule_serviceTypes[k]=='Kitchen Appliances'){
+      var service_to_select='Kitchen Cleaning'
+     }
+     else{
+     var service_to_select=this.schedule_serviceTypes[k]
+     }
        axios
       .get(
         this.url+"/customer/ajax/getserviceproductivity?service_type=" +
-          this.schedule_serviceTypes[k]
+        service_to_select
       )
       .then((response) => {
         var total_highpricewindow_size = 0;
@@ -5168,7 +5290,27 @@ try {
             }
             console.log("addon manhour is"+addon_manhour)
             manhour=parseInt(manhour)+parseInt(addon_manhour)
-        } else if (selected_service == "Window Cleaning") {
+        }
+        else if(selected_service =='Kitchen Appliances'){
+          var addon_manhour=0
+          for(var ao=0;ao<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;ao++){
+            for(var addon=0;addon<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons.length;addon++){
+              if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].selected){
+                if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].details.category){
+                  addon_manhour=addon_manhour+(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].quantity*(parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].selected_size.max_size)/this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].details.productivity))
+                }
+                else{
+                addon_manhour=addon_manhour+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].details.productivity*this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].quantity
+                }
+              }
+            }
+        
+        }
+        console.log("addon manhour is"+addon_manhour)
+        var manhour=parseInt(addon_manhour)
+        }
+        
+        else if (selected_service == "Window Cleaning") {
           for(var b=0;b<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;b++){
             if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.size.is_highprice_window){
               total_highpricewindow_size=total_highpricewindow_size+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[b].section.size.max_size
