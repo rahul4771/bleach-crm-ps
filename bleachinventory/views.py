@@ -4,11 +4,13 @@ from bleach_crm_ps.permissions import IsInventoryAdmin,IsInventoryAdminUser
 from bleachinventory.models import CheckOutItems,ItemHistory,Category,Segment,Line,Attribute,AttributeValue,ItemAttributes,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,PurchaseOrder,PurchaseOrderItems
 from django.contrib import messages
 import re
+import math
 from datetime import date,datetime,timedelta
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q,Sum,When,Case,Value,F,Func,Count,Avg,Max,ExpressionWrapper,DateTimeField,DurationField,BigIntegerField,BooleanField,IntegerField,FloatField,CharField,Prefetch
 from order.models import OrderScheduler
 from senior_team_leader.models import CleaningTeam,CleaningTeamMember
+from bleachadmin.models import ServicePriceRange
 from evaluator.models import EvaluationBookSection,EvaluationSectionKeynote,EvaluationSectionAddons
 # Create your views here.
 
@@ -1139,6 +1141,24 @@ class InventoryCreateCheckout(IsInventoryAdmin,View):
         items = InventoryItem.objects.filter(Q(item_status='available')|Q(item_status='about_to_finish'))
         print(items,"its")
         service = visit.order_scheduler_book.service_type
+        price_ranges = ServicePriceRange.objects.filter(is_active=True,service_type=service)
+
+        for section in visit.order_scheduler_book.sections:
+            if isinstance(section.size, int) == True:
+                max_area = section.size
+            else:
+                if visit.order_scheduler_book.service_type.name == 'Upholstery Cleaning':
+                    
+                    for price_range in price_ranges:
+                        if price_range.name == section.size and price_range.service_type == section.evaluation_book.service_type and price_range.upholstery_type == section.upholstery_type:
+                            max_area = price_range.maximum_area
+                else:
+                    if price_range.name == section.size and price_range.service_type == section.evaluation_book.service_type and section.evaluation_book.service_type.name != 'Mattress Cleaning' and price_range.is_newkitchen == section.new_kitchen and price_range.is_cabinet == section.is_cabinet and price_range.is_highprice_facade == section.is_highprice_facade and price_range.is_highprice_window == section.is_highprice_window:
+                        max_area = price_range.maximum_area
+
+
+
+        
         cleaners = visit.no_of_cleaners
         service_recipe_ingredients = ServiceRecipeIngredients.objects.filter(service_type__service=service).prefetch_related(Prefetch('item_ingredient',queryset=ServiceRecipeItems.objects.all(),to_attr='service_recipe_items'))
         check_out_items = CheckOutItems.objects.filter(visit=visit)
@@ -1146,13 +1166,34 @@ class InventoryCreateCheckout(IsInventoryAdmin,View):
         # for check_out_item in check_out_items:
             
         for ingredient in service_recipe_ingredients:
+            service_quantity = ingredient.quantity
+
+            if ingredient.service_or_person == 'service':
+                
+                service_area = ingredient.service_type.area_size
+
+                recommended_quantity = int(math.ceil(float(max_area) / float(service_area)) * float(service_quantity))
+
+            else:
+                service_person = ingredient.service_type.staff_count
+
+                quantity_per_person = int(service_quantity) // int(service_person)
+
+                recommended_quantity = int(cleaners) * int(quantity_per_person)
+
         
             for service_item in ingredient.service_recipe_items:    
                 
                 if service_item.is_swapped_item == True:
-                    CheckOutItems.objects.get_or_create(visit=visit,service_item=service_item)
+                    try:
+                        checkout_item = CheckOutItems.objects.get(visit=visit,service_item__ingredient=ingredient)
+                        checkout_item.service_item = service_item
+                        checkout_item.save()
+                    except:
+
+                        CheckOutItems.objects.create(visit=visit,service_item=service_item,units=recommended_quantity)
         print(service_recipe_ingredients,"itt")
-        return render(request,'inventory/createCheckout.html',{"visit":visit,"items":items,"service_recipe_ingredients":service_recipe_ingredients,"check_out_items":check_out_items})
+        return render(request,'inventory/createCheckout.html',{"price_ranges":price_ranges,"visit":visit,"items":items,"service_recipe_ingredients":service_recipe_ingredients,"check_out_items":check_out_items})
 
     def post(self,request,visit_id):
         visit = OrderScheduler.objects.select_related('order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='team_members')),to_attr='cleaning_team'),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='sections')).get(id=int(visit_id))
@@ -1171,6 +1212,10 @@ class InventoryCreateCheckout(IsInventoryAdmin,View):
         if action == 'swap_item':
             checkout_item = request.POST.get('item')
             ingredient_id = request.POST.get('ingredient_id')
+            checkout_item_id = request.POST.get('checkout_item_id')
+
+            checkout = CheckOutItems.objects.get(id=int(checkout_item_id))
+
             ingredient = ServiceRecipeIngredients.objects.get(id=int(ingredient_id))
 
             ServiceRecipeItems.objects.filter(ingredient=ingredient,is_swapped_item=True).update(is_swapped_item=False)
@@ -1180,7 +1225,36 @@ class InventoryCreateCheckout(IsInventoryAdmin,View):
             swap_item.is_swapped_item = True
             swap_item.save()
 
+            checkout.item = swap_item.item
+            checkout.save()
+
             messages.success(request,"Item Swapped!")
+
+        if action == 'delete_item':
+            checkout_item = request.POST.get('item_id')
+            CheckOutItems.objects.get(id=int(checkout_item)).delete()
+            messages.success(request,"Item Deleted!")
+
+        if action == 'submit_checkout_list':
+            quantities = request.POST.getlist('qty')
+
+            checkout_items=CheckOutItems.objects.filter(visit=visit)
+
+            count = 0
+
+            for item in checkout_items:
+
+                # if item.service_item:
+                    # inventoryitem = InventoryItem.objects.get(id=int(item.service_item.item.id))
+                    # if inventoryitem.
+                item.units = quantities[count]
+                item.is_checked_out = True
+                item.save()
+
+                count += 1
+
+            messages.success(request,"Check Out List submitted !")
+
             
         return redirect('bleach-inventory:inventory-createcheckout',visit_id)
 
