@@ -3688,7 +3688,10 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 			if not order:		
 				order       = Order.objects.create(evaluation=evaluation,order_no=evaluation.evaluation_id,payment_status='PENDING',invoice_no=new_invoice_no)
 
+
 			###testing availability ####
+			# availability_check = request.data.get('availability_check')
+			# if availability_check:
 			test_schedules_dict = list(request.data.get("service_details").values())[0]['schedule_details']
 			for key in test_schedules_dict.keys():
 				schedule_date           =  test_schedules_dict[key]['date']
@@ -3843,6 +3846,7 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 				else:
 					response_dict['Error'] = 'Cleaners are not available'
 					return Response(response_dict,HTTP_200_OK) 
+
 
 			#Evaluation cost updation
 			evaluation.total_cost     += request.data.get('total_cost')

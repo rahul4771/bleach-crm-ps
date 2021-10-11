@@ -117,14 +117,13 @@
                       <div class="col-md-6 col-xs-6 mb-10">
                           <div class="order-details-key">Size</div> 
                           <div class="c-text order-details-value">
-                          {{section.size}} (
-                            {% if section.evaluation_book.service_type.name == 'Upholstery Cleaning' %}
-                                                                    
+                          {{section.size}} 
+                            {% if section.evaluation_book.service_type.name == 'Upholstery Cleaning' %}                                 
                               {% for price_range in price_ranges %}
                               {% if price_range.name == section.size and price_range.service_type == section.evaluation_book.service_type and price_range.upholstery_type == section.upholstery_type %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}} Seater){% endif %}
                               {% endfor %}
                             
-                              {% else %}
+                            {% else %}
                               
                               {% for price_range in price_ranges %}
                               {% if price_range.name == section.size and price_range.service_type == section.evaluation_book.service_type and section.evaluation_book.service_type.name != 'Mattress Cleaning' and price_range.is_newkitchen == section.new_kitchen and price_range.is_cabinet == section.is_cabinet and price_range.is_highprice_facade == section.is_highprice_facade and price_range.is_highprice_window == section.is_highprice_window %}({{price_range.minimum_area|floatformat:'0'}}-{{price_range.maximum_area|floatformat:'0'}} Sqm){% endif %}
@@ -132,7 +131,7 @@
                               {% endfor %}
                     
                             {% endif %}
-                            ) </div>
+                             </div>
                       </div>
                       <div class="col-md-6 col-xs-6 mb-10">
                           <div class="order-details-key">Wall Type</div> 
@@ -266,6 +265,8 @@
                 </tr>
                 {% endfor %} {% endcomment %}
 
+                <form method="POST" action="" >{% csrf_token %}
+                <input type="hidden" name="action" value="submit_checkout_list">
                 {% for item in check_out_items %}
                 <tr data-itemid="{{item.item.id}}">
                 <td>{% if item.service_item %}{{item.service_item.ingredient.ingredient}}{% else %}-{% endif %}</td>
@@ -275,22 +276,22 @@
                 <div class="qty-container">
         
                   <div class="quantity">
-                    <a class="quantity__minus pointer" onclick="decrement(4{{forloop.counter}})"><span>-</span></a>
-                    <input  type="text" class="quantity__input"  id="id_qty_4{{forloop.counter}}" name="qty" value="1">
-                    <a  class="quantity__plus pointer" onclick="increment(4{{forloop.counter}})"><span>+</span></a>
+                    <a class="quantity__minus pointer" onclick="decrement({{forloop.counter}})"><span>-</span></a>
+                    <input  type="text" class="quantity__input"  id="id_qty_{{forloop.counter}}" value="{{item.units}}" name="qty" value="1">
+                    <a  class="quantity__plus pointer" onclick="increment({{forloop.counter}})"><span>+</span></a>
                   </div>
                     
                 </div>
                 </td>
                 <td>
-                    <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
-                    {% if item.service_item %}<button class="inv-plan-img-btn" onclick="swapModal({{item.service_item.ingredient.id}})" > <img src="{% static 'files/inventory/swap.png' %}"  alt=""> </button>{% endif %}
+                    <button class="inv-plan-img-btn" type="button" data-toggle="modal" data-target="#deleteModel" onclick="delete_checkout_item(this)" data-checkoutid="{{item.id}}" > <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
+                    {% if item.service_item %}<button type="button" class="inv-plan-img-btn" onclick="swapModal({{item.service_item.ingredient.id}},{{item.id}})" > <img src="{% static 'files/inventory/swap.png' %}"  alt=""> </button>{% endif %}
                 </td>
                 </tr>
                 {% endfor %}
 
                 <tr>
-                  <td>           <button class="inv-plan-btn" onclick="openNavAddStore()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="" > Add Item</button></td>
+                  <td>  <button type="button" class="inv-plan-btn" onclick="openNavAddStore()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="" > Add Item</button></td>
                 </tr>
               </tbody>
               </table>
@@ -298,7 +299,8 @@
           </div>
         </div>
         <div class="row mt-20 text-center">
-          <button class="sent-button" >Submit</button>
+          <button class="sent-button" type="submit" >Submit</button>
+          </form>
                         <button class="view-button">Cancel</button>
         </div>
       </div>  
@@ -331,7 +333,11 @@
               <div class="col-md-12 text-center">
                  
                   <div class="cancel-model-content">
+                      <form method="POST" action="" >{% csrf_token %}
+                      <input type="hidden" name="item_id" id="checkout_item_id" >
+                      <input type="hidden" name="action" value="delete_item" >
                       <button class="sent-button" type="submit" >Delete</button>
+                      </form>
                       <button data-dismiss="modal" class="view-button">Cancel</button>
                     
                   </div>
@@ -434,6 +440,7 @@
           <input type="hidden" name="item" id="id_pro_sel2" value="" />
           <input type="hidden" name="action" value="swap_item" />
           <input type="hidden" name="ingredient_id" id="id_ingredient" value="" />
+          <input type="hidden" name="checkout_item_id" id="id_item_checkout" value="" />
 
           <div style="position: relative;">
               <div class="inv-input-container inv-border h-30">
@@ -491,9 +498,10 @@
 {% block javascript %}
 
 <script>
-async function swapModal(id){
+async function swapModal(id,checkout_item_id){
   console.log(id)
   $('#id_ingredient').val(id);
+  $('#id_item_checkout').val(checkout_item_id);
   $('#id_search2').empty();
 
   //list items using api    
@@ -706,6 +714,11 @@ function closeNavAddStore() {
 }
 function closeNavAddStore2() {
     document.getElementById("addStore2").style.width = "0";
+}
+
+function delete_checkout_item(d){
+  console.log("lppp")
+  $('#checkout_item_id').val($(d).data('checkoutid'));
 }
 
   	$(document).ready(function(){

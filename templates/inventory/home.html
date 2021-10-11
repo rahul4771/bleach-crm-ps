@@ -131,7 +131,7 @@
                     
                     <div class="row">
                         <div class="col-md-12">
-                            <div class="white-wrapper white-wrapper-padding m-0" style="margin-bottom: 0px !important;">
+                            {% comment %} <div class="white-wrapper white-wrapper-padding m-0" style="margin-bottom: 0px !important;">
                                 <div class="inv-dash-card-head">
                                     Purchase order approval
                                 </div>
@@ -199,7 +199,7 @@
 
                                     </table>
                                 </div>
-                            </div>
+                            </div> {% endcomment %}
                         </div>
                     </div>
                     <div class="row mt-10">
@@ -229,56 +229,34 @@
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            {% for order in orders %}
                                             <tr>
                                                 <td class="inv-blue-border">
     
-                                                    BLC6464544957
+                                                    {{order.order.order_no}}
                                                 </td>
                                                 <td class="text-center">
-                                                    Name
+                                                    {% for team in order.cleaning_team %}
+                                                    {{team.team_leader.name}}
+                                                    {% endfor %}
                                                 </td>
                                                 <td class="text-center">
-                                                    8.00 AM
+                                                    {{order.start_at|date:'d-m-Y'}}
                                                 </td>
                                                 <td class="text-center">
-                                                    General
+                                                    {{order.order_scheduler_book.service_type.name}}
                                                 </td>
     
                                                 <td style="float: right;">
-                                                    <a href="/bleach-inventory/checkout/">
-                                                    <button class="btn-shadow btn-p inv-plan-img-btn2 "> <img
-                                                        class="btn-img2"
-                                                            src="{% static 'files/inventory/icons/icon4.png' %}" alt="">
-                                                        Check out </button></a>
+                                                    <a href="/bleach-inventory/createcheckout/{{order.id}}"><button class="btn-p inv-plan-img-btn2 btn-shadow" > <img class="btn-img2"
+                                    src="{% static 'files/inventory/icons/icon4.png' %}" alt="">Check-out</button></a>
     
     
                                                 </td>
                                             </tr>
-                                            <tr>
-                                                <td class="inv-gray-border">
-    
-                                                    BLC6464544957
-                                                </td>
-                                                <td class="text-center">
-                                                    Name
-                                                </td>
-                                                <td class="text-center">
-                                                    8.00 AM
-                                                </td>
-                                                <td class="text-center">
-                                                    General
-                                                </td>
-    
-                                                <td style="float: right;">
-                                                    <button class=" inv-plan-img-btn2 btn-p inv-btn-dis"> <img
-                                                            class="btn-img2"
-                                                            src="{% static 'files/inventory/icons/icon4.png' %}" alt="">
-                                                        Check out </button>
-    
-    
-    
-                                                </td>
-                                            </tr>
+                                            {% endfor %}
+
+                                            
                                         </tbody>
                                        
                                        

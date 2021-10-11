@@ -213,7 +213,26 @@
 <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
  <input type="hidden" name="no_of_cleaners" value="{% if order_schedule.order_scheduler_book.number_of_cleaners %}{{order_schedule.order_scheduler_book.number_of_cleaners}}{% else %}{{order_schedule.no_of_cleaners}}{% endif %}">
 
- <div class="common-sub-head align-left">Assign Cleaning Team</div> 
+ <div class="common-sub-head align-left">Assign Cleaning Team</div>
+  {% if last_cleaning_team.cleaningteam_members %}
+  <div class="cleaning_prev_team">
+    <div class="prev-team-title">Previous Team</div>
+  <div class="d-flex mt-5">
+    {{last_cleaning_team.team_leader.name}} (Cleaning Agent),
+  {% for team_member in last_cleaning_team.cleaningteam_members %}
+  {% if not last_cleaning_team.team_leader == team_member.member %}
+  {{team_member.member.name}},
+  {% endif %}
+  {% endfor %}
+  <div class="text-center prev-assign-btn">
+    <input class="assignButton m-0" id="assign_previous_team" name="addevaluator" type="button" value="Assign" >
+  </div>
+  </div>
+  
+ 
+  
+</div>
+  {% endif %}
     <div class="commnDiv-border ltyellow-border"><!--commnDiv-border-->          
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
@@ -462,5 +481,24 @@ function add_duplicateremovel(params)
   });
 }
 
+
+//Assign Previous Team
+{% if last_cleaning_team.cleaningteam_members %}
+assigned_leader   = '{{last_cleaning_team.team_leader.id}}';
+assigned_cleaners = [];
+{% for team_member in last_cleaning_team.cleaningteam_members %}
+{% if not last_cleaning_team.team_leader == team_member.member %}
+assigned_cleaners.push('{{team_member.member.id}}');
+{% endif %}
+{% endfor %}
+{% endif %} 
+
+$('#assign_previous_team').click(function(){
+    $('.assign_leader').val(assigned_leader);
+    for(i=1;i<=assigned_cleaners.length;i++)
+    {
+      $('#assigned_cleaner'+i).val(assigned_cleaners[i-1]);
+    }
+});
 </script>
 {% endblock %}

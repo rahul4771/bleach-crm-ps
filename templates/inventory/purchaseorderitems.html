@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 {% load static %}
+{% load mathfilters %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -234,7 +235,7 @@
                         {% if item.product.item.item_add_type == 'unit' %}
                         <tr>
                             <td>
-                                {% if item.is_received == False %}
+                                {% if item.added_item_count != item.item_count %}
                                 <label style="padding-left: 0px !important;" class="c-container">
                                     <input class="item_select" type="radio" name="radio-select" data-itemid="{{item.product.item.id}}" data-itemname="{{item.product.item.name}}" data-itemcount="{{item.item_count}}" data-itemunitprice="{{item.unit_price}}" >
                                     <span style="top:-4px !important;" class="c-checkmark"></span>
@@ -248,7 +249,9 @@
                               {{item.product.item.name}}
                             </td>
                             <td class="text-left">
-                              {{item.item_count}}
+                              {% if item.added_item_count != item.item_count %}
+                              {{item.item_count|sub:item.added_item_count}}
+                              {% else %} {{item.item_count}} {% endif %}
                               </td>
 
                             <td class="text-left">
@@ -256,7 +259,7 @@
                             </td>
                           
                             <td>
-                                {% if item.is_received == True %}
+                                {% if item.added_item_count == item.item_count %}
                                 <span class="inv-dot c-active ml-5"></span>Added
                                 {% else %}
                                 <span class="inv-dot c-active ml-5"></span>Waiting
