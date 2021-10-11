@@ -18,8 +18,11 @@ class InventoryHome(IsInventoryAdmin,View):
     def get(self,request):
         items = InventoryItem.objects.filter(status=True)
         recent_items = items.order_by('-id')
+        datee = datetime.strptime('01-07-2021','%d-%m-%Y')
         purchase_items = items.filter(Q(item_status='out_of_stock') | Q(item_status='about_to_finish')).prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.all(),to_attr='units'))
-        return render(request,'inventory/home.html',{"recent_items":recent_items,"purchase_items":purchase_items})
+        orders = OrderScheduler.objects.filter(start_at__date=datee).filter(Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS')|Q(work_status='CLEANING_FULFILLED')).prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
+        
+        return render(request,'inventory/home.html',{"recent_items":recent_items,"purchase_items":purchase_items,"orders":orders})
 
 # Category.
 class InventoryCategory(IsInventoryAdmin,View):
@@ -1381,6 +1384,7 @@ class PurchaseOrderItemsPage(IsInventoryAdmin,View):
 
             purchase_order_item = PurchaseOrderItems.objects.get(purchase_order=purchase_order,product__item__id=int(item_id))
             purchase_order_item.is_received = True
+            purchase_order_item.added_item_count += 1
             purchase_order_item.save()
 
             messages.success(request,"Unit added to Inventory")
