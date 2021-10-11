@@ -1142,6 +1142,15 @@ class InventoryCreateCheckout(IsInventoryAdmin,View):
         cleaners = visit.no_of_cleaners
         service_recipe_ingredients = ServiceRecipeIngredients.objects.filter(service_type__service=service).prefetch_related(Prefetch('item_ingredient',queryset=ServiceRecipeItems.objects.all(),to_attr='service_recipe_items'))
         check_out_items = CheckOutItems.objects.filter(visit=visit)
+
+        # for check_out_item in check_out_items:
+            
+        for ingredient in service_recipe_ingredients:
+        
+            for service_item in ingredient.service_recipe_items:    
+                
+                if service_item.is_swapped_item == True:
+                    CheckOutItems.objects.get_or_create(visit=visit,service_item=service_item)
         print(service_recipe_ingredients,"itt")
         return render(request,'inventory/createCheckout.html',{"visit":visit,"items":items,"service_recipe_ingredients":service_recipe_ingredients,"check_out_items":check_out_items})
 
@@ -1164,21 +1173,12 @@ class InventoryCreateCheckout(IsInventoryAdmin,View):
             ingredient_id = request.POST.get('ingredient_id')
             ingredient = ServiceRecipeIngredients.objects.get(id=int(ingredient_id))
 
-            ingredient_items = ServiceRecipeItems.objects.filter(ingredient=ingredient)
+            ServiceRecipeItems.objects.filter(ingredient=ingredient,is_swapped_item=True).update(is_swapped_item=False)
 
             swap_item = ServiceRecipeItems.objects.get(id=int(checkout_item))
-
-            is_swapped_item = ingredient_items.filter(is_swapped_item=True).first()
-
-            if is_swapped_item:
-                is_swapped_item.is_swapped_item = False
-                is_swapped_item.save()
-
-                swap_item.is_swapped_item = True
-                swap_item.save()
-            else:
-                swap_item.is_swapped_item = True
-                swap_item.save()
+ 
+            swap_item.is_swapped_item = True
+            swap_item.save()
 
             messages.success(request,"Item Swapped!")
             

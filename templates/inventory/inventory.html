@@ -28,10 +28,10 @@
                     
                     </div>
                     <div class="right-pos">
-                        <button class="inv-plan-btn">
+                        {% comment %} <button class="inv-plan-btn">
                             <i class="fa fa-filter mr-5" aria-hidden="true"></i>
                             Filter
-                        </button>
+                        </button> {% endcomment %}
 
                         <button class="inv-blue-btn"  onclick="openNavAddStore('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Item </button>
                     </div>
@@ -245,7 +245,7 @@
                     <div class="model-input-name">Reserve</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="item_reserve" id="id_item_reserve">
+                        <input type="text"  class="w-p-100 inv-in" name="item_reserve" value="0" id="id_item_reserve">
                       </div>
                 </div>
 

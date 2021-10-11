@@ -225,7 +225,7 @@
                   </tr>
               </thead>
               <tbody id="id_table">
-                {% for ingredient in service_recipe_ingredients %}
+                {% comment %} {% for ingredient in service_recipe_ingredients %}
                 {% for item in ingredient.service_recipe_items %}
                   {% if forloop.first %}
                   <tr data-itemid="{{item.item.id}}">
@@ -264,13 +264,13 @@
 
                   </td>
                 </tr>
-                {% endfor %}
+                {% endfor %} {% endcomment %}
 
                 {% for item in check_out_items %}
                 <tr data-itemid="{{item.item.id}}">
-                <td>-</td>
-                <td>{{item.item.name}}</td>
-                <td>{{item.item.item_code}}</td>
+                <td>{% if item.service_item %}{{item.service_item.ingredient.ingredient}}{% else %}-{% endif %}</td>
+                <td>{% if item.service_item %}{{item.service_item.item.name}}{% else %}{{item.item.name}}{% endif %}</td>
+                <td>{% if item.service_item %}{{item.service_item.item.item_code}}{% else %}{{item.item.item_code}}{% endif %}</td>
                 <td>
                 <div class="qty-container">
         
@@ -284,6 +284,7 @@
                 </td>
                 <td>
                     <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
+                    {% if item.service_item %}<button class="inv-plan-img-btn" onclick="swapModal({{item.service_item.ingredient.id}})" > <img src="{% static 'files/inventory/swap.png' %}"  alt=""> </button>{% endif %}
                 </td>
                 </tr>
                 {% endfor %}

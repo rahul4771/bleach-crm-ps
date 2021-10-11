@@ -3478,6 +3478,7 @@ responsive:{
          this.responseText='Booking Successful'
          this.snackbar=true
         // this.getBookingDetails(response.data.booking_id)
+        this.last_image_stat=true
       
      this.uploadImages()
     // window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
