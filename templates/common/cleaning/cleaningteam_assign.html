@@ -213,7 +213,16 @@
 <form method="post" action="" enctype= "multipart/form-data">{% csrf_token %}
  <input type="hidden" name="no_of_cleaners" value="{% if order_schedule.order_scheduler_book.number_of_cleaners %}{{order_schedule.order_scheduler_book.number_of_cleaners}}{% else %}{{order_schedule.no_of_cleaners}}{% endif %}">
 
- <div class="common-sub-head align-left">Assign Cleaning Team</div> 
+ <div class="common-sub-head align-left">Assign Cleaning Team</div>
+  {% if last_cleaning_team.cleaningteam_members %}
+  Last Send Team :
+  {{last_cleaning_team.team_leader.name}} (Cleaning Agent),
+  {% for team_member in last_cleaning_team.cleaningteam_members %}
+  {% if not last_cleaning_team.team_leader == team_member.member %}
+  {{team_member.member.name}},
+  {% endif %}
+  {% endfor %}
+  {% endif %}
     <div class="commnDiv-border ltyellow-border"><!--commnDiv-border-->          
 <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
   <div class="ticket-form-left"><!--ticket-form-left-->
