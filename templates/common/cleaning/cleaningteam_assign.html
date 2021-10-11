@@ -225,7 +225,7 @@
   {% endif %}
   {% endfor %}
   <div class="text-center prev-assign-btn">
-    <input class="assignButton m-0" name="addevaluator" type="button" value="Assign" >
+    <input class="assignButton m-0" id="assign_previous_team" name="addevaluator" type="button" value="Assign" >
   </div>
   </div>
   
@@ -481,5 +481,24 @@ function add_duplicateremovel(params)
   });
 }
 
+
+//Assign Previous Team
+{% if last_cleaning_team.cleaningteam_members %}
+assigned_leader   = '{{last_cleaning_team.team_leader.id}}';
+assigned_cleaners = [];
+{% for team_member in last_cleaning_team.cleaningteam_members %}
+{% if not last_cleaning_team.team_leader == team_member.member %}
+assigned_cleaners.push('{{team_member.member.id}}');
+{% endif %}
+{% endfor %}
+{% endif %} 
+
+$('#assign_previous_team').click(function(){
+    $('.assign_leader').val(assigned_leader);
+    for(i=1;i<=assigned_cleaners.length;i++)
+    {
+      $('#assigned_cleaner'+i).val(assigned_cleaners[i-1]);
+    }
+});
 </script>
 {% endblock %}
