@@ -4090,9 +4090,14 @@ class AssigncleaningTeam(IsAuthenticated,View):
 			leaders             = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(Q(id__in=shift_leaders)|Q(id__in=super_shift_leaders))
 			cleaners            = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(Q(id__in=shift_cleaners)|Q(id__in=super_shift_cleaners))
 
-		price_ranges 		= ServicePriceRange.objects.filter(is_active=True)
+		try:
+			last_cleaning_team  = CleaningTeam.objects.select_related('order_scheduler__order','team_leader').filter(order_scheduler__order=order_schedule.order).order_by('start_at').prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='cleaningteam_members')).last()
+		except:
+			last_cleaning_team  = None
 
-		return render(request,'common/cleaning/cleaningteam_assign.html',{'order_schedule':order_schedule,'order_schedules':order_schedules,'cleaners':cleaners,'leaders':leaders,'price_ranges':price_ranges})
+		price_ranges 			= ServicePriceRange.objects.filter(is_active=True)
+
+		return render(request,'common/cleaning/cleaningteam_assign.html',{'order_schedule':order_schedule,'order_schedules':order_schedules,'cleaners':cleaners,'leaders':leaders,'last_cleaning_team':last_cleaning_team,'price_ranges':price_ranges})
 
 	def post(self,request,scheduler_id):
 		
