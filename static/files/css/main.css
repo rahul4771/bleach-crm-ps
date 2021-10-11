@@ -1581,3 +1581,19 @@ padding:10px;
 .addon-heading{
   font-size:16px;
 }
+
+/** CSS for cleanimng team**/
+
+.cleaning_prev_team{
+  padding:10px;
+  background:#edf1f5;
+  margin-bottom:20px;
+  margin-top:20px;
+ 
+}
+.prev-team-title{
+  color:#2e4e85;
+}
+.prev-assign-btn{
+  margin-left:auto;
+}
