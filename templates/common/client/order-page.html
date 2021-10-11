@@ -2402,6 +2402,7 @@
                                         {% endif %}
                                         <!-- feedback end-->
 
+                                        {% comment %}
                                         <!--reorder -->    
                                         {% for schedule in order.orderschedules|slice:"1" %}
                                         {% if forloop.first and schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' or order.order_status == 'ORDER_CLOSED'%}
@@ -2411,6 +2412,7 @@
                                         {% endif %}
                                         {% endfor %}
                                         <!--re order end-->
+                                        {% endcomment %}
 
                                         <!-- cancell-->
                                         {% if not order.evaluation.quatation_status %}
@@ -2577,6 +2579,7 @@
                             <!--feedback end here -->
 
 
+                            {% comment %}
                             <!--reorder-->
                             {% for schedule in order.orderschedules|slice:"1" %}
                             {% if forloop.first and schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' or order.order_status == 'ORDER_CLOSED'%}
@@ -2595,7 +2598,7 @@
                             {% endif %}
                             {% endfor %}
                             <!--reorder end here-->
-                                
+                            {% endcomment %}
 
 
                                 <!--submit button -->
