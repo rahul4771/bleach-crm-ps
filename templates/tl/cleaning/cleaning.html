@@ -616,8 +616,8 @@
 
  </div><!--commnDiv-border--> 
 <br>
- <div align="center"><input class="assignButton checkoutbutton" name="assign" type="button" v-on:click="submitform({{cleaning_team_detail.id}},'check-out')" value="Check Out">
- <input class="assignButton checkinbutton" id="checkin_id" name="assign" type="button" v-on:click="submitform({{cleaning_team_detail.id}},'check-in')" value="Check In">
+ <div align="center"><input class="assignButton checkoutbutton" name="assign" type="button" v-on:click="submitform({{cleaning_team_detail.id}},'check-out','{{cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_policy}}',{{cleaning_teams_count}},{{remaining_team}})" value="Check Out">
+ <input class="assignButton checkinbutton" id="checkin_id" name="assign" type="button" v-on:click="submitform({{cleaning_team_detail.id}},'check-in','{{cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_policy}}',{{cleaning_teams_count}},{{remaining_team}})" value="Check In">
   <!-- <input class="cancel-Button" name="assign" type="submit" value="Submit"></div> --> </form>    	
 <br> <br>             
         </div><!--center-formDiv-->

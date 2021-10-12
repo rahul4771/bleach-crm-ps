@@ -276,8 +276,16 @@ class Cleaning(IsTeamLeader,View):
 		price_ranges_change = ServicePriceRange.objects.filter(is_active=True,service_type__id=cleaning_team_detail.order_scheduler.order_scheduler_book.service_type.id)	
 
 		price_ranges = ServicePriceRange.objects.filter(is_active=True)
+
+		#remaining teams
+		cleaning_teams = CleaningTeam.objects.filter(order_scheduler__order_scheduler_book=cleaning_team_detail.order_scheduler.order_scheduler_book).values('order_scheduler__work_status')
+		cleaning_teams_count = cleaning_teams.count()
+		remaining_team = 0
+		for team in cleaning_teams:
+			if team['order_scheduler__work_status'] != 'CLEANING_FULFILLED':
+				remaining_team += 1
 		
-		return render(request,'tl/cleaning/cleaning.html',{"price_ranges":price_ranges,"price_ranges_change":price_ranges_change,"cleaning_team_detail":cleaning_team_detail,"cleaning_team_members":cleaning_team_members,"is_customer_booking":is_customer_booking})
+		return render(request,'tl/cleaning/cleaning.html',{"price_ranges":price_ranges,"price_ranges_change":price_ranges_change,"cleaning_team_detail":cleaning_team_detail,"cleaning_team_members":cleaning_team_members,"is_customer_booking":is_customer_booking,"cleaning_teams_count":cleaning_teams_count,"remaining_team":remaining_team})
 
 
 	def post(self,request,team_id):
@@ -290,6 +298,7 @@ class Cleaning(IsTeamLeader,View):
 
 		#remaining teams
 		cleaning_teams = CleaningTeam.objects.filter(order_scheduler__order_scheduler_book=cleaning_team_detail.order_scheduler.order_scheduler_book).values('order_scheduler__work_status')
+		cleaning_teams_count = cleaning_teams.count()
 		remaining_team = 0
 		for team in cleaning_teams:
 			if team['order_scheduler__work_status'] != 'CLEANING_FULFILLED':
@@ -364,13 +373,27 @@ class Cleaning(IsTeamLeader,View):
 			#checkout save
 			if submit_status == 'Check Out':
 
-				if remaining_team == 1 and remaining_keynotes >= 1:
-					messages.error(request,"Please Check all Keynotes!!!")
-					return redirect('tl:cleaning',team_id)
-				else:	
-					cleaning_team_detail.order_scheduler.work_status  		= 'CLEANING_FULFILLED'	
-					cleaning_team_detail.check_out                    		= timezone.now()
+				if cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION':
+					
+					if remaining_keynotes >= 1:
+						messages.error(request,"Please Check all Keynotes!!!")
+						return redirect('tl:cleaning',team_id)
+					else:
+						cleaning_team_detail.order_scheduler.work_status  		= 'CLEANING_FULFILLED'	
+						cleaning_team_detail.check_out                    		= timezone.now()
 				
+				else:
+					if cleaning_teams_count > 1:
+						if remaining_team == 1 and remaining_keynotes >= 1:
+							messages.error(request,"Please Check all Keynotes!!!")
+							return redirect('tl:cleaning',team_id)
+						else:	
+							cleaning_team_detail.order_scheduler.work_status  		= 'CLEANING_FULFILLED'	
+							cleaning_team_detail.check_out                    		= timezone.now()
+					else:	
+						cleaning_team_detail.order_scheduler.work_status  		= 'CLEANING_FULFILLED'	
+						cleaning_team_detail.check_out                    		= timezone.now()
+
 				cleaning_team_detail.order_scheduler.order.order_status = 'ORDER_IN_PROGRESS'
 				
 				cleaning_team_detail.save()
