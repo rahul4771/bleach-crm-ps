@@ -451,10 +451,12 @@ function openOccupied(occ_data){
     var date=$(occ_data).data('date')
     var staff=$(occ_data).data('staff')
     date=moment(date,'D-MM-YYYY').format('YYYY-MM-DD')
-  
+  $('.modal-title').html(`
+  <span id="occupied_staff_name">`+resourceList[staff].name+`</span>
+  <span id="occupied_date" class="ml-20 occupied-date">`+moment(date,'YYYY-MM-DD').format('DD-MM-YYYY')+`</span>
+  `)
 
-    $('#occupied_staff_name').text(resourceList[staff].name)
-    $('#occupied_date').text(moment(date,'YYYY-MM-DD').format('DD-MM-YYYY'))
+   
     axios.get(url+'/api/leave-scheduler/popup/?staff_id='+resourceList[staff].id+'&occupied_date='+date)
     .then(function (response) {
 
