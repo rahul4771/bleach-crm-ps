@@ -310,6 +310,7 @@ class PurchaseOrderItems(models.Model):
     purchase_order      = models.ForeignKey(PurchaseOrder,blank=True,null=True,related_name='purchase_order_purchase_order_item')
     product             = models.ForeignKey(SupplierItems,blank=True,null=True,related_name='product_purchase_order_item')
     item_count          = models.IntegerField(default=0,null=True,blank=True)
+    added_item_count    = models.IntegerField(default=0,null=True,blank=True)
     unit_price          = models.CharField(default=0,max_length=100,blank=True,null=True)
     total_price         = models.CharField(default=0,max_length=100,blank=True,null=True)
     is_received         = models.BooleanField(default=False,blank=False,null=False)
