@@ -1802,7 +1802,7 @@ console.log(response)
               if(this.multiServicesBill[i].bill[j].section.size.is_newkitchen){
                 this.serviceDetails.service_details[i].sections[j].new_kitchen=true
               }
-              if(this.multiServicesBill[i].bill[j].is_cabinet){
+              if(this.multiServicesBill[i].bill[j].section.is_cabinet){
                 this.serviceDetails.service_details[i].sections[j].is_cabinet=true
               }
               if(this.multiServicesBill[i].bill[j].section.stain_age){
@@ -1987,6 +1987,7 @@ console.log(response)
             "keynotes":{},
             "addons":{},
             "new_kitchen":false,
+            "is_cabinet":false,
             "is_highprice_facade":false,
             "is_highprice_window":false,
             "colour":'',
@@ -2006,7 +2007,7 @@ console.log(response)
             if(this.multiServicesBill[i].bill[j].section.size.is_newkitchen){
               this.serviceDetails.service_details[i].sections[j].new_kitchen=true
             }
-            if(this.multiServicesBill[i].bill[j].is_cabinet){
+            if(this.multiServicesBill[i].bill[j].section.is_cabinet){
               this.serviceDetails.service_details[i].sections[j].is_cabinet=true
             }
             if(this.multiServicesBill[i].bill[j].section.stain_age){
@@ -4130,12 +4131,12 @@ try {
           
           for(var j=0;j<max_size_val.length;j++){
             if(max_size_val[j].max_size==max_val){
-              var new_cost=left_size*max_size_val[j].unit_price
+              var new_cost=this.otherService.size*max_size_val[j].unit_price
               var current_cost=max_size_val[j].cost+new_cost
               var size=this.otherService.size
               this.otherService.size={
                 name: size+' Seater',
-                cost: current_cost,
+                cost: new_cost,
                 max_size:size,
                 min_size:size,
                 upholstery_type: "SOFA",
