@@ -1776,7 +1776,7 @@ console.log(response)
               "section_net_cost":this.multiServicesBill[i].bill[j].section_net_cost,
               "keynotes":{},
               "addons":{},
-              "is_newkitchen":false,
+              "new_kitchen":false,
               "is_cabinet":false,
               "is_highprice_facade":false,
               "is_highprice_window":false,
@@ -1800,7 +1800,7 @@ console.log(response)
                 this.serviceDetails.service_details[i].sections[j].is_highprice_window=true
               }
               if(this.multiServicesBill[i].bill[j].section.size.is_newkitchen){
-                this.serviceDetails.service_details[i].sections[j].is_newkitchen=true
+                this.serviceDetails.service_details[i].sections[j].new_kitchen=true
               }
               if(this.multiServicesBill[i].bill[j].is_cabinet){
                 this.serviceDetails.service_details[i].sections[j].is_cabinet=true
@@ -1986,7 +1986,7 @@ console.log(response)
             "section_net_cost":this.multiServicesBill[i].bill[j].section_net_cost,
             "keynotes":{},
             "addons":{},
-            "is_newkitchen":false,
+            "new_kitchen":false,
             "is_highprice_facade":false,
             "is_highprice_window":false,
             "colour":'',
@@ -2004,7 +2004,7 @@ console.log(response)
               this.serviceDetails.service_details[i].sections[j].is_highprice_window=true
             }
             if(this.multiServicesBill[i].bill[j].section.size.is_newkitchen){
-              this.serviceDetails.service_details[i].sections[j].is_newkitchen=true
+              this.serviceDetails.service_details[i].sections[j].new_kitchen=true
             }
             if(this.multiServicesBill[i].bill[j].is_cabinet){
               this.serviceDetails.service_details[i].sections[j].is_cabinet=true
