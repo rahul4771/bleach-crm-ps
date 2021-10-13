@@ -2338,7 +2338,7 @@ class GetMultipleServiceDateCleaningSlotesAutofix(APIView):
 	def post(self,request):
 		dropdown_slotes  = {}
 		number_of_cleaners  = int(request.data.get('number_of_cleaners'))-1
-		cleaning_hours       = float(request.data.get('cleaning_hours'))
+		cleaning_hours      = float(request.data.get('cleaning_hours'))
 		service_types       = request.data.get('service_types')
 		     
 
@@ -3893,7 +3893,7 @@ class EvaluatorMultipleCleaningBookingTogetherPhase2(APIView):
 					end_time                =  end_date_time.time()
 
 					#schedule
-					order_schedule = OrderScheduler.objects.create(order=order,status='CONFIRMED',customer_address=evaluation_details.address,evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,order_scheduler_book=saved_service,no_of_cleaners=schedules_dict[key]['no_of_cleaners'],cleaning_hours=schedules_dict[key]['cleaning_hours'])
+					order_schedule = OrderScheduler.objects.create(order=order,status='CONFIRMED',customer_address=evaluation_details.address,evaluation_details=evaluation_details,start_at=start_date_time,end_at=end_date_time,order_scheduler_book=saved_service,no_of_cleaners=schedules_dict[key]['no_of_cleaners'],cleaning_hours=schedules_dict[key]['cleaning_hours'],hourly_cleaning_duration=schedules_dict[key]['hourly_cleaning_duration'])
 
 				#create sections
 				sections_dict = services[service_detail]['sections']
