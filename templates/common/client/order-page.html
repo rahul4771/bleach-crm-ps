@@ -721,7 +721,7 @@
                         
                  </div>
                
-                <div class="col-md-6 mt-10" v-if="service_type=='General Cleaning' || service_type=='Deep Cleaning' || service_type=='Storage Area' || service_type=='Facade Cleaning' || service_type=='Kitchen Cleaning'|| service_type=='Sterilization'" >
+                <div class="col-md-6 mt-10" v-if="service_type=='General Cleaning' || service_type=='Deep Cleaning' || service_type=='Storage Area' || service_type=='Facade Cleaning' || service_type=='Kitchen Cleaning'|| service_type=='Sterilization' || service_type=='Hourly Cleaning'" >
                     <div class=" bold-text common-label required-field"> <label>Wall type</label></div>
                   <multiselect
                     v-model="editSectionData.wall_type"
@@ -734,7 +734,7 @@
                     
                   ></multiselect>
                 </div>
-                <div class="col-md-6 mt-10"  v-if="service_type=='General Cleaning' || service_type=='Deep Cleaning' || service_type=='Storage Area' || service_type=='Kitchen Cleaning'|| service_type=='Sterilization'||service_type=='Car Parking Umbrella'" >
+                <div class="col-md-6 mt-10"  v-if="service_type=='General Cleaning' || service_type=='Deep Cleaning' || service_type=='Storage Area' || service_type=='Kitchen Cleaning'|| service_type=='Sterilization'||service_type=='Car Parking Umbrella' || service_type=='Hourly Cleaning'" >
                     <div class=" bold-text common-label required-field"> <label>Floor type</label></div>
                   <multiselect
                     v-model="editSectionData.floor_type"
@@ -748,7 +748,7 @@
                     
                   ></multiselect>
                 </div>
-                <div class="col-md-6 mt-10" v-if="service_type=='General Cleaning' || service_type=='Deep Cleaning' || service_type=='Storage Area' || service_type=='Kitchen Cleaning'|| service_type=='Sterilization' || service_type=='Car Parking Umbrella'"  >
+                <div class="col-md-6 mt-10" v-if="service_type=='General Cleaning' || service_type=='Deep Cleaning' || service_type=='Storage Area' || service_type=='Kitchen Cleaning'|| service_type=='Sterilization' || service_type=='Car Parking Umbrella' || service_type=='Hourly Cleaning'"  >
                     <div class=" bold-text common-label required-field"> <label>Ceiling type</label></div>
                   <multiselect
                     v-model="editSectionData.ceiling_type"
@@ -841,7 +841,7 @@
                             </div>
                     </div>
                 </div>
-                <div class="col-md-12 mt-20" v-if="service_type=='General Cleaning' || service_type=='Deep Cleaning'">
+                <div class="col-md-12 mt-20" v-if="service_type=='General Cleaning' || service_type=='Deep Cleaning' || service_type=='Hourly Cleaning'">
                     <b>Kitchen (s)</b> 
                      <div class="row mt-10" v-if="keynote_update">
                          <div class="col-md-4 mt-10" v-for="(kitchenkeynote,kindex) in kitchen_addons" v-bind:key="kindex">
