@@ -587,7 +587,13 @@ building_warning:false,
 available_slotes:[],
 date_group:{},
 addons:[],
-last_image_stat:false
+last_image_stat:false,
+hourly_cleaning:{
+  duration:null,
+  hourly_duration:null,
+  cleaners:null
+},
+hourly_slots:true
 
       },
       methods: {
@@ -662,6 +668,8 @@ last_image_stat:false
           this.dialog=false
         },
         findAddedCost(){
+          if(this.serviceType!='Hourly Cleaning')
+          {
           var totalcost=0
          
           for(var i=0;i<this.billingData.length;i++){
@@ -678,6 +686,10 @@ last_image_stat:false
             console.log("added amount is "+totalcost)
             return 0
           }
+        }
+        else{
+          return 0
+        }
         },
         findFullAmount(){
           var fullamount=0
@@ -774,6 +786,9 @@ last_image_stat:false
         },
         scheduleTogether()
         {
+          if(this.serviceType=='Hourly Cleaning'){
+            this.cleaningPolicy='Subscription'
+          }
           if(this.checkScheduleAvail()){
             this.reconfirmation_dialog=true
           }
@@ -1297,6 +1312,9 @@ last_image_stat:false
           return combined
         },
         findCustomVisits(){
+          if(this.serviceType=='Hourly Cleaning'){
+            this.findHourlyCost()
+          }
           if(this.selected_double_slots.length==this.selectedDuration.hours/2){
 
           
@@ -1333,6 +1351,9 @@ last_image_stat:false
           
         },
         findVisits(){
+          if(this.serviceType=='Hourly Cleaning'){
+            this.findHourlyCost()
+          }
           if(this.selected_double_slots.length==this.selectedDuration.hours/2){
         if(this.selected_double_slots.length>0 && this.dateSelected)
         {
@@ -1422,11 +1443,25 @@ last_image_stat:false
         this.slot_msg=true
       }
         },
+        findHourlyCost(){
+          var total_cost=7.5*parseInt(this.hourly_cleaning.cleaners)*parseInt(this.hourly_cleaning.hourly_duration)
+
+          this.multiServicesBill[0].bill[0].section_net_cost=total_cost
+          this.multiServicesBill[0].bill[0].section_cost=total_cost
+          this.multiServicesBill[0].bill[0].section.section_net_cost=total_cost
+          this.multiServicesBill[0].bill[0].section.section_cost=total_cost
+          this.multiServicesBill[0].bill[0].sectiononly_cost=total_cost
+          this.multiServicesBill[0].bill[0].sectiononly_net_cost=total_cost
+          this.multiServicesBill[0].total_cost=total_cost
+        },
         findMonthlyVisits(){
+          if(this.serviceType=='Hourly Cleaning'){
+            this.findHourlyCost()
+          }
           if(this.selected_double_slots.length==this.selectedDuration.hours/2){
           if(this.selected_monthly_date.length>0 && this.selected_double_slots.length>0 )
           {
-          console.log("called monthly")
+        
           var count=0
           var visitcount=0
           while(count<999){
@@ -1439,7 +1474,7 @@ last_image_stat:false
            {
            if(this.selected_monthly_date.includes(String(dayNo)))
            {
-           console.log("yes i foiund")
+          
             var startSlot=Math.min(...this.selected_double_slots)
             var dateTime=day.format('DD-MM-YYYY')+' '+this.slotFormat[startSlot].start_time
             
@@ -1480,9 +1515,14 @@ last_image_stat:false
       }
         },
         checkAvailablility(){
+          var schedule_serviceTypes=this.schedule_serviceTypes
+          if(this.serviceType=='Hourly Cleaning'){
+            schedule_serviceTypes=[]
+            schedule_serviceTypes.push('General Cleaning')
+          }
          axios.post(this.url+'/customer/ajax/multipleservice/multipledates/cleaningslotes/',{number_of_cleaners:this.selectedDuration.cleaners,
           cleaning_hours:this.selectedDuration.hours,
-          service_types:this.schedule_serviceTypes,
+          service_types:schedule_serviceTypes,
           cleaning_datetimes:this.visitDateTime}).then(response=>{
             this.slotStat=response.data
             for(var i=0;i<this.visits.length;i++){
@@ -3172,6 +3212,13 @@ this.infectionControlServices=[]
     <div class="text-center pt-2 service-title">
     Outdoor Cleaning
   </div></div>
+
+  <div class="sr-service-card m-2 p-2 "   onclick="selectService('Hourly Cleaning',this)">
+  <i class="far fa-circle inactive-icon"></i>
+  <img src="/static/files/icons/hourly_cleaning.png" class="service-icon"> 
+  <div class="text-center pt-2 service-title">
+ Hourly Cleaning
+</div></div>
     `)
     selectServiceOnly('General Cleaning')
    
@@ -3760,9 +3807,13 @@ getAreaTypes() {
       });
   },
   getSize() {
+    var service=this.serviceType
+    if(service=='Hourly Cleaning'){
+      service='General Cleaning'
+    }
     axios
       .get(
-       this.url+"/customer/ajax/getservicesizeprice?service_type=" + this.serviceType
+       this.url+"/customer/ajax/getservicesizeprice?service_type=" + service
       )
       .then((response) => {
         this.serviceSize = response.data;
@@ -4359,6 +4410,7 @@ try {
   }).trigger('refresh.owl.carousel');
   },
   goToSchedule(){
+    
     if(!this.editScheduleStat){
       this.resetScheduler()
     }
@@ -4371,8 +4423,12 @@ try {
       this.findSelectedTotalSize()
       this.calcSelectedServices()
       this.newdurationcalculation();
+      if(this.serviceType=='Hourly Cleaning'){
+        this.cleaningPolicy='Subscription'
+      }
 
   },
+  
   checkEditSchedule(){
     if(Object.keys(this.editScheduleData).length>0){
       if(Object.keys(this.editScheduleData.schedule_details).length>0){
@@ -4438,6 +4494,12 @@ try {
       serviceData.sectiononly_net_cost=0
       this.billingData.push(serviceData)
       this.parseAddons()
+    }
+    if(this.serviceType=='Hourly Cleaning'){
+      this.billingData[0].section_net_cost=0
+      this.billingData[0].section_cost=0
+      this.billingData[0].sectiononly_net_cost=0
+      this.billingData[0].sectiononly_cost=0
     }
      var sampleServicesBill={
        service:'',
@@ -4650,6 +4712,23 @@ try {
         keynotes: {},
       });
     }
+  },
+  hourlyCleaningChange(){
+    this.hourly_slots=false
+    this.selectedDuration.cleaners=parseInt(this.hourly_cleaning.cleaners)
+    if((parseInt(this.hourly_cleaning.hourly_duration)%2) !=0 ){
+      this.selectedDuration.hours=parseInt(this.hourly_cleaning.hourly_duration)+1
+      this.hourly_cleaning.duration=parseInt(this.hourly_cleaning.hourly_duration)+1
+    }
+    else{
+      this.selectedDuration.hours=parseInt(this.hourly_cleaning.hourly_duration)
+      this.hourly_cleaning.duration=parseInt(this.hourly_cleaning.hourly_duration)
+    }
+    this.selectedDuration.slots=parseInt(this.selectedDuration.hours)/2
+    
+    this.hourly_slots=false
+    this.calcSlots()
+    this.hourly_slots=true
   },
   selectDuration(duration) {
     duration.slots = duration.hours / 2;
