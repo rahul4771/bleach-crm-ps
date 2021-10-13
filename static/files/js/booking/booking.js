@@ -3589,7 +3589,7 @@ responsive:{
         this.submit_loader=false
         
        if(this.last_image_stat){
-      //  window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
+        window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
        }
      
        
@@ -3597,7 +3597,7 @@ responsive:{
        .catch((error) => {
         console.log(error);
         if(this.last_image_stat){
-        //  window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
+          window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
          }
       });
 
