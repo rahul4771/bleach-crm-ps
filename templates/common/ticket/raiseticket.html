@@ -88,10 +88,9 @@
                                 <div class="wrap-drop" id="noble-gases" style="z-index: 2;">
                                     <span>--Select Order--</span>
                                     <ul class="drop">
-                                        <li><a>BLC00000</a></li>
-                                        <li><a>BLC00000</a></li>
-                                        <li><a>BLC00000</a></li>
-                                        <li><a>BLC00000</a></li>
+                                        {% for order in orders %}
+                                        <li><a>{{order.order_no}}</a></li>
+                                        {% endfor %}
                                     </ul>
                                 </div>
                             </div>

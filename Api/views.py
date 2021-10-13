@@ -618,6 +618,43 @@ class DeleteShiftSchedule(APIView):
 
 		return Response(response_dict,HTTP_200_OK)
 
+class OrderDetailsAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request,order_id):
+		response_dict = {'success':False}
+		print(order_id,"oid")
+		# try:
+		order = Order.objects.select_related('evaluation__customer','evaluation__call_attender').prefetch_related(
+		Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book','customer_address__area','customer_address__governorate').order_by('start_at').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).select_related('team_leader','drop_off_driver','pick_up_driver').prefetch_related(Prefetch('media_cleaningteam',queryset=CleaningTeamMedia.objects.filter(is_active=True),to_attr='cleaning_team_medias'),Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_team')),to_attr='orderschedules'),
+		).get(is_active=True,id=order_id)
+		# except:
+		# 	order = None
+
+		response_dict['order_no'] = order.order_no
+		response_dict['customer_name'] = order.evaluation.customer.name
+		response_dict['customer_number'] = order.evaluation.customer.mobile_number
+		response_dict['amount'] = order.evaluation.customer.mobile_number
+
+		for schedule in order.orderschedules:
+			if schedule.first:
+				response_dict['servicetype'] = schedule.order_scheduler_book.service_type.name
+				response_dict['cleaning_policy'] = schedule.order_scheduler_book.cleaning_policy
+				response_dict['start_at'] = schedule.start_at
+
+				for team in schedule.cleaning_team:
+					response_dict['team_leader'] = team.team_leader.name
+
+					members = []
+					for members in team.cleaning_team_members:
+						members.append(member.member.name)
+
+					response_dict['members'] = members
+		print(response_dict,"dict")
+
+		return Response(response_dict,HTTP_200_OK)
+
 class DailySalesAPI(APIView):
 	permission_classes  	=   (AllowAny,)
 	authentication_classes  = ()

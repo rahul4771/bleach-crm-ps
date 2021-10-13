@@ -148,10 +148,10 @@ class Order(models.Model):
 	updated         = models.DateTimeField(auto_now=True)
 	
 	def __unicode__(self):
-		return str(self.order_no)
+		return str(self.id)
 
 	def __str__(self):
-		return self.order_no
+		return self.id
 
 	def dropzerostotalamount(self):
 		if self.total_amount == int(self.total_amount):
