@@ -722,7 +722,10 @@ function getLeave(current_date){
     
     
    if(userIndex != undefined ){
+       if(resourceList[userIndex])
+       {
     resourceList[userIndex].leave.push({date:gt_day+'-'+gt_month+'-'+gt_year,type:response.data.staffs[i].leave_type,leave_id:response.data.staffs[i].id});
+       }
    }
    
     
