@@ -489,10 +489,8 @@ class ShiftScheduleAPI(APIView):
 
 	def get(self,request):
 		response_dict = {"success":False}
-		# month = int(request.GET.get('month'))
-		# year  = int(request.GET.get('year'))
-		month = 10
-		year  = 2021
+		month = int(request.GET.get('month'))
+		year  = int(request.GET.get('year'))
 
 		try:
 			shiftschedules = ShiftSchedule.objects.filter(is_active=True).filter(Q(Q(shift_date__month=month)&Q(shift_date__year=year))|Q(Q(shift3_start_at__month=month)&Q(shift3_start_at__year=year)))
