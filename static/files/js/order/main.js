@@ -1898,9 +1898,10 @@ setTimeout(function() {
         this.editSectionData.section_cost=sofa.cost
       }
       if(!found){
-          var temp = this.sofa_size[this.sofa_size.length-1].cost
-          var rem=parseInt(this.editSectionData.size)-this.sofa_size[this.sofa_size.length-1].max_size
-          this.editSectionData.section_cost=temp+(rem*this.sofa_size[0].unit_price)
+         // var temp = this.sofa_size[this.sofa_size.length-1].cost
+          //var rem=parseInt(this.editSectionData.size)-this.sofa_size[this.sofa_size.length-1].max_size
+         // this.editSectionData.section_cost=temp+(rem*this.sofa_size[0].unit_price)
+         this.editSectionData.section_cost=this.editSectionData.size*this.sofa_size[0].unit_price
       }
       
     },
