@@ -987,7 +987,8 @@ hourly_slots:true
                 "date":date,
                "time":this.slotFormat[parseInt(min_slot)].start_time,
               "no_of_cleaners":this.selectedDuration.cleaners,
-               "cleaning_hours":cleaning_hr
+               "cleaning_hours":cleaning_hr,
+               "hourly_cleaning_duration":null
               }
               count=count+1
               }
@@ -1008,7 +1009,8 @@ hourly_slots:true
                 "date":date,
                "time":this.slotFormat[parseInt(min_slot)].start_time,
               "no_of_cleaners":this.selectedDuration.cleaners,
-               "cleaning_hours":this.selected_onetime_slots[k].slots.length*2
+               "cleaning_hours":this.selected_onetime_slots[k].slots.length*2,
+               "hourly_cleaning_duration":null
               }
               count=count+1
             }
@@ -1183,7 +1185,8 @@ hourly_slots:true
                 "date":this.visits[k].date,
                "time":this.slotFormat[min_slot].start_time,
               "no_of_cleaners":this.selectedDuration.cleaners,
-               "cleaning_hours":this.selectedDuration.hours
+               "cleaning_hours":this.selectedDuration.hours,
+               "hourly_cleaning_duration":parseInt(this.hourly_cleaning.hourly_duration)||null
               }
             }
            
@@ -1808,8 +1811,8 @@ console.log(response)
               }
               if(this.serviceDetails.service_details[i].cleaning_policy=='SUBSCRIPTION'){
                 var visits=Object.keys(this.multiServicesBill[i].schedule_details).length
-                this.serviceDetails.service_details[i].total_cost=parseInt(this.serviceDetails.service_details[i].total_cost)*parseInt(visits)
-                this.serviceDetails.service_details[i].estimated_cost=parseInt(this.serviceDetails.service_details[i].total_cost)
+                this.serviceDetails.service_details[i].total_cost=parseFloat(this.serviceDetails.service_details[i].total_cost)*parseInt(visits)
+                this.serviceDetails.service_details[i].estimated_cost=parseFloat(this.serviceDetails.service_details[i].total_cost)
               }
             for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
               this.serviceDetails.service_details[i].sections[j]={
