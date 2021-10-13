@@ -3606,7 +3606,7 @@ Fill all the details of the Buildings  to proceed
                       </div>
                      
                     
-                      <div class="col-md-3" @click="goToServices()" v-if="serviceType!='Hourly Cleaning'">
+                      <div class="col-md-3" @click="goToServices()" v-if="checkHourly()">
                         <div class="cart-item-card justify-center h-100">
                           <div class="cart-item-add h-100">
                             <div class="text-center ">

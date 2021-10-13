@@ -691,6 +691,16 @@ hourly_slots:true
           return 0
         }
         },
+        checkHourly(){
+          for(var i=0;i<this.multiServicesBill.length;i++){
+            if(this.multiServicesBill[i].service=='Hourly Cleaning'){
+              return false
+            }
+           
+          }
+          return true
+         
+        },
         findFullAmount(){
           var fullamount=0
          
@@ -3147,6 +3157,21 @@ removeOneTimeSlot(slot){
     
    
   },
+  getHourly(){
+    if(this.multiServicesBill.length==0)
+    {
+    return(
+   ` <div class="sr-service-card m-2 p-2 "   onclick="selectService('Hourly Cleaning',this)">
+  <i class="far fa-circle inactive-icon"></i>
+  <img src="/static/files/icons/hourly_cleaning.png" class="service-icon"> 
+  <div class="text-center pt-2 service-title">
+ Hourly Cleaning
+</div></div>`)
+    }
+    else{
+      return ''
+    }
+  },
   selectCategory(item){
     var carousel = $("#service-carousel");
     carousel.owlCarousel('destroy'); 
@@ -3212,14 +3237,9 @@ this.infectionControlServices=[]
     <div class="text-center pt-2 service-title">
     Outdoor Cleaning
   </div></div>
-
-  <div class="sr-service-card m-2 p-2 "   onclick="selectService('Hourly Cleaning',this)">
-  <i class="far fa-circle inactive-icon"></i>
-  <img src="/static/files/icons/hourly_cleaning.png" class="service-icon"> 
-  <div class="text-center pt-2 service-title">
- Hourly Cleaning
-</div></div>
-    `)
+  
+  ` +this.getHourly()
+    )
     selectServiceOnly('General Cleaning')
    
     }
