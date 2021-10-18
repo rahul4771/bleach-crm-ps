@@ -918,6 +918,7 @@ class PaymentDetails(IsAuthenticated,View):
 
 		total_transactions = transactions.count()
 		total_transactions_amount = transactions.aggregate(total_paid = Sum('amount_paid'))['total_paid']
+		total_transactions_balance = transactions.aggregate(total_balance = Sum('order__remining_amount'))['total_balance']
 
 		
 		

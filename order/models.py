@@ -236,10 +236,10 @@ class Investigation(models.Model):
 	updated              = models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
-		return str(self.id)
+		return str(self.order.order_no)
 
 	def __str__(self):
-		return str(self.id)
+		return str(self.order.order_no)
 
 #For Tracking Medias Uploaded by Investigator on Site
 
@@ -423,10 +423,10 @@ class FollowUp(models.Model):
 		super(FollowUp, self).save(*args, **kwargs)
 	
 	def __unicode__(self):
-		return str(self.id)
+		return str(self.ticket_no)
 
 	def __str__(self):
-		return str(self.id)
+		return str(self.ticket_no)
 
 #Devide an Followup into a number of Schedules.This is to handle multiple days cleaning,multiple address cleaning Subscription Cleaning etc...
 
