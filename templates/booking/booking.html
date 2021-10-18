@@ -439,6 +439,13 @@ width="1000"
 
 >
 <v-card style="min-height:600px">
+  <div class="shift_switch">
+    <v-switch
+  v-model="out_of_shift"
+  label="Out of Shift Cleaning"
+  class="mt-4 ml-2 not-required"
+  ></v-switch>
+  </div>
    <!--- Hourly Cleaning Begins Here-->
    <div v-if="serviceType=='Hourly Cleaning'">
     <div class="row m-0 justify-center">
@@ -627,6 +634,14 @@ width="1000"
 
 >
 <v-card style="min-height:600px">
+
+<div class="shift_switch">
+  <v-switch
+v-model="out_of_shift"
+label="Out of Shift Cleaning"
+class="mt-4 ml-2 not-required"
+></v-switch>
+</div>
 <!--- Hourly Cleaning Begins Here-->
 <div v-if="serviceType=='Hourly Cleaning'">
   <div class="row m-0 justify-center">
@@ -880,6 +895,13 @@ width="1000"
 
 >
 <v-card style="min-height:500px">
+  <div class="shift_switch">
+    <v-switch
+  v-model="out_of_shift"
+  label="Out of Shift Cleaning"
+  class="mt-4 ml-2 not-required"
+  ></v-switch>
+  </div>
   <!--- Hourly Cleaning Begins Here-->
   <div v-if="serviceType=='Hourly Cleaning'">
     <div class="row m-0 justify-center">
@@ -3606,7 +3628,7 @@ Fill all the details of the Buildings  to proceed
                       </div>
                      
                     
-                      <div class="col-md-3" @click="goToServices()" v-if="serviceType!='Hourly Cleaning'">
+                      <div class="col-md-3" @click="goToServices()" v-if="checkHourly()">
                         <div class="cart-item-card justify-center h-100">
                           <div class="cart-item-add h-100">
                             <div class="text-center ">

@@ -749,6 +749,10 @@ margin: auto;
     padding-top:10px;
 
 }
+.shift_switch{
+    position: absolute;
+    right:20px;
+}
 .cart-item-card{
     background: #FFFFFF 0% 0% no-repeat padding-box;
 border: 1px solid #707070;
@@ -1030,6 +1034,12 @@ cursor:pointer;
 [v-cloak] {display: none}
   
 @media only screen and (max-width: 600px) {
+    .shift_switch{
+        position: relative;
+        right: 0px;
+    
+    top: 20px;
+    }
     .content{
         margin-top: 0px !important;
     }
