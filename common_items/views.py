@@ -74,12 +74,24 @@ def generate_random_username(size=10, chars=string.ascii_uppercase + string.digi
 class NewRaiseTicket(IsAuthenticated,View):
 	def get(self,request):
 		try:
-			orders = Order.objects.filter(is_active=True).filter(Q(evaluation__quatation_status='APPROVED') & ~Q(Q(order_status='ORDER_CANCELLED')))
+			# visits = Order.objects.filter(is_active=True).filter(Q(evaluation__quatation_status='APPROVED') & ~Q(Q(order_status='ORDER_CANCELLED')))
+			visits = OrderScheduler.objects.filter(is_active=True).filter(Q(order__evaluation__quatation_status='APPROVED') & ~Q(Q(order__order_status='ORDER_CANCELLED'))).select_related('order_scheduler_book','customer_address__area','customer_address__governorate').order_by('order__id').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).select_related('team_leader','drop_off_driver','pick_up_driver').prefetch_related(Prefetch('media_cleaningteam',queryset=CleaningTeamMedia.objects.filter(is_active=True),to_attr='cleaning_team_medias'),Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_team'))
 		except:
-			orders = None
+			visits = None
 
 		investigators = UserProfile.objects.filter(Q(Q(user_type='QUALITYCONTROLL')|Q(user_type='OPERATIONSUPERVISOR')|Q(user_type='SENIORTEAMLEADER')),is_active=True)
-		return render(request,'common/ticket/raiseticket.html',{"orders":orders})
+		return render(request,'common/ticket/raiseticket.html',{"visits":visits})
+
+	def post(self,request):
+		visit_id = request.POST.get('visit_id')
+		ticket_types = request.POST.get('ticket_type')
+		images = request.POST.getlist('mediabefore')
+		notes = request.POST.get('investigation_notes')
+
+		visit = OrderScheduler.objects.get(id=int(visit_id))
+		order = visit.order
+		print(visit_id,ticket_types,images,notes,"koko")
+		return redirect('agent:agentdash-board')
 
 class OrderDetails(IsAuthenticated,View):
 	def get(self,request):
@@ -1410,7 +1422,7 @@ class ActiveSubscriptions(IsAuthenticated,View):
 class ClientOrderDetails(IsAuthenticated,View):
 	def get(self,request,order_id):
 
-		visits = Order.objects.select_related('evaluation__customer','evaluation__call_attender').prefetch_related(
+		order = Order.objects.select_related('evaluation__customer','evaluation__call_attender').prefetch_related(
 			Prefetch('evaluation__booking_evaluation',queryset=CustomerBooking.objects.filter(is_active=True,booking_type='CLEANINGBOOKING'),to_attr='customer_booking'),
 			Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('evaluator','address__governorate','address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True).select_related('service_type').prefetch_related(Prefetch('evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr='evaluationbookmedias'),Prefetch('evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='evaluationbooksectionkeynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='evaluationbooksections')),to_attr='evaluationbooks')),to_attr='evaluationdetails'),
 			Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book','customer_address__area','customer_address__governorate').order_by('start_at').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).select_related('team_leader','drop_off_driver','pick_up_driver').prefetch_related(Prefetch('media_cleaningteam',queryset=CleaningTeamMedia.objects.filter(is_active=True),to_attr='cleaning_team_medias'),Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_team'),Prefetch('investigations_orderschedule',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('investigation_media',queryset=InvestigationMedia.objects.filter(is_active=True),to_attr='investigationmedias'),Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.filter(is_active=True),to_attr='paybackdiscounts'),Prefetch('buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.filter(is_active=True),to_attr='buybackpromocodegift'),Prefetch('followup_investigation',queryset = FollowUp.objects.filter(is_active=True).prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True).prefetch_related(Prefetch('followup_member_team',queryset=FollowUpTeamMember.objects.filter(is_active=True),to_attr='followupmembers')),to_attr='followupteams')),to_attr='follow_up_schedules')),to_attr='followups')),to_attr='investigations')),to_attr='orderschedules'),

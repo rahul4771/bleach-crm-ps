@@ -80,16 +80,18 @@
                 <div class="main-content-holder">
                     <!--main-content-holder-->
     
-    
+                <form method="POST" action="" >{% csrf_token %}
+
                     <div class="white-wrapper">
                         <div class="row">
                             <div class="col-md-3">
+                            <input type="hidden" name="visit_id" id="id_visit" />
                                 <div class="tk-common-text">Select Order</div>
                                 <div class="wrap-drop" id="noble-gases" style="z-index: 2;">
                                     <span>--Select Order--</span>
                                     <ul class="drop">
-                                        {% for order in orders %}
-                                        <li><a>{{order.order_no}}</a></li>
+                                        {% for visit in visits %}
+                                        <li onclick="loadvisitdata({{visit.id}})"><a>{{visit.order.order_no}} - {{visit.start_at}}</a></li>
                                         {% endfor %}
                                     </ul>
                                 </div>
@@ -97,10 +99,10 @@
                         </div>
                         <div class="row mt-10">
                             <div class="col-md-6">
-                                <div class="tk-order-card">
+                                <div class="tk-order-card" hidden>
                                     <div class="row">
                                         <div class="col-md-3">
-                                            <div class="tk-common-text" style="margin-bottom: 5px">BLC1265515656312</div>
+                                            <div class="tk-common-text" id="visit_blc" style="margin-bottom: 5px">BLC1265515656312</div>
                                             <div class="d-flex">
                                                 <div>
                                                     <span class="tk-dot tk-completed-color"></span><span class="tk-common-text2 av-font">Paid</span>
@@ -109,33 +111,29 @@
                                                     <span class="tk-dot tk-completed-color"></span><span class="tk-common-text2 av-font">Closed</span>
                                                 </div>
                                             </div>
-                                            <div style="margin-bottom:0px" class="mt-15 tk-common-text2">
+                                            <div style="margin-bottom:0px" class="mt-15 tk-common-text2" id="visit_customer">
                                                 Manal Alesheed
                                             </div>
-                                            <div  class="tk-common-text2">
+                                            <div  class="tk-common-text2" id="visit_customer_number">
                                                 9595959595
                                             </div>
                                         </div>
                                         <div class="col-md-6">
-                                            <div style="margin-bottom: 5px" class="tk-common-text">Kitchen Cleaning-One time service</div>
-                                            <div  class="tk-common-text2">Dec 01 2020 ,04:04 AM</div>
+                                            <div style="margin-bottom: 5px" class="tk-common-text"><span id="visit_servicetype">Kitchen Cleaning</span>-<span id="visit_cleaningpolicy">One time service</span></div>
+                                            <div  class="tk-common-text2" id="visit_start_at">Dec 01 2020 ,04:04 AM</div>
                                             <div class="d-flex mt-20">
                                                 <div class="d-flex">
-                                                    <img src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle"> 
-                                                    <div style="margin-bottom: 0px;"  class="tk-common-text2 ml-5 mt-10">Saravan</div>
+                                                    <img id="visit_teamleader_image" src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle"> 
+                                                    <div style="margin-bottom: 0px;"  class="tk-common-text2 ml-5 mt-10" id="visit_teamleader">Saravan</div>
                                                 </div>
-                                                <div class="ml-20 d-flex">
-                                                    <img @click="showCleaners()" src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle">
-                                                    <img @click="showCleaners()" src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle" style="margin-left: -20px;">
-                                                    <img @click="showCleaners()" src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle" style="margin-left: -20px;">
-                                                    <img @click="showCleaners()" src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle" style="margin-left: -20px;">
-                                                    <div @click="showCleaners()" style="margin-bottom: 0px;"  class="tk-common-text2 ml-5 mt-10 pointer">4 Cleaners</div>
+                                                <div class="ml-20 d-flex" id="visit_team_members">
+                                                    
                                                 </div>
                                             </div>
 
                                         </div>
                                         <div class="col-md-3 text-center">
-                                            <div class="tk-total-text" style="margin-top: 40px; line-height: 1;">80.000 KD</div>
+                                            <div class="tk-total-text" style="margin-top: 40px; line-height: 1;" id="visit_price">80.000 KD</div>
                                         </div>
                                     </div>
                                 </div>
@@ -149,7 +147,7 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="tk-common-text">Select Ticket Type</div>
-                                <multiselect @Close="selectTickets()" @remove='hideAll()' label="name" track-by="name"  v-model="value"  selectLabel="Select Ticket" :showLabels='true' :multiple="true" placeholder="Select Ticket Type" :options="options"></multiselect>
+                                <multiselect name="ticket_type" @Close="selectTickets()" @remove='hideAll()' label="name" track-by="name"  v-model="value"  selectLabel="Select Ticket" :showLabels='true' :multiple="true" placeholder="Select Ticket Type" :options="options"></multiselect>
                             
                             </div>
                         </div>
@@ -201,7 +199,7 @@
                             <div class="row">
                                 <div class="col-md-5">
                                     <div class="inv-input-container "> 
-                                        <textarea style="width: 100%;" rows="8" id="id_item_description" name="item_description"></textarea>
+                                        <textarea style="width: 100%;" rows="8" id="id_item_description" name="investigation_notes"></textarea>
                                         </div>
                                 </div>
                             </div>
@@ -228,11 +226,11 @@
                             <div class="row mt-30">
                                 <div class="d-flex" style="align-items: center;
                                 justify-content: center;">
-                                    <button class="tk-can"> Cancel</button>
-                                    <button class="ml-5 tk-sub">Submit</button>
+                                    <button class="tk-can" type="button"> Cancel</button>
+                                    <button class="ml-5 tk-sub" type="submit">Submit</button>
                                 </div>
                             </div>
-                            
+                </form>            
                             
                         </div>
                         <div v-if="at">
@@ -456,12 +454,7 @@
                               </div>
                            
                               
-                              
-                             
-                  
-                  
-                  
-                              
+  
                             </div>
                             <div class="row mt-10"></div>
                            
@@ -807,8 +800,6 @@
     this.initEvents();
 }
 
-
-
    
 DropDown.prototype = {
     initEvents: function () {
@@ -851,5 +842,37 @@ $(function () {
         $('.wrap-drop').removeClass('active');
     });
 });
+
+async function loadvisitdata(visit_id){
+
+    axios.get(url+'/api/order-details/'+visit_id)
+                .then(function (response) {
+                    console.log(response.data,"lop")
+                    $('.tk-order-card').show();
+                    $('#visit_blc').text(response.data.order_no);
+                    $('#id_visit').val(response.data.visit_id);
+                    $('#visit_customer').text(response.data.customer_name);
+                    $('#visit_customer_number').text(response.data.customer_number);
+                    $('#visit_servicetype').text(response.data.servicetype);
+                    $('#visit_cleaningpolicy').text(response.data.cleaningpolicy);
+                    $('#visit_start_at').text(response.data.start_at);
+                    $('#visit_teamleader').text(response.data.team_leader);
+                    $('#visit_teamleader_image').attr("src",response.data.team_leader_image);
+                    $('#visit_price').text(parseFloat(response.data.amount).toFixed(3)+' '+'KD');
+                    $('#visit_no_of_cleaners').text(response.data.no_of_cleaners);
+
+                    $(response.data.members).each(function(key,value){
+                        if (key == 1){
+                            $('#visit_team_members').append('<img @click="showCleaners()" src="'+value.member_image+'" class="tk-img-circle">')
+                        }else{
+                            $('#visit_team_members').append('<img @click="showCleaners()" src="'+value.member_image+'" class="tk-img-circle" style="margin-left: -20px;">')
+                        }
+
+                    })
+                    $('#visit_team_members').append('<div @click="showCleaners()" style="margin-bottom: 0px;"  class="tk-common-text2 ml-5 mt-10 pointer">'+response.data.no_of_cleaners+' cleaners</div>')
+
+                })
+
+}
 </script>
 {% endblock %}
