@@ -62,7 +62,7 @@ const app = new Vue({
       }
     },
 
-    submitform(cleaningteam_id,cleaningtype){
+    submitform(cleaningteam_id,cleaningtype,cleaningpolicy,teamcount,remainingteamcount){
       //console.log(cleaningteam_id,cleaningtype,"lop")
       var form_items = new FormData()
       form_items.append('team_id',cleaningteam_id)
@@ -80,10 +80,37 @@ const app = new Vue({
       form_items.append('check_out_notes',$('#check_out_notes').val())
       console.log(keynote_count,checked_keynotes,"keyns")
 
-      if(checked_keynotes == keynote_count){
-        var form_url = url+'/api/check-out/' ;
-      }else{
-        alert("Please check all keynotes !")
+      if (cleaningpolicy == 'SUBSCRIPTION'){
+        if(checked_keynotes == keynote_count){
+          var form_url = url+'/api/check-out/' ;
+        }else{
+          alert("Please check all keynotes !")
+        }
+      }
+      
+      if (cleaningpolicy == 'ONE TIME SERVICE'){
+        console.log(remainingteamcount,teamcount,"loc")
+        if (remainingteamcount == 1 && teamcount > 1){
+          
+          if(checked_keynotes == keynote_count){
+            var form_url = url+'/api/check-out/' ;
+          }else{
+            alert("Please check all keynotes !")
+          }
+
+        }
+        
+        if (remainingteamcount == 1 && teamcount == 1){
+          if(checked_keynotes == keynote_count){
+            var form_url = url+'/api/check-out/' ;
+          }else{
+            alert("Please check all keynotes !")
+          }
+        }
+        
+        if (remainingteamcount > 1 && teamcount > 1){
+          var form_url = url+'/api/check-out/' ;
+        }
       }
       
     };

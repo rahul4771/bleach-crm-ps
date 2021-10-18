@@ -228,7 +228,7 @@ const app=  new Vue({
         selectedEditSlot:[],
         selectedSlotDetailed:{},
         dataCompleted:false,
-        action_type:'edit_cleaning_withautofix',
+        action_type:'edit_cleaning_withoutautofix',
         cleaningAgentDialog:false,
         cleaningFollowupDialog:false,
         followupStat:false,

@@ -119,7 +119,7 @@ function editSection(service){
  app.editSectionData.section_id=sid
  //app.editSectionData.addons=app.sections[index-1].addonsections
  app.kitchen_addons=app.sections[index-1].addonsections
- if(app.service_type=='General Cleaning' || app.service_type=='Deep Cleaning'){
+ if(app.service_type=='General Cleaning' || app.service_type=='Deep Cleaning' || app.service_type=='Hourly Cleaning' ){
    for(var i=0;i<app.kitchen_addons.length;i++){
     app.kitchen_addons[i].other_details=JSON.parse( app.kitchen_addons[i].other_details)
     app.kitchen_addons[i].other_details.size=app.findKitchenSize(app.kitchen_addons[i].other_details.size,app.kitchen_addons[i].other_details.is_cabinet,app.kitchen_addons[i].other_details.type)
@@ -859,6 +859,9 @@ setTimeout(function() {
    },
     getTheSize(service){
       var service_productivity=[]
+      if(service=='Hourly Cleaning'){
+        service='General Cleaning'
+      }
       axios.get(this.url+'/customer/ajax/getservicesizeprice?service_type='+service).then(response=>{
           this.productivity=response.data
           for(var i in this.productivity){
@@ -1527,6 +1530,8 @@ setTimeout(function() {
       
     },
     recalcAddonCost(){
+      if(this.service_type!='Hourly Cleaning')
+      {
       this.priceupdate=false
       var addon_cost=0
       for(var i=0;i<this.kitchen_addons.length;i++){
@@ -1536,6 +1541,7 @@ setTimeout(function() {
       this.editSectionData.section_cost=sectiononlycost+addon_cost
       
       this.priceupdate=true
+    }
     },
     deleteSection(index,sid){
      
@@ -1768,7 +1774,7 @@ setTimeout(function() {
         sectionData.colour=this.editSectionData.colour.join()   
       }
     }
-    if(this.service_type=='General Cleaning'||this.service_type=='Deep Cleaning'){
+    if(this.service_type=='General Cleaning'||this.service_type=='Deep Cleaning'||this.service_type=='Hourly Cleaning'){
       for(var i=0;i<this.kitchen_addons.length;i++){
         this.kitchen_addons[i].quantity=parseInt(this.kitchen_addons[i].quantity)
         this.kitchen_addons[i].other_details.size=this.kitchen_addons[i].other_details.size.name
@@ -1824,7 +1830,7 @@ setTimeout(function() {
       if(this.editSectionData.ceiling_type.length>0){
         sectionData.ceiling_type=this.editSectionData.ceiling_type.join()   
       }
-      if(this.service_type=='General Cleaning'||this.service_type=='Deep Cleaning'){
+      if(this.service_type=='General Cleaning'||this.service_type=='Deep Cleaning'||this.service_type=='Hourly Cleaning'){
         for(var i=0;i<this.kitchen_addons.length;i++){
           this.kitchen_addons[i].quantity=parseInt(this.kitchen_addons[i].quantity)
           this.kitchen_addons[i].other_details.size=this.kitchen_addons[i].other_details.size.name
@@ -1915,7 +1921,11 @@ setTimeout(function() {
            this.service_size=[]
            this.chair_size=[]
            this.sofa_size=[]
-           axios.get(this.url+'/customer/ajax/getservicesizeprice?service_type='+this.service_type).then(response=>{
+           var serv=this.service_type
+           if(serv=='Hourly Cleaning'){
+             serv='General Cleaning'
+           }
+           axios.get(this.url+'/customer/ajax/getservicesizeprice?service_type='+serv).then(response=>{
             var size=response.data
             for(var i in size){
               this.service_size.push(size[i])
@@ -1937,7 +1947,7 @@ setTimeout(function() {
           /* new order size conversion begins here */
         
            /* General cleaning  size conversion */ 
-          if(this.service_type=='General Cleaning' || this.service_type=='Deep Cleaning' || this.service_type=='Storage Area' || this.service_type=='Sterilization'|| this.service_type=='Carpet Cleaning'|| this.service_type=='Car Parking Umbrella' || this.service_type=='Outdoor Cleaning'){
+          if(this.service_type=='General Cleaning' || this.service_type=='Deep Cleaning' || this.service_type=='Storage Area' || this.service_type=='Sterilization'|| this.service_type=='Carpet Cleaning'|| this.service_type=='Car Parking Umbrella' || this.service_type=='Outdoor Cleaning' || this.service_type=='Hourly Cleaning'){
             for(var j=0;j<this.sections.length;j++){
              
               for(var i=0;i<this.service_size.length;i++){
@@ -2151,6 +2161,8 @@ setTimeout(function() {
       console.log(this.amount)
   },
   calcSectionCost(){
+    if(this.service_type!='Hourly Cleaning')
+    {
     this.priceupdate=false
     this.editSectionData.sectiononly_cost=this.editSectionData.size.cost||0
     this.editSectionData.sectiononly_net_cost=this.editSectionData.size.cost||0
@@ -2158,6 +2170,7 @@ setTimeout(function() {
     this.recalcKeynoteCost()
     this.recalcAddonCost()
     this.priceupdate=true
+    }
   },
     setDate(d){
     
@@ -2172,7 +2185,11 @@ setTimeout(function() {
     },
     getProductivity(){
       this.service_productivity=[]
-      axios.get(this.url+'/customer/ajax/getservicesizeprice?service_type='+this.service_type).then(response=>{
+      var serv=this.service_type
+      if(serv=='Hourly Cleaning'){
+        serv='General Cleaning'
+      }
+      axios.get(this.url+'/customer/ajax/getservicesizeprice?service_type='+serv).then(response=>{
           this.productivity=response.data
           for(var i in this.productivity){
             this.productivity[i].combined_size=this.productivity[i].name+' ( '+this.productivity[i].min_size+' sq.m - '+this.productivity[i].max_size+' sq.m )'
@@ -2186,9 +2203,12 @@ setTimeout(function() {
       })
     },
     async getServiceSize(){
-    
+        var serv=this.service_type
+        if(serv=='Hourly Cleaning'){
+          serv='General Cleaning'
+        }
       this.service_size=[]
-      await axios.get(this.url+'/customer/ajax/getservicesizeprice?service_type='+this.service_type).then(response=>{
+      await axios.get(this.url+'/customer/ajax/getservicesizeprice?service_type='+serv).then(response=>{
           var size=response.data
           for(var i in size){
             this.service_size.push(size[i])

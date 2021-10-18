@@ -95,6 +95,7 @@ const app=new Vue({
         
       },
     data: {
+      out_of_shift:false,
       kitchen_max_cleaners:null,
       new_kitchen_cabinet_productivity:null,
       old_kitchen_cabinet_productivity:null,
@@ -134,6 +135,7 @@ const app=new Vue({
     total_cost:0,
     estimated_cost:0,
     service_details:{},
+    shift_availability_check:true
 
   },
   tempCost:0,
@@ -587,7 +589,13 @@ building_warning:false,
 available_slotes:[],
 date_group:{},
 addons:[],
-last_image_stat:false
+last_image_stat:false,
+hourly_cleaning:{
+  duration:null,
+  hourly_duration:null,
+  cleaners:null
+},
+hourly_slots:true
 
       },
       methods: {
@@ -662,6 +670,8 @@ last_image_stat:false
           this.dialog=false
         },
         findAddedCost(){
+          if(this.serviceType!='Hourly Cleaning')
+          {
           var totalcost=0
          
           for(var i=0;i<this.billingData.length;i++){
@@ -678,6 +688,20 @@ last_image_stat:false
             console.log("added amount is "+totalcost)
             return 0
           }
+        }
+        else{
+          return 0
+        }
+        },
+        checkHourly(){
+          for(var i=0;i<this.multiServicesBill.length;i++){
+            if(this.multiServicesBill[i].service=='Hourly Cleaning'){
+              return false
+            }
+           
+          }
+          return true
+         
         },
         findFullAmount(){
           var fullamount=0
@@ -774,6 +798,9 @@ last_image_stat:false
         },
         scheduleTogether()
         {
+          if(this.serviceType=='Hourly Cleaning'){
+            this.cleaningPolicy='Subscription'
+          }
           if(this.checkScheduleAvail()){
             this.reconfirmation_dialog=true
           }
@@ -795,7 +822,7 @@ last_image_stat:false
           return flag
         },
         resetScheduler(){
-
+          this.out_of_shift=false
           this.cleaningPolicy=''
           this.subStat=''
           this.visits=[]
@@ -931,7 +958,7 @@ last_image_stat:false
             this.multiServicesBill[this.schedule_serviceTypes_selected[j]].schedule_details={}
             this.multiServicesBill[this.schedule_serviceTypes_selected[j]].cleaners=this.selectedDuration.cleaners
            
-            
+            this.multiServicesBill[this.schedule_serviceTypes_selected[j]].shift_availability_check=!this.out_of_shift
             if(Object.keys(this.selected_onetime_slots).length>1){
               this.findContDate()
               var count=0
@@ -962,8 +989,10 @@ last_image_stat:false
                 "date":date,
                "time":this.slotFormat[parseInt(min_slot)].start_time,
               "no_of_cleaners":this.selectedDuration.cleaners,
-               "cleaning_hours":cleaning_hr
+               "cleaning_hours":cleaning_hr,
+               "hourly_cleaning_duration":null
               }
+            
               count=count+1
               }
               }
@@ -983,12 +1012,14 @@ last_image_stat:false
                 "date":date,
                "time":this.slotFormat[parseInt(min_slot)].start_time,
               "no_of_cleaners":this.selectedDuration.cleaners,
-               "cleaning_hours":this.selected_onetime_slots[k].slots.length*2
+               "cleaning_hours":this.selected_onetime_slots[k].slots.length*2,
+               "hourly_cleaning_duration":null
               }
+            
               count=count+1
             }
           }
-
+         
             //Find continous dates
           //   var removedDates=[]
           //   var contDates=[]
@@ -1158,10 +1189,11 @@ last_image_stat:false
                 "date":this.visits[k].date,
                "time":this.slotFormat[min_slot].start_time,
               "no_of_cleaners":this.selectedDuration.cleaners,
-               "cleaning_hours":this.selectedDuration.hours
+               "cleaning_hours":this.selectedDuration.hours,
+               "hourly_cleaning_duration":parseInt(this.hourly_cleaning.hourly_duration)||null
               }
             }
-           
+            this.multiServicesBill[this.schedule_serviceTypes_selected[j]].shift_availability_check=!this.out_of_shift
           }
           for(var k=0;k<this.schedule_serviceTypes_selected;k++)
           {
@@ -1297,6 +1329,9 @@ last_image_stat:false
           return combined
         },
         findCustomVisits(){
+          if(this.serviceType=='Hourly Cleaning'){
+            this.findHourlyCost()
+          }
           if(this.selected_double_slots.length==this.selectedDuration.hours/2){
 
           
@@ -1333,6 +1368,9 @@ last_image_stat:false
           
         },
         findVisits(){
+          if(this.serviceType=='Hourly Cleaning'){
+            this.findHourlyCost()
+          }
           if(this.selected_double_slots.length==this.selectedDuration.hours/2){
         if(this.selected_double_slots.length>0 && this.dateSelected)
         {
@@ -1422,11 +1460,25 @@ last_image_stat:false
         this.slot_msg=true
       }
         },
+        findHourlyCost(){
+          var total_cost=7.5*parseInt(this.hourly_cleaning.cleaners)*parseInt(this.hourly_cleaning.hourly_duration)
+
+          this.multiServicesBill[0].bill[0].section_net_cost=total_cost
+          this.multiServicesBill[0].bill[0].section_cost=total_cost
+          this.multiServicesBill[0].bill[0].section.section_net_cost=total_cost
+          this.multiServicesBill[0].bill[0].section.section_cost=total_cost
+          this.multiServicesBill[0].bill[0].sectiononly_cost=total_cost
+          this.multiServicesBill[0].bill[0].sectiononly_net_cost=total_cost
+          this.multiServicesBill[0].total_cost=total_cost
+        },
         findMonthlyVisits(){
+          if(this.serviceType=='Hourly Cleaning'){
+            this.findHourlyCost()
+          }
           if(this.selected_double_slots.length==this.selectedDuration.hours/2){
           if(this.selected_monthly_date.length>0 && this.selected_double_slots.length>0 )
           {
-          console.log("called monthly")
+        
           var count=0
           var visitcount=0
           while(count<999){
@@ -1439,7 +1491,7 @@ last_image_stat:false
            {
            if(this.selected_monthly_date.includes(String(dayNo)))
            {
-           console.log("yes i foiund")
+          
             var startSlot=Math.min(...this.selected_double_slots)
             var dateTime=day.format('DD-MM-YYYY')+' '+this.slotFormat[startSlot].start_time
             
@@ -1480,9 +1532,15 @@ last_image_stat:false
       }
         },
         checkAvailablility(){
+          var schedule_serviceTypes=this.schedule_serviceTypes
+          if(this.serviceType=='Hourly Cleaning'){
+            schedule_serviceTypes=[]
+            schedule_serviceTypes.push('General Cleaning')
+          }
          axios.post(this.url+'/customer/ajax/multipleservice/multipledates/cleaningslotes/',{number_of_cleaners:this.selectedDuration.cleaners,
           cleaning_hours:this.selectedDuration.hours,
-          service_types:this.schedule_serviceTypes,
+          service_types:schedule_serviceTypes,
+          shift_availability_check:!this.out_of_shift,
           cleaning_datetimes:this.visitDateTime}).then(response=>{
             this.slotStat=response.data
             for(var i=0;i<this.visits.length;i++){
@@ -1506,6 +1564,7 @@ last_image_stat:false
           axios.post(this.url+'/customer/ajax/multipleservice/multipledates/cleaningslotes/autofix/',{number_of_cleaners:this.selectedDuration.cleaners,
            cleaning_hours:this.selectedDuration.hours,
            service_types:this.schedule_serviceTypes,
+           shift_availability_check:!this.out_of_shift,
            cleaning_datetimes:this.slotStat.busy_slotes}).then(response=>{
              this.fixedSlots=response.data.slote_details
              this.autofixStat=true
@@ -1753,13 +1812,15 @@ console.log(response)
                  "estimated_cost":this.multiServicesBill[i].total_cost,
                  "total_cost":this.multiServicesBill[i].total_cost,
                  "number_of_cleaners":this.multiServicesBill[i].cleaners,
+                
                    "cleaning_hours":parseInt(this.selectedDuration.hours),
                    sections:{}
               }
+              
               if(this.serviceDetails.service_details[i].cleaning_policy=='SUBSCRIPTION'){
                 var visits=Object.keys(this.multiServicesBill[i].schedule_details).length
-                this.serviceDetails.service_details[i].total_cost=parseInt(this.serviceDetails.service_details[i].total_cost)*parseInt(visits)
-                this.serviceDetails.service_details[i].estimated_cost=parseInt(this.serviceDetails.service_details[i].total_cost)
+                this.serviceDetails.service_details[i].total_cost=parseFloat(this.serviceDetails.service_details[i].total_cost)*parseInt(visits)
+                this.serviceDetails.service_details[i].estimated_cost=parseFloat(this.serviceDetails.service_details[i].total_cost)
               }
             for(var j=0;j<this.multiServicesBill[i].bill.length;j++){
               this.serviceDetails.service_details[i].sections[j]={
@@ -1947,6 +2008,7 @@ console.log(response)
           }*/
             }
           }
+          this.serviceDetails.shift_availability_check=this.multiServicesBill[0].shift_availability_check
           var tc=0
         for(var sr in this.serviceDetails.service_details )
         {
@@ -3107,6 +3169,21 @@ removeOneTimeSlot(slot){
     
    
   },
+  getHourly(){
+    if(this.multiServicesBill.length==0)
+    {
+    return(
+   ` <div class="sr-service-card m-2 p-2 "   onclick="selectService('Hourly Cleaning',this)">
+  <i class="far fa-circle inactive-icon"></i>
+  <img src="/static/files/icons/hourly_cleaning.png" class="service-icon"> 
+  <div class="text-center pt-2 service-title">
+ Hourly Cleaning
+</div></div>`)
+    }
+    else{
+      return ''
+    }
+  },
   selectCategory(item){
     var carousel = $("#service-carousel");
     carousel.owlCarousel('destroy'); 
@@ -3172,7 +3249,9 @@ this.infectionControlServices=[]
     <div class="text-center pt-2 service-title">
     Outdoor Cleaning
   </div></div>
-    `)
+  
+  ` +this.getHourly()
+    )
     selectServiceOnly('General Cleaning')
    
     }
@@ -3371,7 +3450,8 @@ responsive:{
       {
         estimated_cost:totalCost,
         total_cost:totalCost,
-        service_details:groupData
+        service_details:groupData,
+        shift_availability_check:this.serviceDetails.service_details[0].shift_availability_check
       }
     
    )
@@ -3760,9 +3840,13 @@ getAreaTypes() {
       });
   },
   getSize() {
+    var service=this.serviceType
+    if(service=='Hourly Cleaning'){
+      service='General Cleaning'
+    }
     axios
       .get(
-       this.url+"/customer/ajax/getservicesizeprice?service_type=" + this.serviceType
+       this.url+"/customer/ajax/getservicesizeprice?service_type=" + service
       )
       .then((response) => {
         this.serviceSize = response.data;
@@ -4359,6 +4443,7 @@ try {
   }).trigger('refresh.owl.carousel');
   },
   goToSchedule(){
+    
     if(!this.editScheduleStat){
       this.resetScheduler()
     }
@@ -4371,8 +4456,12 @@ try {
       this.findSelectedTotalSize()
       this.calcSelectedServices()
       this.newdurationcalculation();
+      if(this.serviceType=='Hourly Cleaning'){
+        this.cleaningPolicy='Subscription'
+      }
 
   },
+  
   checkEditSchedule(){
     if(Object.keys(this.editScheduleData).length>0){
       if(Object.keys(this.editScheduleData.schedule_details).length>0){
@@ -4439,6 +4528,12 @@ try {
       this.billingData.push(serviceData)
       this.parseAddons()
     }
+    if(this.serviceType=='Hourly Cleaning'){
+      this.billingData[0].section_net_cost=0
+      this.billingData[0].section_cost=0
+      this.billingData[0].sectiononly_net_cost=0
+      this.billingData[0].sectiononly_cost=0
+    }
      var sampleServicesBill={
        service:'',
        bill:[],
@@ -4447,7 +4542,8 @@ try {
        location_type:this.location_type,
        evaluator_note:this.evaluator_note,
        schedule_details:{},
-       cleaners:null
+       cleaners:null,
+       shift_availability_check:true
      }
    
        this.serviceTypes.push(this.serviceType)
@@ -4650,6 +4746,23 @@ try {
         keynotes: {},
       });
     }
+  },
+  hourlyCleaningChange(){
+    this.hourly_slots=false
+    this.selectedDuration.cleaners=parseInt(this.hourly_cleaning.cleaners)
+    if((parseInt(this.hourly_cleaning.hourly_duration)%2) !=0 ){
+      this.selectedDuration.hours=parseInt(this.hourly_cleaning.hourly_duration)+1
+      this.hourly_cleaning.duration=parseInt(this.hourly_cleaning.hourly_duration)+1
+    }
+    else{
+      this.selectedDuration.hours=parseInt(this.hourly_cleaning.hourly_duration)
+      this.hourly_cleaning.duration=parseInt(this.hourly_cleaning.hourly_duration)
+    }
+    this.selectedDuration.slots=parseInt(this.selectedDuration.hours)/2
+    
+    this.hourly_slots=false
+    this.calcSlots()
+    this.hourly_slots=true
   },
   selectDuration(duration) {
     duration.slots = duration.hours / 2;

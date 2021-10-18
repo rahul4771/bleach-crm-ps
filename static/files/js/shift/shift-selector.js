@@ -209,6 +209,30 @@ for (var j=0;j<resourceList.length;j++){
            
 
         }
+         /* To set Leave dates*/
+         if(resourceList[j].leaves.length>0)
+         {
+             for(var rs=0;rs<resourceList[j].leaves.length;rs++){
+                
+                 if(resourceList[j].leaves[rs].start_at==today || resourceList[j].leaves[rs].end_at==today){
+                    
+                     
+                         if ($('#lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear)[0]){
+                           
+                         } else {
+                             $('#row-2'+rsid).append('<td class="noBorder text-center lv-date" data-staff="'+j+'" data-date="'+today+'"  id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date lv-occupied" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');    
+                         }
+                         
+                                  
+                      
+                      found=true;  
+                      
+                 }
+               
+                 
+             }
+     
+         }
         if(found==false)
         {
             $('#row-2'+rsid).append('<td class="noBorder text-center lv-shift-date" onclick="selectDayShift(this)" id="lv-day-2-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-shift-date" id="lv-shift-date-2-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');
@@ -265,7 +289,10 @@ function nextMonthShift(){
        
     }
     $('#lv-month-select-2').text(DateTime.local(currentYear,currentMonth).monthLong+' '+ currentYear);
-    reCalcShift();
+    resetShift()
+  //  reCalcShift();
+    console.log("clled shift cal")
+    getShift(currentMonth+'-'+currentYear)
 
 }
 function previousMonthShift(){
@@ -276,12 +303,18 @@ function previousMonthShift(){
        
     }
     $('#lv-month-select-2').text(DateTime.local(currentYear,currentMonth).monthLong+' '+ currentYear);
-   
-    reCalcShift();    
+    resetShift()
+  //  reCalcShift();  
+  
+    getShift(currentMonth+'-'+currentYear)
 }
 
 
-
+function resetShift(){
+    for(var i=0;i<resourceList.length;i++){
+        resourceList[i].shift=[]
+    }
+}
 
 //RECALCULATIONS
 function reCalcShift(){
@@ -335,6 +368,30 @@ for (var j=0;j<resourceList.length;j++){
             
            
 
+        }
+        /* To set Leave dates*/
+        if(resourceList[j].leaves.length>0)
+        {
+            for(var rs=0;rs<resourceList[j].leaves.length;rs++){
+               
+                if(resourceList[j].leaves[rs].start_at==today || resourceList[j].leaves[rs].end_at==today){
+                   
+                    
+                        if ($('#lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear)[0]){
+                          
+                        } else {
+                            $('#row-2'+rsid).append('<td class="noBorder text-center lv-date" data-staff="'+j+'" data-date="'+today+'"  id="lv-day-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'"'+'><div class="lv-date lv-occupied" id="lv-date-'+j+'-'+i+'-'+currentMonth+'-'+currentYear+'">'+i+'</div></td>');    
+                        }
+                        
+                                 
+                     
+                     found=true;  
+                     
+                }
+              
+                
+            }
+    
         }
         if(found==false)
         {
@@ -527,10 +584,11 @@ function getUsersShift(){
     staffData['user_type']=response.data.staffs[i].user_type;
     staffData['photo_url']=response.data.staffs[i].photo_url;
     staffData['shift']=[];
+    staffData['leaves']=[];
      
         resourceList.push(staffData); 
 }
-getShift();
+getShift(moment().format('M-YYYY'));
 
 })
 .catch(function (error) {
@@ -813,11 +871,13 @@ function resetResourcesShift(category){
 
 
 //get shifts
-function getShift(){
+function getShift(current_date){
     $('.lv-loader').show()
   //  url ='https://my.bleachkw.com';
   url =api;
-    axios.get(url+'/api/shift-scheduler/')
+  var month=current_date.split('-')[0]
+  var year=current_date.split('-')[1]
+    axios.get(url+'/api/shift-scheduler/?month='+month+'&year='+year)
 .then(function (response) {
   // handle success
     for(var i=0;i<response.data.staffs.length;i++){
@@ -841,6 +901,41 @@ function getShift(){
     resourceList[userIndex].shift.push({date:gt_day+'-'+gt_month+'-'+gt_year,shift1:response.data.staffs[i].shift1,shift2:response.data.staffs[i].shift2,shift3:response.data.staffs[i].shift3,shift3_start_at:response.data.staffs[i].shift3_start_at,shift3_end_at:response.data.staffs[i].shift3_start_at,shift_id:response.data.staffs[i].id});
     }    
 }
+for(var i=0;i<response.data.leaves.length;i++){
+       
+    var userIndex=userSearchShift(response.data.leaves[i].staff)
+  
+    // resourceList[userIndex].leave.push({date:'2-2-2021',type:'Annual Leave'});
+  
+    var gt_start_year=response.data.leaves[i].leave_date.split('-')[0];
+    var gt_start_month=response.data.leaves[i].leave_date.split('-')[1];
+    var gt_start_day=response.data.leaves[i].leave_date.split('-')[2];
+    var gt_end_year=response.data.leaves[i].leave_date.split('-')[0];
+    var gt_end_month=response.data.leaves[i].leave_date.split('-')[1];
+    var gt_end_day=response.data.leaves[i].leave_date.split('-')[2];
+    if(gt_start_day[0]=='0'){
+        gt_start_day=gt_start_day.substring(1);
+    }
+    if(gt_start_month[0]=='0'){
+     gt_start_month=gt_start_month.substring(1);
+ }
+ if(gt_end_day[0]=='0'){
+    gt_end_day=gt_end_day.substring(1);
+}
+if(gt_end_month[0]=='0'){
+ gt_end_month=gt_end_month.substring(1);
+}
+
+ 
+ 
+if(userIndex != undefined ){
+   
+    //console.log("leaves array is "+resourceList[userIndex].leaves)
+ resourceList[userIndex].leaves.push({date:gt_start_day+'-'+gt_start_month+'-'+gt_start_year,start_at:gt_start_day+'-'+gt_start_month+'-'+gt_start_year,end_at:gt_end_day+'-'+gt_end_month+'-'+gt_end_year,member:response.data.leaves[i].staff});
+}
+
+ 
+ }
    
     console.log(resourceList)
     $('.lv-loader').hide()
