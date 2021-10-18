@@ -472,7 +472,7 @@ class LeaveSchedulePopupAPI(APIView):
 				details                   = {}
 				details['id']             = cleaning_member.team.order_scheduler.id
 				details['blc']            = cleaning_member.team.order_scheduler.order.order_no
-				details['start_at']       = datetime.strftime(cleaning_member.team.order_scheduler.start_at,'%d-%m-%Y %H:%M %p')
+				details['start_at']       = datetime.strftime(cleaning_member.team.order_scheduler.start_at+timedelta(hours=3),'%d-%m-%Y %H:%M %p')
 				details['cleaning_hours'] = cleaning_member.team.order_scheduler.cleaning_hours
 
 				response_dict['detials'].append(details)
