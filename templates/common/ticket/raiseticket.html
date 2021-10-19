@@ -87,7 +87,7 @@
                             <div class="col-md-3">
                             <input type="hidden" name="visit_id" id="id_visit" />
                                 <div class="tk-common-text">Select Order</div>
-                                <div class="wrap-drop" id="noble-gases" style="z-index: 2;">
+                                <div class="wrap-drop" id="noble-gases" style="z-index: 3;">
                                     <span>--Select Order--</span>
                                     <ul class="drop">
                                         {% for visit in visits %}
@@ -98,7 +98,21 @@
                             </div>
                         </div>
                         <div class="row mt-10">
-                            <div class="col-md-6">
+                            <div class="col-md-3">
+                            
+                                <div class="tk-common-text">Select Order Scheduler</div>
+                                <div class="wrap-drop" id="drop_id" style="z-index: 2;">
+                                    <span>--Select Order--</span>
+                                    <ul class="drop">
+                                        {% for visit in visits %}
+                                        <li><a>{{visit.order.order_no}} - {{visit.start_at}}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-10">
+                            <div class="col-md-9   col-lg-7">
                                 <div class="tk-order-card" hidden>
                                     <div class="row">
                                         <div class="col-md-3">
@@ -126,7 +140,7 @@
                                                     <img id="visit_teamleader_image" src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle"> 
                                                     <div style="margin-bottom: 0px;"  class="tk-common-text2 ml-5 mt-10" id="visit_teamleader">Saravan</div>
                                                 </div>
-                                                <div class="ml-20 d-flex" id="visit_team_members">
+                                                <div class="ml-30 d-flex" id="visit_team_members">
                                                     
                                                 </div>
                                             </div>
@@ -139,12 +153,12 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row mt-30">
+                        <div class="row mt-30" style="margin-top: 40px;">
                             <div class="col-md-3">
                                 <div class="tk-common-text">Ticket Form</div>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row mt-30">
                             <div class="col-md-3">
                                 <div class="tk-common-text">Select Ticket Type</div>
                                 <multiselect name="ticket_type" @Close="selectTickets()" @remove='hideAll()' label="name" track-by="name"  v-model="value"  selectLabel="Select Ticket" :showLabels='true' :multiple="true" placeholder="Select Ticket Type" :options="options"></multiselect>
@@ -223,6 +237,16 @@
                                     </div> -->
                                 </div>
                             </div>
+                            <div class="row mt-20">
+                                <div class="col-md-12">
+                                    <div class="tk-common-text">User</div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <multiselect  :options="damAc2" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Select Action"></multiselect>
+                                </div>
+                            </div>
                             <div class="row mt-30">
                                 <div class="d-flex" style="align-items: center;
                                 justify-content: center;">
@@ -254,6 +278,16 @@
                                 <div class="col-md-3">
                                     <multiselect v-model="atStaff" :options="ac2" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Staff action"></multiselect>
 
+                                </div>
+                            </div>
+                            <div class="row mt-20">
+                                <div class="col-md-12">
+                                    <div class="tk-common-text">User</div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <multiselect  :options="damAc2" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Select Action"></multiselect>
                                 </div>
                             </div>
                             <div class="row mt-20">
@@ -330,8 +364,18 @@
                                     <multiselect v-model="seracval" :options="damAc2" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Select Action"></multiselect>
                                 </div>
                             </div>
-                            <div>
-                                <div class="row mt-20">
+                            <div class="row mt-20">
+                                <div class="col-md-12">
+                                    <div class="tk-common-text">User</div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <multiselect  :options="damAc2" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Select Action"></multiselect>
+                                </div>
+                            </div>
+                            <div >
+                                <div class="row mt-20" v-if="seracval == 'Follow-up Cleaning'">
                                     <div class="col-md-12">
                                         <div class="tk-sec-head av-font">
                                         Section 1: Building 1 Floor 1 Apartment 1
@@ -339,7 +383,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row mt-10">
+                                <div class="row mt-10" v-if="seracval == 'Follow-up Cleaning'">
                                     <div class="col-md-6 c-right-border">
                                         <div class="order-details-content">
                                             <div class="row c-mb-3">
@@ -378,7 +422,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row mt-20">
+                                <div class="row mt-20" v-if="seracval == 'Follow-up Cleaning'">
                                     <div class="col-md-2">
                                         <div class="tk-common-text2">
                                             Number of cleaners
@@ -406,6 +450,7 @@
                             </div>
                             
                         </div>
+                       
                     </div>
                 </div>
 
@@ -833,8 +878,7 @@ $(function () {
     var dd3 = new DropDown($('#noble-gases3'));
     var dd4 = new DropDown($('#noble-gases4'));
     var dd5 = new DropDown($('#noble-gases5'));
-
-
+    var dd6 = new DropDown($('#drop_id'));
 
     // var dd2 = new DropDown($('#other-gases'));
     $(document).click(function () {
