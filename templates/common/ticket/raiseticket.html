@@ -80,7 +80,7 @@
                 <div class="main-content-holder">
                     <!--main-content-holder-->
     
-                <form method="POST" action="" >{% csrf_token %}
+                {% csrf_token %}
 
                     <div class="white-wrapper">
                         <div class="row">
@@ -101,7 +101,7 @@
                             
                                 <div class="tk-common-text">Select Order Scheduler</div>
                                 <div class="wrap-drop" id="drop_id" style="z-index: 2;">
-                                    <span>--Select Order--</span>
+                                    <span id="id_sched">--Select Order--</span>
                                     <ul class="drop" id="visit_drop">
                                         {% comment %} {% for visit in visits %}
                                         <li><a onclick="loadvisitdata({{visit.id}})">{{visit.order.order_no}} - {{visit.start_at}}</a></li>
@@ -213,7 +213,7 @@
                             <div class="row">
                                 <div class="col-md-5">
                                     <div class="inv-input-container "> 
-                                        <textarea style="width: 100%;" rows="8" id="id_item_description" name="investigation_notes"></textarea>
+                                        <textarea v-model="damagenote" style="width: 100%;" rows="8" id="id_item_description" name="investigation_notes"></textarea>
                                         </div>
                                 </div>
                             </div>
@@ -251,10 +251,10 @@
                                 <div class="d-flex" style="align-items: center;
                                 justify-content: center;">
                                     <button class="tk-can" type="button"> Cancel</button>
-                                    <button class="ml-5 tk-sub" type="submit">Submit</button>
+                                    <button class="ml-5 tk-sub"  @click="submitForm()">Submit</button>
                                 </div>
                             </div>
-                </form>            
+                          
                             
                         </div>
                         <div v-if="at">
@@ -535,6 +535,7 @@
   delimiters: ["<%", "%>"],
   data () {
         return {
+            damagenote:'',
             key:1,
             damacval:"",
             seracval:"",
@@ -572,6 +573,28 @@
         }
       },
       methods:{
+          async submitForm(){
+              
+              let fd = new FormData();
+              fd.append('visit_id',$('#id_visit').val())
+              fd.append('notes',this.damagenote)
+              var types = '';
+              for(var i = 0 ;i<this.value.length;i++){
+                  types = types+this.value[i].name+',';
+              }
+              fd.append('ticket_types',types);
+              for(var j = 0; j<this.images.length;j++){
+                  fd.append('media',this.images[j])
+              }
+              for(var k = 0; j<this.images2.length;l++){
+                  fd.append('media',this.images2[k])
+              }
+              console.log(fd)
+              let result = await _post('api/ticket-submit/',fd);
+              console.log(result);
+              
+
+          },
           showCleaners(){
               $('#id_cl').click();
           },
@@ -916,7 +939,7 @@ async function loadvisitdata(visit_id){
     axios.get(url+'/api/visit-details/'+visit_id)
                 .then(function (response) {
                     console.log(response.data,"lop")
-                    
+                    $('#id_sched').text(response.data.order_no+' - '+response.data.start_at)
                     $('.tk-order-card').show();
 
                     $('#visit_blc').text(response.data.order_no);
