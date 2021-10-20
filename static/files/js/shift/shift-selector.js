@@ -431,17 +431,22 @@ function reinitVal(){
 function selectDayShift(el){
     var dayId=$(el).attr('id');
     dateCounter=dateCounter+1;
-   console.log('day is is'+dayId)
+ 
     var userId=dayId.split('-')[3];
-    console.log("user id is"+userId)
+   
     var user=resourceList[userId].name;
     modalUser=resourceList[userId].id;
-   console.log("resource details is"+resourceList[userId])
+
     selectedDates[userId].name=user;
-    console.log("curent month :"+currentMonth.toString()+"current yr :"+currentYear.toString()+"shift date:"+$('#'+dayId).find('.lv-shift-date').text().toString())
+  
     shiftId=getShiftId($('#'+dayId).find('.lv-shift-date').text().toString()+'-'+currentMonth.toString()+'-'+currentYear.toString(),userId);
-    console.log(shiftId)
-    console.log("hellooo")
+  
+    $('.modal-dialog').removeClass("lv-annual-popup")
+    $('.modal-dialog').removeClass("lv-weekly-popup")
+    $('.modal-dialog').removeClass("lv-sick-popup")
+    $('.modal-dialog').removeClass("lv-covid-popup")
+    $('.modal-dialog').removeClass("lv-maternity-popup")
+    $('.modal-dialog').removeClass("lv-absent-popup")
 
     if($('#'+dayId).find('.lv-shift-date').hasClass('lv-weekend')){
         $('#'+dayId).find('.lv-shift-date').removeClass('lv-weekend');
@@ -455,6 +460,7 @@ function selectDayShift(el){
         $('.modal-title').addClass('lv-annual-text');
         $('.modal-date').text($('#'+dayId).find('.lv-shift-date').text().toString()+'-'+currentMonth.toString()+'-'+currentYear.toString());
         $('.modal-resource').text(user);
+        $('.modal-dialog').addClass("lv-annual-popup")
         $('#ShiftModal').show();
         
     }
@@ -467,6 +473,7 @@ function selectDayShift(el){
         $('.modal-title').addClass('lv-sick-text');
         $('.modal-date').text($('#'+dayId).find('.lv-shift-date').text().toString()+'-'+currentMonth.toString()+'-'+currentYear.toString());
         $('.modal-resource').text(user);
+        $('.modal-dialog').addClass("lv-sick-popup")
         $('#ShiftModal').show();
     }
     if($('#'+dayId).find('.lv-shift-date').hasClass('lv-maternity')){
@@ -486,6 +493,7 @@ function selectDayShift(el){
         $('.modal-title').addClass('lv-maternity-text');
         $('.modal-date').text($('#'+dayId).find('.lv-shift-date').text().toString()+'-'+currentMonth.toString()+'-'+currentYear.toString());
         $('.modal-resource').text(user);
+        $('.modal-dialog').addClass("lv-maternity-popup")
         $('#ShiftModal').show();
     }
     if($('#'+dayId).find('.lv-shift-date').hasClass('lv-weekly')){
@@ -498,6 +506,7 @@ function selectDayShift(el){
         $('.modal-title').addClass('lv-weekly-text');
         $('.modal-date').text($('#'+dayId).find('.lv-shift-date').text().toString()+'-'+currentMonth.toString()+'-'+currentYear.toString());
         $('.modal-resource').text(user);
+        $('.modal-dialog').addClass("lv-weekly-popup")
         $('#ShiftModal').show();
         dateCounter=dateCounter-1;
     }
