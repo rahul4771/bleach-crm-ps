@@ -264,6 +264,7 @@ class InvestigationMedia(models.Model):
 		return str(self.investigation.id)
 
 class Reporting(models.Model):
+	ticket_type		= models.CharField(max_length=100,blank=True,null=True)
 	investigation   = models.ForeignKey('Investigation',blank=False,null=False,related_name='reporting_investigation')
 	title           = models.CharField(max_length=1000,blank=True,null=True)
 	notes           = models.CharField(max_length=5000,blank=True,null=True)
@@ -293,6 +294,7 @@ class ReportingMedia(models.Model):
 
 
 class PaybackDiscount(models.Model):
+	ticket_type		   = models.CharField(max_length=100,blank=True,null=True)
 	investigation      = models.ForeignKey('Investigation',blank=False,null=False,related_name='paybackdiscount_investigation')
 	total_cost         = models.FloatField(blank=True,null=True)
 	approved_total_cost= models.FloatField(blank=True,null=True)
@@ -342,6 +344,7 @@ class PaybackDiscountDetailsMedia(models.Model):
 		return str(self.paybackdiscount.investigation.id)
 
 class BuybackPromocodeGift(models.Model):
+	ticket_type						= models.CharField(max_length=100,blank=True,null=True)
 	investigation   				= models.ForeignKey('Investigation',blank=False,null=False,related_name='buybackpromocodegift_investigation')
 	total_cost      				= models.FloatField(blank=True,null=True)
 	approved_total_cost             = models.FloatField(blank=True,null=True)
@@ -392,6 +395,7 @@ class BuybackPromocodeGiftDetailsMedia(models.Model):
 
 class FollowUp(models.Model): 
 	ticket_no       = models.CharField(max_length=500,blank=True,null=True)
+	ticket_type		= models.CharField(max_length=100,blank=True,null=True)
 	investigation   = models.ForeignKey('Investigation',blank=False,null=False,related_name='followup_investigation') 
 	instructions    = models.CharField(max_length=500,blank=True,null=True)
 	status      	= models.CharField(max_length=100,blank=True,null=True,choices=FOLLOWUP_STATUS)

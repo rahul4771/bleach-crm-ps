@@ -74,13 +74,13 @@ def generate_random_username(size=10, chars=string.ascii_uppercase + string.digi
 class NewRaiseTicket(IsAuthenticated,View):
 	def get(self,request):
 		try:
-			# visits = Order.objects.filter(is_active=True).filter(Q(evaluation__quatation_status='APPROVED') & ~Q(Q(order_status='ORDER_CANCELLED')))
-			visits = OrderScheduler.objects.filter(is_active=True).filter(Q(order__evaluation__quatation_status='APPROVED') & ~Q(Q(order__order_status='ORDER_CANCELLED'))).select_related('order_scheduler_book','customer_address__area','customer_address__governorate').order_by('order__id').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).select_related('team_leader','drop_off_driver','pick_up_driver').prefetch_related(Prefetch('media_cleaningteam',queryset=CleaningTeamMedia.objects.filter(is_active=True),to_attr='cleaning_team_medias'),Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_team'))
+			orders = Order.objects.filter(is_active=True).filter(Q(evaluation__quatation_status='APPROVED') & ~Q(Q(order_status='ORDER_CANCELLED')))
+			# visits = OrderScheduler.objects.filter(is_active=True).filter(Q(order__evaluation__quatation_status='APPROVED') & ~Q(Q(order__order_status='ORDER_CANCELLED'))).select_related('order_scheduler_book','customer_address__area','customer_address__governorate').order_by('order__id').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).select_related('team_leader','drop_off_driver','pick_up_driver').prefetch_related(Prefetch('media_cleaningteam',queryset=CleaningTeamMedia.objects.filter(is_active=True),to_attr='cleaning_team_medias'),Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_team'))
 		except:
-			visits = None
+			orders = None
 
 		investigators = UserProfile.objects.filter(Q(Q(user_type='QUALITYCONTROLL')|Q(user_type='OPERATIONSUPERVISOR')|Q(user_type='SENIORTEAMLEADER')),is_active=True)
-		return render(request,'common/ticket/raiseticket.html',{"visits":visits})
+		return render(request,'common/ticket/raiseticket.html',{"orders":orders,"investigators":investigators})
 
 	def post(self,request):
 		visit_id = request.POST.get('visit_id')
