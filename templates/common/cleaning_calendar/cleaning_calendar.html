@@ -885,6 +885,19 @@
          
         </div>
       </div>
+      <!-- cal loader begins-->
+      <div class="col-md-12 text-center" v-if="cal_loader">
+      <vue-ellipse-progress :loading="true" color="#2e4e85" animation="bounce 700 1000"
+                        fontSize="1.5rem"
+                        :size="180"
+                        font-color="white"
+                        dot="7" 
+                        
+                        >
+                        <p slot="legend-caption">Finding Cleanings</p>
+                        </vue-ellipse-progress>
+                </div>  
+      <!-- cal loader ends-->
      
 
     </div>

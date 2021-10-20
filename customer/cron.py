@@ -3,7 +3,7 @@ from order.models import Order,OrderScheduler
 from customer.models import CustomerBooking
 from datetime import datetime,timedelta,date
 from django.utils import timezone
-from django.db.models import Prefetch
+from django.db.models import Prefetch,Q
 import requests
 
 def quotationexpiry():
@@ -11,9 +11,12 @@ def quotationexpiry():
     expiry_date_start = expiry_date.replace(hour=0,minute=0,second=0,microsecond=0)
     expiry_date_end = expiry_date_start+timedelta(1)
     
-    evaluations = Evaluation.objects.filter(quatation_status='APPROVED',quatation_expiry_date__range=(expiry_date_start,expiry_date_end),is_active=True)
+    evaluations = Evaluation.objects.filter(Q(Q(quatation_status='PENDING')|Q(quatation_status='REJECTED'))).filter(quatation_expiry_date__range=(expiry_date_start,expiry_date_end),is_active=True)
     
     for evaluation in evaluations:
+
+        evaluation.quatation_status = 'EXPIRED'
+        evaluation.save()
 
         url = "https://smsapi.future-club.com/fccsms.aspx"
 

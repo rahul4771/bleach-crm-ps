@@ -80,6 +80,7 @@ const app=  new Vue({
     
     data: {
       slotloader:false,
+      cal_loader:false,
        user_type:'',
         setAttenderNotes:"",
         agent:'#0D87C5',
@@ -457,7 +458,10 @@ const app=  new Vue({
             
           },
           async getSlots(){
+            this.cal_loader=true
            // console.log($('#cl_cleaning_calendar').val())
+           $('.owl-item').css('height','auto')
+            $('.owl-item').css('min-height','600 px')
            this.services=[]
             this.cleaningDate=$('#cl_cleaning_calendar').val()
            
@@ -507,6 +511,7 @@ const app=  new Vue({
             },
             
           }
+          
             axios.get(this.url+"/agent/cleaningcallendar?cleaning_callendar_date="+this.cleaningDate).then((response) => {
                 this.slots = response.data;
                 for(var j=0;j<this.slots.appoved_cleanings.length;j++){
@@ -552,36 +557,12 @@ const app=  new Vue({
                       m = a[q]
                     }
                   }
-
-                  console.log("a is"+a)
-                  // m=Math.max( ...a )
-                  console.log("m is"+m)
-                  // $(".cl-slot-card").css('min-height',m);
-                //   $('#cleaningCalendar-carousel').css('height'm+1)
-                // //   $('.cleaningCalendar-carousel').trigger('destroy.owl.carousel');
-                // //   $('#cleaningCalendar-carousel').owlCarousel({
-                // //     loop:false,
-                // //     margin:10,
-                // //     startPosition:4,
-                // //     nav:true,
-                // //     dots:false,
-                // //     autoHeight: true,
-                // //     navText:[`<i class='fa fa-chevron-left service-control' @click='prevService()'></i>`,
-                // //   `<i class='fa fa-chevron-right service-control'></i>`], 
-                // //     responsive:{
-                // //         0:{
-                // //             items:2
-                // //         },
-                // //         600:{
-                // //             items:4
-                // //         },
-                // //         1000:{
-                // //             items:6
-                // //         }
-                // //     }
-                // // })
+                  
+                  $('.owl-item').height(m+200)
+                  $('.cl-slot-card').css('height','100%')
               
                 }, 500);
+                this.cal_loader=false
                 
               })
           },

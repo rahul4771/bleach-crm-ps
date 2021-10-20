@@ -616,6 +616,87 @@ class DeleteShiftSchedule(APIView):
 
 		return Response(response_dict,HTTP_200_OK)
 
+
+class OrderDetailsAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request,order_id):
+		visits = OrderScheduler.objects.filter(is_active=True,order__id=int(order_id))
+		response_dict = {'success':False}
+		print(visits,"vst")
+
+		visits_list = []
+		
+		for visit in visits:
+			visit_dict = {
+				'order_no' : visit.order.order_no,
+				'visit_id' : visit.id,
+				'start_at' : datetime.strftime(visit.start_at+timedelta(hours=3),'%d-%m-%Y %I:%M %p')
+			}
+			visits_list.append(visit_dict)
+
+		response_dict['visits'] = visits_list
+
+		return Response(response_dict,HTTP_200_OK)
+
+class TicketSubmitAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def post(self,request):
+		visit_id = request.data.get('visit_id')
+		ticket_types = request.data.get('ticket_types')
+		response_dict = {'success':True}
+		# if ticket_type == 'Damage':
+		# 	investigationmedias = request.FILES.getlist('media')
+		# 	notes = request.data.get('notes')
+		# 	action = request.data.get('action')
+
+		return Response(response_dict,HTTP_200_OK)
+
+class VisitDetailsAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request,visit_id):
+		response_dict = {'success':False}
+		print(visit_id,"oid")
+		try:
+			visit = OrderScheduler.objects.select_related('order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).select_related('team_leader','drop_off_driver','pick_up_driver').prefetch_related(Prefetch('media_cleaningteam',queryset=CleaningTeamMedia.objects.filter(is_active=True),to_attr='cleaning_team_medias'),Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_team')).get(is_active=True,id=int(visit_id))
+		except:
+		 	visit = None
+
+		response_dict['order_no'] = visit.order.order_no
+		response_dict['visit_id'] = visit_id
+		response_dict['customer_name'] = visit.order.evaluation.customer.name
+		response_dict['customer_number'] = visit.order.evaluation.customer.mobile_number
+		response_dict['amount'] = visit.order_scheduler_book.total_cost
+
+		response_dict['servicetype'] = visit.order_scheduler_book.service_type.name
+		response_dict['cleaning_policy'] = visit.order_scheduler_book.cleaning_policy
+		response_dict['start_at'] = datetime.strftime(visit.start_at+timedelta(hours=3),'%d-%m-%Y %I:%M %p')
+		response_dict['no_of_cleaners'] = visit.no_of_cleaners
+
+		for team in visit.cleaning_team:
+			print(team,"tm")
+			response_dict['team_leader'] = team.team_leader.name
+			response_dict['team_leader_image'] = team.team_leader.profile_image.url
+
+			members = []
+			for member in team.cleaning_team_members:
+				members_dict= {
+					'member' : member.member.name,
+					'member_image' : member.member.profile_image.url
+				}
+				
+				members.append(members_dict)
+
+			response_dict['members'] = members
+		print(response_dict,"dict")
+
+		return Response(response_dict,HTTP_200_OK)
+
 class DailySalesAPI(APIView):
 	permission_classes  	=   (AllowAny,)
 	authentication_classes  = ()

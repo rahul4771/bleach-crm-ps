@@ -13,6 +13,10 @@ urlpatterns = [
 	
 	url(r'^leave-users-list/$',views.UsersList.as_view(),name='api-leave-users-list'),
 
+	url(r'^order-details/(?P<order_id>\d+)/$',views.OrderDetailsAPI.as_view(),name='api-order-details'),
+	url(r'^visit-details/(?P<visit_id>\d+)/$',views.VisitDetailsAPI.as_view(),name='api-visit-details'),
+	url(r'^ticket-submit/$',views.TicketSubmitAPI.as_view(),name='api-ticket-submit'),
+
 	url(r'^leave-scheduler/$',views.LeaveScheduleAPI.as_view(),name='api-leaveschedule'),
 	url(r'^leave-scheduler/popup/$',views.LeaveSchedulePopupAPI.as_view(),name='api-leaveschedulepopup'),
 	url(r'^leave-scheduler-delete/(?P<leave_id>\d+)/$',views.DeleteLeaveSchedule.as_view(),name='api-leaveschedule-delete'),

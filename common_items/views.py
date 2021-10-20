@@ -72,8 +72,26 @@ def generate_random_username(size=10, chars=string.ascii_uppercase + string.digi
 
 
 class NewRaiseTicket(IsAuthenticated,View):
-    def get(self,request):
-        return render(request,'common/ticket/raiseticket.html',{})
+	def get(self,request):
+		try:
+			orders = Order.objects.filter(is_active=True).filter(Q(evaluation__quatation_status='APPROVED') & ~Q(Q(order_status='ORDER_CANCELLED')))
+			# visits = OrderScheduler.objects.filter(is_active=True).filter(Q(order__evaluation__quatation_status='APPROVED') & ~Q(Q(order__order_status='ORDER_CANCELLED'))).select_related('order_scheduler_book','customer_address__area','customer_address__governorate').order_by('order__id').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).select_related('team_leader','drop_off_driver','pick_up_driver').prefetch_related(Prefetch('media_cleaningteam',queryset=CleaningTeamMedia.objects.filter(is_active=True),to_attr='cleaning_team_medias'),Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_team'))
+		except:
+			orders = None
+
+		investigators = UserProfile.objects.filter(Q(Q(user_type='QUALITYCONTROLL')|Q(user_type='OPERATIONSUPERVISOR')|Q(user_type='SENIORTEAMLEADER')),is_active=True)
+		return render(request,'common/ticket/raiseticket.html',{"orders":orders,"investigators":investigators})
+
+	def post(self,request):
+		visit_id = request.POST.get('visit_id')
+		ticket_types = request.POST.get('ticket_type')
+		images = request.POST.getlist('mediabefore')
+		notes = request.POST.get('investigation_notes')
+
+		visit = OrderScheduler.objects.get(id=int(visit_id))
+		order = visit.order
+		print(visit_id,ticket_types,images,notes,"koko")
+		return redirect('agent:agentdash-board')
 
 class OrderDetails(IsAuthenticated,View):
 	def get(self,request):
@@ -900,6 +918,7 @@ class PaymentDetails(IsAuthenticated,View):
 
 		total_transactions = transactions.count()
 		total_transactions_amount = transactions.aggregate(total_paid = Sum('amount_paid'))['total_paid']
+		total_transactions_balance = transactions.aggregate(total_balance = Sum('order__remining_amount'))['total_balance']
 
 		
 		

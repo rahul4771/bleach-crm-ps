@@ -336,7 +336,7 @@ const app=new Vue({
   temp_no_of_building: 0,
   building: [],
   no_of_floors: [],
-  buildings: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
+  buildings: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10",'11',"12","13","14","15"],
   serviceSection: {
     service_type: "",
     area_type: "",
