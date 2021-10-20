@@ -644,14 +644,14 @@ class TicketSubmitAPI(APIView):
 	permission_classes  	=   (AllowAny,)
 	authentication_classes  = ()
 
-	def get(self,request):
+	def post(self,request):
 		visit_id = request.data.get('visit_id')
 		ticket_types = request.data.get('ticket_types')
-
-		if ticket_type == 'Damage':
-			investigationmedias = request.FILES.getlist('media')
-			notes = request.data.get('notes')
-			action = request.data.get('action')
+		response_dict = {'success':True}
+		# if ticket_type == 'Damage':
+		# 	investigationmedias = request.FILES.getlist('media')
+		# 	notes = request.data.get('notes')
+		# 	action = request.data.get('action')
 
 		return Response(response_dict,HTTP_200_OK)
 
