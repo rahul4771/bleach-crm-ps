@@ -977,12 +977,12 @@ class CleaningCallendar(APIView):
 		for calendar_order_schedule in calendar_order_schedules:
 			similar_schedules 						= OrderScheduler.objects.filter(order_scheduler_book=calendar_order_schedule.order_scheduler_book).order_by('start_at')
 			calendar_order_schedule.total_cleanings = similar_schedules.count()
-			calendar_order_schedule.partition       = list(similar_schedules.values_list('id',flat=True)).index(calendar_order_schedule.id)
+			calendar_order_schedule.partition       = list(similar_schedules.values_list('id',flat=True)).index(calendar_order_schedule.id)+1
 
 		for calendar_notapprovedorder_schedule in calendar_notapprovedorder_schedules:
 			similar_schedules                                  = OrderScheduler.objects.filter(order_scheduler_book=calendar_notapprovedorder_schedule.order_scheduler_book).order_by('start_at')
 			calendar_notapprovedorder_schedule.total_cleanings = similar_schedules.count()
-			calendar_notapprovedorder_schedule.partition       = list(similar_schedules.values_list('id',flat=True)).index(calendar_notapprovedorder_schedule.id)
+			calendar_notapprovedorder_schedule.partition       = list(similar_schedules.values_list('id',flat=True)).index(calendar_notapprovedorder_schedule.id)+1
 
 		#followup schedules
 		try:
