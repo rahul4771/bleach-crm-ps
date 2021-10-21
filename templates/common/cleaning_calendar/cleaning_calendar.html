@@ -75,7 +75,7 @@
                 </div>
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
 
-                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'"><span v-if="item.slots.order.order_no"> <% item.slots.order.order_no %></span>   </div>
+                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'"><span v-if="item.slots.order.order_no"> <% item.slots.order.order_no+' ( '+(item.slots.partition+1)+'/'+item.slots.total_cleanings+' )' %></span>   </div>
                 <div class="cl-marker-progress" v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   <lottie-player src="{% static 'files/animations/cleaning_white.json'%}" background="transparent"  speed="1" class="progress-animation" loop autoplay v-if="item.slots.work_status=='CLEANING_IN_PROGRESS'"></lottie-player>
 
@@ -149,7 +149,7 @@
   
                 </div>
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
-                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
+                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no+' ( '+(item.slots.partition+1)+'/'+item.slots.total_cleanings+' )' %> </div>
                 <div class="cl-marker-progress" v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   <lottie-player src="{% static 'files/animations/cleaning_white.json'%}" background="transparent"  speed="1" class="progress-animation" loop autoplay v-if="item.slots.work_status=='CLEANING_IN_PROGRESS'"></lottie-player>
 
@@ -219,7 +219,7 @@
                 </div>
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
                 
-                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
+                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no+' ( '+(item.slots.partition+1)+'/'+item.slots.total_cleanings+' )'%> </div>
                 <div class="cl-marker-progress" v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   <lottie-player src="{% static 'files/animations/cleaning_white.json'%}" background="transparent"  speed="1" class="progress-animation" loop autoplay v-if="item.slots.work_status=='CLEANING_IN_PROGRESS'"></lottie-player>
 
@@ -289,7 +289,7 @@
   
                 </div>
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
-                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
+                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no+' ( '+(item.slots.partition+1)+'/'+item.slots.total_cleanings+' )'%> </div>
                 <div class="cl-marker-progress" v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   <lottie-player src="{% static 'files/animations/cleaning_white.json'%}" background="transparent"  speed="1" class="progress-animation" loop autoplay v-if="item.slots.work_status=='CLEANING_IN_PROGRESS'"></lottie-player>
 
@@ -358,7 +358,7 @@
   
                 </div>
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
-                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
+                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no+' ( '+(item.slots.partition+1)+'/'+item.slots.total_cleanings+' )'%> </div>
                 <div class="cl-marker-progress" v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   <lottie-player src="{% static 'files/animations/cleaning_white.json'%}" background="transparent"  speed="1" class="progress-animation" loop autoplay v-if="item.slots.work_status=='CLEANING_IN_PROGRESS'"></lottie-player>
 
@@ -431,7 +431,7 @@
   
                 </div>
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
-                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
+                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no+' ( '+(item.slots.partition+1)+'/'+item.slots.total_cleanings+' )'%> </div>
                 <div class="cl-marker-progress" v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   <lottie-player src="{% static 'files/animations/cleaning_white.json'%}" background="transparent"  speed="1" class="progress-animation" loop autoplay v-if="item.slots.work_status=='CLEANING_IN_PROGRESS'"></lottie-player>
 
@@ -501,7 +501,7 @@
   
                 </div>
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
-                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
+                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no+' ( '+(item.slots.partition+1)+'/'+item.slots.total_cleanings+' )' %> </div>
                 <div class="cl-marker-progress" v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   <lottie-player src="{% static 'files/animations/cleaning_white.json'%}" background="transparent"  speed="1" class="progress-animation" loop autoplay v-if="item.slots.work_status=='CLEANING_IN_PROGRESS'"></lottie-player>
 
@@ -569,7 +569,7 @@
   
                 </div>
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
-                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
+                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no+' ( '+(item.slots.partition+1)+'/'+item.slots.total_cleanings+' )'%> </div>
                 <div class="cl-marker-progress" v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   <lottie-player src="{% static 'files/animations/cleaning_white.json'%}" background="transparent"  speed="1" class="progress-animation" loop autoplay v-if="item.slots.work_status=='CLEANING_IN_PROGRESS'"></lottie-player>
 
@@ -638,7 +638,7 @@
   
                 </div>
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
-                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
+                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no+' ( '+(item.slots.partition+1)+'/'+item.slots.total_cleanings+' )' %> </div>
                 <div class="cl-marker-progress" v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   <lottie-player src="{% static 'files/animations/cleaning_white.json'%}" background="transparent"  speed="1" class="progress-animation" loop autoplay v-if="item.slots.work_status=='CLEANING_IN_PROGRESS'"></lottie-player>
 
@@ -707,7 +707,7 @@
   
                 </div>
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
-                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
+                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no+' ( '+(item.slots.partition+1)+'/'+item.slots.total_cleanings+' )'%> </div>
                 <div class="cl-marker-progress" v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   <lottie-player src="{% static 'files/animations/cleaning_white.json'%}" background="transparent"  speed="1" class="progress-animation" loop autoplay v-if="item.slots.work_status=='CLEANING_IN_PROGRESS'"></lottie-player>
 
@@ -776,7 +776,7 @@
   
                 </div>
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
-                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
+                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no+' ( '+(item.slots.partition+1)+'/'+item.slots.total_cleanings+' )'%> </div>
                 <div class="cl-marker-progress" v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   <lottie-player src="{% static 'files/animations/cleaning_white.json'%}" background="transparent"  speed="1" class="progress-animation" loop autoplay v-if="item.slots.work_status=='CLEANING_IN_PROGRESS'"></lottie-player>
 
@@ -845,7 +845,7 @@
   
                 </div>
                 <i class="fa fa-user text-white cl-marker-user" aria-hidden="true" v-if="checkCustomerBooking(item.classType,item.slots,item.color)"></i>
-                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no %> </div>
+                <div class="cl-marker-text "  v-if="item.classType=='cl-start-end' || item.classType=='cl-start-only'">  <% item.slots.order.order_no+' ( '+(item.slots.partition+1)+'/'+item.slots.total_cleanings+' )' %> </div>
                 <div class="cl-marker-progress" v-if="item.classType=='cl-start-end' || item.classType=='cl-end-only'">
                   <lottie-player src="{% static 'files/animations/cleaning_white.json'%}" background="transparent"  speed="1" class="progress-animation" loop autoplay v-if="item.slots.work_status=='CLEANING_IN_PROGRESS'"></lottie-player>
 
