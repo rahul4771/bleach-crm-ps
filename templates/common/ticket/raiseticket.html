@@ -178,7 +178,7 @@
                             </div>
                         </div> -->
                         
-                        <div >
+                        <div v-if="value.length != 0">
                             <div class="row mt-40">
                                 <div class="col-md-12">
                                     <div class="tk-common-text">Upload Media</div>
@@ -268,7 +268,7 @@
                             <div class="row">
                                 <div class="col-md-5">
                                     <div class="inv-input-container "> 
-                                        <textarea v-model="damagenote" style="width: 100%;" rows="8" v-model="reportnote"></textarea>
+                                        <textarea  style="width: 100%;" rows="8" v-model="reportnote"></textarea>
                                         </div>
                                 </div>
                             </div>
@@ -566,17 +566,24 @@
               for(var i = 0 ;i<this.value.length;i++){
                   types = types+this.value[i].name+',';
               }
-              
               fd.append('ticket_types',types);
+              var actiontypes = ''
+              for(var i = 0 ;i<this.damacval.length;i++){
+                actiontypes = actiontypes+this.damacval[i].name+',';
+              }   
+              fd.append('actions',actiontypes);
               for(var j = 0; j<this.images.length;j++){
                   fd.append('media',this.images[j])
               }
-              for(var k = 0; j<this.images2.length;l++){
-                  fd.append('media',this.images2[k])
+              if(actiontypes.includes('Assign Investigator')){
+                  fd.append('secondary_investigator',this.userselect.id)
               }
-              console.log(fd)
-              //let result = await _post('api/ticket-submit/',fd);
-              //console.log(result);
+              if(actiontypes.includes('Internal Report')){
+                  fd.append('title',this.reporttitile);
+                  fd.append('report_note',this.reportnote);
+              }
+              let result = await _post('api/ticket-submit/',fd);
+              console.log(result);
               
 
           },
