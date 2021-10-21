@@ -96,7 +96,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row mt-10">
+
+                        <div class="row mt-10" id="schedule_list_id">
                             <div class="col-md-3">
                             
                                 <div class="tk-common-text">Select Order Scheduler</div>
@@ -110,8 +111,9 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="row mt-10">
-                            <div class="col-md-9   col-lg-7">
+                            <div class="col-md-9   col-lg-8">
                                 <div class="tk-order-card" hidden>
                                     <div class="row">
                                     <input type="hidden" id="id_visit" />
@@ -520,6 +522,10 @@
 
 <script>
 
+    $(document).ready(function(){
+        $('#schedule_list_id').hide();
+    })
+
   var investigators_list = []
 
   {% for investigator in investigators %}
@@ -542,7 +548,8 @@
             atAc:"",
             atStaff:"",
             damAc:['Payback','Gift','Assign Investigator','Insurance Request'],
-            damAc2:investigators_list,
+            damAc2 : ['Payback','Gift','Assign Investigator','Follow-up Cleaning'],
+            damAc3:investigators_list,
             ac: ['Gift', 'Internal reporting'],
             ac2: ['name', 'Name'],
             at:false,
@@ -929,6 +936,8 @@ async function loadvisits(order_id){
                     $(response.data.visits).each(function(key,value){
                         $('#visit_drop').append('<li><a onclick="loadvisitdata('+ value.visit_id +')">'+ value.order_no +' - '+ value.start_at +'</a></li>')
                     })
+
+                    $('#schedule_list_id').show();
                 })
 
 }
