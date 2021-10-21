@@ -647,6 +647,29 @@ class TicketSubmitAPI(APIView):
 	def post(self,request):
 		visit_id = request.data.get('visit_id')
 		ticket_types = request.data.get('ticket_types')
+		notes = request.data.get('notes')
+		investigationmedias = request.FILES.getlist('media')
+		print(visit_id,ticket_types,notes,investigationmedias,"lodat")
+
+		visit = OrderScheduler.objects.get(id=int(visit_id))
+		order = visit.order
+
+		investigation = Investigation.objects.create(order=order,order_schedule=visit,ticket_types=ticket_types)
+
+		FollowUp.objects.create(investigation=investigation,status='TICKET_RISED')
+
+		#save media
+		investigation_medias = request.FILES.getlist('media')
+		if not investigation_medias == ['']:
+			for image in investigation_medias:
+				InvestigationMedia.objects.create(
+					investigation = investigation,
+					media = image,
+					media_type = 'PHOTO',
+					taken_status = 'CUSTOMER_SEND',
+					is_active = True
+				)
+
 		response_dict = {'success':True}
 		# if ticket_type == 'Damage':
 		# 	investigationmedias = request.FILES.getlist('media')
