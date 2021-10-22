@@ -2278,7 +2278,7 @@ class ResourceManagement(IsAuthenticated,View):
 
 		#apply time and date filter
 		if starting_datetime and ending_datetime:
-			workers            =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).prefetch_related('leave_staff').annotate(leave=Sum( Case( When( leave_staff__leave_date=workers_date,then=1),default=0,output_field=IntegerField())) ).prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__date=workers_date)|Q(end_at__date=workers_date)) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter(Q( Q(is_active=True)&Q(Q(start_at__date=workers_date)|Q(end_at__date=workers_date)) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details')).annotate(cleaning_contained=Sum(Case(When(Q(Q(cleaning_member_user__start_at__range=(starting_datetime,ending_datetime))|Q(cleaning_member_user__end_at__range=(starting_datetime,ending_datetime))),then=1),default=0,output_field=IntegerField()))).filter(cleaning_contained=0)
+			workers            =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).prefetch_related('leave_staff').annotate(leave=Sum( Case( When( leave_staff__leave_date=workers_date,then=1),default=0,output_field=IntegerField())) ).prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__date=workers_date)|Q(end_at__date=workers_date)) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter(Q( Q(is_active=True)&Q(Q(start_at__date=workers_date)|Q(end_at__date=workers_date)) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details')).annotate(cleaning_contained=Sum(Case(When(Q(Q(Q(cleaning_member_user__start_at__gte=starting_datetime)&Q(cleaning_member_user__end_at__lte=ending_datetime))|Q(Q(cleaning_member_user__start_at__gte=starting_datetime)&Q(cleaning_member_user__start_at__lt=ending_datetime)&Q(cleaning_member_user__end_at__gt=ending_datetime))|Q(Q(cleaning_member_user__end_at__gt=starting_datetime)&Q(cleaning_member_user__end_at__lte=ending_datetime)&Q(cleaning_member_user__start_at__lt=starting_datetime))),then=1),default=0,output_field=IntegerField()))).filter(cleaning_contained=0)
 		else:
 			workers            =  UserProfile.objects.filter(is_active=True).filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).prefetch_related('leave_staff').annotate(leave=Sum( Case( When( leave_staff__leave_date=workers_date,then=1),default=0,output_field=IntegerField())) ).prefetch_related(Prefetch('cleaning_member_user',queryset=CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__date=workers_date)|Q(end_at__date=workers_date)) )).select_related('team__order_scheduler__customer_address__area','team__order_scheduler__order__evaluation','team__order_scheduler__order_scheduler_book'),to_attr='cleaning_member_details'),Prefetch('followup_member',queryset=FollowUpTeamMember.objects.filter(Q( Q(is_active=True)&Q(Q(start_at__date=workers_date)|Q(end_at__date=workers_date)) )).select_related('team__followup_scheduler__customer_address__area'),to_attr='followup_member_details'))
 
@@ -2327,41 +2327,7 @@ class ResourceManagement(IsAuthenticated,View):
 		
 		if staff_type or service_type or search: 
 		    filters         = functools.reduce(operator.and_,filters)
-		    workers = workers.filter(filters)
-
-		##Monthlly Data
-		# month_start    = workers_date.replace(day=1)
-		# month_end      = month_start+relativedelta(months=1)-relativedelta(days=1)
-		# month_range    = pd.date_range(month_start, month_end)
-		
-		# for worker in workers:
-		# 	cleanings = CleaningTeamMember.objects.filter(is_active=True,member=worker).filter(Q(Q(start_at__month=workers_date.month)|Q(end_at__month=workers_date.month))).values('team__order_scheduler__order__feed_backs_order__rating','member__id','member__profile_image','start_at','end_at').annotate(duration = ExpressionWrapper(F('end_at') - F('start_at'), output_field=DurationField()))
-		# 	followups = FollowUpTeamMember.objects.filter(is_active=True,member=worker).filter(Q(Q(start_at__month=workers_date.month)|Q(end_at__month=workers_date.month))).select_related('team__followup_scheduler__follow_up__investigation__order__feed_backs_order').values('team__followup_scheduler__follow_up__investigation__order__feed_backs_order__rating','member__id','member__profile_image','start_at','end_at').annotate(duration = ExpressionWrapper(F('start_at') - F('start_at'), output_field=DurationField()))		
-
-		# 	###to find worked days
-		# 	worked_days = 0
-		# 	for date in month_range:
-		# 		start_date_day = date
-		# 		end_date_day   = date+timedelta(1)
-		# 		if cleanings.filter(start_at__range=(start_date_day,end_date_day),end_at__range=(start_date_day,end_date_day)) or followups.filter(start_at__range=(start_date_day,end_date_day),end_at__range=(start_date_day,end_date_day)):
-		# 			worked_days = worked_days+1		
-		# 	worker.worked_days = worked_days
-
-			###to find total hours
-			# cleaning_hours     = cleanings.aggregate(total_duration=Sum('duration'))
-			# followup_hours     = followups.aggregate(total_duration=Sum('duration'))
-			# total_time         = (cleaning_hours['total_duration']or timedelta()) + (followup_hours['total_duration']or timedelta())
-			# total_hours        = total_time.days*24+total_time.seconds/3600
-			# worker.total_hours = total_hours
-			
-			# ###to find average work hour
-			# if total_hours and worked_days:
-			# 	worker.average_hours = total_hours/worked_days
-			# else:
-			# 	worker.average_hours = 0.00
-
-			# ###to find total rating
-			# worker.rating = cleanings.aggregate(total_rating=Sum('team__order_scheduler__order__feed_backs_order__rating')/Count('team__order_scheduler__order__feed_backs_order__rating'))['total_rating']or 0			
+		    workers 		= workers.filter(filters)			
 
 		return render(request,'common/resource/resource-new.html',{"workers":workers,"workers_date":workers_date,"service_type":service_type,"staff_type":staff_type,"search":search})
 

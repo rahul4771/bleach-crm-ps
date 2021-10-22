@@ -72,9 +72,11 @@ class CleaningScheduleSerializer(serializers.ModelSerializer):
 	order                = OrderShowSerializer(read_only=True)
 	order_scheduler_book = EvaluationBookShowSerializer(read_only=True)
 	cleaning_team_order_scheduler = CleaningTeamShowSerializer(many=True,read_only=True)
+	partition = serializers.IntegerField(read_only=True)
+	total_cleanings = serializers.IntegerField(read_only=True)
 	class Meta:
 		model  = OrderScheduler
-		fields = ('id','start_at','end_at','customer_address','work_status','no_of_cleaners','cleaning_hours','evaluation_details','order','order_scheduler_book','cleaning_team_order_scheduler')
+		fields = ('id','start_at','end_at','customer_address','work_status','no_of_cleaners','cleaning_hours','evaluation_details','order','order_scheduler_book','cleaning_team_order_scheduler','partition','total_cleanings')
 	
 	def to_representation(self,obj):
 		td = super(CleaningScheduleSerializer,self).to_representation(obj)	

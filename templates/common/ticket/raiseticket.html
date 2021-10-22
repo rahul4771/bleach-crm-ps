@@ -163,11 +163,11 @@
                         <div class="row mt-30">
                             <div class="col-md-3">
                                 <div class="tk-common-text">Select Ticket Type</div>
-                                <multiselect name="ticket_type" @Close="selectTickets()" @remove='hideAll()' label="name" track-by="name"  v-model="value"  selectLabel="Select Ticket" :showLabels='true' :multiple="true" placeholder="Select Ticket Type" :options="options"></multiselect>
+                                <multiselect name="ticket_type" label="name" track-by="name"  v-model="value"  selectLabel="Select Ticket" :showLabels='true' :multiple="true" placeholder="Select Ticket Type" :options="options"></multiselect>
                             
                             </div>
                         </div>
-                        <div class="row mt-20">
+                        <!-- <div class="row mt-20">
                             <div class="col-md-2" v-for="item in value" :key="item.id" >
                                 <div   class="tk-type-card pointer" v-bind:class="{ 'tk-type-cardselected': item.selected }">
                                     <div @click='changeSeleted(item)' style="margin-bottom: 0px; flex-grow: 1;" class="tk-common-text2"><% item.name %></div>
@@ -176,9 +176,9 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
                         
-                        <div v-if="dam">
+                        <div v-if="value.length != 0">
                             <div class="row mt-40">
                                 <div class="col-md-12">
                                     <div class="tk-common-text">Upload Media</div>
@@ -226,29 +226,138 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-3">
-                                    <multiselect v-model="damacval" :options="damAc" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Select Action"></multiselect>
+                                <multiselect   label="name" track-by="name" @Close="selectTickets()" @remove='removeFromSelect()'   v-model="damacval"  selectLabel="Select Action" :showLabels='true' :multiple="true" placeholder="Select Actions" :options="ticketAction"></multiselect>
 
-                                    <!-- <div class="wrap-drop" id="noble-gases3" style="z-index: 2;">
-                                        <span>Select Action</span>
-                                        <ul class="drop">
-                                            <li><a>Payback</a></li>
-                                            <li><a>Gift</a></li>
-                                            <li><a>Assign Investigator</a></li>
-                                            <li><a>Insurance Request</a></li>
-                                        </ul>
-                                    </div> -->
+                                    <!-- <multiselect v-model="damacval" :options="damAc" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Select Action"></multiselect> -->
+                                </div>
+                            </div>
+                            <div class="row mt-20">
+                            <div class="col-md-2" v-for="item in damacval" :key="item.id" >
+                                <div   class="tk-type-card pointer" v-bind:class="{ 'tk-type-cardselected': item.selected }">
+                                    <div @click='changeSeleted(item.id)' style="margin-bottom: 0px; flex-grow: 1;" class="tk-common-text2"><% item.name %></div>
+                                    <div @click='removeItem(item.id)' style="margin-right: 5px;" class="pointer">
+                                        <i class="fa fa-times" aria-hidden="true"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            </div> 
+                        <div v-if="selectTab(1)">
+                            pay
+                        </div>
+                        <div v-if="selectTab(2)">
+                            <!-- Internal reporting -->
+                            <div class="row mt-20">
+                                <div class="col-md-12">
+                                    <div class="tk-common-text">Title</div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    
+                                        <div class="inv-input-container " style="height: 40px;"> 
+                                            <input type="text"  class="w-p-100 inv-in" v-model="reporttitile" >
+                                          </div>
+                                    
                                 </div>
                             </div>
                             <div class="row mt-20">
                                 <div class="col-md-12">
-                                    <div class="tk-common-text">User</div>
+                                    <div class="tk-common-text">Notes</div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="inv-input-container "> 
+                                        <textarea  style="width: 100%;" rows="8" v-model="reportnote"></textarea>
+                                        </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-if="selectTab(3)">
+                            <div class="row mt-20">
+                                <div class="col-md-12">
+                                    <div class="tk-common-text">Investigator</div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-3">
-                                    <multiselect  :options="damAc2" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Select Action"></multiselect>
+                                    <multiselect  label="name" track-by="id" :options="damAc3" :searchable="false" v-model="userselect" :close-on-select="true" :show-labels="false" placeholder="Select investigator"></multiselect>
                                 </div>
                             </div>
+                        </div>
+                        <div v-if="selectTab(4)">
+                            in
+                        </div>
+                        <div v-if="selectTab(5)">
+                            <div class="row mt-20" >
+                                <div class="col-md-12">
+                                    <div class="tk-sec-head av-font">
+                                    Section 1: Building 1 Floor 1 Apartment 1
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-10">
+                                <div class="col-md-6 c-right-border">
+                                    <div class="order-details-content">
+                                        <div class="row c-mb-3">
+                                            <div class="col-md-6 col-xs-6 mb-10">
+                                                <div class="order-details-key">Size</div> 
+                                                <div class="c-text order-details-value">300</div>
+                                            </div>
+                                            <div class="col-md-6 col-xs-6 mb-10">
+                                                <div class="order-details-key">Wall Type</div> 
+                                                <div class="c-text order-details-value">300</div>
+                                            </div>
+                                            <div class="col-md-6 col-xs-6 mb-10">
+                                                <div class="order-details-key">Celling Type</div> 
+                                                <div class="c-text order-details-value">300</div>
+                                            </div>
+                                            <div class="col-md-6 col-xs-6 mb-10">
+                                                <div class="order-details-key">Floor Type</div> 
+                                                <div class="c-text order-details-value">300</div>
+                                            </div>
+                                            <div class="col-md-6 col-xs-6 mb-10">
+                                                <div class="order-details-key">Cost</div> 
+                                                <div class="c-text order-details-value">300</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="position: relative;" class="col-md-6">
+                                    
+                                    <div class="col-md-4 ml-0 "><div style="background: #edf1f5 !important;" class="clean-section-card av-font"><p class="av-font">Bedrooms<span class="c-text2 av-font">2</span></p></div></div>
+                                    <div class="col-md-4 ml-0 "><div style="background: #edf1f5 !important;" class="clean-section-card av-font"><p class="av-font">Bedrooms<span class="c-text2 av-font">2</span></p></div></div>
+                                    <div class="col-md-4 ml-0 "><div style="background: #edf1f5 !important;" class="clean-section-card av-font"><p class="av-font">Bedrooms<span class="c-text2 av-font">2</span></p></div></div>
+                                    <div class="col-md-4 ml-0 "><div style="background: #edf1f5 !important;" class="clean-section-card av-font"><p class="av-font">Bedrooms<span class="c-text2 av-font">2</span></p></div></div>
+
+                                    <div class="tk-edit">
+                                        <img class="pointer edit-icon"  src="{% static 'files/icons/edit.png' %}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-20" >
+                                <div class="col-md-2">
+                                    <div class="tk-common-text2">
+                                        Number of cleaners
+                                    </div>
+                                    <div class="inv-input-container h-30"> 
+                                        <input type="number"  class="w-p-100 inv-in" >
+                                      </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="tk-common-text2">
+                                        Schedule
+                                    </div>
+                                    <div class="inv-input-container h-30"> 
+                                        <input type="date"  class="w-p-100 inv-in" >
+                                      </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        </div>
+                           
                             <div class="row mt-30">
                                 <div class="d-flex" style="align-items: center;
                                 justify-content: center;">
@@ -259,199 +368,7 @@
                           
                             
                         </div>
-                        <div v-if="at">
-                            <div class="row mt-20">
-                                <div class="col-md-12">
-                                    <div class="tk-common-text">Action</div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <multiselect  v-model="atAc" :options="ac" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Select action"></multiselect>
-                                    
-                                </div>
-                            </div>
-                            <div class="row mt-20">
-                                <div class="col-md-12">
-                                    <div class="tk-common-text">Action</div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <multiselect v-model="atStaff" :options="ac2" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Staff action"></multiselect>
-
-                                </div>
-                            </div>
-                            <div class="row mt-20">
-                                <div class="col-md-12">
-                                    <div class="tk-common-text">User</div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <multiselect  :options="damAc2" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Select Action"></multiselect>
-                                </div>
-                            </div>
-                            <div class="row mt-20">
-                                <div class="col-md-12">
-                                    <div class="tk-common-text">Note</div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-5">
-                                    <div class="inv-input-container "> 
-                                        <textarea style="width: 100%;" rows="8" id="id_item_description" name="item_description"></textarea>
-                                        </div>
-                                </div>
-                            </div>
-                            <div class="row mt-30">
-                                <div class="d-flex" style="align-items: center;
-                                justify-content: center;">
-                                    <button class="tk-can"> Cancel</button>
-                                    <button class="ml-5 tk-sub">Submit</button>
-                                </div>
-                            </div>
-                            
-                            
-                        </div>
-                        <div v-if="ser">
-                            <div class="row mt-40">
-                                <div class="col-md-12">
-                                    <div class="tk-common-text">Upload Media</div>
-                                </div>
-    
-                            </div>
-                           
-                            <div class="row mt-10">
-                                <div class="col-md-1" v-for="(image2, imageindex2) in imageData2" v-bind:key="imageindex2">
-                                    <div class="bk-image-upload">
-                                      <img :src="image2.url" style="max-width: 100%" class="h-100 w-100"/>
-                                    </div>
-                                    <div class="image-footer">
-                                      <!-- <i class="far fa-edit img-icon"  v-on:click="editImage(imageindex)"></i>-->
-                                      <i class="far fa-trash-alt pl-2 img-icon" v-on:click="deleteImage2(imageindex2)"></i>
-                                    </div>
-                                  </div>
-                                  <div class="col-md-1">
-                                    <div class="addImg">
-                                      <div class="item_image" style="background: #BEBEBE !important; border: none !important;" @click="$refs.itemfile2.click()" ref="item-image"
-                                        v-on:change="onImageFileChanged2">
-                                        <input type="file" ref="itemfile2" name="mediabefore" style="display: none" accept="image/*"
-                                          class="itemfileselected_before" />
-                                        <i style="color: #fff !important;" class="ImageIcon fa fa-plus"></i>
-                                      </div>
-                                    </div>
-                                  </div>
-    
-                            </div>
-                            <div class="row mt-10">
-                                <div class="col-md-12">
-                                    <div class="tk-common-text">Note</div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-5">
-                                    <div class="inv-input-container "> 
-                                        <textarea style="width: 100%;" rows="8" id="id_item_description" name="item_description"></textarea>
-                                        </div>
-                                </div>
-                            </div>
-                            <div class="row mt-20">
-                                <div class="col-md-12">
-                                    <div class="tk-common-text">Action</div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <multiselect v-model="seracval" :options="damAc2" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Select Action"></multiselect>
-                                </div>
-                            </div>
-                            <div class="row mt-20">
-                                <div class="col-md-12">
-                                    <div class="tk-common-text">User</div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <multiselect  :options="damAc2" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Select Action"></multiselect>
-                                </div>
-                            </div>
-                            <div >
-                                <div class="row mt-20" v-if="seracval == 'Follow-up Cleaning'">
-                                    <div class="col-md-12">
-                                        <div class="tk-sec-head av-font">
-                                        Section 1: Building 1 Floor 1 Apartment 1
-    
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row mt-10" v-if="seracval == 'Follow-up Cleaning'">
-                                    <div class="col-md-6 c-right-border">
-                                        <div class="order-details-content">
-                                            <div class="row c-mb-3">
-                                                <div class="col-md-6 col-xs-6 mb-10">
-                                                    <div class="order-details-key">Size</div> 
-                                                    <div class="c-text order-details-value">300</div>
-                                                </div>
-                                                <div class="col-md-6 col-xs-6 mb-10">
-                                                    <div class="order-details-key">Wall Type</div> 
-                                                    <div class="c-text order-details-value">300</div>
-                                                </div>
-                                                <div class="col-md-6 col-xs-6 mb-10">
-                                                    <div class="order-details-key">Celling Type</div> 
-                                                    <div class="c-text order-details-value">300</div>
-                                                </div>
-                                                <div class="col-md-6 col-xs-6 mb-10">
-                                                    <div class="order-details-key">Floor Type</div> 
-                                                    <div class="c-text order-details-value">300</div>
-                                                </div>
-                                                <div class="col-md-6 col-xs-6 mb-10">
-                                                    <div class="order-details-key">Cost</div> 
-                                                    <div class="c-text order-details-value">300</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div style="position: relative;" class="col-md-6">
-                                        
-                                        <div class="col-md-4 ml-0 "><div style="background: #edf1f5 !important;" class="clean-section-card av-font"><p class="av-font">Bedrooms<span class="c-text2 av-font">2</span></p></div></div>
-                                        <div class="col-md-4 ml-0 "><div style="background: #edf1f5 !important;" class="clean-section-card av-font"><p class="av-font">Bedrooms<span class="c-text2 av-font">2</span></p></div></div>
-                                        <div class="col-md-4 ml-0 "><div style="background: #edf1f5 !important;" class="clean-section-card av-font"><p class="av-font">Bedrooms<span class="c-text2 av-font">2</span></p></div></div>
-                                        <div class="col-md-4 ml-0 "><div style="background: #edf1f5 !important;" class="clean-section-card av-font"><p class="av-font">Bedrooms<span class="c-text2 av-font">2</span></p></div></div>
-
-                                        <div class="tk-edit">
-                                            <img class="pointer edit-icon"  src="{% static 'files/icons/edit.png' %}">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row mt-20" v-if="seracval == 'Follow-up Cleaning'">
-                                    <div class="col-md-2">
-                                        <div class="tk-common-text2">
-                                            Number of cleaners
-                                        </div>
-                                        <div class="inv-input-container h-30"> 
-                                            <input type="number"  class="w-p-100 inv-in" >
-                                          </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="tk-common-text2">
-                                            Schedule
-                                        </div>
-                                        <div class="inv-input-container h-30"> 
-                                            <input type="date"  class="w-p-100 inv-in" >
-                                          </div>
-                                    </div>
-                                </div>
-                                <div class="row mt-30">
-                                    <div class="d-flex" style="align-items: center;
-                                    justify-content: center;">
-                                        <button class="tk-can"> Cancel</button>
-                                        <button class="ml-5 tk-sub">Submit</button>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                        </div>
+                        
                        
                     </div>
                 </div>
@@ -529,7 +446,12 @@
   var investigators_list = []
 
   {% for investigator in investigators %}
-  investigators_list.push('{{investigator.name}}')
+ 
+  investigators_list.push({
+      name:'{{investigator.name}}',
+      id:'{{investigator.id}}'
+  })
+
   {% endfor %}
 
   console.log(investigators_list,"il")
@@ -541,13 +463,43 @@
   delimiters: ["<%", "%>"],
   data () {
         return {
+            reporttitile:'',
+            reportnote:'',
+            userselect:'',
             damagenote:'',
             key:1,
-            damacval:"",
+            damacval:[],
             seracval:"",
             atAc:"",
             atStaff:"",
-            damAc:['Payback','Gift','Assign Investigator','Insurance Request'],
+            ticketAction:[
+                {
+                    id:1,
+                    selected:false,
+                    name:'Payback'
+                },
+                {
+                    id:2,
+                    selected:false,
+                    name:'Internal Report'
+                },
+                {
+                    id:3,
+                    selected:false,
+                    name:'Assign Investigator'
+                },
+                {
+                    id:4,
+                    selected:false,
+                    name:'Insurance Request'
+                },
+                {
+                    id:5,
+                    selected:false,
+                    name:'Follow-up Cleaning'
+                },
+            ],
+            damAc:['Payback','Internal Report','Assign Investigator','Insurance Request','Follow-up Cleaning'],
             damAc2 : ['Payback','Gift','Assign Investigator','Follow-up Cleaning'],
             damAc3:investigators_list,
             ac: ['Gift', 'Internal reporting'],
@@ -580,8 +532,33 @@
         }
       },
       methods:{
-          async submitForm(){
+        removeFromSelect(){
+        
+                if(this.damacval.length != 0){
+                    for(var i = 0;i<this.damacval.length;i++){
+                         this.damacval[i].selected = false
+                        }
+                        this.damacval[0].selected = true
+                }  
+        },
+          selectTab(id){
+              var ind = null;
+              for(var i = 0;i<this.damacval.length;i++){
+                  if(this.damacval[i].id == id){
+                      ind = i;
+                      break;
+                  }
+              }
+              if(ind != null){
+                  return this.damacval[ind].selected
+              }else{
+                  
+                  return false
+              }
               
+          },
+          async submitForm(){
+              console.log(this.userselect)
               let fd = new FormData();
               fd.append('visit_id',$('#id_visit').val())
               fd.append('notes',this.damagenote)
@@ -590,13 +567,21 @@
                   types = types+this.value[i].name+',';
               }
               fd.append('ticket_types',types);
+              var actiontypes = ''
+              for(var i = 0 ;i<this.damacval.length;i++){
+                actiontypes = actiontypes+this.damacval[i].name+',';
+              }   
+              fd.append('actions',actiontypes);
               for(var j = 0; j<this.images.length;j++){
                   fd.append('media',this.images[j])
               }
-              for(var k = 0; j<this.images2.length;l++){
-                  fd.append('media',this.images2[k])
+              if(actiontypes.includes('Assign Investigator')){
+                  fd.append('secondary_investigator',this.userselect.id)
               }
-              console.log(fd)
+              if(actiontypes.includes('Internal Report')){
+                  fd.append('title',this.reporttitile);
+                  fd.append('report_note',this.reportnote);
+              }
               let result = await _post('api/ticket-submit/',fd);
               console.log(result);
               
@@ -644,40 +629,29 @@
             }
         },
           selectTickets(){
-              console.log(this.value)
-            if(this.value.length == 0){
-                this.ser = false
-                this.at = false
-                this.dam = false
-               
-            }else{
-                for(var i =0 ;i<this.value.length;i++){
-                  this.value[i].selected = false;
-              }
-                if(this.value.length == 1){
-                  this.value[0].selected = true
-              }else{
-                this.value[0].selected = true
-              }
-
-              if(this.value[0].id == 1){
-                  this.dam =true
-              }else{
-                  this.at = false
-                  this.dam = false
-              }
-              if(this.value[0].id == 3){
-                  this.at =true
-              }else{
-                  this.at = false
-              }
-              if(this.value[0].id == 2){
-                  this.ser =true
-              }else{
-                  this.ser = false
-              }
-            }
-
+              
+                    var flag = true
+                    var ind;
+                if(this.damacval.length != 0){
+                    for(var i = 0;i<this.damacval.length;i++){
+                        if(this.damacval[i].selected){
+                            ind = i;
+                            flag = false
+                            break;
+                        }
+                    }
+                 
+                    if(flag){
+                        
+                    this.damacval[0].selected = true
+                    }else{
+                        for(var i = 0;i<this.damacval.length;i++){
+                         this.damacval[i].selected = false
+                        }
+                        this.damacval[ind].selected = true
+                        }
+                }  
+                
              
           },
           showDam(){
@@ -690,81 +664,42 @@
               }
               return false
           },
-          removeItem(item){
-            this.value.splice(this.value.indexOf(item), 1);
-            this.ser = false
-                this.at = false
-                this.dam = false
-                this.key = this.key+1;
-                console.log(this.ser,this.at,this.dam,this.key)
-            if(this.value.length == 0){
-                this.ser = false
-                this.at = false
-                this.dam = false
-               
-            }else{
-
-                for(var i =0 ;i<this.value.length;i++){
-                  this.value[i].selected = false;
-              }
-                
-                    if(this.value.length == 1){
-                    this.value[0].selected = true
-                }else{
-                    this.value[0].selected = true
-                }
-
-              if(this.value[0].id == 1){
-                  this.dam =true
-              }else{
-                  this.at = false
-                 
-              }
-              if(this.value[0].id == 3){
-                  this.at =true
-              }else{
-                  this.at = false
-              }
-              if(this.value[0].id == 2){
-                  this.ser =true
-              }else{
-                  this.ser = false
-              }
-            }
-            //   for(var i =0 ;i<this.value.length;i++){
-            //       this.value[i].selected = false;
+          removeItem(id){
+            var ind
+            
+            for(var i = 0;i<this.damacval.length;i++){
                   
-            //       if(this.value[i].id == item.id){
-                     
-            //           this.value[i].selected = true;
-            //       }
-            //   }
-          },
-          changeSeleted(item){
-              
-              if(item.id == 1){
-                  this.dam =true
-              }else{
-                  this.dam = false
-              }
-              if(item.id == 3){
-                  this.at =true
-              }else{
-                  this.at = false
-              }
-              if(item.id == 2){
-                  this.ser =true
-              }else{
-                  this.ser = false
-              }
-              for(var i =0 ;i<this.value.length;i++){
-                  this.value[i].selected = false;
-                  
-                  if(this.value[i].id == item.id){
-                     
-                      this.value[i].selected = true;
+                  if(this.damacval[i].id == id){
+                      ind = i;
+                      break;
                   }
               }
+              var a = this.damacval[ind].selected;
+              this.damacval.splice(ind, 1);
+                if(this.damacval.length != 0){
+                    for(var i = 0;i<this.damacval.length;i++){
+                    this.damacval[i].selected = false
+                }
+                this.damacval[0].selected = true
+                }
+           
+            
+          },
+          changeSeleted(id){
+              var ind
+            for(var i = 0;i<this.damacval.length;i++){
+                  console.log(this.damacval[i].id)
+                  if(this.damacval[i].id == id){
+                      ind = i;
+                      break;
+                  }
+              }
+              for(var i = 0;i<this.damacval.length;i++){
+                  this.damacval[i].selected = false
+              }
+              this.damacval[ind].selected = true
+              
+              
           },
           deleteImage(imageindex) {
         this.imageData.splice(imageindex, 1);

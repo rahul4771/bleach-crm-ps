@@ -961,7 +961,7 @@ class CleaningCallendar(APIView):
 			if not calendar_order_schedules_all.duplicate in calendar_order_schedules_duplicates:
 				calendar_order_schedules_list.append(calendar_order_schedules_all.id)
 				calendar_order_schedules_duplicates.append(calendar_order_schedules_all.duplicate)
-		calendar_order_schedules        = OrderScheduler.objects.filter(id__in=calendar_order_schedules_list).select_related('evaluation_details__evaluator','evaluation_details__evaluation','order_scheduler_book').prefetch_related('evaluation_details__evaluation__booking_evaluation','cleaning_team_order_scheduler__team_leader')   #.annotate(customerbooking=Sum(Case(When(order__evaluation__booking_evaluation__booking_type='CLEANINGBOOKING',then=1),default=0,output_field=IntegerField())))
+		calendar_order_schedules        = OrderScheduler.objects.filter(id__in=calendar_order_schedules_list).select_related('evaluation_details__evaluator','evaluation_details__evaluation','order_scheduler_book').prefetch_related('evaluation_details__evaluation__booking_evaluation','cleaning_team_order_scheduler__team_leader')
 		
 		#not approved & approved not paid schedules
 		calendar_notapprovedorder_schedules_list       = []
@@ -973,15 +973,26 @@ class CleaningCallendar(APIView):
 				calendar_notapprovedorder_schedules_duplicates.append(calendar_notapprovedorder_schedules_all.duplicate)
 		calendar_notapprovedorder_schedules 	    = OrderScheduler.objects.filter(id__in=calendar_notapprovedorder_schedules_list).select_related('evaluation_details__evaluator','order_scheduler_book').prefetch_related('cleaning_team_order_scheduler__team_leader')
 		
+		#approved and not approved partitions
+		for calendar_order_schedule in calendar_order_schedules:
+			similar_schedules 						= OrderScheduler.objects.filter(order_scheduler_book=calendar_order_schedule.order_scheduler_book).order_by('start_at')
+			calendar_order_schedule.total_cleanings = similar_schedules.count()
+			calendar_order_schedule.partition       = list(similar_schedules.values_list('id',flat=True)).index(calendar_order_schedule.id)+1
+
+		for calendar_notapprovedorder_schedule in calendar_notapprovedorder_schedules:
+			similar_schedules                                  = OrderScheduler.objects.filter(order_scheduler_book=calendar_notapprovedorder_schedule.order_scheduler_book).order_by('start_at')
+			calendar_notapprovedorder_schedule.total_cleanings = similar_schedules.count()
+			calendar_notapprovedorder_schedule.partition       = list(similar_schedules.values_list('id',flat=True)).index(calendar_notapprovedorder_schedule.id)+1
+
 		#followup schedules
 		try:
 			calendar_followup_schedules = FollowUpScheduler.objects.filter(Q(Q(Q(start_at__gte=schedule_date_start)&Q(end_at__lte=schedule_date_end))|Q(Q(start_at__gte=schedule_date_start)&Q(start_at__lt=schedule_date_end)&Q(end_at__gt=schedule_date_end))|Q(Q(end_at__gt=schedule_date_start)&Q(end_at__lte=schedule_date_end)&Q(start_at__lt=schedule_date_start)))).order_by('start_at').select_related('follow_up','customer_address').prefetch_related('followupteam_followupschedule__team_leader')
 		except:
 			calendar_followup_schedules = None
 		
-		response_dict['appoved_cleanings']    = CleaningScheduleSerializer(instance=calendar_order_schedules,many=True).data
+		response_dict['appoved_cleanings']     = CleaningScheduleSerializer(instance=calendar_order_schedules,many=True).data
 		response_dict['notapproved_cleanings'] = CleaningScheduleSerializer(instance=calendar_notapprovedorder_schedules,many=True).data
-		response_dict['followup_cleanings']   = FollowupScheduleSerializer(instance=calendar_followup_schedules,many=True).data
+		response_dict['followup_cleanings']    = FollowupScheduleSerializer(instance=calendar_followup_schedules,many=True).data
 
 		response_dict['success'] = True
 
