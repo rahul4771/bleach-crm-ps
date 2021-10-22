@@ -127,6 +127,13 @@ class TlHome(IsTeamLeader,View):
 			my_cleanings  = CleaningTeam.objects.filter(Q(Q(Q(start_at__gte=my_cleaning_date_start)&Q(start_at__lt=my_cleaning_date_end))&Q(team_leader=request.user))).select_related('order_scheduler__order_scheduler_book__service_type','order_scheduler__order__evaluation__customer','order_scheduler__customer_address')
 		except:
 			my_cleanings  = None
+		
+		#partitions
+		for my_cleaning in my_cleanings:
+			similar_schedules 			= OrderScheduler.objects.filter(order_scheduler_book=my_cleaning.order_scheduler.order_scheduler_book).order_by('start_at')
+			my_cleaning.total_cleanings = similar_schedules.count()
+			my_cleaning.partition       = list(similar_schedules.values_list('id',flat=True)).index(my_cleaning.order_scheduler.id)+1
+
 		try:
 			my_followups  = FollowUpTeam.objects.filter(Q(Q(Q(start_at__gte=my_cleaning_date_start)&Q(start_at__lt=my_cleaning_date_end))&Q(team_leader=request.user))).select_related('followup_scheduler__follow_up__investigation__order__evaluation__customer','followup_scheduler__follow_up__investigation__order_schedule__order_scheduler_book__service_type','followup_scheduler__customer_address')
 		except:
