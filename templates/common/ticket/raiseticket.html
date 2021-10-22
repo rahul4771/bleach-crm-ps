@@ -178,7 +178,7 @@
                             </div>
                         </div> -->
                         
-                        <div v-if="value.length != 0">
+                        <div v-if="value.length !=0">
                             <div class="row mt-40">
                                 <div class="col-md-12">
                                     <div class="tk-common-text">Upload Media</div>
@@ -234,15 +234,154 @@
                             <div class="row mt-20">
                             <div class="col-md-2" v-for="item in damacval" :key="item.id" >
                                 <div   class="tk-type-card pointer" v-bind:class="{ 'tk-type-cardselected': item.selected }">
-                                    <div @click='changeSeleted(item.id)' style="margin-bottom: 0px; flex-grow: 1;" class="tk-common-text2"><% item.name %></div>
+                                    <div @click='changeSeleted(item.id)' style="margin-bottom: 0px; flex-grow: 1;" class="tk-common-text2"> <% item.name %> </div>
                                     <div @click='removeItem(item.id)' style="margin-right: 5px;" class="pointer">
                                         <i class="fa fa-times" aria-hidden="true"></i>
                                     </div>
                                 </div>
                             </div>
                             </div> 
-                        <div v-if="selectTab(1)">
-                            pay
+                         <div v-if="selectTab(1)"> 
+                            
+                            <div class="row mt-20">
+                                <div class="col-md-12">
+                                    <div class="tk-common-text">Payback Action</div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <multiselect :multiple="true"  @remove='removeFromPayback()'   :options="paybackaction" :searchable="false" v-model="payback" :close-on-select="true" :show-labels="false" placeholder="Select payback action"></multiselect>
+                                </div>
+                            </div>
+                            
+                            <div v-if="paybackSelected('Service Quality')" class="row mt-20 " style="padding: 10px;">
+                                <div class="col-md-8 payback-section">
+                                    <div  style="position: absolute; top: 5px; right: 10px;" class="pointer" @click="removePayback('Service Quality')">
+        
+                                        <i class="fa fa-times" aria-hidden="true"></i>
+                                    </div>
+                                    <div class="tk-common-text">Section (Service Quality)</div>
+                                    <br>
+                                    <div class="tk-common-text">Items</div>
+                                    <div class="row mt-10">
+                                        <div class="col-md-4">
+                                            <div class="tk-common-text">Details</div>
+                                            <div class="inv-input-container " style="height: 40px;"> 
+                                                <input type="text" v-model="paybackSerDetials" class="w-p-100 inv-in"  >
+                                              </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="tk-common-text">Price</div>
+                                            <div class="inv-input-container " style="height: 40px;"> 
+                                                <input type="number"  class="w-p-100 inv-in" v-model="paybackSerPrice">
+                                              </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button style="margin-top: 30px;" class="ml-5  tk-sub" @click="addPaybackSer" >Add</button>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-10">
+                                        <div class="col-md-4 mt-10" v-for="(item, index) in paybackSer" :key="item" >
+                                            <div   class="tk-type-card pointer" style="padding: 10px; background: #fff; border: 1px solid #edf1f6;">
+                                                <div  style="margin-bottom: 0px; flex-grow: 1;" class="tk-common-text2"> <% item.detials %> </div>
+                                                <div style="flex-grow: 1; margin-bottom: 0px;" class="tk-common-text2">
+                                                    <% item.price %>
+                                                </div>
+                                                <div  style="margin-right: 5px;" class="pointer" @click="removePaybackSer(index)">
+        
+                                                    <i class="fa fa-times" aria-hidden="true"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-if="paybackSelected('Damage')" class="row mt-20 " style="padding: 10px;">
+                                <div class="col-md-8 payback-section">
+                                    <div @click="removePayback('Damage')"  style="position: absolute; top: 5px; right: 10px;" class="pointer">
+        
+                                        <i class="fa fa-times" aria-hidden="true"></i>
+                                    </div>
+                                    <div class="tk-common-text">Section (Damage)</div>
+                                    <br>
+                                    <div class="tk-common-text">Items</div>
+                                    <div class="row mt-10">
+                                        <div class="col-md-4">
+                                            <div class="tk-common-text">Details</div>
+                                            <div class="inv-input-container " style="height: 40px;"> 
+                                                <input type="text" v-model="paybackDamDetials" class="w-p-100 inv-in"  >
+                                              </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="tk-common-text">Price</div>
+                                            <div class="inv-input-container " style="height: 40px;"> 
+                                                <input type="number"  class="w-p-100 inv-in" v-model="paybackDamPrice">
+                                              </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button style="margin-top: 30px;" class="ml-5  tk-sub" @click="addPaybackDam" >Add</button>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-10">
+                                        <div class="col-md-4 mt-10" v-for="(item, index) in paybackDam" :key="item" >
+                                            <div   class="tk-type-card pointer" style="padding: 10px; background: #fff; border: 1px solid #edf1f6;">
+                                                <div  style="margin-bottom: 0px; flex-grow: 1;" class="tk-common-text2"> <% item.detials %> </div>
+                                                <div style="flex-grow: 1; margin-bottom: 0px;" class="tk-common-text2">
+                                                    <% item.price %>
+                                                </div>
+                                                <div  style="margin-right: 5px;" class="pointer" @click="removePaybackDam(index)">
+        
+                                                    <i class="fa fa-times" aria-hidden="true"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div v-if="paybackSelected('Other')" class="row mt-20 " style="padding: 10px;">
+                                <div class="col-md-8 payback-section">
+                                    <div @click="removePayback('Other')"  style="position: absolute; top: 5px; right: 10px;" class="pointer">
+        
+                                        <i class="fa fa-times" aria-hidden="true"></i>
+                                    </div>
+                                    <div class="tk-common-text">Section (Other)</div>
+                                    
+                                    <div class="tk-common-text">Items</div>
+                                    <br>
+                                    <div class="row mt-10">
+                                        <div class="col-md-4">
+                                            <div class="tk-common-text">Details</div>
+                                            <div class="inv-input-container " style="height: 40px;"> 
+                                                <input type="text" v-model="paybackOtherDetials" class="w-p-100 inv-in"  >
+                                              </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="tk-common-text">Price</div>
+                                            <div class="inv-input-container " style="height: 40px;"> 
+                                                <input type="number"  class="w-p-100 inv-in" v-model="paybackOtherPrice">
+                                              </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button style="margin-top: 30px;" class="ml-5  tk-sub" @click="addPaybackOther" >Add</button>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-10">
+                                        <div class="col-md-4 mt-10" v-for="(item, index) in paybackOther" :key="item" >
+                                            <div   class="tk-type-card pointer" style="padding: 10px; background: #fff; border: 1px solid #edf1f6;">
+                                                <div  style="margin-bottom: 0px; flex-grow: 1;" class="tk-common-text2"> <% item.detials %> </div>
+                                                <div style="flex-grow: 1; margin-bottom: 0px;" class="tk-common-text2">
+                                                    <% item.price %>
+                                                </div>
+                                                <div  style="margin-right: 5px;" class="pointer" @click="removePaybackOther(index)">
+        
+                                                    <i class="fa fa-times" aria-hidden="true"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                           
                         </div>
                         <div v-if="selectTab(2)">
                             <!-- Internal reporting -->
@@ -463,6 +602,17 @@
   delimiters: ["<%", "%>"],
   data () {
         return {
+            paybackSerDetials:'',
+            paybackSerPrice:'',
+            paybackSer:[],
+            paybackDamDetials:'',
+            paybackDamPrice:'',
+            paybackDam:[],
+            paybackOtherDetials:'',
+            paybackOtherPrice:'',
+            paybackOther:[],
+            paybackaction:['Service Quality','Damage','Other'],
+            payback:[],
             reporttitile:'',
             reportnote:'',
             userselect:'',
@@ -532,8 +682,78 @@
         }
       },
       methods:{
+        removeFromPayback(){
+            // console.log('ghj')
+            // if(!this.payback.includes('Service Quality')){
+            //     this.paybackSer = []
+            // }
+            // if(!this.payback.includes('Damage')){
+            //     this.paybackDam = []
+            // }
+            // if(!this.payback.includes('Other')){
+            //     this.paybackOther = []
+            // }
+        },
+        removePayback(item){
+            console.log(item)
+            //Service Quality','Damage','Other'],
+            if(item == 'Service Quality'){
+                this.paybackSer = []
+            }
+            if(item == 'Damage'){
+                this.paybackDam = []
+            }
+            if(item == 'Other'){
+                this.paybackOther = []
+            }
+            this.payback.splice(this.payback.indexOf(item), 1); 
+        },
+        addPaybackSer(){
+            if(this.paybackSerDetials != '' && this.paybackSerPrice !=''){
+                var a ={
+                    detials:this.paybackSerDetials,
+                    price:this.paybackSerPrice
+                }
+                this.paybackSer.push(a)
+                this.paybackSerDetials = ''
+                this.paybackSerPrice = ''
+            }
+        },
+        removePaybackSer(item){
+            this.paybackSer.splice(item, 1);
+        },
+        addPaybackOther(){
+            if(this.paybackOtherDetials != '' && this.paybackOtherPrice !=''){
+                var a ={
+                    detials:this.paybackOtherDetials,
+                    price:this.paybackOtherPrice
+                }
+                this.paybackOther.push(a)
+                this.paybackOtherDetials = ''
+                this.paybackOtherPrice = ''
+            }
+        },
+        removePaybackOther(item){
+            this.paybackOther.splice(item, 1);
+        },
+        addPaybackDam(){
+            if(this.paybackDamDetials != '' && this.paybackDamPrice !=''){
+                var a ={
+                    detials:this.paybackDamDetials,
+                    price:this.paybackDamPrice
+                }
+                this.paybackDam.push(a)
+                this.paybackDamDetials = ''
+                this.paybackDamPrice = ''
+            }
+        },
+        removePaybackDam(item){
+            this.paybackDam.splice(item, 1);
+        },
+        paybackSelected(item){
+            return this.payback.includes(item)
+        },
         removeFromSelect(){
-        
                 if(this.damacval.length != 0){
                     for(var i = 0;i<this.damacval.length;i++){
                          this.damacval[i].selected = false

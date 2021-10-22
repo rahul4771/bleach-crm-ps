@@ -650,8 +650,11 @@ class TicketSubmitAPI(APIView):
 		notes = request.data.get('notes')
 		investigationmedias = request.FILES.getlist('media')
 		action = request.data.get('action')
+		paybackdiscount_items = request.data.get('paybackdiscount_items')
 		print(visit_id,ticket_types,notes,investigationmedias,"lodat")
 
+		response_dict['paybackitems'] = paybackdiscount_items
+		
 		visit = OrderScheduler.objects.get(id=int(visit_id))
 		order = visit.order
 
@@ -674,7 +677,7 @@ class TicketSubmitAPI(APIView):
 		if action == 'payback':
 			paybackdiscount = PaybackDiscount.objects.create(investigation=investigation,is_active=True)
 
-			paybackdiscount_items = request.data.get('paybackdiscount_items')
+			# paybackdiscount_items = request.data.get('paybackdiscount_items')
 
 			keynote_array.append(PaybackDiscountDetails(paybackdiscount=paybackdiscount,category=section_name,name=keynote,cost=quantity,is_active=True))
 

@@ -924,13 +924,80 @@ class AvailabilityCleaningCallendar(APIView):
 		response_dict['available_leaders_count']  = available_leaders.count()
 		response_dict['available_leaders']        = UserProfileShowSerializer(instance=available_leaders,many=True).data
 
-		# if response_dict['available_leaders_count'] > 0:
-		# 	hours                 = (cleaning_datetime_end-cleaning_datetime_start).seconds/3600
-		# 	productivity          = ServiceProductivity.objects.filter(service_type__name__in=service_types).aggregate(Sum('perhour_cleaning'))['perhour_cleaning__sum'] or 0.00
-		# 	total_cleaners		  = response_dict['available_cleaners_count']
-		# 	response_dict['work'] = hours*productivity*total_cleaners
-		# else:
-		# 	response_dict['work'] = 0
+		if response_dict['available_leaders_count'] > 0 and len(service_types) == 1:
+			hours                 = (cleaning_datetime_end-cleaning_datetime_start).seconds/3600
+			total_cleaners		  = response_dict['available_cleaners_count']
+
+			work                  = {}
+			if 'General Cleaning' in service_types:
+				productivity                      = ServiceProductivity.objects.filter(service_type__name__in=service_types).aggregate(Sum('perhour_cleaning'))['perhour_cleaning__sum'] or 0.00
+				response_dict['General Cleaning'] = str(hours*productivity*total_cleaners)+' Sqm'
+			
+			elif 'Deep Cleaning' in service_types:
+				productivity                      = ServiceProductivity.objects.filter(service_type__name__in=service_types).aggregate(Sum('perhour_cleaning'))['perhour_cleaning__sum'] or 0.00
+				response_dict['Deep Cleaning']    = str(hours*productivity*total_cleaners)+' Sqm'
+			
+			elif 'Carpet Cleaning' in service_types:
+				productivity                      = ServiceProductivity.objects.filter(service_type__name__in=service_types).aggregate(Sum('perhour_cleaning'))['perhour_cleaning__sum'] or 0.00
+				response_dict['Carpet Cleaning']  = str(hours*productivity*total_cleaners)+' Sqm'
+			
+			elif 'Sterilization' in service_types:
+				productivity                      = ServiceProductivity.objects.filter(service_type__name__in=service_types).aggregate(Sum('perhour_cleaning'))['perhour_cleaning__sum'] or 0.00
+				response_dict['Sterilization']    = str(hours*productivity*total_cleaners)+' Sqm'
+			
+			elif 'Mattress Cleaning' in service_types:
+				productivity                       = ServiceProductivity.objects.filter(service_type__name__in=service_types).aggregate(Sum('perhour_cleaning'))['perhour_cleaning__sum'] or 0.00
+				response_dict['Mattress Cleaning'] = str(hours*productivity*total_cleaners)+' Sqm'
+			
+			elif 'Storage Area' in service_types:
+				productivity                      = ServiceProductivity.objects.filter(service_type__name__in=service_types).aggregate(Sum('perhour_cleaning'))['perhour_cleaning__sum'] or 0.00
+				response_dict['Storage Area']     = str(hours*productivity*total_cleaners)+' Sqm'
+			
+			elif 'Car Parking Umbrella' in service_types:
+				productivity                          = ServiceProductivity.objects.filter(service_type__name__in=service_types).aggregate(Sum('perhour_cleaning'))['perhour_cleaning__sum'] or 0.00
+				response_dict['Car Parking Umbrella'] = str(hours*productivity*total_cleaners)+' Sqm'
+			
+			elif 'Outdoor Cleaning' in service_types:
+				productivity                      = ServiceProductivity.objects.filter(service_type__name__in=service_types).aggregate(Sum('perhour_cleaning'))['perhour_cleaning__sum'] or 0.00
+				response_dict['Outdoor Cleaning'] = str(hours*productivity*total_cleaners)+' Sqm'
+			
+			elif 'Upholstery Cleaning' in service_types:
+				productivities                      = ServiceProductivity.objects.filter(service_type__name__in=service_types)
+				for productivity in productivities:
+					if productivity.upholstery_type == 'CHAIR':
+						response_dict['Chair Cleaning'] = str(hours*float(productivity.perhour_cleaning)*total_cleaners)+' Chairs'
+					elif productivity.upholstery_type == 'SOFA':
+						response_dict['Sofa Cleaning'] = str(hours*float(productivity.perhour_cleaning)*total_cleaners)+' Sofas'
+			
+			elif 'Kitchen Cleaning' in service_types:
+				productivities                      = ServiceProductivity.objects.filter(service_type__name__in=service_types)
+				for productivity in productivities:
+					if not productivity.is_newkitchen and not productivity.is_cabinet:
+						response_dict['Old Kitchen Without Cabinet'] = str(hours*float(productivity.perhour_cleaning)*total_cleaners)+' Sqm'
+					elif productivity.is_newkitchen and not productivity.is_cabinet:
+						response_dict['New Kitchen Without Cabinet'] = str(hours*float(productivity.perhour_cleaning)*total_cleaners)+' Sqm'
+					elif not productivity.is_newkitchen and productivity.is_cabinet:
+						response_dict['Old Kitchen With Cabinet'] = str(hours*float(productivity.perhour_cleaning)*total_cleaners)+' Sqm'
+					elif productivity.is_newkitchen and productivity.is_cabinet:
+						response_dict['New Kitchen With Cabinet'] = str(hours*float(productivity.perhour_cleaning)*total_cleaners)+' Sqm'
+			
+			elif 'Facade Cleaning' in service_types:
+				productivities                      = ServiceProductivity.objects.filter(service_type__name__in=service_types)
+				for productivity in productivities:
+					if not productivity.is_highprice_facade:
+						response_dict['New Facade Cleaning'] = str(hours*float(productivity.perhour_cleaning)*total_cleaners)+' Sqm'
+					elif productivity.is_highprice_facade:
+						response_dict['Old Facade Cleaning'] = str(hours*float(productivity.perhour_cleaning)*total_cleaners)+' Sqm'
+			
+			elif 'Window Cleaning' in service_types:
+				productivities                      = ServiceProductivity.objects.filter(service_type__name__in=service_types)
+				for productivity in productivities:
+					if not productivity.is_highprice_window:
+						response_dict['New Window Cleaning'] = str(hours*float(productivity.perhour_cleaning)*total_cleaners)+' Sqm'
+					elif productivity.is_highprice_window:
+						response_dict['Old Window Cleaning'] = str(hours*float(productivity.perhour_cleaning)*total_cleaners)+' Sqm'
+		else:
+			response_dict['error'] = 'Please Select One Service and Make Sure that Cleaning Agent is Available'
 
 		response_dict['success'] = True
 		return Response(response_dict,HTTP_200_OK)
