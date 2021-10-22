@@ -728,7 +728,7 @@ class VisitDetailsAPI(APIView):
 		response_dict = {'success':False}
 		print(visit_id,"oid")
 		try:
-			visit = OrderScheduler.objects.select_related('order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).select_related('team_leader','drop_off_driver','pick_up_driver').prefetch_related(Prefetch('media_cleaningteam',queryset=CleaningTeamMedia.objects.filter(is_active=True),to_attr='cleaning_team_medias'),Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_team')).get(is_active=True,id=int(visit_id))
+			visit = OrderScheduler.objects.select_related('order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='sections'),Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).select_related('team_leader','drop_off_driver','pick_up_driver').prefetch_related(Prefetch('media_cleaningteam',queryset=CleaningTeamMedia.objects.filter(is_active=True),to_attr='cleaning_team_medias'),Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_team')).get(is_active=True,id=int(visit_id))
 		except:
 		 	visit = None
 
