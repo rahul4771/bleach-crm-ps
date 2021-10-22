@@ -43,6 +43,15 @@
   
     background: #EDF1F6 !important;
     }
+@media only screen and (max-width: 950px){
+    .modal-dialog {
+        width: auto !important;
+    }
+}
+
+.modal-dialog {
+    width: 1000px !important;
+}
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
@@ -70,6 +79,42 @@
         {% endif %}
 
         <section class="content">
+<button style="display: none;" data-toggle="modal" data-target="#editSectionDialog" id="edit-dialog-tigger"></button>
+<!-- edit section dialog begins here-->
+<div class="modal fade " id="editSectionDialog" tabindex="-1" role="dialog" aria-labelledby="editSectionDialogTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered primary-modal" role="document">
+      <div class="modal-content primary-modal-border">
+        <div class="d-flex">
+            <div class="popup-title  w-100 mt-10 mb-10 av-font" id="exampleModalLongTitle">Edit Section </div>
+            <button type="button" class="close ml-auto" data-dismiss="modal" aria-label="Close" style="margin-left:auto">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" v-if="edit_section != null">
+            <div >
+                <div class="row">
+                    <div class="col-md-6 mt-10">
+                        <div class=" bold-text common-label required-field"> <label class="av-font">Section Name</label></div>
+                        <div class="inv-input-container " style="height: 40px;"> 
+                            <input type="text"  class="w-p-100 inv-in"  >
+                        </div>
+                    </div>
+                    <div class="col-md-6 mt-10">
+                        <div class=" bold-text common-label required-field"> <label class="av-font">Section Name</label></div>
+                        <div class="inv-input-container " style="height: 40px;"> 
+                            <input type="text"  class="w-p-100 inv-in"  >
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+          </div>
+
+      </div>
+    </div>
+</div>
+
+            
             <!--content-->
             <div class="container-fluid space topspace">
                 <!--container-fluid space-->
@@ -155,6 +200,7 @@
                                 </div>
                             </div>
                         </div>
+                       <div v-if="isOrderSelected">
                         <div class="row mt-30" style="margin-top: 40px;">
                             <div class="col-md-3">
                                 <div class="tk-common-text">Ticket Form</div>
@@ -166,19 +212,9 @@
                                 <multiselect name="ticket_type" label="name" track-by="name"  v-model="value"  selectLabel="Select Ticket" :showLabels='true' :multiple="true" placeholder="Select Ticket Type" :options="options"></multiselect>
                             
                             </div>
-                        </div>
-                        <!-- <div class="row mt-20">
-                            <div class="col-md-2" v-for="item in value" :key="item.id" >
-                                <div   class="tk-type-card pointer" v-bind:class="{ 'tk-type-cardselected': item.selected }">
-                                    <div @click='changeSeleted(item)' style="margin-bottom: 0px; flex-grow: 1;" class="tk-common-text2"><% item.name %></div>
-                                    <div @click='removeItem(item)' style="margin-right: 5px;" class="pointer">
-                                        <i class="fa fa-times" aria-hidden="true"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> -->
-                        
-                        <div v-if="value.length !=0">
+                        </div>                        
+                        <!-- <div v-if="value.length !=0"> -->
+                            <div>
                             <div class="row mt-40">
                                 <div class="col-md-12">
                                     <div class="tk-common-text">Upload Media</div>
@@ -427,85 +463,89 @@
                         <div v-if="selectTab(4)">
                             in
                         </div>
-                        <div v-if="selectTab(5)">
-                            <div class="row mt-20" >
-                                <div class="col-md-12">
-                                    <div class="tk-sec-head av-font">
-                                    Section 1: Building 1 Floor 1 Apartment 1
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row mt-10">
-                                <div class="col-md-6 c-right-border">
-                                    <div class="order-details-content">
-                                        <div class="row c-mb-3">
-                                            <div class="col-md-6 col-xs-6 mb-10">
-                                                <div class="order-details-key">Size</div> 
-                                                <div class="c-text order-details-value">300</div>
-                                            </div>
-                                            <div class="col-md-6 col-xs-6 mb-10">
-                                                <div class="order-details-key">Wall Type</div> 
-                                                <div class="c-text order-details-value">300</div>
-                                            </div>
-                                            <div class="col-md-6 col-xs-6 mb-10">
-                                                <div class="order-details-key">Celling Type</div> 
-                                                <div class="c-text order-details-value">300</div>
-                                            </div>
-                                            <div class="col-md-6 col-xs-6 mb-10">
-                                                <div class="order-details-key">Floor Type</div> 
-                                                <div class="c-text order-details-value">300</div>
-                                            </div>
-                                            <div class="col-md-6 col-xs-6 mb-10">
-                                                <div class="order-details-key">Cost</div> 
-                                                <div class="c-text order-details-value">300</div>
+                        <!-- <div v-if="selectTab(5)"> -->
+                            <div>
+                            <div v-if="cleaningsections != null">
+                                <div v-for="(item, index) in cleaningsections" :key="item.section_id"  >
+                                    <div class="row mt-20" >
+                                        <div class="col-md-12">
+                                            <div class="tk-sec-head av-font">
+                                            Section <% index+1 %>: Building 1 Floor 1 Apartment 1
+        
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div style="position: relative;" class="col-md-6">
-                                    
-                                    <div class="col-md-4 ml-0 "><div style="background: #edf1f5 !important;" class="clean-section-card av-font"><p class="av-font">Bedrooms<span class="c-text2 av-font">2</span></p></div></div>
-                                    <div class="col-md-4 ml-0 "><div style="background: #edf1f5 !important;" class="clean-section-card av-font"><p class="av-font">Bedrooms<span class="c-text2 av-font">2</span></p></div></div>
-                                    <div class="col-md-4 ml-0 "><div style="background: #edf1f5 !important;" class="clean-section-card av-font"><p class="av-font">Bedrooms<span class="c-text2 av-font">2</span></p></div></div>
-                                    <div class="col-md-4 ml-0 "><div style="background: #edf1f5 !important;" class="clean-section-card av-font"><p class="av-font">Bedrooms<span class="c-text2 av-font">2</span></p></div></div>
-
-                                    <div class="tk-edit">
-                                        <img class="pointer edit-icon"  src="{% static 'files/icons/edit.png' %}">
+                                    <div class="row mt-10">
+                                        <div class="col-md-6 c-right-border">
+                                            <div class="order-details-content">
+                                                <div class="row c-mb-3">
+                                                    <div class="col-md-6 col-xs-6 mb-10">
+                                                        <div class="order-details-key">Size</div> 
+                                                        <div class="c-text order-details-value"> <% item.size %> </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-xs-6 mb-10">
+                                                        <div class="order-details-key">Wall Type</div> 
+                                                        <div class="c-text order-details-value"> <% item.wall_type %> </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-xs-6 mb-10">
+                                                        <div class="order-details-key">Celling Type</div> 
+                                                        <div class="c-text order-details-value"> <% item.ceiling_type %> </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-xs-6 mb-10">
+                                                        <div class="order-details-key">Floor Type</div> 
+                                                        <div class="c-text order-details-value"> <% item.floor_type%> </div>
+                                                    </div>
+                                                    <div class="col-md-6 col-xs-6 mb-10">
+                                                        <div class="order-details-key">Cost</div> 
+                                                        <div class="c-text order-details-value"> <% item.section_net_cost %> </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div style="position: relative;" class="col-md-6">
+                                            
+                                            <div v-for="(keynote, index) in item.keynotes" :key="keynote.keynote_id" class="col-md-4 ml-0 "><div style="background: #edf1f5 !important;" class="clean-section-card av-font"><p class="av-font"> <% keynote.sub_area %> <span class="c-text2 av-font"><% keynote.quantity %></span></p></div></div>
+                                            
+        
+                                            <div class="tk-edit" @click="editSection(index)">
+                                                <img class="pointer edit-icon"  src="{% static 'files/icons/edit.png' %}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-20" >
+                                        <div class="col-md-2">
+                                            <div class="tk-common-text2">
+                                                Number of cleaners
+                                            </div>
+                                            <div class="inv-input-container h-30"> 
+                                                <input type="number"  class="w-p-100 inv-in" >
+                                              </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="tk-common-text2">
+                                                Schedule
+                                            </div>
+                                            <div class="inv-input-container h-30"> 
+                                                <input type="date"  class="w-p-100 inv-in" >
+                                              </div>
+                                        </div>
                                     </div>
                                 </div>
+                               
                             </div>
-                            <div class="row mt-20" >
-                                <div class="col-md-2">
-                                    <div class="tk-common-text2">
-                                        Number of cleaners
-                                    </div>
-                                    <div class="inv-input-container h-30"> 
-                                        <input type="number"  class="w-p-100 inv-in" >
-                                      </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="tk-common-text2">
-                                        Schedule
-                                    </div>
-                                    <div class="inv-input-container h-30"> 
-                                        <input type="date"  class="w-p-100 inv-in" >
-                                      </div>
-                                </div>
-                            </div>
+                            
                         </div>
 
                         </div>
-                           
-                            <div class="row mt-30">
+                            <div class="row mt-30" v-if="value.length != 0 && damacval.length != 0">
                                 <div class="d-flex" style="align-items: center;
                                 justify-content: center;">
                                     <button class="tk-can" type="button"> Cancel</button>
                                     <button class="ml-5 tk-sub"  @click="submitForm()">Submit</button>
                                 </div>
                             </div>
-                          
-                            
+                       </div>
+
                         </div>
                         
                        
@@ -602,6 +642,18 @@
   delimiters: ["<%", "%>"],
   data () {
         return {
+            
+            cause_of_stain:['INK MARK', 'HARD DUST', 'COFFEE & TEA SPILL', 'OIL','GREASE', 'PAINT', 'URINE', 'MILK SPILL', 'NO STAIN', 'OTHERS'],
+            walltypes:["BRICKS","GLASS","CONCRETE","CERAMIC","GYPSUM","FABRIC","RUBBER","STONE","TERRAZO","STAINLESS","VINYL","WOODEN","OTHERS"],
+            ceilingtypes:["WOODEN","GLASS","CONCRETE","CERAMIC","GYPSUM","FOAM","PLASTIC","FABRIC","RUBBER","STAINLESS","VENYL","OTHERS"],
+            floortypes:["MARBLE","GLASS","STONE","CERAMIC","CONCRETE","BRICKS","WOODEN","TERRAZO","OTHERS"],
+            materials:["POLYESTER","NATURAL FIBER","SYNTHETIC","LEATHER","OLEFIN","POLYPROPYLENE","NYLON"],
+            colors:["GREEN","SILVER","VIOLET","WHITE","BLACK","BEIGE","BLUE","GREY","RED","CREAM","MULTI","OFF WHITE","MEROON","ORANGE","PINK","GOLD","BROWN","YELLOW","ROYAL BLUE","LILAC","OTHERS"],
+            edit_section:null,
+            edit_section_active_index:null,
+            edit_servicetype:'',
+            isOrderSelected:false,
+            cleaningsections:null,
             paybackSerDetials:'',
             paybackSerPrice:'',
             paybackSer:[],
@@ -661,9 +713,9 @@
             active:true,
           value: [],
           options:[
-          { name: 'Damage', id: 1 , selected:false},
-        { name: 'Service Quality', id: 2, selected:false },
-        { name: 'Attitude & Behaviour', id: 3, selected:false },
+            { name: 'Damage', id: 1 , selected:false},
+            { name: 'Service Quality', id: 2, selected:false },
+            { name: 'Attitude & Behaviour', id: 3, selected:false },
           ],
           imageData: [],
         images:[],
@@ -672,16 +724,16 @@
             file: "",
             service:""
         },
-        imageData2: [],
-        images2:[],
-        ImageDetails2: {
-            url: "",
-            file: "",
-            service:""
-        },
+        
         }
       },
       methods:{
+        editSection(item){
+            console.log(item)
+            this.edit_section_active_index = item
+            this.edit_section = this.cleaningsections[item]
+            $('#edit-dialog-tigger').click();
+        },
         removeFromPayback(){
             // console.log('ghj')
             // if(!this.payback.includes('Service Quality')){
@@ -810,16 +862,25 @@
               }
               if(actiontypes.includes('Payback')){
                   var p = []
-                  
-                  for(var j = 0 ; j<this.paybackSer.length;j++){
+                   //Service Quality','Damage','Other'],
+                   if(this.payback.includes('Service Quality')){
+                    for(var j = 0 ; j<this.paybackSer.length;j++){
                       p.push(this.paybackSer[j])
+                    }
                   }
-                  for(var j = 0 ; j<this.paybackDam.length;j++){
+                   if(this.payback.includes('Damage')){
+                    for(var j = 0 ; j<this.paybackDam.length;j++){
                       p.push(this.paybackDam[j])
-                  }
-                  for(var j = 0 ; j<this.paybackOther.length;j++){
-                      p.push(this.paybackOther[j])
-                  }
+                     }
+                    }
+                    if(this.payback.includes('Other')){
+                        for(var j = 0 ; j<this.paybackOther.length;j++){
+                          p.push(this.paybackOther[j])
+                        }
+                    }
+                 
+                  
+                  
                   for(var q =0;q<p.length;q++){
                     var pstr = ''
                     pstr = p[q].itemname+','+p[q].price+','+p[q].category
@@ -975,6 +1036,7 @@
           },
           deleteImage(imageindex) {
         this.imageData.splice(imageindex, 1);
+        this.images.splice(imageindex, 1);
         },
         uploadImgToArray(file,fileName){
             file.lastModifiedDate = Date.now();
@@ -1135,11 +1197,13 @@ $(function () {
 
 
 async function loadvisits(order_id){
-
+    app.isOrderSelected = false
     axios.get(url+'/api/order-details/'+order_id)
                 .then(function (response) {
                     console.log(response.data.visits,"vs")
                     $('#visit_drop').empty();
+                    $('#id_sched').text('-- Select Order Schedule--')
+                    $('.tk-order-card').hide();
                     $(response.data.visits).each(function(key,value){
                         $('#visit_drop').append('<li><a onclick="loadvisitdata('+ value.visit_id +')">'+ value.order_no +' - '+ value.start_at +'</a></li>')
                     })
@@ -1151,9 +1215,14 @@ async function loadvisits(order_id){
 
 
 async function loadvisitdata(visit_id){
-
+    app.isOrderSelected = false
     axios.get(url+'/api/visit-details/'+visit_id)
                 .then(function (response) {
+                    app.isOrderSelected = true
+                    app.value = [];
+                    app.damacval = []
+                    app.cleaningsections = response.data.sections
+                    app.edit_servicetype = response.data.servicetype
                     console.log(response.data,"lop")
                     $('#id_sched').text(response.data.order_no+' - '+response.data.start_at)
                     $('.tk-order-card').show();
