@@ -11,15 +11,7 @@
   const app = new Vue({
   el: "#app",
   components: { Multiselect: window.VueMultiselect.default },
-  vuetify: new Vuetify({theme: {
-      themes: {
-        light: {
-          primary: '#2f4e85', // #E53935
-          secondary: '#FFCDD2', // #FFCDD2
-          accent: '#3F51B5', // #3F51B5
-        },
-      },
-    }}),    
+     
   delimiters: ["<%", "%>"],
   data () {
         return {

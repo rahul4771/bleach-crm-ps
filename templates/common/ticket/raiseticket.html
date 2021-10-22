@@ -2,8 +2,7 @@
 {% block content %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'files/css/booking/booking.css' %}">
-<link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+
 <style>
     .multiselect__tags {
   
@@ -60,7 +59,6 @@
     crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
     <div class="wrapper" id="app">
-        <v-app>
         {% if request.user.user_type == 'SALESADMIN' %}
         {% include "salesadmin/common/header.html" %}
         {% elif request.user.user_type == 'AGENT' %}
@@ -88,7 +86,7 @@
     <div class="modal-dialog modal-dialog-centered primary-modal" role="document">
       <div class="modal-content primary-modal-border">
         <div class="d-flex">
-            <div class="popup-title  w-100  av-font" id="exampleModalLongTitle">Edit Section </div>
+            <div class="popup-title  w-100 mt-10 mb-10 av-font" id="exampleModalLongTitle">Edit Section </div>
             <button type="button" class="close ml-auto" data-dismiss="modal" aria-label="Close" style="margin-left:auto">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -145,7 +143,7 @@
                             </div>
                         </div>
 
-                        <div class="row mt-2" id="schedule_list_id">
+                        <div class="row mt-10" id="schedule_list_id">
                             <div class="col-md-3">
                             
                                 <div class="tk-common-text">Select Order Scheduler</div>
@@ -160,7 +158,7 @@
                             </div>
                         </div>
 
-                        <div class="row mt-5">
+                        <div class="row mt-10">
                             <div class="col-md-9   col-lg-8">
                                 <div class="tk-order-card" hidden>
                                     <div class="row">
@@ -175,7 +173,7 @@
                                                     <span class="tk-dot tk-completed-color"></span><span class="tk-common-text2 av-font">Closed</span>
                                                 </div>
                                             </div>
-                                            <div style="margin-bottom:0px; margin-top: 15px;" class=" tk-common-text2" id="visit_customer">
+                                            <div style="margin-bottom:0px" class="mt-15 tk-common-text2" id="visit_customer">
                                                 Manal Alesheed
                                             </div>
                                             <div  class="tk-common-text2" id="visit_customer_number">
@@ -188,7 +186,7 @@
                                             <div class="d-flex mt-20">
                                                 <div class="d-flex">
                                                     <img id="visit_teamleader_image" src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle"> 
-                                                    <div style="margin-bottom: 0px;"  class="tk-common-text2 ml-5 " id="visit_teamleader">Saravan</div>
+                                                    <div style="margin-bottom: 0px;"  class="tk-common-text2 ml-5 mt-10" id="visit_teamleader">Saravan</div>
                                                 </div>
                                                 <div class="ml-30 d-flex" id="visit_team_members">
                                                     
@@ -209,18 +207,18 @@
                                 <div class="tk-common-text">Ticket Form</div>
                             </div>
                         </div>
-                        <div class="row mt-20">
+                        <div class="row mt-30">
                             <div class="col-md-3">
                                 <div class="tk-common-text">Select Ticket Type</div>
                                 <multiselect name="ticket_type" label="name" track-by="name"  v-model="value"  selectLabel="Select Ticket" :showLabels='true' :multiple="true" placeholder="Select Ticket Type" :options="options"></multiselect>
                             
                             </div>
                         </div>                        
-                        <div v-if="value.length !=0">
-                            <div>
-                            <div class="row mt-10">
-                                <div class="col-md-12" style="padding: 0px 0px 0px 12px;">
-                                    <div class="tk-common-text" style="margin-bottom: 0px;">Upload Media</div>
+                         <div v-if="value.length !=0"> 
+                            
+                            <div class="row mt-40">
+                                <div class="col-md-12">
+                                    <div class="tk-common-text">Upload Media</div>
                                 </div>
     
                             </div>
@@ -246,21 +244,21 @@
                                   </div>
     
                             </div>
-                            <div class="row mt-2">
-                                <div class="col-md-12" style="padding: 0px 0px 0px 12px;" >
-                                    <div class="tk-common-text" style="margin-bottom: 0px;" >Note</div>
+                            <div class="row mt-10">
+                                <div class="col-md-12">
+                                    <div class="tk-common-text">Note</div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-5">
                                     <div class="inv-input-container "> 
-                                        <textarea v-model="damagenote" style="width: 100%; border: 1px solid #4b4b4b !important;" rows="8" id="id_item_description" name="investigation_notes"></textarea>
+                                        <textarea v-model="damagenote" style="width: 100%;" rows="8" id="id_item_description" name="investigation_notes"></textarea>
                                         </div>
                                 </div>
                             </div>
                             <div class="row mt-20">
-                                <div class="col-md-12" style="padding: 0px 0px 0px 12px;">
-                                    <div class="tk-common-text" style="margin-bottom: 0px;">Action</div>
+                                <div class="col-md-12">
+                                    <div class="tk-common-text">Action</div>
                                 </div>
                             </div>
                             <div class="row">
@@ -302,7 +300,7 @@
                                     <div class="tk-common-text">Section (Service Quality)</div>
                                     <br>
                                     <div class="tk-common-text">Items</div>
-                                    <div class="row mt-2">
+                                    <div class="row mt-10">
                                         <div class="col-md-4">
                                             <div class="tk-common-text">Details</div>
                                             <div class="inv-input-container " style="height: 40px;"> 
@@ -319,8 +317,8 @@
                                             <button style="margin-top: 30px;" class="ml-5  tk-sub" @click="addPaybackSer" >Add</button>
                                         </div>
                                     </div>
-                                    <div class="row mt-2">
-                                        <div class="col-md-4 mt-2" v-for="(item, index) in paybackSer" :key="item" >
+                                    <div class="row mt-10">
+                                        <div class="col-md-4 mt-10" v-for="(item, index) in paybackSer" :key="item" >
                                             <div   class="tk-type-card pointer" style="padding: 10px; background: #fff; border: 1px solid #edf1f6;">
                                                 <div  style="margin-bottom: 0px; flex-grow: 1;" class="tk-common-text2"> <% item.itemname %> </div>
                                                 <div style="flex-grow: 1; margin-bottom: 0px;" class="tk-common-text2">
@@ -344,7 +342,7 @@
                                     <div class="tk-common-text">Section (Damage)</div>
                                     <br>
                                     <div class="tk-common-text">Items</div>
-                                    <div class="row mt-2">
+                                    <div class="row mt-10">
                                         <div class="col-md-4">
                                             <div class="tk-common-text">Details</div>
                                             <div class="inv-input-container " style="height: 40px;"> 
@@ -361,8 +359,8 @@
                                             <button style="margin-top: 30px;" class="ml-5  tk-sub" @click="addPaybackDam" >Add</button>
                                         </div>
                                     </div>
-                                    <div class="row mt-2">
-                                        <div class="col-md-4 mt-2" v-for="(item, index) in paybackDam" :key="item" >
+                                    <div class="row mt-10">
+                                        <div class="col-md-4 mt-10" v-for="(item, index) in paybackDam" :key="item" >
                                             <div   class="tk-type-card pointer" style="padding: 10px; background: #fff; border: 1px solid #edf1f6;">
                                                 <div  style="margin-bottom: 0px; flex-grow: 1;" class="tk-common-text2"> <% item.itemname %> </div>
                                                 <div style="flex-grow: 1; margin-bottom: 0px;" class="tk-common-text2">
@@ -387,7 +385,7 @@
                                     
                                     <div class="tk-common-text">Items</div>
                                     <br>
-                                    <div class="row mt-2">
+                                    <div class="row mt-10">
                                         <div class="col-md-4">
                                             <div class="tk-common-text">Details</div>
                                             <div class="inv-input-container " style="height: 40px;"> 
@@ -404,8 +402,8 @@
                                             <button style="margin-top: 30px;" class="ml-5  tk-sub" @click="addPaybackOther" >Add</button>
                                         </div>
                                     </div>
-                                    <div class="row mt-2">
-                                        <div class="col-md-4 mt-2" v-for="(item, index) in paybackOther" :key="item" >
+                                    <div class="row mt-10">
+                                        <div class="col-md-4 mt-10" v-for="(item, index) in paybackOther" :key="item" >
                                             <div   class="tk-type-card pointer" style="padding: 10px; background: #fff; border: 1px solid #edf1f6;">
                                                 <div  style="margin-bottom: 0px; flex-grow: 1;" class="tk-common-text2"> <% item.itemname %> </div>
                                                 <div style="flex-grow: 1; margin-bottom: 0px;" class="tk-common-text2">
@@ -446,7 +444,7 @@
                             <div class="row">
                                 <div class="col-md-5">
                                     <div class="inv-input-container "> 
-                                        <textarea  style="width: 100%; border: 1px solid #4b4b4b !important;" rows="8" v-model="reportnote"></textarea>
+                                        <textarea  style="width: 100%;" rows="8" v-model="reportnote"></textarea>
                                         </div>
                                 </div>
                             </div>
@@ -466,8 +464,8 @@
                         <div v-if="selectTab(4)">
                             in
                         </div>
-                        <div v-if="selectTab(5)">
-                            <div>
+                         <div v-if="selectTab(5)"> 
+                            
                             <div v-if="cleaningsections != null">
                                 <div v-for="(item, index) in cleaningsections" :key="item.section_id"  >
                                     <div class="row mt-20" >
@@ -478,27 +476,27 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row mt-2">
+                                    <div class="row mt-10">
                                         <div class="col-md-6 c-right-border">
                                             <div class="order-details-content">
                                                 <div class="row c-mb-3">
-                                                    <div class="col-md-6 col-xs-6 ">
+                                                    <div class="col-md-6 col-xs-6 mb-10">
                                                         <div class="order-details-key">Size</div> 
                                                         <div class="c-text order-details-value"> <% item.size %> </div>
                                                     </div>
-                                                    <div class="col-md-6 col-xs-6 ">
+                                                    <div class="col-md-6 col-xs-6 mb-10">
                                                         <div class="order-details-key">Wall Type</div> 
                                                         <div class="c-text order-details-value"> <% item.wall_type %> </div>
                                                     </div>
-                                                    <div class="col-md-6 col-xs-6 ">
+                                                    <div class="col-md-6 col-xs-6 mb-10">
                                                         <div class="order-details-key">Celling Type</div> 
                                                         <div class="c-text order-details-value"> <% item.ceiling_type %> </div>
                                                     </div>
-                                                    <div class="col-md-6 col-xs-6 ">
+                                                    <div class="col-md-6 col-xs-6 mb-10">
                                                         <div class="order-details-key">Floor Type</div> 
                                                         <div class="c-text order-details-value"> <% item.floor_type%> </div>
                                                     </div>
-                                                    <div class="col-md-6 col-xs-6 ">
+                                                    <div class="col-md-6 col-xs-6 mb-10">
                                                         <div class="order-details-key">Cost</div> 
                                                         <div class="c-text order-details-value"> <% item.section_net_cost %> </div>
                                                     </div>
@@ -525,19 +523,12 @@
                                               </div>
                                         </div>
                                         <div class="col-md-2">
-                                            <br>
-                                            <v-btn
-                                            color="primary"
-                                            class="ma-2  white--text av-font"
-                                           
-                                            >
-                                            Select Slots
-                                            <v-icon
-                                                right
-                                                dark
-                                            >
-                                                mdi-calendar
-                                            </v-icon>
+                                            <div class="tk-common-text2">
+                                                Schedule
+                                            </div>
+                                            <div class="inv-input-container h-30"> 
+                                                <input type="date"  class="w-p-100 inv-in" >
+                                              </div>
                                         </div>
                                     </div>
                                 </div>
@@ -547,7 +538,7 @@
                         </div>
 
                         </div>
-                            <div class="mt-30" v-if="value.length != 0 && damacval.length != 0">
+                            <div class="row mt-30" v-if="value.length != 0 && damacval.length != 0">
                                 <div class="d-flex" style="align-items: center;
                                 justify-content: center;">
                                     <button class="tk-can" type="button"> Cancel</button>
@@ -616,7 +607,6 @@
                   </div>
             </div>
         </section>
-    </v-app>
     </div>
 
 {% endblock %}
@@ -625,10 +615,8 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/browser-image-compression@1.0.13/dist/browser-image-compression.js"></script>
 <script src="https://unpkg.com/vue-multiselect@2.1.0"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
-<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
-      var investigators_list = []
+    var investigators_list = []
 
 {% for investigator in investigators %}
 
@@ -640,6 +628,5 @@ investigators_list.push({
 {% endfor %}
 </script>
 <script src="{% static 'files/js/raiseticket.js' %}"></script>
-
 
 {% endblock %}
