@@ -4,7 +4,7 @@ from django.template.loader import render_to_string
 from django.http import HttpResponse,JsonResponse,HttpResponseRedirect
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule,Shift
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,EvaluationSectionAddons,CleaningMethod,CleaningSection,ServiceType,AreaType
-from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,Reporting
+from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,Reporting,PaybackDiscount,PaybackDiscountDetails
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
@@ -652,13 +652,9 @@ class TicketSubmitAPI(APIView):
 		
 		actions = request.data.get('actions')
 		actions_list = actions.split(",")
-
-		paybackdiscount_items = request.data.get('paybackdiscount_items')
-		print(visit_id,ticket_types,notes,investigationmedias,actions,"lodat")
-
-		response_dict = {}
-		response_dict['paybackitems'] = paybackdiscount_items
-
+			
+		print(visit_id,ticket_types,notes,investigationmedias,"lodat")
+		
 		visit = OrderScheduler.objects.get(id=int(visit_id))
 		order = visit.order
 
@@ -681,11 +677,32 @@ class TicketSubmitAPI(APIView):
 		for action in actions_list:
 			print(action,"act")
 			if action == 'Payback':
+				print("pop")
 				paybackdiscount = PaybackDiscount.objects.create(investigation=investigation,is_active=True)
 
-				# paybackdiscount_items = request.data.get('paybackdiscount_items')
+				paybackdiscount_items = request.data.getlist('paybackdiscount_items')
+				print(paybackdiscount_items,"itms")
+				item_array = []
+				items_total_cost = 0
+				for item in paybackdiscount_items:
+					items_list = item.split(",")
 
-				keynote_array.append(PaybackDiscountDetails(paybackdiscount=paybackdiscount,category=section_name,name=keynote,cost=quantity,is_active=True))
+					if items_list[2] == 'Service Quality':
+						category = 'SERVICEQUALITY'
+					elif items_list[2] == 'Damage':
+						category = 'DAMAGE'
+					else:
+						category = None
+
+					item_array.append(PaybackDiscountDetails(paybackdiscount=paybackdiscount,category=category,name=items_list[0],cost=items_list[1],is_active=True))
+
+					items_total_cost += float(items_list[1])
+
+				#bulk_create keynote
+				PaybackDiscountDetails.objects.bulk_create(item_array)
+
+				paybackdiscount.total_cost = items_total_cost
+				paybackdiscount.save()
 
 				#Email
 				salesadmin_list = UserProfile.objects.filter(is_active=True).filter(is_active=True,user_type='SALESADMIN').values_list('email',flat=True)
@@ -709,10 +726,10 @@ class TicketSubmitAPI(APIView):
 
 			if action == 'Assign Investigator':
 				secondary_investigator = request.data.get('secondary_investigator')
-				
+				print(secondary_investigator,"sec")
 				investigator = UserProfile.objects.get(id=int(secondary_investigator))
 
-				investigationdata = Investigation.objects.select_related('investigator','assigned_by','secondary_investigator','order__evaluation__customer').get(id=investigation_id,is_active=True)
+				investigationdata = Investigation.objects.select_related('investigator','assigned_by','secondary_investigator','order__evaluation__customer').get(id=investigation.id,is_active=True)
 				investigationdata.secondary_investigator = investigator
 				investigationdata.secondary_investigation_created = datetime.now()
 				investigationdata.save()
@@ -723,10 +740,6 @@ class TicketSubmitAPI(APIView):
 				msg.send(fail_silently=False)
 
 		response_dict = {'success':True}
-		# if ticket_type == 'Damage':
-		# 	investigationmedias = request.FILES.getlist('media')
-		# 	notes = request.data.get('notes')
-		# 	action = request.data.get('action')
 
 		return Response(response_dict,HTTP_200_OK)
 
@@ -793,6 +806,7 @@ class VisitDetailsAPI(APIView):
 
 			section_dict= {
 					'section_id' : section.id,
+					'section_name' : section.section_name,
 					'size' : section.size,
 					'floor_type' : section.floor_type,
 					'wall_type' : section.wall_type,
