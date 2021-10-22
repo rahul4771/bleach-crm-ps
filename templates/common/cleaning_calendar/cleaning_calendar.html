@@ -1016,14 +1016,157 @@ class="cl-service-list"
       </div>
   
    </div>
-   <div class="col-md-2 ">
+   <div class="col-md-6">
+    <div class="row m-0">
+      <div class="col-md-4">
+    <v-switch
+    v-model="prod"
+    class="prod-switch ml-20"
+    color="primary"
+    :label="`Productivity`"
+  ></v-switch>
+</div>
+    </div>
+
+     <div class="row m-0">
+   <div class="col-md-4 " v-if="!prod">
+   
     <div class="cl-slot-card-title2 text-center">Available Cleaners</div>
     <div class="cl-cleaners-count text-center">
        <% cleaningDetails.available_cleaners_count %>
     </div>
 
    </div>
-   <div class="col-md-4 ">
+   <div class="col-md-4 " v-if="prod">
+   
+    <div class="cl-slot-card-title2 text-center">Productivity</div>
+    <div v-if="services.length==1">
+      <!-- upholstery begins-->
+      <div   v-if="services[0]=='Upholstery Cleaning'">
+        <div class="prod-content">
+        <div class="subtext-key text-center">
+          Chair Cleaning
+       </div>
+        <div class="text-center prod-value">
+           <% cleaningDetails['Chair Cleaning'] %>
+        </div>
+      </div>
+      <div class="prod-content">
+        <div class="subtext-key text-center">
+          Sofa Cleaning
+       </div>
+        <div class="text-center prod-value">
+           <% cleaningDetails['Sofa Cleaning'] %>
+        </div>
+      </div>
+      </div>
+      <!-- upholsetry ends-->
+      <!-- Facade cleaning-->
+      <div   v-else-if="services[0]=='Facade Cleaning'">
+        <div class="prod-content">
+        <div class="subtext-key text-center">
+          New Facade Cleaning
+       </div>
+        <div class="text-center prod-value">
+           <% cleaningDetails['New Facade Cleaning'] %>
+        </div>
+      </div>
+      <div class="prod-content">
+        <div class="subtext-key text-center">
+          Old Facade Cleaning
+       </div>
+        <div class="text-center prod-value">
+           <% cleaningDetails['Old Facade Cleaning'] %>
+        </div>
+      </div>
+      </div>
+      <!--facade cleaning ends-->
+       <!-- Window cleaning-->
+       <div   v-else-if="services[0]=='Window Cleaning'">
+        <div class="prod-content">
+        <div class="subtext-key text-center">
+          New Window Cleaning
+       </div>
+        <div class="text-center prod-value">
+           <% cleaningDetails['New Window Cleaning'] %>
+        </div>
+      </div>
+      <div class="prod-content">
+        <div class="subtext-key text-center">
+          Old Window Cleaning
+       </div>
+        <div class="text-center prod-value">
+           <% cleaningDetails['Old Window Cleaning'] %>
+        </div>
+      </div>
+      </div>
+      <!--Window cleaning ends-->
+      <!-- Kitchen cleaning begins-->
+      <div   v-else-if="services[0]=='Kitchen Cleaning'">
+        <div class="prod-content">
+        <div class="subtext-key text-center">
+          New Kitchen With Cabinet
+       </div>
+        <div class="text-center prod-value">
+           <% cleaningDetails['New Kitchen With Cabinet'] %>
+        </div>
+      </div>
+      <div class="prod-content">
+        <div class="subtext-key text-center">
+          New Kitchen Without Cabinet
+       </div>
+        <div class="text-center prod-value">
+           <% cleaningDetails['New Kitchen Without Cabinet'] %>
+        </div>
+      </div>
+      <div class="prod-content">
+        <div class="subtext-key text-center">
+          Old Kitchen With Cabinet
+       </div>
+        <div class="text-center prod-value">
+           <% cleaningDetails['Old Kitchen With Cabinet'] %>
+        </div>
+      </div>
+      <div class="prod-content">
+        <div class="subtext-key text-center">
+          Old Kitchen Without Cabinet
+       </div>
+        <div class="text-center prod-value">
+           <% cleaningDetails['Old Kitchen Without Cabinet'] %>
+        </div>
+      </div>
+      </div>
+      <!--Kitchen cleaning ends-->
+      <div  class="prod-content" v-else>
+    <div class="subtext-key text-center">
+      <% services[0] %>
+   </div>
+    <div class="text-center prod-value">
+       <% cleaningDetails[services[0]]||0 %>
+    </div>
+  </div>
+  </div>
+  <div  v-else-if="services.length==0" class="mt-4">
+    <v-alert
+    dense
+    text
+    type="info"
+  >
+    Please Select a service
+    </v-alert>
+  </div>
+  <div  v-else-if="services.length>1" class="mt-4">
+    <v-alert
+    dense
+    text
+    type="info"
+  >
+    Please Select only one service
+    </v-alert>
+  </div>
+
+   </div>
+   <div class="col-md-8 ">
     <div class="cl-slot-card-title2">Available Cleaning Agent(s)</div>
     <div class="row">
       
@@ -1040,8 +1183,12 @@ class="cl-service-list"
       </div>
       
     </div>
+    </div>
+
     
    </div>
+   </div>
+
  </div>
 
       <!-- selected slots section ends-->
