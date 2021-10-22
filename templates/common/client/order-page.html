@@ -1473,6 +1473,10 @@
                                                         <span class="see-more" id="id_see{{evaluationbook.id}}" onclick="seefull({{evaluationbook.id}})">Show More</span>
                                                         <span class="see-more" style="display: none;" id="id_see_less{{evaluationbook.id}}" onclick="seeless({{evaluationbook.id}})">Show Less</span>
                                                         
+                                                       
+                                                        {% else %}
+                                                        <button  data-service="{{evaluationbook.service_type.name}}" onclick="editNotes(this)"
+                                                        data-book_id="{{evaluationbook.id}}" data-note="" class="btn primary-btn mt-10" v-if="edit">Add Notes</button>
                                                         {% endif %}
 
                                                     </div>
