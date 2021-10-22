@@ -1205,7 +1205,7 @@ async function loadvisits(order_id){
                     $('#id_sched').text('-- Select Order Schedule--')
                     $('.tk-order-card').hide();
                     $(response.data.visits).each(function(key,value){
-                        $('#visit_drop').append('<li><a onclick="loadvisitdata('+ value.visit_id +')">'+ value.order_no +' - '+ value.start_at +'</a></li>')
+                        $('#visit_drop').append('<li><a onclick="loadvisitdata('+ value.visit_id +')">'+ value.start_at +'</a></li>')
                     })
 
                     $('#schedule_list_id').show();
@@ -1224,7 +1224,7 @@ async function loadvisitdata(visit_id){
                     app.cleaningsections = response.data.sections
                     app.edit_servicetype = response.data.servicetype
                     console.log(response.data,"lop")
-                    $('#id_sched').text(response.data.order_no+' - '+response.data.start_at)
+                    $('#id_sched').text(response.data.start_at)
                     $('.tk-order-card').show();
 
                     $('#visit_blc').text(response.data.order_no);

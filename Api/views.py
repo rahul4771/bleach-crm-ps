@@ -4,7 +4,7 @@ from django.template.loader import render_to_string
 from django.http import HttpResponse,JsonResponse,HttpResponseRedirect
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule,Shift
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,EvaluationSectionAddons,CleaningMethod,CleaningSection,ServiceType,AreaType
-from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,Reporting
+from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,Reporting,PaybackDiscount,PaybackDiscountDetails
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
@@ -649,12 +649,11 @@ class TicketSubmitAPI(APIView):
 		ticket_types = request.data.get('ticket_types')
 		notes = request.data.get('notes')
 		investigationmedias = request.FILES.getlist('media')
-		action = request.data.get('action')
-		paybackdiscount_items = request.data.getlist('paybackdiscount_items')
+		
+		actions = request.data.get('actions')
+		actions_list = actions.split(",")
+			
 		print(visit_id,ticket_types,notes,investigationmedias,"lodat")
-		response_dict = {}
-		response_dict['paybackitems'] = paybackdiscount_items
-		print(type(paybackdiscount_items),'pay')
 		
 		visit = OrderScheduler.objects.get(id=int(visit_id))
 		order = visit.order
@@ -675,52 +674,72 @@ class TicketSubmitAPI(APIView):
 					is_active = True
 				)
 
-		if action == 'payback':
-			paybackdiscount = PaybackDiscount.objects.create(investigation=investigation,is_active=True)
+		for action in actions_list:
+			print(action,"act")
+			if action == 'Payback':
+				print("pop")
+				paybackdiscount = PaybackDiscount.objects.create(investigation=investigation,is_active=True)
 
-			# paybackdiscount_items = request.data.get('paybackdiscount_items')
+				paybackdiscount_items = request.data.getlist('paybackdiscount_items')
+				print(paybackdiscount_items,"itms")
+				item_array = []
+				items_total_cost = 0
+				for item in paybackdiscount_items:
+					items_list = item.split(",")
 
-			keynote_array.append(PaybackDiscountDetails(paybackdiscount=paybackdiscount,category=section_name,name=keynote,cost=quantity,is_active=True))
+					if items_list[2] == 'Service Quality':
+						category = 'SERVICEQUALITY'
+					elif items_list[2] == 'Damage':
+						category = 'DAMAGE'
+					else:
+						category = None
 
-			#Email
-			salesadmin_list = UserProfile.objects.filter(is_active=True).filter(is_active=True,user_type='SALESADMIN').values_list('email',flat=True)
-			msg_html = render_to_string('email/ticketapprove.html',{'paybackdiscount':paybackdiscount,'email_user':'salesadmin'})
-			msg      = EmailMultiAlternatives('Cash Back Approval', '', 'notification@bleach-kw.com', salesadmin_list)
-			msg.attach_alternative(msg_html, "text/html")
-			msg.send(fail_silently=False)
+					item_array.append(PaybackDiscountDetails(paybackdiscount=paybackdiscount,category=category,name=items_list[0],cost=items_list[1],is_active=True))
 
-			admin_list = UserProfile.objects.filter(is_active=True).filter(is_active=True,user_type='ADMIN').values_list('email',flat=True)
-			msg_html = render_to_string('email/ticketapprove.html',{'paybackdiscount':paybackdiscount,'email_user':'admin'})
-			msg      = EmailMultiAlternatives('Cash Back Approval', '', 'notification@bleach-kw.com', admin_list)
-			msg.attach_alternative(msg_html, "text/html")
-			msg.send(fail_silently=False)
+					items_total_cost += float(items_list[1])
 
-		if action == 'report':
-			title = request.data.get('title')
-			notes = request.data.get('notes')
+				#bulk_create keynote
+				PaybackDiscountDetails.objects.bulk_create(item_array)
 
-			Reporting.objects.create(investigation=investigation,title=title,notes=notes)
+				paybackdiscount.total_cost = items_total_cost
+				paybackdiscount.save()
 
-		if action == 'assign_investigator':
-			secondary_investigator = request.data.get('secondary_investigator')
-			
-			investigator = UserProfile.objects.get(id=int(secondary_investigator))
+				#Email
+				salesadmin_list = UserProfile.objects.filter(is_active=True).filter(is_active=True,user_type='SALESADMIN').values_list('email',flat=True)
+				msg_html = render_to_string('email/ticketapprove.html',{'paybackdiscount':paybackdiscount,'email_user':'salesadmin'})
+				msg      = EmailMultiAlternatives('Cash Back Approval', '', 'notification@bleach-kw.com', salesadmin_list)
+				msg.attach_alternative(msg_html, "text/html")
+				msg.send(fail_silently=False)
 
-			investigationdata = Investigation.objects.select_related('investigator','assigned_by','secondary_investigator','order__evaluation__customer').get(id=investigation_id,is_active=True)
-			investigationdata.secondary_investigator = investigator
-			investigationdata.secondary_investigation_created = datetime.now()
-			investigationdata.save()
-			
-			msg_html = render_to_string('email/rise_ticket_request2.html',{'investigationdata':investigationdata})
-			msg      = EmailMultiAlternatives('Ticket Rised', '', 'notification@bleach-kw.com', [investigationdata.secondary_investigator.email])
-			msg.attach_alternative(msg_html, "text/html")
-			msg.send(fail_silently=False)
+				admin_list = UserProfile.objects.filter(is_active=True).filter(is_active=True,user_type='ADMIN').values_list('email',flat=True)
+				msg_html = render_to_string('email/ticketapprove.html',{'paybackdiscount':paybackdiscount,'email_user':'admin'})
+				msg      = EmailMultiAlternatives('Cash Back Approval', '', 'notification@bleach-kw.com', admin_list)
+				msg.attach_alternative(msg_html, "text/html")
+				msg.send(fail_silently=False)
+
+			if action == 'Internal Report':
+				print("int rep")
+				title = request.data.get('title')
+				notes = request.data.get('report_note')
+
+				Reporting.objects.create(investigation=investigation,title=title,notes=notes)
+
+			if action == 'Assign Investigator':
+				secondary_investigator = request.data.get('secondary_investigator')
+				print(secondary_investigator,"sec")
+				investigator = UserProfile.objects.get(id=int(secondary_investigator))
+
+				investigationdata = Investigation.objects.select_related('investigator','assigned_by','secondary_investigator','order__evaluation__customer').get(id=investigation.id,is_active=True)
+				investigationdata.secondary_investigator = investigator
+				investigationdata.secondary_investigation_created = datetime.now()
+				investigationdata.save()
+				
+				msg_html = render_to_string('email/rise_ticket_request2.html',{'investigationdata':investigationdata})
+				msg      = EmailMultiAlternatives('Ticket Rised', '', 'notification@bleach-kw.com', [investigationdata.secondary_investigator.email])
+				msg.attach_alternative(msg_html, "text/html")
+				msg.send(fail_silently=False)
 
 		response_dict = {'success':True}
-		# if ticket_type == 'Damage':
-		# 	investigationmedias = request.FILES.getlist('media')
-		# 	notes = request.data.get('notes')
-		# 	action = request.data.get('action')
 
 		return Response(response_dict,HTTP_200_OK)
 
@@ -787,6 +806,7 @@ class VisitDetailsAPI(APIView):
 
 			section_dict= {
 					'section_id' : section.id,
+					'section_name' : section.section_name,
 					'size' : section.size,
 					'floor_type' : section.floor_type,
 					'wall_type' : section.wall_type,
