@@ -650,10 +650,11 @@ class TicketSubmitAPI(APIView):
 		notes = request.data.get('notes')
 		investigationmedias = request.FILES.getlist('media')
 		action = request.data.get('action')
-		paybackdiscount_items = request.data.get('paybackdiscount_items')
+		paybackdiscount_items = request.data.getlist('paybackdiscount_items')
 		print(visit_id,ticket_types,notes,investigationmedias,"lodat")
-
+		response_dict = {}
 		response_dict['paybackitems'] = paybackdiscount_items
+		print(type(paybackdiscount_items),'pay')
 		
 		visit = OrderScheduler.objects.get(id=int(visit_id))
 		order = visit.order

@@ -283,7 +283,7 @@
                                     <div class="row mt-10">
                                         <div class="col-md-4 mt-10" v-for="(item, index) in paybackSer" :key="item" >
                                             <div   class="tk-type-card pointer" style="padding: 10px; background: #fff; border: 1px solid #edf1f6;">
-                                                <div  style="margin-bottom: 0px; flex-grow: 1;" class="tk-common-text2"> <% item.detials %> </div>
+                                                <div  style="margin-bottom: 0px; flex-grow: 1;" class="tk-common-text2"> <% item.itemname %> </div>
                                                 <div style="flex-grow: 1; margin-bottom: 0px;" class="tk-common-text2">
                                                     <% item.price %>
                                                 </div>
@@ -325,7 +325,7 @@
                                     <div class="row mt-10">
                                         <div class="col-md-4 mt-10" v-for="(item, index) in paybackDam" :key="item" >
                                             <div   class="tk-type-card pointer" style="padding: 10px; background: #fff; border: 1px solid #edf1f6;">
-                                                <div  style="margin-bottom: 0px; flex-grow: 1;" class="tk-common-text2"> <% item.detials %> </div>
+                                                <div  style="margin-bottom: 0px; flex-grow: 1;" class="tk-common-text2"> <% item.itemname %> </div>
                                                 <div style="flex-grow: 1; margin-bottom: 0px;" class="tk-common-text2">
                                                     <% item.price %>
                                                 </div>
@@ -368,7 +368,7 @@
                                     <div class="row mt-10">
                                         <div class="col-md-4 mt-10" v-for="(item, index) in paybackOther" :key="item" >
                                             <div   class="tk-type-card pointer" style="padding: 10px; background: #fff; border: 1px solid #edf1f6;">
-                                                <div  style="margin-bottom: 0px; flex-grow: 1;" class="tk-common-text2"> <% item.detials %> </div>
+                                                <div  style="margin-bottom: 0px; flex-grow: 1;" class="tk-common-text2"> <% item.itemname %> </div>
                                                 <div style="flex-grow: 1; margin-bottom: 0px;" class="tk-common-text2">
                                                     <% item.price %>
                                                 </div>
@@ -711,8 +711,9 @@
         addPaybackSer(){
             if(this.paybackSerDetials != '' && this.paybackSerPrice !=''){
                 var a ={
-                    detials:this.paybackSerDetials,
-                    price:this.paybackSerPrice
+                    itemname:this.paybackSerDetials,
+                    price:this.paybackSerPrice,
+                    category:'Service Quality'
                 }
                 this.paybackSer.push(a)
                 this.paybackSerDetials = ''
@@ -725,8 +726,10 @@
         addPaybackOther(){
             if(this.paybackOtherDetials != '' && this.paybackOtherPrice !=''){
                 var a ={
-                    detials:this.paybackOtherDetials,
-                    price:this.paybackOtherPrice
+                    itemname:this.paybackOtherDetials,
+                    price:this.paybackOtherPrice,
+                    category:'Other'
+
                 }
                 this.paybackOther.push(a)
                 this.paybackOtherDetials = ''
@@ -739,8 +742,10 @@
         addPaybackDam(){
             if(this.paybackDamDetials != '' && this.paybackDamPrice !=''){
                 var a ={
-                    detials:this.paybackDamDetials,
-                    price:this.paybackDamPrice
+                    itemname:this.paybackDamDetials,
+                    price:this.paybackDamPrice,
+                    category:'Damage'
+
                 }
                 this.paybackDam.push(a)
                 this.paybackDamDetials = ''
@@ -778,6 +783,7 @@
               
           },
           async submitForm(){
+              var flag = true;
               console.log(this.userselect)
               let fd = new FormData();
               fd.append('visit_id',$('#id_visit').val())
@@ -802,7 +808,53 @@
                   fd.append('title',this.reporttitile);
                   fd.append('report_note',this.reportnote);
               }
-              let result = await _post('api/ticket-submit/',fd);
+              if(actiontypes.includes('Payback')){
+                  var p = []
+                  
+                  for(var j = 0 ; j<this.paybackSer.length;j++){
+                      p.push(this.paybackSer[j])
+                  }
+                  for(var j = 0 ; j<this.paybackDam.length;j++){
+                      p.push(this.paybackDam[j])
+                  }
+                  for(var j = 0 ; j<this.paybackOther.length;j++){
+                      p.push(this.paybackOther[j])
+                  }
+                  for(var q =0;q<p.length;q++){
+                    var pstr = ''
+                    pstr = p[q].itemname+','+p[q].price+','+p[q].category
+                    fd.append('paybackdiscount_items',pstr);
+                  }
+
+                //   for(var j = 0 ; j<this.payback.length;j++){
+                //       console.log(this.payback[j])
+                //       if(this.payback[j]== 'Service Quality'){
+                //           var a = {
+                //             category:this.payback[j],
+                //             items:this.paybackSer
+                //           }
+                //           p.push(a);
+                //       }
+                //       if(this.payback[j]== 'Damage'){
+                //           var a = {
+                //             category:this.payback[j],
+                //             items:this.paybackDam
+                //           }
+                //           p.push(a);
+                //       }
+                //       if(this.payback[j]== 'Other'){
+                //           var a = {
+                //             category:this.payback[j],
+                //             items:this.paybackOther
+                //           }
+                //           p.push(a);
+                //       }
+                //   }
+                 
+                  
+
+              }
+             let result = await _post('api/ticket-submit/',fd);
               console.log(result);
               
 
