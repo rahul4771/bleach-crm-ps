@@ -3,7 +3,7 @@ import json
 from django.template.loader import render_to_string
 from django.http import HttpResponse,JsonResponse,HttpResponseRedirect
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule,Shift
-from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType
+from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,EvaluationSectionAddons,CleaningMethod,CleaningSection,ServiceType,AreaType
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,Reporting
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
@@ -727,10 +727,10 @@ class VisitDetailsAPI(APIView):
 	def get(self,request,visit_id):
 		response_dict = {'success':False}
 		print(visit_id,"oid")
-		try:
-			visit = OrderScheduler.objects.select_related('order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='sections'),Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).select_related('team_leader','drop_off_driver','pick_up_driver').prefetch_related(Prefetch('media_cleaningteam',queryset=CleaningTeamMedia.objects.filter(is_active=True),to_attr='cleaning_team_medias'),Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_team')).get(is_active=True,id=int(visit_id))
-		except:
-		 	visit = None
+		# try:
+		visit = OrderScheduler.objects.select_related('order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='evaluationbooksectionkeynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='sections'),Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).select_related('team_leader','drop_off_driver','pick_up_driver').prefetch_related(Prefetch('media_cleaningteam',queryset=CleaningTeamMedia.objects.filter(is_active=True),to_attr='cleaning_team_medias'),Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_team')).get(is_active=True,id=int(visit_id))
+		# except:
+		#  	visit = None
 
 		response_dict['order_no'] = visit.order.order_no
 		response_dict['visit_id'] = visit_id
@@ -758,6 +758,43 @@ class VisitDetailsAPI(APIView):
 				members.append(members_dict)
 
 			response_dict['members'] = members
+
+		sections = []
+		for section in visit.order_scheduler_book.sections:
+			
+			keynotes = []
+			for keynote in section.evaluationbooksectionkeynotes:
+				keynote_dict = {
+					'keynote_id' : keynote.id,
+					'sub_area' : keynote.sub_area,
+					'quantity' : keynote.quantity
+				}
+				keynotes.append(keynote_dict)
+
+			sectionaddons = []
+			for addon in section.sectionaddons:
+				addon_dict = {
+					'addon_id' : addon.id,
+					'addon_name' : addon.name,
+					'quantity' : addon.quantity,
+					'addon_net_cost' : addon.addon_net_cost
+				}
+				sectionaddons.append(addon_dict)
+
+			section_dict= {
+					'section_id' : section.id,
+					'size' : section.size,
+					'floor_type' : section.floor_type,
+					'wall_type' : section.wall_type,
+					'ceiling_type' : section.ceiling_type,
+					'section_net_cost' :section.section_net_cost,
+					'keynotes' : keynotes,
+					'addons' : sectionaddons
+			}
+
+			sections.append(section_dict)
+
+		response_dict['sections'] = sections
 		print(response_dict,"dict")
 
 		return Response(response_dict,HTTP_200_OK)
