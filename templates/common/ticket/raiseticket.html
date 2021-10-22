@@ -2,6 +2,8 @@
 {% block content %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'files/css/booking/booking.css' %}">
+<link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
 <style>
     .multiselect__tags {
   
@@ -58,6 +60,7 @@
     crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
     <div class="wrapper" id="app">
+        <v-app>
         {% if request.user.user_type == 'SALESADMIN' %}
         {% include "salesadmin/common/header.html" %}
         {% elif request.user.user_type == 'AGENT' %}
@@ -85,7 +88,7 @@
     <div class="modal-dialog modal-dialog-centered primary-modal" role="document">
       <div class="modal-content primary-modal-border">
         <div class="d-flex">
-            <div class="popup-title  w-100 mt-10 mb-10 av-font" id="exampleModalLongTitle">Edit Section </div>
+            <div class="popup-title  w-100  av-font" id="exampleModalLongTitle">Edit Section </div>
             <button type="button" class="close ml-auto" data-dismiss="modal" aria-label="Close" style="margin-left:auto">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -96,7 +99,7 @@
                     <div class="col-md-6 mt-10">
                         <div class=" bold-text common-label required-field"> <label class="av-font">Section Name</label></div>
                         <div class="inv-input-container " style="height: 40px;"> 
-                            <input type="text"  class="w-p-100 inv-in"  >
+                            <input type="text" v-model="edit_section.section_name"  class="w-p-100 inv-in"  >
                         </div>
                     </div>
                     <div class="col-md-6 mt-10">
@@ -142,7 +145,7 @@
                             </div>
                         </div>
 
-                        <div class="row mt-10" id="schedule_list_id">
+                        <div class="row mt-2" id="schedule_list_id">
                             <div class="col-md-3">
                             
                                 <div class="tk-common-text">Select Order Scheduler</div>
@@ -157,7 +160,7 @@
                             </div>
                         </div>
 
-                        <div class="row mt-10">
+                        <div class="row mt-5">
                             <div class="col-md-9   col-lg-8">
                                 <div class="tk-order-card" hidden>
                                     <div class="row">
@@ -172,7 +175,7 @@
                                                     <span class="tk-dot tk-completed-color"></span><span class="tk-common-text2 av-font">Closed</span>
                                                 </div>
                                             </div>
-                                            <div style="margin-bottom:0px" class="mt-15 tk-common-text2" id="visit_customer">
+                                            <div style="margin-bottom:0px; margin-top: 15px;" class=" tk-common-text2" id="visit_customer">
                                                 Manal Alesheed
                                             </div>
                                             <div  class="tk-common-text2" id="visit_customer_number">
@@ -185,7 +188,7 @@
                                             <div class="d-flex mt-20">
                                                 <div class="d-flex">
                                                     <img id="visit_teamleader_image" src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle"> 
-                                                    <div style="margin-bottom: 0px;"  class="tk-common-text2 ml-5 mt-10" id="visit_teamleader">Saravan</div>
+                                                    <div style="margin-bottom: 0px;"  class="tk-common-text2 ml-5 " id="visit_teamleader">Saravan</div>
                                                 </div>
                                                 <div class="ml-30 d-flex" id="visit_team_members">
                                                     
@@ -206,18 +209,18 @@
                                 <div class="tk-common-text">Ticket Form</div>
                             </div>
                         </div>
-                        <div class="row mt-30">
+                        <div class="row mt-20">
                             <div class="col-md-3">
                                 <div class="tk-common-text">Select Ticket Type</div>
                                 <multiselect name="ticket_type" label="name" track-by="name"  v-model="value"  selectLabel="Select Ticket" :showLabels='true' :multiple="true" placeholder="Select Ticket Type" :options="options"></multiselect>
                             
                             </div>
                         </div>                        
-                        <!-- <div v-if="value.length !=0"> -->
+                        <div v-if="value.length !=0">
                             <div>
-                            <div class="row mt-40">
-                                <div class="col-md-12">
-                                    <div class="tk-common-text">Upload Media</div>
+                            <div class="row mt-10">
+                                <div class="col-md-12" style="padding: 0px 0px 0px 12px;">
+                                    <div class="tk-common-text" style="margin-bottom: 0px;">Upload Media</div>
                                 </div>
     
                             </div>
@@ -243,21 +246,21 @@
                                   </div>
     
                             </div>
-                            <div class="row mt-10">
-                                <div class="col-md-12">
-                                    <div class="tk-common-text">Note</div>
+                            <div class="row mt-2">
+                                <div class="col-md-12" style="padding: 0px 0px 0px 12px;" >
+                                    <div class="tk-common-text" style="margin-bottom: 0px;" >Note</div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-5">
                                     <div class="inv-input-container "> 
-                                        <textarea v-model="damagenote" style="width: 100%;" rows="8" id="id_item_description" name="investigation_notes"></textarea>
+                                        <textarea v-model="damagenote" style="width: 100%; border: 1px solid #4b4b4b !important;" rows="8" id="id_item_description" name="investigation_notes"></textarea>
                                         </div>
                                 </div>
                             </div>
                             <div class="row mt-20">
-                                <div class="col-md-12">
-                                    <div class="tk-common-text">Action</div>
+                                <div class="col-md-12" style="padding: 0px 0px 0px 12px;">
+                                    <div class="tk-common-text" style="margin-bottom: 0px;">Action</div>
                                 </div>
                             </div>
                             <div class="row">
@@ -299,7 +302,7 @@
                                     <div class="tk-common-text">Section (Service Quality)</div>
                                     <br>
                                     <div class="tk-common-text">Items</div>
-                                    <div class="row mt-10">
+                                    <div class="row mt-2">
                                         <div class="col-md-4">
                                             <div class="tk-common-text">Details</div>
                                             <div class="inv-input-container " style="height: 40px;"> 
@@ -316,8 +319,8 @@
                                             <button style="margin-top: 30px;" class="ml-5  tk-sub" @click="addPaybackSer" >Add</button>
                                         </div>
                                     </div>
-                                    <div class="row mt-10">
-                                        <div class="col-md-4 mt-10" v-for="(item, index) in paybackSer" :key="item" >
+                                    <div class="row mt-2">
+                                        <div class="col-md-4 mt-2" v-for="(item, index) in paybackSer" :key="item" >
                                             <div   class="tk-type-card pointer" style="padding: 10px; background: #fff; border: 1px solid #edf1f6;">
                                                 <div  style="margin-bottom: 0px; flex-grow: 1;" class="tk-common-text2"> <% item.itemname %> </div>
                                                 <div style="flex-grow: 1; margin-bottom: 0px;" class="tk-common-text2">
@@ -341,7 +344,7 @@
                                     <div class="tk-common-text">Section (Damage)</div>
                                     <br>
                                     <div class="tk-common-text">Items</div>
-                                    <div class="row mt-10">
+                                    <div class="row mt-2">
                                         <div class="col-md-4">
                                             <div class="tk-common-text">Details</div>
                                             <div class="inv-input-container " style="height: 40px;"> 
@@ -358,8 +361,8 @@
                                             <button style="margin-top: 30px;" class="ml-5  tk-sub" @click="addPaybackDam" >Add</button>
                                         </div>
                                     </div>
-                                    <div class="row mt-10">
-                                        <div class="col-md-4 mt-10" v-for="(item, index) in paybackDam" :key="item" >
+                                    <div class="row mt-2">
+                                        <div class="col-md-4 mt-2" v-for="(item, index) in paybackDam" :key="item" >
                                             <div   class="tk-type-card pointer" style="padding: 10px; background: #fff; border: 1px solid #edf1f6;">
                                                 <div  style="margin-bottom: 0px; flex-grow: 1;" class="tk-common-text2"> <% item.itemname %> </div>
                                                 <div style="flex-grow: 1; margin-bottom: 0px;" class="tk-common-text2">
@@ -384,7 +387,7 @@
                                     
                                     <div class="tk-common-text">Items</div>
                                     <br>
-                                    <div class="row mt-10">
+                                    <div class="row mt-2">
                                         <div class="col-md-4">
                                             <div class="tk-common-text">Details</div>
                                             <div class="inv-input-container " style="height: 40px;"> 
@@ -401,8 +404,8 @@
                                             <button style="margin-top: 30px;" class="ml-5  tk-sub" @click="addPaybackOther" >Add</button>
                                         </div>
                                     </div>
-                                    <div class="row mt-10">
-                                        <div class="col-md-4 mt-10" v-for="(item, index) in paybackOther" :key="item" >
+                                    <div class="row mt-2">
+                                        <div class="col-md-4 mt-2" v-for="(item, index) in paybackOther" :key="item" >
                                             <div   class="tk-type-card pointer" style="padding: 10px; background: #fff; border: 1px solid #edf1f6;">
                                                 <div  style="margin-bottom: 0px; flex-grow: 1;" class="tk-common-text2"> <% item.itemname %> </div>
                                                 <div style="flex-grow: 1; margin-bottom: 0px;" class="tk-common-text2">
@@ -443,7 +446,7 @@
                             <div class="row">
                                 <div class="col-md-5">
                                     <div class="inv-input-container "> 
-                                        <textarea  style="width: 100%;" rows="8" v-model="reportnote"></textarea>
+                                        <textarea  style="width: 100%; border: 1px solid #4b4b4b !important;" rows="8" v-model="reportnote"></textarea>
                                         </div>
                                 </div>
                             </div>
@@ -463,39 +466,39 @@
                         <div v-if="selectTab(4)">
                             in
                         </div>
-                        <!-- <div v-if="selectTab(5)"> -->
+                        <div v-if="selectTab(5)">
                             <div>
                             <div v-if="cleaningsections != null">
                                 <div v-for="(item, index) in cleaningsections" :key="item.section_id"  >
                                     <div class="row mt-20" >
                                         <div class="col-md-12">
                                             <div class="tk-sec-head av-font">
-                                            Section <% index+1 %>: Building 1 Floor 1 Apartment 1
+                                            Section <% index+1 %>: <% item.section_name %>
         
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row mt-10">
+                                    <div class="row mt-2">
                                         <div class="col-md-6 c-right-border">
                                             <div class="order-details-content">
                                                 <div class="row c-mb-3">
-                                                    <div class="col-md-6 col-xs-6 mb-10">
+                                                    <div class="col-md-6 col-xs-6 ">
                                                         <div class="order-details-key">Size</div> 
                                                         <div class="c-text order-details-value"> <% item.size %> </div>
                                                     </div>
-                                                    <div class="col-md-6 col-xs-6 mb-10">
+                                                    <div class="col-md-6 col-xs-6 ">
                                                         <div class="order-details-key">Wall Type</div> 
                                                         <div class="c-text order-details-value"> <% item.wall_type %> </div>
                                                     </div>
-                                                    <div class="col-md-6 col-xs-6 mb-10">
+                                                    <div class="col-md-6 col-xs-6 ">
                                                         <div class="order-details-key">Celling Type</div> 
                                                         <div class="c-text order-details-value"> <% item.ceiling_type %> </div>
                                                     </div>
-                                                    <div class="col-md-6 col-xs-6 mb-10">
+                                                    <div class="col-md-6 col-xs-6 ">
                                                         <div class="order-details-key">Floor Type</div> 
                                                         <div class="c-text order-details-value"> <% item.floor_type%> </div>
                                                     </div>
-                                                    <div class="col-md-6 col-xs-6 mb-10">
+                                                    <div class="col-md-6 col-xs-6 ">
                                                         <div class="order-details-key">Cost</div> 
                                                         <div class="c-text order-details-value"> <% item.section_net_cost %> </div>
                                                     </div>
@@ -522,12 +525,19 @@
                                               </div>
                                         </div>
                                         <div class="col-md-2">
-                                            <div class="tk-common-text2">
-                                                Schedule
-                                            </div>
-                                            <div class="inv-input-container h-30"> 
-                                                <input type="date"  class="w-p-100 inv-in" >
-                                              </div>
+                                            <br>
+                                            <v-btn
+                                            color="primary"
+                                            class="ma-2  white--text av-font"
+                                           
+                                            >
+                                            Select Slots
+                                            <v-icon
+                                                right
+                                                dark
+                                            >
+                                                mdi-calendar
+                                            </v-icon>
                                         </div>
                                     </div>
                                 </div>
@@ -537,7 +547,7 @@
                         </div>
 
                         </div>
-                            <div class="row mt-30" v-if="value.length != 0 && damacval.length != 0">
+                            <div class="mt-30" v-if="value.length != 0 && damacval.length != 0">
                                 <div class="d-flex" style="align-items: center;
                                 justify-content: center;">
                                     <button class="tk-can" type="button"> Cancel</button>
@@ -606,6 +616,7 @@
                   </div>
             </div>
         </section>
+    </v-app>
     </div>
 
 {% endblock %}
@@ -614,645 +625,21 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/browser-image-compression@1.0.13/dist/browser-image-compression.js"></script>
 <script src="https://unpkg.com/vue-multiselect@2.1.0"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
-
-
+<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
+      var investigators_list = []
 
-    $(document).ready(function(){
-        $('#schedule_list_id').hide();
-    })
+{% for investigator in investigators %}
 
-  var investigators_list = []
+investigators_list.push({
+    name:'{{investigator.name}}',
+    id:'{{investigator.id}}'
+})
 
-  {% for investigator in investigators %}
- 
-  investigators_list.push({
-      name:'{{investigator.name}}',
-      id:'{{investigator.id}}'
-  })
-
-  {% endfor %}
-
-  console.log(investigators_list,"il")
-
-  const app = new Vue({
-  el: "#app",
-  components: { Multiselect: window.VueMultiselect.default },
-  
-  delimiters: ["<%", "%>"],
-  data () {
-        return {
-            
-            cause_of_stain:['INK MARK', 'HARD DUST', 'COFFEE & TEA SPILL', 'OIL','GREASE', 'PAINT', 'URINE', 'MILK SPILL', 'NO STAIN', 'OTHERS'],
-            walltypes:["BRICKS","GLASS","CONCRETE","CERAMIC","GYPSUM","FABRIC","RUBBER","STONE","TERRAZO","STAINLESS","VINYL","WOODEN","OTHERS"],
-            ceilingtypes:["WOODEN","GLASS","CONCRETE","CERAMIC","GYPSUM","FOAM","PLASTIC","FABRIC","RUBBER","STAINLESS","VENYL","OTHERS"],
-            floortypes:["MARBLE","GLASS","STONE","CERAMIC","CONCRETE","BRICKS","WOODEN","TERRAZO","OTHERS"],
-            materials:["POLYESTER","NATURAL FIBER","SYNTHETIC","LEATHER","OLEFIN","POLYPROPYLENE","NYLON"],
-            colors:["GREEN","SILVER","VIOLET","WHITE","BLACK","BEIGE","BLUE","GREY","RED","CREAM","MULTI","OFF WHITE","MEROON","ORANGE","PINK","GOLD","BROWN","YELLOW","ROYAL BLUE","LILAC","OTHERS"],
-            edit_section:null,
-            edit_section_active_index:null,
-            edit_servicetype:'',
-            isOrderSelected:false,
-            cleaningsections:null,
-            paybackSerDetials:'',
-            paybackSerPrice:'',
-            paybackSer:[],
-            paybackDamDetials:'',
-            paybackDamPrice:'',
-            paybackDam:[],
-            paybackOtherDetials:'',
-            paybackOtherPrice:'',
-            paybackOther:[],
-            paybackaction:['Service Quality','Damage','Other'],
-            payback:[],
-            reporttitile:'',
-            reportnote:'',
-            userselect:'',
-            damagenote:'',
-            key:1,
-            damacval:[],
-            seracval:"",
-            atAc:"",
-            atStaff:"",
-            ticketAction:[
-                {
-                    id:1,
-                    selected:false,
-                    name:'Payback'
-                },
-                {
-                    id:2,
-                    selected:false,
-                    name:'Internal Report'
-                },
-                {
-                    id:3,
-                    selected:false,
-                    name:'Assign Investigator'
-                },
-                {
-                    id:4,
-                    selected:false,
-                    name:'Insurance Request'
-                },
-                {
-                    id:5,
-                    selected:false,
-                    name:'Follow-up Cleaning'
-                },
-            ],
-            damAc:['Payback','Internal Report','Assign Investigator','Insurance Request','Follow-up Cleaning'],
-            damAc2 : ['Payback','Gift','Assign Investigator','Follow-up Cleaning'],
-            damAc3:investigators_list,
-            ac: ['Gift', 'Internal reporting'],
-            ac2: ['name', 'Name'],
-            at:false,
-            dam:false,
-            ser:false,
-
-            active:true,
-          value: [],
-          options:[
-            { name: 'Damage', id: 1 , selected:false},
-            { name: 'Service Quality', id: 2, selected:false },
-            { name: 'Attitude & Behaviour', id: 3, selected:false },
-          ],
-          imageData: [],
-        images:[],
-        ImageDetails: {
-            url: "",
-            file: "",
-            service:""
-        },
-        
-        }
-      },
-      methods:{
-        editSection(item){
-            console.log(item)
-            this.edit_section_active_index = item
-            this.edit_section = this.cleaningsections[item]
-            $('#edit-dialog-tigger').click();
-        },
-        removeFromPayback(){
-            // console.log('ghj')
-            // if(!this.payback.includes('Service Quality')){
-            //     this.paybackSer = []
-            // }
-            // if(!this.payback.includes('Damage')){
-            //     this.paybackDam = []
-            // }
-            // if(!this.payback.includes('Other')){
-            //     this.paybackOther = []
-            // }
-        },
-        removePayback(item){
-            console.log(item)
-            //Service Quality','Damage','Other'],
-            if(item == 'Service Quality'){
-                this.paybackSer = []
-            }
-            if(item == 'Damage'){
-                this.paybackDam = []
-            }
-            if(item == 'Other'){
-                this.paybackOther = []
-            }
-            this.payback.splice(this.payback.indexOf(item), 1); 
-        },
-        addPaybackSer(){
-            if(this.paybackSerDetials != '' && this.paybackSerPrice !=''){
-                var a ={
-                    itemname:this.paybackSerDetials,
-                    price:this.paybackSerPrice,
-                    category:'Service Quality'
-                }
-                this.paybackSer.push(a)
-                this.paybackSerDetials = ''
-                this.paybackSerPrice = ''
-            }
-        },
-        removePaybackSer(item){
-            this.paybackSer.splice(item, 1);
-        },
-        addPaybackOther(){
-            if(this.paybackOtherDetials != '' && this.paybackOtherPrice !=''){
-                var a ={
-                    itemname:this.paybackOtherDetials,
-                    price:this.paybackOtherPrice,
-                    category:'Other'
-
-                }
-                this.paybackOther.push(a)
-                this.paybackOtherDetials = ''
-                this.paybackOtherPrice = ''
-            }
-        },
-        removePaybackOther(item){
-            this.paybackOther.splice(item, 1);
-        },
-        addPaybackDam(){
-            if(this.paybackDamDetials != '' && this.paybackDamPrice !=''){
-                var a ={
-                    itemname:this.paybackDamDetials,
-                    price:this.paybackDamPrice,
-                    category:'Damage'
-
-                }
-                this.paybackDam.push(a)
-                this.paybackDamDetials = ''
-                this.paybackDamPrice = ''
-            }
-        },
-        removePaybackDam(item){
-            this.paybackDam.splice(item, 1);
-        },
-        paybackSelected(item){
-            return this.payback.includes(item)
-        },
-        removeFromSelect(){
-                if(this.damacval.length != 0){
-                    for(var i = 0;i<this.damacval.length;i++){
-                         this.damacval[i].selected = false
-                        }
-                        this.damacval[0].selected = true
-                }  
-        },
-          selectTab(id){
-              var ind = null;
-              for(var i = 0;i<this.damacval.length;i++){
-                  if(this.damacval[i].id == id){
-                      ind = i;
-                      break;
-                  }
-              }
-              if(ind != null){
-                  return this.damacval[ind].selected
-              }else{
-                  
-                  return false
-              }
-              
-          },
-          async submitForm(){
-              var flag = true;
-              console.log(this.userselect)
-              let fd = new FormData();
-              fd.append('visit_id',$('#id_visit').val())
-              fd.append('notes',this.damagenote)
-              var types = '';
-              for(var i = 0 ;i<this.value.length;i++){
-                  types = types+this.value[i].name+',';
-              }
-              fd.append('ticket_types',types);
-              var actiontypes = ''
-              for(var i = 0 ;i<this.damacval.length;i++){
-                actiontypes = actiontypes+this.damacval[i].name+',';
-              }   
-              fd.append('actions',actiontypes);
-              for(var j = 0; j<this.images.length;j++){
-                  fd.append('media',this.images[j])
-              }
-              if(actiontypes.includes('Assign Investigator')){
-                  fd.append('secondary_investigator',this.userselect.id)
-              }
-              if(actiontypes.includes('Internal Report')){
-                  fd.append('title',this.reporttitile);
-                  fd.append('report_note',this.reportnote);
-              }
-              if(actiontypes.includes('Payback')){
-                  var p = []
-                   //Service Quality','Damage','Other'],
-                   if(this.payback.includes('Service Quality')){
-                    for(var j = 0 ; j<this.paybackSer.length;j++){
-                      p.push(this.paybackSer[j])
-                    }
-                  }
-                   if(this.payback.includes('Damage')){
-                    for(var j = 0 ; j<this.paybackDam.length;j++){
-                      p.push(this.paybackDam[j])
-                     }
-                    }
-                    if(this.payback.includes('Other')){
-                        for(var j = 0 ; j<this.paybackOther.length;j++){
-                          p.push(this.paybackOther[j])
-                        }
-                    }
-                 
-                  
-                  
-                  for(var q =0;q<p.length;q++){
-                    var pstr = ''
-                    pstr = p[q].itemname+','+p[q].price+','+p[q].category
-                    fd.append('paybackdiscount_items',pstr);
-                  }
-
-                //   for(var j = 0 ; j<this.payback.length;j++){
-                //       console.log(this.payback[j])
-                //       if(this.payback[j]== 'Service Quality'){
-                //           var a = {
-                //             category:this.payback[j],
-                //             items:this.paybackSer
-                //           }
-                //           p.push(a);
-                //       }
-                //       if(this.payback[j]== 'Damage'){
-                //           var a = {
-                //             category:this.payback[j],
-                //             items:this.paybackDam
-                //           }
-                //           p.push(a);
-                //       }
-                //       if(this.payback[j]== 'Other'){
-                //           var a = {
-                //             category:this.payback[j],
-                //             items:this.paybackOther
-                //           }
-                //           p.push(a);
-                //       }
-                //   }
-                 
-                  
-
-              }
-             let result = await _post('api/ticket-submit/',fd);
-              console.log(result);
-              
-
-          },
-          showCleaners(){
-              $('#id_cl').click();
-          },
-        hideAll(){
-            // console.log('g')
-            // for(var i =0 ;i<this.value.length;i++){        
-            //           this.value[i].selected = false;
-            //   }
-            //   this.ser = false
-            //     this.at = false
-            //     this.dam = false
-            if(this.value.length == 0){
-                this.ser = false
-                this.at = false
-                this.dam = false
-               
-            }else{
-                    if(this.value.length == 1){
-                    this.value[0].selected = true
-                }else{
-                    this.value[0].selected = true
-                }
-
-              if(this.value[0].id == 1){
-                  this.dam =true
-              }else{
-                  this.at = false
-                 
-              }
-              if(this.value[0].id == 3){
-                  this.at =true
-              }else{
-                  this.at = false
-              }
-              if(this.value[0].id == 2){
-                  this.ser =true
-              }else{
-                  this.ser = false
-              }
-            }
-        },
-          selectTickets(){
-              
-                    var flag = true
-                    var ind;
-                if(this.damacval.length != 0){
-                    for(var i = 0;i<this.damacval.length;i++){
-                        if(this.damacval[i].selected){
-                            ind = i;
-                            flag = false
-                            break;
-                        }
-                    }
-                 
-                    if(flag){
-                        
-                    this.damacval[0].selected = true
-                    }else{
-                        for(var i = 0;i<this.damacval.length;i++){
-                         this.damacval[i].selected = false
-                        }
-                        this.damacval[ind].selected = true
-                        }
-                }  
-                
-             
-          },
-          showDam(){
-              for(var i =0 ; i<this.value.length;i++){
-                  if(this.value[i].id == 1){
-                      if(this.value.selected){
-                          return true;
-                      }
-                  }
-              }
-              return false
-          },
-          removeItem(id){
-            var ind
-            
-            for(var i = 0;i<this.damacval.length;i++){
-                  
-                  if(this.damacval[i].id == id){
-                      ind = i;
-                      break;
-                  }
-              }
-              var a = this.damacval[ind].selected;
-              this.damacval.splice(ind, 1);
-                if(this.damacval.length != 0){
-                    for(var i = 0;i<this.damacval.length;i++){
-                    this.damacval[i].selected = false
-                }
-                this.damacval[0].selected = true
-                }
-           
-            
-          },
-          changeSeleted(id){
-              var ind
-            for(var i = 0;i<this.damacval.length;i++){
-                  console.log(this.damacval[i].id)
-                  if(this.damacval[i].id == id){
-                      ind = i;
-                      break;
-                  }
-              }
-              for(var i = 0;i<this.damacval.length;i++){
-                  this.damacval[i].selected = false
-              }
-              this.damacval[ind].selected = true
-              
-              
-          },
-          deleteImage(imageindex) {
-        this.imageData.splice(imageindex, 1);
-        this.images.splice(imageindex, 1);
-        },
-        uploadImgToArray(file,fileName){
-            file.lastModifiedDate = Date.now();
-        
-        var converted_file = new File([file],  fileName,{lastModified: Date.now()});
-            console.log("file size is "+converted_file.size)
-            this.ImageDetails.url = URL.createObjectURL(converted_file);
-            this.ImageDetails.file = converted_file;
-            this.imageData.push(this.ImageDetails);
-            this.images.push(converted_file);
-            this.ImageDetails = {
-            file: "",
-            url: "",
-            service:""
-            
-            };
-            console.log(this.imageData)
-        },
-        async onImageFileChanged(event) {
-        console.log(event);
-        console.log("orginal file size is" + event.target.files[0].size);
-        console.log(this.imageData,this.images,"imgd");
-        var file = event.target.files[0];
-
-        const options = {
-            maxSizeMB: 1,
-            maxWidthOrHeight: 1920,
-            useWebWorker: true,
-            onProgress: Function(2),
-        };
-        try {
-            const compressedFile = await imageCompression(
-            event.target.files[0],
-            options
-            );
-            console.log(
-            "compressedFile instanceof Blob",
-            compressedFile instanceof Blob
-            ); // true
-            console.log(
-            `compressedFile size ${compressedFile.size / 1024 / 1024} MB`
-            ); // smaller than maxSizeMB
-
-            await this.uploadImgToArray(compressedFile, event.target.files[0].name); // write your own logic
-        } catch (error) {
-            console.log(error);
-        }
-        },
-
-        deleteImage2(imageindex) {
-        this.imageData2.splice(imageindex, 1);
-        },
-        uploadImgToArray2(file,fileName){
-            file.lastModifiedDate = Date.now();
-        
-        var converted_file = new File([file],  fileName,{lastModified: Date.now()});
-            console.log("file size is "+converted_file.size)
-            this.ImageDetails2.url = URL.createObjectURL(converted_file);
-            this.ImageDetails2.file = converted_file;
-            this.imageData2.push(this.ImageDetails2);
-            this.images2.push(converted_file);
-            this.ImageDetails2 = {
-            file: "",
-            url: "",
-            service:""
-            
-            };
-            console.log(this.imageData2)
-        },
-        async onImageFileChanged2(event) {
-        console.log(event);
-        console.log("orginal file size is" + event.target.files[0].size);
-        console.log(this.imageData2,this.images2,"imgd");
-        var file = event.target.files[0];
-
-        const options = {
-            maxSizeMB: 1,
-            maxWidthOrHeight: 1920,
-            useWebWorker: true,
-            onProgress: Function(2),
-        };
-        try {
-            const compressedFile = await imageCompression(
-            event.target.files[0],
-            options
-            );
-            console.log(
-            "compressedFile instanceof Blob",
-            compressedFile instanceof Blob
-            ); // true
-            console.log(
-            `compressedFile size ${compressedFile.size / 1024 / 1024} MB`
-            ); // smaller than maxSizeMB
-
-            await this.uploadImgToArray2(compressedFile, event.target.files[0].name); // write your own logic
-        } catch (error) {
-            console.log(error);
-        }
-        },
-
-
-
-      }
-  });
-
-  </script>
-<script>
-    function DropDown(el) {
-    this.dd = el;
-    this.placeholder = this.dd.children('span');
-    this.opts = this.dd.find('ul.drop li');
-    this.val = '';
-    this.index = -1;
-    this.initEvents();
-}
-
-   
-DropDown.prototype = {
-    initEvents: function () {
-        var obj = this;
-        obj.dd.on('click', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            $(this).toggleClass('active');
-        });
-        obj.opts.on('click', function () {
-            var opt = $(this);
-            obj.val = opt.text();
-            obj.index = opt.index();
-            obj.placeholder.text(obj.val);
-            opt.siblings().removeClass('selected');
-            opt.filter(':contains("' + obj.val + '")').addClass('selected');
-        }).change();
-    },
-    getValue: function () {
-        return this.val;
-    },
-    getIndex: function () {
-        return this.index;
-    }
-};
-
-$(function () {
-    // create new variable for each menu
-    var dd1 = new DropDown($('#noble-gases'));
-    var dd2 = new DropDown($('#noble-gases2'));
-    var dd3 = new DropDown($('#noble-gases3'));
-    var dd4 = new DropDown($('#noble-gases4'));
-    var dd5 = new DropDown($('#noble-gases5'));
-    var dd6 = new DropDown($('#drop_id'));
-
-    // var dd2 = new DropDown($('#other-gases'));
-    $(document).click(function () {
-        // close menu on document click
-        $('.wrap-drop').removeClass('active');
-    });
-});
-
-
-async function loadvisits(order_id){
-    app.isOrderSelected = false
-    axios.get(url+'/api/order-details/'+order_id)
-                .then(function (response) {
-                    console.log(response.data.visits,"vs")
-                    $('#visit_drop').empty();
-                    $('#id_sched').text('-- Select Order Schedule--')
-                    $('.tk-order-card').hide();
-                    $(response.data.visits).each(function(key,value){
-                        $('#visit_drop').append('<li><a onclick="loadvisitdata('+ value.visit_id +')">'+ value.start_at +'</a></li>')
-                    })
-
-                    $('#schedule_list_id').show();
-                })
-
-}
-
-
-async function loadvisitdata(visit_id){
-    app.isOrderSelected = false
-    axios.get(url+'/api/visit-details/'+visit_id)
-                .then(function (response) {
-                    app.isOrderSelected = true
-                    app.value = [];
-                    app.damacval = []
-                    app.cleaningsections = response.data.sections
-                    app.edit_servicetype = response.data.servicetype
-                    console.log(response.data,"lop")
-                    $('#id_sched').text(response.data.start_at)
-                    $('.tk-order-card').show();
-
-                    $('#visit_blc').text(response.data.order_no);
-                    $('#id_visit').val(response.data.visit_id);
-                    $('#visit_customer').text(response.data.customer_name);
-                    $('#visit_customer_number').text(response.data.customer_number);
-                    $('#visit_servicetype').text(response.data.servicetype);
-                    $('#visit_cleaningpolicy').text(response.data.cleaningpolicy);
-                    $('#visit_start_at').text(response.data.start_at);
-                    $('#visit_teamleader').text(response.data.team_leader);
-                    $('#visit_teamleader_image').attr("src",response.data.team_leader_image);
-                    $('#visit_price').text(parseFloat(response.data.amount).toFixed(3)+' '+'KD');
-                    $('#visit_no_of_cleaners').text(response.data.no_of_cleaners);
-
-                    $('#visit_team_members').empty();
-
-                    $(response.data.members).each(function(key,value){
-                        if (key == 1){
-                            $('#visit_team_members').append('<img @click="showCleaners()" src="'+value.member_image+'" class="tk-img-circle">')
-                        }else{
-                            $('#visit_team_members').append('<img @click="showCleaners()" src="'+value.member_image+'" class="tk-img-circle" style="margin-left: -20px;">')
-                        }
-
-                    })
-                    $('#visit_team_members').append('<div @click="showCleaners()" style="margin-bottom: 0px;"  class="tk-common-text2 ml-5 mt-10 pointer">'+response.data.no_of_cleaners+' cleaners</div>')
-
-                })
-
-}
+{% endfor %}
 </script>
+<script src="{% static 'files/js/raiseticket.js' %}"></script>
+
+
 {% endblock %}
