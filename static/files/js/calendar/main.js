@@ -21,8 +21,11 @@ $(document).ready(function(){
                 items:4
             },
             1000:{
-                items:6
-            }
+                items:5
+            },
+            1300:{
+              items:6
+          }
         }
     })
     $('#evalCalendar-carousel').owlCarousel({

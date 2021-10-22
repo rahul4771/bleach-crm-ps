@@ -409,9 +409,34 @@
     padding: 0!important;
     
   }
+  .lv-annual-popup{
+  
+   
+    border-bottom:6px solid #10a82f !important;
+  }
+  .lv-weekly-popup{ 
+    border-bottom:6px solid #0D87C5 !important;
+  }
+  .lv-sick-popup{ 
+    border-bottom:6px solid #393983 !important;
+  }
+  .lv-absent-popup{ 
+    border-bottom:6px solid #c91212 !important;
+  }
+  .lv-covid-popup{ 
+    border-bottom:6px solid #919191 !important;
+  }
+  .lv-maternity-popup{
+    border-bottom:6px solid #dba03a !important;
+  }
   .modal-dialog{
-    border: 1px solid #000000 !important;
+    border: 1px solid #707070;
     border-radius: 5px !important;
+    display: inline-block;
+    text-align: left;
+    vertical-align: middle;
+    min-width:420px;
+    width:auto !important;
   }
   .lv-occupied{
       background: #D1DEF3 !important;
@@ -424,11 +449,7 @@
     margin-right: -4px; /* Adjusts for spacing */
   }
   
-  .modal-dialog {
-    display: inline-block;
-    text-align: left;
-    vertical-align: middle;
-  }
+  
   .modal-date{
       font-size:18px;
       font-weight:600;
@@ -526,7 +547,7 @@
   }
   #lv-cancel-btn{
     margin-bottom: 10px;
-    border-radius: 20px;
+    border-radius: 6px;
   }
   .lv-modal-btn{
     background-color: #d20e36;
