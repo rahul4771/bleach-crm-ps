@@ -609,12 +609,10 @@ const app = new Vue({
   methods:{
 
     getCount(sch_id){
-       this.visit_count=0
-      //  console.log("sch id is"+sch_id)
-      // console.log("elemts are "+ $("#"+sch_id).parent().children().length+"index is "+$("#"+sch_id).index())
+     
      $('#'+sch_id+'-count').html($("#"+sch_id).index()+1)
       
-      return this.visit_count
+      
     },
     async onImageFileChanged(event) {
     
