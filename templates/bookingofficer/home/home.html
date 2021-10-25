@@ -333,7 +333,7 @@
     {% if cancell_in_progress_orders %}
     <div class="white-wrapper"><!--white-wrapper-->
     <h2 class="h2">Order Cancel Task</h2>
-    <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
+    <table cellpadding="0" cellspacing="0" border="0" summary="" class="main-table table table-hover footable">
     <thead>
         <tr>
         <th>Order Number</th>
@@ -349,28 +349,28 @@
     <tbody>
         {% for cancell_in_progress_order in cancell_in_progress_orders %}
         <tr>
-        <td class="bold-text">
+        <td class="bold-text" data-label="Order Number">
         {{cancell_in_progress_order.order_no}}
         </td>
-        <td>
+        <td data-label="Name">
         {{cancell_in_progress_order.evaluation.customer.name}}
         </td>
-        <td>
+        <td data-label="Mobile">
         {{cancell_in_progress_order.evaluation.customer.mobile_number}}
         </td>
-        <td>
+        <td data-label="Requester">
         {{cancell_in_progress_order.cancell_requester.name}}
         </td>
-        <td>
+        <td data-label="Total Amount">
         {{cancell_in_progress_order.total_amount|floatformat:'3'}}
         </td>
-        <td>
+        <td data-label="Job Completed">
         {{cancell_in_progress_order.job_completed_amount|floatformat:'3'}}
         </td>
-        <td>
+        <td data-label="Paid">
         {{cancell_in_progress_order.amount_paid|floatformat:'3'}}
         </td>
-        <td>
+        <td >
         <span class="clickable-row red-bg" data-href="{% url 'booking-officer:cancell-order' cancell_in_progress_order.id %}">Click to Cancel</span>
         </td>
         </tr>
