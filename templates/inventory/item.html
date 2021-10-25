@@ -180,7 +180,7 @@
                                
                                 <div class="right-pos m-mt-10">
                                     {% comment %} <button class="inv-blue-btn" onclick="openNavAdd('add')"> <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Bundle </button> {% endcomment %}
-                                    {% comment %} <button class="inv-blue-btn" type="button" onclick="openNavAddBundle('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Unit </button> {% endcomment %}
+                                    <button class="inv-blue-btn" type="button" onclick="openNavAddBundle('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Unit </button>
                                 </div>
                             </div>
                         </div>
@@ -474,7 +474,24 @@
             <input type="hidden" name="store" id="id_pro_sel" value="" />
             <input type="hidden" name="edit_unit_id" id="id_unit_edit" >
             
-            <!-- <div class="row mt-20">
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Purchase Order</div>
+                    <input hidden type="text" id="id_unit_status" name="unit_status" value="active" required>
+                    <div class="wrap-drop" id="noble-gases"  >
+                        <span id="id_selectText">Selelct PO</span>
+                        <ul class="drop">
+                            <li onclick="changeSelect('active')"><a>PO1</a></li>
+                            <li onclick="changeSelect('out_of_order')"><a>PO2</a></li> 
+                            <li onclick="changeSelect('expired')"><a>PO3</a></li> 
+
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Store</div>
 
@@ -547,27 +564,8 @@
                       </div>
                 </div>
 
-            </div> -->
-            <div class="row mt-20">
-                <div class="col-md-12 ">
-                    <div class="model-input-name">Purchase Order</div>
-                    <input hidden type="text" id="id_unit_status" name="unit_status" value="active" required>
-                    <div class="wrap-drop" id="noble-gases"  >
-                        <span id="id_selectText">Selelct PO</span>
-                        <ul class="drop">
-                            <li onclick="changeSelect('active')"><a>PO1</a></li>
-                            <li onclick="changeSelect('out_of_order')"><a>PO2</a></li> 
-                            <li onclick="changeSelect('expired')"><a>PO3</a></li> 
-
-                        </ul>
-                    </div>
-                </div>
-
             </div>
-            
-
-
-          
+              
         </div>
         <div class="inv-drawer-footer">
             <button class="sent-button" type="submit" >Submit</button>
