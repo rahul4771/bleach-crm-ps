@@ -1145,7 +1145,7 @@ hr.hr-dashedpad { border: 0; margin:8px 0 5px 0; padding:0; border-bottom: 1px d
   .main-table caption {   font-size: 1.3em; }
   .main-table thead { border: none; clip: rect(0 0 0 0); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; width: 1px; }
   .main-table tr {border-bottom: 5px solid #ddd !important;border: 1px solid #ccc; margin:0 0 20px 0 !important;  display: block; margin-bottom: .625em; }
-  .main-table td { border-bottom: 1px solid #ddd; display: block; font-size: .9em; padding:5px; text-align: right;}
+  .main-table td { border-bottom: 1px solid #ddd; display: block; font-size: .9em; padding:5px; text-align: right;border-top: none !important;}
   .main-table td::before { content: attr(data-label); float: left; font-weight: bold; text-transform: uppercase;}
   .main-table td:last-child { border-bottom: 0;}
   .main-table-border { border: 0;}
