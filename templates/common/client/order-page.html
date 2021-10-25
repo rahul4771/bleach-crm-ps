@@ -1809,7 +1809,8 @@
                                                         {% elif request.user.user_type == 'OPERATIONSUPERVISOR' %}
                                                         <a href="/operation-supervisor/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
                                                         {% else %} <a href="#"> {% endif %}
-                                                            Visit {{forloop.counter}}
+                                                           Visit <span id="id_select_visit{{multi_order_schedule.id}}-count"><% getCount("id_select_visit{{multi_order_schedule.id}}") %></span>
+                                                            <!-- Visit {{forloop.counter}} -->
                                                         </a>
                                                     </div>
                                                     <div class="vist-card-item-second visit-text">
