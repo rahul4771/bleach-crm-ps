@@ -404,6 +404,7 @@ const app = new Vue({
   components: { Multiselect: window.VueMultiselect.default },
 
   data: {
+    new_count:0,
     taken_status:'AGENT_TAKEN',
     image_eval_id:null,
     kitchen_msg:false,
@@ -597,12 +598,22 @@ const app = new Vue({
           image_urls:[],
           media_file:'',
           media_files:[],
-          imageForm:new FormData()
+          visit_count:0,
+          imageForm:new FormData(),
+          break_act:false,
+          two_counter:0,
          // url:'http://localhost:8000'
       // url:'https://test.bleach-kw.com'
             //url:'http://127.0.0.1:8000'
   },
   methods:{
+
+    getCount(sch_id){
+     
+     $('#'+sch_id+'-count').html($("#"+sch_id).index()+1)
+      
+      
+    },
     async onImageFileChanged(event) {
     
   
@@ -667,6 +678,7 @@ const app = new Vue({
       this.selected_addon.details.price=this.selected_addon.selected_size.price
       this.selected_addon.details.category=this.selected_addon.selected_size.size
     },
+
     addToAddon(){
       if(this.newaddon_quantity && this.selected_addon)
       {
@@ -1913,7 +1925,7 @@ setTimeout(function() {
     },
      getSection(id){
       this.eval_book_id=id
-     
+     this.new_count=this.visit_count
         axios.get(this.url+'/customer/editorder/'+this.orderId+'?evaluation_book_id='+id).then(response=>{
           this.sections=response.data.section_details.evaluationsection_book
           this.service_type=response.data.section_details.service_type.name
