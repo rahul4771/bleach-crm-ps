@@ -833,7 +833,7 @@
                     <form method="post" action="https://payment.bleachkw.com/SendPerformREQuest.php" style="display: none;" >
                       {% csrf_token %}
                       <input type="hidden" name="order_status" value="{{order.order_status}}">
-                      <input type="hidden" name="price" value="{{order.evaluation.total_cost|floatformat:'3'}}">
+                      <input type="hidden" name="price" value="{{order.remining_amount|floatformat:'3'}}">
                       <input type="hidden" name="payment_mode" value="prepaid">
                       <input type="hidden" name="qty" value="1">
                       <input type="hidden" name="evaluation_id" value="{{order.evaluation.evaluation_id|slice:'3:'}}{{order.evaluation.customer.username}}">
@@ -846,10 +846,10 @@
                     <!-- credit card payment gateway form begins here-->
                    
 
-                    <form method="get" action="https://testpay.bleach-kw.com/creditcard/payment_form.php" style="display: none;">
+                    <form method="get" action="https://payment.bleachkw.com/creditcard/payment_form.php" style="display: none;">
                       <input type="text" name="merchant_defined_data1" value="{{order.order_no}}"/>
                       <input type="text" name="reference_number" value="{{order.order_no}}1"/>
-                      <input type="text" name="amount" value="{{order.evaluation.total_cost|floatformat:'3'}}"/>
+                      <input type="text" name="amount" value="{{order.remining_amount|floatformat:'3'}}"/>
                       <input type="text" name="merchant_defined_data2" value="prepaid"/>
                       <input type="text" name="merchant_defined_data3" value="{{order.order_status}}"/>
                       <input type="text" name="currency" value="KWD"/>
