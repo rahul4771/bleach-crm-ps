@@ -481,7 +481,7 @@ class InventoryBundle(IsInventoryAdmin,View):
 
 class InventoryItems(IsInventoryAdmin,View):
     def get(self,request,item_id):
-        inventory_item = InventoryItem.objects.prefetch_related(Prefetch('image_item',queryset=InventoryItemImages.objects.all(),to_attr='item_images')).annotate(unit_count=Sum(Case(When(unit_item__status='active',then=1),default=0,output_field=IntegerField())),total_unit_price=Sum(Case(When(unit_item__status='active',then='unit_item__unit_price'),default=0,output_field=FloatField()))).get(id=item_id)
+        inventory_item = InventoryItem.objects.prefetch_related(Prefetch('image_item',queryset=InventoryItemImages.objects.all(),to_attr='item_images')).annotate(quantity_total=Sum('unit_item_history__quantity'),unit_count=Sum(Case(When(unit_item__status='active',then=1),default=0,output_field=IntegerField())),total_unit_price=Sum(Case(When(unit_item__status='active',then='unit_item__unit_price'),default=0,output_field=FloatField()))).get(id=item_id)
         categories = Category.objects.all()
         item_units = ItemUnit.objects.filter(item=inventory_item)
         item_history = ItemHistory.objects.filter(item=inventory_item)
@@ -489,15 +489,27 @@ class InventoryItems(IsInventoryAdmin,View):
         stores = Store.objects.filter(status=True)
 
         available_item_units = item_units.filter(status='active').count()
+        available_quantity = item_history.aggregate(total_quantity=Sum('quantity'))['total_quantity']
+        
         reserve_units = inventory_item.reserve_count
 
-        if int(available_item_units) < int(reserve_units) and int(available_item_units) > 0:
-            inventory_item.item_status = 'about_to_finish'
-        elif int(available_item_units) == 0 :
-            inventory_item.item_status = 'out_of_stock'
+
+        if inventory_item.item_add_type == 'unit':
+            if int(available_item_units) < int(reserve_units) and int(available_item_units) > 0:
+                inventory_item.item_status = 'about_to_finish'
+            elif int(available_item_units) == 0 :
+                inventory_item.item_status = 'out_of_stock'
+            else:
+                inventory_item.item_status = 'available'
+            inventory_item.save()
         else:
-            inventory_item.item_status = 'available'
-        inventory_item.save()
+            if int(available_quantity) < int(reserve_units) and int(available_quantity) > 0:
+                inventory_item.item_status = 'about_to_finish'
+            elif int(available_quantity) == 0 :
+                inventory_item.item_status = 'out_of_stock'
+            else:
+                inventory_item.item_status = 'available'
+            inventory_item.save()
 
         attributes = Attribute.objects.filter(attribute_category=inventory_item.item_category,attribute_segment=inventory_item.item_segment,attribute_line=inventory_item.item_line,status=True).prefetch_related(Prefetch('value_attribute',queryset=AttributeValue.objects.filter(status=True),to_attr='attribute_values'))
 
@@ -628,6 +640,28 @@ class InventoryItems(IsInventoryAdmin,View):
                 status = status
                 )
             messages.success(request,"Unit Added Successfully !")
+
+        if action == "add_quantity":
+            store_id = request.POST.get('store')
+            
+            purchase_date = request.POST.get('purchase_date')
+            print(purchase_date,"pd")
+            
+            quantity = request.POST.get('quantity')
+
+            store = Store.objects.get(id=int(store_id))
+
+            item = InventoryItem.objects.get(id=item_id)
+
+            ItemHistory.objects.create(
+            item = item,
+            purchase_store=store,
+            purchase_date = purchase_date,
+            quantity = quantity,
+            added_by = request.user
+            )
+            
+            messages.success(request,"Quantity Added Successfully !")
 
         if action == "edit_unit":
             unit_id = request.POST.get('edit_unit_id')

@@ -82,6 +82,7 @@ const app=  new Vue({
    
     
     data: {
+      prod:false,
       slotloader:false,
       cal_loader:false,
        user_type:'',

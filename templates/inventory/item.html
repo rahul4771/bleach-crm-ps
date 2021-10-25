@@ -180,7 +180,7 @@
                                
                                 <div class="right-pos m-mt-10">
                                     {% comment %} <button class="inv-blue-btn" onclick="openNavAdd('add')"> <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Bundle </button> {% endcomment %}
-                                    {% comment %} <button class="inv-blue-btn" type="button" onclick="openNavAddBundle('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Unit </button> {% endcomment %}
+                                    <button class="inv-blue-btn" type="button" onclick="openNavAddBundle('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>{% if inventory_item.item_add_type == 'unit' %}Add Unit{% else %}Add Quantity{% endif %} </button>
                                 </div>
                             </div>
                         </div>
@@ -235,7 +235,7 @@
                              <div style="text-align: center;" class=" av-font mt-40">
                                  <br>
                                  <div class="inv-item-amount2">
-                                     {{inventory_item.unit_count}} <span style="font-size: 25px;"> Unit(s) </span>                    
+                                     {% if inventory_item.item_add_type == 'unit' %}{{inventory_item.unit_count}}{% else %}{{inventory_item.quantity_total}}{% endif %} <span style="font-size: 25px;"> {% if inventory_item.item_add_type == 'unit' %}Unit(s){% else %}{{inventory_item.measuring_unit}}(s){% endif %} </span>                    
                                  </div>
                              </div>
                             </div>
@@ -252,7 +252,7 @@
                                            </div>    
                                          <!-- 135 Unit  -->
                                          <!-- <span id="id_res_val" class="inv-item-amount2"> {{inventory_item.reserve_count|default_if_none:'0'}}  <span style="font-size: 25px;"> unit(s) </span> </span> -->
-                                         <div id="id_res_val" class="inv-item-amount2"> {{inventory_item.reserve_count|default_if_none:'0'}}  <span style="font-size: 25px;"> unit(s) </span>  </div>
+                                         <div id="id_res_val" class="inv-item-amount2"> {{inventory_item.reserve_count|default_if_none:'0'}}  <span style="font-size: 25px;"> {% if inventory_item.item_add_type == 'unit' %}Unit(s){% else %}{{inventory_item.measuring_unit}}(s){% endif %} </span>  </div>
                               </div>
                              </div>
                          </div>
@@ -433,11 +433,11 @@
                                 <tbody>
                                     {% for history in item_history %}
                                     <tr>
-                                        <td>{{history.purchase_order.purchase_order_id}}</td>
-                                        <td>{{history.purchase_order.created|date:'d-m-Y'}}</td>
+                                        <td>{{history.purchase_order.purchase_order_id|default_if_none:"-"}}</td>
+                                        <td>{% if history.purchase_order %}{{history.purchase_order.created|date:'d-m-Y'|default_if_none:'-'}}{% else %}{{history.purchase_date|date:'d-m-Y'}}{% endif %}</td>
                                         <td>{{history.quantity}}</td>
                                         <td>{{history.added_by}}</td>
-                                        <td>{{history.purchase_order.created|date:'d-m-Y'}}</td>
+                                        <td>{{history.purchase_order.created|date:'d-m-Y'|default_if_none:'-'}}</td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>
@@ -470,11 +470,36 @@
 
             <form id="myform" method="POST" action="" >{% csrf_token %}
             <input type="hidden" name="item_id" value="{{inventory_item.id}}">
+            
+            {% if inventory_item.item_add_type == 'unit' %}
             <input type="hidden" name="action" value="add_unit" id="unit_action" >
+            {% else %}
+            <input type="hidden" name="action" value="add_quantity" >
+            {% endif %}
+
             <input type="hidden" name="store" id="id_pro_sel" value="" />
             <input type="hidden" name="edit_unit_id" id="id_unit_edit" >
             
-            <!-- <div class="row mt-20">
+            {% comment %} <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Purchase Order</div>
+                    <input hidden type="text" id="id_unit_status" name="unit_status" value="active" required>
+                    <div class="wrap-drop" id="noble-gases"  >
+                        <span id="id_selectText">Select PO</span>
+                        <ul class="drop">
+                            <li onclick="changeSelect('active')"><a>PO1</a></li>
+                            <li onclick="changeSelect('out_of_order')"><a>PO2</a></li> 
+                            <li onclick="changeSelect('expired')"><a>PO3</a></li> 
+
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+
+            <hr> {% endcomment %}
+
+            <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Store</div>
 
@@ -490,6 +515,7 @@
 
             </div>
 
+            {% if inventory_item.item_add_type == 'unit' %}
             <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Serial Number</div>
@@ -500,6 +526,7 @@
                 </div>
 
             </div>
+            {% endif %}
 
             <div class="row mt-20">
                 <div class="col-md-12 ">
@@ -521,6 +548,9 @@
                 </div>
 
             </div> {% endcomment %}
+            
+            
+            {% if inventory_item.item_add_type == 'unit' %}
             <div class="row mt-20 expiry_date_div" hidden>
                 <div class="col-md-12 ">
                     <div class="model-input-name">Expiry Date</div>
@@ -538,6 +568,7 @@
                 </div>
 
             </div>
+
             <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Unit Price</div>
@@ -547,27 +578,22 @@
                       </div>
                 </div>
 
-            </div> -->
+            </div>
+            {% endif %}
+
+            {% if inventory_item.item_add_type == 'quantity' %}
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Purchase Order</div>
-                    <input hidden type="text" id="id_unit_status" name="unit_status" value="active" required>
-                    <div class="wrap-drop" id="noble-gases"  >
-                        <span id="id_selectText">Selelct PO</span>
-                        <ul class="drop">
-                            <li onclick="changeSelect('active')"><a>PO1</a></li>
-                            <li onclick="changeSelect('out_of_order')"><a>PO2</a></li> 
-                            <li onclick="changeSelect('expired')"><a>PO3</a></li> 
+                    <div class="model-input-name">Quantity</div>
 
-                        </ul>
-                    </div>
+                    <div class="inv-input-container h-30"> 
+                        <input type="number" step="0.001"  class="w-p-100 inv-in" name="quantity" id="quantity_id" required>
+                      </div>
                 </div>
 
             </div>
-            
-
-
-          
+            {% endif %}
+              
         </div>
         <div class="inv-drawer-footer">
             <button class="sent-button" type="submit" >Submit</button>
@@ -1286,7 +1312,11 @@ function openNavAddBundle(d) {
         document.getElementById("myform").reset();
         $('#id_unit_status').val('active');
         $("#id_selectText").text("Select PO");
+            {% if inventory_item.item_add_type == 'unit' %}
             $("#supHead").text("Add Unit");
+            {% else %}
+            $("#supHead").text("Add Quantity");
+            {% endif %}
             $("#unit_action").val("add_unit");
         }
         if(d == 'edit'){

@@ -3,8 +3,8 @@ import json
 from django.template.loader import render_to_string
 from django.http import HttpResponse,JsonResponse,HttpResponseRedirect
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule,Shift
-from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType
-from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,Reporting
+from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,EvaluationSectionAddons,CleaningMethod,CleaningSection,ServiceType,AreaType
+from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,FollowUpSection,FollowUpSectionKeynote,Reporting,PaybackDiscount,PaybackDiscountDetails
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from accountant.models import PaymentHistory
 from customer.models import CustomerBooking
@@ -283,7 +283,7 @@ class PaymentResponseCredit(APIView):
 
 
 		payment_result = request.POST.get('decision')
-		print(payment_result)
+		
 		if order and payment_result == 'ACCEPT' and order_status != 'CANCEL_IN_PROGRESS':
 			#Receipt Number
 			receipt_no               = PaymentHistory.objects.filter(is_active=True,receipt_no__isnull=False).aggregate(t=Max('receipt_no'))['t'] or int(str(timezone.now().year)[-2:]+str(timezone.now().month).zfill(2)+'10000')
@@ -357,7 +357,7 @@ class PaymentResponseCredit(APIView):
 			response = requests.request("GET", url, headers=headers, params=querystring)
 
 			####to close order
-			order_closing_check = Order.objects.select_related('evaluation__customer').filter(is_active=True,order_no=evaluation_id,payment_status='COMPLETED').order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter(cleaning_count=F('completed_cleaning_count'),followup_count=F('completed_followup_count'))
+			order_closing_check = Order.objects.select_related('evaluation__customer').filter(is_active=True,order_no=evaluation_id,payment_status='COMPLETED').order_by('-id').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True)),Prefetch('investigation_orders',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True))))).annotate(cleaning_count=Count('order_scheduler_order'),followup_count=Count('investigation_orders'),completed_followup_count=Sum(Case(When(investigation_orders__followup_investigation__status='FOLLOWUP_CLOSED',then=1),default=0,output_field=IntegerField())),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField()))).filter( Q( Q(cleaning_count=F('completed_cleaning_count')) & Q(followup_count=F('completed_followup_count')) & ~Q(cleaning_count=0) ) )
 			if order_closing_check:
 				closing_order	= Order.objects.get(is_active=True,order_no=evaluation_id)
 				closing_order.order_status = 'ORDER_CLOSED'
@@ -649,9 +649,12 @@ class TicketSubmitAPI(APIView):
 		ticket_types = request.data.get('ticket_types')
 		notes = request.data.get('notes')
 		investigationmedias = request.FILES.getlist('media')
-		action = request.data.get('action')
+		
+		actions = request.data.get('actions')
+		actions_list = actions.split(",")
+			
 		print(visit_id,ticket_types,notes,investigationmedias,"lodat")
-
+		
 		visit = OrderScheduler.objects.get(id=int(visit_id))
 		order = visit.order
 
@@ -671,52 +674,72 @@ class TicketSubmitAPI(APIView):
 					is_active = True
 				)
 
-		if action == 'payback':
-			paybackdiscount = PaybackDiscount.objects.create(investigation=investigation,is_active=True)
+		for action in actions_list:
+			print(action,"act")
+			if action == 'Payback':
+				print("pop")
+				paybackdiscount = PaybackDiscount.objects.create(investigation=investigation,is_active=True)
 
-			paybackdiscount_items = request.data.get('paybackdiscount_items')
+				paybackdiscount_items = request.data.getlist('paybackdiscount_items')
+				print(paybackdiscount_items,"itms")
+				item_array = []
+				items_total_cost = 0
+				for item in paybackdiscount_items:
+					items_list = item.split(",")
 
-			keynote_array.append(PaybackDiscountDetails(paybackdiscount=paybackdiscount,category=section_name,name=keynote,cost=quantity,is_active=True))
+					if items_list[2] == 'Service Quality':
+						category = 'SERVICEQUALITY'
+					elif items_list[2] == 'Damage':
+						category = 'DAMAGE'
+					else:
+						category = None
 
-			#Email
-			salesadmin_list = UserProfile.objects.filter(is_active=True).filter(is_active=True,user_type='SALESADMIN').values_list('email',flat=True)
-			msg_html = render_to_string('email/ticketapprove.html',{'paybackdiscount':paybackdiscount,'email_user':'salesadmin'})
-			msg      = EmailMultiAlternatives('Cash Back Approval', '', 'notification@bleach-kw.com', salesadmin_list)
-			msg.attach_alternative(msg_html, "text/html")
-			msg.send(fail_silently=False)
+					item_array.append(PaybackDiscountDetails(paybackdiscount=paybackdiscount,category=category,name=items_list[0],cost=items_list[1],is_active=True))
 
-			admin_list = UserProfile.objects.filter(is_active=True).filter(is_active=True,user_type='ADMIN').values_list('email',flat=True)
-			msg_html = render_to_string('email/ticketapprove.html',{'paybackdiscount':paybackdiscount,'email_user':'admin'})
-			msg      = EmailMultiAlternatives('Cash Back Approval', '', 'notification@bleach-kw.com', admin_list)
-			msg.attach_alternative(msg_html, "text/html")
-			msg.send(fail_silently=False)
+					items_total_cost += float(items_list[1])
 
-		if action == 'report':
-			title = request.data.get('title')
-			notes = request.data.get('notes')
+				#bulk_create keynote
+				PaybackDiscountDetails.objects.bulk_create(item_array)
 
-			Reporting.objects.create(investigation=investigation,title=title,notes=notes)
+				paybackdiscount.total_cost = items_total_cost
+				paybackdiscount.save()
 
-		if action == 'assign_investigator':
-			secondary_investigator = request.data.get('secondary_investigator')
-			
-			investigator = UserProfile.objects.get(id=int(secondary_investigator))
+				#Email
+				salesadmin_list = UserProfile.objects.filter(is_active=True).filter(is_active=True,user_type='SALESADMIN').values_list('email',flat=True)
+				msg_html = render_to_string('email/ticketapprove.html',{'paybackdiscount':paybackdiscount,'email_user':'salesadmin'})
+				msg      = EmailMultiAlternatives('Cash Back Approval', '', 'notification@bleach-kw.com', salesadmin_list)
+				msg.attach_alternative(msg_html, "text/html")
+				msg.send(fail_silently=False)
 
-			investigationdata = Investigation.objects.select_related('investigator','assigned_by','secondary_investigator','order__evaluation__customer').get(id=investigation_id,is_active=True)
-			investigationdata.secondary_investigator = investigator
-			investigationdata.secondary_investigation_created = datetime.now()
-			investigationdata.save()
-			
-			msg_html = render_to_string('email/rise_ticket_request2.html',{'investigationdata':investigationdata})
-			msg      = EmailMultiAlternatives('Ticket Rised', '', 'notification@bleach-kw.com', [investigationdata.secondary_investigator.email])
-			msg.attach_alternative(msg_html, "text/html")
-			msg.send(fail_silently=False)
+				admin_list = UserProfile.objects.filter(is_active=True).filter(is_active=True,user_type='ADMIN').values_list('email',flat=True)
+				msg_html = render_to_string('email/ticketapprove.html',{'paybackdiscount':paybackdiscount,'email_user':'admin'})
+				msg      = EmailMultiAlternatives('Cash Back Approval', '', 'notification@bleach-kw.com', admin_list)
+				msg.attach_alternative(msg_html, "text/html")
+				msg.send(fail_silently=False)
+
+			if action == 'Internal Report':
+				print("int rep")
+				title = request.data.get('title')
+				notes = request.data.get('report_note')
+
+				Reporting.objects.create(investigation=investigation,title=title,notes=notes)
+
+			if action == 'Assign Investigator':
+				secondary_investigator = request.data.get('secondary_investigator')
+				print(secondary_investigator,"sec")
+				investigator = UserProfile.objects.get(id=int(secondary_investigator))
+
+				investigationdata = Investigation.objects.select_related('investigator','assigned_by','secondary_investigator','order__evaluation__customer').get(id=investigation.id,is_active=True)
+				investigationdata.secondary_investigator = investigator
+				investigationdata.secondary_investigation_created = datetime.now()
+				investigationdata.save()
+				
+				msg_html = render_to_string('email/rise_ticket_request2.html',{'investigationdata':investigationdata})
+				msg      = EmailMultiAlternatives('Ticket Rised', '', 'notification@bleach-kw.com', [investigationdata.secondary_investigator.email])
+				msg.attach_alternative(msg_html, "text/html")
+				msg.send(fail_silently=False)
 
 		response_dict = {'success':True}
-		# if ticket_type == 'Damage':
-		# 	investigationmedias = request.FILES.getlist('media')
-		# 	notes = request.data.get('notes')
-		# 	action = request.data.get('action')
 
 		return Response(response_dict,HTTP_200_OK)
 
@@ -727,10 +750,10 @@ class VisitDetailsAPI(APIView):
 	def get(self,request,visit_id):
 		response_dict = {'success':False}
 		print(visit_id,"oid")
-		try:
-			visit = OrderScheduler.objects.select_related('order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('',queryset=EvaluationBookSection.objects.filter(is_active=True),to_attr='sections'),Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).select_related('team_leader','drop_off_driver','pick_up_driver').prefetch_related(Prefetch('media_cleaningteam',queryset=CleaningTeamMedia.objects.filter(is_active=True),to_attr='cleaning_team_medias'),Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_team')).get(is_active=True,id=int(visit_id))
-		except:
-		 	visit = None
+		# try:
+		visit = OrderScheduler.objects.select_related('order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='evaluationbooksectionkeynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='sections'),Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).select_related('team_leader','drop_off_driver','pick_up_driver').prefetch_related(Prefetch('media_cleaningteam',queryset=CleaningTeamMedia.objects.filter(is_active=True),to_attr='cleaning_team_medias'),Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_team')).get(is_active=True,id=int(visit_id))
+		# except:
+		#  	visit = None
 
 		response_dict['order_no'] = visit.order.order_no
 		response_dict['visit_id'] = visit_id
@@ -758,6 +781,44 @@ class VisitDetailsAPI(APIView):
 				members.append(members_dict)
 
 			response_dict['members'] = members
+
+		sections = []
+		for section in visit.order_scheduler_book.sections:
+			
+			keynotes = []
+			for keynote in section.evaluationbooksectionkeynotes:
+				keynote_dict = {
+					'keynote_id' : keynote.id,
+					'sub_area' : keynote.sub_area,
+					'quantity' : keynote.quantity
+				}
+				keynotes.append(keynote_dict)
+
+			sectionaddons = []
+			for addon in section.sectionaddons:
+				addon_dict = {
+					'addon_id' : addon.id,
+					'addon_name' : addon.name,
+					'quantity' : addon.quantity,
+					'addon_net_cost' : addon.addon_net_cost
+				}
+				sectionaddons.append(addon_dict)
+
+			section_dict= {
+					'section_id' : section.id,
+					'section_name' : section.section_name,
+					'size' : section.size,
+					'floor_type' : section.floor_type,
+					'wall_type' : section.wall_type,
+					'ceiling_type' : section.ceiling_type,
+					'section_net_cost' :section.section_net_cost,
+					'keynotes' : keynotes,
+					'addons' : sectionaddons
+			}
+
+			sections.append(section_dict)
+
+		response_dict['sections'] = sections
 		print(response_dict,"dict")
 
 		return Response(response_dict,HTTP_200_OK)
