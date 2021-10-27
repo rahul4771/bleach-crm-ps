@@ -1015,6 +1015,9 @@ class CleaningsExport(IsSeniorTeamLeader,View):
 		wb.save(response)
 
 		return response
+class NewInvestigationTask(IsSeniorTeamLeader,View):
+    def get(self,request):
+        return render(request,'stl/ticket/new-investigation.html',{})
 
 
 class InvestigationTask(IsSeniorTeamLeader,View):

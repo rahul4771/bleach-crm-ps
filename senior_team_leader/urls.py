@@ -12,6 +12,8 @@ urlpatterns = [
 
 	#qualitycontrol
 	url(r'^investigation/(?P<investigation_id>[-\w]+)/$',views.InvestigationTask.as_view(),name='investigation'),
+	url(r'^newinvestigation/',views.NewInvestigationTask.as_view(),name='newinvestigation'),
+
 
     url(r'^ajax/removefollowupsection/',views.RemoveFollowupSection,name='removefollowupbooksection'),
 	url(r'^followup/(?P<investigation_id>[-\w]+)/$',views.Followup.as_view(),name='follow-up'),
