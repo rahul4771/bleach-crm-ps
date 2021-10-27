@@ -20,11 +20,11 @@ $(document).ready(function(){
             600:{
                 items:4
             },
-            1000:{
-                items:5
+            768:{
+                items:4
             },
-            1300:{
-              items:6
+            1400:{
+              items:5
           }
         }
     })
