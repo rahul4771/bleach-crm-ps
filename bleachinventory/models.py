@@ -323,12 +323,10 @@ class PurchaseOrderItems(models.Model):
         return self.purchase_order.purchase_order_id
 
 class ItemHistory(models.Model):
-    purchase_order  =   models.ForeignKey(PurchaseOrder,blank=False,null=False,related_name='purchase_order_item_history')
+    purchase_order  =   models.ForeignKey(PurchaseOrder,blank=True,null=True,related_name='purchase_order_item_history')
     item            =   models.ForeignKey(InventoryItem,blank=False,null=False,related_name='unit_item_history')
     purchase_date   =   models.DateField(blank=True,null=True)
-    # expiry_date     =   models.DateField(blank=True,null=True)
-    # no_expiry       =   models.BooleanField(default=False,blank=False,null=False)
-    # unit_price      =   models.CharField(max_length=10,blank=False,null=False)
+    purchase_store  =   models.ForeignKey(Store,blank=True,null=True,related_name='quantity_store')
     quantity        =   models.CharField(max_length=50,blank=False,null=False)
     added_by        =   models.ForeignKey(UserProfile,blank=False,null=False,related_name='addedby_item_history')
     created         =   models.DateTimeField(auto_now_add=True)

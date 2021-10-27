@@ -2,7 +2,7 @@
 //use async funcation to call service methods
 //Check Response status always
 
- var api ='https://my.bleachkw.com';
+var api ='https://my.bleachkw.com';
 var url ='https://my.bleachkw.com';
 
 // var api ='https://test.bleach-kw.com';
