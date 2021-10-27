@@ -739,10 +739,10 @@ width:100% !important;
 }
 
 .cl-marker-text{
-    padding-top: 5px;
+    padding-top: 7px;
     padding-left: 10px;
     color:#ffffff;
-    font-size:14px;
+    font-size:12px;
     font-weight:500;
 }
 .cl-marker-profile-pic{
