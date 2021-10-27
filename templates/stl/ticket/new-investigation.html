@@ -9,6 +9,25 @@
 
 <link href="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/assets/owl.carousel.css' %}" rel="stylesheet">
 <style>
+    
+    .vc-container {
+        /* --rounded-lg: 0px !important; */
+    }
+    .modal-dialog {
+    border: 1px solid #707070;
+    border-radius: 5px !important;
+    display: inline-block;
+    text-align: left;
+    vertical-align: middle;
+    min-width: 420px;
+    width: 1000px !important;
+}
+@media only screen and (max-width: 999px) {
+    .modal-dialog {
+   
+    width: auto !important;
+}
+}
     /* The container */
 .radio-container {
     font-weight: 500;
@@ -125,7 +144,7 @@
                                     <div class="row">
                                    
                                         <div class="col-md-3">
-                                            <div class="tk-common-text" id="visit_blc" style="margin-bottom: 5px">BLC1265515656312</div>
+                                            <div class="tk-common-text" id="visit_blc" style="margin-bottom: 5px">{{investigation_details.order.order_no}}</div>
                                             <div class="d-flex">
                                                 <div>
                                                     <span class="tk-dot tk-completed-color"></span><span class="tk-common-text2 av-font">Paid</span>
@@ -135,33 +154,35 @@
                                                 </div>
                                             </div>
                                             <div style="margin-bottom:0px" class="mt-15 tk-common-text2" id="visit_customer">
-                                                Manal Alesheed
+                                                {{investigation_details.order.evaluation.customer.name}}
                                             </div>
                                             <div  class="tk-common-text2" id="visit_customer_number">
-                                                9595959595
+                                                {{investigation_details.order.evaluation.customer.mobile_number}}
                                             </div>
                                         </div>
                                         <div class="col-md-6">
-                                            <div style="margin-bottom: 5px" class="tk-common-text"><span id="visit_servicetype">Kitchen Cleaning</span>-<span id="visit_cleaningpolicy">One time service</span></div>
-                                            <div  class="tk-common-text2" id="visit_start_at">Dec 01 2020 ,04:04 AM</div>
+                                            <div style="margin-bottom: 5px" class="tk-common-text"><span id="visit_servicetype">{{investigation_details.order_schedule.order_scheduler_book.service_type}}</span>-<span id="visit_cleaningpolicy">{{investigation_details.order_schedule.order_scheduler_book.cleaning_policy}}</span></div>
+                                            <div  class="tk-common-text2" id="visit_start_at">{{investigation_details.order_schedule.start_at|date:'d-m-Y h:i A'}}</div>
+                                            
+                                            {% for team in investigation_details.order_schedule.cleaning_teams %}
                                             <div class="d-flex mt-20">
                                                 <div class="d-flex">
                                                     <img id="visit_teamleader_image" src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle"> 
-                                                    <div style="margin-bottom: 0px;"  class="tk-common-text2 ml-5 mt-10" id="visit_teamleader">Saravan</div>
+                                                    <div style="margin-bottom: 0px;"  class="tk-common-text2 ml-5 mt-10" id="visit_teamleader">{{team.team_leader.name}}</div>
                                                 </div>
                                                 <div class="ml-30 d-flex" id="visit_team_members">
-                                                    <img onclick="showCleaners()"  src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle mr-5" >
-                                                    <img onclick="showCleaners()"  src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle mr-5" >
-                                                    <img onclick="showCleaners()"  src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle mr-5" >
-                                                    <img onclick="showCleaners()"  src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle mr-5" >
-                                                    <div onclick="showCleaners()"   class="tk-common-text2 ml-5  mt-10 pointer">4 cleaners</div>
+                                                    {% for team_member in team.cleaning_team_members %}
+                                                    <img onclick="showCleaners()"  src="{{team.team_leader.profile_image.url}}" class="tk-img-circle mr-5" >
+                                                    {% endfor %}
+                                                    <div onclick="showCleaners()"   class="tk-common-text2 ml-5  mt-10 pointer">{{team.cleaning_team_members|length}} cleaners</div>
 
                                                 </div>
                                             </div>
+                                            {% endfor %}
     
                                         </div>
                                         <div class="col-md-3 text-center">
-                                            <div class="tk-total-text" style="margin-top: 40px; line-height: 1;" id="visit_price">80.000 KD</div>
+                                            <div class="tk-total-text" style="margin-top: 40px; line-height: 1;" id="visit_price">{{investigation_details.order_schedule.order_scheduler_book.total_cost|floatformat:3}} KD</div>
                                         </div>
                                     </div>
                                 </div>
@@ -177,16 +198,18 @@
                                 <div class="tk-common-text2">Raised by</div>
                                 <div class="d-flex">
                                     <div>
-                                    <img   src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle mr-5 mt-t" >
+                                    <img   src="{{investigation_details.investigator.profile_image.url}}" class="tk-img-circle mr-5 mt-t" >
                                     </div>
                                     <div>
-                                    <div class="tk-common-text2 ml-5   pointer" style="margin-bottom: 0px;">Singam</div>
-                                    <div class="tk-common-text2 ml-5  mt-5 pointer">Investigator</div>
+                                    <div class="tk-common-text2 ml-5   pointer" style="margin-bottom: 0px;">{{investigation_details.investigator.name}}</div>
+                                    <div class="tk-common-text2 ml-5  mt-5 pointer">{{investigation_details.investigator.user_type}}</div>
 
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        
+                        {% if investigation_details.investigationmedias %}
                         <div class="row mt-20">
                             <div class="col-md-12">
                                 <div class="tk-common-text">Media</div>
@@ -195,27 +218,19 @@
                         <div class="row mt-10">
                             <div class="col-md-6">
                                 <div class="owl-carousel owl-theme">
+
+                                    {% for media in investigation_details.investigationmedias %}
                                     <div class="item">
-                                         <img id="visit_teamleader_image" src="/media/investigation/Screenshot_from_2021-10-21_15-30-33.png" > 
+                                         <img id="visit_teamleader_image" src="{{media.media.url}}" > 
                                     </div>
-                                    <div class="item">
-                                        <img id="visit_teamleader_image" src="/media/investigation/Screenshot_from_2021-10-21_15-30-33.png" > 
-                                   </div>
-                                   <div class="item">
-                                    <img id="visit_teamleader_image" src="/media/investigation/Screenshot_from_2021-10-21_15-30-33.png" > 
-                                    </div>
-                                    <div class="item">
-                                        <img id="visit_teamleader_image" src="/media/investigation/Screenshot_from_2021-10-21_15-30-33.png" > 
-                                   </div>
-                                   <div class="item">
-                                    <img id="visit_teamleader_image" src="/media/investigation/Screenshot_from_2021-10-21_15-30-33.png" > 
-                               </div>
-                               <div class="item">
-                                <img id="visit_teamleader_image" src="/media/investigation/Screenshot_from_2021-10-21_15-30-33.png" > 
-                           </div>
+                                    {% endfor %}
+                                
                                 </div>
                             </div>
                         </div>
+                        {% endif %}
+
+                        {% if investigation_details.notes %}
                         <div class="row mt-20">
                             <div class="col-md-12">
                                 <div class="tk-common-text">Investigation Note</div>
@@ -223,9 +238,11 @@
                         </div>
                         <div class="row mt-10">
                             <div class="col-md-9 tk-common-text2" >
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas convallis massa tincidunt dictum tempus. Maecenas vitae eros facilisis mi ornare malesuada vel nec nisi. Sed sodales orci magna, nec commodo nulla sagittis non. Sed quis egestas massa. Nam molestie luctus placerat. Etiam porttitor purus nibh. Donec eget quam in elit semper porttitor non non nunc. Duis sit amet mauris ut massa auctor mollis non vel neque. Aenean sit amet eros vitae dolor tristique  nibh. Fusce posuere eros lacus, sed ullamcorper mi consequat quis. Aenean vitae lorem at massa interdum sagittis et eu augue
+                                {{investigation_details.notes}}
                             </div>
                         </div>
+                        {% endif %}
+
                         <div class="row mt-20">
                             <div class="col-md-12">
                                 <div class="tk-common-text" style="font-size: 17px;">Investigation Form</div>
@@ -349,11 +366,9 @@
                                 </div>
                                 <div class="col-md-2">
                                     <div class="tk-common-text2">
-                                        Schedule
+                                        &nbsp;
                                     </div>
-                                    <div class="inv-input-container h-30"> 
-                                        <input type="date"  class="w-p-100 inv-in" >
-                                      </div>
+                                    <button data-toggle="modal" data-target="#selectsoltmodel"  class="ml-5 tk-sub" ><i class="fa fa-calendar-o mr-5" aria-hidden="true"></i> Select Solt</button>
                                 </div>
                             </div>
                         </div>
@@ -372,6 +387,53 @@
 
             </div>
         </section>
+        <div class="modal fade" id="selectsoltmodel" role="dialog">
+            <div style="border: none !important;" class="modal-dialog cancel-model cancel-order-border " role="document">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12 mt-20">
+          
+                            
+                            <div class="d-flex ">
+                                <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Choose Cleaning Slots</p></div>
+                                <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+          
+                                    <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                                </button>
+          
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-20">
+                     <div class="col-md-4">
+                        <v-date-picker is-expanded :min-date='new Date()' v-model='selectedDate' />
+                     </div>
+                     <div class="col-md-8">
+                        <div class="mt-5 tk-common-text2">
+                            Select  Slots
+                        </div>
+                        
+                        <div class="row mt-10" style="margin:0 !important">
+                            <div class="col-md-4" v-for="(slot,sindex) in time_slots" v-bind:key="sindex">
+                                <div class="time-slot duration text-center p-2" 
+                                @click="addSlot(slot.start_time,slot.end_time,(sindex))" v-if="!checkSelected((sindex))">
+                                  <% slot.start_time+' - '+ slot.end_time %>
+                                 </div>
+                                 <div @click="removeSelected((sindex))" class="time-slot duration-active text-center p-2" v-if="checkSelected((sindex))" >
+                                    <% slot.start_time+' - '+ slot.end_time %>
+                                  </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="row mt-10">
+                        <br>
+                        <br>
+                    </div>
+                   
+                </div>
+            </div>
+          </div>
         <button hidden id="id_cl" data-toggle="modal" data-target="#deleteModel2"  style="margin-top: 9px; color: #3968c6;"><i data-toggle="tooltip" title="Help" class="fa fa-question-circle fa-lg" aria-hidden="true"></i></button>
         <div class="modal fade" id="deleteModel2" role="dialog">
             <div style="border: none !important;" class="modal-dialog cancel-model cancel-order-border " role="document">
@@ -432,6 +494,7 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/browser-image-compression@1.0.13/dist/browser-image-compression.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+<script src='https://unpkg.com/v-calendar'></script>
 <script>
 
 </script>
