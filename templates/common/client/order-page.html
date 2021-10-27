@@ -1790,7 +1790,7 @@
                                         <div class="row">
                                         {% for multi_order_schedule in order.orderschedules %}
                                         {% if multi_order_schedule.order_scheduler_book == evaluationbook %}
-                                        <div style="margin-bottom: 10px;" class="col-md-4 col-xs-12 c-pr5 visit-list" id="id_select_visit{{multi_order_schedule.id}}" onclick="load_cleaning_team({{forloop.counter}},{{multi_order_schedule.id}})"> <!-- -->
+                                        <div style="margin-bottom: 10px;" class="col-md-4 col-xs-12 c-pr5 visit-list" id="id_select_visit{{multi_order_schedule.id}}" onclick="load_cleaning_team('id_select_visit'+{{multi_order_schedule.id}},{{multi_order_schedule.id}},{{evaluationbook.id}})"> <!-- -->
                                             <div class="cleaning-status-container  pointer ">
                                                 
                                                 <div  id="id_select_visit_inner{{multi_order_schedule.id}}" class="row cleaning-status-row  cleaning-status-card  ">
@@ -1810,7 +1810,7 @@
                                                         <a href="/operation-supervisor/dashboard/?cleaning_calendar_date={{multi_order_schedule.start_at|date:'d-m-Y'}}" target="_blank">
                                                         {% else %} <a href="#"> {% endif %}
                                                            Visit <span id="id_select_visit{{multi_order_schedule.id}}-count"><% getCount("id_select_visit{{multi_order_schedule.id}}") %></span>
-                                                            <!-- Visit {{forloop.counter}} -->
+                                                            
                                                         </a>
                                                     </div>
                                                     <div class="vist-card-item-second visit-text">
@@ -1877,13 +1877,14 @@
 
                                     <!--cleaning Team start-->
                                     {% for orderschedule in order.orderschedules %}
-                                    {% if orderschedule.order_scheduler_book == evaluationbook and orderschedule.cleaning_team and forloop.first %}
+                                    {% if orderschedule.order_scheduler_book == evaluationbook and orderschedule.cleaning_team %}
+                                    {% ifchanged evaluationbook %}
                                     {% for cleaning_team in orderschedule.cleaning_team %}  
                                     <div class="clean-visit-section">
                                         
                                         <div class="order-clean-section-header c-mb-10">
                                             <div>
-                                                <h1><span>Visit</span> <span class="visit_count">1</span>  </h1> 
+                                                <h1><span>Visit</span> <span class="visit_count" id="visit_count_{{evaluationbook.id}}">1</span>  </h1> 
                                                 <div class="d-flex secondary-text">
                                                 <div class="status-dot {% if orderschedule.work_status == 'CLEANING_IN_PROGRESS' %} inprogress-chip-bg {% elif orderschedule.work_status == 'CLEANING_FULFILLED' %} completed-chip-bg {% elif orderschedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}assigned-chip-bg{% elif orderschedule.work_status == 'CLEANING_CANCELLED' %}cancel-chip-bg{% else %} notstarted-chip-bg {% endif %}">
                                                  </div>
@@ -1894,21 +1895,21 @@
                                             </div>
                                            <div class="ml-10">
                                            {% for investigation in orderschedule.investigations %}{% for followup in investigation.followups %}{% if followup %}
-                                               <a class="id_view_ticket" href="/common/ticket/details/{{orderschedule.order.evaluation.customer.id}}/{{followup.id}}" target="_blank"><button class="sent-button">View Tickets</button></a>
+                                               <a class="id_view_ticket" id="id_view_ticket_{{evaluationbook.id}}" href="/common/ticket/details/{{orderschedule.order.evaluation.customer.id}}/{{followup.id}}" target="_blank"><button class="sent-button">View Tickets</button></a>
                                            {% endif %}{% endfor %}{% endfor %}
                                            </div>
                                           
                                         </div>
-                                        <div class="row c-mt-20 check_in_out">
+                                        <div class="row c-mt-20 check_in_out" id="check_in_out_{{evaluationbook.id}}">
                                             <div class="col-md-12">
                                                 {% if cleaning_team.check_in %}
                                                 <div class="row c-mt-10">
                                                     <div class="col-md-12">
                                                        <h3 class="check-head">Check In</h3>
-                                                       <div class="mt-10 mb-10"><i class="far fa-clock"></i><span class="checkin-note id_check_in ml-10">
+                                                       <div class="mt-10 mb-10"><i class="far fa-clock"></i><span class="checkin-note id_check_in ml-10" id="id_check_in_{{evaluationbook.id}}">
                                                         {{cleaning_team.check_in|time|lower}}
                                                        </span></div>
-                                                       <div class="mt-10 mb-10"><i class="far fa-file-alt"></i><span class="checkin-note id_check_in_note ml-10">
+                                                       <div class="mt-10 mb-10"><i class="far fa-file-alt"></i><span class="checkin-note id_check_in_note ml-10" id="id_check_in_note_{{evaluationbook.id}}">
                                                         {{cleaning_team.check_in_notes|default_if_none:'Notes not Added'}}
                                                        </span></div>
                                                     </div>
@@ -1919,10 +1920,10 @@
                                                 <div class="row c-mt-10">
                                                     <div class="col-md-12">
                                                        <h3 class="check-head">Check Out</h3>
-                                                       <div class="mt-10 mb-10"><i class="far fa-clock"></i><span class="checkin-note id_check_out ml-10">
+                                                       <div class="mt-10 mb-10"><i class="far fa-clock"></i><span class="checkin-note id_check_out ml-10" id="id_check_out_{{evaluationbook.id}}">
                                                         {{cleaning_team.check_out|time|lower}}
                                                        </span></div>
-                                                       <div class="mt-10 mb-10"><i class="far fa-file-alt"></i><span class="checkin-note id_check_out_note ml-10">
+                                                       <div class="mt-10 mb-10"><i class="far fa-file-alt"></i><span class="checkin-note id_check_out_note ml-10" id="id_check_out_note_{{evaluationbook.id}}">
                                                         {{cleaning_team.check_out_notes|default_if_none:'Notes not Added'}}
                                                        </span></div>
                                                     </div>
@@ -1944,16 +1945,15 @@
                                                 {% endif %}
                                                 {% endif %}
 
-                                                <a class="team_edit_url" href="#" target="_blank" hidden>
+                                                <a class="team_edit_url" id="team_edit_url_{{evaluationbook.id}}" href="#" target="_blank" hidden>
                                                 <div v-if="edit" class="clean-team-edit">
                                                     <img src="{% static 'files/icons/edit.png' %}">
                                                 </div></a>
                                             </div>
                                         </div>
 
-                                        <div class="row c-mt-10 id_team_members_div">
+                                        <div class="row c-mt-10 id_team_members_div" id="id_team_members_div_{{evaluationbook.id}}">
                                         {% for team_member in cleaning_team.cleaning_team_members %}
-                                        {% if team_member.member != cleaning_team.team_leader %}
                                             <div class="col-md-3 m-mt20 .c-mb-10 mr-0 ml-0">
                                                 <div class="row">
                                                     <div class="col-xs-4 pr-0">
@@ -1967,12 +1967,15 @@
                                                     <div class="col-xs-8">
                                                         <div class="order-agent-content text-left">
                                                             <h2>{{team_member.member.name}}</h2>
+                                                            {% if team_member.member == cleaning_team.team_leader %}
+                                                            <h6>Cleaning Agent</h6>
+                                                            {% else %}
                                                             <h6>Team Member</h6>
+                                                            {% endif %}
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        {% endif %}
                                         {% endfor %}
                                         </div>
 
@@ -1984,15 +1987,15 @@
                                             <div class="col-md-3 mr-0 ml-0">
                                                 <div class="row">
                                                     <div class="col-xs-4 pr-0">
-                                                        {% if cleaning_team.team_leader.profile_image %}
-                                                        <img class="clean-team-profile-pic id_assigned_by_img" src="{{cleaning_team.team_leader.profile_image.url}}">
+                                                        {% if cleaning_team.created_by.profile_image %}
+                                                        <img class="clean-team-profile-pic id_assigned_by_img" id="id_assigned_by_img_{{evaluationbook.id}}" src="{{cleaning_team.created_by.profile_image.url}}">
                                                         {% else %}
                                                         <img class="clean-team-profile-pic" src="{% static 'files/icons/profile.png' %}">
                                                         {% endif %}
                                                     </div>
                                                     <div class="col-xs-8">
                                                         <div class="order-agent-content text-left">
-                                                            <h2 class="id_assigned_by">{{cleaning_team.team_leader.name}}</h2>
+                                                            <h2 class="id_assigned_by" id="id_assigned_by_{{evaluationbook.id}}">{{cleaning_team.created_by.name}}</h2>
                                                             <h6 class="id_assigned_by_usertype">SENIOR TEAM LEADER</h6>
 
 
@@ -2002,7 +2005,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="row c-mt-10" id="id_cleaning_images">
+                                        <div class="row c-mt-10" id="id_cleaning_images_{{evaluationbook.id}}">
 
                                             <div id="modal01" class="w3-modal" onclick="this.style.display='none'">
                                                 <div class="topright">
@@ -2015,12 +2018,12 @@
                                             </div>
 
                                             
-                                            <div class="col-md-3 media-gap id_cleaning_before_div">
+                                            <div class="col-md-3 media-gap id_cleaning_before_div" id="id_cleaning_before_div_{{evaluationbook.id}}">
                                                 <h3 class="clean-img-head">Cleaning Before</h3>
                                                 <div class="order-clean-section-header c-mt-10">
 
                                                     
-                                                    <div class="owl-carousel c-mt-10 id_cleaning_before_images">
+                                                    <div class="owl-carousel c-mt-10 id_cleaning_before_images" id="id_cleaning_before_images_{{evaluationbook.id}}">
                                                     {% for cleaning_team in orderschedule.cleaning_team %}{% for media in cleaning_team.cleaning_team_medias %}{% if media.taken_status == 'BEFORE_CLEANING' %}
                                                         <div >
                                                             <img class="slider-img pointer before_image{{orderschedule.id}}" onclick="onClick(this)" src="{{media.media.url}}" alt="">
@@ -2031,11 +2034,11 @@
                                             </div>
                                             
 
-                                            <div class="col-md-3  media-gap id_cleaning_after_div">
+                                            <div class="col-md-3  media-gap id_cleaning_after_div" id="id_cleaning_after_div_{{evaluationbook.id}}">
                                                 <h3 class="clean-img-head">Cleaning After</h3>
                                                 <div class="order-clean-section-header c-mt-10">
                                                     
-                                                    <div class="owl-carousel c-mt-10 id_cleaning_after_images">
+                                                    <div class="owl-carousel c-mt-10 id_cleaning_after_images" id="id_cleaning_after_images_{{evaluationbook.id}}">
                                                         {% for cleaning_team in orderschedule.cleaning_team %}{% for media in cleaning_team.cleaning_team_medias %}{% if media.taken_status == 'AFTER_CLEANING' %}
                                                         <div>
                                                             <img class="slider-img pointer after_image{{orderschedule.id}}" onclick="onClick(this)" src="{{media.media.url}}" alt="">
@@ -2048,6 +2051,7 @@
 
                                     </div>
                                     {% endfor %}
+                                    {% endifchanged %}
                                     {% endif %}
                                     {% endfor %}
                                     <!--cleaning Team end-->
@@ -3485,10 +3489,10 @@ $(document).ready(function () {
     {% endif %}
 
     //for loading first cleaning team
-    {% for schedule in order.orderschedules %}
-    {% if forloop.first %}
-    load_cleaning_team(1,"{{schedule.id}}")
-    {% endif %}{% endfor %}
+    // {% for schedule in order.orderschedules %}
+    // {% if forloop.first %}
+    // load_cleaning_team(1,"{{schedule.id}}")
+    // {% endif %}{% endfor %}
 
     //for hiding reorder when kitchen service included
     {% for evaluationdetail in order.evaluation.evaluationdetails %}
@@ -3499,115 +3503,6 @@ $(document).ready(function () {
     {% endfor %}
     {% endfor %}
 })
-
-
-//load cleaning team data
-function load_cleaning_team(visitcount,scheduleid){
-    console.log(scheduleid,"sched")
-    axios.get(url+'/api/cleaning-team-data/',{ params: { 'visit_count':visitcount, 'schedule_id': scheduleid } })
-                .then(function (response) {
-                   
-                    if (response.data.success == true){  
-                        
-                        $('.visit_count').text(response.data.visit_count);
-
-                        if (response.data.cleaning_status == 'CLEANING_TEAM_ASSIGNED'){    
-                            $('.check_in_out').hide();
-                            $('.team_edit_url').attr('hidden',false);
-                            $('.team_edit_url').attr('href','/common/editcleaning/team/'+scheduleid+'');
-                            console.log($('.team_edit_url2').attr('hidden'),$('.team_edit_url2').attr('href'),"attr")
-                        }else if(response.data.cleaning_status == 'CLEANING_IN_PROGRESS'){
-                            $('.check_in_out').show();
-                            $('.check_out').hide();
-                            $('.id_check_in').text(response.data.start_at);
-                            $('.id_check_in_notes').text(response.data.checkin_notes);
-                            $('.team_edit_url').attr('hidden',true);
-                        }else{
-                            $('.check_in_out').show();
-                            $('.id_check_in').text(response.data.start_at);
-                            $('.id_check_out').text(response.data.end_at);
-                            $('.id_check_in_notes').text(response.data.checkin_notes);
-                            $('.id_check_out_notes').text(response.data.checkout_notes);
-                            $('.team_edit_url').attr('hidden',true);
-                        }
-                        
-                        $('.id_team_members_div').empty();
-
-                        $('.id_team_members_div').append('<div class="col-md-3 m-mt20 .c-mb-10 mr-0 ml-0"> <div class="row"> <div class="col-xs-4 pr-0"> <img class="clean-team-profile-pic" src="'+response.data.team_leader_image+'"> </div> <div class="col-xs-8"> <div class="order-agent-content text-left"> <h2>'+response.data.team_leader+'</h2> <h6>Cleaning Agent</h6> </div></div></div></div>');
-
-                        $.each(response.data.members,function(key,value){
-                            console.log(value,"valk")
-                            $('.id_team_members_div').append('<div class="col-md-3 m-mt20 .c-mb-10 mr-0 ml-0"> <div class="row"> <div class="col-xs-4 pr-0"> <img class="clean-team-profile-pic" src="'+value.member_image+'"> </div> <div class="col-xs-8"> <div class="order-agent-content text-left"> <h2>'+value.member_name+'</h2> <h6>Team Member</h6> </div></div></div></div>');
-                        })
-
-                        $('.id_assigned_by').text(response.data.assigned_by);
-                        $('.id_assigned_by_img').attr("src",response.data.assigned_by_image);
-                        $('.id_assigned_by_usertype').text(response.data.assigned_by_usertype);
-
-
-                        
-                        $('.id_cleaning_before_images').empty();
-                        $('.id_cleaning_after_images').empty();
-
-                        //hiding and showing image divs if images exist
-                        if (response.data.before_cleaning_media.length == 0 && response.data.after_cleaning_media.length == 0){
-                            $('.id_cleaning_images').hide();
-                        }else{
-                            $('.id_cleaning_images').show();
-                        }
-
-                        if (response.data.before_cleaning_media.length == 0){
-                            $('.id_cleaning_before_div').hide();
-                        } else{
-                            $('.id_cleaning_before_div').show();
-                        }
-
-                        if (response.data.after_cleaning_media.length == 0){
-                            $('.id_cleaning_after_div').hide();
-                        } else{
-                            $('.id_cleaning_after_div').show();
-                        }
-
-                        //looping before cleaning images
-                        
-                        $.each(response.data.before_cleaning_media,function(key,value){
-                            
-                            $('.id_cleaning_before_images').append('<div> <img class="slider-img pointer" onclick="onClick(this)" src="'+value.before_cleaning_url+'" alt=""></div>');
-                        })
-
-                        //looping after cleaning images
-                        $.each(response.data.after_cleaning_media,function(key,value){
-
-                            $('.id_cleaning_after_images').append('<div><img class="slider-img pointer" onclick="onClick(this)" src="'+value.after_cleaning_url+'" alt=""></div>');
-                        })  
-                        $('.owl-carousel').trigger('destroy.owl.carousel');
-                        $(".owl-carousel").owlCarousel({
-                            items: 2,
-                            nav: true,
-                            margin: 10,
-                            navText: [
-                            `<i class='fa fa-chevron-left service-control' @click='prevService()'></i>`,
-                            `<i class='fa fa-chevron-right service-control'></i>`,
-                            ],
-                        });
-                        
-                        //view ticket
-                        if (response.data.followup_id === null){
-                            $('.id_view_ticket').hide();
-                        }else{
-                            $('.id_view_ticket').show();
-                            $('.id_view_ticket').attr('href','/common/ticket/details/'+response.data.customer_id+'/'+response.data.followup_id+'')
-                        }
-
-                        // //mark selected visit
-                        $('.cleaning-status-row').removeClass('visit-border');
-                        $('#id_select_visit_inner'+response.data.schedule_id+'').addClass('visit-border');
-
-                    }else{
-                        console.log("no data")
-                    }; 
-                })
-}
 
 //enable dend anf view buttons if any radio button is clicked only
 $('input[name="radio"]').click(function(){
