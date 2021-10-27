@@ -1,8 +1,14 @@
-const app = new Vue({
-    el: "#app",   
+let app = new Vue({
+    el: "#app",
+    components: { Multiselect: window.VueMultiselect.default },
     delimiters: ["<%", "%>"],
     data () {
           return {
+            edit_section:null,
+            edit_section_active_index:null,
+            edit_servicetype:'',
+            cleaningsections:null,
+            selectedDate: new Date(),
               addfollow:true,
             imageData: [],
             images:[],
@@ -11,19 +17,88 @@ const app = new Vue({
                 file: "",
                 service:""
             },
+            render:true,
+            time_slots:[
+                {
+          start_time:'12:00 AM',
+          end_time:'02:00 AM'
+        },{
+          start_time:'02:00 AM',
+          end_time:'04:00 AM'
+        },
+        {
+          start_time:'04:00 AM',
+          end_time:'06:00 AM'
+        },
+        {
+          start_time:'06:00 AM',
+          end_time:'08:00 AM'
+        },
+        {
+          start_time:'08:00 AM',
+          end_time:'10:00 AM'
+        },
+        {
+          start_time:'10:00 AM',
+          end_time:'12:00 PM'
+        },
+        {
+          start_time:'12:00 PM',
+          end_time:'02:00 PM'
+        },
+        {
+          start_time:'02:00 PM',
+          end_time:'04:00 PM'
+        },
+        {
+          start_time:'04:00 PM',
+          end_time:'06:00 PM'
+        },
+        {
+          start_time:'06:00 PM',
+          end_time:'08:00 PM'
+        },
+        {
+          start_time:'08:00 PM',
+          end_time:'10:00 PM'
+        },
+        {
+          start_time:'10:00 PM',
+          end_time:'12:00 AM'
+        }
+                ],
+                selected_slots:[]
           }
     },
     methods:{
+        editSection(item){
+            console.log(item)
+            this.edit_section_active_index = item
+            this.edit_section = this.cleaningsections[item]
+            $('#edit-dialog-tigger').click();
+        },
+        removeSelected(item){
+            var index = this.selected_slots.indexOf(item);
+            if (index !== -1) {
+                this.selected_slots.splice(index, 1);
+              }
+        },
+        checkSelected(index){
+            return this.selected_slots.includes(index)
+            
+        },
+        addSlot(start,end,slot){
+            this.render=false
+            this.selected_slots.push(slot);
+            this.render=true
+          },
         changeFollowup(val){
             if(val == 'yes'){
                 this.addfollow = true
             }else{
                 this.addfollow = false
             }
-            console.log(this.addfollow)
-        },
-        showFl(){
-            console.log(this.addfollow)
+           
         },
         deleteImage(imageindex) {
             this.imageData.splice(imageindex, 1);
@@ -78,7 +153,7 @@ const app = new Vue({
         },
 
     }
-});
+})
 $(document).ready(function () {
     $(".owl-carousel").owlCarousel({
     items: 2,

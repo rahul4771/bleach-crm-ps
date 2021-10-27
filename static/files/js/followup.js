@@ -190,10 +190,10 @@ selected_slots:{}
         }
         },
         addSlot(start,end,slot){
-this.render=false
-  this.selected_slots[this.dateSelected].slots.push(slot)
-  this.render=true
-},
+          this.render=false
+          this.selected_slots[this.dateSelected].slots.push(slot)
+          this.render=true
+        },
 removeSlot(slot){
 this.render=false
 var prevSlot=parseInt(slot)-1
