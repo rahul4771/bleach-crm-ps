@@ -3,6 +3,7 @@ const app = new Vue({
     delimiters: ["<%", "%>"],
     data () {
           return {
+            selectedDate: new Date(),
               addfollow:true,
             imageData: [],
             images:[],
@@ -11,9 +12,75 @@ const app = new Vue({
                 file: "",
                 service:""
             },
+            render:true,
+            time_slots:[
+                {
+          start_time:'12:00 AM',
+          end_time:'02:00 AM'
+        },{
+          start_time:'02:00 AM',
+          end_time:'04:00 AM'
+        },
+        {
+          start_time:'04:00 AM',
+          end_time:'06:00 AM'
+        },
+        {
+          start_time:'06:00 AM',
+          end_time:'08:00 AM'
+        },
+        {
+          start_time:'08:00 AM',
+          end_time:'10:00 AM'
+        },
+        {
+          start_time:'10:00 AM',
+          end_time:'12:00 PM'
+        },
+        {
+          start_time:'12:00 PM',
+          end_time:'02:00 PM'
+        },
+        {
+          start_time:'02:00 PM',
+          end_time:'04:00 PM'
+        },
+        {
+          start_time:'04:00 PM',
+          end_time:'06:00 PM'
+        },
+        {
+          start_time:'06:00 PM',
+          end_time:'08:00 PM'
+        },
+        {
+          start_time:'08:00 PM',
+          end_time:'10:00 PM'
+        },
+        {
+          start_time:'10:00 PM',
+          end_time:'12:00 AM'
+        }
+                ],
+                selected_slots:[]
           }
     },
     methods:{
+        removeSelected(item){
+            var index = this.selected_slots.indexOf(item);
+            if (index !== -1) {
+                this.selected_slots.splice(index, 1);
+              }
+        },
+        checkSelected(index){
+            return this.selected_slots.includes(index)
+            
+        },
+        addSlot(start,end,slot){
+            this.render=false
+            this.selected_slots.push(slot);
+            this.render=true
+          },
         changeFollowup(val){
             if(val == 'yes'){
                 this.addfollow = true
@@ -23,7 +90,7 @@ const app = new Vue({
             console.log(this.addfollow)
         },
         showFl(){
-            console.log(this.addfollow)
+            console.log(this.selectedDate)
         },
         deleteImage(imageindex) {
             this.imageData.splice(imageindex, 1);
