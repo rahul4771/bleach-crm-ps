@@ -1480,7 +1480,12 @@ class CleaningTeamAPI(APIView):
 			team_members_list = []
 			for team_member in cleaningteam.cleaning_team_members:
 				if cleaningteam.team_leader.id != team_member.member.id :
-					team_members_list.append({"member_name":team_member.member.name,"member_image":team_member.member.profile_image.url})
+					try:
+						image_url = team_member.member.profile_image.url
+					except:
+						image_url = None
+					
+					team_members_list.append({"member_name":team_member.member.name,"member_image":image_url})
 
 			before_cleaning_media_list = []
 			after_cleaning_media_list = []

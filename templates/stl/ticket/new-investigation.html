@@ -9,7 +9,46 @@
 
 <link href="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/assets/owl.carousel.css' %}" rel="stylesheet">
 <style>
-    
+        .multiselect__tags {
+  
+  border: 1px solid #707070 !important;
+  
+}
+  .tk-type-cardselected{
+  border: 1px solid #528CE6;
+}
+ .multiselect__option--highlight {
+  background: #fff;
+  outline: none;
+  color: #434343 !important;
+}
+.multiselect {
+  
+  color: #434343 !important;
+}
+.multiselect__option--highlight {
+  background: #EDF1F6 !important;
+  outline: none;
+  color: #434343 !important;
+}
+.multiselect__tag-icon:after {
+  content: "\D7";
+  color: #434343 !important;
+  font-size: 14px;
+}
+.multiselect__tag {
+
+  color: #434343 !important;
+
+  background: #EDF1F6 !important;
+
+}
+.multiselect__option--highlight:after {
+  content: attr(data-select);
+  color: #434343 !important;
+
+  background: #EDF1F6 !important;
+  }
     .vc-container {
         /* --rounded-lg: 0px !important; */
     }
@@ -307,53 +346,54 @@
                             </div>
                         </div>
 
-                        <div class="mt-10" v-if="addfollow">
-                            <div class="row mt-20" >
-                                <div class="col-md-12">
-                                    <div class="tk-sec-head av-font">
-                                    Section 1 : Builid
-
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row mt-10">
-                                <div class="col-md-6 c-right-border">
-                                    <div class="order-details-content">
-                                        <div class="row c-mb-3">
-                                            <div class="col-md-6 col-xs-6 mb-10">
-                                                <div class="order-details-key">Size</div> 
-                                                <div class="c-text order-details-value"> Size </div>
-                                            </div>
-                                            <div class="col-md-6 col-xs-6 mb-10">
-                                                <div class="order-details-key">Wall Type</div> 
-                                                <div class="c-text order-details-value"> Wall Type </div>
-                                            </div>
-                                            <div class="col-md-6 col-xs-6 mb-10">
-                                                <div class="order-details-key">Celling Type</div> 
-                                                <div class="c-text order-details-value"> Cell </div>
-                                            </div>
-                                            <div class="col-md-6 col-xs-6 mb-10">
-                                                <div class="order-details-key">Floor Type</div> 
-                                                <div class="c-text order-details-value"> Floor Type </div>
-                                            </div>
-                                            <div class="col-md-6 col-xs-6 mb-10">
-                                                <div class="order-details-key">Cost</div> 
-                                                <div class="c-text order-details-value"> Cost </div>
-                                            </div>
+                        <div class="mt-10" v-if="addfollow && cleaningsections != null">
+                            <div v-for="(item, index) in cleaningsections" :key="item.section_id"  >
+                                <div class="row mt-20" >
+                                    <div class="col-md-12">
+                                        <div class="tk-sec-head av-font">
+                                        Section <% index+1 %>: <% item.section_name %>
+    
                                         </div>
                                     </div>
                                 </div>
-                                <div style="position: relative;" class="col-md-6">
-                                    
-                                    <div class="col-md-4 ml-0 "><div style="background: #edf1f5 !important;" class="clean-section-card av-font"><p class="av-font"> Room <span class="c-text2 av-font">1</span></p></div></div>
-                                    <div class="col-md-4 ml-0 "><div style="background: #edf1f5 !important;" class="clean-section-card av-font"><p class="av-font"> Room <span class="c-text2 av-font">1</span></p></div></div>
-
-                                    
-
-                                    <div class="tk-edit" >
-                                        <img class="pointer edit-icon"  src="{% static 'files/icons/edit.png' %}">
+                                <div class="row mt-10">
+                                    <div class="col-md-6 c-right-border">
+                                        <div class="order-details-content">
+                                            <div class="row c-mb-3">
+                                                <div class="col-md-6 col-xs-6 mb-10">
+                                                    <div class="order-details-key">Size</div> 
+                                                    <div class="c-text order-details-value"> <% item.size %> </div>
+                                                </div>
+                                                <div class="col-md-6 col-xs-6 mb-10">
+                                                    <div class="order-details-key">Wall Type</div> 
+                                                    <div class="c-text order-details-value"> <% item.wall_type %> </div>
+                                                </div>
+                                                <div class="col-md-6 col-xs-6 mb-10">
+                                                    <div class="order-details-key">Celling Type</div> 
+                                                    <div class="c-text order-details-value"> <% item.ceiling_type %> </div>
+                                                </div>
+                                                <div class="col-md-6 col-xs-6 mb-10">
+                                                    <div class="order-details-key">Floor Type</div> 
+                                                    <div class="c-text order-details-value"> <% item.floor_type%> </div>
+                                                </div>
+                                                <div class="col-md-6 col-xs-6 mb-10">
+                                                    <div class="order-details-key">Cost</div> 
+                                                    <div class="c-text order-details-value"> <% item.section_net_cost %> </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="position: relative;" class="col-md-6">
+                                        
+                                        <div v-for="(keynote, index) in item.keynotes" :key="keynote.keynote_id" class="col-md-4 ml-0 "><div style="background: #edf1f5 !important;" class="clean-section-card av-font"><p class="av-font"> <% keynote.sub_area %> <span class="c-text2 av-font"><% keynote.quantity %></span></p></div></div>
+                                        
+    
+                                        <div class="tk-edit" @click="editSection(index)">
+                                            <img class="pointer edit-icon"  src="{% static 'files/icons/edit.png' %}">
+                                        </div>
                                     </div>
                                 </div>
+                              
                             </div>
                             <div class="row mt-20" >
                                 <div class="col-md-2">
@@ -386,118 +426,184 @@
 
 
             </div>
-        </section>
-        <div class="modal fade" id="selectsoltmodel" role="dialog">
-            <div style="border: none !important;" class="modal-dialog cancel-model cancel-order-border " role="document">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-12 mt-20">
-          
+            <div class="modal fade" id="selectsoltmodel" role="dialog">
+                <div style="border: none !important;" class="modal-dialog cancel-model cancel-order-border " role="document">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12 mt-20">
+              
+                                
+                                <div class="d-flex ">
+                                    <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Choose Cleaning Slots</p></div>
+                                    <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+              
+                                        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                                    </button>
+              
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-20">
+                         <div class="col-md-4">
+                            <v-date-picker is-expanded :min-date='new Date()' v-model='selectedDate' />
+                         </div>
+                         <div class="col-md-8">
+                            <div class="mt-5 tk-common-text2">
+                                Select  Slots
+                            </div>
                             
-                            <div class="d-flex ">
-                                <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Choose Cleaning Slots</p></div>
-                                <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
-          
-                                    <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
-                                </button>
-          
+                            <div class="row mt-10" style="margin:0 !important">
+                                <div class="col-md-4" v-for="(slot,sindex) in time_slots" v-bind:key="sindex">
+                                    <div class="time-slot duration text-center p-2" 
+                                    @click="addSlot(slot.start_time,slot.end_time,(sindex))" v-if="!checkSelected((sindex))">
+                                      <% slot.start_time+' - '+ slot.end_time %>
+                                     </div>
+                                     <div @click="removeSelected((sindex))" class="time-slot duration-active text-center p-2" v-if="checkSelected((sindex))" >
+                                        <% slot.start_time+' - '+ slot.end_time %>
+                                      </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row mt-20">
-                     <div class="col-md-4">
-                        <v-date-picker is-expanded :min-date='new Date()' v-model='selectedDate' />
-                     </div>
-                     <div class="col-md-8">
-                        <div class="mt-5 tk-common-text2">
-                            Select  Slots
                         </div>
-                        
-                        <div class="row mt-10" style="margin:0 !important">
-                            <div class="col-md-4" v-for="(slot,sindex) in time_slots" v-bind:key="sindex">
-                                <div class="time-slot duration text-center p-2" 
-                                @click="addSlot(slot.start_time,slot.end_time,(sindex))" v-if="!checkSelected((sindex))">
-                                  <% slot.start_time+' - '+ slot.end_time %>
-                                 </div>
-                                 <div @click="removeSelected((sindex))" class="time-slot duration-active text-center p-2" v-if="checkSelected((sindex))" >
-                                    <% slot.start_time+' - '+ slot.end_time %>
-                                  </div>
+                        <div class="row mt-30" >
+                            <div class="d-flex" style="align-items: center;
+                            justify-content: center;">
+                                <button class="tk-can" type="button" data-dismiss="modal"> Cancel</button>
+                                <button class="ml-5 tk-sub" >Procced</button>
                             </div>
                         </div>
-                    </div>
-                    </div>
-                    <div class="row mt-10">
                         <br>
-                        <br>
+                       
                     </div>
-                   
                 </div>
-            </div>
-          </div>
-        <button hidden id="id_cl" data-toggle="modal" data-target="#deleteModel2"  style="margin-top: 9px; color: #3968c6;"><i data-toggle="tooltip" title="Help" class="fa fa-question-circle fa-lg" aria-hidden="true"></i></button>
-        <div class="modal fade" id="deleteModel2" role="dialog">
-            <div style="border: none !important;" class="modal-dialog cancel-model cancel-order-border " role="document">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-12 mt-20">
-          
-                            
-                            <div class="d-flex ">
-                                <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Cleaners</p></div>
-                                <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
-          
-                                    <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
-                                </button>
-          
+              </div>
+            <button hidden id="id_cl" data-toggle="modal" data-target="#deleteModel2"  style="margin-top: 9px; color: #3968c6;"><i data-toggle="tooltip" title="Help" class="fa fa-question-circle fa-lg" aria-hidden="true"></i></button>
+            <div class="modal fade" id="deleteModel2" role="dialog">
+                <div style="border: none !important;" class="modal-dialog cancel-model cancel-order-border " role="document">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12 mt-20">
+              
+                                
+                                <div class="d-flex ">
+                                    <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Cleaners</p></div>
+                                    <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+              
+                                        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                                    </button>
+              
+                                </div>
                             </div>
                         </div>
+                        <div class="row mt-20">
+                          <div class="col-md-6 mb-10">
+                            <div class="d-flex">
+                                <img src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle"> 
+                                <div  class="tk-common-text2 ml-5 mt-10">Saravan</div>
+                            </div>
+                          </div>
+                          <div class="col-md-6 mb-10">
+                            <div class="d-flex">
+                                <img src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle"> 
+                                <div  class="tk-common-text2 ml-5 mt-10">Saravan</div>
+                            </div>
+                          </div>
+                          <div class="col-md-6 mb-10">
+                            <div class="d-flex">
+                                <img src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle"> 
+                                <div   class="tk-common-text2 ml-5 mt-10">Saravan</div>
+                            </div>
+                          </div>
+                          <div class="col-md-6 mb-10">
+                            <div class="d-flex">
+                                <img src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle"> 
+                                <div   class="tk-common-text2 ml-5 mt-10">Saravan</div>
+                            </div>
+                          </div>
+                       
+                          
+    
+                        </div>
+                        <div class="row mt-10"></div>
+                       
                     </div>
-                    <div class="row mt-20">
-                      <div class="col-md-6 mb-10">
-                        <div class="d-flex">
-                            <img src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle"> 
-                            <div  class="tk-common-text2 ml-5 mt-10">Saravan</div>
-                        </div>
-                      </div>
-                      <div class="col-md-6 mb-10">
-                        <div class="d-flex">
-                            <img src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle"> 
-                            <div  class="tk-common-text2 ml-5 mt-10">Saravan</div>
-                        </div>
-                      </div>
-                      <div class="col-md-6 mb-10">
-                        <div class="d-flex">
-                            <img src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle"> 
-                            <div   class="tk-common-text2 ml-5 mt-10">Saravan</div>
-                        </div>
-                      </div>
-                      <div class="col-md-6 mb-10">
-                        <div class="d-flex">
-                            <img src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle"> 
-                            <div   class="tk-common-text2 ml-5 mt-10">Saravan</div>
-                        </div>
-                      </div>
-                   
-                      
+                </div>
+              </div>
 
+              <button style="display: none;" data-toggle="modal" data-target="#editSectionDialog" id="edit-dialog-tigger"></button>
+            <!-- edit section dialog begins here-->
+            <div class="modal fade " id="editSectionDialog" tabindex="-1" role="dialog" aria-labelledby="editSectionDialogTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered primary-modal" role="document">
+                <div class="modal-content primary-modal-border">
+                    <div class="d-flex">
+                        <div class="popup-title  w-100 mt-10 mb-10 av-font" id="exampleModalLongTitle">Edit Section </div>
+                        <button type="button" class="close ml-auto" data-dismiss="modal" aria-label="Close" style="margin-left:auto">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
-                    <div class="row mt-10"></div>
-                   
+                    <div class="modal-body" v-if="edit_section != null">
+                        <div >
+                            <div class="row">
+                                <div class="col-md-6 mt-10">
+                                    <div class=" bold-text common-label required-field"> <label class="av-font">Section Name</label></div>
+                                    <div class="inv-input-container " style="height: 40px;"> 
+                                        <input type="text" v-model="edit_section.section_name"  class="w-p-100 inv-in"  >
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mt-10">
+                                    <div class=" bold-text common-label required-field"> <label class="av-font">Section Name</label></div>
+                                    <div class="inv-input-container " style="height: 40px;"> 
+                                        <input type="text"  class="w-p-100 inv-in"  >
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
                 </div>
             </div>
+<<<<<<< HEAD
           </div>
 </div>
 {% endblock %}
+=======
+>>>>>>> 8a22683ed198f62851d0cf841f0b8a5afa841de2
 
+        </section>
+        
+        
+
+</div>
+{% endblock %}
 {% block javascript %}
 
 <script src="{% static '/files/externalfiles/plugins/OwlCarousel2/dist/owl.carousel.js'%}"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/browser-image-compression@1.0.13/dist/browser-image-compression.js"></script>
-
+<script src="https://unpkg.com/vue-multiselect@2.1.0"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
 <script src='https://unpkg.com/v-calendar'></script>
-<script>
 
-</script>
 <script src="{% static 'files/js/investigation.js' %}"></script>
+<<<<<<< HEAD
 {% endblock %}
+=======
+<script>
+    $(document).ready(function(){
+       loadvisitdata(51)
+       })
+   async function loadvisitdata(visit_id){
+       
+       axios.get(url+'/api/visit-details/'+visit_id)
+                   .then(function (response) {
+                       console.log(response,'vist data')
+                       app.cleaningsections = response.data.sections
+                       app.edit_servicetype = response.data.servicetype
+                   })
+   
+   }
+   </script>
+
+{% endblock %}
+>>>>>>> 8a22683ed198f62851d0cf841f0b8a5afa841de2
