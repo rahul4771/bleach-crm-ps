@@ -1,8 +1,13 @@
-const app = new Vue({
-    el: "#app",   
+let app = new Vue({
+    el: "#app",
+    components: { Multiselect: window.VueMultiselect.default },
     delimiters: ["<%", "%>"],
     data () {
           return {
+            edit_section:null,
+            edit_section_active_index:null,
+            edit_servicetype:'',
+            cleaningsections:null,
             selectedDate: new Date(),
               addfollow:true,
             imageData: [],
@@ -66,6 +71,12 @@ const app = new Vue({
           }
     },
     methods:{
+        editSection(item){
+            console.log(item)
+            this.edit_section_active_index = item
+            this.edit_section = this.cleaningsections[item]
+            $('#edit-dialog-tigger').click();
+        },
         removeSelected(item){
             var index = this.selected_slots.indexOf(item);
             if (index !== -1) {
@@ -87,10 +98,7 @@ const app = new Vue({
             }else{
                 this.addfollow = false
             }
-            console.log(this.addfollow)
-        },
-        showFl(){
-            console.log(this.selectedDate)
+           
         },
         deleteImage(imageindex) {
             this.imageData.splice(imageindex, 1);
@@ -145,7 +153,7 @@ const app = new Vue({
         },
 
     }
-});
+})
 $(document).ready(function () {
     $(".owl-carousel").owlCarousel({
     items: 2,

@@ -318,6 +318,114 @@ function cancelCleaningDate(service){
   app.selected_cleaning_date=data.cleaning_start_date
  
 }
+
+//load cleaning team data
+function load_cleaning_team(visitcount,scheduleid,bookid){
+  var visitcount = app.getCount(visitcount);
+
+  axios.get(url+'/api/cleaning-team-data/',{ params: { 'visit_count':visitcount, 'schedule_id': scheduleid } })
+              .then(function (response) {
+                 
+                  if (response.data.success == true){  
+                      $('#visit_count_'+bookid).text(response.data.visit_count);
+
+                      if (response.data.cleaning_status == 'CLEANING_TEAM_ASSIGNED'){    
+                          $('#check_in_out_'+bookid).hide();
+                          $('#team_edit_url_'+bookid).attr('hidden',false);
+                          $('#team_edit_url_'+bookid).attr('href','/common/editcleaning/team/'+scheduleid+'');
+                          console.log($('.team_edit_url2').attr('hidden'),$('.team_edit_url2').attr('href'),"attr")
+                      }else if(response.data.cleaning_status == 'CLEANING_IN_PROGRESS'){
+                          $('#check_in_out_'+bookid).show();
+                          $('#id_check_in'+bookid).text(response.data.start_at);
+                          $('#id_check_in_notes'+bookid).text(response.data.checkin_notes);
+                          $('#team_edit_url_'+bookid).attr('hidden',true);
+                      }else{
+                          $('#check_in_out_'+bookid).show();
+                          $('#id_check_in'+bookid).text(response.data.start_at);
+                          $('#id_check_out'+bookid).text(response.data.end_at);
+                          $('#id_check_in_notes'+bookid).text(response.data.checkin_notes);
+                          $('#id_check_out_notes'+bookid).text(response.data.checkout_notes);
+                          $('#team_edit_url_'+bookid).attr('hidden',true);
+                      }
+                      
+                      $('#id_team_members_div_'+bookid).empty();
+
+                      $('#id_team_members_div_'+bookid).append('<div class="col-md-3 m-mt20 .c-mb-10 mr-0 ml-0"> <div class="row"> <div class="col-xs-4 pr-0"> <img class="clean-team-profile-pic" src="'+response.data.team_leader_image+'"> </div> <div class="col-xs-8"> <div class="order-agent-content text-left"> <h2>'+response.data.team_leader+'</h2> <h6>Cleaning Agent</h6> </div></div></div></div>');
+
+                      $.each(response.data.members,function(key,value){
+                          console.log(value,"valk")
+                          $('#id_team_members_div_'+bookid).append('<div class="col-md-3 m-mt20 .c-mb-10 mr-0 ml-0"> <div class="row"> <div class="col-xs-4 pr-0"> <img class="clean-team-profile-pic" src="'+value.member_image+'"> </div> <div class="col-xs-8"> <div class="order-agent-content text-left"> <h2>'+value.member_name+'</h2> <h6>Team Member</h6> </div></div></div></div>');
+                      })
+
+                      $('#id_assigned_by_'+bookid).text(response.data.assigned_by);
+                      $('#id_assigned_by_img'+bookid).attr("src",response.data.assigned_by_image);
+                      $('#id_assigned_by_usertype'+bookid).text(response.data.assigned_by_usertype);
+
+
+                      
+                      $('#id_cleaning_before_images_'+bookid).empty();
+                      $('#id_cleaning_after_images_'+bookid).empty();
+
+                      //hiding and showing image divs if images exist
+                      if (response.data.before_cleaning_media.length == 0 && response.data.after_cleaning_media.length == 0){
+                          $('#id_cleaning_images_'+bookid).hide();
+                      }else{
+                          $('#id_cleaning_images'+bookid).show();
+                      }
+
+                      if (response.data.before_cleaning_media.length == 0){
+                          $('#id_cleaning_before_div_'+bookid).hide();
+                      } else{
+                          $('#id_cleaning_before_div_'+bookid).show();
+                      }
+
+                      if (response.data.after_cleaning_media.length == 0){
+                          $('#id_cleaning_after_div_'+bookid).hide();
+                      } else{
+                          $('#id_cleaning_after_div_'+bookid).show();
+                      }
+
+                      //looping before cleaning images
+                      
+                      $.each(response.data.before_cleaning_media,function(key,value){
+                          
+                          $('#id_cleaning_before_images_'+bookid).append('<div> <img class="slider-img pointer" onclick="onClick(this)" src="'+value.before_cleaning_url+'" alt=""></div>');
+                      })
+
+                      //looping after cleaning images
+                      $.each(response.data.after_cleaning_media,function(key,value){
+
+                          $('#id_cleaning_after_images_'+bookid).append('<div><img class="slider-img pointer" onclick="onClick(this)" src="'+value.after_cleaning_url+'" alt=""></div>');
+                      })  
+                      $('.owl-carousel').trigger('destroy.owl.carousel');
+                      $(".owl-carousel").owlCarousel({
+                          items: 2,
+                          nav: true,
+                          margin: 10,
+                          navText: [
+                          `<i class='fa fa-chevron-left service-control' @click='prevService()'></i>`,
+                          `<i class='fa fa-chevron-right service-control'></i>`,
+                          ],
+                      });
+                      
+                      //view ticket
+                      if (response.data.followup_id === null){
+                          $('#id_view_ticket_'+bookid).hide();
+                      }else{
+                          $('#id_view_ticket_'+bookid).show();
+                          $('#id_view_ticket_'+bookid).attr('href','/common/ticket/details/'+response.data.customer_id+'/'+response.data.followup_id+'')
+                      }
+
+                      // //mark selected visit
+                      $('.cleaning-status-row').removeClass('visit-border');
+                      $('#id_select_visit_inner'+response.data.schedule_id+'').addClass('visit-border');
+
+                  }else{
+                      console.log("no data")
+                  }; 
+              })
+}
+
 function addSection(service){
   app.service_type=$(service).data('service')
   console.log("called add section"+app.service_type)
@@ -611,8 +719,8 @@ const app = new Vue({
     getCount(sch_id){
      
      $('#'+sch_id+'-count').html($("#"+sch_id).index()+1)
-      
-      
+
+     return($("#"+sch_id).index()+1);
     },
     async onImageFileChanged(event) {
     
