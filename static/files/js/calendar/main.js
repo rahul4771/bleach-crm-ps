@@ -24,7 +24,7 @@ $(document).ready(function(){
                 items:4
             },
             1400:{
-              items:6
+              items:5
           }
         }
     })
