@@ -4,6 +4,10 @@ let app = new Vue({
     delimiters: ["<%", "%>"],
     data () {
           return {
+            sectionfull:null,
+            cleaning_hours:null,
+            noofcleaners:'',
+            totalcost:'',
             cause_of_stain:['INK MARK', 'HARD DUST', 'COFFEE & TEA SPILL', 'OIL','GREASE', 'PAINT', 'URINE', 'MILK SPILL', 'NO STAIN', 'OTHERS'],
             walltypes:["BRICKS","GLASS","CONCRETE","CERAMIC","GYPSUM","FABRIC","RUBBER","STONE","TERRAZO","STAINLESS","VINYL","WOODEN","OTHERS"],
             ceilingtypes:["WOODEN","GLASS","CONCRETE","CERAMIC","GYPSUM","FOAM","PLASTIC","FABRIC","RUBBER","STAINLESS","VENYL","OTHERS"],
@@ -99,7 +103,7 @@ let app = new Vue({
           var a = this.selected_slots[0];
           this.tenttime = this.time_slots[a].start_time;
           this.soltselected = true;
-          
+          this.cleaning_hours = this.selected_slots.length * 2;
           $('#id_model_close').click();
 
         }
@@ -138,12 +142,13 @@ let app = new Vue({
         removeSelected(item){
             var index = this.selected_slots.indexOf(item);
             if (index !== -1) {
-                
-                for(var i =0; i <this.selected_slots.length;i++){
+                var temp = this.selected_slots.length;
+                for(var i =0; i <temp;i++){
+                  console.log(this.selected_slots[i],item)
                   if(this.selected_slots[i]>item){
                     this.selected_slots.splice(i, 1);
                   }
-                  console.log(this.selected_slots[i],item)
+                 
                 }
                 this.selected_slots.splice(index, 1);
                 
@@ -158,7 +163,23 @@ let app = new Vue({
             this.selected_slots.push(slot);
             this.render=true
           },
+        async makeSectionFull(){
+          console.log('string')
+          var a = '';
+          for(var i = 0 ; i<this.cleaningsections.length;i++){
+            var tempkeynote=''
+            console.log(this.cleaningsections[i]);
+            for(var j = 0 ; j<this.cleaningsections[i].keynotes.length;j++){
+              tempkeynote = tempkeynote+ "{'keynote':"+this.cleaningsections[i].keynotes[j].sub_area+",'quantity':"+this.cleaningsections[i].keynotes[j].quantity+"},"
+            }
+            
+            a = a + "{'section_name':"+this.cleaningsections[i].section_name+", 'size':"+this.cleaningsections[i].size+", 'wall_type':"+this.cleaningsections[i].wall_type+", 'ceiling_type':"+this.cleaningsections[i].ceiling_type+", 'floor_type':"+this.cleaningsections[i].floor_type+", 'section_cost':"+this.cleaningsections[i].section_net_cost+",keynotes:["+tempkeynote+"]},"
+          }
+          
+          this.sectionfull  = '['+a+']';
+          console.log(this.sectionfull)
 
+        },
         async submitForm(){
 
           console.log(this.visitid)
@@ -168,7 +189,26 @@ let app = new Vue({
           for(var j = 0; j<this.images.length;j++){
             fd.append('media',this.images[j])
           }
+          if(this.addfollow){
+            await this.makeSectionFull();
+            fd.append('is_followup','True');
+            fd.append('number_of_cleaners',this.noofcleaners);
+            fd.append('total_cost',this.totalcost);
+            fd.append('tendative_date',this.tentdate);
+            fd.append('tendative_time',this.tenttime);
+            fd.append('cleaning_hours',this.cleaning_hours);
+            fd.append('section',this.sectionfull);
+
+          }else{
+            fd.append('is_followup','False');
+
+          }
           let result = await _post('api/investigation-form/',fd);
+          if(result.data.success){
+            window.location.href = '../../dashboard'
+          }else{
+            showNotification('Something went wrong','error')
+          }
           console.log(result)
 
 
