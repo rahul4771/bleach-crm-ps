@@ -1795,7 +1795,12 @@ class GetServiceProductivity(APIView):
 					service_productivity['curtain_perhour_cleaning']  = serviceproductivity.perhour_cleaning
 				else:
 					service_productivity['chair_perhour_cleaning']    = serviceproductivity.perhour_cleaning
+				service_productivity['max_hours'] 		 = serviceproductivity.max_hours
+				service_productivity['min_hours'] 		 = serviceproductivity.min_hours
+				service_productivity['max_cleaners']     = serviceproductivity.max_cleaners
+				service_productivity['min_cleaners']     = serviceproductivity.min_cleaners
 
+		
 		elif service_type         == 'Window Cleaning':
 			serviceproductivities = ServiceProductivity.objects.select_related('service_type').filter(service_type__name=service_type)
 			for serviceproductivity in serviceproductivities:
@@ -1803,6 +1808,10 @@ class GetServiceProductivity(APIView):
 					service_productivity['highpricewindow_perhour_cleaning'] = serviceproductivity.perhour_cleaning
 				else:
 					service_productivity['lowpricewindow_perhour_cleaning']  = serviceproductivity.perhour_cleaning
+				service_productivity['max_hours'] 		 = serviceproductivity.max_hours
+				service_productivity['min_hours'] 		 = serviceproductivity.min_hours
+				service_productivity['max_cleaners']     = serviceproductivity.max_cleaners
+				service_productivity['min_cleaners']     = serviceproductivity.min_cleaners
 		
 		elif service_type         == 'Facade Cleaning':
 			serviceproductivities = ServiceProductivity.objects.select_related('service_type').filter(service_type__name=service_type)
@@ -1811,6 +1820,10 @@ class GetServiceProductivity(APIView):
 					service_productivity['highpricefacade_perhour_cleaning'] = serviceproductivity.perhour_cleaning
 				else:
 					service_productivity['lowpricefacade_perhour_cleaning']  = serviceproductivity.perhour_cleaning
+				service_productivity['max_hours'] 		 = serviceproductivity.max_hours
+				service_productivity['min_hours'] 		 = serviceproductivity.min_hours
+				service_productivity['max_cleaners']     = serviceproductivity.max_cleaners
+				service_productivity['min_cleaners']     = serviceproductivity.min_cleaners
 		
 		elif service_type         == 'Kitchen Cleaning':
 			serviceproductivities = ServiceProductivity.objects.select_related('service_type').filter(service_type__name=service_type)
@@ -1823,13 +1836,21 @@ class GetServiceProductivity(APIView):
 					service_productivity['newkitchenwithcabinet_perhour_cleaning'] = serviceproductivity.perhour_cleaning
 				elif not serviceproductivity.is_newkitchen and serviceproductivity.is_cabinet:
 					service_productivity['oldkitchenwithcabinet_perhour_cleaning'] = serviceproductivity.perhour_cleaning	
-
+				
+				service_productivity['max_hours'] 		 = serviceproductivity.max_hours
+				service_productivity['min_hours'] 		 = serviceproductivity.min_hours
+				service_productivity['max_cleaners']     = serviceproductivity.max_cleaners
+				service_productivity['min_cleaners']     = serviceproductivity.min_cleaners
 		else:
 			serviceproductivity = ServiceProductivity.objects.select_related('service_type').get(service_type__name=service_type)
 			service_productivity['perhour_cleaning'] = serviceproductivity.perhour_cleaning
+			service_productivity['max_hours'] 		 = serviceproductivity.max_hours
+			service_productivity['min_hours'] 		 = serviceproductivity.min_hours
+			service_productivity['max_cleaners']     = serviceproductivity.max_cleaners
+			service_productivity['min_cleaners']     = serviceproductivity.min_cleaners
 
 		if service_type   == 'General Cleaning':
-			total_cleaners = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).filter(is_active=True,is_general_skill=True).count()
+			total_cleaners = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).filter(is_active=True,is_general_skill=True).count()		
 		elif service_type == 'Deep Cleaning':
 			total_cleaners = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).filter(is_active=True,is_deep_skill=True).count()
 		elif service_type == 'Upholstery Cleaning':
@@ -1856,10 +1877,6 @@ class GetServiceProductivity(APIView):
 			total_cleaners = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).filter(is_active=True,is_outdoor_skill=True).count()	
 		else:
 			total_cleaners = 0
-
-		if total_cleaners > 0:
-			total_cleaners = total_cleaners-1
-		service_productivity['max_cleaners'] = total_cleaners
 
 		return JsonResponse(service_productivity)
 
