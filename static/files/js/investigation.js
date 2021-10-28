@@ -4,6 +4,9 @@ let app = new Vue({
     delimiters: ["<%", "%>"],
     data () {
           return {
+            cleaning_hours:null,
+            noofcleaners:'',
+            totalcost:'',
             cause_of_stain:['INK MARK', 'HARD DUST', 'COFFEE & TEA SPILL', 'OIL','GREASE', 'PAINT', 'URINE', 'MILK SPILL', 'NO STAIN', 'OTHERS'],
             walltypes:["BRICKS","GLASS","CONCRETE","CERAMIC","GYPSUM","FABRIC","RUBBER","STONE","TERRAZO","STAINLESS","VINYL","WOODEN","OTHERS"],
             ceilingtypes:["WOODEN","GLASS","CONCRETE","CERAMIC","GYPSUM","FOAM","PLASTIC","FABRIC","RUBBER","STAINLESS","VENYL","OTHERS"],
@@ -99,7 +102,7 @@ let app = new Vue({
           var a = this.selected_slots[0];
           this.tenttime = this.time_slots[a].start_time;
           this.soltselected = true;
-          
+          this.cleaning_hours = this.selected_slots.length * 2;
           $('#id_model_close').click();
 
         }
@@ -169,7 +172,21 @@ let app = new Vue({
           for(var j = 0; j<this.images.length;j++){
             fd.append('media',this.images[j])
           }
-          let result = await _post('api/investigation-form/',fd);
+          if(this.addfollow){
+            fd.append('is_followup','True');
+            fd.append('number_of_cleaners',this.noofcleaners);
+            fd.append('total_cost',this.totalcost);
+            fd.append('tendative_date',this.tentdate);
+            fd.append('tendative_time',this.tenttime);
+            fd.append('cleaning_hours',this.cleaning_hours);
+
+
+
+          }else{
+            fd.append('is_followup','False');
+
+          }
+          let result = await _post('api/investigation-fom/',fd);
           console.log(result)
 
 
