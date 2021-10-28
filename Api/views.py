@@ -759,8 +759,8 @@ class InvestigationFormAPI(APIView):
 		
 		#save media
 		secondary_investigationmedias = request.FILES.getlist('media')
-		if not investigation_medias == ['']:
-			for image in investigation_medias:
+		if not secondary_investigationmedias == ['']:
+			for image in secondary_investigationmedias:
 				InvestigationMedia.objects.create(
 					investigation = investigation,
 					media = image,
@@ -769,31 +769,31 @@ class InvestigationFormAPI(APIView):
 					is_active = True
 				)
 
-		# is_followup = request.data.get('is_followup')
+		is_followup = request.data.get('is_followup')
 
-		# if is_followup == True:
+		if is_followup == True:
 
-		# 	total_cost	= request.data.get('total_cost')
-		# 	no_of_cleaners = request.data.get('number_of_cleaners')
-		# 	cleaning_hours = request.data.get('cleaning_hours')
+			total_cost	= request.data.get('total_cost')
+			no_of_cleaners = request.data.get('number_of_cleaners')
+			cleaning_hours = request.data.get('cleaning_hours')
 			
-		# 	tendative_date = request.data.get('tendative_date').split(',')
+			tendative_date = request.data.get('tendative_date').split(',')
 
-		# 	tendative_time = request.data.get('tendative_time')
+			tendative_time = request.data.get('tendative_time')
 
-		# 	follow_up = FollowUp.objects.select_related('investigation__order__evaluation__customer').get(investigation_id=investigation_id,is_active=True)
-		# 	follow_up.status         = 'FOLLOWUP_IN_PROGRESS'
-		# 	follow_up.followup_notes = request.POST.get('investigator_notes')
-		# 	follow_up.no_of_cleaners = no_of_cleaners
-		# 	follow_up.cleaning_hours = cleaning_hours
-		# 	follow_up.total_cost = total_cost
-		# 	follow_up.save()
+			follow_up = FollowUp.objects.select_related('investigation__order__evaluation__customer').get(investigation_id=investigation_id,is_active=True)
+			follow_up.status         = 'FOLLOWUP_IN_PROGRESS'
+			# follow_up.followup_notes = request.POST.get('investigator_notes')
+			follow_up.no_of_cleaners = no_of_cleaners
+			follow_up.cleaning_hours = cleaning_hours
+			follow_up.total_cost = total_cost
+			follow_up.save()
 
-		# 	for date in tendative_date:
-		# 		print(date)
-		# 		start_date_time = datetime.strptime(date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
-		# 		end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))
-		# 		followup_schedule_array.append(FollowUpScheduler(follow_up=follow_up,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address))
+			for date in tendative_date:
+				print(date)
+				start_date_time = datetime.strptime(date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
+				end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))
+				followup_schedule_array.append(FollowUpScheduler(follow_up=follow_up,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address))
 
 		# 	#to save sections
 		# 	no_of_sections         = int(request.POST.get('section_counter'))

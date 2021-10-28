@@ -159,14 +159,14 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-3 pl-0 m-mt-10" >
+                                {% comment %} <div class="col-md-3 pl-0 m-mt-10" >
                                     <div class="inv-item-head-sub" style="color: #707070;">Price per unit</div>
                                     <div class="inv-item-head-sub-2 mt-20">
                                         <span style="color: #0085C9;"  class="av-font">  {{inventory_item.total_unit_price|floatformat:3}} KD </span>
                                        
                                         
                                     </div>
-                                </div>
+                                </div> {% endcomment %}
                                 
                                 
                                </div>
@@ -331,9 +331,9 @@
                                     <th data-hide="phone,tablet"  style="width: %;" >
                                         Expiry date
                                     </th>
-                                    <th data-hide="phone,tablet"  class="text-center">
+                                    {% comment %} <th data-hide="phone,tablet"  class="text-center">
                                         Unit Price
-                                    </th>
+                                    </th> {% endcomment %}
                                     
                                     <th>
                                         Status
@@ -367,9 +367,9 @@
 
                                         
                                     </td>
-                                    <td class="text-center">
+                                    {% comment %} <td class="text-center">
                                         {{unit.unit_price|floatformat:3}} KD
-                                    </td>
+                                    </td> {% endcomment %}
                                     
                                     <td class="">
                                         <span class="inv-dot {% if unit.status == 'active' %}c-active{% elif unit.status == 'expired' %}c-expired{% elif unit.status == 'out_of_order' %}c-out-of-order{% endif %} ml-5"></span>
