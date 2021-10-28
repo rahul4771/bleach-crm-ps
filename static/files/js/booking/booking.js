@@ -5714,260 +5714,118 @@ try {
         this.sortDuration()
 })
   },
-  durationcalculation() {
+  newHourCalculation(n){
+    console.log(n,"man hour")
+        
+   
+     if (n%2 == 1){
+      n = n+1
+     } 
+        
+    var minman= 4
+    var maxman= 12
+    var minhr = 4
+    var maxhr = 10
     
-    this.duration=[]
-    var selected_service = "General Cleaning";
-    axios
-      .get(
-        this.url+"/customer/ajax/getserviceproductivity?service_type=" +
-          selected_service
-      )
-      .then((response) => {
-        var data = response.data;
-        console.log(data);
-        //to find total size and manhour
-        if (selected_service == "Upholstery Cleaning") {
-          var total_sofa_size = 6;
-          var total_chair_size = 9;
-          var total_curtain_size = 750;
-          var manhour =
-            parseInt(total_sofa_size / data["sofa_perhour_cleaning"]) +
-            parseInt(total_chair_size / data["chair_perhour_cleaning"]) +
-            parseInt(total_curtain_size / data["curtain_perhour_cleaning"]);
-        } else if (selected_service == "Facade Cleaning") {
-          var total_highpricefacade_size = 400;
-          var total_lowpricefacade_size = 400;
-          var manhour =
-            parseInt(
-              total_highpricefacade_size /
-                data["highpricefacade_perhour_cleaning"]
-            ) +
-            parseInt(
-              total_lowpricefacade_size /
-                data["lowpricefacade_perhour_cleaning"]
-            );
-        } else if (selected_service == "Kitchen Cleaning") {
-          var total_newkitchen_size = 400;
-          var total_oldkitchen_size = 400;
-          var manhour =
-            parseInt(
-              total_newkitchen_size / data["newkitchen_perhour_cleaning"]
-            ) +
-            parseInt(
-              total_oldkitchen_size / data["oldkitchen_perhour_cleaning"]
-            );
-        } else if (selected_service == "Window Cleaning") {
-          var total_highpricewindow_size = 400;
-          var total_lowpricewindow_size = 400;
-          var manhour =
-            parseInt(
-              total_highpricewindow_size /
-                data["highpricewindow_perhour_cleaning"]
-            ) +
-            parseInt(
-              total_lowpricewindow_size /
-                data["lowpricewindow_perhour_cleaning"]
-            );
-        } else {
-          var total_estimated_size = this.total_size;
-          var productivity = data["perhour_cleaning"];
-          var manhour = parseInt(total_estimated_size / productivity);
-        }
-        console.log("size estimated is" + total_estimated_size);
-        //optimal finding
-        var r = 2 ** (manhour.toString().length - 1);
-        var mod = manhour % r;
+    
+    //allowed calculation
+    var allowed = []
+    for(var i=minhr;i<=maxhr;i++){
+      if(i%2==0 && i!=8){
+        allowed.push(i)
+      }
+    }
+    //initialization
 
-        if (mod > parseInt(r / 2)) {
-          var n = manhour + (r - mod);
-        } else {
-          var n = manhour - mod;
-        }
-        console.log(manhour, "manhour");
-        console.log(r, "r");
-        console.log(mod, "mod");
-        console.log(n, "n");
-        var pair = [];
-        for (var i = 1; i < parseInt(n ** (1 / 2)) + 1; i++) {
-          if (n % i == 0) {
-            pair = [i, n / i];
+   
+    
+   
+    var maxn= maxman*maxhr
+    var minn= minman*minhr
+    
+    var rem  = n%(maxn)
+    
+    var cleaningset =[] 
+    
+    //Append Each Days Pair
+    var days = parseInt((n-rem)/maxn) 
+    for(var i=0;i<days;i++){
+      cleaningset.push([maxhr,maxman])
+    }
+    
+    
+    //Append Remining Low Pair
+    if (rem != 0){
+        var lowpair = [allowed[0],Math.round(rem/allowed[0])]
+        for(var i=0;i<allowed;i++){
+          if (lowpair[0]+lowpair[1] > (allowed[i]+Math.round(rem/allowed[i]))){
+            lowpair = [allowed[i],Math.round(rem/allowed[i])]
           }
         }
-        console.log(pair, "pair");
-        //pair convert to 3's multiple
-        var convertion_r = 3;
-        var convertion_mod = pair[1] % convertion_r;
-
-        if (convertion_mod > parseInt(convertion_r / 3)) {
-          console.log(manhour, "divider");
-          console.log(pair[1] + (convertion_r - convertion_mod), "divident");
-          console.log(
-            parseInt(manhour / (pair[1] + (convertion_r - convertion_mod))),
-            "division"
-          );
-          pair = [
-            Math.round(manhour / (pair[1] + (convertion_r - convertion_mod))),
-            pair[1] + (convertion_r - convertion_mod),
-          ];
-        } else {
-          console.log(manhour, "divider");
-          console.log(pair[1] - convertion_mod, "divident");
-
-          if (pair[1] - convertion_mod == 0) {
-            pair = [Math.round(manhour / 3), 3];
-          } else {
-            pair = [
-              Math.round(manhour / (pair[1] - convertion_mod)),
-              pair[1] - convertion_mod,
-            ];
+        if(lowpair[1] !=0 && lowpair[1]<minman){
+          cleaningset.push([minhr,minman])
+        }
+        else if(lowpair[1] !=0 && lowpair[1]>maxman){
+          for(var i=0;i<allowed.reverse();i++){
+            var rev=allowed.reverse()
+            if(round(rem/rev[i])<=maxman){
+              cleaningset.push(rev[i],round(rem/rev[i]))
+              break
+            }
           }
         }
-
-        console.log(pair, "newpair");
-
-        var max_cleaners = data["max_cleaners"];
-        //max_cleaners=10;
-        var duration_list = [];
-        var lower_loop = 0;
-        var upper_loop = 0;
-        var middle_element = pair[0];
-        var middle_hours = pair[1];
-
-        if (middle_element <= max_cleaners && middle_element > 0) {
-          duration_list.push(pair);
-
-          //first
-          if (
-            Math.round(manhour / (middle_hours - 3)) > 0 &&
-            Math.round(manhour / (middle_hours - 3)) <= max_cleaners
-          ) {
-            duration_list.push([
-              Math.round(manhour / (middle_hours - 3)),
-              middle_hours - 3,
-            ]);
-            lower_loop = 1;
-          }
-          if (
-            Math.round(manhour / (middle_hours + 3)) > 0 &&
-            Math.round(manhour / (middle_hours + 3)) <= max_cleaners
-          ) {
-            duration_list.push([
-              Math.round(manhour / (middle_hours + 3)),
-              middle_hours + 3,
-            ]);
-            upper_loop = 1;
-          }
-
-          //check
-          if (
-            Math.round(manhour / (middle_hours - 6)) > 0 &&
-            Math.round(manhour / (middle_hours - 6)) <= max_cleaners &&
-            upper_loop == 0
-          ) {
-            duration_list.push([
-              Math.round(manhour / (middle_hours - 6)),
-              middle_hours - 6,
-            ]);
-            lower_loop = 1;
-          }
-          if (
-            Math.round(manhour / (middle_hours + 6)) > 0 &&
-            Math.round(manhour / (middle_hours + 6)) <= max_cleaners &&
-            lower_loop == 0
-          ) {
-            duration_list.push([
-              Math.round(manhour / (middle_hours + 6)),
-              middle_hours + 6,
-            ]);
-            upper_loop = 1;
-          }
-        } else if (middle_element == 0 && max_cleaners > 0) {
-          //1st
-          duration_list.push([1, middle_hours]);
-
-          //2nd
-          if (
-            Math.round(manhour / (middle_hours + 3)) > 0 &&
-            Math.round(manhour / (middle_hours + 3)) <= max_cleaners
-          ) {
-            duration_list.push([
-              Math.round(manhour / (middle_hours + 3)),
-              middle_hours + 3,
-            ]);
-          } else {
-            duration_list.push([1, middle_hours + 3]);
-          }
-
-          //3rd
-          if (
-            Math.round(manhour / (middle_hours + 6)) > 0 &&
-            Math.round(manhour / (middle_hours + 6)) <= max_cleaners
-          ) {
-            duration_list.push([
-              Math.round(manhour / (middle_hours + 6)),
-              middle_hours + 6,
-            ]);
-          } else {
-            duration_list.push([1, middle_hours + 6]);
-          }
-        } else {
-          middle_element = max_cleaners;
-          middle_hours =
-            Math.round(manhour / middle_element) -
-            (Math.round(manhour / middle_element) % 3);
-          if (middle_hours == 0) {
-            middle_hours = 3;
-          }
-
-          //1st
-          duration_list.push([middle_element, middle_hours]);
-
-          //2nd
-          if (
-            Math.round(manhour / (middle_hours + 3)) > 0 &&
-            Math.round(manhour / (middle_hours + 3)) <= max_cleaners
-          ) {
-            duration_list.push([
-              Math.round(manhour / (middle_hours + 3)),
-              middle_hours + 3,
-            ]);
-          } else {
-            duration_list.push([middle_element, middle_hours + 3]);
-          }
-
-          //3rd
-          if (
-            Math.round(manhour / (middle_hours + 6)) > 0 &&
-            Math.round(manhour / (middle_hours + 3)) <= max_cleaners
-          ) {
-            duration_list.push([
-              Math.round(manhour / (middle_hours + 6)),
-              middle_hours + 6,
-            ]);
-          } else {
-            duration_list.push([middle_element, middle_hours + 6]);
-          }
+        else if(lowpair[1] != 0 && lowpair[1] >= minman && lowpair[1] <= maxman){
+          cleaningset.push(lowpair)
         }
-        console.log(duration_list);
+       
+     
+       
+  }
+  if(cleaningset.length==0 && n!=0){
+    cleaningset=[minhr,minman]
+  }
+  //cleaning set smoothening for 2-D array
+  if ((cleaningset.length>1) && !Number.isInteger(cleaningset[0]))
+  {
+    last_set_length = cleaningset.length
+    last_set        = cleaningset[last_set_length-1]
+  
+      
 
-        for (i = 0; i < duration_list.length; i++) {
-          var total_duration = duration_list[i][1];
-          //show to users
-          var total_minutes = (total_duration.toFixed(2) * 60).toFixed(0);
-          var converted_hours = Math.floor(total_minutes / 60);
-          var converted_minutes = total_minutes % 60;
-          var total_cleaners = duration_list[i][0];
-          console.log(converted_hours, "converted_hours");
-          console.log(converted_minutes, "converted_minutes");
-          console.log(total_cleaners, "total_cleaners");
-          this.setDuration(converted_hours, total_cleaners);
+      try{
+          fixed_hour      = cleaningset[0][0]
+          variable_cleaner= cleaningset[0][1]
+      }
+      catch{
+          fixed_hour      = cleaningset[0]
+          variable_cleaner= cleaningset[1]
+      }
+        for(var i=1;i<=variable_cleaner;i++){
+          if ((last_set_length*fixed_hour*i)>=n && i >= minman)
+          {
+          cleaningset    = []
+          for(var j=0;j<last_set_length;j++){
+            cleaningset.push([fixed_hour,i])
+          }
+        
+             
+          break
         }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  },
+        }
+  }
+     
+  //1D array to 2D array
+  if (cleaningset.length>0) 
+      if (Number.isInteger(cleaningset[0])){
+        cleaningset = [cleaningset]
+      }
+          
+      
+  console.log(cleaningset,"new cleaning set")
+
+  return(cleaningset)
+}
+ 
 },
 mounted() {
   this.url = api;
