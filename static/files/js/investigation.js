@@ -4,9 +4,20 @@ let app = new Vue({
     delimiters: ["<%", "%>"],
     data () {
           return {
-            edit_section:null,
+            cause_of_stain:['INK MARK', 'HARD DUST', 'COFFEE & TEA SPILL', 'OIL','GREASE', 'PAINT', 'URINE', 'MILK SPILL', 'NO STAIN', 'OTHERS'],
+            walltypes:["BRICKS","GLASS","CONCRETE","CERAMIC","GYPSUM","FABRIC","RUBBER","STONE","TERRAZO","STAINLESS","VINYL","WOODEN","OTHERS"],
+            ceilingtypes:["WOODEN","GLASS","CONCRETE","CERAMIC","GYPSUM","FOAM","PLASTIC","FABRIC","RUBBER","STAINLESS","VENYL","OTHERS"],
+            floortypes:["MARBLE","GLASS","STONE","CERAMIC","CONCRETE","BRICKS","WOODEN","TERRAZO","OTHERS"],
+            materials:["POLYESTER","NATURAL FIBER","SYNTHETIC","LEATHER","OLEFIN","POLYPROPYLENE","NYLON"],
+            colors:["GREEN","SILVER","VIOLET","WHITE","BLACK","BEIGE","BLUE","GREY","RED","CREAM","MULTI","OFF WHITE","MEROON","ORANGE","PINK","GOLD","BROWN","YELLOW","ROYAL BLUE","LILAC","OTHERS"],
+            tentdate:'',
+            tenttime:'',
+            soltselected:false,
+            notes:'',
+            visitid:'',
+            editSectionData:null,
             edit_section_active_index:null,
-            edit_servicetype:'',
+            service_type:'',
             cleaningsections:null,
             selectedDate: new Date(),
               addfollow:true,
@@ -71,16 +82,71 @@ let app = new Vue({
           }
     },
     methods:{
+      saveEdit(){
+        this.cleaningsections[this.edit_section_active_index] = this.editSectionData;
+        $('#id_model_edit_close').click();
+      },
+      deleteSection(index){
+        if(this.cleaningsections.length>1){
+          this.cleaningsections.splice(index,1)
+        }
+        
+      },
+      confirmSolt(){
+        if(this.selected_slots.length !=0){
+          console.log(this.selected_slots)
+          this.tentdate = moment(this.selectedDate).format('DD-MM-YYYY');
+          var a = this.selected_slots[0];
+          this.tenttime = this.time_slots[a].start_time;
+          this.soltselected = true;
+          
+          $('#id_model_close').click();
+
+        }
+      },
+      clearsoltSelection(){
+        this.selected_slots= [];
+        this.selectedDate = new Date();
+      },
+        disableSolt(item){
+
+          if(this.selected_slots.length != 0 ){
+            if(this.selected_slots.includes(item)){
+              return false
+            }else{
+              var a = this.selected_slots.includes(item-1);
+              var b = this.selected_slots.includes(item+1);
+              if(a || b){
+                return false
+              }else{
+                return true
+              }
+
+            }
+            
+          }else{
+            return false
+          }
+
+        },
         editSection(item){
             console.log(item)
             this.edit_section_active_index = item
-            this.edit_section = this.cleaningsections[item]
+            this.editSectionData = this.cleaningsections[item]
             $('#edit-dialog-tigger').click();
         },
         removeSelected(item){
             var index = this.selected_slots.indexOf(item);
             if (index !== -1) {
+                
+                for(var i =0; i <this.selected_slots.length;i++){
+                  if(this.selected_slots[i]>item){
+                    this.selected_slots.splice(i, 1);
+                  }
+                  console.log(this.selected_slots[i],item)
+                }
                 this.selected_slots.splice(index, 1);
+                
               }
         },
         checkSelected(index){
@@ -92,6 +158,21 @@ let app = new Vue({
             this.selected_slots.push(slot);
             this.render=true
           },
+
+        async submitForm(){
+
+          console.log(this.visitid)
+          let fd = new FormData();
+          fd.append('investigation_id',this.visitid);
+          fd.append('notes',this.notes);
+          for(var j = 0; j<this.images.length;j++){
+            fd.append('media',this.images[j])
+          }
+          let result = await _post('api/investigation-form/',fd);
+          console.log(result)
+
+
+        },
         changeFollowup(val){
             if(val == 'yes'){
                 this.addfollow = true
