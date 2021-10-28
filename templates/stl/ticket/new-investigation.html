@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
-
+    <link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
 <link href="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/assets/owl.carousel.css' %}" rel="stylesheet">
 <style>
         .multiselect__tags {
@@ -321,7 +321,7 @@
                         <div class="row mt-5">
                             <div class="col-md-5">
                                 <div class="inv-input-container "> 
-                                    <textarea  style="width: 100%;" rows="5" id="id_item_description" name="investigation_notes"></textarea>
+                                    <textarea v-model="notes" style="width: 100%;" rows="5" id="id_item_description" name="investigation_notes"></textarea>
                                     </div>
                             </div>
                         </div>
@@ -388,14 +388,16 @@
                                         <div v-for="(keynote, index) in item.keynotes" :key="keynote.keynote_id" class="col-md-4 ml-0 "><div style="background: #edf1f5 !important;" class="clean-section-card av-font"><p class="av-font"> <% keynote.sub_area %> <span class="c-text2 av-font"><% keynote.quantity %></span></p></div></div>
                                         
     
-                                        <div class="tk-edit" @click="editSection(index)">
-                                            <img class="pointer edit-icon"  src="{% static 'files/icons/edit.png' %}">
+                                        <div class="tk-edit" >
+                                            <img class="pointer edit-icon" @click="editSection(index)"  src="{% static 'files/icons/edit.png' %}">
+
+                                            <img class="pointer edit-icon ml-5" @click="deleteSection(index)" src="{% static 'files/icons/delete.png' %}">
                                         </div>
                                     </div>
                                 </div>
                               
                             </div>
-                            <div class="row mt-20" >
+                            <div class="row mt-20" v-if="cleaningsections != null & cleaningsections.length != 0 " >
                                 <div class="col-md-2">
                                     <div class="tk-common-text2">
                                         Number of cleaners
@@ -411,12 +413,31 @@
                                     <button data-toggle="modal" data-target="#selectsoltmodel"  class="ml-5 tk-sub" ><i class="fa fa-calendar-o mr-5" aria-hidden="true"></i> Select Solt</button>
                                 </div>
                             </div>
+                            <div class="row mt-20" v-if="soltselected">
+                                <div class="col-md-2">
+                                    <div class="tk-common-text2">
+                                        Tentative Time
+                                    </div>
+                                    <div class="inv-input-container h-30"> 
+                                        <input type="text" v-model="tenttime" readonly  class="w-p-100 inv-in" >
+                                      </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="tk-common-text2">
+                                        Tentative Date
+                                    </div>
+                                    <div class="inv-input-container h-30"> 
+                                        <input type="text" v-model="tentdate" readonly  class="w-p-100 inv-in" >
+                                      </div>
+                                </div>
+                                
+                            </div>
                         </div>
                         <div class="row mt-30" >
                             <div class="d-flex" style="align-items: center;
                             justify-content: center;">
-                                <button class="tk-can" type="button"> Cancel</button>
-                                <button class="ml-5 tk-sub" >Submit</button>
+                                <button class="tk-can" type="button" onclick="window.location.href = '../../dashboard'"> Cancel</button>
+                                <button class="ml-5 tk-sub" @click="submitForm">Submit</button>
                             </div>
                         </div>
                     </div>
@@ -455,10 +476,13 @@
                             <div class="row mt-10" style="margin:0 !important">
                                 <div class="col-md-4" v-for="(slot,sindex) in time_slots" v-bind:key="sindex">
                                     <div class="time-slot duration text-center p-2" 
-                                    @click="addSlot(slot.start_time,slot.end_time,(sindex))" v-if="!checkSelected((sindex))">
+                                    @click="addSlot(slot.start_time,slot.end_time,(sindex))" v-if="!checkSelected((sindex)) && !disableSolt((sindex))" >
                                       <% slot.start_time+' - '+ slot.end_time %>
                                      </div>
                                      <div @click="removeSelected((sindex))" class="time-slot duration-active text-center p-2" v-if="checkSelected((sindex))" >
+                                        <% slot.start_time+' - '+ slot.end_time %>
+                                      </div>
+                                      <div class="time-slot duration-inactive text-center p-2" v-if="!checkSelected((sindex)) && disableSolt((sindex))" >
                                         <% slot.start_time+' - '+ slot.end_time %>
                                       </div>
                                 </div>
@@ -468,8 +492,10 @@
                         <div class="row mt-30" >
                             <div class="d-flex" style="align-items: center;
                             justify-content: center;">
-                                <button class="tk-can" type="button" data-dismiss="modal"> Cancel</button>
-                                <button class="ml-5 tk-sub" >Procced</button>
+                                <button class="tk-can" type="button" data-dismiss="modal" @click="clearsoltSelection"> Cancel</button>
+                                <button class="tk-can" type="button" data-dismiss="modal" hidden id="id_model_close"> Cancel</button>
+
+                                <button class="ml-5 tk-sub" @click="confirmSolt">Procced</button>
                             </div>
                         </div>
                         <br>
@@ -541,13 +567,13 @@
                         <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body" v-if="edit_section != null">
+                    <div class="modal-body" v-if="editSectionData != null">
                         <div >
                             <div class="row">
                                 <div class="col-md-6 mt-10">
                                     <div class=" bold-text common-label required-field"> <label class="av-font">Section Name</label></div>
                                     <div class="inv-input-container " style="height: 40px;"> 
-                                        <input type="text" v-model="edit_section.section_name"  class="w-p-100 inv-in"  >
+                                        <input type="text" v-model="editSectionData.section_name"  class="w-p-100 inv-in"  >
                                     </div>
                                 </div>
                                 <div class="col-md-6 mt-10">
@@ -556,7 +582,58 @@
                                         <input type="text"  class="w-p-100 inv-in"  >
                                     </div>
                                 </div>
+                                <div class="col-md-6 mt-10"  >
+                                    <div class=" bold-text common-label required-field"> <label>Wall type</label></div>
+                                  <multiselect
+                                    v-model="editSectionData.wall_type"
+                                    placeholder="Wall type"
+                                    
+                                    :options="walltypes"
+                                    :multiple="true"
+                                    :taggable="false"
+                                    :show-labels="false"
+                                    
+                                  ></multiselect>
+                                </div>
+                                <div class="col-md-6 mt-10"  >
+                                    <div class=" bold-text common-label required-field"> <label>Floor type</label></div>
+                                  <multiselect
+                                    v-model="editSectionData.floor_type"
+                                    placeholder="Floor type"
+                                    
+                                    :options="floortypes"
+                                    :multiple="true"
+                                    :taggable="false"
+                                    :show-labels="false"
+                                   
+                                    
+                                  ></multiselect>
+                                </div>
+                                <div class="col-md-6 mt-10"  >
+                                    <div class=" bold-text common-label required-field"> <label>Ceiling type</label></div>
+                                  <multiselect
+                                    v-model="editSectionData.ceiling_type"
+                                    placeholder="Ceiling type"
+                                    :show-labels="false"
+                                    
+                                    :options="ceilingtypes"
+                                    :multiple="true"
+                                    :taggable="false"
+                                   
+                                    
+                                  ></multiselect>
+                                </div>
+                              
                                 
+                            </div>
+                            <div class="row mt-30" >
+                                <div class="d-flex" style="align-items: center;
+                                justify-content: center;">
+                                    <button class="tk-can" type="button" data-dismiss="modal" > Cancel</button>
+                                    <button class="tk-can" type="button" data-dismiss="modal" hidden id="id_model_edit_close"> Cancel</button>
+    
+                                    <button class="ml-5 tk-sub" @click="saveEdit()">Save</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -564,13 +641,6 @@
                 </div>
                 </div>
             </div>
-<<<<<<< HEAD
-          </div>
-</div>
-{% endblock %}
-=======
->>>>>>> 8a22683ed198f62851d0cf841f0b8a5afa841de2
-
         </section>
         
         
@@ -583,15 +653,14 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/browser-image-compression@1.0.13/dist/browser-image-compression.js"></script>
 <script src="https://unpkg.com/vue-multiselect@2.1.0"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 <script src='https://unpkg.com/v-calendar'></script>
 
 <script src="{% static 'files/js/investigation.js' %}"></script>
-<<<<<<< HEAD
-{% endblock %}
-=======
 <script>
     $(document).ready(function(){
-       loadvisitdata(51)
+       loadvisitdata({{investigation_details.order_schedule.id}})
        })
    async function loadvisitdata(visit_id){
        
@@ -599,11 +668,11 @@
                    .then(function (response) {
                        console.log(response,'vist data')
                        app.cleaningsections = response.data.sections
-                       app.edit_servicetype = response.data.servicetype
+                       app.service_type = response.data.servicetype
+                       app.visitid = {{investigation_details.order_schedule.id}}
                    })
    
    }
    </script>
 
 {% endblock %}
->>>>>>> 8a22683ed198f62851d0cf841f0b8a5afa841de2
