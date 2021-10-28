@@ -432,13 +432,13 @@
                                 </div>
                                 
                             </div>
-                            <div class="row mt-20" v-if="soltselected">
+                            <div class="row mt-20" >
                                 <div class="col-md-2">
                                     <div class="tk-common-text2">
                                         Total Cost
                                     </div>
                                     <div class="inv-input-container h-30"> 
-                                        <input type="number" v-model="totalcost"   class="w-p-100 inv-in" >
+                                        <input type="number" v-model="totalAmount"  readonly  class="w-p-100 inv-in" >
                                       </div>
                                 </div>
                                 
@@ -634,6 +634,12 @@
                                    
                                     
                                   ></multiselect>
+                                </div>
+                                <div class="col-md-6 mt-10"  >
+                                    <div class=" bold-text common-label required-field"> <label class="av-font">Section Cost</label></div>
+                                    <div class="inv-input-container " style="height: 40px;"> 
+                                        <input type="number"  v-model="editSectionData.section_cost" class="w-p-100 inv-in"  >
+                                    </div>
                                 </div>
                               
                                 

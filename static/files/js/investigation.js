@@ -2,6 +2,17 @@ let app = new Vue({
     el: "#app",
     components: { Multiselect: window.VueMultiselect.default },
     delimiters: ["<%", "%>"],
+    computed: {
+     
+      totalAmount: function () {
+        var sum =0;
+        for(var i = 0 ; i<this.cleaningsections.length;i++){
+          sum = this.cleaningsections[i].section_net_cost;
+        }
+        
+        return sum;
+      }
+    },
     data () {
           return {
             sectionfull:null,
@@ -19,7 +30,19 @@ let app = new Vue({
             soltselected:false,
             notes:'',
             visitid:'',
-            editSectionData:null,
+            editSectionData:{
+              size:{},
+              keynotes:[],
+              section_cost:0,
+              section_name:'',
+              floor_type:[],
+              ceiling_type:[],
+              wall_type:[],
+              material:[],
+              category:'Floor',
+              age:null,
+              new_kitchen:false
+             },
             edit_section_active_index:null,
             service_type:'',
             cleaningsections:null,
@@ -86,8 +109,29 @@ let app = new Vue({
           }
     },
     methods:{
+      editSection(item){
+        console.log(item)
+        this.edit_section_active_index = item
+        this.editSectionData.section_name = this.cleaningsections[item].section_name
+        this.editSectionData.section_cost = this.cleaningsections[item].section_net_cost
+
+        if(this.editSectionData.wall_type != null){
+          this.editSectionData.wall_type = this.cleaningsections[item].wall_type.split(",");
+        }
+        if(this.editSectionData.floor_type != null){
+          this.editSectionData.floor_type = this.cleaningsections[item].floor_type.split(",");
+        }
+        if(this.editSectionData.ceiling_type != null){
+          this.editSectionData.ceiling_type = this.cleaningsections[item].ceiling_type.split(",");
+        }
+
+        $('#edit-dialog-tigger').click();
+    },
       saveEdit(){
-        this.cleaningsections[this.edit_section_active_index] = this.editSectionData;
+        this.cleaningsections[this.edit_section_active_index].section_name = this.editSectionData.section_name;
+        this.cleaningsections[this.edit_section_active_index].wall_type = this.editSectionData.wall_type.toString();
+        this.cleaningsections[this.edit_section_active_index].floor_type = this.editSectionData.floor_type.toString();
+        this.cleaningsections[this.edit_section_active_index].ceiling_type = this.editSectionData.ceiling_type.toString();
         $('#id_model_edit_close').click();
       },
       deleteSection(index){
@@ -133,12 +177,7 @@ let app = new Vue({
           }
 
         },
-        editSection(item){
-            console.log(item)
-            this.edit_section_active_index = item
-            this.editSectionData = this.cleaningsections[item]
-            $('#edit-dialog-tigger').click();
-        },
+       
         removeSelected(item){
             var index = this.selected_slots.indexOf(item);
             if (index !== -1) {
@@ -193,7 +232,7 @@ let app = new Vue({
             await this.makeSectionFull();
             fd.append('is_followup','True');
             fd.append('number_of_cleaners',this.noofcleaners);
-            fd.append('total_cost',this.totalcost);
+            fd.append('total_cost',this.totalAmount);
             fd.append('tendative_date',this.tentdate);
             fd.append('tendative_time',this.tenttime);
             fd.append('cleaning_hours',this.cleaning_hours);
