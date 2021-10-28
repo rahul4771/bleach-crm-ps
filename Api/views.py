@@ -759,8 +759,8 @@ class InvestigationFormAPI(APIView):
 		
 		#save media
 		secondary_investigationmedias = request.FILES.getlist('media')
-		if not investigation_medias == ['']:
-			for image in investigation_medias:
+		if not secondary_investigationmedias == ['']:
+			for image in secondary_investigationmedias:
 				InvestigationMedia.objects.create(
 					investigation = investigation,
 					media = image,

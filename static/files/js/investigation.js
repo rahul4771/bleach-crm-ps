@@ -4,6 +4,7 @@ let app = new Vue({
     delimiters: ["<%", "%>"],
     data () {
           return {
+            sectionfull:null,
             cleaning_hours:null,
             noofcleaners:'',
             totalcost:'',
@@ -162,7 +163,23 @@ let app = new Vue({
             this.selected_slots.push(slot);
             this.render=true
           },
+        async makeSectionFull(){
+          console.log('string')
+          var a = '';
+          for(var i = 0 ; i<this.cleaningsections.length;i++){
+            var tempkeynote=''
+            console.log(this.cleaningsections[i]);
+            for(var j = 0 ; j<this.cleaningsections[i].keynotes.length;j++){
+              tempkeynote = tempkeynote+ "{'keynote':"+this.cleaningsections[i].keynotes[j].sub_area+",'quantity':"+this.cleaningsections[i].keynotes[j].quantity+"},"
+            }
+            
+            a = a + "{'section_name':"+this.cleaningsections[i].section_name+", 'size':"+this.cleaningsections[i].size+", 'wall_type':"+this.cleaningsections[i].wall_type+", 'ceiling_type':"+this.cleaningsections[i].ceiling_type+", 'floor_type':"+this.cleaningsections[i].floor_type+", 'section_cost':"+this.cleaningsections[i].section_net_cost+",keynotes:["+tempkeynote+"]},"
+          }
+          
+          this.sectionfull  = '['+a+']';
+          console.log(this.sectionfull)
 
+        },
         async submitForm(){
 
           console.log(this.visitid)
@@ -173,20 +190,25 @@ let app = new Vue({
             fd.append('media',this.images[j])
           }
           if(this.addfollow){
+            await this.makeSectionFull();
             fd.append('is_followup','True');
             fd.append('number_of_cleaners',this.noofcleaners);
             fd.append('total_cost',this.totalcost);
             fd.append('tendative_date',this.tentdate);
             fd.append('tendative_time',this.tenttime);
             fd.append('cleaning_hours',this.cleaning_hours);
-
-
+            fd.append('section',this.sectionfull);
 
           }else{
             fd.append('is_followup','False');
 
           }
-          let result = await _post('api/investigation-fom/',fd);
+          let result = await _post('api/investigation-form/',fd);
+          if(result.data.success){
+            window.location.href = '../../dashboard'
+          }else{
+            showNotification('Something went wrong','error')
+          }
           console.log(result)
 
 
