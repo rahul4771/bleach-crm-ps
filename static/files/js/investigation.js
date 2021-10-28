@@ -138,12 +138,13 @@ let app = new Vue({
         removeSelected(item){
             var index = this.selected_slots.indexOf(item);
             if (index !== -1) {
-                
-                for(var i =0; i <this.selected_slots.length;i++){
+                var temp = this.selected_slots.length;
+                for(var i =0; i <temp;i++){
+                  console.log(this.selected_slots[i],item)
                   if(this.selected_slots[i]>item){
                     this.selected_slots.splice(i, 1);
                   }
-                  console.log(this.selected_slots[i],item)
+                 
                 }
                 this.selected_slots.splice(index, 1);
                 
