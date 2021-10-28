@@ -743,6 +743,107 @@ class TicketSubmitAPI(APIView):
 
 		return Response(response_dict,HTTP_200_OK)
 
+class InvestigationFormAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def post(self,request):
+		investigation_id = request.data.get('investigation_id')
+
+		investigation = Investigation.objects.get(id=int(investigation_id))
+		
+		secondary_investigation_notes = request.data.get('notes')
+
+		investigation.secondary_investigation_notes = secondary_investigation_notes
+		investigation.save()
+		
+		#save media
+		secondary_investigationmedias = request.FILES.getlist('media')
+		if not secondary_investigationmedias == ['']:
+			for image in secondary_investigationmedias:
+				InvestigationMedia.objects.create(
+					investigation = investigation,
+					media = image,
+					media_type = 'PHOTO',
+					taken_status = 'SECONDARY_INVESTIGATION',
+					is_active = True
+				)
+
+		is_followup = request.data.get('is_followup')
+
+		print(is_followup,"foll")
+
+		# if is_followup == True:
+		print('vaaa')
+
+		total_cost	= request.data.get('total_cost')
+		no_of_cleaners = request.data.get('number_of_cleaners')
+		cleaning_hours = request.data.get('cleaning_hours')
+		
+		tendative_date = request.data.get('tendative_date')
+
+		tendative_time = request.data.get('tendative_time')
+
+		sections = request.data.getlist('section')
+
+		print(tendative_date,tendative_time,sections,"secs")
+
+		follow_up = FollowUp.objects.select_related('investigation__order__evaluation__customer').get(investigation_id=investigation_id,is_active=True)
+		follow_up.status         = 'FOLLOWUP_IN_PROGRESS'
+		# follow_up.followup_notes = request.POST.get('investigator_notes')
+		follow_up.no_of_cleaners = no_of_cleaners
+		follow_up.cleaning_hours = cleaning_hours
+		follow_up.total_cost = total_cost
+		follow_up.save()
+
+		for date in tendative_date:
+			print(date)
+			start_date_time = datetime.strptime(date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
+			end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))
+			followup_schedule_array.append(FollowUpScheduler(follow_up=follow_up,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address))
+
+	# 	#to save sections
+	# 	no_of_sections         = int(request.POST.get('section_counter'))
+	# 	section_array          = []
+	# 	for i in range(no_of_sections):
+	# 		section_name  = request.POST.get('section'+str(i))
+	# 		size          = request.POST.get('size'+str(i))
+			
+	# 		wall_type     = request.POST.get('walltype'+str(i))
+	# 		ceiling_type  = request.POST.get('ceilingtype'+str(i))
+	# 		floor_type    = request.POST.get('floortype'+str(i))
+			
+	# 		section_cost  = request.POST.get('sectioncost'+str(i))
+
+	# 		try:
+	# 			section_name_arabic = Translator().translate(section_name,src='en', dest='ar').text
+	# 		except:
+	# 			section_name_arabic = section_name
+			
+	# 		section = FollowUpSection.objects.create(follow_up=follow_up,section_name=section_name,section_name_arabic=section_name_arabic,size=size,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,section_net_cost=section_cost)
+
+	# 		#to save keynotes
+	# 		try:
+	# 			no_of_keynotes = int(request.POST.get('section'+str(i)+'-keynote_counter'))
+	# 		except:
+	# 			no_of_keynotes = None
+
+	# 		keynote_array = []
+	# 		if no_of_keynotes:
+	# 			for j in range(no_of_keynotes):
+	# 				keynote = request.POST.get('section'+str(i)+'_keynote'+str(j))
+	# 				quantity= request.POST.get('section'+str(i)+'_quantity'+str(j))
+	# 				if keynote and quantity:
+	# 					keynote_array.append(FollowUpSectionKeynote(followup_section=section,sub_area=keynote,quantity=quantity))
+	# 			#bulk_create keynote
+	# 			FollowUpSectionKeynote.objects.bulk_create(keynote_array)
+
+	# 	FollowUpScheduler.objects.bulk_create(followup_schedule_array)
+
+		response_dict = {'success':True}
+
+		return Response(response_dict,HTTP_200_OK)
+
 class VisitDetailsAPI(APIView):
 	permission_classes  	=   (AllowAny,)
 	authentication_classes  = ()

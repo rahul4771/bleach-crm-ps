@@ -15,7 +15,10 @@ class ServiceProductivity(models.Model):
 	is_highprice_facade = models.BooleanField(null=False,blank=True,default=False)
 	is_highprice_window = models.BooleanField(null=False,blank=True,default=False)
 	upholstery_type     = models.CharField(max_length=50,blank=True,null=True,choices=SERVICEDIVISION_CHOICES)
-
+	min_cleaners  		= models.IntegerField(null=True,blank=True)
+	max_cleaners  		= models.IntegerField(null=True,blank=True)
+	min_hours      		= models.IntegerField(null=True,blank=True)
+	max_hours     		= models.IntegerField(null=True,blank=True)
 
 	is_active    = models.BooleanField(null=False,blank=True,default=True)
 	created      = models.DateTimeField(auto_now_add=True)
