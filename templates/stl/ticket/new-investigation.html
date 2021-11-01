@@ -356,8 +356,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row mt-10">
-                                    <div class="col-md-6 c-right-border">
+                                <div  class="row mt-10">
+                                    <div class="col-md-6 c-right-border" v-if="service_type != 'Upholstery Cleaning'" >
                                         <div class="order-details-content">
                                             <div class="row c-mb-3">
                                                 <div class="col-md-6 col-xs-6 mb-10">
@@ -383,6 +383,25 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col-md-6 c-right-border" v-if="service_type == 'Upholstery Cleaning'" >
+                                        <div class="order-details-content">
+                                            <div class="row c-mb-3">
+                                                <div class="col-md-6 col-xs-6 mb-10">
+                                                    <div class="order-details-key">Age</div> 
+                                                    <div class="c-text order-details-value"> <% item.size %> </div>
+                                                </div>
+                                                <div class="col-md-6 col-xs-6 mb-10">
+                                                    <div class="order-details-key">Size</div> 
+                                                    <div class="c-text order-details-value"> <% item.size %> </div>
+                                                </div>
+                                               
+                                                <div class="col-md-6 col-xs-6 mb-10">
+                                                    <div class="order-details-key">Cost</div> 
+                                                    <div class="c-text order-details-value"> <% item.section_net_cost %> </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div style="position: relative;" class="col-md-6">
                                         
                                         <div v-for="(keynote, index) in item.keynotes" :key="keynote.keynote_id" class="col-md-4 ml-0 "><div style="background: #edf1f5 !important;" class="clean-section-card av-font"><p class="av-font"> <% keynote.sub_area %> <span class="c-text2 av-font"><% keynote.quantity %></span></p></div></div>
@@ -395,6 +414,7 @@
                                         </div>
                                     </div>
                                 </div>
+                               
                               
                             </div>
                             <div class="row mt-20" v-if="cleaningsections != null & cleaningsections.length != 0 " >
@@ -582,7 +602,26 @@
                     <div class="modal-body" v-if="editSectionData != null">
                         <div >
                             <div class="row">
+
+
                                 <!-- Kitchen Cleaning start -->
+                                <div class="col-md-6 mt-10" v-if="service_type=='Kitchen Cleaning'">
+                                    <div class=" bold-text common-label required-field"> <label>Is it a new Kitchen</label></div>
+                                    <div class="d-flex">
+                                    <div>
+                                <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" :value="true"  v-model="editSectionData.new_kitchen" @change="resetKitchenSize" >
+                                    <label class="form-check-label" for="exampleRadios1">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div>
+                                    <input class="form-check-input ml-10" type="radio" name="exampleRadios" id="exampleRadios1" :value="false" checked v-model="editSectionData.new_kitchen" @change="resetKitchenSize" >
+                                        <label class="form-check-label" for="exampleRadios1">
+                                            No
+                                        </label>
+                                    </div>
+                                </div>
+                                </div>
                                 <div class="col-md-12 mt-10 mb-10" v-if="service_type=='Kitchen Cleaning'">
                                     <div class=" bold-text common-label required-field"> <label>Is there any oil residue ? </label></div>
                                     <div class="d-flex">
@@ -618,6 +657,8 @@
                                 </div>
                                 </div>
                                 <!-- Kitchen Cleaning end -->
+
+
                                 <div class="col-md-6 mt-10">
                                     <div class=" bold-text common-label required-field"> <label class="av-font">Section Name</label></div>
                                     <div class="inv-input-container " style="height: 40px;"> 
@@ -625,6 +666,76 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6 "></div>
+
+                                <!-- size kitchen Cleaning -->
+                                <div class="col-md-6 mt-10" v-if="service_type=='Kitchen Cleaning'">
+                    
+                                    <div class=" bold-text common-label required-field"> <label>Size</label></div>
+                                    <multiselect
+                                    v-if="editSectionData.new_kitchen && editSectionData.is_cabinet"
+                                      v-model="editSectionData.size"
+                                      placeholder="Select a Size"
+                                      
+                                      :options="new_kitchen_cabinet_size"
+                
+                                      :multiple="false"
+                                      :taggable="false"
+                                      :show-labels="false"
+                                      track-by="name"
+                                      label="combined_size"
+                                      @input="calcSectionCost()"
+                
+                
+                
+                                    ></multiselect>
+                                    <multiselect
+                                    v-else-if="editSectionData.new_kitchen && !editSectionData.is_cabinet"
+                                      v-model="editSectionData.size"
+                                      placeholder="Select a Size"
+                                      
+                                      :options="old_kitchen_nocabinet_size"
+                
+                                      :multiple="false"
+                                      :taggable="false"
+                                      :show-labels="false"
+                                      track-by="name"
+                                      label="combined_size"
+                                      @input="calcSectionCost()"
+                                    ></multiselect>
+                                    <multiselect
+                                    v-else-if="!editSectionData.new_kitchen && editSectionData.is_cabinet"
+                                      v-model="editSectionData.size"
+                                      placeholder="Select a Size"
+                                      
+                                      :options="old_kitchen_cabinet_size"
+                
+                                      :multiple="false"
+                                      :taggable="false"
+                                      :show-labels="false"
+                                      track-by="name"
+                                      label="combined_size"
+                                      @input="calcSectionCost()"
+                                    ></multiselect>
+                                    <multiselect
+                                    v-else-if="!editSectionData.new_kitchen && !editSectionData.is_cabinet"
+                                      v-model="editSectionData.size"
+                                      placeholder="Select a Size"
+                                      
+                                      :options="old_kitchen_nocabinet_size"
+                
+                                      :multiple="false"
+                                      :taggable="false"
+                                      :show-labels="false"
+                                      track-by="name"
+                                      label="combined_size"
+                                      @input="calcSectionCost()"
+                                    ></multiselect>
+                                  
+                                        
+                                 </div>
+                                 <!-- end size kitchen Cleaning -->
+
+
                                 <div class="col-md-6 mt-10" v-if="service_type!='Upholstery Cleaning' && service_type!='Kitchen Cleaning' && service_type!='Facade Cleaning' && service_type!='Window Cleaning' && service_type!='Kitchen Appliances' " >
                                     <div class=" bold-text common-label required-field"> <label>Size</label></div>
                                     <multiselect

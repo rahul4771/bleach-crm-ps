@@ -7,7 +7,7 @@ let app = new Vue({
       totalAmount: function () {
         var sum =0;
         for(var i = 0 ; i<this.cleaningsections.length;i++){
-          sum = this.cleaningsections[i].section_net_cost;
+          sum = sum + this.cleaningsections[i].section_net_cost;
         }
         
         return sum;
@@ -15,6 +15,10 @@ let app = new Vue({
     },
     data () {
           return {
+            new_kitchen_cabinet_size:[],
+            old_kitchen_cabinet_size:[],
+            new_kitchen_nocabinet_size:[],
+            old_kitchen_nocabinet_size:[],
             newkeynote:{
               sub_area:'',
               quantity:''
@@ -49,7 +53,9 @@ let app = new Vue({
               material:[],
               category:'Floor',
               age:null,
-              new_kitchen:false
+              new_kitchen:null,
+              is_cabinet:null,
+              oil_residue:null
              },
             edit_section_active_index:null,
             service_type:'',
@@ -118,6 +124,42 @@ let app = new Vue({
     },
     methods:{
       resetKitchenSize(){
+        this.editSectionData.size={}
+        this.calcSectionCost();
+      },
+      formatKitchenSize(){
+        this.new_kitchen_cabinet_size = []
+        this.old_kitchen_cabinet_size = []
+        this.new_kitchen_nocabinet_size = []
+        this.old_kitchen_nocabinet_size =[]
+        for(var i=0;i<this.service_productivity.length;i++){
+          if(this.service_productivity[i].is_newkitchen){
+            if(this.service_productivity[i].is_cabinet){
+              this.new_kitchen_cabinet_size.push(this.service_productivity[i])
+            }else{
+              this.new_kitchen_nocabinet_size.push(this.service_productivity[i])
+            }
+         
+          }
+          else{
+            if(this.service_productivity[i].is_cabinet){
+             this.old_kitchen_cabinet_size.push(this.service_productivity[i])
+            }
+            else{
+              this.old_kitchen_nocabinet_size.push(this.service_productivity[i])
+            }
+          }
+        }
+        var size = this.cleaningsections[this.edit_section_active_index].size;
+        var cab = this.cleaningsections[this.edit_section_active_index].is_cabinet;
+        var isnew = this.cleaningsections[this.edit_section_active_index].new_kitchen;
+        for(var i =0;i<this.service_productivity.length; i++){
+          if(this.service_productivity[i].name == size && this.service_productivity[i].is_cabinet == cab && this.service_productivity[i].is_newkitchen == isnew){
+            this.editSectionData.size = this.service_productivity[i];
+            break;
+          }
+        }
+
 
       },
       addToKeynote(){
@@ -146,26 +188,38 @@ let app = new Vue({
         }
         this.service_productivity = [];
         let result = await _get('customer/ajax/getservicesizeprice?service_type='+type);
+        console.log(result)
         this.productivity=result.data
           for(var i in this.productivity){
             this.productivity[i].combined_size=this.productivity[i].name+' ( '+this.productivity[i].min_size+' sq.m - '+this.productivity[i].max_size+' sq.m )'
             this.service_productivity.push(this.productivity[i])
           }
-          var size = this.cleaningsections[this.edit_section_active_index].size
-          for(var i =0;i<this.service_productivity.length; i++){
-            if(this.service_productivity[i].name == size){
-              this.editSectionData.size = this.service_productivity[i];
-              break;
+          var size = this.cleaningsections[this.edit_section_active_index].size;
+
+          if(this.service_type=='Kitchen Cleaning'){
+            this.formatKitchenSize()
+          }else{
+            for(var i =0;i<this.service_productivity.length; i++){
+              if(this.service_productivity[i].name == size){
+                this.editSectionData.size = this.service_productivity[i];
+                break;
+              }
             }
+
           }
+
+          
       },
       editSection(item){
-       
-        this.getSize(this.service_type)
         this.edit_section_active_index = item
+        this.getSize(this.service_type)
         this.editSectionData.section_name = this.cleaningsections[item].section_name
         this.editSectionData.section_cost = this.cleaningsections[item].section_net_cost
         this.editSectionData.keynotes = this.cleaningsections[item].keynotes
+        this.editSectionData.oil_residue = this.cleaningsections[item].oil_residue
+        this.editSectionData.is_cabinet = this.cleaningsections[item].is_cabinet
+        this.editSectionData.new_kitchen = this.cleaningsections[item].new_kitchen
+
         if(this.editSectionData.wall_type != null){
           this.editSectionData.wall_type = this.cleaningsections[item].wall_type.split(",");
         }
@@ -175,12 +229,7 @@ let app = new Vue({
         if(this.editSectionData.ceiling_type != null){
           this.editSectionData.ceiling_type = this.cleaningsections[item].ceiling_type.split(",");
         }
-        if(this.service_type == 'Kitchen Cleaning'){
-          this.editSectionData.oil_residue = true
-          this.editSectionData.is_cabinet = true
-
-
-        }
+        
         $('#edit-dialog-tigger').click();
     },
       saveEdit(){
@@ -191,6 +240,11 @@ let app = new Vue({
         this.cleaningsections[this.edit_section_active_index].wall_type = this.editSectionData.wall_type.toString();
         this.cleaningsections[this.edit_section_active_index].floor_type = this.editSectionData.floor_type.toString();
         this.cleaningsections[this.edit_section_active_index].ceiling_type = this.editSectionData.ceiling_type.toString();
+         this.cleaningsections[this.edit_section_active_index].oil_residue =  this.editSectionData.oil_residue
+         this.cleaningsections[this.edit_section_active_index].is_cabinet =  this.editSectionData.is_cabinet
+         this.cleaningsections[this.edit_section_active_index].new_kitchen =  this.editSectionData.new_kitchen
+
+
         $('#id_model_edit_close').click();
       },
       deleteSection(index){
