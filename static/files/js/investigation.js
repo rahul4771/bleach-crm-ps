@@ -15,6 +15,11 @@ let app = new Vue({
     },
     data () {
           return {
+            newkeynote:{
+              sub_area:'',
+              quantity:''
+            },
+            keynote_msg:false,
             service_productivity:[],
             sizeSelect:'',
             productivity:{},
@@ -112,6 +117,26 @@ let app = new Vue({
           }
     },
     methods:{
+      resetKitchenSize(){
+
+      },
+      addToKeynote(){
+        if(this.newkeynote.sub_area && this.newkeynote.quantity)
+        {
+          this.editSectionData.keynotes.push(this.newkeynote);
+          this.newkeynote={
+            sub_area:'',
+            quantity:''
+          }
+        }
+        else{
+          this.keynote_msg=true
+        }
+      },
+      delKeynote(index){
+        console.log(index)
+        this.editSectionData.keynotes.splice(index,1)
+      },
       calcSectionCost(){
         this.editSectionData.section_cost = this.editSectionData.size.cost || 0;
       },
@@ -150,13 +175,18 @@ let app = new Vue({
         if(this.editSectionData.ceiling_type != null){
           this.editSectionData.ceiling_type = this.cleaningsections[item].ceiling_type.split(",");
         }
+        if(this.service_type == 'Kitchen Cleaning'){
+          this.editSectionData.oil_residue = true
+          this.editSectionData.is_cabinet = true
 
+
+        }
         $('#edit-dialog-tigger').click();
     },
       saveEdit(){
         this.cleaningsections[this.edit_section_active_index].section_name = this.editSectionData.section_name;
         this.cleaningsections[this.edit_section_active_index].size = this.editSectionData.size.name;
-
+        this.cleaningsections[this.edit_section_active_index].keynotes = this.editSectionData.keynotes;
         this.cleaningsections[this.edit_section_active_index].section_net_cost = this.editSectionData.section_cost;
         this.cleaningsections[this.edit_section_active_index].wall_type = this.editSectionData.wall_type.toString();
         this.cleaningsections[this.edit_section_active_index].floor_type = this.editSectionData.floor_type.toString();
@@ -271,7 +301,7 @@ let app = new Vue({
             fd.append('is_followup','False');
 
           }
-          let result = await _post('api/investigation-form/',fd);
+          let result = await _post('api/investigation-formf/',fd);
           if(result.data.success){
             window.location.href = '../../dashboard'
           }else{

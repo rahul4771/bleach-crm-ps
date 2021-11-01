@@ -582,6 +582,42 @@
                     <div class="modal-body" v-if="editSectionData != null">
                         <div >
                             <div class="row">
+                                <!-- Kitchen Cleaning start -->
+                                <div class="col-md-12 mt-10 mb-10" v-if="service_type=='Kitchen Cleaning'">
+                                    <div class=" bold-text common-label required-field"> <label>Is there any oil residue ? </label></div>
+                                    <div class="d-flex">
+                                    <div>
+                                <input class="form-check-input" type="radio" name="residueRadios" id="residueRadios1" :value="true"  v-model="editSectionData.oil_residue" >
+                                    <label class="form-check-label" for="exampleRadios1">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div>
+                                    <input class="form-check-input ml-10" type="radio" name="residueRadios" id="residueRadios1" :value="false" checked v-model="editSectionData.oil_residue">
+                                        <label class="form-check-label" for="exampleRadios1">
+                                            No
+                                        </label>
+                                    </div>
+                                </div>
+                                </div>
+                                <div class="col-md-12 mt-10 mb-10" v-if="service_type=='Kitchen Cleaning'">
+                                    <div class=" bold-text common-label required-field"> <label>Do you want to clean the cabinet ?</label></div>
+                                    <div class="d-flex">
+                                    <div>
+                                <input class="form-check-input" type="radio" name="cabinetRadios" id="cabinetRadios1" :value="true"  v-model="editSectionData.is_cabinet" @change="resetKitchenSize" >
+                                    <label class="form-check-label" for="exampleRadios1">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div>
+                                    <input class="form-check-input ml-10" type="radio" name="cabinetRadios" id="cabinetRadios1" :value="false" checked v-model="editSectionData.is_cabinet" @change="resetKitchenSize" >
+                                        <label class="form-check-label" for="exampleRadios1">
+                                            No
+                                        </label>
+                                    </div>
+                                </div>
+                                </div>
+                                <!-- Kitchen Cleaning end -->
                                 <div class="col-md-6 mt-10">
                                     <div class=" bold-text common-label required-field"> <label class="av-font">Section Name</label></div>
                                     <div class="inv-input-container " style="height: 40px;"> 
@@ -649,7 +685,34 @@
                                         <input type="number" readonly  v-model="editSectionData.section_cost" class="w-p-100 inv-in"  >
                                     </div>
                                 </div>
-                                <div class="col-md-6 mt-10"  >
+                                <div class="col-md-12 mt-20" v-if="service_type!='Kitchen Appliances'">
+                                    <div class="av-font" style="font-weight: 800;">
+                                        Key Notes
+                                    </div> 
+                                    <div class="row mt-10" >
+                                        <div class="col-md-4 mt-10" v-for="(keynote,kindex) in editSectionData.keynotes" v-bind:key="kindex">
+                                            <div class="keynote-chip d-flex" v-if="keynote.sub_area!='kitchen'">
+                                                <input type="text" v-model="keynote.sub_area" class="keynote-input"/>
+                                                <input type="text" v-model="keynote.quantity" class="keynote-input"/>
+                                             
+                                                <div class="keynote-delicon cp" @click="delKeynote(kindex)"><i class="far fa-trash-alt"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mt-10" >
+                                            <div class="keynote-chip" >
+                                                <div class="d-flex">
+                                                <input type="text" style="text-transform:uppercase"  v-model="newkeynote.sub_area" class="keynote-input" placeholder="Name"/>
+                                                <input type="text" v-model="newkeynote.quantity" class="keynote-input" placeholder="Value"/>
+                                              
+                                               <div class="keynote-delicon cp" @click="addToKeynote()"><i class="far fa-plus-square"></i>
+                                               </div>
+                                            </div>
+                                               <div class="red-msg text-center mt-10" v-if="keynote_msg">Please fill the required fields</div>
+                                                </div>
+                                               
+                                            </div> 
+                                    </div>
                                 </div>  
                               
                                 

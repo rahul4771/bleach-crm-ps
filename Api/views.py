@@ -796,11 +796,14 @@ class InvestigationFormAPI(APIView):
 		follow_up.total_cost = total_cost
 		follow_up.save()
 
-		for date in tendative_date:
-			print(date)
-			start_date_time = datetime.strptime(date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
-			end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))
-			followup_schedule_array.append(FollowUpScheduler(follow_up=follow_up,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address))
+		start_date_time = datetime.strptime(tendative_date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
+		end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))
+
+		# for date in tendative_date:
+		# 	print(date+' '+tendative_time,"tod")
+		# 	start_date_time = datetime.strptime(date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
+		# 	end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))
+		# 	followup_schedule_array.append(FollowUpScheduler(follow_up=follow_up,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address))
 
 	# 	#to save sections
 	# 	no_of_sections         = int(request.POST.get('section_counter'))
@@ -838,7 +841,7 @@ class InvestigationFormAPI(APIView):
 	# 			#bulk_create keynote
 	# 			FollowUpSectionKeynote.objects.bulk_create(keynote_array)
 
-	# 	FollowUpScheduler.objects.bulk_create(followup_schedule_array)
+		FollowUpScheduler.objects.create(follow_up=follow_up,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address)
 
 		response_dict = {'success':True}
 
@@ -913,6 +916,7 @@ class VisitDetailsAPI(APIView):
 					'wall_type' : section.wall_type,
 					'ceiling_type' : section.ceiling_type,
 					'section_net_cost' :section.section_net_cost,
+					'upholstery_type' : section.upholstery_type,
 					'keynotes' : keynotes,
 					'addons' : sectionaddons
 			}
