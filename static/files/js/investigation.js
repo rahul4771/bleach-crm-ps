@@ -264,6 +264,7 @@ let app = new Vue({
         async makeSectionFull(){
           console.log('string')
           var a = '';
+
           for(var i = 0 ; i<this.cleaningsections.length;i++){
             var tempkeynote=''
             console.log(this.cleaningsections[i]);
@@ -272,13 +273,31 @@ let app = new Vue({
             }
             
             a = a + "{'section_name':"+this.cleaningsections[i].section_name+", 'size':"+this.cleaningsections[i].size+", 'wall_type':"+this.cleaningsections[i].wall_type+", 'ceiling_type':"+this.cleaningsections[i].ceiling_type+", 'floor_type':"+this.cleaningsections[i].floor_type+", 'section_cost':"+this.cleaningsections[i].section_net_cost+",keynotes:["+tempkeynote+"]},"
-          }
           
+          }
+
           this.sectionfull  = '['+a+']';
           console.log(this.sectionfull)
 
         },
         async submitForm(){
+
+          var sections = [];
+
+          for(var i = 0 ; i<this.cleaningsections.length;i++){
+          
+            var keynotes = [];
+
+            for(var j = 0 ; j<this.cleaningsections[i].keynotes.length;j++){
+              keynote_dict = {'keynote':this.cleaningsections[i].keynotes[j].sub_area,'quantity':this.cleaningsections[i].keynotes[j].quantity}
+              keynotes.push(keynote_dict)
+            }
+
+            section_dict = {'section_name':this.cleaningsections[i].section_name, 'size':this.cleaningsections[i].size, 'wall_type':this.cleaningsections[i].wall_type, 'ceiling_type':this.cleaningsections[i].ceiling_type, 'floor_type':this.cleaningsections[i].floor_type, 'section_cost':this.cleaningsections[i].section_net_cost,'keynotes':keynotes}
+            sections.push(section_dict)
+          
+          }
+          console.log(sections,"secto")
 
           console.log(this.visitid)
           let fd = new FormData();
@@ -288,6 +307,7 @@ let app = new Vue({
             fd.append('media',this.images[j])
           }
           if(this.addfollow){
+            console.log(this.sectionfull,"sefull")
             await this.makeSectionFull();
             fd.append('is_followup','True');
             fd.append('number_of_cleaners',this.noofcleaners);
@@ -295,7 +315,7 @@ let app = new Vue({
             fd.append('tendative_date',this.tentdate);
             fd.append('tendative_time',this.tenttime);
             fd.append('cleaning_hours',this.cleaning_hours);
-            fd.append('section',this.sectionfull);
+            fd.append('sections',JSON.stringify(sections));
 
           }else{
             fd.append('is_followup','False');
@@ -303,7 +323,8 @@ let app = new Vue({
           }
           let result = await _post('api/investigation-formf/',fd);
           if(result.data.success){
-            window.location.href = '../../dashboard'
+            console.log("success")
+            //window.location.href = '../../dashboard'
           }else{
             showNotification('Something went wrong','error')
           }
