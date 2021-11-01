@@ -913,6 +913,9 @@ class VisitDetailsAPI(APIView):
 					'is_highprice_window' : section.is_highprice_window,
 					'vacuuming' : section.vacuuming,
 					'age_of_stain' : section.age_of_stain,
+					'color' : section.color,
+					'material' : section.material,
+					'cause_of_stain' : section.cause_of_stain,
 					'keynotes' : keynotes,
 					'addons' : sectionaddons
 			}
