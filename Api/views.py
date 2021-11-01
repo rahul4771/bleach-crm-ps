@@ -899,6 +899,7 @@ class VisitDetailsAPI(APIView):
 			section_dict= {
 					'section_id' : section.id,
 					'section_name' : section.section_name,
+					'age' : section.age,
 					'size' : section.size,
 					'floor_type' : section.floor_type,
 					'wall_type' : section.wall_type,
@@ -913,7 +914,7 @@ class VisitDetailsAPI(APIView):
 					'is_highprice_window' : section.is_highprice_window,
 					'vacuuming' : section.vacuuming,
 					'age_of_stain' : section.age_of_stain,
-					'color' : section.color,
+					'color' : section.colour,
 					'material' : section.material,
 					'cause_of_stain' : section.cause_of_stain,
 					'keynotes' : keynotes,

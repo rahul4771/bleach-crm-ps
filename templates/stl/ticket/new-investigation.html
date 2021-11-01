@@ -388,11 +388,27 @@
                                             <div class="row c-mb-3">
                                                 <div class="col-md-6 col-xs-6 mb-10">
                                                     <div class="order-details-key">Age</div> 
-                                                    <div class="c-text order-details-value"> <% item.size %> </div>
+                                                    <div class="c-text order-details-value"> <% item.age %> </div>
                                                 </div>
                                                 <div class="col-md-6 col-xs-6 mb-10">
                                                     <div class="order-details-key">Size</div> 
                                                     <div class="c-text order-details-value"> <% item.size %> </div>
+                                                </div>
+                                                <div class="col-md-6 col-xs-6 mb-10">
+                                                    <div class="order-details-key">Material</div> 
+                                                    <div class="c-text order-details-value"> <% item.material %> </div>
+                                                </div>
+                                                <div class="col-md-6 col-xs-6 mb-10">
+                                                    <div class="order-details-key">Colour</div> 
+                                                    <div class="c-text order-details-value"> <% item.color %> </div>
+                                                </div>
+                                                <div class="col-md-6 col-xs-6 mb-10" v-if="item.cause_of_stain !=''" >
+                                                    <div class="order-details-key">Cause of Stain</div> 
+                                                    <div class="c-text order-details-value"> <% item.cause_of_stain %> </div>
+                                                </div>
+                                                <div class="col-md-6 col-xs-6 mb-10" v-if="item.age_of_stain !=''">
+                                                    <div class="order-details-key">Age of Stain</div> 
+                                                    <div class="c-text order-details-value"> <% item.age_of_stain %> </div>
                                                 </div>
                                                
                                                 <div class="col-md-6 col-xs-6 mb-10">
@@ -665,6 +681,13 @@
                                         <input type="text" v-model="editSectionData.section_name"  class="w-p-100 inv-in"  >
                                     </div>
                                 </div>
+                                <div class="col-md-6 mt-10" v-if="service_type=='Upholstery Cleaning'">
+                                    <div class=" bold-text common-label required-field"> <label>Age</label></div>
+                                  
+                                  <div class="inv-input-container " style="height: 40px;"> 
+                                    <input type="number" v-model="editSectionData.age"  class="w-p-100 inv-in"  >
+                                </div>
+                                </div>
                                 <div class="col-md-6 "></div>
 
                                 <!-- size kitchen Cleaning -->
@@ -734,7 +757,40 @@
                                         
                                  </div>
                                  <!-- end size kitchen Cleaning -->
+                                <!--  size Upholstery Cleaning -->
 
+                                <div class="col-md-6 mt-10" v-if="service_type=='Upholstery Cleaning' && editSectionData.upholstery_type=='SOFA'">
+                    
+                                    <div class=" bold-text common-label required-field"> <label>Size</label></div>
+                                    <div class="inv-input-container " style="height: 40px;"> 
+                                        <input type="number" v-model="editSectionData.size"  class="w-p-100 inv-in"  placeholder="Seaters" @input="calcSofaSize()" >
+                                    </div>  
+                                 </div>
+                                 <div class="col-md-6 mt-10" v-if="service_type=='Upholstery Cleaning' && editSectionData.upholstery_type=='CHAIR' ">
+                    
+                                    <div class=" bold-text common-label required-field"> <label>Size</label></div>
+                                    <multiselect
+                                      v-model="editSectionData.size"
+                                      placeholder="Select a Size"
+                                      
+                                      :options="chair_size"
+                
+                                      :multiple="false"
+                                      :taggable="false"
+                                      :show-labels="false"
+                                      track-by="name"
+                                      label="combined_size"
+                                      @input="calcSectionCost()"
+                
+                
+                
+                                    ></multiselect>
+                                  
+                                        
+                                 </div>
+                                <!--  end size Upholstery Cleaning -->
+
+                                 
 
                                 <div class="col-md-6 mt-10" v-if="service_type!='Upholstery Cleaning' && service_type!='Kitchen Cleaning' && service_type!='Facade Cleaning' && service_type!='Window Cleaning' && service_type!='Kitchen Appliances' " >
                                     <div class=" bold-text common-label required-field"> <label>Size</label></div>
@@ -790,12 +846,66 @@
                                     
                                   ></multiselect>
                                 </div>
+
+                                <div class="col-md-6 mt-10" v-if="service_type=='Upholstery Cleaning' || service_type=='Mattress Cleaning' || service_type=='Carpet Cleaning'">
+                 
+                                    <div class=" bold-text common-label required-field"> <label>Material</label></div>
+                                    <multiselect
+                                      v-model="editSectionData.material"
+                                      placeholder="Materials"
+                                      
+                                      :options="materials"
+                                      :multiple="true"
+                                      :taggable="false"
+                                      :show-labels="false"
+                                      
+                                    ></multiselect>
+                                </div>
+                                <div class="col-md-6 mt-10" v-if="service_type=='Upholstery Cleaning' || service_type=='Mattress Cleaning' || service_type=='Carpet Cleaning'">
+                                   
+                                      <div class=" bold-text common-label required-field"> <label>Colour</label></div>
+                                      <multiselect
+                                        v-model="editSectionData.color"
+                                        placeholder="Color"
+                                        
+                                        :options="colors"
+                                        :multiple="true"
+                                        :taggable="false"
+                                        :show-labels="false"
+                                        
+                                      ></multiselect>
+                                </div>
+                                <div class="col-md-6 mt-10" v-if="service_type=='Upholstery Cleaning' || service_type=='Mattress Cleaning' || service_type=='Carpet Cleaning'">
+                                   
+                                      <div class=" bold-text common-label"> <label>Cause of Stain</label></div>
+                                      <multiselect
+                                        v-model="editSectionData.cause_of_stain"
+                                        placeholder="Cause Of Stain"
+                                        
+                                        :options="cause_of_stain"
+                                        :multiple="true"
+                                        :taggable="false"
+                                        :show-labels="false"
+                                        
+                                      ></multiselect>
+                                </div>
+                                <div class="col-md-6 mt-10" v-if="service_type=='Upholstery Cleaning' || service_type=='Mattress Cleaning' || service_type=='Carpet Cleaning'">
+                                      
+                                      <div class=" bold-text common-label "> <label>Age Of Stain</label></div>
+                                      <div class="inv-input-container " style="height: 40px;"> 
+                                        <input type="number" v-model="editSectionData.age_of_stain"  class="w-p-100 inv-in"  >
+                                    </div>
+                                    
+                                          
+                                </div>
+
                                 <div class="col-md-6 mt-10"  >
                                     <div class=" bold-text common-label required-field"> <label class="av-font">Section Cost</label></div>
                                     <div class="inv-input-container " style="height: 40px;"> 
                                         <input type="number" readonly  v-model="editSectionData.section_cost" class="w-p-100 inv-in"  >
                                     </div>
                                 </div>
+                                <div class="col-md-6 "></div>
                                 <div class="col-md-12 mt-20" v-if="service_type!='Kitchen Appliances'">
                                     <div class="av-font" style="font-weight: 800;">
                                         Key Notes

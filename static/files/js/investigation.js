@@ -15,6 +15,8 @@ let app = new Vue({
     },
     data () {
           return {
+            sofa_size:[],
+            chair_size:[],
             new_kitchen_cabinet_size:[],
             old_kitchen_cabinet_size:[],
             new_kitchen_nocabinet_size:[],
@@ -43,6 +45,7 @@ let app = new Vue({
             notes:'',
             visitid:'',
             editSectionData:{
+              age_of_stain:'',
               size:{},
               keynotes:[],
               section_cost:0,
@@ -51,6 +54,8 @@ let app = new Vue({
               ceiling_type:[],
               wall_type:[],
               material:[],
+              color:[],
+              cause_of_stain:[],
               category:'Floor',
               age:null,
               new_kitchen:null,
@@ -123,6 +128,25 @@ let app = new Vue({
           }
     },
     methods:{
+      calcSofaSize(){
+        var found =false
+        var sofa={}
+        for(var i=0;i<this.sofa_size.length;i++){
+          if(this.editSectionData.size<=this.sofa_size[i].max_size){
+            found=true
+            sofa=this.sofa_size[i]
+            break;
+          }
+        }
+        if(found){
+          this.editSectionData.section_cost=sofa.cost
+        }
+        if(!found){
+          this.editSectionData.section_cost=this.editSectionData.size*this.sofa_size[0].unit_price;
+       }
+        
+
+      },
       resetKitchenSize(){
         this.editSectionData.size={}
         this.calcSectionCost();
@@ -182,6 +206,7 @@ let app = new Vue({
       calcSectionCost(){
         this.editSectionData.section_cost = this.editSectionData.size.cost || 0;
       },
+      
       async getSize(type){
         if(type=='Hourly Cleaning'){
           type='General Cleaning'
@@ -195,9 +220,32 @@ let app = new Vue({
             this.service_productivity.push(this.productivity[i])
           }
           var size = this.cleaningsections[this.edit_section_active_index].size;
-
           if(this.service_type=='Kitchen Cleaning'){
             this.formatKitchenSize()
+          }else if(this.service_type=='Upholstery Cleaning'){
+            this.chair_size = [];
+            this.sofa_size = [];
+            for(var i=0;i<this.service_productivity.length;i++){
+              if(this.service_productivity[i].upholstery_type == "CHAIR"){
+                this.chair_size.push(this.service_productivity[i]);
+              }
+              if(this.service_productivity[i].upholstery_type == "SOFA"){
+                console.log('sofa push')
+                this.sofa_size.push(this.service_productivity[i]);
+              }
+            }
+            if(this.editSectionData.upholstery_type == 'CHAIR'){
+              for(var i =0;i<this.chair_size.length; i++){
+                if(this.chair_size[i].name == size){
+                  this.editSectionData.size = this.chair_size[i];
+                  break;
+                }
+              }
+
+            }else if(this.editSectionData.upholstery_type == 'SOFA'){
+              this.editSectionData.size = size.split(" ")[0];
+            }
+
           }else{
             for(var i =0;i<this.service_productivity.length; i++){
               if(this.service_productivity[i].name == size){
@@ -211,14 +259,22 @@ let app = new Vue({
           
       },
       editSection(item){
+        if(this.service_type == 'Upholstery Cleaning'){
+          this.editSectionData.upholstery_type = this.cleaningsections[item].upholstery_type
+        }
         this.edit_section_active_index = item
         this.getSize(this.service_type)
+        
         this.editSectionData.section_name = this.cleaningsections[item].section_name
+        this.editSectionData.age = this.cleaningsections[item].age
+
         this.editSectionData.section_cost = this.cleaningsections[item].section_net_cost
         this.editSectionData.keynotes = this.cleaningsections[item].keynotes
         this.editSectionData.oil_residue = this.cleaningsections[item].oil_residue
         this.editSectionData.is_cabinet = this.cleaningsections[item].is_cabinet
         this.editSectionData.new_kitchen = this.cleaningsections[item].new_kitchen
+        this.editSectionData.age_of_stain = this.cleaningsections[item].age_of_stain
+
 
         if(this.editSectionData.wall_type != null){
           this.editSectionData.wall_type = this.cleaningsections[item].wall_type.split(",");
@@ -229,20 +285,49 @@ let app = new Vue({
         if(this.editSectionData.ceiling_type != null){
           this.editSectionData.ceiling_type = this.cleaningsections[item].ceiling_type.split(",");
         }
-        
+        if(this.editSectionData.material != null){
+          this.editSectionData.material = this.cleaningsections[item].material.split(",");
+        }
+        if(this.editSectionData.color != null){
+          this.editSectionData.color = this.cleaningsections[item].color.split(",");
+        }    
+        if(this.editSectionData.cause_of_stain != null){
+          if(this.cleaningsections[item].cause_of_stain != ''){
+            this.editSectionData.cause_of_stain = this.cleaningsections[item].cause_of_stain.split(",");
+          }else{
+            this.editSectionData.cause_of_stain = []
+          }
+          
+         
+        }        
         $('#edit-dialog-tigger').click();
     },
       saveEdit(){
         this.cleaningsections[this.edit_section_active_index].section_name = this.editSectionData.section_name;
-        this.cleaningsections[this.edit_section_active_index].size = this.editSectionData.size.name;
+        this.cleaningsections[this.edit_section_active_index].age = this.editSectionData.age;
+        if(this.service_type =='Upholstery Cleaning'){
+          if(this.editSectionData.upholstery_type == 'CHAIR'){
+            this.cleaningsections[this.edit_section_active_index].size = this.editSectionData.size.name;
+          }
+          if(this.editSectionData.upholstery_type == 'SOFA'){
+            this.cleaningsections[this.edit_section_active_index].size = this.editSectionData.size + ' Seater';
+          }
+
+        }else{
+          this.cleaningsections[this.edit_section_active_index].size = this.editSectionData.size.name;
+        }
         this.cleaningsections[this.edit_section_active_index].keynotes = this.editSectionData.keynotes;
         this.cleaningsections[this.edit_section_active_index].section_net_cost = this.editSectionData.section_cost;
         this.cleaningsections[this.edit_section_active_index].wall_type = this.editSectionData.wall_type.toString();
         this.cleaningsections[this.edit_section_active_index].floor_type = this.editSectionData.floor_type.toString();
         this.cleaningsections[this.edit_section_active_index].ceiling_type = this.editSectionData.ceiling_type.toString();
-         this.cleaningsections[this.edit_section_active_index].oil_residue =  this.editSectionData.oil_residue
-         this.cleaningsections[this.edit_section_active_index].is_cabinet =  this.editSectionData.is_cabinet
-         this.cleaningsections[this.edit_section_active_index].new_kitchen =  this.editSectionData.new_kitchen
+        this.cleaningsections[this.edit_section_active_index].material = this.editSectionData.material.toString();
+        this.cleaningsections[this.edit_section_active_index].color = this.editSectionData.color.toString();
+        this.cleaningsections[this.edit_section_active_index].cause_of_stain = this.editSectionData.cause_of_stain.toString();
+        this.cleaningsections[this.edit_section_active_index].age_of_stain =  this.editSectionData.age_of_stain
+        this.cleaningsections[this.edit_section_active_index].oil_residue =  this.editSectionData.oil_residue
+        this.cleaningsections[this.edit_section_active_index].is_cabinet =  this.editSectionData.is_cabinet
+        this.cleaningsections[this.edit_section_active_index].new_kitchen =  this.editSectionData.new_kitchen
 
 
         $('#id_model_edit_close').click();
