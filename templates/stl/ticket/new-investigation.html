@@ -588,13 +588,21 @@
                                         <input type="text" v-model="editSectionData.section_name"  class="w-p-100 inv-in"  >
                                     </div>
                                 </div>
-                                <div class="col-md-6 mt-10">
-                                    <div class=" bold-text common-label required-field"> <label class="av-font">Section Name</label></div>
-                                    <div class="inv-input-container " style="height: 40px;"> 
-                                        <input type="text"  class="w-p-100 inv-in"  >
-                                    </div>
+                                <div class="col-md-6 "></div>
+                                <div class="col-md-6 mt-10" v-if="service_type!='Upholstery Cleaning' && service_type!='Kitchen Cleaning' && service_type!='Facade Cleaning' && service_type!='Window Cleaning' && service_type!='Kitchen Appliances' " >
+                                    <div class=" bold-text common-label required-field"> <label>Size</label></div>
+                                    <multiselect
+                                        v-model="editSectionData.size"
+                                        placeholder="Size"
+                                        label="combined_size"
+                                        :options="service_productivity"
+                                        :multiple="false"
+                                        :taggable="false"
+                                        :show-labels="false"
+                                        @input="calcSectionCost()"
+                                    ></multiselect>
                                 </div>
-                                <div class="col-md-6 mt-10"  >
+                                <div class="col-md-6 mt-10"  v-if="service_type=='General Cleaning' || service_type=='Deep Cleaning' || service_type=='Storage Area' || service_type=='Facade Cleaning' || service_type=='Kitchen Cleaning'|| service_type=='Sterilization' || service_type=='Hourly Cleaning'">
                                     <div class=" bold-text common-label required-field"> <label>Wall type</label></div>
                                   <multiselect
                                     v-model="editSectionData.wall_type"
@@ -607,7 +615,7 @@
                                     
                                   ></multiselect>
                                 </div>
-                                <div class="col-md-6 mt-10"  >
+                                <div class="col-md-6 mt-10" v-if="service_type=='General Cleaning' || service_type=='Deep Cleaning' || service_type=='Storage Area' || service_type=='Kitchen Cleaning'|| service_type=='Sterilization'||service_type=='Car Parking Umbrella' || service_type=='Hourly Cleaning'" >
                                     <div class=" bold-text common-label required-field"> <label>Floor type</label></div>
                                   <multiselect
                                     v-model="editSectionData.floor_type"
@@ -621,7 +629,7 @@
                                     
                                   ></multiselect>
                                 </div>
-                                <div class="col-md-6 mt-10"  >
+                                <div class="col-md-6 mt-10" v-if="service_type=='General Cleaning' || service_type=='Deep Cleaning' || service_type=='Storage Area' || service_type=='Kitchen Cleaning'|| service_type=='Sterilization' || service_type=='Car Parking Umbrella' || service_type=='Hourly Cleaning'" >
                                     <div class=" bold-text common-label required-field"> <label>Ceiling type</label></div>
                                   <multiselect
                                     v-model="editSectionData.ceiling_type"
@@ -638,9 +646,11 @@
                                 <div class="col-md-6 mt-10"  >
                                     <div class=" bold-text common-label required-field"> <label class="av-font">Section Cost</label></div>
                                     <div class="inv-input-container " style="height: 40px;"> 
-                                        <input type="number"  v-model="editSectionData.section_cost" class="w-p-100 inv-in"  >
+                                        <input type="number" readonly  v-model="editSectionData.section_cost" class="w-p-100 inv-in"  >
                                     </div>
                                 </div>
+                                <div class="col-md-6 mt-10"  >
+                                </div>  
                               
                                 
                             </div>

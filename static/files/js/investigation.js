@@ -15,6 +15,9 @@ let app = new Vue({
     },
     data () {
           return {
+            service_productivity:[],
+            sizeSelect:'',
+            productivity:{},
             sectionfull:null,
             cleaning_hours:null,
             noofcleaners:'',
@@ -109,12 +112,35 @@ let app = new Vue({
           }
     },
     methods:{
+      calcSectionCost(){
+        this.editSectionData.section_cost = this.editSectionData.size.cost || 0;
+      },
+      async getSize(type){
+        if(type=='Hourly Cleaning'){
+          type='General Cleaning'
+        }
+        this.service_productivity = [];
+        let result = await _get('customer/ajax/getservicesizeprice?service_type='+type);
+        this.productivity=result.data
+          for(var i in this.productivity){
+            this.productivity[i].combined_size=this.productivity[i].name+' ( '+this.productivity[i].min_size+' sq.m - '+this.productivity[i].max_size+' sq.m )'
+            this.service_productivity.push(this.productivity[i])
+          }
+          var size = this.cleaningsections[this.edit_section_active_index].size
+          for(var i =0;i<this.service_productivity.length; i++){
+            if(this.service_productivity[i].name == size){
+              this.editSectionData.size = this.service_productivity[i];
+              break;
+            }
+          }
+      },
       editSection(item){
-        console.log(item)
+       
+        this.getSize(this.service_type)
         this.edit_section_active_index = item
         this.editSectionData.section_name = this.cleaningsections[item].section_name
         this.editSectionData.section_cost = this.cleaningsections[item].section_net_cost
-
+        this.editSectionData.keynotes = this.cleaningsections[item].keynotes
         if(this.editSectionData.wall_type != null){
           this.editSectionData.wall_type = this.cleaningsections[item].wall_type.split(",");
         }
@@ -129,6 +155,9 @@ let app = new Vue({
     },
       saveEdit(){
         this.cleaningsections[this.edit_section_active_index].section_name = this.editSectionData.section_name;
+        this.cleaningsections[this.edit_section_active_index].size = this.editSectionData.size.name;
+
+        this.cleaningsections[this.edit_section_active_index].section_net_cost = this.editSectionData.section_cost;
         this.cleaningsections[this.edit_section_active_index].wall_type = this.editSectionData.wall_type.toString();
         this.cleaningsections[this.edit_section_active_index].floor_type = this.editSectionData.floor_type.toString();
         this.cleaningsections[this.edit_section_active_index].ceiling_type = this.editSectionData.ceiling_type.toString();
