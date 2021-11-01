@@ -45,6 +45,7 @@ let app = new Vue({
             notes:'',
             visitid:'',
             editSectionData:{
+              is_highprice_window:null,
               age_of_stain:'',
               size:{},
               keynotes:[],
@@ -75,6 +76,8 @@ let app = new Vue({
                 service:""
             },
             render:true,
+            highprice_window:[],
+            lowprice_window:[],
             time_slots:[
                 {
           start_time:'12:00 AM',
@@ -128,6 +131,10 @@ let app = new Vue({
           }
     },
     methods:{
+      resetWindowSize(){
+        this.editSectionData.size={}
+        this.calcSectionCost()
+      },
       calcSofaSize(){
         var found =false
         var sofa={}
@@ -206,7 +213,26 @@ let app = new Vue({
       calcSectionCost(){
         this.editSectionData.section_cost = this.editSectionData.size.cost || 0;
       },
-      
+      formatWindowSize(){
+        this.highprice_window=[]
+        this.lowprice_window=[]
+        for(var i=0;i<this.service_productivity.length;i++){
+          if(this.service_productivity[i].is_highprice_window){
+            this.highprice_window.push(this.service_productivity[i])
+          }
+          else{
+            this.lowprice_window.push(this.service_productivity[i])
+          }
+        }
+        var size = this.cleaningsections[this.edit_section_active_index].size;
+        var w = this.cleaningsections[this.edit_section_active_index].is_highprice_window;
+        for(var i=0;i<this.service_productivity.length;i++){
+          if(this.service_productivity[i].name == size && this.service_productivity[i].is_highprice_window == w){
+            this.editSectionData.size = this.service_productivity[i];
+            break;
+          }
+        }
+      },
       async getSize(type){
         if(type=='Hourly Cleaning'){
           type='General Cleaning'
@@ -246,6 +272,8 @@ let app = new Vue({
               this.editSectionData.size = size.split(" ")[0];
             }
 
+          }else if(this.service_type=='Window Cleaning'){
+            this.formatWindowSize();
           }else{
             for(var i =0;i<this.service_productivity.length; i++){
               if(this.service_productivity[i].name == size){
@@ -274,6 +302,8 @@ let app = new Vue({
         this.editSectionData.is_cabinet = this.cleaningsections[item].is_cabinet
         this.editSectionData.new_kitchen = this.cleaningsections[item].new_kitchen
         this.editSectionData.age_of_stain = this.cleaningsections[item].age_of_stain
+        this.editSectionData.is_highprice_window = this.cleaningsections[item].is_highprice_window
+
 
 
         if(this.editSectionData.wall_type != null){
@@ -328,6 +358,8 @@ let app = new Vue({
         this.cleaningsections[this.edit_section_active_index].oil_residue =  this.editSectionData.oil_residue
         this.cleaningsections[this.edit_section_active_index].is_cabinet =  this.editSectionData.is_cabinet
         this.cleaningsections[this.edit_section_active_index].new_kitchen =  this.editSectionData.new_kitchen
+        this.cleaningsections[this.edit_section_active_index].is_highprice_window =  this.editSectionData.is_highprice_window
+
 
 
         $('#id_model_edit_close').click();
