@@ -1598,7 +1598,7 @@ width="1000"
           <!-- keynote for services other than detailed cleaning category begins here-->
           <div class="col-md-12" v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning' || serviceType=='Window Cleaning' || serviceType=='Carpet Cleaning'">
             <div>Add Keynotes</div>
-            <div class="row keynote-chip m-0">
+            <div class="row m-0">
             <div v-for="(keynote,kindex) in otherService.keynote_data" v-bind:key="kindex" class="col-md-6" >
               <div class="keynote-item">
                 <v-chip
@@ -2283,7 +2283,7 @@ width="1000"
                                       </div>
                                       <div class="col-md-12 mt-2">
                                         <div>Add Keynotes</div>
-                                        <div class="row keynote-chip m-0">
+                                        <div class="row  m-0">
                                         <div v-for="(keynote,kindex) in building[index-1].floors[floor-1].keynote_data" v-bind:key="kindex" class="col-md-3" >
                                           <div class="keynote-item">
                                             <v-chip
@@ -2602,7 +2602,7 @@ width="1000"
 
                                                 <div class="col-md-12 mt-2">
                                                   <div>Add Keynotes</div>
-                                                  <div class="row keynote-chip">
+                                                  <div class="row ">
                                                   <div v-for="(keynote,kindex) in apartment.keynote_data" v-bind:key="kindex" class="col-md-3" >
                                                     <div class="keynote-item">
                                                       <v-chip
@@ -3137,7 +3137,7 @@ Fill all the details of the Buildings  to proceed
                         <!-- keynote for services other than detailed cleaning category begins here-->
                         <div class="col-md-12" v-if="serviceType=='Upholstery Cleaning' || serviceType=='Kitchen Cleaning'|| serviceType=='Window Cleaning' || serviceType=='Carpet Cleaning'">
                           <div>Add Keynotes</div>
-                          <div class="row keynote-chip m-0">
+                          <div class="row m-0">
                           <div v-for="(keynote,kindex) in otherService.keynote_data" v-bind:key="kindex" class="col-md-3" >
                             <div class="keynote-item">
                               <v-chip
