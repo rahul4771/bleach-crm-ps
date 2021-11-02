@@ -5807,7 +5807,7 @@ try {
 })
   },
   newHourCalculation(n){
-    n=220
+    
     console.log(n,"man hour")
         
    
