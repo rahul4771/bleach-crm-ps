@@ -441,12 +441,14 @@
                                     <div class="inv-input-container h-30"> 
                                         <input type="number" v-model="noofcleaners"  class="w-p-100 inv-in" >
                                       </div>
+                                      <p v-if="incheck" class="av-font red-text">Please Input Number of cleaners</p>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="tk-common-text2">
                                         &nbsp;
                                     </div>
-                                    <button data-toggle="modal" data-target="#selectsoltmodel"  class="ml-5 tk-sub" ><i class="fa fa-calendar-o mr-5" aria-hidden="true"></i> Select Slot</button>
+                                    <button data-toggle="modal" data-target="#selectsoltmodel"  id="id_modal_btn"  hidden class="ml-5 tk-sub" ><i class="fa fa-calendar-o mr-5" aria-hidden="true"></i> Select Slot</button>
+                                    <button @click="openSoltModal"  class="ml-5 tk-sub" ><i class="fa fa-calendar-o mr-5" aria-hidden="true"></i> Select Slot</button>
                                 </div>
                             </div>
                             <div class="row mt-20" v-if="soltselected">
@@ -514,9 +516,14 @@
                         </div>
                         <div class="row mt-20">
                          <div class="col-md-4">
-                            <v-date-picker is-expanded :min-date='new Date()' v-model='selectedDate' />
+                            <v-date-picker is-expanded :min-date='new Date()' v-on="inputEvents" v-model='selectedDate' />
                          </div>
-                         <div class="col-md-8">
+                         <div class="col-md-8" v-if="avSolt == null">
+                            <div class="mt-5 tk-common-text2">
+                                loading...
+                            </div>
+                         </div>
+                         <div class="col-md-8" v-if="avSolt != null">
                             <div class="mt-5 tk-common-text2">
                                 Select  Slots
                             </div>
@@ -524,13 +531,13 @@
                             <div class="row mt-10" style="margin:0 !important">
                                 <div class="col-md-4" v-for="(slot,sindex) in time_slots" v-bind:key="sindex">
                                     <div class="time-slot duration text-center p-2" 
-                                    @click="addSlot(slot.start_time,slot.end_time,(sindex))" v-if="!checkSelected((sindex)) && !disableSolt((sindex))" >
+                                    @click="addSlot(slot.start_time,slot.end_time,(sindex))" v-if="!checkSelected((sindex)) && !disableSolt((sindex)) && checkAvalSolt((sindex))" >
                                       <% slot.start_time+' - '+ slot.end_time %>
                                      </div>
                                      <div @click="removeSelected((sindex))" class="time-slot duration-active text-center p-2" v-if="checkSelected((sindex))" >
                                         <% slot.start_time+' - '+ slot.end_time %>
                                       </div>
-                                      <div class="time-slot duration-inactive text-center p-2" v-if="!checkSelected((sindex)) && disableSolt((sindex))" >
+                                      <div class="time-slot duration-inactive text-center p-2" v-if="!checkSelected((sindex)) && disableSolt((sindex)) && checkAvalSolt((sindex)) " >
                                         <% slot.start_time+' - '+ slot.end_time %>
                                       </div>
                                 </div>
@@ -543,7 +550,9 @@
                                 <button class="tk-can" type="button" data-dismiss="modal" @click="clearsoltSelection"> Cancel</button>
                                 <button class="tk-can" type="button" data-dismiss="modal" hidden id="id_model_close"> Cancel</button>
 
-                                <button class="ml-5 tk-sub" @click="confirmSolt">Proceed</button>
+                                <button class="ml-5 tk-sub"  @click="confirmSolt" >Proceed</button>
+                                
+
                             </div>
                         </div>
                         <br>

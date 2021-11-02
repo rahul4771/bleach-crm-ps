@@ -18,6 +18,8 @@ let app = new Vue({
     },
     data () {
           return {
+            avSolt:null,
+            incheck:false,
             sofa_size:[],
             chair_size:[],
             new_kitchen_cabinet_size:[],
@@ -133,7 +135,53 @@ let app = new Vue({
                 selected_slots:[]
           }
     },
+    watch: {
+      selectedDate: function() {
+        this.selected_slots = [];
+          this.getAvalibility();
+
+
+      }
+  },
     methods:{
+      inputEvents(){
+        console.log("date chaneg")
+      },
+      checkAvalSolt(index){
+        var tempIndex = index*2;
+        if(this.avSolt != null){
+          if(this.avSolt[tempIndex].length == 0){
+            return false
+          }else{
+            return true
+          }
+        }else{   
+          return true
+        }
+      },
+      async getAvalibility(){
+        
+        this.avSolt = null;
+        
+        let result = await _post("customer/ajax/getmultipleservicecleaningslotes",{
+          cleaning_date:moment(this.selectedDate).format('DD-MM-YYYY'),
+          number_of_cleaners:this.noofcleaners,
+          service_types:[this.service_type]
+        })
+        this.avSolt = result.data.slotes
+        console.log(this.avSolt)
+      },
+      openSoltModal(){
+        this.incheck = false
+        if(this.noofcleaners == ''){
+          this.incheck = true
+        }else{
+          
+          this.getAvalibility();
+          $("#id_modal_btn").click();
+        }
+      
+      },
       resetWindowSize(){
         this.editSectionData.size={}
         this.calcSectionCost()
@@ -410,7 +458,9 @@ let app = new Vue({
         if(this.selected_slots.length !=0){
           console.log(this.selected_slots)
           this.tentdate = moment(this.selectedDate).format('DD-MM-YYYY');
-          var a = this.selected_slots[0];
+          var a = Math.min(...this.selected_slots);
+         
+         
           this.tenttime = this.time_slots[a].start_time;
           this.soltselected = true;
           this.cleaning_hours = this.selected_slots.length * 2;
