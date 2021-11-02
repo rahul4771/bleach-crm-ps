@@ -313,7 +313,7 @@
                       Visit : <span class="inv-text-bold">{% if orderschedule.order_scheduler_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{section.section_cleanings|floatformat:"-1"}}{% endif %}</span>
                     </div>
                     <div class="p-2">
-                      Unit Price : <span class="inv-text-bold">{{section.section_cost|floatformat:'3'}}</span>
+                      Unit Price : <span class="inv-text-bold">{% if section.sectiononly_cost %}{{section.sectiononly_cost|floatformat:'3'}}{% else %}{{section.section_cost|floatformat:'3'}}{% endif %}</span>
                     </div>
                   </div>
                 </div>
@@ -324,7 +324,7 @@
                   <div class="inv-price p-1 ">
                  
                     <span class="inv-text-bold">
-                    {{section.sectiononly_net_cost|floatformat:'3'}}
+                      {% if section.sectiononly_net_cost %}{{section.sectiononly_net_cost|floatformat:'3'}}{% else %}{{section.section_net_cost|floatformat:'3'}}{% endif %}
                     </span> KD
                  
                   </div>
@@ -536,7 +536,7 @@
                               NET PRICE
                             </div>
                             <div class="qt-details-price">
-                            {{section.sectiononly_net_cost|floatformat:'3'}} KD
+                            {% if section.sectiononly_net_cost %}{{section.sectiononly_net_cost|floatformat:'3'}}{% else %}{{section.section_net_cost|floatformat:'3'}}{% endif %}
                             </div>
                           </div>
                         

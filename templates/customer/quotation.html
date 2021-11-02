@@ -412,7 +412,7 @@
                       Visit : <span class="inv-text-bold">{% if evaluation_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{book_section.section_cleanings|floatformat:"-1"}}{% endif %}</span>
                     </div>
                     <div class="p-2">
-                      Unit Price : <span class="inv-text-bold">{{book_section.sectiononly_cost|floatformat:'3'}}</span>
+                      Unit Price : <span class="inv-text-bold">{% if book_section.sectiononly_cost %}{{book_section.sectiononly_cost|floatformat:'3'}}{% else %}{{book_section.section_cost|floatformat:'3'}}{% endif %}</span>
                     </div>
                   </div>
                 </div>
@@ -423,7 +423,7 @@
                   <div class="inv-price p-1 ">
                  
                     <span class="inv-text-bold">
-                    {{book_section.sectiononly_net_cost|floatformat:'3'}}
+                      {% if book_section.sectiononly_net_cost %}{{book_section.sectiononly_net_cost|floatformat:'3'}}{% else %}{{book_section.section_net_cost|floatformat:'3'}}{% endif %}
                     </span> KD
                  
                   </div>
@@ -636,7 +636,7 @@
                               NET PRICE
                             </div>
                             <div class="qt-details-price">
-                            {{book_section.sectiononly_net_cost|floatformat:'3'}} KD
+                              {% if book_section.sectiononly_net_cost %}{{book_section.sectiononly_net_cost|floatformat:'3'}}{% else %}{{book_section.section_net_cost|floatformat:'3'}}{% endif %} KD
                             </div>
                           </div>
                         
