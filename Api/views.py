@@ -28,7 +28,7 @@ from django.db.models.functions import Cast,TruncDate,ExtractMonth,ExtractYear,C
 from django.db.models import Prefetch
 from dateutil.relativedelta import relativedelta
 import pandas as pd
-
+from googletrans import Translator
 from datetime import date
 from django.contrib.auth import authenticate
 from rest_framework.views import APIView
@@ -769,69 +769,67 @@ class InvestigationFormAPI(APIView):
 					is_active = True
 				)
 
-		# is_followup = request.data.get('is_followup')
+		is_followup = request.data.get('is_followup')
+
+		print(is_followup,"foll")
 
 		# if is_followup == True:
+		print('vaaa')
 
-		# 	total_cost	= request.data.get('total_cost')
-		# 	no_of_cleaners = request.data.get('number_of_cleaners')
-		# 	cleaning_hours = request.data.get('cleaning_hours')
-			
-		# 	tendative_date = request.data.get('tendative_date').split(',')
+		total_cost	= request.data.get('total_cost')
+		no_of_cleaners = request.data.get('number_of_cleaners')
+		cleaning_hours = request.data.get('cleaning_hours')
+		
+		tendative_date = request.data.get('tendative_date')
 
-		# 	tendative_time = request.data.get('tendative_time')
+		tendative_time = request.data.get('tendative_time')
 
-		# 	follow_up = FollowUp.objects.select_related('investigation__order__evaluation__customer').get(investigation_id=investigation_id,is_active=True)
-		# 	follow_up.status         = 'FOLLOWUP_IN_PROGRESS'
-		# 	follow_up.followup_notes = request.POST.get('investigator_notes')
-		# 	follow_up.no_of_cleaners = no_of_cleaners
-		# 	follow_up.cleaning_hours = cleaning_hours
-		# 	follow_up.total_cost = total_cost
-		# 	follow_up.save()
+		sections = request.data.get('sections')
+		sections = json.loads(sections)
 
-		# 	for date in tendative_date:
-		# 		print(date)
-		# 		start_date_time = datetime.strptime(date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
-		# 		end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))
-		# 		followup_schedule_array.append(FollowUpScheduler(follow_up=follow_up,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address))
+		# for section in sections:
+		# 	section = dict(section)
+		# 	print(section.section_name,"lol")
+
+		print(tendative_date,tendative_time,sections,"secs")
+
+		follow_up = FollowUp.objects.select_related('investigation__order__evaluation__customer').get(investigation_id=investigation_id,is_active=True)
+		follow_up.status         = 'FOLLOWUP_IN_PROGRESS'
+		# follow_up.followup_notes = request.POST.get('investigator_notes')
+		follow_up.no_of_cleaners = no_of_cleaners
+		follow_up.cleaning_hours = cleaning_hours
+		follow_up.total_cost = total_cost
+		follow_up.save()
+
+		start_date_time = datetime.strptime(tendative_date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
+		end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))
+
+		# for date in tendative_date:
+		# 	print(date+' '+tendative_time,"tod")
+		# 	start_date_time = datetime.strptime(date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
+		# 	end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))
+		# 	followup_schedule_array.append(FollowUpScheduler(follow_up=follow_up,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address))
+
 
 		# 	#to save sections
-		# 	no_of_sections         = int(request.POST.get('section_counter'))
-		# 	section_array          = []
-		# 	for i in range(no_of_sections):
-		# 		section_name  = request.POST.get('section'+str(i))
-		# 		size          = request.POST.get('size'+str(i))
-				
-		# 		wall_type     = request.POST.get('walltype'+str(i))
-		# 		ceiling_type  = request.POST.get('ceilingtype'+str(i))
-		# 		floor_type    = request.POST.get('floortype'+str(i))
-				
-		# 		section_cost  = request.POST.get('sectioncost'+str(i))
+		for section in sections:
+			print(section['section_name'],"sn")
 
-		# 		try:
-		# 			section_name_arabic = Translator().translate(section_name,src='en', dest='ar').text
-		# 		except:
-		# 			section_name_arabic = section_name
-				
-		# 		section = FollowUpSection.objects.create(follow_up=follow_up,section_name=section_name,section_name_arabic=section_name_arabic,size=size,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,section_net_cost=section_cost)
+			try:
+				section_name_arabic = Translator().translate(section['section_name'],src='en', dest='ar').text
+			except:
+				section_name_arabic = section['section_name']
 
-		# 		#to save keynotes
-		# 		try:
-		# 			no_of_keynotes = int(request.POST.get('section'+str(i)+'-keynote_counter'))
-		# 		except:
-		# 			no_of_keynotes = None
+			new_section = FollowUpSection.objects.create(follow_up=follow_up,section_name=section['section_name'],section_name_arabic=section_name_arabic,size=section['size'],wall_type=section['wall_type'],ceiling_type=section['ceiling_type'],floor_type=section['floor_type'],section_net_cost=section['section_cost'])
+	
+			keynote_array = []
+			for keynote in section['keynotes']:
+				keynote_array.append(FollowUpSectionKeynote(followup_section=new_section,sub_area=keynote['keynote'],quantity=keynote['quantity']))
 
-		# 		keynote_array = []
-		# 		if no_of_keynotes:
-		# 			for j in range(no_of_keynotes):
-		# 				keynote = request.POST.get('section'+str(i)+'_keynote'+str(j))
-		# 				quantity= request.POST.get('section'+str(i)+'_quantity'+str(j))
-		# 				if keynote and quantity:
-		# 					keynote_array.append(FollowUpSectionKeynote(followup_section=section,sub_area=keynote,quantity=quantity))
-		# 			#bulk_create keynote
-		# 			FollowUpSectionKeynote.objects.bulk_create(keynote_array)
+			FollowUpSectionKeynote.objects.bulk_create(keynote_array)
+	
 
-		# 	FollowUpScheduler.objects.bulk_create(followup_schedule_array)
+		FollowUpScheduler.objects.create(follow_up=follow_up,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address)
 
 		response_dict = {'success':True}
 
@@ -901,11 +899,24 @@ class VisitDetailsAPI(APIView):
 			section_dict= {
 					'section_id' : section.id,
 					'section_name' : section.section_name,
+					'age' : section.age,
 					'size' : section.size,
 					'floor_type' : section.floor_type,
 					'wall_type' : section.wall_type,
 					'ceiling_type' : section.ceiling_type,
 					'section_net_cost' :section.section_net_cost,
+					'upholstery_type' : section.upholstery_type,
+					'oil_residue' : section.oil_residue,
+					'cement_residue' : section.cement_residue,
+					'new_kitchen' : section.new_kitchen,
+					'is_cabinet' : section.is_cabinet,
+					'is_highprice_facade' : section.is_highprice_facade,
+					'is_highprice_window' : section.is_highprice_window,
+					'vacuuming' : section.vacuuming,
+					'age_of_stain' : section.age_of_stain,
+					'color' : section.colour,
+					'material' : section.material,
+					'cause_of_stain' : section.cause_of_stain,
 					'keynotes' : keynotes,
 					'addons' : sectionaddons
 			}

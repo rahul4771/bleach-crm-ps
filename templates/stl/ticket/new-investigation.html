@@ -356,26 +356,61 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row mt-10">
-                                    <div class="col-md-6 c-right-border">
+                                <div  class="row mt-10">
+                                    <div class="col-md-6 c-right-border" v-if="service_type != 'Upholstery Cleaning'" >
                                         <div class="order-details-content">
                                             <div class="row c-mb-3">
+                                                <div class="col-md-6 col-xs-6 mb-10" >
+                                                    <div class="order-details-key">Size</div> 
+                                                    <div class="c-text order-details-value"> <% item.size %> </div>
+                                                </div>
+                                                <div class="col-md-6 col-xs-6 mb-10">
+                                                    <div class="order-details-key" v-if="service_type != 'Window Cleaning'">Wall Type</div> 
+                                                    <div class="c-text order-details-value"> <% item.wall_type %> </div>
+                                                </div>
+                                                <div class="col-md-6 col-xs-6 mb-10" v-if="service_type != 'Window Cleaning'">
+                                                    <div class="order-details-key">Celling Type</div> 
+                                                    <div class="c-text order-details-value"> <% item.ceiling_type %> </div>
+                                                </div>
+                                                <div class="col-md-6 col-xs-6 mb-10" v-if="service_type != 'Window Cleaning'">
+                                                    <div class="order-details-key">Floor Type</div> 
+                                                    <div class="c-text order-details-value"> <% item.floor_type%> </div>
+                                                </div>
+                                                <div class="col-md-6 col-xs-6 mb-10">
+                                                    <div class="order-details-key">Cost</div> 
+                                                    <div class="c-text order-details-value"> <% item.section_net_cost %> </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 c-right-border" v-if="service_type == 'Upholstery Cleaning'" >
+                                        <div class="order-details-content">
+                                            <div class="row c-mb-3">
+                                                <div class="col-md-6 col-xs-6 mb-10">
+                                                    <div class="order-details-key">Age</div> 
+                                                    <div class="c-text order-details-value"> <% item.age %> </div>
+                                                </div>
                                                 <div class="col-md-6 col-xs-6 mb-10">
                                                     <div class="order-details-key">Size</div> 
                                                     <div class="c-text order-details-value"> <% item.size %> </div>
                                                 </div>
                                                 <div class="col-md-6 col-xs-6 mb-10">
-                                                    <div class="order-details-key">Wall Type</div> 
-                                                    <div class="c-text order-details-value"> <% item.wall_type %> </div>
+                                                    <div class="order-details-key">Material</div> 
+                                                    <div class="c-text order-details-value"> <% item.material %> </div>
                                                 </div>
                                                 <div class="col-md-6 col-xs-6 mb-10">
-                                                    <div class="order-details-key">Celling Type</div> 
-                                                    <div class="c-text order-details-value"> <% item.ceiling_type %> </div>
+                                                    <div class="order-details-key">Colour</div> 
+                                                    <div class="c-text order-details-value"> <% item.color %> </div>
                                                 </div>
-                                                <div class="col-md-6 col-xs-6 mb-10">
-                                                    <div class="order-details-key">Floor Type</div> 
-                                                    <div class="c-text order-details-value"> <% item.floor_type%> </div>
+                                                <div class="col-md-6 col-xs-6 mb-10" v-if="item.cause_of_stain !=''" >
+                                                    <div class="order-details-key">Cause of Stain</div> 
+                                                    <div class="c-text order-details-value"> <% item.cause_of_stain %> </div>
                                                 </div>
+                                                <div class="col-md-6 col-xs-6 mb-10" v-if="item.age_of_stain !=''">
+                                                    <div class="order-details-key">Age of Stain</div> 
+                                                    <div class="c-text order-details-value"> <% item.age_of_stain %> </div>
+                                                </div>
+                                               
                                                 <div class="col-md-6 col-xs-6 mb-10">
                                                     <div class="order-details-key">Cost</div> 
                                                     <div class="c-text order-details-value"> <% item.section_net_cost %> </div>
@@ -395,6 +430,7 @@
                                         </div>
                                     </div>
                                 </div>
+                               
                               
                             </div>
                             <div class="row mt-20" v-if="cleaningsections != null & cleaningsections.length != 0 " >
@@ -410,7 +446,7 @@
                                     <div class="tk-common-text2">
                                         &nbsp;
                                     </div>
-                                    <button data-toggle="modal" data-target="#selectsoltmodel"  class="ml-5 tk-sub" ><i class="fa fa-calendar-o mr-5" aria-hidden="true"></i> Select Solt</button>
+                                    <button data-toggle="modal" data-target="#selectsoltmodel"  class="ml-5 tk-sub" ><i class="fa fa-calendar-o mr-5" aria-hidden="true"></i> Select Slot</button>
                                 </div>
                             </div>
                             <div class="row mt-20" v-if="soltselected">
@@ -507,7 +543,7 @@
                                 <button class="tk-can" type="button" data-dismiss="modal" @click="clearsoltSelection"> Cancel</button>
                                 <button class="tk-can" type="button" data-dismiss="modal" hidden id="id_model_close"> Cancel</button>
 
-                                <button class="ml-5 tk-sub" @click="confirmSolt">Procced</button>
+                                <button class="ml-5 tk-sub" @click="confirmSolt">Proceed</button>
                             </div>
                         </div>
                         <br>
@@ -582,19 +618,249 @@
                     <div class="modal-body" v-if="editSectionData != null">
                         <div >
                             <div class="row">
+                                
+                                <!-- Kitchen Cleaning start -->
+                                <div class="col-md-6 mt-10" v-if="service_type=='Kitchen Cleaning'">
+                                    <div class=" bold-text common-label required-field"> <label>Is it a new Kitchen</label></div>
+                                    <div class="d-flex">
+                                    <div>
+                                <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" :value="true"  v-model="editSectionData.new_kitchen" @change="resetKitchenSize" >
+                                    <label class="form-check-label" for="exampleRadios1">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div>
+                                    <input class="form-check-input ml-10" type="radio" name="exampleRadios" id="exampleRadios1" :value="false" checked v-model="editSectionData.new_kitchen" @change="resetKitchenSize" >
+                                        <label class="form-check-label" for="exampleRadios1">
+                                            No
+                                        </label>
+                                    </div>
+                                </div>
+                                </div>
+                                <div class="col-md-12 mt-10 mb-10" v-if="service_type=='Kitchen Cleaning'">
+                                    <div class=" bold-text common-label required-field"> <label>Is there any oil residue ? </label></div>
+                                    <div class="d-flex">
+                                    <div>
+                                <input class="form-check-input" type="radio" name="residueRadios" id="residueRadios1" :value="true"  v-model="editSectionData.oil_residue" >
+                                    <label class="form-check-label" for="exampleRadios1">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div>
+                                    <input class="form-check-input ml-10" type="radio" name="residueRadios" id="residueRadios1" :value="false" checked v-model="editSectionData.oil_residue">
+                                        <label class="form-check-label" for="exampleRadios1">
+                                            No
+                                        </label>
+                                    </div>
+                                </div>
+                                </div>
+                                <div class="col-md-12 mt-10 mb-10" v-if="service_type=='Kitchen Cleaning'">
+                                    <div class=" bold-text common-label required-field"> <label>Do you want to clean the cabinet ?</label></div>
+                                    <div class="d-flex">
+                                    <div>
+                                <input class="form-check-input" type="radio" name="cabinetRadios" id="cabinetRadios1" :value="true"  v-model="editSectionData.is_cabinet" @change="resetKitchenSize" >
+                                    <label class="form-check-label" for="exampleRadios1">
+                                        Yes
+                                    </label>
+                                </div>
+                                <div>
+                                    <input class="form-check-input ml-10" type="radio" name="cabinetRadios" id="cabinetRadios1" :value="false" checked v-model="editSectionData.is_cabinet" @change="resetKitchenSize" >
+                                        <label class="form-check-label" for="exampleRadios1">
+                                            No
+                                        </label>
+                                    </div>
+                                </div>
+                                </div>
+                                <!-- Kitchen Cleaning end -->
+
+
                                 <div class="col-md-6 mt-10">
                                     <div class=" bold-text common-label required-field"> <label class="av-font">Section Name</label></div>
                                     <div class="inv-input-container " style="height: 40px;"> 
                                         <input type="text" v-model="editSectionData.section_name"  class="w-p-100 inv-in"  >
                                     </div>
                                 </div>
-                                <div class="col-md-6 mt-10">
-                                    <div class=" bold-text common-label required-field"> <label class="av-font">Section Name</label></div>
-                                    <div class="inv-input-container " style="height: 40px;"> 
-                                        <input type="text"  class="w-p-100 inv-in"  >
+                                 <!-- window cleaning-->
+                            <div class="col-md-12 mt-10 mb-10" v-if="service_type=='Window Cleaning'">
+                                <div class=" bold-text common-label required-field"> <label>Type of Window</label></div>
+                                <div class="d-flex">
+                                <div>
+                            <input class="form-check-input" type="radio" name="windowRadios" id="windowRadios1" :value="true"  v-model="editSectionData.is_highprice_window" @change="resetWindowSize" >
+                                <label class="form-check-label" for="exampleRadios1">
+                                Old
+                                </label>
+                            </div>
+                                <div>
+                                    <input class="form-check-input ml-10" type="radio" name="windowRadios" id="windowRadios1" :value="false" checked v-model="editSectionData.is_highprice_window" @change="resetWindowSize" >
+                                        <label class="form-check-label" for="exampleRadios1">
+                                        New
+                                        </label>
                                     </div>
                                 </div>
-                                <div class="col-md-6 mt-10"  >
+                            </div>
+                            <div class="col-md-6 mt-10" v-if="service_type=='Window Cleaning' ">
+                    
+                                <div class=" bold-text common-label required-field"> <label>Size</label></div>
+                                <multiselect
+                                  v-model="editSectionData.size"
+                                  placeholder="Select a Size"
+                                  
+                                  :options="highprice_window"
+            
+                                  :multiple="false"
+                                  :taggable="false"
+                                  :show-labels="false"
+                                  track-by="name"
+                                  label="combined_size"
+                                  @input="calcSectionCost()"
+                                v-if="editSectionData.is_highprice_window"
+            
+            
+                                ></multiselect>
+                                <multiselect
+                                v-model="editSectionData.size"
+                                placeholder="Select a Size"
+                                v-else
+                                :options="lowprice_window"
+            
+                                :multiple="false"
+                                :taggable="false"
+                                :show-labels="false"
+                                track-by="name"
+                                label="combined_size"
+                                @input="calcSectionCost()"
+            
+            
+            
+                              ></multiselect>
+                              
+                                    
+                             </div>
+                                <div class="col-md-6 mt-10" v-if="service_type=='Upholstery Cleaning'">
+                                    <div class=" bold-text common-label required-field"> <label>Age</label></div>
+                                  
+                                  <div class="inv-input-container " style="height: 40px;"> 
+                                    <input type="number" v-model="editSectionData.age"  class="w-p-100 inv-in"  >
+                                </div>
+                                </div>
+                                <div class="col-md-6 "></div>
+
+                                <!-- size kitchen Cleaning -->
+                                <div class="col-md-6 mt-10" v-if="service_type=='Kitchen Cleaning'">
+                    
+                                    <div class=" bold-text common-label required-field"> <label>Size</label></div>
+                                    <multiselect
+                                    v-if="editSectionData.new_kitchen && editSectionData.is_cabinet"
+                                      v-model="editSectionData.size"
+                                      placeholder="Select a Size"
+                                      
+                                      :options="new_kitchen_cabinet_size"
+                
+                                      :multiple="false"
+                                      :taggable="false"
+                                      :show-labels="false"
+                                      track-by="name"
+                                      label="combined_size"
+                                      @input="calcSectionCost()"
+                
+                
+                
+                                    ></multiselect>
+                                    <multiselect
+                                    v-else-if="editSectionData.new_kitchen && !editSectionData.is_cabinet"
+                                      v-model="editSectionData.size"
+                                      placeholder="Select a Size"
+                                      
+                                      :options="old_kitchen_nocabinet_size"
+                
+                                      :multiple="false"
+                                      :taggable="false"
+                                      :show-labels="false"
+                                      track-by="name"
+                                      label="combined_size"
+                                      @input="calcSectionCost()"
+                                    ></multiselect>
+                                    <multiselect
+                                    v-else-if="!editSectionData.new_kitchen && editSectionData.is_cabinet"
+                                      v-model="editSectionData.size"
+                                      placeholder="Select a Size"
+                                      
+                                      :options="old_kitchen_cabinet_size"
+                
+                                      :multiple="false"
+                                      :taggable="false"
+                                      :show-labels="false"
+                                      track-by="name"
+                                      label="combined_size"
+                                      @input="calcSectionCost()"
+                                    ></multiselect>
+                                    <multiselect
+                                    v-else-if="!editSectionData.new_kitchen && !editSectionData.is_cabinet"
+                                      v-model="editSectionData.size"
+                                      placeholder="Select a Size"
+                                      
+                                      :options="old_kitchen_nocabinet_size"
+                
+                                      :multiple="false"
+                                      :taggable="false"
+                                      :show-labels="false"
+                                      track-by="name"
+                                      label="combined_size"
+                                      @input="calcSectionCost()"
+                                    ></multiselect>
+                                  
+                                        
+                                 </div>
+                                 <!-- end size kitchen Cleaning -->
+                                <!--  size Upholstery Cleaning -->
+
+                                <div class="col-md-6 mt-10" v-if="service_type=='Upholstery Cleaning' && editSectionData.upholstery_type=='SOFA'">
+                    
+                                    <div class=" bold-text common-label required-field"> <label>Size</label></div>
+                                    <div class="inv-input-container " style="height: 40px;"> 
+                                        <input type="number" v-model="editSectionData.size"  class="w-p-100 inv-in"  placeholder="Seaters" @input="calcSofaSize()" >
+                                    </div>  
+                                 </div>
+                                 <div class="col-md-6 mt-10" v-if="service_type=='Upholstery Cleaning' && editSectionData.upholstery_type=='CHAIR' ">
+                    
+                                    <div class=" bold-text common-label required-field"> <label>Size</label></div>
+                                    <multiselect
+                                      v-model="editSectionData.size"
+                                      placeholder="Select a Size"
+                                      
+                                      :options="chair_size"
+                
+                                      :multiple="false"
+                                      :taggable="false"
+                                      :show-labels="false"
+                                      track-by="name"
+                                      label="combined_size"
+                                      @input="calcSectionCost()"
+                
+                
+                
+                                    ></multiselect>
+                                  
+                                        
+                                 </div>
+                                <!--  end size Upholstery Cleaning -->
+
+                                 
+
+                                <div class="col-md-6 mt-10" v-if="service_type!='Upholstery Cleaning' && service_type!='Kitchen Cleaning' && service_type!='Facade Cleaning' && service_type!='Window Cleaning' && service_type!='Kitchen Appliances' " >
+                                    <div class=" bold-text common-label required-field"> <label>Size</label></div>
+                                    <multiselect
+                                        v-model="editSectionData.size"
+                                        placeholder="Size"
+                                        label="combined_size"
+                                        :options="service_productivity"
+                                        :multiple="false"
+                                        :taggable="false"
+                                        :show-labels="false"
+                                        @input="calcSectionCost()"
+                                    ></multiselect>
+                                </div>
+                                <div class="col-md-6 mt-10"  v-if="service_type=='General Cleaning' || service_type=='Deep Cleaning' || service_type=='Storage Area' || service_type=='Facade Cleaning' || service_type=='Kitchen Cleaning'|| service_type=='Sterilization' || service_type=='Hourly Cleaning'">
                                     <div class=" bold-text common-label required-field"> <label>Wall type</label></div>
                                   <multiselect
                                     v-model="editSectionData.wall_type"
@@ -607,7 +873,7 @@
                                     
                                   ></multiselect>
                                 </div>
-                                <div class="col-md-6 mt-10"  >
+                                <div class="col-md-6 mt-10" v-if="service_type=='General Cleaning' || service_type=='Deep Cleaning' || service_type=='Storage Area' || service_type=='Kitchen Cleaning'|| service_type=='Sterilization'||service_type=='Car Parking Umbrella' || service_type=='Hourly Cleaning'" >
                                     <div class=" bold-text common-label required-field"> <label>Floor type</label></div>
                                   <multiselect
                                     v-model="editSectionData.floor_type"
@@ -621,7 +887,7 @@
                                     
                                   ></multiselect>
                                 </div>
-                                <div class="col-md-6 mt-10"  >
+                                <div class="col-md-6 mt-10" v-if="service_type=='General Cleaning' || service_type=='Deep Cleaning' || service_type=='Storage Area' || service_type=='Kitchen Cleaning'|| service_type=='Sterilization' || service_type=='Car Parking Umbrella' || service_type=='Hourly Cleaning'" >
                                     <div class=" bold-text common-label required-field"> <label>Ceiling type</label></div>
                                   <multiselect
                                     v-model="editSectionData.ceiling_type"
@@ -635,12 +901,96 @@
                                     
                                   ></multiselect>
                                 </div>
+
+                                <div class="col-md-6 mt-10" v-if="service_type=='Upholstery Cleaning' || service_type=='Mattress Cleaning' || service_type=='Carpet Cleaning'">
+                 
+                                    <div class=" bold-text common-label required-field"> <label>Material</label></div>
+                                    <multiselect
+                                      v-model="editSectionData.material"
+                                      placeholder="Materials"
+                                      
+                                      :options="materials"
+                                      :multiple="true"
+                                      :taggable="false"
+                                      :show-labels="false"
+                                      
+                                    ></multiselect>
+                                </div>
+                                <div class="col-md-6 mt-10" v-if="service_type=='Upholstery Cleaning' || service_type=='Mattress Cleaning' || service_type=='Carpet Cleaning'">
+                                   
+                                      <div class=" bold-text common-label required-field"> <label>Colour</label></div>
+                                      <multiselect
+                                        v-model="editSectionData.color"
+                                        placeholder="Color"
+                                        
+                                        :options="colors"
+                                        :multiple="true"
+                                        :taggable="false"
+                                        :show-labels="false"
+                                        
+                                      ></multiselect>
+                                </div>
+                                <div class="col-md-6 mt-10" v-if="service_type=='Upholstery Cleaning' || service_type=='Mattress Cleaning' || service_type=='Carpet Cleaning'">
+                                   
+                                      <div class=" bold-text common-label"> <label>Cause of Stain</label></div>
+                                      <multiselect
+                                        v-model="editSectionData.cause_of_stain"
+                                        placeholder="Cause Of Stain"
+                                        
+                                        :options="cause_of_stain"
+                                        :multiple="true"
+                                        :taggable="false"
+                                        :show-labels="false"
+                                        
+                                      ></multiselect>
+                                </div>
+                                <div class="col-md-6 mt-10" v-if="service_type=='Upholstery Cleaning' || service_type=='Mattress Cleaning' || service_type=='Carpet Cleaning'">
+                                      
+                                      <div class=" bold-text common-label "> <label>Age Of Stain</label></div>
+                                      <div class="inv-input-container " style="height: 40px;"> 
+                                        <input type="number" v-model="editSectionData.age_of_stain"  class="w-p-100 inv-in"  >
+                                    </div>
+                                    
+                                          
+                                </div>
+
                                 <div class="col-md-6 mt-10"  >
                                     <div class=" bold-text common-label required-field"> <label class="av-font">Section Cost</label></div>
                                     <div class="inv-input-container " style="height: 40px;"> 
-                                        <input type="number"  v-model="editSectionData.section_cost" class="w-p-100 inv-in"  >
+                                        <input type="number" readonly  v-model="editSectionData.section_cost" class="w-p-100 inv-in"  >
                                     </div>
                                 </div>
+                                <div class="col-md-6 "></div>
+                                <div class="col-md-12 mt-20" v-if="service_type!='Kitchen Appliances'">
+                                    <div class="av-font" style="font-weight: 800;">
+                                        Key Notes
+                                    </div> 
+                                    <div class="row mt-10" >
+                                        <div class="col-md-4 mt-10" v-for="(keynote,kindex) in editSectionData.keynotes" v-bind:key="kindex">
+                                            <div class="keynote-chip d-flex" v-if="keynote.sub_area!='kitchen'">
+                                                <input type="text" v-model="keynote.sub_area" class="keynote-input"/>
+                                                <input type="text" v-model="keynote.quantity" class="keynote-input"/>
+                                             
+                                                <div class="keynote-delicon cp" @click="delKeynote(kindex)"><i class="far fa-trash-alt"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mt-10" >
+                                            <div class="keynote-chip" >
+                                                <div class="d-flex">
+                                                <input type="text" style="text-transform:uppercase"  v-model="newkeynote.sub_area" class="keynote-input" placeholder="Name"/>
+                                                <input type="text" v-model="newkeynote.quantity" class="keynote-input" placeholder="Value"/>
+                                              
+                                               <div class="keynote-delicon cp" @click="addToKeynote()"><i class="far fa-plus-square"></i>
+                                               </div>
+                                            </div>
+                                               <div class="red-msg text-center mt-10" v-if="keynote_msg">Please fill the required fields</div>
+                                                </div>
+                                               
+                                            </div> 
+                                    </div>
+                                </div>  
+                                
                               
                                 
                             </div>
@@ -679,6 +1029,7 @@
 <script>
     $(document).ready(function(){
        loadvisitdata({{investigation_details.order_schedule.id}})
+       console.log({{investigation_details.order_schedule.id}},"iddd")
        })
    async function loadvisitdata(visit_id){
        
