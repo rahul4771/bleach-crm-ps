@@ -95,6 +95,12 @@ const app=new Vue({
         
       },
     data: {
+      currentSlotDay:1,
+      cleaning_set:[],
+      max_cleaners:[],
+      min_cleaners:[],
+      max_hours:[],
+      min_hours:[],
       out_of_shift:false,
       kitchen_max_cleaners:null,
       new_kitchen_cabinet_productivity:null,
@@ -599,6 +605,14 @@ hourly_slots:true
 
       },
       methods: {
+        isSlotsSelected(){
+          if(this.currentSlotDay>this.cleaning_set.length){
+            return true
+          }
+          else{
+            return false
+          }
+        },
         findAddonCost(){
           var addon_cost=0
           for(var i=0;i<this.addons_parsed.length;i++){
@@ -788,6 +802,19 @@ hourly_slots:true
           this.getMultipleSlots()
           //this.calcSlots()
         },
+        oneTimeNewDateChange(){
+
+          this.one_time_slots={}
+            this.one_time_slots[this.oneTimeDateSelected]={
+              slots:[]
+            }
+          
+          var yr=this.oneTimeDateSelected.split('-')[0]
+          var mt=this.oneTimeDateSelected.split('-')[1]
+          var dy=this.oneTimeDateSelected.split('-')[2]
+          this.slotDate=dy+'-'+mt+'-'+yr
+          this.getMultipleSlots()
+        },
         reconfirmScheduler(){
           this.reconfirmation_dialog=false
           for(var i=0;i<this.multiServicesBill.length;i++){
@@ -822,6 +849,7 @@ hourly_slots:true
           return flag
         },
         resetScheduler(){
+          this.currentSlotDay=1
           this.out_of_shift=false
           this.cleaningPolicy=''
           this.subStat=''
@@ -838,12 +866,14 @@ hourly_slots:true
           this.reselectDate={}
           this.reselectDateIndex=null
          // this.one_time_slots={},
-
+          if(this.cleaning_set.length>0)
+          {
           this.selectedDuration={
-            cleaners:null,
-            hours:null,
-            slots:null
+            cleaners:this.cleaning_set[0][1],
+            hours:this.cleaning_set[0][0],
+            slots:(this.cleaning_set[0][0])/2
           }
+        }
           this.scheduleFormat={
             allSchedule:{},
             individual:{}
@@ -865,6 +895,7 @@ hourly_slots:true
             this.one_time_slots[this.oneTimeDateSelected]={
                 slots:[]
             }
+            this.selected_onetime_slots={}
 
         },
         addKeynote(building,floor){
@@ -940,6 +971,7 @@ hourly_slots:true
           }
         },
         addOneTimeToSchedule(){
+         
           if(this.scheduleStat){
             this.scheduleStatus=true
           }
@@ -1053,7 +1085,7 @@ hourly_slots:true
           var groundid=Object.keys(this.scheduleGroup).length
           this.scheduleGroup[groundid]=[ ...this.schedule_serviceTypes_selected ]
           this.selected_onetime_slots={}
-
+          this.currentSlotDay=1
           this.onetime_scheduled={}
           this.oneTimeSelectionStat=false
           this.schedule_serviceTypes_selected=[]
@@ -2673,6 +2705,7 @@ console.log(response)
     this.one_time_slots[this.oneTimeDateSelected].slots.push(currSlot)
     this.onetimerender=true
 },
+
 resetOneTime(){
   this.onetimerender=false
   this.one_time_slots={}
@@ -2680,12 +2713,13 @@ resetOneTime(){
   this.one_time_slots[this.oneTimeDateSelected]={
     slots:[]
   }
- 
+  this.selected_onetime_slots={}
+ this.currentSlotDay=1
   this.onetimerender=true
 },
 checkSlotSelection(){
-  for(var i in  this.one_time_slots){
-    if(this.one_time_slots[i].slots.length>0){
+  for(var i in  this.selected_onetime_slots){
+    if(this.selected_onetime_slots[i].slots.length>0){
       return true
     
     }
@@ -2791,7 +2825,19 @@ removeOneTimeSlot(slot){
   else{
     return false
   }
-  },
+  
+ 
+},
+checkSelectedDate(){
+  console.log("called me")
+  for(var i in this.selected_onetime_slots){
+    console.log("i is "+i)
+    if(i==this.oneTimeDateSelected){
+      return true
+    }
+  }
+  
+},
   
   checkOneTimeSlotStat(start,end,slot){
     for(var i in this.slotFormat){
@@ -2808,7 +2854,7 @@ removeOneTimeSlot(slot){
     for(var i in this.one_time_slots){
       counter=counter+this.one_time_slots[i].slots.length
     }
-    if(counter<this.selectedDuration.slots)
+    if(counter<(this.cleaning_set[this.currentSlotDay-1][0])/2)
     {
       
     if(this.one_time_slots[this.oneTimeDateSelected].slots.length>0)
@@ -2882,6 +2928,44 @@ removeOneTimeSlot(slot){
     else{
       this.slot_msg=true
     }
+  },
+  nextSlotSelection(){
+    this.slot_msg=false
+    var slotscount=this.oneTimeSlotCounter()
+    var slots_required=this.selectedDuration.hours/2
+    if(slotscount==slots_required)
+    {
+   
+    
+      for(var i in this.one_time_slots){
+        if(this.one_time_slots[i].slots.length>0){
+          this.selected_onetime_slots[i]={
+            slots:this.one_time_slots[i].slots,
+            day_count:this.currentSlotDay
+          }
+        }
+      }
+    
+  
+      if(this.currentSlotDay>this.cleaning_set.length){
+        this.onetime_dialog=false
+        this.oneTimeSelectionStat=true
+      }
+      else{
+        this.currentSlotDay++
+        if(this.currentSlotDay<=this.cleaning_set.length)
+        {
+      this.oneTimeDateSelected=moment(this.oneTimeDateSelected,'YYYY-MM-DD').add(1,'days').format('YYYY-MM-DD')  
+      this.oneTimeNewDateChange()
+        }
+      }
+    }
+    else{
+      this.slot_msg=true
+    }
+    
+    
+
   },
   
   addSlot(slot) {
@@ -5335,6 +5419,10 @@ try {
         var total_lowpricewindow_size = 0;
         var total_highpricefacade_size = 0;
           var total_lowpricefacade_size = 0;
+          this.max_cleaners.push(response.data.max_cleaners)
+          this.min_cleaners.push(response.data.min_cleaners)
+          this.max_hours.push(response.data.max_hours)
+          this.min_hours.push(response.data.min_hours)
            var selected_service=this.schedule_serviceTypes[k]
           console.log(response.data)
           this.durationData[this.schedule_serviceTypes[k]]=response.data
@@ -5512,6 +5600,10 @@ try {
    });
  },
   newdurationcalculation(){
+    this.max_cleaners=[]
+    this.min_cleaners=[]
+    this.max_hours=[]
+    this.min_hours=[]
      this.duration=[]
      this.totalmanhour=0
   let promises = [];
@@ -5531,201 +5623,206 @@ try {
   console.log("i am ready")
     var manhour=this.totalmanhour
     var n=this.n
-    console.log("n is "+n)
-    console.log("man hour  is "+manhour)
-    var pair = [];
-        for (var i = 1; i < parseInt(n ** (1 / 2)) + 1; i++) {
-          if (n % i == 0) {
-            pair = [i, n / i];
-          }
-        }
-        console.log(pair, "pair");
-        //pair convert to 3's multiple
-        var convertion_r = 2;
-        var convertion_mod = pair[1] % convertion_r;
-        var highest_cleaner=Math.max(...this.maxCleaners)
-        var lowest_cleaner=Math.min(...this.maxCleaners)
+    
+    this.newHourCalculation(manhour)
+    // var pair = [];
+    //     for (var i = 1; i < parseInt(n ** (1 / 2)) + 1; i++) {
+    //       if (n % i == 0) {
+    //         pair = [i, n / i];
+    //       }
+    //     }
+    //     console.log(pair, "pair");
+    //     //pair convert to 3's multiple
+    //     var convertion_r = 2;
+    //     var convertion_mod = pair[1] % convertion_r;
+    //     var highest_cleaner=Math.max(...this.maxCleaners)
+    //     var lowest_cleaner=Math.min(...this.maxCleaners)
 
-        if (convertion_mod > parseInt(convertion_r / 2)) {
-          console.log(manhour, "divider");
-          console.log(pair[1] + (convertion_r - convertion_mod), "divident");
-          console.log(
-            parseInt(manhour / (pair[1] + (convertion_r - convertion_mod))),
-            "division"
-          );
-          pair = [
-            Math.round(manhour / (pair[1] + (convertion_r - convertion_mod))),
-            pair[1] + (convertion_r - convertion_mod),
-          ];
-        } else {
-          console.log(manhour, "divider");
-          console.log(pair[1] - convertion_mod, "divident");
+    //     if (convertion_mod > parseInt(convertion_r / 2)) {
+    //       console.log(manhour, "divider");
+    //       console.log(pair[1] + (convertion_r - convertion_mod), "divident");
+    //       console.log(
+    //         parseInt(manhour / (pair[1] + (convertion_r - convertion_mod))),
+    //         "division"
+    //       );
+    //       pair = [
+    //         Math.round(manhour / (pair[1] + (convertion_r - convertion_mod))),
+    //         pair[1] + (convertion_r - convertion_mod),
+    //       ];
+    //     } else {
+    //       console.log(manhour, "divider");
+    //       console.log(pair[1] - convertion_mod, "divident");
 
-          if (pair[1] - convertion_mod == 0) {
-            pair = [Math.round(manhour / 2), 2];
-          } else {
-            pair = [
-              Math.round(manhour / (pair[1] - convertion_mod)),
-              pair[1] - convertion_mod,
-            ];
-          }
-        }
+    //       if (pair[1] - convertion_mod == 0) {
+    //         pair = [Math.round(manhour / 2), 2];
+    //       } else {
+    //         pair = [
+    //           Math.round(manhour / (pair[1] - convertion_mod)),
+    //           pair[1] - convertion_mod,
+    //         ];
+    //       }
+    //     }
 
-        console.log(pair, "newpair");
+    //     console.log(pair, "newpair");
 
-        //var max_cleaners = data["max_cleaners"];
-        //max_cleaners=10;
-        console.log("lowest cleaner is "+lowest_cleaner)
-        var duration_list = [];
-        var lower_loop = 0;
-        var upper_loop = 0;
-        var middle_element = pair[0];
-        var middle_hours = pair[1];
+    //     //var max_cleaners = data["max_cleaners"];
+    //     //max_cleaners=10;
+    //     console.log("lowest cleaner is "+lowest_cleaner)
+    //     var duration_list = [];
+    //     var lower_loop = 0;
+    //     var upper_loop = 0;
+    //     var middle_element = pair[0];
+    //     var middle_hours = pair[1];
 
-        if (middle_element <= lowest_cleaner && middle_element > 0) {
-          duration_list.push(pair);
+    //     if (middle_element <= lowest_cleaner && middle_element > 0) {
+    //       duration_list.push(pair);
 
-          //first
-          if (
-            Math.round(manhour / (middle_hours - 2)) > 0 &&
-            Math.round(manhour / (middle_hours - 2)) <= lowest_cleaner
-          ) {
-            duration_list.push([
-              Math.round(manhour / (middle_hours - 2)),
-              middle_hours - 2,
-            ]);
-            lower_loop = 1;
-          }
-          if (
-            Math.round(manhour / (middle_hours + 2)) > 0 &&
-            Math.round(manhour / (middle_hours + 2)) <= lowest_cleaner
-          ) {
-            duration_list.push([
-              Math.round(manhour / (middle_hours + 2)),
-              middle_hours + 2,
-            ]);
-            upper_loop = 1;
-          }
+    //       //first
+    //       if (
+    //         Math.round(manhour / (middle_hours - 2)) > 0 &&
+    //         Math.round(manhour / (middle_hours - 2)) <= lowest_cleaner
+    //       ) {
+    //         duration_list.push([
+    //           Math.round(manhour / (middle_hours - 2)),
+    //           middle_hours - 2,
+    //         ]);
+    //         lower_loop = 1;
+    //       }
+    //       if (
+    //         Math.round(manhour / (middle_hours + 2)) > 0 &&
+    //         Math.round(manhour / (middle_hours + 2)) <= lowest_cleaner
+    //       ) {
+    //         duration_list.push([
+    //           Math.round(manhour / (middle_hours + 2)),
+    //           middle_hours + 2,
+    //         ]);
+    //         upper_loop = 1;
+    //       }
 
-          //check
-          if (
-            Math.round(manhour / (middle_hours - 4)) > 0 &&
-            Math.round(manhour / (middle_hours - 4)) <= lowest_cleaner &&
-            upper_loop == 0
-          ) {
-            duration_list.push([
-              Math.round(manhour / (middle_hours - 4)),
-              middle_hours - 4,
-            ]);
-            lower_loop = 1;
-          }
-          if (
-            Math.round(manhour / (middle_hours + 4)) > 0 &&
-            Math.round(manhour / (middle_hours + 4)) <= lowest_cleaner &&
-            lower_loop == 0
-          ) {
-            duration_list.push([
-              Math.round(manhour / (middle_hours + 4)),
-              middle_hours + 4,
-            ]);
-            upper_loop = 1;
-          }
-        } else if (middle_element == 0 && lowest_cleaner > 0) {
-          //1st
-          duration_list.push([1, middle_hours]);
+    //       //check
+    //       if (
+    //         Math.round(manhour / (middle_hours - 4)) > 0 &&
+    //         Math.round(manhour / (middle_hours - 4)) <= lowest_cleaner &&
+    //         upper_loop == 0
+    //       ) {
+    //         duration_list.push([
+    //           Math.round(manhour / (middle_hours - 4)),
+    //           middle_hours - 4,
+    //         ]);
+    //         lower_loop = 1;
+    //       }
+    //       if (
+    //         Math.round(manhour / (middle_hours + 4)) > 0 &&
+    //         Math.round(manhour / (middle_hours + 4)) <= lowest_cleaner &&
+    //         lower_loop == 0
+    //       ) {
+    //         duration_list.push([
+    //           Math.round(manhour / (middle_hours + 4)),
+    //           middle_hours + 4,
+    //         ]);
+    //         upper_loop = 1;
+    //       }
+    //     } else if (middle_element == 0 && lowest_cleaner > 0) {
+    //       //1st
+    //       duration_list.push([1, middle_hours]);
 
-          //2nd
-          if (
-            Math.round(manhour / (middle_hours + 2)) > 0 &&
-            Math.round(manhour / (middle_hours + 2)) <= lowest_cleaner
-          ) {
-            duration_list.push([
-              Math.round(manhour / (middle_hours + 2)),
-              middle_hours + 2,
-            ]);
-          } else {
-            duration_list.push([1, middle_hours + 2]);
-          }
+    //       //2nd
+    //       if (
+    //         Math.round(manhour / (middle_hours + 2)) > 0 &&
+    //         Math.round(manhour / (middle_hours + 2)) <= lowest_cleaner
+    //       ) {
+    //         duration_list.push([
+    //           Math.round(manhour / (middle_hours + 2)),
+    //           middle_hours + 2,
+    //         ]);
+    //       } else {
+    //         duration_list.push([1, middle_hours + 2]);
+    //       }
 
-          //3rd
-          if (
-            Math.round(manhour / (middle_hours + 4)) > 0 &&
-            Math.round(manhour / (middle_hours + 4)) <= lowest_cleaner
-          ) {
-            duration_list.push([
-              Math.round(manhour / (middle_hours + 4)),
-              middle_hours + 4,
-            ]);
-          } else {
-            duration_list.push([1, middle_hours + 4]);
-          }
-        } else {
-          middle_element = lowest_cleaner;
-          middle_hours =
-            Math.round(manhour / middle_element) -
-            (Math.round(manhour / middle_element) % 2);
-          if (middle_hours == 0) {
-            middle_hours = 2;
-          }
+    //       //3rd
+    //       if (
+    //         Math.round(manhour / (middle_hours + 4)) > 0 &&
+    //         Math.round(manhour / (middle_hours + 4)) <= lowest_cleaner
+    //       ) {
+    //         duration_list.push([
+    //           Math.round(manhour / (middle_hours + 4)),
+    //           middle_hours + 4,
+    //         ]);
+    //       } else {
+    //         duration_list.push([1, middle_hours + 4]);
+    //       }
+    //     } else {
+    //       middle_element = lowest_cleaner;
+    //       middle_hours =
+    //         Math.round(manhour / middle_element) -
+    //         (Math.round(manhour / middle_element) % 2);
+    //       if (middle_hours == 0) {
+    //         middle_hours = 2;
+    //       }
 
-          //1st
-          duration_list.push([middle_element, middle_hours]);
+    //       //1st
+    //       duration_list.push([middle_element, middle_hours]);
 
-          //2nd
-          if (
-            Math.round(manhour / (middle_hours + 2)) > 0 &&
-            Math.round(manhour / (middle_hours + 2)) <= lowest_cleaner
-          ) {
-            duration_list.push([
-              Math.round(manhour / (middle_hours + 2)),
-              middle_hours + 2,
-            ]);
-          } else {
-            duration_list.push([middle_element, middle_hours + 2]);
-          }
+    //       //2nd
+    //       if (
+    //         Math.round(manhour / (middle_hours + 2)) > 0 &&
+    //         Math.round(manhour / (middle_hours + 2)) <= lowest_cleaner
+    //       ) {
+    //         duration_list.push([
+    //           Math.round(manhour / (middle_hours + 2)),
+    //           middle_hours + 2,
+    //         ]);
+    //       } else {
+    //         duration_list.push([middle_element, middle_hours + 2]);
+    //       }
 
-          //3rd
-          if (
-            Math.round(manhour / (middle_hours + 4)) > 0 &&
-            Math.round(manhour / (middle_hours + 2)) <= highest_cleaner
-          ) {
-            duration_list.push([
-              Math.round(manhour / (middle_hours + 4)),
-              middle_hours + 4,
-            ]);
-          } else {
-            duration_list.push([middle_element, middle_hours + 4]);
-          }
-        }
-        console.log(duration_list);
+    //       //3rd
+    //       if (
+    //         Math.round(manhour / (middle_hours + 4)) > 0 &&
+    //         Math.round(manhour / (middle_hours + 2)) <= highest_cleaner
+    //       ) {
+    //         duration_list.push([
+    //           Math.round(manhour / (middle_hours + 4)),
+    //           middle_hours + 4,
+    //         ]);
+    //       } else {
+    //         duration_list.push([middle_element, middle_hours + 4]);
+    //       }
+    //     }
+    //     console.log(duration_list);
 
-        for (i = 0; i < duration_list.length; i++) {
-          var total_duration = duration_list[i][1];
-          //show to users
-          var total_minutes = (total_duration.toFixed(2) * 60).toFixed(0);
-          var converted_hours = Math.floor(total_minutes / 60);
-          var converted_minutes = total_minutes % 60;
-          var total_cleaners = duration_list[i][0];
-          console.log(converted_hours, "converted_hours");
-          console.log(converted_minutes, "converted_minutes");
-          console.log(total_cleaners, "total_cleaners");
-          this.setDuration(converted_hours, total_cleaners);
-        }
-        this.sortDuration()
+    //     for (i = 0; i < duration_list.length; i++) {
+    //       var total_duration = duration_list[i][1];
+         
+    //       var total_minutes = (total_duration.toFixed(2) * 60).toFixed(0);
+    //       var converted_hours = Math.floor(total_minutes / 60);
+    //       var converted_minutes = total_minutes % 60;
+    //       var total_cleaners = duration_list[i][0];
+    //       console.log(converted_hours, "converted_hours");
+    //       console.log(converted_minutes, "converted_minutes");
+    //       console.log(total_cleaners, "total_cleaners");
+    //       this.setDuration(converted_hours, total_cleaners);
+    //     }
+    //     this.sortDuration()
 })
   },
   newHourCalculation(n){
+    n=220
     console.log(n,"man hour")
         
    
      if (n%2 == 1){
       n = n+1
      } 
-        
-    var minman= 4
-    var maxman= 12
-    var minhr = 4
-    var maxhr = 10
+        minman=Math.max(...this.min_cleaners)
+        maxman=Math.min(...this.max_cleaners)
+        minhr=Math.max(...this.min_hours)
+        maxhr=Math.min(...this.max_hours)
+        console.log("min man is"+minman+" maxman:"+maxman+"minhr:"+minhr+"maxhr:"+maxhr)
+    // var minman= 4
+    // var maxman= 12
+    // var minhr = 4
+    // var maxhr = 10
     
     
     //allowed calculation
@@ -5820,10 +5917,16 @@ try {
         cleaningset = [cleaningset]
       }
           
-      
+      this.cleaning_set=cleaningset
   console.log(cleaningset,"new cleaning set")
+ this.selectedDuration={
+    cleaners:this.cleaning_set[0][1],
+    hours:this.cleaning_set[0][0],
+    slots:this.cleaning_set[0][0]/2
+  }
+  this.getMultipleSlots()
 
-  return(cleaningset)
+ 
 }
  
 },
