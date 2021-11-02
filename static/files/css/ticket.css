@@ -275,7 +275,7 @@
 .tk-edit {
   position: absolute;
   right: 0px;
-  top: 0px;
+  top: -25px;
 }
 .edit-icon {
   width: 20px;
@@ -288,4 +288,19 @@
   position: relative;
   background: #edf1f6;
   padding: 20px;
+}
+.keynote-chip {
+  border: 1px solid #2f4e85;
+  padding: 6px;
+  border-radius: 10px;
+}
+.keynote-input {
+  border: none;
+  border-bottom: 1px dotted #2f4e85;
+  border-radius: 0px;
+  max-width: 100px;
+  margin-right: 15px;
+}
+.keynote-delicon {
+  margin-left: auto;
 }
