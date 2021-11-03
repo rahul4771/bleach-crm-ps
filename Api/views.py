@@ -28,7 +28,7 @@ from django.db.models.functions import Cast,TruncDate,ExtractMonth,ExtractYear,C
 from django.db.models import Prefetch
 from dateutil.relativedelta import relativedelta
 import pandas as pd
-
+from googletrans import Translator
 from datetime import date
 from django.contrib.auth import authenticate
 from rest_framework.views import APIView
@@ -649,6 +649,7 @@ class TicketSubmitAPI(APIView):
 		ticket_types = request.data.get('ticket_types')
 		notes = request.data.get('notes')
 		investigationmedias = request.FILES.getlist('media')
+		assigned_by = request.data.get('assigned_by')
 		
 		actions = request.data.get('actions')
 		actions_list = actions.split(",")
@@ -657,8 +658,10 @@ class TicketSubmitAPI(APIView):
 		
 		visit = OrderScheduler.objects.get(id=int(visit_id))
 		order = visit.order
+		
+		assigned_by_user = UserProfile.objects.get(id=int(assigned_by),is_active=True)
 
-		investigation = Investigation.objects.create(order=order,order_schedule=visit,ticket_types=ticket_types)
+		investigation = Investigation.objects.create(order=order,order_schedule=visit,notes=notes,ticket_types=ticket_types,assigned_by=assigned_by_user,scheduled_at=timezone.now())
 
 		FollowUp.objects.create(investigation=investigation,status='TICKET_RISED')
 
@@ -729,15 +732,18 @@ class TicketSubmitAPI(APIView):
 				print(secondary_investigator,"sec")
 				investigator = UserProfile.objects.get(id=int(secondary_investigator))
 
-				investigationdata = Investigation.objects.select_related('investigator','assigned_by','secondary_investigator','order__evaluation__customer').get(id=investigation.id,is_active=True)
-				investigationdata.secondary_investigator = investigator
-				investigationdata.secondary_investigation_created = datetime.now()
-				investigationdata.save()
+				# investigationdata = Investigation.objects.select_related('investigator','assigned_by','secondary_investigator','order__evaluation__customer').get(id=investigation.id,is_active=True)
+				investigation.investigator = investigator
+				investigation.secondary_investigation_created = datetime.now()
+				investigation.save()
 				
-				msg_html = render_to_string('email/rise_ticket_request2.html',{'investigationdata':investigationdata})
-				msg      = EmailMultiAlternatives('Ticket Rised', '', 'notification@bleach-kw.com', [investigationdata.secondary_investigator.email])
-				msg.attach_alternative(msg_html, "text/html")
-				msg.send(fail_silently=False)
+				# msg_html = render_to_string('email/rise_ticket_request2.html',{'investigationdata':investigationdata})
+				# msg      = EmailMultiAlternatives('Ticket Rised', '', 'notification@bleach-kw.com', [investigationdata.investigator.email])
+				# msg.attach_alternative(msg_html, "text/html")
+				# msg.send(fail_silently=False)
+
+			investigation.is_casesandcomplaints_submit = True
+			investigation.save()
 
 		response_dict = {'success':True}
 
@@ -755,6 +761,7 @@ class InvestigationFormAPI(APIView):
 		secondary_investigation_notes = request.data.get('notes')
 
 		investigation.secondary_investigation_notes = secondary_investigation_notes
+		investigation.is_secondary_investigation_completed = True
 		investigation.save()
 		
 		#save media
@@ -769,77 +776,76 @@ class InvestigationFormAPI(APIView):
 					is_active = True
 				)
 
+		followup = FollowUp.objects.get(investigation=investigation,is_active=True)
+		followup.status = 'FOLLOWUP_IN_PROGRESS'
+		followup.save()
+
 		is_followup = request.data.get('is_followup')
 
 		print(is_followup,"foll")
 
-		# if is_followup == True:
-		print('vaaa')
+		if is_followup == 'True':
+			print('vaaa')
 
-		total_cost	= request.data.get('total_cost')
-		no_of_cleaners = request.data.get('number_of_cleaners')
-		cleaning_hours = request.data.get('cleaning_hours')
-		
-		tendative_date = request.data.get('tendative_date')
+			total_cost	= request.data.get('total_cost')
+			no_of_cleaners = request.data.get('number_of_cleaners')
+			cleaning_hours = request.data.get('cleaning_hours')
+			
+			tendative_date = request.data.get('tendative_date')
 
-		tendative_time = request.data.get('tendative_time')
+			tendative_time = request.data.get('tendative_time')
 
-		sections = request.data.getlist('section')
+			sections = request.data.get('sections')
+			sections = json.loads(sections)
 
-		print(tendative_date,tendative_time,sections,"secs")
+			print(sections,"secs")
+			# for section in sections:
+			# 	section = dict(section)
+			# 	print(section.section_name,"lol")
 
-		follow_up = FollowUp.objects.select_related('investigation__order__evaluation__customer').get(investigation_id=investigation_id,is_active=True)
-		follow_up.status         = 'FOLLOWUP_IN_PROGRESS'
-		# follow_up.followup_notes = request.POST.get('investigator_notes')
-		follow_up.no_of_cleaners = no_of_cleaners
-		follow_up.cleaning_hours = cleaning_hours
-		follow_up.total_cost = total_cost
-		follow_up.save()
+			print(tendative_date,tendative_time,sections,"secs")
 
-		for date in tendative_date:
-			print(date)
-			start_date_time = datetime.strptime(date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
+			follow_up = FollowUp.objects.select_related('investigation__order__evaluation__customer').get(investigation_id=investigation_id,is_active=True)
+			follow_up.status         = 'FOLLOWUP_IN_PROGRESS'
+			# follow_up.followup_notes = request.POST.get('investigator_notes')
+			follow_up.no_of_cleaners = no_of_cleaners
+			follow_up.cleaning_hours = cleaning_hours
+			follow_up.total_cost = total_cost
+			follow_up.save()
+
+			start_date_time = datetime.strptime(tendative_date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
 			end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))
-			followup_schedule_array.append(FollowUpScheduler(follow_up=follow_up,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address))
 
-	# 	#to save sections
-	# 	no_of_sections         = int(request.POST.get('section_counter'))
-	# 	section_array          = []
-	# 	for i in range(no_of_sections):
-	# 		section_name  = request.POST.get('section'+str(i))
-	# 		size          = request.POST.get('size'+str(i))
+			# for date in tendative_date:
+			# 	print(date+' '+tendative_time,"tod")
+			# 	start_date_time = datetime.strptime(date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
+			# 	end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))
+			# 	followup_schedule_array.append(FollowUpScheduler(follow_up=follow_up,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address))
+
+
+			# 	#to save sections
+			for section in sections:
+
+				try:
+					section_name_arabic = Translator().translate(section['section_name'],src='en', dest='ar').text
+				except:
+					section_name_arabic = section['section_name']
+
+				new_section = FollowUpSection.objects.create(follow_up=follow_up,section_name=section['section_name'],section_name_arabic=section_name_arabic,size=section['size'],wall_type=section['wall_type'],ceiling_type=section['ceiling_type'],floor_type=section['floor_type'],cause_of_stain=section['cause_of_stain'],material=section['material'],colour=section['color'],age=section['age'],section_net_cost=section['section_net_cost'])
+		
+				keynote_array = []
+				for keynote in section['keynotes']:
+					
+					keynote_array.append(FollowUpSectionKeynote(followup_section=new_section,sub_area=keynote['sub_area'],quantity=keynote['quantity']))
+
+				FollowUpSectionKeynote.objects.bulk_create(keynote_array)
+		
+
+			FollowUpScheduler.objects.create(follow_up=follow_up,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address)
+
+			investigation.is_followup_approved = True
+			investigation.save()
 			
-	# 		wall_type     = request.POST.get('walltype'+str(i))
-	# 		ceiling_type  = request.POST.get('ceilingtype'+str(i))
-	# 		floor_type    = request.POST.get('floortype'+str(i))
-			
-	# 		section_cost  = request.POST.get('sectioncost'+str(i))
-
-	# 		try:
-	# 			section_name_arabic = Translator().translate(section_name,src='en', dest='ar').text
-	# 		except:
-	# 			section_name_arabic = section_name
-			
-	# 		section = FollowUpSection.objects.create(follow_up=follow_up,section_name=section_name,section_name_arabic=section_name_arabic,size=size,wall_type=wall_type,ceiling_type=ceiling_type,floor_type=floor_type,section_net_cost=section_cost)
-
-	# 		#to save keynotes
-	# 		try:
-	# 			no_of_keynotes = int(request.POST.get('section'+str(i)+'-keynote_counter'))
-	# 		except:
-	# 			no_of_keynotes = None
-
-	# 		keynote_array = []
-	# 		if no_of_keynotes:
-	# 			for j in range(no_of_keynotes):
-	# 				keynote = request.POST.get('section'+str(i)+'_keynote'+str(j))
-	# 				quantity= request.POST.get('section'+str(i)+'_quantity'+str(j))
-	# 				if keynote and quantity:
-	# 					keynote_array.append(FollowUpSectionKeynote(followup_section=section,sub_area=keynote,quantity=quantity))
-	# 			#bulk_create keynote
-	# 			FollowUpSectionKeynote.objects.bulk_create(keynote_array)
-
-	# 	FollowUpScheduler.objects.bulk_create(followup_schedule_array)
-
 		response_dict = {'success':True}
 
 		return Response(response_dict,HTTP_200_OK)
@@ -908,11 +914,24 @@ class VisitDetailsAPI(APIView):
 			section_dict= {
 					'section_id' : section.id,
 					'section_name' : section.section_name,
+					'age' : section.age,
 					'size' : section.size,
 					'floor_type' : section.floor_type,
 					'wall_type' : section.wall_type,
 					'ceiling_type' : section.ceiling_type,
 					'section_net_cost' :section.section_net_cost,
+					'upholstery_type' : section.upholstery_type,
+					'oil_residue' : section.oil_residue,
+					'cement_residue' : section.cement_residue,
+					'new_kitchen' : section.new_kitchen,
+					'is_cabinet' : section.is_cabinet,
+					'is_highprice_facade' : section.is_highprice_facade,
+					'is_highprice_window' : section.is_highprice_window,
+					'vacuuming' : section.vacuuming,
+					'age_of_stain' : section.age_of_stain,
+					'color' : section.colour,
+					'material' : section.material,
+					'cause_of_stain' : section.cause_of_stain,
 					'keynotes' : keynotes,
 					'addons' : sectionaddons
 			}
@@ -2803,4 +2822,34 @@ class CheckinChecklist(APIView):
 		# responsedata = json.dumps(response_dict)
 
 		# return Response(responsedata,HTTP_200_OK)
+
+class ItemQuantityCheck(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+	def get(self,request):
+		response_dict            = {'success':False}
+
+		item_id     = request.GET.get('item_id')
+		quantity 	= request.GET.get('quantity')
+
+		print(item_id,quantity,"qty")
+
+		item = InventoryItem.objects.annotate(quantity_total=Sum('unit_item_history__quantity'),unit_count=Sum(Case(When(unit_item__status='active',then=1),default=0,output_field=IntegerField()))).get(id=int(item_id))
+		
+		if item.item_add_type == 'unit':
+			item_count = item.unit_count
+		else:
+			if item.quantity_total:
+				item_count = item.quantity_total
+			else:
+				item_count = 0
+
+		if item_count >= int(quantity) :
+			response_dict['item_available'] = True
+		else:
+			response_dict['item_available'] = False
+
+		response_dict['success'] = True
+
+		return Response(response_dict, HTTP_200_OK)
 	

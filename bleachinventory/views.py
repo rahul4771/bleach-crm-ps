@@ -145,7 +145,10 @@ class InventoryAttribute(IsInventoryAdmin,View):
             print(category_id,segment_id,line_id,"print vals")
 
             if category_id:
-                category = Category.objects.get(id=int(category_id))
+                if category_id == '0':
+                    category = None
+                else:
+                    category = Category.objects.get(id=int(category_id))
             else:
                 category = None
 
@@ -490,6 +493,8 @@ class InventoryItems(IsInventoryAdmin,View):
 
         available_item_units = item_units.filter(status='active').count()
         available_quantity = item_history.aggregate(total_quantity=Sum('quantity'))['total_quantity']
+        if not available_quantity:
+            available_quantity = 0
         
         reserve_units = inventory_item.reserve_count
 
@@ -511,7 +516,7 @@ class InventoryItems(IsInventoryAdmin,View):
                 inventory_item.item_status = 'available'
             inventory_item.save()
 
-        attributes = Attribute.objects.filter(attribute_category=inventory_item.item_category,attribute_segment=inventory_item.item_segment,attribute_line=inventory_item.item_line,status=True).prefetch_related(Prefetch('value_attribute',queryset=AttributeValue.objects.filter(status=True),to_attr='attribute_values'))
+        attributes = Attribute.objects.filter(status=True).filter(Q (Q(attribute_category=inventory_item.item_category) & Q(attribute_segment=inventory_item.item_segment) & Q(attribute_line=inventory_item.item_line)) | Q(attribute_category=None)).prefetch_related(Prefetch('value_attribute',queryset=AttributeValue.objects.filter(status=True),to_attr='attribute_values'))
 
         try:
             item_attributes = ItemAttributes.objects.filter(item=inventory_item)
@@ -975,7 +980,11 @@ class InventoryInv(IsInventoryAdmin,View):
             inventory_items       = InventoryItem.objects.all()
 
         for item in inventory_items:
-            available_item_units = ItemUnit.objects.filter(item=item,status='active').count()
+            if item.item_add_type == 'unit':
+                available_item_units = ItemUnit.objects.filter(item=item,status='active').count()
+            else:
+                available_item_units = ItemHistory.objects.filter(item=item).aggregate(total_quantity=Sum('quantity'))['total_quantity'] or 0
+            
             reserve_units = item.reserve_count
 
             if int(available_item_units) < int(reserve_units) and int(available_item_units) > 0:
@@ -985,6 +994,8 @@ class InventoryInv(IsInventoryAdmin,View):
             else:
                 item.item_status = 'available'
             item.save()
+            
+
         
         # inventory_latest  = inventory_items.last()
         # if inventory_latest:
@@ -1063,6 +1074,10 @@ class InventoryInv(IsInventoryAdmin,View):
             reserve = request.POST.get('item_reserve')
             status     = request.POST.get('item_status')
             reusable     = request.POST.get('item_reusable')
+            item_add_type     = request.POST.get('itemadd_type')
+            unit_measure     = request.POST.get('unit_measure')
+
+            print()
 
             if category_id:
                 category = Category.objects.get(id=int(category_id))
@@ -1109,6 +1124,8 @@ class InventoryInv(IsInventoryAdmin,View):
             item.reserve_count   = reserve
             item.status = status
             item.is_reusable = reusable
+            item.item_add_type = item_add_type
+            item.measuring_unit = unit_measure
             item.save()
             messages.success(request,"Item Updated Successfully !")
         
@@ -1180,6 +1197,8 @@ class InventoryCreateCheckout(IsInventoryAdmin,View):
         service = visit.order_scheduler_book.service_type
         price_ranges = ServicePriceRange.objects.filter(is_active=True,service_type=service)
 
+        max_area = 0
+
         for section in visit.order_scheduler_book.sections:
             if isinstance(section.size, int) == True:
                 max_area = section.size
@@ -1221,15 +1240,31 @@ class InventoryCreateCheckout(IsInventoryAdmin,View):
 
         
             for service_item in ingredient.service_recipe_items:    
-                
-                if service_item.is_swapped_item == True:
-                    try:
-                        checkout_item = CheckOutItems.objects.get(visit=visit,service_item__ingredient=ingredient)
-                        checkout_item.service_item = service_item
-                        checkout_item.save()
-                    except:
 
-                        CheckOutItems.objects.create(visit=visit,service_item=service_item,units=recommended_quantity)
+                item = InventoryItem.objects.annotate(quantity_total=Sum('unit_item_history__quantity'),unit_count=Sum(Case(When(unit_item__status='active',then=1),default=0,output_field=IntegerField()))).get(id=int(service_item.item.id))
+                
+                print(item.item_add_type,item.unit_count,item.quantity_total,recommended_quantity,"tots")
+                if item.item_add_type == 'unit':
+                    item_count = item.unit_count
+                else:
+                    if item.quantity_total:
+                        item_count = item.quantity_total
+                    else:
+                        item_count = 0
+
+                if item_count >= recommended_quantity :
+
+                    if service_item.is_swapped_item == True:
+                        try:
+                            checkout_item = CheckOutItems.objects.get(visit=visit,service_item__ingredient=ingredient)
+                            checkout_item.service_item = service_item
+                            checkout_item.save()
+                        except:
+
+                            CheckOutItems.objects.create(visit=visit,service_item=service_item,units=recommended_quantity)
+                else:
+                    pass
+
         print(service_recipe_ingredients,"itt")
         return render(request,'inventory/createCheckout.html',{"price_ranges":price_ranges,"visit":visit,"items":items,"service_recipe_ingredients":service_recipe_ingredients,"check_out_items":check_out_items})
 

@@ -125,7 +125,7 @@
                 </div>
                 <div class="main-content-holder">
                     <!--main-content-holder-->
-    
+                <input type="hidden" id="id_user_id" value="{{request.user.id}}" />
                 {% csrf_token %}
 
                     <div class="white-wrapper">
@@ -407,7 +407,7 @@
                                             <div   class="tk-type-card pointer" style="padding: 10px; background: #fff; border: 1px solid #edf1f6;">
                                                 <div  style="margin-bottom: 0px; flex-grow: 1;" class="tk-common-text2"> <% item.itemname %> </div>
                                                 <div style="flex-grow: 1; margin-bottom: 0px;" class="tk-common-text2">
-                                                    <% item.price %>
+                                                    <% item.price %> <span>KD</span>
                                                 </div>
                                                 <div  style="margin-right: 5px;" class="pointer" @click="removePaybackOther(index)">
         
