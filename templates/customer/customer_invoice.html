@@ -238,7 +238,13 @@
                 <!--Visit begins-->
               <div class="col-md-6 col-lg-4 mt-2">
                 <div class="keynote-chip">
-                  <div class="qt-details-title">
+                  <div class="qt-details-title d-flex">
+                    {% if orderschedule.work_status == 'CLEANING_IN_PROGRESS' %} <div class="status-dot inprogress-chip-bg  mr-5" style="margin:3px;"></div>
+                    {% elif orderschedule.work_status == 'CLEANING_FULFILLED' %} <div class="status-dot completed-chip-bg  mr-5" style="margin:3px;"></div> 
+                    {% elif orderschedule.work_status == 'CLEANING_TEAM_ASSIGNED' %} <div class="status-dot assigned-chip-bg  mr-5" style="margin:3px;"></div>
+                    {% elif orderschedule.work_status == 'CLEANING_CANCELLED' %} <div class="status-dot cancel-chip-bg  mr-5" style="margin:3px;"></div>
+                    {% else %} <div class="status-dot notstarted-chip-bg  mr-5" style="margin:3px;"></div>
+                    {% endif %}
                     Visit {{forloop.counter}}
                   </div>
                   <div class="d-flex visit-popup">
