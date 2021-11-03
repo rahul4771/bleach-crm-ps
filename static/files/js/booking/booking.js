@@ -5622,9 +5622,9 @@ try {
 .then(responses =>{
   console.log("i am ready")
     var manhour=this.totalmanhour
-    var n=this.n
+    // var n=this.n
     
-    this.newHourCalculation(manhour)
+    this.newHourCalculation(219)
     // var pair = [];
     //     for (var i = 1; i < parseInt(n ** (1 / 2)) + 1; i++) {
     //       if (n % i == 0) {
@@ -5807,22 +5807,19 @@ try {
 })
   },
   newHourCalculation(n){
-    
+   
     console.log(n,"man hour")
         
    
      if (n%2 == 1){
       n = n+1
      } 
-        minman=Math.max(...this.min_cleaners)
-        maxman=Math.min(...this.max_cleaners)
-        minhr=Math.max(...this.min_hours)
-        maxhr=Math.min(...this.max_hours)
+        var minman=Math.max(...this.min_cleaners)
+       var maxman=Math.min(...this.max_cleaners)
+        var minhr=Math.max(...this.min_hours)
+        var maxhr=Math.min(...this.max_hours)
         console.log("min man is"+minman+" maxman:"+maxman+"minhr:"+minhr+"maxhr:"+maxhr)
-    // var minman= 4
-    // var maxman= 12
-    // var minhr = 4
-    // var maxhr = 10
+   
     
     
     //allowed calculation

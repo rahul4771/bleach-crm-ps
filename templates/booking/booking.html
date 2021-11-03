@@ -293,6 +293,9 @@
     <div class="mt-4" v-if="!isSlotsSelected()">
       Select  Day <%currentSlotDay%>
     </div>
+    <div class="mt-4=2" v-if="!isSlotsSelected()">
+      Please Select <%cleaning_set[currentSlotDay-1][0]/2%> slot(s)
+    </div>
 <div class="row mt-2" style="margin:0 !important" >
   <div class="col-md-4" v-for="(slot,sindex) in parsedTimeSlots" v-bind:key="sindex" v-if="one_time_slots[oneTimeDateSelected] && !slot_loader && !isSlotsSelected()">
     <div class="time-slot duration text-center p-2" 
