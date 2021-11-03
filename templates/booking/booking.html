@@ -66,6 +66,15 @@
       </template>
     </v-snackbar>
         <!-- snackbar ends here-->
+        <div class="fullpage-loader" v-if="submit_loader">
+          
+          <div class="loader-content">
+            <div class="w-50">
+           <img src="{% static 'files/animations/loading-buffering.gif'%}" style="width:30px;margin-bottom:10px"/>
+        </div>
+        <b>Booking is processing.<br>
+            Please do not press back button or reload the page</b></div>
+        </div>
      <!-- reset building dialog -->
      <v-dialog
    v-model="building_warning"
@@ -212,45 +221,7 @@
 <v-dialog v-model="onetime_dialog" width="1000">
   <v-card>
 <div class="row mt-4 m-0">
-  <!-- <div class="col-md-12">
-    <h6>Choose a duration</h6>
-   
-  </div>
- 
-  <div class="col-md-2 mt-2 col-12" v-if="duration.length>0">
-    <div class="text-center p-2">Durations</div>
-  </div>
-  <div class="col-md-12 mt-2 danger" v-else>
-      Cleaners not available for the selected service
-  </div>
-  <div
-    class="col-md-2 mt-2 col-6"
-    v-for="(item, durindex) in duration"
-    v-bind:key="durindex"
-  >
-    <div
-      class="duration-active text-center p-2"
-      v-on:click="selectDuration(item)"
-      v-if="selectedDuration == item"
-    >
-      <b> <% item.hours %> Hrs</b>
-    </div>
-    <div
-      class="duration text-center p-2"
-      v-on:click="selectDuration(item)"
-      v-else
-    >
-      <b> <% item.hours %> Hrs</b>
-    </div>
-    <div
-      v-if="selectedDuration == item"
-      class="text-center sub-content"
-    >
-      <% item.hours / 2 %> slots<br>
-      <% item.cleaners %> <span v-if="item.cleaners<2">cleaner</span><span v-else>cleaners</span>
-    </div>
-  </div>
-</div> -->
+
 <div class="row m-0" v-if="selectedDuration.hours && onetimerender" style="margin:0 !important">
   <div class="col-md-4" >
     <div >

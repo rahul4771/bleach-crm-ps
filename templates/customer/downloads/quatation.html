@@ -129,10 +129,10 @@
           {% if evaluation_book.cleaning_policy == 'ONE TIME SERVICE' %}1{% else %}{{book_section.section_cleanings|floatformat:"-1"}}{% endif %}
         </td>
         <td style="text-align: right;">
-          {{book_section.sectiononly_cost|floatformat:'3'}}
+          {% if book_section.sectiononly_cost %}{{book_section.sectiononly_cost|floatformat:'3'}}{% else %}{{book_section.section_cost|floatformat:'3'}}{% endif %}
         </td>
         <td style="text-align: right;">
-          {{book_section.sectiononly_net_cost|floatformat:'3'}}
+          {% if book_section.sectiononly_net_cost %}{{book_section.sectiononly_net_cost|floatformat:'3'}}{% else %}{{book_section.section_net_cost|floatformat:'3'}}{% endif %}
         </td>
       </tr>
 
