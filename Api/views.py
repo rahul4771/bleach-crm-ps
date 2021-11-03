@@ -2807,4 +2807,34 @@ class CheckinChecklist(APIView):
 		# responsedata = json.dumps(response_dict)
 
 		# return Response(responsedata,HTTP_200_OK)
+
+class ItemQuantityCheck(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+	def get(self,request):
+		response_dict            = {'success':False}
+
+		item_id     = request.GET.get('item_id')
+		quantity 	= request.GET.get('quantity')
+
+		print(item_id,quantity,"qty")
+
+		item = InventoryItem.objects.annotate(quantity_total=Sum('unit_item_history__quantity'),unit_count=Sum(Case(When(unit_item__status='active',then=1),default=0,output_field=IntegerField()))).get(id=int(item_id))
+		
+		if item.item_add_type == 'unit':
+			item_count = item.unit_count
+		else:
+			if item.quantity_total:
+				item_count = item.quantity_total
+			else:
+				item_count = 0
+
+		if item_count >= int(quantity) :
+			response_dict['item_available'] = True
+		else:
+			response_dict['item_available'] = False
+
+		response_dict['success'] = True
+
+		return Response(response_dict, HTTP_200_OK)
 	

@@ -231,10 +231,10 @@
                                             <table class="inv-table item-table1"> 
                                                 <tr>
                                                     <th style="width: %;">
-                                                       Item Name
+                                                       Ingredient
                                                     </th>
                                                     <th style="width: %;">
-                                                       Quantity
+                                                        Quantity
                                                      </th>
                                                     <th style="width: %;">
                                                         Action
@@ -250,7 +250,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-5">
-                                        <h3 class="av-font">Ingredients under <span class="av-font" id="id_ingredient_1"></span> </h3>
+                                        <h3 class="av-font">Items under <span class="av-font" id="id_ingredient_1"></span> </h3>
                                         <div class="attribute-table-2">
                                             <table class="inv-table item-table5"> 
                                                 <tr>
@@ -413,7 +413,7 @@
                                             <table class="inv-table item-table2"> 
                                                 <tr>
                                                     <th style="width: %;">
-                                                       Item Name
+                                                       Ingredient
                                                     </th>
                                                     <th style="width: %;">
                                                        Count
@@ -432,7 +432,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-5">
-                                        <h3 class="av-font">Ingredients under <span class="av-font" id="id_ingredient_1"></span> </h3>
+                                        <h3 class="av-font">Items under <span class="av-font" id="id_ingredient_2"></span> </h3>
 
                                         <div class="attribute-table-2">
                                             <table class="inv-table item-table6"> 
@@ -580,7 +580,7 @@
                                             <table class="inv-table item-table3"> 
                                                 <tr>
                                                     <th style="width: %;">
-                                                       Item Name
+                                                       Ingredient
                                                     </th>
                                                     <th style="width: %;">
                                                        Count
@@ -599,7 +599,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-5">
-                                        <h3 class="av-font">Ingredients under <span class="av-font" id="id_ingredient_1"></span> </h3>
+                                        <h3 class="av-font">Items under <span class="av-font" id="id_ingredient_3"></span> </h3>
 
                                         <div class="attribute-table-2">
                                             <table class="inv-table item-table7"> 
@@ -747,7 +747,7 @@
                                             <table class="inv-table item-table4"> 
                                                 <tr>
                                                     <th style="width: %;">
-                                                       Item Name
+                                                       Ingredient
                                                     </th>
                                                     <th style="width: %;">
                                                        Count
@@ -766,7 +766,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-5">
-                                        <h3 class="av-font">Ingredients under <span class="av-font" id="id_ingredient_1"></span> </h3>
+                                        <h3 class="av-font">Items under <span class="av-font" id="id_ingredient_4"></span> </h3>
 
                                         <div class="attribute-table-2">
                                             <table class="inv-table item-table8"> 
@@ -2013,6 +2013,7 @@ function openNavAddStore2(d) {
              $('#ingredient_id').val(ingredient_id);
 
             if (category == 'detailedCleaning'){
+                $('#id_ingredient_1').text(result.data.ingredient);
                 if (result.data.service_items.length > 0){
                     $(".item-table5 tr:not(:first)").remove(); 
                     var edit = "edit";
@@ -2025,6 +2026,7 @@ function openNavAddStore2(d) {
                 }
             
             }else if(category=='specialCare'){
+                $('#id_ingredient_2').text(result.data.ingredient);
                 if (result.data.service_items.length > 0){
                     $(".item-table6 tr:not(:first)").remove(); 
                     var edit = "edit";
@@ -2037,6 +2039,7 @@ function openNavAddStore2(d) {
                 }
             }
             else if(category=='kitchenCleaning'){
+                $('#id_ingredient_3').text(result.data.ingredient);
                 if (result.data.service_items.length > 0){
                     $(".item-table7 tr:not(:first)").remove(); 
                     var edit = "edit";
@@ -2048,6 +2051,7 @@ function openNavAddStore2(d) {
                     $(".item-table7 tr:not(:first)").remove(); 
                 }              
             }else{
+                $('#id_ingredient_4').text(result.data.ingredient);
                 if (result.data.service_items.length > 0){
                     $(".item-table8 tr:not(:first)").remove(); 
                     var edit = "edit";
