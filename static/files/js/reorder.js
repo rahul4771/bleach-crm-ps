@@ -175,7 +175,7 @@ function openNav() {
       rules: {
         required: v => !!v || 'this field is required',
       },
-        url:'https://my.bleachkw.com',
+        url:'',
         kitchenData:{
             wall_type:'',
             floor_type:'',
@@ -4718,6 +4718,7 @@ function openNav() {
     },
   
     mounted() {
+      this.url = api;
       const urlSearchParams = new URLSearchParams(window.location.search);
       const params = Object.fromEntries(urlSearchParams.entries());
       this.custId=params.id
