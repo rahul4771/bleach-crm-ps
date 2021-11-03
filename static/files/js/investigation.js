@@ -2,6 +2,9 @@ let app = new Vue({
     el: "#app",
     components: { Multiselect: window.VueMultiselect.default },
     delimiters: ["<%", "%>"],
+    mounted(){
+      this.getKitchen()
+    },
     computed: {
      
       totalAmount: function () {
@@ -15,6 +18,8 @@ let app = new Vue({
     },
     data () {
           return {
+            avSolt:null,
+            incheck:false,
             sofa_size:[],
             chair_size:[],
             new_kitchen_cabinet_size:[],
@@ -130,7 +135,53 @@ let app = new Vue({
                 selected_slots:[]
           }
     },
+    watch: {
+      selectedDate: function() {
+        this.selected_slots = [];
+          this.getAvalibility();
+
+
+      }
+  },
     methods:{
+      inputEvents(){
+        console.log("date chaneg")
+      },
+      checkAvalSolt(index){
+        var tempIndex = index*2;
+        if(this.avSolt != null){
+          if(this.avSolt[tempIndex].length == 0){
+            return false
+          }else{
+            return true
+          }
+        }else{   
+          return true
+        }
+      },
+      async getAvalibility(){
+        
+        this.avSolt = null;
+        
+        let result = await _post("customer/ajax/getmultipleservicecleaningslotes",{
+          cleaning_date:moment(this.selectedDate).format('DD-MM-YYYY'),
+          number_of_cleaners:this.noofcleaners,
+          service_types:[this.service_type]
+        })
+        this.avSolt = result.data.slotes
+        console.log(this.avSolt)
+      },
+      openSoltModal(){
+        this.incheck = false
+        if(this.noofcleaners == ''){
+          this.incheck = true
+        }else{
+          
+          this.getAvalibility();
+          $("#id_modal_btn").click();
+        }
+      
+      },
       resetWindowSize(){
         this.editSectionData.size={}
         this.calcSectionCost()
@@ -158,6 +209,7 @@ let app = new Vue({
         this.editSectionData.size={}
         this.calcSectionCost();
       },
+      
       formatKitchenSize(){
         this.new_kitchen_cabinet_size = []
         this.old_kitchen_cabinet_size = []
@@ -232,6 +284,38 @@ let app = new Vue({
             break;
           }
         }
+      },
+      async getKitchen(){
+        let result = await _get('customer/ajax/getservicesizeprice?service_type=Kitchen Cleaning');
+        var productivity = result.data;
+        var  service_productivity = []
+        for(var i in productivity){
+          productivity[i].combined_size=productivity[i].name+' ( '+productivity[i].min_size+' sq.m - '+productivity[i].max_size+' sq.m )'
+          service_productivity.push(productivity[i])
+        }
+        this.new_kitchen_cabinet_size = []
+        this.old_kitchen_cabinet_size = []
+        this.new_kitchen_nocabinet_size = []
+        this.old_kitchen_nocabinet_size =[]
+        for(var i=0;i<service_productivity.length;i++){
+          if(service_productivity[i].is_newkitchen){
+            if(service_productivity[i].is_cabinet){
+              this.new_kitchen_cabinet_size.push(service_productivity[i])
+            }else{
+              this.new_kitchen_nocabinet_size.push(service_productivity[i])
+            }
+         
+          }
+          else{
+            if(service_productivity[i].is_cabinet){
+             this.old_kitchen_cabinet_size.push(service_productivity[i])
+            }
+            else{
+              this.old_kitchen_nocabinet_size.push(service_productivity[i])
+            }
+          }
+        }
+        
       },
       async getSize(type){
         if(type=='Hourly Cleaning'){
@@ -374,7 +458,9 @@ let app = new Vue({
         if(this.selected_slots.length !=0){
           console.log(this.selected_slots)
           this.tentdate = moment(this.selectedDate).format('DD-MM-YYYY');
-          var a = this.selected_slots[0];
+          var a = Math.min(...this.selected_slots);
+         
+         
           this.tenttime = this.time_slots[a].start_time;
           this.soltselected = true;
           this.cleaning_hours = this.selected_slots.length * 2;
@@ -452,23 +538,8 @@ let app = new Vue({
 
         },
         async submitForm(){
-
-          var sections = [];
-
-          for(var i = 0 ; i<this.cleaningsections.length;i++){
-          
-            var keynotes = [];
-
-            for(var j = 0 ; j<this.cleaningsections[i].keynotes.length;j++){
-              keynote_dict = {'keynote':this.cleaningsections[i].keynotes[j].sub_area,'quantity':this.cleaningsections[i].keynotes[j].quantity}
-              keynotes.push(keynote_dict)
-            }
-
-            section_dict = {'section_name':this.cleaningsections[i].section_name, 'size':this.cleaningsections[i].size, 'wall_type':this.cleaningsections[i].wall_type, 'ceiling_type':this.cleaningsections[i].ceiling_type, 'floor_type':this.cleaningsections[i].floor_type, 'section_cost':this.cleaningsections[i].section_net_cost,'keynotes':keynotes}
-            sections.push(section_dict)
-          
-          }
-          console.log(sections,"secto")
+         var tempSections = JSON.stringify(this.cleaningsections);
+         
 
           console.log(this.visitid)
           let fd = new FormData();
@@ -486,16 +557,16 @@ let app = new Vue({
             fd.append('tendative_date',this.tentdate);
             fd.append('tendative_time',this.tenttime);
             fd.append('cleaning_hours',this.cleaning_hours);
-            fd.append('sections',JSON.stringify(sections));
+            fd.append('sections',tempSections);
 
           }else{
             fd.append('is_followup','False');
 
           }
-          let result = await _post('api/investigation-formf/',fd);
+          let result = await _post('api/investigation-form/',fd);
           if(result.data.success){
             console.log("success")
-            //window.location.href = '../../dashboard'
+            window.location.href = '../../dashboard'
           }else{
             showNotification('Something went wrong','error')
           }
