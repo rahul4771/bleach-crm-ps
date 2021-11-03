@@ -270,15 +270,15 @@
                 {% for item in check_out_items %}
                 <tr data-itemid="{{item.item.id}}">
                 <td>{% if item.service_item %}{{item.service_item.ingredient.ingredient}}{% else %}-{% endif %}</td>
-                <td>{% if item.service_item %}{{item.service_item.item.name}}{% else %}{{item.item.name}}{% endif %}</td>
+                <td id="id_item_name_{{item.service_item.item.id}}">{% if item.service_item %}{{item.service_item.item.name}}{% else %}{{item.item.name}}{% endif %}</td>
                 <td>{% if item.service_item %}{{item.service_item.item.item_code}}{% else %}{{item.item.item_code}}{% endif %}</td>
                 <td>
                 <div class="qty-container">
         
                   <div class="quantity">
-                    <a class="quantity__minus pointer" onclick="decrement({{forloop.counter}})"><span>-</span></a>
+                    <a class="quantity__minus pointer" onclick="decrement({{forloop.counter}},{{item.service_item.item.id}})"><span>-</span></a>
                     <input  type="text" class="quantity__input"  id="id_qty_{{forloop.counter}}" value="{{item.units}}" name="qty" value="1">
-                    <a  class="quantity__plus pointer" onclick="increment({{forloop.counter}})"><span>+</span></a>
+                    <a  class="quantity__plus pointer" onclick="increment({{forloop.counter}},{{item.service_item.item.id}})"><span>+</span></a>
                   </div>
                     
                 </div>
@@ -587,15 +587,45 @@ function hideselectedoptions(){
 
 
 
-function increment(id){
-  console.log(id)
+async function increment(id,item_id){
+  console.log(id,item_id)
   $('#id_qty_'+id).val(parseInt($('#id_qty_'+id).val()) + 1 );
+
+  var quantity = parseInt($('#id_qty_'+id).val()) + 1 ;
+  console.log(quantity,"po")
+
+  var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+    if(result.status == 200){
+      console.log(result.data.item_available,"lop")
+      if (result.data.item_available == true){
+        console.log("lo1")
+        $('#id_item_name_'+item_id+'').attr("style","color:green;")
+      }else{
+        console.log("lo2")
+        $('#id_item_name_'+item_id+'').attr("style","color:red;")
+      }
+    }
 }
-function decrement(id){
+
+async function decrement(id,item_id){
   $('#id_qty_'+id).val(parseInt($('#id_qty_'+id).val()) - 1 );
     				if ($('#id_qty_'+id).val() == 0) {
 						$('#id_qty_'+id).val(1);
 					}
+
+  var quantity = parseInt($('#id_qty_'+id).val()) - 1 ;
+
+  var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+    if(result.status == 200){
+      console.log(result.data.item_available,"lop")
+      if (result.data.item_available == true){
+        console.log("lo1")
+        $('#id_item_name_'+item_id+'').attr("style","color:green;")
+      }else{
+        console.log("lo2")
+        $('#id_item_name_'+item_id+'').attr("style","color:red;")
+      }
+    }
 }
 
 

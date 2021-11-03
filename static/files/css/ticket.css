@@ -158,6 +158,15 @@
 .tk-completed-color {
   background: #779f39;
 }
+.tk-paid-color {
+  background: #31AA4A;
+}
+.tk-pending-color {
+  background: #FFA400;
+}
+.tk-onhold-color {
+  background: #FF5E00;
+}
 .mt-15 {
   margin-top: 15px;
 }

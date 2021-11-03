@@ -58,11 +58,11 @@
                                 <th data-hide="phone,tablet"  class="text-center">
                                     Reserve
                                 </th>
-                                <th class="text-left">
+                                <th class="text-left table-w-12">
                                     Item Status
                                 </th>
     
-                                <th data-hide="phone,tablet"  style="width: %;" class="text-center">Action</th>
+                                <th data-hide="phone,tablet"  style="width: %;" class="text-center table-w-20">Action</th>
                             </tr>
                         </thead>
                      <tbody>
@@ -628,6 +628,8 @@ function changeSelect(va){
         document.getElementById("item_reusable_id").value = $(this).data('itemreusbale');
         document.getElementById("itemadd_type_id").value = $(this).data('itemaddtype');
         document.getElementById("unit_measure_id").value = $(this).data('unitmeasure');
+        $('#id_selectText5').text($(this).data('itemaddtype'));
+        $('#id_selectText6').text($(this).data('unitmeasure'));
 
         if($('#item_status_id').val() == 'True'){
             console.log("true")
@@ -645,21 +647,7 @@ function changeSelect(va){
 
         }
 
-        if($('#itemadd_type_id').val() == 'True'){
-            console.log("true")
-            $('#id_selectText5').text('Yes');
-        }else{
-           $('#id_selectText5').text('No');
-
-        }
-
-        if($('#unit_measure_id').val() == 'True'){
-            console.log("true")
-            $('#id_selectText6').text('Yes');
-        }else{
-           $('#id_selectText6').text('No');
-
-        }
+        
         
         $('.item-form-btn').text('Update');
 

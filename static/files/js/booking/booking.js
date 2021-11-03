@@ -5624,7 +5624,7 @@ try {
     var manhour=this.totalmanhour
     // var n=this.n
     
-    this.newHourCalculation(219)
+    this.newHourCalculation(manhour)
     // var pair = [];
     //     for (var i = 1; i < parseInt(n ** (1 / 2)) + 1; i++) {
     //       if (n % i == 0) {
@@ -5851,7 +5851,7 @@ try {
     //Append Remining Low Pair
     if (rem != 0){
         var lowpair = [allowed[0],Math.round(rem/allowed[0])]
-        for(var i=0;i<allowed;i++){
+        for(var i=0;i<allowed.length;i++){
           if (lowpair[0]+lowpair[1] > (allowed[i]+Math.round(rem/allowed[i]))){
             lowpair = [allowed[i],Math.round(rem/allowed[i])]
           }

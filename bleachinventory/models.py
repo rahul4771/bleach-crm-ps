@@ -10,7 +10,7 @@ UNIT_STATUS_CHOICES=(
 	)
 
 ITEM_STATUS_CHOICES=(
-	('available','Available'),
+	('available','available'),
 	('out_of_stock','out_of_stock'),
 	('about_to_finish','about_to_finish')
 	)
