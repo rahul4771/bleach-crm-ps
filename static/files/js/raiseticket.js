@@ -213,6 +213,7 @@
               let fd = new FormData();
               fd.append('visit_id',$('#id_visit').val())
               fd.append('notes',this.damagenote)
+              fd.append('assigned_by',$('#id_user_id').val())
               var types = '';
               for(var i = 0 ;i<this.value.length;i++){
                   types = types+this.value[i].name+',';

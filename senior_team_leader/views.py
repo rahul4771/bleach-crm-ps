@@ -604,7 +604,7 @@ class StlHome(IsSeniorTeamLeader,View):
 				followupschedule.days_left_coming = (followupschedule.start_at-timezone.now()).days
 
 		try:	
-			investigations  = Investigation.objects.filter(is_active=True,investigator=request.user,is_casesandcomplaints_submit=False).select_related('order__evaluation__customer','order_schedule__customer_address__area','order_schedule__order_scheduler_book').prefetch_related(Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team_details'),Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'))
+			investigations  = Investigation.objects.filter(is_active=True,investigator=request.user).select_related('order__evaluation__customer','order_schedule__customer_address__area','order_schedule__order_scheduler_book').prefetch_related(Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team_details'),Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'))
 		except:
 			investigations  = 	None
 
