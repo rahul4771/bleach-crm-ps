@@ -247,7 +247,7 @@
                     <i class="far fa-clock mt-1 inv-primary-text"></i><span class="ml-2 "> {{orderschedule.start_at|time:'h:i A'}}</span>  
                   </div>
                   <div class="ml-10">
-                    <i class="fas fa-hourglass-end mt-1 inv-primary-text"></i><span class="ml-2 "> {{orderschedule.cleaning_hours}} Hours</span> 
+                    <i class="fas fa-hourglass-end mt-1 inv-primary-text"></i><span class="ml-2 "> {% if orderschedule.cleaning_hours %}{{orderschedule.cleaning_hours}}{% else %}{{orderschedule.order_scheduler_book.cleaning_hours}}{% endif %} Hours</span> 
                   </div>
                 </div>
                 </div>   
