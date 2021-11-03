@@ -1734,10 +1734,10 @@ setTimeout(function() {
       axios.post(this.url+'/customer/editorder/'+this.orderId,{
         "action_type":'edit_discount',
        "payment_method":this.paymentData.payment_method,
-       "discount_amount":parseInt(this.paymentData.discount),
+       "discount_amount":parseInt(this.paymentData.discount)||0,
        "before_cleaning_amount":parseInt(this.paymentData.amount_before_cleaning),
        "after_cleaning_amount":parseInt(this.paymentData.amount_after_cleaning),
-       "additional_charge":parseFloat(this.paymentData.additional_charge),
+       "additional_charge":parseFloat(this.paymentData.additional_charge)||0,
       }).then(response=>{
         console.log(response)
         $('#edit-payment-close').click()
@@ -1750,8 +1750,8 @@ setTimeout(function() {
       axios.post(this.url+'/customer/editorder/'+this.orderId,{
         "action_type":'edit_discount',
        "payment_method":this.paymentData.payment_method,
-       "discount_amount":parseInt(this.paymentData.discount),
-       "additional_charge":parseFloat(this.paymentData.additional_charge),
+       "discount_amount":parseInt(this.paymentData.discount)||0,
+       "additional_charge":parseFloat(this.paymentData.additional_charge)||0,
        
       }).then(response=>{
         console.log(response)
@@ -1768,8 +1768,8 @@ setTimeout(function() {
       axios.post(this.url+'/customer/editorder/'+this.orderId,{
         "action_type":'submit_quatation',
        "payment_method":this.paymentData.payment_method,
-       "discount_amount":parseInt(this.paymentData.discount),
-       "additional_charge":parseFloat(this.paymentData.additional_charge),
+       "discount_amount":parseInt(this.paymentData.discount)||0,
+       "additional_charge":parseFloat(this.paymentData.additional_charge)||0,
        "before_cleaning_amount":parseInt(this.paymentData.amount_before_cleaning),
        "after_cleaning_amount":parseInt(this.paymentData.amount_after_cleaning),
        
@@ -1785,8 +1785,8 @@ setTimeout(function() {
       axios.post(this.url+'/customer/editorder/'+this.orderId,{
         "action_type":'submit_quatation',
        "payment_method":this.paymentData.payment_method,
-       "discount_amount":parseInt(this.paymentData.discount),
-       "additional_charge":parseFloat(this.paymentData.additional_charge)
+       "discount_amount":parseInt(this.paymentData.discount)||0,
+       "additional_charge":parseFloat(this.paymentData.additional_charge)||0
        
        
       }).then(response=>{

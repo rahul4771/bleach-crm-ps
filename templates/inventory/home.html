@@ -6,6 +6,9 @@
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
+    .inv-plan-img-btn2{
+        font-size: 12px;
+    }
     .owl-theme .owl-nav {
         margin-top: 10px;
         text-align: center;
@@ -127,7 +130,7 @@
             </div>
 
             <div class="row">
-                <div class="col-md-9" style="font-family: AvenirLTStd !important;">
+                <div class="col-md-12 col-lg-9" style="font-family: AvenirLTStd !important;">
                     
                     <div class="row">
                         <div class="col-md-12">
@@ -248,7 +251,7 @@
                                                 </td>
     
                                                 <td style="float: right;">
-                                                    <a href="/bleach-inventory/createcheckout/{{order.id}}"><button class="btn-p inv-plan-img-btn2 btn-shadow" > <img class="btn-img2"
+                                                    <a href="/bleach-inventory/createcheckout/{{order.id}}"><button class="btn-p inv-plan-img-btn2 btn-shadow" > <img class="btn-img2 mr-5"
                                     src="{% static 'files/inventory/icons/icon4.png' %}" alt="">Check-out</button></a>
     
     
@@ -286,10 +289,10 @@
                                                 <th  data-hide="phone,tablet" style="width: %;" class="text-center">
                                                     Unit Price
                                                 </th>
-                                                <th  data-hide="phone,tablet" style="width: %;" class="text-center">
+                                                <th  data-hide="phone,tablet" style="width: %;" class="text-center table-w-20">
                                                     Seller
                                                 </th>
-                                                <th  data-hide="phone,tablet" >
+                                                <th  data-hide="phone,tablet" class="table-w-20">
                                                     Status
                                                 </th>
     
@@ -374,7 +377,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3 pl-0">
+                <div class="col-md-6 col-lg-3 mt-10 ">
                     <div class="white-wrapper white-wrapper-padding m-0">
                         <div class="inv-dash-card-head">
                             Pending Check-in
@@ -628,6 +631,17 @@
     $(document).ready(function () {
         $('.owl-carousel').owlCarousel({
             items: 2,
+            responsive: {
+            0: {
+            items: 1,
+            },
+            600: {
+            items: 1,
+            },
+            1000: {
+            items: 2,
+            },
+        },
             nav: true,
             navText: [
                 `<i style="color:#000000 !important;" class='fa fa-chevron-left service-control' @click='prevService()'></i>`,

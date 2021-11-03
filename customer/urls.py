@@ -23,7 +23,7 @@ urlpatterns = [
 		url(r'^feedback-page/(?P<order_id>[-\w]+)$',views.CustomerFeedback.as_view(),name='customer-feedback'),
 
 		url(r'^quatation/download/(?P<evaluation_id>[-\w]+)$',views.quatation_html_to_pdf_view,name='quatation-download'),
-		# url(r'^purchaseorder/download/(?P<purchase_order_id>[-\w]+)$',views.purchaseorder_html_to_pdf_view,name='purchaseorder-download'),
+		url(r'^purchaseorder/download/(?P<purchase_order_id>[-\w]+)$',views.purchaseorder_html_to_pdf_view,name='purchaseorder-download'),
 		url(r'^invoice/download/(?P<evaluation_id>[-\w]+)$',views.invoice_html_to_pdf_view,name='invoice-download'),
 		url(r'^payment/receipt/download/(?P<payment_id>[-\w]+)$',views.receipt_html_to_pdf_view,name='payment-receipt-download'),
 		url(r'^order-detail/download/(?P<order_id>[-\w]+)/(?P<service_id>[-\w]+)/(?P<section_id>[-\w]+)$',views.orderdetail_html_to_pdf_view,name='order-detail-download'),
@@ -67,6 +67,7 @@ urlpatterns = [
 		url(r'^evaluatorbookingmultiplephase3/customer/(?P<evaluation_id>[-\w]+)$',views.EvaluatorMultipleCleaningBookingLetCustomerPhase3.as_view(),name='evaluatorclientcleaningmultiplebookingcustomerphase3'),#New Logic Applied atomic applied 8 to 22 logic applied
 
 		#order edits
+		url(r'^service/add-delete/(?P<evaluation_details_id>[-\w]+)$',views.AddDeleteService.as_view(),name='add-delete-service'),
 		url(r'^editorder/(?P<order_id>[-\w]+)$',views.EditOrderDetails.as_view(),name='edit-order'),
 		url(r'^service/cancellrequest/$',views.ServiceCancellationRequest.as_view(),name='cancell-service'),
 		url(r'^service/cancell/$',views.ServiceCancellation.as_view(),name='cancell-service-submit'),

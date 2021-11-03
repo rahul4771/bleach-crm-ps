@@ -390,22 +390,22 @@ let app = new Vue({
 
 
 
-        if(this.editSectionData.wall_type != null){
+        if(this.cleaningsections[item].wall_type != null){
           this.editSectionData.wall_type = this.cleaningsections[item].wall_type.split(",");
         }
-        if(this.editSectionData.floor_type != null){
+        if(this.cleaningsections[item].floor_type != null){
           this.editSectionData.floor_type = this.cleaningsections[item].floor_type.split(",");
         }
-        if(this.editSectionData.ceiling_type != null){
+        if(this.cleaningsections[item].ceiling_type != null){
           this.editSectionData.ceiling_type = this.cleaningsections[item].ceiling_type.split(",");
         }
-        if(this.editSectionData.material != null){
+        if(this.cleaningsections[item].material != null){
           this.editSectionData.material = this.cleaningsections[item].material.split(",");
         }
-        if(this.editSectionData.color != null){
+        if(this.cleaningsections[item].color != null){
           this.editSectionData.color = this.cleaningsections[item].color.split(",");
         }    
-        if(this.editSectionData.cause_of_stain != null){
+        if(this.cleaningsections[item].cause_of_stain != null){
           if(this.cleaningsections[item].cause_of_stain != ''){
             this.editSectionData.cause_of_stain = this.cleaningsections[item].cause_of_stain.split(",");
           }else{
