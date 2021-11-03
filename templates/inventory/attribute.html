@@ -242,6 +242,7 @@
                     <div class="wrap-drop" id="noble-gases"  >
                         <span id="id_selectText">--Select Category--</span>
                         <ul class="drop">
+                            <li id="cat_id0" onclick="changeSelect(0)"><a>All</a></li>
                             {% for category in categories %}
                             <li id="cat_id{{category.id}}" onclick="changeSelect({{category.id}})"><a>{{category.name}}</a></li>
                    
