@@ -631,6 +631,17 @@
     $(document).ready(function () {
         $('.owl-carousel').owlCarousel({
             items: 2,
+            responsive: {
+            0: {
+            items: 1,
+            },
+            600: {
+            items: 1,
+            },
+            1000: {
+            items: 2,
+            },
+        },
             nav: true,
             navText: [
                 `<i style="color:#000000 !important;" class='fa fa-chevron-left service-control' @click='prevService()'></i>`,
