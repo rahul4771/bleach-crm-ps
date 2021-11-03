@@ -26,6 +26,10 @@ html{
     color:#289bac;
   
 }
+.slots-container{
+    min-height: 300px
+;
+}
 .banner-box-text{
     color:#ffffff;
     font-size:14px;
