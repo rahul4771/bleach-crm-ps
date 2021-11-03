@@ -268,45 +268,7 @@
 <!-- One time cleaning dialog-->
 <v-dialog v-model="onetime_dialog" width="1000">
   <v-card style="min-height:500px">
-<div class="row mt-4 m-0">
-  <div class="col-md-12">
-    <h6>Choose a duration</h6>
-   
-  </div>
- 
-  <div class="col-md-2 mt-2 col-12" v-if="duration.length>0">
-    <div class="text-center p-2">In Hours</div>
-  </div>
-  <div class="col-md-12 mt-2 danger" v-else>
-      Cleaners not available for the selected service
-  </div>
-  <div
-    class="col-md-2 mt-2 col-6"
-    v-for="(item, durindex) in duration"
-    v-bind:key="durindex"
-  >
-    <div
-      class="duration-active text-center p-2"
-      v-on:click="selectDuration(item)"
-      v-if="selectedDuration == item"
-    >
-      <b> <% item.hours %></b>
-    </div>
-    <div
-      class="duration text-center p-2"
-      v-on:click="selectDuration(item)"
-      v-else
-    >
-      <b> <% item.hours %> </b>
-    </div>
-    <div
-      v-if="selectedDuration == item"
-      class="text-center sub-content"
-    >
-      <% item.hours / 2 %> slots
-    </div>
-  </div>
-</div>
+
 <div class="row m-0" v-if="selectedDuration.hours && onetimerender" style="margin:0 !important">
   <div class="col-md-4">
     <div >
@@ -316,11 +278,46 @@
     v-on:change="oneTimeDateChange()" class="mt-2" :min="today" ></v-date-picker>
   </div>
   <div class="col-md-8 "  >
-    <div class="mt-4">
-      Select  Slots
+    <div class="text-right">
+      <v-btn
+     
+      color="primary"
+      rounded
+      small
+      outlined
+      @click="resetOneTime()"
+      v-if="checkSlotSelection()"
+    >
+    <v-icon left>mdi-cached</v-icon>
+      Reset Selection
+    </v-btn>
     </div>
-<div class="row mt-2" style="margin:0 !important">
-  <div class="col-md-4" v-for="(slot,sindex) in bookingonetimeslots" v-bind:key="sindex">
+    <div >
+     <div  v-for="(sdate,sdindex) in selected_onetime_slots" >
+     
+     <div v-if="sdate.slots.length>0"><b>Day <% sdate.day_count %> : <% sdindex %></b></div> 
+     <v-chip
+    v-for="(st,stindex) in sdate.slots"
+      class="ma-2"
+      
+     
+    >
+  
+   <span v-if="slotFormat[st]"> <% slotFormat[st].start_time+' - '+slotFormat[st].end_time %></span> 
+    </v-chip>
+  </div> 
+  </div>
+
+  <div class="mt-4" v-if="!isSlotsSelected()">No of Days : <%cleaning_set.length%></div>
+    <div class="mt-4" v-if="!isSlotsSelected()">
+     <b>Select  Day <%currentSlotDay%></b> 
+    </div>
+    <div class="mt-4" v-if="!isSlotsSelected()">
+      Please Select <%cleaning_set[currentSlotDay-1][0]/2%> slot(s)
+    </div>
+    
+<div class="row mt-2 " style="margin:0 !important">
+  <div class="col-md-4" v-for="(slot,sindex) in bookingonetimeslots" v-bind:key="sindex" v-if="one_time_slots[oneTimeDateSelected] && !slot_loader && !isSlotsSelected()">
     <div class="time-slot duration text-center p-2" 
    @click="addOneTimeSlot(slot.start_time,slot.end_time,onetimeslots[sindex])" v-if='!one_time_slots[oneTimeDateSelected].slots.includes(onetimeslots[sindex]) && checkOneTimeSlotStat(onetimeslots[sindex])'>
      <% slot.start_time+' - '+ slot.end_time %>
@@ -333,7 +330,7 @@
       <% slot.start_time+' - '+ slot.end_time %>
     </div>
   </div>
-  <div class="col-md-12" v-if="bookingonetimeslots.length<1">
+  <div class="col-md-12" v-if="bookingonetimeslots.length<1 && !slot_loader">
     <v-alert
       dense
       outlined
@@ -342,8 +339,17 @@
       Cleaners not available. Please try another date.
     </v-alert>
   </div>
+  <div class="col-md-12 text-center"  v-if="slot_loader">
+    <v-progress-circular
+    :size="50"
+    color="primary"
+    indeterminate
+    class="mt-10"
+   
+  ></v-progress-circular>
+  </div>
   <div class="col-md-12 ">
-    <div v-if="oneTimeSlotCounter()<1">
+    <div v-if="oneTimeSlotCounter()<1 && !slot_loader">
     <v-alert
     dense
     outlined
@@ -354,8 +360,12 @@
   </v-alert>
 </div>
     <div class="d-flex justify-center">
-    <v-btn color="primary" @click="submitOneTimeSlots()">
+    
+    <v-btn color="primary" @click="nextSlotSelection()" v-if="isSlotsSelected()">
       Proceed
+    </v-btn>
+    <v-btn color="primary" @click="nextSlotSelection()" v-else>
+      Next
     </v-btn>
     <v-btn color="primary" outlined class="ml-2" @click="onetime_dialog=false">
       Cancel
@@ -1449,7 +1459,7 @@ width="1000"
 
                       <!-- One time cleaning begins here-->
                         
-                      <div class="row m-0"  v-if="cleaningPolicy=='One Time'">
+                      <div class="row m-0"  v-if="cleaningPolicy=='One Time' && checkEditSchedule()">
                         <div class="col-md-12 " v-if="!oneTimeSelectionStat">
                           <v-btn
                           tile
@@ -1506,12 +1516,12 @@ form.submit();
 <script src="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/owl.carousel.js' %}"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
-<!-- <script src="https://unpkg.com/axios/dist/axios.min.js"></script> -->
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.33/moment-timezone.min.js"
   integrity="sha512-jkvef+BAlqJubZdUhcyvaE84uD9XOoLR3e5GGX7YW7y8ywt0rwcGmTQHoxSMRzrJA3+Jh2T8Uy6f8TLU3WQhpQ=="
   crossorigin="anonymous"></script>-->
-  <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/browser-image-compression@1.0.13/dist/browser-image-compression.js"></script> -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/browser-image-compression@1.0.13/dist/browser-image-compression.js"></script>
   <!--<script src="{% static 'files/js/customer/main.js' %}"></script>-->
 <script src="{% static 'files/js/reorder.js' %}"></script>
 
