@@ -849,6 +849,7 @@ hourly_slots:true
           return flag
         },
         resetScheduler(){
+          console.log("inside reset scheduler")
           this.currentSlotDay=1
           this.out_of_shift=false
           this.cleaningPolicy=''
@@ -865,6 +866,7 @@ hourly_slots:true
           this.reselectSlot=[]
           this.reselectDate={}
           this.reselectDateIndex=null
+
          // this.one_time_slots={},
           if(this.cleaning_set.length>0)
           {
@@ -5756,6 +5758,7 @@ try {
     hours:this.cleaning_set[0][0],
     slots:this.cleaning_set[0][0]/2
   }
+  this.calcSlots()
   this.getMultipleSlots()
 
  
