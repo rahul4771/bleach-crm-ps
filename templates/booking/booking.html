@@ -423,6 +423,7 @@ width="1000"
     <v-switch
   v-model="out_of_shift"
   label="Out of Shift Cleaning"
+  @change="clearOutOfShift()"
   class="mt-4 ml-2 not-required"
   ></v-switch>
   </div>
@@ -458,9 +459,9 @@ width="1000"
         Select  Slots
       </div>
   <div class="row mt-2" style="margin:0 !important">
-    <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex">
+    <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex"  v-if="outofshiftCheck(sindex)">
       <div class="time-slot duration text-center p-2" 
-     @click="addDoubleSlot(slot.start_time,slot.end_time,(sindex+1))" v-if='!selected_double_slots.includes((sindex+1)) && checkSlotStat((sindex+1))'>
+     @click="addDoubleSlot(slot.start_time,slot.end_time,(sindex+1))" >
        <% slot.start_time+' - '+ slot.end_time %>
       </div>
   
@@ -548,7 +549,7 @@ width="1000"
         Select <% selectedDuration.hours/2 %> Slots
       </div>
   <div class="row mt-2" style="margin:0 !important">
-    <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex">
+    <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex" v-if="outofshiftCheck(sindex)">
       <div class="time-slot duration text-center p-2" 
      @click="addDoubleSlot(slot.start_time,slot.end_time,(sindex+1))" v-if='!selected_double_slots.includes((sindex+1)) && checkSlotStat((sindex+1))'>
        <% slot.start_time+' - '+ slot.end_time %>
@@ -616,6 +617,8 @@ width="1000"
 v-model="out_of_shift"
 label="Out of Shift Cleaning"
 class="mt-4 ml-2 not-required"
+@change="clearOutOfShift()"
+
 ></v-switch>
 </div>
 <!--- Hourly Cleaning Begins Here-->
@@ -680,7 +683,7 @@ class="mt-4 ml-2 not-required"
       Select Slots
     </div>
 <div class="row mt-2" style="margin:0 !important" v-if="hourly_slots">
-  <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex">
+  <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex" v-if="outofshiftCheck(sindex)">
     <div class="time-slot duration text-center p-2" 
    @click="addDoubleSlot(slot.start_time,slot.end_time,(sindex+1))" v-if='!selected_double_slots.includes((sindex+1)) && checkSlotStat((sindex+1))'>
      <% slot.start_time+' - '+ slot.end_time %>
@@ -805,7 +808,7 @@ class="mt-4 ml-2 not-required"
         Select <% selectedDuration.hours/2 %>  Slots
       </div>
   <div class="row mt-2" style="margin:0 !important">
-    <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex">
+    <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex" v-if="outofshiftCheck(sindex)">
       <div class="time-slot duration text-center p-2" 
      @click="addDoubleSlot(slot.start_time,slot.end_time,(sindex+1))" v-if='!selected_double_slots.includes((sindex+1)) && checkSlotStat((sindex+1))'>
        <% slot.start_time+' - '+ slot.end_time %>
@@ -872,6 +875,7 @@ width="1000"
   v-model="out_of_shift"
   label="Out of Shift Cleaning"
   class="mt-4 ml-2 not-required"
+  @change="clearOutOfShift()"
   ></v-switch>
   </div>
   <!--- Hourly Cleaning Begins Here-->
@@ -907,7 +911,7 @@ width="1000"
         Select  Slots
       </div>
   <div class="row mt-4">
-    <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex">
+    <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex" v-if="outofshiftCheck(sindex)">
       <div class="time-slot duration text-center p-2" 
      @click="addDoubleSlot(slot.start_time,slot.end_time,(sindex+1))" v-if='!selected_double_slots.includes((sindex+1)) && checkSlotStat((sindex+1))'>
        <% slot.start_time+' - '+ slot.end_time %>
@@ -997,7 +1001,7 @@ width="1000"
       Select <% selectedDuration.hours/2 %> Slots
     </div>
 <div class="row mt-4">
-  <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex">
+  <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex" v-if="outofshiftCheck(sindex)">
     <div class="time-slot duration text-center p-2" 
    @click="addDoubleSlot(slot.start_time,slot.end_time,(sindex+1))" v-if='!selected_double_slots.includes((sindex+1)) && checkSlotStat((sindex+1))'>
      <% slot.start_time+' - '+ slot.end_time %>

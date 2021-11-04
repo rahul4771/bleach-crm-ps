@@ -857,6 +857,35 @@ hourly_slots:true
           }
           return flag
         },
+        outofshiftCheck(index){
+          if(this.out_of_shift)
+          {
+            return true
+          }
+          else{
+            if(index>3 && index<11){
+              return true
+            }
+            else{
+              return false
+            }
+          }
+        },
+        clearOutOfShift(){
+          if(!this.out_of_shift){
+            for(var i=0;i<=2;i++){
+              if(this.selected_double_slots.includes(i+1)){
+                var index=this.selected_double_slots.indexOf(i+1)
+                this.selected_double_slots.splice(index,1)
+              }
+            }
+            if(this.selected_double_slots.includes(12)){
+              this.selected_double_slots.splice(11,1)
+            }
+            
+           
+          }
+        },
         resetScheduler(){
           this.hourly_cleaning={
             cleaners:'',
