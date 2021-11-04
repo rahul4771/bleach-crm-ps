@@ -237,9 +237,7 @@
               <div class="col-md-6 col-lg-4 mt-2">
                 <div class="keynote-chip">
                   <div class="qt-details-title d-flex">
-                    {% if orderschedule.work_status == 'CLEANING_IN_PROGRESS' %} <div class="status-dot inprogress-chip-bg  mr-5" style="margin:3px;"></div>
-                    {% elif orderschedule.work_status == 'CLEANING_FULFILLED' %} <div class="status-dot completed-chip-bg  mr-5" style="margin:3px;"></div> 
-                    {% elif orderschedule.work_status == 'CLEANING_TEAM_ASSIGNED' %} <div class="status-dot assigned-chip-bg  mr-5" style="margin:3px;"></div>
+                    {% if orderschedule.work_status == 'CLEANING_FULFILLED' %} <div class="status-dot completed-chip-bg  mr-5" style="margin:3px;"></div> 
                     {% elif orderschedule.work_status == 'CLEANING_CANCELLED' %} <div class="status-dot cancel-chip-bg  mr-5" style="margin:3px;"></div>
                     {% else %} <div class="status-dot notstarted-chip-bg  mr-5" style="margin:3px;"></div>
                     {% endif %}
@@ -253,13 +251,14 @@
                     <i class="far fa-clock mt-1 inv-primary-text"></i><span class="ml-2 "> {{orderschedule.start_at|time:'h:i A'}}</span>  
                   </div>
                   <div class="ml-10">
-                    <i class="fas fa-hourglass-end mt-1 inv-primary-text"></i><span class="ml-2 "> {% if orderschedule.cleaning_hours %}{{orderschedule.cleaning_hours}}{% else %}{{orderschedule.order_scheduler_book.cleaning_hours}}{% endif %} Hours</span> 
+                    <i class="fas fa-hourglass-end mt-1 inv-primary-text"></i><span class="ml-2 "> {% if orderschedule.cleaning_hours %}{{orderschedule.cleaning_hours}}{% else %}{{orderschedule.order_scheduler_book.cleaning_hours}}{% endif %} </span> 
                   </div>
                 </div>
                 </div>   
               </div>
               <!--Visit ends-->
               {% endfor %}
+
               </div>
             </div>
             <div class="col-md-12">
@@ -279,7 +278,6 @@
             </div>
              
             </div>
-
           
 
             
