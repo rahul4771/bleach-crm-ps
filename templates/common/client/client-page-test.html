@@ -369,7 +369,7 @@
                     </div>
                 <BR>
 
-                {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}
+                {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'ADMIN'%}
                 <a style="text-decoration: none; color: #434343;" href="{% url 'customer:statement-of-account' client_details.id %}" target="_blank">
                 <div class="text-center">
                     <div  class="secondary-btn cd-ml-4">
