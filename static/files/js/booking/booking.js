@@ -364,7 +364,7 @@ const app=new Vue({
   ],
   splitData: ["8"],
   selectTest: "",
-  selectedDuration: "8",
+  selectedDuration: {},
   size: ["SMALL", "MEDIUM", "LARGE"],
   cause_of_stain:['INK MARK', 'HARD DUST', 'COFFEE & TEA SPILL', 'OIL',
   'GREASE', 'PAINT', 'URINE', 'MILK SPILL', 'NO STAIN', 'OTHERS'],
@@ -1495,7 +1495,13 @@ hourly_slots:true
       }
         },
         findHourlyCost(){
-          var total_cost=7.5*parseInt(this.hourly_cleaning.cleaners)*parseInt(this.hourly_cleaning.hourly_duration)
+          if(this.hourly_cleaning.hourly_duration<=2)
+          {
+          var total_cost=15*parseInt(this.hourly_cleaning.cleaners)*parseInt(this.hourly_cleaning.hourly_duration)
+          }
+          else{
+            var total_cost=25*parseInt(this.hourly_cleaning.cleaners)*parseInt(this.hourly_cleaning.hourly_duration)
+          }
 
           this.multiServicesBill[0].bill[0].section_net_cost=total_cost
           this.multiServicesBill[0].bill[0].section_cost=total_cost
@@ -5638,10 +5644,199 @@ try {
   console.log("i am ready")
     var manhour=this.totalmanhour
     // var n=this.n
-    
-    this.newHourCalculation(manhour)
+    if(this.cleaningPolicy=='Subscription')
+    {
+      this.oldHourCalculation(manhour)
+    }
+    else{
+      
+      this.newHourCalculation(manhour)
+    }
     
 })
+  },
+  oldHourCalculation(n){
+    var manhour=n
+    var pair = [];
+    for (var i = 1; i < parseInt(n ** (1 / 2)) + 1; i++) {
+      if (n % i == 0) {
+        pair = [i, n / i];
+      }
+    }
+    console.log(pair, "pair");
+    //pair convert to 3's multiple
+    var convertion_r = 2;
+    var convertion_mod = pair[1] % convertion_r;
+    var highest_cleaner=Math.max(...this.maxCleaners)
+    var lowest_cleaner=Math.min(...this.maxCleaners)
+
+    if (convertion_mod > parseInt(convertion_r / 2)) {
+      console.log(manhour, "divider");
+      console.log(pair[1] + (convertion_r - convertion_mod), "divident");
+      console.log(
+        parseInt(manhour / (pair[1] + (convertion_r - convertion_mod))),
+        "division"
+      );
+      pair = [
+        Math.round(manhour / (pair[1] + (convertion_r - convertion_mod))),
+        pair[1] + (convertion_r - convertion_mod),
+      ];
+    } else {
+      console.log(manhour, "divider");
+      console.log(pair[1] - convertion_mod, "divident");
+
+      if (pair[1] - convertion_mod == 0) {
+        pair = [Math.round(manhour / 2), 2];
+      } else {
+        pair = [
+          Math.round(manhour / (pair[1] - convertion_mod)),
+          pair[1] - convertion_mod,
+        ];
+      }
+    }
+
+    console.log(pair, "newpair");
+
+    //var max_cleaners = data["max_cleaners"];
+    //max_cleaners=10;
+    console.log("lowest cleaner is "+lowest_cleaner)
+    var duration_list = [];
+    var lower_loop = 0;
+    var upper_loop = 0;
+    var middle_element = pair[0];
+    var middle_hours = pair[1];
+
+    if (middle_element <= lowest_cleaner && middle_element > 0) {
+      duration_list.push(pair);
+
+      //first
+      if (
+        Math.round(manhour / (middle_hours - 2)) > 0 &&
+        Math.round(manhour / (middle_hours - 2)) <= lowest_cleaner
+      ) {
+        duration_list.push([
+          Math.round(manhour / (middle_hours - 2)),
+          middle_hours - 2,
+        ]);
+        lower_loop = 1;
+      }
+      if (
+        Math.round(manhour / (middle_hours + 2)) > 0 &&
+        Math.round(manhour / (middle_hours + 2)) <= lowest_cleaner
+      ) {
+        duration_list.push([
+          Math.round(manhour / (middle_hours + 2)),
+          middle_hours + 2,
+        ]);
+        upper_loop = 1;
+      }
+
+      //check
+      if (
+        Math.round(manhour / (middle_hours - 4)) > 0 &&
+        Math.round(manhour / (middle_hours - 4)) <= lowest_cleaner &&
+        upper_loop == 0
+      ) {
+        duration_list.push([
+          Math.round(manhour / (middle_hours - 4)),
+          middle_hours - 4,
+        ]);
+        lower_loop = 1;
+      }
+      if (
+        Math.round(manhour / (middle_hours + 4)) > 0 &&
+        Math.round(manhour / (middle_hours + 4)) <= lowest_cleaner &&
+        lower_loop == 0
+      ) {
+        duration_list.push([
+          Math.round(manhour / (middle_hours + 4)),
+          middle_hours + 4,
+        ]);
+        upper_loop = 1;
+      }
+    } else if (middle_element == 0 && lowest_cleaner > 0) {
+      //1st
+      duration_list.push([1, middle_hours]);
+
+      //2nd
+      if (
+        Math.round(manhour / (middle_hours + 2)) > 0 &&
+        Math.round(manhour / (middle_hours + 2)) <= lowest_cleaner
+      ) {
+        duration_list.push([
+          Math.round(manhour / (middle_hours + 2)),
+          middle_hours + 2,
+        ]);
+      } else {
+        duration_list.push([1, middle_hours + 2]);
+      }
+
+      //3rd
+      if (
+        Math.round(manhour / (middle_hours + 4)) > 0 &&
+        Math.round(manhour / (middle_hours + 4)) <= lowest_cleaner
+      ) {
+        duration_list.push([
+          Math.round(manhour / (middle_hours + 4)),
+          middle_hours + 4,
+        ]);
+      } else {
+        duration_list.push([1, middle_hours + 4]);
+      }
+    } else {
+      middle_element = lowest_cleaner;
+      middle_hours =
+        Math.round(manhour / middle_element) -
+        (Math.round(manhour / middle_element) % 2);
+      if (middle_hours == 0) {
+        middle_hours = 2;
+      }
+
+      //1st
+      duration_list.push([middle_element, middle_hours]);
+
+      //2nd
+      if (
+        Math.round(manhour / (middle_hours + 2)) > 0 &&
+        Math.round(manhour / (middle_hours + 2)) <= lowest_cleaner
+      ) {
+        duration_list.push([
+          Math.round(manhour / (middle_hours + 2)),
+          middle_hours + 2,
+        ]);
+      } else {
+        duration_list.push([middle_element, middle_hours + 2]);
+      }
+
+      //3rd
+      if (
+        Math.round(manhour / (middle_hours + 4)) > 0 &&
+        Math.round(manhour / (middle_hours + 2)) <= highest_cleaner
+      ) {
+        duration_list.push([
+          Math.round(manhour / (middle_hours + 4)),
+          middle_hours + 4,
+        ]);
+      } else {
+        duration_list.push([middle_element, middle_hours + 4]);
+      }
+    }
+    console.log(duration_list);
+
+    for (i = 0; i < duration_list.length; i++) {
+      var total_duration = duration_list[i][1];
+      //show to users
+      var total_minutes = (total_duration.toFixed(2) * 60).toFixed(0);
+      var converted_hours = Math.floor(total_minutes / 60);
+      var converted_minutes = total_minutes % 60;
+      var total_cleaners = duration_list[i][0];
+      console.log(converted_hours, "converted_hours");
+      console.log(converted_minutes, "converted_minutes");
+      console.log(total_cleaners, "total_cleaners");
+      this.setDuration(converted_hours, total_cleaners);
+    }
+    this.sortDuration()
+
   },
   newHourCalculation(n){
    
