@@ -6,6 +6,7 @@ from common_items import views
 urlpatterns = [
 
 		url(r'^raiseticket/$',views.NewRaiseTicket.as_view(),name='raise-tickets'),
+		url(r'^tickets/order/register/(?P<orderid>[-\w]+)/$',views.OrderTicketRegistration.as_view(),name='orderticketregister'),
 
 
 		url(r'^orders/$',views.OrderDetails.as_view(),name='orders'),
