@@ -1825,7 +1825,7 @@
                                                     <img  class="visit-time-edit pointer ml-10 mt-2p" src="{% static 'files/icons/time-primary.png' %}" ><span class="ml-5 visit-text">{% if multi_order_schedule.cleaning_hours %}{{multi_order_schedule.cleaning_hours}}{% else %}{{evaluationbook.cleaning_hours|default_if_none:0.0}}{% endif %}</span>
 
                                                     <!--cleaning date edit-->
-                                                    {% if request.user.user_type == 'SALESADMIN' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'SENIORTEAMLEADER' %}                                                    
+                                                    {% if request.user.user_type == 'SALESADMIN' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'EVALUATOR' %}                                                    
 
                                                         {% if multi_order_schedule.work_status == 'CLEANING_FULFILLED' or multi_order_schedule.work_status == 'CLEANING_IN_PROGRESS' %}
                                                         {% else %}

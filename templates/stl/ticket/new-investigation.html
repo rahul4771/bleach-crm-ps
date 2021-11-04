@@ -187,18 +187,18 @@
                                             <div class="d-flex">
                                                 <div>
                                                     {% if investigation_details.order.payment_status == 'COMPLETED' %}
-                                                        <span class="tk-dot tk-completed-color"></span><span class="tk-common-text2 av-font">Paid</span>
+                                                        <span class="tk-dot tk-paid-color"></span><span class="tk-common-text2 av-font">Paid</span>
                                                     {% elif investigation_details.order.payment_status == 'PENDING' %}
-                                                        <span class="tk-dot tk-completed-color"></span><span class="tk-common-text2 av-font">Pending</span>
+                                                        <span class="tk-dot tk-pending-color"></span><span class="tk-common-text2 av-font">Pending</span>
                                                     {% else %}
-                                                        <span class="tk-dot tk-completed-color"></span><span class="tk-common-text2 av-font">On Hold</span>
+                                                        <span class="tk-dot tk-onhold-color"></span><span class="tk-common-text2 av-font">On Hold</span>
                                                     {% endif %}
                                                 </div>
                                                 <div class="ml-10">
                                                     {% if investigation_details.order.order_status == 'ORDER_CLOSED' %}   
-                                                        <span class="tk-dot tk-completed-color"></span><span class="tk-common-text2 av-font">Closed</span>
+                                                        <span class="tk-dot tk-paid-color"></span><span class="tk-common-text2 av-font">Closed</span>
                                                     {% elif investigation_details.order.order_status == 'ORDER_IN_PROGRESS' %}   
-                                                        <span class="tk-dot tk-completed-color"></span><span class="tk-common-text2 av-font">In Progress</span>
+                                                        <span class="tk-dot tk-pending-color"></span><span class="tk-common-text2 av-font">In Progress</span>
                                                     {% endif %}
                                                 </div>
                                             </div>
