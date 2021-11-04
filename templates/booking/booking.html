@@ -441,12 +441,8 @@ width="1000"
     </div>
     <div class="col-md-4">
       <h6>Enter Number of cleaners</h6>
-      <v-text-field
-      label="Number of Cleaners"
-      v-model="hourly_cleaning.cleaners"
-      type="number"
-      @input="hourlyCleaningChange()"
-    ></v-text-field>
+      <v-select :items="hourly_options" v-model="hourly_cleaning.cleaners" @change="hourlyCleaningChange()" item-text="text" item-value="value"></v-select>
+    
     </div>
   </div>
   <div class="row m-0" v-if="hourly_cleaning.hourly_duration && hourly_cleaning.cleaners" style="margin:0 !important">
@@ -636,13 +632,9 @@ class="mt-4 ml-2 not-required"
           ></v-text-field>
   </div>
   <div class="col-md-4">
-    <h6>Enter Number of cleaners</h6>
-    <v-text-field
-    label="Number of Cleaners"
-    v-model="hourly_cleaning.cleaners"
-    type="number"
-    @input="hourlyCleaningChange()"
-  ></v-text-field>
+    <h6>Select Number of cleaners</h6>
+    <v-select :items="hourly_options" v-model="hourly_cleaning.cleaners" @change="hourlyCleaningChange()" item-text="text" item-value="value"></v-select>
+
   </div>
 </div>
 <div class="row m-0" v-if="hourly_cleaning.cleaners && hourly_cleaning.hourly_duration" style="margin:0 !important">
@@ -896,13 +888,9 @@ width="1000"
             ></v-text-field>
     </div>
     <div class="col-md-4">
-      <h6>Enter Number of cleaners</h6>
-      <v-text-field
-      label="Number of Cleaners"
-      v-model="hourly_cleaning.cleaners"
-      type="number"
-      @input="hourlyCleaningChange()"
-    ></v-text-field>
+      <h6>Select Number of cleaners</h6>
+      <v-select :items="hourly_options" v-model="hourly_cleaning.cleaners" @change="hourlyCleaningChange()" item-text="text" item-value="value"></v-select>
+
     </div>
   </div>
   <div class="row " style="margin:0 !important" v-if="hourly_cleaning.hourly_duration && hourly_cleaning.cleaners">
