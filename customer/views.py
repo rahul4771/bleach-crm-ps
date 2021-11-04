@@ -1798,6 +1798,7 @@ class GetServiceProductivity(APIView):
 				service_productivity['max_hours'] 		 = serviceproductivity.max_hours
 				service_productivity['min_hours'] 		 = serviceproductivity.min_hours
 				service_productivity['min_cleaners']     = serviceproductivity.min_cleaners
+				service_productivity['max_cleaners']     = serviceproductivity.max_cleaners
 
 		
 		elif service_type         == 'Window Cleaning':
@@ -1810,6 +1811,7 @@ class GetServiceProductivity(APIView):
 				service_productivity['max_hours'] 		 = serviceproductivity.max_hours
 				service_productivity['min_hours'] 		 = serviceproductivity.min_hours
 				service_productivity['min_cleaners']     = serviceproductivity.min_cleaners
+				service_productivity['max_cleaners']     = serviceproductivity.max_cleaners
 		
 		elif service_type         == 'Facade Cleaning':
 			serviceproductivities = ServiceProductivity.objects.select_related('service_type').filter(service_type__name=service_type)
@@ -1821,6 +1823,7 @@ class GetServiceProductivity(APIView):
 				service_productivity['max_hours'] 		 = serviceproductivity.max_hours
 				service_productivity['min_hours'] 		 = serviceproductivity.min_hours
 				service_productivity['min_cleaners']     = serviceproductivity.min_cleaners
+				service_productivity['max_cleaners']     = serviceproductivity.max_cleaners
 		
 		elif service_type         == 'Kitchen Cleaning':
 			serviceproductivities = ServiceProductivity.objects.select_related('service_type').filter(service_type__name=service_type)
@@ -1837,45 +1840,14 @@ class GetServiceProductivity(APIView):
 				service_productivity['max_hours'] 		 = serviceproductivity.max_hours
 				service_productivity['min_hours'] 		 = serviceproductivity.min_hours
 				service_productivity['min_cleaners']     = serviceproductivity.min_cleaners
+				service_productivity['max_cleaners']     = serviceproductivity.max_cleaners
 		else:
 			serviceproductivity = ServiceProductivity.objects.select_related('service_type').get(service_type__name=service_type)
 			service_productivity['perhour_cleaning'] = serviceproductivity.perhour_cleaning
 			service_productivity['max_hours'] 		 = serviceproductivity.max_hours
 			service_productivity['min_hours'] 		 = serviceproductivity.min_hours
 			service_productivity['min_cleaners']     = serviceproductivity.min_cleaners
-
-		if service_type   == 'General Cleaning':
-			total_cleaners = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).filter(is_active=True,is_general_skill=True).count()
-		elif service_type == 'Deep Cleaning':
-			total_cleaners = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).filter(is_active=True,is_deep_skill=True).count()
-		elif service_type == 'Upholstery Cleaning':
-			total_cleaners = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).filter(is_active=True,is_upholstery_skill=True).count()
-		elif service_type == 'Kitchen Cleaning':
-			total_cleaners = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).filter(is_active=True,is_kitchen_skill=True).count()
-		elif service_type == 'Kitchen Appliances':
-			total_cleaners = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).filter(is_active=True,is_kitchen_skill=True).count()
-		elif service_type == 'Carpet Cleaning':
-			total_cleaners = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).filter(is_active=True,is_carpet_skill=True).count()
-		elif service_type == 'Sterilization':
-			total_cleaners = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).filter(is_active=True,is_sterilization_skill=True).count()
-		elif service_type == 'Mattress Cleaning':
-			total_cleaners = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).filter(is_active=True,is_deep_skill=True).count()
-		elif service_type == 'Facade Cleaning':
-			total_cleaners = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).filter(is_active=True,is_facade_skill=True).count()
-		elif service_type == 'Storage Area':
-			total_cleaners = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).filter(is_active=True,is_storagearea_skill=True).count()
-		elif service_type == 'Car Parking Umbrella':
-			total_cleaners = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).filter(is_active=True,is_carparkingumbrella_skill=True).count()
-		elif service_type == 'Window Cleaning':
-			total_cleaners = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).filter(is_active=True,is_window_skill=True).count()
-		elif service_type == 'Outdoor Cleaning':
-			total_cleaners = UserProfile.objects.filter(Q(Q(user_type='TEAMINCHARGE')|Q(user_type='CLEANER'))).filter(is_active=True,is_outdoor_skill=True).count()	
-		else:
-			total_cleaners = 0
-
-		if total_cleaners > 0:
-			total_cleaners = total_cleaners-1
-		service_productivity['max_cleaners'] = total_cleaners
+			service_productivity['max_cleaners']     = serviceproductivity.max_cleaners
 
 		return JsonResponse(service_productivity)
 
