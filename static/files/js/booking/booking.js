@@ -95,6 +95,15 @@ const app=new Vue({
         
       },
     data: {
+      hourly_options:[{
+        text:'1 - 2 Cleaners',
+        value:2
+      },
+      {
+        text:'3 - 4 Cleaners',
+        value:4
+      }
+    ],
       currentSlotDay:1,
       cleaning_set:[],
       max_cleaners:[],
@@ -849,7 +858,11 @@ hourly_slots:true
           return flag
         },
         resetScheduler(){
-          console.log("inside reset scheduler")
+          this.hourly_cleaning={
+            cleaners:'',
+            duration:'',
+            hourly_duration:''
+          }
           this.currentSlotDay=1
           this.out_of_shift=false
           this.cleaningPolicy=''
@@ -1495,7 +1508,7 @@ hourly_slots:true
       }
         },
         findHourlyCost(){
-          if(this.hourly_cleaning.hourly_duration<=2)
+          if(this.hourly_cleaning.cleaners<=2)
           {
           var total_cost=15*parseInt(this.hourly_cleaning.cleaners)*parseInt(this.hourly_cleaning.hourly_duration)
           }
@@ -4841,6 +4854,7 @@ try {
   },
   hourlyCleaningChange(){
     this.hourly_slots=false
+    this.hourly_cleaning.hourly_duration=parseInt(this.hourly_cleaning.hourly_duration)
     this.selectedDuration.cleaners=parseInt(this.hourly_cleaning.cleaners)
     if((parseInt(this.hourly_cleaning.hourly_duration)%2) !=0 ){
       this.selectedDuration.hours=parseInt(this.hourly_cleaning.hourly_duration)+1
