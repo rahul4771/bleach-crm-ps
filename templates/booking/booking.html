@@ -514,7 +514,7 @@ width="1000"
   </div>
   <!--- Hourly Cleaning Ends Here-->
   <div v-if="serviceType!='Hourly Cleaning'">
-  <!-- <div class="row m-0" style="margin:0 !important">
+  <div class="row m-0" style="margin:0 !important">
     <div class="col-md-12">
       <h6>Choose a duration</h6>
     </div>
@@ -538,7 +538,7 @@ width="1000"
         <% item.cleaners %> <span v-if="item.cleaners<2">cleaner</span><span v-else>cleaners</span>
       </div>
     </div>
-    </div> -->
+    </div>
   <div class="row m-0" v-if="selectedDuration.hours" style="margin:0 !important">
     <div class="col-md-4">
       <div >
@@ -743,7 +743,7 @@ class="mt-4 ml-2 not-required"
 <!--- Hourly Cleaning Ends Here-->
 
 <div v-if="serviceType!='Hourly Cleaning'">
-  <!-- <div class="row m-0" style="margin:0 !important" >
+  <div class="row m-0" style="margin:0 !important" >
     <div class="col-md-12">
       <h6>Choose a duration</h6>
     </div>
@@ -767,7 +767,7 @@ class="mt-4 ml-2 not-required"
         <% item.cleaners %> <span v-if="item.cleaners<2">cleaner</span><span v-else>cleaners</span>
       </div>
     </div>
-    </div> -->
+    </div>
 
 
   <div class="row m-0" v-if="selectedDuration.hours" style="margin:0 !important">
@@ -970,7 +970,7 @@ width="1000"
   </div>
    <!--- Hourly Cleaning Ends Here-->
    <div v-if="serviceType!='Hourly Cleaning'">
-<!-- <div class="row m-0" style="margin:0 !important" >
+<div class="row m-0" style="margin:0 !important" >
   <div class="col-md-12">
     <h6>Choose a duration</h6>
   </div>
@@ -994,7 +994,7 @@ width="1000"
       <% item.cleaners %> <span v-if="item.cleaners<2">cleaner</span><span v-else>cleaners</span>
     </div>
   </div>
-  </div> -->
+  </div>
   <div class="row " style="margin:0 !important" v-if="selectedDuration.hours">
   <div class="col-md-4">
     <div >
@@ -3714,6 +3714,7 @@ Fill all the details of the Buildings  to proceed
           dense
           v-model="cleaningPolicy"
           v-if="serviceType!='Hourly Cleaning'"
+        @change="newdurationcalculation()"
          
         ></v-select>
         <v-select
