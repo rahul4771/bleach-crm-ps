@@ -444,6 +444,14 @@ width="1000"
 
 >
 <v-card style="min-height:600px">
+  <div class="shift_switch">
+    <v-switch
+  v-model="out_of_shift"
+  label="Out of Shift Cleaning"
+  @change="clearOutOfShift()"
+  class="mt-4 ml-2 not-required"
+  ></v-switch>
+  </div>
   <div class="row m-0" style="margin:0 !important">
     <div class="col-md-12">
       <h6>Choose a duration</h6>
@@ -481,7 +489,7 @@ width="1000"
         Select  Slots
       </div>
   <div class="row mt-2" style="margin:0 !important">
-    <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex">
+    <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex" v-if="outofshiftCheck(sindex)">
       <div class="time-slot duration text-center p-2" 
      @click="addDoubleSlot(slot.start_time,slot.end_time,(sindex+1))" v-if='!selected_double_slots.includes((sindex+1)) && checkSlotStat((sindex+1))'>
        <% slot.start_time+' - '+ slot.end_time %>
@@ -530,6 +538,14 @@ width="1000"
 
 >
 <v-card style="min-height:600px">
+  <div class="shift_switch">
+    <v-switch
+  v-model="out_of_shift"
+  label="Out of Shift Cleaning"
+  @change="clearOutOfShift()"
+  class="mt-4 ml-2 not-required"
+  ></v-switch>
+  </div>
   <div class="row m-0" style="margin:0 !important">
     <div class="col-md-12">
       <h6>Choose a duration</h6>
@@ -597,7 +613,7 @@ width="1000"
         Select  Slots
       </div>
   <div class="row mt-2" style="margin:0 !important">
-    <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex">
+    <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex" v-if="outofshiftCheck(sindex)">
       <div class="time-slot duration text-center p-2" 
      @click="addDoubleSlot(slot.start_time,slot.end_time,(sindex+1))" v-if='!selected_double_slots.includes((sindex+1)) && checkSlotStat((sindex+1))'>
        <% slot.start_time+' - '+ slot.end_time %>
@@ -647,7 +663,14 @@ width="1000"
 
 >
 <v-card style="min-height:500px">
-  
+  <div class="shift_switch">
+    <v-switch
+  v-model="out_of_shift"
+  label="Out of Shift Cleaning"
+  @change="clearOutOfShift()"
+  class="mt-4 ml-2 not-required"
+  ></v-switch>
+  </div>
 <div class="row m-0" style="margin:0 !important">
   <div class="col-md-12">
     <h6>Choose a duration</h6>
@@ -686,7 +709,7 @@ width="1000"
       Select  Slots
     </div>
 <div class="row mt-4">
-  <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex">
+  <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex" v-if="outofshiftCheck(sindex)">
     <div class="time-slot duration text-center p-2" 
    @click="addDoubleSlot(slot.start_time,slot.end_time,(sindex+1))" v-if='!selected_double_slots.includes((sindex+1)) && checkSlotStat((sindex+1))'>
      <% slot.start_time+' - '+ slot.end_time %>
@@ -1061,6 +1084,7 @@ width="1000"
           label="Cleaning Policy"
           dense
           v-model="cleaningPolicy"
+          @change="newdurationcalculation()"
          
         ></v-select>
                        
