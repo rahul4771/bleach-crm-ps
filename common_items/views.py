@@ -4587,11 +4587,12 @@ class TicketRegistration(IsAuthenticated,View):
 class OrderTicketRegistration(IsAuthenticated,View):
 	def get(self,request,orderid):
 
-		order = Order.objects.filter(id=int(orderid)).first()
+		selected_order = Order.objects.filter(id=int(orderid)).first()
+		orders = Order.objects.filter(is_active=True).filter(Q(evaluation__quatation_status='APPROVED') & ~Q(Q(order_status='ORDER_CANCELLED')))
 
 		investigators = UserProfile.objects.filter(Q(Q(user_type='QUALITYCONTROLL')|Q(user_type='OPERATIONSUPERVISOR')|Q(user_type='SENIORTEAMLEADER')),is_active=True)
 
-		return render(request,'agent/ticket/ticket_registration.html',{'order':order,'investigators':investigators})
+		return render(request,'common/ticket/raiseticket.html',{'orders':orders, 'selected_order':selected_order, 'investigators':investigators})
 
 	def post(self,request,orderid):
 		order_id           = request.POST.get('order_id')

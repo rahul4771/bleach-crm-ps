@@ -129,19 +129,21 @@
                 {% csrf_token %}
 
                     <div class="white-wrapper">
+                        
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="tk-common-text">Select Order</div>
                                 <div class="wrap-drop" id="noble-gases" style="z-index: 3;">
-                                    <span>--Select Order--</span>
+                                    <span id="order_number">--Select Order--</span>
                                     <ul class="drop">
                                         {% for order in orders %}
-                                        <li onclick="loadvisits({{order.id}})"><a>{{order.order_no}}</a></li>
+                                        <li id="order_{{order.id}}" onclick="loadvisits({{order.id}})"><a>{{order.order_no}}</a></li>
                                         {% endfor %}
                                     </ul>
                                 </div>
                             </div>
                         </div>
+                       
 
                         <div class="row mt-10" id="schedule_list_id">
                             <div class="col-md-3">
@@ -616,6 +618,13 @@
 <script src="https://unpkg.com/vue-multiselect@2.1.0"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
 <script>
+
+$(document).ready(function(){
+    
+    $('#order_{{selected_order.id}}').click();
+    $('#order_number').text("{{selected_order.order_no}}");
+})
+
     var investigators_list = []
 
 {% for investigator in investigators %}
