@@ -165,6 +165,7 @@ class AdminHome(IsBookingOfficer,View):
 				ticket.days_left = (timezone.now()-ticket.scheduled_at).days
 
 				for paybackdiscount in ticket.paybackdiscounts:
+					print(paybackdiscount,"payba")
 					ticket_count += 1
 
 				for buybackpromocodegift in ticket.buybackpromocodegifts:
@@ -275,14 +276,16 @@ class AdminHome(IsBookingOfficer,View):
 		#buybackgiftpromos		
 		approved_paybackdiscounts = Investigation.objects.filter(is_paybackdiscount_approved=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.select_related('investigation').filter(is_active=True,investigation__is_paybackdiscount_approved=True,is_completed=False),to_attr='paybackdiscounts')).annotate(paybackdiscount_count=Case(When(Q( Q(paybackdiscount_investigation__is_active=True) & Q(paybackdiscount_investigation__investigation__is_paybackdiscount_approved=True) & Q(paybackdiscount_investigation__is_completed=False) ),then=1),default=0,output_field=IntegerField()))
 		
-		ticket_count = 0
+		# ticket_count = 0
 		#add days left
-		if approved_paybackdiscounts:
-			for ticket in approved_paybackdiscounts:
-				ticket.days_left = (timezone.now()-ticket.scheduled_at).days
+		# if approved_paybackdiscounts:
+		# 	for ticket in approved_paybackdiscounts:
+		# 		print(ticket,"her")
+		# 		ticket.days_left = (timezone.now()-ticket.scheduled_at).days
 
-				for paybackdiscount in ticket.paybackdiscounts:
-					ticket_count += 1
+		# 		for paybackdiscount in ticket.paybackdiscounts:
+		# 			print(paybackdiscount,"her2")
+		# 			ticket_count += 1
 
 		#order cancell cashback
 		order_cancell_cashbacks = CancellOrderAmountHistory.objects.filter(amount_return_method='CASHBACK',is_completed=False).select_related('order__evaluation__customer').prefetch_related('order__order_scheduler_order__order_scheduler_book')
