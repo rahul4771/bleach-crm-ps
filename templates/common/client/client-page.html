@@ -4,6 +4,7 @@
 
 <div class="wrapper" id="app"><!--wrapper-->
  <link href="{% static 'files/css/client-details.css' %}" rel="stylesheet">
+ <link href="{% static 'files/css/colors.css' %}" rel="stylesheet">
  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
  {% if request.user.user_type == 'SALESADMIN' %}
@@ -150,6 +151,10 @@
             <div class="col-md-9 pr-0 ">
 
             {% for order in orders %}
+            
+            
+            
+
                 <div class="main-content-holder clickable-cursor">
 
 
@@ -178,55 +183,33 @@
                                 </div>
                             </div>
         
-                            <div class="d-flex cd-mt-4">
-                            {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION' %}
-                            
-                            {% if order.order_status == 'APPROVED_BY_CLIENT' %}
-                            <div class="approved-bg chip">
-                                Approved
-                            </div>
-                            {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
-                            <div class="order-in-progress-bg chip">
-                                Order in Progress
-                            </div>
-                            {% elif order.order_status == 'ORDER_CLOSED' %}
-                            <div class="completed-bg chip">
-                                Completed
-                            </div>
-                            {% elif order.order_status == 'CANCEL_IN_PROGRESS' %}
-                            Cancell in Progress
-                            {% elif order.order_status == 'CANCELLED' %}
-                            <div class="cancelled-bg chip">
-                                Cancelled
-                            </div>
-                            {% endif %}
-                            
-                            {% else %}
+      
+                          <div class="d-flex cd-mt-4">
                             {% if order.evaluation.quatation_status == 'APPROVED' %}
-                            <div class="approved-not-paid-bg chip">
-                                Approved Not Paid
-                            </div>
+                            {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION' %}
+                            {% if order.order_status == 'APPROVED_BY_CLIENT' %}
+                            <div class="d-flex"><div class="status-dot approved-status-bg"></div>Approved</div>
+                            {% elif order.order_status == 'ORDER_IN_PROGRESS' %}
+                            <div class="d-flex"><div class="status-dot order-in-progress-status-bg"></div>Order in progress</div>
+                            {% elif order.order_status == 'ORDER_CLOSED' %}
+                            <div class="d-flex"><div class="status-dot completed-status-bg"></div>Order closed</div>
+                            {% elif order.order_status == 'CANCEL_IN_PROGRESS' %}
+                            <div class="d-flex"><div class="status-dot cancel-in-progress-status-bg"></div>Cancel in progress</div>
+                            {% else %}
+                            <div class="d-flex"><div class="status-dot cancelled-status-bg"></div>Cancelled</div>
                             {% endif %}
-                            
+                            {% else %}
+                            <div class="d-flex"><div class="status-dot approved-not-paid-status-bg"></div>Approved Not Paid</div>
                             {% endif %}
-                            
-                            {% if order.evaluation.quatation_status == 'REJECTED' %}
-                            <div class="rejected-bg chip">
-                                Rejected
-                            </div>
-                            {% elif order.evaluation.quatation_status == 'PENDING' %}
-                            <div class="pending-bg chip">
-                                Pending
-                            </div>
-                            {% elif order.evaluation.quatation_status == 'EXPIRED' %}
-                            <div class="expired-bg chip">
-                                Expired
-                            </div>
-                            {% elif not order.evaluation.quatation_status %}
-                            <div class="evaluating-bg chip">
-                                Evaluating
-                            </div>
+                        
+
+                            {% elif order.evaluation.quatation_status == 'REJECTED' %}<div class="d-flex"><div class="status-dot rejected-status-bg"></div>Rejected</div>
+                            {% elif order.evaluation.quatation_status == 'PENDING' %}<div class="d-flex"><div class="status-dot pending-status-bg"></div>Pending</div>
+                            {% elif order.evaluation.quatation_status == 'EXPIRED' %}<div class="d-flex"><div class="status-dot expired-status-bg"></div>Expired</div>
+                            {% else %}
+                            <div class="d-flex"><div class="status-dot evaluating-status-bg"></div>Evaluating</div>
                             {%endif%}
+
                     
                             {% if order.feedback_details %}
                             <div class="cd-ml-4 cd-mt-2">
@@ -365,7 +348,7 @@
                     </div>
                 <BR>
 
-                {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' %}
+                {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'ADMIN'%}
                 <a style="text-decoration: none; color: #434343;" href="{% url 'customer:statement-of-account' client_details.id %}" target="_blank">
                 <div class="text-center">
                     <div  class="secondary-btn cd-ml-4">
