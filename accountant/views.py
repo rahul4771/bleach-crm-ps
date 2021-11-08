@@ -1234,6 +1234,48 @@ def export_users_xls(request):
 	# Sheet body, remaining rows
 	font_style = xlwt.XFStyle()
 
+	if report_type == 'paymentdetails':
+
+		response = HttpResponse(content_type='application/ms-excel')
+		response['Content-Disposition'] = 'attachment; filename="PAYMENT_DETAILS_'+from_date+'_'+to_date+'.xls"'
+
+		wb = xlwt.Workbook(encoding='utf-8')
+		ws = wb.add_sheet('PAYMENT DETAILS SHEET')
+
+		columns = ['BLC No.','Job Type','Order Amount','Total Paid Amount','Balance']
+		
+		for col_num in range(len(columns)):
+			ws.write(row_num, col_num, columns[col_num], font_style)
+
+		orders = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).values_list('order_no', 'evaluation__payment_method', 'total_amount', 'amount_paid', 'remining_amount').order_by('-id')
+	
+		#removing duplicates
+		found = set()
+
+		rows = []
+
+		for order in orders:
+
+			order_list = list(order)
+
+			if order_list[1] == 'SUBSCRIPTION':
+				order_list[1] = 'Subscription'
+			else:
+				order_list[1] = 'One Time Cleaning'
+
+			order = tuple(order_list)
+			
+			if order_list[0] not in found:
+				rows.append(order)
+			found.add(order_list[0])
+
+		rows = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows ]
+	
+		for row in rows:
+			row_num += 1
+			for col_num in range(len(row)):
+				ws.write(row_num, col_num, row[col_num], font_style)
+
 	if report_type == 'salessummarylist':
 
 		response = HttpResponse(content_type='application/ms-excel')

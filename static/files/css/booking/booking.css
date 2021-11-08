@@ -26,6 +26,31 @@ html{
     color:#289bac;
   
 }
+.slots-container{
+    min-height: 300px
+;
+}
+.fullpage-loader{
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    background: #0000007d;
+    z-index: 9999;
+    top: 0;
+    left: 0;
+}
+.loader-content{
+    color: #ffffff;
+    top: 50%;
+    position: absolute;
+    text-align: center;
+  
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    text-align: center;
+}
 .banner-box-text{
     color:#ffffff;
     font-size:14px;

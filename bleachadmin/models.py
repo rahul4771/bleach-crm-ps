@@ -24,10 +24,10 @@ class ServiceProductivity(models.Model):
 	created      = models.DateTimeField(auto_now_add=True)
 	updated      = models.DateTimeField(auto_now=True)
 	def __unicode__(self):
-		return str(self.id)
+		return str(self.service_type.name)
 
 	def __str__(self):
-		return str(self.id)
+		return str(self.service_type.name)
 
 class ServicePriceRange(models.Model):
 	service_type     = models.ForeignKey(ServiceType,blank=True,null=True,related_name='pricerange_service_type')

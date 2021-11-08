@@ -95,6 +95,15 @@ const app=new Vue({
         
       },
     data: {
+      hourly_options:[{
+        text:'1 - 2 Cleaners',
+        value:2
+      },
+      {
+        text:'3 - 4 Cleaners',
+        value:4
+      }
+    ],
       currentSlotDay:1,
       cleaning_set:[],
       max_cleaners:[],
@@ -364,7 +373,7 @@ const app=new Vue({
   ],
   splitData: ["8"],
   selectTest: "",
-  selectedDuration: "8",
+  selectedDuration: {},
   size: ["SMALL", "MEDIUM", "LARGE"],
   cause_of_stain:['INK MARK', 'HARD DUST', 'COFFEE & TEA SPILL', 'OIL',
   'GREASE', 'PAINT', 'URINE', 'MILK SPILL', 'NO STAIN', 'OTHERS'],
@@ -848,7 +857,41 @@ hourly_slots:true
           }
           return flag
         },
+        outofshiftCheck(index){
+          if(this.out_of_shift)
+          {
+            return true
+          }
+          else{
+            if(index>3 && index<11){
+              return true
+            }
+            else{
+              return false
+            }
+          }
+        },
+        clearOutOfShift(){
+          if(!this.out_of_shift){
+            for(var i=0;i<=2;i++){
+              if(this.selected_double_slots.includes(i+1)){
+                var index=this.selected_double_slots.indexOf(i+1)
+                this.selected_double_slots.splice(index,1)
+              }
+            }
+            if(this.selected_double_slots.includes(12)){
+              this.selected_double_slots.splice(11,1)
+            }
+            
+           
+          }
+        },
         resetScheduler(){
+          this.hourly_cleaning={
+            cleaners:'',
+            duration:'',
+            hourly_duration:''
+          }
           this.currentSlotDay=1
           this.out_of_shift=false
           this.cleaningPolicy=''
@@ -865,6 +908,7 @@ hourly_slots:true
           this.reselectSlot=[]
           this.reselectDate={}
           this.reselectDateIndex=null
+
          // this.one_time_slots={},
           if(this.cleaning_set.length>0)
           {
@@ -1493,7 +1537,13 @@ hourly_slots:true
       }
         },
         findHourlyCost(){
-          var total_cost=7.5*parseInt(this.hourly_cleaning.cleaners)*parseInt(this.hourly_cleaning.hourly_duration)
+          if(this.hourly_cleaning.cleaners<=2)
+          {
+          var total_cost=15*parseInt(this.hourly_cleaning.cleaners)*parseInt(this.hourly_cleaning.hourly_duration)
+          }
+          else{
+            var total_cost=25*parseInt(this.hourly_cleaning.cleaners)*parseInt(this.hourly_cleaning.hourly_duration)
+          }
 
           this.multiServicesBill[0].bill[0].section_net_cost=total_cost
           this.multiServicesBill[0].bill[0].section_cost=total_cost
@@ -4833,6 +4883,7 @@ try {
   },
   hourlyCleaningChange(){
     this.hourly_slots=false
+    this.hourly_cleaning.hourly_duration=parseInt(this.hourly_cleaning.hourly_duration)
     this.selectedDuration.cleaners=parseInt(this.hourly_cleaning.cleaners)
     if((parseInt(this.hourly_cleaning.hourly_duration)%2) !=0 ){
       this.selectedDuration.hours=parseInt(this.hourly_cleaning.hourly_duration)+1
@@ -5058,6 +5109,18 @@ try {
   parseSize() {
     this.sizeData = [];
     for (var i in this.serviceSize) {
+      if(this.serviceType=='Upholstery Cleaning'){
+        this.serviceSize[i]["combinedSize"] =
+        this.serviceSize[i].name +
+        "( " +
+        this.serviceSize[i].min_size +
+        " Seater - " +
+        this.serviceSize[i].max_size +
+        " Seater )";
+      this.sizeData.push(this.serviceSize[i]);
+    
+      }
+      else{
       this.serviceSize[i]["combinedSize"] =
         this.serviceSize[i].name +
         "( " +
@@ -5067,6 +5130,7 @@ try {
         " sq. m )";
       this.sizeData.push(this.serviceSize[i]);
     }
+  }
   },
   checkBillingData(building,floor){
     this.billingDataIndex=null
@@ -5623,188 +5687,199 @@ try {
   console.log("i am ready")
     var manhour=this.totalmanhour
     // var n=this.n
+    if(this.cleaningPolicy=='Subscription')
+    {
+      this.oldHourCalculation(manhour)
+    }
+    else{
+      
+      this.newHourCalculation(manhour)
+    }
     
-    this.newHourCalculation(manhour)
-    // var pair = [];
-    //     for (var i = 1; i < parseInt(n ** (1 / 2)) + 1; i++) {
-    //       if (n % i == 0) {
-    //         pair = [i, n / i];
-    //       }
-    //     }
-    //     console.log(pair, "pair");
-    //     //pair convert to 3's multiple
-    //     var convertion_r = 2;
-    //     var convertion_mod = pair[1] % convertion_r;
-    //     var highest_cleaner=Math.max(...this.maxCleaners)
-    //     var lowest_cleaner=Math.min(...this.maxCleaners)
-
-    //     if (convertion_mod > parseInt(convertion_r / 2)) {
-    //       console.log(manhour, "divider");
-    //       console.log(pair[1] + (convertion_r - convertion_mod), "divident");
-    //       console.log(
-    //         parseInt(manhour / (pair[1] + (convertion_r - convertion_mod))),
-    //         "division"
-    //       );
-    //       pair = [
-    //         Math.round(manhour / (pair[1] + (convertion_r - convertion_mod))),
-    //         pair[1] + (convertion_r - convertion_mod),
-    //       ];
-    //     } else {
-    //       console.log(manhour, "divider");
-    //       console.log(pair[1] - convertion_mod, "divident");
-
-    //       if (pair[1] - convertion_mod == 0) {
-    //         pair = [Math.round(manhour / 2), 2];
-    //       } else {
-    //         pair = [
-    //           Math.round(manhour / (pair[1] - convertion_mod)),
-    //           pair[1] - convertion_mod,
-    //         ];
-    //       }
-    //     }
-
-    //     console.log(pair, "newpair");
-
-    //     //var max_cleaners = data["max_cleaners"];
-    //     //max_cleaners=10;
-    //     console.log("lowest cleaner is "+lowest_cleaner)
-    //     var duration_list = [];
-    //     var lower_loop = 0;
-    //     var upper_loop = 0;
-    //     var middle_element = pair[0];
-    //     var middle_hours = pair[1];
-
-    //     if (middle_element <= lowest_cleaner && middle_element > 0) {
-    //       duration_list.push(pair);
-
-    //       //first
-    //       if (
-    //         Math.round(manhour / (middle_hours - 2)) > 0 &&
-    //         Math.round(manhour / (middle_hours - 2)) <= lowest_cleaner
-    //       ) {
-    //         duration_list.push([
-    //           Math.round(manhour / (middle_hours - 2)),
-    //           middle_hours - 2,
-    //         ]);
-    //         lower_loop = 1;
-    //       }
-    //       if (
-    //         Math.round(manhour / (middle_hours + 2)) > 0 &&
-    //         Math.round(manhour / (middle_hours + 2)) <= lowest_cleaner
-    //       ) {
-    //         duration_list.push([
-    //           Math.round(manhour / (middle_hours + 2)),
-    //           middle_hours + 2,
-    //         ]);
-    //         upper_loop = 1;
-    //       }
-
-    //       //check
-    //       if (
-    //         Math.round(manhour / (middle_hours - 4)) > 0 &&
-    //         Math.round(manhour / (middle_hours - 4)) <= lowest_cleaner &&
-    //         upper_loop == 0
-    //       ) {
-    //         duration_list.push([
-    //           Math.round(manhour / (middle_hours - 4)),
-    //           middle_hours - 4,
-    //         ]);
-    //         lower_loop = 1;
-    //       }
-    //       if (
-    //         Math.round(manhour / (middle_hours + 4)) > 0 &&
-    //         Math.round(manhour / (middle_hours + 4)) <= lowest_cleaner &&
-    //         lower_loop == 0
-    //       ) {
-    //         duration_list.push([
-    //           Math.round(manhour / (middle_hours + 4)),
-    //           middle_hours + 4,
-    //         ]);
-    //         upper_loop = 1;
-    //       }
-    //     } else if (middle_element == 0 && lowest_cleaner > 0) {
-    //       //1st
-    //       duration_list.push([1, middle_hours]);
-
-    //       //2nd
-    //       if (
-    //         Math.round(manhour / (middle_hours + 2)) > 0 &&
-    //         Math.round(manhour / (middle_hours + 2)) <= lowest_cleaner
-    //       ) {
-    //         duration_list.push([
-    //           Math.round(manhour / (middle_hours + 2)),
-    //           middle_hours + 2,
-    //         ]);
-    //       } else {
-    //         duration_list.push([1, middle_hours + 2]);
-    //       }
-
-    //       //3rd
-    //       if (
-    //         Math.round(manhour / (middle_hours + 4)) > 0 &&
-    //         Math.round(manhour / (middle_hours + 4)) <= lowest_cleaner
-    //       ) {
-    //         duration_list.push([
-    //           Math.round(manhour / (middle_hours + 4)),
-    //           middle_hours + 4,
-    //         ]);
-    //       } else {
-    //         duration_list.push([1, middle_hours + 4]);
-    //       }
-    //     } else {
-    //       middle_element = lowest_cleaner;
-    //       middle_hours =
-    //         Math.round(manhour / middle_element) -
-    //         (Math.round(manhour / middle_element) % 2);
-    //       if (middle_hours == 0) {
-    //         middle_hours = 2;
-    //       }
-
-    //       //1st
-    //       duration_list.push([middle_element, middle_hours]);
-
-    //       //2nd
-    //       if (
-    //         Math.round(manhour / (middle_hours + 2)) > 0 &&
-    //         Math.round(manhour / (middle_hours + 2)) <= lowest_cleaner
-    //       ) {
-    //         duration_list.push([
-    //           Math.round(manhour / (middle_hours + 2)),
-    //           middle_hours + 2,
-    //         ]);
-    //       } else {
-    //         duration_list.push([middle_element, middle_hours + 2]);
-    //       }
-
-    //       //3rd
-    //       if (
-    //         Math.round(manhour / (middle_hours + 4)) > 0 &&
-    //         Math.round(manhour / (middle_hours + 2)) <= highest_cleaner
-    //       ) {
-    //         duration_list.push([
-    //           Math.round(manhour / (middle_hours + 4)),
-    //           middle_hours + 4,
-    //         ]);
-    //       } else {
-    //         duration_list.push([middle_element, middle_hours + 4]);
-    //       }
-    //     }
-    //     console.log(duration_list);
-
-    //     for (i = 0; i < duration_list.length; i++) {
-    //       var total_duration = duration_list[i][1];
-         
-    //       var total_minutes = (total_duration.toFixed(2) * 60).toFixed(0);
-    //       var converted_hours = Math.floor(total_minutes / 60);
-    //       var converted_minutes = total_minutes % 60;
-    //       var total_cleaners = duration_list[i][0];
-    //       console.log(converted_hours, "converted_hours");
-    //       console.log(converted_minutes, "converted_minutes");
-    //       console.log(total_cleaners, "total_cleaners");
-    //       this.setDuration(converted_hours, total_cleaners);
-    //     }
-    //     this.sortDuration()
 })
+  },
+  oldHourCalculation(n){
+    var manhour=n
+    var pair = [];
+    for (var i = 1; i < parseInt(n ** (1 / 2)) + 1; i++) {
+      if (n % i == 0) {
+        pair = [i, n / i];
+      }
+    }
+    console.log(pair, "pair");
+    //pair convert to 3's multiple
+    var convertion_r = 2;
+    var convertion_mod = pair[1] % convertion_r;
+    var highest_cleaner=Math.max(...this.maxCleaners)
+    var lowest_cleaner=Math.min(...this.maxCleaners)
+
+    if (convertion_mod > parseInt(convertion_r / 2)) {
+      console.log(manhour, "divider");
+      console.log(pair[1] + (convertion_r - convertion_mod), "divident");
+      console.log(
+        parseInt(manhour / (pair[1] + (convertion_r - convertion_mod))),
+        "division"
+      );
+      pair = [
+        Math.round(manhour / (pair[1] + (convertion_r - convertion_mod))),
+        pair[1] + (convertion_r - convertion_mod),
+      ];
+    } else {
+      console.log(manhour, "divider");
+      console.log(pair[1] - convertion_mod, "divident");
+
+      if (pair[1] - convertion_mod == 0) {
+        pair = [Math.round(manhour / 2), 2];
+      } else {
+        pair = [
+          Math.round(manhour / (pair[1] - convertion_mod)),
+          pair[1] - convertion_mod,
+        ];
+      }
+    }
+
+    console.log(pair, "newpair");
+
+    //var max_cleaners = data["max_cleaners"];
+    //max_cleaners=10;
+    console.log("lowest cleaner is "+lowest_cleaner)
+    var duration_list = [];
+    var lower_loop = 0;
+    var upper_loop = 0;
+    var middle_element = pair[0];
+    var middle_hours = pair[1];
+
+    if (middle_element <= lowest_cleaner && middle_element > 0) {
+      duration_list.push(pair);
+
+      //first
+      if (
+        Math.round(manhour / (middle_hours - 2)) > 0 &&
+        Math.round(manhour / (middle_hours - 2)) <= lowest_cleaner
+      ) {
+        duration_list.push([
+          Math.round(manhour / (middle_hours - 2)),
+          middle_hours - 2,
+        ]);
+        lower_loop = 1;
+      }
+      if (
+        Math.round(manhour / (middle_hours + 2)) > 0 &&
+        Math.round(manhour / (middle_hours + 2)) <= lowest_cleaner
+      ) {
+        duration_list.push([
+          Math.round(manhour / (middle_hours + 2)),
+          middle_hours + 2,
+        ]);
+        upper_loop = 1;
+      }
+
+      //check
+      if (
+        Math.round(manhour / (middle_hours - 4)) > 0 &&
+        Math.round(manhour / (middle_hours - 4)) <= lowest_cleaner &&
+        upper_loop == 0
+      ) {
+        duration_list.push([
+          Math.round(manhour / (middle_hours - 4)),
+          middle_hours - 4,
+        ]);
+        lower_loop = 1;
+      }
+      if (
+        Math.round(manhour / (middle_hours + 4)) > 0 &&
+        Math.round(manhour / (middle_hours + 4)) <= lowest_cleaner &&
+        lower_loop == 0
+      ) {
+        duration_list.push([
+          Math.round(manhour / (middle_hours + 4)),
+          middle_hours + 4,
+        ]);
+        upper_loop = 1;
+      }
+    } else if (middle_element == 0 && lowest_cleaner > 0) {
+      //1st
+      duration_list.push([1, middle_hours]);
+
+      //2nd
+      if (
+        Math.round(manhour / (middle_hours + 2)) > 0 &&
+        Math.round(manhour / (middle_hours + 2)) <= lowest_cleaner
+      ) {
+        duration_list.push([
+          Math.round(manhour / (middle_hours + 2)),
+          middle_hours + 2,
+        ]);
+      } else {
+        duration_list.push([1, middle_hours + 2]);
+      }
+
+      //3rd
+      if (
+        Math.round(manhour / (middle_hours + 4)) > 0 &&
+        Math.round(manhour / (middle_hours + 4)) <= lowest_cleaner
+      ) {
+        duration_list.push([
+          Math.round(manhour / (middle_hours + 4)),
+          middle_hours + 4,
+        ]);
+      } else {
+        duration_list.push([1, middle_hours + 4]);
+      }
+    } else {
+      middle_element = lowest_cleaner;
+      middle_hours =
+        Math.round(manhour / middle_element) -
+        (Math.round(manhour / middle_element) % 2);
+      if (middle_hours == 0) {
+        middle_hours = 2;
+      }
+
+      //1st
+      duration_list.push([middle_element, middle_hours]);
+
+      //2nd
+      if (
+        Math.round(manhour / (middle_hours + 2)) > 0 &&
+        Math.round(manhour / (middle_hours + 2)) <= lowest_cleaner
+      ) {
+        duration_list.push([
+          Math.round(manhour / (middle_hours + 2)),
+          middle_hours + 2,
+        ]);
+      } else {
+        duration_list.push([middle_element, middle_hours + 2]);
+      }
+
+      //3rd
+      if (
+        Math.round(manhour / (middle_hours + 4)) > 0 &&
+        Math.round(manhour / (middle_hours + 2)) <= highest_cleaner
+      ) {
+        duration_list.push([
+          Math.round(manhour / (middle_hours + 4)),
+          middle_hours + 4,
+        ]);
+      } else {
+        duration_list.push([middle_element, middle_hours + 4]);
+      }
+    }
+    console.log(duration_list);
+
+    for (i = 0; i < duration_list.length; i++) {
+      var total_duration = duration_list[i][1];
+      //show to users
+      var total_minutes = (total_duration.toFixed(2) * 60).toFixed(0);
+      var converted_hours = Math.floor(total_minutes / 60);
+      var converted_minutes = total_minutes % 60;
+      var total_cleaners = duration_list[i][0];
+      console.log(converted_hours, "converted_hours");
+      console.log(converted_minutes, "converted_minutes");
+      console.log(total_cleaners, "total_cleaners");
+      this.setDuration(converted_hours, total_cleaners);
+    }
+    this.sortDuration()
+
   },
   newHourCalculation(n){
    
@@ -5921,6 +5996,7 @@ try {
     hours:this.cleaning_set[0][0],
     slots:this.cleaning_set[0][0]/2
   }
+  this.calcSlots()
   this.getMultipleSlots()
 
  

@@ -531,6 +531,22 @@ class InventoryItems(IsInventoryAdmin,View):
         else:
             new_unit_code = 'UNIT9001'
 
+        purchase_orders = PurchaseOrder.objects.filter(purchase_order_purchase_order_item__product__item__id=int(item_id)).prefetch_related(Prefetch('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.filter(),to_attr='purchase_order_items'))
+
+        # for order in purchase_orders:
+        #     for item in order.purchase_order_items:
+        #         print(item.product.item,"it")
+
+        #         if item.product.item.item_add_type == 'quantity':
+        #             ItemHistory.objects.create(purchase_order=order,item=item.product.item,quantity=item.item_count,added_by=request.user)
+        #             item.is_received = True
+        #             # purchase_order_item.added_item_count += 1
+        #             item.save()
+
+
+
+        print(purchase_orders,"orddd")
+
         return render(request,'inventory/item.html',{"stores":stores,"item_attributes":item_attributes,"inventory_item":inventory_item,"attributes":attributes,"categories":categories,"item_units":item_units,"item_history":item_history,"new_unit_code":new_unit_code})
 
     def post(self,request,item_id):
@@ -1387,6 +1403,7 @@ class PurchaseOrderItemsPage(IsInventoryAdmin,View):
                 print(item,item_counts[loopcount], "itm")
                 ItemHistory.objects.create(purchase_order=purchase_order,item=item,quantity=item_counts[loopcount],added_by=request.user)
                 purchase_order_item.is_received = True
+                # purchase_order_item.added_item_count += 1
                 purchase_order_item.save()
                 loopcount += 1
 

@@ -187,18 +187,18 @@
                                             <div class="d-flex">
                                                 <div>
                                                     {% if investigation_details.order.payment_status == 'COMPLETED' %}
-                                                        <span class="tk-dot tk-completed-color"></span><span class="tk-common-text2 av-font">Paid</span>
+                                                        <span class="tk-dot tk-paid-color"></span><span class="tk-common-text2 av-font">Paid</span>
                                                     {% elif investigation_details.order.payment_status == 'PENDING' %}
-                                                        <span class="tk-dot tk-completed-color"></span><span class="tk-common-text2 av-font">Pending</span>
+                                                        <span class="tk-dot tk-pending-color"></span><span class="tk-common-text2 av-font">Pending</span>
                                                     {% else %}
-                                                        <span class="tk-dot tk-completed-color"></span><span class="tk-common-text2 av-font">On Hold</span>
+                                                        <span class="tk-dot tk-onhold-color"></span><span class="tk-common-text2 av-font">On Hold</span>
                                                     {% endif %}
                                                 </div>
                                                 <div class="ml-10">
                                                     {% if investigation_details.order.order_status == 'ORDER_CLOSED' %}   
-                                                        <span class="tk-dot tk-completed-color"></span><span class="tk-common-text2 av-font">Closed</span>
+                                                        <span class="tk-dot tk-paid-color"></span><span class="tk-common-text2 av-font">Closed</span>
                                                     {% elif investigation_details.order.order_status == 'ORDER_IN_PROGRESS' %}   
-                                                        <span class="tk-dot tk-completed-color"></span><span class="tk-common-text2 av-font">In Progress</span>
+                                                        <span class="tk-dot tk-pending-color"></span><span class="tk-common-text2 av-font">In Progress</span>
                                                     {% endif %}
                                                 </div>
                                             </div>
@@ -221,7 +221,7 @@
                                                 </div>
                                                 <div class="ml-30 d-flex" id="visit_team_members">
                                                     {% for team_member in team.cleaning_team_members %}
-                                                    <img onclick="showCleaners()"  src="{{team.team_leader.profile_image.url}}" class="tk-img-circle mr-5" >
+                                                    <img onclick="showCleaners()"  src="{{team_member.member.profile_image.url}}" class="tk-img-circle mr-5" >
                                                     {% endfor %}
                                                     <div onclick="showCleaners()"   class="tk-common-text2 ml-5  mt-10 pointer">{{team.cleaning_team_members|length}} cleaners</div>
 

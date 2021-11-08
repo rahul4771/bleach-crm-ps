@@ -66,6 +66,15 @@
       </template>
     </v-snackbar>
         <!-- snackbar ends here-->
+        <!-- <div class="fullpage-loader" v-if="submit_loader">
+          
+          <div class="loader-content">
+            <div class="w-50">
+           <img src="{% static 'files/animations/loading-buffering.gif'%}" style="width:30px;margin-bottom:10px"/>
+        </div>
+        <b>Booking is processing.<br>
+            Please do not press back or reload the page</b></div>
+        </div> -->
      <!-- reset building dialog -->
      <v-dialog
    v-model="building_warning"
@@ -211,46 +220,8 @@
 <!-- One time cleaning dialog-->
 <v-dialog v-model="onetime_dialog" width="1000">
   <v-card>
-<div class="row mt-4 m-0">
-  <!-- <div class="col-md-12">
-    <h6>Choose a duration</h6>
-   
-  </div>
- 
-  <div class="col-md-2 mt-2 col-12" v-if="duration.length>0">
-    <div class="text-center p-2">Durations</div>
-  </div>
-  <div class="col-md-12 mt-2 danger" v-else>
-      Cleaners not available for the selected service
-  </div>
-  <div
-    class="col-md-2 mt-2 col-6"
-    v-for="(item, durindex) in duration"
-    v-bind:key="durindex"
-  >
-    <div
-      class="duration-active text-center p-2"
-      v-on:click="selectDuration(item)"
-      v-if="selectedDuration == item"
-    >
-      <b> <% item.hours %> Hrs</b>
-    </div>
-    <div
-      class="duration text-center p-2"
-      v-on:click="selectDuration(item)"
-      v-else
-    >
-      <b> <% item.hours %> Hrs</b>
-    </div>
-    <div
-      v-if="selectedDuration == item"
-      class="text-center sub-content"
-    >
-      <% item.hours / 2 %> slots<br>
-      <% item.cleaners %> <span v-if="item.cleaners<2">cleaner</span><span v-else>cleaners</span>
-    </div>
-  </div>
-</div> -->
+
+
 <div class="row m-0" v-if="selectedDuration.hours && onetimerender" style="margin:0 !important">
   <div class="col-md-4" >
     <div >
@@ -395,7 +366,7 @@ width="1000"
 
   <div class="col-md-8"  >
     <div>
-      Select  Slots
+      Select <% selectedDuration.hours/2 %> Slots
     </div>
     
 <div class="row mt-4">
@@ -452,6 +423,7 @@ width="1000"
     <v-switch
   v-model="out_of_shift"
   label="Out of Shift Cleaning"
+  @change="clearOutOfShift()"
   class="mt-4 ml-2 not-required"
   ></v-switch>
   </div>
@@ -470,12 +442,8 @@ width="1000"
     </div>
     <div class="col-md-4">
       <h6>Enter Number of cleaners</h6>
-      <v-text-field
-      label="Number of Cleaners"
-      v-model="hourly_cleaning.cleaners"
-      type="number"
-      @input="hourlyCleaningChange()"
-    ></v-text-field>
+      <v-select :items="hourly_options" v-model="hourly_cleaning.cleaners" @change="hourlyCleaningChange()" item-text="text" item-value="value"></v-select>
+    
     </div>
   </div>
   <div class="row m-0" v-if="hourly_cleaning.hourly_duration && hourly_cleaning.cleaners" style="margin:0 !important">
@@ -491,9 +459,9 @@ width="1000"
         Select  Slots
       </div>
   <div class="row mt-2" style="margin:0 !important">
-    <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex">
+    <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex"  v-if="outofshiftCheck(sindex)">
       <div class="time-slot duration text-center p-2" 
-     @click="addDoubleSlot(slot.start_time,slot.end_time,(sindex+1))" v-if='!selected_double_slots.includes((sindex+1)) && checkSlotStat((sindex+1))'>
+     @click="addDoubleSlot(slot.start_time,slot.end_time,(sindex+1))" >
        <% slot.start_time+' - '+ slot.end_time %>
       </div>
   
@@ -578,10 +546,10 @@ width="1000"
     </div>
     <div class="col-md-8 "  >
       <div class="mt-4">
-        Select  Slots
+        Select <% selectedDuration.hours/2 %> Slots
       </div>
   <div class="row mt-2" style="margin:0 !important">
-    <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex">
+    <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex" v-if="outofshiftCheck(sindex)">
       <div class="time-slot duration text-center p-2" 
      @click="addDoubleSlot(slot.start_time,slot.end_time,(sindex+1))" v-if='!selected_double_slots.includes((sindex+1)) && checkSlotStat((sindex+1))'>
        <% slot.start_time+' - '+ slot.end_time %>
@@ -649,6 +617,8 @@ width="1000"
 v-model="out_of_shift"
 label="Out of Shift Cleaning"
 class="mt-4 ml-2 not-required"
+@change="clearOutOfShift()"
+
 ></v-switch>
 </div>
 <!--- Hourly Cleaning Begins Here-->
@@ -665,13 +635,9 @@ class="mt-4 ml-2 not-required"
           ></v-text-field>
   </div>
   <div class="col-md-4">
-    <h6>Enter Number of cleaners</h6>
-    <v-text-field
-    label="Number of Cleaners"
-    v-model="hourly_cleaning.cleaners"
-    type="number"
-    @input="hourlyCleaningChange()"
-  ></v-text-field>
+    <h6>Select Number of cleaners</h6>
+    <v-select :items="hourly_options" v-model="hourly_cleaning.cleaners" @change="hourlyCleaningChange()" item-text="text" item-value="value"></v-select>
+
   </div>
 </div>
 <div class="row m-0" v-if="hourly_cleaning.cleaners && hourly_cleaning.hourly_duration" style="margin:0 !important">
@@ -714,10 +680,10 @@ class="mt-4 ml-2 not-required"
   </div>
   <div class="col-md-8 "  v-if="hourly_slots" >
     <div class="mt-4">
-      Select  Slots
+      Select Slots
     </div>
 <div class="row mt-2" style="margin:0 !important" v-if="hourly_slots">
-  <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex">
+  <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex" v-if="outofshiftCheck(sindex)">
     <div class="time-slot duration text-center p-2" 
    @click="addDoubleSlot(slot.start_time,slot.end_time,(sindex+1))" v-if='!selected_double_slots.includes((sindex+1)) && checkSlotStat((sindex+1))'>
      <% slot.start_time+' - '+ slot.end_time %>
@@ -839,10 +805,10 @@ class="mt-4 ml-2 not-required"
     </div>
     <div class="col-md-8 "  >
       <div class="mt-4">
-        Select  Slots
+        Select <% selectedDuration.hours/2 %>  Slots
       </div>
   <div class="row mt-2" style="margin:0 !important">
-    <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex">
+    <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex" v-if="outofshiftCheck(sindex)">
       <div class="time-slot duration text-center p-2" 
      @click="addDoubleSlot(slot.start_time,slot.end_time,(sindex+1))" v-if='!selected_double_slots.includes((sindex+1)) && checkSlotStat((sindex+1))'>
        <% slot.start_time+' - '+ slot.end_time %>
@@ -909,6 +875,7 @@ width="1000"
   v-model="out_of_shift"
   label="Out of Shift Cleaning"
   class="mt-4 ml-2 not-required"
+  @change="clearOutOfShift()"
   ></v-switch>
   </div>
   <!--- Hourly Cleaning Begins Here-->
@@ -925,13 +892,9 @@ width="1000"
             ></v-text-field>
     </div>
     <div class="col-md-4">
-      <h6>Enter Number of cleaners</h6>
-      <v-text-field
-      label="Number of Cleaners"
-      v-model="hourly_cleaning.cleaners"
-      type="number"
-      @input="hourlyCleaningChange()"
-    ></v-text-field>
+      <h6>Select Number of cleaners</h6>
+      <v-select :items="hourly_options" v-model="hourly_cleaning.cleaners" @change="hourlyCleaningChange()" item-text="text" item-value="value"></v-select>
+
     </div>
   </div>
   <div class="row " style="margin:0 !important" v-if="hourly_cleaning.hourly_duration && hourly_cleaning.cleaners">
@@ -948,7 +911,7 @@ width="1000"
         Select  Slots
       </div>
   <div class="row mt-4">
-    <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex">
+    <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex" v-if="outofshiftCheck(sindex)">
       <div class="time-slot duration text-center p-2" 
      @click="addDoubleSlot(slot.start_time,slot.end_time,(sindex+1))" v-if='!selected_double_slots.includes((sindex+1)) && checkSlotStat((sindex+1))'>
        <% slot.start_time+' - '+ slot.end_time %>
@@ -1035,10 +998,10 @@ width="1000"
 
   <div class="col-md-8"  >
     <div>
-      Select  Slots
+      Select <% selectedDuration.hours/2 %> Slots
     </div>
 <div class="row mt-4">
-  <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex">
+  <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex" v-if="outofshiftCheck(sindex)">
     <div class="time-slot duration text-center p-2" 
    @click="addDoubleSlot(slot.start_time,slot.end_time,(sindex+1))" v-if='!selected_double_slots.includes((sindex+1)) && checkSlotStat((sindex+1))'>
      <% slot.start_time+' - '+ slot.end_time %>
@@ -3743,6 +3706,7 @@ Fill all the details of the Buildings  to proceed
           dense
           v-model="cleaningPolicy"
           v-if="serviceType!='Hourly Cleaning'"
+        @change="newdurationcalculation()"
          
         ></v-select>
         <v-select

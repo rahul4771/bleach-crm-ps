@@ -421,7 +421,7 @@
                     <div style="flex-grow: 1;" class="m-mt-10 left">
                         <b>NET PRICE</b>
                         <p style="font-size: 15px; margin-top: 10px; line-height: 2;" class="amount-text m-mt-10">
-                            <b>{{section.sectiononly_net_cost|default_if_none:''}}</b> KD
+                            <b>{% if section.sectiononly_net_cost %}{{section.sectiononly_net_cost|floatformat:'3'}}{% else %}{{section.section_net_cost|floatformat:'3'}}{% endif %}</b> KD
                         </p>
                     </div>
                 </div>

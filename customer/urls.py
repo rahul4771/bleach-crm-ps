@@ -67,6 +67,7 @@ urlpatterns = [
 		url(r'^evaluatorbookingmultiplephase3/customer/(?P<evaluation_id>[-\w]+)$',views.EvaluatorMultipleCleaningBookingLetCustomerPhase3.as_view(),name='evaluatorclientcleaningmultiplebookingcustomerphase3'),#New Logic Applied atomic applied 8 to 22 logic applied
 
 		#order edits
+		url(r'^service/add-delete/(?P<evaluation_details_id>[-\w]+)$',views.AddDeleteService.as_view(),name='add-delete-service'),
 		url(r'^editorder/(?P<order_id>[-\w]+)$',views.EditOrderDetails.as_view(),name='edit-order'),
 		url(r'^service/cancellrequest/$',views.ServiceCancellationRequest.as_view(),name='cancell-service'),
 		url(r'^service/cancell/$',views.ServiceCancellation.as_view(),name='cancell-service-submit'),

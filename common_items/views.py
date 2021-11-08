@@ -1308,18 +1308,18 @@ class ActiveSubscriptions(IsAuthenticated,View):
 				cleaning_price = 0
 				for scheduler in invoice.orderschedules:
 					if scheduler.work_status=='CLEANING_FULFILLED':
-						cleaning_price += scheduler.order_scheduler_book.total_cost/len(scheduler.order_scheduler_book.bookschedules)	
-						cleaning_price -= invoice.evaluation.promocode_amount
-						cleaning_price -= invoice.evaluation.writeback_amount
-						cleaning_price += invoice.evaluation.fine_amount
-
-				if cleaning_price > invoice.amount_paid:
-					invoice.balance       = cleaning_price-invoice.amount_paid
-				else:
-					invoice.balance       = cleaning_price-invoice.amount_paid
-
-				if invoice.balance == int(invoice.balance):
-					invoice.balance = int(invoice.balance)
+						total_cleanings = len(scheduler.order_scheduler_book.bookschedules)
+						
+						cleaning_price += scheduler.order_scheduler_book.total_cost/total_cleanings	
+						cleaning_price += (invoice.evaluation.fine_amount/total_cleanings)
+						cleaning_price += (invoice.evaluation.additional_charge/total_cleanings)
+						cleaning_price -= (invoice.evaluation.discount/total_cleanings)
+						cleaning_price -= (invoice.evaluation.credit_amount/total_cleanings)
+						cleaning_price -= (invoice.evaluation.cancelled_amount/total_cleanings)
+						cleaning_price -= (invoice.evaluation.promocode_amount/total_cleanings)
+						cleaning_price -= (invoice.evaluation.writeback_amount/total_cleanings)
+						
+				invoice.balance       = cleaning_price-invoice.amount_paid
 
 		#PAGINATION CLIENTS
 		no_of_entries = request.GET.get('no_of_entries')
@@ -4587,11 +4587,12 @@ class TicketRegistration(IsAuthenticated,View):
 class OrderTicketRegistration(IsAuthenticated,View):
 	def get(self,request,orderid):
 
-		order = Order.objects.filter(id=int(orderid)).first()
+		selected_order = Order.objects.filter(id=int(orderid)).first()
+		orders = Order.objects.filter(is_active=True).filter(Q(evaluation__quatation_status='APPROVED') & ~Q(Q(order_status='ORDER_CANCELLED')))
 
 		investigators = UserProfile.objects.filter(Q(Q(user_type='QUALITYCONTROLL')|Q(user_type='OPERATIONSUPERVISOR')|Q(user_type='SENIORTEAMLEADER')),is_active=True)
 
-		return render(request,'agent/ticket/ticket_registration.html',{'order':order,'investigators':investigators})
+		return render(request,'common/ticket/raiseticket.html',{'orders':orders, 'selected_order':selected_order, 'investigators':investigators})
 
 	def post(self,request,orderid):
 		order_id           = request.POST.get('order_id')
