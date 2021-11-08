@@ -5529,25 +5529,42 @@ class EditOrderDetails(APIView):
 				total_cleanings                        = evaluation_book.order_scheduler_book_details.count()
 
 				if evaluation_book.cleaning_policy == 'SUBSCRIPTION':
-					saved_section                          = section_save_serializer.save(evaluation_book_id=evaluation_book__id,section_cleanings=total_cleanings)
+					saved_section          			                   = section_save_serializer.save(evaluation_book_id=evaluation_book__id,section_cleanings=total_cleanings)
+					
+					evaluation_book.estimated_cost     				  += (saved_section.section_net_cost*total_cleanings-old_section_cost)
+					evaluation_book.total_cost         				  += (saved_section.section_net_cost*total_cleanings-old_section_cost)
+					evaluation_book.save()
+
+					evaluation_book.evaluation_details.estimated_cost += (saved_section.section_net_cost*total_cleanings-old_section_cost)
+					evaluation_book.evaluation_details.total_cost     += (saved_section.section_net_cost*total_cleanings-old_section_cost)
+					evaluation_book.evaluation_details.save()
+
+					order.remining_amount += (saved_section.section_net_cost*total_cleanings-old_section_cost)
+					order.total_amount    += (saved_section.section_net_cost*total_cleanings-old_section_cost)
+					order.save()
+
+					order.evaluation.total_cost        += (saved_section.section_net_cost*total_cleanings-old_section_cost)
+					order.evaluation.estimated_cost    += (saved_section.section_net_cost*total_cleanings-old_section_cost)
+					order.evaluation.save()				
 				else:
-					saved_section                          = section_save_serializer.save(evaluation_book_id=evaluation_book__id,section_cleanings=total_cleanings)
+					saved_section                                      = section_save_serializer.save(evaluation_book_id=evaluation_book__id,section_cleanings=total_cleanings)
 
-				evaluation_book.estimated_cost     				  += (saved_section.section_net_cost-old_section_cost)
-				evaluation_book.total_cost         				  += (saved_section.section_net_cost-old_section_cost)
-				evaluation_book.save()
+					evaluation_book.estimated_cost     				  += (saved_section.section_net_cost-old_section_cost)
+					evaluation_book.total_cost         				  += (saved_section.section_net_cost-old_section_cost)
+					evaluation_book.save()
 
-				evaluation_book.evaluation_details.estimated_cost += (saved_section.section_net_cost-old_section_cost)
-				evaluation_book.evaluation_details.total_cost     += (saved_section.section_net_cost-old_section_cost)
-				evaluation_book.evaluation_details.save()
+					evaluation_book.evaluation_details.estimated_cost += (saved_section.section_net_cost-old_section_cost)
+					evaluation_book.evaluation_details.total_cost     += (saved_section.section_net_cost-old_section_cost)
+					evaluation_book.evaluation_details.save()
 
-				order.remining_amount += (saved_section.section_net_cost-old_section_cost)
-				order.total_amount    += (saved_section.section_net_cost-old_section_cost)
-				order.save()
+					order.remining_amount += (saved_section.section_net_cost-old_section_cost)
+					order.total_amount    += (saved_section.section_net_cost-old_section_cost)
+					order.save()
 
-				order.evaluation.total_cost        += (saved_section.section_net_cost-old_section_cost)
-				order.evaluation.estimated_cost    += (saved_section.section_net_cost-old_section_cost)
-				order.evaluation.save()
+					order.evaluation.total_cost        += (saved_section.section_net_cost-old_section_cost)
+					order.evaluation.estimated_cost    += (saved_section.section_net_cost-old_section_cost)
+					order.evaluation.save()
+				
 
 				#delete and add keynotes
 				keynotes     = request.data.get('keynotes')
