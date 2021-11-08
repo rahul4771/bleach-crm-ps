@@ -4631,3 +4631,6 @@ class OrderTicketRegistration(IsAuthenticated,View):
 		
 
 		return redirect('common_items:ticketregister')
+class EditTicket(IsAuthenticated,View):
+    def get(self,request):
+        return render(request,'common/ticket/editticket.html',{})
