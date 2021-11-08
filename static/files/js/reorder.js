@@ -95,6 +95,7 @@ function openNav() {
             
           },
         data: {
+          out_of_shift:false,
           slot_loader:false,
           currentSlotDay:1,
           cleaning_set:[],
@@ -608,6 +609,35 @@ function openNav() {
   
   
           methods: {
+            clearOutOfShift(){
+              if(!this.out_of_shift){
+                for(var i=0;i<=2;i++){
+                  if(this.selected_double_slots.includes(i+1)){
+                    var index=this.selected_double_slots.indexOf(i+1)
+                    this.selected_double_slots.splice(index,1)
+                  }
+                }
+                if(this.selected_double_slots.includes(12)){
+                  this.selected_double_slots.splice(11,1)
+                }
+                
+               
+              }
+            },
+            outofshiftCheck(index){
+              if(this.out_of_shift)
+              {
+                return true
+              }
+              else{
+                if(index>3 && index<11){
+                  return true
+                }
+                else{
+                  return false
+                }
+              }
+            },
             isSlotsSelected(){
               if(this.currentSlotDay>this.cleaning_set.length){
                 return true
@@ -877,6 +907,7 @@ function openNav() {
               
               for(var j=0;j<this.schedule_serviceTypes_selected.length;j++){
                 this.multiServicesBill[this.schedule_serviceTypes_selected[j]].cleaning_policy='ONE TIME SERVICE'
+                this.multiServicesBill[this.schedule_serviceTypes_selected[j]].shift_availability_check=!this.out_of_shift
                 this.multiServicesBill[this.schedule_serviceTypes_selected[j]].schedule_details={}
                 var count=0
                 for(var k in this.selected_onetime_slots){
@@ -892,8 +923,10 @@ function openNav() {
                   "no_of_cleaners":this.selectedDuration.cleaners,
                    "cleaning_hours":this.selectedDuration.hours
                   }
+                 
                   count=count+1
                 }
+
               }
               for(var k=0;k<this.schedule_serviceTypes_selected;k++)
               {
@@ -968,6 +1001,7 @@ function openNav() {
                    "cleaning_hours":this.selectedDuration.hours
                   }
                 }
+                this.multiServicesBill[this.schedule_serviceTypes_selected[j]].shift_availability_check=!this.out_of_shift
                
               }
     
@@ -1243,6 +1277,7 @@ function openNav() {
              axios.post(this.url+'/customer/ajax/multipleservice/multipledates/cleaningslotes/',{number_of_cleaners:this.selectedDuration.cleaners,
               cleaning_hours:this.selectedDuration.hours,
               service_types:this.schedule_serviceTypes,
+              shift_availability_check:!this.out_of_shift,
               cleaning_datetimes:this.visitDateTime}).then(response=>{
                 this.slotStat=response.data
                 for(var i=0;i<this.visits.length;i++){
@@ -1266,6 +1301,7 @@ function openNav() {
               axios.post(this.url+'/customer/ajax/multipleservice/multipledates/cleaningslotes/autofix/',{number_of_cleaners:this.selectedDuration.cleaners,
                cleaning_hours:this.selectedDuration.hours,
                service_types:this.schedule_serviceTypes,
+               shift_availability_check:!this.out_of_shift,
                cleaning_datetimes:this.slotStat.busy_slotes}).then(response=>{
                  this.fixedSlots=response.data.slote_details
                  this.autofixStat=true
@@ -1594,6 +1630,7 @@ function openNav() {
               this.serviceDetails.estimated_cost=this.totalCost
               //this.customerDetails.customer_details
               //this.serviceDetails['customer_addresses']= this.customerDetails.customer_addresses
+              this.serviceDetails.shift_availability_check=this.multiServicesBill[0].shift_availability_check
               this.bookMultipleService()
         },
         openFloor(index,floor){
@@ -3835,9 +3872,201 @@ function openNav() {
     .then(responses =>{
       console.log("i am ready")
         var manhour=this.totalmanhour
-        this.newHourCalculation(manhour)
+        if(this.cleaningPolicy=='Subscription')
+        {
+          this.oldHourCalculation(manhour)
+        }
+        else{
+          
+          this.newHourCalculation(manhour)
+        }
     })
       },
+      oldHourCalculation(n){
+        var manhour=n
+        var pair = [];
+        for (var i = 1; i < parseInt(n ** (1 / 2)) + 1; i++) {
+          if (n % i == 0) {
+            pair = [i, n / i];
+          }
+        }
+        console.log(pair, "pair");
+        //pair convert to 3's multiple
+        var convertion_r = 2;
+        var convertion_mod = pair[1] % convertion_r;
+        var highest_cleaner=Math.max(...this.maxCleaners)
+        var lowest_cleaner=Math.min(...this.maxCleaners)
+    
+        if (convertion_mod > parseInt(convertion_r / 2)) {
+          console.log(manhour, "divider");
+          console.log(pair[1] + (convertion_r - convertion_mod), "divident");
+          console.log(
+            parseInt(manhour / (pair[1] + (convertion_r - convertion_mod))),
+            "division"
+          );
+          pair = [
+            Math.round(manhour / (pair[1] + (convertion_r - convertion_mod))),
+            pair[1] + (convertion_r - convertion_mod),
+          ];
+        } else {
+          console.log(manhour, "divider");
+          console.log(pair[1] - convertion_mod, "divident");
+    
+          if (pair[1] - convertion_mod == 0) {
+            pair = [Math.round(manhour / 2), 2];
+          } else {
+            pair = [
+              Math.round(manhour / (pair[1] - convertion_mod)),
+              pair[1] - convertion_mod,
+            ];
+          }
+        }
+    
+        console.log(pair, "newpair");
+    
+        //var max_cleaners = data["max_cleaners"];
+        //max_cleaners=10;
+        console.log("lowest cleaner is "+lowest_cleaner)
+        var duration_list = [];
+        var lower_loop = 0;
+        var upper_loop = 0;
+        var middle_element = pair[0];
+        var middle_hours = pair[1];
+    
+        if (middle_element <= lowest_cleaner && middle_element > 0) {
+          duration_list.push(pair);
+    
+          //first
+          if (
+            Math.round(manhour / (middle_hours - 2)) > 0 &&
+            Math.round(manhour / (middle_hours - 2)) <= lowest_cleaner
+          ) {
+            duration_list.push([
+              Math.round(manhour / (middle_hours - 2)),
+              middle_hours - 2,
+            ]);
+            lower_loop = 1;
+          }
+          if (
+            Math.round(manhour / (middle_hours + 2)) > 0 &&
+            Math.round(manhour / (middle_hours + 2)) <= lowest_cleaner
+          ) {
+            duration_list.push([
+              Math.round(manhour / (middle_hours + 2)),
+              middle_hours + 2,
+            ]);
+            upper_loop = 1;
+          }
+    
+          //check
+          if (
+            Math.round(manhour / (middle_hours - 4)) > 0 &&
+            Math.round(manhour / (middle_hours - 4)) <= lowest_cleaner &&
+            upper_loop == 0
+          ) {
+            duration_list.push([
+              Math.round(manhour / (middle_hours - 4)),
+              middle_hours - 4,
+            ]);
+            lower_loop = 1;
+          }
+          if (
+            Math.round(manhour / (middle_hours + 4)) > 0 &&
+            Math.round(manhour / (middle_hours + 4)) <= lowest_cleaner &&
+            lower_loop == 0
+          ) {
+            duration_list.push([
+              Math.round(manhour / (middle_hours + 4)),
+              middle_hours + 4,
+            ]);
+            upper_loop = 1;
+          }
+        } else if (middle_element == 0 && lowest_cleaner > 0) {
+          //1st
+          duration_list.push([1, middle_hours]);
+    
+          //2nd
+          if (
+            Math.round(manhour / (middle_hours + 2)) > 0 &&
+            Math.round(manhour / (middle_hours + 2)) <= lowest_cleaner
+          ) {
+            duration_list.push([
+              Math.round(manhour / (middle_hours + 2)),
+              middle_hours + 2,
+            ]);
+          } else {
+            duration_list.push([1, middle_hours + 2]);
+          }
+    
+          //3rd
+          if (
+            Math.round(manhour / (middle_hours + 4)) > 0 &&
+            Math.round(manhour / (middle_hours + 4)) <= lowest_cleaner
+          ) {
+            duration_list.push([
+              Math.round(manhour / (middle_hours + 4)),
+              middle_hours + 4,
+            ]);
+          } else {
+            duration_list.push([1, middle_hours + 4]);
+          }
+        } else {
+          middle_element = lowest_cleaner;
+          middle_hours =
+            Math.round(manhour / middle_element) -
+            (Math.round(manhour / middle_element) % 2);
+          if (middle_hours == 0) {
+            middle_hours = 2;
+          }
+    
+          //1st
+          duration_list.push([middle_element, middle_hours]);
+    
+          //2nd
+          if (
+            Math.round(manhour / (middle_hours + 2)) > 0 &&
+            Math.round(manhour / (middle_hours + 2)) <= lowest_cleaner
+          ) {
+            duration_list.push([
+              Math.round(manhour / (middle_hours + 2)),
+              middle_hours + 2,
+            ]);
+          } else {
+            duration_list.push([middle_element, middle_hours + 2]);
+          }
+    
+          //3rd
+          if (
+            Math.round(manhour / (middle_hours + 4)) > 0 &&
+            Math.round(manhour / (middle_hours + 2)) <= highest_cleaner
+          ) {
+            duration_list.push([
+              Math.round(manhour / (middle_hours + 4)),
+              middle_hours + 4,
+            ]);
+          } else {
+            duration_list.push([middle_element, middle_hours + 4]);
+          }
+        }
+        console.log(duration_list);
+    
+        for (i = 0; i < duration_list.length; i++) {
+          var total_duration = duration_list[i][1];
+          //show to users
+          var total_minutes = (total_duration.toFixed(2) * 60).toFixed(0);
+          var converted_hours = Math.floor(total_minutes / 60);
+          var converted_minutes = total_minutes % 60;
+          var total_cleaners = duration_list[i][0];
+          console.log(converted_hours, "converted_hours");
+          console.log(converted_minutes, "converted_minutes");
+          console.log(total_cleaners, "total_cleaners");
+          this.setDuration(converted_hours, total_cleaners);
+        }
+        
+        this.sortDuration()
+    
+      },
+
       newHourCalculation(n){
    
         console.log(n,"man hour")
@@ -3956,9 +4185,21 @@ function openNav() {
         hours:this.cleaning_set[0][0],
         slots:this.cleaning_set[0][0]/2
       }
+     
       this.getMultipleSlots()
     
      
+    },
+    sortDuration(){
+      if(this.duration[0].hours<this.duration[1].hours){
+       this.selectDuration(this.duration[0])
+      }
+      else{
+        var temp=this.duration[0]
+        this.duration[0]=this.duration[1]
+        this.duration[1]=temp
+        this.selectDuration(this.duration[0])
+      }
     },
       durationcalculation() {
         
@@ -4713,7 +4954,8 @@ function openNav() {
         "id":this.multiServicesBill[i].id,
         "evaluation_details_id":this.multiServicesBill[i].evaluation_details_id,
         "schedule_details":this.multiServicesBill[i].schedule_details,
-        "cleaning_policy":this.multiServicesBill[i].cleaning_policy
+        "cleaning_policy":this.multiServicesBill[i].cleaning_policy,
+        "shift_availability_check":this.multiServicesBill[i].shift_availability_check
       }
     }
     this.completedAddress.push(this.currentAddressIndex)
@@ -4746,7 +4988,8 @@ function openNav() {
               "id":this.multiServicesBill[service[j]].id,
               "cleaning_policy":this.multiServicesBill[service[j]].cleaning_policy,
               "evaluation_details_id":this.multiServicesBill[service[j]].evaluation_details_id,
-              "schedule_details":this.multiServicesBill[service[j]].schedule_details
+              "schedule_details":this.multiServicesBill[service[j]].schedule_details,
+              "shift_availability_check":this.multiServicesBill[service[j]].shift_availability_check
             }
           }
           axios.post(this.url+'/customer/duplicatebookingphase2/'+this.duplicate_id+'/',serviceDetails).then(response=>{
@@ -4756,7 +4999,7 @@ function openNav() {
             ch_count=ch_count+1
             
             if(ch_count==(Object.keys(this.scheduleGroup).length) && this.currentAddressIndex==this.bookedServiceDetails.length){
-              window.location.href='/common/makequatation/phase1/'+this.bookedServiceDetails[0].address.customer.id+'/'+this.main_eval_id
+             window.location.href='/common/makequatation/phase1/'+this.bookedServiceDetails[0].address.customer.id+'/'+this.main_eval_id
 
             }
            // window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
@@ -4784,7 +5027,7 @@ function openNav() {
         this.success_msg=true
         this.error_msg_stat=false
         if(this.currentAddressIndex==this.bookedServiceDetails.length){
-          window.location.href='/common/makequatation/phase1/'+this.bookedServiceDetails[0].address.customer.id+'/'+this.main_eval_id
+         window.location.href='/common/makequatation/phase1/'+this.bookedServiceDetails[0].address.customer.id+'/'+this.main_eval_id
         }
        // window.location.href='/common/makequatation/phase1/'+this.bookedServiceDetails[0].address.customer.id+'/'+this.main_eval_id
          // window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id

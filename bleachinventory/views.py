@@ -531,11 +531,19 @@ class InventoryItems(IsInventoryAdmin,View):
         else:
             new_unit_code = 'UNIT9001'
 
-        purchase_orders = PurchaseOrder.objects.filter(purchase_order_purchase_order_item__product__item__id=int(item_id)).prefetch_related('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.filter())
+        purchase_orders = PurchaseOrder.objects.filter(purchase_order_purchase_order_item__product__item__id=int(item_id)).prefetch_related(Prefetch('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.filter(),to_attr='purchase_order_items'))
 
-        # PurchaseOrderItems.objects.filter()
+        # for order in purchase_orders:
+        #     for item in order.purchase_order_items:
+        #         print(item.product.item,"it")
 
-        # if inventory_item.item_add_type == 'unit':
+        #         if item.product.item.item_add_type == 'quantity':
+        #             ItemHistory.objects.create(purchase_order=order,item=item.product.item,quantity=item.item_count,added_by=request.user)
+        #             item.is_received = True
+        #             # purchase_order_item.added_item_count += 1
+        #             item.save()
+
+
 
         print(purchase_orders,"orddd")
 
