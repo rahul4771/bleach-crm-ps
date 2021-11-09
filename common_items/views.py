@@ -4631,6 +4631,8 @@ class OrderTicketRegistration(IsAuthenticated,View):
 		
 
 		return redirect('common_items:ticketregister')
+
 class EditTicket(IsAuthenticated,View):
-    def get(self,request):
-        return render(request,'common/ticket/editticket.html',{})
+	def get(self,request,ticket_id):
+		ticket = FollowUp.objects.get(id=int(ticket_id))
+		return render(request,'common/ticket/editticket.html',{"ticket_id":ticket_id,"visit_id":ticket.investigation.order_schedule.id})

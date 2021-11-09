@@ -88,6 +88,7 @@
                         <!--welcome-wrapper-->
                         <h1 class="dashboard-head">Edit Ticket</h1>
                     </div>
+                    
                     <div class="main-content-holder">
                         <div class="white-wrapper">
                             <div class="row mt-10">
@@ -495,5 +496,12 @@
 
 </script>
 <script src="{% static 'files/js/editticket.js' %}"></script>
+
+<script>
+$(document).ready(function(){
+    loadvisitdata({{visit_id}}) ;
+    ticketdata({{ticket_id}}) ;
+})
+</script>
 
 {% endblock %}
