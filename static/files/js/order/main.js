@@ -1863,7 +1863,7 @@ setTimeout(function() {
           "sectiononly_cost":this.editSectionData.sectiononly_cost,
           "sectiononly_net_cost":this.editSectionData.sectiononly_net_cost,
 
-          "section_net_cost":this.editSectionData.section_net_cost,
+          "section_net_cost":this.editSectionData.section_cost,
           "new_kitchen":this.editSectionData.new_kitchen,
           "oil_residue":this.editSectionData.oil_residue,
           "is_cabinet":this.editSectionData.is_cabinet,
@@ -1929,8 +1929,8 @@ setTimeout(function() {
       }).then(response=>{
         console.log(response)
         $('#edit-section-close').click()
-      //  this.resetSection()
-        // location.reload()
+       this.resetSection()
+        location.reload()
       })
     },
     addSectionData(){
