@@ -621,14 +621,21 @@ async function loadvisitdata(visit_id){
                     $('#visit_team_members').empty();
 
                     $(response.data.members).each(function(key,value){
-                        if (key == 1){
-                            $('#visit_team_members').append('<img @click="showCleaners()" src="'+value.member_image+'" class="tk-img-circle">')
+                        if (key == 0){
+                            $('#visit_team_members').append('<img onclick="openImgModal()" src="'+value.member_image+'" class="tk-img-circle">')
                         }else{
-                            $('#visit_team_members').append('<img @click="showCleaners()" src="'+value.member_image+'" class="tk-img-circle" style="margin-left: -20px;">')
+                            $('#visit_team_members').append('<img onclick="openImgModal()" src="'+value.member_image+'" class="tk-img-circle" style="margin-left: -20px;">')
+                        }
+                        if(key == 3){
+                            return false
                         }
 
                     })
-                    $('#visit_team_members').append('<div @click="showCleaners()" style="margin-bottom: 0px;"  class="tk-common-text2 ml-5  pointer">'+response.data.no_of_cleaners+' cleaners</div>')
+                    $(response.data.members).each(function(key,value){
+                        $('#id_modal_img_section').append('<div class="col-md-4 mb-10"><div class="d-flex"><img src="'+value.member_image+'" class="tk-img-circle"> <div  class="tk-common-text2 ml-5 mt-10">'+value.member+'</div></div></div>')
+
+                })
+                    $('#visit_team_members').append('<div onclick="openImgModal()" style="margin-bottom: 0px;"  class="tk-common-text2 ml-5  pointer">'+response.data.members.length+' cleaners</div>')
 
                 })
 

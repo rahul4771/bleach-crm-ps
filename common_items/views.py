@@ -4635,4 +4635,5 @@ class OrderTicketRegistration(IsAuthenticated,View):
 class EditTicket(IsAuthenticated,View):
 	def get(self,request,ticket_id):
 		ticket = FollowUp.objects.get(id=int(ticket_id))
-		return render(request,'common/ticket/editticket.html',{"ticket_id":ticket_id,"visit_id":ticket.investigation.order_schedule.id})
+		investigators = UserProfile.objects.filter(Q(Q(user_type='QUALITYCONTROLL')|Q(user_type='TECHNICALSUPERVISOR')|Q(user_type='SENIORTEAMLEADER')),is_active=True)
+		return render(request,'common/ticket/editticket.html',{"ticket_id":ticket_id,"visit_id":ticket.investigation.order_schedule.id,"investigators":investigators})

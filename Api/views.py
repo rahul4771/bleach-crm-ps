@@ -995,6 +995,8 @@ class TicketDetailsAPI(APIView):
 
 		if followup_details.investigation.investigator:
 			is_investigator = True
+			response_dict['investigator_name'] = followup_details.investigation.investigator.name
+			response_dict['investigator_id'] = followup_details.investigation.investigator.id
 		else:
 			is_investigator = False
 
@@ -1007,8 +1009,7 @@ class TicketDetailsAPI(APIView):
 		response_dict['is_paybackdiscount'] = is_paybackdiscount
 		response_dict['is_report'] = is_report
 		response_dict['is_investigator'] = is_investigator
-		response_dict['investigator_name'] = followup_details.investigation.investigator.name
-		response_dict['investigator_id'] = followup_details.investigation.investigator.id
+	
 		response_dict['ticket_types'] = followup_details.investigation.ticket_types
 		response_dict['notes'] = followup_details.investigation.notes
 		response_dict['medias'] = medias

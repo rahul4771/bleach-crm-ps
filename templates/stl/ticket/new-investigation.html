@@ -220,10 +220,7 @@
                                                     <div style="margin-bottom: 0px;"  class="tk-common-text2 ml-5 mt-10" id="visit_teamleader">{{team.team_leader.name}}</div>
                                                 </div>
                                                 <div class="ml-30 d-flex" id="visit_team_members">
-                                                    {% for team_member in team.cleaning_team_members %}
-                                                    <img onclick="showCleaners()"  src="{{team_member.member.profile_image.url}}" class="tk-img-circle mr-5" >
-                                                    {% endfor %}
-                                                    <div onclick="showCleaners()"   class="tk-common-text2 ml-5  mt-10 pointer">{{team.cleaning_team_members|length}} cleaners</div>
+                                                    
 
                                                 </div>
                                             </div>
@@ -344,11 +341,11 @@
                             <div class="col-md-12">
                                 <div class="d-flex">
                                     <label class="radio-container av-font" @click="changeFollowup('yes')">Yes
-                                        <input type="radio" checked="checked"   name="radio">
+                                        <input type="radio"    name="radio">
                                         <span class="rad-checkmark"></span>
                                       </label>
                                       <label class="radio-container av-font ml-10" @click="changeFollowup('no')">No
-                                        <input type="radio"  name="radio">
+                                        <input type="radio" checked="checked"  name="radio">
                                         <span class="rad-checkmark"></span>
                                       </label>
                                 </div>
@@ -570,58 +567,7 @@
                     </div>
                 </div>
               </div>
-            <button hidden id="id_cl" data-toggle="modal" data-target="#deleteModel2"  style="margin-top: 9px; color: #3968c6;"><i data-toggle="tooltip" title="Help" class="fa fa-question-circle fa-lg" aria-hidden="true"></i></button>
-            <div class="modal fade" id="deleteModel2" role="dialog">
-                <div style="border: none !important;" class="modal-dialog cancel-model cancel-order-border " role="document">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-md-12 mt-20">
-              
-                                
-                                <div class="d-flex ">
-                                    <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Cleaners</p></div>
-                                    <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
-              
-                                        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
-                                    </button>
-              
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row mt-20">
-                          <div class="col-md-6 mb-10">
-                            <div class="d-flex">
-                                <img src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle"> 
-                                <div  class="tk-common-text2 ml-5 mt-10">Saravan</div>
-                            </div>
-                          </div>
-                          <div class="col-md-6 mb-10">
-                            <div class="d-flex">
-                                <img src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle"> 
-                                <div  class="tk-common-text2 ml-5 mt-10">Saravan</div>
-                            </div>
-                          </div>
-                          <div class="col-md-6 mb-10">
-                            <div class="d-flex">
-                                <img src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle"> 
-                                <div   class="tk-common-text2 ml-5 mt-10">Saravan</div>
-                            </div>
-                          </div>
-                          <div class="col-md-6 mb-10">
-                            <div class="d-flex">
-                                <img src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle"> 
-                                <div   class="tk-common-text2 ml-5 mt-10">Saravan</div>
-                            </div>
-                          </div>
-                       
-                          
-    
-                        </div>
-                        <div class="row mt-10"></div>
-                       
-                    </div>
-                </div>
-              </div>
+           
 
               <button style="display: none;" data-toggle="modal" data-target="#editSectionDialog" id="edit-dialog-tigger"></button>
             <!-- edit section dialog begins here-->
@@ -1028,6 +974,35 @@
                 </div>
                 </div>
             </div>
+            <button hidden id="id_cl" data-toggle="modal" data-target="#deleteModel2"  style="margin-top: 9px; color: #3968c6;"><i data-toggle="tooltip" title="Help" class="fa fa-question-circle fa-lg" aria-hidden="true"></i></button>
+            <div class="modal fade" id="deleteModel2" role="dialog">
+                <div style="border: none !important;" class="modal-dialog cancel-model cancel-order-border " role="document">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12 mt-20">
+              
+                                
+                                <div class="d-flex ">
+                                    <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Cleaners</p></div>
+                                    <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+              
+                                        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                                    </button>
+              
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-20" id="id_modal_img_section">
+                          
+                       
+                          
+
+                        </div>
+                        <div class="row mt-10"></div>
+                       
+                    </div>
+                </div>
+              </div>
         </section>
         
         
@@ -1061,6 +1036,41 @@
                    })
    
    }
+   var cllist = []
+   {% for team in investigation_details.order_schedule.cleaning_teams %}
+        {% for team_member in team.cleaning_team_members %}
+
+        console.log('{{team_member.member.name}}')
+        cllist.push({
+            name:'{{team_member.member.name}}',
+            img:'{{team_member.member.profile_image.url}}',
+
+        })
+        {% endfor %}
+    {% endfor %}
+
+    console.log(cllist)
+
+    $(cllist).each(function(key,value){
+                        if (key == 0){
+                            $('#visit_team_members').append('<img onclick="openImgModal()" src="'+value.img+'" class="tk-img-circle">')
+                        }else{
+                            $('#visit_team_members').append('<img onclick="openImgModal()" src="'+value.name+'" class="tk-img-circle" style="margin-left: -20px;">')
+                        }
+                        if(key==3){
+                            return false
+                        }
+
+                    })
+                    $(cllist).each(function(key,value){
+                            $('#id_modal_img_section').append('<div class="col-md-4 mb-10"><div class="d-flex"><img src="'+value.img+'" class="tk-img-circle"> <div  class="tk-common-text2 ml-5 mt-10">'+value.name+'</div></div></div>')
+
+                    })
+                    $('#visit_team_members').append('<div onclick="openImgModal()" style="margin-bottom: 0px;"  class="tk-common-text2 ml-5 mt-10  pointer">'+cllist.length+' cleaners</div>')
+
+   function openImgModal(){
+    $('#id_cl').click()
+}
    </script>
 
 {% endblock %}
