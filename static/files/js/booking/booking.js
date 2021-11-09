@@ -5910,6 +5910,7 @@ try {
      if (n%2 == 1){
       n = n+1
      } 
+     console.log("min man data is"+this.min_cleaners+" maxman:"+this.max_cleaners+"minhr:"+this.min_hours+"maxhr:"+this.max_hours)
         var minman=Math.max(...this.min_cleaners)
        var maxman=Math.max(...this.max_cleaners)
         var minhr=Math.max(...this.min_hours)
