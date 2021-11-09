@@ -96,11 +96,11 @@ const app=new Vue({
       },
     data: {
       hourly_options:[{
-        text:'1 - 2 Cleaners',
+        text:'1 - 2 Hours',
         value:2
       },
       {
-        text:'3 - 4 Cleaners',
+        text:'3 - 4 Hours',
         value:4
       }
     ],
@@ -2303,6 +2303,7 @@ console.log(response)
         type:'old',
         residue:false
     }
+    this.changeNewKitchen()
    this.recalcPrice(building,floor)
      }
        
@@ -2323,6 +2324,7 @@ console.log(response)
         type:'old',
         residue:false
     }
+    this.changeNewKitchen()
    this.recalcApartmentPrice(building,floor,apartment)
  
        
@@ -2342,8 +2344,10 @@ console.log(response)
         ceiling_type:'',
         condition:'',
         type:'old',
+        is_cabinet:false,
         residue:false
     }
+    this.changeNewKitchen()
     this.kitchendialog=false
     this.recalcPrice(building,floor)
        
@@ -2374,9 +2378,11 @@ console.log(response)
         size:'',
         ceiling_type:'',
         condition:'',
+        is_cabinet:false,
         residue:false,
         type:'old'
     }
+    this.changeNewKitchen()
     this.kitchendialog=false
     this.recalcApartmentPrice(building,floor,apartment)
        
@@ -2395,8 +2401,10 @@ console.log(response)
           ceiling_type:'',
           condition:'',
           type:'old',
+          is_cabinet:false,
           residue:false
       }
+      this.changeNewKitchen()
         
        
        
@@ -2440,8 +2448,10 @@ console.log(response)
           ceiling_type:'',
           condition:'',
           type:'old',
+          is_cabinet:false,
           residue:false
       }
+      this.changeNewKitchen()
        
     },
      editNewKitchen(building,floor,serv){
@@ -2492,9 +2502,11 @@ console.log(response)
         size:'',
         ceiling_type:'',
         condition:'',
+        is_cabinet:false,
         type:'',
         residue:false
     }
+    this.changeNewKitchen()
     this.recalcPrice(this.currentBuilding,this.currentFloor)
     },
       updateKitchenApartment(){
@@ -2508,8 +2520,10 @@ console.log(response)
         ceiling_type:'',
         condition:'',
         type:'old',
-        residue:false
+        residue:false,
+        is_cabinet:false,
     }
+    this.changeNewKitchen()
     this.recalcApartmentPrice(this.currentBuilding,this.currentFloor,this.currentApartment)
     },
     deleteKitchen(building,floor,service){
@@ -5242,6 +5256,10 @@ try {
                 if(this.building[building].floors[floor].apartments[apartment].kitchens[k].type=='old'){
                   this.building[building].floors[floor].apartments[apartment].section_net_cost=this.building[building].floors[floor].apartments[apartment].section_net_cost+this.building[building].floors[floor].apartments[apartment].kitchens[k].size.cost
               }
+              if(this.building[building].floors[floor].apartments[apartment].kitchens[k].type=='new' && this.serviceType!='General Cleaning'){
+                this.building[building].floors[floor].apartments[apartment].section_net_cost=this.building[building].floors[floor].apartments[apartment].section_net_cost+this.building[building].floors[floor].apartments[apartment].kitchens[k].size.cost
+            }
+              
 
               }
           }
@@ -5336,6 +5354,9 @@ try {
                 if(this.building[building].floors[floor - 1].kitchens[k].type=='old'){
                   this.building[building].floors[floor - 1].section_net_cost=this.building[building].floors[floor - 1].section_net_cost+this.building[building].floors[floor - 1].kitchens[k].size.cost
               }
+              if(this.building[building].floors[floor - 1].kitchens[k].type=='new' && this.serviceType!='General Cleaning'){
+                this.building[building].floors[floor - 1].section_net_cost=this.building[building].floors[floor - 1].section_net_cost+this.building[building].floors[floor - 1].kitchens[k].size.cost
+            }
 
               }
           }
@@ -5890,9 +5911,9 @@ try {
       n = n+1
      } 
         var minman=Math.max(...this.min_cleaners)
-       var maxman=Math.min(...this.max_cleaners)
+       var maxman=Math.max(...this.max_cleaners)
         var minhr=Math.max(...this.min_hours)
-        var maxhr=Math.min(...this.max_hours)
+        var maxhr=Math.max(...this.max_hours)
         console.log("min man is"+minman+" maxman:"+maxman+"minhr:"+minhr+"maxhr:"+maxhr)
    
     
