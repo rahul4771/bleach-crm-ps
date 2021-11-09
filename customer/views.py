@@ -5531,7 +5531,7 @@ class EditOrderDetails(APIView):
 				if evaluation_book.cleaning_policy == 'SUBSCRIPTION':
 					saved_section                                  = section_save_serializer.save(evaluation_book_id=evaluation_book__id,section_cleanings=total_cleanings,section_net_cost=section_save_serializer.validated_data['section_net_cost']*total_cleanings,sectiononly_net_cost=section_save_serializer.validated_data['sectiononly_cost']*total_cleanings)
 				else:
-					saved_section                                  = section_save_serializer.save(evaluation_book_id=evaluation_book__id,section_cleanings=total_cleanings,section_net_cost=section_save_serializer.validated_data['section_net_cost']*total_cleanings,sectiononly_net_cost=section_save_serializer.validated_data['sectiononly_cost']*total_cleanings)
+					saved_section                                  = section_save_serializer.save(evaluation_book_id=evaluation_book__id,section_cleanings=total_cleanings)
 
 				evaluation_book.estimated_cost     				  += (saved_section.section_net_cost-old_section_cost)
 				evaluation_book.total_cost         				  += (saved_section.section_net_cost-old_section_cost)
