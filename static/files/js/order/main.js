@@ -1016,7 +1016,14 @@ setTimeout(function() {
       this.editSectionData.section_cost=this.fixed_section_cost
       console.log("called me"+JSON.stringify(this.kitchen_keynotes))
       for(var j=0;j<this.kitchen_keynotes.length;j++){
+        if(this.service_type!='General Cleaning'){
         this.editSectionData.section_cost=this.editSectionData.section_cost+this.kitchen_keynotes[j].quantity.size.cost
+        }
+        else{
+          if(this.kitchen_keynotes[j].other_details.type=='old'){
+            this.editSectionData.section_cost=this.editSectionData.section_cost+this.kitchen_keynotes[j].quantity.size.cost
+          }
+        }
       }
     },
     addKitchenToKeynote(){
@@ -1085,6 +1092,7 @@ setTimeout(function() {
       this.recalcAddonCost()
     },
     changeKitchenSize(index){
+     
       this.kitchen_addons[index].addon_cost= this.kitchen_addons[index].other_details.size.cost
       this.kitchen_addons[index].addon_net_cost= this.kitchen_addons[index].other_details.size.cost
       
@@ -1655,7 +1663,15 @@ setTimeout(function() {
       this.priceupdate=false
       var addon_cost=0
       for(var i=0;i<this.kitchen_addons.length;i++){
-       addon_cost=addon_cost+ this.kitchen_addons[i].addon_net_cost
+        if(this.service_type!='General Cleaning')
+        {
+             addon_cost=addon_cost+ this.kitchen_addons[i].addon_net_cost
+        }
+        else{
+          if(this.kitchen_addons[i].other_details.type=='old'){
+            addon_cost=addon_cost+ this.kitchen_addons[i].addon_net_cost
+          }
+        }
       }
       var sectiononlycost=this.editSectionData.sectiononly_cost||0
       this.editSectionData.section_cost=sectiononlycost+addon_cost
@@ -1834,6 +1850,7 @@ setTimeout(function() {
     updateSection(){
       this.parseKeynotes()
       var sectionData={}
+      console.log("section net cost is"+this.editSectionData.section_net_cost)
       sectionData=
         {
           "section_name":this.editSectionData.section_name,
@@ -1846,7 +1863,7 @@ setTimeout(function() {
           "sectiononly_cost":this.editSectionData.sectiononly_cost,
           "sectiononly_net_cost":this.editSectionData.sectiononly_net_cost,
 
-          "section_net_cost":this.editSectionData.section_cost,
+          "section_net_cost":this.editSectionData.section_net_cost,
           "new_kitchen":this.editSectionData.new_kitchen,
           "oil_residue":this.editSectionData.oil_residue,
           "is_cabinet":this.editSectionData.is_cabinet,
@@ -1901,6 +1918,7 @@ setTimeout(function() {
         this.kitchen_addons[i].other_details=JSON.stringify(this.kitchen_addons[i].other_details)
       }
     }
+    console.log("section net cost before sending is"+this.editSectionData.section_net_cost)
       axios.post(this.url+'/customer/editorder/'+this.orderId,{
         "action_type":'edit_section',
         "evaluation_book__id":this.eval_book_id,
@@ -1911,8 +1929,8 @@ setTimeout(function() {
       }).then(response=>{
         console.log(response)
         $('#edit-section-close').click()
-        this.resetSection()
-        location.reload()
+      //  this.resetSection()
+        // location.reload()
       })
     },
     addSectionData(){
