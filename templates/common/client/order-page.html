@@ -2062,6 +2062,7 @@
                                     </div>
                                     <!-- Other Media start -->
                                     <h1 class="other-media">Other media</h1>
+                                   
                                     <div class="row">
                                         {% for orderschedule in order.orderschedules %}
                                         {% if orderschedule.order_scheduler_book == evaluationbook and orderschedule.investigations.investigationmedias %}
@@ -2119,9 +2120,12 @@
                     </div>
                     </div>
                     {% endfor %}
+                    <!-- <div class="row">
+                        <button class="sent-button" type="submit" onclick="addMoreService({{evaluationdetail.id}});">Add Services</button>
+                    </div> -->
                     {% endfor %}
                     <!-- Service Details Main Ends Here -->
-
+                       
                     {% if request.user.user_type != 'SENIORTEAMLEADER' and request.user.user_type != 'TEAMINCHARGE' %}
                     <div class="row c-mt-20">
                         <div class="order-details-left-wrapper ">
@@ -3470,6 +3474,9 @@
 function duplicate(id){
     window.location.href='/common/reorder?id='+id
 } 
+function addMoreService(id){
+    window.location.href='/customer/service/add-delete/'+id
+}
 
 function resubmit(id){
     window.location.href='/customer/resubmitorder/'+id
