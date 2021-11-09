@@ -245,7 +245,7 @@
         <div class="dropdown-menu" id="dropdown-menu-orders">
           <a class="d-flex dropdown-orders" href="{% url 'common_items:ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}" target="_blank"><img src="{% static 'files/images/View_invoice.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">View Ticket Details</div></a>
           
-          {% comment %} {% if ticket.status == 'TICKET_RISED' and request.user.user_type == 'AGENT' or request.user.user_type == 'OPERATIONSUPERVISOR' %}<a class="d-flex dropdown-orders" href="{% url 'common_items:tickets-edit' ticket.id ticket.investigation.order_schedule.order.id %}" target="_blank"><img src="{% static 'files/images/EditQuotation.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">Edit Ticket</div></a>{% endif %} {% endcomment %}
+          {% if ticket.status == 'TICKET_RISED' and request.user.user_type == 'AGENT' or request.user.user_type == 'OPERATIONSUPERVISOR' %}<a class="d-flex dropdown-orders" href="{% url 'common_items:edit-tickets' ticket.id %}" target="_blank"><img src="{% static 'files/images/EditQuotation.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">Edit Ticket</div></a>{% endif %}
 
         </div>
       </div>

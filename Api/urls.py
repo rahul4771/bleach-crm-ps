@@ -15,6 +15,7 @@ urlpatterns = [
 
 	url(r'^order-details/(?P<order_id>\d+)/$',views.OrderDetailsAPI.as_view(),name='api-order-details'),
 	url(r'^visit-details/(?P<visit_id>\d+)/$',views.VisitDetailsAPI.as_view(),name='api-visit-details'),
+	url(r'^ticket-details/(?P<ticket_id>\d+)/$',views.TicketDetailsAPI.as_view(),name='api-ticket-details'),
 	url(r'^ticket-submit/$',views.TicketSubmitAPI.as_view(),name='api-ticket-submit'),
 	url(r'^investigation-form/$',views.InvestigationFormAPI.as_view(),name='api-investigation-form'),
 
