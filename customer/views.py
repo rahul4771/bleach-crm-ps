@@ -5524,14 +5524,14 @@ class EditOrderDetails(APIView):
 
 			section_save_serializer        = EvaluationBookSectionSerializer(data=request.data.get('section_details'),instance=old_section)
 			if section_save_serializer.is_valid():
-				evaluation_book__id                    = request.data.get('evaluation_book__id')
-				evaluation_book                        = EvaluationBook.objects.select_related('evaluation_details').prefetch_related(Prefetch('order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules')).get(id=evaluation_book__id)
-				total_cleanings                        = evaluation_book.order_scheduler_book_details.count()
+				evaluation_book__id                                = request.data.get('evaluation_book__id')
+				evaluation_book                                    = EvaluationBook.objects.select_related('evaluation_details').prefetch_related(Prefetch('order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules')).get(id=evaluation_book__id)
+				total_cleanings                                    = evaluation_book.order_scheduler_book_details.count()
 
 				if evaluation_book.cleaning_policy == 'SUBSCRIPTION':
-					saved_section                          = section_save_serializer.save(evaluation_book_id=evaluation_book__id,section_cleanings=total_cleanings)
+					saved_section                                  = section_save_serializer.save(evaluation_book_id=evaluation_book__id,section_cleanings=total_cleanings,section_net_cost=section_save_serializer.validated_data['section_net_cost']*total_cleanings,sectiononly_net_cost=section_save_serializer.validated_data['sectiononly_cost']*total_cleanings)
 				else:
-					saved_section                          = section_save_serializer.save(evaluation_book_id=evaluation_book__id,section_cleanings=total_cleanings)
+					saved_section                                  = section_save_serializer.save(evaluation_book_id=evaluation_book__id,section_cleanings=total_cleanings,section_net_cost=section_save_serializer.validated_data['section_net_cost']*total_cleanings,sectiononly_net_cost=section_save_serializer.validated_data['sectiononly_cost']*total_cleanings)
 
 				evaluation_book.estimated_cost     				  += (saved_section.section_net_cost-old_section_cost)
 				evaluation_book.total_cost         				  += (saved_section.section_net_cost-old_section_cost)
@@ -5541,12 +5541,12 @@ class EditOrderDetails(APIView):
 				evaluation_book.evaluation_details.total_cost     += (saved_section.section_net_cost-old_section_cost)
 				evaluation_book.evaluation_details.save()
 
-				order.remining_amount += (saved_section.section_net_cost-old_section_cost)
-				order.total_amount    += (saved_section.section_net_cost-old_section_cost)
+				order.remining_amount 							  += (saved_section.section_net_cost-old_section_cost)
+				order.total_amount    							  += (saved_section.section_net_cost-old_section_cost)
 				order.save()
 
-				order.evaluation.total_cost        += (saved_section.section_net_cost-old_section_cost)
-				order.evaluation.estimated_cost    += (saved_section.section_net_cost-old_section_cost)
+				order.evaluation.total_cost        				  += (saved_section.section_net_cost-old_section_cost)
+				order.evaluation.estimated_cost    			      += (saved_section.section_net_cost-old_section_cost)
 				order.evaluation.save()
 
 				#delete and add keynotes

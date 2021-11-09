@@ -447,12 +447,12 @@ class ClientOrders(IsAuthenticated,View):
 		except:
 			client_details = None
 
-		orders = Order.objects.filter(evaluation__customer_id=client_id).select_related('evaluation__customer').prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluationbooks')),to_attr='evaluationdetails')).annotate(total_cleaners=Sum('evaluation__evaluation_details__evaluation_book_evaluation_details__number_of_cleaners'), avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField()))
+		orders = Order.objects.select_related('evaluation__customer').filter(Q(evaluation__customer_id=client_id)&Q(Q(evaluation__estimated_cost__gt=0)|Q(evaluation__quatation_status__isnull=False))).order_by('-id').prefetch_related(Prefetch('feed_backs_order',queryset=FeedBack.objects.filter(is_active=True),to_attr='feedback_details'),Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluationbooks')),to_attr='evaluationdetails')).annotate(total_cleaners=Sum('evaluation__evaluation_details__evaluation_book_evaluation_details__number_of_cleaners'), avg_starring=Cast(Sum('feed_backs_order__rating')/5.0,FloatField()),order_in_progress_count=Count(Case(When( order_status='ORDER_IN_PROGRESS',then=1),output_field=IntegerField())),order_closed_count=Count(Case(When( order_status='ORDER_CLOSED',then=1),output_field=IntegerField())),order_cancelled_count=Count(Case(When( order_status='ORDER_CANCELLED',then=1),output_field=IntegerField())),order_cancellinprogress_count=Count(Case(When( order_status='CANCEL_IN_PROGRESS',then=1),output_field=IntegerField())),approved_not_paid_count=Count(Case(When( Q( Q(evaluation__quatation_status='APPROVED') & Q(Q(Q(evaluation__payment_method='PREPAID')&~Q(payment_status='COMPLETED'))|Q(Q(evaluation__payment_method='BREAKDOWN')&Q(preamount_paid=0))) ),then=1),output_field=IntegerField())))
 
 		for order in orders:
 			tickets = FollowUp.objects.filter(is_active=True,investigation__order_schedule__order__id=order.id).count()
 			order.total_tickets = tickets
-			print(order.total_tickets,"tots")
+		
 
 		#COUNT
 		active_orders_count = orders.filter(Q(Q(order_status='APPROVED_BY_CLIENT')|Q(order_status='ORDER_IN_PROGRESS'))).count()
@@ -464,7 +464,7 @@ class ClientOrders(IsAuthenticated,View):
 		total_paid = orders.aggregate(paid=Sum('amount_paid'))['paid']
 		total_balance = orders.aggregate(balance=Sum('remining_amount'))['balance']
 
-		return render(request,"common/client/client-page-test.html",{"client_details":client_details,"orders":orders,"active_orders_count":active_orders_count,"completed_orders_count":completed_orders_count,"active_followups":active_followups,"closed_followups":closed_followups,"total_paid":total_paid,"total_balance":total_balance})
+		return render(request,"common/client/client-page.html",{"client_details":client_details,"orders":orders,"active_orders_count":active_orders_count,"completed_orders_count":completed_orders_count,"active_followups":active_followups,"closed_followups":closed_followups,"total_paid":total_paid,"total_balance":total_balance})
 
 	def post(self,request,client_id):
 
