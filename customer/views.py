@@ -5015,10 +5015,10 @@ class AddDeleteService(APIView):
 		response_dict = {'success':False}
 
 		#evaluation books,sections,keynotes and order details
-		evaluation_details                  = EvaluationDetails.objects.select_related('evaluation').prefetch_related('evaluation_book_evaluation_details__evaluationsection_book__keynotesections').filter(id=evaluation_details_id)
+		evaluation_details                  = EvaluationDetails.objects.select_related('evaluation').prefetch_related('evaluation_book_evaluation_details__evaluationsection_book__keynotesections').get(id=evaluation_details_id)
 		order_details                       = Order.objects.get(evaluation=evaluation_details.evaluation)
 
-		response_dict['evaluation_details'] = EvaluationDetailsSerializer(instance=evaluation_details,many=True).data
+		response_dict['evaluation_details'] = EvaluationDetailsSerializer(instance=evaluation_details).data
 		response_dict['order_details']      = OrderSerializer(instance=order_details).data
 
 		#deleting schedules
