@@ -943,6 +943,82 @@ class VisitDetailsAPI(APIView):
 
 		return Response(response_dict,HTTP_200_OK)
 
+class TicketDetailsAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+
+	def get(self,request,ticket_id):
+		response_dict = {'success':False}
+		print("pop")
+		# try:
+		followup_details = FollowUp.objects.select_related('investigation__investigator','investigation__order','investigation__order_schedule__customer_address__area','investigation__order_schedule__customer_address__governorate','investigation__order_schedule__order_scheduler_book').prefetch_related(Prefetch('investigation__investigation_media',queryset=InvestigationMedia.objects.filter(is_active=True,taken_status = 'CUSTOMER_SEND'),to_attr='investigationmedias'),Prefetch('investigation__paybackdiscount_investigation',queryset=PaybackDiscount.objects.filter(is_active=True).prefetch_related(Prefetch('paybackdiscount_details',queryset=PaybackDiscountDetails.objects.filter(is_active=True),to_attr='paybackdiscountdetails')),to_attr='paybackdiscounts'),Prefetch('investigation__reporting_investigation',queryset=Reporting.objects.filter(is_active=True),to_attr='reports')).get(is_active=True,id=ticket_id)
+		# except:
+		#  	visit = None
+		print(followup_details,"pop2")
+
+		paybackdiscounts = []
+		report_list = []
+
+		if followup_details.investigation.paybackdiscounts:
+			
+			is_paybackdiscount = True
+
+			for discount in followup_details.investigation.paybackdiscounts:
+				response_dict['paybackdiscount_id'] = discount.id
+
+				for detail in discount.paybackdiscountdetails:
+					print(detail,"diss")
+					discount_dict = {
+						'discount_id':detail.id,
+						'category':detail.category,
+						'name':detail.name,
+						'cost':detail.cost
+					}
+					paybackdiscounts.append(discount_dict)
+
+		else:
+			is_paybackdiscount = False
+			response_dict['paybackdiscount_id'] = None
+
+		if followup_details.investigation.reports:
+			is_report = True
+			for report in followup_details.investigation.reports:
+				report_dict = {
+					'report_id':report.id,
+					'title':report.title,
+					'notes':report.notes
+				}
+				report_list.append(report_dict)
+
+		else:
+			is_report = False
+
+		if followup_details.investigation.investigator:
+			is_investigator = True
+		else:
+			is_investigator = False
+
+		medias = []
+		if followup_details.investigation.investigationmedias:
+			
+			for media in followup_details.investigation.investigationmedias:
+				medias.append(media.media.url)
+
+		response_dict['is_paybackdiscount'] = is_paybackdiscount
+		response_dict['is_report'] = is_report
+		response_dict['is_investigator'] = is_investigator
+		response_dict['investigator_name'] = followup_details.investigation.investigator.name
+		response_dict['investigator_id'] = followup_details.investigation.investigator.id
+		response_dict['ticket_types'] = followup_details.investigation.ticket_types
+		response_dict['notes'] = followup_details.investigation.notes
+		response_dict['medias'] = medias
+		response_dict['paybackdiscounts'] = paybackdiscounts
+		response_dict['report'] = report_list
+		 	
+		print(response_dict,"dictio")
+
+		return Response(response_dict,HTTP_200_OK)
+
 class DailySalesAPI(APIView):
 	permission_classes  	=   (AllowAny,)
 	authentication_classes  = ()

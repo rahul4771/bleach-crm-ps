@@ -562,6 +562,7 @@ async function loadvisitdata(visit_id){
     app.isOrderSelected = false
     axios.get(url+'/api/visit-details/'+visit_id)
                 .then(function (response) {
+                    console.log(response.data,"dat")
                     app.isOrderSelected = true
                     app.value = [];
                     app.damacval = []
@@ -594,6 +595,18 @@ async function loadvisitdata(visit_id){
 
                     })
                     $('#visit_team_members').append('<div @click="showCleaners()" style="margin-bottom: 0px;"  class="tk-common-text2 ml-5  pointer">'+response.data.no_of_cleaners+' cleaners</div>')
+
+                })
+
+}
+
+async function ticketdata(ticket_id){
+    app.isOrderSelected = false
+    axios.get(url+'/api/ticket-details/'+ticket_id)
+                .then(function (response) {
+                    console.log(response.data,"dattt")
+                    
+                    
 
                 })
 
