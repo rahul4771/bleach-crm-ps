@@ -5015,10 +5015,10 @@ class AddDeleteService(APIView):
 		response_dict = {'success':False}
 
 		#evaluation books,sections,keynotes and order details
-		evaluation_details                  = EvaluationDetails.objects.select_related('evaluation').prefetch_related('evaluation_book_evaluation_details__evaluationsection_book__keynotesections').filter(id=evaluation_details_id)
+		evaluation_details                  = EvaluationDetails.objects.select_related('evaluation').prefetch_related('evaluation_book_evaluation_details__evaluationsection_book__keynotesections').get(id=evaluation_details_id)
 		order_details                       = Order.objects.get(evaluation=evaluation_details.evaluation)
 
-		response_dict['evaluation_details'] = EvaluationDetailsSerializer(instance=evaluation_details,many=True).data
+		response_dict['evaluation_details'] = EvaluationDetailsSerializer(instance=evaluation_details).data
 		response_dict['order_details']      = OrderSerializer(instance=order_details).data
 
 		#deleting schedules
@@ -5531,7 +5531,7 @@ class EditOrderDetails(APIView):
 				if evaluation_book.cleaning_policy == 'SUBSCRIPTION':
 					saved_section                                  = section_save_serializer.save(evaluation_book_id=evaluation_book__id,section_cleanings=total_cleanings,section_net_cost=section_save_serializer.validated_data['section_net_cost']*total_cleanings,sectiononly_net_cost=section_save_serializer.validated_data['sectiononly_cost']*total_cleanings)
 				else:
-					saved_section                                  = section_save_serializer.save(evaluation_book_id=evaluation_book__id,section_cleanings=total_cleanings,section_net_cost=section_save_serializer.validated_data['section_net_cost']*total_cleanings,sectiononly_net_cost=section_save_serializer.validated_data['sectiononly_cost']*total_cleanings)
+					saved_section                                  = section_save_serializer.save(evaluation_book_id=evaluation_book__id,section_cleanings=total_cleanings)
 
 				evaluation_book.estimated_cost     				  += (saved_section.section_net_cost-old_section_cost)
 				evaluation_book.total_cost         				  += (saved_section.section_net_cost-old_section_cost)

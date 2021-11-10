@@ -431,18 +431,18 @@ width="1000"
    <div v-if="serviceType=='Hourly Cleaning'">
     <div class="row m-0 justify-center">
     <div class="col-md-4">
-      <h6>Enter a duration</h6>
+      <h6>Enter Number of cleaners</h6>
       <v-text-field
-              label="Duration in hours"
+              label="Number of Cleaners"
              
               type="number"
-              v-model="hourly_cleaning.hourly_duration"
+              v-model="hourly_cleaning.cleaners"
               @input="hourlyCleaningChange()"
             ></v-text-field>
     </div>
     <div class="col-md-4">
-      <h6>Enter Number of cleaners</h6>
-      <v-select :items="hourly_options" v-model="hourly_cleaning.cleaners" @change="hourlyCleaningChange()" item-text="text" item-value="value"></v-select>
+      <h6>Select Duration</h6>
+      <v-select :items="hourly_options" v-model="hourly_cleaning.hourly_duration" @change="hourlyCleaningChange()" item-text="text" item-value="value"></v-select>
     
     </div>
   </div>
@@ -624,21 +624,21 @@ class="mt-4 ml-2 not-required"
 <!--- Hourly Cleaning Begins Here-->
 <div v-if="serviceType=='Hourly Cleaning'">
   <div class="row m-0 justify-center">
-  <div class="col-md-4">
-    <h6>Enter a duration</h6>
-    <v-text-field
-            label="Duration in hours"
-           
-            type="number"
-            v-model="hourly_cleaning.hourly_duration"
-            @input="hourlyCleaningChange()"
-          ></v-text-field>
-  </div>
-  <div class="col-md-4">
-    <h6>Select Number of cleaners</h6>
-    <v-select :items="hourly_options" v-model="hourly_cleaning.cleaners" @change="hourlyCleaningChange()" item-text="text" item-value="value"></v-select>
-
-  </div>
+    <div class="col-md-4">
+      <h6>Enter Number of cleaners</h6>
+      <v-text-field
+              label="Number of Cleaners"
+             
+              type="number"
+              v-model="hourly_cleaning.cleaners"
+              @input="hourlyCleaningChange()"
+            ></v-text-field>
+    </div>
+    <div class="col-md-4">
+      <h6>Select Duration</h6>
+      <v-select :items="hourly_options" v-model="hourly_cleaning.hourly_duration" @change="hourlyCleaningChange()" item-text="text" item-value="value"></v-select>
+    
+    </div>
 </div>
 <div class="row m-0" v-if="hourly_cleaning.cleaners && hourly_cleaning.hourly_duration" style="margin:0 !important">
   <div class="col-md-4 text-center">
@@ -881,21 +881,21 @@ width="1000"
   <!--- Hourly Cleaning Begins Here-->
   <div v-if="serviceType=='Hourly Cleaning'">
     <div class="row m-0 justify-center">
-    <div class="col-md-4">
-      <h6>Enter a duration</h6>
-      <v-text-field
-              label="Duration in hours"
-             
-              type="number"
-              v-model="hourly_cleaning.hourly_duration"
-              @input="hourlyCleaningChange()"
-            ></v-text-field>
-    </div>
-    <div class="col-md-4">
-      <h6>Select Number of cleaners</h6>
-      <v-select :items="hourly_options" v-model="hourly_cleaning.cleaners" @change="hourlyCleaningChange()" item-text="text" item-value="value"></v-select>
-
-    </div>
+      <div class="col-md-4">
+        <h6>Enter Number of cleaners</h6>
+        <v-text-field
+                label="Number of Cleaners"
+               
+                type="number"
+                v-model="hourly_cleaning.cleaners"
+                @input="hourlyCleaningChange()"
+              ></v-text-field>
+      </div>
+      <div class="col-md-4">
+        <h6>Select Duration</h6>
+        <v-select :items="hourly_options" v-model="hourly_cleaning.hourly_duration" @change="hourlyCleaningChange()" item-text="text" item-value="value"></v-select>
+      
+      </div>
   </div>
   <div class="row " style="margin:0 !important" v-if="hourly_cleaning.hourly_duration && hourly_cleaning.cleaners">
     <div class="col-md-4">
@@ -3557,7 +3557,7 @@ Fill all the details of the Buildings  to proceed
                                 Kitchen <% kindex+1 %> (    <% kitchen.size.name %> )<br>
                              
                                 </div>
-                                <div class="ml-auto primary-text strike-text" v-if="kitchen.type=='new'">
+                                <div class="ml-auto primary-text strike-text" v-if="kitchen.type=='new' && service.service=='General Cleaning'">
                                   KD <span><% kitchen.size.cost  %></span>
                                   <span v-if="service.schedule_details && service.cleaning_policy=='SUBSCRIPTION'">x <% Object.keys(service.schedule_details).length %></span>
                                 </div>
