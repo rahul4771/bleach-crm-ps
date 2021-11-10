@@ -4,7 +4,7 @@ from django.views import View
 from django.conf import settings
 from bleach_crm_ps.permissions import IsAccountant
 # Create your views here.
-
+import pandas as pd
 import xlwt
 import itertools
 
@@ -1205,6 +1205,13 @@ class FineWriteBack(View):
 
 		return redirect('accountant:accountantdash-board')
 
+# def has_overlap(a_start, a_end, b_start, b_end):
+#     latest_start = max(a_start, b_start)
+#     earliest_end = min(a_end, b_end)
+# 	print(latest_start <= earliest_end,"kopiko")
+#     return latest_start <= earliest_end
+				
+
 #export to excel
 def export_users_xls(request):
 
@@ -1220,6 +1227,10 @@ def export_users_xls(request):
 	prev_date_end = prevdate+timedelta(1)
 	todate_date_start= todate.replace(hour=0,minute=0,second=0,microsecond=0)   #single_date+timedelta(1)
 	todate_date_end = todate_date_start+timedelta(1)
+
+	daterange  = pd.date_range(prev_date_start, todate_date_end)
+
+	print(daterange,"drange")
 
 	# print(prev_date_start,todate_date_end,"datesss")
 	# Sheet header, first row
@@ -1263,10 +1274,63 @@ def export_users_xls(request):
 
 			employee_cleanings = CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(member__id=employee.id)&Q(Q(start_at__range=(prev_date_start,todate_date_end))&Q(end_at__range=(prev_date_start,todate_date_end))) )).values_list('team__order_scheduler__order__order_no','start_at','end_at').distinct().annotate(duration = ExpressionWrapper(F('end_at') - F('start_at'), output_field=DurationField())).union(FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(member__id=employee.id)&Q(Q(start_at__range=(prev_date_start,todate_date_end))&Q(end_at__range=(prev_date_start,todate_date_end)))) ).values_list('team__followup_scheduler__follow_up__investigation__order__order_no','start_at','end_at').distinct().annotate(duration = ExpressionWrapper(F('end_at') - F('start_at'), output_field=DurationField()))).aggregate(total_duration=Sum('duration'))
 
+			employee_cleanings_list = CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(member__id=employee.id)&Q(Q(start_at__range=(prev_date_start,todate_date_end))&Q(end_at__range=(prev_date_start,todate_date_end))) )).values_list('team__order_scheduler__order__order_no','start_at','end_at').distinct().union(FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(member__id=employee.id)&Q(Q(start_at__range=(prev_date_start,todate_date_end))&Q(end_at__range=(prev_date_start,todate_date_end)))) ).values_list('team__followup_scheduler__follow_up__investigation__order__order_no','start_at','end_at').distinct())
+			print(employee_cleanings,"kok")
 			# .union(CleaningTeam.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__range=(prev_date_start,todate_date_end))&Q(end_at__range=(prev_date_start,todate_date_end)))) ).annotate(duration = ExpressionWrapper(F('end_at') - F('start_at'), output_field=DurationField())).values('duration')).union(FollowUpTeam.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__range=(prev_date_start,todate_date_end))&Q(end_at__range=(prev_date_start,todate_date_end)))) ).annotate(duration = ExpressionWrapper(F('end_at') - F('start_at'), output_field=DurationField())).values('duration'))
 
-			print(employee_cleanings['total_duration'],"emplo")
+			# print(employee_cleanings['total_duration'],"emplo")
 
+			cleaning_data = []
+			
+	
+			for cleaning in employee_cleanings_list:
+				
+				cleaning_dict = {
+					'schedule_date' : datetime.strftime(cleaning[1],'%d-%m-%Y'),
+					'start_at' : cleaning[1],
+					'end_at' : cleaning[2]
+				}
+				cleaning_data.append(cleaning_dict)
+
+			print(cleaning_data,"dat")
+
+			for date in daterange:
+				
+				date_times = []
+				date = datetime.strftime(date,'%d-%m-%Y')
+				print(date,"ttt")
+
+				
+				for d in cleaning_data:
+					if d['schedule_date'] == date:
+						date_times.append(d['start_at'])
+						date_times.append(d['end_at'])
+				print(date_times,"dtms")
+
+				if len(date_times) == 4:
+					print("lop")
+					# has_overlap(date_times[0],date_times[1],date_times[2],date_times[3])
+
+					latest_start = max(date_times[0], date_times[2])
+					earliest_end = min(date_times[1], date_times[3])
+					print(latest_start <= earliest_end,"kopiko")
+					intersection = latest_start <= earliest_end
+					if intersection == True:
+						duration1 = date_times[1] - date_times[0]
+						duration2 = date_times[3] - date_times[2]
+						print(duration1,duration2,"jiok")
+						total_duration = duration2 + duration1
+						print(employee_cleanings['total_duration'],total_duration,"tdur")
+
+						new_duration = employee_cleanings['total_duration'] - total_duration
+
+						print(new_duration,"mewd",date_times[3] - date_times[0])
+
+						final_duration = new_duration + (date_times[3] - date_times[0])
+
+						print(final_duration,"dura")
+				else:
+					final_duration = str(employee_cleanings['total_duration'])
 
 			d0 = prev_date_start
 			d1 = todate_date_end
@@ -1286,8 +1350,8 @@ def export_users_xls(request):
 			if employee.is_active == True:
 				employees.append('Active')
 			else:
-				employees.append('False')
-			employees.append(str(employee_cleanings['total_duration']))
+				employees.append('Inactive')
+			employees.append(final_duration)
 			employees.append(total_working_hours)
 
 			rows.append(employees)
