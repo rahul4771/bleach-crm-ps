@@ -72,7 +72,7 @@ let app = new Vue({
             service_type:'',
             cleaningsections:null,
             selectedDate: new Date(),
-              addfollow:true,
+              addfollow:false,
             imageData: [],
             images:[],
             ImageDetails: {

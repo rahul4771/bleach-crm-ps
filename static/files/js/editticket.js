@@ -15,10 +15,11 @@
   delimiters: ["<%", "%>"],
   data () {
         return {
-            
+            report_id:'',
+            showType:false,
             edit_section_active_index:null,
             edit_servicetype:'',
-            isOrderSelected:true,
+            isOrderSelected:false,
             cleaningsections:null,
             paybackSerDetials:'',
             paybackSerPrice:'',
@@ -69,7 +70,7 @@
             ],
             damAc:['Payback','Internal Report','Assign Investigator','Insurance Request','Follow-up Cleaning'],
             damAc2 : ['Payback','Gift','Assign Investigator','Follow-up Cleaning'],
-            damAc3:[],
+            damAc3:investigators_list,
             ac: ['Gift', 'Internal reporting'],
             ac2: ['name', 'Name'],
             at:false,
@@ -94,6 +95,133 @@
         }
       },
       methods:{
+          async setEditData(item){
+              console.log(item,'item')
+              var tempar = []
+              if(item.ticket_types.includes('Damage')){
+                tempar.push(
+                    { name: 'Damage', id: 1 , selected:false}
+                  );
+              }
+              if(item.ticket_types.includes('Service Quality')){
+                tempar.push(
+                    { name: 'Service Quality', id: 2, selected:false }
+                );
+              }
+              if(item.ticket_types.includes('Attitude & Behaviour')){
+                tempar.push(
+                    { name: 'Attitude & Behaviour', id: 3, selected:false }
+                );
+              }
+              this.value = tempar
+              this.damagenote = item.notes;
+              if(item.is_paybackdiscount){
+                this.damacval.push(
+                    {
+                        id:1,
+                        selected:false,
+                        name:'Payback'
+                    }
+                    )
+                    for(var i = 0; i<item.paybackdiscounts.length;i++){
+                        if(item.paybackdiscounts[i].category == 'SERVICEQUALITY'){
+                            var a ={
+                                itemname:item.paybackdiscounts[i].name,
+                                price:item.paybackdiscounts[i].cost,
+                                category:'Service Quality',
+                                discount_id:item.paybackdiscounts[i].discount_id
+                            }
+                            this.paybackSer.push(a);
+                            //paybackaction:['Service Quality','Damage','Other'],
+                            if(!this.payback.includes('Service Quality')){
+                                this.payback.push('Service Quality')
+                            }
+                        }
+                        if(item.paybackdiscounts[i].category == 'DAMAGE'){
+                            var b ={
+                                itemname:item.paybackdiscounts[i].name,
+                                price:item.paybackdiscounts[i].cost,
+                                category:'Damage',
+                                discount_id:item.paybackdiscounts[i].discount_id
+                            }
+                            this.paybackDam.push(b)
+                            if(!this.payback.includes('Damage')){
+                                this.payback.push('Damage')
+                            }
+                        }
+                        if(item.paybackdiscounts[i].category == null){
+                            var b ={
+                                itemname:item.paybackdiscounts[i].name,
+                                price:item.paybackdiscounts[i].cost,
+                                category:'Other',
+                                discount_id:item.paybackdiscounts[i].discount_id
+                            }
+                            this.paybackOther.push(b)
+                            if(!this.payback.includes('Other')){
+                                this.payback.push('Other')
+                            }
+                        }
+                    }
+
+            }
+              if(item.is_report){
+                  this.damacval.push(
+                    {
+                        id:2,
+                        selected:false,
+                        name:'Internal Report'
+                    }
+                  )
+                  if(item.report.length != 0 ){
+                    this.report_id =item.report[0].report_id;
+                    this.reporttitile = item.report[0].title;
+                    this.reportnote = item.report[0].notes
+                  }
+                   
+              }
+              if(item.is_investigator){
+                this.damacval.push(
+                    {
+                        id:3,
+                        selected:false,
+                        name:'Assign Investigator'
+                    }
+                )
+                this.userselect = {
+                    id:item.investigator_id,
+                    name:item.investigator_name
+                }
+              }
+              if(this.damacval.length !=0){
+                  this.damacval[0].selected = true
+              }
+              for(var j =0;j<item.medias.length;j++){ 
+                  var tempImg = item.medias[j].split('/')
+                  var response = await fetch(api+item.medias[j]);
+                  var blob = await response.blob();
+                    var converted_file = new File([blob],  tempImg[3],{lastModified: Date.now()});
+                    this.ImageDetails.url = URL.createObjectURL(converted_file);
+                    this.ImageDetails.file = converted_file;
+                    this.imageData.push(this.ImageDetails);
+                    this.images.push(converted_file);
+                    this.ImageDetails = {
+                    file: "",
+                    url: "",
+                    service:""
+                    
+                    };
+              }
+              
+              
+
+
+
+
+              this.isOrderSelected = true
+              
+              
+             
+          },
         editSection(item){
             console.log(item)
             this.edit_section_active_index = item
@@ -101,16 +229,7 @@
             $('#edit-dialog-tigger').click();
         },
         removeFromPayback(){
-            // console.log('ghj')
-            // if(!this.payback.includes('Service Quality')){
-            //     this.paybackSer = []
-            // }
-            // if(!this.payback.includes('Damage')){
-            //     this.paybackDam = []
-            // }
-            // if(!this.payback.includes('Other')){
-            //     this.paybackOther = []
-            // }
+            console.log(this.value)
         },
         removePayback(item){
             console.log(item)
@@ -541,7 +660,7 @@ $(function () {
 
 
 async function loadvisits(order_id){
-    app.isOrderSelected = false
+    // app.isOrderSelected = false
     axios.get(url+'/api/order-details/'+order_id)
                 .then(function (response) {
                     console.log(response.data.visits,"vs")
@@ -559,16 +678,13 @@ async function loadvisits(order_id){
 
 
 async function loadvisitdata(visit_id){
-    app.isOrderSelected = false
+    // app.isOrderSelected = false
     axios.get(url+'/api/visit-details/'+visit_id)
                 .then(function (response) {
-                    console.log(response.data,"dat")
-                    app.isOrderSelected = true
-                    app.value = [];
-                    app.damacval = []
-                    app.cleaningsections = response.data.sections
-                    app.edit_servicetype = response.data.servicetype
-                    console.log(response.data,"lop")
+                   
+                    // app.isOrderSelected = false
+                    
+                   
                     $('#id_sched').text(response.data.start_at)
                     $('.tk-order-card').show();
 
@@ -585,27 +701,37 @@ async function loadvisitdata(visit_id){
                     $('#visit_no_of_cleaners').text(response.data.no_of_cleaners);
 
                     $('#visit_team_members').empty();
+                    $('#id_modal_img_section').empty();
 
+                    console.log(response.data.members.length,'leng')
+                    
                     $(response.data.members).each(function(key,value){
-                        if (key == 1){
-                            $('#visit_team_members').append('<img @click="showCleaners()" src="'+value.member_image+'" class="tk-img-circle">')
+                        if (key == 0){
+                            $('#visit_team_members').append('<img onclick="openImgModal()" src="'+value.member_image+'" class="tk-img-circle">')
                         }else{
-                            $('#visit_team_members').append('<img @click="showCleaners()" src="'+value.member_image+'" class="tk-img-circle" style="margin-left: -20px;">')
+                            $('#visit_team_members').append('<img onclick="openImgModal()" src="'+value.member_image+'" class="tk-img-circle" style="margin-left: -20px;">')
+                        }
+                        if(key==3){
+                            return false
                         }
 
                     })
-                    $('#visit_team_members').append('<div @click="showCleaners()" style="margin-bottom: 0px;"  class="tk-common-text2 ml-5  pointer">'+response.data.no_of_cleaners+' cleaners</div>')
+                    $(response.data.members).each(function(key,value){
+                            $('#id_modal_img_section').append('<div class="col-md-4 mb-10"><div class="d-flex"><img src="'+value.member_image+'" class="tk-img-circle"> <div  class="tk-common-text2 ml-5 mt-10">'+value.member+'</div></div></div>')
+
+                    })
+                    $('#visit_team_members').append('<div onclick="openImgModal()" style="margin-bottom: 0px;"  class="tk-common-text2 ml-5 mt-10  pointer">'+response.data.members.length+' cleaners</div>')
 
                 })
 
 }
 
 async function ticketdata(ticket_id){
-    app.isOrderSelected = false
+  
     axios.get(url+'/api/ticket-details/'+ticket_id)
                 .then(function (response) {
-                    console.log(response.data,"dattt")
-                    
+                   
+                    app.setEditData(response.data);
                     
 
                 })

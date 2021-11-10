@@ -1537,7 +1537,7 @@ hourly_slots:true
       }
         },
         findHourlyCost(){
-          if(this.hourly_cleaning.cleaners<=2)
+          if(this.hourly_cleaning.hourly_duration<=2)
           {
           var total_cost=15*parseInt(this.hourly_cleaning.cleaners)*parseInt(this.hourly_cleaning.hourly_duration)
           }

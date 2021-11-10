@@ -125,7 +125,7 @@
 {% if investigation.investigator != None and investigation.is_secondary_investigation_completed == False %}
 <span class="{% if investigation.days_left <= 2 %}green-bg{% elif investigation.days_left > 2 and investigation.days_left <= 5 %}yellow-bg{% elif investigation.days_left > 5 and investigation.days_left <= 7 %}orange-bg{% else %}red-bg{% endif %} clickable-row-list" data-href="{% url 'stl:newinvestigation' investigation.id %}">View</span>
 {% else %}
-<span class="{% if investigation.days_left <= 2 %}green-bg{% elif investigation.days_left > 2 and investigation.days_left <= 5 %}yellow-bg{% elif investigation.days_left > 5 and investigation.days_left <= 7 %}orange-bg{% else %}red-bg{% endif %} " >Investigated</span>
+<span class="{% if investigation.days_left <= 2 %}green-bg{% elif investigation.days_left > 2 and investigation.days_left <= 5 %}yellow-bg{% elif investigation.days_left > 5 and investigation.days_left <= 7 %}orange-bg{% else %}red-bg{% endif %} clickable-row-list" data-href="{% url 'stl:investigation' investigation.id %}" >Investigated</span>
 {% endif %}
 </td>
 </tr>

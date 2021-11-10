@@ -573,31 +573,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row mt-20">
-                              <div class="col-md-6 mb-10">
-                                <div class="d-flex">
-                                    <img src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle"> 
-                                    <div  class="tk-common-text2 ml-5 mt-10">Saravan</div>
-                                </div>
-                              </div>
-                              <div class="col-md-6 mb-10">
-                                <div class="d-flex">
-                                    <img src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle"> 
-                                    <div  class="tk-common-text2 ml-5 mt-10">Saravan</div>
-                                </div>
-                              </div>
-                              <div class="col-md-6 mb-10">
-                                <div class="d-flex">
-                                    <img src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle"> 
-                                    <div   class="tk-common-text2 ml-5 mt-10">Saravan</div>
-                                </div>
-                              </div>
-                              <div class="col-md-6 mb-10">
-                                <div class="d-flex">
-                                    <img src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle"> 
-                                    <div   class="tk-common-text2 ml-5 mt-10">Saravan</div>
-                                </div>
-                              </div>
+                            <div class="row mt-20" id="id_modal_img_section">
+                              
                            
                               
   
@@ -635,6 +612,10 @@ investigators_list.push({
 })
 
 {% endfor %}
+
+function openImgModal(){
+    $('#id_cl').click()
+}
 </script>
 <script src="{% static 'files/js/raiseticket.js' %}"></script>
 

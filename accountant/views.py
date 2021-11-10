@@ -31,7 +31,7 @@ from accountant.models import PaymentHistory
 import requests
 from django.http import HttpResponse,JsonResponse,HttpResponseRedirect
 
-from user.models import UserProfile
+from user.models import UserProfile,LeaveSchedule
 
 def GetCashCollectOrderInfo(request):
 	data               = {}
@@ -1234,6 +1234,71 @@ def export_users_xls(request):
 	# Sheet body, remaining rows
 	font_style = xlwt.XFStyle()
 
+	if report_type == 'employeecommission':
+
+		response = HttpResponse(content_type='application/ms-excel')
+		response['Content-Disposition'] = 'attachment; filename="EMPLOYEE_COMMISSION_'+from_date+'_'+to_date+'.xls"'
+
+		wb = xlwt.Workbook(encoding='utf-8')
+		ws = wb.add_sheet('EMPLOYEE COMMISSION SHEET')
+
+		columns = ['Cleaner','Status','Occupied Hours','Total Working Hours']
+		
+		for col_num in range(len(columns)):
+			ws.write(row_num, col_num, columns[col_num], font_style)
+
+		try:
+			total_active_workers = CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__range=(prev_date_start,todate_date_end))&Q(end_at__range=(prev_date_start,todate_date_end))) )).values_list('member',flat=True).distinct().union(FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__range=(prev_date_start,todate_date_end))&Q(end_at__range=(prev_date_start,todate_date_end)))) ).values_list('member',flat=True)).union(CleaningTeam.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__range=(prev_date_start,todate_date_end))&Q(end_at__range=(prev_date_start,todate_date_end)))) ).values_list('team_leader',flat=True)).union(FollowUpTeam.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__range=(prev_date_start,todate_date_end))&Q(end_at__range=(prev_date_start,todate_date_end)))) ).values_list('team_leader',flat=True)).distinct()
+		except:
+			total_active_workers = 0
+
+		print(total_active_workers,"workrs")
+
+		rows = []
+
+		for worker in total_active_workers:
+			employees = []
+			employee = UserProfile.objects.get(id=int(worker))
+			print(employee,"epl")
+
+			employee_cleanings = CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(member__id=employee.id)&Q(Q(start_at__range=(prev_date_start,todate_date_end))&Q(end_at__range=(prev_date_start,todate_date_end))) )).values_list('team__order_scheduler__order__order_no','start_at','end_at').distinct().annotate(duration = ExpressionWrapper(F('end_at') - F('start_at'), output_field=DurationField())).union(FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(member__id=employee.id)&Q(Q(start_at__range=(prev_date_start,todate_date_end))&Q(end_at__range=(prev_date_start,todate_date_end)))) ).values_list('team__followup_scheduler__follow_up__investigation__order__order_no','start_at','end_at').distinct().annotate(duration = ExpressionWrapper(F('end_at') - F('start_at'), output_field=DurationField()))).aggregate(total_duration=Sum('duration'))
+
+			# .union(CleaningTeam.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__range=(prev_date_start,todate_date_end))&Q(end_at__range=(prev_date_start,todate_date_end)))) ).annotate(duration = ExpressionWrapper(F('end_at') - F('start_at'), output_field=DurationField())).values('duration')).union(FollowUpTeam.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__range=(prev_date_start,todate_date_end))&Q(end_at__range=(prev_date_start,todate_date_end)))) ).annotate(duration = ExpressionWrapper(F('end_at') - F('start_at'), output_field=DurationField())).values('duration'))
+
+			print(employee_cleanings['total_duration'],"emplo")
+
+
+			d0 = prev_date_start
+			d1 = todate_date_end
+			delta = d1 - d0
+
+			print(delta.days,"dyss")
+
+			leave_schedules = LeaveSchedule.objects.filter(staff=employee,leave_date__range=(prev_date_start,todate_date_end)).values_list('leave_date',flat=True).distinct().count()
+
+			print(leave_schedules,"lvs")
+
+			worked_days = int(delta.days) - int(leave_schedules)
+			total_working_hours = worked_days * 10
+			# total_working_hours = total_working_hours // 24
+
+			employees.append(employee.name)
+			if employee.is_active == True:
+				employees.append('Active')
+			else:
+				employees.append('False')
+			employees.append(str(employee_cleanings['total_duration']))
+			employees.append(total_working_hours)
+
+			rows.append(employees)
+
+		print(rows,"ross")
+	
+		for row in rows:
+			row_num += 1
+			for col_num in range(len(row)):
+				ws.write(row_num, col_num, row[col_num], font_style)
+
 	if report_type == 'paymentdetails':
 
 		response = HttpResponse(content_type='application/ms-excel')
@@ -1247,7 +1312,7 @@ def export_users_xls(request):
 		for col_num in range(len(columns)):
 			ws.write(row_num, col_num, columns[col_num], font_style)
 
-		orders = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end)).values_list('order_no', 'evaluation__payment_method', 'total_amount', 'amount_paid', 'remining_amount').order_by('-id')
+		orders = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end),evaluation__quatation_status='APPROVED').values_list('order_no', 'evaluation__payment_method', 'total_amount', 'amount_paid', 'remining_amount').order_by('-id')
 	
 		#removing duplicates
 		found = set()
@@ -1849,6 +1914,7 @@ def export_users_xls(request):
 			ws.write(row_num, col_num, columns[col_num], font_style)
 
 		payments = PaymentHistory.objects.filter(is_active=True,payment_mode='ONLINECREDIT',created__range=(prev_date_start,todate_date_end)).values_list('paid_date','order__order_no','order__evaluation__payment_method','amount_paid','amount_paid','transaction_id', 'payment_gateway', 'receipt_no').order_by('-id')
+
 
 		rows = []
 

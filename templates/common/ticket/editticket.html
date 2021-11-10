@@ -146,7 +146,7 @@
                                 <div class="row mt-30">
                                     <div class="col-md-3">
                                         <div class="tk-common-text">Select Ticket Type</div>
-                                        <multiselect name="ticket_type" label="name" track-by="name"  v-model="value"  selectLabel="Select Ticket" :showLabels='true' :multiple="true" placeholder="Select Ticket Type" :options="options"></multiselect>
+                                        <multiselect name="ticket_type"  label="name" track-by="name"  v-model="value"  selectLabel="Select Ticket" :showLabels='true' :multiple="true" placeholder="Select Ticket Type" :options="options"></multiselect>
                                     
                                     </div>
                                 </div>                        
@@ -485,6 +485,36 @@
                         </div>
                     </div>
                </div>
+
+               <button hidden id="id_cl" data-toggle="modal" data-target="#deleteModel2"  style="margin-top: 9px; color: #3968c6;"><i data-toggle="tooltip" title="Help" class="fa fa-question-circle fa-lg" aria-hidden="true"></i></button>
+                <div class="modal fade" id="deleteModel2" role="dialog">
+                    <div style="border: none !important;" class="modal-dialog cancel-model cancel-order-border " role="document">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-12 mt-20">
+                  
+                                    
+                                    <div class="d-flex ">
+                                        <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Cleaners</p></div>
+                                        <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+                  
+                                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                                        </button>
+                  
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-20" id="id_modal_img_section">
+                              
+                           
+                              
+  
+                            </div>
+                            <div class="row mt-10"></div>
+                           
+                        </div>
+                    </div>
+                  </div>
         </section>
     </div>
     {% endblock %}
@@ -495,13 +525,29 @@
     <script>
 
 </script>
-<script src="{% static 'files/js/editticket.js' %}"></script>
+
 
 <script>
 $(document).ready(function(){
     loadvisitdata({{visit_id}}) ;
     ticketdata({{ticket_id}}) ;
 })
+var investigators_list = []
+
+{% for investigator in investigators %}
+
+investigators_list.push({
+    name:'{{investigator.name}}',
+    id:'{{investigator.id}}'
+})
+
+{% endfor %}
+
+
+function openImgModal(){
+    $('#id_cl').click()
+}
 </script>
+<script src="{% static 'files/js/editticket.js' %}"></script>
 
 {% endblock %}
