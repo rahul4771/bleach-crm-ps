@@ -1539,10 +1539,10 @@ hourly_slots:true
         findHourlyCost(){
           if(this.hourly_cleaning.hourly_duration<=2)
           {
-          var total_cost=15*parseInt(this.hourly_cleaning.cleaners)*parseInt(this.hourly_cleaning.hourly_duration)
+          var total_cost=15*parseInt(this.hourly_cleaning.cleaners)
           }
           else{
-            var total_cost=25*parseInt(this.hourly_cleaning.cleaners)*parseInt(this.hourly_cleaning.hourly_duration)
+            var total_cost=25*parseInt(this.hourly_cleaning.cleaners)
           }
 
           this.multiServicesBill[0].bill[0].section_net_cost=total_cost
