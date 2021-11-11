@@ -1220,7 +1220,7 @@ def export_users_xls(request):
 	from_date = request.POST.get('from_date')
 	to_date = request.POST.get('to_date')
 	report_type = request.POST.get('report_type')
-	print(from_date,to_date,report_type,"ftd")
+	# print(from_date,to_date,report_type,"ftd")
 
 	prevdate = datetime.strptime(from_date, '%d-%m-%Y')
 	todate = datetime.strptime(to_date, '%d-%m-%Y')
@@ -1342,14 +1342,14 @@ def export_users_xls(request):
 			delta = d1 - d0
 
 			if delta.days == 0:
-				print("zero")
+				# print("zero")
 				delta = (d1 - d0)+timedelta(days=1)
 
-			print(delta.days,"dyss")
+			# print(delta.days,"dyss")
 
 			leave_schedules = LeaveSchedule.objects.filter(staff=employee,leave_date__range=(prev_date_start,todate_date_end)).values_list('leave_date',flat=True).distinct().count()
 
-			print(leave_schedules,"lvs")
+			# print(leave_schedules,"lvs")
 
 			worked_days = int(delta.days) - int(leave_schedules)
 			total_working_hours = worked_days * 10
@@ -1365,7 +1365,7 @@ def export_users_xls(request):
 
 			rows.append(employees)
 
-		print(rows,"ross")
+		# print(rows,"ross")
 	
 		for row in rows:
 			row_num += 1
