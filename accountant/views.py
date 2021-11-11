@@ -1207,10 +1207,11 @@ class FineWriteBack(View):
 
 def return_slots(start_time, end_time, visit_date):
 	slot_list = []
+	slot_list.append(str(visit_date))
 	for i in range(start_time,end_time,2):
 		slot = int((i+2)/2)
 		slot_list.append(slot)
-	slot_list.append(str(visit_date))
+	# slot_list.append(str(visit_date))
 	return(slot_list)
 				
 
@@ -1286,7 +1287,7 @@ def export_users_xls(request):
 				duration_list = [] 
 				duration_list.append(int(datetime.strftime(cleaning[1],'%H')))
 				duration_list.append(int(datetime.strftime(cleaning[2],'%H')))
-				duration_list.append(datetime.strftime(cleaning[2],'%d-%m-%Y %H:%I'))
+				duration_list.append(datetime.strftime(cleaning[2],'%d-%m-%Y'))
 			
 				cleaning_durations.append(duration_list)
 
@@ -1310,16 +1311,31 @@ def export_users_xls(request):
 
 				output.append(slots)
 
-				new_output = []
-				for elem in output:
-					if elem not in new_output:
-						new_output.append(elem)
+			new_output = []
+				# for elem in output:
+				# 	if elem not in new_output:
+				# 		new_output.append(elem)
 
-			for out in new_output:
-				for i in out:
-					if type(i) != str:
-						final_slots.append(i)
+			print(output,"outp")
+			for date in daterange:
+				str_date = datetime.strftime(date,'%d-%m-%Y')
+				for elem in output:
+					if str_date == elem[0]:
+						new_output.append(elem)
+				# 	if elem not in new_output:
+				# 		new_output.append(elem)
+
+				print(new_output,"mewo")
+
+				for out in new_output:
+					for i in out:
+						if type(i) != str:
+							final_slots.append(i)
+
+				print(final_slots,"mewo2")
 					
+			final_slots=(list(set(final_slots)))
+			print(final_slots,"mewo3")
 			total_duration = len(final_slots)*(2)
 			if employee.name == 'Alfredo Ngalongalo':
 				print(employee_cleanings_list,"Alfredo List")
