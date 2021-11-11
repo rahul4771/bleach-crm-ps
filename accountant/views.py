@@ -1286,8 +1286,12 @@ def export_users_xls(request):
 				duration_list = [] 
 				duration_list.append(int(datetime.strftime(cleaning[1],'%H')))
 				duration_list.append(int(datetime.strftime(cleaning[2],'%H')))
-				duration_list.append(int(datetime.strftime(cleaning[2],'%d-%m-%Y %H:%I')))
-				
+
+				if cleaning[2]:
+					duration_list.append(datetime.strftime(cleaning[2],'%d-%m-%Y %H:%I'))
+				else:
+					duration_list.append('No date')
+					
 				cleaning_durations.append(duration_list)
 
 			print(cleaning_durations,"dat")
