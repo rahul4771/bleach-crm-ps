@@ -1306,6 +1306,7 @@ def export_users_xls(request):
 				# print (new_cleaning_durations,"newcl")
 				
 			total_duration = 0
+			final_slots = []
 			for i in new_cleaning_durations:
 				# print(i[2],"iprint")
 				slots= return_slots(i[0],i[1],i[2])
@@ -1322,18 +1323,16 @@ def export_users_xls(request):
 
 				# print(type(output),"op")
 
-				final_slots = []
-
 				for out in new_output:
 					for i in out:
 						if type(i) != str:
 							final_slots.append(i)
 					
-				duration = len(final_slots)*(2)
-				if employee.name == 'Alfredo Ngalongalo':
-					print(employee_cleanings_list,"alfredo")
-					print(final_slots,len(final_slots),"Alfredo")
-				total_duration += duration
+			total_duration = len(final_slots)*(2)
+				# if employee.name == 'Alfredo Ngalongalo':
+				# 	print(employee_cleanings_list,"alfredo")
+				# 	print(final_slots,len(final_slots),"Alfredo")
+				# total_duration += duration
 				# print(final_slots,"prefinal")
 
 			# print(duration,"dura")
