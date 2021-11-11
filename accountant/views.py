@@ -1320,6 +1320,7 @@ def export_users_xls(request):
 					if type(i) != str:
 						final_slots.append(i)
 					
+			final_slots=(list(set(final_slots)))
 			total_duration = len(final_slots)*(2)
 			if employee.name == 'Alfredo Ngalongalo':
 				print(employee_cleanings_list,"Alfredo List")
