@@ -1332,7 +1332,7 @@ def export_users_xls(request):
 			d0 = prev_date_start
 			d1 = todate_date_end.replace(hour=23,minute=59,second=59,microsecond=0)
 			
-			delta = (d1 - d0)+timedelta(days=1)
+			delta = d1 - d0
 			print(d0,d1,delta,"daysss")
 
 			leave_schedules = LeaveSchedule.objects.filter(staff=employee,leave_date__range=(prev_date_start,todate_date_end)).values_list('leave_date',flat=True).distinct().count()
