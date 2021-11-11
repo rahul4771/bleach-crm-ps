@@ -1205,11 +1205,12 @@ class FineWriteBack(View):
 
 		return redirect('accountant:accountantdash-board')
 
-def return_slots(start_time, end_time):
+def return_slots(start_time, end_time, visit_date):
 	slot_list = []
 	for i in range(start_time,end_time,2):
 		slot = int((i+2)/2)
 		slot_list.append(slot)
+	slot_list.append(visit_date)
 	return(slot_list)
 				
 
@@ -1286,12 +1287,9 @@ def export_users_xls(request):
 				duration_list = [] 
 				duration_list.append(int(datetime.strftime(cleaning[1],'%H')))
 				duration_list.append(int(datetime.strftime(cleaning[2],'%H')))
+				duration_list.append(datetime.strftime(cleaning[2],'%d-%m-%Y %H:%I'))
+				
 
-				if cleaning[2]:
-					duration_list.append(datetime.strftime(cleaning[2],'%d-%m-%Y %H:%I'))
-				else:
-					duration_list.append('No date')
-					
 				cleaning_durations.append(duration_list)
 
 			print(cleaning_durations,"dat")
@@ -1300,16 +1298,20 @@ def export_users_xls(request):
 			output=[]
 
 			for i in cleaning_durations:
+				
 				if i[0]>i[1]:
-					new_cleaning_durations= new_cleaning_durations+[[i[0],24],[0,i[1]],i[2]]
+					new_cleaning_durations= new_cleaning_durations+[[i[0],24,i[2]],[0,i[1],i[2]]]
 				else:
 					new_cleaning_durations= new_cleaning_durations+[i]
-				print (new_cleaning_durations)
+				# print (new_cleaning_durations,"newcl")
 				
 			total_duration = 0
 			for i in new_cleaning_durations:
-				slots= return_slots(i[0],i[1])
-				output=output+slots.append(i[2])
+				print(i[2],"iprint")
+				slots= return_slots(i[0],i[1],i[2])
+				print(slots,"slts")
+
+				output=output+slots
 
 				final_slots=(list(set(output)))
 				duration = len(final_slots)*(2)
