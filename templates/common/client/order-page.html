@@ -2120,6 +2120,7 @@
                     </div>
                     </div>
                     {% endfor %}
+                   
                     <!-- <div class="row">
                         <button class="sent-button" type="submit" onclick="addMoreService({{evaluationdetail.id}});">Add Services</button>
                     </div> -->
@@ -3475,7 +3476,8 @@ function duplicate(id){
     window.location.href='/common/reorder?id='+id
 } 
 function addMoreService(id){
-    window.location.href='/customer/service/add-delete/'+id
+   // window.location.href='/customer/service/add-delete/'+id
+   window.location.href='/common/newservice/?eval_id='+id
 }
 
 function resubmit(id){

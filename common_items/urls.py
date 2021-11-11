@@ -30,6 +30,7 @@ urlpatterns = [
 		url(r'^makequatation/phase1/edit/(?P<enquiry_id>[-\w]+)/(?P<evaluation_id>[-\w]+)/$',views.MakeQuatationPhase1Edit.as_view(),name='makequatation1edit'),
 		url(r'^resources/$',views.ResourceManagement.as_view(),name='resource-management'),
 		url(r'^booking/(?P<evaluation_detail_id>[-\w]+)/$',views.Booking.as_view(),name='booking'),
+		url(r'^newservice/$',views.NewService.as_view(),name='new service'),
 		url(r'^newfeedback/order/(?P<orderid>[-\w]+)/$',views.AddFeedBackOrder.as_view(),name='new-feedback-order'),
 		url(r'^reorder$',views.Reorder.as_view(),name='reorder'),
 

@@ -4026,7 +4026,9 @@ class MakeQuatationPhase2Edit(IsAuthenticated,View):
 class Booking(IsAuthenticated,View):
 	def get(self,request,evaluation_detail_id):
 		return render(request,"booking/booking.html")
-
+class NewService(IsAuthenticated,View):
+	def get(self,request):
+		return render(request,"booking/newservice.html")
 class Reorder(IsAuthenticated,View):
 	def get(self,request):
 		return render(request,"common/client/reorder.html")	
