@@ -5083,15 +5083,15 @@ class AddDeleteService(APIView):
 					total_leaders 	= total_leaders.filter(is_outdoor_skill=True)
 
 			#evaluation,evaluation details,order
-			evaluation_details = EvaluationDetails.objects.select_related('evaluation').get(id=evaluation_details_id)
-			evaluation         = evaluation_details.evaluation
-			order              = Order.objects.get(evaluation=evaluation)
+			evaluation_details 			= EvaluationDetails.objects.select_related('evaluation').get(id=evaluation_details_id)
+			evaluation         			= evaluation_details.evaluation
+			order              			= Order.objects.get(evaluation=evaluation)
 			
 		
 			###testing availability ####
-			shift_availability_check = request.data.get('shift_availability_check')
+			shift_availability_check 	= request.data.get('shift_availability_check')
 			
-			test_schedules_dict = list(request.data.get("service_details").values())[0]['schedule_details']
+			test_schedules_dict 		= list(request.data.get("service_details").values())[0]['schedule_details']
 			for key in test_schedules_dict.keys():
 				schedule_date           =  test_schedules_dict[key]['date']
 				schedule_time           =  test_schedules_dict[key]['time']
@@ -5111,8 +5111,8 @@ class AddDeleteService(APIView):
 					super_shift_leaders = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(id__in=today_shifts).filter(Q(Q(universal_shift_start__lte=start_time)&Q(universal_shift_end__gte=start_time))&Q(Q(universal_shift_start__lte=end_time)&Q(universal_shift_end__gte=end_time))).values_list('id',flat=True)
 
 					#absent cleaners and leaders	
-					absent_cleaners = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=start_date_time.date())|Q(leave_date=end_date_time.date()))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
-					absent_leaders  = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=start_date_time.date())|Q(leave_date=end_date_time.date()))).filter(staff__user_type='TEAMINCHARGE').values_list('staff',flat=True)
+					absent_cleaners 	= LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=start_date_time.date())|Q(leave_date=end_date_time.date()))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).values_list('staff',flat=True)
+					absent_leaders  	= LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=start_date_time.date())|Q(leave_date=end_date_time.date()))).filter(staff__user_type='TEAMINCHARGE').values_list('staff',flat=True)
 
 					#(applying 8 to 22 leave logic)
 					leavestart_at_datetime1  = start_date_time.replace(hour=8,minute=0,second=0,microsecond=0)
@@ -5292,7 +5292,6 @@ class AddDeleteService(APIView):
 			order.remining_amount     -= evaluation_details.total_cost+evaluation.credit_amount+evaluation.discount-evaluation.additional_charge
 			order.save()
 			
-			evaluation_details.status         = 'EVALUATED'
 			evaluation_details.total_cost     = 0
 			evaluation_details.estimated_cost = 0			
 			evaluation_details.save()

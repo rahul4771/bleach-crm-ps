@@ -1216,8 +1216,8 @@ def return_slots(start_time, end_time):
 #export to excel
 def export_users_xls(request):
 
-	from_date = request.POST.get('from_date')
-	to_date = request.POST.get('to_date')
+	from_date   = request.POST.get('from_date')
+	to_date     = request.POST.get('to_date')
 	report_type = request.POST.get('report_type')
 	print(from_date,to_date,report_type,"ftd")
 
@@ -1235,16 +1235,16 @@ def export_users_xls(request):
 
 	# print(prev_date_start,todate_date_end,"datesss")
 	# Sheet header, first row
-	row_num = 0
+	row_num  = 0
 	row_num2 = 0
 	row_num3 = 0
 	row_num4 = 0
 
-	font_style = xlwt.XFStyle()
+	font_style           = xlwt.XFStyle()
 	font_style.font.bold = True
 
 	# Sheet body, remaining rows
-	font_style = xlwt.XFStyle()
+	font_style           = xlwt.XFStyle()
 
 	if report_type == 'employeecommission':
 
