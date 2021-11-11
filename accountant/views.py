@@ -1265,20 +1265,21 @@ def export_users_xls(request):
 		except:
 			total_active_workers = 0
 
-		print(total_active_workers,"workrs")
+		# print(total_active_workers,"workrs")
 
 		rows = []
 
 		for worker in total_active_workers:
 			employees = []
 			employee = UserProfile.objects.get(id=int(worker))
-			print(employee,"epl")
+			# print(employee,"epl")
 
 			# employee_cleanings = CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(member__id=employee.id)&Q(Q(start_at__range=(prev_date_start,todate_date_end))&Q(end_at__range=(prev_date_start,todate_date_end))) )).values_list('team__order_scheduler__order__order_no','start_at','end_at').distinct().annotate(duration = ExpressionWrapper(F('end_at') - F('start_at'), output_field=DurationField())).union(FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(member__id=employee.id)&Q(Q(start_at__range=(prev_date_start,todate_date_end))&Q(end_at__range=(prev_date_start,todate_date_end)))) ).values_list('team__followup_scheduler__follow_up__investigation__order__order_no','start_at','end_at').distinct().annotate(duration = ExpressionWrapper(F('end_at') - F('start_at'), output_field=DurationField()))).aggregate(total_duration=Sum('duration'))
 
 			employee_cleanings_list = CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(member__id=employee.id)&Q(team__order_scheduler__end_at__range=(prev_date_start,todate_date_end)) )).values_list('team__order_scheduler__order__order_no','team__order_scheduler__start_at','team__order_scheduler__end_at').union(FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(member__id=employee.id)&Q(end_at__range=(prev_date_start,todate_date_end))) ).values_list('team__followup_scheduler__follow_up__investigation__order__order_no','start_at','end_at'))
 			# print(employee_cleanings,"kok")
-
+			if employee.name == 'Alfredo Ngalongalo':
+				print(employee_cleanings_list,"alfredo")
 			#occupied hours calc
 			cleaning_durations = []
 			
@@ -1292,7 +1293,7 @@ def export_users_xls(request):
 
 				cleaning_durations.append(duration_list)
 
-			print(cleaning_durations,"dat")
+			# print(cleaning_durations,"dat")
 
 			new_cleaning_durations=[]
 			output=[]
@@ -1318,7 +1319,7 @@ def export_users_xls(request):
 					if elem not in new_output:
 						new_output.append(elem)
 				
-				print(new_output,"newout")
+				# print(new_output,"newout")
 
 				# print(type(output),"op")
 
@@ -1331,7 +1332,7 @@ def export_users_xls(request):
 					
 				duration = len(final_slots)*(2)
 				total_duration += duration
-				print(final_slots,"prefinal")
+				# print(final_slots,"prefinal")
 
 			# print(duration,"dura")
 
