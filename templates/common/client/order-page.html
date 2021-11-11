@@ -1790,7 +1790,7 @@
                                         <div class="row">
                                         {% for multi_order_schedule in order.orderschedules %}
                                         {% if multi_order_schedule.order_scheduler_book == evaluationbook %}
-                                        <div style="margin-bottom: 10px;" class="col-md-4 col-xs-12 c-pr5 visit-list" id="id_select_visit{{multi_order_schedule.id}}" onclick="load_cleaning_team('id_select_visit'+{{multi_order_schedule.id}},{{multi_order_schedule.id}},{{evaluationbook.id}})"> <!-- -->
+                                        <div style="margin-bottom: 10px;" class="col-md-4 col-xs-12 c-pr5 visit-list" id="id_select_visit{{multi_order_schedule.id}}" onclick="load_cleaning_team('id_select_visit'+{{multi_order_schedule.id}},{{multi_order_schedule.id}},{{evaluationbook.id}})"> 
                                             <div class="cleaning-status-container  pointer ">
                                                 
                                                 <div  id="id_select_visit_inner{{multi_order_schedule.id}}" class="row cleaning-status-row  cleaning-status-card  ">
@@ -1885,11 +1885,11 @@
                                         <div class="order-clean-section-header c-mb-10">
                                             <div>
                                                 <h1><span>Visit</span> <span class="visit_count" id="visit_count_{{evaluationbook.id}}">1</span>  </h1> 
-                                                <div class="d-flex secondary-text">
-                                                <div class="status-dot {% if orderschedule.work_status == 'CLEANING_IN_PROGRESS' %} inprogress-chip-bg {% elif orderschedule.work_status == 'CLEANING_FULFILLED' %} completed-chip-bg {% elif orderschedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}assigned-chip-bg{% elif orderschedule.work_status == 'CLEANING_CANCELLED' %}cancel-chip-bg{% else %} notstarted-chip-bg {% endif %}">
-                                                 </div>
-                                                 <div>   {% if orderschedule.work_status == 'CLEANING_IN_PROGRESS' %} In Progress {% elif orderschedule.work_status == 'CLEANING_FULFILLED' %} Completed{% elif orderschedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}Team Assigned{% elif orderschedule.work_status == 'CLEANING_CANCELLED' %}Cancelled{% else %} Not Started{% endif %}
-                                                </div>
+                                                <div class="d-flex secondary-text" id="status_dot{{evaluationbook.id}}">
+                                                    <div class="status-dot {% if orderschedule.work_status == 'CLEANING_IN_PROGRESS' %} inprogress-chip-bg {% elif orderschedule.work_status == 'CLEANING_FULFILLED' %} completed-chip-bg {% elif orderschedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}assigned-chip-bg{% elif orderschedule.work_status == 'CLEANING_CANCELLED' %}cancel-chip-bg{% else %} notstarted-chip-bg {% endif %}">
+                                                    </div>
+                                                    <div >   {% if orderschedule.work_status == 'CLEANING_IN_PROGRESS' %} In Progress {% elif orderschedule.work_status == 'CLEANING_FULFILLED' %} Completed{% elif orderschedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}Team Assigned{% elif orderschedule.work_status == 'CLEANING_CANCELLED' %}Cancelled{% else %} Not Started{% endif %}
+                                                    </div>
                                                 </div>
 
                                             </div>
