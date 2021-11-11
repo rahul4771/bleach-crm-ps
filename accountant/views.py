@@ -1210,7 +1210,7 @@ def return_slots(start_time, end_time, visit_date):
 	for i in range(start_time,end_time,2):
 		slot = int((i+2)/2)
 		slot_list.append(slot)
-	slot_list.append(visit_date)
+	slot_list.append(str(visit_date))
 	return(slot_list)
 				
 
@@ -1307,17 +1307,33 @@ def export_users_xls(request):
 				
 			total_duration = 0
 			for i in new_cleaning_durations:
-				print(i[2],"iprint")
+				# print(i[2],"iprint")
 				slots= return_slots(i[0],i[1],i[2])
-				print(slots,"slts")
+				# print(slots,"slts")
 
-				output=output+slots
+				output.append(slots)
 
-				final_slots=(list(set(output)))
+				new_output = []
+				for elem in output:
+					if elem not in new_output:
+						new_output.append(elem)
+				
+				print(new_output,"newout")
+
+				# print(type(output),"op")
+
+				final_slots = []
+
+				for out in new_output:
+					for i in out:
+						if type(i) != str:
+							final_slots.append(i)
+					
 				duration = len(final_slots)*(2)
 				total_duration += duration
+				print(final_slots,"prefinal")
 
-			print(duration,"dura")
+			# print(duration,"dura")
 
 			#total working hours calc
 			d0 = prev_date_start
