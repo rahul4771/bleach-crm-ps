@@ -1217,8 +1217,8 @@ def return_slots(start_time, end_time, visit_date):
 #export to excel
 def export_users_xls(request):
 
-	from_date = request.POST.get('from_date')
-	to_date = request.POST.get('to_date')
+	from_date   = request.POST.get('from_date')
+	to_date     = request.POST.get('to_date')
 	report_type = request.POST.get('report_type')
 	# print(from_date,to_date,report_type,"ftd")
 
@@ -1236,16 +1236,16 @@ def export_users_xls(request):
 
 	# print(prev_date_start,todate_date_end,"datesss")
 	# Sheet header, first row
-	row_num = 0
+	row_num  = 0
 	row_num2 = 0
 	row_num3 = 0
 	row_num4 = 0
 
-	font_style = xlwt.XFStyle()
+	font_style           = xlwt.XFStyle()
 	font_style.font.bold = True
 
 	# Sheet body, remaining rows
-	font_style = xlwt.XFStyle()
+	font_style           = xlwt.XFStyle()
 
 	if report_type == 'employeecommission':
 
@@ -1283,27 +1283,23 @@ def export_users_xls(request):
 			cleaning_durations = []
 			
 			for cleaning in employee_cleanings_list:
-				
 				duration_list = [] 
 				duration_list.append(int(datetime.strftime(cleaning[1],'%H')))
 				duration_list.append(int(datetime.strftime(cleaning[2],'%H')))
 				duration_list.append(datetime.strftime(cleaning[2],'%d-%m-%Y %H:%I'))
-				
-
+			
 				cleaning_durations.append(duration_list)
 
-			# print(cleaning_durations,"dat")
 
 			new_cleaning_durations=[]
 			output=[]
 
 			for i in cleaning_durations:
-				
 				if i[0]>i[1]:
 					new_cleaning_durations= new_cleaning_durations+[[i[0],24,i[2]],[0,i[1],i[2]]]
 				else:
 					new_cleaning_durations= new_cleaning_durations+[i]
-				# print (new_cleaning_durations,"newcl")
+				
 				
 			total_duration = 0
 			final_slots = []
@@ -1318,10 +1314,6 @@ def export_users_xls(request):
 				for elem in output:
 					if elem not in new_output:
 						new_output.append(elem)
-				
-				# print(new_output,"newout")
-
-				# print(type(output),"op")
 
 				for out in new_output:
 					for i in out:
@@ -1329,13 +1321,10 @@ def export_users_xls(request):
 							final_slots.append(i)
 					
 			total_duration = len(final_slots)*(2)
-				# if employee.name == 'Alfredo Ngalongalo':
-				# 	print(employee_cleanings_list,"alfredo")
-				# 	print(final_slots,len(final_slots),"Alfredo")
-				# total_duration += duration
-				# print(final_slots,"prefinal")
-
-			# print(duration,"dura")
+			if employee.name == 'Alfredo Ngalongalo':
+				print(employee_cleanings_list,"Alfredo List")
+				print(final_slots,len(final_slots),"Alfredo")
+				print(total_duration,"total duration")
 
 			#total working hours calc
 			d0 = prev_date_start
