@@ -1231,6 +1231,8 @@ def export_users_xls(request):
 	todate_date_start= todate.replace(hour=0,minute=0,second=0,microsecond=0)   #single_date+timedelta(1)
 	todate_date_end = todate_date_start+timedelta(1)
 
+	print(prev_date_start,todate_date_end,"mko")
+
 	daterange  = pd.date_range(prev_date_start, todate_date_end)
 
 	# print(daterange,"drange")
@@ -1331,16 +1333,19 @@ def export_users_xls(request):
 			#total working hours calc
 			d0 = prev_date_start
 			d1 = todate_date_end
+			print(d0,d1,"dee")
 
 			delta = d1 - d0
-			print(d0,d1,delta,"daysss")
+			print(d0,d1,delta.days,"daysss")
 
-			todate_date_end = todate_date_end - timedelta(1)
-			todate = todate_date_end.replace(hour=23,minute=59,second=59,microsecond=0)					
+			todate = todate_date_end - timedelta(days=1)
+			todate = todate.replace(hour=23,minute=59,second=59,microsecond=0)		
+
+			print(todate,"toddy")			
 
 			leave_schedules = LeaveSchedule.objects.filter(staff=employee,leave_date__range=(prev_date_start,todate)).values_list('leave_date',flat=True).distinct().count()
 
-			# print(leave_schedules,"lvs")
+			print(leave_schedules,"lvs")
 
 			worked_days = int(delta.days) - int(leave_schedules)
 			total_working_hours = worked_days * 10
