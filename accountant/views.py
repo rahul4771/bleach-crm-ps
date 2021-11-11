@@ -1330,13 +1330,15 @@ def export_users_xls(request):
 
 			#total working hours calc
 			d0 = prev_date_start
-			d1 = todate_date_end-timedelta(1)
-			d1 = d1.replace(hour=23,minute=59,second=59,microsecond=0)
-			
+			d1 = todate_date_end
+
 			delta = d1 - d0
 			print(d0,d1,delta,"daysss")
 
-			leave_schedules = LeaveSchedule.objects.filter(staff=employee,leave_date__range=(prev_date_start,d1)).values_list('leave_date',flat=True).distinct().count()
+			todate_date_end = todate_date_end - timedelta(1)
+			todate = todate_date_end.replace(hour=23,minute=59,second=59,microsecond=0)					
+
+			leave_schedules = LeaveSchedule.objects.filter(staff=employee,leave_date__range=(prev_date_start,todate)).values_list('leave_date',flat=True).distinct().count()
 
 			# print(leave_schedules,"lvs")
 
