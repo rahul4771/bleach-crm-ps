@@ -1260,7 +1260,7 @@ def export_users_xls(request):
 			ws.write(row_num, col_num, columns[col_num], font_style)
 
 		try:
-			total_active_workers = CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(team__order_scheduler__start_at__range=(prev_date_start,todate_date_end))&Q(team__order_scheduler__end_at__range=(prev_date_start,todate_date_end))) )).values_list('member',flat=True).distinct().union(FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(Q(start_at__range=(prev_date_start,todate_date_end))&Q(end_at__range=(prev_date_start,todate_date_end)))) ).values_list('member',flat=True)).distinct()
+			total_active_workers = CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(team__order_scheduler__end_at__range=(prev_date_start,todate_date_end)) )).values_list('member',flat=True).distinct().union(FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(end_at__range=(prev_date_start,todate_date_end))) ).values_list('member',flat=True)).distinct()
 		except:
 			total_active_workers = 0
 
@@ -1275,7 +1275,7 @@ def export_users_xls(request):
 
 			# employee_cleanings = CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(member__id=employee.id)&Q(Q(start_at__range=(prev_date_start,todate_date_end))&Q(end_at__range=(prev_date_start,todate_date_end))) )).values_list('team__order_scheduler__order__order_no','start_at','end_at').distinct().annotate(duration = ExpressionWrapper(F('end_at') - F('start_at'), output_field=DurationField())).union(FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(member__id=employee.id)&Q(Q(start_at__range=(prev_date_start,todate_date_end))&Q(end_at__range=(prev_date_start,todate_date_end)))) ).values_list('team__followup_scheduler__follow_up__investigation__order__order_no','start_at','end_at').distinct().annotate(duration = ExpressionWrapper(F('end_at') - F('start_at'), output_field=DurationField()))).aggregate(total_duration=Sum('duration'))
 
-			employee_cleanings_list = CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(member__id=employee.id)&Q(Q(team__order_scheduler__start_at__range=(prev_date_start,todate_date_end))&Q(team__order_scheduler__end_at__range=(prev_date_start,todate_date_end))) )).values_list('team__order_scheduler__order__order_no','team__order_scheduler__start_at','team__order_scheduler__end_at').union(FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(member__id=employee.id)&Q(Q(start_at__range=(prev_date_start,todate_date_end))&Q(end_at__range=(prev_date_start,todate_date_end)))) ).values_list('team__followup_scheduler__follow_up__investigation__order__order_no','start_at','end_at'))
+			employee_cleanings_list = CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(member__id=employee.id)&Q(team__order_scheduler__end_at__range=(prev_date_start,todate_date_end)) )).values_list('team__order_scheduler__order__order_no','team__order_scheduler__start_at','team__order_scheduler__end_at').union(FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(member__id=employee.id)&Q(end_at__range=(prev_date_start,todate_date_end))) ).values_list('team__followup_scheduler__follow_up__investigation__order__order_no','start_at','end_at'))
 			# print(employee_cleanings,"kok")
 
 			#occupied hours calc
@@ -1286,7 +1286,12 @@ def export_users_xls(request):
 				duration_list = [] 
 				duration_list.append(int(datetime.strftime(cleaning[1],'%H')))
 				duration_list.append(int(datetime.strftime(cleaning[2],'%H')))
-				
+
+				if cleaning[2]:
+					duration_list.append(datetime.strftime(cleaning[2],'%d-%m-%Y %H:%I'))
+				else:
+					duration_list.append('No date')
+					
 				cleaning_durations.append(duration_list)
 
 			print(cleaning_durations,"dat")
@@ -1296,7 +1301,7 @@ def export_users_xls(request):
 
 			for i in cleaning_durations:
 				if i[0]>i[1]:
-					new_cleaning_durations= new_cleaning_durations+[[i[0],24],[0,i[1]]]
+					new_cleaning_durations= new_cleaning_durations+[[i[0],24],[0,i[1]],i[2]]
 				else:
 					new_cleaning_durations= new_cleaning_durations+[i]
 				print (new_cleaning_durations)
@@ -1304,7 +1309,7 @@ def export_users_xls(request):
 			total_duration = 0
 			for i in new_cleaning_durations:
 				slots= return_slots(i[0],i[1])
-				output=output+slots
+				output=output+slots.append(i[2])
 
 				final_slots=(list(set(output)))
 				duration = len(final_slots)*(2)
