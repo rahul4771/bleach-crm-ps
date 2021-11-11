@@ -1301,12 +1301,14 @@ def export_users_xls(request):
 					new_cleaning_durations= new_cleaning_durations+[i]
 				print (new_cleaning_durations)
 				
+			total_duration = 0
 			for i in new_cleaning_durations:
 				slots= return_slots(i[0],i[1])
 				output=output+slots
 
-			final_slots=(list(set(output)))
-			duration = len(final_slots)*(2)
+				final_slots=(list(set(output)))
+				duration = len(final_slots)*(2)
+				total_duration += duration
 
 			print(duration,"dura")
 
@@ -1330,7 +1332,7 @@ def export_users_xls(request):
 				employees.append('Active')
 			else:
 				employees.append('Inactive')
-			employees.append(duration)
+			employees.append(total_duration)
 			employees.append(total_working_hours)
 
 			rows.append(employees)
