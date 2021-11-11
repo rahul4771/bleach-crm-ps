@@ -1273,12 +1273,8 @@ def export_users_xls(request):
 		for worker in total_active_workers:
 			employees = []
 			employee = UserProfile.objects.get(id=int(worker))
-			# print(employee,"epl")
-
-			# employee_cleanings = CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(member__id=employee.id)&Q(Q(start_at__range=(prev_date_start,todate_date_end))&Q(end_at__range=(prev_date_start,todate_date_end))) )).values_list('team__order_scheduler__order__order_no','start_at','end_at').distinct().annotate(duration = ExpressionWrapper(F('end_at') - F('start_at'), output_field=DurationField())).union(FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(member__id=employee.id)&Q(Q(start_at__range=(prev_date_start,todate_date_end))&Q(end_at__range=(prev_date_start,todate_date_end)))) ).values_list('team__followup_scheduler__follow_up__investigation__order__order_no','start_at','end_at').distinct().annotate(duration = ExpressionWrapper(F('end_at') - F('start_at'), output_field=DurationField()))).aggregate(total_duration=Sum('duration'))
 
 			employee_cleanings_list = CleaningTeamMember.objects.filter( Q( Q(is_active=True)&Q(member__id=employee.id)&Q(team__order_scheduler__end_at__range=(prev_date_start,todate_date_end)) )).values_list('team__order_scheduler__order__order_no','team__order_scheduler__start_at','team__order_scheduler__end_at').union(FollowUpTeamMember.objects.filter( Q( Q(is_active=True)&Q(member__id=employee.id)&Q(end_at__range=(prev_date_start,todate_date_end))) ).values_list('team__followup_scheduler__follow_up__investigation__order__order_no','start_at','end_at'))
-			# print(employee_cleanings,"kok")
 			
 			#occupied hours calc
 			cleaning_durations = []
@@ -1293,8 +1289,6 @@ def export_users_xls(request):
 
 				cleaning_durations.append(duration_list)
 
-			# print(cleaning_durations,"dat")
-
 			new_cleaning_durations=[]
 			output=[]
 
@@ -1304,17 +1298,15 @@ def export_users_xls(request):
 					new_cleaning_durations= new_cleaning_durations+[[i[0],24,i[2]],[0,i[1],i[2]]]
 				else:
 					new_cleaning_durations= new_cleaning_durations+[i]
-				# print (new_cleaning_durations,"newcl")
 				
 			total_duration = 0
 			final_slots = []
 			for i in new_cleaning_durations:
-				# print(i[2],"iprint")
+				
 				slots= return_slots(i[0],i[1],i[2])
-				# print(slots,"slts")
-
 				output.append(slots)
 
+			#calculating duration of slots for each date
 			for date in daterange:
 				str_date = datetime.strftime(date,'%d-%m-%Y')
 				
@@ -1338,14 +1330,10 @@ def export_users_xls(request):
 
 			#total working hours calc
 			d0 = prev_date_start
-			d1 = todate_date_end
-			delta = d1 - d0
-
-			if delta.days == 0:
-				# print("zero")
-				delta = (d1 - d0)+timedelta(days=1)
-
-			# print(delta.days,"dyss")
+			d1 = todate_date_end-timedelta(1)
+			
+			delta = (d1 - d0)+timedelta(days=1)
+			print(d0,d1,delta,"daysss")
 
 			leave_schedules = LeaveSchedule.objects.filter(staff=employee,leave_date__range=(prev_date_start,todate_date_end)).values_list('leave_date',flat=True).distinct().count()
 
