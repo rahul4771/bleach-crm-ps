@@ -1330,7 +1330,7 @@ def export_users_xls(request):
 
 			#total working hours calc
 			d0 = prev_date_start
-			d1 = todate_date_end-timedelta(1)
+			d1 = todate_date_end.replace(hours=23,minutes=59,seconds=59,microseconds=0)
 			
 			delta = (d1 - d0)+timedelta(days=1)
 			print(d0,d1,delta,"daysss")
