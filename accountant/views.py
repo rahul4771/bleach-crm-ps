@@ -1336,7 +1336,7 @@ def export_users_xls(request):
 			delta = d1 - d0
 			print(d0,d1,delta,"daysss")
 
-			leave_schedules = LeaveSchedule.objects.filter(staff=employee,leave_date__range=(prev_date_start,todate_date_end)).values_list('leave_date',flat=True).distinct().count()
+			leave_schedules = LeaveSchedule.objects.filter(staff=employee,leave_date__range=(prev_date_start,d1)).values_list('leave_date',flat=True).distinct().count()
 
 			# print(leave_schedules,"lvs")
 
