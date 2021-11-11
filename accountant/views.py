@@ -1315,10 +1315,10 @@ def export_users_xls(request):
 					if elem not in new_output:
 						new_output.append(elem)
 
-				for out in new_output:
-					for i in out:
-						if type(i) != str:
-							final_slots.append(i)
+			for out in new_output:
+				for i in out:
+					if type(i) != str:
+						final_slots.append(i)
 					
 			total_duration = len(final_slots)*(2)
 			if employee.name == 'Alfredo Ngalongalo':
