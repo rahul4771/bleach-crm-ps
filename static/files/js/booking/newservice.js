@@ -611,7 +611,8 @@ $(document).ready(function(){
     cleaners:null
   },
   hourly_slots:true,
-  bookedServiceDetails:{}
+  bookedServiceDetails:{},
+  order_details_id:''
   
         },
         methods: {
@@ -3767,7 +3768,7 @@ $(document).ready(function(){
           this.submit_loader=false
           
          if(this.last_image_stat){
-         // window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
+          window.location.href='/common/client/order/details/'+this.order_details_id
          }
        
          
@@ -3775,7 +3776,7 @@ $(document).ready(function(){
          .catch((error) => {
           console.log(error);
           if(this.last_image_stat){
-           // window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
+            window.location.href='/common/client/order/details/'+this.order_details_id
            }
         });
   
@@ -3805,6 +3806,7 @@ $(document).ready(function(){
       this.addons=[]
       var ser = 'Kitchen Cleaning'
       axios.get(this.url+'/customer/ajax/getserviceaddons?service_type='+ser).then(response=>{
+        console.log("parse addon s worded")
         this.addons=response.data.service_addons
        this.parseAddons()
        
@@ -6056,7 +6058,9 @@ $(document).ready(function(){
   async getInitialData(){
     const urlSearchParams = new URLSearchParams(window.location.search);
     const params = Object.fromEntries(urlSearchParams.entries());
+    await this.getAddons()
    axios.get(this.url+'/customer/service/add-delete/'+params.eval_id).then(response=>{
+       this.order_details_id=response.data.order_details.id
     this.bookedServiceDetails=response.data.evaluation_details.evaluation_book_evaluation_details
     var serviceBookedDetails= this.bookedServiceDetails
     for(var i=0;i<serviceBookedDetails.length;i++)
@@ -6074,6 +6078,47 @@ $(document).ready(function(){
         discount:false
       }
       for(var j=0;j<serviceBookedDetails[i].evaluationsection_book.length;j++) {
+       
+        console.log("addons is"+JSON.stringify(addons))
+        console.log("addons section is"+JSON.stringify(serviceBookedDetails[i].evaluationsection_book[j].addonsections))
+        if(serviceBookedDetails[i].evaluationsection_book[j].addonsections.length>0){
+           var addons=[ ...this.addons_parsed ]
+            for(var aon=0;aon<serviceBookedDetails[i].evaluationsection_book[j].addonsections.length;aon++){
+              for(var n=0;n<addons.length;n++){
+               
+                if(serviceBookedDetails[i].evaluationsection_book[j].addonsections[aon].name==addons[n].details.name){
+                 
+                  addons[n].selected=true
+                  addons[n].selected_size=serviceBookedDetails[i].evaluationsection_book[j].addonsections[aon].size
+                  if(addons[n].selected_size){
+                    for(var sz=0;sz<addons[n].size.length;sz++){
+                      if(addons[n].size[sz].size==addons[n].selected_size){
+                        addons[n].selected_size=addons[n].size[sz]
+
+                      }
+                      
+                    }
+                  }
+                  addons[n].quantity=serviceBookedDetails[i].evaluationsection_book[j].addonsections[aon].quantity
+                }
+              }
+            }
+        }
+        serviceBookedDetails[i].evaluationsection_book[j]['keynote_data']=[]
+        for(var ky=0;ky<serviceBookedDetails[i].evaluationsection_book[j].keynotesections.length;ky++){
+
+          serviceBookedDetails[i].evaluationsection_book[j].keynote_data.push({
+            name:serviceBookedDetails[i].evaluationsection_book[j].keynotesections[ky].sub_area,
+            value:serviceBookedDetails[i].evaluationsection_book[j].keynotesections[ky].quantity
+          })
+        }
+        if(serviceBookedDetails[i].evaluationsection_book[j].addonsections.length>0){
+        serviceBookedDetails[i].evaluationsection_book[j]['addons']=[ ...addons ]
+        console.log("addons final is"+JSON.stringify(addons))
+       
+        }
+        this.parseAddons()
+        addons=[]
         scheduleDetails.bill.push({
             section:serviceBookedDetails[i].evaluationsection_book[j],
             section_cost:serviceBookedDetails[i].evaluationsection_book[j].section_cost,
@@ -6087,6 +6132,7 @@ $(document).ready(function(){
     }
      this.rearrangeSize()
      this.rearrangeKitchenAddons()
+     this.selectCategory('Detailed Cleaning')
     
    })
 
@@ -6377,7 +6423,7 @@ $(document).ready(function(){
        
         this.changeNewKitchen()
   
-    this.selectCategory('Detailed Cleaning')
+    
     
     //moment.tz.setDefault("Asia/Baghdad");
     

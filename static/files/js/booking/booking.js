@@ -610,7 +610,8 @@ hourly_cleaning:{
   hourly_duration:null,
   cleaners:null
 },
-hourly_slots:true
+hourly_slots:true,
+
 
       },
       methods: {

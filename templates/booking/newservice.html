@@ -3573,7 +3573,7 @@ Fill all the details of the Buildings  to proceed
                                  <% addon.details.name +' x '+addon.quantity%>
                                 </div>
                                 <div class="ml-auto primary-text" >
-                                  KD <span v-if="!addon.details.category"><% addon.details.price * addon.quantity %></span><span v-else>KD <% addon.selected_size.price * addon.quantity %></span>
+                                  KD <span v-if="!addon.details.category"><% addon.details.price * addon.quantity %></span><span v-else> <% addon.selected_size.price * addon.quantity %></span>
                                   <span v-if="service.schedule_details && service.cleaning_policy=='SUBSCRIPTION'">x <% Object.keys(service.schedule_details).length %></span>
                                 </div>
                               </div>
