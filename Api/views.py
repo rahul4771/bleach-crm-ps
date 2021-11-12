@@ -754,7 +754,8 @@ class TicketEditAPI(APIView):
 	authentication_classes  = ()
 
 	def post(self,request):
-		visit_id = request.data.get('visit_id')
+		followup_id = request.data.get('followup_id')
+		
 		ticket_types = request.data.get('ticket_types')
 		notes = request.data.get('notes')
 		investigationmedias = request.FILES.getlist('media')
@@ -763,23 +764,22 @@ class TicketEditAPI(APIView):
 		actions = request.data.get('actions')
 		actions_list = actions.split(",")
 			
-		print(visit_id,ticket_types,notes,investigationmedias,"lodat")
-		
-		visit = OrderScheduler.objects.get(id=int(visit_id))
-		order = visit.order
+		print(ticket_types,notes,investigationmedias,"lodat")
 		
 		assigned_by_user = UserProfile.objects.get(id=int(assigned_by),is_active=True)
 
-		investigation = Investigation.objects.create(order=order,order_schedule=visit,notes=notes,ticket_types=ticket_types,assigned_by=assigned_by_user,scheduled_at=timezone.now())
+		# investigation = Investigation.objects.create(order=order,order_schedule=visit,notes=notes,ticket_types=ticket_types,assigned_by=assigned_by_user,scheduled_at=timezone.now())
 
-		FollowUp.objects.create(investigation=investigation,status='TICKET_RISED')
+		followup = FollowUp.objects.get(id=int(followup_id))
 
+		investigationmedias = InvestigationMedia.objects.filter(investigation=followup.investigation).delete()
+		
 		#save media
 		investigation_medias = request.FILES.getlist('media')
 		if not investigation_medias == ['']:
 			for image in investigation_medias:
 				InvestigationMedia.objects.create(
-					investigation = investigation,
+					investigation = followup.investigation,
 					media = image,
 					media_type = 'PHOTO',
 					taken_status = 'CUSTOMER_SEND',
@@ -790,7 +790,14 @@ class TicketEditAPI(APIView):
 			print(action,"act")
 			if action == 'Payback':
 				print("pop")
-				paybackdiscount = PaybackDiscount.objects.create(investigation=investigation,is_active=True)
+				
+				payback_discount_id = request.data.get('paybackdiscount_id')
+				if payback_discount_id:
+					paybackdiscount = PaybackDiscount.objects.get(id=int(payback_discount_id),investigation=investigation,is_active=True)
+				else:
+					paybackdiscount = PaybackDiscount.objects.create(investigation=investigation,is_active=True)
+
+				PaybackDiscountDetails.objects.filter(paybackdiscount=paybackdiscount).delete()
 
 				paybackdiscount_items = request.data.getlist('paybackdiscount_items')
 				print(paybackdiscount_items,"itms")
@@ -1118,7 +1125,7 @@ class TicketDetailsAPI(APIView):
 		response_dict['is_paybackdiscount'] = is_paybackdiscount
 		response_dict['is_report'] = is_report
 		response_dict['is_investigator'] = is_investigator
-		
+		response_dict['followup_id'] = followup_details.id
 		response_dict['ticket_types'] = followup_details.investigation.ticket_types
 		response_dict['notes'] = followup_details.investigation.notes
 		response_dict['medias'] = medias
