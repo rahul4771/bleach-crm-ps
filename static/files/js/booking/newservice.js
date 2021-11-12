@@ -6104,6 +6104,14 @@ $(document).ready(function(){
               }
             }
         }
+        serviceBookedDetails[i].evaluationsection_book[j]['keynote_data']=[]
+        for(var ky=0;ky<serviceBookedDetails[i].evaluationsection_book[j].keynotesections.length;ky++){
+
+          serviceBookedDetails[i].evaluationsection_book[j].keynote_data.push({
+            name:serviceBookedDetails[i].evaluationsection_book[j].keynotesections[ky].sub_area,
+            value:serviceBookedDetails[i].evaluationsection_book[j].keynotesections[ky].quantity
+          })
+        }
         if(serviceBookedDetails[i].evaluationsection_book[j].addonsections.length>0){
         serviceBookedDetails[i].evaluationsection_book[j]['addons']=[ ...addons ]
         console.log("addons final is"+JSON.stringify(addons))
