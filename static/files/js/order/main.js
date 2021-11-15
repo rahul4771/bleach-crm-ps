@@ -333,7 +333,7 @@ function load_cleaning_team(visitcount,scheduleid,bookid){
                           $('#check_in_out_'+bookid).hide();
                           $('#team_edit_url_'+bookid).attr('hidden',false);
                           $('#team_edit_url_'+bookid).attr('href','/common/editcleaning/team/'+scheduleid+'');
-                          $('#status_dot'+bookid).html('<div class="status-dot assigned-chip-bg"></div><div>Completed</div>');
+                          $('#status_dot'+bookid).html('<div class="status-dot assigned-chip-bg"></div><div>Team Assigned</div>');
                           console.log($('.team_edit_url2').attr('hidden'),$('.team_edit_url2').attr('href'),"attr")
                       }else if(response.data.cleaning_status == 'CLEANING_IN_PROGRESS'){
                           $('#check_in_out_'+bookid).show();

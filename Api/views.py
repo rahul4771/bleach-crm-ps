@@ -741,7 +741,7 @@ class TicketSubmitAPI(APIView):
 				# msg      = EmailMultiAlternatives('Ticket Rised', '', 'notification@bleach-kw.com', [investigationdata.investigator.email])
 				# msg.attach_alternative(msg_html, "text/html")
 				# msg.send(fail_silently=False)
-
+			
 			investigation.is_casesandcomplaints_submit = True
 			investigation.save()
 
@@ -754,7 +754,8 @@ class TicketEditAPI(APIView):
 	authentication_classes  = ()
 
 	def post(self,request):
-		visit_id = request.data.get('visit_id')
+		followup_id = request.data.get('followup_id')
+		
 		ticket_types = request.data.get('ticket_types')
 		notes = request.data.get('notes')
 		investigationmedias = request.FILES.getlist('media')
@@ -763,23 +764,22 @@ class TicketEditAPI(APIView):
 		actions = request.data.get('actions')
 		actions_list = actions.split(",")
 			
-		print(visit_id,ticket_types,notes,investigationmedias,"lodat")
-		
-		visit = OrderScheduler.objects.get(id=int(visit_id))
-		order = visit.order
+		print(ticket_types,notes,investigationmedias,"lodat")
 		
 		assigned_by_user = UserProfile.objects.get(id=int(assigned_by),is_active=True)
 
-		investigation = Investigation.objects.create(order=order,order_schedule=visit,notes=notes,ticket_types=ticket_types,assigned_by=assigned_by_user,scheduled_at=timezone.now())
+		# investigation = Investigation.objects.create(order=order,order_schedule=visit,notes=notes,ticket_types=ticket_types,assigned_by=assigned_by_user,scheduled_at=timezone.now())
 
-		FollowUp.objects.create(investigation=investigation,status='TICKET_RISED')
-
+		followup = FollowUp.objects.get(id=int(followup_id))
+		investigation = followup.investigation
+		investigationmedias = InvestigationMedia.objects.filter(investigation=followup.investigation).delete()
+		
 		#save media
 		investigation_medias = request.FILES.getlist('media')
 		if not investigation_medias == ['']:
 			for image in investigation_medias:
 				InvestigationMedia.objects.create(
-					investigation = investigation,
+					investigation = followup.investigation,
 					media = image,
 					media_type = 'PHOTO',
 					taken_status = 'CUSTOMER_SEND',
@@ -790,7 +790,14 @@ class TicketEditAPI(APIView):
 			print(action,"act")
 			if action == 'Payback':
 				print("pop")
-				paybackdiscount = PaybackDiscount.objects.create(investigation=investigation,is_active=True)
+				
+				payback_discount_id = request.data.get('paybackdiscount_id')
+				if payback_discount_id:
+					paybackdiscount = PaybackDiscount.objects.get(id=int(payback_discount_id),investigation=investigation,is_active=True)
+				else:
+					paybackdiscount = PaybackDiscount.objects.create(investigation=investigation,is_active=True)
+
+				PaybackDiscountDetails.objects.filter(paybackdiscount=paybackdiscount).delete()
 
 				paybackdiscount_items = request.data.getlist('paybackdiscount_items')
 				print(paybackdiscount_items,"itms")
@@ -1114,14 +1121,15 @@ class TicketDetailsAPI(APIView):
 			
 			for media in followup_details.investigation.investigationmedias:
 				medias.append(media.media.url)
-
+		
 		response_dict['is_paybackdiscount'] = is_paybackdiscount
 		response_dict['is_report'] = is_report
 		response_dict['is_investigator'] = is_investigator
-		
+		response_dict['followup_id'] = followup_details.id
 		response_dict['ticket_types'] = followup_details.investigation.ticket_types
 		response_dict['notes'] = followup_details.investigation.notes
 		response_dict['medias'] = medias
+		response_dict['assigned_by'] = str(followup_details.investigation.assigned_by.id)
 		response_dict['paybackdiscounts'] = paybackdiscounts
 		response_dict['report'] = report_list
 		 	
@@ -1823,14 +1831,12 @@ class CheckInAPI(APIView):
 	authentication_classes  = ()
 
 	def post(self,request):
-		print("runo")
 		response_dict = {}
 		response_dict['success'] = False
 
 		team_id        = request.data.get('team_id')
 		check_in_notes = request.data.get('check_in_notes')
-	
-		print(team_id,"zack")
+
 		try:
 			cleaning_team_detail = CleaningTeam.objects.select_related('order_scheduler__order').get(is_active=True,id=team_id)
 		except:	
@@ -1844,6 +1850,14 @@ class CheckInAPI(APIView):
 		if check_in_notes:
 			cleaning_team_detail.check_in_notes = check_in_notes
 		
+		#confirm team
+		absent_cleaners_list 				= list(str(request.data.get('absent_list')).split(','))
+		absent_cleaners      				= CleaningTeamMember.objects.filter(is_active=True,member__id__in=absent_cleaners_list,team__id=team_id)
+		absent_cleaners.delete()
+
+		cleaning_team_detail.no_of_cleaners                 = (cleaning_team_detail.no_of_cleaners)-len(absent_cleaners_list)
+		cleaning_team_detail.order_scheduler.no_of_cleaners = (cleaning_team_detail.order_scheduler.no_of_cleaners)-len(absent_cleaners_list)
+
 		cleaning_team_detail.save()	
 
 		cleaning_team_detail.order_scheduler.save()
@@ -1859,7 +1873,6 @@ class CheckInAPI(APIView):
 						)
 
 		if cleaning_team_detail.is_section_updated == True:
-			print("send smmsr")
 			evaluaation = cleaning_team_detail.order_scheduler.order.evaluation
 			if evaluaation.customer.is_sms == True:
 
@@ -1883,7 +1896,6 @@ class CheckInAPI(APIView):
 
 				response = requests.request("GET", url, headers=headers, params=querystring)
 
-				print(message,response.text,"respo")
 		response_dict['success'] = True
 		response_dict['cleaning_date'] = cleaning_team_detail.start_at.date().strftime('%d-%m-%Y')
 		return Response(response_dict,HTTP_200_OK)
