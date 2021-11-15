@@ -30,6 +30,27 @@ html{
     min-height: 300px
 ;
 }
+.cleaning-team-check{
+    font-size: 12px;
+    padding: 2px;
+}
+.clr-check-box{
+        cursor:pointer;
+        height: 20px;
+        width: 20px;
+        border-radius: 16px;
+        border: 1px solid #c7c7c7;
+    
+}
+.clr-check-box-active{
+    background-color: #30ab23de;
+    height: 20px;
+    width: 20px;
+    border-radius: 15px;
+    cursor:pointer;
+    border: none;
+
+}
 .fullpage-loader{
     width: 100%;
     height: 100vh;
