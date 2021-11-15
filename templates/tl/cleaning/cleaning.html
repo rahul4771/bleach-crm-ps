@@ -140,7 +140,7 @@
             {% if cleaner.member != request.user %}
             <div class="col-md-12  text-center mt-10">
               <div class="d-flex">
-              <div class=" mt-2 mb-2 mx-auto clr-check-box-active text-white" id="inv-cleaners-check-box" onclick="changeState(this)">
+              <div class=" mt-2 mb-2 mx-auto clr-check-box-active text-white" id="inv-cleaners-check-box" onclick="changeState(this,{{cleaner.id}})">
                 <i class="fa fa-check inv-check-onetime-icon cleaning-team-check" id="inv-check-debit" style="display: inline;"></i>
               </div>
 <div class="common-gray-text align-left ml-10">{{cleaner.member.name}}</div>
@@ -149,7 +149,7 @@
 {% endif %}
 {% endfor %}
 <div class="text-center col-md-12">
-  <button class="sent-button send-btn2 mt-4 mb-4 mx-auto" data-toggle="modal" data-target="#cleanersModal">Check In</button>
+  <button class="sent-button send-btn2 mt-4 mb-4 mx-auto" @click="submitCheckinform()">Submit</button>
 
 </div>
             
@@ -661,10 +661,11 @@
  </div><!--commnDiv-border--> 
 <br>
  <div align="center"><input class="assignButton checkoutbutton" name="assign" type="button" v-on:click="submitform({{cleaning_team_detail.id}},'check-out','{{cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_policy}}',{{cleaning_teams_count}},{{remaining_team}})" value="Check Out">
- <input class="assignButton checkinbutton" id="checkin_id" name="assign" type="button" v-on:click="submitform({{cleaning_team_detail.id}},'check-in','{{cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_policy}}',{{cleaning_teams_count}},{{remaining_team}})" value="Check In">
+ <!-- <input class="assignButton checkinbutton" id="checkin_id" name="assign" type="button" v-on:click="submitform({{cleaning_team_detail.id}},'check-in','{{cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_policy}}',{{cleaning_teams_count}},{{remaining_team}})" value="Check In"> -->
   <!-- <input class="cancel-Button" name="assign" type="submit" value="Submit"></div> -->
 </form>   
-<button class="sent-button send-btn2" data-toggle="modal" data-target="#cleanersModal">Check In</button>
+<button class="sent-button send-btn2" data-toggle="modal" data-target="#cleanersModal" style="display:none" id="cleaner-popup-btn">Check In</button>
+<button class="sent-button send-btn2 checkinbutton" @click="openCheckin({{cleaning_team_detail.id}},'check-in','{{cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_policy}}',{{cleaning_teams_count}},{{remaining_team}})">Check In</button>
 
 <br> <br>             
         </div><!--center-formDiv-->
@@ -745,16 +746,7 @@ function sectionupdate(section_id,action_type){
     })
 }
 
-function changeState(item){
-  if($(item).hasClass('clr-check-box-active')){
-    $(item).removeClass('clr-check-box-active')
-    $(item).addClass('clr-check-box')
-  }
-  else{
-    $(item).removeClass('clr-check-box')
-    $(item).addClass('clr-check-box-active')
-  }
-}
+
 function submitform(){
   var testarray = $('.itemfileselected_before').val();
   console.log(testarray,"testtt")
