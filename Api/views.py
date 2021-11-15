@@ -771,6 +771,7 @@ class TicketEditAPI(APIView):
 		# investigation = Investigation.objects.create(order=order,order_schedule=visit,notes=notes,ticket_types=ticket_types,assigned_by=assigned_by_user,scheduled_at=timezone.now())
 
 		followup = FollowUp.objects.get(id=int(followup_id))
+		investigation = followup.investigation
 
 		investigationmedias = InvestigationMedia.objects.filter(investigation=followup.investigation).delete()
 		
@@ -1129,6 +1130,7 @@ class TicketDetailsAPI(APIView):
 		response_dict['ticket_types'] = followup_details.investigation.ticket_types
 		response_dict['notes'] = followup_details.investigation.notes
 		response_dict['medias'] = medias
+		response_dict['assigned_by'] = followup_details.investigation.assigned_by.name
 		response_dict['paybackdiscounts'] = paybackdiscounts
 		response_dict['report'] = report_list
 		 	
