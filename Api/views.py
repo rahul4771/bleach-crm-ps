@@ -1823,14 +1823,12 @@ class CheckInAPI(APIView):
 	authentication_classes  = ()
 
 	def post(self,request):
-		print("runo")
 		response_dict = {}
 		response_dict['success'] = False
 
 		team_id        = request.data.get('team_id')
 		check_in_notes = request.data.get('check_in_notes')
-	
-		print(team_id,"zack")
+
 		try:
 			cleaning_team_detail = CleaningTeam.objects.select_related('order_scheduler__order').get(is_active=True,id=team_id)
 		except:	
@@ -1848,6 +1846,11 @@ class CheckInAPI(APIView):
 
 		cleaning_team_detail.order_scheduler.save()
 
+		#confirm team
+		absent_cleaners_list = list(str(request.data.get('absent_list')).split(','))
+		absent_cleaners      = CleaningTeamMember.objects.filter(is_active=True,member__id__in=absent_cleaners_list,team__id=team_id)
+		absent_cleaners.delete()
+		
 		#To Save Media
 		medias = request.FILES.getlist('media')
 		if not medias==['']:
@@ -1859,7 +1862,6 @@ class CheckInAPI(APIView):
 						)
 
 		if cleaning_team_detail.is_section_updated == True:
-			print("send smmsr")
 			evaluaation = cleaning_team_detail.order_scheduler.order.evaluation
 			if evaluaation.customer.is_sms == True:
 
@@ -1883,7 +1885,6 @@ class CheckInAPI(APIView):
 
 				response = requests.request("GET", url, headers=headers, params=querystring)
 
-				print(message,response.text,"respo")
 		response_dict['success'] = True
 		response_dict['cleaning_date'] = cleaning_team_detail.start_at.date().strftime('%d-%m-%Y')
 		return Response(response_dict,HTTP_200_OK)
