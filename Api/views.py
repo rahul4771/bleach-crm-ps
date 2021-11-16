@@ -1851,9 +1851,11 @@ class CheckInAPI(APIView):
 			cleaning_team_detail.check_in_notes = check_in_notes
 		
 		#confirm team
-		absent_cleaners_list 				= list(str(request.data.get('absent_list')).split(','))
-		absent_cleaners      				= CleaningTeamMember.objects.filter(is_active=True,member__id__in=absent_cleaners_list,team__id=team_id)
+		absent_cleaners_list 				= [int(x) for x in request.data.get('absent_list').split(",")]
+		absent_cleaners      				= CleaningTeamMember.objects.filter(is_active=True,id__in=absent_cleaners_list,team__id=team_id)
 		absent_cleaners.delete()
+		print(absent_cleaners_list,"absent_cleaners_list")
+		print(absent_cleaners,"absent_cleaners")
 
 		cleaning_team_detail.no_of_cleaners                 = (cleaning_team_detail.no_of_cleaners)-len(absent_cleaners_list)
 		cleaning_team_detail.order_scheduler.no_of_cleaners = (cleaning_team_detail.order_scheduler.no_of_cleaners)-len(absent_cleaners_list)
