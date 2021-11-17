@@ -1832,14 +1832,12 @@ class CheckInAPI(APIView):
 	authentication_classes  = ()
 
 	def post(self,request):
-		print("runo")
 		response_dict = {}
 		response_dict['success'] = False
 
 		team_id        = request.data.get('team_id')
 		check_in_notes = request.data.get('check_in_notes')
-	
-		print(team_id,"zack")
+
 		try:
 			cleaning_team_detail = CleaningTeam.objects.select_related('order_scheduler__order').get(is_active=True,id=team_id)
 		except:	
@@ -1853,6 +1851,14 @@ class CheckInAPI(APIView):
 		if check_in_notes:
 			cleaning_team_detail.check_in_notes = check_in_notes
 		
+		#confirm team
+		absent_cleaners_list 				= list(str(request.data.get('absent_list')).split(','))
+		absent_cleaners      				= CleaningTeamMember.objects.filter(is_active=True,member__id__in=absent_cleaners_list,team__id=team_id)
+		absent_cleaners.delete()
+
+		cleaning_team_detail.no_of_cleaners                 = (cleaning_team_detail.no_of_cleaners)-len(absent_cleaners_list)
+		cleaning_team_detail.order_scheduler.no_of_cleaners = (cleaning_team_detail.order_scheduler.no_of_cleaners)-len(absent_cleaners_list)
+
 		cleaning_team_detail.save()	
 
 		cleaning_team_detail.order_scheduler.save()
@@ -1868,7 +1874,6 @@ class CheckInAPI(APIView):
 						)
 
 		if cleaning_team_detail.is_section_updated == True:
-			print("send smmsr")
 			evaluaation = cleaning_team_detail.order_scheduler.order.evaluation
 			if evaluaation.customer.is_sms == True:
 
@@ -1892,7 +1897,6 @@ class CheckInAPI(APIView):
 
 				response = requests.request("GET", url, headers=headers, params=querystring)
 
-				print(message,response.text,"respo")
 		response_dict['success'] = True
 		response_dict['cleaning_date'] = cleaning_team_detail.start_at.date().strftime('%d-%m-%Y')
 		return Response(response_dict,HTTP_200_OK)
