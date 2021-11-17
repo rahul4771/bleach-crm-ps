@@ -1797,6 +1797,22 @@ def SalesCleaningTypeData(request):
 				"count" : sales_cleaningtype_count,
 				}
 				data.append(clean_dict)
+
+			data_sorted = sorted(data, key = itemgetter('count'),reverse=True)
+
+			data_list = data_sorted[:5]
+
+			others_sum = 0 
+
+			for d in data_sorted[5:] :
+				others_sum += int(d['count'])
+			
+			others_dict = {
+				"cleaning_type" : 'Others',
+				"count" : others_sum,
+			}
+
+			data_list.append(others_dict)
 	else:
 		try:
 			prevdate = datetime.strptime(prevdate, '%Y-%m-%d')
@@ -1817,6 +1833,9 @@ def SalesCleaningTypeData(request):
 				"count" : sales_cleaningtype_count,
 				}
 				data.append(clean_dict)
+
+			
+			
 		print(data)
 	return JsonResponse(data,safe=False)
 
