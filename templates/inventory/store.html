@@ -110,15 +110,15 @@
             </div>
             <hr>
 
-            <form method="POST" action="" >{% csrf_token %}
+            <form method="POST" id="storeform" action="" >{% csrf_token %}
             <input type="hidden" name="action" id="store_action" value="add_store" />
             <input type="hidden" name="store_edit_id" id="id_edit_store" />
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Store Name</div>
+                    <div class="model-input-name required-field">Store Name</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="store_name" id="name_store">
+                        <input type="text"  class="w-p-100 inv-in" name="store_name" id="name_store" required>
                       </div>
                 </div>
 
@@ -135,20 +135,20 @@
             </div>
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Address</div>
+                    <div class="model-input-name required-field">Address</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="store_address" id="address_store">
+                        <input type="text"  class="w-p-100 inv-in" name="store_address" id="address_store" required>
                       </div>
                 </div>
 
             </div>
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Contact</div>
+                    <div class="model-input-name required-field">Contact</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="number"  class="w-p-100 inv-in" name="store_contact" id="contact_store">
+                        <input type="number"  class="w-p-100 inv-in" name="store_contact" id="contact_store" required>
                       </div>
                 </div>
 
@@ -180,7 +180,7 @@
           
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button store-form-btn" type="submit" >Submit</button>
+            <button class="sent-button store-form-btn" type="button" onclick="storeformvalidation()" >Submit</button>
             </form>
             <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
         </div>
@@ -331,6 +331,21 @@ function changeSelect(va){
         //console.log($(this).data('categoryid'),$(this).data('categoryname'),"editc")
         $('#id_store_delete').val($(this).data('storeid'));
     })
+
+    function storeformvalidation(){
+        console.log($('input[name=item]').val(),$('input[name=item_count]').val(),$('#id_item').val(),"lolo")
+
+        if ($('input[name=store_name]').val() == ''){
+            $('input[name=store_name]').addClass('red-border-input');
+        }else if ($('input[name=store_address]').val() == ''){
+            $('input[name=store_address]').addClass('red-border-input');
+        }else if ($('input[name=store_contact]').val() == ''){
+            $('input[name=store_contact]').addClass('red-border-input');
+        }else{
+            console.log("lolo")
+            $('#storeform').submit();
+        }
+    }
 
     function set_params_go(args)
     {

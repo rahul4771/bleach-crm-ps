@@ -1348,3 +1348,7 @@ padding: 7px 30px 7px 30px;
 .quantity__plus:visited {
   color: #434343;
 }
+
+.red-border-input{
+  border: red 1px solid !important;
+  }

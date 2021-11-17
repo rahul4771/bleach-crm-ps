@@ -416,7 +416,7 @@
           
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button" type="submit" >Submit</button>
+            <button class="sent-button" type="button" onclick="formvalidation()">Submit</button>
             </form>
                         <button data-dismiss="modal" onclick="closeNavAddBundle()" class="view-button">Cancel</button>
         </div>
@@ -769,6 +769,22 @@ function changeSelect(va){
 function changeSelect2(va){
         $('#id_unit_status').val(va)
     }
+
+function formvalidation(){
+        console.log($('input[name=unit_price]').val(),"lolo")
+
+        if ($('input[name=storename]').val() == ''){
+            $('input[name=storename]').addClass('red-border-input');
+        }else if ($('input[name=serial_number]').val() == ''){
+            $('input[name=serial_number]').addClass('red-border-input');
+        }else if ($('input[name=purchase_date]').val() == ''){
+            $('input[name=purchase_date]').addClass('red-border-input');
+        }else if ($('input[name=unit_price]').val() == ''){
+            $('input[name=unit_price]').addClass('red-border-input');
+        }else{
+            $('#myform').submit();
+        }
+}
 
 function set_params_go(args)
     {

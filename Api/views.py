@@ -772,7 +772,7 @@ class TicketEditAPI(APIView):
 
 		followup = FollowUp.objects.get(id=int(followup_id))
 		investigation = followup.investigation
-		investigationmedias = InvestigationMedia.objects.filter(investigation=followup.investigation).delete()
+		InvestigationMedia.objects.filter(investigation=investigation).delete()
 		
 		#save media
 		investigation_medias = request.FILES.getlist('media')
@@ -859,6 +859,7 @@ class TicketEditAPI(APIView):
 				# msg.send(fail_silently=False)
 
 			investigation.is_casesandcomplaints_submit = True
+			investigation.ticket_types = ticket_types
 			investigation.save()
 
 		response_dict = {'success':True}
@@ -1851,9 +1852,11 @@ class CheckInAPI(APIView):
 			cleaning_team_detail.check_in_notes = check_in_notes
 		
 		#confirm team
-		absent_cleaners_list 				= list(str(request.data.get('absent_list')).split(','))
-		absent_cleaners      				= CleaningTeamMember.objects.filter(is_active=True,member__id__in=absent_cleaners_list,team__id=team_id)
+		absent_cleaners_list 				= [int(x) for x in request.data.get('absent_list').split(",")]
+		absent_cleaners      				= CleaningTeamMember.objects.filter(is_active=True,id__in=absent_cleaners_list,team__id=team_id)
 		absent_cleaners.delete()
+		print(absent_cleaners_list,"absent_cleaners_list")
+		print(absent_cleaners,"absent_cleaners")
 
 		cleaning_team_detail.no_of_cleaners                 = (cleaning_team_detail.no_of_cleaners)-len(absent_cleaners_list)
 		cleaning_team_detail.order_scheduler.no_of_cleaners = (cleaning_team_detail.order_scheduler.no_of_cleaners)-len(absent_cleaners_list)
@@ -2637,41 +2640,46 @@ class InventoryServiceItemsAPI(APIView):
 		ingredient_item_id = request.GET.get('ingredient_item_id')
 		action = request.GET.get('action')
 		
-		print(ingredient_id,"attrsed3")
-		try:
-			ingredient = ServiceRecipeIngredients.objects.get(id=int(ingredient_id))
+		print(ingredient_id,"iyyo","attrsed3")
+		# try:
+		ingredient = ServiceRecipeIngredients.objects.get(id=int(ingredient_id))
+		print(ingredient,"ingri")
 
-			if action == 'add_item':
-				ingredient_items_exist = ServiceRecipeItems.objects.filter(ingredient=ingredient)
-				print("add")
-				item = InventoryItem.objects.get(id=int(item_id))
-				
-				if ingredient_items_exist:
-					ServiceRecipeItems.objects.create(ingredient=ingredient,item=item)
-				else:
-					ServiceRecipeItems.objects.create(ingredient=ingredient,item=item,is_swapped_item=True)
+		if action == 'add_item':
+			ingredient_items_exist = ServiceRecipeItems.objects.filter(ingredient=ingredient)
+			print("add")
+			item = InventoryItem.objects.get(id=int(item_id))
+			
+			if ingredient_items_exist:
+				ServiceRecipeItems.objects.create(ingredient=ingredient,item=item)
+			else:
+				ServiceRecipeItems.objects.create(ingredient=ingredient,item=item,is_swapped_item=True)
 
-			if action == 'edit_item':
-				ingredient_item = ServiceRecipeItems.objects.get(id=int(ingredient_item_id))
-				item = InventoryItem.objects.get(id=int(item_id))
-				ingredient_item.item = item
-				ingredient_item.save()
+		if action == 'edit_item':
+			print("eddit")
+			ingredient_item = ServiceRecipeItems.objects.get(id=int(ingredient_item_id))
+			item = InventoryItem.objects.get(id=int(item_id))
+			ingredient_item.item = item
+			ingredient_item.save()
 
-			if action == 'delete_item':
-				ServiceRecipeItems.objects.get(id=int(ingredient_item_id)).delete()
+		if action == 'delete_item':
+			ServiceRecipeItems.objects.get(id=int(ingredient_item_id)).delete()
 
-			response_dict['ingredient'] = ingredient.ingredient
-			items = ServiceRecipeItems.objects.filter(ingredient=ingredient)
-		except:
-			ingredient = None
-			items = None
+		print(ingredient.ingredient,"ingr")
+		response_dict['ingredient'] = ingredient.ingredient
+		items = ServiceRecipeItems.objects.filter(ingredient=ingredient)
+		# except:
+		# 	ingredient = None
+		# 	items = None
+		# 	response_dict['ingredient'] = None
 
 		items_list = []
 		if items:
 			for item in items:
 				list_item = {
-					'item_id' : item.id,
+					'ingredient_item_id' : item.id,
 					'item_name' : item.item.name,
+					'item_id' : item.item.id
 				}
 
 				items_list.append(list_item)

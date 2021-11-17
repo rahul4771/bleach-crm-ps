@@ -329,29 +329,35 @@ function load_cleaning_team(visitcount,scheduleid,bookid){
                   if (response.data.success == true){  
                       $('#visit_count_'+bookid).text(response.data.visit_count);
 
-                      if (response.data.cleaning_status == 'CLEANING_TEAM_ASSIGNED'){    
+                      if (response.data.cleaning_status == 'CLEANING_TEAM_ASSIGNED'){   
                           $('#check_in_out_'+bookid).hide();
                           $('#team_edit_url_'+bookid).attr('hidden',false);
                           $('#team_edit_url_'+bookid).attr('href','/common/editcleaning/team/'+scheduleid+'');
                           $('#status_dot'+bookid).html('<div class="status-dot assigned-chip-bg"></div><div>Team Assigned</div>');
                           console.log($('.team_edit_url2').attr('hidden'),$('.team_edit_url2').attr('href'),"attr")
-                      }else if(response.data.cleaning_status == 'CLEANING_IN_PROGRESS'){
+                      }
+                      else if(response.data.cleaning_status == 'CLEANING_IN_PROGRESS'){
                           $('#check_in_out_'+bookid).show();
-                          $('#id_check_in'+bookid).text(response.data.start_at);
+                          $('#checkout_'+bookid).hide();
+
+                          $('#id_check_in_'+bookid).text(response.data.start_at);
                           $('#id_check_in_notes'+bookid).text(response.data.checkin_notes);
                           $('#team_edit_url_'+bookid).attr('hidden',true);
                           $('#status_dot'+bookid).html('<div class="status-dot inprogress-chip-bg"></div><div>In Progress</div>');
                       }
                       else if(response.data.cleaning_status == 'CLEANING_FULFILLED'){
                         $('#check_in_out_'+bookid).show();
-                        $('#id_check_in'+bookid).text(response.data.start_at);
-                        $('#id_check_out'+bookid).text(response.data.end_at);
+                        $('#checkout_'+bookid).show();
+                        
+                        $('#id_check_in_'+bookid).text(response.data.start_at);
+                        $('#id_check_out_'+bookid).text(response.data.end_at);
                         $('#id_check_in_notes'+bookid).text(response.data.checkin_notes);
                         $('#id_check_out_notes'+bookid).text(response.data.checkout_notes);
                         $('#team_edit_url_'+bookid).attr('hidden',true);
                         $('#status_dot'+bookid).html('<div class="status-dot completed-chip-bg"></div><div>Completed</div>');
                       }
                       else{
+                        alert(response.data.start_at,"noooooooooooo")
                         $('#check_in_out_'+bookid).hide();
                       }
                       

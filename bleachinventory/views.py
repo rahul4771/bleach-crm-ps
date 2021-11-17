@@ -177,23 +177,31 @@ class InventoryAttribute(IsInventoryAdmin,View):
             attribute_line     = request.POST.get('attribute_line')
             status     = request.POST.get('status')
 
-            print(attribute_id,name,attribute_type,status,"lop")
+            print(attribute_category,attribute_id,name,attribute_type,status,"lop")
 
             attribute = Attribute.objects.get(id=int(attribute_id))
-            category = Category.objects.get(id=int(attribute_category))
-            segment = Segment.objects.get(id=int(attribute_segment))
-            line = Line.objects.get(id=int(attribute_line))
+            
+            if attribute_category == '0':
+                print("prip")
+                category = None
+                segment = None
+                line = None
+            else:
+                print("prip2")
+                category = Category.objects.get(id=int(attribute_category))
+                segment = Segment.objects.get(id=int(attribute_segment))
+                line = Line.objects.get(id=int(attribute_line))
 
             # attribute.category = category
             attribute.name     = name
             attribute.attribute_type = attribute_type
 
-            if category:
-                attribute.attribute_category = category
-            if segment:
-                attribute.attribute_segment = segment
-            if line:
-                attribute.attribute_line = line
+            
+            attribute.attribute_category = category
+            
+            attribute.attribute_segment = segment
+            
+            attribute.attribute_line = line
 
             attribute.status   = status
             attribute.save()
