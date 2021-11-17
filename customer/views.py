@@ -5827,6 +5827,40 @@ class EditOrderDetails(APIView):
 			
 			response_dict['success'] = True
 
+		elif action == 'add_backupteam':
+			team_id               = request.data.get('team_id')
+			backup_start_at       = datetime.strptime(request.data.get('backup_start_at'),'%d-%m-%Y %I:%M %p')
+			backup_end_at         = datetime.strptime(request.data.get('backup_end_at'),'%d-%m-%Y %I:%M %p')
+			backup_cleaners       = request.data.get('backup_cleaners')
+
+			#create
+			CleaningTeam.objects.filter(id=team_id).update(backup_start_at=backup_start_at,backup_end_at=backup_end_at)
+
+			backup_cleaners_array = []
+			for backup_cleaner in backup_cleaners:
+				backup_cleaners_array.append(CleaningTeamMember(team__id=team_id,member=backup_cleaner,start_at=backup_start_at,end_at=backup_end_at,start_time=backup_start_at.time(),end_time=backup_end_at.time(),is_backup_cleaner=True))
+			CleaningTeamMember.objects.bulk_create(backup_cleaners_array)
+
+			response_dict['success'] = True
+
+		elif action == 'edit_backupteam':
+			team_id               = request.data.get('team_id')
+			backup_start_at       = datetime.strptime(request.data.get('backup_start_at'),'%d-%m-%Y %I:%M %p')
+			backup_end_at         = datetime.strptime(request.data.get('backup_end_at'),'%d-%m-%Y %I:%M %p')
+			backup_cleaners       = request.data.get('backup_cleaners')
+
+			#delete
+			CleaningTeamMember.objects.filter(team__id=team_id,is_backup_cleaner=True).delete()
+			#update
+			CleaningTeam.objects.filter(id=team_id).update(backup_start_at=backup_start_at,backup_end_at=backup_end_at)
+
+			backup_cleaners_array = []
+			for backup_cleaner in backup_cleaners:
+				backup_cleaners_array.append(CleaningTeamMember(team__id=team_id,member=backup_cleaner,start_at=backup_start_at,end_at=backup_end_at,start_time=backup_start_at.time(),end_time=backup_end_at.time(),is_backup_cleaner=True))
+			CleaningTeamMember.objects.bulk_create(backup_cleaners_array)	
+
+			response_dict['success'] = True
+
 		return Response(response_dict,HTTP_200_OK)
 
 class ServiceCancellationRequest(APIView):
