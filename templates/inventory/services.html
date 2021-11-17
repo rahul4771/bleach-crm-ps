@@ -1793,7 +1793,29 @@ function openNavAddStore2(d) {
         } 
 
 }
+function openNavAddStoreEdit() {
+        $('#id_search').empty();
+        {% for item in items %}
+    var tempId = '{{item.id}}';
+    var tempName = '{{item.name}}';
+    $('#id_search').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
 
+    {% endfor %}
+        $("#itemHead2").text("Edit Item");
+    
+    if(screen.width<= 600){
+            document.getElementById("addItemDrawer").style.width = "100%";
+          
+        }else if(screen.width<= 720){
+            document.getElementById("addItemDrawer").style.width = "50%";
+           
+        }
+        else{
+            document.getElementById("addItemDrawer").style.width = "30%";
+          
+        } 
+
+}
      function openNavAddStore(d) {
         $('#id_search').empty();
         {% for item in items %}
@@ -2019,7 +2041,7 @@ function openNavAddStore2(d) {
                     var edit = "edit";
                     $.each(result.data.service_items,function(key,value){
                         console.log(value.item_name,"lo")
-                        $('.item-table5').append('<tr><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('+edit+')"><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn delete_item" data-toggle="modal" onclick="deleteItem('+value.item_id+')" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
+                        $('.item-table5').append('<tr><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStoreEdit()"><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn delete_item" data-toggle="modal" onclick="deleteItem('+value.item_id+')" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
                     })
                 }else{
                     $(".item-table5 tr:not(:first)").remove(); 
@@ -2032,7 +2054,7 @@ function openNavAddStore2(d) {
                     var edit = "edit";
                     $.each(result.data.service_items,function(key,value){
                         console.log(value.item_name,"lo")
-                        $('.item-table6').append('<tr><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('+edit+')"><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn delete_item" data-toggle="modal" onclick="deleteItem('+value.item_id+')" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
+                        $('.item-table6').append('<tr><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStoreEdit()"><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn delete_item" data-toggle="modal" onclick="deleteItem('+value.item_id+')" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
                     })
                 }else{
                     $(".item-table6 tr:not(:first)").remove(); 
@@ -2045,7 +2067,7 @@ function openNavAddStore2(d) {
                     var edit = "edit";
                     $.each(result.data.service_items,function(key,value){
                         console.log(value.item_name,"lo")
-                        $('.item-table7').append('<tr><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('+edit+')"><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn delete_item" data-toggle="modal" onclick="deleteItem('+value.item_id+')" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
+                        $('.item-table7').append('<tr><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStoreEdit()"><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn delete_item" data-toggle="modal" onclick="deleteItem('+value.item_id+')" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
                     })
                 }else{
                     $(".item-table7 tr:not(:first)").remove(); 
@@ -2057,7 +2079,7 @@ function openNavAddStore2(d) {
                     var edit = "edit";
                     $.each(result.data.service_items,function(key,value){
                         console.log(value.item_name,"lo")
-                        $('.item-table8').append('<tr><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStore2('+edit+')"><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn delete_item" data-toggle="modal" onclick="deleteItem('+value.item_id+')" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
+                        $('.item-table8').append('<tr><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStoreEdit()"><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn delete_item" data-toggle="modal" onclick="deleteItem('+value.item_id+')" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
                     })
                 }else{
                     $(".item-table8 tr:not(:first)").remove(); 
