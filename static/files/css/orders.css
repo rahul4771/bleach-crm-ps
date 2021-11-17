@@ -30,6 +30,79 @@ padding:10px;
   cursor: pointer;
   border-radius:3px;
 }
+.backup-team-chip{
+  border: 1px solid #707070;
+border-radius: 10px;
+    padding: 5px;
+}
+.backup-rm-circle{
+  cursor: pointer;
+  font-size:16px;
+}
+.backup-input{
+  border-radius: 5px;
+      border: 1px solid #707070;
+      /* border: 1px solid #608BDF; */
+      padding: 5px;
+      outline:none;
+      max-width:200px;
+}
+.backup-input:focus{
+  border: 1px solid #608BDF;
+}
+.backup-input input{
+  border:none !important;
+  outline:none !important;
+}
+.team-select-arrow{
+  color:#2E4E85;
+}
+.team-select-box{
+  border: 1px solid #608BDF;
+border-radius: 7px;
+  width: 200px;
+  height: 200px;
+  padding: 10px;
+      overflow: auto;
+      position: absolute;
+      background: #ffffff;
+      z-index: 999;
+      margin-top: 11px;
+}
+.team-done-btn{
+  font-size: 12px !important;
+}
+.team-select{
+  padding:7px;
+}
+.normal-checkbox{
+  -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+    position: relative;
+    top: 4.33333px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 15px;
+    width: 15px;
+    transition: all 0.15s ease-out 0s;
+    background: none !important;
+    border: 1px solid #707070 !important;
+    color: #2e4e85 !important;
+    cursor: pointer;
+    border-radius: 0px;
+    display: inline-block;
+   
+    outline: none !important;
+    z-index: 1;
+    margin-right:0.5rem !important;
+}
+.team-checkbox-label{
+  font-weight: 500;
+}
 .order-details-img{
   height:150px;
   width:150px;

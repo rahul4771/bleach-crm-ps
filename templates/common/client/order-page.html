@@ -313,6 +313,119 @@
         </div>
       </div>
     <!-- EDIT PAYMENT MODAL ENDS HERE-->
+    <!-- Backup Team MODAL BEGINS HERE-->
+    <div class="modal fade " id="backupModal" tabindex="-1" role="dialog" aria-labelledby="editPaymentModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered primary-modal" role="document" >
+          <div class="modal-content primary-modal-border mt-100">
+            
+           
+            <div class="modal-body">
+              <div class="cotainer">
+                <div class="row">
+                   <div class="col-md-12">
+                       <div class="modal-title"><b>Add Backup Team</b></div>
+                   </div>
+                   <div class="col-md-4" >
+                       <div class="mt-20">
+                           Start Time
+                       </div>
+                       <div class="d-flex mt-10">
+                           <div>
+
+                               <select placeholder="Start Date" class="team-select">
+                                   <option>
+                                       12/04/2021
+                                   </option>
+                               </select>
+
+                           </div>
+                           <div>
+                            <select placeholder="Start Time" class="ml-10 team-select">
+                                <option>
+                                    12:00 AM
+                                </option>
+                                <option>
+                                    02:00 PM
+                                </option>
+                            </select>
+                           </div>
+                       </div>
+                       </div>
+                       <div class="col-md-4" >
+                        <div class="mt-20">
+                            End Time
+                        </div>
+                        <div class="d-flex mt-10">
+                            <div>
+ 
+                                <select placeholder="Start Date" class="team-select">
+                                    <option>
+                                        12/04/2021
+                                    </option>
+                                </select>
+ 
+                            </div>
+                            <div>
+                             <select placeholder="Start Time" class="ml-10 team-select">
+                                 <option>
+                                     12:00 AM
+                                 </option>
+                                 <option>
+                                     02:00 PM
+                                 </option>
+                             </select>
+                            </div>
+                        </div>
+                        </div>
+                   <div class="col-md-12" >
+                       <div class="mt-20 backup-input">
+                           <input type="text" v-model="team_search" class="" placeholder="add team member" @focus="team_options=true" />
+                           <i class="fas fa-chevron-down team-select-arrow"></i>
+                        </div>
+                       <div class="team-select-box" v-if="team_options">
+                           <div class="text-right">
+                        <input name="paid" type="button" class="done-button team-done-btn" value="Done"
+                        id="done" @click="addTeamMember()">
+                    </div>
+                        <div v-for="(item,index) in team" v-bind:key="index" >
+                         <input type="checkbox" :value="item" class="normal-checkbox"/>
+                         <label class="ml-2 team-checkbox-label"> <% item %></label><br>
+                        
+                        </div>
+                    </div>
+                      
+                   </div>
+                   <div class="col-md-12 mt-10">
+                       <div class="row m-0">
+                           <div class="col-md-4" v-for="(item,index) in team" v-bind:key="index">
+                               <div class="d-flex backup-team-chip mt-10">
+                                   <div>
+                                   <% item %>
+                                </div>
+                                <div class="ml-auto">
+                                    <i class="far fa-times-circle backup-rm-circle" @click="removeTeam(index)"></i>
+                                </div>
+                                  
+                               </div>
+
+                           </div>
+                       </div>
+                   </div>
+                
+
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer text-center">
+              
+              <button type="submit"  class="btn primary-btn"  @click="updateDiscount()">Submit</button>
+              <button type="button" class="btn primary-btn-bordered" data-dismiss="modal"  id="edit-payment-close">Cancel</button>
+            </div>
+           
+          </div>
+        </div>
+      </div>
+    <!-- Backup Team MODAL ENDS HERE-->
     <div data-toggle="modal" data-target="#uploadImageModal" id="upload-image-tigger"></div>
     <div data-toggle="modal" data-target="#notesModal" id="notes-tigger"></div>
     <div data-toggle="modal" data-target="#editPaymentModal" id="edit-payment-tigger"></div>
@@ -323,6 +436,7 @@
     <div data-toggle="modal" data-target="#cancelCleaningModal" id="cleaning-cancel-tigger"></div>
     <div data-toggle="modal" data-target="#deleteSectionModel" id="delete-section-tigger"></div> 
     <div data-toggle="modal" data-target="#customerNoteModel" id="customer_note-tigger"></div>
+    <div data-toggle="modal" data-target="#backupModal" id="backupTeamBtn"></div>
 <!-- edit section dialog begins here-->
 <div class="modal fade " id="editSectionDialog" tabindex="-1" role="dialog" aria-labelledby="editSectionDialogTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered primary-modal" role="document">
@@ -1978,6 +2092,9 @@
                                             </div>
                                         {% endfor %}
                                         </div>
+                                        <div class="row">
+                                            <button class="sent-button mt-10" type="submit" @click="addBackupTeam(`{{evaluationdetail.id}}`,`{{orderschedule.start_at|date:'d-m-Y h:i'}}`,`{{orderschedule.end_at|date:'d-m-Y h:i'}}`,`{{orderschedule.cleaning_hours}}`)">Add Backup Team</button>
+                                        </div>
 
                                         <div class="order-clean-section-header c-mt-10">
                                             <h5>Assigned by</h5>
@@ -2056,7 +2173,7 @@
                                     {% endfor %}
                                     <!--cleaning Team end-->
                                     
-
+                                  
                                     <div class="c-mt-20">
                                         <hr class="bar">
                                     </div>

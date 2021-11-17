@@ -723,12 +723,31 @@ const app = new Vue({
           imageForm:new FormData(),
           break_act:false,
           two_counter:0,
+          team:[
+            'Lucifer',
+            'Amanediel',
+            'Michael',
+            'Adam','Eve',
+            'Ebel','Trixie',
+            'Chloe'
+          ],
+          team_search:'',
+          team_options:false
          // url:'http://localhost:8000'
       // url:'https://test.bleach-kw.com'
             //url:'http://127.0.0.1:8000'
   },
   methods:{
-
+    addTeamMember(){
+      this.team_options=false
+    },
+    removeTeam(index){
+      this.team.splice(index,1)
+    },
+ addBackupTeam(id,start,end,duration){
+   console.log("start:"+start+"end:"+end+"duartion:"+duration)
+  $('#backupTeamBtn').click()
+ },
     getCount(sch_id){
      
      $('#'+sch_id+'-count').html($("#"+sch_id).index()+1)
