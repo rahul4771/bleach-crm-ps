@@ -148,12 +148,12 @@
                 </div>
             </div>
             <hr>
-        <form method="POST" action="" >{% csrf_token %}
+        <form method="POST" id="addcategoryform" action="" >{% csrf_token %}
             <input type="hidden" name="action" id="category_action" value="add_category" />
             <input type="hidden" name="category_edit_id" id="id_edit_category" />
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Category Name</div>
+                    <div class="model-input-name required-field">Category Name</div>
 
                     <div class="inv-input-container h-30"> 
                         <input type="text" id="name_category" class="w-p-100 inv-in" name="category_name" required>
@@ -173,7 +173,7 @@
             </div>
             <div class="row mt-20" id="category_id_div">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Category Id</div>
+                    <div class="model-input-name required-field">Category Id</div>
 
                     <div class="inv-input-container h-30"> 
                         <input type="text"  class="w-p-100 inv-in"  name="category_id" id="id_cat_id" maxlength="2"  minlength="2" required>
@@ -183,7 +183,7 @@
             </div>
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Status</div>
+                    <div class="model-input-name required-field">Status</div>
 
                     <!-- <select id="status_category" name="category_status" class="minimal">
                         <option value="True" selected>Active</option>
@@ -206,7 +206,7 @@
           
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button category-form-btn" type="submit" >Submit</button>
+            <button class="sent-button category-form-btn" type="button" onclick="ValidateEmptyFields()" >Submit</button>
             </form>
                         <button data-dismiss="modal" onclick="closeNavAddCategory()" class="view-button">Cancel</button>
         </div>
@@ -229,7 +229,17 @@
             <hr>
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Category  Name</div>
+                    <div class="model-input-name required-field">Category  Name</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text" class="w-p-100 inv-in" name="attributes">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name required-field">Category  Code</div>
 
                     <div class="inv-input-container h-30"> 
                         <input type="text"  class="w-p-100 inv-in" name="attributes">
@@ -239,17 +249,7 @@
             </div>
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Category  Code</div>
-
-                    <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="attributes">
-                      </div>
-                </div>
-
-            </div>
-            <div class="row mt-20">
-                <div class="col-md-12 ">
-                    <div class="model-input-name">Status</div>
+                    <div class="model-input-name required-field">Status</div>
 
                     <select id="id_payment" class="minimal">
                         <option  >Active</option>
@@ -265,7 +265,7 @@
           
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button category-form-btn" >Submit</button>
+            <button class="sent-button category-form-btn" type="button" onclick="checkforblank()" >Submit</button>
                         <button data-dismiss="modal" onclick="closeNavEditCategory()" class="view-button">Cancel</button>
         </div>
     </div>
@@ -286,7 +286,7 @@
             <hr>
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Category  Name</div>
+                    <div class="model-input-name required-field">Category  Name</div>
 
                     <div class="inv-input-container h-30"> 
                         <input type="text"  class="w-p-100 inv-in" name="attributes">
@@ -296,7 +296,7 @@
             </div>
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Category  Code</div>
+                    <div class="model-input-name ">Category  Code</div>
 
                     <div class="inv-input-container h-30"> 
                         <input type="text"  class="w-p-100 inv-in" name="attributes">
@@ -306,7 +306,7 @@
             </div>
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Status</div>
+                    <div class="model-input-name required-field">Status</div>
 
                     <select id="status_category" class="minimal">
                         <option value="True" selected>Active</option>
@@ -333,7 +333,9 @@
 {% endblock %}
 
 {% block javascript %}
+<script src="{% static 'files/js/validation.js' %}"></script>  
 <script>
+
     function DropDown(el) {
     this.dd = el;
     this.placeholder = this.dd.children('span');
@@ -379,6 +381,24 @@ $(function () {
 });
 </script>
 <script>
+
+    function ValidateEmptyFields() {
+        var isFormValid = true;
+        console.log("loggg")
+        $(".required-field input").each(function() {
+            console.log($(this).val().length,"lenn")
+            if ($(this).val().length == 0) {
+                $(this).addClass("red-border-input");
+                isFormValid = false;
+            } else {
+                $(this).removeClass("red-border-input");
+            }
+        });
+
+        if (!isFormValid) alert("Please fill in all the required fields (indicated by *)");
+
+        return isFormValid;
+        }
 
     function changeSelect(va){
         $('#status_category').val(va)

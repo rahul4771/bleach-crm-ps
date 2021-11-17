@@ -66,14 +66,14 @@
         <div class="main-content-holder"><!--main-content-holder-->   
             <div class="white-wrapper f-gray white-wrapper-padding" >
               
-                <form method="POST" action="">{% csrf_token %}
+                <form method="POST" id="itemdetailsform" action="">{% csrf_token %}
                 <input type="hidden" name="action" value="edit_item_details" />
               <div class="row">
                   <div class="col-md-12" style="position: relative;">
                     <div class="edit-div">
                         <img id="id_editButton" onclick="editItemData()" class="inv-edit-img"
                         src="{% static 'files/icons/edit.png' %}">
-                        <button id="id_editDone" class="inv-blue-btn inv-hide" type="submit" onclick="doneEdit()">Done </button>
+                        <button id="id_editDone" class="inv-blue-btn inv-hide" type="button" onclick="doneEdit()">Done </button>
                     </div>
                   </div>
               </div>
@@ -255,7 +255,7 @@
                               <div style="text-align: center;"  class=" av-font mt-40">       
                                   <br>
                                          <div id="id_res_text" class="inv-input-container h-30 inv-hide" > 
-                                             <input type="number"  class="w-p-100 inv-in" value="{{inventory_item.reserve_count|default_if_none:'0'}}" name="reserve">
+                                             <input type="number"  class="w-p-100 inv-in" value="{{inventory_item.reserve_count|default_if_none:'0'}}" name="reserve" required>
                                            </div>    
                                          <!-- 135 Unit  -->
                                          <!-- <span id="id_res_val" class="inv-item-amount2"> {{inventory_item.reserve_count|default_if_none:'0'}}  <span style="font-size: 25px;"> unit(s) </span> </span> -->
@@ -487,7 +487,7 @@
             <input type="hidden" name="store" id="id_pro_sel" value="" />
             <input type="hidden" name="edit_unit_id" id="id_unit_edit" >
             <div class="row mt-20">
-                <div class="col-md-12 ">
+                <div class="col-md-12 " id="id_add_method">
                     <div class="model-input-name">Select add method</div>
                    
                     <div class="wrap-drop" id="select_methddrp" style="z-index: 4;" >
@@ -525,11 +525,11 @@
            <div id="id_man">
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Store</div>
+                    <div class="model-input-name required-field">Store</div>
 
                     <div style="position: relative;">
                         <div class="inv-input-container inv-border h-30">
-                            <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" name="storename" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()" >
+                            <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" name="storename" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()" required>
                         </div>
                         <div id="id_search" class="row inv-result-box" style="display: none;">
                           
@@ -554,10 +554,10 @@
 
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Purchase Date</div>
+                    <div class="model-input-name required-field">Purchase Date</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="date" class="w-p-100 inv-in" name="purchase_date" id="id_purchase_date" >
+                        <input type="date" class="w-p-100 inv-in" name="purchase_date" id="id_purchase_date" required>
                       </div>
                 </div>
 
@@ -577,7 +577,7 @@
             {% if inventory_item.item_add_type == 'unit' %}
             <div class="row mt-20 expiry_date_div" hidden>
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Expiry Date</div>
+                    <div class="model-input-name required-field">Expiry Date</div>
 
                     <div class="inv-input-container h-30"> 
                         <input type="date" class="w-p-100 inv-in" name="expiry_date" id="id_expiry_date">
@@ -595,7 +595,7 @@
 
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Unit Price</div>
+                    <div class="model-input-name required-field">Unit Price</div>
 
                     <div class="inv-input-container h-30"> 
                         <input type="number" step="0.001"  class="w-p-100 inv-in" name="unit_price" id="unit_price_id" >
@@ -608,10 +608,10 @@
             {% if inventory_item.item_add_type == 'quantity' %}
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Quantity</div>
+                    <div class="model-input-name required-field">Quantity</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="number" step="0.001"  class="w-p-100 inv-in" name="quantity" id="quantity_id" >
+                        <input type="number" step="0.001"  class="w-p-100 inv-in" name="quantity" id="quantity_id" value="1" required>
                       </div>
                 </div>
 
@@ -624,7 +624,7 @@
            
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button" type="submit" >Submit</button>
+            <button class="sent-button" type="button" onclick="formvalidation()">Submit</button>
             </form>
                         <button data-dismiss="modal" onclick="closeNavAddBundle()" class="view-button">Cancel</button>
         </div>
@@ -1296,20 +1296,40 @@ function editItemData(){
 }
 
 function doneEdit(){
-    document.getElementById('id_editButton').style.display = 'block';
-    document.getElementById('id_editDone').style.display = 'none';
-    document.getElementById('id_cat_val').style.display = 'block';
-    document.getElementById('id_cat_select').style.display = 'none';
-    document.getElementById('id_seg_val').style.display = 'block';
-    document.getElementById('id_seg_select').style.display = 'none';
-    document.getElementById('id_line_val').style.display = 'block';
-    document.getElementById('id_line_select').style.display = 'none';
-    document.getElementById('id_name_val').style.display = 'block';
-    document.getElementById('id_name_text').style.display = 'none';
-    document.getElementById('id_des_val').style.display = 'block';
-    document.getElementById('id_des_text').style.display = 'none';
-    document.getElementById('id_res_val').style.display = 'block';
-    document.getElementById('id_res_text').style.display = 'none';
+    console.log($('input[name=item_category]').val(),"mokk")
+
+    if ($('input[name=item_name]').val() == ''){
+        $('input[name=item_name]').addClass('red-border-input');
+    }else if ($('input[name=reserve]').val() == ''){
+        $('input[name=reserve]').addClass('red-border-input');
+    }else if ($('input[name=description]').val() == ''){
+        $('input[name=description]').addClass('red-border-input');
+    }else if ($('input[name=item_category]').val() == undefined){
+        console.log("jiooo")
+        $('#id_cat_select').addClass('red-border-input');
+    }else if ($('input[name=item_segment]').val() == undefined){
+        $('input[name=item_segment]').addClass('red-border-input');
+    }else if ($('input[name=item_line]').val() == undefined){
+        $('input[name=item_line]').addClass('red-border-input');
+    }else{
+        console.log("no[")
+        document.getElementById('id_editButton').style.display = 'block';
+        document.getElementById('id_editDone').style.display = 'none';
+        document.getElementById('id_cat_val').style.display = 'block';
+        document.getElementById('id_cat_select').style.display = 'none';
+        document.getElementById('id_seg_val').style.display = 'block';
+        document.getElementById('id_seg_select').style.display = 'none';
+        document.getElementById('id_line_val').style.display = 'block';
+        document.getElementById('id_line_select').style.display = 'none';
+        document.getElementById('id_name_val').style.display = 'block';
+        document.getElementById('id_name_text').style.display = 'none';
+        document.getElementById('id_des_val').style.display = 'block';
+        document.getElementById('id_des_text').style.display = 'none';
+        document.getElementById('id_res_val').style.display = 'block';
+        document.getElementById('id_res_text').style.display = 'none';
+        document.getElementById("itemdetailsform").submit();
+    }
+    
 }
 
 function editItemDetials() {
@@ -1331,8 +1351,11 @@ function editItemDetials() {
 $('#id_no_expiry').click(function(){
     if (document.getElementById("id_no_expiry").checked){
         $('.expiry_date_div').hide();
+        $('#id_expiry_date').attr("required",false);
     }else{
         $('.expiry_date_div').show();
+        $('#id_expiry_date').attr("required",true);
+
     }
 })
 
@@ -1351,6 +1374,9 @@ function openNavAddBundle(d) {
 
     if(d == 'add'){
         document.getElementById("myform").reset();
+        $('#id_add_method').show();
+        $('#id_man').hide();
+        $('#id_po').hide();
         $('#id_unit_status').val('active');
         $("#id_selectText").text("Select PO");
             {% if inventory_item.item_add_type == 'unit' %}
@@ -1363,6 +1389,7 @@ function openNavAddBundle(d) {
         if(d == 'edit'){
             $("#supHead").text("Edit Unit");
             $("#unit_action").val("edit_unit");
+            
         }
         if(screen.width<= 600){
             document.getElementById("addBundle").style.width = "100%";
@@ -1389,7 +1416,9 @@ function openNavAddBundle(d) {
         // var dt = $(this).data('purchasedate').split('/')
         // console.log(dt)
         // var tmPur = dt
-
+        $('#id_add_method').hide();
+        $('#id_man').show();
+        $('#id_po').hide();
         $('#id_unit_edit').val($(this).data('unitid'));
         $('#id_unit_code').val($(this).data('unitcode'));
         $('#id_purchase_date').val($(this).data('purchasedate'));
@@ -1457,6 +1486,40 @@ function openNavAddBundle(d) {
 
 
         document.getElementById("id_search").style.display="none"
+    }
+
+//form empty field validation
+    function formvalidation(){
+        console.log($('input[name=unit_price]').val(),"lolo")
+        
+        {% if inventory_item.item_add_type == 'unit' %}
+
+            if ($('input[name=storename]').val() == ''){
+                $('input[name=storename]').addClass('red-border-input');
+            }else if ($('input[name=serial_number]').val() == ''){
+                $('input[name=serial_number]').addClass('red-border-input');
+            }else if ($('input[name=purchase_date]').val() == ''){
+                $('input[name=purchase_date]').addClass('red-border-input');
+            }else if ($('input[name=unit_price]').val() == ''){
+                $('input[name=unit_price]').addClass('red-border-input');
+            }else{
+                $('#myform').submit();
+            }
+
+        {% else %}
+
+            if ($('input[name=storename]').val() == ''){
+                $('input[name=storename]').addClass('red-border-input');
+            }else if ($('input[name=purchase_date]').val() == ''){
+                $('input[name=purchase_date]').addClass('red-border-input');
+            }else if ($('input[name=quantity]').val() == ''){
+                console.log("logoo")
+                $('input[name=quantity]').addClass('red-border-input');
+            }else{
+                $('#myform').submit();
+            }
+
+        {% endif %}
     }
    
 </script>

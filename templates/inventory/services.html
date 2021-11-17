@@ -862,11 +862,11 @@
 
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Item</div>
+                    <div class="model-input-name required-field">Item</div>
                     <input type="hidden" name="item" id="id_pro_sel" value="" />
                     <div style="position: relative;">
                         <div class="inv-input-container inv-border h-30">
-                            <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()">
+                            <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()" required>
                            
                             <!-- <div onclick="ProductListShow()" class="model-filter">
                                 
@@ -891,7 +891,7 @@
             
     </div>
     <div class="inv-drawer-footer">
-        <button class="sent-button item-form-btn" type="button" onclick="serviceitemaction('add_item')" >Add</button>
+        <button class="sent-button item-form-btn" type="button" onclick="itemformvalidation()" >Add</button>
         </form>
                     <button data-dismiss="modal" onclick="closeNavAddStore2()" class="view-button">Cancel</button>
     </div>
@@ -917,7 +917,7 @@
             </div>
             <hr>
 
-            <form method="POST" action="">{% csrf_token %}
+            <form method="POST" id="ingredientform" action="">{% csrf_token %}
             <input type="hidden" name="action" id="item_action" value="add_ingredient" />
 
             <input type="hidden" name="item_edit_id" id="id_edit_item" />
@@ -943,7 +943,7 @@
 
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Ingredient</div>
+                    <div class="model-input-name required-field">Ingredient</div>
 
                     <!-- <div style="position: relative;">
                         <div class="inv-input-container inv-border h-30">
@@ -1017,7 +1017,7 @@
 
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Quantity</div>
+                    <div class="model-input-name required-field">Quantity</div>
 
                     <div class="inv-input-container h-30"> 
                         <input type="number" step="0.1"  class="w-p-100 inv-in" name="item_count" id="id_item_count">
@@ -1067,7 +1067,7 @@
           
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button item-form-btn" type="submit" >Add</button>
+            <button class="sent-button item-form-btn" type="button" onclick="ingredientformvalidation()" >Add</button>
             </form>
                         <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
         </div>
@@ -2070,6 +2070,31 @@ function openNavAddStore2(d) {
          }else{
             showNotification('No Data','error')
          }
+    }
+
+//validation form
+    function ingredientformvalidation(){
+        console.log($('input[name=item]').val(),$('input[name=item_count]').val(),$('#id_item').val(),"lolo")
+
+        if ($('input[name=ingredient]').val() == ''){
+            $('input[name=ingredient]').addClass('red-border-input');
+        }else if ($('input[name=item_count]').val() == ''){
+            $('input[name=item_count]').addClass('red-border-input');
+        }else{
+            console.log("lolo")
+            $('#ingredientform').submit();
+        }
+    }
+
+    function itemformvalidation(){
+        console.log($('#pro-name').val(),"lolo")
+
+        if ($('#pro-name').val() == ''){
+            $('#pro-name').addClass('red-border-input');
+        }else{
+            console.log("lolo")
+            serviceitemaction('add_item');
+        }
     }
 
     //add items using api

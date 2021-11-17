@@ -741,7 +741,7 @@ class TicketSubmitAPI(APIView):
 				# msg      = EmailMultiAlternatives('Ticket Rised', '', 'notification@bleach-kw.com', [investigationdata.investigator.email])
 				# msg.attach_alternative(msg_html, "text/html")
 				# msg.send(fail_silently=False)
-
+			
 			investigation.is_casesandcomplaints_submit = True
 			investigation.save()
 
@@ -772,8 +772,7 @@ class TicketEditAPI(APIView):
 
 		followup = FollowUp.objects.get(id=int(followup_id))
 		investigation = followup.investigation
-
-		investigationmedias = InvestigationMedia.objects.filter(investigation=followup.investigation).delete()
+		InvestigationMedia.objects.filter(investigation=investigation).delete()
 		
 		#save media
 		investigation_medias = request.FILES.getlist('media')
@@ -860,6 +859,7 @@ class TicketEditAPI(APIView):
 				# msg.send(fail_silently=False)
 
 			investigation.is_casesandcomplaints_submit = True
+			investigation.ticket_types = ticket_types
 			investigation.save()
 
 		response_dict = {'success':True}
@@ -1122,7 +1122,7 @@ class TicketDetailsAPI(APIView):
 			
 			for media in followup_details.investigation.investigationmedias:
 				medias.append(media.media.url)
-
+		
 		response_dict['is_paybackdiscount'] = is_paybackdiscount
 		response_dict['is_report'] = is_report
 		response_dict['is_investigator'] = is_investigator
@@ -1130,7 +1130,7 @@ class TicketDetailsAPI(APIView):
 		response_dict['ticket_types'] = followup_details.investigation.ticket_types
 		response_dict['notes'] = followup_details.investigation.notes
 		response_dict['medias'] = medias
-		response_dict['assigned_by'] = followup_details.investigation.assigned_by.name
+		response_dict['assigned_by'] = str(followup_details.investigation.assigned_by.id)
 		response_dict['paybackdiscounts'] = paybackdiscounts
 		response_dict['report'] = report_list
 		 	
