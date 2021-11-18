@@ -335,6 +335,7 @@ function load_cleaning_team(visitcount,scheduleid,bookid){
                       app.team_cleaning_end=response.data.cleaning_end_at
                       app.team_cleaning_hr=response.data.cleaning_hours
                       app.team_cleaning_id=response.data.team_id
+                      app.current_backups=response.data.backup_members
                       if (response.data.cleaning_status == 'CLEANING_TEAM_ASSIGNED'){   
                           $('#check_in_out_'+bookid).hide();
                           $('#team_edit_url_'+bookid).attr('hidden',false);
@@ -855,12 +856,14 @@ const app = new Vue({
             cleaning_date_end:'',
             service_types:[]
           },
-          filtered_teams:[]
+          filtered_teams:[],
+          current_backups:[]
          // url:'http://localhost:8000'
       // url:'https://test.bleach-kw.com'
             //url:'http://127.0.0.1:8000'
   },
   methods:{
+    
     getTeamMembers(){
       axios.post(this.url+'/customer/availablecleaners/',{
         cleaning_datetime_start:this.backup_team_data.cleaning_date_start+' '+this.backup_team_data.cleaning_time_start,
@@ -1006,6 +1009,51 @@ const app = new Vue({
   this.getTeamMembers()
   $('#backupTeamBtn').click()
  },
+ editBackupTeam(team_id,id,start,end,duration){
+  this.selected_team=[ ...this.current_backups ]
+  this.temp_selected_item=[ ...this.current_backups ]
+  if(!this.cleaning_team_api){
+    this.team_cleaning_id=team_id
+   this.team_cleaning_start=start
+   this.team_cleaning_end=end
+   this.team_cleaning_hr=duration
+  }
+  this.backup_team_data.cleaning_date_start=moment(this.team_cleaning_start,'DD-MM-YYYY hh:mm a').format('DD-MM-YYYY')
+  this.backup_team_data.cleaning_time_start=moment(this.team_cleaning_start,'DD-MM-YYYY hh:mm a').format('hh:mm a')
+  this.backup_team_data.cleaning_date_end=moment(this.team_cleaning_end,'DD-MM-YYYY hh:mm a').format('DD-MM-YYYY')
+  this.backup_team_data.cleaning_time_end=moment(this.team_cleaning_end,'DD-MM-YYYY hh:mm a').format('hh:mm a')
+  this.date_options=[]
+ var start_date=moment(this.team_cleaning_start,'DD-MM-YYYY hh:mm a')
+ var end_date=moment(this.team_cleaning_end,'DD-MM-YYYY hh:mm a')
+ var count=0
+ console.log("start:"+start_date+"end:"+end_date+"duartion:"+duration+"id is "+id)
+  while(moment(this.team_cleaning_start,'DD-MM-YYYY hh:mm a').isSameOrBefore(moment(this.team_cleaning_end,'DD-MM-YYYY hh:mm a')) && count<parseInt(this.team_cleaning_hr))
+  {
+    var found=false
+    for(var i=0;i<this.date_options.length;i++){
+      if(this.date_options[i].date==moment(this.team_cleaning_start,'DD-MM-YYYY hh:mm a').format('DD-MM-YYYY')){
+         found=true
+         this.date_options[i].time.push(moment(this.team_cleaning_start,'DD-MM-YYYY hh:mm a').format('hh:mm a'))
+         break
+      }
+    }
+    if(!found)
+    {
+    this.date_options.push(
+     {
+       date:moment(this.team_cleaning_start,'DD-MM-YYYY hh:mm a').format('DD-MM-YYYY'),
+       time:[moment(this.team_cleaning_start,'DD-MM-YYYY hh:mm a').format('hh:mm a')]
+     }) 
+    
+    }
+    this.team_cleaning_start= moment(this.team_cleaning_start,'DD-MM-YYYY hh:mm a').add(2,'hours').format('DD-MM-YYYY hh:mm a')
+    count=count+2
+
+  }
+  console.log("date options"+this.date_options)
+ this.getTeamMembers()
+  $('#editBackupTeamBtn').click()
+},
     getCount(sch_id){
      
      $('#'+sch_id+'-count').html($("#"+sch_id).index()+1)
