@@ -183,7 +183,7 @@
             </div>
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name required-field">Status</div>
+                    <div class="model-input-name">Status</div>
 
                     <!-- <select id="status_category" name="category_status" class="minimal">
                         <option value="True" selected>Active</option>
@@ -206,7 +206,7 @@
           
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button category-form-btn" type="button" onclick="ValidateEmptyFields()" >Submit</button>
+            <button class="sent-button category-form-btn" type="button" onclick="formvalidation()" >Submit</button>
             </form>
                         <button data-dismiss="modal" onclick="closeNavAddCategory()" class="view-button">Cancel</button>
         </div>
@@ -265,7 +265,7 @@
           
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button category-form-btn" type="button" onclick="checkforblank()" >Submit</button>
+            <button class="sent-button category-form-btn" type="button" onclick="formvalidation()" >Submit</button>
                         <button data-dismiss="modal" onclick="closeNavEditCategory()" class="view-button">Cancel</button>
         </div>
     </div>
@@ -382,24 +382,6 @@ $(function () {
 </script>
 <script>
 
-    function ValidateEmptyFields() {
-        var isFormValid = true;
-        console.log("loggg")
-        $(".required-field input").each(function() {
-            console.log($(this).val().length,"lenn")
-            if ($(this).val().length == 0) {
-                $(this).addClass("red-border-input");
-                isFormValid = false;
-            } else {
-                $(this).removeClass("red-border-input");
-            }
-        });
-
-        if (!isFormValid) alert("Please fill in all the required fields (indicated by *)");
-
-        return isFormValid;
-        }
-
     function changeSelect(va){
         $('#status_category').val(va)
     }
@@ -479,7 +461,29 @@ $(function () {
         $('.category-form-btn').text('Add');
     })
     
-    
+    //form validation
+    function formvalidation(){
+        console.log($('#id_cat_id').val(),"nio")
+
+        if ($('#category_action').val() == 'add_category'){
+            if ($('input[name=category_name]').val() == ''){
+                $('input[name=category_name]').addClass('red-border-input');
+            }else if ($('#id_cat_id').val() == ''){
+                $('#id_cat_id').addClass('red-border-input');
+            }else{
+                console.log("lolo555")
+                $('#addcategoryform').submit();
+            }
+        }else{
+            if ($('input[name=category_name]').val() == ''){
+                $('input[name=category_name]').addClass('red-border-input');
+            }else{
+                console.log("lolo555")
+                $('#addcategoryform').submit();
+            }
+        }
+    }
+
     //edit category
     $('.edit_category').click(function(){
         console.log($(this).data('categoryid'),$(this).data('categoryname'),"editc")
