@@ -332,21 +332,18 @@
                        <div class="d-flex mt-10">
                            <div>
 
-                               <select placeholder="Start Date" class="team-select">
-                                   <option>
-                                       12/04/2021
+                               <select placeholder="Start Date" class="team-select" v-model="backup_team_data.cleaning_date_start">
+                                   <option v-for="(item,index) in getStartDates()" v-bind:key="index">
+                                      <% item %>
                                    </option>
                                </select>
 
                            </div>
                            <div>
-                            <select placeholder="Start Time" class="ml-10 team-select">
-                                <option>
-                                    12:00 AM
-                                </option>
-                                <option>
-                                    02:00 PM
-                                </option>
+                            <select placeholder="Start Time" class="ml-10 team-select" v-model="backup_team_data.cleaning_time_start">
+                                <option v-for="(item,index) in getStartTime()" v-bind:key="index">
+                                    <% item %>
+                                 </option>
                             </select>
                            </div>
                        </div>
@@ -358,20 +355,17 @@
                         <div class="d-flex mt-10">
                             <div>
  
-                                <select placeholder="Start Date" class="team-select">
-                                    <option>
-                                        12/04/2021
+                                <select placeholder="End Date" class="team-select" v-model="backup_team_data.cleaning_date_end">
+                                    <option v-for="(item,index) in getEndDates()" v-bind:key="index">
+                                       <% item %>
                                     </option>
                                 </select>
  
                             </div>
                             <div>
-                             <select placeholder="Start Time" class="ml-10 team-select">
-                                 <option>
-                                     12:00 AM
-                                 </option>
-                                 <option>
-                                     02:00 PM
+                             <select placeholder="Start Time" class="ml-10 team-select" v-model="backup_team_data.cleaning_time_end">
+                                <option v-for="(item,index) in getEndTime()" v-bind:key="index">
+                                    <% item %>
                                  </option>
                              </select>
                             </div>
@@ -2170,7 +2164,7 @@
 
 
                                         <div class="row">
-                                            <button class="sent-button mt-10" type="submit" @click="addBackupTeam(`{{evaluationdetail.id}}`,`{{orderschedule.start_at|date:'d-m-Y h:i'}}`,`{{orderschedule.end_at|date:'d-m-Y h:i'}}`,`{{orderschedule.cleaning_hours}}`)">Add Backup Team</button>
+                                            <button class="sent-button mt-10" type="submit" @click="addBackupTeam(`{{evaluationdetail.id}}`,`{{orderschedule.start_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.end_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.cleaning_hours}}`)">Add Backup Team</button>
                                         </div>
 
                                         <div class="order-clean-section-header c-mt-10">

@@ -867,7 +867,55 @@ const app = new Vue({
     removeTeam(index){
       this.team.splice(index,1)
     },
+    getStartDates(){
+      var start_dates=[]
+      for(var i=0;i<this.date_options.length;i++){
+          start_dates.push(this.date_options[i].date)
+      }
+      return start_dates
+    },
+    getEndDates(){
+      var end_dates=[]
+      for(var i=0;i<this.date_options.length;i++){
+        if(moment(this.backup_team_data.cleaning_date_start,'DD-MM-YYYY').isSameOrBefore(moment(this.date_options[i].date,'DD-MM-YYYY')))
+        end_dates.push(this.date_options[i].date)
+    }
+    return end_dates
+    },
+    getStartTime(){
+      var start_time=[]
+      for(var i=0;i<this.date_options.length;i++){
+        if(this.date_options[i].date==this.backup_team_data.cleaning_date_start){
+          // for(var j=0;j<this.date_options[i].length;j++){
+          //   this.backup_team_data.cleaning_date_start
+          // }
+          return this.date_options[i].time
+        }
+         
+      }
+      
+    },
+    getEndTime(){
+      var end_time=[]
+      for(var i=0;i<this.date_options.length;i++){
+        if(this.date_options[i].date==this.backup_team_data.cleaning_date_end){
+           for(var j=0;j<this.date_options[i].time.length;j++){
+             if(moment(this.date_options[i].time[j],'hh:mm a').isAfter(moment(this.backup_team_data.cleaning_time_start,'hh:mm a'))){
+               end_time.push(this.date_options[i].time[j])
+             }
+            
+           }
+           var added_time=moment(this.date_options[i].time[this.date_options[i].time.length-1],'hh:mm a').add(2,'hours').format('hh:mm a')
+           end_time.push(added_time)
+          
+        }
+         
+      }
+     
+      return end_time
+    },
  addBackupTeam(id,start,end,duration){
+    console.log("start:"+start+"end:"+end+"duartion:"+duration+"id is "+id)
    if(!this.cleaning_team_api){
     this.team_cleaning_start=start
     this.team_cleaning_end=end
@@ -906,7 +954,7 @@ const app = new Vue({
 
    }
    console.log("date options"+this.date_options)
-  //  console.log("start:"+start+"end:"+end+"duartion:"+duration+"id is "+id)
+  
   $('#backupTeamBtn').click()
  },
     getCount(sch_id){

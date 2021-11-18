@@ -4877,3 +4877,6 @@ class TicketFollowup(IsAgent,View):
 	def get(self,request):
 		return render(request,"agent/ticket/followup-tickets.html") 	
 
+class InvestigationDetials(IsAgent,View):
+    def get(self,request):
+        return render(request,'agent/ticket/Investigation.html',{})
