@@ -322,7 +322,9 @@ function cancelCleaningDate(service){
 //load cleaning team data
 function load_cleaning_team(visitcount,scheduleid,bookid){
   var visitcount = app.getCount(visitcount);
-
+ app.selected_team=[]
+ app.filtered_teams=[]
+ app.temp_selected_item=[]
   axios.get(url+'/api/cleaning-team-data/',{ params: { 'visit_count':visitcount, 'schedule_id': scheduleid } })
               .then(function (response) {
                  
@@ -332,7 +334,7 @@ function load_cleaning_team(visitcount,scheduleid,bookid){
                       app.team_cleaning_start=response.data.cleaning_start_at
                       app.team_cleaning_end=response.data.cleaning_end_at
                       app.team_cleaning_hr=response.data.cleaning_hours
-
+                      app.team_cleaning_id=response.data.team_id
                       if (response.data.cleaning_status == 'CLEANING_TEAM_ASSIGNED'){   
                           $('#check_in_out_'+bookid).hide();
                           $('#team_edit_url_'+bookid).attr('hidden',false);
@@ -833,14 +835,8 @@ const app = new Vue({
           imageForm:new FormData(),
           break_act:false,
           two_counter:0,
-          team:[
-            'Lucifer',
-            'Amanediel',
-            'Michael',
-            'Adam','Eve',
-            'Ebel','Trixie',
-            'Chloe'
-          ],
+          team:[],
+          
           team_search:'',
           team_options:false,
           team_cleaning_start:'',
@@ -849,23 +845,75 @@ const app = new Vue({
           cleaning_team_api:false,
           date_options:[],
           time_options:[],
+          selected_team:[],
+          temp_selected_item:[],
+          team_cleaning_id:'',
           backup_team_data:{
             cleaning_date_start:'',
             cleaning_time_start:'',
             cleaning_time_end:'',
             cleaning_date_end:'',
             service_types:[]
-          }
+          },
+          filtered_teams:[]
          // url:'http://localhost:8000'
       // url:'https://test.bleach-kw.com'
             //url:'http://127.0.0.1:8000'
   },
   methods:{
-    addTeamMember(){
-      this.team_options=false
+    getTeamMembers(){
+      axios.post(this.url+'/customer/availablecleaners/',{
+        cleaning_datetime_start:this.backup_team_data.cleaning_date_start+' '+this.backup_team_data.cleaning_time_start,
+        cleaning_datetime_end:this.backup_team_data.cleaning_date_end+' '+this.backup_team_data.cleaning_time_end,
+        service_types:['General Cleaning']
+
+      }).then(response=>{
+        this.team=response.data.available_cleaners
+        this.filtered_teams=[...this.team]
+      }).catch(err=>{
+
+      })
+    },
+    searchTeam(){
+      var filtered=[]
+      if(!this.team_search){
+        this.filtered_teams=this.team
+      }
+      for(var i=0;i<this.team.length;i++){
+        var search=this.team_search.toUpperCase()
+        var teamname=this.team[i].name.toUpperCase()
+        if(teamname.startsWith(search)){
+          filtered.push(this.team[i])
+        }
+      }
+      this.filtered_teams=[ ...filtered ]
+    },  
+    selectTeam(){
+    this.selected_team=[ ...this.temp_selected_item ]
+    this.team_options=false
+    this.team_search=''
+    this.filtered_teams=[ ...this.team ]
+    },
+    addTeamMembers(){
+      var backup_cleaners=[]
+      for(var i=0;i<this.selected_team.length;i++){
+        backup_cleaners.push(this.selected_team[i].id)
+      }
+      axios.post(this.url+'/customer/editorder/'+this.orderId,{
+        action_type:'add_backupteam',
+        backup_start_at:this.backup_team_data.cleaning_date_start+' '+this.backup_team_data.cleaning_time_start,
+        backup_end_at:this.backup_team_data.cleaning_date_end+' '+this.backup_team_data.cleaning_time_end,
+        backup_cleaners :backup_cleaners,
+        team_id:this.team_cleaning_id
+
+      }).then(response=>{
+        $('#close_backup').click()
+        location.reload()
+      })
     },
     removeTeam(index){
-      this.team.splice(index,1)
+      this.selected_team.splice(index,1)
+      this.temp_selected_item.splice(index,1)
     },
     getStartDates(){
       var start_dates=[]
@@ -914,9 +962,10 @@ const app = new Vue({
      
       return end_time
     },
- addBackupTeam(id,start,end,duration){
-    console.log("start:"+start+"end:"+end+"duartion:"+duration+"id is "+id)
+ addBackupTeam(team_id,id,start,end,duration){
+    console.log("start:"+start+"end:"+end+"duartion:"+duration+"team id is "+team_id)
    if(!this.cleaning_team_api){
+     this.team_cleaning_id=team_id
     this.team_cleaning_start=start
     this.team_cleaning_end=end
     this.team_cleaning_hr=duration
@@ -954,7 +1003,7 @@ const app = new Vue({
 
    }
    console.log("date options"+this.date_options)
-  
+  this.getTeamMembers()
   $('#backupTeamBtn').click()
  },
     getCount(sch_id){

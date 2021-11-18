@@ -355,7 +355,7 @@
                         <div class="d-flex mt-10">
                             <div>
  
-                                <select placeholder="End Date" class="team-select" v-model="backup_team_data.cleaning_date_end">
+                                <select placeholder="End Date" class="team-select" v-model="backup_team_data.cleaning_date_end" @change="getTeamMembers()">
                                     <option v-for="(item,index) in getEndDates()" v-bind:key="index">
                                        <% item %>
                                     </option>
@@ -373,17 +373,17 @@
                         </div>
                    <div class="col-md-12" >
                        <div class="mt-20 backup-input">
-                           <input type="text" v-model="team_search" class="" placeholder="add team member" @focus="team_options=true" />
+                           <input type="text" v-model="team_search" class="" placeholder="add team member" @focus="team_options=true" @input="searchTeam()"/>
                            <i class="fas fa-chevron-down team-select-arrow"></i>
                         </div>
                        <div class="team-select-box" v-if="team_options">
                            <div class="text-right">
                         <input name="paid" type="button" class="done-button team-done-btn" value="Done"
-                        id="done" @click="addTeamMember()">
+                        id="done" @click="selectTeam()">
                     </div>
-                        <div v-for="(item,index) in team" v-bind:key="index" >
-                         <input type="checkbox" :value="item" class="normal-checkbox"/>
-                         <label class="ml-2 team-checkbox-label"> <% item %></label><br>
+                        <div v-for="(item,index) in filtered_teams" v-bind:key="index" >
+                         <input type="checkbox" :value="item" class="normal-checkbox" v-model="temp_selected_item"/>
+                         <label class="ml-2 team-checkbox-label"> <% item.name %></label><br>
                         
                         </div>
                     </div>
@@ -391,10 +391,10 @@
                    </div>
                    <div class="col-md-12 mt-10">
                        <div class="row m-0">
-                           <div class="col-md-4" v-for="(item,index) in team" v-bind:key="index">
+                           <div class="col-md-4" v-for="(item,index) in selected_team" v-bind:key="index">
                                <div class="d-flex backup-team-chip mt-10">
                                    <div>
-                                   <% item %>
+                                   <% item.name %>
                                 </div>
                                 <div class="ml-auto">
                                     <i class="far fa-times-circle backup-rm-circle" @click="removeTeam(index)"></i>
@@ -412,8 +412,8 @@
             </div>
             <div class="modal-footer text-center">
               
-              <button type="submit"  class="btn primary-btn"  @click="updateDiscount()">Submit</button>
-              <button type="button" class="btn primary-btn-bordered" data-dismiss="modal"  id="edit-payment-close">Cancel</button>
+              <button type="submit"  class="btn primary-btn"  @click="addTeamMembers()">Submit</button>
+              <button type="button" class="btn primary-btn-bordered" data-dismiss="modal"  id="close_backup">Cancel</button>
             </div>
            
           </div>
@@ -2164,7 +2164,7 @@
 
 
                                         <div class="row">
-                                            <button class="sent-button mt-10" type="submit" @click="addBackupTeam(`{{evaluationdetail.id}}`,`{{orderschedule.start_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.end_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.cleaning_hours}}`)">Add Backup Team</button>
+                                            <button class="sent-button mt-10" type="submit" @click="addBackupTeam(`{{cleaning_team.id}}`,`{{evaluationdetail.id}}`,`{{orderschedule.start_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.end_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.cleaning_hours}}`)">Add Backup Team</button>
                                         </div>
 
                                         <div class="order-clean-section-header c-mt-10">
