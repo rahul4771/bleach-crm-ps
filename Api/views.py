@@ -1757,14 +1757,18 @@ class CleaningTeamAPI(APIView):
 
 			#backup
 			if cleaningteam.backup_start_at:
-				backup_start_at = (cleaningteam.backup_start_at+timedelta(hours=3)).time().strftime("%I:%M %p")
+				backup_start_at          = (cleaningteam.backup_start_at+timedelta(hours=3)).time().strftime("%I:%M %p")
+				backup_datetime_start_at = (cleaningteam.backup_start_at+timedelta(hours=3)).strftime("%D-%M-%Y %I:%M %p")
 			else:
-				backup_start_at = None
+				backup_start_at          = None
+				backup_datetime_start_at = None
 			
 			if cleaningteam.backup_end_at:
-				backup_end_at   = (cleaningteam.backup_end_at+timedelta(hours=3)).time().strftime("%I:%M %p")
+				backup_end_at            = (cleaningteam.backup_end_at+timedelta(hours=3)).time().strftime("%I:%M %p")
+				backup_datetime_end_at   = (cleaningteam.backup_end_at+timedelta(hours=3)).strftime("%D-%M-%Y %I:%M %p")
 			else:
-				backup_end_at   = None
+				backup_end_at            = None
+				backup_datetime_end_at   = None
 
 			if cleaningteam.backup_check_in:
 				backup_check_in = (cleaningteam.backup_check_in+timedelta(hours=3)).time().strftime("%I:%M %p")
