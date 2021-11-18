@@ -2068,6 +2068,7 @@
 
                                         <div class="row c-mt-10 id_team_members_div" id="id_team_members_div_{{evaluationbook.id}}">
                                         {% for team_member in cleaning_team.cleaning_team_members %}
+                                            {% if not team_member.is_backup_cleaner %}
                                             <div class="col-md-3 m-mt20 .c-mb-10 mr-0 ml-0">
                                                 <div class="row">
                                                     <div class="col-xs-4 pr-0">
@@ -2090,6 +2091,7 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            {% endif %}
                                         {% endfor %}
                                         </div>
                                         <div class="row">

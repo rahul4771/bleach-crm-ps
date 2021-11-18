@@ -5985,12 +5985,18 @@ class EditOrderDetails(APIView):
 			backup_cleaners       = request.data.get('backup_cleaners')
 
 			#create
-			CleaningTeam.objects.filter(id=team_id).update(backup_start_at=backup_start_at,backup_end_at=backup_end_at)
+			cleaning_team         = CleaningTeam.objects.select_related('order_scheduler__evaluation_details').get(id=team_id)
+			cleaning_teams        = CleaningTeam.objects.filter(order_scheduler__start_at=cleaning_team.order_scheduler.start_at,order_scheduler__end_at=cleaning_team.order_scheduler.end_at,order_scheduler__evaluation_details__evaluation=cleaning_team.order_scheduler.evaluation_details.evaluation)
+			
+			for cleaning_team in cleaning_teams:
+				cleaning_team.backup_start_at =  backup_start_at
+				cleaning_team.backup_end_at   =  backup_end_at
+				cleaning_team.save()
 
-			backup_cleaners_array = []
-			for backup_cleaner in backup_cleaners:
-				backup_cleaners_array.append(CleaningTeamMember(team__id=team_id,member=backup_cleaner,start_at=backup_start_at,end_at=backup_end_at,start_time=backup_start_at.time(),end_time=backup_end_at.time(),is_backup_cleaner=True))
-			CleaningTeamMember.objects.bulk_create(backup_cleaners_array)
+				backup_cleaners_array = []
+				for backup_cleaner in backup_cleaners:
+					backup_cleaners_array.append(CleaningTeamMember(team=cleaningteam,member=backup_cleaner,start_at=backup_start_at,end_at=backup_end_at,start_time=backup_start_at.time(),end_time=backup_end_at.time(),is_backup_cleaner=True))
+				CleaningTeamMember.objects.bulk_create(backup_cleaners_array)
 
 			response_dict['success'] = True
 
@@ -6000,15 +6006,23 @@ class EditOrderDetails(APIView):
 			backup_end_at         = datetime.strptime(request.data.get('backup_end_at'),'%d-%m-%Y %I:%M %p')
 			backup_cleaners       = request.data.get('backup_cleaners')
 
-			#delete
-			CleaningTeamMember.objects.filter(team__id=team_id,is_backup_cleaner=True).delete()
-			#update
-			CleaningTeam.objects.filter(id=team_id).update(backup_start_at=backup_start_at,backup_end_at=backup_end_at)
+			#create
+			cleaning_team         = CleaningTeam.objects.select_related('order_scheduler__evaluation_details').get(id=team_id)
+			cleaning_teams        = CleaningTeam.objects.filter(order_scheduler__start_at=cleaning_team.order_scheduler.start_at,order_scheduler__end_at=cleaning_team.order_scheduler.end_at,order_scheduler__evaluation_details__evaluation=cleaning_team.order_scheduler.evaluation_details.evaluation)
+			
+			for cleaning_team in cleaning_teams:
+				cleaning_team.backup_start_at =  backup_start_at
+				cleaning_team.backup_end_at   =  backup_end_at
+				cleaning_team.save()
+				
+				#delete
+				CleaningTeamMember.objects.filter(team=cleaning_team,is_backup_cleaner=True).delete()
 
-			backup_cleaners_array = []
-			for backup_cleaner in backup_cleaners:
-				backup_cleaners_array.append(CleaningTeamMember(team__id=team_id,member=backup_cleaner,start_at=backup_start_at,end_at=backup_end_at,start_time=backup_start_at.time(),end_time=backup_end_at.time(),is_backup_cleaner=True))
-			CleaningTeamMember.objects.bulk_create(backup_cleaners_array)	
+				#update
+				backup_cleaners_array = []
+				for backup_cleaner in backup_cleaners:
+					backup_cleaners_array.append(CleaningTeamMember(team=cleaning_team,member=backup_cleaner,start_at=backup_start_at,end_at=backup_end_at,start_time=backup_start_at.time(),end_time=backup_end_at.time(),is_backup_cleaner=True))
+				CleaningTeamMember.objects.bulk_create(backup_cleaners_array)
 
 			response_dict['success'] = True
 
