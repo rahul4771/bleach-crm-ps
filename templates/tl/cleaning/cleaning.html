@@ -112,10 +112,20 @@
 
 <div class="narrow-head align-left">Cleaners</div>
 {% for cleaner in cleaning_team_members %}
-{% if cleaner.member != request.user %}
+{% if not cleaner.is_backup_cleaner and cleaner.member != request.user %}
 <div class="common-gray-text align-left"><strong>{{cleaner.member.name}}</strong></div>
 {% endif %}
 {% endfor %}
+
+<br>
+
+<div class="narrow-head align-left">Backup Cleaners</div>
+{% for cleaner in cleaning_team_members %}
+{% if cleaner.is_backup_cleaner %}
+<div class="common-gray-text align-left"><strong>{{cleaner.member.name}}</strong></div>
+{% endif %}
+{% endfor %}
+
 <!-- Cleaners modal begins here-->
 <div class="modal fade" id="cleanersModal" role="dialog">
   <div style="border: none !important;" class="modal-dialog cancel-model cancel-order-border " role="document">

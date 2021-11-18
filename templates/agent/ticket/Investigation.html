@@ -1,0 +1,688 @@
+{% extends "base.html" %}
+{% load mathfilters %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'files/css/booking/booking.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
+<link href="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/assets/owl.carousel.css' %}" rel="stylesheet">
+<style>
+        .multiselect__tags {
+  
+  border: 1px solid #707070 !important;
+  
+}
+  .tk-type-cardselected{
+  border: 1px solid #528CE6;
+}
+ .multiselect__option--highlight {
+  background: #fff;
+  outline: none;
+  color: #434343 !important;
+}
+.multiselect {
+  
+  color: #434343 !important;
+}
+.multiselect__option--highlight {
+  background: #EDF1F6 !important;
+  outline: none;
+  color: #434343 !important;
+}
+.multiselect__tag-icon:after {
+  content: "\D7";
+  color: #434343 !important;
+  font-size: 14px;
+}
+.multiselect__tag {
+
+  color: #434343 !important;
+
+  background: #EDF1F6 !important;
+
+}
+.multiselect__option--highlight:after {
+  content: attr(data-select);
+  color: #434343 !important;
+
+  background: #EDF1F6 !important;
+  }
+    .vc-container {
+        /* --rounded-lg: 0px !important; */
+    }
+    .modal-dialog {
+    border: 1px solid #707070;
+    border-radius: 5px !important;
+    display: inline-block;
+    text-align: left;
+    vertical-align: middle;
+    min-width: 420px;
+    width: 1000px !important;
+}
+@media only screen and (max-width: 999px) {
+    .modal-dialog {
+   
+    width: auto !important;
+}
+}
+    /* The container */
+.radio-container {
+    font-weight: 500;
+  display: block !important;
+  position: relative !important;
+  padding-left: 24px !important;
+  margin-bottom: 12px !important;
+  cursor: pointer;
+  font-size: 15px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  color: #434343;
+}
+
+
+/* Hide the browser's default radio button */
+.radio-container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Create a custom radio button */
+.rad-checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 16px;
+  width: 16px;
+  background-color: #fff !important;
+  border-radius: 50%;
+  border: 1px solid #707070;
+}
+
+/* On mouse-over, add a grey background color */
+.radio-container:hover input ~ .rad-checkmark {
+  background-color: #ccc !important;
+}
+
+/* When the radio button is checked, add a blue background */
+.radio-container input:checked ~ .rad-checkmark {
+  background-color: #fff !important;
+}
+
+/* Create the indicator (the dot/circle - hidden when not checked) */
+.rad-checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the indicator (dot/circle) when checked */
+.radio-container input:checked ~ .rad-checkmark:after {
+  display: block;
+}
+
+/* Style the indicator (dot/circle) */
+.radio-container .rad-checkmark:after {
+ 	top: 3px;
+	left: 3px;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: #2E4E85;
+}
+    .owl-theme .owl-nav [class*='owl-'] {
+    background: #fff !important;
+}
+    .owl-prev {
+    position: absolute;
+    top: 35% !important;
+    left: -15px;
+   
+    display: block !important;
+    border: 1px solid #b9b9b9 !important;
+    height: 25px !important;
+    width: 25px !important;
+    border-radius: 40px !important;
+    background: #fff !important;
+    color: #707070;
+    opacity: 1 !important;
+}
+.owl-next {
+    color: #707070;
+    position: absolute;
+    top: 35% !important;
+    right: -15px !important;
+    
+    display: block !important;
+    border: 1px solid #b9b9b9 !important;
+    height: 25px !important;
+    width: 25px !important;
+    border-radius: 40px !important;
+    background: #fff !important;
+    opacity: 1 !important;
+}
+</style>
+<div class="wrapper" id="app" v-cloak><!--wrapper-->
+    {% include "stl/common/header.html" %}    
+        <section class="content"><!--content-->
+            <div class="container-fluid space topspace"><!--container-fluid space-->
+                <div class="welcome-wrapper"><!--welcome-wrapper-->
+                    <h1 class="dashboard-head">Investigation Details</h1>
+                   
+                </div><!--welcome-wrapper-->
+
+                <div class="main-content-holder">
+                    <div class="white-wrapper">
+                        <div class="row">
+                            <div class="col-md-9   col-lg-8">
+                                <div class="tk-order-card" >
+                                    <div class="row">
+                                   
+                                        <div class="col-md-3">
+                                            <div class="tk-common-text" id="visit_blc" style="margin-bottom: 5px">{{investigation_details.order.order_no}}</div>
+                                            <div class="d-flex">
+                                                <div>
+                                                    {% if investigation_details.order.payment_status == 'COMPLETED' %}
+                                                        <span class="tk-dot tk-paid-color"></span><span class="tk-common-text2 av-font">Paid</span>
+                                                    {% elif investigation_details.order.payment_status == 'PENDING' %}
+                                                        <span class="tk-dot tk-pending-color"></span><span class="tk-common-text2 av-font">Pending</span>
+                                                    {% else %}
+                                                        <span class="tk-dot tk-onhold-color"></span><span class="tk-common-text2 av-font">On Hold</span>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="ml-10">
+                                                    {% if investigation_details.order.order_status == 'ORDER_CLOSED' %}   
+                                                        <span class="tk-dot tk-paid-color"></span><span class="tk-common-text2 av-font">Closed</span>
+                                                    {% elif investigation_details.order.order_status == 'ORDER_IN_PROGRESS' %}   
+                                                        <span class="tk-dot tk-pending-color"></span><span class="tk-common-text2 av-font">In Progress</span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <div style="margin-bottom:0px" class="mt-15 tk-common-text2" id="visit_customer">
+                                                {{investigation_details.order.evaluation.customer.name}}
+                                            </div>
+                                            <div  class="tk-common-text2" id="visit_customer_number">
+                                                {{investigation_details.order.evaluation.customer.mobile_number}}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div style="margin-bottom: 5px" class="tk-common-text"><span id="visit_servicetype">{{investigation_details.order_schedule.order_scheduler_book.service_type}}</span>-<span id="visit_cleaningpolicy">{{investigation_details.order_schedule.order_scheduler_book.cleaning_policy}}</span></div>
+                                            <div  class="tk-common-text2" id="visit_start_at">{{investigation_details.order_schedule.start_at|date:'d-m-Y h:i A'}}</div>
+                                            
+                                            {% for team in investigation_details.order_schedule.cleaning_teams %}
+                                            <div class="d-flex mt-20">
+                                                <div class="d-flex">
+                                                    <img id="visit_teamleader_image" src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle"> 
+                                                    <div style="margin-bottom: 0px;"  class="tk-common-text2 ml-5 mt-10" id="visit_teamleader">{{team.team_leader.name}}</div>
+                                                </div>
+                                                <div class="ml-30 d-flex" id="visit_team_members">
+                                                    
+
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+    
+                                        </div>
+                                        <div class="col-md-3 text-center">
+                                            <div class="tk-total-text" style="margin-top: 40px; line-height: 1;" id="visit_price">{{investigation_details.order_schedule.order_scheduler_book.total_cost|floatformat:3}} KD</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-20">
+                            <div class="col-md-12">
+                                <div class="tk-common-text">Ticket details</div>
+                            </div>
+                        </div>
+                        <div class="row mt-20">
+                            <div class="col-md-3">
+                                <div class="tk-common-text2">Raised by</div>
+                                <div class="d-flex">
+                                    <div>
+                                    <img   src="{{investigation_details.assigned_by.profile_image.url}}" class="tk-img-circle mr-5 mt-t" >
+                                    </div>
+                                    <div>
+                                    <div class="tk-common-text2 ml-5   pointer" style="margin-bottom: 0px;">{{investigation_details.investigator.name}}</div>
+                                    <div class="tk-common-text2 ml-5  mt-5 pointer">{{investigation_details.investigator.user_type}}</div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="tk-common-text2">Investigated by</div>
+                                <div class="d-flex">
+                                    <div>
+                                    <img   src="{{investigation_details.assigned_by.profile_image.url}}" class="tk-img-circle mr-5 mt-t" >
+                                    </div>
+                                    <div>
+                                    <div class="tk-common-text2 ml-5   pointer" style="margin-bottom: 0px;">investigator</div>
+                                    <div class="tk-common-text2 ml-5  mt-5 pointer"> User</div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {% if investigation_details.investigationmedias %}
+                        <div class="row mt-20">
+                            <div class="col-md-12">
+                                <div class="tk-common-text">Media</div>
+                            </div>
+                        </div>
+                        <div class="row mt-10">
+                            <div class="col-md-6">
+                                <div class="owl-carousel owl-theme">
+
+                                    {% for media in investigation_details.investigationmedias %}
+                                    <div class="item">
+                                         <img id="visit_teamleader_image" src="{{media.media.url}}" > 
+                                    </div>
+                                    {% endfor %}
+                                
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if investigation_details.notes %}
+                        <div class="row mt-20">
+                            <div class="col-md-12">
+                                <div class="tk-common-text">Investigation Note</div>
+                            </div>
+                        </div>
+                        <div class="row mt-10">
+                            <div class="col-md-9 tk-common-text2" >
+                                {{investigation_details.notes}}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <div class="row mt-20">
+                            <div class="col-md-12">
+                                <div class="tk-common-text" style="font-size: 17px;">Investigation Details</div>
+                            </div>
+                        </div>
+                        <div class="row mt-20">
+                            <div class="col-md-12">
+                                <div class="tk-common-text">Media</div>
+                            </div>
+                        </div>
+                        <div class="row mt-5">
+                            <div class="col-md-1" >
+                                <div class="bk-image-upload">
+                                  <img src="{% static 'files/images/1.jpg'%}" style="max-width: 100%" class="h-100 w-100"/>
+                                </div>
+                                
+                              </div>
+                              <div class="col-md-1" >
+                                <div class="bk-image-upload">
+                                  <img src="{% static 'files/images/2.jpg'%}" style="max-width: 100%" class="h-100 w-100"/>
+                                </div>
+                               
+                              </div>
+                             
+                        </div>
+                        <div class="row mt-20">
+                            <div class="col-md-12">
+                                <div class="tk-common-text">Note</div>
+                            </div>
+                        </div>
+                        <div class="row mt-5">
+                            <div class="col-md-5">
+                                <div class="tk-common-text2">
+                                  Note by investigater
+                                </div>
+
+                            </div>
+                        </div>
+                        <!-- <div class="row mt-20">
+                            <div class="col-md-12">
+                                <div class="tk-common-text">Do you want to add follow-up cleaning</div>
+                            </div>
+                        </div>
+                        <div class="row mt-5">
+                            <div class="col-md-12">
+                                <div class="d-flex">
+                                    <label class="radio-container av-font" @click="changeFollowup('yes')">Yes
+                                        <input type="radio"    name="radio">
+                                        <span class="rad-checkmark"></span>
+                                      </label>
+                                      <label class="radio-container av-font ml-10" @click="changeFollowup('no')">No
+                                        <input type="radio" checked="checked"  name="radio">
+                                        <span class="rad-checkmark"></span>
+                                      </label>
+                                </div>
+
+                            </div>
+                        </div> -->
+
+                        <div class="mt-10" >
+                            <div v-for="(item, index) in cleaningsections" :key="item.section_id"  >
+                                <div class="row mt-20" >
+                                    <div class="col-md-12">
+                                        <div class="tk-sec-head av-font">
+                                        Section <% index+1 %>: <% item.section_name %>
+    
+                                        </div>
+                                    </div>
+                                </div>
+                                <div  class="row mt-10">
+                                    <div class="col-md-6 c-right-border" v-if="service_type != 'Upholstery Cleaning'" >
+                                        <div class="order-details-content">
+                                            <div class="row c-mb-3">
+                                                <div class="col-md-6 col-xs-6 mb-10" >
+                                                    <div class="order-details-key">Size</div> 
+                                                    <div class="c-text order-details-value"> <% item.size %> </div>
+                                                </div>
+                                                <div class="col-md-6 col-xs-6 mb-10">
+                                                    <div class="order-details-key" v-if="service_type != 'Window Cleaning'">Wall Type</div> 
+                                                    <div class="c-text order-details-value"> <% item.wall_type %> </div>
+                                                </div>
+                                                <div class="col-md-6 col-xs-6 mb-10" v-if="service_type != 'Window Cleaning'">
+                                                    <div class="order-details-key">Celling Type</div> 
+                                                    <div class="c-text order-details-value"> <% item.ceiling_type %> </div>
+                                                </div>
+                                                <div class="col-md-6 col-xs-6 mb-10" v-if="service_type != 'Window Cleaning'">
+                                                    <div class="order-details-key">Floor Type</div> 
+                                                    <div class="c-text order-details-value"> <% item.floor_type%> </div>
+                                                </div>
+                                                <div class="col-md-6 col-xs-6 mb-10">
+                                                    <div class="order-details-key">Cost</div> 
+                                                    <div class="c-text order-details-value"> <% item.section_net_cost %> </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 c-right-border" v-if="service_type == 'Upholstery Cleaning'" >
+                                        <div class="order-details-content">
+                                            <div class="row c-mb-3">
+                                                <div class="col-md-6 col-xs-6 mb-10">
+                                                    <div class="order-details-key">Age</div> 
+                                                    <div class="c-text order-details-value"> <% item.age %> </div>
+                                                </div>
+                                                <div class="col-md-6 col-xs-6 mb-10">
+                                                    <div class="order-details-key">Size</div> 
+                                                    <div class="c-text order-details-value"> <% item.size %> </div>
+                                                </div>
+                                                <div class="col-md-6 col-xs-6 mb-10">
+                                                    <div class="order-details-key">Material</div> 
+                                                    <div class="c-text order-details-value"> <% item.material %> </div>
+                                                </div>
+                                                <div class="col-md-6 col-xs-6 mb-10">
+                                                    <div class="order-details-key">Colour</div> 
+                                                    <div class="c-text order-details-value"> <% item.color %> </div>
+                                                </div>
+                                                <div class="col-md-6 col-xs-6 mb-10" v-if="item.cause_of_stain !=''" >
+                                                    <div class="order-details-key">Cause of Stain</div> 
+                                                    <div class="c-text order-details-value"> <% item.cause_of_stain %> </div>
+                                                </div>
+                                                <div class="col-md-6 col-xs-6 mb-10" v-if="item.age_of_stain !=''">
+                                                    <div class="order-details-key">Age of Stain</div> 
+                                                    <div class="c-text order-details-value"> <% item.age_of_stain %> </div>
+                                                </div>
+                                               
+                                                <div class="col-md-6 col-xs-6 mb-10">
+                                                    <div class="order-details-key">Cost</div> 
+                                                    <div class="c-text order-details-value"> <% item.section_net_cost %> </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="position: relative;" class="col-md-6">
+                                        
+                                        <div v-for="(keynote, index) in item.keynotes" :key="keynote.keynote_id" class="col-md-4 ml-0 "><div style="background: #edf1f5 !important;" class="clean-section-card av-font"><p class="av-font"> <% keynote.sub_area %> <span class="c-text2 av-font"><% keynote.quantity %></span></p></div></div>
+                                        
+    
+                                    </div>
+                                </div>
+                               
+                              
+                            </div>
+                            <div class="row mt-20" v-if="cleaningsections != null & cleaningsections.length != 0 " >
+                                <div class="col-md-2">
+                                    <div class="tk-common-text2">
+                                        Number of cleaners
+                                    </div>
+                                    <div class="tk-common-text2">
+                                        6
+                                    </div>
+                                    <div class="inv-input-container h-30"> 
+                                        <input type="number" v-model="noofcleaners" readonly hidden  class="w-p-100 inv-in" >
+                                      </div>
+                                      <p v-if="incheck" class="av-font red-text">Please Input Number of cleaners</p>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="tk-common-text2">
+                                        Duration
+                                    </div>
+                                    <div class="tk-common-text2">
+                                        6
+                                    </div>
+                                    
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="tk-common-text2">
+                                        &nbsp;
+                                    </div>
+                                    <button data-toggle="modal" data-target="#selectsoltmodel"  id="id_modal_btn"  hidden class="ml-5 tk-sub" ><i class="fa fa-calendar-o mr-5" aria-hidden="true"></i> Select Slot</button>
+                                    <button @click="openSoltModal"  class="ml-5 tk-sub" ><i class="fa fa-calendar-o mr-5" aria-hidden="true"></i> Select Slot</button>
+                                </div>
+                            </div>
+                            <div class="row mt-20" v-if="soltselected">
+                                <div class="col-md-2">
+                                    <div class="tk-common-text2">
+                                        Tentative Time
+                                    </div>
+                                    <div class="inv-input-container h-30"> 
+                                        <input type="text" v-model="tenttime" readonly  class="w-p-100 inv-in" >
+                                      </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="tk-common-text2">
+                                        Tentative Date
+                                    </div>
+                                    <div class="inv-input-container h-30"> 
+                                        <input type="text" v-model="tentdate" readonly  class="w-p-100 inv-in" >
+                                      </div>
+                                </div>
+                                
+                            </div>
+                            <div class="row mt-20" >
+                                <div class="col-md-2">
+                                    <div class="tk-common-text2">
+                                        Total Cost
+                                    </div>
+                                    <div class="inv-input-container h-30"> 
+                                        <input type="number" v-model="totalAmount"  readonly  class="w-p-100 inv-in" >
+                                      </div>
+                                </div>
+                                
+                                
+                            </div>
+                        </div>
+                        <div class="row mt-30" >
+                            <div class="d-flex" style="align-items: center;
+                            justify-content: center;">
+                                <button class="tk-can" type="button" onclick="window.location.href = '../../dashboard'"> Cancel</button>
+                                <button class="ml-5 tk-sub" >Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+
+
+
+            </div>
+            <div class="modal fade" id="selectsoltmodel" role="dialog">
+                <div style="border: none !important;" class="modal-dialog cancel-model cancel-order-border " role="document">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12 mt-20">
+              
+                                
+                                <div class="d-flex ">
+                                    <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Choose Cleaning Slots</p></div>
+                                    <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+              
+                                        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                                    </button>
+              
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-20">
+                         <div class="col-md-4">
+                            <v-date-picker is-expanded :min-date='new Date()'  v-model='selectedDate' />
+                         </div>
+                         <div class="col-md-8" v-if="avSolt == null">
+                            <div class="mt-5 tk-common-text2">
+                                loading...
+                            </div>
+                         </div>
+                         <div class="col-md-8" v-if="avSolt != null">
+                            <div class="mt-5 tk-common-text2">
+                                Select  Slots
+                            </div>
+                            
+                            <div class="row mt-10" style="margin:0 !important">
+                                <div class="col-md-4" v-for="(slot,sindex) in time_slots" v-bind:key="sindex">
+                                    <div class="time-slot duration text-center p-2" 
+                                    @click="addSlot(slot.start_time,slot.end_time,(sindex))" v-if="!checkSelected((sindex)) && !disableSolt((sindex)) && checkAvalSolt((sindex))" >
+                                      <% slot.start_time+' - '+ slot.end_time %>
+                                     </div>
+                                     <div @click="removeSelected((sindex))" class="time-slot duration-active text-center p-2" v-if="checkSelected((sindex))" >
+                                        <% slot.start_time+' - '+ slot.end_time %>
+                                      </div>
+                                      <div class="time-slot duration-inactive text-center p-2" v-if="!checkSelected((sindex)) && disableSolt((sindex)) && checkAvalSolt((sindex)) " >
+                                        <% slot.start_time+' - '+ slot.end_time %>
+                                      </div>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="row mt-30" >
+                            <div class="d-flex" style="align-items: center;
+                            justify-content: center;">
+                                <button class="tk-can" type="button" data-dismiss="modal" @click="clearsoltSelection"> Cancel</button>
+                                <button class="tk-can" type="button" data-dismiss="modal" hidden id="id_model_close"> Cancel</button>
+
+                                <button class="ml-5 tk-sub"  @click="confirmSolt" >Proceed</button>
+                                
+
+                            </div>
+                        </div>
+                        <br>
+                       
+                    </div>
+                </div>
+              </div>
+           
+
+
+            <button hidden id="id_cl" data-toggle="modal" data-target="#deleteModel2"  style="margin-top: 9px; color: #3968c6;"><i data-toggle="tooltip" title="Help" class="fa fa-question-circle fa-lg" aria-hidden="true"></i></button>
+            <div class="modal fade" id="deleteModel2" role="dialog">
+                <div style="border: none !important;" class="modal-dialog cancel-model cancel-order-border " role="document">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12 mt-20">
+              
+                                
+                                <div class="d-flex ">
+                                    <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Cleaners</p></div>
+                                    <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+              
+                                        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                                    </button>
+              
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-20" id="id_modal_img_section">
+                          
+                       
+                          
+
+                        </div>
+                        <div class="row mt-10"></div>
+                       
+                    </div>
+                </div>
+              </div>
+        </section>
+        
+        
+
+</div>
+{% endblock %}
+{% block javascript %}
+
+<script src="{% static '/files/externalfiles/plugins/OwlCarousel2/dist/owl.carousel.js'%}"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/browser-image-compression@1.0.13/dist/browser-image-compression.js"></script>
+<script src="https://unpkg.com/vue-multiselect@2.1.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src='https://unpkg.com/v-calendar'></script>
+
+<script src="{% static 'files/js/investigation.js' %}"></script>
+<script>
+    $(document).ready(function(){
+       loadvisitdata(1714)
+       
+       })
+   async function loadvisitdata(visit_id){
+       
+       axios.get(url+'/api/visit-details/'+visit_id)
+                   .then(function (response) {
+                       console.log(response,'vist data')
+                       app.cleaningsections = response.data.sections
+                       app.service_type = response.data.servicetype
+                       app.visitid = '1',
+                       app.noofcleaners = 2
+                   })
+   
+   }
+   var cllist = []
+   {% for team in investigation_details.order_schedule.cleaning_teams %}
+        {% for team_member in team.cleaning_team_members %}
+
+        console.log('{{team_member.member.name}}')
+        cllist.push({
+            name:'{{team_member.member.name}}',
+            img:'{{team_member.member.profile_image.url}}',
+
+        })
+        {% endfor %}
+    {% endfor %}
+
+    console.log(cllist)
+
+    $(cllist).each(function(key,value){
+                        if (key == 0){
+                            $('#visit_team_members').append('<img onclick="openImgModal()" src="'+value.img+'" class="tk-img-circle">')
+                        }else{
+                            $('#visit_team_members').append('<img onclick="openImgModal()" src="'+value.name+'" class="tk-img-circle" style="margin-left: -20px;">')
+                        }
+                        if(key==3){
+                            return false
+                        }
+
+                    })
+                    $(cllist).each(function(key,value){
+                            $('#id_modal_img_section').append('<div class="col-md-4 mb-10"><div class="d-flex"><img src="'+value.img+'" class="tk-img-circle"> <div  class="tk-common-text2 ml-5 mt-10">'+value.name+'</div></div></div>')
+
+                    })
+                    $('#visit_team_members').append('<div onclick="openImgModal()" style="margin-bottom: 0px;"  class="tk-common-text2 ml-5 mt-10  pointer">'+cllist.length+' cleaners</div>')
+
+   function openImgModal(){
+    $('#id_cl').click()
+}
+   </script>
+
+{% endblock %}

@@ -322,20 +322,49 @@ function cancelCleaningDate(service){
 //load cleaning team data
 function load_cleaning_team(visitcount,scheduleid,bookid){
   var visitcount = app.getCount(visitcount);
-
+ app.selected_team=[]
+ app.filtered_teams=[]
+ app.temp_selected_item=[]
   axios.get(url+'/api/cleaning-team-data/',{ params: { 'visit_count':visitcount, 'schedule_id': scheduleid } })
               .then(function (response) {
                  
                   if (response.data.success == true){  
                       $('#visit_count_'+bookid).text(response.data.visit_count);
-
+                      app.cleaning_team_api=true
+                      app.team_cleaning_start=response.data.cleaning_start_at
+                      app.team_cleaning_end=response.data.cleaning_end_at
+                      app.team_cleaning_hr=response.data.cleaning_hours
+                      app.team_cleaning_id=response.data.team_id
+                      app.current_backups=response.data.backup_members
                       if (response.data.cleaning_status == 'CLEANING_TEAM_ASSIGNED'){   
                           $('#check_in_out_'+bookid).hide();
                           $('#team_edit_url_'+bookid).attr('hidden',false);
                           $('#team_edit_url_'+bookid).attr('href','/common/editcleaning/team/'+scheduleid+'');
                           $('#status_dot'+bookid).html('<div class="status-dot assigned-chip-bg"></div><div>Team Assigned</div>');
                           console.log($('.team_edit_url2').attr('hidden'),$('.team_edit_url2').attr('href'),"attr")
-                      }
+                          
+                          //backup
+                          if(response.data.backup_start_at)
+                          {
+                            $('#id_backup_startat_'+bookid).text(response.data.backup_start_at);
+                            $('#id_backupadd_'+bookid).hide();
+                          }
+                          else
+                          {
+                            $('#id_backup_startat_'+bookid).text('');
+                            $('#id_backupadd_'+bookid).show();
+                          }
+
+                          if(response.data.backup_end_at)
+                          {
+                            $('#id_backup_endat_'+bookid).text(response.data.backup_end_at);
+                          }
+                          else
+                          {
+                            $('#id_backup_endat_'+bookid).text('');
+                          }
+
+                        }
                       else if(response.data.cleaning_status == 'CLEANING_IN_PROGRESS'){
                           $('#check_in_out_'+bookid).show();
                           $('#checkout_'+bookid).hide();
@@ -344,7 +373,52 @@ function load_cleaning_team(visitcount,scheduleid,bookid){
                           $('#id_check_in_notes'+bookid).text(response.data.checkin_notes);
                           $('#team_edit_url_'+bookid).attr('hidden',true);
                           $('#status_dot'+bookid).html('<div class="status-dot inprogress-chip-bg"></div><div>In Progress</div>');
-                      }
+
+                          $('#id_backup_startat_'+bookid).text();
+                          $('#id_backup_endat_'+bookid).text();
+                          $('#id_backup_checkin_'+bookid).text();
+                          $('#id_backup_checkout_'+bookid).text();
+
+                          //backup
+                          if(response.data.backup_start_at)
+                          {
+                            $('#id_backup_startat_'+bookid).text(response.data.backup_start_at);
+                            $('#id_backupadd_'+bookid).hide();
+                          }
+                          else
+                          {
+                            $('#id_backup_startat_'+bookid).text('');
+                            $('#id_backupadd_'+bookid).show();
+                          }
+
+                          if(response.data.backup_end_at)
+                          {
+                            $('#id_backup_endat_'+bookid).text(response.data.backup_end_at);
+                          }
+                          else
+                          {
+                            $('#id_backup_endat_'+bookid).text('');
+                          }
+
+                          if(response.data.backup_check_in)
+                          {
+                            $('#id_backup_checkin_'+bookid).text(response.data.backup_check_in);
+                          }
+                          else
+                          {
+                            $('#id_backup_checkin_'+bookid).text('');
+                          }
+
+                          if(response.data.backup_check_out)
+                          {
+                            $('#id_backup_checkout_'+bookid).text(response.data.backup_check_out);
+                          }
+                          else
+                          {
+                            $('#id_backup_checkout_'+bookid).text('');
+                          }
+
+                        }
                       else if(response.data.cleaning_status == 'CLEANING_FULFILLED'){
                         $('#check_in_out_'+bookid).show();
                         $('#checkout_'+bookid).show();
@@ -355,20 +429,66 @@ function load_cleaning_team(visitcount,scheduleid,bookid){
                         $('#id_check_out_notes'+bookid).text(response.data.checkout_notes);
                         $('#team_edit_url_'+bookid).attr('hidden',true);
                         $('#status_dot'+bookid).html('<div class="status-dot completed-chip-bg"></div><div>Completed</div>');
+                      
+                        //backup
+                        if(response.data.backup_start_at)
+                        {
+                          $('#id_backup_startat_'+bookid).text(response.data.backup_start_at);
+                          $('#id_backupadd_'+bookid).hide();
+                        }
+                        else
+                        {
+                          $('#id_backup_startat_'+bookid).text('');
+                          $('#id_backupadd_'+bookid).show();
+                        }
+
+                        if(response.data.backup_end_at)
+                        {
+                          $('#id_backup_endat_'+bookid).text(response.data.backup_end_at);
+                        }
+                        else
+                        {
+                          $('#id_backup_endat_'+bookid).text('');
+                        }
+
+                        if(response.data.backup_check_in)
+                        {
+                          $('#id_backup_checkin_'+bookid).text(response.data.backup_check_in);
+                        }
+                        else
+                        {
+                          $('#id_backup_checkin_'+bookid).text('');
+                        }
+
+                        if(response.data.backup_check_out)
+                        {
+                          $('#id_backup_checkout_'+bookid).text(response.data.backup_check_out);
+                        }
+                        else
+                        {
+                          $('#id_backup_checkout_'+bookid).text('');
+                        }
                       }
                       else{
-                        alert(response.data.start_at,"noooooooooooo")
                         $('#check_in_out_'+bookid).hide();
                       }
                       
+                      //team members
                       $('#id_team_members_div_'+bookid).empty();
 
                       $('#id_team_members_div_'+bookid).append('<div class="col-md-3 m-mt20 .c-mb-10 mr-0 ml-0"> <div class="row"> <div class="col-xs-4 pr-0"> <img class="clean-team-profile-pic" src="'+response.data.team_leader_image+'"> </div> <div class="col-xs-8"> <div class="order-agent-content text-left"> <h2>'+response.data.team_leader+'</h2> <h6>Cleaning Agent</h6> </div></div></div></div>');
 
                       $.each(response.data.members,function(key,value){
-                          console.log(value,"valk")
                           $('#id_team_members_div_'+bookid).append('<div class="col-md-3 m-mt20 .c-mb-10 mr-0 ml-0"> <div class="row"> <div class="col-xs-4 pr-0"> <img class="clean-team-profile-pic" src="'+value.member_image+'"> </div> <div class="col-xs-8"> <div class="order-agent-content text-left"> <h2>'+value.member_name+'</h2> <h6>Team Member</h6> </div></div></div></div>');
                       })
+
+                      //backup members
+                      $('#id_team_backupmembers_div_'+bookid).empty();
+
+                      $.each(response.data.backup_members,function(key,value){
+                          $('#id_team_backupmembers_div_'+bookid).append('<div class="col-md-3 m-mt20 .c-mb-10 mr-0 ml-0"> <div class="row"> <div class="col-xs-4 pr-0"> <img class="clean-team-profile-pic" src="'+value.member_image+'"> </div> <div class="col-xs-8"> <div class="order-agent-content text-left"> <h2>'+value.member_name+'</h2> <h6>Team Member</h6> </div></div></div></div>');
+                      })
+
 
                       $('#id_assigned_by_'+bookid).text(response.data.assigned_by);
                       $('#id_assigned_by_img'+bookid).attr("src",response.data.assigned_by_image);
@@ -723,12 +843,224 @@ const app = new Vue({
           imageForm:new FormData(),
           break_act:false,
           two_counter:0,
+          team:[],
+          
+          team_search:'',
+          team_options:false,
+          team_cleaning_start:'',
+          team_cleaning_end:'',
+          team_cleaning_hr:'',
+          cleaning_team_api:false,
+          date_options:[],
+          time_options:[],
+          selected_team:[],
+          temp_selected_item:[],
+          team_cleaning_id:'',
+          backup_team_data:{
+            cleaning_date_start:'',
+            cleaning_time_start:'',
+            cleaning_time_end:'',
+            cleaning_date_end:'',
+            service_types:[]
+          },
+          filtered_teams:[],
+          current_backups:[]
          // url:'http://localhost:8000'
       // url:'https://test.bleach-kw.com'
             //url:'http://127.0.0.1:8000'
   },
   methods:{
+    
+    getTeamMembers(){
+      axios.post(this.url+'/customer/availablecleaners/',{
+        cleaning_datetime_start:this.backup_team_data.cleaning_date_start+' '+this.backup_team_data.cleaning_time_start,
+        cleaning_datetime_end:this.backup_team_data.cleaning_date_end+' '+this.backup_team_data.cleaning_time_end,
+        service_types:['General Cleaning']
 
+      }).then(response=>{
+        this.team=response.data.available_cleaners
+        this.filtered_teams=[...this.team]
+      }).catch(err=>{
+
+      })
+    },
+    searchTeam(){
+      var filtered=[]
+      if(!this.team_search){
+        this.filtered_teams=this.team
+      }
+      for(var i=0;i<this.team.length;i++){
+        var search=this.team_search.toUpperCase()
+        var teamname=this.team[i].name.toUpperCase()
+        if(teamname.startsWith(search)){
+          filtered.push(this.team[i])
+        }
+      }
+      this.filtered_teams=[ ...filtered ]
+    },  
+    selectTeam(){
+    this.selected_team=[ ...this.temp_selected_item ]
+    this.team_options=false
+    this.team_search=''
+    this.filtered_teams=[ ...this.team ]
+    },
+    addTeamMembers(){
+      var backup_cleaners=[]
+      for(var i=0;i<this.selected_team.length;i++){
+        backup_cleaners.push(this.selected_team[i].id)
+      }
+      axios.post(this.url+'/customer/editorder/'+this.orderId,{
+        action_type:'add_backupteam',
+        backup_start_at:this.backup_team_data.cleaning_date_start+' '+this.backup_team_data.cleaning_time_start,
+        backup_end_at:this.backup_team_data.cleaning_date_end+' '+this.backup_team_data.cleaning_time_end,
+        backup_cleaners :backup_cleaners,
+        team_id:this.team_cleaning_id
+
+      }).then(response=>{
+        $('#close_backup').click()
+        location.reload()
+      })
+    },
+    removeTeam(index){
+      this.selected_team.splice(index,1)
+      this.temp_selected_item.splice(index,1)
+    },
+    getStartDates(){
+      var start_dates=[]
+      for(var i=0;i<this.date_options.length;i++){
+          start_dates.push(this.date_options[i].date)
+      }
+      return start_dates
+    },
+    getEndDates(){
+      var end_dates=[]
+      for(var i=0;i<this.date_options.length;i++){
+        if(moment(this.backup_team_data.cleaning_date_start,'DD-MM-YYYY').isSameOrBefore(moment(this.date_options[i].date,'DD-MM-YYYY')))
+        end_dates.push(this.date_options[i].date)
+    }
+    return end_dates
+    },
+    getStartTime(){
+      var start_time=[]
+      for(var i=0;i<this.date_options.length;i++){
+        if(this.date_options[i].date==this.backup_team_data.cleaning_date_start){
+          // for(var j=0;j<this.date_options[i].length;j++){
+          //   this.backup_team_data.cleaning_date_start
+          // }
+          return this.date_options[i].time
+        }
+         
+      }
+      
+    },
+    getEndTime(){
+      var end_time=[]
+      for(var i=0;i<this.date_options.length;i++){
+        if(this.date_options[i].date==this.backup_team_data.cleaning_date_end){
+           for(var j=0;j<this.date_options[i].time.length;j++){
+             if(moment(this.date_options[i].time[j],'hh:mm a').isAfter(moment(this.backup_team_data.cleaning_time_start,'hh:mm a'))){
+               end_time.push(this.date_options[i].time[j])
+             }
+            
+           }
+           var added_time=moment(this.date_options[i].time[this.date_options[i].time.length-1],'hh:mm a').add(2,'hours').format('hh:mm a')
+           end_time.push(added_time)
+          
+        }
+         
+      }
+     
+      return end_time
+    },
+ addBackupTeam(team_id,id,start,end,duration){
+    console.log("start:"+start+"end:"+end+"duartion:"+duration+"team id is "+team_id)
+   if(!this.cleaning_team_api){
+     this.team_cleaning_id=team_id
+    this.team_cleaning_start=start
+    this.team_cleaning_end=end
+    this.team_cleaning_hr=duration
+   }
+   this.backup_team_data.cleaning_date_start=moment(this.team_cleaning_start,'DD-MM-YYYY hh:mm a').format('DD-MM-YYYY')
+   this.backup_team_data.cleaning_time_start=moment(this.team_cleaning_start,'DD-MM-YYYY hh:mm a').format('hh:mm a')
+   this.backup_team_data.cleaning_date_end=moment(this.team_cleaning_end,'DD-MM-YYYY hh:mm a').format('DD-MM-YYYY')
+   this.backup_team_data.cleaning_time_end=moment(this.team_cleaning_end,'DD-MM-YYYY hh:mm a').format('hh:mm a')
+   this.date_options=[]
+  var start_date=moment(this.team_cleaning_start,'DD-MM-YYYY hh:mm a')
+  var end_date=moment(this.team_cleaning_end,'DD-MM-YYYY hh:mm a')
+  var count=0
+  console.log("start:"+start_date+"end:"+end_date+"duartion:"+duration+"id is "+id)
+   while(moment(this.team_cleaning_start,'DD-MM-YYYY hh:mm a').isSameOrBefore(moment(this.team_cleaning_end,'DD-MM-YYYY hh:mm a')) && count<parseInt(this.team_cleaning_hr))
+   {
+     var found=false
+     for(var i=0;i<this.date_options.length;i++){
+       if(this.date_options[i].date==moment(this.team_cleaning_start,'DD-MM-YYYY hh:mm a').format('DD-MM-YYYY')){
+          found=true
+          this.date_options[i].time.push(moment(this.team_cleaning_start,'DD-MM-YYYY hh:mm a').format('hh:mm a'))
+          break
+       }
+     }
+     if(!found)
+     {
+     this.date_options.push(
+      {
+        date:moment(this.team_cleaning_start,'DD-MM-YYYY hh:mm a').format('DD-MM-YYYY'),
+        time:[moment(this.team_cleaning_start,'DD-MM-YYYY hh:mm a').format('hh:mm a')]
+      }) 
+     
+     }
+     this.team_cleaning_start= moment(this.team_cleaning_start,'DD-MM-YYYY hh:mm a').add(2,'hours').format('DD-MM-YYYY hh:mm a')
+     count=count+2
+
+   }
+   console.log("date options"+this.date_options)
+  this.getTeamMembers()
+  $('#backupTeamBtn').click()
+ },
+ editBackupTeam(team_id,id,start,end,duration){
+  this.selected_team=[ ...this.current_backups ]
+  this.temp_selected_item=[ ...this.current_backups ]
+  if(!this.cleaning_team_api){
+    this.team_cleaning_id=team_id
+   this.team_cleaning_start=start
+   this.team_cleaning_end=end
+   this.team_cleaning_hr=duration
+  }
+  this.backup_team_data.cleaning_date_start=moment(this.team_cleaning_start,'DD-MM-YYYY hh:mm a').format('DD-MM-YYYY')
+  this.backup_team_data.cleaning_time_start=moment(this.team_cleaning_start,'DD-MM-YYYY hh:mm a').format('hh:mm a')
+  this.backup_team_data.cleaning_date_end=moment(this.team_cleaning_end,'DD-MM-YYYY hh:mm a').format('DD-MM-YYYY')
+  this.backup_team_data.cleaning_time_end=moment(this.team_cleaning_end,'DD-MM-YYYY hh:mm a').format('hh:mm a')
+  this.date_options=[]
+ var start_date=moment(this.team_cleaning_start,'DD-MM-YYYY hh:mm a')
+ var end_date=moment(this.team_cleaning_end,'DD-MM-YYYY hh:mm a')
+ var count=0
+ console.log("start:"+start_date+"end:"+end_date+"duartion:"+duration+"id is "+id)
+  while(moment(this.team_cleaning_start,'DD-MM-YYYY hh:mm a').isSameOrBefore(moment(this.team_cleaning_end,'DD-MM-YYYY hh:mm a')) && count<parseInt(this.team_cleaning_hr))
+  {
+    var found=false
+    for(var i=0;i<this.date_options.length;i++){
+      if(this.date_options[i].date==moment(this.team_cleaning_start,'DD-MM-YYYY hh:mm a').format('DD-MM-YYYY')){
+         found=true
+         this.date_options[i].time.push(moment(this.team_cleaning_start,'DD-MM-YYYY hh:mm a').format('hh:mm a'))
+         break
+      }
+    }
+    if(!found)
+    {
+    this.date_options.push(
+     {
+       date:moment(this.team_cleaning_start,'DD-MM-YYYY hh:mm a').format('DD-MM-YYYY'),
+       time:[moment(this.team_cleaning_start,'DD-MM-YYYY hh:mm a').format('hh:mm a')]
+     }) 
+    
+    }
+    this.team_cleaning_start= moment(this.team_cleaning_start,'DD-MM-YYYY hh:mm a').add(2,'hours').format('DD-MM-YYYY hh:mm a')
+    count=count+2
+
+  }
+  console.log("date options"+this.date_options)
+ this.getTeamMembers()
+  $('#editBackupTeamBtn').click()
+},
     getCount(sch_id){
      
      $('#'+sch_id+'-count').html($("#"+sch_id).index()+1)

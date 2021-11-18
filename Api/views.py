@@ -39,6 +39,8 @@ from rest_framework import status
 from rest_framework.authentication import TokenAuthentication 
 from rest_framework.authtoken.models import Token
 
+from agent.serializers import UserProfileShowSerializer
+
 
 # Create your views here.
 class ApiCheckSlote(APIView):
@@ -1686,7 +1688,7 @@ class PaymentPolicyEditAPI(APIView):
 		return Response(response_dict,HTTP_200_OK)
 
 class CleaningTeamAPI(APIView):
-	permission_classes  	=   (AllowAny,)
+	permission_classes  	= (AllowAny,)
 	authentication_classes  = ()
 
 	def get(self,request):
@@ -1697,16 +1699,23 @@ class CleaningTeamAPI(APIView):
 		cleaningteam = CleaningTeam.objects.filter(is_active=True,order_scheduler__id=int(schedule_id)).prefetch_related(Prefetch('media_cleaningteam',queryset=CleaningTeamMedia.objects.filter(is_active=True),to_attr='cleaning_team_medias'),Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True),to_attr='cleaning_team_members')).first()
 
 		if cleaningteam:
+			cleaning_start_at = (cleaningteam.order_scheduler.start_at+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
+			cleaning_end_at   = (cleaningteam.order_scheduler.end_at+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
+			cleaning_hours    =  cleaningteam.order_scheduler.cleaning_hours
 
-			team_members_list = []
+			team_members_list   = []
+			backup_members_list = []
 			for team_member in cleaningteam.cleaning_team_members:
-				if cleaningteam.team_leader.id != team_member.member.id :
+				if cleaningteam.team_leader.id != team_member.member.id and not team_member.is_backup_cleaner:
 					try:
 						image_url = team_member.member.profile_image.url
 					except:
 						image_url = None
 					
 					team_members_list.append({"member_name":team_member.member.name,"member_image":image_url})
+				
+				elif cleaningteam.team_leader.id != team_member.member.id and team_member.is_backup_cleaner:					
+					backup_members_list.append(UserProfileShowSerializer(instance=team_member.member).data)
 
 			before_cleaning_media_list = []
 			after_cleaning_media_list = []
@@ -1743,6 +1752,32 @@ class CleaningTeamAPI(APIView):
 			else:
 				check_out_notes = 'No Notes'
 
+			#backup
+			if cleaningteam.backup_start_at:
+				backup_start_at          = (cleaningteam.backup_start_at+timedelta(hours=3)).time().strftime("%I:%M %p")
+				backup_datetime_start_at = (cleaningteam.backup_start_at+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
+			else:
+				backup_start_at          = None
+				backup_datetime_start_at = None
+			
+			if cleaningteam.backup_end_at:
+				backup_end_at            = (cleaningteam.backup_end_at+timedelta(hours=3)).time().strftime("%I:%M %p")
+				backup_datetime_end_at   = (cleaningteam.backup_end_at+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
+			else:
+				backup_end_at            = None
+				backup_datetime_end_at   = None
+
+			if cleaningteam.backup_check_in:
+				backup_check_in = (cleaningteam.backup_check_in+timedelta(hours=3)).time().strftime("%I:%M %p")
+			else:
+				backup_check_in = None
+
+			if cleaningteam.backup_check_out:
+				backup_check_out = (cleaningteam.backup_check_out+timedelta(hours=3)).time().strftime("%I:%M %p")
+			else:
+				backup_check_out = None 
+			
+
 			cleaning_status = cleaningteam.order_scheduler.work_status
 
 			followup = FollowUp.objects.filter(is_active=True,investigation__order_schedule__id=cleaningteam.order_scheduler.id).last()
@@ -1755,7 +1790,7 @@ class CleaningTeamAPI(APIView):
 			
 			print(cleaning_status,"printest")
 
-			response_dict = {'success':True,"visit_count":visit_count,"schedule_id":schedule_id, "customer_id":customer_id,"followup_id":followup_id,"cleaning_status":cleaning_status,"team_leader":cleaningteam.team_leader.name,"team_leader_image":cleaningteam.team_leader.profile_image.url,"assigned_by":cleaningteam.created_by.name,"assigned_by_image":cleaningteam.created_by.profile_image.url,"assigned_by_usertype":cleaningteam.created_by.user_type,"start_at":check_in_time,"end_at":check_out_time,'members':team_members_list, 'before_cleaning_media':before_cleaning_media_list, 'after_cleaning_media':after_cleaning_media_list,'checkin_notes':check_in_notes,'checkout_notes':check_out_notes}
+			response_dict = {'success':True,"team_id":cleaningteam.id,"visit_count":visit_count,"schedule_id":schedule_id, "customer_id":customer_id,"followup_id":followup_id,"cleaning_status":cleaning_status,"team_leader":cleaningteam.team_leader.name,"team_leader_image":cleaningteam.team_leader.profile_image.url,"assigned_by":cleaningteam.created_by.name,"assigned_by_image":cleaningteam.created_by.profile_image.url,"assigned_by_usertype":cleaningteam.created_by.user_type,"start_at":check_in_time,"end_at":check_out_time,"cleaning_start_at":cleaning_start_at,"cleaning_end_at":cleaning_end_at,"cleaning_hours":cleaning_hours,'members':team_members_list, 'before_cleaning_media':before_cleaning_media_list, 'after_cleaning_media':after_cleaning_media_list,'checkin_notes':check_in_notes,'checkout_notes':check_out_notes,'backup_start_at':backup_start_at,'backup_end_at':backup_end_at,'backup_check_in':backup_check_in,'backup_check_out':backup_check_out,'backup_datetime_start_at':backup_datetime_start_at,'backup_datetime_end_at':backup_datetime_end_at,'backup_members':backup_members_list}
 
 		else:
 
@@ -1852,15 +1887,17 @@ class CheckInAPI(APIView):
 			cleaning_team_detail.check_in_notes = check_in_notes
 		
 		#confirm team
-		absent_cleaners_list 				= [int(x) for x in request.data.get('absent_list').split(",")]
-		absent_cleaners      				= CleaningTeamMember.objects.filter(is_active=True,id__in=absent_cleaners_list,team__id=team_id)
-		absent_cleaners.delete()
-		print(absent_cleaners_list,"absent_cleaners_list")
-		print(absent_cleaners,"absent_cleaners")
+		absents                             = request.data.get('absent_list')
+		if absents:
+			absent_cleaners_list 				= [int(x) for x in absents.split(",")]
+			absent_cleaners      				= CleaningTeamMember.objects.filter(is_active=True,id__in=absent_cleaners_list,team__id=team_id)
+			absent_cleaners.delete()
 
-		cleaning_team_detail.no_of_cleaners                 = (cleaning_team_detail.no_of_cleaners)-len(absent_cleaners_list)
-		cleaning_team_detail.order_scheduler.no_of_cleaners = (cleaning_team_detail.order_scheduler.no_of_cleaners)-len(absent_cleaners_list)
 
+			cleaning_team_detail.no_of_cleaners                 = (cleaning_team_detail.no_of_cleaners)-len(absent_cleaners_list)
+			cleaning_team_detail.order_scheduler.no_of_cleaners = (cleaning_team_detail.order_scheduler.no_of_cleaners)-len(absent_cleaners_list)
+
+		
 		cleaning_team_detail.save()	
 
 		cleaning_team_detail.order_scheduler.save()
