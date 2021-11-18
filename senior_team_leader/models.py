@@ -39,8 +39,6 @@ class CleaningTeam(models.Model):
 	backup_end_at 			= models.DateTimeField(blank=True,null=True)
 	backup_check_in 		= models.DateTimeField(blank=True,null=True)
 	backup_check_out 	    = models.DateTimeField(blank=True,null=True)
-	backup_check_in_notes   = models.CharField(max_length=1000,blank=True,null=True)
-	backup_check_out_notes  = models.CharField(max_length=1000,blank=True,null=True)
 
 	is_active          = models.BooleanField(null=False,blank=True,default=True)
 	created            = models.DateTimeField(auto_now_add=True)
