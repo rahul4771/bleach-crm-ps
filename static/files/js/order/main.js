@@ -339,7 +339,26 @@ function load_cleaning_team(visitcount,scheduleid,bookid){
                           $('#team_edit_url_'+bookid).attr('href','/common/editcleaning/team/'+scheduleid+'');
                           $('#status_dot'+bookid).html('<div class="status-dot assigned-chip-bg"></div><div>Team Assigned</div>');
                           console.log($('.team_edit_url2').attr('hidden'),$('.team_edit_url2').attr('href'),"attr")
-                      }
+                          
+                          //backup
+                          if(response.data.backup_start_at)
+                          {
+                            $('#id_backup_startat_'+bookid).text(response.data.backup_start_at);
+                          }
+                          else
+                          {
+                            $('#id_backup_startat_'+bookid).text('');
+                          }
+
+                          if(response.data.backup_end_at)
+                          {
+                            $('#id_backup_endat_'+bookid).text(response.data.backup_end_at);
+                          }
+                          else
+                          {
+                            $('#id_backup_endat_'+bookid).text('');
+                          }
+                        }
                       else if(response.data.cleaning_status == 'CLEANING_IN_PROGRESS'){
                           $('#check_in_out_'+bookid).show();
                           $('#checkout_'+bookid).hide();
@@ -348,7 +367,50 @@ function load_cleaning_team(visitcount,scheduleid,bookid){
                           $('#id_check_in_notes'+bookid).text(response.data.checkin_notes);
                           $('#team_edit_url_'+bookid).attr('hidden',true);
                           $('#status_dot'+bookid).html('<div class="status-dot inprogress-chip-bg"></div><div>In Progress</div>');
-                      }
+
+                          $('#id_backup_startat_'+bookid).text();
+                          $('#id_backup_endat_'+bookid).text();
+                          $('#id_backup_checkin_'+bookid).text();
+                          $('#id_backup_checkout_'+bookid).text();
+
+                          //backup
+                          if(response.data.backup_start_at)
+                          {
+                            $('#id_backup_startat_'+bookid).text(response.data.backup_start_at);
+                          }
+                          else
+                          {
+                            $('#id_backup_startat_'+bookid).text('');
+                          }
+
+                          if(response.data.backup_end_at)
+                          {
+                            $('#id_backup_endat_'+bookid).text(response.data.backup_end_at);
+                          }
+                          else
+                          {
+                            $('#id_backup_endat_'+bookid).text('');
+                          }
+
+                          if(response.data.backup_check_in)
+                          {
+                            $('#id_backup_checkin_'+bookid).text(response.data.backup_check_in);
+                          }
+                          else
+                          {
+                            $('#id_backup_checkin_'+bookid).text('');
+                          }
+
+                          if(response.data.backup_check_out)
+                          {
+                            $('#id_backup_checkout_'+bookid).text(response.data.backup_check_out);
+                          }
+                          else
+                          {
+                            $('#id_backup_checkout_'+bookid).text('');
+                          }
+
+                        }
                       else if(response.data.cleaning_status == 'CLEANING_FULFILLED'){
                         $('#check_in_out_'+bookid).show();
                         $('#checkout_'+bookid).show();
@@ -359,20 +421,64 @@ function load_cleaning_team(visitcount,scheduleid,bookid){
                         $('#id_check_out_notes'+bookid).text(response.data.checkout_notes);
                         $('#team_edit_url_'+bookid).attr('hidden',true);
                         $('#status_dot'+bookid).html('<div class="status-dot completed-chip-bg"></div><div>Completed</div>');
+                      
+                        //backup
+                        if(response.data.backup_start_at)
+                        {
+                          $('#id_backup_startat_'+bookid).text(response.data.backup_start_at);
+                        }
+                        else
+                        {
+                          $('#id_backup_startat_'+bookid).text('');
+                        }
+
+                        if(response.data.backup_end_at)
+                        {
+                          $('#id_backup_endat_'+bookid).text(response.data.backup_end_at);
+                        }
+                        else
+                        {
+                          $('#id_backup_endat_'+bookid).text('');
+                        }
+
+                        if(response.data.backup_check_in)
+                        {
+                          $('#id_backup_checkin_'+bookid).text(response.data.backup_check_in);
+                        }
+                        else
+                        {
+                          $('#id_backup_checkin_'+bookid).text('');
+                        }
+
+                        if(response.data.backup_check_out)
+                        {
+                          $('#id_backup_checkout_'+bookid).text(response.data.backup_check_out);
+                        }
+                        else
+                        {
+                          $('#id_backup_checkout_'+bookid).text('');
+                        }
                       }
                       else{
-                        alert(response.data.start_at,"noooooooooooo")
                         $('#check_in_out_'+bookid).hide();
                       }
                       
+                      //team members
                       $('#id_team_members_div_'+bookid).empty();
 
                       $('#id_team_members_div_'+bookid).append('<div class="col-md-3 m-mt20 .c-mb-10 mr-0 ml-0"> <div class="row"> <div class="col-xs-4 pr-0"> <img class="clean-team-profile-pic" src="'+response.data.team_leader_image+'"> </div> <div class="col-xs-8"> <div class="order-agent-content text-left"> <h2>'+response.data.team_leader+'</h2> <h6>Cleaning Agent</h6> </div></div></div></div>');
 
                       $.each(response.data.members,function(key,value){
-                          console.log(value,"valk")
                           $('#id_team_members_div_'+bookid).append('<div class="col-md-3 m-mt20 .c-mb-10 mr-0 ml-0"> <div class="row"> <div class="col-xs-4 pr-0"> <img class="clean-team-profile-pic" src="'+value.member_image+'"> </div> <div class="col-xs-8"> <div class="order-agent-content text-left"> <h2>'+value.member_name+'</h2> <h6>Team Member</h6> </div></div></div></div>');
                       })
+
+                      //backup members
+                      $('#id_team_backupmembers_div_'+bookid).empty();
+
+                      $.each(response.data.backup_members,function(key,value){
+                          $('#id_team_backupmembers_div_'+bookid).append('<div class="col-md-3 m-mt20 .c-mb-10 mr-0 ml-0"> <div class="row"> <div class="col-xs-4 pr-0"> <img class="clean-team-profile-pic" src="'+value.member_image+'"> </div> <div class="col-xs-8"> <div class="order-agent-content text-left"> <h2>'+value.member_name+'</h2> <h6>Team Member</h6> </div></div></div></div>');
+                      })
+
 
                       $('#id_assigned_by_'+bookid).text(response.data.assigned_by);
                       $('#id_assigned_by_img'+bookid).attr("src",response.data.assigned_by_image);

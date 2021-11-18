@@ -2094,6 +2094,7 @@
                                             {% endif %}
                                         {% endfor %}
                                         </div>
+                                                              
                                         <!-- Backup team begins here-->
                                         <div class="order-clean-section-header c-clean-team-header c-mt-10">
                                             <div class="row mt-20">
@@ -2114,9 +2115,10 @@
                                                 </div></a>
                                             </div>
                                         </div>
-                                        <div class="row c-mt-10 id_team_members_div" id="id_team_members_div_{{evaluationbook.id}}">
+                                        <div class="row c-mt-10 id_team_members_div" id="id_team_backupmembers_div_{{evaluationbook.id}}">
                                             
                                             {% for team_member in cleaning_team.cleaning_team_members %}
+                                                {% if team_member.is_backup_cleaner %}
                                                 <div class="col-md-3 m-mt20 .c-mb-10 mr-0 ml-0">
                                                     <div class="row">
                                                         <div class="col-xs-4 pr-0">
@@ -2130,15 +2132,12 @@
                                                         <div class="col-xs-8">
                                                             <div class="order-agent-content text-left">
                                                                 <h2>{{team_member.member.name}}</h2>
-                                                                {% if team_member.member == cleaning_team.team_leader %}
-                                                                <h6>Cleaning Agent</h6>
-                                                                {% else %}
                                                                 <h6>Team Member</h6>
-                                                                {% endif %}
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                {% endif %}
                                             {% endfor %}
                                             </div>
                                             <div class="row mt-20 mb-20">
@@ -2146,28 +2145,30 @@
                                                     <div class="order-details-key">
                                                         Start Time
                                                     </div>
-                                                    <div class="c-text order-details-value"> 12/03/2021 10:00 AM</div>
+                                                    <div class="c-text order-details-value" id="id_backup_startat_{{evaluationbook.id}}"> {{cleaning_team.backup_start_at|date:'h:i A'}}</div>
                                                 </div>
                                                 <div class="col-md-3">
                                                     <div class="order-details-key">
                                                         End Time
                                                     </div>
-                                                    <div class="c-text order-details-value"> 12/03/2021 10:00 AM</div>
+                                                    <div class="c-text order-details-value" id="id_backup_endat_{{evaluationbook.id}}"> {{cleaning_team.backup_end_at|date:'h:i A'}}</div>
                                                 </div>
                                                 <div class="col-md-3">
                                                     <div class="order-details-key">
                                                        Checkin
                                                     </div>
-                                                    <div class="c-text order-details-value"> 12/03/2021 10:00 AM</div>
+                                                    <div class="c-text order-details-value" id="id_backup_checkin_{{evaluationbook.id}}"> {{cleaning_team.backup_check_in|date:'h:i A'}}</div>
                                                 </div>
                                                 <div class="col-md-3">
                                                     <div class="order-details-key">
                                                        Checkout
                                                     </div>
-                                                    <div class="c-text order-details-value"> 12/03/2021 10:00 AM</div>
+                                                    <div class="c-text order-details-value" id="id_backup_checkout_{{evaluationbook.id}}"> {{cleaning_team.backup_check_out|date:'h:i A'}}</div>
                                                 </div>
                                             </div>
                                         <!-- Backup team ends here-->
+
+
                                         <div class="row">
                                             <button class="sent-button mt-10" type="submit" @click="addBackupTeam(`{{evaluationdetail.id}}`,`{{orderschedule.start_at|date:'d-m-Y h:i'}}`,`{{orderschedule.end_at|date:'d-m-Y h:i'}}`,`{{orderschedule.cleaning_hours}}`)">Add Backup Team</button>
                                         </div>
