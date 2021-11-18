@@ -1686,7 +1686,7 @@ class PaymentPolicyEditAPI(APIView):
 		return Response(response_dict,HTTP_200_OK)
 
 class CleaningTeamAPI(APIView):
-	permission_classes  	=   (AllowAny,)
+	permission_classes  	= (AllowAny,)
 	authentication_classes  = ()
 
 	def get(self,request):
@@ -1789,7 +1789,7 @@ class CleaningTeamAPI(APIView):
 			
 			print(cleaning_status,"printest")
 
-			response_dict = {'success':True,"visit_count":visit_count,"schedule_id":schedule_id, "customer_id":customer_id,"followup_id":followup_id,"cleaning_status":cleaning_status,"team_leader":cleaningteam.team_leader.name,"team_leader_image":cleaningteam.team_leader.profile_image.url,"assigned_by":cleaningteam.created_by.name,"assigned_by_image":cleaningteam.created_by.profile_image.url,"assigned_by_usertype":cleaningteam.created_by.user_type,"start_at":check_in_time,"end_at":check_out_time,"cleaning_start_at":cleaning_start_at,"cleaning_end_at":cleaning_end_at,"cleaning_hours":cleaning_hours,'members':team_members_list, 'before_cleaning_media':before_cleaning_media_list, 'after_cleaning_media':after_cleaning_media_list,'checkin_notes':check_in_notes,'checkout_notes':check_out_notes,'backup_start_at':backup_start_at,'backup_end_at':backup_end_at,'backup_check_in':backup_check_in,'backup_check_out':backup_check_out,'backup_members':backup_members_list}
+			response_dict = {'success':True,"team_id":cleaningteam.id,visit_count":visit_count,"schedule_id":schedule_id, "customer_id":customer_id,"followup_id":followup_id,"cleaning_status":cleaning_status,"team_leader":cleaningteam.team_leader.name,"team_leader_image":cleaningteam.team_leader.profile_image.url,"assigned_by":cleaningteam.created_by.name,"assigned_by_image":cleaningteam.created_by.profile_image.url,"assigned_by_usertype":cleaningteam.created_by.user_type,"start_at":check_in_time,"end_at":check_out_time,"cleaning_start_at":cleaning_start_at,"cleaning_end_at":cleaning_end_at,"cleaning_hours":cleaning_hours,'members':team_members_list, 'before_cleaning_media':before_cleaning_media_list, 'after_cleaning_media':after_cleaning_media_list,'checkin_notes':check_in_notes,'checkout_notes':check_out_notes,'backup_start_at':backup_start_at,'backup_end_at':backup_end_at,'backup_check_in':backup_check_in,'backup_check_out':backup_check_out,'backup_members':backup_members_list}
 
 		else:
 
@@ -1886,15 +1886,17 @@ class CheckInAPI(APIView):
 			cleaning_team_detail.check_in_notes = check_in_notes
 		
 		#confirm team
-		absent_cleaners_list 				= [int(x) for x in request.data.get('absent_list').split(",")]
-		absent_cleaners      				= CleaningTeamMember.objects.filter(is_active=True,id__in=absent_cleaners_list,team__id=team_id)
-		absent_cleaners.delete()
-		print(absent_cleaners_list,"absent_cleaners_list")
-		print(absent_cleaners,"absent_cleaners")
+		absents                             = request.data.get('absent_list')
+		if absents:
+			absent_cleaners_list 				= [int(x) for x in absents.split(",")]
+			absent_cleaners      				= CleaningTeamMember.objects.filter(is_active=True,id__in=absent_cleaners_list,team__id=team_id)
+			absent_cleaners.delete()
 
-		cleaning_team_detail.no_of_cleaners                 = (cleaning_team_detail.no_of_cleaners)-len(absent_cleaners_list)
-		cleaning_team_detail.order_scheduler.no_of_cleaners = (cleaning_team_detail.order_scheduler.no_of_cleaners)-len(absent_cleaners_list)
 
+			cleaning_team_detail.no_of_cleaners                 = (cleaning_team_detail.no_of_cleaners)-len(absent_cleaners_list)
+			cleaning_team_detail.order_scheduler.no_of_cleaners = (cleaning_team_detail.order_scheduler.no_of_cleaners)-len(absent_cleaners_list)
+
+		
 		cleaning_team_detail.save()	
 
 		cleaning_team_detail.order_scheduler.save()
