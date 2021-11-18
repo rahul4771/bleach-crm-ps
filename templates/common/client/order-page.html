@@ -327,7 +327,7 @@
                    </div>
                    <div class="col-md-4" >
                        <div class="mt-20">
-                           Start Time
+                           In Time
                        </div>
                        <div class="d-flex mt-10">
                            <div>
@@ -353,7 +353,7 @@
                        </div>
                        <div class="col-md-4" >
                         <div class="mt-20">
-                            End Time
+                            Out Time
                         </div>
                         <div class="d-flex mt-10">
                             <div>
@@ -2094,6 +2094,80 @@
                                             {% endif %}
                                         {% endfor %}
                                         </div>
+                                        <!-- Backup team begins here-->
+                                        <div class="order-clean-section-header c-clean-team-header c-mt-10">
+                                            <div class="row mt-20">
+
+                                                <h3 class="ml-10">Backup Team</h3>
+                                                {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR' or request.user.user_type == 'SALESADMIN' or request.user.user_type == 'ACCOUNTANT' %}
+                                                {% if orderschedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}
+                                                <a href="{% url 'common_items:edit-cleaningteam' orderschedule.id %}" target="_blank">
+                                                <div v-if="edit" class="clean-team-edit">
+                                                    <img src="{% static 'files/icons/edit.png' %}">
+                                                </div></a>
+                                                {% endif %}
+                                                {% endif %}
+
+                                                <a class="team_edit_url" id="team_edit_url_{{evaluationbook.id}}" href="#" target="_blank" hidden>
+                                                <div v-if="edit" class="clean-team-edit">
+                                                    <img src="{% static 'files/icons/edit.png' %}">
+                                                </div></a>
+                                            </div>
+                                        </div>
+                                        <div class="row c-mt-10 id_team_members_div" id="id_team_members_div_{{evaluationbook.id}}">
+                                            
+                                            {% for team_member in cleaning_team.cleaning_team_members %}
+                                                <div class="col-md-3 m-mt20 .c-mb-10 mr-0 ml-0">
+                                                    <div class="row">
+                                                        <div class="col-xs-4 pr-0">
+                                                            {% if team_member.member.profile_image %}
+                                                            <img class="clean-team-profile-pic" src="{{team_member.member.profile_image.url}}">
+                                                            {% else %}
+                                                            <img class="clean-team-profile-pic" src="{% static 'files/icons/profile.png' %}">
+                                                            {% endif %}
+    
+                                                        </div>
+                                                        <div class="col-xs-8">
+                                                            <div class="order-agent-content text-left">
+                                                                <h2>{{team_member.member.name}}</h2>
+                                                                {% if team_member.member == cleaning_team.team_leader %}
+                                                                <h6>Cleaning Agent</h6>
+                                                                {% else %}
+                                                                <h6>Team Member</h6>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                            </div>
+                                            <div class="row mt-20 mb-20">
+                                                <div class="col-md-3">
+                                                    <div class="order-details-key">
+                                                        Start Time
+                                                    </div>
+                                                    <div class="c-text order-details-value"> 12/03/2021 10:00 AM</div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="order-details-key">
+                                                        End Time
+                                                    </div>
+                                                    <div class="c-text order-details-value"> 12/03/2021 10:00 AM</div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="order-details-key">
+                                                       Checkin
+                                                    </div>
+                                                    <div class="c-text order-details-value"> 12/03/2021 10:00 AM</div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="order-details-key">
+                                                       Checkout
+                                                    </div>
+                                                    <div class="c-text order-details-value"> 12/03/2021 10:00 AM</div>
+                                                </div>
+                                            </div>
+                                        <!-- Backup team ends here-->
                                         <div class="row">
                                             <button class="sent-button mt-10" type="submit" @click="addBackupTeam(`{{evaluationdetail.id}}`,`{{orderschedule.start_at|date:'d-m-Y h:i'}}`,`{{orderschedule.end_at|date:'d-m-Y h:i'}}`,`{{orderschedule.cleaning_hours}}`)">Add Backup Team</button>
                                         </div>
