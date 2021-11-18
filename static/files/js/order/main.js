@@ -347,10 +347,12 @@ function load_cleaning_team(visitcount,scheduleid,bookid){
                           if(response.data.backup_start_at)
                           {
                             $('#id_backup_startat_'+bookid).text(response.data.backup_start_at);
+                            $('#id_backupadd_'+bookid).hide();
                           }
                           else
                           {
                             $('#id_backup_startat_'+bookid).text('');
+                            $('#id_backupadd_'+bookid).show();
                           }
 
                           if(response.data.backup_end_at)
@@ -361,6 +363,7 @@ function load_cleaning_team(visitcount,scheduleid,bookid){
                           {
                             $('#id_backup_endat_'+bookid).text('');
                           }
+
                         }
                       else if(response.data.cleaning_status == 'CLEANING_IN_PROGRESS'){
                           $('#check_in_out_'+bookid).show();
@@ -380,10 +383,12 @@ function load_cleaning_team(visitcount,scheduleid,bookid){
                           if(response.data.backup_start_at)
                           {
                             $('#id_backup_startat_'+bookid).text(response.data.backup_start_at);
+                            $('#id_backupadd_'+bookid).hide();
                           }
                           else
                           {
                             $('#id_backup_startat_'+bookid).text('');
+                            $('#id_backupadd_'+bookid).show();
                           }
 
                           if(response.data.backup_end_at)
@@ -429,10 +434,12 @@ function load_cleaning_team(visitcount,scheduleid,bookid){
                         if(response.data.backup_start_at)
                         {
                           $('#id_backup_startat_'+bookid).text(response.data.backup_start_at);
+                          $('#id_backupadd_'+bookid).hide();
                         }
                         else
                         {
                           $('#id_backup_startat_'+bookid).text('');
+                          $('#id_backupadd_'+bookid).show();
                         }
 
                         if(response.data.backup_end_at)
