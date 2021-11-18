@@ -39,6 +39,8 @@ from rest_framework import status
 from rest_framework.authentication import TokenAuthentication 
 from rest_framework.authtoken.models import Token
 
+from agent.serializers import UserProfileShowSerializer
+
 
 # Create your views here.
 class ApiCheckSlote(APIView):
@@ -1712,13 +1714,8 @@ class CleaningTeamAPI(APIView):
 					
 					team_members_list.append({"member_name":team_member.member.name,"member_image":image_url})
 				
-				elif cleaningteam.team_leader.id != team_member.member.id and team_member.is_backup_cleaner:
-					try:
-						image_url = team_member.member.profile_image.url
-					except:
-						image_url = None
-					
-					backup_members_list.append({"member_name":team_member.member.name,"member_image":image_url})
+				elif cleaningteam.team_leader.id != team_member.member.id and team_member.is_backup_cleaner:					
+					backup_members_list.append(UserProfileShowSerializer(instance=team_member.member).data)
 
 			before_cleaning_media_list = []
 			after_cleaning_media_list = []
@@ -1758,14 +1755,14 @@ class CleaningTeamAPI(APIView):
 			#backup
 			if cleaningteam.backup_start_at:
 				backup_start_at          = (cleaningteam.backup_start_at+timedelta(hours=3)).time().strftime("%I:%M %p")
-				backup_datetime_start_at = (cleaningteam.backup_start_at+timedelta(hours=3)).strftime("%D-%M-%Y %I:%M %p")
+				backup_datetime_start_at = (cleaningteam.backup_start_at+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
 			else:
 				backup_start_at          = None
 				backup_datetime_start_at = None
 			
 			if cleaningteam.backup_end_at:
 				backup_end_at            = (cleaningteam.backup_end_at+timedelta(hours=3)).time().strftime("%I:%M %p")
-				backup_datetime_end_at   = (cleaningteam.backup_end_at+timedelta(hours=3)).strftime("%D-%M-%Y %I:%M %p")
+				backup_datetime_end_at   = (cleaningteam.backup_end_at+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
 			else:
 				backup_end_at            = None
 				backup_datetime_end_at   = None
@@ -1793,7 +1790,7 @@ class CleaningTeamAPI(APIView):
 			
 			print(cleaning_status,"printest")
 
-			response_dict = {'success':True,"team_id":cleaningteam.id,"visit_count":visit_count,"schedule_id":schedule_id, "customer_id":customer_id,"followup_id":followup_id,"cleaning_status":cleaning_status,"team_leader":cleaningteam.team_leader.name,"team_leader_image":cleaningteam.team_leader.profile_image.url,"assigned_by":cleaningteam.created_by.name,"assigned_by_image":cleaningteam.created_by.profile_image.url,"assigned_by_usertype":cleaningteam.created_by.user_type,"start_at":check_in_time,"end_at":check_out_time,"cleaning_start_at":cleaning_start_at,"cleaning_end_at":cleaning_end_at,"cleaning_hours":cleaning_hours,'members':team_members_list, 'before_cleaning_media':before_cleaning_media_list, 'after_cleaning_media':after_cleaning_media_list,'checkin_notes':check_in_notes,'checkout_notes':check_out_notes,'backup_start_at':backup_start_at,'backup_end_at':backup_end_at,'backup_check_in':backup_check_in,'backup_check_out':backup_check_out,'backup_members':backup_members_list}
+			response_dict = {'success':True,"team_id":cleaningteam.id,"visit_count":visit_count,"schedule_id":schedule_id, "customer_id":customer_id,"followup_id":followup_id,"cleaning_status":cleaning_status,"team_leader":cleaningteam.team_leader.name,"team_leader_image":cleaningteam.team_leader.profile_image.url,"assigned_by":cleaningteam.created_by.name,"assigned_by_image":cleaningteam.created_by.profile_image.url,"assigned_by_usertype":cleaningteam.created_by.user_type,"start_at":check_in_time,"end_at":check_out_time,"cleaning_start_at":cleaning_start_at,"cleaning_end_at":cleaning_end_at,"cleaning_hours":cleaning_hours,'members':team_members_list, 'before_cleaning_media':before_cleaning_media_list, 'after_cleaning_media':after_cleaning_media_list,'checkin_notes':check_in_notes,'checkout_notes':check_out_notes,'backup_start_at':backup_start_at,'backup_end_at':backup_end_at,'backup_check_in':backup_check_in,'backup_check_out':backup_check_out,'backup_datetime_start_at':backup_datetime_start_at,'backup_datetime_end_at':backup_datetime_end_at,'backup_members':backup_members_list}
 
 		else:
 
