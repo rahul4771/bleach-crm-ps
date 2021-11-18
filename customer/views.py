@@ -46,6 +46,7 @@ from rest_framework.status import HTTP_200_OK
 
 from customer.serilizers import UserProfileSerializer,AddressSerializer,AddressSaveSerializer,EvaluationBookSerializer,EvaluationBookSectionSerializer,EvaluationSectionKeynoteSerializer,EvaluationSerializer,OrderSerializer,EvaluationDetailsSerializer,CustomerBookingSerializer,EvaluationSectionAddonSerializer
 from bleachadmin.serializers import ServiceAddOnsSerializer
+from agent.serializers import UserProfileShowSerializer
 
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
