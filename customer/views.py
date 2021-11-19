@@ -6022,7 +6022,7 @@ class EditOrderDetails(APIView):
 				#update
 				backup_cleaners_array = []
 				for backup_cleaner in backup_cleaners:
-					backup_cleaners_array.append(CleaningTeamMember(team=cleaning_team,member=backup_cleaner,start_at=backup_start_at,end_at=backup_end_at,start_time=backup_start_at.time(),end_time=backup_end_at.time(),is_backup_cleaner=True))
+					backup_cleaners_array.append(CleaningTeamMember(team=cleaning_team,member__id=backup_cleaner,start_at=backup_start_at,end_at=backup_end_at,start_time=backup_start_at.time(),end_time=backup_end_at.time(),is_backup_cleaner=True))
 				CleaningTeamMember.objects.bulk_create(backup_cleaners_array)
 
 			response_dict['success'] = True

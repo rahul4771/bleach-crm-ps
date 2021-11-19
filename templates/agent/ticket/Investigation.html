@@ -3,6 +3,8 @@
 {% block content %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'files/css/booking/booking.css' %}">
+<link rel="stylesheet" href="{% static 'files/css/leave/leave-selector.css' %}">
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -479,6 +481,9 @@
                                     </div>
                                     <button data-toggle="modal" data-target="#selectsoltmodel"  id="id_modal_btn"  hidden class="ml-5 tk-sub" ><i class="fa fa-calendar-o mr-5" aria-hidden="true"></i> Select Slot</button>
                                     <button @click="openSoltModal"  class="ml-5 tk-sub" ><i class="fa fa-calendar-o mr-5" aria-hidden="true"></i> Select Slot</button>
+                                    <br>
+                                    <p v-if="isSelectedSolt" class="av-font red-text">Please Select Solt</p>
+
                                 </div>
                             </div>
                             <div class="row mt-20" v-if="soltselected">
@@ -512,12 +517,29 @@
                                 
                                 
                             </div>
+                            <div class="row mt-30">
+                                <div class="col-md-12 tk-common-text2">
+                                    <div class="d-flex">
+                                        <label style="" class="c-container" @click="changeCheckBox()">
+                                            &nbsp; Is verified
+                                            <input type="checkbox">
+                                            <span  style="top:0px !important;" class="c-checkmark"></span>
+                                        </label>
+                                    </div>
+                                    <p v-if="checkVer" class="av-font red-text">Required</p>
+
+                                   
+                                  
+                                </div>
+                            </div>
                         </div>
                         <div class="row mt-30" >
                             <div class="d-flex" style="align-items: center;
                             justify-content: center;">
                                 <button class="tk-can" type="button" onclick="window.location.href = '../../dashboard'"> Cancel</button>
-                                <button class="ml-5 tk-sub" >Submit</button>
+                                <button class="ml-5 tk-sub" v-if="is_agent_checked" @click="checkAgentSub">Submit</button>
+                                <button @click="chechIsver" class="ml-5 tk-sub" style="background-color: #edf1f5; color: #737373;" v-if="!is_agent_checked" >Submit</button>
+
                             </div>
                         </div>
                     </div>
@@ -580,7 +602,7 @@
                                 <button class="tk-can" type="button" data-dismiss="modal" @click="clearsoltSelection"> Cancel</button>
                                 <button class="tk-can" type="button" data-dismiss="modal" hidden id="id_model_close"> Cancel</button>
 
-                                <button class="ml-5 tk-sub"  @click="confirmSolt" >Proceed</button>
+                                <button class="ml-5 tk-sub"  @click="confirmSolt2" >Proceed</button>
                                 
 
                             </div>
@@ -651,8 +673,8 @@
                        console.log(response,'vist data')
                        app.cleaningsections = response.data.sections
                        app.service_type = response.data.servicetype
-                       app.visitid = '1',
-                       app.noofcleaners = 2
+                       app.visitid = {{investigation_details.id}},
+                       app.noofcleaners = {% for followup in investigation_details.followup %}{{followup.no_of_cleaners}}{% endfor %}
                    })
    
    }
