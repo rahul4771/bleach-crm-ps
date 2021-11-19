@@ -79,7 +79,7 @@ class NewRaiseTicket(IsAuthenticated,View):
 		except:
 			orders = None
 
-		investigators = UserProfile.objects.filter(Q(Q(user_type='QUALITYCONTROLL')|Q(user_type='OPERATIONSUPERVISOR')|Q(user_type='SENIORTEAMLEADER')),is_active=True)
+		investigators = UserProfile.objects.filter(is_investigator=True,is_active=True)
 		return render(request,'common/ticket/raiseticket.html',{"orders":orders,"investigators":investigators})
 
 	def post(self,request):
@@ -552,7 +552,7 @@ class TicketDetails(IsAuthenticated,View):
 			governorates = None
 
 		try:
-			investigators = UserProfile.objects.filter(is_active=True,user_type='QUALITYCONTROLL')
+			investigators = UserProfile.objects.filter(is_active=True,is_investigator=True)
 		except:
 			investigators = None
 
@@ -2640,7 +2640,7 @@ class TicketDetailsEdit(IsAuthenticated,View):
 
 		order = Order.objects.filter(id=int(order_id)).prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True,work_status='CLEANING_FULFILLED').select_related('customer_address__area','order_scheduler_book').prefetch_related(Prefetch('investigations_orderschedule',queryset=Investigation.objects.filter(check_out__isnull=True),to_attr='assigned_investigations')),to_attr='orderschedules')).first()
 		ticket = FollowUp.objects.filter(is_active=True,id=int(ticket_id)).first()
-		investigators = UserProfile.objects.filter(Q(Q(user_type='QUALITYCONTROLL')|Q(user_type='OPERATIONSUPERVISOR')|Q(user_type='SENIORTEAMLEADER')),is_active=True)
+		investigators = UserProfile.objects.filter(is_investigator=True,is_active=True)
 		investigationmedias = InvestigationMedia.objects.filter(investigation__id=ticket.investigation.id,taken_status = 'CUSTOMER_SEND',is_active=True)
 		
 		return render(request,"common/ticket/ticket_registration_edit.html",{'order':order,'investigators':investigators,"ticket":ticket,"investigationmedias":investigationmedias})
@@ -4637,5 +4637,5 @@ class OrderTicketRegistration(IsAuthenticated,View):
 class EditTicket(IsAuthenticated,View):
 	def get(self,request,ticket_id):
 		ticket = FollowUp.objects.get(id=int(ticket_id))
-		investigators = UserProfile.objects.filter(Q(Q(user_type='QUALITYCONTROLL')|Q(user_type='TECHNICALSUPERVISOR')|Q(user_type='SENIORTEAMLEADER')),is_active=True)
+		investigators = UserProfile.objects.filter(is_investigator=True,is_active=True)
 		return render(request,'common/ticket/editticket.html',{"ticket_id":ticket_id,"visit_id":ticket.investigation.order_schedule.id,"investigators":investigators})
