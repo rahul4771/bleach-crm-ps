@@ -214,7 +214,7 @@
                 </div>
             </div>
             <hr>
-            <form method="POST" action="">{% csrf_token %}
+            <form method="POST" id="myForm" action="">{% csrf_token %}
             <input type="hidden" name="action" id="attribute_action" value="add_attribute" />
             <input type="hidden" name="attribute_edit_id" id="id_edit_attribute" />
             <div class="row mt-20">
@@ -295,7 +295,7 @@
 
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name required-field">Status</div>
+                    <div class="model-input-name ">Status</div>
 
                    <!-- <select class="minimal" name="status" id="status_attribute" required>
                         <option value="True" selected>Active</option>
@@ -319,7 +319,7 @@
           
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button attribute-form-btn" type="submit" >Add</button>
+            <button class="sent-button attribute-form-btn" type="button" onclick="formvalidation()" >Add</button>
             </form>
                         <button data-dismiss="modal" onclick="closeNavAddAttribute()" class="view-button">Cancel</button>
         </div>
@@ -807,6 +807,50 @@ $(function () {
          }else{
             showNotification('Something went wrong','error')
          }
+    }
+
+    //form validation
+    function itemformvalidation(){
+
+        if ($('#segment_action').val() == 'add_segment'){
+
+            if ($('input[name=segment]').val() == ''){
+                $('input[name=segment]').addClass('red-border-input');
+            }else if ($('input[name=segment_code]').val() == ''){
+                $('input[name=segment_code]').addClass('red-border-input');
+            }else{
+                console.log("lolo")
+                $('#myForm').submit();
+            }
+
+        }else{
+            if ($('input[name=segment]').val() == ''){
+                $('input[name=segment]').addClass('red-border-input');
+            }else{
+                console.log("lolo")
+                $('#myForm').submit();
+            }
+        }
+    }
+
+    function formvalidation(){
+
+        
+
+            if ($('#name_attribute').val() == ''){
+                $('#name_attribute').addClass('red-border-input');
+            }else if ($('input[name=attribute_category]').val() == '' && $('#id_selectText').text() !== 'All'){
+                $('#noble-gases').addClass('red-border-input');
+            }else if ($('input[name=attribute_segment]').val() == '' && $('#id_selectText').text() !== 'All'){
+                $('#noble-gases2').addClass('red-border-input');
+            }else if ($('input[name=attribute_line]').val() == '' && $('#id_selectText').text() !== 'All'){
+                $('#noble-gases3').addClass('red-border-input');
+            }else{
+                console.log("lolo")
+                $('#myForm').submit();
+            }
+
+        
     }
 
     function set_params_go(args)

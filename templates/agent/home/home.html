@@ -73,6 +73,22 @@
 
 <div class="main-content-holder"><!--main-content-holder-->
 
+<div class="white-wrapper"><!--white-wrapper-->
+<h2 class="h2">Open Tickets</h2>
+<table class="main-table">
+<tbody>
+{% for ticket in open_tickets %}
+<tr>
+<td data-label="BLC Number" class="bold-text"><a href="{% url 'common_items:ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}" target="_blank">TKT{{ticket.ticket_no}}</a></td>
+<td class="clickable-row" data-href="{% url 'agent:agent-open-ticket' ticket.investigation.id %}">
+<span class="green-bg">Click to View</span>
+</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div><!--white-wrapper-->
+
 <div class="white-wrapper closetickets"><!--white-wrapper-->
 <h2 class="h2">Case Closing Task</h2>
 <table class="main-table">

@@ -336,7 +336,7 @@
   
         </div>
         <div class="inv-drawer-footer" style="position: relative !important;">
-            <button class="sent-button inventory-form-btn" type="submit" >Submit</button>
+            <button class="sent-button inventory-form-btn" type="button" onclick="formvalidation()" >Submit</button>
             </form>
                         <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
         </div>
@@ -516,6 +516,24 @@ function changeSelect(va){
     }
     function closeNavAddStore() {
         document.getElementById("addStore").style.width = "0";
+    }
+
+
+    //form validation
+    function formvalidation(){
+
+        if ($('input[name=item_name]').val() == ''){
+            $('input[name=item_name]').addClass('red-border-input');
+        }else if ($('input[name=item_category]').val() == ''){
+            $('#noble-gases').addClass('red-border-input');
+        }else if ($('input[name=item_segment]').val() == ''){
+            $('#noble-gases2').addClass('red-border-input');
+        }else if ($('input[name=item_line]').val() == ''){
+            $('#noble-gases3').addClass('red-border-input');
+        }else{
+            console.log("lolo")
+            $('#myForm').submit();
+        }
     }
 
     

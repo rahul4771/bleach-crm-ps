@@ -99,6 +99,7 @@ class UserProfile(AbstractUser):
     bleach_mobile_number = models.CharField(max_length=10,blank=True,null=True)
     user_type 		= models.CharField(max_length=20,blank=True,null=True,choices=USER_TYPE_CHOICES)
     is_team_leader  = models.BooleanField(null=False,blank=True,default=False)
+    is_investigator = models.BooleanField(null=False,blank=True,default=False)
     gender 	  		= models.CharField(max_length=20,blank=True,null=True,choices=GENDER_CHOICES)
     nationality		= CountryField(null=True,blank=True)
     company 		= models.CharField(max_length=100,blank=True,null=True)

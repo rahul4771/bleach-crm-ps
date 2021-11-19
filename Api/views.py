@@ -869,7 +869,7 @@ class TicketEditAPI(APIView):
 		return Response(response_dict,HTTP_200_OK)
 
 class InvestigationFormAPI(APIView):
-	permission_classes  	=   (AllowAny,)
+	permission_classes  	= (AllowAny,)
 	authentication_classes  = ()
 
 	def post(self,request):
@@ -960,7 +960,7 @@ class InvestigationFormAPI(APIView):
 				FollowUpSectionKeynote.objects.bulk_create(keynote_array)
 		
 
-			FollowUpScheduler.objects.create(follow_up=follow_up,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address)
+			# FollowUpScheduler.objects.create(follow_up=follow_up,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address)
 
 			investigation.is_followup_approved = True
 			investigation.save()

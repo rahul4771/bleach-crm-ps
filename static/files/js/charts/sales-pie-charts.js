@@ -268,19 +268,39 @@ function drawcleaningtypeChart() {
         var legItem = [];
         
         for (var i = 0; i < data.getNumberOfRows(); i++) {
+            if (i < 5){
             var label = data.getValue(i, 0);
-            var split_label = label.split(" ")
             var value = data.getValue(i, 1);
             var percent = Number(100 * value / total).toFixed(1);
             if (isNaN(percent)) percent = 0.0; 
-            console.log(percent,"perc")
+            console.log(percent,"percdf")
             // This will create legend list for the display
+            if (percent > 0){
             legItem[i] = document.createElement('div');
             legItem[i].className = 'donut-char-legend';
             legItem[i].id = 'legend_' + data.getValue(i, 0);
-            legItem[i].innerHTML = '<i class="fa fa-square" style="color:'+colors[i]+'"></i> <div class="chart-stat">' + split_label[0] + '</div><span>' + percent + ' %</span>';
+            
+            legItem[i].innerHTML = '<i class="fa fa-square" style="color:'+colors[i]+'"></i> <div class="chart-stat">' + label + '</div><span>' + percent + ' %</span>';
 
             legend.appendChild(legItem[i]);
+            }
+        }
+        }
+
+        var others = 0;
+
+        for (var j = 5; j < data_cleaning.length; j++){
+            console.log(j,"joy")
+            others += data.getValue(j, 1);
+            
+        }
+
+        if (others != 0){
+            console.log(others,"ott")
+            var others_percent = Number(100 * others / total).toFixed(1);
+            if (isNaN(others_percent)) others_percent = 0.0;
+            console.log(others,others_percent,"otp")
+            $('#legend_cleaning').append('<div class="donut-char-legend" ><i class="fa fa-square" style="color:#0099c6"></i> <div class="chart-stat">Others</div><span>' + others_percent + ' %</span></div>')
         }
         $('#cleaning_loader').attr("hidden",true);
         

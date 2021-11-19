@@ -166,7 +166,7 @@
     opacity: 1 !important;
 }
 </style>
-<div class="wrapper" id="app"><!--wrapper-->
+<div class="wrapper" id="app" v-cloak><!--wrapper-->
     {% include "stl/common/header.html" %}    
         <section class="content"><!--content-->
             <div class="container-fluid space topspace"><!--container-fluid space-->
@@ -445,18 +445,48 @@
                                     <div class="tk-common-text2">
                                         Number of cleaners
                                     </div>
-                                    <div class="inv-input-container h-30"> 
+                                    <div class="inv-input-container h-40"> 
                                         <input type="number" v-model="noofcleaners"  class="w-p-100 inv-in" >
                                       </div>
                                       <p v-if="incheck" class="av-font red-text">Please Input Number of cleaners</p>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="tk-common-text2">
+                                        Cleaning Duration
+                                    </div>
+                                    <!-- <div class="inv-input-container h-30"> 
+                                        <select class="w-p-100 inv-in" required>
+                                        <option value="2">2</option>
+                                        <option value="4">4</option>
+                                        <option value="8">8</option>
+                                        <option value="10">10</option>
+                                        </select>
+                                      </div> -->
+                                      <multiselect
+                                      v-model="cleaning_hours"
+                                      placeholder="Select a duration"
+                                      
+                                      :options="durationArray"
+                
+                                      :multiple="false"
+                                      :taggable="false"
+                                      :show-labels="false"
+                                     
+                                      
+                
+                
+                                    ></multiselect>
+                                    <p v-if="incheck2" class="av-font red-text">Please Select Duration</p>
+
+                                      
+                                </div>
+                                {% comment %} <div class="col-md-2">
+                                    <div class="tk-common-text2">
                                         &nbsp;
                                     </div>
                                     <button data-toggle="modal" data-target="#selectsoltmodel"  id="id_modal_btn"  hidden class="ml-5 tk-sub" ><i class="fa fa-calendar-o mr-5" aria-hidden="true"></i> Select Slot</button>
                                     <button @click="openSoltModal"  class="ml-5 tk-sub" ><i class="fa fa-calendar-o mr-5" aria-hidden="true"></i> Select Slot</button>
-                                </div>
+                                </div> {% endcomment %}
                             </div>
                             <div class="row mt-20" v-if="soltselected">
                                 <div class="col-md-2">
@@ -482,7 +512,7 @@
                                     <div class="tk-common-text2">
                                         Total Cost
                                     </div>
-                                    <div class="inv-input-container h-30"> 
+                                    <div class="inv-input-container h-40"> 
                                         <input type="number" v-model="totalAmount"  readonly  class="w-p-100 inv-in" >
                                       </div>
                                 </div>
@@ -494,7 +524,7 @@
                             <div class="d-flex" style="align-items: center;
                             justify-content: center;">
                                 <button class="tk-can" type="button" onclick="window.location.href = '../../dashboard'"> Cancel</button>
-                                <button class="ml-5 tk-sub" @click="submitForm">Submit</button>
+                                <button class="ml-5 tk-sub" @click="checkValidation">Submit</button>
                             </div>
                         </div>
                     </div>
