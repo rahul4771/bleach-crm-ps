@@ -79,6 +79,23 @@ const app = new Vue({
       this.cleaningData.teamcount=teamcount
       this.cleaningData.remainingteamcount=remainingteamcount
     },
+    checkinBackup(team_id){
+      console.log("team id is"+team_id)
+      $('#backup-cleaner-popup-btn').click()
+      this.cleaningData.cleaningteam_id=team_id
+    },
+    checkinBackupTeam(){
+      
+        axios.post(url+'/api/backup-check-in/',{
+          team_id:this.cleaningData.cleaningteam_id,
+          absent_list:this.absent_list
+        }).then(response=>{
+          if(response.data.success){
+            location.reload()
+          }
+
+        })
+    },
     submitform(cleaningteam_id,cleaningtype,cleaningpolicy,teamcount,remainingteamcount){
      
      
