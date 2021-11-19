@@ -554,8 +554,6 @@ let app = new Vue({
             fd.append('is_followup','True');
             fd.append('number_of_cleaners',this.noofcleaners);
             fd.append('total_cost',this.totalAmount);
-            fd.append('tendative_date',this.tentdate);
-            fd.append('tendative_time',this.tenttime);
             fd.append('cleaning_hours',this.cleaning_hours);
             fd.append('sections',tempSections);
 
