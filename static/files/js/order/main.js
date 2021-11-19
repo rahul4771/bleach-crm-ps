@@ -330,12 +330,9 @@ function load_cleaning_team(visitcount,scheduleid,bookid){
                  
                   if (response.data.success == true){  
                       $('#visit_count_'+bookid).text(response.data.visit_count);
-                      app.cleaning_team_api=true
-                      app.team_cleaning_start=response.data.cleaning_start_at
-                      app.team_cleaning_end=response.data.cleaning_end_at
-                      app.team_cleaning_hr=response.data.cleaning_hours
-                      app.team_cleaning_id=response.data.team_id
-                      app.current_backups=response.data.backup_members
+                      app.visit_count=parseInt(response.data.visit_count)
+                      app.team_schedule_id=response.data.schedule_id
+                      
                       if (response.data.cleaning_status == 'CLEANING_TEAM_ASSIGNED'){   
                           $('#check_in_out_'+bookid).hide();
                           $('#team_edit_url_'+bookid).attr('hidden',false);
@@ -864,7 +861,9 @@ const app = new Vue({
             service_types:[]
           },
           filtered_teams:[],
-          current_backups:[]
+          current_backups:[],
+          visit_count:'',
+          team_schedule_id:''
          // url:'http://localhost:8000'
       // url:'https://test.bleach-kw.com'
             //url:'http://127.0.0.1:8000'
@@ -1033,7 +1032,31 @@ const app = new Vue({
   this.getTeamMembers()
   $('#backupTeamBtn').click()
  },
- editBackupTeam(team_id,id,start,end,duration){
+ async loadBackupTeam(visitcount,scheduleid){
+  await axios.get(url+'/api/cleaning-team-data/',{ params: { 'visit_count':visitcount, 'schedule_id': scheduleid } }).then(response=>{
+    this.cleaning_team_api=true
+                      this.team_cleaning_start=response.data.backup_datetime_start_at
+                      this.team_cleaning_end=response.data.backup_datetime_end_at
+                      this.team_cleaning_hr=response.data.cleaning_hours
+                      this.team_cleaning_id=response.data.team_id
+                      this.current_backups=response.data.backup_members
+
+                    
+  }).catch(err=>{
+
+  })
+  return true
+ },
+ async editBackupTeam(order_id,team_id,id,start,end,duration,cleaning_team){
+   console.log("cleaning tem:"+cleaning_team)
+   if(!this.visit_count){
+     this.visit_count=1
+   }
+   if(!this.team_schedule_id){
+     this.team_schedule_id=order_id
+   }
+   var team=await this.loadBackupTeam(this.visit_count,this.team_schedule_id)
+   console.log("current backups is"+this.current_backups)
   this.selected_team=[ ...this.current_backups ]
   this.temp_selected_item=[ ...this.current_backups ]
   if(!this.cleaning_team_api){
