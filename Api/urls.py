@@ -19,6 +19,7 @@ urlpatterns = [
 	url(r'^ticket-edit/$',views.TicketEditAPI.as_view(),name='api-ticket-edit'),
 	url(r'^ticket-submit/$',views.TicketSubmitAPI.as_view(),name='api-ticket-submit'),
 	url(r'^investigation-form/$',views.InvestigationFormAPI.as_view(),name='api-investigation-form'),
+	url(r'^agent-investigation-check/$',views.AgentInvestigationChecckAPI.as_view(),name='api-investigation-check'),
 
 	url(r'^leave-scheduler/$',views.LeaveScheduleAPI.as_view(),name='api-leaveschedule'),
 	url(r'^leave-scheduler/popup/$',views.LeaveSchedulePopupAPI.as_view(),name='api-leaveschedulepopup'),

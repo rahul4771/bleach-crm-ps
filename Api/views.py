@@ -874,7 +874,7 @@ class InvestigationFormAPI(APIView):
 
 	def post(self,request):
 		investigation_id = request.data.get('investigation_id')
-
+		print(investigation_id,"invest")
 		investigation = Investigation.objects.get(id=int(investigation_id))
 		
 		secondary_investigation_notes = request.data.get('notes')
@@ -910,9 +910,9 @@ class InvestigationFormAPI(APIView):
 			no_of_cleaners = request.data.get('number_of_cleaners')
 			cleaning_hours = request.data.get('cleaning_hours')
 			
-			tendative_date = request.data.get('tendative_date')
+			# tendative_date = request.data.get('tendative_date')
 
-			tendative_time = request.data.get('tendative_time')
+			# tendative_time = request.data.get('tendative_time')
 
 			sections = request.data.get('sections')
 			sections = json.loads(sections)
@@ -922,7 +922,7 @@ class InvestigationFormAPI(APIView):
 			# 	section = dict(section)
 			# 	print(section.section_name,"lol")
 
-			print(tendative_date,tendative_time,sections,"secs")
+			print(sections,"secs")
 
 			follow_up = FollowUp.objects.select_related('investigation__order__evaluation__customer').get(investigation_id=investigation_id,is_active=True)
 			follow_up.status         = 'FOLLOWUP_IN_PROGRESS'
@@ -932,8 +932,8 @@ class InvestigationFormAPI(APIView):
 			follow_up.total_cost = total_cost
 			follow_up.save()
 
-			start_date_time = datetime.strptime(tendative_date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
-			end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))
+			# start_date_time = datetime.strptime(tendative_date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
+			# end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))
 
 			# for date in tendative_date:
 			# 	print(date+' '+tendative_time,"tod")
@@ -964,6 +964,47 @@ class InvestigationFormAPI(APIView):
 
 			investigation.is_followup_approved = True
 			investigation.save()
+			
+		response_dict = {'success':True}
+
+		return Response(response_dict,HTTP_200_OK)
+
+class AgentInvestigationChecckAPI(APIView):
+	permission_classes  	= (AllowAny,)
+	authentication_classes  = ()
+
+	def post(self,request):
+		investigation_id = request.data.get('investigation_id')
+
+		investigation = Investigation.objects.get(id=int(investigation_id))
+
+		followup = FollowUp.objects.get(investigation=investigation,is_active=True)
+		followup.status = 'FOLLOWUP_IN_PROGRESS'
+		followup.save()
+
+		print('vaaa')
+		
+		tendative_date = request.data.get('tendative_date')
+
+		tendative_time = request.data.get('tendative_time')
+
+		print(tendative_date,tendative_time,"secs")
+
+		# follow_up = FollowUp.objects.select_related('investigation__order__evaluation__customer').get(investigation_id=investigation_id,is_active=True)
+		# follow_up.status         = 'FOLLOWUP_IN_PROGRESS'
+		# # follow_up.followup_notes = request.POST.get('investigator_notes')
+		# follow_up.no_of_cleaners = no_of_cleaners
+		# follow_up.cleaning_hours = cleaning_hours
+		# follow_up.total_cost = total_cost
+		# follow_up.save()
+
+		start_date_time = datetime.strptime(tendative_date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
+		end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))		
+
+		FollowUpScheduler.objects.create(follow_up=follow_up,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address)
+
+		# investigation.is_followup_approved = True
+		# investigation.save()
 			
 		response_dict = {'success':True}
 
