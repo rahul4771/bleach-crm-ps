@@ -247,7 +247,7 @@
             </div>
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name required-field">Status</div>
+                    <div class="model-input-name">Status</div>
 
                     <!-- <select class="minimal" name="status" id="status_segment" required>
                         <option value="True" selected>Active</option>
@@ -271,7 +271,7 @@
           
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button" type="submit" id="button_segment">Add</button>
+            <button class="sent-button" type="button" onclick="formvalidation()" id="button_segment">Add</button>
             </form>
                         <button data-dismiss="modal" onclick="closeNavAddSegment()" class="view-button">Cancel</button>
         </div>
@@ -318,7 +318,7 @@
             </div>
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name required-field">Status</div>
+                    <div class="model-input-name">Status</div>
 
                     <!-- <select class="minimal" id="line_status_id" name="line_status">
                         <option value="True" selected>Active</option>
@@ -342,7 +342,7 @@
           
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button line-form-btn" type="submit" >Submit</button>
+            <button class="sent-button line-form-btn" type="button" onclick="lineformvalidation()" >Submit</button>
             </form>
                         <button data-dismiss="modal" onclick="closeNavAddLine()" class="view-button">Cancel</button>
         </div>
@@ -603,6 +603,53 @@ $(function () {
             query+='&'+key+'='+params[key].toString();
     query=query.replace('&','?');
     window.location.href=url+query;  
+    }
+
+    //form validation
+    function formvalidation(){
+
+        if ($('#segment_action').val() == 'add_segment'){
+
+            if ($('input[name=segment]').val() == ''){
+                $('input[name=segment]').addClass('red-border-input');
+            }else if ($('input[name=segment_code]').val() == ''){
+                $('input[name=segment_code]').addClass('red-border-input');
+            }else{
+                console.log("lolo")
+                $('#myForm').submit();
+            }
+
+        }else{
+            if ($('input[name=segment]').val() == ''){
+                $('input[name=segment]').addClass('red-border-input');
+            }else{
+                console.log("lolo")
+                $('#myForm').submit();
+            }
+        }
+    }
+
+    function lineformvalidation(){
+
+        if ($('#segment_action_id').val() == 'add_line'){
+
+            if ($('input[name=line_name]').val() == ''){
+                $('input[name=line_name]').addClass('red-border-input');
+            }else if ($('input[name=line_code]').val() == ''){
+                $('input[name=line_code]').addClass('red-border-input');
+            }else{
+                console.log("lolo")
+                $('#myForm2').submit();
+            }
+
+        }else{
+            if ($('input[name=line_name]').val() == ''){
+                $('input[name=line_name]').addClass('red-border-input');
+            }else{
+                console.log("lolo")
+                $('#myForm2').submit();
+            }
+        }
     }
 
     //get lines using api

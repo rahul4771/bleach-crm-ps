@@ -869,12 +869,12 @@ class TicketEditAPI(APIView):
 		return Response(response_dict,HTTP_200_OK)
 
 class InvestigationFormAPI(APIView):
-	permission_classes  	=   (AllowAny,)
+	permission_classes  	= (AllowAny,)
 	authentication_classes  = ()
 
 	def post(self,request):
 		investigation_id = request.data.get('investigation_id')
-
+		print(investigation_id,"invest")
 		investigation = Investigation.objects.get(id=int(investigation_id))
 		
 		secondary_investigation_notes = request.data.get('notes')
@@ -910,9 +910,9 @@ class InvestigationFormAPI(APIView):
 			no_of_cleaners = request.data.get('number_of_cleaners')
 			cleaning_hours = request.data.get('cleaning_hours')
 			
-			tendative_date = request.data.get('tendative_date')
+			# tendative_date = request.data.get('tendative_date')
 
-			tendative_time = request.data.get('tendative_time')
+			# tendative_time = request.data.get('tendative_time')
 
 			sections = request.data.get('sections')
 			sections = json.loads(sections)
@@ -922,7 +922,7 @@ class InvestigationFormAPI(APIView):
 			# 	section = dict(section)
 			# 	print(section.section_name,"lol")
 
-			print(tendative_date,tendative_time,sections,"secs")
+			print(sections,"secs")
 
 			follow_up = FollowUp.objects.select_related('investigation__order__evaluation__customer').get(investigation_id=investigation_id,is_active=True)
 			follow_up.status         = 'FOLLOWUP_IN_PROGRESS'
@@ -932,8 +932,8 @@ class InvestigationFormAPI(APIView):
 			follow_up.total_cost = total_cost
 			follow_up.save()
 
-			start_date_time = datetime.strptime(tendative_date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
-			end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))
+			# start_date_time = datetime.strptime(tendative_date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
+			# end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))
 
 			# for date in tendative_date:
 			# 	print(date+' '+tendative_time,"tod")
@@ -960,10 +960,51 @@ class InvestigationFormAPI(APIView):
 				FollowUpSectionKeynote.objects.bulk_create(keynote_array)
 		
 
-			FollowUpScheduler.objects.create(follow_up=follow_up,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address)
+			# FollowUpScheduler.objects.create(follow_up=follow_up,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address)
 
 			investigation.is_followup_approved = True
 			investigation.save()
+			
+		response_dict = {'success':True}
+
+		return Response(response_dict,HTTP_200_OK)
+
+class AgentInvestigationChecckAPI(APIView):
+	permission_classes  	= (AllowAny,)
+	authentication_classes  = ()
+
+	def post(self,request):
+		investigation_id = request.data.get('investigation_id')
+
+		investigation = Investigation.objects.get(id=int(investigation_id))
+
+		followup = FollowUp.objects.get(investigation=investigation,is_active=True)
+		followup.status = 'FOLLOWUP_IN_PROGRESS'
+		followup.save()
+
+		print('vaaa')
+		
+		tendative_date = request.data.get('tendative_date')
+
+		tendative_time = request.data.get('tendative_time')
+
+		print(tendative_date,tendative_time,"secs")
+
+		# follow_up = FollowUp.objects.select_related('investigation__order__evaluation__customer').get(investigation_id=investigation_id,is_active=True)
+		# follow_up.status         = 'FOLLOWUP_IN_PROGRESS'
+		# # follow_up.followup_notes = request.POST.get('investigator_notes')
+		# follow_up.no_of_cleaners = no_of_cleaners
+		# follow_up.cleaning_hours = cleaning_hours
+		# follow_up.total_cost = total_cost
+		# follow_up.save()
+
+		start_date_time = datetime.strptime(tendative_date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
+		end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))		
+
+		FollowUpScheduler.objects.create(follow_up=follow_up,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address)
+
+		# investigation.is_followup_approved = True
+		# investigation.save()
 			
 		response_dict = {'success':True}
 
@@ -1940,8 +1981,32 @@ class CheckInAPI(APIView):
 		response_dict['cleaning_date'] = cleaning_team_detail.start_at.date().strftime('%d-%m-%Y')
 		return Response(response_dict,HTTP_200_OK)
 
+class BackupCheckInAPI(APIView):
+	permission_classes  	= (AllowAny,)
+	authentication_classes  = ()
+
+	def post(self,request):
+		response_dict            = {}
+		response_dict['success'] = False
+
+		team_id                  = request.data.get('team_id')
+
+		#confirm backup team
+		absents                             = request.data.get('absent_list')
+		if absents:
+			absent_cleaners_list 				= [int(x) for x in absents.split(",")]
+			absent_cleaners      				= CleaningTeamMember.objects.filter(is_active=True,id__in=absent_cleaners_list,team__id=team_id,is_backup_cleaner=True)
+			absent_cleaners.delete()
+		
+		#backupteam checkin
+		CleaningTeam.objects.filter(id=team_id).update(backup_check_in=timezone.now())
+
+		response_dict['success'] = True
+
+		return Response(response_dict,HTTP_200_OK)
+
 class CheckOutAPI(APIView):
-	permission_classes  	=   (AllowAny,)
+	permission_classes  	= (AllowAny,)
 	authentication_classes  = ()
 
 	def post(self,request):
@@ -1951,35 +2016,16 @@ class CheckOutAPI(APIView):
 		team_id         = request.data.get('team_id')
 		check_out_notes = request.data.get('check_out_notes')
 	
-		print(team_id,"zack")
 		try:
 			cleaning_team_detail = CleaningTeam.objects.select_related('order_scheduler__order').get(is_active=True,id=team_id)
 		except:	
 			cleaning_team_detail = None
 
-		#remaining teams
-		# cleaning_teams = CleaningTeam.objects.filter(order_scheduler__order_scheduler_book=cleaning_team_detail.order_scheduler.order_scheduler_book).values('order_scheduler__work_status')
-		# remaining_team = 0
-		# for team in cleaning_teams:
-		# 	if team['order_scheduler__work_status'] != 'CLEANING_FULFILLED':
-		# 		remaining_team += 1
-		
-		# print(remaining_team,"rtm")
-
-		#remaining keynotes
-		# keynotes = EvaluationSectionKeynote.objects.filter(evaluation_section__evaluation_book=cleaning_team_detail.order_scheduler.order_scheduler_book).values('completion_status')
-		# remaining_keynotes = 0
-		# if keynotes:
-		# 	for key in keynotes:
-		# 		if key['completion_status'] == False:
-		# 			remaining_keynotes += 1
-		# else:
-		# 	pass
-		# print(remaining_keynotes,"rky")
-
 
 		cleaning_team_detail.order_scheduler.work_status  		= 'CLEANING_FULFILLED'	
 		cleaning_team_detail.check_out                    		= timezone.now()
+		if cleaning_team_detail.backup_check_in:
+			cleaning_team_detail.backup_check_out 				= timezone.now()
 		
 		cleaning_team_detail.order_scheduler.order.order_status = 'ORDER_IN_PROGRESS'
 
