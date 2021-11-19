@@ -1993,7 +1993,7 @@ class BackupCheckInAPI(APIView):
 
 		#confirm backup team
 		absent_cleaners_list                    = request.data.get('absent_list')
-		if absents:
+		if absent_cleaners_list:
 			absent_cleaners      				= CleaningTeamMember.objects.filter(is_active=True,id__in=absent_cleaners_list,team__id=team_id,is_backup_cleaner=True)
 			absent_cleaners.delete()
 		
