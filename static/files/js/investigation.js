@@ -18,8 +18,10 @@ let app = new Vue({
     },
     data () {
           return {
+            durationArray:[2,4,8,10],
             avSolt:null,
             incheck:false,
+            incheck2:false,
             sofa_size:[],
             chair_size:[],
             new_kitchen_cabinet_size:[],
@@ -537,6 +539,30 @@ let app = new Vue({
           console.log(this.sectionfull)
 
         },
+        checkValidation(){
+          if(this.addfollow){
+            var flag = true
+          this.incheck = false
+          this.incheck2 = false
+
+          if(this.noofcleaners == ''){
+            this.incheck = true
+            flag = false
+          }
+          if(this.cleaning_hours == null){
+            this.incheck2 = true
+            flag = false
+          }
+          if(flag){
+            this.submitForm();
+          }
+
+          }else{
+            this.submitForm();
+
+          }
+          
+        },
         async submitForm(){
          var tempSections = JSON.stringify(this.cleaningsections);
          
@@ -554,8 +580,8 @@ let app = new Vue({
             fd.append('is_followup','True');
             fd.append('number_of_cleaners',this.noofcleaners);
             fd.append('total_cost',this.totalAmount);
-            fd.append('tendative_date',this.tentdate);
-            fd.append('tendative_time',this.tenttime);
+            // fd.append('tendative_date',this.tentdate);
+            // fd.append('tendative_time',this.tenttime);
             fd.append('cleaning_hours',this.cleaning_hours);
             fd.append('sections',tempSections);
 
