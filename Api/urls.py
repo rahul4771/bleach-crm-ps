@@ -65,6 +65,7 @@ urlpatterns = [
 	
 	url(r'^tl/cleaning/details/(?P<team_id>\d+)/$',views.TlCleaningDetails.as_view(),name='api-cleaningdetails'),
 	url(r'^check-in/$',views.CheckInAPI.as_view(),name='api-check-in'),
+	url(r'^backup-check-in/$',views.BackupCheckInAPI.as_view(),name='api-backupcheck-in'),
 	url(r'^check-out/$',views.CheckOutAPI.as_view(),name='api-check-out'),
 
 	url(r'^tl/followupcleaning/details/(?P<team_id>\d+)/$',views.TlFollowupCleaningDetails.as_view(),name='api-followupdetails'),
