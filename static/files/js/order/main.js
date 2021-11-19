@@ -921,6 +921,23 @@ const app = new Vue({
         location.reload()
       })
     },
+    editTeamMembers(){
+      var backup_cleaners=[]
+      for(var i=0;i<this.selected_team.length;i++){
+        backup_cleaners.push(this.selected_team[i].id)
+      }
+      axios.post(this.url+'/customer/editorder/'+this.orderId,{
+        action_type:'edit_backupteam',
+        backup_start_at:this.backup_team_data.cleaning_date_start+' '+this.backup_team_data.cleaning_time_start,
+        backup_end_at:this.backup_team_data.cleaning_date_end+' '+this.backup_team_data.cleaning_time_end,
+        backup_cleaners :backup_cleaners,
+        team_id:this.team_cleaning_id
+
+      }).then(response=>{
+        $('#close_backup').click()
+        location.reload()
+      })
+    },
     removeTeam(index){
       this.selected_team.splice(index,1)
       this.temp_selected_item.splice(index,1)
