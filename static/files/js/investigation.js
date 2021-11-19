@@ -743,6 +743,43 @@ $(document).ready(function () {
       `<i style="color:#707070;" class='fa fa-chevron-right service-control'></i>`,
     ],
   });
+
+  $('#id_owl_1').owlCarousel({
+    items: 1,
+    nav: true,
+    loop:true,
+    autoplay:false,
+    autoplayTimeout:2000,
+    autoplayHoverPause:false,
+    navText: [
+    `<i style="color:#000000 !important;" class='fa fa-chevron-left service-control' @click='prevService()'></i>`,
+    `<i style="color:#000000 !important;" class='fa fa-chevron-right service-control'></i>`,
+    ],
+    });
+    $('.play').on('click',function(){
+    owl.trigger('play.owl.autoplay',[1000])
+    })
+    $('.stop').on('click',function(){
+    owl.trigger('stop.owl.autoplay')
+    })
+    $('#id_owl_2').owlCarousel({
+    items: 1,
+    nav: true,
+    loop:true,
+    autoplay:false,
+    autoplayTimeout:2000,
+    autoplayHoverPause:false,
+    navText: [
+    `<i style="color:#000000 !important;" class='fa fa-chevron-left service-control' @click='prevService()'></i>`,
+    `<i style="color:#000000 !important;" class='fa fa-chevron-right service-control'></i>`,
+    ],
+    });
+    $('.play').on('click',function(){
+    owl.trigger('play.owl.autoplay',[1000])
+    })
+    $('.stop').on('click',function(){
+    owl.trigger('stop.owl.autoplay')
+    })
 });
 
 function showCleaners(){
