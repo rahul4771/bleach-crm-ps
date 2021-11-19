@@ -452,11 +452,25 @@
                                 </div>
                                 <div class="col-md-2">
                                     <div class="tk-common-text2">
+                                        Cleaning Duration
+                                    </div>
+                                    <div class="inv-input-container h-30"> 
+                                        <select class="w-p-100 inv-in" required>
+                                        <option value="2">2</option>
+                                        <option value="4">4</option>
+                                        <option value="8">8</option>
+                                        <option value="10">10</option>
+                                        </select>
+                                      </div>
+                                      
+                                </div>
+                                {% comment %} <div class="col-md-2">
+                                    <div class="tk-common-text2">
                                         &nbsp;
                                     </div>
                                     <button data-toggle="modal" data-target="#selectsoltmodel"  id="id_modal_btn"  hidden class="ml-5 tk-sub" ><i class="fa fa-calendar-o mr-5" aria-hidden="true"></i> Select Slot</button>
                                     <button @click="openSoltModal"  class="ml-5 tk-sub" ><i class="fa fa-calendar-o mr-5" aria-hidden="true"></i> Select Slot</button>
-                                </div>
+                                </div> {% endcomment %}
                             </div>
                             <div class="row mt-20" v-if="soltselected">
                                 <div class="col-md-2">
