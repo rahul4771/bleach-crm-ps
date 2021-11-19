@@ -125,7 +125,49 @@
 <div class="common-gray-text align-left"><strong>{{cleaner.member.name}}</strong></div>
 {% endif %}
 {% endfor %}
+<!-- Backup Cleaners modal begins here-->
+<div class="modal fade" id="cleanersModal" role="dialog">
+  <div style="border: none !important;" class="modal-dialog cancel-model cancel-order-border " role="document">
+      <div class="container-fluid">
+          <div class="row">
+              <div class="col-md-12 mt-20">
 
+                  
+                  <div class="d-flex ">
+                      <div style="margin: 0 auto; flex-grow: 3;"><p class="model-head">Cleaning Team</p></div>
+                      <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                          <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                      </button>
+
+                  </div>
+              </div>
+          </div>
+          <div class="row mt-20">
+            {% for cleaner in cleaning_team_members %}
+
+            {% if cleaner.is_backup_cleaner %}
+            <div class="col-md-12  text-center mt-10">
+              <div class="d-flex">
+              <div class=" mt-2 mb-2 mx-auto clr-check-box-active text-white" id="inv-cleaners-check-box" onclick="changeState(this,{{cleaner.id}})">
+                <i class="fa fa-check inv-check-onetime-icon cleaning-team-check" id="inv-check-debit" style="display: inline;"></i>
+              </div>
+<div class="common-gray-text align-left ml-10">{{cleaner.member.name}}</div>
+</div>
+</div>
+{% endif %}
+{% endfor %}
+<div class="text-center col-md-12">
+  <button class="sent-button send-btn2 mt-4 mb-4 mx-auto" @click="checkinTeam()">Submit</button>
+
+</div>
+            
+            
+          </div>     
+      </div>
+  </div>
+</div>
+<!--Backup  Cleaners modal ends here-->
 <!-- Cleaners modal begins here-->
 <div class="modal fade" id="cleanersModal" role="dialog">
   <div style="border: none !important;" class="modal-dialog cancel-model cancel-order-border " role="document">
@@ -147,7 +189,7 @@
           <div class="row mt-20">
             {% for cleaner in cleaning_team_members %}
 
-            {% if cleaner.member != request.user %}
+            {% if cleaner.member != request.user and not cleaner.is_backup_cleaner %}
             <div class="col-md-12  text-center mt-10">
               <div class="d-flex">
               <div class=" mt-2 mb-2 mx-auto clr-check-box-active text-white" id="inv-cleaners-check-box" onclick="changeState(this,{{cleaner.id}})">

@@ -722,28 +722,7 @@ let app = new Vue({
 
     }
 })
-$(document).ready(function () {
-    $(".owl-carousel").owlCarousel({
-    items: 2,
-    nav: true,
-    margin: 10,
-    responsive:{
-        0:{
-            items:1
-        },
-        600:{
-            items:2
-        },
-        1000:{
-            items:4
-        }
-    },
-    navText: [
-      `<i style="color:#707070;" class='fa fa-chevron-left service-control' @click='prevService()'></i>`,
-      `<i style="color:#707070;" class='fa fa-chevron-right service-control'></i>`,
-    ],
-  });
-});
+
 
 function showCleaners(){
     //$('#id_cl').click();
