@@ -18,6 +18,10 @@ let app = new Vue({
     },
     data () {
           return {
+            isSelectedSolt:false,
+            checkVer:false,
+            functionClick:0,
+            is_agent_checked:false,
             durationArray:[2,4,8,10],
             avSolt:null,
             incheck:false,
@@ -149,6 +153,41 @@ let app = new Vue({
       inputEvents(){
         console.log("date chaneg")
       },
+      checkAgentSub(){
+        this.isSelectedSolt = false;
+        this.checkVer = false
+        if(this.tenttime ==''){
+          this.isSelectedSolt = true;
+        }else{
+          this.submitAgentForm()
+        }
+        
+      },
+      chechIsver(){
+        this.checkVer = false
+        if(!this.is_agent_checked){
+          this.checkVer = true
+        }
+      },
+      async submitAgentForm(){
+
+         let fd = new FormData();
+         fd.append('investigation_id',this.visitid);
+         
+        fd.append('tendative_date',this.tentdate);
+        fd.append('tendative_time',this.tenttime);
+        fd.append('is_agent_checked',true)
+         let result = await _post('api/agent-investigation-check/',fd);
+         if(result.data.success){
+           console.log("success")
+           window.location.href = '../../dashboard'
+         }else{
+           showNotification('Something went wrong','error')
+         }
+         console.log(result)
+
+
+       },
       checkAvalSolt(index){
         var tempIndex = index*2;
         if(this.avSolt != null){
@@ -470,6 +509,20 @@ let app = new Vue({
 
         }
       },
+      confirmSolt2(){
+        if(this.selected_slots.length !=0){
+          console.log(this.selected_slots)
+          this.tentdate = moment(this.selectedDate).format('DD-MM-YYYY');
+          var a = Math.min(...this.selected_slots);
+         
+         
+          this.tenttime = this.time_slots[a].start_time;
+          this.soltselected = true;
+          
+          $('#id_model_close').click();
+
+        }
+      },
       clearsoltSelection(){
         this.selected_slots= [];
         this.selectedDate = new Date();
@@ -538,6 +591,13 @@ let app = new Vue({
           this.sectionfull  = '['+a+']';
           console.log(this.sectionfull)
 
+        },
+
+        changeCheckBox(){
+          if(this.functionClick % 2 ==  0){
+          this.is_agent_checked = !this.is_agent_checked
+          }
+          this.functionClick = this.functionClick+1
         },
         checkValidation(){
           if(this.addfollow){
