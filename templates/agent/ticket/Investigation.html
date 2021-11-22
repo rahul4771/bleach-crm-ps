@@ -533,12 +533,22 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row mt-30" >
+                        <div class="row mt-30" v-if="!loading" >
                             <div class="d-flex" style="align-items: center;
                             justify-content: center;">
                                 <button class="tk-can" type="button" onclick="window.location.href = '../../dashboard'"> Cancel</button>
                                 <button class="ml-5 tk-sub" v-if="is_agent_checked" @click="checkAgentSub">Submit</button>
                                 <button @click="chechIsver" class="ml-5 tk-sub" style="background-color: #edf1f5; color: #737373;" v-if="!is_agent_checked" >Submit</button>
+                                
+
+
+                            </div>
+                        </div>
+                        <div class="row mt-30" v-if="loading">
+                            <div class="d-flex" style="align-items: center;
+                            justify-content: center;">
+                                <div class="re-loader"></div>
+
 
                             </div>
                         </div>

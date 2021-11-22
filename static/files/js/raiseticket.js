@@ -15,7 +15,7 @@
   delimiters: ["<%", "%>"],
   data () {
         return {
-            
+            loading:false,
             cause_of_stain:['INK MARK', 'HARD DUST', 'COFFEE & TEA SPILL', 'OIL','GREASE', 'PAINT', 'URINE', 'MILK SPILL', 'NO STAIN', 'OTHERS'],
             walltypes:["BRICKS","GLASS","CONCRETE","CERAMIC","GYPSUM","FABRIC","RUBBER","STONE","TERRAZO","STAINLESS","VINYL","WOODEN","OTHERS"],
             ceilingtypes:["WOODEN","GLASS","CONCRETE","CERAMIC","GYPSUM","FOAM","PLASTIC","FABRIC","RUBBER","STAINLESS","VENYL","OTHERS"],
@@ -289,11 +289,13 @@
                   
 
               }
+              this.loading = true
              let result = await _post('api/ticket-submit/',fd);
-
+             
              if(result.data.success){
                  location.reload()
              }else{
+                this.loading = false
                 showNotification('Something went wrong','error')
              }
               console.log(result);

@@ -15,6 +15,7 @@
   delimiters: ["<%", "%>"],
   data () {
         return {
+            loading:false,
             assigned_by:'',
             followup_id:'',
             paybackdiscount_id:'',
@@ -380,12 +381,14 @@
                     fd.append('paybackdiscount_items',pstr);
                   }
               }
+              this.loading = true
              let result = await _post('api/ticket-edit/',fd);
-
+             
              if(result.data.success){
                 window.location.href = '../tickets/'
                  
              }else{
+                this.loading = false
                 showNotification('Something went wrong','error')
              }
              
