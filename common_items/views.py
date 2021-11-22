@@ -2635,6 +2635,20 @@ class CallBackList(IsAuthenticated,View):
 		messages.success(request,"Payment note updated !!")
 		return redirect('common_items:callback-list')
 
+class NewInvestigationTask(IsAuthenticated,View):
+	def get(self,request,investigation_id):
+		
+		try:
+			investigation_details = Investigation.objects.select_related('order_schedule__customer_address__area','order_schedule__order_scheduler_book__service_type','order_schedule__evaluation_details__evaluator','investigator','order__evaluation__customer','order__evaluation__call_attender').prefetch_related(Prefetch('investigation_media',queryset=InvestigationMedia.objects.filter(is_active=True,media_type='PHOTO',taken_status='CUSTOMER_SEND'),to_attr='investigationmedias'),Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_teams')).get(id=investigation_id)	
+		except:
+			investigation_details = None
+		
+		#save checkin_time
+		investigation_details.check_in = timezone.now()
+		investigation_details.save()
+
+		return render(request,'stl/ticket/new-investigation.html',{'investigation_details':investigation_details})
+
 class TicketDetailsEdit(IsAuthenticated,View):
 	def get(self,request,ticket_id,order_id):
 

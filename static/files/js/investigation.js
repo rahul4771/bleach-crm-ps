@@ -658,7 +658,9 @@ let app = new Vue({
           
           if(result.data.success){
             console.log("success")
-            window.location.href = '../../dashboard'
+              window.history.back()
+              // window.location.href = url+'/stl/dashboard'
+            
           }else{
             this.loading = false
             showNotification('Something went wrong','error')
