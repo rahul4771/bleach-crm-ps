@@ -730,6 +730,7 @@ class TicketSubmitAPI(APIView):
 				Reporting.objects.create(investigation=investigation,title=title,notes=notes)
 
 			if action == 'Assign Investigator':
+				print(request.data.get('secondary_investigator'),"assign")
 				secondary_investigator = request.data.get('secondary_investigator')
 				print(secondary_investigator,"sec")
 				investigator = UserProfile.objects.get(id=int(secondary_investigator))
@@ -993,7 +994,7 @@ class AgentInvestigationChecckAPI(APIView):
 			
 		investigation.is_agent_approved = True
 		investigation.save()
-		
+
 		response_dict = {'success':True}
 
 		return Response(response_dict,HTTP_200_OK)

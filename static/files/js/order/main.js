@@ -484,9 +484,9 @@ function load_cleaning_team(visitcount,scheduleid,bookid){
 
                       //backup members
                       $('#id_team_backupmembers_div_'+bookid).empty();
-
+                      
                       $.each(response.data.backup_members,function(key,value){
-                          $('#id_team_backupmembers_div_'+bookid).append('<div class="col-md-3 m-mt20 .c-mb-10 mr-0 ml-0"> <div class="row"> <div class="col-xs-4 pr-0"> <img class="clean-team-profile-pic" src="'+value.member_image+'"> </div> <div class="col-xs-8"> <div class="order-agent-content text-left"> <h2>'+value.member_name+'</h2> <h6>Team Member</h6> </div></div></div></div>');
+                          $('#id_team_backupmembers_div_'+bookid).append('<div class="col-md-3 m-mt20 .c-mb-10 mr-0 ml-0"> <div class="row"> <div class="col-xs-4 pr-0"> <img class="clean-team-profile-pic" src="'+value.profile_image+'"> </div> <div class="col-xs-8"> <div class="order-agent-content text-left"> <h2>'+value.name+'</h2> <h6>Team Member</h6> </div></div></div></div>');
                       })
 
 

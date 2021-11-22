@@ -312,9 +312,11 @@ class AccountantHome(IsAccountant,View):
 		if approved_paybackdiscounts:
 			for ticket in approved_paybackdiscounts:
 				ticket.days_left = (timezone.now()-ticket.scheduled_at).days
-
-				for paybackdiscount in ticket.paybackdiscounts:
+				
+				for discount in ticket.paybackdiscounts:
 					ticket_count += 1
+
+		print(approved_paybackdiscounts,ticket_count,"tot")
 
 		#order cancell cashback
 		order_cancell_cashbacks = CancellOrderAmountHistory.objects.filter(amount_return_method='CASHBACK',is_completed=False).select_related('order__evaluation__customer').prefetch_related('order__order_scheduler_order__order_scheduler_book')

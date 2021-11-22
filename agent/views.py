@@ -1700,6 +1700,10 @@ class AgentHome(IsAgent,View):
 		#followup confirmation for special user
 		open_tickets = FollowUp.objects.filter(is_active=True,status='FOLLOWUP_IN_PROGRESS',investigation__assigned_by=request.user,investigation__is_agent_approved=False,investigation__is_followup_approved=True)
 		
+		#add days left
+		for ticket in open_tickets:
+			ticket.days_left = (timezone.now()-ticket.investigation.scheduled_at).days
+			
 		return render(request,'agent/home/home.html',{'today_enquiry_count':today_enquiry_count,'week_enquiry_count':week_enquiry_count,'month_average_feedback':month_average_feedback,'lastmonth_average_feedback':lastmonth_average_feedback,'cleaning_job':cleaning_job,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,'follow_up_job':follow_up_job,'today_follow_up_job_count':today_follow_up_job_count,'week_follow_up_job_count':week_follow_up_job_count,'evaluation_details':evaluation_details,'evaluation_date':evaluation_date,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,'workers':workers,"customer_addresses":customer_addresses,"followup_to_be_closed":followup_to_be_closed,"calendar_notapprovedorder_schedules":calendar_notapprovedorder_schedules,"sp_calendar_notapprovedorder_schedules":sp_calendar_notapprovedorder_schedules,"spp_calendar_notapprovedorder_schedules":spp_calendar_notapprovedorder_schedules,"open_tickets":open_tickets})
 
 

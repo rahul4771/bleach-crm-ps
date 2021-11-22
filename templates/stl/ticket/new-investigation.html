@@ -265,7 +265,7 @@
                         </div>
                         <div class="row mt-10">
                             <div class="col-md-6">
-                                <div class="owl-carousel owl-theme">
+                                <div class="owl-carousel owl-theme" id="owl_id_1">
 
                                     {% for media in investigation_details.investigationmedias %}
                                     
@@ -1055,6 +1055,30 @@
 
 <script src="{% static 'files/js/investigation.js' %}"></script>
 <script>
+    $(document).ready(function () {
+    $("#owl_id_1").owlCarousel({
+    items: 2,
+    nav: true,
+    margin: 10,
+    responsive:{
+        0:{
+            items:1
+        },
+        600:{
+            items:2
+        },
+        1000:{
+            items:4
+        }
+    },
+    navText: [
+      `<i style="color:#707070;" class='fa fa-chevron-left service-control' @click='prevService()'></i>`,
+      `<i style="color:#707070;" class='fa fa-chevron-right service-control'></i>`,
+    ],
+  });
+ 
+ 
+});
     $(document).ready(function(){
        loadvisitdata({{investigation_details.order_schedule.id}})
        console.log({{investigation_details.order_schedule.id}},"iddd")
