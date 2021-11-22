@@ -68,7 +68,7 @@
 
 <div class="main-content-holder"><!--main-content-holder-->  
 
-{% if investigations %}  
+{% if request.user.is_investigator == True %}  
 
 <div class="white-wrapper"><!--white-wrapper-->
 
@@ -82,6 +82,7 @@
 <table class="main-table">
 <tbody>
 {% for investigation in investigations %}
+{% if investigation.investigator != None and investigation.is_secondary_investigation_completed == False %}
 <tr class="{% if investigation.days_left <= 2 %}green-line{% elif investigation.days_left > 2 and investigation.days_left <= 5 %}yellow-line{% elif investigation.days_left > 5 and investigation.days_left <= 7 %}orange-line{% else %}red-line{% endif %} clickable-row-list" data-href="#"> 
 <td data-label="Ticket Number" class="bold-text" >{% for followup in investigation.followup %}
         <a href="{% url 'common_items:ticketadvanced' investigation.order_schedule.order.evaluation.customer.id followup.id %}" target="_blank">TKT{{followup.ticket_no}}</a>
@@ -122,13 +123,14 @@
 <td data-label="">
 {% comment %} {% if investigation.investigator == None and investigation.is_secondary_investigation_completed == False %}
 <span class="{% if investigation.days_left <= 2 %}green-bg{% elif investigation.days_left > 2 and investigation.days_left <= 5 %}yellow-bg{% elif investigation.days_left > 5 and investigation.days_left <= 7 %}orange-bg{% else %}red-bg{% endif %} clickable-row-list" data-href="{% url 'stl:investigation' investigation.id %}">View</span> {% endcomment %}
-{% if investigation.investigator != None and investigation.is_secondary_investigation_completed == False %}
+
 <span class="{% if investigation.days_left <= 2 %}green-bg{% elif investigation.days_left > 2 and investigation.days_left <= 5 %}yellow-bg{% elif investigation.days_left > 5 and investigation.days_left <= 7 %}orange-bg{% else %}red-bg{% endif %} clickable-row-list" data-href="{% url 'stl:newinvestigation' investigation.id %}">View</span>
-{% else %}
-<span class="{% if investigation.days_left <= 2 %}green-bg{% elif investigation.days_left > 2 and investigation.days_left <= 5 %}yellow-bg{% elif investigation.days_left > 5 and investigation.days_left <= 7 %}orange-bg{% else %}red-bg{% endif %} clickable-row-list" data-href="{% url 'stl:investigation' investigation.id %}" >Investigated</span>
-{% endif %}
+{% comment %} {% else %}
+<span class="{% if investigation.days_left <= 2 %}green-bg{% elif investigation.days_left > 2 and investigation.days_left <= 5 %}yellow-bg{% elif investigation.days_left > 5 and investigation.days_left <= 7 %}orange-bg{% else %}red-bg{% endif %} clickable-row-list" data-href="{% url 'stl:investigation' investigation.id %}" >Investigated</span> {% endcomment %}
+
 </td>
 </tr>
+{% endif %}
 {% endfor %} 
 </tbody>
 </table>

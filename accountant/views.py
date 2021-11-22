@@ -1383,7 +1383,7 @@ def export_users_xls(request):
 		for col_num in range(len(columns)):
 			ws.write(row_num, col_num, columns[col_num], font_style)
 
-		orders = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end),evaluation__quatation_status='APPROVED').values_list('order_no', 'evaluation__payment_method', 'total_amount', 'amount_paid', 'remining_amount').order_by('-id')
+		orders = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end),evaluation__quatation_status='APPROVED').filter(~Q( Q(evaluation__quatation_status='APPROVED') & Q(Q(Q(evaluation__payment_method='PREPAID')&~Q(payment_status='COMPLETED'))|Q(Q(evaluation__payment_method='BREAKDOWN')&Q(preamount_paid=0))) )).values_list('order_no', 'evaluation__payment_method', 'total_amount', 'amount_paid', 'remining_amount').order_by('-id')
 	
 		#removing duplicates
 		found = set()
