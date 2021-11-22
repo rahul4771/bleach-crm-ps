@@ -687,6 +687,12 @@
                                         <input type="text" v-model="editSectionData.section_name"  class="w-p-100 inv-in"  >
                                     </div>
                                 </div>
+                                <div class="col-md-6 mt-10">
+                                    <div class=" bold-text common-label required-field"> <label class="av-font">Size</label></div>
+                                    <div class="inv-input-container " style="height: 40px;"> 
+                                        <input type="text" v-model="editSectionData.size"  class="w-p-100 inv-in"  >
+                                    </div>
+                                </div>
                                  <!-- window cleaning-->
                             <div class="col-md-12 mt-10 mb-10" v-if="service_type=='Window Cleaning'">
                                 <div class=" bold-text common-label required-field"> <label>Type of Window</label></div>
@@ -705,44 +711,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6 mt-10" v-if="service_type=='Window Cleaning' ">
-                    
-                                <div class=" bold-text common-label required-field"> <label>Size</label></div>
-                                <multiselect
-                                  v-model="editSectionData.size"
-                                  placeholder="Select a Size"
-                                  
-                                  :options="highprice_window"
-            
-                                  :multiple="false"
-                                  :taggable="false"
-                                  :show-labels="false"
-                                  track-by="name"
-                                  label="combined_size"
-                                  @input="calcSectionCost()"
-                                v-if="editSectionData.is_highprice_window"
-            
-            
-                                ></multiselect>
-                                <multiselect
-                                v-model="editSectionData.size"
-                                placeholder="Select a Size"
-                                v-else
-                                :options="lowprice_window"
-            
-                                :multiple="false"
-                                :taggable="false"
-                                :show-labels="false"
-                                track-by="name"
-                                label="combined_size"
-                                @input="calcSectionCost()"
-            
-            
-            
-                              ></multiselect>
-                              
-                                    
-                             </div>
+                            
                                 <div class="col-md-6 mt-10" v-if="service_type=='Upholstery Cleaning'">
                                     <div class=" bold-text common-label required-field"> <label>Age</label></div>
                                   
@@ -752,121 +721,13 @@
                                 </div>
                                 <div class="col-md-6 "></div>
 
-                                <!-- size kitchen Cleaning -->
-                                <div class="col-md-6 mt-10" v-if="service_type=='Kitchen Cleaning'">
-                    
-                                    <div class=" bold-text common-label required-field"> <label>Size</label></div>
-                                    <multiselect
-                                    v-if="editSectionData.new_kitchen && editSectionData.is_cabinet"
-                                      v-model="editSectionData.size"
-                                      placeholder="Select a Size"
-                                      
-                                      :options="new_kitchen_cabinet_size"
-                
-                                      :multiple="false"
-                                      :taggable="false"
-                                      :show-labels="false"
-                                      track-by="name"
-                                      label="combined_size"
-                                      @input="calcSectionCost()"
-                
-                
-                
-                                    ></multiselect>
-                                    <multiselect
-                                    v-else-if="editSectionData.new_kitchen && !editSectionData.is_cabinet"
-                                      v-model="editSectionData.size"
-                                      placeholder="Select a Size"
-                                      
-                                      :options="old_kitchen_nocabinet_size"
-                
-                                      :multiple="false"
-                                      :taggable="false"
-                                      :show-labels="false"
-                                      track-by="name"
-                                      label="combined_size"
-                                      @input="calcSectionCost()"
-                                    ></multiselect>
-                                    <multiselect
-                                    v-else-if="!editSectionData.new_kitchen && editSectionData.is_cabinet"
-                                      v-model="editSectionData.size"
-                                      placeholder="Select a Size"
-                                      
-                                      :options="old_kitchen_cabinet_size"
-                
-                                      :multiple="false"
-                                      :taggable="false"
-                                      :show-labels="false"
-                                      track-by="name"
-                                      label="combined_size"
-                                      @input="calcSectionCost()"
-                                    ></multiselect>
-                                    <multiselect
-                                    v-else-if="!editSectionData.new_kitchen && !editSectionData.is_cabinet"
-                                      v-model="editSectionData.size"
-                                      placeholder="Select a Size"
-                                      
-                                      :options="old_kitchen_nocabinet_size"
-                
-                                      :multiple="false"
-                                      :taggable="false"
-                                      :show-labels="false"
-                                      track-by="name"
-                                      label="combined_size"
-                                      @input="calcSectionCost()"
-                                    ></multiselect>
-                                  
-                                        
-                                 </div>
-                                 <!-- end size kitchen Cleaning -->
-                                <!--  size Upholstery Cleaning -->
-
-                                <div class="col-md-6 mt-10" v-if="service_type=='Upholstery Cleaning' && editSectionData.upholstery_type=='SOFA'">
-                    
-                                    <div class=" bold-text common-label required-field"> <label>Size</label></div>
-                                    <div class="inv-input-container " style="height: 40px;"> 
-                                        <input type="number" v-model="editSectionData.size"  class="w-p-100 inv-in"  placeholder="Seaters" @input="calcSofaSize()" >
-                                    </div>  
-                                 </div>
-                                 <div class="col-md-6 mt-10" v-if="service_type=='Upholstery Cleaning' && editSectionData.upholstery_type=='CHAIR' ">
-                    
-                                    <div class=" bold-text common-label required-field"> <label>Size</label></div>
-                                    <multiselect
-                                      v-model="editSectionData.size"
-                                      placeholder="Select a Size"
-                                      
-                                      :options="chair_size"
-                
-                                      :multiple="false"
-                                      :taggable="false"
-                                      :show-labels="false"
-                                      track-by="name"
-                                      label="combined_size"
-                                      @input="calcSectionCost()"
-                
-                
-                
-                                    ></multiselect>
-                                  
-                                        
-                                 </div>
-                                <!--  end size Upholstery Cleaning -->
+                              
+                               
+                          
 
                                  
 
-                                <div class="col-md-6 mt-10" v-if="service_type!='Upholstery Cleaning' && service_type!='Kitchen Cleaning' && service_type!='Facade Cleaning' && service_type!='Window Cleaning' && service_type!='Kitchen Appliances' " >
-                                    <div class=" bold-text common-label required-field"> <label>Size</label></div>
-                                    <multiselect
-                                        v-model="editSectionData.size"
-                                        placeholder="Size"
-                                        label="combined_size"
-                                        :options="service_productivity"
-                                        :multiple="false"
-                                        :taggable="false"
-                                        :show-labels="false"
-                                        @input="calcSectionCost()"
-                                    ></multiselect>
-                                </div>
+                                
                                 <div class="col-md-6 mt-10"  v-if="service_type=='General Cleaning' || service_type=='Deep Cleaning' || service_type=='Storage Area' || service_type=='Facade Cleaning' || service_type=='Kitchen Cleaning'|| service_type=='Sterilization' || service_type=='Hourly Cleaning'">
                                     <div class=" bold-text common-label required-field"> <label>Wall type</label></div>
                                   <multiselect
@@ -964,7 +825,7 @@
                                 <div class="col-md-6 mt-10"  >
                                     <div class=" bold-text common-label required-field"> <label class="av-font">Section Cost</label></div>
                                     <div class="inv-input-container " style="height: 40px;"> 
-                                        <input type="number" readonly  v-model="editSectionData.section_cost" class="w-p-100 inv-in"  >
+                                        <input type="number"   v-model="editSectionData.section_cost" class="w-p-100 inv-in"  >
                                     </div>
                                 </div>
                                 <div class="col-md-6 "></div>

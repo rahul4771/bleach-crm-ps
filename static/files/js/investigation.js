@@ -10,7 +10,7 @@ let app = new Vue({
       totalAmount: function () {
         var sum =0;
         for(var i = 0 ; i<this.cleaningsections.length;i++){
-          sum = sum + this.cleaningsections[i].section_net_cost;
+          sum = sum + parseInt(this.cleaningsections[i].section_net_cost);
         }
         
         return sum;
@@ -59,7 +59,7 @@ let app = new Vue({
             editSectionData:{
               is_highprice_window:null,
               age_of_stain:'',
-              size:{},
+              size:'',
               keynotes:[],
               section_cost:0,
               section_name:'',
@@ -151,6 +151,15 @@ let app = new Vue({
       }
   },
     methods:{
+      getTotal(){
+        var sum =0;
+        for(var i = 0 ; i<this.cleaningsections.length;i++){
+          console.log(this.cleaningsections[i].section_net_cost,'xot')
+          sum = sum + parseInt(this.cleaningsections[i].section_net_cost);
+        }
+        
+        return sum;
+      },
       inputEvents(){
         console.log("date chaneg")
       },
@@ -363,55 +372,55 @@ let app = new Vue({
         
       },
       async getSize(type){
-        if(type=='Hourly Cleaning'){
-          type='General Cleaning'
-        }
-        this.service_productivity = [];
-        let result = await _get('customer/ajax/getservicesizeprice?service_type='+type);
-        console.log(result)
-        this.productivity=result.data
-          for(var i in this.productivity){
-            this.productivity[i].combined_size=this.productivity[i].name+' ( '+this.productivity[i].min_size+' sq.m - '+this.productivity[i].max_size+' sq.m )'
-            this.service_productivity.push(this.productivity[i])
-          }
-          var size = this.cleaningsections[this.edit_section_active_index].size;
-          if(this.service_type=='Kitchen Cleaning'){
-            this.formatKitchenSize()
-          }else if(this.service_type=='Upholstery Cleaning'){
-            this.chair_size = [];
-            this.sofa_size = [];
-            for(var i=0;i<this.service_productivity.length;i++){
-              if(this.service_productivity[i].upholstery_type == "CHAIR"){
-                this.chair_size.push(this.service_productivity[i]);
-              }
-              if(this.service_productivity[i].upholstery_type == "SOFA"){
-                console.log('sofa push')
-                this.sofa_size.push(this.service_productivity[i]);
-              }
-            }
-            if(this.editSectionData.upholstery_type == 'CHAIR'){
-              for(var i =0;i<this.chair_size.length; i++){
-                if(this.chair_size[i].name == size){
-                  this.editSectionData.size = this.chair_size[i];
-                  break;
-                }
-              }
+        // if(type=='Hourly Cleaning'){
+        //   type='General Cleaning'
+        // }
+        // this.service_productivity = [];
+        // let result = await _get('customer/ajax/getservicesizeprice?service_type='+type);
+        // console.log(result)
+        // this.productivity=result.data
+        //   for(var i in this.productivity){
+        //     this.productivity[i].combined_size=this.productivity[i].name+' ( '+this.productivity[i].min_size+' sq.m - '+this.productivity[i].max_size+' sq.m )'
+        //     this.service_productivity.push(this.productivity[i])
+        //   }
+        //   var size = this.cleaningsections[this.edit_section_active_index].size;
+        //   if(this.service_type=='Kitchen Cleaning'){
+        //     this.formatKitchenSize()
+        //   }else if(this.service_type=='Upholstery Cleaning'){
+        //     this.chair_size = [];
+        //     this.sofa_size = [];
+        //     for(var i=0;i<this.service_productivity.length;i++){
+        //       if(this.service_productivity[i].upholstery_type == "CHAIR"){
+        //         this.chair_size.push(this.service_productivity[i]);
+        //       }
+        //       if(this.service_productivity[i].upholstery_type == "SOFA"){
+        //         console.log('sofa push')
+        //         this.sofa_size.push(this.service_productivity[i]);
+        //       }
+        //     }
+        //     if(this.editSectionData.upholstery_type == 'CHAIR'){
+        //       for(var i =0;i<this.chair_size.length; i++){
+        //         if(this.chair_size[i].name == size){
+        //           this.editSectionData.size = this.chair_size[i];
+        //           break;
+        //         }
+        //       }
 
-            }else if(this.editSectionData.upholstery_type == 'SOFA'){
-              this.editSectionData.size = size.split(" ")[0];
-            }
+        //     }else if(this.editSectionData.upholstery_type == 'SOFA'){
+        //       this.editSectionData.size = size.split(" ")[0];
+        //     }
 
-          }else if(this.service_type=='Window Cleaning'){
-            this.formatWindowSize();
-          }else{
-            for(var i =0;i<this.service_productivity.length; i++){
-              if(this.service_productivity[i].name == size){
-                this.editSectionData.size = this.service_productivity[i];
-                break;
-              }
-            }
+        //   }else if(this.service_type=='Window Cleaning'){
+        //     this.formatWindowSize();
+        //   }else{
+        //     for(var i =0;i<this.service_productivity.length; i++){
+        //       if(this.service_productivity[i].name == size){
+        //         this.editSectionData.size = this.service_productivity[i];
+        //         break;
+        //       }
+        //     }
 
-          }
+        //   }
 
           
       },
@@ -420,7 +429,8 @@ let app = new Vue({
           this.editSectionData.upholstery_type = this.cleaningsections[item].upholstery_type
         }
         this.edit_section_active_index = item
-        this.getSize(this.service_type)
+        //this.getSize(this.service_type)
+        this.editSectionData.size = this.cleaningsections[item].size
         
         this.editSectionData.section_name = this.cleaningsections[item].section_name
         this.editSectionData.age = this.cleaningsections[item].age
@@ -464,17 +474,19 @@ let app = new Vue({
       saveEdit(){
         this.cleaningsections[this.edit_section_active_index].section_name = this.editSectionData.section_name;
         this.cleaningsections[this.edit_section_active_index].age = this.editSectionData.age;
-        if(this.service_type =='Upholstery Cleaning'){
-          if(this.editSectionData.upholstery_type == 'CHAIR'){
-            this.cleaningsections[this.edit_section_active_index].size = this.editSectionData.size.name;
-          }
-          if(this.editSectionData.upholstery_type == 'SOFA'){
-            this.cleaningsections[this.edit_section_active_index].size = this.editSectionData.size + ' Seater';
-          }
+        // if(this.service_type =='Upholstery Cleaning'){
+        //   if(this.editSectionData.upholstery_type == 'CHAIR'){
+        //     this.cleaningsections[this.edit_section_active_index].size = this.editSectionData.size.name;
+        //   }
+        //   if(this.editSectionData.upholstery_type == 'SOFA'){
+        //     this.cleaningsections[this.edit_section_active_index].size = this.editSectionData.size + ' Seater';
+        //   }
 
-        }else{
-          this.cleaningsections[this.edit_section_active_index].size = this.editSectionData.size.name;
-        }
+        // }else{
+        //   this.cleaningsections[this.edit_section_active_index].size = this.editSectionData.size.name;
+        // }
+        this.cleaningsections[this.edit_section_active_index].size = this.editSectionData.size;
+
         this.cleaningsections[this.edit_section_active_index].keynotes = this.editSectionData.keynotes;
         this.cleaningsections[this.edit_section_active_index].section_net_cost = this.editSectionData.section_cost;
         this.cleaningsections[this.edit_section_active_index].wall_type = this.editSectionData.wall_type.toString();
