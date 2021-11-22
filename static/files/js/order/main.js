@@ -988,8 +988,9 @@ const app = new Vue({
      
       return end_time
     },
- addBackupTeam(team_id,id,start,end,duration){
+ async addBackupTeam(team_id,id,start,end,duration){
     console.log("start:"+start+"end:"+end+"duartion:"+duration+"team id is "+team_id)
+    var team=await this.loadBackupTeamToAdd(this.visit_count,this.team_schedule_id)
    if(!this.cleaning_team_api){
      this.team_cleaning_id=team_id
     this.team_cleaning_start=start
@@ -1004,7 +1005,7 @@ const app = new Vue({
   var start_date=moment(this.team_cleaning_start,'DD-MM-YYYY hh:mm a')
   var end_date=moment(this.team_cleaning_end,'DD-MM-YYYY hh:mm a')
   var count=0
-  console.log("start:"+start_date+"end:"+end_date+"duartion:"+duration+"id is "+id)
+  console.log("start:"+this.team_cleaning_start+"end:"+this.team_cleaning_end+"duartion:"+this.team_cleaning_hr+"id is "+id)
    while(moment(this.team_cleaning_start,'DD-MM-YYYY hh:mm a').isSameOrBefore(moment(this.team_cleaning_end,'DD-MM-YYYY hh:mm a')) && count<parseInt(this.team_cleaning_hr))
    {
      var found=false
@@ -1032,9 +1033,24 @@ const app = new Vue({
   this.getTeamMembers()
   $('#backupTeamBtn').click()
  },
+ async loadBackupTeamToAdd(visitcount,scheduleid){
+  await axios.get(url+'/api/cleaning-team-data/',{ params: { 'visit_count':visitcount, 'schedule_id': scheduleid } }).then(response=>{
+                     this.cleaning_team_api=true
+                      this.team_cleaning_start=response.data.cleaning_start_at
+                      this.team_cleaning_end=response.data.cleaning_end_at
+                      this.team_cleaning_hr=response.data.cleaning_hours
+                      this.team_cleaning_id=response.data.team_id
+                     
+
+                    
+  }).catch(err=>{
+
+  })
+  return true
+ },
  async loadBackupTeam(visitcount,scheduleid){
   await axios.get(url+'/api/cleaning-team-data/',{ params: { 'visit_count':visitcount, 'schedule_id': scheduleid } }).then(response=>{
-    this.cleaning_team_api=true
+                     this.cleaning_team_api=true
                       this.team_cleaning_start=response.data.backup_datetime_start_at
                       this.team_cleaning_end=response.data.backup_datetime_end_at
                       this.team_cleaning_hr=response.data.cleaning_hours
