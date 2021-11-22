@@ -937,7 +937,7 @@ const app = new Vue({
 
       }).then(response=>{
         $('#close_backup').click()
-        //location.reload()
+        location.reload()
       })
     },
     editTeamMembers(){
