@@ -227,6 +227,7 @@ function openPaymentEdit(payment){
  app.paymentData.additional_charge=paymentDetails.additional_charge
  app.paymentData.amount_before_cleaning=paymentDetails.amount_before_cleaning
  app.paymentData.amount_after_cleaning=paymentDetails.amount_after_cleaning
+ app.cancelledAmount=paymentDetails.cancelled_amount
  app.openPayment()
 }
 function openSubmit(payment){
@@ -660,6 +661,7 @@ const app = new Vue({
   components: { Multiselect: window.VueMultiselect.default },
 
   data: {
+    cancelledAmount:0,
     new_count:0,
     taken_status:'AGENT_TAKEN',
     image_eval_id:null,
@@ -2035,7 +2037,7 @@ setTimeout(function() {
       this.other_keynotes= others
     },
     calDiscount(){
-      this.paymentData.final_amount=parseFloat(this.total_amount)-(parseFloat(this.paymentData.discount)||0)+(parseFloat(this.paymentData.additional_charge)||0)
+      this.paymentData.final_amount=parseFloat(this.total_amount)-(parseFloat(this.paymentData.discount)||0)+(parseFloat(this.paymentData.additional_charge)||0)-(parseFloat(this.cancelledAmount)||0)
       this.paymentData.amount_after_cleaning=''
       this.paymentData.amount_before_cleaning=''
     },
