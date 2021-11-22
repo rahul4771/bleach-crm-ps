@@ -2272,7 +2272,11 @@
 
 
                                         {% if not cleaning_team.backup_start_at %}
-                                        <div class="row" id="id_backup_{{evaluationbook.id}}">
+                                        <div class="row" id="id_backupadd_{{evaluationbook.id}}">
+                                            <button class="sent-button mt-10" type="submit" @click="addBackupTeam(`{{cleaning_team.id}}`,`{{evaluationdetail.id}}`,`{{orderschedule.start_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.end_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.cleaning_hours}}`)">Add Backup Team</button>
+                                        </div>
+                                        {% else %}
+                                        <div class="row" id="id_backupadd_{{evaluationbook.id}}" style="display:none;">
                                             <button class="sent-button mt-10" type="submit" @click="addBackupTeam(`{{cleaning_team.id}}`,`{{evaluationdetail.id}}`,`{{orderschedule.start_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.end_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.cleaning_hours}}`)">Add Backup Team</button>
                                         </div>
                                         {% endif %}

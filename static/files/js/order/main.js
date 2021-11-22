@@ -361,6 +361,24 @@ function load_cleaning_team(visitcount,scheduleid,bookid){
                             $('#id_backup_endat_'+bookid).text('');
                           }
 
+                          if(response.data.backup_check_in)
+                          {
+                            $('#id_backup_checkin_'+bookid).text(response.data.backup_check_in);
+                          }
+                          else
+                          {
+                            $('#id_backup_checkin_'+bookid).text('');
+                          }
+
+                          if(response.data.backup_check_out)
+                          {
+                            $('#id_backup_checkout_'+bookid).text(response.data.backup_check_out);
+                          }
+                          else
+                          {
+                            $('#id_backup_checkout_'+bookid).text('');
+                          }
+
                         }
                       else if(response.data.cleaning_status == 'CLEANING_IN_PROGRESS'){
                           $('#check_in_out_'+bookid).show();
@@ -917,7 +935,7 @@ const app = new Vue({
 
       }).then(response=>{
         $('#close_backup').click()
-        location.reload()
+        //location.reload()
       })
     },
     editTeamMembers(){
