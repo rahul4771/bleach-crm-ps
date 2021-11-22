@@ -126,7 +126,7 @@
 {% endif %}
 {% endfor %}
 {% if not cleaning_team_detail.backup_check_in %}
-<button class="sent-button send-btn2 mt-4 mb-4 mx-auto" @click="checkinBackup(`{{cleaning_team_detail.id}}`)">Check-In Backup Cleaners</button>
+<button class="sent-button send-btn2 mt-4 mb-4 mx-auto" @click="checkinBackup(`{{cleaning_team_detail.id}}`)" id="checkin-backup-btn">Check-In Backup Cleaners</button>
 
 {% else %}
 <div>
@@ -850,6 +850,7 @@ $(document).ready(function(){
     $('.checklisttitle').attr("hidden",false);
     $('.cleaningkeynotes').attr("hidden",false);
     $('.hr1').attr("hidden",false);
+    $('#checkin-backup-btn').show();
   {% else %}
     $('input[name="mediaafter"]').attr("required",false);
     $('input[name="mediabefore"]').attr("required",true);
@@ -861,6 +862,7 @@ $(document).ready(function(){
     $('.cleaningsection').attr("hidden",true);
     $('.cleaningkeynotes').attr("hidden",true);
     $('.hr1').attr("hidden",true);
+    $('#checkin-backup-btn').hide();
   {% endif %}
 
   //$('.checklist').css('display','none');
