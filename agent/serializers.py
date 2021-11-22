@@ -22,7 +22,7 @@ class CleaningTeamMemberShowSerializer(serializers.ModelSerializer):
 	member = UserProfileShowSerializer(read_only=True)
 	class Meta:
 		model = CleaningTeamMember
-		fields= ('member',)
+		fields= ('member','is_backup_cleaner')
 
 
 

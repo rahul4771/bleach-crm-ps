@@ -1377,8 +1377,19 @@ class="cl-service-list"
               Team Members
             </div>
             <div class="cl-modal-text-title  " v-if="currentSlotDetails.cleaning_team_order_scheduler[0]">
+              <span v-for="(team,tindex) in currentSlotDetails.cleaning_team_order_scheduler[0].cleaning_member_team" >
+              <span  v-if="!team.is_backup_cleaner"> <% team.member.name %> <span v-if="currentSlotDetails.cleaning_team_order_scheduler[0].cleaning_member_team.length>0 && (currentSlotDetails.cleaning_team_order_scheduler[0].cleaning_member_team.length-1)!=tindex && !team.is_backup_cleaner">,</span></span> 
+              </span>
+            </div>
+            <div v-else class="cl-highlight cl-modal-text-title "> Not Assigned </div>
+            <div class="cl-modal-text-content cl-mt-20">
+              Backup Team 
+            </div>
+            <div class="cl-modal-text-title  " v-if="currentSlotDetails.cleaning_team_order_scheduler[0]">
               <span v-for="(team,tindex) in currentSlotDetails.cleaning_team_order_scheduler[0].cleaning_member_team">
-                <% team.member.name %><span v-if="currentSlotDetails.cleaning_team_order_scheduler[0].cleaning_member_team.length>0 && (currentSlotDetails.cleaning_team_order_scheduler[0].cleaning_member_team.length-1)!=tindex">,</span>
+                <span v-if="team.is_backup_cleaner"> <% team.member.name %>
+                  <span v-if="currentSlotDetails.cleaning_team_order_scheduler[0].cleaning_member_team.length>0 && (currentSlotDetails.cleaning_team_order_scheduler[0].cleaning_member_team.length-1)!=tindex && team.is_backup_cleaner">,</span>
+                </span>
               </span>
             </div>
             <div v-else class="cl-highlight cl-modal-text-title "> Not Assigned </div>

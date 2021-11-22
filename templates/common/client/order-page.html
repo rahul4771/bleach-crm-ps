@@ -2205,7 +2205,7 @@
                                                 {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR' or request.user.user_type == 'SALESADMIN' or request.user.user_type == 'ACCOUNTANT' %}
                                                 {% if orderschedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}
                                                
-                                                <div v-if="edit" class="clean-team-edit" @click="editBackupTeam(`{{cleaning_team.id}}`,`{{evaluationdetail.id}}`,`{{orderschedule.start_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.end_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.cleaning_hours}}`)">
+                                                <div v-if="edit" class="clean-team-edit" @click="editBackupTeam(`{{orderschedule.id}}`,`{{cleaning_team.id}}`,`{{evaluationdetail.id}}`,`{{orderschedule.start_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.end_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.cleaning_hours}}`)">
                                                     <img src="{% static 'files/icons/edit.png' %}">
                                                 </div>
                                                 {% endif %}
