@@ -18,6 +18,7 @@ let app = new Vue({
     },
     data () {
           return {
+            loading:false,
             isSelectedSolt:false,
             checkVer:false,
             functionClick:0,
@@ -177,11 +178,14 @@ let app = new Vue({
         fd.append('tendative_date',this.tentdate);
         fd.append('tendative_time',this.tenttime);
         fd.append('is_agent_checked',true)
+        this.loading = true
          let result = await _post('api/agent-investigation-check/',fd);
+         
          if(result.data.success){
            console.log("success")
            window.location.href = '../../dashboard'
          }else{
+          this.loading  = false
            showNotification('Something went wrong','error')
          }
          console.log(result)
@@ -649,11 +653,14 @@ let app = new Vue({
             fd.append('is_followup','False');
 
           }
+          this.loading = true
           let result = await _post('api/investigation-form/',fd);
+          
           if(result.data.success){
             console.log("success")
             window.location.href = '../../dashboard'
           }else{
+            this.loading = false
             showNotification('Something went wrong','error')
           }
           console.log(result)
