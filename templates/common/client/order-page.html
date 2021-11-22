@@ -2272,7 +2272,11 @@
 
 
                                         {% if not cleaning_team.backup_start_at %}
-                                        <div class="row" id="id_backup_{{evaluationbook.id}}">
+                                        <div class="row" id="id_backupadd_{{evaluationbook.id}}">
+                                            <button class="sent-button mt-10" type="submit" @click="addBackupTeam(`{{cleaning_team.id}}`,`{{evaluationdetail.id}}`,`{{orderschedule.start_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.end_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.cleaning_hours}}`)">Add Backup Team</button>
+                                        </div>
+                                        {% else %}
+                                        <div class="row" id="id_backupadd_{{evaluationbook.id}}" style="display:none;">
                                             <button class="sent-button mt-10" type="submit" @click="addBackupTeam(`{{cleaning_team.id}}`,`{{evaluationdetail.id}}`,`{{orderschedule.start_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.end_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.cleaning_hours}}`)">Add Backup Team</button>
                                         </div>
                                         {% endif %}
@@ -2513,7 +2517,7 @@
                                                         {% if order.amount_paid == 0.000 and order.evaluation.is_promocode_applied == False %}
                                                        
                                                         <button class="model-close ml-10" >
-                                                            <img  class="policy-time-edit pointer" src="{% static 'files/icons/edit.png' %}" data-amount_before_cleaning="{{order.evaluation.before_cleaning_amount}}" data-amount_after_cleaning="{{order.evaluation.after_cleaning_amount}}" data-discount="{{order.evaluation.discount}}" data-payment_method="{{order.evaluation.payment_method}}" data-total_amount="{{order.evaluation.estimated_cost}}" data-final_amount="{{order.evaluation.total_cost}}" data-additional_charge="{{order.evaluation.additional_charge|default_if_none:'0'}}" onclick="openPaymentEdit(this)">
+                                                            <img  class="policy-time-edit pointer" src="{% static 'files/icons/edit.png' %}" data-amount_before_cleaning="{{order.evaluation.before_cleaning_amount}}" data-amount_after_cleaning="{{order.evaluation.after_cleaning_amount}}" data-discount="{{order.evaluation.discount}}" data-payment_method="{{order.evaluation.payment_method}}" data-total_amount="{{order.evaluation.estimated_cost}}" data-final_amount="{{order.evaluation.total_cost}}" data-additional_charge="{{order.evaluation.additional_charge|default_if_none:'0'}}" data-cancelled_amount="{{order.evaluation.cancelled_amount|default_if_none:'0'}}" onclick="openPaymentEdit(this)">
                                                         </button>
                                                         {% else %}
                                                         {% endif %}
@@ -3194,6 +3198,7 @@
     </div>
 </div>
 <!-- Visit Cancel ends here-->
+
 <!-- -->
 <!-- -->
 <div class="modal fade bd-example-modal-lg" id="cancelModel" tabindex="-1" role="dialog"
@@ -3362,6 +3367,8 @@
     </div>
 </div>
 <!-- Modal Add feedback -->
+
+
 <div class="modal fade bd-example-modal-lg" id="feedbackModel" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog cancel-model cancel-order-border" role="document">
