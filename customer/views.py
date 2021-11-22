@@ -5770,9 +5770,9 @@ class EditOrderDetails(APIView):
 
 					order.evaluation.discount               = discount_amount
 					order.evaluation.additional_charge      = additional_charge
-					order.evaluation.total_cost             = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
-					order.total_amount                      = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
-					order.remining_amount                   = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
+					order.evaluation.total_cost             = (order.evaluation.estimated_cost-order.evaluation.cancelled_amount-order.evaluation.credit_amount-discount_amount+additional_charge)
+					order.total_amount                      = (order.evaluation.estimated_cost-order.evaluation.cancelled_amount-order.evaluation.credit_amount-discount_amount+additional_charge)
+					order.remining_amount                   = (order.evaluation.estimated_cost-order.evaluation.cancelled_amount-order.evaluation.credit_amount-discount_amount+additional_charge)
 				
 				elif payment_method == 'BREAKDOWN':
 					before_cleaning_amount                  = request.data.get('before_cleaning_amount')
@@ -5783,10 +5783,10 @@ class EditOrderDetails(APIView):
 
 					order.evaluation.discount                = discount_amount
 					order.evaluation.additional_charge       = additional_charge
-					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
-					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
-					order.total_amount                       = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
-					order.remining_amount                    = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
+					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.cancelled_amount-order.evaluation.credit_amount-discount_amount+additional_charge)
+					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.cancelled_amount-order.evaluation.credit_amount-discount_amount+additional_charge)
+					order.total_amount                       = (order.evaluation.estimated_cost-order.evaluation.cancelled_amount-order.evaluation.credit_amount-discount_amount+additional_charge)
+					order.remining_amount                    = (order.evaluation.estimated_cost-order.evaluation.cancelled_amount-order.evaluation.credit_amount-discount_amount+additional_charge)
 
 				elif payment_method == 'POSTPAID':
 					order.evaluation.before_cleaning_amount = 0
@@ -5795,18 +5795,18 @@ class EditOrderDetails(APIView):
 
 					order.evaluation.discount                = discount_amount
 					order.evaluation.additional_charge       = additional_charge
-					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
-					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
-					order.total_amount                       = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
-					order.remining_amount                    = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
+					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.cancelled_amount-order.evaluation.credit_amount-discount_amount+additional_charge)
+					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.cancelled_amount-order.evaluation.credit_amount-discount_amount+additional_charge)
+					order.total_amount                       = (order.evaluation.estimated_cost-order.evaluation.cancelled_amount-order.evaluation.credit_amount-discount_amount+additional_charge)
+					order.remining_amount                    = (order.evaluation.estimated_cost-order.evaluation.cancelled_amount-order.evaluation.credit_amount-discount_amount+additional_charge)
 				
 				else:
 					order.evaluation.discount                = discount_amount
 					order.evaluation.additional_charge       = additional_charge
-					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
-					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
-					order.total_amount                       = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
-					order.remining_amount                    = (order.evaluation.estimated_cost-order.evaluation.credit_amount-discount_amount+additional_charge)
+					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.cancelled_amount-order.evaluation.credit_amount-discount_amount+additional_charge)
+					order.evaluation.total_cost              = (order.evaluation.estimated_cost-order.evaluation.cancelled_amount-order.evaluation.credit_amount-discount_amount+additional_charge)
+					order.total_amount                       = (order.evaluation.estimated_cost-order.evaluation.cancelled_amount-order.evaluation.credit_amount-discount_amount+additional_charge)
+					order.remining_amount                    = (order.evaluation.estimated_cost-order.evaluation.cancelled_amount-order.evaluation.credit_amount-discount_amount+additional_charge)
 
 
 				#to check payment completed
