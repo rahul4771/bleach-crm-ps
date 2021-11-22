@@ -212,7 +212,7 @@
                         <div class="row mt-30">
                             <div class="col-md-3">
                                 <div class="tk-common-text">Select Ticket Type</div>
-                                <multiselect name="ticket_type" label="name" track-by="name"  v-model="value"  selectLabel="Select Ticket" :showLabels='true' :multiple="true" placeholder="Select Ticket Type" :options="options"></multiselect>
+                                <multiselect name="ticket_type" label="name" track-by="name"  @Close="addServiceQu()"  v-model="value"  selectLabel="Select Ticket" :showLabels='true' :multiple="true" placeholder="Select Ticket Type" :options="options"></multiselect>
                             
                             </div>
                         </div>                        
