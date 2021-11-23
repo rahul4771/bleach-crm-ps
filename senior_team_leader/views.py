@@ -604,7 +604,7 @@ class StlHome(IsSeniorTeamLeader,View):
 				followupschedule.days_left_coming = (followupschedule.start_at-timezone.now()).days
 
 		try:	
-			investigations  = Investigation.objects.filter(is_active=True,investigator=request.user).select_related('order__evaluation__customer','order_schedule__customer_address__area','order_schedule__order_scheduler_book').prefetch_related(Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team_details'),Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'))
+			investigations  = Investigation.objects.filter(is_active=True,investigator=request.user,is_secondary_investigation_completed=False).select_related('order__evaluation__customer','order_schedule__customer_address__area','order_schedule__order_scheduler_book').prefetch_related(Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team_details'),Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'))
 		except:
 			investigations  = 	None
 
@@ -1016,19 +1016,19 @@ class CleaningsExport(IsSeniorTeamLeader,View):
 
 		return response
 
-class NewInvestigationTask(IsSeniorTeamLeader,View):
-	def get(self,request,investigation_id):
+# class NewInvestigationTask(IsSeniorTeamLeader,View):
+# 	def get(self,request,investigation_id):
 		
-		try:
-			investigation_details = Investigation.objects.select_related('order_schedule__customer_address__area','order_schedule__order_scheduler_book__service_type','order_schedule__evaluation_details__evaluator','investigator','order__evaluation__customer','order__evaluation__call_attender').prefetch_related(Prefetch('investigation_media',queryset=InvestigationMedia.objects.filter(is_active=True,media_type='PHOTO',taken_status='CUSTOMER_SEND'),to_attr='investigationmedias'),Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_teams')).get(id=investigation_id)	
-		except:
-			investigation_details = None
+# 		try:
+# 			investigation_details = Investigation.objects.select_related('order_schedule__customer_address__area','order_schedule__order_scheduler_book__service_type','order_schedule__evaluation_details__evaluator','investigator','order__evaluation__customer','order__evaluation__call_attender').prefetch_related(Prefetch('investigation_media',queryset=InvestigationMedia.objects.filter(is_active=True,media_type='PHOTO',taken_status='CUSTOMER_SEND'),to_attr='investigationmedias'),Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_teams')).get(id=investigation_id)	
+# 		except:
+# 			investigation_details = None
 		
-		#save checkin_time
-		investigation_details.check_in = timezone.now()
-		investigation_details.save()
+# 		#save checkin_time
+# 		investigation_details.check_in = timezone.now()
+# 		investigation_details.save()
 
-		return render(request,'stl/ticket/new-investigation.html',{'investigation_details':investigation_details})
+# 		return render(request,'stl/ticket/new-investigation.html',{'investigation_details':investigation_details})
 
 
 class InvestigationTask(IsSeniorTeamLeader,View):
