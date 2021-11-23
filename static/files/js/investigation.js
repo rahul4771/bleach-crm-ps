@@ -77,7 +77,7 @@ let app = new Vue({
              },
             edit_section_active_index:null,
             service_type:'',
-            cleaningsections:null,
+            cleaningsections:[],
             selectedDate: new Date(),
               addfollow:false,
             imageData: [],
@@ -670,7 +670,9 @@ let app = new Vue({
           
           if(result.data.success){
             console.log("success")
-            window.location.href = '../../dashboard'
+              window.history.back()
+              // window.location.href = url+'/stl/dashboard'
+            
           }else{
             this.loading = false
             showNotification('Something went wrong','error')
@@ -741,7 +743,6 @@ let app = new Vue({
 
     }
 })
-
 
 function showCleaners(){
     //$('#id_cl').click();

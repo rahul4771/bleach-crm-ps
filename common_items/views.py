@@ -79,7 +79,7 @@ class NewRaiseTicket(IsAuthenticated,View):
 		except:
 			orders = None
 
-		investigators = UserProfile.objects.filter(Q(Q(user_type='QUALITYCONTROLL')|Q(user_type='OPERATIONSUPERVISOR')|Q(user_type='SENIORTEAMLEADER')),is_active=True)
+		investigators = UserProfile.objects.filter(is_investigator=True,is_active=True)
 		return render(request,'common/ticket/raiseticket.html',{"orders":orders,"investigators":investigators})
 
 	def post(self,request):
@@ -552,7 +552,7 @@ class TicketDetails(IsAuthenticated,View):
 			governorates = None
 
 		try:
-			investigators = UserProfile.objects.filter(is_active=True,user_type='QUALITYCONTROLL')
+			investigators = UserProfile.objects.filter(is_active=True,is_investigator=True)
 		except:
 			investigators = None
 
@@ -2635,12 +2635,26 @@ class CallBackList(IsAuthenticated,View):
 		messages.success(request,"Payment note updated !!")
 		return redirect('common_items:callback-list')
 
+class NewInvestigationTask(IsAuthenticated,View):
+	def get(self,request,investigation_id):
+		
+		try:
+			investigation_details = Investigation.objects.select_related('order_schedule__customer_address__area','order_schedule__order_scheduler_book__service_type','order_schedule__evaluation_details__evaluator','investigator','order__evaluation__customer','order__evaluation__call_attender').prefetch_related(Prefetch('investigation_media',queryset=InvestigationMedia.objects.filter(is_active=True,media_type='PHOTO',taken_status='CUSTOMER_SEND'),to_attr='investigationmedias'),Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_teams')).get(id=investigation_id)	
+		except:
+			investigation_details = None
+		
+		#save checkin_time
+		investigation_details.check_in = timezone.now()
+		investigation_details.save()
+
+		return render(request,'stl/ticket/new-investigation.html',{'investigation_details':investigation_details})
+
 class TicketDetailsEdit(IsAuthenticated,View):
 	def get(self,request,ticket_id,order_id):
 
 		order = Order.objects.filter(id=int(order_id)).prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True,work_status='CLEANING_FULFILLED').select_related('customer_address__area','order_scheduler_book').prefetch_related(Prefetch('investigations_orderschedule',queryset=Investigation.objects.filter(check_out__isnull=True),to_attr='assigned_investigations')),to_attr='orderschedules')).first()
 		ticket = FollowUp.objects.filter(is_active=True,id=int(ticket_id)).first()
-		investigators = UserProfile.objects.filter(Q(Q(user_type='QUALITYCONTROLL')|Q(user_type='OPERATIONSUPERVISOR')|Q(user_type='SENIORTEAMLEADER')),is_active=True)
+		investigators = UserProfile.objects.filter(is_investigator=True,is_active=True)
 		investigationmedias = InvestigationMedia.objects.filter(investigation__id=ticket.investigation.id,taken_status = 'CUSTOMER_SEND',is_active=True)
 		
 		return render(request,"common/ticket/ticket_registration_edit.html",{'order':order,'investigators':investigators,"ticket":ticket,"investigationmedias":investigationmedias})
@@ -4637,5 +4651,5 @@ class OrderTicketRegistration(IsAuthenticated,View):
 class EditTicket(IsAuthenticated,View):
 	def get(self,request,ticket_id):
 		ticket = FollowUp.objects.get(id=int(ticket_id))
-		investigators = UserProfile.objects.filter(Q(Q(user_type='QUALITYCONTROLL')|Q(user_type='TECHNICALSUPERVISOR')|Q(user_type='SENIORTEAMLEADER')),is_active=True)
+		investigators = UserProfile.objects.filter(is_investigator=True,is_active=True)
 		return render(request,'common/ticket/editticket.html',{"ticket_id":ticket_id,"visit_id":ticket.investigation.order_schedule.id,"investigators":investigators})

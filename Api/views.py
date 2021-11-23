@@ -730,6 +730,7 @@ class TicketSubmitAPI(APIView):
 				Reporting.objects.create(investigation=investigation,title=title,notes=notes)
 
 			if action == 'Assign Investigator':
+				print(request.data.get('secondary_investigator'),"assign")
 				secondary_investigator = request.data.get('secondary_investigator')
 				print(secondary_investigator,"sec")
 				investigator = UserProfile.objects.get(id=int(secondary_investigator))
@@ -979,10 +980,6 @@ class AgentInvestigationChecckAPI(APIView):
 		investigation = Investigation.objects.get(id=int(investigation_id))
 
 		followup = FollowUp.objects.get(investigation=investigation,is_active=True)
-		followup.status = 'FOLLOWUP_IN_PROGRESS'
-		followup.save()
-
-		print('vaaa')
 		
 		tendative_date = request.data.get('tendative_date')
 
@@ -990,22 +987,14 @@ class AgentInvestigationChecckAPI(APIView):
 
 		print(tendative_date,tendative_time,"secs")
 
-		# follow_up = FollowUp.objects.select_related('investigation__order__evaluation__customer').get(investigation_id=investigation_id,is_active=True)
-		# follow_up.status         = 'FOLLOWUP_IN_PROGRESS'
-		# # follow_up.followup_notes = request.POST.get('investigator_notes')
-		# follow_up.no_of_cleaners = no_of_cleaners
-		# follow_up.cleaning_hours = cleaning_hours
-		# follow_up.total_cost = total_cost
-		# follow_up.save()
-
 		start_date_time = datetime.strptime(tendative_date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
-		end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))		
+		end_date_time   = start_date_time + timedelta(hours=float(followup.cleaning_hours))		
 
-		FollowUpScheduler.objects.create(follow_up=follow_up,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address)
-
-		# investigation.is_followup_approved = True
-		# investigation.save()
+		FollowUpScheduler.objects.create(follow_up=followup,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address)
 			
+		investigation.is_agent_approved = True
+		investigation.save()
+
 		response_dict = {'success':True}
 
 		return Response(response_dict,HTTP_200_OK)

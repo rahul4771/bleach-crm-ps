@@ -1490,7 +1490,7 @@ class TicketApprove(IsAdmin,View):
 
 			paybackdiscount.approved_by = request.user
 
-			paybackdiscount.is_completed = True
+			# paybackdiscount.is_completed = True
 
 			paybackdiscount.save()
 

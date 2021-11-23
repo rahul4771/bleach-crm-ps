@@ -77,19 +77,98 @@
 <h2 class="h2">Open Tickets</h2>
 <table class="main-table">
 <tbody>
-{% for ticket in open_tickets %}
-<tr>
-<td data-label="BLC Number" class="bold-text"><a href="{% url 'common_items:ticketadvanced' ticket.investigation.order_schedule.order.evaluation.customer.id ticket.id %}" target="_blank">TKT{{ticket.ticket_no}}</a></td>
-<td class="clickable-row" data-href="{% url 'agent:agent-open-ticket' ticket.investigation.id %}">
-<span class="green-bg">Click to View</span>
+
+{% for follow_up in followup_to_be_closed %}
+
+{% if follow_up.investigation.is_agent_approved == False and follow_up.investigation.is_followup_approved == True %}
+
+<tr class="{% if follow_up.days_left <= 2 %}green-line{% elif follow_up.days_left > 2 and follow_up.days_left <= 5 %}yellow-line{% elif follow_up.days_left > 5 and follow_up.days_left <= 7 %}orange-line{% else %}red-line{% endif %}" > 
+<td data-label="BLC Number" class="bold-text"><a href="{% url 'common_items:ticketadvanced' follow_up.investigation.order_schedule.order.evaluation.customer.id follow_up.id %}" target="_blank">TKT{{follow_up.ticket_no}}</a></td>
+
+<td data-label="Customer">{{follow_up.investigation.order.evaluation.customer.name}}</td>
+<td class="hide-a" data-label="">{{follow_up.investigation.order.evaluation.customer.mobile_number}}</td>
+
+<td class="hide-a" data-label="">
+{% if follow_up.investigation.investigator %}
+{% if follow_up.investigation.investigator.profile_image %}
+<img src="{{follow_up.investigation.investigator.profile_image.url}}" class="profile-avatar" title="{{follow_up.investigation.investigator.name}}">
+{% else %}
+<img src="{% static 'files/images/profile-pic.jpg' %}" class="profile-avatar" title="{{follow_up.investigation.investigator.name}}">
+{% endif %}
+{% endif %}
+</td>
+
+<td class="hide-a" data-label="">
+    <span class="{% if follow_up.investigation.order_schedule.order_scheduler_book.cleaning_policy == 'SUBSCRIPTION' %}green-text{% else %}blue-text{% endif %} bold-text">{{follow_up.investigation.order_schedule.order_scheduler_book.cleaning_policy}}</span>
+</td>
+<td data-label="" class="bold-text">{% if follow_up.days_left <= 2 %}<h3 class="green-text-h3">{{follow_up.days_left}}</h3> Days&#11014;{% elif follow_up.days_left > 2 and follow_up.days_left <= 5 %}<h3 class="yellow-text-h3">{{follow_up.days_left}}</h3> Days&#11014;{% elif follow_up.days_left > 5 and follow_up.days_left <= 7 %}<h3 class="orange-text-h3">{{follow_up.days_left}}</h3> Days&#11014;{% else %}<h3 class="red-text-h3">{{follow_up.days_left}}</h3> Days&#11014;{% endif %}</td>
+
+<td class="clickable-row" data-href="{% url 'agent:agent-open-ticket' follow_up.investigation.id %}">
+<span class="yellow-bg">Click to View</span>
 </td>
 </tr>
+
+{% else %}
+
+{% if follow_up.followupcount|add:follow_up.paybackcount|add:follow_up.buybackpromocodecount|add:follow_up.internalreportcount > 0 and follow_up.followupcount|add:follow_up.paybackcount|add:follow_up.buybackpromocodecount|add:follow_up.internalreportcount == follow_up.followupcompletedcount|add:follow_up.paybackcompletedcount|add:follow_up.buybackpromocodecompletedcount|add:follow_up.internalreportcount or follow_up.investigation.is_secondary_investigation_completed == True and follow_up.investigation.is_followup_approved == False %}
+<tr class="green-line ticketcount">
+<td data-label="BLC Number" class="bold-text"><a href="{% url 'common_items:ticketadvanced' follow_up.investigation.order_schedule.order.evaluation.customer.id follow_up.id %}" target="_blank">TKT{{follow_up.ticket_no}}</a></td>
+
+
+<td data-label="Customer">{{follow_up.investigation.order.evaluation.customer.name}}</td>
+
+<td data-label="Time">{{follow_up.investigation.order.evaluation.customer.mobile_number}}</td>
+
+<td class="hide-a" data-label=""><img src="{{follow_up.investigation.investigator.profile_image.url}}" class="profile-avatar" title="{{follow_up.investigation.investigator.name}}"></td>
+
+<td>
+{% for followup in follow_up.followupschedulers %}
+{% if forloop.first %}
+FollowUp Cleaning<br>
+{% endif %}
+{% endfor %}
+{% for payback in follow_up.investigation.paybackdiscount %}
+{% if forloop.first %}
+Payback / Discount<br>
+{% endif %}
+{% endfor %}
+{% for buyback in follow_up.investigation.buybackpromocodegift %}
+{% if forloop.first %}
+BuyBack / Promocode /Gift<br>
+{% endif %}
+{% endfor %}
+{% for report in follow_up.investigation.internalreports %}
+{% if forloop.first %}
+Internal Report
+{% endif %}
+{% endfor %}
+
+</td>
+
+{% comment %} <td data-label="Area">{{follow_up.investigation.order_schedule.customer_address.area}}</td> {% endcomment %}
+<td data-label="" class="bold-text">{% if follow_up.days_left <= 2 %}<h3 class="green-text-h3">{{follow_up.days_left}}</h3> Days&#11014;{% elif follow_up.days_left > 2 and follow_up.days_left <= 5 %}<h3 class="yellow-text-h3">{{follow_up.days_left}}</h3> Days&#11014;{% elif follow_up.days_left > 5 and follow_up.days_left <= 7 %}<h3 class="orange-text-h3">{{follow_up.days_left}}</h3> Days&#11014;{% else %}<h3 class="red-text-h3">{{follow_up.days_left}}</h3> Days&#11014;{% endif %}</td>
+
+{% if follow_up.investigation.investigator and follow_up.investigation.is_secondary_investigation_completed == False %}
+<td><span class="orange-bg">Investigation Pending</span></td>
+{% else %}
+<td data-label="" class="followup_schedule_close clickable-cursor" data-tickettypes="{{follow_up.investigation.ticket_types}}" data-blcno="{{follow_up.investigation.order.order_no}}" data-tktno="{{follow_up.ticket_no}}" 
+{% for followup in follow_up.followupschedulers %}{% if forloop.first %}data-followup="FollowUp Cleaning"{% else %}data-followup=""{% endif %}{% endfor %}
+{% for payback in follow_up.investigation.paybackdiscount %}{% if forloop.first %}data-paybacktype="{{payback.approved_option|default_if_none:""}}"{% else %}data-paybacktype=""{% endif %}{% endfor %} 
+{% for buyback in follow_up.investigation.buybackpromocodegift %}{% if forloop.first %}data-buybacktype="{{buyback.approved_option|default_if_none:""}}"{% else %}data-buybacktype=""{% endif %}{% endfor %}
+{% for report in follow_up.investigation.internalreports %}{% if forloop.first %}data-internalreport="Internal Report"{% else %}data-internalreport=""{% endif %}{% endfor %}
+data-assigner="{{follow_up.investigation.assigned_by.name}}" data-investigator="{{follow_up.investigation.investigator.name}}"
+data-customer_name="{{follow_up.investigation.order.evaluation.customer.name}}" data-mobile_no="{{follow_up.investigation.order.evaluation.customer.mobile_number}}" data-area="{{follow_up.investigation.order_schedule.customer_address.area.name}}" data-service_type="{{follow_up.investigation.order_schedule.order_scheduler_book.service_type.name}}" data-id="{{follow_up.id}}"><span class="green-bg">Click to Close</span></td>
+{% endif %}
+</tr>
+{% endif %}
+{% endif %}
+
 {% endfor %}
 </tbody>
 </table>
 </div><!--white-wrapper-->
 
-<div class="white-wrapper closetickets"><!--white-wrapper-->
+{% comment %} <div class="white-wrapper closetickets"><!--white-wrapper-->
 <h2 class="h2">Case Closing Task</h2>
 <table class="main-table">
 <tbody>
@@ -138,7 +217,7 @@ data-customer_name="{{follow_up.investigation.order.evaluation.customer.name}}" 
 {% endfor %}
 </tbody>
 </table>
-</div><!--white-wrapper-->
+</div><!--white-wrapper--> {% endcomment %}
 
 <!-- As per the requirement date confirmation task commeneted -->
 {% comment %}

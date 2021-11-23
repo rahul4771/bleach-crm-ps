@@ -169,7 +169,7 @@
 }
 </style>
 <div class="wrapper" id="app" v-cloak><!--wrapper-->
-    {% include "stl/common/header.html" %}    
+    {% include "agent/common/header.html" %}    
         <section class="content"><!--content-->
             <div class="container-fluid space topspace"><!--container-fluid space-->
                 <div class="welcome-wrapper"><!--welcome-wrapper-->
@@ -273,7 +273,7 @@
                         {% if investigation_details.investigationmedias %}
                         <div class="row mt-20">
                             <div class="col-md-12">
-                                <div class="tk-common-text">Media</div>
+                                <div class="tk-common-text">Customer Media</div>
                             </div>
                         </div>
                         <div class="row mt-10">
@@ -281,11 +281,11 @@
                                 <div class="owl-carousel owl-theme"  id="owl_id_1">
 
                                     {% for media in investigation_details.investigationmedias %}
-                                    
+                                    {% if media.taken_status == 'CUSTOMER_SEND' %}
                                         <div class="item">
                                             <img src="{{media.media.url}}" > 
                                         </div>
-                                    
+                                    {% endif %}
                                     {% endfor %}
                                 
                                 </div>
@@ -296,7 +296,7 @@
                         {% if investigation_details.notes %}
                         <div class="row mt-20">
                             <div class="col-md-12">
-                                <div class="tk-common-text">Investigation Note</div>
+                                <div class="tk-common-text">Note</div>
                             </div>
                         </div>
                         <div class="row mt-10">
@@ -315,7 +315,7 @@
                         {% if investigation_details.investigationmedias %}
                         <div class="row mt-20">
                             <div class="col-md-12">
-                                <div class="tk-common-text">Media</div>
+                                <div class="tk-common-text">Investigation Media</div>
                             </div>
                         </div>
                         <div class="row mt-10">
@@ -338,7 +338,7 @@
                         {% if investigation_details.secondary_investigation_notes %}
                         <div class="row mt-20">
                             <div class="col-md-12">
-                                <div class="tk-common-text">Note</div>
+                                <div class="tk-common-text">Investigation Note</div>
                             </div>
                         </div>
                         <div class="row mt-5">
@@ -370,6 +370,11 @@
 
                             </div>
                         </div> -->
+                        <div class="row mt-20">
+                            <div class="col-md-12">
+                                <div class="tk-common-text" style="font-size: 17px;">FollowUp Details</div>
+                            </div>
+                        </div>
 
                         <div class="mt-10" >
                             <div v-for="(item, index) in cleaningsections" :key="item.section_id"  >
@@ -521,7 +526,7 @@
                                 <div class="col-md-12 tk-common-text2">
                                     <div class="d-flex">
                                         <label style="" class="c-container" @click="changeCheckBox()">
-                                            &nbsp; Is verified
+                                            &nbsp; Verify Followup Cleaning
                                             <input type="checkbox">
                                             <span  style="top:0px !important;" class="c-checkmark"></span>
                                         </label>

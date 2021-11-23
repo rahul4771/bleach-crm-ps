@@ -312,9 +312,11 @@ class AccountantHome(IsAccountant,View):
 		if approved_paybackdiscounts:
 			for ticket in approved_paybackdiscounts:
 				ticket.days_left = (timezone.now()-ticket.scheduled_at).days
-
-				for paybackdiscount in ticket.paybackdiscounts:
+				
+				for discount in ticket.paybackdiscounts:
 					ticket_count += 1
+
+		print(approved_paybackdiscounts,ticket_count,"tot")
 
 		#order cancell cashback
 		order_cancell_cashbacks = CancellOrderAmountHistory.objects.filter(amount_return_method='CASHBACK',is_completed=False).select_related('order__evaluation__customer').prefetch_related('order__order_scheduler_order__order_scheduler_book')
@@ -1381,7 +1383,7 @@ def export_users_xls(request):
 		for col_num in range(len(columns)):
 			ws.write(row_num, col_num, columns[col_num], font_style)
 
-		orders = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end),evaluation__quatation_status='APPROVED').values_list('order_no', 'evaluation__payment_method', 'total_amount', 'amount_paid', 'remining_amount').order_by('-id')
+		orders = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end),evaluation__quatation_status='APPROVED').filter(~Q( Q(evaluation__quatation_status='APPROVED') & Q(Q(Q(evaluation__payment_method='PREPAID')&~Q(payment_status='COMPLETED'))|Q(Q(evaluation__payment_method='BREAKDOWN')&Q(preamount_paid=0))) )).values_list('order_no', 'evaluation__payment_method', 'total_amount', 'amount_paid', 'remining_amount').order_by('-id')
 	
 		#removing duplicates
 		found = set()
