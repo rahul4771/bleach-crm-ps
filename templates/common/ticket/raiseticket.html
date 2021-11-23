@@ -265,7 +265,12 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-3">
-                                <multiselect   label="name" track-by="name" @Close="selectTickets()" @remove='removeFromSelect()'   v-model="damacval"  selectLabel="Select Action" :showLabels='true' :multiple="true" placeholder="Select Actions" :options="ticketAction"></multiselect>
+                                <multiselect v-if="!isSerQual()"  label="name" track-by="name" @Close="selectTickets()" @remove='removeFromSelect()'  v-model="damacval"  selectLabel="Select Action" :showLabels='true' :multiple="true" placeholder="Select Actions" :options="ticketAction">
+                                   
+                                </multiselect>
+                                <multiselect v-if="isSerQual()"  label="name" track-by="name" @Close="selectTickets()" @remove='removeFromSelect()'   v-model="damacval"  selectLabel="Select Action" :showLabels='true' :multiple="true" placeholder="Select Actions" :options="ticketAction2">
+                                   
+                                </multiselect>
 
                                     <!-- <multiselect v-model="damacval" :options="damAc" :searchable="false" :close-on-select="true" :show-labels="false" placeholder="Select Action"></multiselect> -->
                                 </div>

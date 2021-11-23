@@ -122,11 +122,6 @@ class TechnicalSupervisorHome(IsTechnicalSupervisor,View):
 			investigations  = Investigation.objects.filter(is_active=True,secondary_investigator=request.user,is_secondary_investigation_completed=False).select_related('order__evaluation__customer','order_schedule__customer_address__area','order_schedule__order_scheduler_book').prefetch_related(Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team_details'),Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'))
 		except:
 			investigations  = 	None
-
-		#add days left
-		for investigation in investigations:
-			investigation.days_left = (timezone.now()-investigation.scheduled_at).days
-
 		
 		#cleaning schedule & followup schedule for cleaning calendar			
 		cleaning_calendar_date	= request.GET.get('cleaning_calendar_date')
@@ -184,8 +179,17 @@ class TechnicalSupervisorHome(IsTechnicalSupervisor,View):
 			spp_calendar_notapprovedorder_schedules = OrderScheduler.objects.filter(Q(Q(Q(end_at__gt=schedule_date_start)&Q(end_at__lte=schedule_date_end)&Q(start_at__lt=schedule_date_start)))).select_related('order__evaluation__customer','customer_address','order_scheduler_book').filter(Q( Q(order__evaluation__quatation_status='PENDING')|Q( Q(order__evaluation__quatation_status='APPROVED') & Q(order__evaluation__payment_method='BREAKDOWN') & Q(order__preamount_paid = 0) ) | Q( Q(order__evaluation__quatation_status='APPROVED') & Q(order__evaluation__payment_method='PREPAID') & Q(order__amount_paid=0) ) ))
 		except:
 			spp_calendar_notapprovedorder_schedules = None
+
+		try:	
+			cases_investigations  = Investigation.objects.filter(is_active=True,investigator=request.user,is_secondary_investigation_completed=False).select_related('order__evaluation__customer','order_schedule__customer_address__area','order_schedule__order_scheduler_book').prefetch_related(Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team_details'),Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'))
+		except:
+			cases_investigations  = None
+
+		#add days left
+		for investigation in cases_investigations:
+			investigation.days_left = (timezone.now()-investigation.scheduled_at).days
 		
-		return render(request,'technicalsupervisor/home/home.html',{'investigations':investigations,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"workers_details":workers_details,"workers_date":workers_date,"search_query":search,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_date":today_date,"weekstart_date":weekstart_date,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,"calendar_notapprovedorder_schedules":calendar_notapprovedorder_schedules,"sp_calendar_notapprovedorder_schedules":sp_calendar_notapprovedorder_schedules,"spp_calendar_notapprovedorder_schedules":spp_calendar_notapprovedorder_schedules})
+		return render(request,'technicalsupervisor/home/home.html',{'cases_investigations':cases_investigations,'investigations':investigations,'today_cleaning_job_count':today_cleaning_job_count,'week_cleaning_job_count':week_cleaning_job_count,"total_workers":total_workers,"total_active_workers":total_active_workers,"today_active_teams_count":today_active_teams_count,"week_active_teams_count":week_active_teams_count,"workers_details":workers_details,"workers_date":workers_date,"search_query":search,"today_total_team_mens":today_total_team_mens,"week_total_team_mens":week_total_team_mens,"today_date":today_date,"weekstart_date":weekstart_date,"today_cleaning_active_teams":today_cleaning_active_teams,"today_followup_active_teams":today_followup_active_teams,"week_followup_active_teams":week_followup_active_teams,"week_cleaning_active_teams":week_cleaning_active_teams,'calendar_order_schedules':calendar_order_schedules,'calendar_followup_schedules':calendar_followup_schedules,'sp_calendar_order_schedules':sp_calendar_order_schedules,'sp_calendar_followup_schedules':sp_calendar_followup_schedules,'spp_calendar_order_schedules':spp_calendar_order_schedules,'spp_calendar_followup_schedules':spp_calendar_followup_schedules,'schedule_date':schedule_date,"calendar_notapprovedorder_schedules":calendar_notapprovedorder_schedules,"sp_calendar_notapprovedorder_schedules":sp_calendar_notapprovedorder_schedules,"spp_calendar_notapprovedorder_schedules":spp_calendar_notapprovedorder_schedules})
 
 
 class InvestigationTask(IsTechnicalSupervisor,View):

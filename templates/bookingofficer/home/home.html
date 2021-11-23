@@ -172,7 +172,7 @@
     {% endif %}
 
 
-{% comment %} {% if approved_paybackdiscounts and ticket_count > 0 %}
+{% if approved_paybackdiscounts and ticket_count > 0 %}
     <div class="white-wrapper"><!--white-wrapper-->
     <h2 class="h2">Payback/Discount Task</h2>
     <table class="main-table">
@@ -198,7 +198,7 @@
     </tbody>
     </table>
     </div>
-    {% endif %} {% endcomment %}
+    {% endif %}
 
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Cash Collection Requests</h2>

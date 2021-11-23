@@ -70,6 +70,33 @@
                 //     name:'Follow-up Cleaning'
                 // },
             ],
+            ticketAction2:[
+                {
+                    id:1,
+                    selected:false,
+                    name:'Payback'
+                },
+                {
+                    id:2,
+                    selected:false,
+                    name:'Internal Report'
+                },
+                {
+                    id:3,
+                    selected:false,
+                    name:'Assign Investigator'
+                }
+                // {
+                //     id:4,
+                //     selected:false,
+                //     name:'Insurance Request'
+                // },
+                // {
+                //     id:5,
+                //     selected:false,
+                //     name:'Follow-up Cleaning'
+                // },
+            ],
             damAc:['Payback','Internal Report','Assign Investigator','Insurance Request','Follow-up Cleaning'],
             damAc2 : ['Payback','Gift','Assign Investigator','Follow-up Cleaning'],
             damAc3:investigators_list,
@@ -98,48 +125,60 @@
       },
       methods:{
           removedOp(){
+              console.log('chng')
 
           },
-        addServiceQu(){
-          
+        isSerQual(){
             var flag = false
-            var flag2 = false
-            var ind
             for(var i =0;i<this.value.length;i++){
                 if(this.value[i].id == 2){
                     flag = true;
                     break;
                 }
             }
-            if(flag){
-                for(var j =0;j<this.ticketAction.length;j++){
-                    if(this.ticketAction[j].id == 3){
-                        flag2 = true;
-                        break;
-                    }
-                }
-                if(!flag2){
-                    this.ticketAction.push(  {
-                        id:3,
-                        selected:false,
-                        name:'Assign Investigator'
-                    })
-                }
+            return flag
 
-            }else{
-                for(var k =0;k<this.ticketAction.length;k++){
-                    if(this.ticketAction[k].id == 3){
-                        flag2 = true;
-                        ind = k
-                        break;
-                    }
-                }
-                if(flag2){
-                    this.ticketAction.splice(ind,1)
-                }
+        },
+        addServiceQu(){
+          
+            // var flag = false
+            // var flag2 = false
+            // var ind
+            // for(var i =0;i<this.value.length;i++){
+            //     if(this.value[i].id == 2){
+            //         flag = true;
+            //         break;
+            //     }
+            // }
+            // if(flag){
+            //     for(var j =0;j<this.ticketAction.length;j++){
+            //         if(this.ticketAction[j].id == 3){
+            //             flag2 = true;
+            //             break;
+            //         }
+            //     }
+            //     if(!flag2){
+            //         this.ticketAction.push(  {
+            //             id:3,
+            //             selected:false,
+            //             name:'Assign Investigator'
+            //         })
+            //     }
 
-            }
-            console.log(flag,this.value)
+            // }else{
+            //     for(var k =0;k<this.ticketAction.length;k++){
+            //         if(this.ticketAction[k].id == 3){
+            //             flag2 = true;
+            //             ind = k
+            //             break;
+            //         }
+            //     }
+            //     if(flag2){
+            //         this.ticketAction.splice(ind,1)
+            //     }
+
+            // }
+            // console.log(flag,this.value)
 
         },
         editSection(item){
@@ -225,6 +264,7 @@
             return this.payback.includes(item)
         },
         removeFromSelect(){
+            
                 if(this.damacval.length != 0){
                     for(var i = 0;i<this.damacval.length;i++){
                          this.damacval[i].selected = false
