@@ -1527,6 +1527,12 @@ text-align: center;
 .model-sale-card-head{
   font-size: 16px;
 }
+.d-flex{
+  display: flex;
+}
+.mt-100{
+  margin-top:100px;
+}
 
 @media only screen and (max-width: 600px) {
   .w-p-75 {

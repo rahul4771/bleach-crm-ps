@@ -286,7 +286,7 @@
             <input type="hidden" name="supplier_edit_id" id="id_edit_supplier" />
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Supplier Name</div>
+                    <div class="model-input-name required-field">Supplier Name</div>
 
                     <div class="inv-input-container h-30"> 
                         <input type="text"  class="w-p-100 inv-in" name="supplier_name" id="name_supplier" required>
@@ -306,10 +306,10 @@
             </div>
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Contact</div>
+                    <div class="model-input-name required-field">Contact</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="number" id="contact_supplier" class="w-p-100 inv-in" name="contact">
+                        <input type="number" id="contact_supplier" class="w-p-100 inv-in" name="contact" required>
                       </div>
                 </div>
 
@@ -326,10 +326,10 @@
             </div>
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Address</div>
+                    <div class="model-input-name required-field">Address</div>
 
                     <div class="inv-input-container h-30"> 
-                        <textarea name="address" id="address_supplier" class="w-p-100 inv-in"></textarea>
+                        <textarea name="address" id="address_supplier" class="w-p-100 inv-in" required></textarea>
                       </div>
                 </div>
 
@@ -370,7 +370,7 @@
           
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button supplier-form-btn" type="submit" >Submit</button>
+            <button class="sent-button supplier-form-btn" type="button" onclick="supplierformvalidation()" >Submit</button>
         </form>
                         <button data-dismiss="modal" onclick="closeNavAddBundle()" class="view-button">Cancel</button>
         </div>
@@ -392,14 +392,14 @@
             </div>
             <hr>
 
-            <form method="POST" action="" >{% csrf_token %}
+            <form method="POST" id="itemform" action="" >{% csrf_token %}
             <input type="hidden" name="action" id="supplier_item_action" value="add_item" />
             <input type="hidden" name="item_supplier_id" id="item_supplier_id" />
             <input type="hidden" name="item" id="id_pro_sel" value="" />
             <input type="hidden" name="item_edit_id" id="id_edit_item" />
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Item</div>
+                    <div class="model-input-name required-field">Item</div>
 
                     {% comment %} <input type="text"  class="w-p-100 inv-in" name="supplier_item" id="id_supplier_item"> {% endcomment %}
                 
@@ -425,7 +425,7 @@
             </div>
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Price</div>
+                    <div class="model-input-name required-field">Price</div>
 
                     <input type="text"  class="w-p-100 inv-in" name="supplier_item_price" id="id_supplier_item_price" required>
                 </div>
@@ -445,7 +445,7 @@
   
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button item-form-btn" type="submit" >Submit</button>
+            <button class="sent-button item-form-btn" type="button" onclick="itemformvalidation()" >Submit</button>
             </form>
             <button data-dismiss="modal" onclick="closeNavAddItem()" class="view-button">Cancel</button>
         </div>
@@ -807,6 +807,35 @@ function openNavAddBundle(d) {
         //console.log($(this).data('categoryid'),$(this).data('categoryname'),"editc")
         $('#id_supplier_delete').val($(this).data('supplierid'));
     })
+
+    //form validation
+    function supplierformvalidation(){
+        console.log($('input[name=address]').val(),"lolo")
+
+        if ($('input[name=supplier_name]').val() == ''){
+            $('input[name=supplier_name]').addClass('red-border-input');
+        }else if ($('input[name=contact]').val() == ''){
+            $('input[name=contact]').addClass('red-border-input');
+        }else if ($('textarea[name=address]').val() == ''){
+            $('textarea[name=address]').addClass('red-border-input');
+        }else{
+            console.log("lolo")
+            $('#myForm').submit();
+        }
+    }
+
+    function itemformvalidation(){
+        console.log($('input[name=product]').val(),"lolo")
+
+        if ($('input[name=product]').val() == ''){
+            $('input[name=product]').addClass('red-border-input');
+        }else if ($('input[name=supplier_item_price]').val() == ''){
+            $('input[name=supplier_item_price]').addClass('red-border-input');
+        }else{
+            console.log("lolo")
+            $('#itemform').submit();
+        }
+    }
 
     function set_params_go(args)
     {

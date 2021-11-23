@@ -4999,7 +4999,7 @@ function openNav() {
             ch_count=ch_count+1
             
             if(ch_count==(Object.keys(this.scheduleGroup).length) && this.currentAddressIndex==this.bookedServiceDetails.length){
-            // window.location.href='/common/makequatation/phase1/'+this.bookedServiceDetails[0].address.customer.id+'/'+this.main_eval_id
+             window.location.href='/common/makequatation/phase1/'+this.bookedServiceDetails[0].address.customer.id+'/'+this.main_eval_id
 
             }
            // window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id
@@ -5027,7 +5027,7 @@ function openNav() {
         this.success_msg=true
         this.error_msg_stat=false
         if(this.currentAddressIndex==this.bookedServiceDetails.length){
-        // window.location.href='/common/makequatation/phase1/'+this.bookedServiceDetails[0].address.customer.id+'/'+this.main_eval_id
+         window.location.href='/common/makequatation/phase1/'+this.bookedServiceDetails[0].address.customer.id+'/'+this.main_eval_id
         }
        // window.location.href='/common/makequatation/phase1/'+this.bookedServiceDetails[0].address.customer.id+'/'+this.main_eval_id
          // window.location.href='/common/makequatation/phase1/'+params.enquiry_id+'/'+params.evaluation_id

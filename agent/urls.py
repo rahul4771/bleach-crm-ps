@@ -3,6 +3,8 @@ from agent import views
 
 urlpatterns = [
 
+
+
 	url(r'^cleaningcallendar/$',views.CleaningCallendar.as_view(),name='cleaning-callendar'),
 	url(r'^cleaningcallendar/availability/$',views.AvailabilityCleaningCallendar.as_view(),name='cleaning-callendar-availability'),#New logic applied 8 to 22 logic
 	url(r'^cleaningcallendar/cleaning/popup/$',views.CleaningCallendarCleaningPopup.as_view(),name='cleaning-callendar-cleaningpopup'),
@@ -24,6 +26,7 @@ urlpatterns = [
 	url(r'^newfeedback/$',views.AddFeedBack.as_view(),name='new-feedback'),
 	url(r'^newfeedback/order/(?P<orderid>[-\w]+)/$',views.AddFeedBackOrder.as_view(),name='new-feedback-order'),
 
+	url(r'^tickets/investigation/(?P<investigation_id>[-\w]+)$',views.InvestigationDetails.as_view(),name='agent-open-ticket'),
 	
 	url(r'^tickets/edit/(?P<ticket_id>[-\w]+)/(?P<order_id>[-\w]+)/$',views.TicketDetailsEdit.as_view(),name='agent-tickets-edit'),
 	url(r'^ticket/details/(?P<client_id>[-\w]+)/(?P<followup_id>[-\w]+)/$',views.TicketAdvanced.as_view(),name='agent-ticketadvanced'),

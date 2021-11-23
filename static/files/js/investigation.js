@@ -10,7 +10,7 @@ let app = new Vue({
       totalAmount: function () {
         var sum =0;
         for(var i = 0 ; i<this.cleaningsections.length;i++){
-          sum = sum + this.cleaningsections[i].section_net_cost;
+          sum = sum + parseInt(this.cleaningsections[i].section_net_cost);
         }
         
         return sum;
@@ -18,8 +18,15 @@ let app = new Vue({
     },
     data () {
           return {
+            loading:false,
+            isSelectedSolt:false,
+            checkVer:false,
+            functionClick:0,
+            is_agent_checked:false,
+            durationArray:[2,4,8,10],
             avSolt:null,
             incheck:false,
+            incheck2:false,
             sofa_size:[],
             chair_size:[],
             new_kitchen_cabinet_size:[],
@@ -52,7 +59,7 @@ let app = new Vue({
             editSectionData:{
               is_highprice_window:null,
               age_of_stain:'',
-              size:{},
+              size:'',
               keynotes:[],
               section_cost:0,
               section_name:'',
@@ -70,7 +77,7 @@ let app = new Vue({
              },
             edit_section_active_index:null,
             service_type:'',
-            cleaningsections:null,
+            cleaningsections:[],
             selectedDate: new Date(),
               addfollow:false,
             imageData: [],
@@ -144,9 +151,56 @@ let app = new Vue({
       }
   },
     methods:{
+      getTotal(){
+        var sum =0;
+        for(var i = 0 ; i<this.cleaningsections.length;i++){
+          console.log(this.cleaningsections[i].section_net_cost,'xot')
+          sum = sum + parseInt(this.cleaningsections[i].section_net_cost);
+        }
+        
+        return sum;
+      },
       inputEvents(){
         console.log("date chaneg")
       },
+      checkAgentSub(){
+        this.isSelectedSolt = false;
+        this.checkVer = false
+        if(this.tenttime ==''){
+          this.isSelectedSolt = true;
+        }else{
+          this.submitAgentForm()
+        }
+        
+      },
+      chechIsver(){
+        this.checkVer = false
+        if(!this.is_agent_checked){
+          this.checkVer = true
+        }
+      },
+      async submitAgentForm(){
+
+         let fd = new FormData();
+         fd.append('investigation_id',this.visitid);
+         
+        fd.append('tendative_date',this.tentdate);
+        fd.append('tendative_time',this.tenttime);
+        fd.append('is_agent_checked',true)
+        this.loading = true
+         let result = await _post('api/agent-investigation-check/',fd);
+         
+         if(result.data.success){
+           console.log("success")
+           window.location.href = '../../dashboard'
+         }else{
+          this.loading  = false
+           showNotification('Something went wrong','error')
+         }
+         console.log(result)
+
+
+       },
       checkAvalSolt(index){
         var tempIndex = index*2;
         if(this.avSolt != null){
@@ -318,55 +372,55 @@ let app = new Vue({
         
       },
       async getSize(type){
-        if(type=='Hourly Cleaning'){
-          type='General Cleaning'
-        }
-        this.service_productivity = [];
-        let result = await _get('customer/ajax/getservicesizeprice?service_type='+type);
-        console.log(result)
-        this.productivity=result.data
-          for(var i in this.productivity){
-            this.productivity[i].combined_size=this.productivity[i].name+' ( '+this.productivity[i].min_size+' sq.m - '+this.productivity[i].max_size+' sq.m )'
-            this.service_productivity.push(this.productivity[i])
-          }
-          var size = this.cleaningsections[this.edit_section_active_index].size;
-          if(this.service_type=='Kitchen Cleaning'){
-            this.formatKitchenSize()
-          }else if(this.service_type=='Upholstery Cleaning'){
-            this.chair_size = [];
-            this.sofa_size = [];
-            for(var i=0;i<this.service_productivity.length;i++){
-              if(this.service_productivity[i].upholstery_type == "CHAIR"){
-                this.chair_size.push(this.service_productivity[i]);
-              }
-              if(this.service_productivity[i].upholstery_type == "SOFA"){
-                console.log('sofa push')
-                this.sofa_size.push(this.service_productivity[i]);
-              }
-            }
-            if(this.editSectionData.upholstery_type == 'CHAIR'){
-              for(var i =0;i<this.chair_size.length; i++){
-                if(this.chair_size[i].name == size){
-                  this.editSectionData.size = this.chair_size[i];
-                  break;
-                }
-              }
+        // if(type=='Hourly Cleaning'){
+        //   type='General Cleaning'
+        // }
+        // this.service_productivity = [];
+        // let result = await _get('customer/ajax/getservicesizeprice?service_type='+type);
+        // console.log(result)
+        // this.productivity=result.data
+        //   for(var i in this.productivity){
+        //     this.productivity[i].combined_size=this.productivity[i].name+' ( '+this.productivity[i].min_size+' sq.m - '+this.productivity[i].max_size+' sq.m )'
+        //     this.service_productivity.push(this.productivity[i])
+        //   }
+        //   var size = this.cleaningsections[this.edit_section_active_index].size;
+        //   if(this.service_type=='Kitchen Cleaning'){
+        //     this.formatKitchenSize()
+        //   }else if(this.service_type=='Upholstery Cleaning'){
+        //     this.chair_size = [];
+        //     this.sofa_size = [];
+        //     for(var i=0;i<this.service_productivity.length;i++){
+        //       if(this.service_productivity[i].upholstery_type == "CHAIR"){
+        //         this.chair_size.push(this.service_productivity[i]);
+        //       }
+        //       if(this.service_productivity[i].upholstery_type == "SOFA"){
+        //         console.log('sofa push')
+        //         this.sofa_size.push(this.service_productivity[i]);
+        //       }
+        //     }
+        //     if(this.editSectionData.upholstery_type == 'CHAIR'){
+        //       for(var i =0;i<this.chair_size.length; i++){
+        //         if(this.chair_size[i].name == size){
+        //           this.editSectionData.size = this.chair_size[i];
+        //           break;
+        //         }
+        //       }
 
-            }else if(this.editSectionData.upholstery_type == 'SOFA'){
-              this.editSectionData.size = size.split(" ")[0];
-            }
+        //     }else if(this.editSectionData.upholstery_type == 'SOFA'){
+        //       this.editSectionData.size = size.split(" ")[0];
+        //     }
 
-          }else if(this.service_type=='Window Cleaning'){
-            this.formatWindowSize();
-          }else{
-            for(var i =0;i<this.service_productivity.length; i++){
-              if(this.service_productivity[i].name == size){
-                this.editSectionData.size = this.service_productivity[i];
-                break;
-              }
-            }
+        //   }else if(this.service_type=='Window Cleaning'){
+        //     this.formatWindowSize();
+        //   }else{
+        //     for(var i =0;i<this.service_productivity.length; i++){
+        //       if(this.service_productivity[i].name == size){
+        //         this.editSectionData.size = this.service_productivity[i];
+        //         break;
+        //       }
+        //     }
 
-          }
+        //   }
 
           
       },
@@ -375,7 +429,8 @@ let app = new Vue({
           this.editSectionData.upholstery_type = this.cleaningsections[item].upholstery_type
         }
         this.edit_section_active_index = item
-        this.getSize(this.service_type)
+        //this.getSize(this.service_type)
+        this.editSectionData.size = this.cleaningsections[item].size
         
         this.editSectionData.section_name = this.cleaningsections[item].section_name
         this.editSectionData.age = this.cleaningsections[item].age
@@ -419,17 +474,19 @@ let app = new Vue({
       saveEdit(){
         this.cleaningsections[this.edit_section_active_index].section_name = this.editSectionData.section_name;
         this.cleaningsections[this.edit_section_active_index].age = this.editSectionData.age;
-        if(this.service_type =='Upholstery Cleaning'){
-          if(this.editSectionData.upholstery_type == 'CHAIR'){
-            this.cleaningsections[this.edit_section_active_index].size = this.editSectionData.size.name;
-          }
-          if(this.editSectionData.upholstery_type == 'SOFA'){
-            this.cleaningsections[this.edit_section_active_index].size = this.editSectionData.size + ' Seater';
-          }
+        // if(this.service_type =='Upholstery Cleaning'){
+        //   if(this.editSectionData.upholstery_type == 'CHAIR'){
+        //     this.cleaningsections[this.edit_section_active_index].size = this.editSectionData.size.name;
+        //   }
+        //   if(this.editSectionData.upholstery_type == 'SOFA'){
+        //     this.cleaningsections[this.edit_section_active_index].size = this.editSectionData.size + ' Seater';
+        //   }
 
-        }else{
-          this.cleaningsections[this.edit_section_active_index].size = this.editSectionData.size.name;
-        }
+        // }else{
+        //   this.cleaningsections[this.edit_section_active_index].size = this.editSectionData.size.name;
+        // }
+        this.cleaningsections[this.edit_section_active_index].size = this.editSectionData.size;
+
         this.cleaningsections[this.edit_section_active_index].keynotes = this.editSectionData.keynotes;
         this.cleaningsections[this.edit_section_active_index].section_net_cost = this.editSectionData.section_cost;
         this.cleaningsections[this.edit_section_active_index].wall_type = this.editSectionData.wall_type.toString();
@@ -464,6 +521,20 @@ let app = new Vue({
           this.tenttime = this.time_slots[a].start_time;
           this.soltselected = true;
           this.cleaning_hours = this.selected_slots.length * 2;
+          $('#id_model_close').click();
+
+        }
+      },
+      confirmSolt2(){
+        if(this.selected_slots.length !=0){
+          console.log(this.selected_slots)
+          this.tentdate = moment(this.selectedDate).format('DD-MM-YYYY');
+          var a = Math.min(...this.selected_slots);
+         
+         
+          this.tenttime = this.time_slots[a].start_time;
+          this.soltselected = true;
+          
           $('#id_model_close').click();
 
         }
@@ -537,6 +608,37 @@ let app = new Vue({
           console.log(this.sectionfull)
 
         },
+
+        changeCheckBox(){
+          if(this.functionClick % 2 ==  0){
+          this.is_agent_checked = !this.is_agent_checked
+          }
+          this.functionClick = this.functionClick+1
+        },
+        checkValidation(){
+          if(this.addfollow){
+            var flag = true
+          this.incheck = false
+          this.incheck2 = false
+
+          if(this.noofcleaners == ''){
+            this.incheck = true
+            flag = false
+          }
+          if(this.cleaning_hours == null){
+            this.incheck2 = true
+            flag = false
+          }
+          if(flag){
+            this.submitForm();
+          }
+
+          }else{
+            this.submitForm();
+
+          }
+          
+        },
         async submitForm(){
          var tempSections = JSON.stringify(this.cleaningsections);
          
@@ -554,8 +656,8 @@ let app = new Vue({
             fd.append('is_followup','True');
             fd.append('number_of_cleaners',this.noofcleaners);
             fd.append('total_cost',this.totalAmount);
-            fd.append('tendative_date',this.tentdate);
-            fd.append('tendative_time',this.tenttime);
+            // fd.append('tendative_date',this.tentdate);
+            // fd.append('tendative_time',this.tenttime);
             fd.append('cleaning_hours',this.cleaning_hours);
             fd.append('sections',tempSections);
 
@@ -563,11 +665,16 @@ let app = new Vue({
             fd.append('is_followup','False');
 
           }
+          this.loading = true
           let result = await _post('api/investigation-form/',fd);
+          
           if(result.data.success){
             console.log("success")
-            window.location.href = '../../dashboard'
+              window.history.back()
+              // window.location.href = url+'/stl/dashboard'
+            
           }else{
+            this.loading = false
             showNotification('Something went wrong','error')
           }
           console.log(result)
@@ -636,28 +743,6 @@ let app = new Vue({
 
     }
 })
-$(document).ready(function () {
-    $(".owl-carousel").owlCarousel({
-    items: 2,
-    nav: true,
-    margin: 10,
-    responsive:{
-        0:{
-            items:1
-        },
-        600:{
-            items:2
-        },
-        1000:{
-            items:4
-        }
-    },
-    navText: [
-      `<i style="color:#707070;" class='fa fa-chevron-left service-control' @click='prevService()'></i>`,
-      `<i style="color:#707070;" class='fa fa-chevron-right service-control'></i>`,
-    ],
-  });
-});
 
 function showCleaners(){
     //$('#id_cl').click();

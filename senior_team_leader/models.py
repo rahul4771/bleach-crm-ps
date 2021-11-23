@@ -20,23 +20,29 @@ MEDIA_CHOICES = (
 #Cleaning team for different Order Schedules
 
 class CleaningTeam(models.Model):
-	order_scheduler = models.ForeignKey(OrderScheduler,blank=True,null=True,related_name='cleaning_team_order_scheduler')
-	team_leader 	= models.ForeignKey(UserProfile,blank=True,null=True,related_name='cleaningteam_team_leader')
-	start_at 		= models.DateTimeField(blank=True,null=True)
-	end_at 			= models.DateTimeField(blank=True,null=True)
-	check_in 		= models.DateTimeField(blank=True,null=True)
-	check_out 	    = models.DateTimeField(blank=True,null=True)
-	check_in_notes  = models.CharField(max_length=1000,blank=True,null=True)
-	check_out_notes = models.CharField(max_length=1000,blank=True,null=True)
-	no_of_cleaners  = models.IntegerField(blank=True,null=True)
-	drop_off_driver = models.ForeignKey(UserProfile,blank=True,null=True,related_name='cleaningteam_drop_off')
+	order_scheduler         = models.ForeignKey(OrderScheduler,blank=True,null=True,related_name='cleaning_team_order_scheduler')
+	team_leader 	        = models.ForeignKey(UserProfile,blank=True,null=True,related_name='cleaningteam_team_leader')
+	start_at 		        = models.DateTimeField(blank=True,null=True)
+	end_at 			        = models.DateTimeField(blank=True,null=True)
+	check_in 		        = models.DateTimeField(blank=True,null=True)
+	check_out 	            = models.DateTimeField(blank=True,null=True)
+	check_in_notes          = models.CharField(max_length=1000,blank=True,null=True)
+	check_out_notes         = models.CharField(max_length=1000,blank=True,null=True)
+	no_of_cleaners          = models.IntegerField(blank=True,null=True)
+	drop_off_driver         = models.ForeignKey(UserProfile,blank=True,null=True,related_name='cleaningteam_drop_off')
 	vehicle_number_drop_off = models.CharField(max_length=100,blank=True,null=True)
-	pick_up_driver  = models.ForeignKey(UserProfile,blank=True,null=True,related_name='cleaningteam_pick_up')
+	pick_up_driver          = models.ForeignKey(UserProfile,blank=True,null=True,related_name='cleaningteam_pick_up')
 	vehicle_number_pick_up  = models.CharField(max_length=100,blank=True,null=True) 
-	created_by      = models.ForeignKey(UserProfile,blank=True,null=True,related_name='cleaningteam_created_by')
-	is_active       = models.BooleanField(null=False,blank=True,default=True)
-	created         = models.DateTimeField(auto_now_add=True)
-	updated         = models.DateTimeField(auto_now=True)
+	created_by              = models.ForeignKey(UserProfile,blank=True,null=True,related_name='cleaningteam_created_by')
+	
+	backup_start_at 		= models.DateTimeField(blank=True,null=True)
+	backup_end_at 			= models.DateTimeField(blank=True,null=True)
+	backup_check_in 		= models.DateTimeField(blank=True,null=True)
+	backup_check_out 	    = models.DateTimeField(blank=True,null=True)
+
+	is_active          = models.BooleanField(null=False,blank=True,default=True)
+	created            = models.DateTimeField(auto_now_add=True)
+	updated            = models.DateTimeField(auto_now=True)
 	is_section_updated = models.BooleanField(null=False,blank=True,default=False)
 
 	def __unicode__(self):
@@ -90,13 +96,15 @@ class CleaningTeamTask(models.Model):
 #To Save Cleaning Team Members Details
 
 class CleaningTeamMember(models.Model):
-	team 			= models.ForeignKey('CleaningTeam',blank=False,null=False,related_name='cleaning_member_team')
-	member 			= models.ForeignKey(UserProfile,blank=True,null=True,related_name='cleaning_member_user')
-	start_at 		= models.DateTimeField(blank=True,null=True)
-	end_at 			= models.DateTimeField(blank=True,null=True)
-	start_time      = models.TimeField(blank=True,null=True)
-	end_time        = models.TimeField(blank=True,null=True)
-	
+	team 				= models.ForeignKey('CleaningTeam',blank=False,null=False,related_name='cleaning_member_team')
+	member 				= models.ForeignKey(UserProfile,blank=True,null=True,related_name='cleaning_member_user')
+	start_at 			= models.DateTimeField(blank=True,null=True)
+	end_at 				= models.DateTimeField(blank=True,null=True)
+	start_time      	= models.TimeField(blank=True,null=True)
+	end_time        	= models.TimeField(blank=True,null=True)
+
+	is_backup_cleaner	= models.BooleanField(null=False,blank=True,default=False)
+
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
 	created         = models.DateTimeField(auto_now_add=True)
 	updated         = models.DateTimeField(auto_now=True)

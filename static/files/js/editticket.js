@@ -15,6 +15,10 @@
   delimiters: ["<%", "%>"],
   data () {
         return {
+            loading:false,
+            assigned_by:'',
+            followup_id:'',
+            paybackdiscount_id:'',
             report_id:'',
             showType:false,
             edit_section_active_index:null,
@@ -97,6 +101,9 @@
       methods:{
           async setEditData(item){
               console.log(item,'item')
+              this.followup_id = item.followup_id;
+              this.paybackdiscount_id = item.paybackdiscount_id
+              this.assigned_by = item.assigned_by;
               var tempar = []
               if(item.ticket_types.includes('Damage')){
                 tempar.push(
@@ -323,9 +330,10 @@
               var flag = true;
               console.log(this.userselect)
               let fd = new FormData();
-              fd.append('visit_id',$('#id_visit').val())
+              fd.append('followup_id',this.followup_id)
+              fd.append('paybackdiscount_id',this.paybackdiscount_id)
               fd.append('notes',this.damagenote)
-              fd.append('assigned_by',$('#id_user_id').val())
+              fd.append('assigned_by',this.assigned_by)
               var types = '';
               for(var i = 0 ;i<this.value.length;i++){
                   types = types+this.value[i].name+',';
@@ -373,11 +381,14 @@
                     fd.append('paybackdiscount_items',pstr);
                   }
               }
-             let result = await _post('api/ticket-submitt/',fd);
-
+              this.loading = true
+             let result = await _post('api/ticket-edit/',fd);
+             
              if(result.data.success){
-                 location.reload()
+                window.location.href = '../tickets/'
+                 
              }else{
+                this.loading = false
                 showNotification('Something went wrong','error')
              }
              

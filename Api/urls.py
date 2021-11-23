@@ -16,8 +16,10 @@ urlpatterns = [
 	url(r'^order-details/(?P<order_id>\d+)/$',views.OrderDetailsAPI.as_view(),name='api-order-details'),
 	url(r'^visit-details/(?P<visit_id>\d+)/$',views.VisitDetailsAPI.as_view(),name='api-visit-details'),
 	url(r'^ticket-details/(?P<ticket_id>\d+)/$',views.TicketDetailsAPI.as_view(),name='api-ticket-details'),
+	url(r'^ticket-edit/$',views.TicketEditAPI.as_view(),name='api-ticket-edit'),
 	url(r'^ticket-submit/$',views.TicketSubmitAPI.as_view(),name='api-ticket-submit'),
 	url(r'^investigation-form/$',views.InvestigationFormAPI.as_view(),name='api-investigation-form'),
+	url(r'^agent-investigation-check/$',views.AgentInvestigationChecckAPI.as_view(),name='api-investigation-check'),
 
 	url(r'^leave-scheduler/$',views.LeaveScheduleAPI.as_view(),name='api-leaveschedule'),
 	url(r'^leave-scheduler/popup/$',views.LeaveSchedulePopupAPI.as_view(),name='api-leaveschedulepopup'),
@@ -64,6 +66,7 @@ urlpatterns = [
 	
 	url(r'^tl/cleaning/details/(?P<team_id>\d+)/$',views.TlCleaningDetails.as_view(),name='api-cleaningdetails'),
 	url(r'^check-in/$',views.CheckInAPI.as_view(),name='api-check-in'),
+	url(r'^backup-check-in/$',views.BackupCheckInAPI.as_view(),name='api-backupcheck-in'),
 	url(r'^check-out/$',views.CheckOutAPI.as_view(),name='api-check-out'),
 
 	url(r'^tl/followupcleaning/details/(?P<team_id>\d+)/$',views.TlFollowupCleaningDetails.as_view(),name='api-followupdetails'),

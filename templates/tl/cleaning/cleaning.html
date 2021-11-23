@@ -54,6 +54,7 @@
 </style>
 <div class="wrapper" id="app"><!--wrapper-->
 {% include "tl/common/header.html" %}
+
     
     <section class="content"><!--content-->
         <div class="container-fluid space topspace"><!--container-fluid space-->
@@ -111,15 +112,119 @@
 
 <div class="narrow-head align-left">Cleaners</div>
 {% for cleaner in cleaning_team_members %}
-{% if cleaner.member != request.user %}
+{% if not cleaner.is_backup_cleaner and cleaner.member != request.user %}
 <div class="common-gray-text align-left"><strong>{{cleaner.member.name}}</strong></div>
 {% endif %}
 {% endfor %}
-<div class="common-gray-text align-left"><strong>{{cleaning_team_detail.team_leader.name}}</strong></div>
+
+<br>
+<div class="common-gray-text align-left"><strong>{{cleaning_team_detail.team_leader.name}} (Cleaning Agent)</strong></div><br>
+<div class="narrow-head align-left">Backup Cleaners</div>
+{% for backupcleaner in cleaning_team_members %}
+{% if backupcleaner.is_backup_cleaner %}
+<div class="common-gray-text align-left"><strong>{{backupcleaner.member.name}}</strong></div>
+{% endif %}
+{% endfor %}
+{% if not cleaning_team_detail.backup_check_in %}
+<button class="sent-button send-btn2 mt-4 mb-4 mx-auto" @click="checkinBackup(`{{cleaning_team_detail.id}}`)" id="checkin-backup-btn">Check-In Backup Cleaners</button>
+
+{% else %}
+<div>
+  <div style="font-size: 12px;color: #255cad;margin-top:10px;">Check-In Time</div>
+  <div>{{ cleaning_team_detail.backup_check_in | date:'h:i a' }}</div>
+</div>
+{% endif %}
+<!-- Backup Cleaners modal begins here-->
+<div class="modal fade" id="backupCleanersModal" role="dialog">
+  <div style="border: none !important;" class="modal-dialog cancel-model cancel-order-border" role="document">
+      <div class="container-fluid">
+          <div class="row">
+              <div class="col-md-12 mt-20">
+
+                  
+                  <div class="d-flex ">
+                      <div style="margin: 0 auto; flex-grow: 3;"><p class="model-head">Backup Team </p></div>
+                      <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                          <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                      </button>
+
+                  </div>
+              </div>
+          </div>
+          <div class="row mt-20">
+            {% for cleaner in cleaning_team_members %}
+
+            {% if cleaner.is_backup_cleaner %}
+            <div class="col-md-12  text-center mt-10">
+              <div class="d-flex">
+              <div class=" mt-2 mb-2 mx-auto clr-check-box-active text-white" id="inv-cleaners-check-box" onclick="changeState(this,{{cleaner.id}})">
+                <i class="fa fa-check inv-check-onetime-icon cleaning-team-check" id="inv-check-debit" style="display: inline;"></i>
+              </div>
+<div class="common-gray-text align-left ml-10">{{cleaner.member.name}}</div>
+</div>
+</div>
+{% endif %}
+{% endfor %}
+<div class="text-center col-md-12">
+  <button class="sent-button send-btn2 mt-4 mb-4 mx-auto" @click="checkinBackupTeam()">Submit</button>
+
+</div>
+            
+            
+          </div>     
+      </div>
+  </div>
+</div>
+<!--Backup  Cleaners modal ends here-->
+<!-- Cleaners modal begins here-->
+<div class="modal fade" id="cleanersModal" role="dialog">
+  <div style="border: none !important;" class="modal-dialog cancel-model cancel-order-border " role="document">
+      <div class="container-fluid">
+          <div class="row">
+              <div class="col-md-12 mt-20">
+
+                  
+                  <div class="d-flex ">
+                      <div style="margin: 0 auto; flex-grow: 3;"><p class="model-head">Cleaning Team</p></div>
+                      <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                          <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                      </button>
+
+                  </div>
+              </div>
+          </div>
+          <div class="row mt-20">
+            {% for cleaner in cleaning_team_members %}
+
+            {% if cleaner.member != request.user and not cleaner.is_backup_cleaner %}
+            <div class="col-md-12  text-center mt-10">
+              <div class="d-flex">
+              <div class=" mt-2 mb-2 mx-auto clr-check-box-active text-white" id="inv-cleaners-check-box" onclick="changeState(this,{{cleaner.id}})">
+                <i class="fa fa-check inv-check-onetime-icon cleaning-team-check" id="inv-check-debit" style="display: inline;"></i>
+              </div>
+<div class="common-gray-text align-left ml-10">{{cleaner.member.name}}</div>
+</div>
+</div>
+{% endif %}
+{% endfor %}
+<div class="text-center col-md-12">
+  <button class="sent-button send-btn2 mt-4 mb-4 mx-auto" @click="submitCheckinform()">Submit</button>
+
+</div>
+            
+            
+          </div>     
+      </div>
+  </div>
+</div>
+<!-- Cleaners modal ends here-->
+
 
 <hr class="hr-dashedpad">
 {% for section in  cleaning_team_detail.order_scheduler.order_scheduler_book.sections %}
-<div class="row mt-20">
+<div class="row m-0">
   <div class="col-md-12 pl-0">
    <div class="inv-check-section">
      <div class="d-flex ">
@@ -617,8 +722,13 @@
  </div><!--commnDiv-border--> 
 <br>
  <div align="center"><input class="assignButton checkoutbutton" name="assign" type="button" v-on:click="submitform({{cleaning_team_detail.id}},'check-out','{{cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_policy}}',{{cleaning_teams_count}},{{remaining_team}})" value="Check Out">
- <input class="assignButton checkinbutton" id="checkin_id" name="assign" type="button" v-on:click="submitform({{cleaning_team_detail.id}},'check-in','{{cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_policy}}',{{cleaning_teams_count}},{{remaining_team}})" value="Check In">
-  <!-- <input class="cancel-Button" name="assign" type="submit" value="Submit"></div> --> </form>    	
+ <!-- <input class="assignButton checkinbutton" id="checkin_id" name="assign" type="button" v-on:click="submitform({{cleaning_team_detail.id}},'check-in','{{cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_policy}}',{{cleaning_teams_count}},{{remaining_team}})" value="Check In"> -->
+  <!-- <input class="cancel-Button" name="assign" type="submit" value="Submit"></div> -->
+</form>   
+<button class="sent-button send-btn2" data-toggle="modal" data-target="#cleanersModal" style="display:none" id="cleaner-popup-btn">Check In</button>
+<button class="sent-button send-btn2" data-toggle="modal" data-target="#backupCleanersModal" style="display:none" id="backup-cleaner-popup-btn">Check In Backup Team</button>
+<button class="sent-button send-btn2 checkinbutton" @click="openCheckin({{cleaning_team_detail.id}},'check-in','{{cleaning_team_detail.order_scheduler.order_scheduler_book.cleaning_policy}}',{{cleaning_teams_count}},{{remaining_team}})">Check In</button>
+
 <br> <br>             
         </div><!--center-formDiv-->
 </div><!--white-wrapper-->      
@@ -740,6 +850,7 @@ $(document).ready(function(){
     $('.checklisttitle').attr("hidden",false);
     $('.cleaningkeynotes').attr("hidden",false);
     $('.hr1').attr("hidden",false);
+    $('#checkin-backup-btn').show();
   {% else %}
     $('input[name="mediaafter"]').attr("required",false);
     $('input[name="mediabefore"]').attr("required",true);
@@ -751,6 +862,7 @@ $(document).ready(function(){
     $('.cleaningsection').attr("hidden",true);
     $('.cleaningkeynotes').attr("hidden",true);
     $('.hr1').attr("hidden",true);
+    $('#checkin-backup-btn').hide();
   {% endif %}
 
   //$('.checklist').css('display','none');

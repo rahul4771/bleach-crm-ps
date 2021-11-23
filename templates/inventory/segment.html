@@ -202,7 +202,7 @@
         <div class="inv-sidedrawer-inner">
             <div class="d-flex">
                 <div class="inv-drawer-head  inv-drawer-head-common">
-                    Add Atribute
+                    Add Attribute
                 </div>
                 <div class="right-pos">
 
@@ -227,7 +227,7 @@
             </div>
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Segment Name</div>
+                    <div class="model-input-name required-field">Segment Name</div>
 
                     <div class="inv-input-container h-30"> 
                         <input type="text"  class="w-p-100 inv-in" name="segment" id="name_segment" required>
@@ -237,7 +237,7 @@
             </div>
             <div class="row mt-20" id="segment_id_div">
                 <div class="col-md-12 ">
-                    <div class="model-input-name" >Segment Code</div>
+                    <div class="model-input-name required-field" >Segment Code</div>
 
                     <div class="inv-input-container h-30"> 
                         <input type="text"  class="w-p-100 inv-in" name="segment_code" minlength="2" maxlength="2" id="id_seg_code" required >
@@ -271,7 +271,7 @@
           
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button" type="submit" id="button_segment">Add</button>
+            <button class="sent-button" type="button" onclick="formvalidation()" id="button_segment">Add</button>
             </form>
                         <button data-dismiss="modal" onclick="closeNavAddSegment()" class="view-button">Cancel</button>
         </div>
@@ -298,7 +298,7 @@
             <input type="hidden" name="edit_line_id" id="id_edit_line" />
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name" >Line Name</div>
+                    <div class="model-input-name required-field" >Line Name</div>
 
                     <div class="inv-input-container h-30"> 
                         <input type="text"  class="w-p-100 inv-in" name="line_name" id="line_name_id" required>
@@ -308,7 +308,7 @@
             </div>
             <div class="row mt-20" id="line_id_div">
                 <div class="col-md-12 ">
-                    <div class="model-input-name" >Line Code</div>
+                    <div class="model-input-name required-field" >Line Code</div>
 
                     <div class="inv-input-container h-30"> 
                         <input type="text"  class="w-p-100 inv-in" name="line_code" maxlength="2" minlength="2" id="line_name2_id" required>
@@ -342,7 +342,7 @@
           
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button line-form-btn" type="submit" >Submit</button>
+            <button class="sent-button line-form-btn" type="button" onclick="lineformvalidation()" >Submit</button>
             </form>
                         <button data-dismiss="modal" onclick="closeNavAddLine()" class="view-button">Cancel</button>
         </div>
@@ -603,6 +603,53 @@ $(function () {
             query+='&'+key+'='+params[key].toString();
     query=query.replace('&','?');
     window.location.href=url+query;  
+    }
+
+    //form validation
+    function formvalidation(){
+
+        if ($('#segment_action').val() == 'add_segment'){
+
+            if ($('input[name=segment]').val() == ''){
+                $('input[name=segment]').addClass('red-border-input');
+            }else if ($('input[name=segment_code]').val() == ''){
+                $('input[name=segment_code]').addClass('red-border-input');
+            }else{
+                console.log("lolo")
+                $('#myForm').submit();
+            }
+
+        }else{
+            if ($('input[name=segment]').val() == ''){
+                $('input[name=segment]').addClass('red-border-input');
+            }else{
+                console.log("lolo")
+                $('#myForm').submit();
+            }
+        }
+    }
+
+    function lineformvalidation(){
+
+        if ($('#segment_action_id').val() == 'add_line'){
+
+            if ($('input[name=line_name]').val() == ''){
+                $('input[name=line_name]').addClass('red-border-input');
+            }else if ($('input[name=line_code]').val() == ''){
+                $('input[name=line_code]').addClass('red-border-input');
+            }else{
+                console.log("lolo")
+                $('#myForm2').submit();
+            }
+
+        }else{
+            if ($('input[name=line_name]').val() == ''){
+                $('input[name=line_name]').addClass('red-border-input');
+            }else{
+                console.log("lolo")
+                $('#myForm2').submit();
+            }
+        }
     }
 
     //get lines using api

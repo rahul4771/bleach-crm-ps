@@ -5,11 +5,20 @@ const app = new Vue({
   data: {
     imageData: [],
     images:[],
+    absent_list:[],
     ImageDetails: {
         url: "",
         file: "",
         service:""
       },
+      cleaningData:{
+        cleaningteam_id:null,
+        cleaningtype:null,
+        cleaningpolicy:null,
+        teamcount:null,
+        remainingteamcount:null
+      },
+    
   },
   methods: {
     deleteImage(imageindex) {
@@ -61,9 +70,35 @@ const app = new Vue({
         console.log(error);
       }
     },
+    openCheckin(cleaningteam_id,cleaningtype,cleaningpolicy,teamcount,remainingteamcount){
 
+      $('#cleaner-popup-btn').click()
+      this.cleaningData.cleaningteam_id=cleaningteam_id
+      this.cleaningData.cleaningtype=cleaningtype
+      this.cleaningData.cleaningpolicy=cleaningpolicy
+      this.cleaningData.teamcount=teamcount
+      this.cleaningData.remainingteamcount=remainingteamcount
+    },
+    checkinBackup(team_id){
+      console.log("team id is"+team_id)
+      $('#backup-cleaner-popup-btn').click()
+      this.cleaningData.cleaningteam_id=team_id
+    },
+    checkinBackupTeam(){
+      
+        axios.post(url+'/api/backup-check-in/',{
+          team_id:this.cleaningData.cleaningteam_id,
+          absent_list:this.absent_list
+        }).then(response=>{
+          if(response.data.success){
+            location.reload()
+          }
+
+        })
+    },
     submitform(cleaningteam_id,cleaningtype,cleaningpolicy,teamcount,remainingteamcount){
-      //console.log(cleaningteam_id,cleaningtype,"lop")
+     
+     
       var form_items = new FormData()
       form_items.append('team_id',cleaningteam_id)
 
@@ -73,6 +108,91 @@ const app = new Vue({
 
     if (cleaningtype == 'check-in'){
       form_items.append('check_in_notes',$('#check_in_notes').val())
+      form_items.append('absent_list',this.absent_list)
+      var form_url = url+'/api/check-in/' ;
+    }else{
+      var keynote_count = document.querySelectorAll('input[type="checkbox"]').length;
+      var checked_keynotes = document.querySelectorAll('input[type="checkbox"]:checked').length;
+      form_items.append('check_out_notes',$('#check_out_notes').val())
+      console.log(keynote_count,checked_keynotes,"keyns")
+
+      if (cleaningpolicy == 'SUBSCRIPTION'){
+        if(checked_keynotes == keynote_count){
+          var form_url = url+'/api/check-out/' ;
+        }else{
+          alert("Please check all keynotes !")
+        }
+      }
+      
+      if (cleaningpolicy == 'ONE TIME SERVICE'){
+        console.log(remainingteamcount,teamcount,"loc")
+        if (remainingteamcount == 1 && teamcount > 1){
+          
+          if(checked_keynotes == keynote_count){
+            var form_url = url+'/api/check-out/' ;
+          }else{
+            alert("Please check all keynotes !")
+          }
+
+        }
+        
+        if (remainingteamcount == 1 && teamcount == 1){
+          if(checked_keynotes == keynote_count){
+            var form_url = url+'/api/check-out/' ;
+          }else{
+            alert("Please check all keynotes !")
+          }
+        }
+        
+        if (remainingteamcount > 1 && teamcount > 1){
+          var form_url = url+'/api/check-out/' ;
+        }
+      }
+      
+    };
+     
+    if (this.imageData.length > 0){
+        axios.post(
+          form_url, form_items
+        
+       )
+       .then((response) => {
+         
+         console.log(response)
+         if (response.data.success == true){
+          window.location.href='/tl/dashboard/?my_cleaning_calendar_date='+response.data.cleaning_date+'';
+         }
+       
+        
+       })
+        .catch((error) => {
+         console.log(error,"rok");
+       
+       });
+
+      }else{
+        alert("Please add before cleaning images !")
+      }
+
+  },
+
+    submitCheckinform(){
+      var cleaningteam_id=this.cleaningData.cleaningteam_id
+      var cleaningtype=this.cleaningData.cleaningtype
+      var cleaningpolicy=this.cleaningData.cleaningpolicy
+      var teamcount=this.cleaningData.teamcount
+      var remainingteamcount=this.cleaningData.remainingteamcount
+     
+      var form_items = new FormData()
+      form_items.append('team_id',cleaningteam_id)
+
+    for(var i=0;i<this.imageData.length;i++){
+      form_items.append('media',this.imageData[i].file);
+      }
+
+    if (cleaningtype == 'check-in'){
+      form_items.append('check_in_notes',$('#check_in_notes').val())
+      form_items.append('absent_list',this.absent_list)
       var form_url = url+'/api/check-in/' ;
     }else{
       var keynote_count = document.querySelectorAll('input[type="checkbox"]').length;
@@ -170,3 +290,22 @@ $(".action-icon").click(function(){
   console.log("celd")
   $(this).toggleClass("down2")  ; 
 })
+function changeState(item,cleaner){
+  console.log("cleaner is"+cleaner)
+  if($(item).hasClass('clr-check-box-active')){
+    $(item).removeClass('clr-check-box-active')
+    $(item).addClass('clr-check-box')
+    if(!app.absent_list.includes(cleaner)){
+      app.absent_list.push(cleaner)
+    }
+  }
+  else{
+    $(item).removeClass('clr-check-box')
+    $(item).addClass('clr-check-box-active')
+    if(app.absent_list.includes(cleaner)){
+      var index=app.absent_list.indexOf(cleaner)
+        app.absent_list.splice(index,1)
+      
+    }
+  }
+}

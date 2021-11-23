@@ -1,3 +1,6 @@
+.h-40{
+  height: 40px;
+}
 .tk-customer-card {
   padding: 15px;
   margin-top: 20px;
@@ -70,7 +73,7 @@
 }
 .tk-card {
   border: 1px solid #878787;
-  border-radius: 10px;
+  border-radius: 4px;
   padding: 10px;
   width: 100%;
 }
@@ -107,6 +110,7 @@
   /* margin-bottom: 15px;*/
 }
 .timeline-head {
+  font-family: Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;
   color: #878787;
   font-weight: 400;
   font-size: 18px;
@@ -312,4 +316,25 @@
 }
 .keynote-delicon {
   margin-left: auto;
+}
+
+.re-loader {
+  border: 3px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 3px solid #125597;
+  width: 30px;
+  height: 30px;
+  -webkit-animation: spin 1s linear infinite; /* Safari */
+  animation: spin 1s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

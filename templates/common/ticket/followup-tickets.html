@@ -344,7 +344,7 @@
                                          <div class="col-md-8">
                                             {% if section.material %} <div>  <b>Material</b> : <span >{{section.material}}</span> </div> {% endif %}
                                             {% if section.material %} <div>  <b>Color</b> : <span >{{section.colour}}</span></div> {% endif %}
-                                            <div>  <b>Cost</b> : <span >{{section.section_cost|floatformat:'3'}} KD</span> </div>
+                                            <div>  <b>Cost</b> : <span >{{section.section_net_cost|floatformat:'3'}} KD</span> </div>
                                          </div>
 
                                         {% endfor %}

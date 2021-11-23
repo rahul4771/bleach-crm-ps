@@ -97,7 +97,7 @@
                                     </td>
                                     <td>
                                   
-                                        <button class="inv-plan-img-btn edit_attribute" data-attributeid="{{attribute.id}}" data-attributename="{{attribute.name}}" data-attributecategory="{{attribute.attribute_category.id}}" data-attributesegment="{{attribute.attribute_segment.id}}" data-attributeline="{{attribute.attribute_line.id}}" data-attributestatus="{{attribute.status}}" onclick="showDrawer('edit')" > <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>
+                                        <button class="inv-plan-img-btn edit_attribute" data-attributeid="{{attribute.id}}" data-attributename="{{attribute.name}}" {% if attribute.attribute_category %}data-attributecategory="{{attribute.attribute_category.id}}"{% else %}data-attributecategory="0"{% endif %} data-attributesegment="{{attribute.attribute_segment.id}}" data-attributeline="{{attribute.attribute_line.id}}" data-attributestatus="{{attribute.status}}" onclick="showDrawer('edit')" > <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>
                                         <button class="inv-plan-img-btn delete_attribute" data-attributeid="{{attribute.id}}" data-attributename="{{attribute.name}}" data-attributestatus="{{attribute.status}}" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
         
                                     </td>
@@ -204,7 +204,7 @@
         <div class="inv-sidedrawer-inner">
             <div class="d-flex">
                 <div class="inv-drawer-head  inv-drawer-head-common">
-                    Add Atribute
+                    Add Attribute
                 </div>
                 <div class="right-pos">
 
@@ -214,12 +214,12 @@
                 </div>
             </div>
             <hr>
-            <form method="POST" action="">{% csrf_token %}
+            <form method="POST" id="myForm" action="">{% csrf_token %}
             <input type="hidden" name="action" id="attribute_action" value="add_attribute" />
             <input type="hidden" name="attribute_edit_id" id="id_edit_attribute" />
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Attribute Name</div>
+                    <div class="model-input-name required-field">Attribute Name</div>
 
                     <div class="inv-input-container h-30"> 
                         <input type="text"  class="w-p-100 inv-in" id="name_attribute" name="attribute" required>
@@ -229,7 +229,7 @@
             </div>
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Category</div>
+                    <div class="model-input-name required-field">Category</div>
 
                     <!-- <select class="minimal" name="attribute_category" id="id_category" required>
                         <option value="">--Select Category--</option>
@@ -255,7 +255,7 @@
 
             <div class="row mt-20 segment_dropdown">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Segment</div>
+                    <div class="model-input-name required-field">Segment</div>
 
                     <!-- <select class="minimal" name="attribute_segment" id="id_segment">
                         <option value="">--Select Segment--</option>
@@ -275,7 +275,7 @@
 
             <div class="row mt-20 line_dropdown">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Line</div>
+                    <div class="model-input-name required-field">Line</div>
 
                     <!-- <select class="minimal" name="attribute_line" id="id_line">
                         <option value="">--Select Line--</option>
@@ -295,7 +295,7 @@
 
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Status</div>
+                    <div class="model-input-name ">Status</div>
 
                    <!-- <select class="minimal" name="status" id="status_attribute" required>
                         <option value="True" selected>Active</option>
@@ -319,7 +319,7 @@
           
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button attribute-form-btn" type="submit" >Add</button>
+            <button class="sent-button attribute-form-btn" type="button" onclick="formvalidation()" >Add</button>
             </form>
                         <button data-dismiss="modal" onclick="closeNavAddAttribute()" class="view-button">Cancel</button>
         </div>
@@ -346,7 +346,7 @@
             <input type="hidden" name="edit_value_id" id="id_edit_value" />
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Value Name</div>
+                    <div class="model-input-name required-field">Value Name</div>
 
                     <div class="inv-input-container h-30"> 
                         <input type="text" id="value_name_id" name="value_name" class="w-p-100 inv-in" required>
@@ -356,7 +356,7 @@
             </div>
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Status</div>
+                    <div class="model-input-name required-field">Status</div>
 
                     <!-- <select id="value_status_id" name="value_status" class="minimal">
                         <option value="True" selected>Active</option>
@@ -633,21 +633,37 @@ $(function () {
     //edit attribute
     $('.edit_attribute').click(async function(){
         $('#id_selectText').text($('#cat_id'+$(this).data('attributecategory')).text());
+        
         $('#id_edit_attribute').val($(this).data('attributeid'));
         $('#name_attribute').val($(this).data('attributename'));
+        
 
        await getsegments($(this).data('attributecategory'));
        await getlines($(this).data('attributesegment'));
-       $('#id_seg_text').text($('#seg_id'+$(this).data('attributesegment')).text());
-       $('#id_line_text').text($('#line_id'+$(this).data('attributeline')).text());
+       
 
         console.log($(this).data('attributecategory'),$(this).data('attributesegment'),$(this).data('attributeline'),"attrcheck")
         
         document.getElementById("id_category").value = $(this).data('attributecategory');
-        document.getElementById("id_line").value = $(this).data('attributeline');
 
-        console.log('seg',$(this).data('attributesegment'))
-        document.getElementById("id_segment").value = $(this).data('attributesegment');
+        if ($(this).data('attributecategory') != 0 ){
+            $('.segment_dropdown').show();
+            $('.line_dropdown').show();
+            $('#id_seg_text').text($('#seg_id'+$(this).data('attributesegment')).text());
+            $('#id_line_text').text($('#line_id'+$(this).data('attributeline')).text());
+            $('#id_segment').attr('required',false);
+            $('#id_line').attr('required',false);
+
+            document.getElementById("id_line").value = $(this).data('attributeline');
+
+            console.log('seg',$(this).data('attributesegment'))
+            document.getElementById("id_segment").value = $(this).data('attributesegment');
+        }else{
+            $('.segment_dropdown').hide();
+            $('.line_dropdown').hide();
+            $('#id_segment').attr('required',false);
+            $('#id_line').attr('required',false);
+        }
         
         document.getElementById("status_attribute").value = $(this).data('attributestatus');
         if($('#status_attribute').val() == 'True'){
@@ -727,6 +743,8 @@ $(function () {
                 $('.segment_dropdown').show();
             }else{
                 showNotification('No Segments','error')
+                $('.segment_dropdown').hide();
+                $('.line_dropdown').hide();
             }
             
          }else{
@@ -762,6 +780,7 @@ $(function () {
                 $('.line_dropdown').show();
             }else{
                 $('#id_line').attr("required",false);
+                $('.line_dropdown').hide();
                 showNotification('No Lines','error')
             }
             
@@ -788,6 +807,50 @@ $(function () {
          }else{
             showNotification('Something went wrong','error')
          }
+    }
+
+    //form validation
+    function itemformvalidation(){
+
+        if ($('#segment_action').val() == 'add_segment'){
+
+            if ($('input[name=segment]').val() == ''){
+                $('input[name=segment]').addClass('red-border-input');
+            }else if ($('input[name=segment_code]').val() == ''){
+                $('input[name=segment_code]').addClass('red-border-input');
+            }else{
+                console.log("lolo")
+                $('#myForm').submit();
+            }
+
+        }else{
+            if ($('input[name=segment]').val() == ''){
+                $('input[name=segment]').addClass('red-border-input');
+            }else{
+                console.log("lolo")
+                $('#myForm').submit();
+            }
+        }
+    }
+
+    function formvalidation(){
+
+        
+
+            if ($('#name_attribute').val() == ''){
+                $('#name_attribute').addClass('red-border-input');
+            }else if ($('input[name=attribute_category]').val() == '' && $('#id_selectText').text() !== 'All'){
+                $('#noble-gases').addClass('red-border-input');
+            }else if ($('input[name=attribute_segment]').val() == '' && $('#id_selectText').text() !== 'All'){
+                $('#noble-gases2').addClass('red-border-input');
+            }else if ($('input[name=attribute_line]').val() == '' && $('#id_selectText').text() !== 'All'){
+                $('#noble-gases3').addClass('red-border-input');
+            }else{
+                console.log("lolo")
+                $('#myForm').submit();
+            }
+
+        
     }
 
     function set_params_go(args)

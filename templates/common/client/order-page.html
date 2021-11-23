@@ -313,6 +313,220 @@
         </div>
       </div>
     <!-- EDIT PAYMENT MODAL ENDS HERE-->
+    <!-- Backup Team MODAL BEGINS HERE-->
+    <div class="modal fade " id="backupModal" tabindex="-1" role="dialog" aria-labelledby="backupModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered primary-modal" role="document" >
+          <div class="modal-content primary-modal-border mt-100">
+            
+           
+            <div class="modal-body">
+              <div class="cotainer">
+                <div class="row">
+                   <div class="col-md-12">
+                       <div class="modal-title"><b>Add Backup Team</b></div>
+                   </div>
+                   <div class="col-md-4" >
+                       <div class="mt-20">
+                           In Time
+                       </div>
+                       <div class="d-flex mt-10">
+                           <div>
+
+                               <select placeholder="Start Date" class="team-select" v-model="backup_team_data.cleaning_date_start">
+                                   <option v-for="(item,index) in getStartDates()" v-bind:key="index">
+                                      <% item %>
+                                   </option>
+                               </select>
+
+                           </div>
+                           <div>
+                            <select placeholder="Start Time" class="ml-10 team-select" v-model="backup_team_data.cleaning_time_start">
+                                <option v-for="(item,index) in getStartTime()" v-bind:key="index">
+                                    <% item %>
+                                 </option>
+                            </select>
+                           </div>
+                       </div>
+                       </div>
+                       <div class="col-md-4" >
+                        <div class="mt-20">
+                            Out Time
+                        </div>
+                        <div class="d-flex mt-10">
+                            <div>
+ 
+                                <select placeholder="End Date" class="team-select" v-model="backup_team_data.cleaning_date_end" @change="getTeamMembers()">
+                                    <option v-for="(item,index) in getEndDates()" v-bind:key="index">
+                                       <% item %>
+                                    </option>
+                                </select>
+ 
+                            </div>
+                            <div>
+                             <select placeholder="Start Time" class="ml-10 team-select" v-model="backup_team_data.cleaning_time_end">
+                                <option v-for="(item,index) in getEndTime()" v-bind:key="index">
+                                    <% item %>
+                                 </option>
+                             </select>
+                            </div>
+                        </div>
+                        </div>
+                   <div class="col-md-12" >
+                       <div class="mt-20 backup-input">
+                           <input type="text" v-model="team_search" class="" placeholder="add team member" @focus="team_options=true" @input="searchTeam()"/>
+                           <i class="fas fa-chevron-down team-select-arrow"></i>
+                        </div>
+                       <div class="team-select-box" v-if="team_options">
+                           <div class="text-right">
+                        <input name="paid" type="button" class="done-button team-done-btn" value="Done"
+                        id="done" @click="selectTeam()">
+                    </div>
+                        <div v-for="(item,index) in filtered_teams" v-bind:key="index" >
+                         <input type="checkbox" :value="item" class="normal-checkbox" v-model="temp_selected_item"/>
+                         <label class="ml-2 team-checkbox-label"> <% item.name %></label><br>
+                        
+                        </div>
+                    </div>
+                      
+                   </div>
+                   <div class="col-md-12 mt-10">
+                       <div class="row m-0">
+                           <div class="col-md-4" v-for="(item,index) in selected_team" v-bind:key="index">
+                               <div class="d-flex backup-team-chip mt-10">
+                                   <div>
+                                   <% item.name %>
+                                </div>
+                                <div class="ml-auto">
+                                    <i class="far fa-times-circle backup-rm-circle" @click="removeTeam(index)"></i>
+                                </div>
+                                  
+                               </div>
+
+                           </div>
+                       </div>
+                   </div>
+                
+
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer text-center">
+              
+              <button type="submit"  class="btn primary-btn"  @click="addTeamMembers()">Submit</button>
+              <button type="button" class="btn primary-btn-bordered" data-dismiss="modal"  id="close_backup">Cancel</button>
+            </div>
+           
+          </div>
+        </div>
+      </div>
+    <!-- Backup Team MODAL ENDS HERE-->
+    <!-- Backup Team Edit MODAL BEGINS HERE-->
+    <div class="modal fade " id="editBackupModal" tabindex="-1" role="dialog" aria-labelledby="backupModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered primary-modal" role="document" >
+          <div class="modal-content primary-modal-border mt-100">
+            
+           
+            <div class="modal-body">
+              <div class="cotainer">
+                <div class="row">
+                   <div class="col-md-12">
+                       <div class="modal-title"><b>Edit Backup Team</b></div>
+                   </div>
+                   <div class="col-md-4" >
+                       <div class="mt-20">
+                           In Time
+                       </div>
+                       <div class="d-flex mt-10">
+                           <div>
+
+                               <select placeholder="Start Date" class="team-select" v-model="backup_team_data.cleaning_date_start">
+                                   <option v-for="(item,index) in getStartDates()" v-bind:key="index">
+                                      <% item %>
+                                   </option>
+                               </select>
+
+                           </div>
+                           <div>
+                            <select placeholder="Start Time" class="ml-10 team-select" v-model="backup_team_data.cleaning_time_start">
+                                <option v-for="(item,index) in getStartTime()" v-bind:key="index">
+                                    <% item %>
+                                 </option>
+                            </select>
+                           </div>
+                       </div>
+                       </div>
+                       <div class="col-md-4" >
+                        <div class="mt-20">
+                            Out Time
+                        </div>
+                        <div class="d-flex mt-10">
+                            <div>
+ 
+                                <select placeholder="End Date" class="team-select" v-model="backup_team_data.cleaning_date_end" @change="getTeamMembers()">
+                                    <option v-for="(item,index) in getEndDates()" v-bind:key="index">
+                                       <% item %>
+                                    </option>
+                                </select>
+ 
+                            </div>
+                            <div>
+                             <select placeholder="Start Time" class="ml-10 team-select" v-model="backup_team_data.cleaning_time_end">
+                                <option v-for="(item,index) in getEndTime()" v-bind:key="index">
+                                    <% item %>
+                                 </option>
+                             </select>
+                            </div>
+                        </div>
+                        </div>
+                   <div class="col-md-12" >
+                       <div class="mt-20 backup-input">
+                           <input type="text" v-model="team_search" class="" placeholder="add team member" @focus="team_options=true" @input="searchTeam()"/>
+                           <i class="fas fa-chevron-down team-select-arrow"></i>
+                        </div>
+                       <div class="team-select-box" v-if="team_options">
+                           <div class="text-right">
+                        <input name="paid" type="button" class="done-button team-done-btn" value="Done"
+                        id="done" @click="selectTeam()">
+                    </div>
+                        <div v-for="(item,index) in filtered_teams" v-bind:key="index" >
+                         <input type="checkbox" :value="item" class="normal-checkbox" v-model="temp_selected_item"/>
+                         <label class="ml-2 team-checkbox-label"> <% item.name %></label><br>
+                        
+                        </div>
+                    </div>
+                      
+                   </div>
+                   <div class="col-md-12 mt-10">
+                       <div class="row m-0">
+                           <div class="col-md-4" v-for="(item,index) in selected_team" v-bind:key="index">
+                               <div class="d-flex backup-team-chip mt-10">
+                                   <div>
+                                   <% item.name %>
+                                </div>
+                                <div class="ml-auto">
+                                    <i class="far fa-times-circle backup-rm-circle" @click="removeTeam(index)"></i>
+                                </div>
+                                  
+                               </div>
+
+                           </div>
+                       </div>
+                   </div>
+                
+
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer text-center">
+              
+              <button type="submit"  class="btn primary-btn"  @click="editTeamMembers()">Submit</button>
+              <button type="button" class="btn primary-btn-bordered" data-dismiss="modal"  id="close_backup">Cancel</button>
+            </div>
+           
+          </div>
+        </div>
+      </div>
+    <!-- Backup Team MODAL ENDS HERE-->
     <div data-toggle="modal" data-target="#uploadImageModal" id="upload-image-tigger"></div>
     <div data-toggle="modal" data-target="#notesModal" id="notes-tigger"></div>
     <div data-toggle="modal" data-target="#editPaymentModal" id="edit-payment-tigger"></div>
@@ -323,6 +537,8 @@
     <div data-toggle="modal" data-target="#cancelCleaningModal" id="cleaning-cancel-tigger"></div>
     <div data-toggle="modal" data-target="#deleteSectionModel" id="delete-section-tigger"></div> 
     <div data-toggle="modal" data-target="#customerNoteModel" id="customer_note-tigger"></div>
+    <div data-toggle="modal" data-target="#backupModal" id="backupTeamBtn"></div>
+    <div data-toggle="modal" data-target="#editBackupModal" id="editBackupTeamBtn"></div>
 <!-- edit section dialog begins here-->
 <div class="modal fade " id="editSectionDialog" tabindex="-1" role="dialog" aria-labelledby="editSectionDialogTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered primary-modal" role="document">
@@ -1917,7 +2133,7 @@
                                                 {% endif %}
 
                                                 {% if cleaning_team.check_out %}
-                                                <div class="row c-mt-10">
+                                                <div class="row c-mt-10" id="checkout_{{evaluationbook.id}}">
                                                     <div class="col-md-12">
                                                        <h3 class="check-head">Check Out</h3>
                                                        <div class="mt-10 mb-10"><i class="far fa-clock"></i><span class="checkin-note id_check_out ml-10" id="id_check_out_{{evaluationbook.id}}">
@@ -1954,6 +2170,7 @@
 
                                         <div class="row c-mt-10 id_team_members_div" id="id_team_members_div_{{evaluationbook.id}}">
                                         {% for team_member in cleaning_team.cleaning_team_members %}
+                                            {% if not team_member.is_backup_cleaner %}
                                             <div class="col-md-3 m-mt20 .c-mb-10 mr-0 ml-0">
                                                 <div class="row">
                                                     <div class="col-xs-4 pr-0">
@@ -1976,8 +2193,93 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            {% endif %}
                                         {% endfor %}
                                         </div>
+                                                              
+                                        <!-- Backup team begins here-->
+                                        <div class="order-clean-section-header c-clean-team-header c-mt-10">
+                                            <div class="row mt-20">
+
+                                                <h3 class="ml-10">Backup Team</h3>
+                                                {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR' or request.user.user_type == 'SALESADMIN' or request.user.user_type == 'ACCOUNTANT' %}
+                                                {% if orderschedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}
+                                               
+                                                <div v-if="edit" class="clean-team-edit" @click="editBackupTeam(`{{orderschedule.id}}`,`{{cleaning_team.id}}`,`{{evaluationdetail.id}}`,`{{orderschedule.start_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.end_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.cleaning_hours}}`)">
+                                                    <img src="{% static 'files/icons/edit.png' %}">
+                                                </div>
+                                                {% endif %}
+                                                {% endif %}
+
+                                                <a class="team_edit_url" id="team_edit_url_{{evaluationbook.id}}" href="#" target="_blank" hidden>
+                                                <div v-if="edit" class="clean-team-edit">
+                                                    <img src="{% static 'files/icons/edit.png' %}">
+                                                </div></a>
+                                            </div>
+                                        </div>
+                                        <div class="row c-mt-10 id_team_members_div" id="id_team_backupmembers_div_{{evaluationbook.id}}">
+                                            
+                                            {% for team_member in cleaning_team.cleaning_team_members %}
+                                                {% if team_member.is_backup_cleaner %}
+                                                <div class="col-md-3 m-mt20 .c-mb-10 mr-0 ml-0">
+                                                    <div class="row">
+                                                        <div class="col-xs-4 pr-0">
+                                                            {% if team_member.member.profile_image %}
+                                                            <img class="clean-team-profile-pic" src="{{team_member.member.profile_image.url}}">
+                                                            {% else %}
+                                                            <img class="clean-team-profile-pic" src="{% static 'files/icons/profile.png' %}">
+                                                            {% endif %}
+    
+                                                        </div>
+                                                        <div class="col-xs-8">
+                                                            <div class="order-agent-content text-left">
+                                                                <h2>{{team_member.member.name}}</h2>
+                                                                <h6>Team Member</h6>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+                                            {% endfor %}
+                                            </div>
+                                            <div class="row mt-20 mb-20">
+                                                <div class="col-md-3">
+                                                    <div class="order-details-key">
+                                                        Start Time
+                                                    </div>
+                                                    <div class="c-text order-details-value" id="id_backup_startat_{{evaluationbook.id}}"> {{cleaning_team.backup_start_at|date:'h:i A'}}</div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="order-details-key">
+                                                        End Time
+                                                    </div>
+                                                    <div class="c-text order-details-value" id="id_backup_endat_{{evaluationbook.id}}"> {{cleaning_team.backup_end_at|date:'h:i A'}}</div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="order-details-key">
+                                                       Checkin
+                                                    </div>
+                                                    <div class="c-text order-details-value" id="id_backup_checkin_{{evaluationbook.id}}"> {{cleaning_team.backup_check_in|date:'h:i A'}}</div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="order-details-key">
+                                                       Checkout
+                                                    </div>
+                                                    <div class="c-text order-details-value" id="id_backup_checkout_{{evaluationbook.id}}"> {{cleaning_team.backup_check_out|date:'h:i A'}}</div>
+                                                </div>
+                                            </div>
+                                        <!-- Backup team ends here-->
+
+
+                                        {% if not cleaning_team.backup_start_at %}
+                                        <div class="row" id="id_backupadd_{{evaluationbook.id}}">
+                                            <button class="sent-button mt-10" type="submit" @click="addBackupTeam(`{{cleaning_team.id}}`,`{{evaluationdetail.id}}`,`{{orderschedule.start_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.end_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.cleaning_hours}}`)">Add Backup Team</button>
+                                        </div>
+                                        {% else %}
+                                        <div class="row" id="id_backupadd_{{evaluationbook.id}}" style="display:none;">
+                                            <button class="sent-button mt-10" type="submit" @click="addBackupTeam(`{{cleaning_team.id}}`,`{{evaluationdetail.id}}`,`{{orderschedule.start_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.end_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.cleaning_hours}}`)">Add Backup Team</button>
+                                        </div>
+                                        {% endif %}
 
                                         <div class="order-clean-section-header c-mt-10">
                                             <h5>Assigned by</h5>
@@ -2056,7 +2358,7 @@
                                     {% endfor %}
                                     <!--cleaning Team end-->
                                     
-
+                                  
                                     <div class="c-mt-20">
                                         <hr class="bar">
                                     </div>
@@ -2121,9 +2423,9 @@
                     </div>
                     {% endfor %}
                    
-                    <!-- <div class="row">
+                    <div class="row">
                         <button class="sent-button mt-10" type="submit" onclick="addMoreService({{evaluationdetail.id}});">Add More Service</button>
-                    </div> -->
+                    </div>
                     {% endfor %}
                     <!-- Service Details Main Ends Here -->
                        
@@ -2215,7 +2517,7 @@
                                                         {% if order.amount_paid == 0.000 and order.evaluation.is_promocode_applied == False %}
                                                        
                                                         <button class="model-close ml-10" >
-                                                            <img  class="policy-time-edit pointer" src="{% static 'files/icons/edit.png' %}" data-amount_before_cleaning="{{order.evaluation.before_cleaning_amount}}" data-amount_after_cleaning="{{order.evaluation.after_cleaning_amount}}" data-discount="{{order.evaluation.discount}}" data-payment_method="{{order.evaluation.payment_method}}" data-total_amount="{{order.evaluation.estimated_cost}}" data-final_amount="{{order.evaluation.total_cost}}" data-additional_charge="{{order.evaluation.additional_charge|default_if_none:'0'}}" onclick="openPaymentEdit(this)">
+                                                            <img  class="policy-time-edit pointer" src="{% static 'files/icons/edit.png' %}" data-amount_before_cleaning="{{order.evaluation.before_cleaning_amount}}" data-amount_after_cleaning="{{order.evaluation.after_cleaning_amount}}" data-discount="{{order.evaluation.discount}}" data-payment_method="{{order.evaluation.payment_method}}" data-total_amount="{{order.evaluation.estimated_cost}}" data-final_amount="{{order.evaluation.total_cost}}" data-additional_charge="{{order.evaluation.additional_charge|default_if_none:'0'}}" data-cancelled_amount="{{order.evaluation.cancelled_amount|default_if_none:'0'}}" onclick="openPaymentEdit(this)">
                                                         </button>
                                                         {% else %}
                                                         {% endif %}
@@ -2896,6 +3198,7 @@
     </div>
 </div>
 <!-- Visit Cancel ends here-->
+
 <!-- -->
 <!-- -->
 <div class="modal fade bd-example-modal-lg" id="cancelModel" tabindex="-1" role="dialog"
@@ -3064,6 +3367,8 @@
     </div>
 </div>
 <!-- Modal Add feedback -->
+
+
 <div class="modal fade bd-example-modal-lg" id="feedbackModel" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog cancel-model cancel-order-border" role="document">

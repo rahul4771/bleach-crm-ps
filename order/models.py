@@ -230,6 +230,7 @@ class Investigation(models.Model):
 	is_internalreporting_approved  = models.BooleanField(null=False,blank=True,default=False)
 	is_casesandcomplaints_submit   = models.BooleanField(null=False,blank=True,default=False)
 	is_secondary_investigation_completed   = models.BooleanField(null=False,blank=True,default=False)
+	is_agent_approved   			= models.BooleanField(null=False,blank=True,default=False)
 	
 	is_active            = models.BooleanField(null=False,blank=True,default=True)
 	created              = models.DateTimeField(auto_now_add=True)

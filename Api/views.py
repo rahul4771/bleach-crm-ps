@@ -39,6 +39,8 @@ from rest_framework import status
 from rest_framework.authentication import TokenAuthentication 
 from rest_framework.authtoken.models import Token
 
+from agent.serializers import UserProfileShowSerializer
+
 
 # Create your views here.
 class ApiCheckSlote(APIView):
@@ -728,6 +730,7 @@ class TicketSubmitAPI(APIView):
 				Reporting.objects.create(investigation=investigation,title=title,notes=notes)
 
 			if action == 'Assign Investigator':
+				print(request.data.get('secondary_investigator'),"assign")
 				secondary_investigator = request.data.get('secondary_investigator')
 				print(secondary_investigator,"sec")
 				investigator = UserProfile.objects.get(id=int(secondary_investigator))
@@ -741,7 +744,7 @@ class TicketSubmitAPI(APIView):
 				# msg      = EmailMultiAlternatives('Ticket Rised', '', 'notification@bleach-kw.com', [investigationdata.investigator.email])
 				# msg.attach_alternative(msg_html, "text/html")
 				# msg.send(fail_silently=False)
-
+			
 			investigation.is_casesandcomplaints_submit = True
 			investigation.save()
 
@@ -754,7 +757,8 @@ class TicketEditAPI(APIView):
 	authentication_classes  = ()
 
 	def post(self,request):
-		visit_id = request.data.get('visit_id')
+		followup_id = request.data.get('followup_id')
+		
 		ticket_types = request.data.get('ticket_types')
 		notes = request.data.get('notes')
 		investigationmedias = request.FILES.getlist('media')
@@ -763,23 +767,22 @@ class TicketEditAPI(APIView):
 		actions = request.data.get('actions')
 		actions_list = actions.split(",")
 			
-		print(visit_id,ticket_types,notes,investigationmedias,"lodat")
-		
-		visit = OrderScheduler.objects.get(id=int(visit_id))
-		order = visit.order
+		print(ticket_types,notes,investigationmedias,"lodat")
 		
 		assigned_by_user = UserProfile.objects.get(id=int(assigned_by),is_active=True)
 
-		investigation = Investigation.objects.create(order=order,order_schedule=visit,notes=notes,ticket_types=ticket_types,assigned_by=assigned_by_user,scheduled_at=timezone.now())
+		# investigation = Investigation.objects.create(order=order,order_schedule=visit,notes=notes,ticket_types=ticket_types,assigned_by=assigned_by_user,scheduled_at=timezone.now())
 
-		FollowUp.objects.create(investigation=investigation,status='TICKET_RISED')
-
+		followup = FollowUp.objects.get(id=int(followup_id))
+		investigation = followup.investigation
+		InvestigationMedia.objects.filter(investigation=investigation).delete()
+		
 		#save media
 		investigation_medias = request.FILES.getlist('media')
 		if not investigation_medias == ['']:
 			for image in investigation_medias:
 				InvestigationMedia.objects.create(
-					investigation = investigation,
+					investigation = followup.investigation,
 					media = image,
 					media_type = 'PHOTO',
 					taken_status = 'CUSTOMER_SEND',
@@ -790,7 +793,14 @@ class TicketEditAPI(APIView):
 			print(action,"act")
 			if action == 'Payback':
 				print("pop")
-				paybackdiscount = PaybackDiscount.objects.create(investigation=investigation,is_active=True)
+				
+				payback_discount_id = request.data.get('paybackdiscount_id')
+				if payback_discount_id:
+					paybackdiscount = PaybackDiscount.objects.get(id=int(payback_discount_id),investigation=investigation,is_active=True)
+				else:
+					paybackdiscount = PaybackDiscount.objects.create(investigation=investigation,is_active=True)
+
+				PaybackDiscountDetails.objects.filter(paybackdiscount=paybackdiscount).delete()
 
 				paybackdiscount_items = request.data.getlist('paybackdiscount_items')
 				print(paybackdiscount_items,"itms")
@@ -852,6 +862,7 @@ class TicketEditAPI(APIView):
 				# msg.send(fail_silently=False)
 
 			investigation.is_casesandcomplaints_submit = True
+			investigation.ticket_types = ticket_types
 			investigation.save()
 
 		response_dict = {'success':True}
@@ -859,12 +870,12 @@ class TicketEditAPI(APIView):
 		return Response(response_dict,HTTP_200_OK)
 
 class InvestigationFormAPI(APIView):
-	permission_classes  	=   (AllowAny,)
+	permission_classes  	= (AllowAny,)
 	authentication_classes  = ()
 
 	def post(self,request):
 		investigation_id = request.data.get('investigation_id')
-
+		print(investigation_id,"invest")
 		investigation = Investigation.objects.get(id=int(investigation_id))
 		
 		secondary_investigation_notes = request.data.get('notes')
@@ -900,9 +911,9 @@ class InvestigationFormAPI(APIView):
 			no_of_cleaners = request.data.get('number_of_cleaners')
 			cleaning_hours = request.data.get('cleaning_hours')
 			
-			tendative_date = request.data.get('tendative_date')
+			# tendative_date = request.data.get('tendative_date')
 
-			tendative_time = request.data.get('tendative_time')
+			# tendative_time = request.data.get('tendative_time')
 
 			sections = request.data.get('sections')
 			sections = json.loads(sections)
@@ -912,7 +923,7 @@ class InvestigationFormAPI(APIView):
 			# 	section = dict(section)
 			# 	print(section.section_name,"lol")
 
-			print(tendative_date,tendative_time,sections,"secs")
+			print(sections,"secs")
 
 			follow_up = FollowUp.objects.select_related('investigation__order__evaluation__customer').get(investigation_id=investigation_id,is_active=True)
 			follow_up.status         = 'FOLLOWUP_IN_PROGRESS'
@@ -922,8 +933,8 @@ class InvestigationFormAPI(APIView):
 			follow_up.total_cost = total_cost
 			follow_up.save()
 
-			start_date_time = datetime.strptime(tendative_date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
-			end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))
+			# start_date_time = datetime.strptime(tendative_date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
+			# end_date_time   = start_date_time + timedelta(hours=float(cleaning_hours))
 
 			# for date in tendative_date:
 			# 	print(date+' '+tendative_time,"tod")
@@ -950,11 +961,40 @@ class InvestigationFormAPI(APIView):
 				FollowUpSectionKeynote.objects.bulk_create(keynote_array)
 		
 
-			FollowUpScheduler.objects.create(follow_up=follow_up,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address)
+			# FollowUpScheduler.objects.create(follow_up=follow_up,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address)
 
 			investigation.is_followup_approved = True
 			investigation.save()
 			
+		response_dict = {'success':True}
+
+		return Response(response_dict,HTTP_200_OK)
+
+class AgentInvestigationChecckAPI(APIView):
+	permission_classes  	= (AllowAny,)
+	authentication_classes  = ()
+
+	def post(self,request):
+		investigation_id = request.data.get('investigation_id')
+
+		investigation = Investigation.objects.get(id=int(investigation_id))
+
+		followup = FollowUp.objects.get(investigation=investigation,is_active=True)
+		
+		tendative_date = request.data.get('tendative_date')
+
+		tendative_time = request.data.get('tendative_time')
+
+		print(tendative_date,tendative_time,"secs")
+
+		start_date_time = datetime.strptime(tendative_date+' '+tendative_time,'%d-%m-%Y %I:%M %p')
+		end_date_time   = start_date_time + timedelta(hours=float(followup.cleaning_hours))		
+
+		FollowUpScheduler.objects.create(follow_up=followup,status='CONFIRMED',start_at=start_date_time,end_at=end_date_time,customer_address=investigation.order_schedule.customer_address)
+			
+		investigation.is_agent_approved = True
+		investigation.save()
+
 		response_dict = {'success':True}
 
 		return Response(response_dict,HTTP_200_OK)
@@ -1114,14 +1154,15 @@ class TicketDetailsAPI(APIView):
 			
 			for media in followup_details.investigation.investigationmedias:
 				medias.append(media.media.url)
-
+		
 		response_dict['is_paybackdiscount'] = is_paybackdiscount
 		response_dict['is_report'] = is_report
 		response_dict['is_investigator'] = is_investigator
-		
+		response_dict['followup_id'] = followup_details.id
 		response_dict['ticket_types'] = followup_details.investigation.ticket_types
 		response_dict['notes'] = followup_details.investigation.notes
 		response_dict['medias'] = medias
+		response_dict['assigned_by'] = str(followup_details.investigation.assigned_by.id)
 		response_dict['paybackdiscounts'] = paybackdiscounts
 		response_dict['report'] = report_list
 		 	
@@ -1677,7 +1718,7 @@ class PaymentPolicyEditAPI(APIView):
 		return Response(response_dict,HTTP_200_OK)
 
 class CleaningTeamAPI(APIView):
-	permission_classes  	=   (AllowAny,)
+	permission_classes  	= (AllowAny,)
 	authentication_classes  = ()
 
 	def get(self,request):
@@ -1688,16 +1729,23 @@ class CleaningTeamAPI(APIView):
 		cleaningteam = CleaningTeam.objects.filter(is_active=True,order_scheduler__id=int(schedule_id)).prefetch_related(Prefetch('media_cleaningteam',queryset=CleaningTeamMedia.objects.filter(is_active=True),to_attr='cleaning_team_medias'),Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True),to_attr='cleaning_team_members')).first()
 
 		if cleaningteam:
+			cleaning_start_at = (cleaningteam.order_scheduler.start_at+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
+			cleaning_end_at   = (cleaningteam.order_scheduler.end_at+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
+			cleaning_hours    =  cleaningteam.order_scheduler.cleaning_hours
 
-			team_members_list = []
+			team_members_list   = []
+			backup_members_list = []
 			for team_member in cleaningteam.cleaning_team_members:
-				if cleaningteam.team_leader.id != team_member.member.id :
+				if cleaningteam.team_leader.id != team_member.member.id and not team_member.is_backup_cleaner:
 					try:
 						image_url = team_member.member.profile_image.url
 					except:
 						image_url = None
 					
 					team_members_list.append({"member_name":team_member.member.name,"member_image":image_url})
+				
+				elif cleaningteam.team_leader.id != team_member.member.id and team_member.is_backup_cleaner:					
+					backup_members_list.append(UserProfileShowSerializer(instance=team_member.member).data)
 
 			before_cleaning_media_list = []
 			after_cleaning_media_list = []
@@ -1734,6 +1782,32 @@ class CleaningTeamAPI(APIView):
 			else:
 				check_out_notes = 'No Notes'
 
+			#backup
+			if cleaningteam.backup_start_at:
+				backup_start_at          = (cleaningteam.backup_start_at+timedelta(hours=3)).time().strftime("%I:%M %p")
+				backup_datetime_start_at = (cleaningteam.backup_start_at+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
+			else:
+				backup_start_at          = None
+				backup_datetime_start_at = None
+			
+			if cleaningteam.backup_end_at:
+				backup_end_at            = (cleaningteam.backup_end_at+timedelta(hours=3)).time().strftime("%I:%M %p")
+				backup_datetime_end_at   = (cleaningteam.backup_end_at+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
+			else:
+				backup_end_at            = None
+				backup_datetime_end_at   = None
+
+			if cleaningteam.backup_check_in:
+				backup_check_in = (cleaningteam.backup_check_in+timedelta(hours=3)).time().strftime("%I:%M %p")
+			else:
+				backup_check_in = None
+
+			if cleaningteam.backup_check_out:
+				backup_check_out = (cleaningteam.backup_check_out+timedelta(hours=3)).time().strftime("%I:%M %p")
+			else:
+				backup_check_out = None 
+			
+
 			cleaning_status = cleaningteam.order_scheduler.work_status
 
 			followup = FollowUp.objects.filter(is_active=True,investigation__order_schedule__id=cleaningteam.order_scheduler.id).last()
@@ -1746,7 +1820,7 @@ class CleaningTeamAPI(APIView):
 			
 			print(cleaning_status,"printest")
 
-			response_dict = {'success':True,"visit_count":visit_count,"schedule_id":schedule_id, "customer_id":customer_id,"followup_id":followup_id,"cleaning_status":cleaning_status,"team_leader":cleaningteam.team_leader.name,"team_leader_image":cleaningteam.team_leader.profile_image.url,"assigned_by":cleaningteam.created_by.name,"assigned_by_image":cleaningteam.created_by.profile_image.url,"assigned_by_usertype":cleaningteam.created_by.user_type,"start_at":check_in_time,"end_at":check_out_time,'members':team_members_list, 'before_cleaning_media':before_cleaning_media_list, 'after_cleaning_media':after_cleaning_media_list,'checkin_notes':check_in_notes,'checkout_notes':check_out_notes}
+			response_dict = {'success':True,"team_id":cleaningteam.id,"visit_count":visit_count,"schedule_id":schedule_id, "customer_id":customer_id,"followup_id":followup_id,"cleaning_status":cleaning_status,"team_leader":cleaningteam.team_leader.name,"team_leader_image":cleaningteam.team_leader.profile_image.url,"assigned_by":cleaningteam.created_by.name,"assigned_by_image":cleaningteam.created_by.profile_image.url,"assigned_by_usertype":cleaningteam.created_by.user_type,"start_at":check_in_time,"end_at":check_out_time,"cleaning_start_at":cleaning_start_at,"cleaning_end_at":cleaning_end_at,"cleaning_hours":cleaning_hours,'members':team_members_list, 'before_cleaning_media':before_cleaning_media_list, 'after_cleaning_media':after_cleaning_media_list,'checkin_notes':check_in_notes,'checkout_notes':check_out_notes,'backup_start_at':backup_start_at,'backup_end_at':backup_end_at,'backup_check_in':backup_check_in,'backup_check_out':backup_check_out,'backup_datetime_start_at':backup_datetime_start_at,'backup_datetime_end_at':backup_datetime_end_at,'backup_members':backup_members_list}
 
 		else:
 
@@ -1823,14 +1897,12 @@ class CheckInAPI(APIView):
 	authentication_classes  = ()
 
 	def post(self,request):
-		print("runo")
 		response_dict = {}
 		response_dict['success'] = False
 
 		team_id        = request.data.get('team_id')
 		check_in_notes = request.data.get('check_in_notes')
-	
-		print(team_id,"zack")
+
 		try:
 			cleaning_team_detail = CleaningTeam.objects.select_related('order_scheduler__order').get(is_active=True,id=team_id)
 		except:	
@@ -1843,6 +1915,18 @@ class CheckInAPI(APIView):
 		
 		if check_in_notes:
 			cleaning_team_detail.check_in_notes = check_in_notes
+		
+		#confirm team
+		absents                             = request.data.get('absent_list')
+		if absents:
+			absent_cleaners_list 				= [int(x) for x in absents.split(",")]
+			absent_cleaners      				= CleaningTeamMember.objects.filter(is_active=True,id__in=absent_cleaners_list,team__id=team_id)
+			absent_cleaners.delete()
+
+
+			cleaning_team_detail.no_of_cleaners                 = (cleaning_team_detail.no_of_cleaners)-len(absent_cleaners_list)
+			cleaning_team_detail.order_scheduler.no_of_cleaners = (cleaning_team_detail.order_scheduler.no_of_cleaners)-len(absent_cleaners_list)
+
 		
 		cleaning_team_detail.save()	
 
@@ -1859,7 +1943,6 @@ class CheckInAPI(APIView):
 						)
 
 		if cleaning_team_detail.is_section_updated == True:
-			print("send smmsr")
 			evaluaation = cleaning_team_detail.order_scheduler.order.evaluation
 			if evaluaation.customer.is_sms == True:
 
@@ -1883,13 +1966,35 @@ class CheckInAPI(APIView):
 
 				response = requests.request("GET", url, headers=headers, params=querystring)
 
-				print(message,response.text,"respo")
 		response_dict['success'] = True
 		response_dict['cleaning_date'] = cleaning_team_detail.start_at.date().strftime('%d-%m-%Y')
 		return Response(response_dict,HTTP_200_OK)
 
+class BackupCheckInAPI(APIView):
+	permission_classes  	= (AllowAny,)
+	authentication_classes  = ()
+
+	def post(self,request):
+		response_dict               = {}
+		response_dict['success']    = False
+
+		team_id                     = request.data.get('team_id')
+
+		#confirm backup team
+		absent_cleaners_list        = request.data.get('absent_list')
+		if absent_cleaners_list:
+			absent_cleaners      	= CleaningTeamMember.objects.filter(is_active=True,id__in=absent_cleaners_list,team__id=team_id,is_backup_cleaner=True)
+			absent_cleaners.delete()
+		
+		#backupteam checkin
+		CleaningTeam.objects.filter(id=team_id).update(backup_check_in=timezone.now())
+
+		response_dict['success'] = True
+
+		return Response(response_dict,HTTP_200_OK)
+
 class CheckOutAPI(APIView):
-	permission_classes  	=   (AllowAny,)
+	permission_classes  	= (AllowAny,)
 	authentication_classes  = ()
 
 	def post(self,request):
@@ -1899,35 +2004,16 @@ class CheckOutAPI(APIView):
 		team_id         = request.data.get('team_id')
 		check_out_notes = request.data.get('check_out_notes')
 	
-		print(team_id,"zack")
 		try:
 			cleaning_team_detail = CleaningTeam.objects.select_related('order_scheduler__order').get(is_active=True,id=team_id)
 		except:	
 			cleaning_team_detail = None
 
-		#remaining teams
-		# cleaning_teams = CleaningTeam.objects.filter(order_scheduler__order_scheduler_book=cleaning_team_detail.order_scheduler.order_scheduler_book).values('order_scheduler__work_status')
-		# remaining_team = 0
-		# for team in cleaning_teams:
-		# 	if team['order_scheduler__work_status'] != 'CLEANING_FULFILLED':
-		# 		remaining_team += 1
-		
-		# print(remaining_team,"rtm")
-
-		#remaining keynotes
-		# keynotes = EvaluationSectionKeynote.objects.filter(evaluation_section__evaluation_book=cleaning_team_detail.order_scheduler.order_scheduler_book).values('completion_status')
-		# remaining_keynotes = 0
-		# if keynotes:
-		# 	for key in keynotes:
-		# 		if key['completion_status'] == False:
-		# 			remaining_keynotes += 1
-		# else:
-		# 	pass
-		# print(remaining_keynotes,"rky")
-
 
 		cleaning_team_detail.order_scheduler.work_status  		= 'CLEANING_FULFILLED'	
 		cleaning_team_detail.check_out                    		= timezone.now()
+		if cleaning_team_detail.backup_check_in:
+			cleaning_team_detail.backup_check_out 				= timezone.now()
 		
 		cleaning_team_detail.order_scheduler.order.order_status = 'ORDER_IN_PROGRESS'
 
@@ -2625,41 +2711,46 @@ class InventoryServiceItemsAPI(APIView):
 		ingredient_item_id = request.GET.get('ingredient_item_id')
 		action = request.GET.get('action')
 		
-		print(ingredient_id,"attrsed3")
-		try:
-			ingredient = ServiceRecipeIngredients.objects.get(id=int(ingredient_id))
+		print(ingredient_id,"iyyo","attrsed3")
+		# try:
+		ingredient = ServiceRecipeIngredients.objects.get(id=int(ingredient_id))
+		print(ingredient,"ingri")
 
-			if action == 'add_item':
-				ingredient_items_exist = ServiceRecipeItems.objects.filter(ingredient=ingredient)
-				print("add")
-				item = InventoryItem.objects.get(id=int(item_id))
-				
-				if ingredient_items_exist:
-					ServiceRecipeItems.objects.create(ingredient=ingredient,item=item)
-				else:
-					ServiceRecipeItems.objects.create(ingredient=ingredient,item=item,is_swapped_item=True)
+		if action == 'add_item':
+			ingredient_items_exist = ServiceRecipeItems.objects.filter(ingredient=ingredient)
+			print("add")
+			item = InventoryItem.objects.get(id=int(item_id))
+			
+			if ingredient_items_exist:
+				ServiceRecipeItems.objects.create(ingredient=ingredient,item=item)
+			else:
+				ServiceRecipeItems.objects.create(ingredient=ingredient,item=item,is_swapped_item=True)
 
-			if action == 'edit_item':
-				ingredient_item = ServiceRecipeItems.objects.get(id=int(ingredient_item_id))
-				item = InventoryItem.objects.get(id=int(item_id))
-				ingredient_item.item = item
-				ingredient_item.save()
+		if action == 'edit_item':
+			print("eddit")
+			ingredient_item = ServiceRecipeItems.objects.get(id=int(ingredient_item_id))
+			item = InventoryItem.objects.get(id=int(item_id))
+			ingredient_item.item = item
+			ingredient_item.save()
 
-			if action == 'delete_item':
-				ServiceRecipeItems.objects.get(id=int(ingredient_item_id)).delete()
+		if action == 'delete_item':
+			ServiceRecipeItems.objects.get(id=int(ingredient_item_id)).delete()
 
-			response_dict['ingredient'] = ingredient.ingredient
-			items = ServiceRecipeItems.objects.filter(ingredient=ingredient)
-		except:
-			ingredient = None
-			items = None
+		print(ingredient.ingredient,"ingr")
+		response_dict['ingredient'] = ingredient.ingredient
+		items = ServiceRecipeItems.objects.filter(ingredient=ingredient)
+		# except:
+		# 	ingredient = None
+		# 	items = None
+		# 	response_dict['ingredient'] = None
 
 		items_list = []
 		if items:
 			for item in items:
 				list_item = {
-					'item_id' : item.id,
+					'ingredient_item_id' : item.id,
 					'item_name' : item.item.name,
+					'item_id' : item.item.id
 				}
 
 				items_list.append(list_item)

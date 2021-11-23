@@ -15,7 +15,7 @@
   delimiters: ["<%", "%>"],
   data () {
         return {
-            
+            loading:false,
             cause_of_stain:['INK MARK', 'HARD DUST', 'COFFEE & TEA SPILL', 'OIL','GREASE', 'PAINT', 'URINE', 'MILK SPILL', 'NO STAIN', 'OTHERS'],
             walltypes:["BRICKS","GLASS","CONCRETE","CERAMIC","GYPSUM","FABRIC","RUBBER","STONE","TERRAZO","STAINLESS","VINYL","WOODEN","OTHERS"],
             ceilingtypes:["WOODEN","GLASS","CONCRETE","CERAMIC","GYPSUM","FOAM","PLASTIC","FABRIC","RUBBER","STAINLESS","VENYL","OTHERS"],
@@ -58,11 +58,7 @@
                     selected:false,
                     name:'Internal Report'
                 },
-                {
-                    id:3,
-                    selected:false,
-                    name:'Assign Investigator'
-                },
+              
                 // {
                 //     id:4,
                 //     selected:false,
@@ -101,6 +97,51 @@
         }
       },
       methods:{
+          removedOp(){
+
+          },
+        addServiceQu(){
+          
+            var flag = false
+            var flag2 = false
+            var ind
+            for(var i =0;i<this.value.length;i++){
+                if(this.value[i].id == 2){
+                    flag = true;
+                    break;
+                }
+            }
+            if(flag){
+                for(var j =0;j<this.ticketAction.length;j++){
+                    if(this.ticketAction[j].id == 3){
+                        flag2 = true;
+                        break;
+                    }
+                }
+                if(!flag2){
+                    this.ticketAction.push(  {
+                        id:3,
+                        selected:false,
+                        name:'Assign Investigator'
+                    })
+                }
+
+            }else{
+                for(var k =0;k<this.ticketAction.length;k++){
+                    if(this.ticketAction[k].id == 3){
+                        flag2 = true;
+                        ind = k
+                        break;
+                    }
+                }
+                if(flag2){
+                    this.ticketAction.splice(ind,1)
+                }
+
+            }
+            console.log(flag,this.value)
+
+        },
         editSection(item){
             console.log(item)
             this.edit_section_active_index = item
@@ -189,7 +230,7 @@
                          this.damacval[i].selected = false
                         }
                         this.damacval[0].selected = true
-                }  
+                } 
         },
           selectTab(id){
               var ind = null;
@@ -289,11 +330,13 @@
                   
 
               }
+              this.loading = true
              let result = await _post('api/ticket-submit/',fd);
-
+             
              if(result.data.success){
                  location.reload()
              }else{
+                this.loading = false
                 showNotification('Something went wrong','error')
              }
               console.log(result);

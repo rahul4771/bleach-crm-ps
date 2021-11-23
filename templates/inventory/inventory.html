@@ -148,7 +148,7 @@
             <input type="hidden" name="item_edit_id" id="id_edit_item" />
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Item</div>
+                    <div class="model-input-name required-field">Item</div>
 
                     <div class="inv-input-container h-30"> 
                         <input type="text"  class="w-p-100 inv-in" name="item_name" id="id_item_name">
@@ -168,7 +168,7 @@
             </div> {% endcomment %}
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Category</div>
+                    <div class="model-input-name required-field">Category</div>
 
                     <!-- <select class="minimal" name="item_category" id="id_category" required>
                         <option value="">--Select Category--</option>
@@ -193,7 +193,7 @@
 
             <div class="row mt-20 segment_dropdown">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Segment</div>
+                    <div class="model-input-name required-field">Segment</div>
 
                     <!-- <select class="minimal" name="item_segment" id="id_segment">
                         <option value="">--Select Segment--</option>
@@ -213,7 +213,7 @@
 
             <div class="row mt-20 line_dropdown">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Line</div>
+                    <div class="model-input-name required-field">Line</div>
 
                     <!-- <select class="minimal" name="item_line" id="id_line">
                         <option value="">--Select Line--</option>
@@ -336,7 +336,7 @@
   
         </div>
         <div class="inv-drawer-footer" style="position: relative !important;">
-            <button class="sent-button inventory-form-btn" type="submit" >Submit</button>
+            <button class="sent-button inventory-form-btn" type="button" onclick="formvalidation()" >Submit</button>
             </form>
                         <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
         </div>
@@ -516,6 +516,24 @@ function changeSelect(va){
     }
     function closeNavAddStore() {
         document.getElementById("addStore").style.width = "0";
+    }
+
+
+    //form validation
+    function formvalidation(){
+
+        if ($('input[name=item_name]').val() == ''){
+            $('input[name=item_name]').addClass('red-border-input');
+        }else if ($('input[name=item_category]').val() == ''){
+            $('#noble-gases').addClass('red-border-input');
+        }else if ($('input[name=item_segment]').val() == ''){
+            $('#noble-gases2').addClass('red-border-input');
+        }else if ($('input[name=item_line]').val() == ''){
+            $('#noble-gases3').addClass('red-border-input');
+        }else{
+            console.log("lolo")
+            $('#myForm').submit();
+        }
     }
 
     
