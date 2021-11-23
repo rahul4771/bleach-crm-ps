@@ -883,13 +883,23 @@ const app = new Vue({
           filtered_teams:[],
           current_backups:[],
           visit_count:'',
-          team_schedule_id:''
+          team_schedule_id:'',
+          add_eval_id:''
          // url:'http://localhost:8000'
       // url:'https://test.bleach-kw.com'
             //url:'http://127.0.0.1:8000'
   },
   methods:{
-    
+    openAddService(id){
+      
+      this.add_eval_id=id
+      $('#addServiceModalBtn').click()
+      console.log("called modal")
+    },
+    addMoreService(){
+      // window.location.href='/customer/service/add-delete/'+id
+      window.location.href='/common/newservice/?eval_id='+this.add_eval_id
+   },
     getTeamMembers(){
       axios.post(this.url+'/customer/availablecleaners/',{
         cleaning_datetime_start:this.backup_team_data.cleaning_date_start+' '+this.backup_team_data.cleaning_time_start,
