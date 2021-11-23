@@ -539,6 +539,7 @@
     <div data-toggle="modal" data-target="#customerNoteModel" id="customer_note-tigger"></div>
     <div data-toggle="modal" data-target="#backupModal" id="backupTeamBtn"></div>
     <div data-toggle="modal" data-target="#editBackupModal" id="editBackupTeamBtn"></div>
+    <div data-toggle="modal" data-target="#addServiceModal" id="addServiceModalBtn"></div>
 <!-- edit section dialog begins here-->
 <div class="modal fade " id="editSectionDialog" tabindex="-1" role="dialog" aria-labelledby="editSectionDialogTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered primary-modal" role="document">
@@ -2271,14 +2272,16 @@
                                         <!-- Backup team ends here-->
 
 
-                                        {% if not cleaning_team.backup_start_at %}
-                                        <div class="row" id="id_backupadd_{{evaluationbook.id}}">
-                                            <button class="sent-button mt-10" type="submit" @click="addBackupTeam(`{{cleaning_team.id}}`,`{{evaluationdetail.id}}`,`{{orderschedule.start_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.end_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.cleaning_hours}}`)">Add Backup Team</button>
-                                        </div>
-                                        {% else %}
-                                        <div class="row" id="id_backupadd_{{evaluationbook.id}}" style="display:none;">
-                                            <button class="sent-button mt-10" type="submit" @click="addBackupTeam(`{{cleaning_team.id}}`,`{{evaluationdetail.id}}`,`{{orderschedule.start_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.end_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.cleaning_hours}}`)">Add Backup Team</button>
-                                        </div>
+                                        {% if request.user.user_type == 'SENIORTEAMLEADER' %}
+                                            {% if not cleaning_team.backup_start_at %}
+                                            <div class="row" id="id_backupadd_{{evaluationbook.id}}">
+                                                <button class="sent-button mt-10" type="submit" @click="addBackupTeam(`{{cleaning_team.id}}`,`{{evaluationdetail.id}}`,`{{orderschedule.start_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.end_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.cleaning_hours}}`)">Add Backup Team</button>
+                                            </div>
+                                            {% else %}
+                                            <div class="row" id="id_backupadd_{{evaluationbook.id}}" style="display:none;">
+                                                <button class="sent-button mt-10" type="submit" @click="addBackupTeam(`{{cleaning_team.id}}`,`{{evaluationdetail.id}}`,`{{orderschedule.start_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.end_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.cleaning_hours}}`)">Add Backup Team</button>
+                                            </div>
+                                            {% endif %}
                                         {% endif %}
 
                                         <div class="order-clean-section-header c-mt-10">
@@ -2424,7 +2427,7 @@
                     {% endfor %}
                    
                     <div class="row">
-                        <button class="sent-button mt-10" type="submit" onclick="addMoreService({{evaluationdetail.id}});">Add More Service</button>
+                        <button class="sent-button mt-10" type="submit" @click="openAddService({{evaluationdetail.id}});">Add More Service</button>
                     </div>
                     {% endfor %}
                     <!-- Service Details Main Ends Here -->
@@ -3096,6 +3099,48 @@
 </div>
 <!-- section delete-->
 <!-- Modal Cancel -->
+
+<!-- Add service warning popup -->
+<div class="modal fade bd-example-modal-lg" id="addServiceModal" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog cancel-model cancel-order-border" role="document">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="d-flex cl-modal-icons">
+                        <button data-dismiss="modal" class="model-close">
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="cancel-model-content">
+                        <h1>All scheduled dates will be reset on adding new service. </h1>
+                        <h1>Are you sure you want to continue ?</h1>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <div class="cancel-model-content">
+                        
+                        <button class="sent-button" type="submit" @click="addMoreService()">Yes</button>
+                        <button data-dismiss="modal" class="view-button">Cancel</button>
+                      
+                        
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Add service warning popup -->
 <!-- Visit Delete -->
 <div class="modal fade bd-example-modal-lg" id="deleteCleaningModal" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -3780,10 +3825,7 @@
 function duplicate(id){
     window.location.href='/common/reorder?id='+id
 } 
-function addMoreService(id){
-   // window.location.href='/customer/service/add-delete/'+id
-   window.location.href='/common/newservice/?eval_id='+id
-}
+
 
 function resubmit(id){
     window.location.href='/customer/resubmitorder/'+id
