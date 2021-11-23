@@ -2408,10 +2408,22 @@
                                   
                                     <!-- Other Media end-->
                                     
-                                    {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR' %}
-                                    <!--add more images begins-->
-                                    <button  class="order-upload-btn mt-20" onclick="addImage(this)"  data-eval_id="{{evaluationbook.id}}">Upload More Images</button>
-                                    <!-- add more images end-->
+                                    {% if request.user.user_type == 'AGENT' %}
+                                        {% if evaluationdetail.evaluator == None and request.user.id == order.evaluation.call_attender.id %}
+                                        <!--add more images begins-->
+                                        <button  class="order-upload-btn mt-20" onclick="addImage(this)"  data-eval_id="{{evaluationbook.id}}">Upload More Images</button>
+                                        <!-- add more images end-->
+                                        {% endif %}
+                                    {% elif request.user.user_type == 'EVALUATOR' %}
+                                        {% if evaluationdetail.evaluator.id == request.user.id or request.user.id == order.evaluation.call_attender.id %}
+                                        <!--add more images begins-->
+                                        <button  class="order-upload-btn mt-20" onclick="addImage(this)"  data-eval_id="{{evaluationbook.id}}">Upload More Images</button>
+                                        <!-- add more images end-->
+                                        {% endif %}
+                                    {% elif request.user.user_type == 'BOOKINGOFFICER' %}
+                                        <!--add more images begins-->
+                                        <button  class="order-upload-btn mt-20" onclick="addImage(this)"  data-eval_id="{{evaluationbook.id}}">Upload More Images</button>
+                                        <!-- add more images end-->
                                     {% endif %}
 
                                 </div>
@@ -2426,9 +2438,53 @@
                     </div>
                     {% endfor %}
                    
+
+
+                <!---Add/Remove Service-->
+                {% if order.evaluation.quatation_status == 'APPROVED' %}
+                      
+                {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION' %}
+                {% else %}
+                {% if request.user.user_type == 'AGENT' %}
+                    {% if evaluationdetail.evaluator == None and request.user.id == order.evaluation.call_attender.id %}
                     <div class="row">
-                        <button class="sent-button mt-10" type="submit" @click="openAddService({{evaluationdetail.id}});">Add More Service</button>
+                        <button class="sent-button mt-10" type="submit" @click="openAddService({{evaluationdetail.id}});">Add/Remove Service</button>
                     </div>
+                    {% endif %}
+                    {% elif request.user.user_type == 'EVALUATOR' %}
+                    {% if evaluationdetail.evaluator.id == request.user.id or request.user.id == order.evaluation.call_attender.id %}
+                    <div class="row">
+                        <button class="sent-button mt-10" type="submit" @click="openAddService({{evaluationdetail.id}});">Add/Remove Service</button>
+                    </div>
+                    {% endif %}
+                    {% elif request.user.user_type == 'BOOKINGOFFICER' %}
+                    <div class="row">
+                        <button class="sent-button mt-10" type="submit" @click="openAddService({{evaluationdetail.id}});">Add/Remove Service</button>
+                    </div>
+                {% endif %}
+                {% endif %}
+                
+                {% elif order.evaluation.quatation_status == 'PENDING' %}
+                {% if request.user.user_type == 'AGENT' %}
+                    {% if evaluationdetail.evaluator == None and request.user.id == order.evaluation.call_attender.id %}
+                    <div class="row">
+                        <button class="sent-button mt-10" type="submit" @click="openAddService({{evaluationdetail.id}});">Add/Remove Service</button>
+                    </div>
+                    {% endif %}
+                    {% elif request.user.user_type == 'EVALUATOR' %}
+                    {% if evaluationdetail.evaluator.id == request.user.id or request.user.id == order.evaluation.call_attender.id %}
+                    <div class="row">
+                        <button class="sent-button mt-10" type="submit" @click="openAddService({{evaluationdetail.id}});">Add/Remove Service</button>
+                    </div>
+                    {% endif %}
+                    {% elif request.user.user_type == 'BOOKINGOFFICER' %}
+                    <div class="row">
+                        <button class="sent-button mt-10" type="submit" @click="openAddService({{evaluationdetail.id}});">Add/Remove Service</button>
+                    </div>
+                {% endif %}
+                {%endif%}
+                <!---Add/Remove Service-->
+                    
                     {% endfor %}
                     <!-- Service Details Main Ends Here -->
                        
