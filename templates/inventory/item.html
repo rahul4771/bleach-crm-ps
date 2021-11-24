@@ -1296,7 +1296,7 @@ function editItemData(){
 }
 
 function doneEdit(){
-    console.log($('input[name=item_category]').val(),"mokk")
+    console.log($('#id_cat_select').val(),"mokk")
 
     if ($('input[name=item_name]').val() == ''){
         $('input[name=item_name]').addClass('red-border-input');
@@ -1304,13 +1304,6 @@ function doneEdit(){
         $('input[name=reserve]').addClass('red-border-input');
     }else if ($('input[name=description]').val() == ''){
         $('input[name=description]').addClass('red-border-input');
-    }else if ($('input[name=item_category]').val() == undefined){
-        console.log("jiooo")
-        $('#id_cat_select').addClass('red-border-input');
-    }else if ($('input[name=item_segment]').val() == undefined){
-        $('input[name=item_segment]').addClass('red-border-input');
-    }else if ($('input[name=item_line]').val() == undefined){
-        $('input[name=item_line]').addClass('red-border-input');
     }else{
         console.log("no[")
         document.getElementById('id_editButton').style.display = 'block';
@@ -1329,6 +1322,7 @@ function doneEdit(){
         document.getElementById('id_res_text').style.display = 'none';
         document.getElementById("itemdetailsform").submit();
     }
+    
     
 }
 

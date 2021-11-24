@@ -516,9 +516,9 @@ class InventoryItems(IsInventoryAdmin,View):
                 inventory_item.item_status = 'available'
             inventory_item.save()
         else:
-            if int(available_quantity) < int(reserve_units) and int(available_quantity) > 0:
+            if float(available_quantity) < float(reserve_units) and float(available_quantity) > 0:
                 inventory_item.item_status = 'about_to_finish'
-            elif int(available_quantity) == 0 :
+            elif float(available_quantity) == 0 :
                 inventory_item.item_status = 'out_of_stock'
             else:
                 inventory_item.item_status = 'available'
@@ -1004,20 +1004,42 @@ class InventoryInv(IsInventoryAdmin,View):
             inventory_items       = InventoryItem.objects.all()
 
         for item in inventory_items:
+            # if item.item_add_type == 'unit':
+            #     available_item_units = ItemUnit.objects.filter(item=item,status='active').count()
+            # else:
+            #     available_item_units = ItemHistory.objects.filter(item=item).aggregate(total_quantity=Sum('quantity'))['total_quantity'] or 0
+            
+            # reserve_units = item.reserve_count
+
+            # if float(available_item_units) < float(reserve_units) and float(available_item_units) > 0:
+            #     item.item_status = 'about_to_finish'
+            # elif float(available_item_units) == 0 :
+            #     item.item_status = 'out_of_stock'
+            # else:
+            #     item.item_status = 'available'
+            # item.save()
+            reserve_units = item.reserve_count
+            
             if item.item_add_type == 'unit':
                 available_item_units = ItemUnit.objects.filter(item=item,status='active').count()
+
+                if int(available_item_units) < int(reserve_units) and int(available_item_units) > 0:
+                    item.item_status = 'about_to_finish'
+                elif int(available_item_units) == 0 :
+                    item.item_status = 'out_of_stock'
+                else:
+                    item.item_status = 'available'
+                item.save()
             else:
                 available_item_units = ItemHistory.objects.filter(item=item).aggregate(total_quantity=Sum('quantity'))['total_quantity'] or 0
-            
-            reserve_units = item.reserve_count
 
-            if int(available_item_units) < int(reserve_units) and int(available_item_units) > 0:
-                item.item_status = 'about_to_finish'
-            elif int(available_item_units) == 0 :
-                item.item_status = 'out_of_stock'
-            else:
-                item.item_status = 'available'
-            item.save()
+                if float(available_item_units) < float(reserve_units) and float(available_item_units) > 0:
+                    item.item_status = 'about_to_finish'
+                elif float(available_item_units) == 0 :
+                    item.item_status = 'out_of_stock'
+                else:
+                    item.item_status = 'available'
+                item.save()
             
 
         

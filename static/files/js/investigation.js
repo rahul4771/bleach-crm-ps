@@ -23,7 +23,7 @@ let app = new Vue({
             checkVer:false,
             functionClick:0,
             is_agent_checked:false,
-            durationArray:[2,4,8,10],
+            durationArray:[2,4,6,8,10],
             avSolt:null,
             incheck:false,
             incheck2:false,
@@ -670,8 +670,9 @@ let app = new Vue({
           
           if(result.data.success){
             console.log("success")
-              window.history.back()
+              // window.history.back()
               // window.location.href = url+'/stl/dashboard'
+              document.referrer ? window.location = document.referrer : history.back()
             
           }else{
             this.loading = false
