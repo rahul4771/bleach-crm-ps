@@ -2400,18 +2400,18 @@
                                     {% if request.user.user_type == 'AGENT' %}
                                         {% if evaluationdetail.evaluator == None and request.user.id == order.evaluation.call_attender.id %}
                                         <!--add more images begins-->
-                                        <button  class="outline-btn mt-20" onclick="addImage(this)"  data-eval_id="{{evaluationbook.id}}">Upload More Images</button>
+                                        <button  class="outline-btn mt-20" onclick="addImage(this)"  data-eval_id="{{evaluationbook.id}}"><i class="far fa-images" style="margin-right:8px"></i>Upload More Images</button>
                                         <!-- add more images end-->
                                         {% endif %}
                                     {% elif request.user.user_type == 'EVALUATOR' %}
                                         {% if evaluationdetail.evaluator.id == request.user.id or request.user.id == order.evaluation.call_attender.id %}
                                         <!--add more images begins-->
-                                        <button  class="outline-btn mt-20" onclick="addImage(this)"  data-eval_id="{{evaluationbook.id}}">Upload More Images</button>
+                                        <button  class="outline-btn mt-20" onclick="addImage(this)"  data-eval_id="{{evaluationbook.id}}"><i class="far fa-images" style="margin-right:8px"></i>Upload More Images</button>
                                         <!-- add more images end-->
                                         {% endif %}
                                     {% elif request.user.user_type == 'BOOKINGOFFICER' %}
                                         <!--add more images begins-->
-                                        <button  class="outline-btn mt-20" onclick="addImage(this)"  data-eval_id="{{evaluationbook.id}}">Upload More Images</button>
+                                        <button  class="outline-btn mt-20" onclick="addImage(this)"  data-eval_id="{{evaluationbook.id}}"><i class="far fa-images" style="margin-right:8px"></i>Upload More Images</button>
                                         <!-- add more images end-->
                                     {% endif %}
 
