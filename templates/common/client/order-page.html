@@ -2162,10 +2162,12 @@
                                                 {% endif %}
                                                 {% endif %}
 
-                                                <a class="team_edit_url" id="team_edit_url_{{evaluationbook.id}}" href="#" target="_blank" hidden>
+                                                {% if orderschedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}
+                                                <a class="team_edit_url" id="team_edit_url_{{evaluationbook.id}}" href="#" target="_blank">
                                                 <div v-if="edit" class="clean-team-edit">
                                                     <img src="{% static 'files/icons/edit.png' %}">
                                                 </div></a>
+                                                {% endif %}
                                             </div>
                                         </div>
 
@@ -2203,19 +2205,13 @@
                                             <div class="row mt-20">
 
                                                 <h3 class="ml-10">Backup Team</h3>
-                                                {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR' or request.user.user_type == 'SALESADMIN' or request.user.user_type == 'ACCOUNTANT' %}
-                                                {% if orderschedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}
-                                               
+                                                {% if request.user.user_type == 'SENIORTEAMLEADER' %} 
+                                                {% if cleaning_team.backup_start_at %}                                        
                                                 <div v-if="edit" class="clean-team-edit" @click="editBackupTeam(`{{orderschedule.id}}`,`{{cleaning_team.id}}`,`{{evaluationdetail.id}}`,`{{orderschedule.start_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.end_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.cleaning_hours}}`)">
                                                     <img src="{% static 'files/icons/edit.png' %}">
                                                 </div>
                                                 {% endif %}
                                                 {% endif %}
-
-                                                <a class="team_edit_url" id="team_edit_url_{{evaluationbook.id}}" href="#" target="_blank" hidden>
-                                                <div v-if="edit" class="clean-team-edit">
-                                                    <img src="{% static 'files/icons/edit.png' %}">
-                                                </div></a>
                                             </div>
                                         </div>
                                         <div class="row c-mt-10 id_team_members_div" id="id_team_backupmembers_div_{{evaluationbook.id}}">
