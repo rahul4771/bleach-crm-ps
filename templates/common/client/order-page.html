@@ -2274,11 +2274,11 @@
 
                                         {% if not cleaning_team.backup_start_at %}
                                         <div class="row" id="id_backupadd_{{evaluationbook.id}}">
-                                            <button class="sent-button mt-10" type="submit" @click="addBackupTeam(`{{cleaning_team.id}}`,`{{evaluationdetail.id}}`,`{{orderschedule.start_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.end_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.cleaning_hours}}`)">Add Backup Team</button>
+                                            <button class="outline-btn mt-10" type="submit" @click="addBackupTeam(`{{cleaning_team.id}}`,`{{evaluationdetail.id}}`,`{{orderschedule.start_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.end_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.cleaning_hours}}`)">Add Backup Team</button>
                                         </div>
                                         {% else %}
                                         <div class="row" id="id_backupadd_{{evaluationbook.id}}" style="display:none;">
-                                            <button class="sent-button mt-10" type="submit" @click="addBackupTeam(`{{cleaning_team.id}}`,`{{evaluationdetail.id}}`,`{{orderschedule.start_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.end_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.cleaning_hours}}`)">Add Backup Team</button>
+                                            <button class="outline-btn mt-10" type="submit" @click="addBackupTeam(`{{cleaning_team.id}}`,`{{evaluationdetail.id}}`,`{{orderschedule.start_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.end_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.cleaning_hours}}`)">Add Backup Team</button>
                                         </div>
                                         {% endif %}
 
@@ -2408,7 +2408,7 @@
                                     
                                     {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR' %}
                                     <!--add more images begins-->
-                                    <button  class="order-upload-btn mt-20" onclick="addImage(this)"  data-eval_id="{{evaluationbook.id}}">Upload More Images</button>
+                                    <button  class="outline-btn mt-20" onclick="addImage(this)"  data-eval_id="{{evaluationbook.id}}"><i class="far fa-images" style="margin-right:8px"></i>Upload More Images</button>
                                     <!-- add more images end-->
                                     {% endif %}
 
@@ -2425,7 +2425,7 @@
                     {% endfor %}
                    
                     <div class="row">
-                        <button class="sent-button mt-10" type="submit" @click="openAddService({{evaluationdetail.id}});">Add More Service</button>
+                        <button class="outline-btn mt-10" type="submit" @click="openAddService({{evaluationdetail.id}});">Add More Service</button>
                     </div>
                     {% endfor %}
                     <!-- Service Details Main Ends Here -->

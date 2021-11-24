@@ -79,9 +79,33 @@ const app=  new Vue({
     el: '#app',
     vuetify: new Vuetify(),
     delimiters: ['<%', '%>'],
+   components:{
    
+    draggable: window['vuedraggable']
+   },
     
     data: {
+      list1: [
+        { name: "Lucifer", id: 1 },
+        { name: "Michael", id: 2 },
+        { name: "Amanedeil", id: 3 },
+        { name: "Chloe", id: 4 }
+      ],
+      list2: [
+        { name: "Trixie", id: 5 },
+        { name: "Adam", id: 6 },
+        { name: "Eve", id: 7 }
+      ],
+      list3: [
+        { name: "Joe", id: 8 },
+        { name: "Pheobe", id: 9 },
+        { name: "Monica", id: 10 }
+      ],
+      list4: [
+        { name: "Chandler", id: 11 },
+        { name: "Rachel", id: 12 },
+        
+      ],
       prod:false,
       slotloader:false,
       cal_loader:false,
@@ -297,6 +321,20 @@ const app=  new Vue({
         this.getEvaluationSlots()
       },
       methods:{
+        add: function() {
+          this.list.push({ name: "Juan" });
+        },
+        replace: function() {
+          this.list = [{ name: "Edgard" }];
+        },
+        clone: function(el) {
+          return {
+            name: el.name + " cloned"
+          };
+        },
+        log: function(evt) {
+          window.console.log(evt);
+        },
         calChecker(date){
           
           

@@ -39,6 +39,16 @@ border-radius: 10px;
   cursor: pointer;
   font-size:16px;
 }
+.outline-btn{
+    background: #fff 0% 0% no-repeat padding-box;
+    box-shadow: 0px 3px 6px #0000003d;
+    opacity: 1;
+    color: #2c4c82;
+    border: 1px solid #2c4c82;
+    border-radius: 3px;
+    padding: 5px 30px 5px 30px;
+    margin: 3px;
+}
 .backup-input{
   border-radius: 5px;
       border: 1px solid #707070;
