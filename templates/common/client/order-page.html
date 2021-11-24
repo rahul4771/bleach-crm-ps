@@ -2153,7 +2153,7 @@
                                             <div class="row">
 
                                                 <h3 class="ml-10">Cleaning Team</h3>
-                                                {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR' or request.user.user_type == 'SALESADMIN' or request.user.user_type == 'ACCOUNTANT' %}
+                                                {% if request.user.user_type == 'SENIORTEAMLEADER' %}
                                                 {% if orderschedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}
                                                 <a href="{% url 'common_items:edit-cleaningteam' orderschedule.id %}" target="_blank">
                                                 <div v-if="edit" class="clean-team-edit">
@@ -2161,11 +2161,6 @@
                                                 </div></a>
                                                 {% endif %}
                                                 {% endif %}
-
-                                                <a class="team_edit_url" id="team_edit_url_{{evaluationbook.id}}" href="#" target="_blank" hidden>
-                                                <div v-if="edit" class="clean-team-edit">
-                                                    <img src="{% static 'files/icons/edit.png' %}">
-                                                </div></a>
                                             </div>
                                         </div>
 
@@ -2203,19 +2198,13 @@
                                             <div class="row mt-20">
 
                                                 <h3 class="ml-10">Backup Team</h3>
-                                                {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR' or request.user.user_type == 'SALESADMIN' or request.user.user_type == 'ACCOUNTANT' %}
-                                                {% if orderschedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}
-                                               
+                                                {% if request.user.user_type == 'SENIORTEAMLEADER' %} 
+                                                {% if cleaning_team.backup_start_at %}                                        
                                                 <div v-if="edit" class="clean-team-edit" @click="editBackupTeam(`{{orderschedule.id}}`,`{{cleaning_team.id}}`,`{{evaluationdetail.id}}`,`{{orderschedule.start_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.end_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.cleaning_hours}}`)">
                                                     <img src="{% static 'files/icons/edit.png' %}">
                                                 </div>
                                                 {% endif %}
                                                 {% endif %}
-
-                                                <a class="team_edit_url" id="team_edit_url_{{evaluationbook.id}}" href="#" target="_blank" hidden>
-                                                <div v-if="edit" class="clean-team-edit">
-                                                    <img src="{% static 'files/icons/edit.png' %}">
-                                                </div></a>
                                             </div>
                                         </div>
                                         <div class="row c-mt-10 id_team_members_div" id="id_team_backupmembers_div_{{evaluationbook.id}}">
@@ -2272,14 +2261,16 @@
                                         <!-- Backup team ends here-->
 
 
-                                        {% if not cleaning_team.backup_start_at %}
-                                        <div class="row" id="id_backupadd_{{evaluationbook.id}}">
-                                            <button class="sent-button mt-10" type="submit" @click="addBackupTeam(`{{cleaning_team.id}}`,`{{evaluationdetail.id}}`,`{{orderschedule.start_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.end_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.cleaning_hours}}`)">Add Backup Team</button>
-                                        </div>
-                                        {% else %}
-                                        <div class="row" id="id_backupadd_{{evaluationbook.id}}" style="display:none;">
-                                            <button class="sent-button mt-10" type="submit" @click="addBackupTeam(`{{cleaning_team.id}}`,`{{evaluationdetail.id}}`,`{{orderschedule.start_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.end_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.cleaning_hours}}`)">Add Backup Team</button>
-                                        </div>
+                                        {% if request.user.user_type == 'SENIORTEAMLEADER' %}
+                                            {% if not cleaning_team.backup_start_at %}
+                                            <div class="row" id="id_backupadd_{{evaluationbook.id}}">
+                                                <button class="outline-btn mt-10" type="submit" @click="addBackupTeam(`{{cleaning_team.id}}`,`{{evaluationdetail.id}}`,`{{orderschedule.start_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.end_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.cleaning_hours}}`)">Add Backup Team</button>
+                                            </div>
+                                            {% else %}
+                                            <div class="row" id="id_backupadd_{{evaluationbook.id}}" style="display:none;">
+                                                <button class="outline-btn mt-10" type="submit" @click="addBackupTeam(`{{cleaning_team.id}}`,`{{evaluationdetail.id}}`,`{{orderschedule.start_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.end_at|date:'d-m-Y g:i A'}}`,`{{orderschedule.cleaning_hours}}`)">Add Backup Team</button>
+                                            </div>
+                                            {% endif %}
                                         {% endif %}
 
                                         <div class="order-clean-section-header c-mt-10">
@@ -2406,10 +2397,22 @@
                                   
                                     <!-- Other Media end-->
                                     
-                                    {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR' %}
-                                    <!--add more images begins-->
-                                    <button  class="order-upload-btn mt-20" onclick="addImage(this)"  data-eval_id="{{evaluationbook.id}}">Upload More Images</button>
-                                    <!-- add more images end-->
+                                    {% if request.user.user_type == 'AGENT' %}
+                                        {% if evaluationdetail.evaluator == None and request.user.id == order.evaluation.call_attender.id %}
+                                        <!--add more images begins-->
+                                        <button  class="outline-btn mt-20" onclick="addImage(this)"  data-eval_id="{{evaluationbook.id}}"><i class="far fa-images" style="margin-right:8px"></i>Upload More Images</button>
+                                        <!-- add more images end-->
+                                        {% endif %}
+                                    {% elif request.user.user_type == 'EVALUATOR' %}
+                                        {% if evaluationdetail.evaluator.id == request.user.id or request.user.id == order.evaluation.call_attender.id %}
+                                        <!--add more images begins-->
+                                        <button  class="outline-btn mt-20" onclick="addImage(this)"  data-eval_id="{{evaluationbook.id}}"><i class="far fa-images" style="margin-right:8px"></i>Upload More Images</button>
+                                        <!-- add more images end-->
+                                        {% endif %}
+                                    {% elif request.user.user_type == 'BOOKINGOFFICER' %}
+                                        <!--add more images begins-->
+                                        <button  class="outline-btn mt-20" onclick="addImage(this)"  data-eval_id="{{evaluationbook.id}}"><i class="far fa-images" style="margin-right:8px"></i>Upload More Images</button>
+                                        <!-- add more images end-->
                                     {% endif %}
 
                                 </div>
@@ -2424,9 +2427,53 @@
                     </div>
                     {% endfor %}
                    
+
+
+                <!---Add/Remove Service-->
+                {% if order.evaluation.quatation_status == 'APPROVED' %}
+                      
+                {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION' %}
+                {% else %}
+                {% if request.user.user_type == 'AGENT' %}
+                    {% if evaluationdetail.evaluator == None and request.user.id == order.evaluation.call_attender.id %}
                     <div class="row">
-                        <button class="sent-button mt-10" type="submit" @click="openAddService({{evaluationdetail.id}});">Add More Service</button>
+                        <button class="sent-button mt-10" type="submit" @click="openAddService({{evaluationdetail.id}});">Add/Remove Service</button>
                     </div>
+                    {% endif %}
+                    {% elif request.user.user_type == 'EVALUATOR' %}
+                    {% if evaluationdetail.evaluator.id == request.user.id or request.user.id == order.evaluation.call_attender.id %}
+                    <div class="row">
+                        <button class="osent-button mt-10" type="submit" @click="openAddService({{evaluationdetail.id}});">Add/Remove Service</button>
+                    </div>
+                    {% endif %}
+                    {% elif request.user.user_type == 'BOOKINGOFFICER' %}
+                    <div class="row">
+                        <button class="sent-button mt-10" type="submit" @click="openAddService({{evaluationdetail.id}});">Add/Remove Service</button>
+                    </div>
+                {% endif %}
+                {% endif %}
+                
+                {% elif order.evaluation.quatation_status == 'PENDING' %}
+                {% if request.user.user_type == 'AGENT' %}
+                    {% if evaluationdetail.evaluator == None and request.user.id == order.evaluation.call_attender.id %}
+                    <div class="row">
+                        <button class="sent-button mt-10" type="submit" @click="openAddService({{evaluationdetail.id}});">Add/Remove Service</button>
+                    </div>
+                    {% endif %}
+                    {% elif request.user.user_type == 'EVALUATOR' %}
+                    {% if evaluationdetail.evaluator.id == request.user.id or request.user.id == order.evaluation.call_attender.id %}
+                    <div class="row">
+                        <button class="sent-button mt-10" type="submit" @click="openAddService({{evaluationdetail.id}});">Add/Remove Service</button>
+                    </div>
+                    {% endif %}
+                    {% elif request.user.user_type == 'BOOKINGOFFICER' %}
+                    <div class="row">
+                        <button class="sent-button mt-10" type="submit" @click="openAddService({{evaluationdetail.id}});">Add/Remove Service</button>
+                    </div>
+                {% endif %}
+                {%endif%}
+                <!---Add/Remove Service-->
+                    
                     {% endfor %}
                     <!-- Service Details Main Ends Here -->
                        

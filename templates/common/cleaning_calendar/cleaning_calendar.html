@@ -36,6 +36,63 @@
     
     </div>
   <input id="user_type" value="{{request.user.user_type}}" style="display: none"/>
+  <!-- Draggable begins here-->
+<!-- <div class="row">
+  <div class="col-3">
+    <h3>Team 1</h3>
+    <draggable class="list-group" :list="list1" group="people" @change="log">
+      <div
+        class="list-group-item"
+        v-for="(element, index) in list1"
+        :key="element.name"
+      >
+        <% element.name %> <% index %>
+      </div>
+    </draggable>
+  </div>
+
+  <div class="col-3">
+    <h3>Team 2</h3>
+    <draggable class="list-group" :list="list2" group="people" @change="log">
+      <div
+        class="list-group-item"
+        v-for="(element, index) in list2"
+        :key="element.name"
+      >
+        <% element.name %> <% index %>
+      </div>
+    </draggable>
+  </div>
+  <div class="col-3">
+    <h3>Team 3</h3>
+    <draggable class="list-group" :list="list3" group="people" @change="log">
+      <div
+        class="list-group-item"
+        v-for="(element, index) in list3"
+        :key="element.name"
+      >
+        <% element.name %> <% index %>
+      </div>
+    </draggable>
+  </div>
+  <div class="col-3">
+    <h3>Team 4</h3>
+    <draggable class="list-group" :list="list4" group="people" @change="log">
+      <div
+        class="list-group-item"
+        v-for="(element, index) in list4"
+        :key="element.name"
+      >
+        <% element.name %> <% index %>
+      </div>
+    </draggable>
+  </div>
+
+  <rawDisplayer class="col-3" :value="list1" title="List 1" />
+
+  <rawDisplayer class="col-3" :value="list2" title="List 2" />
+</div> -->
+<!-- draggable ends here-->
   
     <div class="row">
       <div class="col-md-12">
@@ -1829,6 +1886,10 @@ class="cl-service-list"
     </div>
   </div>
   <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+  <!-- CDNJS :: Sortable (https://cdnjs.com/) -->
+<script src="//cdn.jsdelivr.net/npm/sortablejs@1.8.4/Sortable.min.js"></script>
+<!-- CDNJS :: Vue.Draggable (https://cdnjs.com/) -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.20.0/vuedraggable.umd.min.js"></script>
 
   <script>
   console.log($('#cleaning_calendar_date').val(),"calodate")
