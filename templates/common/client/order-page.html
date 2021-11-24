@@ -2153,20 +2153,13 @@
                                             <div class="row">
 
                                                 <h3 class="ml-10">Cleaning Team</h3>
-                                                {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR' or request.user.user_type == 'SALESADMIN' or request.user.user_type == 'ACCOUNTANT' %}
+                                                {% if request.user.user_type == 'SENIORTEAMLEADER' %}
                                                 {% if orderschedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}
                                                 <a href="{% url 'common_items:edit-cleaningteam' orderschedule.id %}" target="_blank">
                                                 <div v-if="edit" class="clean-team-edit">
                                                     <img src="{% static 'files/icons/edit.png' %}">
                                                 </div></a>
                                                 {% endif %}
-                                                {% endif %}
-
-                                                {% if orderschedule.work_status == 'CLEANING_TEAM_ASSIGNED' %}
-                                                <a class="team_edit_url" id="team_edit_url_{{evaluationbook.id}}" href="#" target="_blank">
-                                                <div v-if="edit" class="clean-team-edit">
-                                                    <img src="{% static 'files/icons/edit.png' %}">
-                                                </div></a>
                                                 {% endif %}
                                             </div>
                                         </div>
