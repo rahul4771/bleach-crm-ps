@@ -149,7 +149,7 @@ Internal Report
 <td data-label="" class="bold-text">{% if follow_up.days_left <= 2 %}<h3 class="green-text-h3">{{follow_up.days_left}}</h3> Days&#11014;{% elif follow_up.days_left > 2 and follow_up.days_left <= 5 %}<h3 class="yellow-text-h3">{{follow_up.days_left}}</h3> Days&#11014;{% elif follow_up.days_left > 5 and follow_up.days_left <= 7 %}<h3 class="orange-text-h3">{{follow_up.days_left}}</h3> Days&#11014;{% else %}<h3 class="red-text-h3">{{follow_up.days_left}}</h3> Days&#11014;{% endif %}</td>
 
 {% if follow_up.investigation.investigator and follow_up.investigation.is_secondary_investigation_completed == False %}
-<td><span class="orange-bg">Investigation Pending</span></td>
+<td><span class="green-bg">Investigation Pending</span></td>
 {% else %}
 <td data-label="" class="followup_schedule_close clickable-cursor" data-tickettypes="{{follow_up.investigation.ticket_types}}" data-blcno="{{follow_up.investigation.order.order_no}}" data-tktno="{{follow_up.ticket_no}}" 
 {% for followup in follow_up.followupschedulers %}{% if forloop.first %}data-followup="FollowUp Cleaning"{% else %}data-followup=""{% endif %}{% endfor %}
