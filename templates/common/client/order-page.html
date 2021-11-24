@@ -2437,18 +2437,18 @@
                 {% if request.user.user_type == 'AGENT' %}
                     {% if evaluationdetail.evaluator == None and request.user.id == order.evaluation.call_attender.id %}
                     <div class="row">
-                        <button class="outline-btn mt-10" type="submit" @click="openAddService({{evaluationdetail.id}});">Add/Remove Service</button>
+                        <button class="sent-button mt-10" type="submit" @click="openAddService({{evaluationdetail.id}});">Add/Remove Service</button>
                     </div>
                     {% endif %}
                     {% elif request.user.user_type == 'EVALUATOR' %}
                     {% if evaluationdetail.evaluator.id == request.user.id or request.user.id == order.evaluation.call_attender.id %}
                     <div class="row">
-                        <button class="outline-btnmt-10" type="submit" @click="openAddService({{evaluationdetail.id}});">Add/Remove Service</button>
+                        <button class="osent-button mt-10" type="submit" @click="openAddService({{evaluationdetail.id}});">Add/Remove Service</button>
                     </div>
                     {% endif %}
                     {% elif request.user.user_type == 'BOOKINGOFFICER' %}
                     <div class="row">
-                        <button class="outline-btn mt-10" type="submit" @click="openAddService({{evaluationdetail.id}});">Add/Remove Service</button>
+                        <button class="sent-button mt-10" type="submit" @click="openAddService({{evaluationdetail.id}});">Add/Remove Service</button>
                     </div>
                 {% endif %}
                 {% endif %}
@@ -2457,18 +2457,18 @@
                 {% if request.user.user_type == 'AGENT' %}
                     {% if evaluationdetail.evaluator == None and request.user.id == order.evaluation.call_attender.id %}
                     <div class="row">
-                        <button class="outline-btn mt-10" type="submit" @click="openAddService({{evaluationdetail.id}});">Add/Remove Service</button>
+                        <button class="sent-button mt-10" type="submit" @click="openAddService({{evaluationdetail.id}});">Add/Remove Service</button>
                     </div>
                     {% endif %}
                     {% elif request.user.user_type == 'EVALUATOR' %}
                     {% if evaluationdetail.evaluator.id == request.user.id or request.user.id == order.evaluation.call_attender.id %}
                     <div class="row">
-                        <button class="outline-btn mt-10" type="submit" @click="openAddService({{evaluationdetail.id}});">Add/Remove Service</button>
+                        <button class="sent-button mt-10" type="submit" @click="openAddService({{evaluationdetail.id}});">Add/Remove Service</button>
                     </div>
                     {% endif %}
                     {% elif request.user.user_type == 'BOOKINGOFFICER' %}
                     <div class="row">
-                        <button class="outline-btn mt-10" type="submit" @click="openAddService({{evaluationdetail.id}});">Add/Remove Service</button>
+                        <button class="sent-button mt-10" type="submit" @click="openAddService({{evaluationdetail.id}});">Add/Remove Service</button>
                     </div>
                 {% endif %}
                 {%endif%}
