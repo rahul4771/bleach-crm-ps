@@ -510,9 +510,9 @@
                         <div class="wrap-drop" id="noble-gases" style="z-index: 3;" >
                             <span id="id_selectText">Select PO</span>
                             <ul class="drop">
-                                <li onclick="changeSelect('active')"><a>PO1</a></li>
-                                <li onclick="changeSelect('out_of_order')"><a>PO2</a></li> 
-                                <li onclick="changeSelect('expired')"><a>PO3</a></li> 
+                                {% for order in purchase_orders %}
+                                    <li onclick="changeSelect('active')"><a>{{order.purchase_order_id}}</a></li>
+                                {% endfor %}
     
                             </ul>
                         </div>
@@ -625,6 +625,7 @@
         </div>
         <div class="inv-drawer-footer">
             <button class="sent-button" type="button" onclick="formvalidation()">Submit</button>
+            <button class="sent-button" type="button" onclick="window.location.href:'{% url 'bleach-inventory:inventory-purchaseorderitems' 7%}';">Purchase Order</button>
             </form>
                         <button data-dismiss="modal" onclick="closeNavAddBundle()" class="view-button">Cancel</button>
         </div>
