@@ -5433,15 +5433,16 @@ class AddDeleteService(APIView):
 
 			evaluation.total_cost            -= evaluation_details.total_cost+evaluation.credit_amount+evaluation.discount-evaluation.additional_charge
 			evaluation.estimated_cost        -= evaluation_details.estimated_cost
+			evaluation.customer.credit_amount = evaluation.credit_amount
+			order.total_amount        		 -= evaluation_details.total_cost+evaluation.credit_amount+evaluation.discount-evaluation.additional_charge
+			order.remining_amount    		 -= evaluation_details.total_cost+evaluation.credit_amount+evaluation.discount-evaluation.additional_charge
+			
 			evaluation.discount               = 0
 			evaluation.additional_charge	  = 0
-			evaluation.customer.credit_amount = evaluation.credit_amount
 			evaluation.credit_amount          = 0
+			
 			evaluation.customer.save()
 			evaluation.save()
-
-			order.total_amount        -= evaluation_details.total_cost+evaluation.credit_amount+evaluation.discount-evaluation.additional_charge
-			order.remining_amount     -= evaluation_details.total_cost+evaluation.credit_amount+evaluation.discount-evaluation.additional_charge
 			order.save()
 			
 			evaluation_details.total_cost     = 0
