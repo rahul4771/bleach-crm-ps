@@ -511,7 +511,7 @@
                             <span id="id_selectText">Select PO</span>
                             <ul class="drop">
                                 {% for order in purchase_orders %}
-                                    <li onclick="changeSelect({{order.id}})"><a>{{order.purchase_order_id}}</a></li>
+                                    <li onclick="po_select('{{order.id}}')"><a>{{order.purchase_order_id}}</a></li>
                                 {% endfor %}
     
                             </ul>
@@ -1127,7 +1127,16 @@ function selectFileInp(){
     }
 
     function changeSelect(va){
+        print(va,"pop")
         $('#id_unit_status').val(va)
+        var po_url = url+'/bleach-inventory/purchaseOrder/items/'+va+'/'
+        print(po_url,"pop")
+    }
+
+    function po_select(va){
+        print(va,"pop")
+        var po_url = url+'/bleach-inventory/purchaseOrder/items/'+va+'/'
+        print(po_url,"pop")
     }
 
     

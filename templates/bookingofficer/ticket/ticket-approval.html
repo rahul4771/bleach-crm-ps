@@ -1,212 +1,228 @@
 {% extends "base.html" %}
 {% block content %}
 {% load static %}
+
 <div class="wrapper"><!--wrapper-->
 {% include "bookingofficer/common/header.html" %}    
     <section class="content"><!--content-->
         <div class="container-fluid space topspace"><!--container-fluid space-->
             <div class="welcome-wrapper"><!--welcome-wrapper-->
-        <h1 class="dashboard-head">Ticket Approval Form</h1>
-        <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p>   
+        <h1 class="dashboard-head">Payback Approval Form</h1>
+        
             </div><!--welcome-wrapper-->
-       
+        </div>
            
             
-     <div class="main-content-holder"><!--main-content-holder-->            
-     
-      
-            
+     <div class="main-content-holder"><!--main-content-holder-->                        
 <div class="white-wrapper"><!--white-wrapper-->
-<div class="center-formDiv"><!--center-formDiv-->
 
-             <div class="common-sub-head align-left">Details</div> 
-             
-                  <div class="cleaning-column-wrapper ltyellow-border"><!--cleaning-column-wrapper-->
-                    <div class="cleaning-column-widget cleaning-column-widget-column1"><!--cleaning-column-widget cleaning-column-widget-column1-->
-                    <div class="blc-number-big">
-                    {% for followup in investigation_details.followup %}
-                    TKT{{followup.ticket_no}}
-                    {% endfor %}
+    <div class="row mt-10">
+        <div class="col-md-9   col-lg-8">
+            <div class="tk-order-card" >
+                <div class="row">
+                <input type="hidden" id="id_visit" />
+                    <div class="col-md-3">
+                        <div class="tk-common-text" id="visit_blc" style="margin-bottom: 5px">BLC1265515656312</div>
+                        <div class="d-flex">
+                            <div>
+                                <span class="tk-dot tk-completed-color"></span><span class="tk-common-text2 av-font">Paid</span>
+                            </div>
+                            <div class="ml-10">
+                                <span class="tk-dot tk-completed-color"></span><span class="tk-common-text2 av-font">Closed</span>
+                            </div>
+                        </div>
+                        <div style="margin-bottom:0px" class="mt-15 tk-common-text2" id="visit_customer">
+                            Manal Alesheed
+                        </div>
+                        <div  class="tk-common-text2" id="visit_customer_number">
+                            9595959595
+                        </div>
                     </div>
-                    <div class="mobile-number">
-                    {{investigation_details.order.evaluation.evaluation_id}}
+                    <div class="col-md-6">
+                        <div style="margin-bottom: 5px" class="tk-common-text"><span id="visit_servicetype">Kitchen Cleaning</span>-<span id="visit_cleaningpolicy">One time service</span></div>
+                        <div  class="tk-common-text2" id="visit_start_at">Dec 01 2020 ,04:04 AM</div>
+                        <div class="d-flex mt-20">
+                            <div class="d-flex">
+                                <img id="visit_teamleader_image" src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle"> 
+                                <div style="margin-bottom: 0px;"  class="tk-common-text2 ml-5 mt-10" id="visit_teamleader">Saravan</div>
+                            </div>
+                            <div class="ml-30 d-flex" id="visit_team_members">
+                                
+                            </div>
+                        </div>
+
                     </div>
-                    <div class="customer-name"><i class="fa blue-text fa-user-circle-o" aria-hidden="true"></i> {{investigation_details.order.evaluation.customer.name}}</div>
-                    <div class="mobile-number"><i class="fa green-text fa-lg fa-phone" aria-hidden="true"></i> &nbsp;  {{investigation_details.order.evaluation.customer.mobile_number}}</div>
-                    <div class="email"><i class="fa orange-text fa-lg fa-envelope-o" aria-hidden="true"></i> &nbsp;  {{investigation_details.order.evaluation.customer.email}}</div>
-                    <br>
-                    {% comment %} {% for tickettype in ticket_types %}
-                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> &nbsp;  {{tickettype}}</div>
-                    {% endfor %} {% endcomment %}
-                    <br>
-                    {% for cleaning_team in investigation_details.order_schedule.cleaning_teams %}
-                    <div class="tl blue-text">Cleaning Agent&nbsp;:{{cleaning_team.team_leader.name}}</div>
-                    <br>
-                    <div class="cleaner blue-text" >Cleaners&nbsp;:<br>{% for member in cleaning_team.cleaning_team_members %}{% if member.member != cleaning_team.team_leader %}<i class="fa fa-user" aria-hidden="true"></i> <span class="gray-text"> {{member.member.name}} </span>{% endif %}<br>{% endfor %}</div>
-                    {% endfor %}
-
-                    {% if investigation_details.notes %}
-                    <br>
-                    <div class="email">Agent Notes :{{investigation_details.notes}}</div>
-                    {% endif %}
-                </div><!--cleaning-column-widget cleaning-column-widget-column1-->
-                
-                <div class="cleaning-column-widget cleaning-column-widget-column2"><!--cleaning-column-widget cleaning-column-widget-column2-->
-                    <div class="common-gray-text align-left">
-                      <i class="fa fa-lg fa-calendar red-text" aria-hidden="true"></i>
-                      <b>
-                      {{investigation_details.order_schedule.start_at}}</b>
+                    <div class="col-md-3 text-center">
+                       <div class="row">
+                           <div class="col-xs-7">
+                               <div class="tk-common-text2"> Total amount</div>
+                           </div>
+                           
+                           <div class="col-xs-5">
+                            <div class="tk-common-text2">: 80 KD </div>
+                        </div>
+                       </div>
+                       <div class="row ">
+                        <div class="col-xs-7">
+                            <div class="tk-common-text2"> Paid amount </div>
+                        </div>
+                        
+                        <div class="col-xs-5">
+                         <div class="tk-common-text2">: 80 KD </div>
+                     </div>
                     </div>
-                    <br>
-                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-building-o green-text" aria-hidden="true"></i><b>{{pinvestigation_details.order_schedule.customer_address.apartment}}</b>: {% if investigation_details.order_schedule.customer_address.floor %}{{investigation_details.order_schedule.customer_address.floor}}, {% else %}{% endif %} {{investigation_details.order_schedule.customer_address.building}}, {{investigation_details.order_schedule.customer_address.block}}, {{investigation_details.order_schedule.customer_address.street}}, {% if investigation_details.order_schedule.customer_address.avenue %}{{investigation_details.order_schedule.customer_address.avenue}}, {% else %}{% endif %} {{investigation_details.order_schedule.customer_address.area.name}}, {{investigation_details.order_schedule.customer_address.governorate.name}} </div>
-                    <br>
-                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-users blue-text" aria-hidden="true"></i>{{investigation_details.order_schedule.order_scheduler_book.number_of_cleaners}} Cleaners</div>
-                    <br>
-                    <div class="common-gray-text align-left"><i class="fa fa-lg fa-credit-card orange-text" aria-hidden="true"></i> {{investigation_details.order_schedule.order_scheduler_book.total_cost|floatformat:3}} KD</div>
-                    {% if order_schedule.evaluation_details.evaluator %}
-                    <div class="profile-pic-line"><img class="agent_image" src="{{investigation_details.order_schedule.evaluation_details.evaluator.profile_image.url}}" title="{{investigation_details.order_schedule.evaluation_details.evaluator.name}}"></div>
-                    {% else %}
-                    <div class="profile-pic-line"><img class="agent_image" src="{{investigation_details.order.evaluation.call_attender.profile_image.url}}" title="{{investigation_details.order.evaluation.call_attender.name}}"></div>
-                    {% endif %}
-
-              <hr class="bar">
-              <div class="details-sub-head align-left margin">Payments</div> 
-              <br>
-                <div class="order-payment-widget order-payment-widget-column"><!--order-payment-widget order-payment-widget-column-->
-                    <div class="payment-text"><div>Total Amount</div> : {{investigation_details.order_schedule.order.evaluation.estimated_cost|default_if_none:'0.00'|floatformat:'2'}} KD</div>
-                    <div class="payment-text"><div>Paid</div> : {{investigation_details.order_schedule.order.amount_paid|default_if_none:'0.00'|floatformat:'2'}} KD</div>
-                    <br>
-                    <div class="payment-text bold-text red-text"><div>Remaining Amount</div> : {{investigation_details.order_schedule.order.remining_amount|default_if_none:'0.00'|floatformat:'2'}} KD</div>
-                    <hr class="bar"> 
-                
-                </div><!--order-payment-widget order-payment-widget-column-->
-
-                </div><!--cleaning-column-widget cleaning-column-widget-column2-->
-                
-            </div><!--cleaning-column-wrapper-->
-      </div><!--center-formDiv-->
-    </div><!--white-wrapper-->
-            <br><br>   
-
-    <div class="order-top-wrapper"><!--order-top-wrapper-->
-	<div class="cleaning-Order-wrapper"><!--cleaning-Order-wrapper-->
-    	<div class="cleaning--left-stretch"><!--cleaning--left-stretch-->
-         <div class="center-formDiv"><!--center-formDiv-->	    
-
-    <div class="details-sub-head align-left">Actions</div>
-<div class="investigation-columns"><!--investigation-columns-->
-        <div class="investigation-columns-left"><!--investigation-columns-left-->
-            {% if investigation_details.investigator.profile_image %}
-            <div class="profile-pic"><img src="{{investigation_details.investigator.profile_image.url}}"></div>
-            {% else %}
-            <div class="profile-pic"><img src="{% static 'files/images/profile-pic.png' %}"></div>            
-            {% endif %}
-            <div class="client-name">{{investigation_details.investigator.name}}<div class="common-gray-text">QC</div></div>
-        </div><!--investigation-columns-left-->
-
-        <div class="investigation-columns-middle"><!--investigation-columns-middle-->
-        <div class="order-invest-date">
-                <p> 
-                {% for schedules in investigation_details.followup %} 
-                {% if schedules.follow_up_schedules %}<i class="fa fa-lg fa-check-circle green-text" aria-hidden="true"></i>  &nbsp;Followup Cleaning <span class="gray-text" style="margin-left:50px;">Worth:</span> {{schedules.total_cost|floatformat:3}} KD{% endif %}
-                {% endfor %}
-                <br>
-                
-                {% if investigation_details.reports %}<i class="fa fa-lg fa-check-circle green-text" aria-hidden="true"></i> &nbsp;Internal Reporting {% endif %}
-                
-                <br>
-
-                {% for promocode in investigation_details.buybackpromocodegift %}
-                {% if investigation_details.buybackpromocodegift %}{% if investigation_details.is_buybackgiftpromo_approved  %}<i class="fa fa-lg fa-check-circle green-text" aria-hidden="true"></i>{% else %}<i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i>{% endif %}  &nbsp;Buyback/Promocode/Gift <span class="gray-text" style="margin-left:5px;">Worth:</span> {{promocode.total_cost|floatformat:3}} KD{% endif %}
-                {% endfor %}
-                <br>
-                {% for discount in investigation_details.paybackdiscount %}
-                {% if investigation_details.paybackdiscount %}{% if investigation_details.is_paybackdiscount_approved  %}<i class="fa fa-lg fa-check-circle green-text" aria-hidden="true"></i>{% else %}<i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i>{% endif %}  &nbsp;Payback/Discount <span class="gray-text" style="margin-left:50px;">Worth:</span> {{discount.total_cost|floatformat:3}} KD{% endif %}</p>
-                {% endfor %}
+                    <div class="row ">
+                        <div class="col-xs-7">
+                            <div class="tk-common-text2"> Remaining amount </div>
+                        </div>
+                        
+                        <div class="col-xs-5">
+                         <div class="tk-common-text2">: 80 KD </div>
+                     </div>
+                    </div>
+                    </div>
+                </div>
             </div>
-        </div><!--investigation-columns-middle-->
-</div><!--investigation-columns-->
+        </div>
+    </div>
+    <div class="row mt-20">
+        <div class="col-md-9   col-lg-8">
+            <div class="tk-common-text">
+                Pay-back/Discount Details
+            </div>
+           <div>
+            <table id="soa_table">
+                <tr>
+                    <td class="text-center av-font">
+                        Service quality
+                    </td>
+                    <td class="text-left av-font">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing 
+                    </td>
+                    <td class="text-right av-font">
+                        120.000 KD
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center av-font">
+                        Damage
+                    </td>
+                    <td class="text-left av-font">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing 
+                    </td>
+                    <td class="text-right av-font">
+                        120.000 KD
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-center av-font">
+                        Service quality
+                    </td>
+                    <td class="text-left av-font">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing 
+                    </td>
+                    <td class="text-right av-font">
+                        120.000 KD
+                    </td>
+                </tr>
+               
+            </table>
+            <div >
+                <div class="soa_section3">
+                    <div id="soa_amount_section">
+                      <div id="soa_balance" class="tk-common-text2">
+                        Total
+                      </div>
+                      <h1 id="closingbalance" class="av-font" style="text-align: right;color: #303030;font-size: 28px; font-weight: 300;">0.000 KD</h1>
+                    </div>
+                  </div>
+            </div>
+           </div>
 
+        </div>
+    </div>
+    <form >
+    <div class="tk-common-text mt-10">
+        Add Pay-back/Discount
+    </div>
+    <div class="row mt-10">
+        <div class="col-md-3">
+            <div class="tk-common-text mt-10">
+                Refund amount
+            </div>
+            <div class="inv-input-container " style="height: 34px;"> 
+                <input type="number"  class="w-p-100 inv-in" >
+              </div>
+        </div>
+        <div class="col-md-3">
+            <div class="tk-common-text mt-10">
+                Refund Options
+            </div>
+            <input type="text"  hidden id="id_ticket_type" required  class="w-p-100 inv-in" >
 
-{% if investigation_details.paybackdiscount %}
-<hr class="divider">
-<div class="details-sub-head align-left">Payback/Discount Details</div>
-<br>
-{% for paybackdiscount in investigation_details.paybackdiscount %}
-{% for paybackdiscountdetail in  paybackdiscount.paybackdiscountdetails %}
-<div class="evaluation-card"><!--evaluation-card-->
-    <div class="evaluation-section"><label>{{paybackdiscountdetail.name}} ({% if paybackdiscountdetail.category == 'SERVICEQUALITY' %}Service Quality{% else %}{{paybackdiscountdetail.category|title}}{% endif %})</label>{{paybackdiscountdetail.cost|floatformat:'3'}} KD</div> 
-</div><!--evaluation-card-->
-{% endfor %}
-<div class="evaluation-card"><!--evaluation-card-->
-    <div class="evaluation-section"><label><span class="red-text bold-text">Total</span></label><span class="red-text">{{paybackdiscount.total_cost|floatformat:'3'}} KD</span></div> 
-</div><!--evaluation-card-->
-
-{% if investigation_details.is_paybackdiscount_approved  %}
-{% else %}
-<div class="details-sub-head align-left">Discount / Payback</div>
-<form method="POST">{% csrf_token%}
-<input type="hidden" name="approve_action" value="payback" type="text" />
-<input type="text" name="payback_amount" class="textBox OnlyNumber" value="{{paybackdiscount.total_cost|floatformat:'3'}}" style="width:25%" required/>
-<input class="assignButton" type="button" value="Approve" onclick="submitAnyForm(this);" style="margin-left:10px;">
+            <div class="wrap-drop" id="noble-gases" style="z-index: 3;">
+                
+                <span id="order_number">Select refund option</span>
+                <ul class="drop">
+                    
+                    <li  onclick="selectType('Type1')"><a> Type 1 </a></li>
+                    <li  onclick="selectType('Type2')"><a> Type 1 </a></li>
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-10">
+        <div class="col-md-12">
+            <div class="tk-common-text">Note</div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="inv-input-container "> 
+                <textarea style="width: 100%;" rows="8" id="id_item_description" name="notes"></textarea>
+                </div>
+        </div>
+    </div>
+    <div class="row mt-30" v-if="value.length != 0 && damacval.length != 0 && !loading">
+        <div class="d-flex" style="align-items: center;
+        justify-content: center;">
+            <button class="tk-can" type="button"> Cancel</button>
+            <button class="ml-5 tk-sub"  >Submit</button>
+        </div>
+    </div>
 </form>
-{% endif %}
-{% endfor %}
-{% endif %}
 
 
-{% if investigation_details.buybackpromocodegift %}
-<hr class="divider">
-<div class="details-sub-head align-left">Buyback/Promocode/Gift Details</div>
-<br>
-{% for buybackpromogift in investigation_details.buybackpromocodegift %}
-{% for buybackpromogiftdetail in  buybackpromogift.buybackpromogiftdetails %}
-<div class="evaluation-card"><!--evaluation-card-->
-    <div class="evaluation-section"><label>{{buybackpromogiftdetail.name}} ({% if buybackpromogiftdetail.category == 'SERVICEQUALITY' %}Service Quality{% else %}{{buybackpromogiftdetail.category|title}}{% endif %})</label>{{buybackpromogiftdetail.cost|floatformat:'3'}} KD</div> 
-</div><!--evaluation-card-->
-{% endfor %}
-<div class="evaluation-card"><!--evaluation-card-->
-    <div class="evaluation-section"><label><span class="red-text bold-text">Total</span></label><span class="red-text">{{buybackpromogift.total_cost|floatformat:'3'}} KD</span></div> 
-</div><!--evaluation-card-->
+<button hidden id="id_cl" data-toggle="modal" data-target="#deleteModel2"  style="margin-top: 9px; color: #3968c6;"><i data-toggle="tooltip" title="Help" class="fa fa-question-circle fa-lg" aria-hidden="true"></i></button>
+<div class="modal fade" id="deleteModel2" role="dialog">
+    <div style="border: none !important;" class="modal-dialog cancel-model cancel-order-border " role="document">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 mt-20">
+  
+                    
+                    <div class="d-flex ">
+                        <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Cleaners</p></div>
+                        <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+  
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                        </button>
+  
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-20" id="id_modal_img_section">
+              
+           
+              
 
-{% if investigation_details.is_buybackgiftpromo_approved  %}
-{% else %}
-<div class="details-sub-head align-left">Buy Back</div>
-<br>
-<form method="POST">{% csrf_token%}
-<input type="hidden" name="approve_action" value="buyback" type="text" />
-
-<label for="favcity" style="width:25%">
-<select name="buyback_type" class="textBox buyback_type" >
-<option value="BUYBACK">Buy Back</option>
-<option value="PROMOCODE">Promo Code</option>
-<option value="GIFT">Gift</option>
-</select>
-</label>
-<input type="text" name="buyback_amount" class="textBox OnlyNumber" value="{{buybackpromogift.total_cost|floatformat:'3'}}" style="width:25%" required/>
-
-<label for="favcity" style="width:25%">
-<select name="promocode" class="textBox" hidden>
-<option value="">Select PromoCode</option>
-{% for promocode in promocodes %}
-<option value="{{promocode.promocode}}">{{promocode.promocode}}</option>
-{% endfor %}
-</select>
-</label>
-
-<input class="assignButton" type="button" value="Approve" onclick="submitAnyForm(this);" >
-
-</form>
-{% endif %}
-{% endfor %}
-{% endif %}
-<hr class="divider">
-<a href="/booking-officer/dashboard/"><input class="assignButton" type="button" value="Back" ></a>
-
-        </div> <!--center-formDiv-->
-		</div><!--cleaning--left-stretch-->   
-	</div><!--cleaning-Order-wrapper-->
-</div><!--order-top-wrapper--> 
+            </div>
+            <div class="row mt-10"></div>
+           
+        </div>
+    </div>
+  </div>
 
       </div><!--main-content-holder-->
         </div><!--container-fluid space-->
@@ -217,6 +233,57 @@
 
 {% block javascript %} 
 <script>
+        function DropDown(el) {
+    this.dd = el;
+    this.placeholder = this.dd.children('span');
+    this.opts = this.dd.find('ul.drop li');
+    this.val = '';
+    this.index = -1;
+    this.initEvents();
+}
+
+   
+DropDown.prototype = {
+    initEvents: function () {
+        var obj = this;
+        obj.dd.on('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $(this).toggleClass('active');
+        });
+        obj.opts.on('click', function () {
+            var opt = $(this);
+            obj.val = opt.text();
+            obj.index = opt.index();
+            obj.placeholder.text(obj.val);
+            opt.siblings().removeClass('selected');
+            opt.filter(':contains("' + obj.val + '")').addClass('selected');
+        }).change();
+    },
+    getValue: function () {
+        return this.val;
+    },
+    getIndex: function () {
+        return this.index;
+    }
+};
+
+function selectType(val){
+    $('#id_ticket_type').val(val)
+}
+
+$(function () {
+    // create new variable for each menu
+    var dd1 = new DropDown($('#noble-gases'));
+
+
+    // var dd2 = new DropDown($('#other-gases'));
+    $(document).click(function () {
+        // close menu on document click
+        $('.wrap-drop').removeClass('active');
+    });
+});
+
 $('.buyback_type').change(function(){
     if ($(this).val() == 'PROMOCODE'){
         $('select[name="promocode"]').attr('hidden',false);
@@ -226,5 +293,49 @@ $('.buyback_type').change(function(){
         $('select[name="promocode"]').attr('hidden',true);
     }
 })
+
+
+async function loadvisitdata(visit_id){
+  
+    axios.get(url+'/api/visit-details/'+visit_id)
+                .then(function (response) {
+                    
+                    $('#id_sched').text(response.data.start_at)
+                    $('.tk-order-card').show();
+
+                    $('#visit_blc').text(response.data.order_no);
+                    $('#id_visit').val(response.data.visit_id);
+                    $('#visit_customer').text(response.data.customer_name);
+                    $('#visit_customer_number').text(response.data.customer_number);
+                    $('#visit_servicetype').text(response.data.servicetype);
+                    $('#visit_cleaningpolicy').text(response.data.cleaningpolicy);
+                    $('#visit_start_at').text(response.data.start_at);
+                    $('#visit_teamleader').text(response.data.team_leader);
+                    $('#visit_teamleader_image').attr("src",response.data.team_leader_image);
+                    $('#visit_price').text(parseFloat(response.data.amount).toFixed(3)+' '+'KD');
+                    $('#visit_no_of_cleaners').text(response.data.no_of_cleaners);
+
+                    $('#visit_team_members').empty();
+
+                    $(response.data.members).each(function(key,value){
+                        if (key == 0){
+                            $('#visit_team_members').append('<img onclick="openImgModal()" src="'+value.member_image+'" class="tk-img-circle">')
+                        }else{
+                            $('#visit_team_members').append('<img onclick="openImgModal()" src="'+value.member_image+'" class="tk-img-circle" style="margin-left: -20px;">')
+                        }
+                        if(key == 3){
+                            return false
+                        }
+
+                    })
+                    $(response.data.members).each(function(key,value){
+                        $('#id_modal_img_section').append('<div class="col-md-4 mb-10"><div class="d-flex"><img src="'+value.member_image+'" class="tk-img-circle"> <div  class="tk-common-text2 ml-5 mt-10">'+value.member+'</div></div></div>')
+
+                })
+                    $('#visit_team_members').append('<div onclick="openImgModal()" style="margin-bottom: 0px;"  class="tk-common-text2 ml-5  pointer">'+response.data.members.length+' cleaners</div>')
+
+                })
+
+}
 </script>
 {% endblock %}

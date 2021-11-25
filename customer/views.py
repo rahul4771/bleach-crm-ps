@@ -6072,6 +6072,8 @@ class ServiceCancellation(APIView):
 	def post(self,request):
 		response_dict={}
 		response_dict['success'] = False
+
+		print(request.data)
 		
 		cancelled_by             = request.data.get('cancelled_by')
 		order_id                 = request.data.get('order_id')
