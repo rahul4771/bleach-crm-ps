@@ -402,7 +402,7 @@
         <td class="hide-a" data-label="">{% if ticket.investigator.profile_image %}<img src="{{ticket.investigator.profile_image.url}}" title="{{ticket.investigator.name}}" class="profile-avatar">{% endif %}</td>
         <td data-label="" class="bold-text">{% if ticket.days_left <= 2 %}<h3 class="green-text-h3">{{ticket.days_left}}</h3> Days&#11014;{% elif ticket.days_left > 2 and ticket.days_left <= 5 %}<h3 class="yellow-text-h3">{{ticket.days_left}}</h3> Days&#11014;{% elif ticket.days_left > 5 and ticket.days_left <= 7 %}<h3 class="orange-text-h3">{{ticket.days_left}}</h3> Days&#11014;{% else %}<h3 class="red-text-h3">{{ticket.days_left}}</h3> Days&#11014;{% endif %}</td>
         <td data-label="">
-        <span class="{% if ticket.days_left <= 2 %}green-bg{% elif ticket.days_left > 2 and ticket.days_left <= 5 %}yellow-bg{% elif ticket.days_left > 5 and ticket.days_left <= 7 %}orange-bg{% else %}red-bg{% endif %} clickable-row-list" data-href="{% url 'booking-officer:bookingofficer-ticketapprove' ticket.id %}">Click to Approve</span>
+        <span class="{% if ticket.days_left <= 2 %}green-bg{% elif ticket.days_left > 2 and ticket.days_left <= 5 %}yellow-bg{% elif ticket.days_left > 5 and ticket.days_left <= 7 %}orange-bg{% else %}red-bg{% endif %} clickable-row-list" data-href="{% url 'booking-officer:bookingofficer-ticketapprove'  %}">Click to Approve</span>
         </td>
         </tr>
         {% endif %}
