@@ -274,7 +274,7 @@ class AdminHome(IsBookingOfficer,View):
 					invoice.balance       = cleaning_price-invoice.amount_paid
 
 		#buybackgiftpromos		
-		approved_paybackdiscounts = Investigation.objects.filter(is_paybackdiscount_approved=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.select_related('investigation').filter(is_active=True,investigation__is_paybackdiscount_approved=True,is_completed=False),to_attr='paybackdiscounts')).annotate(paybackdiscount_count=Case(When(Q( Q(paybackdiscount_investigation__is_active=True) & Q(paybackdiscount_investigation__investigation__is_paybackdiscount_approved=True) & Q(paybackdiscount_investigation__is_completed=False) ),then=1),default=0,output_field=IntegerField()))
+		approved_paybackdiscounts = Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True),to_attr='followup'),Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.select_related('investigation').filter(is_active=True,is_completed=False),to_attr='paybackdiscounts')).annotate(paybackdiscount_count=Case(When(Q( Q(paybackdiscount_investigation__is_active=True) & Q(paybackdiscount_investigation__is_completed=False) ),then=1),default=0,output_field=IntegerField()))
 		
 		ticket_count = 0
 		# add days left
@@ -1843,96 +1843,58 @@ class DailySales(View):
 		return render(request,'bookingofficer/dailysales/daily-sales.html',{"dailysales":daily_sales,"monthlysales":monthly_sales,"month_name":full_month_name})
 
 class TicketApprove(IsBookingOfficer,View):
-	def get(self,request,ticket_id):
+	def get(self,request,paybackdiscount_id):
 		
 		try:
-			investigation_details = Investigation.objects.select_related('order_schedule__customer_address__area','order_schedule__order_scheduler_book__service_type','order_schedule__evaluation_details__evaluator','investigator','order__evaluation__customer','order__evaluation__call_attender').prefetch_related(Prefetch('followup_investigation',queryset=FollowUp.objects.filter(is_active=True).prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True),to_attr='follow_up_schedules')),to_attr='followup'),Prefetch('paybackdiscount_investigation',queryset=PaybackDiscount.objects.filter(is_active=True).prefetch_related(Prefetch('paybackdiscount_details',queryset=PaybackDiscountDetails.objects.filter(is_active=True),to_attr='paybackdiscountdetails')),to_attr='paybackdiscount'),Prefetch('reporting_investigation',queryset=Reporting.objects.filter(is_active=True),to_attr='reports'),Prefetch('buybackpromocodegift_investigation',queryset=BuybackPromocodeGift.objects.filter(is_active=True).prefetch_related(Prefetch('buybackpromocodegiftdetails',queryset=BuybackPromocodeGiftDetails.objects.filter(is_active=True),to_attr='buybackpromogiftdetails')),to_attr='buybackpromocodegift'),Prefetch('order_schedule__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='cleaning_team_members')),to_attr='cleaning_teams')).get(id=ticket_id)
-		except:
-		 	investigation_details = None
-
-		ticket_types_list = []
-		if investigation_details.ticket_types:
-			ticket_types = investigation_details.ticket_types.split(",")
-			for type in ticket_types:
-				ticket_types_list.append(type)
-		else:
-			ticket_types = None
-			
-		print(ticket_types_list,"typo")
-
-		promocodes = Promocode.objects.filter(is_active=True)
-
-		return render(request,'bookingofficer/ticket/ticket-approval.html',{"ticket_types":ticket_types,"investigation_details":investigation_details,"promocodes":promocodes})
-
-	def post(self,request,ticket_id):
-
-		try:
-			paybackdiscount = PaybackDiscount.objects.get(investigation__id=int(ticket_id),is_active=True)
+			paybackdiscount = PaybackDiscount.objects.prefetch_related(Prefetch('paybackdiscount_details',queryset=PaybackDiscountDetails.objects.filter(is_active=True),to_attr='paybackdiscountdetails')).get(id=int(paybackdiscount_id),is_active=True)
 		except:
 			paybackdiscount = None
 
-		try:	
-			buybackpromocodegift = BuybackPromocodeGift.objects.get(investigation__id=int(ticket_id),is_active=True)
-		except:
-			buybackpromocodegift = None
+		return render(request,'bookingofficer/ticket/ticket-approval.html',{"paybackdiscount":paybackdiscount})
 
-		investigation = Investigation.objects.get(id=ticket_id)
-		
-		approve_action = request.POST.get('approve_action')
+	def post(self,request,paybackdiscount_id):
+		print("craopp")
 
-		if approve_action == 'payback':
+		option = request.POST.get('approved_option')
+
+		print(option,"opp")
+
+		paybackdiscount = PaybackDiscount.objects.get(id=paybackdiscount_id)
+		investigation = Investigation.objects.get(id=paybackdiscount.investigation.id)
+
+		if option == 'PAYBACK':
 			
-			payback_amount = request.POST.get('payback_amount',0.0)
-
-			paybackdiscount.approved_total_cost = payback_amount
-
-			paybackdiscount.approved_by = request.user
-
-			paybackdiscount.save()
+			PaybackDiscount.objects.filter(id=paybackdiscount_id).update(approved_option=option,approved_by=request.user,approved_total_cost=request.POST.get('approved_total_cost'),is_completed=True,accountant_notes=request.POST.get('notes'))
 
 			investigation.is_paybackdiscount_approved = True
-
 			investigation.save()
 
-			messages.success(request,"Payback Approved !")
+			messages.success(request,"Payback Succesfully Added")
 
-		if approve_action == 'buyback':
-
-			buyback_type = request.POST.get('buyback_type')
-
-			if buyback_type == 'PROMOCODE':
-
-				promo_code = request.POST.get('promocode',None)
-
-				buybackpromocodegift.approved_promo_code = promo_code
-
-				buybackpromocodegift.approved_by = request.user
-				
-				buybackpromocodegift.save()
-
-			else:
-
-				buyback_amount = request.POST.get('buyback_amount',0.0)
-
-				buybackpromocodegift.approved_total_cost = buyback_amount
-
-				buybackpromocodegift.approved_by = request.user
-
-				buybackpromocodegift.save()
-
-			buybackpromocodegift.approved_option = buyback_type
-
-			buybackpromocodegift.is_completed = True
+		if option == 'DISCOUNT':
 			
-			buybackpromocodegift.save()
+			PaybackDiscount.objects.filter(id=paybackdiscount_id).update(approved_option=option,approved_by=request.user,approved_total_cost=request.POST.get('approved_total_cost'),is_completed=True,accountant_notes=request.POST.get('notes'))
+			
+			#update order and evaluation
+			order_id      =  paybackdiscount.investigation.order.id
+			evaluation_id =  paybackdiscount.investigation.order.evaluation.id
+			
+			Order.objects.filter(id=order_id).update(total_amount=F('total_amount')-float(request.POST.get('approved_total_cost')),remining_amount=F('remining_amount')-float(request.POST.get('approved_total_cost')))
+			
+			evaluation = Evaluation.objects.get(id=evaluation_id)
+			evaluation.total_cost     = evaluation.total_cost-float(request.POST.get('approved_total_cost'))
+			evaluation.discount       = evaluation.discount+float(request.POST.get('approved_total_cost'))
+			evaluation.extra_discount = evaluation.extra_discount+float(request.POST.get('approved_total_cost'))
+			if evaluation.payment_method == 'BREAKDOWN':
+				evaluation.after_cleaning_amount = evaluation.after_cleaning_amount-float(request.POST.get('approved_total_cost'))
+			evaluation.save()
 
-			investigation.is_buybackgiftpromo_approved = True
-
+			investigation.is_paybackdiscount_approved = True
 			investigation.save()
 
-			messages.success(request,"BuyBack/PromoCode/Gift Approved !")
-		
-		return redirect('booking-officer:bookingofficer-ticketapprove', ticket_id)
+			messages.success(request,"Discount Succesfully Added")
+
+		return redirect('booking-officer:bookingofficerdash-board')
 
 class PromocodeView(IsBookingOfficer,View):
 
@@ -3208,7 +3170,7 @@ class EvaluationBookCancellation(IsBookingOfficer,View):
 	def get(self,request,evaluation_id):
 
 		#cancell in progress books
-		cancell_books = EvaluationBook.objects.select_related('evaluation_details__evaluation','evaluation_details__address').filter(evaluation_details__evaluation__id=evaluation_id,status='CANCELL_IN_PROGRESS')
+		cancell_books             = EvaluationBook.objects.select_related('evaluation_details__evaluation','evaluation_details__address').filter(evaluation_details__evaluation__id=evaluation_id,status='CANCELL_IN_PROGRESS')
 
 		#cancell in progress orders
 		cancell_in_progress_order = Order.objects.select_related('evaluation__customer').get(evaluation__id=evaluation_id)

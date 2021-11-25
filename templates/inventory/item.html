@@ -510,9 +510,9 @@
                         <div class="wrap-drop" id="noble-gases" style="z-index: 3;" >
                             <span id="id_selectText">Select PO</span>
                             <ul class="drop">
-                                <li onclick="changeSelect('active')"><a>PO1</a></li>
-                                <li onclick="changeSelect('out_of_order')"><a>PO2</a></li> 
-                                <li onclick="changeSelect('expired')"><a>PO3</a></li> 
+                                {% for order in purchase_orders %}
+                                    <li onclick="po_select('{{order.id}}')"><a>{{order.purchase_order_id}}</a></li>
+                                {% endfor %}
     
                             </ul>
                         </div>
@@ -624,7 +624,8 @@
            
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button" type="button" onclick="formvalidation()">Submit</button>
+            <button class="sent-button" type="button" id="submit-btn" onclick="formvalidation()">Submit</button>
+            <a href="#" id="load_po"><button class="sent-button" type="button" id="po-btn" >Purchase Order</button></a>
             </form>
                         <button data-dismiss="modal" onclick="closeNavAddBundle()" class="view-button">Cancel</button>
         </div>
@@ -1077,6 +1078,8 @@ $(function () {
     $(document).click(function () {
         // close menu on document click
         $('.wrap-drop').removeClass('active');
+        $('#submit-btn').hide()
+        $('#po-btn').hide()
     });
 });
 </script>
@@ -1088,9 +1091,13 @@ $(function () {
         if(val == 'po'){
             $('#id_po').show()
             $('#id_man').hide()
+            $('#po-btn').show()
+            $('#submit-btn').hide()
         }else{
             $('#id_po').hide()
             $('#id_man').show()
+            $('#po-btn').hide()
+            $('#submit-btn').show()
         }
     }
     function deleteImg(id){
@@ -1119,8 +1126,11 @@ function selectFileInp(){
         
     }
 
-    function changeSelect(va){
-        $('#id_unit_status').val(va)
+    function po_select(va){
+        console.log(va,"pop")
+        var po_url = url+'/bleach-inventory/purchaseOrder/items/'+va+'/'
+        $('#load_po').attr("href",po_url)
+        console.log(po_url,"pop")
     }
 
     
@@ -1296,7 +1306,7 @@ function editItemData(){
 }
 
 function doneEdit(){
-    console.log($('input[name=item_category]').val(),"mokk")
+    console.log($('#id_cat_select').val(),"mokk")
 
     if ($('input[name=item_name]').val() == ''){
         $('input[name=item_name]').addClass('red-border-input');
@@ -1304,13 +1314,6 @@ function doneEdit(){
         $('input[name=reserve]').addClass('red-border-input');
     }else if ($('input[name=description]').val() == ''){
         $('input[name=description]').addClass('red-border-input');
-    }else if ($('input[name=item_category]').val() == undefined){
-        console.log("jiooo")
-        $('#id_cat_select').addClass('red-border-input');
-    }else if ($('input[name=item_segment]').val() == undefined){
-        $('input[name=item_segment]').addClass('red-border-input');
-    }else if ($('input[name=item_line]').val() == undefined){
-        $('input[name=item_line]').addClass('red-border-input');
     }else{
         console.log("no[")
         document.getElementById('id_editButton').style.display = 'block';
@@ -1329,6 +1332,7 @@ function doneEdit(){
         document.getElementById('id_res_text').style.display = 'none';
         document.getElementById("itemdetailsform").submit();
     }
+    
     
 }
 

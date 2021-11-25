@@ -666,6 +666,19 @@ function ProductListShow(){
         document.getElementById("id_search").style.display="block"
     }
 
+//expiry date field hide/show
+$('#id_no_expiry').click(function(){
+    if (document.getElementById("id_no_expiry").checked){
+        $('.expiry_date_div').hide();
+        $('#id_expiry_date').attr("required",false);
+    }else{
+        $('.expiry_date_div').show();
+        $('#id_expiry_date').attr("required",true);
+
+    }
+})
+
+
 function closeProductShow(d){
         console.log(d);
         var proId = $(d).attr("data-pro")

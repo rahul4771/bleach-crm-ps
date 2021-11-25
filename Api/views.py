@@ -1016,6 +1016,10 @@ class VisitDetailsAPI(APIView):
 		response_dict['customer_name'] = visit.order.evaluation.customer.name
 		response_dict['customer_number'] = visit.order.evaluation.customer.mobile_number
 		response_dict['amount'] = visit.order_scheduler_book.total_cost
+		response_dict['order_amount'] = visit.order.total_amount
+		response_dict['order_paid_amount'] =visit.order.amount_paid
+		response_dict['order_remaining_amount'] = visit.order.remining_amount
+		response_dict['payment_status'] = visit.order.payment_status
 
 		response_dict['servicetype'] = visit.order_scheduler_book.service_type.name
 		response_dict['cleaning_policy'] = visit.order_scheduler_book.cleaning_policy
@@ -2113,6 +2117,45 @@ class CheckOutAPI(APIView):
 		response_dict['success'] = True
 		response_dict['cleaning_date'] = cleaning_team_detail.start_at.date().strftime('%d-%m-%Y')
 		return Response(response_dict,HTTP_200_OK)
+
+
+class TeamSerachAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+	def get(self,request):
+		response_dict = {}
+
+		cleaning_date      = datetime.strptime(request.GET.get('cleaning_date'),'%d-%m-%Y')
+		blc                = request.GET.get('blc_no')
+
+
+		cleaning_teams = CleaningTeam.objects.select_related('order_scheduler__order__evaluation').filter(Q(Q(order_scheduler__work_status='CLEANING_TEAM_ASSIGNED')&Q(Q(start_at__date=cleaning_date)|Q(start_at__date=cleaning_date)&Q(order_scheduler__order__order_no__icontains=blc)) ))
+		
+		teams = {}
+		if cleaning_teams:
+			for cleaning_team in cleaning_teams:
+				teams[cleaning_team.id] = [cleaning_team.order_scheduler.order.order_no,(cleaning_team.order_scheduler.start_at+timedelta(hours=3)).strftime('%d-%m-%Y %I:%M %p'),(cleaning_team.order_scheduler.end_at+timedelta(hours=3)).strftime('%d-%m-%Y %I:%M %p')]
+
+		response_dict['teams']      = teams
+		response_dict['success']    = True
+
+		return Response(response_dict,HTTP_200_OK)
+
+
+class TeamSerachResultAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+	def get(self,request):
+		response_dict            = {}
+		team_id                  = request.GET.get('team_id')
+
+		cleaning_team            = CleaningTeam.objects.get(id=team_id)
+
+		response_dict['team']    = CleaningTeamAPISerializer(instance=cleaning_team).data
+		response_dict['success'] = True
+
+		return Response(response_dict,HTTP_200_OK)
+
 
 class SOAMailAPI(APIView):
 	permission_classes  	=   (AllowAny,)

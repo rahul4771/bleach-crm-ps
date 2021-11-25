@@ -516,9 +516,9 @@ class InventoryItems(IsInventoryAdmin,View):
                 inventory_item.item_status = 'available'
             inventory_item.save()
         else:
-            if int(available_quantity) < int(reserve_units) and int(available_quantity) > 0:
+            if float(available_quantity) < float(reserve_units) and float(available_quantity) > 0:
                 inventory_item.item_status = 'about_to_finish'
-            elif int(available_quantity) == 0 :
+            elif float(available_quantity) == 0 :
                 inventory_item.item_status = 'out_of_stock'
             else:
                 inventory_item.item_status = 'available'
@@ -539,23 +539,11 @@ class InventoryItems(IsInventoryAdmin,View):
         else:
             new_unit_code = 'UNIT9001'
 
-        purchase_orders = PurchaseOrder.objects.filter(purchase_order_purchase_order_item__product__item__id=int(item_id)).prefetch_related(Prefetch('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.filter(),to_attr='purchase_order_items'))
-
-        # for order in purchase_orders:
-        #     for item in order.purchase_order_items:
-        #         print(item.product.item,"it")
-
-        #         if item.product.item.item_add_type == 'quantity':
-        #             ItemHistory.objects.create(purchase_order=order,item=item.product.item,quantity=item.item_count,added_by=request.user)
-        #             item.is_received = True
-        #             # purchase_order_item.added_item_count += 1
-        #             item.save()
-
-
+        purchase_orders = PurchaseOrder.objects.filter(purchase_order_purchase_order_item__product__item__id=int(item_id),purchase_order_purchase_order_item__is_received=False).prefetch_related()
 
         print(purchase_orders,"orddd")
 
-        return render(request,'inventory/item.html',{"stores":stores,"item_attributes":item_attributes,"inventory_item":inventory_item,"attributes":attributes,"categories":categories,"item_units":item_units,"item_history":item_history,"new_unit_code":new_unit_code})
+        return render(request,'inventory/item.html',{"stores":stores,"item_attributes":item_attributes,"inventory_item":inventory_item,"attributes":attributes,"categories":categories,"item_units":item_units,"item_history":item_history,"new_unit_code":new_unit_code,"purchase_orders":purchase_orders})
 
     def post(self,request,item_id):
         action =request.POST.get('action')
@@ -1004,20 +992,42 @@ class InventoryInv(IsInventoryAdmin,View):
             inventory_items       = InventoryItem.objects.all()
 
         for item in inventory_items:
+            # if item.item_add_type == 'unit':
+            #     available_item_units = ItemUnit.objects.filter(item=item,status='active').count()
+            # else:
+            #     available_item_units = ItemHistory.objects.filter(item=item).aggregate(total_quantity=Sum('quantity'))['total_quantity'] or 0
+            
+            # reserve_units = item.reserve_count
+
+            # if float(available_item_units) < float(reserve_units) and float(available_item_units) > 0:
+            #     item.item_status = 'about_to_finish'
+            # elif float(available_item_units) == 0 :
+            #     item.item_status = 'out_of_stock'
+            # else:
+            #     item.item_status = 'available'
+            # item.save()
+            reserve_units = item.reserve_count
+            
             if item.item_add_type == 'unit':
                 available_item_units = ItemUnit.objects.filter(item=item,status='active').count()
+
+                if int(available_item_units) < int(reserve_units) and int(available_item_units) > 0:
+                    item.item_status = 'about_to_finish'
+                elif int(available_item_units) == 0 :
+                    item.item_status = 'out_of_stock'
+                else:
+                    item.item_status = 'available'
+                item.save()
             else:
                 available_item_units = ItemHistory.objects.filter(item=item).aggregate(total_quantity=Sum('quantity'))['total_quantity'] or 0
-            
-            reserve_units = item.reserve_count
 
-            if int(available_item_units) < int(reserve_units) and int(available_item_units) > 0:
-                item.item_status = 'about_to_finish'
-            elif int(available_item_units) == 0 :
-                item.item_status = 'out_of_stock'
-            else:
-                item.item_status = 'available'
-            item.save()
+                if float(available_item_units) < float(reserve_units) and float(available_item_units) > 0:
+                    item.item_status = 'about_to_finish'
+                elif float(available_item_units) == 0 :
+                    item.item_status = 'out_of_stock'
+                else:
+                    item.item_status = 'available'
+                item.save()
             
 
         
@@ -1478,8 +1488,10 @@ class PurchaseOrderItemsPage(IsInventoryAdmin,View):
                 )
 
             purchase_order_item = PurchaseOrderItems.objects.get(purchase_order=purchase_order,product__item__id=int(item_id))
-            purchase_order_item.is_received = True
+            
             purchase_order_item.added_item_count += 1
+            if purchase_order_item.added_item_count == purchase_order_item.item_count:
+                purchase_order_item.is_received = True
             purchase_order_item.save()
 
             messages.success(request,"Unit added to Inventory")
