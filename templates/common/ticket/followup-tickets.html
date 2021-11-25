@@ -362,7 +362,7 @@
                                             {% if team.followupmembers %}
 
                                             <div class="col-md-12">
-                                                <div> <b>Cleaning Team {{forloop.parentloop.counter}}</b>  <span class="tk-ml-10 blue-text">{{follow_up_scheduler.start_at}}</span></div>
+                                                <div> <b>Followup Schedule {{forloop.parentloop.counter}}</b>  <span class="tk-ml-10 blue-text">{{follow_up_scheduler.start_at}}</span></div>
                                             </div>
                                             <div class="col-md-12">
                                                 
@@ -440,7 +440,7 @@
                                          {% endfor %}
                                          {% endfor %}
 
-                                         {% if followup_details.investigation.investigationmedias %}
+                                         {% comment %} {% if followup_details.investigation.investigationmedias %}
                                             <div class="col-md-12">
                                                 <div class="tk-subtitle tk-mt-5">Customer Images</div>
                                                 <div class="row mt-10">
@@ -456,7 +456,7 @@
                                                     
                                                 </div>
                                             </div>
-                                        {% endif %}
+                                        {% endif %} {% endcomment %}
                                          
                                          
 

@@ -511,7 +511,7 @@
                             <span id="id_selectText">Select PO</span>
                             <ul class="drop">
                                 {% for order in purchase_orders %}
-                                    <li onclick="changeSelect('active')"><a>{{order.purchase_order_id}}</a></li>
+                                    <li onclick="changeSelect({{order.id}})"><a>{{order.purchase_order_id}}</a></li>
                                 {% endfor %}
     
                             </ul>
@@ -624,8 +624,8 @@
            
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button" type="button" onclick="formvalidation()">Submit</button>
-            <button class="sent-button" type="button" onclick="window.location.href:'{% url 'bleach-inventory:inventory-purchaseorderitems' 7%}';">Purchase Order</button>
+            <button class="sent-button" type="button" id="submit-btn" onclick="formvalidation()">Submit</button>
+            <button class="sent-button" type="button" id="po-btn" onclick="window.location.href:'{% url 'bleach-inventory:inventory-purchaseorderitems' 7%}';">Purchase Order</button>
             </form>
                         <button data-dismiss="modal" onclick="closeNavAddBundle()" class="view-button">Cancel</button>
         </div>
@@ -1078,6 +1078,8 @@ $(function () {
     $(document).click(function () {
         // close menu on document click
         $('.wrap-drop').removeClass('active');
+        $('#submit-btn').hide()
+        $('#po-btn').hide()
     });
 });
 </script>
@@ -1089,9 +1091,13 @@ $(function () {
         if(val == 'po'){
             $('#id_po').show()
             $('#id_man').hide()
+            $('#po-btn').show()
+            $('#submit-btn').hide()
         }else{
             $('#id_po').hide()
             $('#id_man').show()
+            $('#po-btn').hide()
+            $('#submit-btn').show()
         }
     }
     function deleteImg(id){
