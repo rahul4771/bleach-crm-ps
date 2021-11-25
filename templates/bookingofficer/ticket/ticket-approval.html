@@ -35,9 +35,9 @@
                     <div class="mobile-number"><i class="fa green-text fa-lg fa-phone" aria-hidden="true"></i> &nbsp;  {{investigation_details.order.evaluation.customer.mobile_number}}</div>
                     <div class="email"><i class="fa orange-text fa-lg fa-envelope-o" aria-hidden="true"></i> &nbsp;  {{investigation_details.order.evaluation.customer.email}}</div>
                     <br>
-                    {% for tickettype in ticket_types %}
+                    {% comment %} {% for tickettype in ticket_types %}
                     <div class="common-gray-text align-left"><i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i> &nbsp;  {{tickettype}}</div>
-                    {% endfor %}
+                    {% endfor %} {% endcomment %}
                     <br>
                     {% for cleaning_team in investigation_details.order_schedule.cleaning_teams %}
                     <div class="tl blue-text">Cleaning Agent&nbsp;:{{cleaning_team.team_leader.name}}</div>
