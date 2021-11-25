@@ -272,7 +272,7 @@
                                 </div>
                             </div>
                             
-                            {% if investigation_details.investigationmedias %}
+                            {% if investigation_details.investigationcustomermedias %}
                             <div class="row mt-20">
                                 <div class="col-md-12">
                                     <div class="tk-common-text">Customer Media</div>
@@ -282,12 +282,12 @@
                                 <div class="col-md-6">
                                     <div class="owl-carousel owl-theme"  id="owl_id_1">
     
-                                        {% for media in investigation_details.investigationmedias %}
-                                        {% if media.taken_status == 'CUSTOMER_SEND' %}
+                                        {% for media in investigation_details.investigationcustomermedias %}
+                                        
                                             <div class="item">
                                                 <img src="{{media.media.url}}" > 
                                             </div>
-                                        {% endif %}
+                                        
                                         {% endfor %}
                                     
                                     </div>
@@ -327,11 +327,11 @@
                                     <div class="owl-carousel owl-theme" id="owl_id_2" >
     
                                         {% for media in investigation_details.investigationmedias %}
-                                        {% if media.taken_status == 'SECONDARY_INVESTIGATION' %}
+                                        
                                             <div class="item">
                                                 <img id="visit_teamleader_image" src="{{media.media.url}}" > 
                                             </div>
-                                        {% endif %}
+                                        
                                         {% endfor %}
                                     
                                     </div>
