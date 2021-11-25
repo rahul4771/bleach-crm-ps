@@ -338,3 +338,33 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+#soa_table{
+  margin-top: 20px;
+  width: 100%;
+}
+#soa_table th {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 8px;
+  text-align: left;
+  background-color: #EDF1F6;
+  color: #303030;
+}
+#soa_table td, #soa_table th {
+  border: 1px solid #528CE6;
+  padding: 8px;
+}
+
+#soa_section3{
+  float: left;
+  width: 100%;
+}
+#soa_amount_section{
+  margin-left: 70%;
+  margin-top: 20px;
+  background: #EDF1F6;
+  color: #4A4A4B;
+  width: 30%;
+  padding: 15px;
+}
