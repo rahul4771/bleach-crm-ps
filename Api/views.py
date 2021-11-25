@@ -1016,6 +1016,10 @@ class VisitDetailsAPI(APIView):
 		response_dict['customer_name'] = visit.order.evaluation.customer.name
 		response_dict['customer_number'] = visit.order.evaluation.customer.mobile_number
 		response_dict['amount'] = visit.order_scheduler_book.total_cost
+		response_dict['order_amount'] = visit.order.total_amount
+		response_dict['order_paid_amount'] =visit.order.amount_paid
+		response_dict['order_remaining_amount'] = visit.order.remining_amount
+		response_dict['payment_status'] = visit.order.payment_status
 
 		response_dict['servicetype'] = visit.order_scheduler_book.service_type.name
 		response_dict['cleaning_policy'] = visit.order_scheduler_book.cleaning_policy

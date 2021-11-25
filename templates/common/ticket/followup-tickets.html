@@ -508,23 +508,20 @@
                          <!--- Timeline card 7 ends-->  
                          
 
-                        
-                         <!--Timeline card 8 begins-->
+                        <!--Timeline card 8 begins-->
                          {% if followup_details.investigation.paybackdiscounts %}
+                         
                          <div class="col-md-8 tk-mt-30">
                             <div class="d-flex">
                             {% for payback in followup_details.investigation.paybackdiscounts %}
-                            {% if followup_details.investigation.is_paybackdiscount_approved == True %}
-                                <i class="fas fa-check-circle tk-timeline-icon sort_tab ticket-item"><span class="timeline-head">Payback / Discount (<span class="green-text">Approved</span>)</span></i>
-                            {% else %}
-                                <i class="fas fa-check-circle tk-timeline-icon-yellow ticket-item"><span class="timeline-head">Payback / Discount (<span class="yellow-text">Pending Approval</span>)</span></i>
-                            {% endif %}
-                            {% endfor %}
+                            {% if payback.is_completed == True %}
+                                <i class="fas fa-check-circle tk-timeline-icon sort_tab ticket-item"><span class="timeline-head">Payback / Discount (<span class="green-text">Completed</span>)</span></i>
+                            
                                 <div class="tk-timeline h-100 tk-line"></div>
                                  <div class="tk-card tk-ml-30 tk-mt-20 w-100">
                                      <div class="row">
 
-                                        <div class="col-md-12">
+                                        <div class="col-md-4">
                                         {% for paybackdiscount in followup_details.investigation.paybackdiscounts %}
                                         {% if paybackdiscount.approved_by %}
 
@@ -544,91 +541,6 @@
                                             </div> 
 
                                         {% endif %}
-                                        {% endfor %}
-                                        </div>
-
-                                        {% for paybackdiscount in followup_details.investigation.paybackdiscounts %}
-                                        {% for paybackdiscountdetail in  paybackdiscount.paybackdiscountdetails %}
-                                        <div class="col-md-4 ">
-                                            
-                                             <div class=" tk-secondary-text"><b>{% if paybackdiscountdetail.category == 'SERVICEQUALITY' %}Service Quality{% else %}{{paybackdiscountdetail.category|title}}{% endif %}</b></div>
-                                             <div class="tk-secondary-text"> 
-                                                 <div class="d-flex tk-items">
-                                                     <div><b>Item</b>  </div> : <div >{{paybackdiscountdetail.name}}</div>
-                                                 </div>
-                                                 <div class="d-flex tk-items">
-                                                    <div><b>Price</b> </div>: <div >{{paybackdiscountdetail.cost|floatformat:'3'}} KD</div>
-                                                </div>
-                                                
-                                             </div>
-                                        </div>
-                                        {% endfor %}
-
-                                        <div class="col-md-12 d-flex tk-title">
-                                            <div><b>Maximum Price</b> </div>: <div >{{paybackdiscount.total_cost|floatformat:'3'}} KD</div>
-                                        </div>
-
-                                        {% endfor %}
-
-                                        
-                                        {% for paybackdiscount in followup_details.investigation.paybackdiscounts %}
-                                        {% if paybackdiscount.paybackdiscountmedias %}
-                                         <div class="col-md-12">
-                                            <div class="tk-subtitle tk-mt-5">Media</div>
-                                            <div class="row mt-10">
-                                                <div class="owl-carousel c-mt-10">
-                                                {% for paybackdiscountmedia in paybackdiscount.paybackdiscountmedias %}
-                                                    <div style="margin-left:25px; margin-right:10px;">
-                                                        <img class="slider-img pointer" onclick="onClick(this)" src="{{paybackdiscountmedia.media.url}}" alt="">
-                                                    </div>
-                                                {% endfor %}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        {% endif %}
-                                        {% endfor %}
-                                        
-                                     </div>
-                                 </div>
-                             </div>
-                        </div>
-                        {% endif %}
-                         <!--Timeline card 8 ends here-->   
-
-
-                        <!--Timeline card 8 begins-->
-                         {% if followup_details.investigation.is_paybackdiscount_approved == True %}
-                         
-                         <div class="col-md-8 tk-mt-30">
-                            <div class="d-flex">
-                            {% for payback in followup_details.investigation.paybackdiscounts %}
-                            {% if payback.is_completed == True %}
-                                <i class="fas fa-check-circle tk-timeline-icon sort_tab ticket-item"><span class="timeline-head">Payback / Discount (<span class="green-text">Completed</span>)</span></i>
-                            
-                                <div class="tk-timeline h-100 tk-line"></div>
-                                 <div class="tk-card tk-ml-30 tk-mt-20 w-100">
-                                     <div class="row">
-
-                                        <div class="col-md-4">
-                                        {% for paybackdiscount in followup_details.investigation.paybackdiscounts %}
-                                        {% if paybackdiscount.accountant_approval %}
-
-                                             <div class="d-flex ">
-                                                {% if paybackdiscount.accountant_approval.profile_image %}
-                                                    <img src="{{paybackdiscount.accountant_approval.profile_image.url}}" class="tk-profile "/>
-                                                {% else %}
-                                                    <img src="/static/files/images/profile-pic.png" class="tk-profile "/>
-                                                {% endif %}
-                                                 <div class="tk-ml-10 ">
-                                                    <div class="tk-title-2 tk-mt-10">{{paybackdiscount.accountant_approval.name}}</div>
-                                                    <div class="tk-subtitle tk-mt-5 tk-secondary-text">{{paybackdiscount.accountant_approval.user_type}}</div>
-                                                 {% comment %} <div class="tk-desc tk-secondary-text blue-text">
-                                                 {% for report in followup_details.investigation.reports %} {{report.created}} {% endfor %} 
-                                                 </div> {% endcomment %}
-                                             </div>
-                                            </div> 
-
-                                        {% endif %}
                                         </div>
 
                                         
@@ -638,11 +550,12 @@
                                             <div class="tk-desc tk-secondary-text"> {{paybackdiscount.accountant_notes}}</div>
                                         {% endif %}
                                         </div>
-
+                                        
                                         <div class="col-md-12 ">
                                         {% if paybackdiscount.approved_option %}
                                             <div class=" tk-title-2"><b>{{paybackdiscount.approved_option}}</b></div>
-                                            <div class=" tk-title"> {{paybackdiscount.approved_total_cost|floatformat:"3"}} KD</div>
+                                            <div class=" tk-title">Total Cost : <b>{{paybackdiscount.total_cost|floatformat:"3"}} KD </b></div>
+                                            <div class=" tk-title">Approved Total Cost : <b>{{paybackdiscount.approved_total_cost|floatformat:"3"}} KD </b></div>
                                         {% endif %}
                                         </div>
                                         
@@ -653,7 +566,7 @@
                                  </div>
                             
                             {% else %}
-                                <i class="fas fa-check-circle tk-timeline-icon-yellow ticket-item"><span class="timeline-head">Payback / Discount (<span class="yellow-text">Pending Accountant Approval</span>)</span></i>
+                                <i class="fas fa-check-circle tk-timeline-icon-yellow ticket-item"><span class="timeline-head">Payback / Discount (<span class="yellow-text">Pending Approval</span>)</span></i>
                                 
                             {% endif %}
                             {% endfor %}
