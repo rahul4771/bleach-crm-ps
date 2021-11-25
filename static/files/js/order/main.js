@@ -305,7 +305,6 @@ function cancelCleaningDate(service){
   app.reduction_status=false
   $('#cleaning-cancel-tigger').click()
   var data=$(service).data()
-  
   app.no_of_cleaners=data.no_of_cleaners
   app.cleaning_policy='SUBSCRIPTION'
   app.selected_no_of_cleaners=data.no_of_cleaners
@@ -314,7 +313,7 @@ function cancelCleaningDate(service){
   app.no_of_slots=Math.ceil(data.cleaning_hours/2)
   app.evaluation_book_id=data.evaluation_book_id
   app.schedule_id=data.id
-  app.reducing_total=parseInt(data.estimated_cost)
+  app.reducing_total=parseInt(data.estimated_cost/data.total_cleanings)
   app.cleaning_start_date=data.cleaning_start_date
   app.selected_cleaning_date=data.cleaning_start_date
  
