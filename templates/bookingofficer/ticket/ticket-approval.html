@@ -7,7 +7,7 @@
     <section class="content"><!--content-->
         <div class="container-fluid space topspace"><!--container-fluid space-->
             <div class="welcome-wrapper"><!--welcome-wrapper-->
-        <h1 class="dashboard-head">Payback Approval Form</h1>
+        <h1 class="dashboard-head">Payback Approval Form {{paybackdiscount.investigation.order_schedule.id}}</h1>
         
             </div><!--welcome-wrapper-->
         </div>
@@ -22,29 +22,27 @@
                 <div class="row">
                 <input type="hidden" id="id_visit" />
                     <div class="col-md-3">
-                        <div class="tk-common-text" id="visit_blc" style="margin-bottom: 5px">BLC1265515656312</div>
+                        <div class="tk-common-text" id="visit_blc" style="margin-bottom: 5px"></div>
                         <div class="d-flex">
                             <div>
-                                <span class="tk-dot tk-completed-color"></span><span class="tk-common-text2 av-font">Paid</span>
+                                <span class="tk-dot tk-completed-color"></span><span class="tk-common-text2 av-font" id="payment_status"></span>
                             </div>
-                            <div class="ml-10">
-                                <span class="tk-dot tk-completed-color"></span><span class="tk-common-text2 av-font">Closed</span>
-                            </div>
+                            
                         </div>
                         <div style="margin-bottom:0px" class="mt-15 tk-common-text2" id="visit_customer">
-                            Manal Alesheed
+                            
                         </div>
                         <div  class="tk-common-text2" id="visit_customer_number">
-                            9595959595
+                            
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div style="margin-bottom: 5px" class="tk-common-text"><span id="visit_servicetype">Kitchen Cleaning</span>-<span id="visit_cleaningpolicy">One time service</span></div>
-                        <div  class="tk-common-text2" id="visit_start_at">Dec 01 2020 ,04:04 AM</div>
+                        <div style="margin-bottom: 5px" class="tk-common-text"><span id="visit_servicetype"></span>-<span id="visit_cleaningpolicy"></span></div>
+                        <div  class="tk-common-text2" id="visit_start_at"></div>
                         <div class="d-flex mt-20">
                             <div class="d-flex">
-                                <img id="visit_teamleader_image" src="/media/profile_photo/sheldon1.jpg" class="tk-img-circle"> 
-                                <div style="margin-bottom: 0px;"  class="tk-common-text2 ml-5 mt-10" id="visit_teamleader">Saravan</div>
+                                <img id="visit_teamleader_image" src="" class="tk-img-circle"> 
+                                <div style="margin-bottom: 0px;"  class="tk-common-text2 ml-5 mt-10" id="visit_teamleader"></div>
                             </div>
                             <div class="ml-30 d-flex" id="visit_team_members">
                                 
@@ -59,16 +57,16 @@
                            </div>
                            
                            <div class="col-xs-5">
-                            <div class="tk-common-text2">: 80 KD </div>
+                            <div class="tk-common-text2" id="total_order_amt" id="total_order_amt">: 0 KD </div>
                         </div>
                        </div>
                        <div class="row ">
                         <div class="col-xs-7">
-                            <div class="tk-common-text2"> Paid amount </div>
+                            <div class="tk-common-text2" > Paid amount </div>
                         </div>
                         
                         <div class="col-xs-5">
-                         <div class="tk-common-text2">: 80 KD </div>
+                         <div class="tk-common-text2" id="total_paid_amt">: 0 KD </div>
                      </div>
                     </div>
                     <div class="row ">
@@ -77,7 +75,7 @@
                         </div>
                         
                         <div class="col-xs-5">
-                         <div class="tk-common-text2">: 80 KD </div>
+                         <div class="tk-common-text2" id="total_remaining_amt">: 0 KD </div>
                      </div>
                     </div>
                     </div>
@@ -92,40 +90,25 @@
             </div>
            <div>
             <table id="soa_table">
+                {% for item in paybackdiscount.paybackdiscountdetails %}
                 <tr>
                     <td class="text-center av-font">
-                        Service quality
-                    </td>
-                    <td class="text-left av-font">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing 
-                    </td>
-                    <td class="text-right av-font">
-                        120.000 KD
-                    </td>
-                </tr>
-                <tr>
-                    <td class="text-center av-font">
+                        {% if item.category == 'SERVICEQUALITY' %}
+                        Service Quality
+                        {% elif item.category == 'DAMAGE' %}
                         Damage
+                        {% else %}
+                        Others
+                        {% endif %}
                     </td>
                     <td class="text-left av-font">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing 
+                        {{item.name}}
                     </td>
                     <td class="text-right av-font">
-                        120.000 KD
+                        {{item.cost|floatformat:3}} KD
                     </td>
                 </tr>
-                <tr>
-                    <td class="text-center av-font">
-                        Service quality
-                    </td>
-                    <td class="text-left av-font">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing 
-                    </td>
-                    <td class="text-right av-font">
-                        120.000 KD
-                    </td>
-                </tr>
-               
+                {% endfor %}
             </table>
             <div >
                 <div class="soa_section3">
@@ -133,7 +116,7 @@
                       <div id="soa_balance" class="tk-common-text2">
                         Total
                       </div>
-                      <h1 id="closingbalance" class="av-font" style="text-align: right;color: #303030;font-size: 28px; font-weight: 300;">0.000 KD</h1>
+                      <h1 id="closingbalance" class="av-font" style="text-align: right;color: #303030;font-size: 28px; font-weight: 300;">{{paybackdiscount.total_cost|floatformat:3}} KD</h1>
                     </div>
                   </div>
             </div>
@@ -141,7 +124,7 @@
 
         </div>
     </div>
-    <form >
+    <form method="POST" action="">{% csrf_token %}
     <div class="tk-common-text mt-10">
         Add Pay-back/Discount
     </div>
@@ -151,22 +134,22 @@
                 Refund amount
             </div>
             <div class="inv-input-container " style="height: 34px;"> 
-                <input type="number"  class="w-p-100 inv-in" >
+                <input type="number" step="0.001" name="approved_total_cost" class="w-p-100 inv-in" value="{{paybackdiscount.total_cost|floatformat:3}}" required>
               </div>
         </div>
         <div class="col-md-3">
             <div class="tk-common-text mt-10">
                 Refund Options
             </div>
-            <input type="text"  hidden id="id_ticket_type" required  class="w-p-100 inv-in" >
+            <input type="text" name="approved_option" hidden id="id_ticket_type" required  class="w-p-100 inv-in" >
 
             <div class="wrap-drop" id="noble-gases" style="z-index: 3;">
                 
                 <span id="order_number">Select refund option</span>
                 <ul class="drop">
                     
-                    <li  onclick="selectType('Type1')"><a> Type 1 </a></li>
-                    <li  onclick="selectType('Type2')"><a> Type 1 </a></li>
+                    <li  onclick="selectType('PAYBACK')"><a> Payback </a></li>
+                    <li  onclick="selectType('DISCOUNT')"><a> Discount </a></li>
                     
                 </ul>
             </div>
@@ -233,6 +216,10 @@
 
 {% block javascript %} 
 <script>
+    $(document).ready(function(){
+        loadvisitdata("{{paybackdiscount.investigation.order_schedule.id}}")
+    })
+
         function DropDown(el) {
     this.dd = el;
     this.placeholder = this.dd.children('span');
@@ -269,6 +256,7 @@ DropDown.prototype = {
 };
 
 function selectType(val){
+    console.log(val,"cfg")
     $('#id_ticket_type').val(val)
 }
 
@@ -296,10 +284,10 @@ $('.buyback_type').change(function(){
 
 
 async function loadvisitdata(visit_id){
-  
+    console.log(visit_id,"vid")
     axios.get(url+'/api/visit-details/'+visit_id)
                 .then(function (response) {
-                    
+                    console.log(response,"resp")
                     $('#id_sched').text(response.data.start_at)
                     $('.tk-order-card').show();
 
@@ -311,9 +299,23 @@ async function loadvisitdata(visit_id){
                     $('#visit_cleaningpolicy').text(response.data.cleaningpolicy);
                     $('#visit_start_at').text(response.data.start_at);
                     $('#visit_teamleader').text(response.data.team_leader);
+                    $('#total_order_amt').text(response.data.order_amount+' KD');
+                    $('#total_paid_amt').text(response.data.order_paid_amount+' KD');
+                    $('#total_remaining_amt').text(response.data.order_remaining_amount+' KD');
                     $('#visit_teamleader_image').attr("src",response.data.team_leader_image);
                     $('#visit_price').text(parseFloat(response.data.amount).toFixed(3)+' '+'KD');
                     $('#visit_no_of_cleaners').text(response.data.no_of_cleaners);
+                    $('#payment_status').text(response.data.payment_status);
+                    
+                    if (response.data.payment_status == 'COMPLETED'){
+                        $('.tk-dot').addClass('tk-completed-color')
+                    }else if(response.data.payment_status == 'PENDING'){
+                        $('.tk-dot').addClass('tk-pending-color')
+                    }else if(response.data.payment_status == 'ON_HOLD'){
+                        $('.tk-dot').addClass('tk-pending-color')
+                    }else{
+                        $('.tk-dot').addClass('tk-pending-color')
+                    }
 
                     $('#visit_team_members').empty();
 
