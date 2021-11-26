@@ -77,5 +77,4 @@ urlpatterns = [
 
 	###Team members swap
 	url(r'^team/search/$',views.TeamSerachAPI.as_view(),name='api-team-search'),
-	url(r'^team/searchresult/$',views.TeamSerachResultAPI.as_view(),name='api-team-searchresult'),
 ]
