@@ -1078,8 +1078,7 @@ $(function () {
     $(document).click(function () {
         // close menu on document click
         $('.wrap-drop').removeClass('active');
-        $('#submit-btn').hide()
-        $('#po-btn').hide()
+        
     });
 });
 </script>
@@ -1144,6 +1143,8 @@ function selectFileInp(){
     $(document).ready(function () {
         $('#id_man').hide();
         $('#id_po').hide();
+        $('#submit-btn').hide()
+        $('#po-btn').hide()
         $('.owl-carousel').owlCarousel({
             items: 1,
             nav: true,
