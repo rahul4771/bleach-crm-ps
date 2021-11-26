@@ -2125,32 +2125,19 @@ class TeamSerachAPI(APIView):
 		blc                = request.GET.get('blc_no')
 
 
-		cleaning_teams = CleaningTeam.objects.select_related('order_scheduler__order__evaluation').filter(Q(Q(order_scheduler__work_status='CLEANING_TEAM_ASSIGNED')&Q(Q(start_at__date=cleaning_date)|Q(start_at__date=cleaning_date)&Q(order_scheduler__order__order_no__icontains=blc)) ))
+		cleaning_teams     = CleaningTeam.objects.select_related('order_scheduler__order__evaluation').filter(Q(Q(order_scheduler__work_status='CLEANING_TEAM_ASSIGNED')&Q(Q(start_at__date=cleaning_date)|Q(start_at__date=cleaning_date)&Q(order_scheduler__order__order_no__icontains=blc)) ))
 		
-		teams = {}
+		teams = []
 		if cleaning_teams:
 			for cleaning_team in cleaning_teams:
-				teams[cleaning_team.id] = [cleaning_team.order_scheduler.order.order_no,(cleaning_team.order_scheduler.start_at+timedelta(hours=3)).strftime('%d-%m-%Y %I:%M %p'),(cleaning_team.order_scheduler.end_at+timedelta(hours=3)).strftime('%d-%m-%Y %I:%M %p')]
+				cleaning_team            = CleaningTeam.objects.get(id=cleaning_team.id)
+				teams.append({'blc':cleaning_team.order_scheduler.order.order_no,'start_at':(cleaning_team.order_scheduler.start_at+timedelta(hours=3)).strftime('%d-%m-%Y %I:%M %p'),'end_at':(cleaning_team.order_scheduler.end_at+timedelta(hours=3)).strftime('%d-%m-%Y %I:%M %p'),'team_details':CleaningTeamAPISerializer(instance=cleaning_team).data})
 
 		response_dict['teams']      = teams
 		response_dict['success']    = True
 
 		return Response(response_dict,HTTP_200_OK)
 
-
-class TeamSerachResultAPI(APIView):
-	permission_classes  	=   (AllowAny,)
-	authentication_classes  = ()
-	def get(self,request):
-		response_dict            = {}
-		team_id                  = request.GET.get('team_id')
-
-		cleaning_team            = CleaningTeam.objects.get(id=team_id)
-
-		response_dict['team']    = CleaningTeamAPISerializer(instance=cleaning_team).data
-		response_dict['success'] = True
-
-		return Response(response_dict,HTTP_200_OK)
 
 
 class SOAMailAPI(APIView):
