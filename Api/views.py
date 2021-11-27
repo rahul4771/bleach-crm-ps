@@ -2144,6 +2144,80 @@ class TeamSerachAPI(APIView):
 
 
 
+class TeamSerachAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+	def get(self,request):
+		response_dict = {}
+
+		cleaning_date      = datetime.strptime(request.GET.get('cleaning_date'),'%d-%m-%Y')
+		blc                = request.GET.get('blc_no')
+
+
+		cleaning_teams     = CleaningTeam.objects.select_related('order_scheduler__order__evaluation').filter(Q(Q(order_scheduler__work_status='CLEANING_TEAM_ASSIGNED')&Q(Q(start_at__date=cleaning_date)|Q(start_at__date=cleaning_date)&Q(order_scheduler__order__order_no__icontains=blc)) ))
+		
+		teams = []
+		if cleaning_teams:
+			for cleaning_team in cleaning_teams:
+				cleaning_team            = CleaningTeam.objects.get(id=cleaning_team.id)
+				teams.append({'blc':cleaning_team.order_scheduler.order.order_no,'start_at':(cleaning_team.order_scheduler.start_at+timedelta(hours=3)).strftime('%d-%m-%Y %I:%M %p'),'end_at':(cleaning_team.order_scheduler.end_at+timedelta(hours=3)).strftime('%d-%m-%Y %I:%M %p'),'team_details':CleaningTeamAPISerializer(instance=cleaning_team).data})
+
+		response_dict['teams']      = teams
+		response_dict['success']    = True
+
+		return Response(response_dict,HTTP_200_OK)
+
+
+
+class TeamSwapCheckAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+	def post(self,request):
+		response_dict         = {}
+
+		member_id              = request.data.get('member_id')
+
+		current_team_id        = request.data.get('current_team_id')
+		destination_team_id    = request.data.get('destination_team_id')
+
+		current_team                      = CleaningTeam.objects.select_related('order_scheduler__order__evaluation').get(id=current_team_id)
+		currentcleaning_datetime_start    = (current_team.order_scheduler.start_at+timedelta(hours=3))
+		currentcleaning_datetime_end      = (current_team.order_scheduler.end_at+timedelta(hours=3))
+		current_teams                     = CleaningTeam.objects.select_related('order_scheduler__order').filter(order_scheduler__order=current_team.order_scheduler.order,order_scheduler__start_at=currentcleaning_datetime_start,order_scheduler__end_at=currentcleaning_datetime_end).values_list('id',flat=True)
+
+		destination_team                  = CleaningTeam.objects.select_related('order_scheduler__order__evaluation').get(id=destination_team_id)
+		destination_date1                 = (destination_team.order_scheduler.start_at+timedelta(hours=3)).date()
+		destination_date2                 = (destination_team.order_scheduler.end_at+timedelta(hours=3)).date()
+		destinationcleaning_datetime_start= (destination_team.order_scheduler.start_at+timedelta(hours=3))
+		destinationcleaning_datetime_end  = (destination_team.order_scheduler.end_at+timedelta(hours=3))
+
+		#absent/shift/supershift cleaners	
+		absent_cleaner         = LeaveSchedule.objects.select_related('staff').filter(Q(Q(leave_date=destination_date1)|Q(leave_date=destination_date2))).filter(staff__id=member_id)
+		shift_cleaners         = ShiftSchedule.objects.select_related('staff').filter(Q(Q(shift_date=destination_date1)|Q(shift_date=destination_date2)|Q(Q(shift3_start_at__lte=cleaning_datetime_end)&Q(shift3_end_at__gte=cleaning_datetime_end)))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=cleaning_datetime_start.time())&Q(shift1_end_at__gte=cleaning_datetime_start.time()))&Q(Q(shift1_start_at__lte=cleaning_datetime_end.time())&Q(shift1_end_at__gte=cleaning_datetime_end.time()))) | Q(Q(Q(shift2_start_at__lte=cleaning_datetime_start.time())&Q(shift2_end_at__gte=cleaning_datetime_start.time()))&Q(Q(shift2_start_at__lte=cleaning_datetime_end.time())&Q(shift2_end_at__gte=cleaning_datetime_end.time()))) | Q(Q(Q(shift3_start_at__lte=cleaning_datetime_start)&Q(shift3_end_at__gte=cleaning_datetime_start))&Q(Q(shift3_start_at__lte=cleaning_datetime_end)&Q(shift3_end_at__gte=cleaning_datetime_end))) )
+		super_shift_cleaners   = UserProfile.objects.filter(id=member_id).filter( Q(Q(universal_shift_start__lte=cleaning_datetime_start.time())&Q(universal_shift_end__gte=cleaning_datetime_start.time()))&Q(Q(universal_shift_start__lte=cleaning_datetime_end.time())&Q(universal_shift_end__gte=cleaning_datetime_end.time())) )
+		active_cleaners1 	   = CleaningTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=cleaning_datetime_start)&Q(start_at__lt=cleaning_datetime_end))|Q(Q(end_at__gt=cleaning_datetime_start)&Q(end_at__lte=cleaning_datetime_end))|Q(Q(start_at__lte=cleaning_datetime_start)&Q(end_at__gte=cleaning_datetime_start)&Q(start_at__lte=cleaning_datetime_end)&Q(end_at__gte=cleaning_datetime_end))|Q(Q(start_at__gte=cleaning_datetime_start)&Q(end_at__gte=cleaning_datetime_start)&Q(start_at__lte=cleaning_datetime_end)&Q(end_at__lte=cleaning_datetime_end)))).exclude(team__id__in=current_teams)
+		active_cleaners2 	   = FollowUpTeamMember.objects.select_related('member').filter(Q(Q(Q(start_at__gte=cleaning_datetime_start)&Q(start_at__lt=cleaning_datetime_end))|Q(Q(end_at__gt=cleaning_datetime_start)&Q(end_at__lte=cleaning_datetime_end))|Q(Q(start_at__lte=cleaning_datetime_start)&Q(end_at__gte=cleaning_datetime_start)&Q(start_at__lte=cleaning_datetime_end)&Q(end_at__gte=cleaning_datetime_end))|Q(Q(start_at__gte=cleaning_datetime_start)&Q(end_at__gte=cleaning_datetime_start)&Q(start_at__lte=cleaning_datetime_end)&Q(end_at__lte=cleaning_datetime_end))))	
+
+		if (not absent_cleaner and not active_cleaners1	and not active_cleaners2) and (shift_cleaners or super_shift_cleaners):
+			response_dict['availabilty'] = True
+		
+		response_dict['success']    = True
+
+		return Response(response_dict,HTTP_200_OK)
+
+
+
+class TeamSwapAPI(APIView):
+	permission_classes  	=   (AllowAny,)
+	authentication_classes  = ()
+	def post(self,request):
+		response_dict               = {}		
+		response_dict['success']    = True
+
+		return Response(response_dict,HTTP_200_OK)
+
+
+
 class SOAMailAPI(APIView):
 	permission_classes  	=   (AllowAny,)
 	authentication_classes  = ()
