@@ -5430,7 +5430,7 @@ class AddDeleteService(APIView):
 
 			#Emptying and Cost Updation
 			service_delete_status = request.data.get('seperate')
-			if service_delete_status:
+			if not service_delete_status:
 				EvaluationBook.objects.filter(evaluation_details=evaluation_details).delete()
 
 				evaluation.total_cost            -= evaluation_details.total_cost+evaluation.credit_amount+evaluation.discount-evaluation.additional_charge
