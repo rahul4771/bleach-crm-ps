@@ -15,6 +15,11 @@
     display: inline-block;
     
   }
+  .cl-date-title{
+      font-size:16px;
+      font-weight:500;
+
+  }
   .cl-tooltip .tooltiptext::after {
     content: " ";
     position: absolute;
