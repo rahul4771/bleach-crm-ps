@@ -1467,9 +1467,12 @@ transition="dialog-bottom-transition"
               </span>
             </div>
             <div v-else class="cl-highlight cl-modal-text-title "> Not Assigned </div>
+            <div v-if="currentSlotDetails.cleaning_team_order_scheduler[0]">
             <div v-if="findBackupCleaners(currentSlotDetails.cleaning_team_order_scheduler[0].cleaning_member_team)" class="cl-modal-text-content cl-mt-20">
               Backup Team 
             </div>
+          </div>
+            
             <div class="cl-modal-text-title  " v-if="currentSlotDetails.cleaning_team_order_scheduler[0]">
               <span v-for="(team,tindex) in currentSlotDetails.cleaning_team_order_scheduler[0].cleaning_member_team">
                 <span v-if="team.is_backup_cleaner"> <% team.member.name %>
