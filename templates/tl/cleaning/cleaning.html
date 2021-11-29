@@ -595,9 +595,9 @@
 
  </div><!--commnDiv-border--> 
 <br>
-<div>
+{% comment %} <div>
   <button class="sent-button"  onclick="openNavAddStore()">Collect Items</button>
-</div>
+</div> {% endcomment %}
     <br><br>
 
 
@@ -771,6 +771,7 @@
                             </th>
                         </tr>
                         <tbody>
+                        {% for item in cleaning_items %}
                             <tr>
                                 <td>
                                     <label style="padding-left: 0px !important;" class="c-container">
@@ -779,15 +780,15 @@
                                     </label>
                                 </td>
                                 <td>
-                                  Name 
+                                  {{item.item.name}} 
                                 </td>
                                 
                                 <td>
                             
-                                    8
+                                    {{item.units}}
                                 </td>
                             </tr>
-                           
+                           {% endfor %}
 
                         </tbody>
                      
