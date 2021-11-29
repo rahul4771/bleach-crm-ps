@@ -2194,6 +2194,7 @@
                                         </div>
                                                               
                                         <!-- Backup team begins here-->
+                                        <div class="backupteam_main" {% if not cleaning_team.backup_start_at %}hidden{% endif %}>
                                         <div class="order-clean-section-header c-clean-team-header c-mt-10">
                                             <div class="row mt-20">
 
@@ -2207,6 +2208,7 @@
                                                 {% endif %}
                                             </div>
                                         </div>
+
                                         <div class="row c-mt-10 id_team_members_div" id="id_team_backupmembers_div_{{evaluationbook.id}}">
                                             
                                             {% for team_member in cleaning_team.cleaning_team_members %}
@@ -2258,6 +2260,7 @@
                                                     <div class="c-text order-details-value" id="id_backup_checkout_{{evaluationbook.id}}"> {{cleaning_team.backup_check_out|date:'h:i A'}}</div>
                                                 </div>
                                             </div>
+                                        </div>   
                                         <!-- Backup team ends here-->
 
 
