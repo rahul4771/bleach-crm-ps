@@ -77,7 +77,17 @@ $('.owl-item').height(heightCarousel)
 const app=  new Vue({
 
     el: '#app',
-    vuetify: new Vuetify(),
+    vuetify: new Vuetify(
+      {theme: {
+        themes: {
+          light: {
+            primary: '#2e4e85', // #E53935
+            secondary: '#FFCDD2', // #FFCDD2
+            accent: '#3F51B5', // #3F51B5
+          },
+        },
+      }}
+    ),
     delimiters: ['<%', '%>'],
    components:{
    
@@ -85,6 +95,9 @@ const app=  new Vue({
    },
     
     data: {
+      openSwap:false,
+      selected_swap:[],
+      swap_options:[],
       list1: [
         { name: "Lucifer", id: 1 },
         { name: "Michael", id: 2 },
@@ -274,7 +287,8 @@ const app=  new Vue({
             selected_cleaning_duration:{},
             currentServices:[],
             followup_duration:[],
-            followup_cleaners:0
+            followup_cleaners:0,
+            blc_no:''
            
 
       },
@@ -319,8 +333,16 @@ const app=  new Vue({
        
        
         this.getEvaluationSlots()
+        this.getBLC()
       },
       methods:{
+        getBLC(){
+          axios.get(this.url+'/api/team/search/?cleaning_date='+this.cleaningDate+'&blc_no='+this.blc_no).then(response=>{
+            this.swap_options=response.data.teams
+          }).catch(err=>{
+
+          })
+        },
         add: function() {
           this.list.push({ name: "Juan" });
         },
@@ -500,6 +522,7 @@ const app=  new Vue({
             
           },
           async getSlots(){
+            this.getBLC()
             this.cal_loader=true
            // console.log($('#cl_cleaning_calendar').val())
            $('.owl-item').css('height','auto')

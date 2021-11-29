@@ -36,65 +36,12 @@
     
     </div>
   <input id="user_type" value="{{request.user.user_type}}" style="display: none"/>
-  <!-- Draggable begins here-->
-<!-- <div class="row">
-  <div class="col-3">
-    <h3>Team 1</h3>
-    <draggable class="list-group" :list="list1" group="people" @change="log">
-      <div
-        class="list-group-item"
-        v-for="(element, index) in list1"
-        :key="element.name"
-      >
-        <% element.name %> <% index %>
-      </div>
-    </draggable>
-  </div>
-
-  <div class="col-3">
-    <h3>Team 2</h3>
-    <draggable class="list-group" :list="list2" group="people" @change="log">
-      <div
-        class="list-group-item"
-        v-for="(element, index) in list2"
-        :key="element.name"
-      >
-        <% element.name %> <% index %>
-      </div>
-    </draggable>
-  </div>
-  <div class="col-3">
-    <h3>Team 3</h3>
-    <draggable class="list-group" :list="list3" group="people" @change="log">
-      <div
-        class="list-group-item"
-        v-for="(element, index) in list3"
-        :key="element.name"
-      >
-        <% element.name %> <% index %>
-      </div>
-    </draggable>
-  </div>
-  <div class="col-3">
-    <h3>Team 4</h3>
-    <draggable class="list-group" :list="list4" group="people" @change="log">
-      <div
-        class="list-group-item"
-        v-for="(element, index) in list4"
-        :key="element.name"
-      >
-        <% element.name %> <% index %>
-      </div>
-    </draggable>
-  </div>
-
-  <rawDisplayer class="col-3" :value="list1" title="List 1" />
-
-  <rawDisplayer class="col-3" :value="list2" title="List 2" />
-</div> -->
-<!-- draggable ends here-->
+  <!-- <div>
+    <v-btn class="primary" @click="openSwap = true">Swap Cleaners</v-btn>
+  </div> -->
   
-    <div class="row">
+  
+    <div class="row mt-4">
       <div class="col-md-12">
         <div class="owl-carousel owl-theme" id="cleaningCalendar-carousel">
           <div class="cl-slot-card" id="div_1">
@@ -1261,8 +1208,89 @@ class="cl-service-list"
 </div>
 
 <!--cleaning calendar ends here-->
+<!-- cleaning swap dialog begins-->
+<v-dialog
+v-model="openSwap"
+fullscreen
+hide-overlay
+transition="dialog-bottom-transition"
+>
+<v-card>
+  <v-toolbar
+    dark
+    color="primary"
+  >
+    <v-btn
+      icon
+      dark
+      @click="openSwap = false"
+    >
+      <v-icon>mdi-close</v-icon>
+    </v-btn>
+    <v-toolbar-title>Swap Cleaners</v-toolbar-title>
+    <v-spacer></v-spacer>
+    <v-toolbar-items>
+      <v-btn
+       
+        text
+        @click="openSwap = false"
+      >
+      <b>Save</b>  
+      </v-btn>
+    </v-toolbar-items>
+  </v-toolbar>
+  <div class="container">
+<div class="row">
+  <div class="col-md-12">
+    <div class="cl-date-title mt-4 primary-text">
+     Date : <% cleaningDate %>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <v-autocomplete
+          v-model="selected_swap"
+          :items="swap_options"
+          item-text="blc"
+          return-object
+          label="Select BLC No"
+          multiple
+          deletable-chips
+         
+          chips
+         :counter="2"
+        ></v-autocomplete>
+
+</div>
+
+</div>
+<!-- Draggable begins here-->
+<div class="row">
+<div class="col-3" v-for="(cleaning,index) in selected_swap" v-bind:key="index">
+<h3><%cleaning.blc%></h3>
+<draggable class="list-group" :list="cleaning.team_details.cleaning_member_team" group="people" @change="log">
+  <div
+    class="list-group-item"
+    v-for="(member, mindex) in cleaning.team_details.cleaning_member_team"
+    v-bind:key="mindex"
+  >
+    <% member.member.name %>
+  </div>
+</draggable>
 
 
+</div>
+
+
+<!-- <rawDisplayer class="col-3" :value="list1" title="" />
+
+<rawDisplayer class="col-3" :value="list2" title="List 2" /> -->
+</div>
+</div>
+</v-card>
+</v-dialog>
+
+<!-- draggable ends here-->
+<!-- cleaning swap dialog ends-->
 <!-- new cleaning cal popup -->
 
 <v-dialog
