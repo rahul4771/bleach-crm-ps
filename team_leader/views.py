@@ -607,3 +607,7 @@ class FollowupCleaning(IsTeamLeader,View):
 		my_cleaning_calendar_date = request.GET.get('my_cleaning_calendar_date') or ''
 				
 		return redirect('/tl/dashboard/?my_cleaning_calendar_date='+my_cleaning_calendar_date)
+
+class ItemsList(IsTeamLeader,View):
+	def get(self,request):
+		return render(request,"tl/items/items.html")
