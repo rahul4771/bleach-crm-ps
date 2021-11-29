@@ -51,6 +51,9 @@
 .inv-red{
   color: #C91212;
 }
+.c-inv-red{
+  background-color: #C91212;
+}
 
 .inv-ab-fin{
   border-left: 5px solid #DBA03A;
@@ -90,6 +93,10 @@
   border-radius: 50%;
   display: inline-block;
   margin-right: 5px;
+}
+
+.mr-10{
+  margin-right: 10px;
 }
 
 .inv-dot2 {
@@ -1352,3 +1359,8 @@ padding: 7px 30px 7px 30px;
 .red-border-input{
   border: red 1px solid !important;
   }
+
+.item-with{
+  color: #2E4E85;
+  font-size: 25px;
+}

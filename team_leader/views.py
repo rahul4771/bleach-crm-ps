@@ -20,7 +20,7 @@ from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,FollowU
 from senior_team_leader.models import CleaningTeam,FollowUpTeam,CleaningTeamMember,FollowUpTeamMember,CleaningTeamMedia,FollowUpTeamMedia
 from bleachadmin.models import ServicePriceRange
 from customer.models import CustomerBooking
-
+from bleachinventory.models import CheckOutItems
 import requests
 
 from django.http import HttpResponse,JsonResponse
@@ -291,8 +291,11 @@ class Cleaning(IsTeamLeader,View):
 		for team in cleaning_teams:
 			if team['order_scheduler__work_status'] != 'CLEANING_FULFILLED':
 				remaining_team += 1
+
+		#cleaning items
+		cleaning_items = CheckOutItems.objects.filter(visit__id=cleaning_team_detail.order_scheduler.id)
 		
-		return render(request,'tl/cleaning/cleaning.html',{"price_ranges":price_ranges,"price_ranges_change":price_ranges_change,"cleaning_team_detail":cleaning_team_detail,"cleaning_team_members":cleaning_team_members,"is_customer_booking":is_customer_booking,"cleaning_teams_count":cleaning_teams_count,"remaining_team":remaining_team})
+		return render(request,'tl/cleaning/cleaning.html',{"cleaning_items":cleaning_items,"price_ranges":price_ranges,"price_ranges_change":price_ranges_change,"cleaning_team_detail":cleaning_team_detail,"cleaning_team_members":cleaning_team_members,"is_customer_booking":is_customer_booking,"cleaning_teams_count":cleaning_teams_count,"remaining_team":remaining_team})
 
 
 	# def post(self,request,team_id):
@@ -607,3 +610,7 @@ class FollowupCleaning(IsTeamLeader,View):
 		my_cleaning_calendar_date = request.GET.get('my_cleaning_calendar_date') or ''
 				
 		return redirect('/tl/dashboard/?my_cleaning_calendar_date='+my_cleaning_calendar_date)
+
+class ItemsList(IsTeamLeader,View):
+	def get(self,request):
+		return render(request,"tl/items/items.html")

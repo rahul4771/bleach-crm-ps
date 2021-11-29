@@ -3604,11 +3604,12 @@ $(document).ready(function(){
       }
     },
     async seperateMultiBook(){
+      var count=0
       const urlSearchParams = new URLSearchParams(window.location.search);
       const params = Object.fromEntries(urlSearchParams.entries());
      this.userid=window.location.href.split('/')[5]
       var  posturl='/customer/service/add-delete/'
-      
+     
       for(var sch in this.scheduleGroup)
       {
         this.submit_loader=true
@@ -3622,19 +3623,24 @@ $(document).ready(function(){
         totalCost=totalCost+this.serviceDetails.service_details[data[i]].total_cost
       }
      // var res=await this.seperateBookRequest(posturl,totalCost,groupData)
-     var res=await axios
-     .post(
-        this.url+posturl+params.eval_id,
-        {
+     var seperate_data={
           id:params.eval_id,  
           estimated_cost:totalCost,
           total_cost:totalCost,
           service_details:groupData,
           shift_availability_check:this.serviceDetails.service_details[0].shift_availability_check
-        }
+     }
+     if(count>0){
+       seperate_data['seperate']=true
+     }
+     var res=await axios
+     .post(
+        this.url+posturl+params.eval_id,
+        seperate_data
       
      )
      .then((response) => {
+       count=count+1
        this.submit_loader=false
        console.log("booking details is "+response)
        this.phase2Result=response.data
@@ -3646,6 +3652,7 @@ $(document).ready(function(){
     
      console.log("got response")
         var schedule_keys=Object.keys(this.scheduleGroup)
+        console.log("schedule keys:"+schedule_keys)
         if(sch==this.scheduleGroup[schedule_keys[schedule_keys.length-1]])
         {
           this.last_image_stat=true

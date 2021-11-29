@@ -563,6 +563,8 @@
 
 
 
+
+
 {% if cleaning_team_detail.order_scheduler.order_scheduler_book.evaluationmedias %}
 <div class="details-sub-head align-left">Media</div>
 <div class="order-clean-outer-wrapper"><!--order-clean-outer-wrapper-->
@@ -592,7 +594,10 @@
 
 
  </div><!--commnDiv-border--> 
-
+<br>
+{% comment %} <div>
+  <button class="sent-button"  onclick="openNavAddStore()">Collect Items</button>
+</div> {% endcomment %}
     <br><br>
 
 
@@ -736,7 +741,77 @@
             
             
       </div><!--main-content-holder-->
+      <div id="addStore" class="inv-sidedrawer">
 
+        <div class="inv-sidedrawer-inner">
+            <div class="d-flex">
+                <div class="inv-drawer-head" id="itemHead">
+                    Name
+                </div>
+                <div class="right-pos">
+
+                    <button onclick="closeNavAddStore()" class="img-button">
+                        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                    </button>
+                </div>
+            </div>
+            
+          <div class="row mt-20">
+              <div class="col-md-12">
+                  <div style="border-top:1px solid #c4c4c4">
+                    <table class="inv-table"> 
+                        <tr>
+                            <th></th>
+                            <th style="width: %;">
+                                Name
+                            </th>
+                            
+                            <th style="width: %;">
+                                Quantity
+                            </th>
+                        </tr>
+                        <tbody>
+                        {% for item in cleaning_items %}
+                            <tr>
+                                <td>
+                                    <label style="padding-left: 0px !important;" class="c-container">
+                                        <input type="checkbox">
+                                        <span style="top:-4px !important;" class="c-checkmark"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                  {{item.item.name}} 
+                                </td>
+                                
+                                <td>
+                            
+                                    {{item.units}}
+                                </td>
+                            </tr>
+                           {% endfor %}
+
+                        </tbody>
+                     
+                        
+                        
+                       
+                    </table>
+                  </div>
+              
+              </div>
+          </div>
+
+
+
+
+
+
+        </div>
+        <div class="inv-drawer-footer">
+            <button class="sent-button">Submit </button>
+            <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
+        </div>
+    </div>
 
       
 
@@ -927,7 +1002,20 @@ $(".keynote").change(function(){
 
 })
 
+function openNavAddStore() {
 
+if (screen.width <= 600) {
+    document.getElementById("addStore").style.width = "100%";
+} else if (screen.width <= 720) {
+    document.getElementById("addStore").style.width = "50%";
+}
+else {
+    document.getElementById("addStore").style.width = "30%";
+}
+}
+function closeNavAddStore() {
+document.getElementById("addStore").style.width = "0";
+}
 
 
 $(".imgAdd").click(function () {
