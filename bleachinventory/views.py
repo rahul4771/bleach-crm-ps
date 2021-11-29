@@ -539,7 +539,7 @@ class InventoryItems(IsInventoryAdmin,View):
         else:
             new_unit_code = 'UNIT9001'
 
-        purchase_orders = PurchaseOrder.objects.filter(purchase_order_purchase_order_item__product__item__id=int(item_id),purchase_order_purchase_order_item__is_received=False)
+        purchase_orders = PurchaseOrder.objects.filter(purchase_order_purchase_order_item__product__item__id=int(item_id),purchase_order_purchase_order_item__is_received=False).prefetch_related()
 
         print(purchase_orders,"orddd")
 
@@ -1488,8 +1488,10 @@ class PurchaseOrderItemsPage(IsInventoryAdmin,View):
                 )
 
             purchase_order_item = PurchaseOrderItems.objects.get(purchase_order=purchase_order,product__item__id=int(item_id))
-            purchase_order_item.is_received = True
+            
             purchase_order_item.added_item_count += 1
+            if purchase_order_item.added_item_count == purchase_order_item.item_count:
+                purchase_order_item.is_received = True
             purchase_order_item.save()
 
             messages.success(request,"Unit added to Inventory")

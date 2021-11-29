@@ -7,7 +7,7 @@ urlpatterns = [
 
 	url(r'^tickets/$',views.TicketDetails.as_view(),name='tl-tickets'),
 	url(r'^ticket/details/(?P<client_id>[-\w]+)/(?P<followup_id>[-\w]+)/$',views.TicketAdvanced.as_view(),name='tl-ticketadvanced'),
-
+	url(r'^items/$',views.ItemsList.as_view(),name='tl-items'),
 	url(r'^cleaning/(?P<team_id>[-\w]+)/$',views.Cleaning.as_view(),name='cleaning'),
 	url(r'^followupcleaning/(?P<team_id>[-\w]+)/$',views.FollowupCleaning.as_view(),name='followupcleaning'),
 

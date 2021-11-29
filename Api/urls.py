@@ -74,4 +74,9 @@ urlpatterns = [
 	url(r'^tl/followupcleaning/checkout/$',views.TlFollowupCleaningCheckout.as_view(),name='api-followupcheckout'),
 
 	url(r'^check-in/checklist/$',views.CheckinChecklist.as_view(),name='api-check-in'),
+
+	###Team members swap
+	url(r'^team/search/$',views.TeamSerachAPI.as_view(),name='api-team-search'),
+	url(r'^team/swapcheck/$',views.TeamSwapCheckAPI.as_view(),name='api-swap-check'),
+	url(r'^team/swap/$',views.TeamSwapAPI.as_view(),name='api-swap'),
 ]
