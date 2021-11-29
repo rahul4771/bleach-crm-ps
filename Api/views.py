@@ -2245,76 +2245,98 @@ class TeamSwapAPI(APIView):
 	permission_classes  	=   (AllowAny,)
 	authentication_classes  = ()
 	def post(self,request):
-		response_dict               = {}
 		response_dict         = {}
 
-		member_id            			  = request.data.get('member_id')
+		swapping_details      = request.data.get('swapping_details')
 
-		current_team_id        			  = request.data.get('current_team_id')
-		destination_team_id    			  = request.data.get('destination_team_id')
+		for swapping_detail in swapping_details:
 
-		current_team                      = CleaningTeam.objects.select_related('order_scheduler__order__evaluation').get(id=current_team_id)
-		currentcleaning_datetime_start    = (current_team.order_scheduler.start_at+timedelta(hours=3))
-		currentcleaning_datetime_end      = (current_team.order_scheduler.end_at+timedelta(hours=3))
-		current_teams                     = CleaningTeam.objects.select_related('order_scheduler__order').filter(order_scheduler__order=current_team.order_scheduler.order,order_scheduler__start_at=currentcleaning_datetime_start,order_scheduler__end_at=currentcleaning_datetime_end).values_list('id',flat=True)
+			member_id            			  = swapping_detail['member_id']
 
-		destination_team                  = CleaningTeam.objects.select_related('order_scheduler__order__evaluation').get(id=destination_team_id)
-		destination_date1                 = (destination_team.order_scheduler.start_at+timedelta(hours=3)).date()
-		destination_date2                 = (destination_team.order_scheduler.end_at+timedelta(hours=3)).date()
-		destinationcleaning_datetime_start= (destination_team.order_scheduler.start_at+timedelta(hours=3))
-		destinationcleaning_datetime_end  = (destination_team.order_scheduler.end_at+timedelta(hours=3))
-		destination_teams                 = CleaningTeam.objects.select_related('order_scheduler__order','order_scheduler__order_scheduler_book__service_type').filter(order_scheduler__order=destination_team.order_scheduler.order,order_scheduler__start_at=destinationcleaning_datetime_start,order_scheduler__end_at=destinationcleaning_datetime_end)
+			current_team_id        			  = swapping_detail['current_team_id']
+			destination_team_id    			  = swapping_detail['destination_team_id']
 
-		#Cleaning Services
-		user             = UserProfile.objects.filter(id=member_id)
-		for destination_team in destination_teams:
-			service_type = destination_team.order_scheduler.order_scheduler_book.service_type.name
-			
-			if service_type == 'General Cleaning':
-				user  = user.filter(is_general_skill=True)
-			elif service_type == 'Deep Cleaning':
-				user  = user.filter(is_deep_skill=True)
-			elif service_type == 'Upholstery Cleaning':
-				user  = user.filter(is_upholstery_skill=True)
-			elif service_type == 'Kitchen Cleaning':
-				user  = user.filter(is_kitchen_skill=True)
-			elif service_type == 'Kitchen Appliances':
-				user  = user.filter(is_kitchen_skill=True)
-			elif service_type == 'Carpet Cleaning':
-				user  = user.filter(is_carpet_skill=True)
-			elif service_type == 'Sterilization':
-				user  = user.filter(is_sterilization_skill=True)
-			elif service_type == 'Mattress Cleaning':
-				user  = user.filter(is_mattress_skill=True)
-			elif service_type == 'Facade Cleaning':
-				user  = user.filter(is_facade_skill=True)
-			elif service_type == 'Storage Area':
-				user  = user.filter(is_storagearea_skill=True)
-			elif service_type == 'Car Parking Umbrella':
-				user = user.filter(is_carparkingumbrella_skill=True)
-			elif service_type == 'Window Cleaning':
-				user  = user.filter(is_window_skill=True)
-			elif service_type == 'Outdoor Cleaning':
-				user  = user.filter(is_outdoor_skill=True)
+			current_team                      = CleaningTeam.objects.select_related('order_scheduler__order__evaluation').get(id=current_team_id)
+			currentcleaning_datetime_start    = (current_team.order_scheduler.start_at+timedelta(hours=3))
+			currentcleaning_datetime_end      = (current_team.order_scheduler.end_at+timedelta(hours=3))
+			current_teams                     = CleaningTeam.objects.select_related('order_scheduler__order').filter(order_scheduler__order=current_team.order_scheduler.order,order_scheduler__start_at=currentcleaning_datetime_start,order_scheduler__end_at=currentcleaning_datetime_end).values_list('id',flat=True)
 
+			destination_team                  = CleaningTeam.objects.select_related('order_scheduler__order__evaluation').get(id=destination_team_id)
+			destination_date1                 = (destination_team.order_scheduler.start_at+timedelta(hours=3)).date()
+			destination_date2                 = (destination_team.order_scheduler.end_at+timedelta(hours=3)).date()
+			destinationcleaning_datetime_start= (destination_team.order_scheduler.start_at+timedelta(hours=3))
+			destinationcleaning_datetime_end  = (destination_team.order_scheduler.end_at+timedelta(hours=3))
+			destination_teams                 = CleaningTeam.objects.select_related('order_scheduler__order','order_scheduler__order_scheduler_book__service_type').filter(order_scheduler__order=destination_team.order_scheduler.order,order_scheduler__start_at=destinationcleaning_datetime_start,order_scheduler__end_at=destinationcleaning_datetime_end)
 
-		#absent/shift/supershift cleaners
-		absent_cleaner         = LeaveSchedule.objects.select_related('staff').filter(staff__id=member_id).filter(Q(Q(leave_date=destination_date1)|Q(leave_date=destination_date2)))
-		shift_cleaners         = ShiftSchedule.objects.select_related('staff').filter(staff__id=member_id).filter(Q(Q(shift_date=destination_date1)|Q(shift_date=destination_date2)|Q(Q(shift3_start_at__lte=destinationcleaning_datetime_end)&Q(shift3_end_at__gte=destinationcleaning_datetime_end)))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=destinationcleaning_datetime_start.time())&Q(shift1_end_at__gte=destinationcleaning_datetime_start.time()))&Q(Q(shift1_start_at__lte=destinationcleaning_datetime_end.time())&Q(shift1_end_at__gte=destinationcleaning_datetime_end.time()))) | Q(Q(Q(shift2_start_at__lte=destinationcleaning_datetime_start.time())&Q(shift2_end_at__gte=destinationcleaning_datetime_start.time()))&Q(Q(shift2_start_at__lte=destinationcleaning_datetime_end.time())&Q(shift2_end_at__gte=destinationcleaning_datetime_end.time()))) | Q(Q(Q(shift3_start_at__lte=destinationcleaning_datetime_start)&Q(shift3_end_at__gte=destinationcleaning_datetime_start))&Q(Q(shift3_start_at__lte=destinationcleaning_datetime_end)&Q(shift3_end_at__gte=destinationcleaning_datetime_end))) )
-		super_shift_cleaners   = UserProfile.objects.filter(id=member_id).filter( Q(Q(universal_shift_start__lte=destinationdestinationcleaning_datetime_start.time())&Q(universal_shift_end__gte=destinationdestinationcleaning_datetime_start.time()))&Q(Q(universal_shift_start__lte=destinationdestinationcleaning_datetime_end.time())&Q(universal_shift_end__gte=destinationdestinationcleaning_datetime_end.time())) )
-		active_cleaners1 	   = CleaningTeamMember.objects.select_related('member').filter(id=member_id).filter(Q(Q(Q(start_at__gte=destinationcleaning_datetime_start)&Q(start_at__lt=destinationcleaning_datetime_end))|Q(Q(end_at__gt=destinationcleaning_datetime_start)&Q(end_at__lte=destinationcleaning_datetime_end))|Q(Q(start_at__lte=destinationcleaning_datetime_start)&Q(end_at__gte=destinationcleaning_datetime_start)&Q(start_at__lte=destinationcleaning_datetime_end)&Q(end_at__gte=destinationcleaning_datetime_end))|Q(Q(start_at__gte=destinationcleaning_datetime_start)&Q(end_at__gte=destinationcleaning_datetime_start)&Q(start_at__lte=destinationcleaning_datetime_end)&Q(end_at__lte=destinationcleaning_datetime_end)))).exclude(team__id__in=current_teams)
-		active_cleaners2 	   = FollowUpTeamMember.objects.select_related('member').filter(id=member_id).filter(Q(Q(Q(start_at__gte=destinationcleaning_datetime_start)&Q(start_at__lt=destinationcleaning_datetime_end))|Q(Q(end_at__gt=destinationcleaning_datetime_start)&Q(end_at__lte=destinationcleaning_datetime_end))|Q(Q(start_at__lte=destinationcleaning_datetime_start)&Q(end_at__gte=destinationcleaning_datetime_start)&Q(start_at__lte=destinationcleaning_datetime_end)&Q(end_at__gte=destinationcleaning_datetime_end))|Q(Q(start_at__gte=destinationcleaning_datetime_start)&Q(end_at__gte=destinationcleaning_datetime_start)&Q(start_at__lte=destinationcleaning_datetime_end)&Q(end_at__lte=destinationcleaning_datetime_end))))	
-
-		if (not absent_cleaner and not active_cleaners1	and not active_cleaners2) and (shift_cleaners or super_shift_cleaners) and user:
-			#delete from current team
-			for current_team in current_teams:
-				CleaningTeamMember.objects.filter(team=current_team,member=user).delete()
-
-			#add to destination team		
+			#Cleaning Services
+			user             = UserProfile.objects.filter(id=member_id)
 			for destination_team in destination_teams:
-				CleaningTeamMember.objects.create(team=destination_team,member=user,start_at=destination_team.start_at,end_at=destination_team.end_at,start_time=destination_team.start_time,end_time=destination_team.end_time)
+				service_type = destination_team.order_scheduler.order_scheduler_book.service_type.name
+				
+				if service_type == 'General Cleaning':
+					user  = user.filter(is_general_skill=True)
+				elif service_type == 'Deep Cleaning':
+					user  = user.filter(is_deep_skill=True)
+				elif service_type == 'Upholstery Cleaning':
+					user  = user.filter(is_upholstery_skill=True)
+				elif service_type == 'Kitchen Cleaning':
+					user  = user.filter(is_kitchen_skill=True)
+				elif service_type == 'Kitchen Appliances':
+					user  = user.filter(is_kitchen_skill=True)
+				elif service_type == 'Carpet Cleaning':
+					user  = user.filter(is_carpet_skill=True)
+				elif service_type == 'Sterilization':
+					user  = user.filter(is_sterilization_skill=True)
+				elif service_type == 'Mattress Cleaning':
+					user  = user.filter(is_mattress_skill=True)
+				elif service_type == 'Facade Cleaning':
+					user  = user.filter(is_facade_skill=True)
+				elif service_type == 'Storage Area':
+					user  = user.filter(is_storagearea_skill=True)
+				elif service_type == 'Car Parking Umbrella':
+					user = user.filter(is_carparkingumbrella_skill=True)
+				elif service_type == 'Window Cleaning':
+					user  = user.filter(is_window_skill=True)
+				elif service_type == 'Outdoor Cleaning':
+					user  = user.filter(is_outdoor_skill=True)
 
-			response_dict['success']    = True
+
+			#absent/shift/supershift cleaners
+			absent_cleaner         = LeaveSchedule.objects.select_related('staff').filter(staff__id=member_id).filter(Q(Q(leave_date=destination_date1)|Q(leave_date=destination_date2)))
+			shift_cleaners         = ShiftSchedule.objects.select_related('staff').filter(staff__id=member_id).filter(Q(Q(shift_date=destination_date1)|Q(shift_date=destination_date2)|Q(Q(shift3_start_at__lte=destinationcleaning_datetime_end)&Q(shift3_end_at__gte=destinationcleaning_datetime_end)))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=destinationcleaning_datetime_start.time())&Q(shift1_end_at__gte=destinationcleaning_datetime_start.time()))&Q(Q(shift1_start_at__lte=destinationcleaning_datetime_end.time())&Q(shift1_end_at__gte=destinationcleaning_datetime_end.time()))) | Q(Q(Q(shift2_start_at__lte=destinationcleaning_datetime_start.time())&Q(shift2_end_at__gte=destinationcleaning_datetime_start.time()))&Q(Q(shift2_start_at__lte=destinationcleaning_datetime_end.time())&Q(shift2_end_at__gte=destinationcleaning_datetime_end.time()))) | Q(Q(Q(shift3_start_at__lte=destinationcleaning_datetime_start)&Q(shift3_end_at__gte=destinationcleaning_datetime_start))&Q(Q(shift3_start_at__lte=destinationcleaning_datetime_end)&Q(shift3_end_at__gte=destinationcleaning_datetime_end))) )
+			super_shift_cleaners   = UserProfile.objects.filter(id=member_id).filter( Q(Q(universal_shift_start__lte=destinationdestinationcleaning_datetime_start.time())&Q(universal_shift_end__gte=destinationdestinationcleaning_datetime_start.time()))&Q(Q(universal_shift_start__lte=destinationdestinationcleaning_datetime_end.time())&Q(universal_shift_end__gte=destinationdestinationcleaning_datetime_end.time())) )
+			active_cleaners1 	   = CleaningTeamMember.objects.select_related('member').filter(id=member_id).filter(Q(Q(Q(start_at__gte=destinationcleaning_datetime_start)&Q(start_at__lt=destinationcleaning_datetime_end))|Q(Q(end_at__gt=destinationcleaning_datetime_start)&Q(end_at__lte=destinationcleaning_datetime_end))|Q(Q(start_at__lte=destinationcleaning_datetime_start)&Q(end_at__gte=destinationcleaning_datetime_start)&Q(start_at__lte=destinationcleaning_datetime_end)&Q(end_at__gte=destinationcleaning_datetime_end))|Q(Q(start_at__gte=destinationcleaning_datetime_start)&Q(end_at__gte=destinationcleaning_datetime_start)&Q(start_at__lte=destinationcleaning_datetime_end)&Q(end_at__lte=destinationcleaning_datetime_end)))).exclude(team__id__in=current_teams)
+			active_cleaners2 	   = FollowUpTeamMember.objects.select_related('member').filter(id=member_id).filter(Q(Q(Q(start_at__gte=destinationcleaning_datetime_start)&Q(start_at__lt=destinationcleaning_datetime_end))|Q(Q(end_at__gt=destinationcleaning_datetime_start)&Q(end_at__lte=destinationcleaning_datetime_end))|Q(Q(start_at__lte=destinationcleaning_datetime_start)&Q(end_at__gte=destinationcleaning_datetime_start)&Q(start_at__lte=destinationcleaning_datetime_end)&Q(end_at__gte=destinationcleaning_datetime_end))|Q(Q(start_at__gte=destinationcleaning_datetime_start)&Q(end_at__gte=destinationcleaning_datetime_start)&Q(start_at__lte=destinationcleaning_datetime_end)&Q(end_at__lte=destinationcleaning_datetime_end))))	
+
+			if (not absent_cleaner and not active_cleaners1	and not active_cleaners2) and (shift_cleaners or super_shift_cleaners) and user:
+				response_dict['availability']    = True
+
+			if response_dict['availability']    == False:
+				break
+
+
+		if response_dict['availability']    == True:
+			for swapping_detail in swapping_details:
+				member_id            			  = swapping_detail['member_id']
+				current_team_id        			  = swapping_detail['current_team_id']
+				destination_team_id    			  = swapping_detail['destination_team_id']
+
+				current_team                      = CleaningTeam.objects.select_related('order_scheduler__order__evaluation').get(id=current_team_id)
+				current_teams                     = CleaningTeam.objects.select_related('order_scheduler__order').filter(order_scheduler__order=current_team.order_scheduler.order,order_scheduler__start_at=currentcleaning_datetime_start,order_scheduler__end_at=currentcleaning_datetime_end).values_list('id',flat=True)
+				destination_team                  = CleaningTeam.objects.select_related('order_scheduler__order__evaluation').get(id=destination_team_id)
+				destination_teams                 = CleaningTeam.objects.select_related('order_scheduler__order','order_scheduler__order_scheduler_book__service_type').filter(order_scheduler__order=destination_team.order_scheduler.order,order_scheduler__start_at=destinationcleaning_datetime_start,order_scheduler__end_at=destinationcleaning_datetime_end)
+			
+				user             = UserProfile.objects.filter(id=member_id)
+				
+				#delete from current team
+				for current_team in current_teams:
+					CleaningTeamMember.objects.filter(team=current_team,member=user).delete()
+
+				#add to destination team		
+				for destination_team in destination_teams:
+					CleaningTeamMember.objects.create(team=destination_team,member=user,start_at=destination_team.start_at,end_at=destination_team.end_at,start_time=destination_team.start_time,end_time=destination_team.end_time)
+
+			response_dict['success'] = True
 
 		return Response(response_dict,HTTP_200_OK)
 
