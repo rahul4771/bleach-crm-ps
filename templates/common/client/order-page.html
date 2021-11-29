@@ -332,7 +332,7 @@
                        <div class="d-flex mt-10">
                            <div>
 
-                               <select placeholder="Start Date" class="team-select" v-model="backup_team_data.cleaning_date_start">
+                               <select placeholder="Start Date" class="team-select" v-model="backup_team_data.cleaning_date_start" @change="getTeamMembers()">
                                    <option v-for="(item,index) in getStartDates()" v-bind:key="index">
                                       <% item %>
                                    </option>
@@ -340,7 +340,7 @@
 
                            </div>
                            <div>
-                            <select placeholder="Start Time" class="ml-10 team-select" v-model="backup_team_data.cleaning_time_start">
+                            <select placeholder="Start Time" class="ml-10 team-select" v-model="backup_team_data.cleaning_time_start" @change="getTeamMembers()">
                                 <option v-for="(item,index) in getStartTime()" v-bind:key="index">
                                     <% item %>
                                  </option>
@@ -363,7 +363,7 @@
  
                             </div>
                             <div>
-                             <select placeholder="Start Time" class="ml-10 team-select" v-model="backup_team_data.cleaning_time_end">
+                             <select placeholder="Start Time" class="ml-10 team-select" v-model="backup_team_data.cleaning_time_end" @change="getTeamMembers()">
                                 <option v-for="(item,index) in getEndTime()" v-bind:key="index">
                                     <% item %>
                                  </option>
@@ -439,7 +439,7 @@
                        <div class="d-flex mt-10">
                            <div>
 
-                               <select placeholder="Start Date" class="team-select" v-model="backup_team_data.cleaning_date_start">
+                               <select placeholder="Start Date" class="team-select" v-model="backup_team_data.cleaning_date_start" @change="getTeamMembers()">
                                    <option v-for="(item,index) in getStartDates()" v-bind:key="index">
                                       <% item %>
                                    </option>
@@ -447,7 +447,7 @@
 
                            </div>
                            <div>
-                            <select placeholder="Start Time" class="ml-10 team-select" v-model="backup_team_data.cleaning_time_start">
+                            <select placeholder="Start Time" class="ml-10 team-select" v-model="backup_team_data.cleaning_time_start" @change="getTeamMembers()">
                                 <option v-for="(item,index) in getStartTime()" v-bind:key="index">
                                     <% item %>
                                  </option>
@@ -470,7 +470,7 @@
  
                             </div>
                             <div>
-                             <select placeholder="Start Time" class="ml-10 team-select" v-model="backup_team_data.cleaning_time_end">
+                             <select placeholder="Start Time" class="ml-10 team-select" v-model="backup_team_data.cleaning_time_end" @change="getTeamMembers()">
                                 <option v-for="(item,index) in getEndTime()" v-bind:key="index">
                                     <% item %>
                                  </option>
