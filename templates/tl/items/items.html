@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'files/css/booking/booking.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="{% static 'files/externalfiles/plugins/OwlCarousel2/dist/assets/owl.carousel.css' %}" rel="stylesheet">
+
+    <div class="wrapper" id="app"><!--wrapper-->
+        {% include "tl/common/header.html" %}
+
+            
+    <section class="content"><!--content-->
+        <div class="container-fluid space topspace"><!--container-fluid space-->
+            <div class="welcome-wrapper"><!--welcome-wrapper-->
+                <h1 class="dashboard-head">Item With Me </h1>
+              
+            </div><!--welcome-wrapper-->
+            <div class="main-content-holder"><!--main-content-holder-->            
+                <div class="white-wrapper"><!--white-wrapper-->
+                    <div class="item-with av-font">
+                        Item With Me
+                    </div>
+                    <div class="mt-20">
+                        <div class="mt-30">
+                            <table class="inv-table footable" style="border-top:1px solid #c4c4c4"> 
+                                <thead>
+                                <tr>
+                                    <th style="width: %;">
+                                      
+                                    </th>
+                                    <th data-hide="phone,tablet"  class="text-left">
+                                        Item
+                                    </th>
+                                    <th data-hide="phone,tablet"  class="text-left">
+                                        Item Code
+                                    </th>
+                                    <th data-hide="phone,tablet"  class="text-left">
+                                        Serial number
+                                    </th>
+                                    <th data-hide="phone,tablet"  class="text-center">
+                                        Category
+                                    </th>
+                                    <th data-hide="phone,tablet"  class="text-left">
+                                        Unit
+                                    </th>
+                                    <th>
+                                        Status
+                                    </th>
+                                    <th data-hide="phone,tablet"  class="text-left">
+                                        Count down
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                           
+                                <tr>
+                                   <td>
+                                    <label style="padding-left: 0px !important;" class="c-container">
+                                        <input type="checkbox">
+                                        <span style="top:-4px !important;" class="c-checkmark"></span>
+                                    </label>
+                                   </td>
+                                   
+                                    <td class="text-left">
+                                        00000
+                                    </td>
+                                    <td class="text-left">
+                                       000000
+                                    </td>
+                                    <td class="text-left">
+                                       00000
+                                    </td>
+                                    <td class="text-center"> 
+                                        cat
+                                    </td>
+                                    <td class="text-left">
+                                        1
+                                     </td>
+                                    <td>
+                                      
+                                        <span class="inv-dot c-active ml-5"></span>Pending
+                                      
+                                    </td>
+                                    <td class="text-left">
+                                        5 days
+                                    </td>
+                                    
+                                </tr>
+                                <tr>
+                                    <td>
+                                     <label style="padding-left: 0px !important;" class="c-container">
+                                         <input type="checkbox">
+                                         <span style="top:-4px !important;" class="c-checkmark"></span>
+                                     </label>
+                                    </td>
+                                    
+                                     <td class="text-left">
+                                         00000
+                                     </td>
+                                     <td class="text-left">
+                                        000000
+                                     </td>
+                                     <td class="text-left">
+                                        00000
+                                     </td>
+                                     <td class="text-center"> 
+                                         cat
+                                     </td>
+                                     <td class="text-left">
+                                         1
+                                      </td>
+                                     <td>
+                                       
+                                         <span class="inv-dot c-inv-red ml-5"></span>Not returned
+                                       
+                                     </td>
+                                     <td class="text-left">
+                                         5 days
+                                     </td>
+                                     
+                                 </tr>
+                              
+                            </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="d-flex mt-30" style="align-items: center;
+                    justify-content: center;">  <button class="sent-button" type="submit">Return</button>
+                
+                                
+                   
+                </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+    </div>
+
+
+{% endblock %}

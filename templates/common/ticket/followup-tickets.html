@@ -298,19 +298,19 @@
                                          <div class="col-md-7" id="actionlist">
 
                                             {% if followup_details.follow_up_schedules %}
-                                                <div class="tk-mt-30 tk-secondary-text"> <i class="fa fa-lg fa-check-circle green-text" aria-hidden="true"></i> <b>FollowUp cleaning</b> - {% for schedule in followup_details.follow_up_schedules %}{% if forloop.first %}<span class="blue-text">{{schedule.created}}</span>{% endif %}{% endfor %}</div>
+                                                <div class="tk-mt-30 tk-secondary-text action_item"> <i class="fa fa-lg fa-check-circle green-text" aria-hidden="true"></i> <b>FollowUp cleaning</b> - {% for schedule in followup_details.follow_up_schedules %}{% if forloop.first %}<span class="blue-text">{{schedule.created}}</span>{% endif %}{% endfor %}</div>
                                             {% endif %}
 
                                             {% if followup_details.investigation.reports %}
-                                             <div class=" tk-secondary-text"> <i class="fa fa-lg fa-check-circle green-text" aria-hidden="true"></i> <b>Internal Report</b> - {% for report in followup_details.investigation.reports %}<span class="blue-text">{{report.created}}</span>{% endfor %}</div>
+                                             <div class=" tk-secondary-text action_item"> <i class="fa fa-lg fa-check-circle green-text" aria-hidden="true"></i> <b>Internal Report</b> - {% for report in followup_details.investigation.reports %}<span class="blue-text">{{report.created}}</span>{% endfor %}</div>
                                             {% endif %}
 
                                             {% if followup_details.investigation.paybackdiscounts %}
-                                             <div class=" tk-secondary-text"> {% if followup_details.investigation.is_paybackdiscount_approved == True  %}<i class="fa fa-lg fa-check-circle green-text" aria-hidden="true"></i>{% else %}<i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i>{% endif %} <b>Payback / Discount</b> - {% for payback in followup_details.investigation.paybackdiscounts %}<span class="blue-text">{{payback.created}}</span>{% endfor %}</div>
+                                             <div class=" tk-secondary-text action_item"> {% if followup_details.investigation.is_paybackdiscount_approved == True  %}<i class="fa fa-lg fa-check-circle green-text" aria-hidden="true"></i>{% else %}<i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i>{% endif %} <b>Payback / Discount</b> - {% for payback in followup_details.investigation.paybackdiscounts %}<span class="blue-text">{{payback.created}}</span>{% endfor %}</div>
                                             {% endif %}
 
                                             {% if followup_details.investigation.buybackpromogifts %}
-                                             <div class=" tk-secondary-text"> {% if followup_details.investigation.is_buybackgiftpromo_approved == True %}<i class="fa fa-lg fa-check-circle green-text" aria-hidden="true"></i>{% else %}<i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i>{% endif %} <b>Buyback / Promocode / Gift</b> - {% for payback in followup_details.investigation.paybackdiscounts %}<span class="blue-text">{{payback.created}}</span>{% endfor %}</div>
+                                             <div class=" tk-secondary-text action_item"> {% if followup_details.investigation.is_buybackgiftpromo_approved == True %}<i class="fa fa-lg fa-check-circle green-text" aria-hidden="true"></i>{% else %}<i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i>{% endif %} <b>Buyback / Promocode / Gift</b> - {% for payback in followup_details.investigation.paybackdiscounts %}<span class="blue-text">{{payback.created}}</span>{% endfor %}</div>
                                             {% endif %}
                                          </div>
                                         
@@ -762,7 +762,7 @@
                         {% else %}
                         <div class="col-md-8 tk-mt-30 ticket-close">
                             <div class="d-flex">
-                                <i class="fas fa-check-circle tk-timeline-icon-yellow"><span class="timeline-head">Waiting to be closed</span></i>
+                                <i class="fas fa-check-circle tk-timeline-icon-yellow"><span class="timeline-head ticket_waiting">Waiting to be closed</span></i>
                             </div>
                         </div>
                         {% endif %}
@@ -941,12 +941,19 @@ function onClose() {
 
     var action_count = $('.ticket-item').length ;
     var completed_action_count = $('#ticket-timeline').find('.tk-timeline-icon').length ;
+    var action_items = $('div.action_items').length;
+
+    console.log(action_items,action_count,completed_action_count,"mop")
 
     if (action_count == completed_action_count){
         $('.ticket-close').show();
     }else{
         $('.ticket-close').hide();
     };
+
+    if (action_items == 0){
+        $('.ticket_waiting').text('Pending')
+    }
 
     console.log(action_count,completed_action_count,"countt")
  
