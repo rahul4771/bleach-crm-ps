@@ -5429,25 +5429,27 @@ class AddDeleteService(APIView):
 
 
 			#Emptying and Cost Updation
-			EvaluationBook.objects.filter(evaluation_details=evaluation_details).delete()
+			service_delete_status = request.data.get('seperate')
+			if service_delete_status:
+				EvaluationBook.objects.filter(evaluation_details=evaluation_details).delete()
 
-			evaluation.total_cost            -= evaluation_details.total_cost+evaluation.credit_amount+evaluation.discount-evaluation.additional_charge
-			evaluation.estimated_cost        -= evaluation_details.estimated_cost
-			evaluation.customer.credit_amount = evaluation.credit_amount
-			order.total_amount        		 -= evaluation_details.total_cost+evaluation.credit_amount+evaluation.discount-evaluation.additional_charge
-			order.remining_amount    		 -= evaluation_details.total_cost+evaluation.credit_amount+evaluation.discount-evaluation.additional_charge
+				evaluation.total_cost            -= evaluation_details.total_cost+evaluation.credit_amount+evaluation.discount-evaluation.additional_charge
+				evaluation.estimated_cost        -= evaluation_details.estimated_cost
+				evaluation.customer.credit_amount = evaluation.credit_amount
+				order.total_amount        		 -= evaluation_details.total_cost+evaluation.credit_amount+evaluation.discount-evaluation.additional_charge
+				order.remining_amount    		 -= evaluation_details.total_cost+evaluation.credit_amount+evaluation.discount-evaluation.additional_charge
 			
-			evaluation.discount               = 0
-			evaluation.additional_charge	  = 0
-			evaluation.credit_amount          = 0
+				evaluation.discount               = 0
+				evaluation.additional_charge	  = 0
+				evaluation.credit_amount          = 0
 			
-			evaluation.customer.save()
-			evaluation.save()
-			order.save()
+				evaluation.customer.save()
+				evaluation.save()
+				order.save()
 			
-			evaluation_details.total_cost     = 0
-			evaluation_details.estimated_cost = 0			
-			evaluation_details.save()
+				evaluation_details.total_cost     = 0
+				evaluation_details.estimated_cost = 0			
+				evaluation_details.save()
 
 			#Evaluation cost updation
 			evaluation.total_cost     += request.data.get('total_cost')
