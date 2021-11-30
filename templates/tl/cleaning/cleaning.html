@@ -596,7 +596,13 @@
  </div><!--commnDiv-border--> 
 <br>
 {% comment %} <div>
-  <button class="sent-button"  onclick="openNavAddStore()">Collect Items</button>
+  {% if cleaning_team_detail.order_scheduler.items_collected == False %}
+  <button class="sent-button collect_item" type="button"  onclick="openNavAddStore()">Collect Items</button>
+  {% else %}
+  <button class="sent-button item_collected" type="button" >Items Collected</button>
+  {% endif %}
+
+  <button class="sent-button item_collected" type="button" hidden>Items Collected</button>
 </div> {% endcomment %}
     <br><br>
 
@@ -746,7 +752,7 @@
         <div class="inv-sidedrawer-inner">
             <div class="d-flex">
                 <div class="inv-drawer-head" id="itemHead">
-                    Name
+                    Items
                 </div>
                 <div class="right-pos">
 
@@ -763,7 +769,7 @@
                         <tr>
                             <th></th>
                             <th style="width: %;">
-                                Name
+                                Item Name
                             </th>
                             
                             <th style="width: %;">
@@ -775,7 +781,7 @@
                             <tr>
                                 <td>
                                     <label style="padding-left: 0px !important;" class="c-container">
-                                        <input type="checkbox">
+                                        <input type="checkbox" class="item_check" data-itemid="{{item.id}}">
                                         <span style="top:-4px !important;" class="c-checkmark"></span>
                                     </label>
                                 </td>
@@ -808,7 +814,7 @@
 
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button">Submit </button>
+            <button class="sent-button" onclick="checkeditems()">Submit </button>
             <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
         </div>
     </div>
@@ -1001,6 +1007,38 @@ $(".keynote").change(function(){
 
 
 })
+
+
+//collect items for cleaning
+async function checkeditems(){
+  item_ids = []
+
+  $('.item_check').each(function(index, obj){
+    if ($(this).is(":checked")){
+      console.log($(this).data('itemid'),"idee")
+      item_ids.push($(this).data('itemid'))
+    }
+  })
+
+  console.log(item_ids,"its")
+
+  var formDetails={
+            "item_ids" : item_ids,
+            "visit_id" : "{{cleaning_team_detail.order_scheduler.id}}",
+            "user_id"  : "{{request.user.id}}"
+          }
+
+  axios.post(url+'/api/items-collect/',formDetails)
+              .then(function (response) {
+                  
+                  closeNavAddStore()
+                  $('.collect_item').hide()
+                  $('.item_collected').show()
+
+              })
+
+
+}
 
 function openNavAddStore() {
 
