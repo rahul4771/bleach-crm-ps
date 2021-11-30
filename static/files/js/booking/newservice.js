@@ -3757,8 +3757,8 @@ $(document).ready(function(){
          });
     },
     uploadImages(){
-      const urlSearchParams = new URLSearchParams(window.location.search);
-      const params = Object.fromEntries(urlSearchParams.entries());
+      // const urlSearchParams = new URLSearchParams(window.location.search);
+      // const params = Object.fromEntries(urlSearchParams.entries());
      for(var i=0;i<this.multiServiceImages.length;i++){
       this.submit_loader=true
        var image=new FormData()
