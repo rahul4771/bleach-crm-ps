@@ -5602,13 +5602,13 @@ $(document).ready(function(){
               //To find addons man hour 
               var addon_manhour=0
               for(var ao=0;ao<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;ao++){
-                  for(var addon=0;addon<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons.length;addon++){
-                    if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].selected){
-                      if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].details.category){
-                        addon_manhour=addon_manhour+(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].quantity*(parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].selected_size.max_size)/this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].details.productivity))
+                  for(var addon=0;addon<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addonsections.length;addon++){
+                    if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addonsections[addon].selected){
+                      if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addonsections[addon].details.category){
+                        addon_manhour=addon_manhour+(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addonsections[addon].quantity*(parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addonsections[addon].selected_size.max_size)/this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addonsections[addon].details.productivity))
                       }
                       else{
-                      addon_manhour=addon_manhour+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].details.productivity*this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].quantity
+                      addon_manhour=addon_manhour+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addonsections[addon].details.productivity*this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addonsections[addon].quantity
                       }
                     }
                   }
@@ -5620,13 +5620,13 @@ $(document).ready(function(){
           else if(selected_service =='Kitchen Appliances'){
             var addon_manhour=0
             for(var ao=0;ao<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill.length;ao++){
-              for(var addon=0;addon<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons.length;addon++){
-                if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].selected){
-                  if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].details.category){
-                    addon_manhour=addon_manhour+(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].quantity*(parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].selected_size.max_size)/this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].details.productivity))
+              for(var addon=0;addon<this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addonsections.length;addon++){
+                if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addonsections[addon].selected){
+                  if(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addonsections[addon].details.category){
+                    addon_manhour=addon_manhour+(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addonsections[addon].quantity*(parseInt(this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addonsections[addon].selected_size.max_size)/this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addonsections[addon].details.productivity))
                   }
                   else{
-                  addon_manhour=addon_manhour+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].details.productivity*this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addons[addon].quantity
+                  addon_manhour=addon_manhour+this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addonsections[addon].details.productivity*this.multiServicesBill[this.schedule_serviceTypes_selected[k]].bill[ao].section.addonsections[addon].quantity
                   }
                 }
               }

@@ -336,6 +336,22 @@ const app=  new Vue({
         this.getBLC()
       },
       methods:{
+        changedSwap(current_team_id){
+       //   console.log("team id is"+current_team_id)
+        },
+        checkEnd(evt) {
+          // HERE I AM GETTNG newDraggableIndex, newIndex, oldDraggableIndex, oldIndex
+          // BUT I NEED PID AND SID ALSO
+          // console.log("end event is"+JSON.stringify(evt.draggedContext.element));
+    },
+        checkMove: function(evt){
+         console.log("event is "+JSON.stringify(evt.draggedContext.element))
+       console.log("target is"+JSON.stringify(evt.relatedContext.list))
+       var selected_member=evt.draggedContext.element
+       var target_array=evt.relatedContext.list
+       this.checkSwapAvailability(selected_member.member.id,selected_member.team_id,target_array[0].team_id)
+       
+      },
         findBackupCleaners(teams){
           var backups=teams.filter(team=>team.is_backup_cleaner)
           if(backups.length>0){
@@ -345,12 +361,33 @@ const app=  new Vue({
             return false
           }
         },
+        checkSwapAvailability(member_id,current_team_id,destination_team_id){
+          axios.post(this.url+'/api/team/swapcheck/',{
+              member_id:member_id,
+              current_team_id:current_team_id,
+              destination_team_id:destination_team_id
+
+
+          }).then(response=>{
+            
+          }).catch(err=>{
+    
+          })
+        },
         getBLC(){
           axios.get(this.url+'/api/team/search/?cleaning_date='+this.cleaningDate+'&blc_no='+this.blc_no).then(response=>{
             this.swap_options=response.data.teams
+            this.appendTeamid()
           }).catch(err=>{
 
           })
+        },
+        appendTeamid(){
+          for(var i=0;i<this.swap_options.length;i++){
+           for(var j=0;j<this.swap_options[i].team_details.cleaning_member_team.length;j++){
+            this.swap_options[i].team_details.cleaning_member_team[j]['team_id']=this.swap_options[i].team_details.id
+           }
+          }
         },
         add: function() {
           this.list.push({ name: "Juan" });
@@ -363,8 +400,9 @@ const app=  new Vue({
             name: el.name + " cloned"
           };
         },
-        log: function(evt) {
-          window.console.log(evt);
+        swapLog() {
+          console.log("event happended")
+         // window.console.log(evt);
         },
         calChecker(date){
           
@@ -531,7 +569,7 @@ const app=  new Vue({
             
           },
           async getSlots(){
-            this.getBLC()
+            
             this.cal_loader=true
            // console.log($('#cl_cleaning_calendar').val())
            $('.owl-item').css('height','auto')
@@ -642,6 +680,7 @@ const app=  new Vue({
                 this.cal_loader=false
                 
               })
+              this.getBLC()
           },
           getSlotDetails(slot){
             var prevSlot=parseInt(slot)-1
