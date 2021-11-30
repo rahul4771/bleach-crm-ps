@@ -344,11 +344,13 @@ function load_cleaning_team(visitcount,scheduleid,bookid){
                           if(response.data.backup_start_at)
                           {
                             $('#id_backup_startat_'+bookid).text(response.data.backup_start_at);
+                            $('.backupteam_main').show();
                             $('#id_backupadd_'+bookid).hide();
                           }
                           else
                           {
                             $('#id_backup_startat_'+bookid).text('');
+                            $('.backupteam_main').hide();
                             $('#id_backupadd_'+bookid).show();
                           }
 
@@ -398,11 +400,13 @@ function load_cleaning_team(visitcount,scheduleid,bookid){
                           if(response.data.backup_start_at)
                           {
                             $('#id_backup_startat_'+bookid).text(response.data.backup_start_at);
+                            $('.backupteam_main').show();
                             $('#id_backupadd_'+bookid).hide();
                           }
                           else
                           {
                             $('#id_backup_startat_'+bookid).text('');
+                            $('.backupteam_main').hide();
                             $('#id_backupadd_'+bookid).show();
                           }
 
@@ -449,11 +453,13 @@ function load_cleaning_team(visitcount,scheduleid,bookid){
                         if(response.data.backup_start_at)
                         {
                           $('#id_backup_startat_'+bookid).text(response.data.backup_start_at);
+                          $('.backupteam_main').show();
                           $('#id_backupadd_'+bookid).hide();
                         }
                         else
                         {
                           $('#id_backup_startat_'+bookid).text('');
+                          $('.backupteam_main').hide();
                           $('#id_backupadd_'+bookid).show();
                         }
 
@@ -889,6 +895,7 @@ const app = new Vue({
             //url:'http://127.0.0.1:8000'
   },
   methods:{
+    
     openAddService(id){
       
       this.add_eval_id=id

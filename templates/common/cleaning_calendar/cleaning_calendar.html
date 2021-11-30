@@ -1257,7 +1257,7 @@ transition="dialog-bottom-transition"
           deletable-chips
          
           chips
-         :counter="2"
+         :counter="4"
         ></v-autocomplete>
 
 </div>
@@ -1267,7 +1267,7 @@ transition="dialog-bottom-transition"
 <div class="row">
 <div class="col-3" v-for="(cleaning,index) in selected_swap" v-bind:key="index">
 <h3><%cleaning.blc%></h3>
-<draggable class="list-group" :list="cleaning.team_details.cleaning_member_team" group="people" @change="log">
+<draggable class="list-group" :list="cleaning.team_details.cleaning_member_team" group="people" @change="swapLog()" :move="checkMove"  @end="checkEnd">
   <div
     class="list-group-item"
     v-for="(member, mindex) in cleaning.team_details.cleaning_member_team"
@@ -1467,9 +1467,12 @@ transition="dialog-bottom-transition"
               </span>
             </div>
             <div v-else class="cl-highlight cl-modal-text-title "> Not Assigned </div>
-            <div class="cl-modal-text-content cl-mt-20">
+            <div v-if="currentSlotDetails.cleaning_team_order_scheduler[0]">
+            <div v-if="findBackupCleaners(currentSlotDetails.cleaning_team_order_scheduler[0].cleaning_member_team)" class="cl-modal-text-content cl-mt-20">
               Backup Team 
             </div>
+          </div>
+            
             <div class="cl-modal-text-title  " v-if="currentSlotDetails.cleaning_team_order_scheduler[0]">
               <span v-for="(team,tindex) in currentSlotDetails.cleaning_team_order_scheduler[0].cleaning_member_team">
                 <span v-if="team.is_backup_cleaner"> <% team.member.name %>

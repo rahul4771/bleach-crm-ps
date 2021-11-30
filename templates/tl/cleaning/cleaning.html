@@ -119,21 +119,25 @@
 
 <br>
 <div class="common-gray-text align-left"><strong>{{cleaning_team_detail.team_leader.name}} (Cleaning Agent)</strong></div><br>
+
+{% if cleaning_team_detail.backup_start_at %}
 <div class="narrow-head align-left">Backup Cleaners</div>
 {% for backupcleaner in cleaning_team_members %}
 {% if backupcleaner.is_backup_cleaner %}
 <div class="common-gray-text align-left"><strong>{{backupcleaner.member.name}}</strong></div>
 {% endif %}
 {% endfor %}
+
 {% if not cleaning_team_detail.backup_check_in %}
 <button class="sent-button send-btn2 mt-4 mb-4 mx-auto" @click="checkinBackup(`{{cleaning_team_detail.id}}`)" id="checkin-backup-btn">Check-In Backup Cleaners</button>
-
 {% else %}
 <div>
   <div style="font-size: 12px;color: #255cad;margin-top:10px;">Check-In Time</div>
   <div>{{ cleaning_team_detail.backup_check_in | date:'h:i a' }}</div>
 </div>
 {% endif %}
+{% endif %}
+
 <!-- Backup Cleaners modal begins here-->
 <div class="modal fade" id="backupCleanersModal" role="dialog">
   <div style="border: none !important;" class="modal-dialog cancel-model cancel-order-border" role="document">
