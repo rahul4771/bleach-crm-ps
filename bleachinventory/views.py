@@ -22,7 +22,28 @@ class InventoryHome(IsInventoryAdmin,View):
         purchase_items = items.filter(Q(item_status='out_of_stock') | Q(item_status='about_to_finish')).prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.all(),to_attr='units'))
         orders = OrderScheduler.objects.filter(start_at__date=date.today()).filter(Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS')|Q(work_status='CLEANING_FULFILLED')).prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
         
-        return render(request,'inventory/home.html',{"recent_items":recent_items,"purchase_items":purchase_items,"orders":orders})
+        return_items_users = CheckOutItems.objects.filter(is_returned=True,is_checked_in=False).values_list('is_collected_by',flat=True).distinct().annotate(total_items=Sum('units'))
+        
+        return_items_list = []
+
+        for item_user in return_items_users:
+            print(item_user,"mol")
+            total_units = 0
+            return_items = CheckOutItems.objects.filter(is_returned=True,is_checked_in=False,is_collected_by=int(item_user))
+            for item in return_items:
+                item_user_name = item.is_collected_by.name
+                total_units += int(item.units)
+
+            return_item_dict = {
+                "item_user_id" : item_user,
+                "item_user_name" : item_user_name,
+                "total_units" : total_units
+            }
+
+            return_items_list.append(return_item_dict)
+
+        print(return_items_list,"mok")
+        return render(request,'inventory/home.html',{"return_items":return_items_list,"recent_items":recent_items,"purchase_items":purchase_items,"orders":orders})
 
 # Category.
 class InventoryCategory(IsInventoryAdmin,View):

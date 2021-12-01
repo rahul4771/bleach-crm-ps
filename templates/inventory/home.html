@@ -384,77 +384,25 @@
                         </div>
                         <div class="mt-10">
                            
+                            {% for item in return_items %}
                             <div class="row inv-card2 ml-0 mb-10">
                                 <div class="col-xs-6 av-font p-10">
-                                    <span style="font-size: 16px;" >Name</span>
+                                    <span style="font-size: 16px;" >{{item.item_user_name}}</span>
                                     <div  style="font-size: 16px;" class="mt-10">
-                                        5 Items
+                                        {{item.total_units}} Items
                                     </div>
 
                                 </div>
                                 <div class="col-xs-6 inv-green inv-card2-time p-10">
                                     <div class="inv-left">
-                                        <button onclick="openNavAddStore()" class="btn-shadow inv-plan-img-btn2 mt-20 btn-p"> <img class="btn-img2"
+                                        <button onclick="openNavAddStore({{item.item_user_id}})" class="btn-shadow inv-plan-img-btn2 mt-20 btn-p"> <img class="btn-img2"
                                                 src="{% static 'files/inventory/icons/icon3.png' %}" alt=""> Check-in
                                         </button>
                                     </div>
 
                                 </div>
                             </div>
-
-                            <div class="row inv-card2 ml-0 mb-10">
-                                <div class="col-xs-6 av-font p-10">
-                                    <span style="font-size: 16px;" >Name</span>
-                                    <div  style="font-size: 16px;" class="mt-10">
-                                        5 Items
-                                    </div>
-
-                                </div>
-                                <div class="col-xs-6 inv-green inv-card2-time p-10">
-                                    <div class="inv-left">
-                                        <button onclick="openNavAddStore()" class="btn-shadow inv-plan-img-btn2 mt-20 btn-p"> <img class="btn-img2"
-                                                src="{% static 'files/inventory/icons/icon3.png' %}" alt=""> Check-in
-                                        </button>
-                                    </div>
-
-                                </div>
-                            </div>
-
-                            <div class="row inv-card2 ml-0 mb-10">
-                                <div class="col-xs-6 av-font p-10">
-                                    <span style="font-size: 16px;" >Name</span>
-                                    <div  style="font-size: 16px;" class="mt-10">
-                                        5 Items
-                                    </div>
-
-                                </div>
-                                <div class="col-xs-6 inv-green inv-card2-time p-10">
-                                    <div class="inv-left">
-                                        <button onclick="openNavAddStore()" class="btn-shadow inv-plan-img-btn2 mt-20 btn-p"> <img class="btn-img2"
-                                                src="{% static 'files/inventory/icons/icon3.png' %}" alt=""> Check-in
-                                        </button>
-                                    </div>
-
-                                </div>
-                            </div>
-
-                            <div class="row inv-card2 ml-0 mb-10">
-                                <div class="col-xs-6 av-font p-10">
-                                    <span style="font-size: 16px;" >Name</span>
-                                    <div  style="font-size: 16px;" class="mt-10">
-                                        5 Items
-                                    </div>
-
-                                </div>
-                                <div class="col-xs-6 inv-green inv-card2-time p-10">
-                                    <div class="inv-left">
-                                        <button onclick="openNavAddStore()" class="btn-shadow inv-plan-img-btn2 mt-20 btn-p"> <img class="btn-img2"
-                                                src="{% static 'files/inventory/icons/icon3.png' %}" alt=""> Check-in
-                                        </button>
-                                    </div>
-
-                                </div>
-                            </div>
+                            {% endfor %}
                            
                         </div>
                     </div>
@@ -504,67 +452,24 @@
                                 Quantity
                             </th>
                         </tr>
-                        <tbody>
-                            <tr>
+                        <tbody id="items_container">
+                            {% comment %} <tr>
                                 <td>
                                     <label style="padding-left: 0px !important;" class="c-container">
                                         <input type="checkbox">
                                         <span style="top:-4px !important;" class="c-checkmark"></span>
                                     </label>
                                 </td>
-                                <td>
-                            
+                                <td id="id_item_name">
                                     00000
                                 </td>
-                                <td>
-                            
+                                <td id="id_item_code">
                                     00
                                 </td>
-                                <td>
-                            
+                                <td id="id_quantity">
                                     8
                                 </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label style="padding-left: 0px !important;" class="c-container">
-                                        <input type="checkbox">
-                                        <span style="top:-4px !important;" class="c-checkmark"></span>
-                                    </label>
-                                </td>
-                                <td>
-                            
-                                    00000
-                                </td>
-                                <td>
-                            
-                                    00
-                                </td>
-                                <td>
-                            
-                                    8
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label style="padding-left: 0px !important;" class="c-container">
-                                        <input type="checkbox">
-                                        <span style="top:-4px !important;" class="c-checkmark"></span>
-                                    </label>
-                                </td>
-                                <td>
-                            
-                                    00000
-                                </td>
-                                <td>
-                            
-                                    00
-                                </td>
-                                <td>
-                            
-                                    8
-                                </td>
-                            </tr>
+                            </tr> {% endcomment %}
 
                         </tbody>
                      
@@ -584,7 +489,10 @@
 
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button">Check-in</button>
+            <form method="POST" id="checkinform" action="" >{% csrf_token %}
+                <input type="hidden" name="item_ids" id="id_item_ids" >
+                <button class="sent-button" type="button" onclick="checkinsubmit()">Check-in</button>
+            </form>        
             <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
         </div>
     </div>
@@ -611,7 +519,9 @@
       }
     });
   });
-    function openNavAddStore() {
+
+
+async function openNavAddStore(item_user_id) {
 
         if (screen.width <= 600) {
             document.getElementById("addStore").style.width = "100%";
@@ -621,7 +531,21 @@
         else {
             document.getElementById("addStore").style.width = "30%";
         }
+
+        axios.get(url+'/api/items-check-in/',{params:{item_user:item_user_id}})
+              .then(function (response) {
+                  
+                  console.log(response,"resp")
+
+                  $.each(response.data.items_list,function(obj,value){
+                    $('#items_container').append('<tr><td><label style="padding-left: 0px !important;" class="c-container"><input type="checkbox"><span style="top:-4px !important;" class="c-checkmark"></span></label></td><td >'+value.item_name+'</td><td >'+value.item_code+'</td><td >'+value.quantity+'</td></tr>');
+                  })
+                  
+
+              })
     }
+
+
     function closeNavAddStore() {
         document.getElementById("addStore").style.width = "0";
     }

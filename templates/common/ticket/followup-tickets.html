@@ -297,6 +297,10 @@
                                          </div>
                                          <div class="col-md-7" id="actionlist">
 
+                                            {% if followup_details.investigation.investigator %}
+                                                <div class="tk-mt-30 tk-secondary-text action_item"> {% if followup_details.investigation.is_secondary_investigation_completed == True  %}<i class="fa fa-lg fa-check-circle green-text" aria-hidden="true"></i>{% else %}<i class="fa fa-lg fa-check-circle yellow-text" aria-hidden="true"></i>{% endif %} <b>Investigation</b> </div>
+                                            {% endif %}
+
                                             {% if followup_details.follow_up_schedules %}
                                                 <div class="tk-mt-30 tk-secondary-text action_item"> <i class="fa fa-lg fa-check-circle green-text" aria-hidden="true"></i> <b>FollowUp cleaning</b> - {% for schedule in followup_details.follow_up_schedules %}{% if forloop.first %}<span class="blue-text">{{schedule.created}}</span>{% endif %}{% endfor %}</div>
                                             {% endif %}
@@ -466,7 +470,67 @@
                         </div>
                         {% endif %}
                            <!-- Time line card4 ends here-->
+                        
+                        <!--- Timeline card 6 begins-->  
+                        {% if followup_details.investigation.investigator %}
+                        <div class="col-md-8 tk-mt-30">
+                            <div class="d-flex">
+                                {% if followup_details.investigation.is_secondary_investigation_completed == True %}
+                                <i class="fas fa-check-circle tk-timeline-icon sort_tab ticket-item"><span class="timeline-head">Investigation (<span class="green-text">Completed</span>)</span></i>
+                             
+                                <div class="tk-timeline h-100 tk-line"></div>
+                                <div class="tk-card tk-ml-30 tk-mt-20 w-100">
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                             <div class="d-flex ">
+                                                {% if followup_details.investigation.investigator.profile_image %}
+                                                    <img src="{{followup_details.investigation.investigator.profile_image.url}}" class="tk-profile "/>
+                                                {% else %}
+                                                    <img src="/static/files/images/profile-pic.png" class="tk-profile "/>
+                                                {% endif %}
+                                                 <div class="tk-ml-10 ">
+                                                    <div class="tk-title-2 tk-mt-10">{{followup_details.investigation.investigator.name}}</div>
+                                                    <div class="tk-subtitle tk-mt-5 tk-secondary-text">{{followup_details.investigation.investigator.user_type}}</div>
+                                                 {% comment %} <div class="tk-desc tk-secondary-text blue-text">
+                                                 {% for report in followup_details.investigation.reports %} {{report.created|date:'d-m-Y g:i A'}} {% endfor %} 
+                                                 </div> {% endcomment %}
+                                             </div>
+                                             </div>
+                                         </div>
+                                        
+                                         <div class="col-md-7 ">
+                                            
+                                                <div class="tk-desc tk-secondary-text"> {{followup_details.investigation.secondary_investigation_notes}}</div>
+                                            
+                                        </div>
 
+                    
+                                        {% if followup_details.investigation.secondaryinvestigationmedias %} 
+                                                
+                                            <div class="col-md-12">
+                                                <div class="tk-subtitle tk-mt-5">Media</div>
+                                                <div class="row mt-10">
+                                                    <div class="owl-carousel c-mt-10">
+                                                    {% for media in followup_details.investigation.secondaryinvestigationmedias %}
+                                                        <div style="margin-left:25px; margin-right:10px;">
+                                                            <img class="slider-img pointer" onclick="onClick(this)" src="{{media.media.url}}" alt="">
+                                                        </div>
+                                                    {% endfor %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                                    
+                                        {% endif %}
+                                        
+                                    </div>
+                                </div>
+                                {% else %}
+                                <i class="fas fa-check-circle tk-timeline-icon-yellow ticket-item"><span class="timeline-head">Investigation (<span class="yellow-text">Pending</span>)</span></i>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}  
+                         <!--- Timeline card 6 ends-->  
                         
                         <!--- Timeline card 7 begins-->  
                         {% if followup_details.investigation.reports %}
@@ -941,19 +1005,14 @@ function onClose() {
 
     var action_count = $('.ticket-item').length ;
     var completed_action_count = $('#ticket-timeline').find('.tk-timeline-icon').length ;
-    var action_items = $('div.action_items').length;
 
-    console.log(action_items,action_count,completed_action_count,"mop")
+    console.log(action_count,completed_action_count,"mop")
 
     if (action_count == completed_action_count){
         $('.ticket-close').show();
     }else{
         $('.ticket-close').hide();
     };
-
-    if (action_items == 0){
-        $('.ticket_waiting').text('Pending')
-    }
 
     console.log(action_count,completed_action_count,"countt")
  
