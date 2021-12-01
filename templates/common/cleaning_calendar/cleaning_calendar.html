@@ -36,9 +36,9 @@
     
     </div>
   <input id="user_type" value="{{request.user.user_type}}" style="display: none"/>
-  <!-- <div>
+  <div>
     <v-btn class="primary" @click="openSwap = true">Swap Cleaners</v-btn>
-  </div> -->
+  </div>
   
   
     <div class="row mt-4">
@@ -1224,6 +1224,7 @@ transition="dialog-bottom-transition"
       icon
       dark
       @click="openSwap = false"
+      class="swap-close-btn"
     >
       <v-icon>mdi-close</v-icon>
     </v-btn>
@@ -1231,13 +1232,20 @@ transition="dialog-bottom-transition"
     <v-spacer></v-spacer>
     <v-toolbar-items>
       <v-btn
+       class="save-swap-btn"
        
-        text
         @click="openSwap = false"
       >
-      <b>Save</b>  
+      <v-icon
+      medium
+      color="primary"
+      class="mr-2"
+    >
+      mdi-content-save-outline
+    </v-icon><b>Save Changes</b>  
       </v-btn>
     </v-toolbar-items>
+   
   </v-toolbar>
   <div class="container">
 <div class="row">
@@ -1264,10 +1272,29 @@ transition="dialog-bottom-transition"
 
 </div>
 <!-- Draggable begins here-->
+<v-snackbar
+      v-model="drag_availability"
+     
+      color="primary"
+    >
+      <% drag_text %>
+
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="default"
+          text
+          v-bind="attrs"
+          @click="snackbar = false"
+          class="error-box-btn"
+        >
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
 <div class="row">
 <div class="col-3" v-for="(cleaning,index) in selected_swap" v-bind:key="index">
 <h3><%cleaning.blc%></h3>
-<draggable class="list-group" :list="cleaning.team_details.cleaning_member_team" group="people" @change="swapLog()" :move="checkMove"  @end="checkEnd">
+<draggable class="list-group" :list="cleaning.team_details.cleaning_member_team" group="people" @change="swapLog()" :move="checkMove" @end="checkAvail">
   <div
     class="list-group-item"
     v-for="(member, mindex) in cleaning.team_details.cleaning_member_team"

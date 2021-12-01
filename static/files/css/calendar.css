@@ -20,6 +20,17 @@
       font-weight:500;
 
   }
+  .error-box-btn:hover{
+    color:#2C4C82 !important;
+  }
+  .swap-close-btn:hover{
+    color:#2C4C82 !important;
+  }
+  .save-swap-btn{
+      background-color: #ffffffff !important;
+      background: #ffffffff !important;
+      color:#2C4C82 !important;
+  }
   .cl-tooltip .tooltiptext::after {
     content: " ";
     position: absolute;

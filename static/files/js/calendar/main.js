@@ -288,7 +288,12 @@ const app=  new Vue({
             currentServices:[],
             followup_duration:[],
             followup_cleaners:0,
-            blc_no:''
+            blc_no:'',
+            last_member:'',
+            last_array:[],
+            drag_availability:false,
+            timeout:2000,
+            drag_text:'testing'
            
 
       },
@@ -339,17 +344,74 @@ const app=  new Vue({
         changedSwap(current_team_id){
        //   console.log("team id is"+current_team_id)
         },
-        checkEnd(evt) {
+        submitSwap(){
+
+        },
+        checkAvail(evt) {
           // HERE I AM GETTNG newDraggableIndex, newIndex, oldDraggableIndex, oldIndex
           // BUT I NEED PID AND SID ALSO
           // console.log("end event is"+JSON.stringify(evt.draggedContext.element));
+          var selected_member=this.last_member
+       var target_array=this.last_array
+          console.log("selected is "+JSON.stringify(this.selected_swap))
+          axios.post(this.url+'/api/team/swapcheck/',{
+            member_id:selected_member.member.id,
+            current_team_id:selected_member.team_id,
+            destination_team_id:target_array[0].team_id
+
+
+        }).then(response=>{
+            if(!response.data.availabilty){
+              this.drag_availability=true
+              this.drag_text=selected_member.member.name+' is not available '
+              for(var i=0;i<this.selected_swap.length;i++){
+                if(this.selected_swap[i].team_details.id==target_array[0].team_id){
+                  var index=this.selected_swap[i].team_details.cleaning_member_team.indexOf(selected_member)
+                  if(this.selected_swap[i].team_details.cleaning_member_team.includes(selected_member))
+                  {
+                    
+                  this.selected_swap[i].team_details.cleaning_member_team.splice(index,1)
+                  }
+                }
+                if(this.selected_swap[i].team_details.id==selected_member.team_id)
+                {
+                  if(!this.selected_swap[i].team_details.cleaning_member_team.includes(selected_member))
+                  {
+                 this.selected_swap[i].team_details.cleaning_member_team.push(selected_member)
+                  }
+                }
+              }
+            }
+        }).catch(err=>{
+  
+        })
     },
-        checkMove: function(evt){
+         checkMove: async function(evt){
          console.log("event is "+JSON.stringify(evt.draggedContext.element))
        console.log("target is"+JSON.stringify(evt.relatedContext.list))
+       
        var selected_member=evt.draggedContext.element
        var target_array=evt.relatedContext.list
-       this.checkSwapAvailability(selected_member.member.id,selected_member.team_id,target_array[0].team_id)
+       this.last_member=selected_member
+       this.last_array=target_array
+       //return false
+      // this.checkSwapAvailability(selected_member.member.id,selected_member.team_id,target_array[0].team_id,selected_member,target_array)
+    //   var avail=await axios.post(this.url+'/api/team/swapcheck/',{
+    //     member_id:selected_member.member.id,
+    //     current_team_id:selected_member.team_id,
+    //     destination_team_id:target_array[0].team_id
+
+
+    // }).then(response=>{
+    //   return response.data.availabilty
+       
+    // }).catch(err=>{
+
+    // })
+    
+      //return false
+    
+    
        
       },
         findBackupCleaners(teams){
@@ -361,7 +423,7 @@ const app=  new Vue({
             return false
           }
         },
-        checkSwapAvailability(member_id,current_team_id,destination_team_id){
+        checkSwapAvailability(member_id,current_team_id,destination_team_id,selected_member,target_array){
           axios.post(this.url+'/api/team/swapcheck/',{
               member_id:member_id,
               current_team_id:current_team_id,
@@ -369,7 +431,24 @@ const app=  new Vue({
 
 
           }).then(response=>{
-            
+              if(response.data.availabilty){
+                for(var i=0;i<this.selected_swap.length;i++){
+                  if(this.selected_swap[i].team_details.id==target_array[0].team_id){
+                    var index=this.selected_swap[i].team_details.cleaning_member_team.indexOf(selected_member)
+                    if(this.selected_swap[i].team_details.cleaning_member_team.includes(selected_member))
+                    {
+                    this.selected_swap[i].team_details.cleaning_member_team.splice(index,1)
+                    }
+                  }
+                  if(this.selected_swap[i].team_details.id==selected_member.team_id)
+                  {
+                    if(!this.selected_swap[i].team_details.cleaning_member_team.includes(selected_member))
+                    {
+                   this.selected_swap[i].team_details.cleaning_member_team.push(selected_member)
+                    }
+                  }
+                }
+              }
           }).catch(err=>{
     
           })
