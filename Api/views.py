@@ -12,7 +12,7 @@ from bleachadmin.models import ServicePriceRange,Settings
 from django.core.mail import send_mail,EmailMultiAlternatives
 from Api.serializers import DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, UsersListSerializer,ShiftScheduleSerializer,OccupiedMembersSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
 from agent.views import generate_random_username
-from bleachinventory.models import Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems
+from bleachinventory.models import Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,CheckOutItems
 import re
 import random
 import string
@@ -3359,4 +3359,59 @@ class ItemQuantityCheck(APIView):
 		response_dict['success'] = True
 
 		return Response(response_dict, HTTP_200_OK)
+
+class ItemCollectAPI(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+	def post(self,request):
+		response_dict            = {'success':True}
+
+		item_ids     = request.data.get('item_ids')
+		visit_id     = request.data.get('visit_id')
+
+		print(item_ids,visit_id,"mko")
+		
+		tl_user = UserProfile.objects.get(id=int(request.data.get('user_id')))
+
+		for item_id in item_ids:
+			cleaning_item = CheckOutItems.objects.get(id=item_id)
+			cleaning_item.is_collected = True
+			cleaning_item.is_collected_by = tl_user
+			cleaning_item.save()
+
+		visit = OrderScheduler.objects.get(id=visit_id)
+		visit.items_collected = True
+		visit.save()
+
+		return Response(response_dict, HTTP_200_OK)
+
+class ItemsCheckInAPI(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+	def get(self,request):
+		response_dict            = {'success':True}
+
+		item_user    = request.GET.get('item_user')
+
+		print(item_user,"lpo")
+
+		return_items = CheckOutItems.objects.filter(is_returned=True,is_checked_in=False,is_collected_by=int(item_user))
+
+		items_list = []
+
+		for item in return_items:
+			item_dict = {
+				'item_id' : item.id,
+				'item_name' : item.item.name,
+				'item_code' : item.item.item_code,
+				'quantity' : item.units
+			}
+			items_list.append(item_dict)
+
+		response_dict['items_list'] = items_list
+
+		print(return_items,"ret")
+
+		return Response(response_dict, HTTP_200_OK)
+	
 	

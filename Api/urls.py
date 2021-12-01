@@ -21,6 +21,8 @@ urlpatterns = [
 	url(r'^investigation-form/$',views.InvestigationFormAPI.as_view(),name='api-investigation-form'),
 	url(r'^agent-investigation-check/$',views.AgentInvestigationChecckAPI.as_view(),name='api-investigation-check'),
 
+	url(r'^items-collect/$',views.ItemCollectAPI.as_view(),name='api-items-collect'),
+	url(r'^items-check-in/$',views.ItemsCheckInAPI.as_view(),name='api-items-check-in'),
 	url(r'^leave-scheduler/$',views.LeaveScheduleAPI.as_view(),name='api-leaveschedule'),
 	url(r'^leave-scheduler/popup/$',views.LeaveSchedulePopupAPI.as_view(),name='api-leaveschedulepopup'),
 	url(r'^leave-scheduler-delete/(?P<leave_id>\d+)/$',views.DeleteLeaveSchedule.as_view(),name='api-leaveschedule-delete'),

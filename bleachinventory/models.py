@@ -345,6 +345,7 @@ class CheckOutItems(models.Model):
     is_checked_out       = models.BooleanField(default=False,blank=False,null=False)
     is_collected         = models.BooleanField(default=False,blank=False,null=False)
     is_collected_by      = models.ForeignKey(UserProfile,blank=True,null=True,related_name='item_collected_by')
+    is_returned          = models.BooleanField(default=False,blank=False,null=False)
     is_checked_in        = models.BooleanField(default=False,blank=False,null=False)
     check_in_user        = models.ForeignKey(UserProfile,blank=True,null=True,related_name='item_checked_in_by')
     created              = models.DateTimeField(auto_now_add=True)

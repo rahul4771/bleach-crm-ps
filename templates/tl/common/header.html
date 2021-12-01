@@ -48,6 +48,7 @@
             <br><br>
             <ul id="accordion" class="nav">
                 <li class="active lhs-home"><a href="{% url 'tl:tldash-board' %}" title="My Dashboard"><span>My Dashboard</span></a> <div></div></li>
+                {% comment %} <li class="lhs-items"><a href="{% url 'tl:tl-items' %}" title="My Items"><span>My Items</span></a> <div></div></li> {% endcomment %}
                 {% if request.user.is_team_leader %}
                 <li class="lhs-orders"><a href="{% url 'common_items:orders' %}" title="Orders"><span>Orders</span></a></li>
                 <li class="lhs-tickets"><a href="{% url 'common_items:tickets' %}" title="Tickets"><span>Tickets</span></a></li>
