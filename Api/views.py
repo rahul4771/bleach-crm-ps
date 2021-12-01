@@ -2233,7 +2233,9 @@ class TeamSwapCheckAPI(APIView):
 		active_cleaners2 	   = FollowUpTeamMember.objects.select_related('member').filter(id=member_id).filter(Q(Q(Q(start_at__gte=destinationcleaning_datetime_start)&Q(start_at__lt=destinationcleaning_datetime_end))|Q(Q(end_at__gt=destinationcleaning_datetime_start)&Q(end_at__lte=destinationcleaning_datetime_end))|Q(Q(start_at__lte=destinationcleaning_datetime_start)&Q(end_at__gte=destinationcleaning_datetime_start)&Q(start_at__lte=destinationcleaning_datetime_end)&Q(end_at__gte=destinationcleaning_datetime_end))|Q(Q(start_at__gte=destinationcleaning_datetime_start)&Q(end_at__gte=destinationcleaning_datetime_start)&Q(start_at__lte=destinationcleaning_datetime_end)&Q(end_at__lte=destinationcleaning_datetime_end))))	
 
 		if (not absent_cleaner and not active_cleaners1	and not active_cleaners2) and (shift_cleaners or super_shift_cleaners) and user:
-			response_dict['availabilty'] = True
+			response_dict['availability'] = True
+		else:
+			response_dict['availability'] = True
 		
 		response_dict['success']    = True
 
