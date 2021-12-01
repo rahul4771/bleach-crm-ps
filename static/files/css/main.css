@@ -143,6 +143,7 @@ h4{ font-size:18px; font-weight:500 !important; color:#949494 !important; paddin
 .user-typer-wrapper .column-right .user-type{ font-size:14px; line-height:16px; margin:0; padding:0; color:#666; }*/
 .card-column:hover { box-shadow: 0 10px 28px rgba(0, 0, 0, 0.15), 0 10px 10px rgba(0, 0, 0, 0.10);}
 .lhs-home{background:url(../images/lhs-home.png) no-repeat left; background-size: 30px 30px; background-position: 18px 7px; display:block; }
+.lhs-items{background:url(../images/lhs-items.png) no-repeat left; background-size: 30px 30px; background-position: 18px 7px; display:block; }
 .lhs-orders{background:url(../images/lhs-orders.png) no-repeat left; background-size: 30px 30px; background-position: 18px 7px; display:block;}
 .lhs-clients{background:url(../images/lhs-clients.png) no-repeat left; background-size: 30px 30px; background-position: 18px 7px; display:block;}
 .lhs-tickets{background:url(../images/lhs-tickets.png) no-repeat left; background-size: 30px 30px; background-position: 18px 7px; display:block;}
