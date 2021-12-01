@@ -336,6 +336,15 @@ const app=  new Vue({
         this.getBLC()
       },
       methods:{
+        findBackupCleaners(teams){
+          var backups=teams.filter(team=>team.is_backup_cleaner)
+          if(backups.length>0){
+            return true
+          }
+          else{
+            return false
+          }
+        },
         getBLC(){
           axios.get(this.url+'/api/team/search/?cleaning_date='+this.cleaningDate+'&blc_no='+this.blc_no).then(response=>{
             this.swap_options=response.data.teams

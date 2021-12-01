@@ -613,4 +613,22 @@ class FollowupCleaning(IsTeamLeader,View):
 
 class ItemsList(IsTeamLeader,View):
 	def get(self,request):
-		return render(request,"tl/items/items.html")
+		tl_items = CheckOutItems.objects.filter(is_collected=True,is_collected_by=request.user,is_checked_in=False,item__is_reusable=True)
+		
+		for item in tl_items:
+			item.days_since_cleaning = (timezone.now()-item.visit.end_at).days
+
+		return render(request,"tl/items/items.html",{"tl_items":tl_items})
+
+	def post(self,request):
+		item_ids = request.POST.get('item_ids')
+		item_ids = item_ids.split(",")
+		item_ids.remove('')
+		
+		for item_id in item_ids:
+			print(item_id,"idee")
+			checkout_item = CheckOutItems.objects.get(id=int(item_id))
+			checkout_item.is_returned = True
+			checkout_item.save()
+
+		return redirect('tl:tl-items')

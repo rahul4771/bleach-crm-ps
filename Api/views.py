@@ -3382,5 +3382,34 @@ class ItemCollectAPI(APIView):
 		visit.save()
 
 		return Response(response_dict, HTTP_200_OK)
+
+class ItemsCheckInAPI(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+	def get(self,request):
+		response_dict            = {'success':True}
+
+		item_user    = request.GET.get('item_user')
+
+		print(item_user,"lpo")
+
+		return_items = CheckOutItems.objects.filter(is_returned=True,is_checked_in=False,is_collected_by=int(item_user))
+
+		items_list = []
+
+		for item in return_items:
+			item_dict = {
+				'item_id' : item.id,
+				'item_name' : item.item.name,
+				'item_code' : item.item.item_code,
+				'quantity' : item.units
+			}
+			items_list.append(item_dict)
+
+		response_dict['items_list'] = items_list
+
+		print(return_items,"ret")
+
+		return Response(response_dict, HTTP_200_OK)
 	
 	
