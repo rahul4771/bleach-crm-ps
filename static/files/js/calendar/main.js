@@ -499,6 +499,16 @@ const app=  new Vue({
         getBLC(){
           axios.get(this.url+'/api/team/search/?cleaning_date='+this.cleaningDate+'&blc_no='+this.blc_no).then(response=>{
             this.swap_options=response.data.teams
+            for(var i=0;i<this.swap_options.length;i++){
+           //   var index = this.swap_options.team_details.cleaning_member_team.indexOf(this.swap_options[i].team_details.team_leader)
+             
+              for(var j=0;j<this.swap_options[i].team_details.cleaning_member_team.length;j++)
+              {
+              if(this.swap_options[i].team_details.team_leader.id==this.swap_options[i].team_details.cleaning_member_team[j].member.id){
+                this.swap_options[i].team_details.cleaning_member_team.splice(j,1)
+              }
+              }
+            }
             this.appendTeamid()
           }).catch(err=>{
 
