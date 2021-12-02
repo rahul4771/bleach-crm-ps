@@ -357,6 +357,7 @@ const app=  new Vue({
           // HERE I AM GETTNG newDraggableIndex, newIndex, oldDraggableIndex, oldIndex
           // BUT I NEED PID AND SID ALSO
           // console.log("end event is"+JSON.stringify(evt.draggedContext.element));
+          this.swap_data=[]
           var selected_member=this.last_member
        var target_array=this.last_array
        
@@ -401,6 +402,7 @@ const app=  new Vue({
                 destination_team_id:target_array[0].team_id
 
               })
+              this.saveSwap()
             }
         }).catch(err=>{
   
@@ -450,8 +452,9 @@ const app=  new Vue({
         },
         saveSwap(){
           axios.post(this.url+'/api/team/swap/',{swapping_details:this.swap_data}).then(response=>{
-           
-            this.closeSwapDialog()
+           this.getBLC()
+            // this.closeSwapDialog()
+            this.swap_data=[]
         }).catch(err=>{
 
         })
@@ -475,6 +478,13 @@ const app=  new Vue({
                   }
                   if(this.selected_swap[i].team_details.id==selected_member.team_id)
                   {
+                    // var found = false
+                    // for(var j=0;j<this.selected_swap[i].team_details.cleaning_member_team.length;j++){
+                    //   if(this.selected_swap[i].team_details.cleaning_member_team[j].member.id==member_id){
+                    //     found=true
+                    //     break
+                    //   }
+                    // }
                     if(!this.selected_swap[i].team_details.cleaning_member_team.includes(selected_member))
                     {
                    this.selected_swap[i].team_details.cleaning_member_team.push(selected_member)
