@@ -2135,7 +2135,7 @@ class TeamSerachAPI(APIView):
 		if cleaning_teams:
 			for cleaning_team in cleaning_teams:
 				cleaning_team            = CleaningTeam.objects.get(id=cleaning_team.id)
-				teams.append({'blc':cleaning_team.order_scheduler.order.order_no,'start_at':(cleaning_team.order_scheduler.start_at+timedelta(hours=3)).strftime('%d-%m-%Y %I:%M %p'),'end_at':(cleaning_team.order_scheduler.end_at+timedelta(hours=3)).strftime('%d-%m-%Y %I:%M %p'),'team_details':CleaningTeamAPISerializer(instance=cleaning_team).data,'TeamIncharge':cleaning_team.team_leader.id})
+				teams.append({'blc':cleaning_team.order_scheduler.order.order_no,'start_at':(cleaning_team.order_scheduler.start_at+timedelta(hours=3)).strftime('%d-%m-%Y %I:%M %p'),'end_at':(cleaning_team.order_scheduler.end_at+timedelta(hours=3)).strftime('%d-%m-%Y %I:%M %p'),'team_details':CleaningTeamAPISerializer(instance=cleaning_team).data})
 
 		response_dict['teams']      = teams
 		response_dict['success']    = True
@@ -2303,10 +2303,17 @@ class TeamSwapAPI(APIView):
 					#delete from current team
 					for current_team in current_teams:
 						CleaningTeamMember.objects.filter(team=current_team,member=user).delete()
-
+						current_team.order_scheduler.no_of_cleaners -= 1
+						current_team.no_of_cleaners -= 1
+						current_team.order_scheduler.save()
+						current_team.save()
 					#add to destination team		
 					for destination_team in destination_teams:
 						CleaningTeamMember.objects.create(team=destination_team,member=user,start_at=destination_team.start_at,end_at=destination_team.end_at,start_time=destination_team.start_time,end_time=destination_team.end_time)
+						destination_team.order_scheduler.no_of_cleaners += 1
+						destination_team.no_of_cleaners += 1
+						destination_team.order_scheduler.save()
+						destination_team.save()
 			else:
 				response_dict['availability']    = False
 			
