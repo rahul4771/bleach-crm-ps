@@ -2129,44 +2129,18 @@ class TeamSerachAPI(APIView):
 		blc                = request.GET.get('blc_no')
 
 
-		cleaning_teams     = CleaningTeam.objects.select_related('order_scheduler__order__evaluation').filter(Q(Q(order_scheduler__work_status='CLEANING_TEAM_ASSIGNED')&Q(Q(start_at__date=cleaning_date)|Q(start_at__date=cleaning_date)&Q(order_scheduler__order__order_no__icontains=blc)) ))
+		cleaning_teams     = CleaningTeam.objects.select_related('order_scheduler__order__evaluation','team_leader').filter(Q(Q(order_scheduler__work_status='CLEANING_TEAM_ASSIGNED')&Q(Q(start_at__date=cleaning_date)|Q(start_at__date=cleaning_date)&Q(order_scheduler__order__order_no__icontains=blc)) ))
 		
 		teams = []
 		if cleaning_teams:
 			for cleaning_team in cleaning_teams:
 				cleaning_team            = CleaningTeam.objects.get(id=cleaning_team.id)
-				teams.append({'blc':cleaning_team.order_scheduler.order.order_no,'start_at':(cleaning_team.order_scheduler.start_at+timedelta(hours=3)).strftime('%d-%m-%Y %I:%M %p'),'end_at':(cleaning_team.order_scheduler.end_at+timedelta(hours=3)).strftime('%d-%m-%Y %I:%M %p'),'team_details':CleaningTeamAPISerializer(instance=cleaning_team).data})
+				teams.append({'blc':cleaning_team.order_scheduler.order.order_no,'start_at':(cleaning_team.order_scheduler.start_at+timedelta(hours=3)).strftime('%d-%m-%Y %I:%M %p'),'end_at':(cleaning_team.order_scheduler.end_at+timedelta(hours=3)).strftime('%d-%m-%Y %I:%M %p'),'team_details':CleaningTeamAPISerializer(instance=cleaning_team).data,'TeamIncharge':cleaning_team.team_leader.id})
 
 		response_dict['teams']      = teams
 		response_dict['success']    = True
 
 		return Response(response_dict,HTTP_200_OK)
-
-
-
-class TeamSerachAPI(APIView):
-	permission_classes  	=   (AllowAny,)
-	authentication_classes  = ()
-	def get(self,request):
-		response_dict = {}
-
-		cleaning_date      = datetime.strptime(request.GET.get('cleaning_date'),'%d-%m-%Y')
-		blc                = request.GET.get('blc_no')
-
-
-		cleaning_teams     = CleaningTeam.objects.select_related('order_scheduler__order__evaluation').filter(Q(Q(order_scheduler__work_status='CLEANING_TEAM_ASSIGNED')&Q(Q(start_at__date=cleaning_date)|Q(start_at__date=cleaning_date)&Q(order_scheduler__order__order_no__icontains=blc)) ))
-		
-		teams = []
-		if cleaning_teams:
-			for cleaning_team in cleaning_teams:
-				cleaning_team            = CleaningTeam.objects.get(id=cleaning_team.id)
-				teams.append({'blc':cleaning_team.order_scheduler.order.order_no,'start_at':(cleaning_team.order_scheduler.start_at+timedelta(hours=3)).strftime('%d-%m-%Y %I:%M %p'),'end_at':(cleaning_team.order_scheduler.end_at+timedelta(hours=3)).strftime('%d-%m-%Y %I:%M %p'),'team_details':CleaningTeamAPISerializer(instance=cleaning_team).data})
-
-		response_dict['teams']      = teams
-		response_dict['success']    = True
-
-		return Response(response_dict,HTTP_200_OK)
-
 
 
 class TeamSwapCheckAPI(APIView):
@@ -2313,31 +2287,29 @@ class TeamSwapAPI(APIView):
 			if (not absent_cleaner and not active_cleaners1	and not active_cleaners2) and (shift_cleaners or super_shift_cleaners) and user:
 				response_dict['availability']    = True
 
-			if response_dict['availability']    == False:
-				break
+				#Swap
+				for swapping_detail in swapping_details:
+					member_id            			  = swapping_detail['member_id']
+					current_team_id        			  = swapping_detail['current_team_id']
+					destination_team_id    			  = swapping_detail['destination_team_id']
 
-
-		if response_dict['availability']    == True:
-			for swapping_detail in swapping_details:
-				member_id            			  = swapping_detail['member_id']
-				current_team_id        			  = swapping_detail['current_team_id']
-				destination_team_id    			  = swapping_detail['destination_team_id']
-
-				current_team                      = CleaningTeam.objects.select_related('order_scheduler__order__evaluation').get(id=current_team_id)
-				current_teams                     = CleaningTeam.objects.select_related('order_scheduler__order').filter(order_scheduler__order=current_team.order_scheduler.order,order_scheduler__start_at=currentcleaning_datetime_start,order_scheduler__end_at=currentcleaning_datetime_end).values_list('id',flat=True)
-				destination_team                  = CleaningTeam.objects.select_related('order_scheduler__order__evaluation').get(id=destination_team_id)
-				destination_teams                 = CleaningTeam.objects.select_related('order_scheduler__order','order_scheduler__order_scheduler_book__service_type').filter(order_scheduler__order=destination_team.order_scheduler.order,order_scheduler__start_at=destinationcleaning_datetime_start,order_scheduler__end_at=destinationcleaning_datetime_end)
-			
-				user             = UserProfile.objects.filter(id=member_id)
+					current_team                      = CleaningTeam.objects.select_related('order_scheduler__order__evaluation').get(id=current_team_id)
+					current_teams                     = CleaningTeam.objects.select_related('order_scheduler__order').filter(order_scheduler__order=current_team.order_scheduler.order,order_scheduler__start_at=currentcleaning_datetime_start,order_scheduler__end_at=currentcleaning_datetime_end).values_list('id',flat=True)
+					destination_team                  = CleaningTeam.objects.select_related('order_scheduler__order__evaluation').get(id=destination_team_id)
+					destination_teams                 = CleaningTeam.objects.select_related('order_scheduler__order','order_scheduler__order_scheduler_book__service_type').filter(order_scheduler__order=destination_team.order_scheduler.order,order_scheduler__start_at=destinationcleaning_datetime_start,order_scheduler__end_at=destinationcleaning_datetime_end)
 				
-				#delete from current team
-				for current_team in current_teams:
-					CleaningTeamMember.objects.filter(team=current_team,member=user).delete()
+					user                              = UserProfile.objects.filter(id=member_id)
+					
+					#delete from current team
+					for current_team in current_teams:
+						CleaningTeamMember.objects.filter(team=current_team,member=user).delete()
 
-				#add to destination team		
-				for destination_team in destination_teams:
-					CleaningTeamMember.objects.create(team=destination_team,member=user,start_at=destination_team.start_at,end_at=destination_team.end_at,start_time=destination_team.start_time,end_time=destination_team.end_time)
-
+					#add to destination team		
+					for destination_team in destination_teams:
+						CleaningTeamMember.objects.create(team=destination_team,member=user,start_at=destination_team.start_at,end_at=destination_team.end_at,start_time=destination_team.start_time,end_time=destination_team.end_time)
+			else:
+				response_dict['availability']    = False
+			
 			response_dict['success'] = True
 
 		return Response(response_dict,HTTP_200_OK)
