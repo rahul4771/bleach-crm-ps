@@ -1223,7 +1223,7 @@ transition="dialog-bottom-transition"
     <v-btn
       icon
       dark
-      @click="openSwap = false"
+      @click="closeSwapDialog()"
       class="swap-close-btn"
     >
       <v-icon>mdi-close</v-icon>
@@ -1234,7 +1234,7 @@ transition="dialog-bottom-transition"
       <v-btn
        class="save-swap-btn"
        
-        @click="openSwap = false"
+        @click="saveSwap()"
       >
       <v-icon
       medium

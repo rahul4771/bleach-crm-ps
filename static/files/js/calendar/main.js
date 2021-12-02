@@ -283,6 +283,7 @@ const app=  new Vue({
           type:''
         },
         limitdate:'15-07-2021',
+        swap_data:[],
         cleaning_duration:[],
             selected_cleaning_duration:{},
             currentServices:[],
@@ -347,12 +348,18 @@ const app=  new Vue({
         submitSwap(){
 
         },
+        findChangedCleaners(){
+          for(var i=0;i<this.selected_swap.length;i++){
+           
+          }
+        },
         checkAvail(evt) {
           // HERE I AM GETTNG newDraggableIndex, newIndex, oldDraggableIndex, oldIndex
           // BUT I NEED PID AND SID ALSO
           // console.log("end event is"+JSON.stringify(evt.draggedContext.element));
           var selected_member=this.last_member
        var target_array=this.last_array
+       
           console.log("selected is "+JSON.stringify(this.selected_swap))
           axios.post(this.url+'/api/team/swapcheck/',{
             member_id:selected_member.member.id,
@@ -361,7 +368,7 @@ const app=  new Vue({
 
 
         }).then(response=>{
-            if(!response.data.availabilty){
+            if(!response.data.availability){
               this.drag_availability=true
               this.drag_text=selected_member.member.name+' is not available '
               for(var i=0;i<this.selected_swap.length;i++){
@@ -381,6 +388,19 @@ const app=  new Vue({
                   }
                 }
               }
+            }
+            else{
+              for(var i=0;i<this.swap_data.length;i++){
+                if(this.swap_data[i].member_id==selected_member.member.id && this.swap_data[i].current_team_id==selected_member.team_id){
+                  this.swap_data.splice(i,1)
+                }
+              }
+              this.swap_data.push({
+                member_id:selected_member.member.id,
+                current_team_id:selected_member.team_id,
+                destination_team_id:target_array[0].team_id
+
+              })
             }
         }).catch(err=>{
   
@@ -422,6 +442,19 @@ const app=  new Vue({
           else{
             return false
           }
+        },
+        closeSwapDialog(){
+          this.selected_swap=[]
+          this.swap_data=[]
+          this.openSwap=false
+        },
+        saveSwap(){
+          axios.post(this.url+'/api/team/swap/',{swapping_details:this.swap_data}).then(response=>{
+           
+            this.closeSwapDialog()
+        }).catch(err=>{
+
+        })
         },
         checkSwapAvailability(member_id,current_team_id,destination_team_id,selected_member,target_array){
           axios.post(this.url+'/api/team/swapcheck/',{
