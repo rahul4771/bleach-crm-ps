@@ -2235,6 +2235,8 @@ class TeamSwapAPI(APIView):
 
 			current_team_id        			  = swapping_detail['current_team_id']
 			destination_team_id    			  = swapping_detail['destination_team_id']
+			current_team_incharge             = swapping_detail['current_team_incharge']
+			destination_team_incharge         = swapping_detail['destination_team_incharge']
 
 			current_team                      = CleaningTeam.objects.select_related('order_scheduler__order__evaluation').get(id=current_team_id)
 			currentcleaning_datetime_start    = (current_team.order_scheduler.start_at+timedelta(hours=3))
@@ -2313,6 +2315,7 @@ class TeamSwapAPI(APIView):
 
 						current_team.order_scheduler.no_of_cleaners -= 1
 						current_team.no_of_cleaners -= 1
+						current_team.team_leader_id  = current_team_incharge
 						current_team.order_scheduler.save()
 						current_team.save()
 					#add to destination team		
@@ -2320,6 +2323,7 @@ class TeamSwapAPI(APIView):
 						CleaningTeamMember.objects.create(team=destination_team,member=user,start_at=destination_team.start_at,end_at=destination_team.end_at,start_time=destination_team.start_at.time(),end_time=destination_team.end_at.time())
 						destination_team.order_scheduler.no_of_cleaners += 1
 						destination_team.no_of_cleaners += 1
+						destination_team.team_leader_id  = destination_team_incharge
 						destination_team.order_scheduler.save()
 						destination_team.save()
 			else:
