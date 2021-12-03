@@ -1293,9 +1293,15 @@ transition="dialog-bottom-transition"
     </v-snackbar>
 <div class="row">
 <div class="col-3" v-for="(cleaning,index) in selected_swap" v-bind:key="index">
-<h3><%cleaning.blc%></h3>
-<div>Start Time : <% cleaning.start_at.substring(10) %></div>
-<div>End Time : <%cleaning.end_at.substring(10) %></div>
+
+<div class="swap-time">
+  <h3><%cleaning.blc%></h3>
+<div><div class="swap-time-label">Start Time</div>
+<div class="swap-time-text"><% cleaning.start_at.substring(10) %></div> </div>
+<div><div class="swap-time-label mt-2">End Time</div>
+<div class="swap-time-text"><% cleaning.end_at.substring(10) %></div> </div>
+
+</div>
 <draggable class="list-group mt-4" :list="cleaning.team_details.cleaning_member_team" group="people" @change="swapLog()" :move="checkMove" @end="checkAvail">
   <div
     class="list-group-item"
