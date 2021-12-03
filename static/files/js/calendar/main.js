@@ -449,6 +449,7 @@ const app=  new Vue({
           this.selected_swap=[]
           this.swap_data=[]
           this.openSwap=false
+          location.reload()
         },
         saveSwap(){
           axios.post(this.url+'/api/team/swap/',{swapping_details:this.swap_data}).then(response=>{
