@@ -23,9 +23,22 @@
   .error-box-btn:hover{
     color:#2C4C82 !important;
   }
+  .tl-marker{
+    width: 20px;
+        color: #ffffff;
+        font-size: 10px;
+        font-weight: 600;
+        margin-left: auto;
+        text-align: center;
+        padding: 2px;
+        height: 20px;
+        background: #2C4C82 !important;
+        border-radius: 15px;
+  }
   .swap-close-btn:hover{
     color:#2C4C82 !important;
   }
+
   .save-swap-btn{
       background-color: #ffffffff !important;
       background: #ffffffff !important;

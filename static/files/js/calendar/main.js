@@ -294,7 +294,8 @@ const app=  new Vue({
             last_array:[],
             drag_availability:false,
             timeout:2000,
-            drag_text:'testing'
+            drag_text:'testing',
+            appended_swap_team:[]
            
 
       },
@@ -396,10 +397,19 @@ const app=  new Vue({
                   this.swap_data.splice(i,1)
                 }
               }
+              var current_array=[]
+              for(var k=0;k<this.selected_swap.length;k++){
+                if(this.selected_swap[k].team_details.id==selected_member.team_id){
+                  current_array=this.selected_swap[k].team_details.cleaning_member_team
+                  break
+                }
+              }
               this.swap_data.push({
                 member_id:selected_member.member.id,
                 current_team_id:selected_member.team_id,
-                destination_team_id:target_array[0].team_id
+                destination_team_id:target_array[0].team_id,
+                current_team_incharge:current_array[0].member.id,
+                destination_team_incharge:target_array[0].member.id
 
               })
               this.saveSwap()
@@ -500,16 +510,23 @@ const app=  new Vue({
         getBLC(){
           axios.get(this.url+'/api/team/search/?cleaning_date='+this.cleaningDate+'&blc_no='+this.blc_no).then(response=>{
             this.swap_options=response.data.teams
-            
+           
             for(var i=0;i<this.swap_options.length;i++){
            //   var index = this.swap_options.team_details.cleaning_member_team.indexOf(this.swap_options[i].team_details.team_leader)
-             
+           var team_leader= []
               for(var j=0;j<this.swap_options[i].team_details.cleaning_member_team.length;j++)
               {
               if(this.swap_options[i].team_details.team_leader.id==this.swap_options[i].team_details.cleaning_member_team[j].member.id){
+                this.swap_options[i].team_details.cleaning_member_team[j]['team_id']=this.swap_options[i].team_details.id
+                team_leader.push(this.swap_options[i].team_details.cleaning_member_team[j])
+              
                 this.swap_options[i].team_details.cleaning_member_team.splice(j,1)
+                 var newarray=team_leader.concat(this.swap_options[i].team_details.cleaning_member_team)
+                this.appended_swap_team=[ ...newarray ]
+                 
               }
               }
+              this.swap_options[i].team_details.cleaning_member_team=[ ...newarray ]
             }
             this.appendTeamid()
           }).catch(err=>{
