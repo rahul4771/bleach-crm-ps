@@ -2287,7 +2287,6 @@ class TeamSwapAPI(APIView):
 			if (not absent_cleaner and not active_cleaners1	and not active_cleaners2) and (shift_cleaners or super_shift_cleaners) and user:
 				response_dict['availability']    = True
 
-				print(swapping_details)
 				#Swap
 				for swapping_detail in swapping_details:
 					member_id            			  = swapping_detail['member_id']
@@ -2300,7 +2299,7 @@ class TeamSwapAPI(APIView):
 					destination_teams                 = CleaningTeam.objects.select_related('order_scheduler__order','order_scheduler__order_scheduler_book__service_type').filter(order_scheduler__order=destination_team.order_scheduler.order,order_scheduler__start_at=destination_team.order_scheduler.start_at,order_scheduler__end_at=destination_team.order_scheduler.end_at)
 				
 					user                              = UserProfile.objects.get(id=member_id)
-				
+
 					#delete from current team
 					for current_team in current_teams:
 						CleaningTeamMember.objects.filter(team=current_team,member=user).delete()
