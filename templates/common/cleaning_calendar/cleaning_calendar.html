@@ -14,7 +14,7 @@
       <form method="GET" action="{% url 'stl:cleaning-export' %}" >{% csrf_token %}
       <input type="hidden" name="cleaning_ids" id="id_cleaningids" />
       <input type="hidden" name="cleanings_date" id="id_cleaningsdate" />
-      <button style="margin-bottom: 10px;"  class="export-excel-btn" onclick="load_cleaning_data()"> <i class="fa fa-file-excel mr-5" aria-hidden="true"></i> Export to excel</button>
+      <button style="margin-bottom: 10px;color:#ffffff"  class="export-excel-btn primary-btn" onclick="load_cleaning_data()"> <i class="fa fa-file-excel mr-5" aria-hidden="true"></i> Export to excel</button>
       </form>
     {% endif %}
 
@@ -38,7 +38,7 @@
   <input id="user_type" value="{{request.user.user_type}}" style="display: none"/>
   {% if request.user.user_type == 'SENIORTEAMLEADER' %}
   <div>
-    <v-btn class="primary" @click="openSwap = true">Swap Cleaners</v-btn>
+    <v-btn class="primary" @click="openSwap = true"><v-icon>mdi-swap-horizontal </v-icon> Swap Cleaners</v-btn>
   </div>
   {% endif %}
   
