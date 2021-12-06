@@ -36,9 +36,11 @@
     
     </div>
   <input id="user_type" value="{{request.user.user_type}}" style="display: none"/>
+  {% if request.user.user_type == 'SENIORTEAMLEADER' %}
   <div>
     <v-btn class="primary" @click="openSwap = true">Swap Cleaners</v-btn>
   </div>
+  {% endif %}
   
   
     <div class="row mt-4">
