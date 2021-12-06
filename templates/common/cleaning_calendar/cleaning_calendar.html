@@ -6,19 +6,24 @@
 
   <div class="filter-columns-wrapper"><!--filter-columns-wrapper-->
   
-    <div class="filter-column-boxes filter-columns-left "><!--filter-column-boxes filter-columns-left-->
+    <div class="filter-column-boxes w-100"><!--filter-column-boxes filter-columns-left-->
     <h2 class="h2">Cleaning Calendar</h2>
 
     
     {% if request.user.user_type == 'SENIORTEAMLEADER' %}
-      <form method="GET" action="{% url 'stl:cleaning-export' %}" >{% csrf_token %}
-      <input type="hidden" name="cleaning_ids" id="id_cleaningids" />
-      <input type="hidden" name="cleanings_date" id="id_cleaningsdate" />
-      <button style="margin-bottom: 10px;"  class="export-excel-btn" onclick="load_cleaning_data()"> <i class="fa fa-file-excel mr-5" aria-hidden="true"></i> Export to excel</button>
-      </form>
+    <div class="row">
+      <div class="col-md-12">
+        <v-btn class="primary" @click="openSwap = true"> <v-icon>mdi-swap-horizontal</v-icon>Swap Cleaners</v-btn>
+      </div>
+   
+     
+    </div>
     {% endif %}
 
     </div>
+   
+      
+     
     
     <div class="filter-column-boxes filter-columns-right"><!--filter-column-boxes filter-columns-right-->
     <div class="date-wrapper"><!--date-wrapper-->
@@ -32,15 +37,20 @@
                   <button data-toggle="modal" data-target="#deleteModel2"  style="margin-top: 9px; color: #3968c6;"><i data-toggle="tooltip" title="Help" class="fa fa-question-circle fa-lg" aria-hidden="true"></i></button>
               </div>
     </div><!--date-wrapper-->
-    </div>
+    {% if request.user.user_type == 'SENIORTEAMLEADER' %}
+    <div class="text-right mt-2">
+      <form method="GET" action="{% url 'stl:cleaning-export' %}" >{% csrf_token %}
+      <input type="hidden" name="cleaning_ids" id="id_cleaningids" />
+      <input type="hidden" name="cleanings_date" id="id_cleaningsdate" />
+      <button style="margin-bottom: 10px;color:#ffffff !important;"  class="export-excel-btn primary-btn" onclick="load_cleaning_data()"> <i class="fa fa-file-excel mr-5" aria-hidden="true"></i> Export to excel</button>
+      </form>
+      </div>
+    </div> 
+    {% endif %}
     
     </div>
   <input id="user_type" value="{{request.user.user_type}}" style="display: none"/>
-  {% if request.user.user_type == 'SENIORTEAMLEADER' %}
-  <div>
-    <v-btn class="primary" @click="openSwap = true">Swap Cleaners</v-btn>
-  </div>
-  {% endif %}
+  
   
   
     <div class="row mt-4">
