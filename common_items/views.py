@@ -1047,8 +1047,13 @@ class PaymentDetails(IsAuthenticated,View):
 		if neworder_due_payments: 
 			total_neworder_due_amount = 0
 			for payment in neworder_due_payments:
-				if payment.evaluation.payment_method in ['POSTPAID','BREAKDOWN']:
-					total_neworder_due_amount += payment.remining_amount		
+				if payment.evaluation.payment_method in ['PREPAID','BREAKDOWN']:
+					if payment.evaluation.payment_method == 'PREPAID' :
+						total_neworder_due_amount += payment.total_amount
+
+					if payment.evaluation.payment_method == 'BREAKDOWN':
+						total_neworder_due_amount += payment.evaluation.before_cleaning_amount
+					
 
 			total_neworder_due_orders = neworder_due_payments.count()		
 		else:

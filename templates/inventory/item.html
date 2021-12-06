@@ -240,9 +240,10 @@
                          <div class="av-font text-center">
                              Inventory
                              <div style="text-align: center;" class=" av-font mt-40">
+                                 
                                  <br>
                                  <div class="inv-item-amount2">
-                                     {% if inventory_item.item_add_type == 'unit' %}{{inventory_item.unit_count}}{% else %}{{inventory_item.quantity_total}}{% endif %} <span style="font-size: 25px;"> {% if inventory_item.item_add_type == 'unit' %}Unit(s){% else %}{{inventory_item.measuring_unit}}(s){% endif %} </span>                    
+                                     {% if inventory_item.item_add_type == 'unit' %}{{inventory_item.unit_count}}{% else %}{{inventory_item.total_quantity}}{% endif %} <span style="font-size: 25px;"> {% if inventory_item.item_add_type == 'unit' %}Unit(s){% else %}{{inventory_item.measuring_unit}}(s){% endif %} </span>                    
                                  </div>
                              </div>
                             </div>
@@ -557,7 +558,7 @@
                     <div class="model-input-name required-field">Purchase Date</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="date" class="w-p-100 inv-in" name="purchase_date" id="id_purchase_date" required>
+                        <input type="date" class="w-p-100 inv-in" name="purchase_date" maxlength="7" id="id_purchase_date" required>
                       </div>
                 </div>
 

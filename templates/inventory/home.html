@@ -538,7 +538,7 @@ async function openNavAddStore(item_user_id) {
                   console.log(response,"resp")
 
                   $.each(response.data.items_list,function(obj,value){
-                    $('#items_container').append('<tr><td><label style="padding-left: 0px !important;" class="c-container"><input type="checkbox"><span style="top:-4px !important;" class="c-checkmark"></span></label></td><td >'+value.item_name+'</td><td >'+value.item_code+'</td><td >'+value.quantity+'</td></tr>');
+                    $('#items_container').append('<tr><td><label style="padding-left: 0px !important;" class="c-container"><input type="checkbox" class="item_check" data-itemid="'+value.item_id+'"><span style="top:-4px !important;" class="c-checkmark"></span></label></td><td >'+value.item_name+'</td><td >'+value.item_code+'</td><td >'+value.quantity+'</td></tr>');
                   })
                   
 
@@ -570,6 +570,33 @@ async function openNavAddStore(item_user_id) {
             ],
         });
     });
+
+    function checkinsubmit(){
+        
+        var item_ids = [];
+
+        $('.item_check').each(function(){
+            if ($(this).is(":checked")){
+                item_ids.push($(this).data('itemid'))
+            } 
+        })
+
+        var formdata = {
+            'item_ids' : item_ids,
+            'inventory_user' : {{request.user.id}}
+        }
+
+        axios.post(url+'/api/items-check-in/',formdata)
+              .then(function (response) {
+                  
+                  console.log(response,"resp")
+                  window.location.reload()
+
+              })
+
+        console.log(item_ids,"kok")
+        
+    }
 </script>
 
 {% endblock %}

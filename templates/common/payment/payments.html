@@ -213,7 +213,7 @@
       <div style="flex-grow: 1; margin-left: 0px; color: #737373;">No.of entries : <span class="payment-card-amount">{{total_neworder_due_orders}}</span> </div>
     </div>
     <div class=" mt-10">
-      <div style="flex-grow: 1; margin-left: 0px; color: #737373;">Total amount : <span class="payment-card-amount">{{total_neworder_due_amount|floatformat:3}}</span> </div>
+      <div style="flex-grow: 1; margin-left: 0px; color: #737373;">Total amount : <span class="payment-card-amount">{{total_neworder_due_amount|floatformat:'3'}}</span> </div>
     </div>
   </div>
 
@@ -860,7 +860,7 @@
         {% endfor %}
         </td>
         <td data-label="Contact Number" class="text-center">{{invoice.evaluation.customer.mobile_number}}</td>
-        <td data-label="Total Amount" class="text-right">{{invoice.remining_amount|default_if_none:'0.000'|floatformat:'3'}}KD</td>
+        <td data-label="Total Amount" class="text-right">{% if invoice.evaluation.payment_method == 'PREPAID' %}{{invoice.total_amount|default_if_none:'0.000'|floatformat:'3'}}{% elif invoice.evaluation.payment_method == 'BREAKDOWN' %}{{invoice.evaluation.before_cleaning_amount|default_if_none:'0.000'|floatformat:'3'}}{% endif %} KD</td>
         <td data-label="Payment Method">
         <div class="text-center d-flex "><div class="round-marker {% if invoice.evaluation.payment_method == 'PREPAID' %}prepaid-bg{% else %}postpaid-bg{% endif %}"></div><span>{{invoice.evaluation.payment_method}}</span></div>
         </td>
