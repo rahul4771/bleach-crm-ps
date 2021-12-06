@@ -3343,16 +3343,21 @@ class ItemQuantityCheck(APIView):
 		
 		if item.item_add_type == 'unit':
 			item_count = item.unit_count
+
+			if int(item_count) >= int(quantity) :
+				response_dict['item_available'] = True
+			else:
+				response_dict['item_available'] = False
 		else:
 			if item.quantity_total:
 				item_count = item.quantity_total
 			else:
 				item_count = 0
 
-		if item_count >= int(quantity) :
-			response_dict['item_available'] = True
-		else:
-			response_dict['item_available'] = False
+			if float(item_count) >= float(quantity) :
+				response_dict['item_available'] = True
+			else:
+				response_dict['item_available'] = False
 
 		response_dict['success'] = True
 
@@ -3387,7 +3392,7 @@ class ItemsCheckInAPI(APIView):
 	permission_classes        = (AllowAny,)
 	authentication_classes    = ()
 	def get(self,request):
-		response_dict            = {'success':True}
+		response_dict = {'success':True}
 
 		item_user    = request.GET.get('item_user')
 
@@ -3411,5 +3416,37 @@ class ItemsCheckInAPI(APIView):
 		print(return_items,"ret")
 
 		return Response(response_dict, HTTP_200_OK)
-	
+
+	def post(self,request):
+		
+		item_ids    = request.data.get('item_ids')
+
+		for item_id in item_ids:
+
+			checkin_item = CheckOutItems.objects.get(id=int(item_id),is_returned=True,is_checked_in=False)
+			print(checkin_item.item.item_add_type,"iom")
+			checkin_item.is_checked_in = True
+			checkin_item.check_in_user = UserProfile.objects.get(id=int(request.data.get('inventory_user')),is_active=True)
+			
+			if checkin_item.item.item_add_type == 'unit':
+				print("pam")
+				inventoryitem = InventoryItem.objects.prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(status='out_of_order'),to_attr='item_units')).get(id=int(checkin_item.item.id))
+				if inventoryitem.item_units:
+					for unit in inventoryitem.item_units[:int(checkin_item.units)]:
+						unit.status = 'active'
+						unit.save()
+
+			checkin_item.save()
+
+			if checkin_item.service_item and checkin_item.service_item.item.item_add_type == 'unit':
+				inventoryitem = InventoryItem.objects.prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(status='active'),to_attr='item_units')).get(id=int(checkin_item.service_item.item.id))
+				if inventoryitem.item_units:
+					for unit in inventoryitem.item_units[:int(checkin_item.units)]:
+						unit.status = 'active'
+						unit.save()
+
+		response_dict = {'success':True}
+
+		return Response(response_dict, HTTP_200_OK)
+			
 	

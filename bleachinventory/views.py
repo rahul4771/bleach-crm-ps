@@ -32,7 +32,7 @@ class InventoryHome(IsInventoryAdmin,View):
             return_items = CheckOutItems.objects.filter(is_returned=True,is_checked_in=False,is_collected_by=int(item_user))
             for item in return_items:
                 item_user_name = item.is_collected_by.name
-                total_units += int(item.units)
+                total_units += float(item.units)
 
             return_item_dict = {
                 "item_user_id" : item_user,
@@ -699,6 +699,9 @@ class InventoryItems(IsInventoryAdmin,View):
             added_by = request.user
             )
             
+            item.total_quantity = float(item.total_quantity)+float(quantity)
+            item.save()
+
             messages.success(request,"Quantity Added Successfully !")
 
         if action == "edit_unit":
@@ -1372,9 +1375,38 @@ class InventoryCreateCheckout(IsInventoryAdmin,View):
 
             for item in checkout_items:
 
-                # if item.service_item:
-                    # inventoryitem = InventoryItem.objects.get(id=int(item.service_item.item.id))
-                    # if inventoryitem.
+                if item.item and item.item.item_add_type == 'unit':
+                    inventoryitem = InventoryItem.objects.prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(status='active'),to_attr='item_units')).get(id=int(item.item.id))
+                    if inventoryitem.item_units:
+                        for unit in inventoryitem.item_units[:int(quantities[count])]:
+                            unit.status = 'out_of_order'
+                            unit.save()
+
+                if item.item and item.item.item_add_type == 'quantity':
+                    inventoryitem = InventoryItem.objects.prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(status='active'),to_attr='item_units')).get(id=int(item.item.id))
+                    
+                    if float(inventoryitem.total_quantity) >= float(quantities[count]):
+                        inventoryitem.total_quantity = float(inventoryitem.total_quantity) - float(quantities[count])
+                        inventoryitem.save()
+                    else:
+                        messages.error(request,"Quantity limit exceeded !")
+                        return redirect('bleach-inventory:inventory-createcheckout',visit_id)
+
+                if item.service_item and item.service_item.item.item_add_type == 'unit':
+                    inventoryitem = InventoryItem.objects.prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(status='active'),to_attr='item_units')).get(id=int(item.service_item.item.id))
+                    
+                    if inventoryitem.item_units:
+                        for unit in inventoryitem.item_units[:int(quantities[count])]:
+                            unit.status = 'out_of_order'
+                            unit.save()
+
+                if item.service_item and item.service_item.item.item_add_type == 'quantity':
+                    inventoryitem = InventoryItem.objects.prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(status='active'),to_attr='item_units')).get(id=int(item.service_item.item.id))
+                    
+                    if float(inventoryitem.total_quantity) >= float(quantities[count]):
+                        inventoryitem.total_quantity = float(inventoryitem.total_quantity) - float(quantities[count])
+                        inventoryitem.save()
+
                 item.units = quantities[count]
                 item.is_checked_out = True
                 item.save()
@@ -1441,6 +1473,10 @@ class PurchaseOrderItemsPage(IsInventoryAdmin,View):
                 purchase_order_item = PurchaseOrderItems.objects.get(purchase_order=purchase_order,product__item__id=int(product))
                 print(item,item_counts[loopcount], "itm")
                 ItemHistory.objects.create(purchase_order=purchase_order,item=item,quantity=item_counts[loopcount],added_by=request.user)
+                
+                item.total_quantity += float(item_counts[loopcount])
+                item.save()
+
                 purchase_order_item.is_received = True
                 # purchase_order_item.added_item_count += 1
                 purchase_order_item.save()
