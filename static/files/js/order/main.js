@@ -2187,9 +2187,9 @@ setTimeout(function() {
       axios.post(this.url+'/customer/editorder/'+this.orderId,{
         "action_type":'edit_discount',
        "payment_method":this.paymentData.payment_method,
-       "discount_amount":parseInt(this.paymentData.discount)||0,
-       "before_cleaning_amount":parseInt(this.paymentData.amount_before_cleaning),
-       "after_cleaning_amount":parseInt(this.paymentData.amount_after_cleaning),
+       "discount_amount":parseFloat(this.paymentData.discount)||0,
+       "before_cleaning_amount":parseFloat(this.paymentData.amount_before_cleaning),
+       "after_cleaning_amount":parseFloat(this.paymentData.amount_after_cleaning),
        "additional_charge":parseFloat(this.paymentData.additional_charge)||0,
       }).then(response=>{
         console.log(response)
@@ -2203,7 +2203,7 @@ setTimeout(function() {
       axios.post(this.url+'/customer/editorder/'+this.orderId,{
         "action_type":'edit_discount',
        "payment_method":this.paymentData.payment_method,
-       "discount_amount":parseInt(this.paymentData.discount)||0,
+       "discount_amount":parseFloat(this.paymentData.discount)||0,
        "additional_charge":parseFloat(this.paymentData.additional_charge)||0,
        
       }).then(response=>{
@@ -2221,10 +2221,10 @@ setTimeout(function() {
       axios.post(this.url+'/customer/editorder/'+this.orderId,{
         "action_type":'submit_quatation',
        "payment_method":this.paymentData.payment_method,
-       "discount_amount":parseInt(this.paymentData.discount)||0,
+       "discount_amount":parseFloat(this.paymentData.discount)||0,
        "additional_charge":parseFloat(this.paymentData.additional_charge)||0,
-       "before_cleaning_amount":parseInt(this.paymentData.amount_before_cleaning),
-       "after_cleaning_amount":parseInt(this.paymentData.amount_after_cleaning),
+       "before_cleaning_amount":parseFloat(this.paymentData.amount_before_cleaning),
+       "after_cleaning_amount":parseFloat(this.paymentData.amount_after_cleaning),
        
       }).then(response=>{
         console.log(response)
@@ -2238,7 +2238,7 @@ setTimeout(function() {
       axios.post(this.url+'/customer/editorder/'+this.orderId,{
         "action_type":'submit_quatation',
        "payment_method":this.paymentData.payment_method,
-       "discount_amount":parseInt(this.paymentData.discount)||0,
+       "discount_amount":parseFloat(this.paymentData.discount)||0,
        "additional_charge":parseFloat(this.paymentData.additional_charge)||0
        
        

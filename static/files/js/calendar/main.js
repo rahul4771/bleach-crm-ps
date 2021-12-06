@@ -283,12 +283,19 @@ const app=  new Vue({
           type:''
         },
         limitdate:'15-07-2021',
+        swap_data:[],
         cleaning_duration:[],
             selected_cleaning_duration:{},
             currentServices:[],
             followup_duration:[],
             followup_cleaners:0,
-            blc_no:''
+            blc_no:'',
+            last_member:'',
+            last_array:[],
+            drag_availability:false,
+            timeout:2000,
+            drag_text:'testing',
+            appended_swap_team:[]
            
 
       },
@@ -339,17 +346,104 @@ const app=  new Vue({
         changedSwap(current_team_id){
        //   console.log("team id is"+current_team_id)
         },
-        checkEnd(evt) {
+        submitSwap(){
+
+        },
+        findChangedCleaners(){
+          for(var i=0;i<this.selected_swap.length;i++){
+           
+          }
+        },
+        checkAvail(evt) {
           // HERE I AM GETTNG newDraggableIndex, newIndex, oldDraggableIndex, oldIndex
           // BUT I NEED PID AND SID ALSO
           // console.log("end event is"+JSON.stringify(evt.draggedContext.element));
+          this.swap_data=[]
+          var selected_member=this.last_member
+       var target_array=this.last_array
+       
+          console.log("selected is "+JSON.stringify(this.selected_swap))
+          axios.post(this.url+'/api/team/swapcheck/',{
+            member_id:selected_member.member.id,
+            current_team_id:selected_member.team_id,
+            destination_team_id:target_array[0].team_id
+
+
+        }).then(response=>{
+            if(!response.data.availability){
+              this.drag_availability=true
+              this.drag_text=selected_member.member.name+' is not available '
+              for(var i=0;i<this.selected_swap.length;i++){
+                if(this.selected_swap[i].team_details.id==target_array[0].team_id){
+                  var index=this.selected_swap[i].team_details.cleaning_member_team.indexOf(selected_member)
+                  if(this.selected_swap[i].team_details.cleaning_member_team.includes(selected_member))
+                  {
+                    
+                  this.selected_swap[i].team_details.cleaning_member_team.splice(index,1)
+                  }
+                }
+                if(this.selected_swap[i].team_details.id==selected_member.team_id)
+                {
+                  if(!this.selected_swap[i].team_details.cleaning_member_team.includes(selected_member))
+                  {
+                 this.selected_swap[i].team_details.cleaning_member_team.push(selected_member)
+                  }
+                }
+              }
+            }
+            else{
+              for(var i=0;i<this.swap_data.length;i++){
+                if(this.swap_data[i].member_id==selected_member.member.id && this.swap_data[i].current_team_id==selected_member.team_id){
+                  this.swap_data.splice(i,1)
+                }
+              }
+              var current_array=[]
+              for(var k=0;k<this.selected_swap.length;k++){
+                if(this.selected_swap[k].team_details.id==selected_member.team_id){
+                  current_array=this.selected_swap[k].team_details.cleaning_member_team
+                  break
+                }
+              }
+              this.swap_data.push({
+                member_id:selected_member.member.id,
+                current_team_id:selected_member.team_id,
+                destination_team_id:target_array[0].team_id,
+                current_team_incharge:current_array[0].member.id,
+                destination_team_incharge:target_array[0].member.id
+
+              })
+              this.saveSwap()
+            }
+        }).catch(err=>{
+  
+        })
     },
-        checkMove: function(evt){
+         checkMove: async function(evt){
          console.log("event is "+JSON.stringify(evt.draggedContext.element))
        console.log("target is"+JSON.stringify(evt.relatedContext.list))
+       
        var selected_member=evt.draggedContext.element
        var target_array=evt.relatedContext.list
-       this.checkSwapAvailability(selected_member.member.id,selected_member.team_id,target_array[0].team_id)
+       this.last_member=selected_member
+       this.last_array=target_array
+       //return false
+      // this.checkSwapAvailability(selected_member.member.id,selected_member.team_id,target_array[0].team_id,selected_member,target_array)
+    //   var avail=await axios.post(this.url+'/api/team/swapcheck/',{
+    //     member_id:selected_member.member.id,
+    //     current_team_id:selected_member.team_id,
+    //     destination_team_id:target_array[0].team_id
+
+
+    // }).then(response=>{
+    //   return response.data.availabilty
+       
+    // }).catch(err=>{
+
+    // })
+    
+      //return false
+    
+    
        
       },
         findBackupCleaners(teams){
@@ -361,7 +455,22 @@ const app=  new Vue({
             return false
           }
         },
-        checkSwapAvailability(member_id,current_team_id,destination_team_id){
+        closeSwapDialog(){
+          this.selected_swap=[]
+          this.swap_data=[]
+          this.openSwap=false
+          location.reload()
+        },
+        saveSwap(){
+          axios.post(this.url+'/api/team/swap/',{swapping_details:this.swap_data}).then(response=>{
+           this.getBLC()
+            // this.closeSwapDialog()
+            this.swap_data=[]
+        }).catch(err=>{
+
+        })
+        },
+        checkSwapAvailability(member_id,current_team_id,destination_team_id,selected_member,target_array){
           axios.post(this.url+'/api/team/swapcheck/',{
               member_id:member_id,
               current_team_id:current_team_id,
@@ -369,7 +478,31 @@ const app=  new Vue({
 
 
           }).then(response=>{
-            
+              if(response.data.availabilty){
+                for(var i=0;i<this.selected_swap.length;i++){
+                  if(this.selected_swap[i].team_details.id==target_array[0].team_id){
+                    var index=this.selected_swap[i].team_details.cleaning_member_team.indexOf(selected_member)
+                    if(this.selected_swap[i].team_details.cleaning_member_team.includes(selected_member))
+                    {
+                    this.selected_swap[i].team_details.cleaning_member_team.splice(index,1)
+                    }
+                  }
+                  if(this.selected_swap[i].team_details.id==selected_member.team_id)
+                  {
+                    // var found = false
+                    // for(var j=0;j<this.selected_swap[i].team_details.cleaning_member_team.length;j++){
+                    //   if(this.selected_swap[i].team_details.cleaning_member_team[j].member.id==member_id){
+                    //     found=true
+                    //     break
+                    //   }
+                    // }
+                    if(!this.selected_swap[i].team_details.cleaning_member_team.includes(selected_member))
+                    {
+                   this.selected_swap[i].team_details.cleaning_member_team.push(selected_member)
+                    }
+                  }
+                }
+              }
           }).catch(err=>{
     
           })
@@ -377,6 +510,24 @@ const app=  new Vue({
         getBLC(){
           axios.get(this.url+'/api/team/search/?cleaning_date='+this.cleaningDate+'&blc_no='+this.blc_no).then(response=>{
             this.swap_options=response.data.teams
+           
+            for(var i=0;i<this.swap_options.length;i++){
+           //   var index = this.swap_options.team_details.cleaning_member_team.indexOf(this.swap_options[i].team_details.team_leader)
+           var team_leader= []
+              for(var j=0;j<this.swap_options[i].team_details.cleaning_member_team.length;j++)
+              {
+              if(this.swap_options[i].team_details.team_leader.id==this.swap_options[i].team_details.cleaning_member_team[j].member.id){
+                this.swap_options[i].team_details.cleaning_member_team[j]['team_id']=this.swap_options[i].team_details.id
+                team_leader.push(this.swap_options[i].team_details.cleaning_member_team[j])
+              
+                this.swap_options[i].team_details.cleaning_member_team.splice(j,1)
+                 var newarray=team_leader.concat(this.swap_options[i].team_details.cleaning_member_team)
+                this.appended_swap_team=[ ...newarray ]
+                 
+              }
+              }
+              this.swap_options[i].team_details.cleaning_member_team=[ ...newarray ]
+            }
             this.appendTeamid()
           }).catch(err=>{
 

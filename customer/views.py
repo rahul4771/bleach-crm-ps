@@ -5765,6 +5765,7 @@ class EditOrderDetails(APIView):
 			payment_method        = request.data.get('payment_method')
 			discount_amount       = request.data.get('discount_amount')
 			additional_charge     = request.data.get('additional_charge')
+			print(discount_amount,"discount_amount")
 			if order.amount_paid == 0:
 				if payment_method == 'PREPAID':
 					order.evaluation.before_cleaning_amount = 0
