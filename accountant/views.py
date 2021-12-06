@@ -1378,12 +1378,12 @@ def export_users_xls(request):
 		wb = xlwt.Workbook(encoding='utf-8')
 		ws = wb.add_sheet('PAYMENT DETAILS SHEET')
 
-		columns = ['BLC No.','Job Type','Order Amount','Total Paid Amount','Balance']
+		columns = ['BLC No.','Job Type','Order Amount','Total Paid Amount','Balance','Order Status']
 		
 		for col_num in range(len(columns)):
 			ws.write(row_num, col_num, columns[col_num], font_style)
 
-		orders = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end),evaluation__quatation_status='APPROVED').filter(~Q( Q(evaluation__quatation_status='APPROVED') & Q(Q(Q(evaluation__payment_method='PREPAID')&~Q(payment_status='COMPLETED'))|Q(Q(evaluation__payment_method='BREAKDOWN')&Q(preamount_paid=0))) )).values_list('order_no', 'evaluation__payment_method', 'total_amount', 'amount_paid', 'remining_amount').order_by('-id')
+		orders = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end),evaluation__quatation_status='APPROVED').filter(~Q( order_status = 'ORDER_CANCELLED' )).values_list('order_no', 'evaluation__payment_method', 'total_amount', 'amount_paid', 'remining_amount','evaluation__quatation_status','payment_status','preamount_paid','order_status','evaluation__payment_method').order_by('-id')
 	
 		#removing duplicates
 		found = set()
@@ -1393,6 +1393,24 @@ def export_users_xls(request):
 		for order in orders:
 
 			order_list = list(order)
+
+			if order_list[5] == 'APPROVED':
+				if order_list[6] == 'COMPLETED' or order_list[7] != 0 or order_list[9] == 'POSTPAID':
+					if order_list[8] == 'APPROVED_BY_CLIENT':
+						order_list[5] = 'APPROVED'
+					elif order_list[8] == 'ORDER_IN_PROGRESS':
+						order_list[5] = 'ORDER IN PROGRESS'
+					elif order_list[8] == 'ORDER_CLOSED':
+						order_list[5] = 'COMPLETED'
+					else:
+						order_list[5] = '-'
+				else:
+					order_list[5] = 'APPROVED-NOT PAID'
+
+			order_list[6] = ''
+			order_list[7] = ''
+			order_list[8] = ''
+			order_list[9] = ''
 
 			if order_list[1] == 'SUBSCRIPTION':
 				order_list[1] = 'Subscription'

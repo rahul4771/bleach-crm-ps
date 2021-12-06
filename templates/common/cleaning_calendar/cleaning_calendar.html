@@ -36,9 +36,11 @@
     
     </div>
   <input id="user_type" value="{{request.user.user_type}}" style="display: none"/>
-  <!-- <div>
+  {% if request.user.user_type == 'SENIORTEAMLEADER' %}
+  <div>
     <v-btn class="primary" @click="openSwap = true">Swap Cleaners</v-btn>
-  </div> -->
+  </div>
+  {% endif %}
   
   
     <div class="row mt-4">
@@ -1223,21 +1225,29 @@ transition="dialog-bottom-transition"
     <v-btn
       icon
       dark
-      @click="openSwap = false"
+      @click="closeSwapDialog()"
+      class="swap-close-btn"
     >
       <v-icon>mdi-close</v-icon>
     </v-btn>
     <v-toolbar-title>Swap Cleaners</v-toolbar-title>
     <v-spacer></v-spacer>
-    <v-toolbar-items>
+    <!-- <v-toolbar-items>
       <v-btn
+       class="save-swap-btn"
        
-        text
-        @click="openSwap = false"
+        @click="saveSwap()"
       >
-      <b>Save</b>  
+      <v-icon
+      medium
+      color="primary"
+      class="mr-2"
+    >
+      mdi-content-save-outline
+    </v-icon><b>Save Changes</b>  
       </v-btn>
-    </v-toolbar-items>
+    </v-toolbar-items> -->
+   
   </v-toolbar>
   <div class="container">
 <div class="row">
@@ -1257,23 +1267,56 @@ transition="dialog-bottom-transition"
           deletable-chips
          
           chips
-         :counter="4"
+      
         ></v-autocomplete>
 
 </div>
 
 </div>
 <!-- Draggable begins here-->
+<v-snackbar
+      v-model="drag_availability"
+     
+      color="primary"
+    >
+      <% drag_text %>
+
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="default"
+          text
+          v-bind="attrs"
+          @click="snackbar = false"
+          class="error-box-btn"
+        >
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
 <div class="row">
 <div class="col-3" v-for="(cleaning,index) in selected_swap" v-bind:key="index">
-<h3><%cleaning.blc%></h3>
-<draggable class="list-group" :list="cleaning.team_details.cleaning_member_team" group="people" @change="swapLog()" :move="checkMove"  @end="checkEnd">
+
+<div class="swap-time">
+  <h3><%cleaning.blc%></h3>
+<div><div class="swap-time-label">Start Time</div>
+<div class="swap-time-text"><% cleaning.start_at.substring(10) %></div> </div>
+<div><div class="swap-time-label mt-2">End Time</div>
+<div class="swap-time-text"><% cleaning.end_at.substring(10) %></div> </div>
+
+</div>
+<draggable class="list-group mt-4" :list="cleaning.team_details.cleaning_member_team" group="people" @change="swapLog()" :move="checkMove" @end="checkAvail">
   <div
     class="list-group-item"
     v-for="(member, mindex) in cleaning.team_details.cleaning_member_team"
     v-bind:key="mindex"
   >
+  <div class="d-flex">
     <% member.member.name %>
+    <div class="tl-marker" v-if="mindex==0">
+      TL
+    </div>
+  </div>
+    
   </div>
 </draggable>
 
@@ -1916,10 +1959,13 @@ transition="dialog-bottom-transition"
         </div>
     </div>
   </div>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
+
   <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
   <!-- CDNJS :: Sortable (https://cdnjs.com/) -->
 <script src="//cdn.jsdelivr.net/npm/sortablejs@1.8.4/Sortable.min.js"></script>
 <!-- CDNJS :: Vue.Draggable (https://cdnjs.com/) -->
+
 <script src="//cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/2.20.0/vuedraggable.umd.min.js"></script>
 
   <script>

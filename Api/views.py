@@ -2129,7 +2129,7 @@ class TeamSerachAPI(APIView):
 		blc                = request.GET.get('blc_no')
 
 
-		cleaning_teams     = CleaningTeam.objects.select_related('order_scheduler__order__evaluation').filter(Q(Q(order_scheduler__work_status='CLEANING_TEAM_ASSIGNED')&Q(Q(start_at__date=cleaning_date)|Q(start_at__date=cleaning_date)&Q(order_scheduler__order__order_no__icontains=blc)) ))
+		cleaning_teams     = CleaningTeam.objects.select_related('order_scheduler__order__evaluation','team_leader').filter(Q(Q(order_scheduler__work_status='CLEANING_TEAM_ASSIGNED')&Q(Q(start_at__date=cleaning_date)|Q(start_at__date=cleaning_date)&Q(order_scheduler__order__order_no__icontains=blc)) ))
 		
 		teams = []
 		if cleaning_teams:
@@ -2141,32 +2141,6 @@ class TeamSerachAPI(APIView):
 		response_dict['success']    = True
 
 		return Response(response_dict,HTTP_200_OK)
-
-
-
-class TeamSerachAPI(APIView):
-	permission_classes  	=   (AllowAny,)
-	authentication_classes  = ()
-	def get(self,request):
-		response_dict = {}
-
-		cleaning_date      = datetime.strptime(request.GET.get('cleaning_date'),'%d-%m-%Y')
-		blc                = request.GET.get('blc_no')
-
-
-		cleaning_teams     = CleaningTeam.objects.select_related('order_scheduler__order__evaluation').filter(Q(Q(order_scheduler__work_status='CLEANING_TEAM_ASSIGNED')&Q(Q(start_at__date=cleaning_date)|Q(start_at__date=cleaning_date)&Q(order_scheduler__order__order_no__icontains=blc)) ))
-		
-		teams = []
-		if cleaning_teams:
-			for cleaning_team in cleaning_teams:
-				cleaning_team            = CleaningTeam.objects.get(id=cleaning_team.id)
-				teams.append({'blc':cleaning_team.order_scheduler.order.order_no,'start_at':(cleaning_team.order_scheduler.start_at+timedelta(hours=3)).strftime('%d-%m-%Y %I:%M %p'),'end_at':(cleaning_team.order_scheduler.end_at+timedelta(hours=3)).strftime('%d-%m-%Y %I:%M %p'),'team_details':CleaningTeamAPISerializer(instance=cleaning_team).data})
-
-		response_dict['teams']      = teams
-		response_dict['success']    = True
-
-		return Response(response_dict,HTTP_200_OK)
-
 
 
 class TeamSwapCheckAPI(APIView):
@@ -2183,17 +2157,17 @@ class TeamSwapCheckAPI(APIView):
 		current_team                      = CleaningTeam.objects.select_related('order_scheduler__order__evaluation').get(id=current_team_id)
 		currentcleaning_datetime_start    = (current_team.order_scheduler.start_at+timedelta(hours=3))
 		currentcleaning_datetime_end      = (current_team.order_scheduler.end_at+timedelta(hours=3))
-		current_teams                     = CleaningTeam.objects.select_related('order_scheduler__order').filter(order_scheduler__order=current_team.order_scheduler.order,order_scheduler__start_at=currentcleaning_datetime_start,order_scheduler__end_at=currentcleaning_datetime_end).values_list('id',flat=True)
+		current_teams                     = CleaningTeam.objects.select_related('order_scheduler__order').filter(order_scheduler__order=current_team.order_scheduler.order,order_scheduler__start_at=current_team.order_scheduler.start_at,order_scheduler__end_at=current_team.order_scheduler.end_at).values_list('id',flat=True)
 
 		destination_team                  = CleaningTeam.objects.select_related('order_scheduler__order__evaluation').get(id=destination_team_id)
 		destination_date1                 = (destination_team.order_scheduler.start_at+timedelta(hours=3)).date()
 		destination_date2                 = (destination_team.order_scheduler.end_at+timedelta(hours=3)).date()
 		destinationcleaning_datetime_start= (destination_team.order_scheduler.start_at+timedelta(hours=3))
 		destinationcleaning_datetime_end  = (destination_team.order_scheduler.end_at+timedelta(hours=3))
-		destination_teams                 = CleaningTeam.objects.select_related('order_scheduler__order','order_scheduler__order_scheduler_book__service_type').filter(order_scheduler__order=destination_team.order_scheduler.order,order_scheduler__start_at=destinationcleaning_datetime_start,order_scheduler__end_at=destinationcleaning_datetime_end)
+		destination_teams                 = CleaningTeam.objects.select_related('order_scheduler__order','order_scheduler__order_scheduler_book__service_type').filter(order_scheduler__order=destination_team.order_scheduler.order,order_scheduler__start_at=destination_team.order_scheduler.start_at,order_scheduler__end_at=destination_team.order_scheduler.end_at)
 
 		#Cleaning Services
-		user             = UserProfile.objects.filter(id=member_id)
+		user             				  = UserProfile.objects.filter(id=member_id)
 		for destination_team in destination_teams:
 			service_type = destination_team.order_scheduler.order_scheduler_book.service_type.name
 			
@@ -2228,12 +2202,18 @@ class TeamSwapCheckAPI(APIView):
 		#absent/shift/supershift cleaners
 		absent_cleaner         = LeaveSchedule.objects.select_related('staff').filter(staff__id=member_id).filter(Q(Q(leave_date=destination_date1)|Q(leave_date=destination_date2)))
 		shift_cleaners         = ShiftSchedule.objects.select_related('staff').filter(staff__id=member_id).filter(Q(Q(shift_date=destination_date1)|Q(shift_date=destination_date2)|Q(Q(shift3_start_at__lte=destinationcleaning_datetime_end)&Q(shift3_end_at__gte=destinationcleaning_datetime_end)))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=destinationcleaning_datetime_start.time())&Q(shift1_end_at__gte=destinationcleaning_datetime_start.time()))&Q(Q(shift1_start_at__lte=destinationcleaning_datetime_end.time())&Q(shift1_end_at__gte=destinationcleaning_datetime_end.time()))) | Q(Q(Q(shift2_start_at__lte=destinationcleaning_datetime_start.time())&Q(shift2_end_at__gte=destinationcleaning_datetime_start.time()))&Q(Q(shift2_start_at__lte=destinationcleaning_datetime_end.time())&Q(shift2_end_at__gte=destinationcleaning_datetime_end.time()))) | Q(Q(Q(shift3_start_at__lte=destinationcleaning_datetime_start)&Q(shift3_end_at__gte=destinationcleaning_datetime_start))&Q(Q(shift3_start_at__lte=destinationcleaning_datetime_end)&Q(shift3_end_at__gte=destinationcleaning_datetime_end))) )
-		super_shift_cleaners   = UserProfile.objects.filter(id=member_id).filter( Q(Q(universal_shift_start__lte=destinationcleaning_datetime_start.time())&Q(universal_shift_end__gte=destinationcleaning_datetime_start.time()))&Q(Q(universal_shift_start__lte=destinationcleaning_datetime_end.time())&Q(universal_shift_end__gte=destinationcleaning_datetime_end.time())) )
-		active_cleaners1 	   = CleaningTeamMember.objects.select_related('member').filter(id=member_id).filter(Q(Q(Q(start_at__gte=destinationcleaning_datetime_start)&Q(start_at__lt=destinationcleaning_datetime_end))|Q(Q(end_at__gt=destinationcleaning_datetime_start)&Q(end_at__lte=destinationcleaning_datetime_end))|Q(Q(start_at__lte=destinationcleaning_datetime_start)&Q(end_at__gte=destinationcleaning_datetime_start)&Q(start_at__lte=destinationcleaning_datetime_end)&Q(end_at__gte=destinationcleaning_datetime_end))|Q(Q(start_at__gte=destinationcleaning_datetime_start)&Q(end_at__gte=destinationcleaning_datetime_start)&Q(start_at__lte=destinationcleaning_datetime_end)&Q(end_at__lte=destinationcleaning_datetime_end)))).exclude(team__id__in=current_teams)
-		active_cleaners2 	   = FollowUpTeamMember.objects.select_related('member').filter(id=member_id).filter(Q(Q(Q(start_at__gte=destinationcleaning_datetime_start)&Q(start_at__lt=destinationcleaning_datetime_end))|Q(Q(end_at__gt=destinationcleaning_datetime_start)&Q(end_at__lte=destinationcleaning_datetime_end))|Q(Q(start_at__lte=destinationcleaning_datetime_start)&Q(end_at__gte=destinationcleaning_datetime_start)&Q(start_at__lte=destinationcleaning_datetime_end)&Q(end_at__gte=destinationcleaning_datetime_end))|Q(Q(start_at__gte=destinationcleaning_datetime_start)&Q(end_at__gte=destinationcleaning_datetime_start)&Q(start_at__lte=destinationcleaning_datetime_end)&Q(end_at__lte=destinationcleaning_datetime_end))))	
+		if not shift_cleaners:
+			super_shift_cleaners   = UserProfile.objects.filter(id=member_id).filter( Q(Q(universal_shift_start__lte=destinationcleaning_datetime_start.time())&Q(universal_shift_end__gte=destinationcleaning_datetime_start.time()))&Q(Q(universal_shift_start__lte=destinationcleaning_datetime_end.time())&Q(universal_shift_end__gte=destinationcleaning_datetime_end.time())) )
+		else:
+			super_shift_cleaners   = None 
+		active_cleaners1 	   = CleaningTeamMember.objects.select_related('member').filter(member__id=member_id).filter(Q(Q(Q(start_at__gte=destinationcleaning_datetime_start)&Q(start_at__lt=destinationcleaning_datetime_end))|Q(Q(end_at__gt=destinationcleaning_datetime_start)&Q(end_at__lte=destinationcleaning_datetime_end))|Q(Q(start_at__lte=destinationcleaning_datetime_start)&Q(end_at__gte=destinationcleaning_datetime_start)&Q(start_at__lte=destinationcleaning_datetime_end)&Q(end_at__gte=destinationcleaning_datetime_end))|Q(Q(start_at__gte=destinationcleaning_datetime_start)&Q(end_at__gte=destinationcleaning_datetime_start)&Q(start_at__lte=destinationcleaning_datetime_end)&Q(end_at__lte=destinationcleaning_datetime_end)))).exclude(team__id__in=current_teams)
+		active_cleaners2 	   = FollowUpTeamMember.objects.select_related('member').filter(member__id=member_id).filter(Q(Q(Q(start_at__gte=destinationcleaning_datetime_start)&Q(start_at__lt=destinationcleaning_datetime_end))|Q(Q(end_at__gt=destinationcleaning_datetime_start)&Q(end_at__lte=destinationcleaning_datetime_end))|Q(Q(start_at__lte=destinationcleaning_datetime_start)&Q(end_at__gte=destinationcleaning_datetime_start)&Q(start_at__lte=destinationcleaning_datetime_end)&Q(end_at__gte=destinationcleaning_datetime_end))|Q(Q(start_at__gte=destinationcleaning_datetime_start)&Q(end_at__gte=destinationcleaning_datetime_start)&Q(start_at__lte=destinationcleaning_datetime_end)&Q(end_at__lte=destinationcleaning_datetime_end))))	
 
 		if (not absent_cleaner and not active_cleaners1	and not active_cleaners2) and (shift_cleaners or super_shift_cleaners) and user:
-			response_dict['availabilty'] = True
+			
+			response_dict['availability'] = True
+		else:
+			response_dict['availability'] = False
 		
 		response_dict['success']    = True
 
@@ -2255,18 +2235,20 @@ class TeamSwapAPI(APIView):
 
 			current_team_id        			  = swapping_detail['current_team_id']
 			destination_team_id    			  = swapping_detail['destination_team_id']
+			current_team_incharge             = swapping_detail['current_team_incharge']
+			destination_team_incharge         = swapping_detail['destination_team_incharge']
 
 			current_team                      = CleaningTeam.objects.select_related('order_scheduler__order__evaluation').get(id=current_team_id)
 			currentcleaning_datetime_start    = (current_team.order_scheduler.start_at+timedelta(hours=3))
 			currentcleaning_datetime_end      = (current_team.order_scheduler.end_at+timedelta(hours=3))
-			current_teams                     = CleaningTeam.objects.select_related('order_scheduler__order').filter(order_scheduler__order=current_team.order_scheduler.order,order_scheduler__start_at=currentcleaning_datetime_start,order_scheduler__end_at=currentcleaning_datetime_end).values_list('id',flat=True)
+			current_teams                     = CleaningTeam.objects.select_related('order_scheduler__order').filter(order_scheduler__order=current_team.order_scheduler.order,order_scheduler__start_at=current_team.order_scheduler.start_at,order_scheduler__end_at=current_team.order_scheduler.end_at).values_list('id',flat=True)
 
 			destination_team                  = CleaningTeam.objects.select_related('order_scheduler__order__evaluation').get(id=destination_team_id)
 			destination_date1                 = (destination_team.order_scheduler.start_at+timedelta(hours=3)).date()
 			destination_date2                 = (destination_team.order_scheduler.end_at+timedelta(hours=3)).date()
 			destinationcleaning_datetime_start= (destination_team.order_scheduler.start_at+timedelta(hours=3))
 			destinationcleaning_datetime_end  = (destination_team.order_scheduler.end_at+timedelta(hours=3))
-			destination_teams                 = CleaningTeam.objects.select_related('order_scheduler__order','order_scheduler__order_scheduler_book__service_type').filter(order_scheduler__order=destination_team.order_scheduler.order,order_scheduler__start_at=destinationcleaning_datetime_start,order_scheduler__end_at=destinationcleaning_datetime_end)
+			destination_teams                 = CleaningTeam.objects.select_related('order_scheduler__order','order_scheduler__order_scheduler_book__service_type').filter(order_scheduler__order=destination_team.order_scheduler.order,order_scheduler__start_at=destination_team.order_scheduler.start_at,order_scheduler__end_at=destination_team.order_scheduler.end_at)
 
 			#Cleaning Services
 			user             = UserProfile.objects.filter(id=member_id)
@@ -2304,38 +2286,49 @@ class TeamSwapAPI(APIView):
 			#absent/shift/supershift cleaners
 			absent_cleaner         = LeaveSchedule.objects.select_related('staff').filter(staff__id=member_id).filter(Q(Q(leave_date=destination_date1)|Q(leave_date=destination_date2)))
 			shift_cleaners         = ShiftSchedule.objects.select_related('staff').filter(staff__id=member_id).filter(Q(Q(shift_date=destination_date1)|Q(shift_date=destination_date2)|Q(Q(shift3_start_at__lte=destinationcleaning_datetime_end)&Q(shift3_end_at__gte=destinationcleaning_datetime_end)))).filter(Q(Q(staff__user_type='CLEANER')|Q(staff__user_type='TEAMINCHARGE'))).filter(Q(Q(Q(shift1_start_at__lte=destinationcleaning_datetime_start.time())&Q(shift1_end_at__gte=destinationcleaning_datetime_start.time()))&Q(Q(shift1_start_at__lte=destinationcleaning_datetime_end.time())&Q(shift1_end_at__gte=destinationcleaning_datetime_end.time()))) | Q(Q(Q(shift2_start_at__lte=destinationcleaning_datetime_start.time())&Q(shift2_end_at__gte=destinationcleaning_datetime_start.time()))&Q(Q(shift2_start_at__lte=destinationcleaning_datetime_end.time())&Q(shift2_end_at__gte=destinationcleaning_datetime_end.time()))) | Q(Q(Q(shift3_start_at__lte=destinationcleaning_datetime_start)&Q(shift3_end_at__gte=destinationcleaning_datetime_start))&Q(Q(shift3_start_at__lte=destinationcleaning_datetime_end)&Q(shift3_end_at__gte=destinationcleaning_datetime_end))) )
-			super_shift_cleaners   = UserProfile.objects.filter(id=member_id).filter( Q(Q(universal_shift_start__lte=destinationcleaning_datetime_start.time())&Q(universal_shift_end__gte=destinationcleaning_datetime_start.time()))&Q(Q(universal_shift_start__lte=destinationcleaning_datetime_end.time())&Q(universal_shift_end__gte=destinationcleaning_datetime_end.time())) )
-			active_cleaners1 	   = CleaningTeamMember.objects.select_related('member').filter(id=member_id).filter(Q(Q(Q(start_at__gte=destinationcleaning_datetime_start)&Q(start_at__lt=destinationcleaning_datetime_end))|Q(Q(end_at__gt=destinationcleaning_datetime_start)&Q(end_at__lte=destinationcleaning_datetime_end))|Q(Q(start_at__lte=destinationcleaning_datetime_start)&Q(end_at__gte=destinationcleaning_datetime_start)&Q(start_at__lte=destinationcleaning_datetime_end)&Q(end_at__gte=destinationcleaning_datetime_end))|Q(Q(start_at__gte=destinationcleaning_datetime_start)&Q(end_at__gte=destinationcleaning_datetime_start)&Q(start_at__lte=destinationcleaning_datetime_end)&Q(end_at__lte=destinationcleaning_datetime_end)))).exclude(team__id__in=current_teams)
-			active_cleaners2 	   = FollowUpTeamMember.objects.select_related('member').filter(id=member_id).filter(Q(Q(Q(start_at__gte=destinationcleaning_datetime_start)&Q(start_at__lt=destinationcleaning_datetime_end))|Q(Q(end_at__gt=destinationcleaning_datetime_start)&Q(end_at__lte=destinationcleaning_datetime_end))|Q(Q(start_at__lte=destinationcleaning_datetime_start)&Q(end_at__gte=destinationcleaning_datetime_start)&Q(start_at__lte=destinationcleaning_datetime_end)&Q(end_at__gte=destinationcleaning_datetime_end))|Q(Q(start_at__gte=destinationcleaning_datetime_start)&Q(end_at__gte=destinationcleaning_datetime_start)&Q(start_at__lte=destinationcleaning_datetime_end)&Q(end_at__lte=destinationcleaning_datetime_end))))	
+			if not shift_cleaners:
+				super_shift_cleaners   = UserProfile.objects.filter(id=member_id).filter( Q(Q(universal_shift_start__lte=destinationcleaning_datetime_start.time())&Q(universal_shift_end__gte=destinationcleaning_datetime_start.time()))&Q(Q(universal_shift_start__lte=destinationcleaning_datetime_end.time())&Q(universal_shift_end__gte=destinationcleaning_datetime_end.time())) )
+			else:
+				super_shift_cleaners   = None
+			active_cleaners1 	   = CleaningTeamMember.objects.select_related('member').filter(member__id=member_id).filter(Q(Q(Q(start_at__gte=destinationcleaning_datetime_start)&Q(start_at__lt=destinationcleaning_datetime_end))|Q(Q(end_at__gt=destinationcleaning_datetime_start)&Q(end_at__lte=destinationcleaning_datetime_end))|Q(Q(start_at__lte=destinationcleaning_datetime_start)&Q(end_at__gte=destinationcleaning_datetime_start)&Q(start_at__lte=destinationcleaning_datetime_end)&Q(end_at__gte=destinationcleaning_datetime_end))|Q(Q(start_at__gte=destinationcleaning_datetime_start)&Q(end_at__gte=destinationcleaning_datetime_start)&Q(start_at__lte=destinationcleaning_datetime_end)&Q(end_at__lte=destinationcleaning_datetime_end)))).exclude(team__id__in=current_teams)
+			active_cleaners2 	   = FollowUpTeamMember.objects.select_related('member').filter(member__id=member_id).filter(Q(Q(Q(start_at__gte=destinationcleaning_datetime_start)&Q(start_at__lt=destinationcleaning_datetime_end))|Q(Q(end_at__gt=destinationcleaning_datetime_start)&Q(end_at__lte=destinationcleaning_datetime_end))|Q(Q(start_at__lte=destinationcleaning_datetime_start)&Q(end_at__gte=destinationcleaning_datetime_start)&Q(start_at__lte=destinationcleaning_datetime_end)&Q(end_at__gte=destinationcleaning_datetime_end))|Q(Q(start_at__gte=destinationcleaning_datetime_start)&Q(end_at__gte=destinationcleaning_datetime_start)&Q(start_at__lte=destinationcleaning_datetime_end)&Q(end_at__lte=destinationcleaning_datetime_end))))	
 
 			if (not absent_cleaner and not active_cleaners1	and not active_cleaners2) and (shift_cleaners or super_shift_cleaners) and user:
-				response_dict['availability']    = True
+				response_dict['availability']         = True
 
-			if response_dict['availability']    == False:
-				break
+				#Swap
+				for swapping_detail in swapping_details:
+					member_id            			  = swapping_detail['member_id']
+					current_team_id        			  = swapping_detail['current_team_id']
+					destination_team_id    			  = swapping_detail['destination_team_id']
 
-
-		if response_dict['availability']    == True:
-			for swapping_detail in swapping_details:
-				member_id            			  = swapping_detail['member_id']
-				current_team_id        			  = swapping_detail['current_team_id']
-				destination_team_id    			  = swapping_detail['destination_team_id']
-
-				current_team                      = CleaningTeam.objects.select_related('order_scheduler__order__evaluation').get(id=current_team_id)
-				current_teams                     = CleaningTeam.objects.select_related('order_scheduler__order').filter(order_scheduler__order=current_team.order_scheduler.order,order_scheduler__start_at=currentcleaning_datetime_start,order_scheduler__end_at=currentcleaning_datetime_end).values_list('id',flat=True)
-				destination_team                  = CleaningTeam.objects.select_related('order_scheduler__order__evaluation').get(id=destination_team_id)
-				destination_teams                 = CleaningTeam.objects.select_related('order_scheduler__order','order_scheduler__order_scheduler_book__service_type').filter(order_scheduler__order=destination_team.order_scheduler.order,order_scheduler__start_at=destinationcleaning_datetime_start,order_scheduler__end_at=destinationcleaning_datetime_end)
-			
-				user             = UserProfile.objects.filter(id=member_id)
+					current_team                      = CleaningTeam.objects.select_related('order_scheduler__order__evaluation').get(id=current_team_id)
+					current_teams                     = CleaningTeam.objects.select_related('order_scheduler__order').filter(order_scheduler__order=current_team.order_scheduler.order,order_scheduler__start_at=current_team.order_scheduler.start_at,order_scheduler__end_at=current_team.order_scheduler.end_at)
+					destination_team                  = CleaningTeam.objects.select_related('order_scheduler__order__evaluation').get(id=destination_team_id)
+					destination_teams                 = CleaningTeam.objects.select_related('order_scheduler__order','order_scheduler__order_scheduler_book__service_type').filter(order_scheduler__order=destination_team.order_scheduler.order,order_scheduler__start_at=destination_team.order_scheduler.start_at,order_scheduler__end_at=destination_team.order_scheduler.end_at)
 				
-				#delete from current team
-				for current_team in current_teams:
-					CleaningTeamMember.objects.filter(team=current_team,member=user).delete()
+					user                              = UserProfile.objects.get(id=member_id)
 
-				#add to destination team		
-				for destination_team in destination_teams:
-					CleaningTeamMember.objects.create(team=destination_team,member=user,start_at=destination_team.start_at,end_at=destination_team.end_at,start_time=destination_team.start_time,end_time=destination_team.end_time)
+					#delete from current team
+					for current_team in current_teams:
+						CleaningTeamMember.objects.filter(team=current_team,member=user).delete()
 
+						current_team.order_scheduler.no_of_cleaners -= 1
+						current_team.no_of_cleaners -= 1
+						current_team.team_leader_id  = current_team_incharge
+						current_team.order_scheduler.save()
+						current_team.save()
+					#add to destination team		
+					for destination_team in destination_teams:
+						CleaningTeamMember.objects.create(team=destination_team,member=user,start_at=destination_team.start_at,end_at=destination_team.end_at,start_time=destination_team.start_at.time(),end_time=destination_team.end_at.time())
+						destination_team.order_scheduler.no_of_cleaners += 1
+						destination_team.no_of_cleaners += 1
+						destination_team.team_leader_id  = destination_team_incharge
+						destination_team.order_scheduler.save()
+						destination_team.save()
+			else:
+				response_dict['availability']    = False
+			
 			response_dict['success'] = True
 
 		return Response(response_dict,HTTP_200_OK)
@@ -3343,16 +3336,21 @@ class ItemQuantityCheck(APIView):
 		
 		if item.item_add_type == 'unit':
 			item_count = item.unit_count
+
+			if int(item_count) >= int(quantity) :
+				response_dict['item_available'] = True
+			else:
+				response_dict['item_available'] = False
 		else:
 			if item.quantity_total:
 				item_count = item.quantity_total
 			else:
 				item_count = 0
 
-		if item_count >= int(quantity) :
-			response_dict['item_available'] = True
-		else:
-			response_dict['item_available'] = False
+			if float(item_count) >= float(quantity) :
+				response_dict['item_available'] = True
+			else:
+				response_dict['item_available'] = False
 
 		response_dict['success'] = True
 
@@ -3387,7 +3385,7 @@ class ItemsCheckInAPI(APIView):
 	permission_classes        = (AllowAny,)
 	authentication_classes    = ()
 	def get(self,request):
-		response_dict            = {'success':True}
+		response_dict = {'success':True}
 
 		item_user    = request.GET.get('item_user')
 
@@ -3411,5 +3409,37 @@ class ItemsCheckInAPI(APIView):
 		print(return_items,"ret")
 
 		return Response(response_dict, HTTP_200_OK)
-	
+
+	def post(self,request):
+		
+		item_ids    = request.data.get('item_ids')
+
+		for item_id in item_ids:
+
+			checkin_item = CheckOutItems.objects.get(id=int(item_id),is_returned=True,is_checked_in=False)
+			print(checkin_item.item.item_add_type,"iom")
+			checkin_item.is_checked_in = True
+			checkin_item.check_in_user = UserProfile.objects.get(id=int(request.data.get('inventory_user')),is_active=True)
+			
+			if checkin_item.item.item_add_type == 'unit':
+				print("pam")
+				inventoryitem = InventoryItem.objects.prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(status='out_of_order'),to_attr='item_units')).get(id=int(checkin_item.item.id))
+				if inventoryitem.item_units:
+					for unit in inventoryitem.item_units[:int(checkin_item.units)]:
+						unit.status = 'active'
+						unit.save()
+
+			checkin_item.save()
+
+			if checkin_item.service_item and checkin_item.service_item.item.item_add_type == 'unit':
+				inventoryitem = InventoryItem.objects.prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(status='active'),to_attr='item_units')).get(id=int(checkin_item.service_item.item.id))
+				if inventoryitem.item_units:
+					for unit in inventoryitem.item_units[:int(checkin_item.units)]:
+						unit.status = 'active'
+						unit.save()
+
+		response_dict = {'success':True}
+
+		return Response(response_dict, HTTP_200_OK)
+			
 	
