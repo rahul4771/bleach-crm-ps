@@ -389,7 +389,7 @@
                                 <div class="col-xs-6 av-font p-10">
                                     <span style="font-size: 16px;" >{{item.item_user_name}}</span>
                                     <div  style="font-size: 16px;" class="mt-10">
-                                        {{item.total_units}} Items
+                                        {{item.total_items}} Items
                                     </div>
 
                                 </div>
@@ -522,6 +522,7 @@
 
 
 async function openNavAddStore(item_user_id) {
+        $('#items_container').empty();
 
         if (screen.width <= 600) {
             document.getElementById("addStore").style.width = "100%";
@@ -538,8 +539,13 @@ async function openNavAddStore(item_user_id) {
                   console.log(response,"resp")
 
                   $.each(response.data.items_list,function(obj,value){
-                    $('#items_container').append('<tr><td><label style="padding-left: 0px !important;" class="c-container"><input type="checkbox" class="item_check" data-itemid="'+value.item_id+'"><span style="top:-4px !important;" class="c-checkmark"></span></label></td><td >'+value.item_name+'</td><td >'+value.item_code+'</td><td >'+value.quantity+'</td></tr>');
-                  })
+                    if (value.item_type == 'quantity'){
+                        $('#items_container').append('<tr><td><label style="padding-left: 0px !important;" class="c-container"><input type="checkbox" class="item_check" data-itemid="'+value.item_id+'"><span style="top:-4px !important;" class="c-checkmark"></span></label></td><td >'+value.item_name+'</td><td >'+value.item_code+'</td><td ><a class="quantity__minus pointer" onclick="decrement(2,)"><span>-</span></a><input type="text" class="quantity__input" id="id_qty" value="0" name="qty"><a class="quantity__plus pointer" onclick="increment(2,)"><span>+</span></a></td></tr>');
+                    }
+                    if (value.item_type == 'unit'){
+                        $('#items_container').append('<tr><td><label style="padding-left: 0px !important;" class="c-container"><input type="checkbox" class="item_check" data-itemid="'+value.item_id+'"><span style="top:-4px !important;" class="c-checkmark"></span></label></td><td >'+value.item_name+'</td><td >'+value.item_code+'</td><td >'+value.quantity+'</td></tr>');
+                    }
+                    })
                   
 
               })
