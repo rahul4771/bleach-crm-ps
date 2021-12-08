@@ -174,12 +174,18 @@ class InventoryAttribute(IsInventoryAdmin,View):
                 category = None
 
             if segment_id:
-                segment = Segment.objects.get(id=int(segment_id))
+                if segment_id == '0':
+                    segment = None
+                else:
+                    segment = Segment.objects.get(id=int(segment_id))
             else:
                 segment = None
 
             if line_id:
-                line = Line.objects.get(id=int(line_id))
+                if line_id == '0':
+                    line = None
+                else:
+                    line = Line.objects.get(id=int(line_id))
             else:
                 line = None
 
@@ -206,6 +212,14 @@ class InventoryAttribute(IsInventoryAdmin,View):
                 print("prip")
                 category = None
                 segment = None
+                line = None
+            elif attribute_segment == '0':
+                category = Category.objects.get(id=int(attribute_category))
+                segment = None
+                line = None
+            elif attribute_line == '0':
+                category = Category.objects.get(id=int(attribute_category))
+                segment = Segment.objects.get(id=int(attribute_segment))
                 line = None
             else:
                 print("prip2")
@@ -545,7 +559,7 @@ class InventoryItems(IsInventoryAdmin,View):
                 inventory_item.item_status = 'available'
             inventory_item.save()
 
-        attributes = Attribute.objects.filter(status=True).filter(Q (Q(attribute_category=inventory_item.item_category) & Q(attribute_segment=inventory_item.item_segment) & Q(attribute_line=inventory_item.item_line)) | Q(attribute_category=None)).prefetch_related(Prefetch('value_attribute',queryset=AttributeValue.objects.filter(status=True),to_attr='attribute_values'))
+        attributes = Attribute.objects.filter(status=True).filter(Q (Q(attribute_category=inventory_item.item_category) & Q(attribute_segment=inventory_item.item_segment) & Q(attribute_line=inventory_item.item_line)) | Q(attribute_category=None) | Q( Q(attribute_category=inventory_item.item_category) & Q(attribute_segment=None)) | Q( Q(attribute_category=inventory_item.item_category) & Q(attribute_segment=inventory_item.item_segment) & Q(attribute_line=None)) ).prefetch_related(Prefetch('value_attribute',queryset=AttributeValue.objects.filter(status=True),to_attr='attribute_values'))
 
         try:
             item_attributes = ItemAttributes.objects.filter(item=inventory_item)
