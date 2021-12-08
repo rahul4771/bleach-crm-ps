@@ -613,7 +613,7 @@ class FollowupCleaning(IsTeamLeader,View):
 
 class ItemsList(IsTeamLeader,View):
 	def get(self,request):
-		tl_items = CheckOutItems.objects.filter(is_collected=True,is_collected_by=request.user,is_checked_in=False,item__is_reusable=True)
+		tl_items = CheckOutItems.objects.filter(is_collected=True,is_collected_by=request.user,is_checked_in=False)
 		
 		for item in tl_items:
 			item.days_since_cleaning = (timezone.now()-item.visit.end_at).days

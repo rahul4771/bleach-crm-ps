@@ -23,7 +23,8 @@ ITEM_ADD_TYPE_CHOICES=(
 MEASURING_UNIT_CHOICES=(
     ('litre','litre'),
 	('kg','kg'),
-    ('number','number'),
+    ('piece','piece'),
+    ('pack','pack')
 )
 
 class Category(models.Model):

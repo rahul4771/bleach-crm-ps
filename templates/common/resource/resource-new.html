@@ -774,6 +774,7 @@
         {% for worker in workers %}
         busy_slotesdetails={};
         
+        busy_slotes=[]
         {% for cleaning_details in worker.cleaning_member_details %}
 
         //attendance
@@ -783,7 +784,6 @@
         //slote clculations
         start_hour = parseInt('{{cleaning_details.start_at|date:'H'}}');
         end_hour   = parseInt('{{cleaning_details.end_at|date:'H'}}');
-        busy_slotes=[]
 
         slotes     = [[0,1],[2,3],[4,5],[6,7],[8,9],[10,11],[12,13],[14,15],[16,17],[18,19],[20,21],[22,23]]
         for(i=0;i<=11;i++)
@@ -812,11 +812,13 @@
         }
 
         busy_slotesdetails['{{cleaning_details.team.order_scheduler.order_scheduler_book.cleaning_policy}}'] = busy_slotes;
-
+        
         {% endfor %}
 
+        console.log("Test Subscription")
         //slotes coloring
         console.log(busy_slotesdetails,"busy slotes");
+        console.log("{{worker.cleaning_member_details}}","cleaning details");
         if(busy_slotesdetails['ONE TIME SERVICE'])
         {
             for(j=0;j<busy_slotesdetails['ONE TIME SERVICE'].length;j++)
