@@ -349,14 +349,14 @@
                 <BR>
 
                 {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'ADMIN'%}
-                <a style="text-decoration: none; color: #434343;" href="{% url 'customer:statement-of-account' client_details.id %}" target="_blank">
-                <div class="text-center">
+                {% comment %} <a style="text-decoration: none; color: #434343;" href="{% url 'customer:statement-of-account' client_details.id %}" target="_blank"> {% endcomment %}
+                <div class="text-center" data-toggle="modal" data-target="#soaModal">
                     <div  class="secondary-btn cd-ml-4">
                         <i class="far fa-file-alt primary-icon"></i>
                         Statement Of Account
                     </div>
                 </div>
-                </a>
+                {% comment %} </a> {% endcomment %}
                 {% endif %}
 
                 </div>
@@ -547,7 +547,56 @@
           </div>
       </form>
           <!--    Edit modal ends here-->
-        
+    
+    
+    <!--    Edit modal-->
+    <form method="POST" action="{% url 'customer:statement-of-account' client_details.id %}">
+        {% csrf_token %}
+    <div class="modal fade" id="soaModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="cd-modal-close">
+                <i class="far fa-times-circle cd-modal-close-icon" data-dismiss="modal" ></i>
+              </div>
+           
+            <div class="modal-body">
+                <div class="cd-card-title">Select Date range</div>
+             <div class="row ml-0 mr-0 cd-mt-4">
+
+                 <div class="col-md-6 cd-mt-4">
+                    <div ><!--ticket-form-right-->
+                        <div class=" bold-text common-label required-field"> <label>Starting Date</label></div>
+                      <input name="start_date" type="date" class="textBox OnlyNumber" id="id_start_date" onchange="datecheck()" required>
+                         <p class="phone_alert" style="color:Red;"></p>
+                     </div>
+                 </div>
+
+                 <div class="col-md-6 cd-mt-4">
+                    <div ><!--ticket-form-right-->
+                        <div class=" bold-text common-label required-field"> <label>Ending Date</label></div>
+                      <input name="end_date" type="date" class="textBox OnlyNumber" id="id_end_date" onchange="datecheck()" required>
+                         <p class="phone_alert" style="color:Red;"></p>
+                     </div>
+                 </div>
+                
+             </div>
+             <div class="d-flex justify-center cd-mt-4">
+                <div class="secondary-btn cd-mt-4" data-dismiss="modal">
+                    Cancel
+                </div>
+                 <div class="primary-btn cd-ml-4 cd-mt-4">
+                     <input type="submit" value="Submit" class="restrict-input-btn">
+                 </div>
+             </div>
+            </div>
+           
+          </div>
+        </div>
+      </div>
+  </form>
+      <!--    SOA modal ends here-->
+
+
     </section><!--content-->
  
 {% if request.user.user_type == 'AGENT' %}   
@@ -570,6 +619,19 @@
         else{
             $('.company-details').hide()
         }
+    }
+
+    function datecheck(d){
+        var date1 = new Date($('#id_start_date').val())
+        var date2 = new Date($('#id_end_date').val())
+
+        
+            if (date1 > date2){
+                $('#id_start_date').val('')
+            }
+        
+
+        console.log(date1,date2,"rung")
     }
 </script>
 {% endblock %}

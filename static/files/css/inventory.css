@@ -32,6 +32,9 @@
   padding: 4px 40px 4px 40px;
   margin: 3px;
 }
+.td-md-width{
+  width:180px;
+}
 
 .inv-team-head{
   font-size: 16px !important;
