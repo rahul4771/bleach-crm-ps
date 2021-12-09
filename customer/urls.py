@@ -51,9 +51,12 @@ urlpatterns = [
 		url(r'^ajax/getmultipleservicecleaningslotes$',views.GetMultipleServiceCleaningSlotes.as_view(),name='ajax-multipleservicecleaningslotes'),#New logic applied latest 8 to 22 logic
 		url(r'^ajax/multipleservice/multipledates/cleaningslotes/$',views.GetMultipleServiceDateCleaningSlotes.as_view(),name='ajax-multipleservicedatecleaningslotes'),#New logic applied 8 to 22 logic
 		url(r'^ajax/multipleservice/multipledates/cleaningslotes/autofix/$',views.GetMultipleServiceDateCleaningSlotesAutofix.as_view(),name='ajax-multipleservicedatecleaningslotes-autofix'),#New logic applied 8 t0 22 logic 
-		url(r'^availablecleaners/$',views.GetAvailableCleaners.as_view(),name='available-cleaners'),#New logic applied 8 t0 22 logic 
+		url(r'^availablecleaners/$',views.GetAvailableCleaners.as_view(),name='available-cleaners'),#New logic applied 8 t0 22 logic
+		url(r'^availablecleaners/group/subscription/$',views.GetAvailableCleanersGroupSubscription.as_view(),name='available-cleaners'),#New logic applied 8 t0 22 logic 
+		
 		url(r'^ajax/addressotpsend$',views.AddressOtpSend,name='ajax-addressotpsend'),
 		url(r'^ajax/addressotpverify$',views.AddressOtpVerify,name='ajax-addressotpverify'),
+
 		
 		#booking cleaning
 		url(r'^bookingphase1$',views.ClientCleaningBookingPhase1.as_view(),name='clientcleaningbookingphase1'),
