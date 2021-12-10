@@ -52,8 +52,10 @@ urlpatterns = [
 		url(r'^ajax/multipleservice/multipledates/cleaningslotes/$',views.GetMultipleServiceDateCleaningSlotes.as_view(),name='ajax-multipleservicedatecleaningslotes'),#New logic applied 8 to 22 logic
 		url(r'^ajax/multipleservice/multipledates/cleaningslotes/autofix/$',views.GetMultipleServiceDateCleaningSlotesAutofix.as_view(),name='ajax-multipleservicedatecleaningslotes-autofix'),#New logic applied 8 t0 22 logic 
 		url(r'^availablecleaners/$',views.GetAvailableCleaners.as_view(),name='available-cleaners'),#New logic applied 8 t0 22 logic
+		
 		url(r'^subscription/slotes/$',views.GetSubscriptionSlotes.as_view(),name='subscription-slotes'),
-		url(r'^availablecleaners/group/subscription/$',views.GetAvailableCleanersGroupSubscription.as_view(),name='available-cleaners-group-subscription'),#New logic applied 8 t0 22 logic 
+		url(r'^availablecleaners/group/subscription/$',views.GetAvailableCleanersGroupSubscription.as_view(),name='available-cleaners-group-subscription'),#New logic applied 8 t0 22 logic
+		url(r'^group/subscription/save/$',views.GroupSubscriptionSave.as_view(),name='group-subscription-save'),#New logic applied 8 t0 22 logic 
 		
 		url(r'^ajax/addressotpsend$',views.AddressOtpSend,name='ajax-addressotpsend'),
 		url(r'^ajax/addressotpverify$',views.AddressOtpVerify,name='ajax-addressotpverify'),

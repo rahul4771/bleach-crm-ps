@@ -2924,6 +2924,59 @@ class GetAvailableCleanersGroupSubscription(APIView):
 
 		return Response(response_dict,HTTP_200_OK)
 
+class GroupSubscriptionSave(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+	def post(self,request):
+		response_dict             = {}
+		response_dict['success']  = False
+
+		assigned_cleaners         = request.data.get('assigned_cleaners')
+		assigned_leader           = request.data.get('team_leader')
+		schedules                 = request.data.get('schedules')
+
+		for schedule in schedules:
+			order_schedule            = OrderScheduler.objects.get(id=schedule)
+			start_at_datetime         = order_schedule.start_at
+			end_at_datetime           = order_schedule.end_at
+			start_at_time             = start_at_datetime.time()
+			end_at_time               = end_at_datetime.time()
+	
+			#same blc cleaners for excluding
+			sameblc_cleaners    = CleaningTeamMember.objects.select_related('team__order_scheduler__evaluation_details__evaluation').filter(team__order_scheduler__evaluation_details__evaluation=order_schedule.evaluation_details.evaluation).filter(Q(Q(Q(start_at__gte=start_at_datetime)&Q(start_at__lte=end_at_datetime))|Q(Q(end_at__gte=start_at_datetime)&Q(end_at__lte=end_at_datetime))|Q(Q(start_at__lte=start_at_datetime)&Q(end_at__gte=start_at_datetime)&Q(start_at__lte=end_at_datetime)&Q(end_at__gte=end_at_datetime))|Q(Q(start_at__gte=start_at_datetime)&Q(end_at__gte=start_at_datetime)&Q(start_at__lte=end_at_datetime)&Q(end_at__lte=end_at_datetime)))).values_list("member",flat=True)
+
+			active_cleaners1 	= CleaningTeamMember.objects.filter(Q(Q(Q(start_at__gte=start_at_datetime)&Q(start_at__lt=end_at_datetime))|Q(Q(end_at__gt=start_at_datetime)&Q(end_at__lte=end_at_datetime))|Q(Q(start_at__lte=start_at_datetime)&Q(end_at__gte=start_at_datetime)&Q(start_at__lte=end_at_datetime)&Q(end_at__gte=end_at_datetime))|Q(Q(start_at__gte=start_at_datetime)&Q(end_at__gte=start_at_datetime)&Q(start_at__lte=end_at_datetime)&Q(end_at__lte=end_at_datetime)))).exclude(member__id__in=sameblc_cleaners).values_list("member",flat=True)
+			active_cleaners2 	= FollowUpTeamMember.objects.filter(Q(Q(Q(start_at__gte=start_at_datetime)&Q(start_at__lt=end_at_datetime))|Q(Q(end_at__gt=start_at_datetime)&Q(end_at__lte=end_at_datetime))|Q(Q(start_at__lte=start_at_datetime)&Q(end_at__gte=start_at_datetime)&Q(start_at__lte=end_at_datetime)&Q(end_at__gte=end_at_datetime))|Q(Q(start_at__gte=start_at_datetime)&Q(end_at__gte=start_at_datetime)&Q(start_at__lte=end_at_datetime)&Q(end_at__lte=end_at_datetime)))).values_list("member",flat=True)
+
+			#check cleaners	& leaders	
+			check_cleaners      = UserProfile.objects.filter(Q(Q(is_active=True)&Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))).exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(id__in=assigned_cleaners)
+			check_tl            = UserProfile.objects.filter(is_active=True,user_type='TEAMINCHARGE').exclude(Q(Q(id__in=active_cleaners1)|Q(id__in=active_cleaners2))).filter(id=assigned_leader)
+
+			if	check_cleaners.count() >= len(assigned_cleaners) and check_tl:
+				cleaning_team = CleaningTeam.objects.create(order_scheduler=order_schedule,team_leader_id=assigned_leader,start_at=start_at_datetime,end_at=end_at_datetime)
+				
+				#cleaners
+				assigned_cleaners_list   = []
+				for cleaner in assigned_cleaners:
+					assigned_cleaners_list.append(CleaningTeamMember(team=cleaning_team,member_id=cleaner,start_at=start_at_datetime,end_at=end_at_datetime,start_time=start_at_time,end_time=end_at_time))
+				assigned_cleaners_list.append(CleaningTeamMember(team=cleaning_team,member=cleaning_team.team_leader,start_at=start_at_datetime,end_at=end_at_datetime,start_time=start_at_time,end_time=end_at_time))
+				#bulk create
+				cleaning_team_members_assign = CleaningTeamMember.objects.bulk_create(assigned_cleaners_list)
+
+				if cleaning_team_members_assign:
+					#update cleaners count
+					order_scheduler.no_of_cleaners = len(assigned_cleaners)+1
+					order_scheduler.work_status    = 'CLEANING_TEAM_ASSIGNED'
+					order_scheduler.save()
+
+				response_dict['success']  = True
+			else:
+				response_dict['success']  = False
+				response_dict['error']    = 'Some Cleanings Not Updated ! Please Check that Manually'
+
+
+		return Response(response_dict,HTTP_200_OK)
+
 
 def AddressOtpSend(request):
 	response_dict = {}
