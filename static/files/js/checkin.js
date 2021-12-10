@@ -111,8 +111,8 @@ const app = new Vue({
       form_items.append('absent_list',this.absent_list)
       var form_url = url+'/api/check-in/' ;
     }else{
-      var keynote_count = document.querySelectorAll('input[type="checkbox"]').length;
-      var checked_keynotes = document.querySelectorAll('input[type="checkbox"]:checked').length;
+      var keynote_count = $('.keynote:checkbox').length;
+      var checked_keynotes = $('.keynote:checkbox:checked').length;
       form_items.append('check_out_notes',$('#check_out_notes').val())
       console.log(keynote_count,checked_keynotes,"keyns")
 
@@ -195,8 +195,8 @@ const app = new Vue({
       form_items.append('absent_list',this.absent_list)
       var form_url = url+'/api/check-in/' ;
     }else{
-      var keynote_count = document.querySelectorAll('input[type="checkbox"]').length;
-      var checked_keynotes = document.querySelectorAll('input[type="checkbox"]:checked').length;
+      var keynote_count = $('.keynote:checkbox').length;
+      var checked_keynotes = $('.keynote:checkbox:checked').length;
       form_items.append('check_out_notes',$('#check_out_notes').val())
       console.log(keynote_count,checked_keynotes,"keyns")
 

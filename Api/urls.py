@@ -46,7 +46,6 @@ urlpatterns = [
 	url(r'^daily-sales-chart/$',views.DailySalesChartAPI.as_view(),name='api-daily-sales-chart'),
 	url(r'^payment-policy-edit/$',views.PaymentPolicyEditAPI.as_view(),name='api-payment-policy-edit'),
 	url(r'^cleaning-team-data/$',views.CleaningTeamAPI.as_view(),name='api-cleaning-team-data'),
-	# url(r'^cleaning-export/$',views.CleaningsExport.as_view(),name='api-cleaning-export'),
 
 	#inventory
 	url(r'^inventory-lines/$',views.InventoryLinesAPI.as_view(),name='api-inventory-lines'),
@@ -59,6 +58,9 @@ urlpatterns = [
 	url(r'^inventory-service-area/$',views.InventoryServiceAreaAPI.as_view(),name='api-inventory-service-area'),
 	url(r'^inventory-service-items/$',views.InventoryServiceItemsAPI.as_view(),name='api-inventory-service-items'),
 	url(r'^inventory-item-quantity-check/$',views.ItemQuantityCheck.as_view(),name='api-inventory-item-quantity-check'),
+	url(r'^inventory-checkout-item-add/$',views.CheckOutItemAdd.as_view(),name='api-inventory-checkout-item-add'),
+	url(r'^inventory-checkout-item-delete/$',views.CheckOutItemDelete.as_view(),name='api-inventory-checkout-item-delete'),
+	url(r'^inventory-checkout-item-swap/$',views.CheckOutItemSwap.as_view(),name='api-inventory-checkout-item-swap'),
 
 	###Team Leader Mobile app API'S
 	url(r'^login/$',views.LoginAPI.as_view(),name='api-login'),

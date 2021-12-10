@@ -3343,14 +3343,111 @@ class ItemQuantityCheck(APIView):
 				response_dict['item_available'] = False
 		else:
 			if item.quantity_total:
-				item_count = item.quantity_total
+				item_count = item.total_quantity
 			else:
 				item_count = 0
+			
+			print(item_count,quantity,"qtt")
 
 			if float(item_count) >= float(quantity) :
 				response_dict['item_available'] = True
 			else:
 				response_dict['item_available'] = False
+
+		response_dict['success'] = True
+
+		return Response(response_dict, HTTP_200_OK)
+
+class CheckOutItemAdd(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+	def get(self,request):
+		response_dict            = {'success':False}
+
+		service_item = request.GET.get('item_id')
+		visit_id = request.GET.get('visit_id')
+
+		print(visit_id,"vis")
+		visit = OrderScheduler.objects.get(id=int(visit_id))
+
+		item = InventoryItem.objects.get(id=int(service_item))
+		
+		if item.item_status == 'available' or item.item_status == 'about_to_finish':
+			checkout_items_count = CheckOutItems.objects.filter(visit=visit).count()
+
+			checkout_item = CheckOutItems.objects.create(visit=visit,item=item)
+			response_dict['checkout_item_id'] = checkout_item.id
+			response_dict['item_id'] = checkout_item.item.id
+			response_dict['item_name'] = checkout_item.item.name
+			response_dict['item_code'] = checkout_item.item.item_code
+
+			if checkout_item.item.item_add_type == 'unit':
+				response_dict['item_unit'] = 'unit(S)'
+			else:
+				response_dict['item_unit'] = checkout_item.item.measuring_unit
+
+			response_dict['item_count'] = checkout_items_count + 1
+
+			response_dict['message'] = 'Item Added'
+		else:
+			response_dict['message'] = 'Out of stock'
+
+		response_dict['success'] = True
+
+		return Response(response_dict, HTTP_200_OK)
+
+class CheckOutItemDelete(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+	def get(self,request):
+		response_dict            = {'success':False}
+
+		checkout_item = request.GET.get('item_id')
+		checkout_item = CheckOutItems.objects.get(id=int(checkout_item))
+		checkout_item_id = checkout_item.id
+
+		checkout_item.delete()
+		
+		response_dict['checkout_item_id'] = checkout_item_id
+
+		response_dict['success'] = True
+
+		return Response(response_dict, HTTP_200_OK)
+
+class CheckOutItemSwap(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+	def get(self,request):
+		response_dict            = {'success':False}
+
+		checkout_item = request.GET.get('service_item')
+		ingredient_id = request.GET.get('ingredient_id')
+		checkout_item_id = request.GET.get('checkout_item_id')
+		print(checkout_item_id,checkout_item,"mpl")
+		checkout = CheckOutItems.objects.get(id=int(checkout_item_id))
+
+		ingredient = ServiceRecipeIngredients.objects.get(id=int(ingredient_id))
+
+		swap_item = ServiceRecipeItems.objects.get(ingredient=ingredient,item__id=int(checkout_item))
+		print(swap_item,"swp")
+
+		checkout.service_item = swap_item
+		checkout.is_swapped_item = True
+		checkout.save()
+
+		response_dict['ingredient_id'] = ingredient.id
+		response_dict['ingredient_name'] = ingredient.ingredient
+		response_dict['checkout_item_id'] = checkout.id
+		response_dict['item_id'] = checkout.service_item.item.id
+		response_dict['item_name'] = checkout.service_item.item.name
+		response_dict['item_code'] = checkout.service_item.item.item_code
+
+		if checkout.service_item.item.item_add_type == 'unit':
+			response_dict['item_unit'] = 'unit(S)'
+		else:
+			response_dict['item_unit'] = checkout.service_item.item.measuring_unit
+
+		# response_dict['item_count'] = checkout_items_count + 1
 
 		response_dict['success'] = True
 

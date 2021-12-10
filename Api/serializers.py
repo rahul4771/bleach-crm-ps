@@ -184,6 +184,16 @@ class EvaluationBookAPISerializer(serializers.ModelSerializer):
         model = EvaluationBook
         fields = ('cleaning_policy','area_type','location_type','cleaning_method','evaluator_note','service_type','evaluationsection_book')
 
+class OrderScheduleShowSerializer(serializers.ModelSerializer):
+    class Meta:
+        model  = OrderScheduler
+        fields = ('id','start_at','end_at','work_status','no_of_cleaners','cleaning_hours')
+
+    def to_representation(self,obj):
+        td = super(OrderScheduleShowSerializer,self).to_representation(obj)	
+        td['start_at']  = ((obj.start_at)+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
+        td['end_at'] 	= ((obj.end_at)+timedelta(hours=3)).strftime("%d-%m-%Y %I:%M %p")
+        return(td)
 
 ##Cleaning Team API's
 class OrderScheduleAPISerializer(serializers.ModelSerializer):
