@@ -1027,15 +1027,15 @@ class InventoryInv(IsInventoryAdmin,View):
         search = request.GET.get('search')
 
         item_category = request.GET.get('item_category',None)
-        if item_category:
+        if item_category != None:
             item_category = int(item_category)
 
         item_segment = request.GET.get('item_segment',None)
-        if item_segment:
+        if item_segment != None:
             item_segment = int(item_segment)
 
         item_line = request.GET.get('item_line',None)
-        if item_line:
+        if item_line != None:
             item_line = int(item_line)
 
         item_status = request.GET.get('item_status')
