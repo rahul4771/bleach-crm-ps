@@ -625,6 +625,7 @@ const app = new Vue({
   
   delimiters: ["<%", "%>"],
   
+  
   mounted() {
    this.url=api
    
@@ -889,13 +890,117 @@ const app = new Vue({
           current_backups:[],
           visit_count:'',
           team_schedule_id:'',
-          add_eval_id:''
+          add_eval_id:'',
+          visit_list:[],
+          selected_visit_list:[],
+          visit_services:[],
+          visit_step:1,
+          visit_cleaners:[],
+          selected_visit_cleaners:[],
+          visit_team_leader:''
+
          // url:'http://localhost:8000'
       // url:'https://test.bleach-kw.com'
             //url:'http://127.0.0.1:8000'
   },
   methods:{
-    
+    getVisitAvailability(){
+      var visit_data=[]
+      for(var i=0;i<this.selected_visit_list.length;i++){
+        visit_data.push({
+          "cleaning_datetime_start":this.selected_visit_list[i].start_at,
+          "cleaning_datetime_end":this.selected_visit_list[i].end_at,
+        })
+      }
+      axios.post(this.url+'/customer/availablecleaners/group/subscription/',{
+        "subscription_details":visit_data,
+        "service_types":this.visit_services
+      }).then(response=>{
+        this.visit_step=2
+        this.visit_cleaners=response.data.available_cleaners
+      }).catch(err=>{
+
+      })
+    },
+    backToVisit(){
+      this.selected_visit_cleaners=[]
+      this.visit_step=1
+    },
+    selectedVisitCleaners(){
+      var cleaners=[]
+      for(var i=0;i<this.selected_visit_cleaners.length;i++){
+        for(var j=0;j<this.visit_cleaners.length;j++){
+          if(this.selected_visit_cleaners[i]==this.visit_cleaners[j].id){
+            cleaners.push(this.visit_cleaners[j])
+            break
+          }
+        }
+      }
+      console.log("cleamners re "+ cleaners)
+      return cleaners
+    },
+    assignCleaners(){
+      var schedules=[]
+      for(var i=0;i<this.selected_visit_list.length;i++){
+        schedules.push(this.selected_visit_list[i].id)
+      }
+      console.log("schedules is"+schedules+" visit teamleader is "+this.visit_team_leader+"assigned cleaners : "+this.selected_visit_cleaners)
+      axios.post(this.url+'/customer/group/subscription/save/',{
+        schedules:schedules,
+        assigned_cleaners:this.selected_visit_cleaners,
+        team_leader:this.visit_team_leader
+      }).then(response=>{
+       $('#visit-close').click()
+      }).catch(err=>{
+
+      })
+    },
+    addVisitToSelection(item){
+      if(this.selected_visit_list.includes(item)){
+        var index= this.selected_visit_list.indexOf(item)
+        this.selected_visit_list.splice(index,1)
+      }
+      else{
+        this.selected_visit_list.push(item)
+      }
+    },
+    addCleanerToSelection(item){
+      if(this.selected_visit_cleaners.includes(item)){
+        var index= this.selected_visit_cleaners.indexOf(item)
+        this.selected_visit_cleaners.splice(index,1)
+      }
+      else{
+        this.selected_visit_cleaners.push(item)
+      }
+    },
+    getVisitList(bid,serv){
+      this.visit_list=[]
+      this.visit_services=[]
+      this.visit_services.push(serv)
+      console.log("bid is"+bid)
+      axios.get(this.url+'/customer/subscription/slotes/',{params:{
+        book_id:bid
+      }}).then(response=>{
+        var visits=response.data.subscriptions
+      
+        for(var i=0;i<visits.length;i++){
+          if(!visits[i].work_status)
+          {
+          this.visit_list.push({
+            visit_count:i+1,
+            start_at:visits[i].start_at,
+            end_at:visits[i].end_at,
+            id:visits[i].id,
+            no_of_cleaners:visits[i].no_of_cleaners,
+            work_status:visits[i].work_status
+          })
+        }
+      }
+        $('#assign-cleaners-trigger').click()
+      }).catch(err=>{
+        console.log(err)
+      })
+    },
     openAddService(id){
       
       this.add_eval_id=id

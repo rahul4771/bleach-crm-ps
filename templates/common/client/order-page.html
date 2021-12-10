@@ -22,6 +22,7 @@
 <div class="wrapper" id="app" v-cloak><!--wrapper-->
    <!--- user id-->
    
+   
    <input type="hidden" value="{{request.user.id}}" id="user_id"/>
     <!-- helper modal begins here-->
     <div class="modal fade" id="helpModel" role="dialog">
@@ -527,6 +528,78 @@
         </div>
       </div>
     <!-- Backup Team MODAL ENDS HERE-->
+    <!-- assign cleaners modal begins here-->
+    <div class="modal fade " id="assignCleanersModal"  role="dialog" aria-labelledby="assignCleanersModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered primary-modal" role="document" >
+          <div class="modal-content primary-modal-border mt-100" >
+            <div class="modal-body">
+                <div >
+                  <div class="row" v-if="visit_step==1">
+                      <div class="col-md-12 primary-text">
+                          Select Visits
+                      </div>
+    <div style="margin-bottom: 10px;" class="col-md-4 col-xs-12 c-pr5 visit-list mt-10" v-for="(item,index) in visit_list" v-bind:key="item"> 
+        <div class="cleaning-status-container  pointer " @click="addVisitToSelection(item)">
+            
+            <div  class="row cleaning-status-row  cleaning-status-card  ">
+                <input type="checkbox" :value="item" class="normal-checkbox" v-model="selected_visit_list" style="margin:0px" />
+                <div class="vist-card-item-first visit-text">
+                    visit <% item.visit_count %>
+                </div>
+                <div class="vist-card-item-second visit-text">
+                    <% item.start_at %>
+                </div>
+                <img  class="visit-time-edit pointer ml-10 mt-4p" src="{% static 'files/icons/time-primary.png' %}" ><span class="ml-5 visit-text">3</span>
+            </div>
+            
+        </div>
+    </div>
+    </div>
+    <div class="row" v-if="visit_step==2">
+        <div class="col-md-12 primary-text">
+            Select Cleaners
+        </div>
+<div style="margin-bottom: 10px;" class="col-md-4 col-xs-12 c-pr5 visit-list mt-10" v-for="(cleaner,cindex) in visit_cleaners" v-bind:key="item"> 
+<div class="cleaning-status-container  pointer " @click="addCleanerToSelection(cleaner.id)">
+
+<div  class="row cleaning-status-row  cleaning-status-card  ">
+  <input type="checkbox" :value="cleaner.id" class="normal-checkbox" v-model="selected_visit_cleaners" style="margin:0px" />
+  <div class="vist-card-item-first visit-text">
+       <% cleaner.name %>
+  </div>
+ 
+</div>
+
+</div>
+</div>
+
+
+<div class="col-md-12 primary-text mt-10" v-if="selected_visit_cleaners.length>0">
+    Select Team Leader
+</div>
+<div class="col-md-12 mt-10" v-if="selected_visit_cleaners.length>0">
+    <select style="max-width:200px;padding:7px;" v-model="visit_team_leader">
+        <option v-for="(item,index) in selectedVisitCleaners()" v-bind:key="index" :value="item.id">
+            <% item.name %>
+        </option>
+    </select>
+</div>
+</div>
+    </div>
+    <div class="modal-footer text-center mt-10">
+              
+        <button type="submit"  class="btn primary-btn"  @click="getVisitAvailability()" v-if="visit_step==1">Next</button>
+        <button type="submit"  class="btn primary-btn-bordered"  @click="backToVisit()" v-if="visit_step==2">Back</button>
+        <button type="submit"  class="btn primary-btn"  @click="assignCleaners()" v-if="visit_step==2">Submit</button>
+        <button type="button" class="btn primary-btn-bordered" data-dismiss="modal"  id="visit-close">Cancel</button>
+      </div>
+    </div>
+    </div>
+    </div>
+
+    </div>
+
+    <!-- assign cleaners modal ends here-->
     <div data-toggle="modal" data-target="#uploadImageModal" id="upload-image-tigger"></div>
     <div data-toggle="modal" data-target="#notesModal" id="notes-tigger"></div>
     <div data-toggle="modal" data-target="#editPaymentModal" id="edit-payment-tigger"></div>
@@ -540,6 +613,7 @@
     <div data-toggle="modal" data-target="#backupModal" id="backupTeamBtn"></div>
     <div data-toggle="modal" data-target="#editBackupModal" id="editBackupTeamBtn"></div>
     <div data-toggle="modal" data-target="#addServiceModal" id="addServiceModalBtn"></div>
+    <div data-toggle="modal" data-target="#assignCleanersModal" id="assign-cleaners-trigger"></div>
 <!-- edit section dialog begins here-->
 <div class="modal fade " id="editSectionDialog" tabindex="-1" role="dialog" aria-labelledby="editSectionDialogTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered primary-modal" role="document">
@@ -2000,10 +2074,11 @@
                                     <!-- Cleaning Visit List starts here -->
                                     <div class="order-clean-section-header c-mb-10 d-flex">
                                         <h2>Cleaning Visit(s)</h2>
-                                        <button data-toggle="modal" data-target="#helpModel"  style="margin-top: 9px; color: #3968c6;margin-left:auto;background: none;
-                                        border: none;"><i data-toggle="tooltip" title="Help" class="fa fa-question-circle fa-lg" aria-hidden="true"></i></button>                                        
+                                        <button data-toggle="modal" data-target="#helpModel"  style="margin-top: 9px; color: #3968c6;background: none;margin-left:20px;
+                                        border: none;margin-left: auto;"><i data-toggle="tooltip" title="Help" class="fa fa-question-circle fa-lg" aria-hidden="true"></i></button>                                        
                                     </div>
-                                    <div class="testimonial-group">
+                                    <!-- <div class="view-button view-btn assign-cleaner-btn" @click="getVisitList(`{{evaluationbook.id}}`,`{{evaluationbook.service_type.name}}`)">Assign Cleaners</div> -->
+                                    <div class="testimonial-group mt-20">
                                         <div class="row">
                                         {% for multi_order_schedule in order.orderschedules %}
                                         {% if multi_order_schedule.order_scheduler_book == evaluationbook %}
@@ -3826,6 +3901,7 @@
 
 <!-- alert box ends here-->
 
+
 </div>
 <!--container-fluid space topspace-->
 
@@ -3851,6 +3927,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.en-AU.min.js" integrity="sha512-ghvIK/3dPoQzHCrGQxvxAeTtLGNHobiKoLA8tdztoqiiINxSre6RiloNaN6uVLg1ESyBiZh7rnmRBa+psz85Zw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://unpkg.com/vue-multiselect@2.1.0"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue-ellipse-progress/dist/vue-ellipse-progress.umd.min.js"></script>
 
