@@ -246,7 +246,10 @@
                                         Unit Price
                                     </th>
                                     <th data-hide="phone,tablet" style="text-align: center;">
-                                        Number of units
+                                        Quantity
+                                    </th>
+                                    <th data-hide="phone,tablet" style="text-align: center;">
+                                        unit
                                     </th>
                                     <th data-hide="phone,tablet" style="text-align: center;">
                                         Net Price
@@ -262,6 +265,7 @@
                                     <td>{{item.product.item}}</td>
                                     <td style="text-align: right;">{{item.unit_price|floatformat:3}} KD</td>
                                     <td style="text-align: center;">{{item.item_count}}</td>
+                                    <td style="text-align: center;">{% if item.product.item.measuring_unit %}{{item.product.item.measuring_unit}}(s){% else %}Unit(s){% endif %}</td>
                                     <td style="text-align: right;">{{item.total_price|floatformat:3}} KD</td>
                                     <td style="float: right;"> 
                                         <button type="button" class="inv-plan-img-btn edit-item-btn" data-itemid="{{item.id}}" data-productid="{{item.product.id}}" data-productname="{{item.product.item}}" data-unitprice="{{item.unit_price}}" data-itemcount="{{item.item_count}}" data-totalprice="{{item.total_price}}"> <img

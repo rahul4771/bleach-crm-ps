@@ -243,7 +243,7 @@
                                  
                                  <br>
                                  <div class="inv-item-amount2">
-                                     {% if inventory_item.item_add_type == 'unit' %}{{inventory_item.unit_count}}{% else %}{{inventory_item.total_quantity}}{% endif %} <span style="font-size: 25px;"> {% if inventory_item.item_add_type == 'unit' %}Unit(s){% else %}{{inventory_item.measuring_unit}}(s){% endif %} </span>                    
+                                     {% if inventory_item.item_add_type == 'unit' %}{{inventory_item.unit_count}}{% else %}{{inventory_item.total_quantity|floatformat:3}}{% endif %} <span style="font-size: 25px;"> {% if inventory_item.item_add_type == 'unit' %}Unit(s){% else %}{{inventory_item.measuring_unit}}(s){% endif %} </span>                    
                                  </div>
                              </div>
                             </div>

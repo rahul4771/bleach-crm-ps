@@ -12,6 +12,8 @@ from order.models import OrderScheduler
 from senior_team_leader.models import CleaningTeam,CleaningTeamMember
 from bleachadmin.models import ServicePriceRange
 from evaluator.models import EvaluationBookSection,EvaluationSectionKeynote,EvaluationSectionAddons
+import functools
+import operator
 # Create your views here.
 
 class InventoryHome(IsInventoryAdmin,View):
@@ -174,12 +176,18 @@ class InventoryAttribute(IsInventoryAdmin,View):
                 category = None
 
             if segment_id:
-                segment = Segment.objects.get(id=int(segment_id))
+                if segment_id == '0':
+                    segment = None
+                else:
+                    segment = Segment.objects.get(id=int(segment_id))
             else:
                 segment = None
 
             if line_id:
-                line = Line.objects.get(id=int(line_id))
+                if line_id == '0':
+                    line = None
+                else:
+                    line = Line.objects.get(id=int(line_id))
             else:
                 line = None
 
@@ -206,6 +214,14 @@ class InventoryAttribute(IsInventoryAdmin,View):
                 print("prip")
                 category = None
                 segment = None
+                line = None
+            elif attribute_segment == '0':
+                category = Category.objects.get(id=int(attribute_category))
+                segment = None
+                line = None
+            elif attribute_line == '0':
+                category = Category.objects.get(id=int(attribute_category))
+                segment = Segment.objects.get(id=int(attribute_segment))
                 line = None
             else:
                 print("prip2")
@@ -545,7 +561,7 @@ class InventoryItems(IsInventoryAdmin,View):
                 inventory_item.item_status = 'available'
             inventory_item.save()
 
-        attributes = Attribute.objects.filter(status=True).filter(Q (Q(attribute_category=inventory_item.item_category) & Q(attribute_segment=inventory_item.item_segment) & Q(attribute_line=inventory_item.item_line)) | Q(attribute_category=None)).prefetch_related(Prefetch('value_attribute',queryset=AttributeValue.objects.filter(status=True),to_attr='attribute_values'))
+        attributes = Attribute.objects.filter(status=True).filter(Q (Q(attribute_category=inventory_item.item_category) & Q(attribute_segment=inventory_item.item_segment) & Q(attribute_line=inventory_item.item_line)) | Q(attribute_category=None) | Q( Q(attribute_category=inventory_item.item_category) & Q(attribute_segment=None)) | Q( Q(attribute_category=inventory_item.item_category) & Q(attribute_segment=inventory_item.item_segment) & Q(attribute_line=None)) ).prefetch_related(Prefetch('value_attribute',queryset=AttributeValue.objects.filter(status=True),to_attr='attribute_values'))
 
         try:
             item_attributes = ItemAttributes.objects.filter(item=inventory_item)
@@ -1010,26 +1026,28 @@ class InventoryInv(IsInventoryAdmin,View):
     def get(self,request):
         search = request.GET.get('search')
 
+        item_category = request.GET.get('item_category',None)
+        if item_category:
+            item_category = int(item_category)
+
+        item_segment = request.GET.get('item_segment',None)
+        if item_segment:
+            item_segment = int(item_segment)
+
+        item_line = request.GET.get('item_line',None)
+        if item_line:
+            item_line = int(item_line)
+
+        item_status = request.GET.get('item_status')
+        print(item_category,item_segment,item_line,item_status,"mkk")
+
         if search:
             inventory_items       = InventoryItem.objects.filter(Q(name__icontains=search)|Q(item_code__icontains=search))
         else:
             inventory_items       = InventoryItem.objects.all()
 
         for item in inventory_items:
-            # if item.item_add_type == 'unit':
-            #     available_item_units = ItemUnit.objects.filter(item=item,status='active').count()
-            # else:
-            #     available_item_units = ItemHistory.objects.filter(item=item).aggregate(total_quantity=Sum('quantity'))['total_quantity'] or 0
             
-            # reserve_units = item.reserve_count
-
-            # if float(available_item_units) < float(reserve_units) and float(available_item_units) > 0:
-            #     item.item_status = 'about_to_finish'
-            # elif float(available_item_units) == 0 :
-            #     item.item_status = 'out_of_stock'
-            # else:
-            #     item.item_status = 'available'
-            # item.save()
             reserve_units = item.reserve_count
             
             if item.item_add_type == 'unit':
@@ -1052,19 +1070,59 @@ class InventoryInv(IsInventoryAdmin,View):
                 else:
                     item.item_status = 'available'
                 item.save()
-            
-
-        
-        # inventory_latest  = inventory_items.last()
-        # if inventory_latest:
-        #     code_number  =  int(re.findall(r'(\d+)', inventory_latest.item_code)[0]) + 1
-        #     new_item_code = 'ITEM'+str(code_number)
-        # else:
-        #     new_item_code = 'ITEM9001'
 
         categories  = Category.objects.all()
 
-        return render(request,'inventory/inventory.html',{"categories":categories,"items":inventory_items,"search_query":search,})
+        filters = []
+
+        if item_category:
+            case1 = Q(item_category__id=item_category)
+            filters.append(case1)
+
+        if item_segment:
+            case2 = Q(item_segment__id=item_segment)
+            filters.append(case2)
+
+        if item_line:
+            case3 = Q(item_line__id=item_line)
+            filters.append(case3)
+
+        if item_status:
+            case4 = Q(item_status=item_status)
+            filters.append(case4)
+
+        if item_category or item_segment or item_line or item_status:
+            filters = functools.reduce(operator.and_,filters)
+
+            inventory_items = inventory_items.filter(filters)
+
+        #PAGINATION CLIENTS
+        no_of_entries = request.GET.get('no_of_entries')
+        if not no_of_entries:
+            no_of_entries = 20
+
+        page = request.GET.get('page',1)
+        paginator=Paginator(inventory_items,no_of_entries)
+        try:
+            inventory_items=paginator.page(page)
+        except PageNotAnInteger:
+            inventory_items=paginator.page(1)
+        except EmptyPage:
+            inventory_items = paginator.page(paginator.num_pages)
+
+        # Get the index of the current page
+        index = inventory_items.number - 1  # edited to something easier without index
+        # This value is maximum index of your pages, so the last page - 1
+        max_index = len(paginator.page_range)
+        # You want a range of 7, so lets calculate where to slice the list
+        start_index = index - 3 if index >= 3 else 0
+        end_index = index + 3 if index <= max_index - 3 else max_index
+        # Get our new page range. In the latest versions of Django page_range returns
+        # an iterator. Thus pass it to list, to make our slice possible again.
+        page_range = list(paginator.page_range)[start_index:end_index]
+        entry_per_page=(inventory_items.end_index())-(inventory_items.start_index())+1
+
+        return render(request,'inventory/inventory.html',{"categories":categories,"items":inventory_items,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"item_category":item_category,"item_segment":item_segment,"item_line":item_line,"item_status":item_status})
 
     def post(self,request):
         action =request.POST.get('action')
@@ -1099,14 +1157,6 @@ class InventoryInv(IsInventoryAdmin,View):
 
             items    = InventoryItem.objects.all()
         
-            # item_latest  = items.last()
-            # if item_latest:
-                # code_number  =  int(re.findall(r'(\d+)', item_latest.item_code)[0]) + 1
-            #     new_item_code = 'ITEM'+str(code_number)
-            # else:
-            #     new_item_code = 'ITEM9001'
-
-            # item code generation
             item_code_series = str(category.category_id)+str(segment.segment_id)+str(line.line_id)
 
             latest_item_code = InventoryItem.objects.filter(item_code__contains=item_code_series).last()
@@ -1258,9 +1308,12 @@ class InventoryCreateCheckout(IsInventoryAdmin,View):
         max_area = 0
 
         for section in visit.order_scheduler_book.sections:
-            if isinstance(section.size, int) == True:
+        
+            if section.size.isnumeric() == True:
                 max_area = section.size
+                print(max_area,"mx")
             else:
+                print("mok")
                 if visit.order_scheduler_book.service_type.name == 'Upholstery Cleaning':
                     
                     for price_range in price_ranges:
@@ -1278,7 +1331,7 @@ class InventoryCreateCheckout(IsInventoryAdmin,View):
         service_recipe_ingredients = ServiceRecipeIngredients.objects.filter(service_type__service=service).prefetch_related(Prefetch('item_ingredient',queryset=ServiceRecipeItems.objects.all(),to_attr='service_recipe_items'))
         check_out_items = CheckOutItems.objects.filter(visit=visit)
 
-        # for check_out_item in check_out_items:
+        # recommended quantity calc
             
         for ingredient in service_recipe_ingredients:
             service_quantity = ingredient.quantity
@@ -1287,12 +1340,16 @@ class InventoryCreateCheckout(IsInventoryAdmin,View):
                 
                 service_area = ingredient.service_type.area_size
 
-                recommended_quantity = int(math.ceil(float(max_area) / float(service_area)) * float(service_quantity))
+                print(math.ceil(float(max_area) / float(service_area)),service_quantity,"lolss")
+                
+                if service_area:
+                    print("lpppp")
+                    recommended_quantity = int(math.ceil(float(max_area) / float(service_area)) * float(service_quantity))
 
             else:
                 service_person = ingredient.service_type.staff_count
 
-                quantity_per_person = int(service_quantity) // int(service_person)
+                quantity_per_person = int(service_quantity) / int(service_person)
 
                 recommended_quantity = int(cleaners) * int(quantity_per_person)
 
@@ -1310,18 +1367,13 @@ class InventoryCreateCheckout(IsInventoryAdmin,View):
                     else:
                         item_count = 0
 
-                if item_count >= recommended_quantity :
+                try:
+                    checkout_item = CheckOutItems.objects.get(visit=visit,service_item__ingredient=ingredient)
+                    
+                except:
 
-                    if service_item.is_swapped_item == True:
-                        try:
-                            checkout_item = CheckOutItems.objects.get(visit=visit,service_item__ingredient=ingredient)
-                            checkout_item.service_item = service_item
-                            checkout_item.save()
-                        except:
-
-                            CheckOutItems.objects.create(visit=visit,service_item=service_item,units=recommended_quantity)
-                else:
-                    pass
+                    CheckOutItems.objects.create(visit=visit,service_item=service_item,units=recommended_quantity,is_swapped_item=False)
+                
 
         print(service_recipe_ingredients,"itt")
         return render(request,'inventory/createCheckout.html',{"price_ranges":price_ranges,"visit":visit,"items":items,"service_recipe_ingredients":service_recipe_ingredients,"check_out_items":check_out_items})
@@ -1330,33 +1382,30 @@ class InventoryCreateCheckout(IsInventoryAdmin,View):
         visit = OrderScheduler.objects.select_related('order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='team_members')),to_attr='cleaning_team'),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='sections')).get(id=int(visit_id))
         service = visit.order_scheduler_book.service_type
         action = request.POST.get('action')
-        if action == 'add_item':
-            service_item = request.POST.get('item')
-            item = InventoryItem.objects.get(id=int(service_item))
-            # service_recipe_item = ServiceRecipeItems.objects.get(ingredient__service_type__service=service,item=item)
-            if item.item_status == 'available' or item.item_status == 'about_to_finish':
-                CheckOutItems.objects.create(visit=visit,item=item)
-                messages.success(request,"Item added!")
-            else:
-                messages.error(request,"Item out of stock!")
+        # if action == 'add_item':
+        #     service_item = request.POST.get('item')
+        #     item = InventoryItem.objects.get(id=int(service_item))
+        #     # service_recipe_item = ServiceRecipeItems.objects.get(ingredient__service_type__service=service,item=item)
+        #     if item.item_status == 'available' or item.item_status == 'about_to_finish':
+        #         CheckOutItems.objects.create(visit=visit,item=item)
+        #         messages.success(request,"Item added!")
+        #     else:
+        #         messages.error(request,"Item out of stock!")
 
         if action == 'swap_item':
-            checkout_item = request.POST.get('item')
+            checkout_item = request.POST.get('service_item')
             ingredient_id = request.POST.get('ingredient_id')
             checkout_item_id = request.POST.get('checkout_item_id')
-
+            print(checkout_item_id,checkout_item,"mpl")
             checkout = CheckOutItems.objects.get(id=int(checkout_item_id))
 
             ingredient = ServiceRecipeIngredients.objects.get(id=int(ingredient_id))
 
-            ServiceRecipeItems.objects.filter(ingredient=ingredient,is_swapped_item=True).update(is_swapped_item=False)
+            swap_item = ServiceRecipeItems.objects.get(ingredient=ingredient,item__id=int(checkout_item))
+            print(swap_item,"swp")
 
-            swap_item = ServiceRecipeItems.objects.get(id=int(checkout_item))
- 
-            swap_item.is_swapped_item = True
-            swap_item.save()
-
-            checkout.item = swap_item.item
+            checkout.service_item = swap_item
+            checkout.is_swapped_item = True
             checkout.save()
 
             messages.success(request,"Item Swapped!")

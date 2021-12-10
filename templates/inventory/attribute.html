@@ -97,7 +97,7 @@
                                     </td>
                                     <td>
                                   
-                                        <button class="inv-plan-img-btn edit_attribute" data-attributeid="{{attribute.id}}" data-attributename="{{attribute.name}}" {% if attribute.attribute_category %}data-attributecategory="{{attribute.attribute_category.id}}"{% else %}data-attributecategory="0"{% endif %} data-attributesegment="{{attribute.attribute_segment.id}}" data-attributeline="{{attribute.attribute_line.id}}" data-attributestatus="{{attribute.status}}" onclick="showDrawer('edit')" > <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>
+                                        <button class="inv-plan-img-btn edit_attribute" data-attributeid="{{attribute.id}}" data-attributename="{{attribute.name}}" {% if attribute.attribute_category %}data-attributecategory="{{attribute.attribute_category.id}}"{% else %}data-attributecategory="0"{% endif %} {% if attribute.attribute_segment %}data-attributesegment="{{attribute.attribute_segment.id}}"{% else %}data-attributesegment="0"{% endif %} {% if attribute.attribute_line %}data-attributeline="{{attribute.attribute_line.id}}"{% else %}data-attributeline="0"{% endif %} data-attributestatus="{{attribute.status}}" onclick="showDrawer('edit')" > <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>
                                         <button class="inv-plan-img-btn delete_attribute" data-attributeid="{{attribute.id}}" data-attributename="{{attribute.name}}" data-attributestatus="{{attribute.status}}" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
         
                                     </td>
@@ -633,6 +633,8 @@ $(function () {
     //edit attribute
     $('.edit_attribute').click(async function(){
         $('#id_selectText').text($('#cat_id'+$(this).data('attributecategory')).text());
+        $('#id_selectText2').text($('#seg_id'+$(this).data('attributesegment')).text());
+        $('#id_selectText3').text($('#line_id'+$(this).data('attributeline')).text());
         
         $('#id_edit_attribute').val($(this).data('attributeid'));
         $('#name_attribute').val($(this).data('attributename'));
@@ -724,6 +726,9 @@ $(function () {
                 $('#id_seg_text').text('--Select Segment--');
                 $('#id_ul_seg').empty();
                 $('#id_segment').attr("required",true);
+
+                $('#id_ul_seg').append('<li id="seg_id0" onclick="changeSelect2(0)"><a>All</a></li>')
+
                 $.each(result.data.inventory_segment,function(key,value){
                     console.log(key.id,value.id,"stat")
                     var tempName = String(value.name)
@@ -761,6 +766,8 @@ $(function () {
             if (result.data.inventory_line.length > 0 ){
                 $('#id_line_text').text('--Select Line--');
                 $('#id_ul_line').empty();
+
+                $('#id_ul_line').append('<li id="line_id0" onclick="changeSelect3(0)"><a>All</a></li>')
 
                 $.each(result.data.inventory_line,function(key,value){
                     console.log(key.id,value.id,"stat")

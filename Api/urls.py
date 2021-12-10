@@ -58,6 +58,8 @@ urlpatterns = [
 	url(r'^inventory-service-area/$',views.InventoryServiceAreaAPI.as_view(),name='api-inventory-service-area'),
 	url(r'^inventory-service-items/$',views.InventoryServiceItemsAPI.as_view(),name='api-inventory-service-items'),
 	url(r'^inventory-item-quantity-check/$',views.ItemQuantityCheck.as_view(),name='api-inventory-item-quantity-check'),
+	url(r'^inventory-checkout-item-add/$',views.CheckOutItemAdd.as_view(),name='api-inventory-checkout-item-add'),
+	url(r'^inventory-checkout-item-delete/$',views.CheckOutItemDelete.as_view(),name='api-inventory-checkout-item-delete'),
 
 	###Team Leader Mobile app API'S
 	url(r'^login/$',views.LoginAPI.as_view(),name='api-login'),
