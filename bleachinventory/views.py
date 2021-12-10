@@ -1030,21 +1030,27 @@ class InventoryInv(IsInventoryAdmin,View):
             item_category = request.GET.get('item_category')
             item_category = int(item_category)
         except:
-            item_category = None
+            item_category = ''
 
         try:
             item_segment = request.GET.get('item_segment')
             item_segment = int(item_segment)
         except:
-            item_segment = None
+            item_segment = ''
 
         try:
             item_line = request.GET.get('item_line')
             item_line = int(item_line)
         except:
-            item_line = None
+            item_line = ''
 
-        item_status = request.GET.get('item_status')
+        try:
+            item_status = request.GET.get('item_status')
+            if item_status == None:
+                item_status = ''
+        except:
+            item_status = ''
+
         print(item_category,item_segment,item_line,item_status,"mkk")
 
         if search:
