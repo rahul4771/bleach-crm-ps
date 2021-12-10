@@ -3404,11 +3404,50 @@ class CheckOutItemDelete(APIView):
 
 		checkout_item = request.GET.get('item_id')
 		checkout_item = CheckOutItems.objects.get(id=int(checkout_item))
-		checkout_item_id = checkout_item.item.id
+		checkout_item_id = checkout_item.id
 
 		checkout_item.delete()
 		
-		response_dict['item_id'] = checkout_item_id
+		response_dict['checkout_item_id'] = checkout_item_id
+
+		response_dict['success'] = True
+
+		return Response(response_dict, HTTP_200_OK)
+
+class CheckOutItemSwap(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+	def get(self,request):
+		response_dict            = {'success':False}
+
+		checkout_item = request.GET.get('service_item')
+		ingredient_id = request.GET.get('ingredient_id')
+		checkout_item_id = request.GET.get('checkout_item_id')
+		print(checkout_item_id,checkout_item,"mpl")
+		checkout = CheckOutItems.objects.get(id=int(checkout_item_id))
+
+		ingredient = ServiceRecipeIngredients.objects.get(id=int(ingredient_id))
+
+		swap_item = ServiceRecipeItems.objects.get(ingredient=ingredient,item__id=int(checkout_item))
+		print(swap_item,"swp")
+
+		checkout.service_item = swap_item
+		checkout.is_swapped_item = True
+		checkout.save()
+
+		response_dict['ingredient_id'] = ingredient.id
+		response_dict['ingredient_name'] = ingredient.ingredient
+		response_dict['checkout_item_id'] = checkout.id
+		response_dict['item_id'] = checkout.service_item.item.id
+		response_dict['item_name'] = checkout.service_item.item.name
+		response_dict['item_code'] = checkout.service_item.item.item_code
+
+		if checkout.service_item.item.item_add_type == 'unit':
+			response_dict['item_unit'] = 'unit(S)'
+		else:
+			response_dict['item_unit'] = checkout.service_item.item.measuring_unit
+
+		# response_dict['item_count'] = checkout_items_count + 1
 
 		response_dict['success'] = True
 

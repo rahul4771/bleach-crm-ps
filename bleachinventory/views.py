@@ -1410,10 +1410,10 @@ class InventoryCreateCheckout(IsInventoryAdmin,View):
 
             messages.success(request,"Item Swapped!")
 
-        if action == 'delete_item':
-            checkout_item = request.POST.get('item_id')
-            CheckOutItems.objects.get(id=int(checkout_item)).delete()
-            messages.success(request,"Item Deleted!")
+        # if action == 'delete_item':
+        #     checkout_item = request.POST.get('item_id')
+        #     CheckOutItems.objects.get(id=int(checkout_item)).delete()
+        #     messages.success(request,"Item Deleted!")
 
         if action == 'submit_checkout_list':
             quantities = request.POST.getlist('qty')
