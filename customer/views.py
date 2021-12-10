@@ -44,7 +44,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response 
 from rest_framework.status import HTTP_200_OK 
 
-from customer.serilizers import UserProfileSerializer,AddressSerializer,AddressSaveSerializer,EvaluationBookSerializer,EvaluationBookSectionSerializer,EvaluationSectionKeynoteSerializer,EvaluationSerializer,OrderSerializer,EvaluationDetailsSerializer,CustomerBookingSerializer,EvaluationSectionAddonSerializer
+from customer.serilizers import UserProfileSerializer,AddressSerializer,AddressSaveSerializer,EvaluationBookSerializer,EvaluationBookSectionSerializer,EvaluationSectionKeynoteSerializer,EvaluationSerializer,OrderSerializer,EvaluationDetailsSerializer,CustomerBookingSerializer,EvaluationSectionAddonSerializer,OrderScheduleShowSerializer
 from bleachadmin.serializers import ServiceAddOnsSerializer
 from agent.serializers import UserProfileShowSerializer
 
@@ -2747,6 +2747,22 @@ class GetAvailableCleaners(APIView):
 
 		return Response(response_dict,HTTP_200_OK)
 
+
+class GetSubscriptionSlotes(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+	def get(self,request):
+		response_dict            = {}
+		response_dict['success'] = False
+
+		book_id                          = request.GET.get('book_id')
+		order_schedules                  = OrderScheduler.objects.filter(order_scheduler_book__id=book_id)
+		
+		response_dict['subscriptions']   = OrderScheduleShowSerializer(instance=order_schedules,many=True).data
+
+		response_dict['success']         = True
+
+		return Response(response_dict,HTTP_200_OK)
 
 class GetAvailableCleanersGroupSubscription(APIView):
 	permission_classes        = (AllowAny,)
