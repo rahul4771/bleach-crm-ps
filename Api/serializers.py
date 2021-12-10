@@ -184,6 +184,10 @@ class EvaluationBookAPISerializer(serializers.ModelSerializer):
         model = EvaluationBook
         fields = ('cleaning_policy','area_type','location_type','cleaning_method','evaluator_note','service_type','evaluationsection_book')
 
+class OrderScheduleShowSerializer(serializers.ModelSerializer):
+	class Meta:
+		model  = OrderScheduler
+		fields = ('id','start_at','end_at','work_status','no_of_cleaners','cleaning_hours')
 
 ##Cleaning Team API's
 class OrderScheduleAPISerializer(serializers.ModelSerializer):
