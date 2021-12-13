@@ -1378,12 +1378,12 @@ def export_users_xls(request):
 		wb = xlwt.Workbook(encoding='utf-8')
 		ws = wb.add_sheet('PAYMENT DETAILS SHEET')
 
-		columns = ['BLC No.','Job Type','Order Amount','Total Paid Amount','Balance','Order Status']
+		columns = ['BLC No.','Job Type','Order Amount','Total Paid Amount','Balance','Order Status','Customer','Sales']
 		
 		for col_num in range(len(columns)):
 			ws.write(row_num, col_num, columns[col_num], font_style)
 
-		orders = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end),evaluation__quatation_status='APPROVED').filter(~Q( order_status = 'ORDER_CANCELLED' )).values_list('order_no', 'evaluation__payment_method', 'total_amount', 'amount_paid', 'remining_amount','evaluation__quatation_status','payment_status','preamount_paid','order_status','evaluation__payment_method').order_by('-id')
+		orders = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end),evaluation__quatation_status='APPROVED').filter(~Q( order_status = 'ORDER_CANCELLED' )).values_list('order_no', 'evaluation__payment_method', 'total_amount', 'amount_paid', 'remining_amount','evaluation__quatation_status','evaluation__customer__name','payment_status','preamount_paid','order_status','evaluation__payment_method').order_by('-id')
 	
 		#removing duplicates
 		found = set()
@@ -1392,25 +1392,62 @@ def export_users_xls(request):
 
 		for order in orders:
 
-			order_list = list(order)
+			cleaning_amount = 0
 
+			order_list = list(order)
+			
+			#sales calculation
+			orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',work_status='CLEANING_FULFILLED',order__order_no=order_list[0]).values_list('order__order_no','order_scheduler_book__estimated_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id','order_scheduler_book__evaluation_details__evaluation__id','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount','order_scheduler_book__evaluation_details__evaluator__id','order_scheduler_book__evaluation_details__evaluation__discount').order_by('end_at')
+
+			print(orderschedules.count(),"countt")
+			
+			schedules_list = []
+
+			for schedule in orderschedules:
+
+				schedules_list.append(schedule)
+
+			for schedule in schedules_list:
+
+				#schedule count of order
+				order_schedule_count = OrderScheduler.objects.filter(order__order_no=schedule[0]).count()
+
+				#schedule count of evaluation book
+				schedule_count = OrderScheduler.objects.filter(order__order_no=schedule[0],order_scheduler_book__id=schedule[4]).count()
+
+				order_amount     = schedule[1]
+				cleaning_amount += float(order_amount/schedule_count)
+
+				
+				#fine,promocode, write off calc
+				if schedule[6] > 0:
+					cleaning_amount -= float(schedule[6]/order_schedule_count)
+				if schedule[7] > 0:
+					cleaning_amount -= float(schedule[7]/order_schedule_count)
+				if schedule[8] > 0:
+					cleaning_amount += float(schedule[8]/order_schedule_count)
+				if schedule[10] > 0:
+					cleaning_amount -= float(schedule[10]/order_schedule_count)
+
+
+			#order 
 			if order_list[5] == 'APPROVED':
-				if order_list[6] == 'COMPLETED' or order_list[7] != 0 or order_list[9] == 'POSTPAID':
-					if order_list[8] == 'APPROVED_BY_CLIENT':
+				if order_list[7] == 'COMPLETED' or order_list[8] != 0 or order_list[10] == 'POSTPAID':
+					if order_list[9] == 'APPROVED_BY_CLIENT':
 						order_list[5] = 'APPROVED'
-					elif order_list[8] == 'ORDER_IN_PROGRESS':
+					elif order_list[9] == 'ORDER_IN_PROGRESS':
 						order_list[5] = 'ORDER IN PROGRESS'
-					elif order_list[8] == 'ORDER_CLOSED':
+					elif order_list[9] == 'ORDER_CLOSED':
 						order_list[5] = 'COMPLETED'
 					else:
 						order_list[5] = '-'
 				else:
 					order_list[5] = 'APPROVED-NOT PAID'
 
-			order_list[6] = ''
-			order_list[7] = ''
+			order_list[7] = cleaning_amount
 			order_list[8] = ''
 			order_list[9] = ''
+			order_list[10] = ''
 
 			if order_list[1] == 'SUBSCRIPTION':
 				order_list[1] = 'Subscription'
