@@ -1366,26 +1366,47 @@ class InventoryCreateCheckout(IsInventoryAdmin,View):
                 recommended_quantity = int(cleaners) * int(quantity_per_person)
 
         
+            items_list = []
             for service_item in ingredient.service_recipe_items:    
 
-                item = InventoryItem.objects.annotate(quantity_total=Sum('unit_item_history__quantity'),unit_count=Sum(Case(When(unit_item__status='active',then=1),default=0,output_field=IntegerField()))).get(id=int(service_item.item.id))
-                
-                print(item.item_add_type,item.unit_count,item.quantity_total,recommended_quantity,"tots")
-                if item.item_add_type == 'unit':
-                    item_count = item.unit_count
+                if service_item.item.item_add_type == 'unit':
+                    item = InventoryItem.objects.annotate(quantity_total=Sum(Case(When(unit_item__status='active',then=1),default=0,output_field=IntegerField()))).get(id=int(service_item.item.id))
                 else:
-                    if item.quantity_total:
-                        item_count = item.quantity_total
-                    else:
-                        item_count = 0
+                    item = InventoryItem.objects.annotate(quantity_total=Sum('unit_item_history__quantity')).get(id=int(service_item.item.id))
 
-                try:
-                    checkout_item = CheckOutItems.objects.get(visit=visit,service_item__ingredient=ingredient)
-                    
-                except:
+                item_dict = {
+                    'item_id' : item.id,
+                    'item_name' : item.name,
+                    'total_quantity' : item.quantity_total
+                }
 
-                    CheckOutItems.objects.create(visit=visit,service_item=service_item,units=recommended_quantity,is_swapped_item=False)
-                
+                items_list.append(item_dict)        
+    
+
+            newlist = sorted(items_list, key=lambda d: d['total_quantity'], reverse=True) 
+            
+            variable_recommended_quantity = recommended_quantity
+
+            for item in newlist:
+                service_item = ServiceRecipeItems.objects.get(ingredient=ingredient,item__id=int(item['item_id']))
+
+                if item['total_quantity'] > 0 and float(item['total_quantity']) >= float(recommended_quantity):
+                    try:
+                        checkout_item = CheckOutItems.objects.get(visit=visit,service_item=service_item,service_item__ingredient=ingredient)
+                    except:
+                        CheckOutItems.objects.create(visit=visit,service_item=service_item,units=recommended_quantity,is_swapped_item=False)
+                    print("klap")
+
+                elif item['total_quantity'] > 0 and float(item['total_quantity']) < float(variable_recommended_quantity):
+                    variable_recommended_quantity = float(variable_recommended_quantity) - float(item['total_quantity'])
+                    try:
+                        checkout_item = CheckOutItems.objects.get(visit=visit,service_item=service_item,service_item__ingredient=ingredient)
+                    except:
+                        CheckOutItems.objects.create(visit=visit,service_item=service_item,units=item['total_quantity'],is_swapped_item=False)
+                    print("klap2")     
+
+                else:
+                    pass
 
         print(service_recipe_ingredients,"itt")
         return render(request,'inventory/createCheckout.html',{"price_ranges":price_ranges,"visit":visit,"items":items,"service_recipe_ingredients":service_recipe_ingredients,"check_out_items":check_out_items})
