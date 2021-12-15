@@ -2945,7 +2945,7 @@ class InventoryServiceItemsAPI(APIView):
 			if ingredient_items_exist:
 				ServiceRecipeItems.objects.create(ingredient=ingredient,item=item)
 			else:
-				ServiceRecipeItems.objects.create(ingredient=ingredient,item=item,is_swapped_item=True)
+				ServiceRecipeItems.objects.create(ingredient=ingredient,item=item)
 
 		if action == 'edit_item':
 			print("eddit")
