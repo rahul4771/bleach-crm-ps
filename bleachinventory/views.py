@@ -1361,7 +1361,8 @@ class InventoryCreateCheckout(IsInventoryAdmin,View):
             else:
                 service_person = ingredient.service_type.staff_count
 
-                if service_person:
+                if service_person != 0:
+                    
                     quantity_per_person = int(service_quantity) / int(service_person)
 
                     recommended_quantity = int(cleaners) * int(quantity_per_person)
