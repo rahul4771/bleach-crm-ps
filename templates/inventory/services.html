@@ -363,7 +363,7 @@
                                           <div class="d-flex inv-hide" id="id_area_edit_2">
                                             <div style="width: 50%; " class="inv-input-container h-30"> 
                                                 <input type="number"   class="w-p-100 inv-in" name="area2" id="id_area2">
-                                                <div class="av-font" style="margin-left:5px; margin-top: 5px; font-size:18px;">sqm</div>
+                                                <div class="av-font variable_type" style="margin-left:5px; margin-top: 5px; font-size:18px;">sqm</div>
                                             </div> 
                                             <button style="margin-left: 10px;" id="id_editDone" class="inv-blue-btn " type="submit" onclick="closeditShow(2)">Done </button>
                                         </div>
@@ -371,7 +371,7 @@
                                             <div class="model-input-name service_area" >
                                                 0
                                             </div>
-                                            <div class="av-font" style="margin-left:10px; margin-top: 0px; font-size:18px; color: #5a5a5a;">sqm</div>
+                                            <div class="av-font variable_type" style="margin-left:10px; margin-top: 0px; font-size:18px; color: #5a5a5a;">sqm</div>
 
                                             <div   class="edit-div" style="top: 0px !important; position: relative; margin-left: 15px;">
                                               <img onclick="showEditModal(2)" id="id_editButton2"  class="inv-edit-img"
@@ -1756,6 +1756,13 @@ console.log('calling funcation', name, type)
         $('#id_head2').text(name)
     }
 
+    if (name == 'Upholstery Cleaning'){
+        console.log("loho")
+        $('.variable_type').text('seater');
+    }else{
+        $('.variable_type').text('sqm');
+    }
+
     $('#id_name_cleaning').val(name)
     $('#id_name_cleaning2').val(name)
 
@@ -1789,6 +1796,13 @@ function selectActive(d,id,name){
 
     $('.area_service').val(name)
     $('#id_name_category').val(id)
+
+    if (name == 'Upholstery Cleaning'){
+        console.log("loho")
+        $('.variable_type').text('seater');
+    }else{
+        $('.variable_type').text('sqm');
+    }
 
     if (id == 'detailedCleaning'){
         var recipe_category = $('#id_recipe_type1').val();
