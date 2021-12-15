@@ -39,13 +39,14 @@
                         <button class="inv-blue-btn filter_btn"  data-toggle="modal" data-target="#filterModel" > Filter </button>
                     </div>
                 </div>
+                <br><br>
                 <div class="d-flex">
                     <div>
                         <label for="favcity" style="width:100%;"> 
                             <select style="padding: 5px 50px 5px 7px !important; " name="no_of_entries" id="no_of_entries" onchange="set_params_go();"> 
-                            <option value="20">20 Entries</option>
-                            <option value="50">50 Entries</option>
-                            <option value="100">100 Entries</option>
+                            <option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
+                            <option value="50" {% if no_of_entries == '50' %}selected{% endif %}>50 Entries</option>
+                            <option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
                             </select>
                             </label>
                     </div>
@@ -147,7 +148,7 @@
 
                         {% if items.has_previous %}
                         <li class="page-item">
-                          <a class="page-link" href="?page={{ items.previous_page_number }}&search={{request.GET.search}}&item_category={{item_category}}&item_segment={{item_segment}}&item_line={{item_line}}&item_status={{item_status}}" aria-label="Previous">
+                          <a class="page-link" href="?page={{ items.previous_page_number }}&search={{request.GET.search}}&item_category={{item_category}}&item_segment={{item_segment}}&item_line={{item_line}}&item_status={{item_status}}&no_of_entries={{no_of_entries}}" aria-label="Previous">
                             <span aria-hidden="true">«</span>
                             <span class="sr-only">Previous</span>
                           </a>
@@ -163,15 +164,15 @@
 
                         {% for pg in page_range %}
                             {% if vus.number == pg %}
-                                <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}&item_category={{item_category}}&item_segment={{item_segment}}&item_line={{item_line}}&item_status={{item_status}}" >{{pg}}</a></li> 
+                                <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}&item_category={{item_category}}&item_segment={{item_segment}}&item_line={{item_line}}&item_status={{item_status}}&no_of_entries={{no_of_entries}}" >{{pg}}</a></li> 
                             {% else %}
-                                <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&item_category={{item_category}}&item_segment={{item_segment}}&item_line={{item_line}}&item_status={{item_status}}" >{{pg}}</a></li>
+                                <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&item_category={{item_category}}&item_segment={{item_segment}}&item_line={{item_line}}&item_status={{item_status}}&no_of_entries={{no_of_entries}}" >{{pg}}</a></li>
                             {% endif %}
                         {% endfor %}
 
                         {% if items.has_next %}
                         <li class="page-item">
-                          <a class="page-link" href="?page={{ items.next_page_number }}&search={{request.GET.search}}&item_category={{item_category}}&item_segment={{item_segment}}&item_line={{item_line}}&item_status={{item_status}}" aria-label="Next">
+                          <a class="page-link" href="?page={{ items.next_page_number }}&search={{request.GET.search}}&item_category={{item_category}}&item_segment={{item_segment}}&item_line={{item_line}}&item_status={{item_status}}&no_of_entries={{no_of_entries}}" aria-label="Next">
                             <span aria-hidden="true">»</span>
                             <span class="sr-only">Next</span>
                           </a>
