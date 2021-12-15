@@ -81,6 +81,17 @@
           <th style="text-align: center;">Debit</th>
           <th style="text-align: center;">Balance</th>
         </tr>
+        
+        {% comment %} <tr>
+          <td style="text-align:left;"></td> <!-- Don't remove this column as it's needed for the row commands -->
+          <td class="align-right">OPENING BALANCE</td>
+          <td style="text-align: right;" class="orderamount">-</td>
+          <td style="text-align: right;" class="ordercredit">{{opening_credit|default_if_none:"0.00"|floatformat:3}}</td>
+
+          <td style="text-align: right;" class="orderdebit">{{opening_debit|default_if_none:"0.00"|floatformat:3}}</td>
+          <td style="text-align: right;" class="orderbalance">{{opening_balance|default_if_none:"0.00"|floatformat:3}}</td>
+        </tr> {% endcomment %}
+
         {% for order in orders %}
         <tr>
           <td>{{order.date|date:'d-m-Y'}}</td>
