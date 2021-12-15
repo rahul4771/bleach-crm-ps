@@ -875,7 +875,14 @@ def purchaseorder_html_to_pdf_view(request,purchase_order_id):
 
 	purchase_order = PurchaseOrder.objects.prefetch_related(Prefetch('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.all(),to_attr='purchase_order_items')).get(id=int(purchase_order_id))
 	
-	html_string = render_to_string('customer/downloads/purchaseorderpage.html',{"purchase_order":purchase_order})
+	items_total_price = 0
+
+	for item in purchase_order.purchase_order_items:
+		items_total_price += float(item.total_price)
+
+	items_final_price = float(items_total_price)+float(purchase_order.tax)+float(purchase_order.shipping_charge)+float(purchase_order.other_charge)-float(purchase_order.discount)
+
+	html_string = render_to_string('customer/downloads/purchaseorderpage.html',{"purchase_order":purchase_order,"items_total_price":items_total_price,"items_final_price":items_final_price})
 	
 	html     = HTML(string=html_string,base_url=request.build_absolute_uri())
 	main_doc = html.render()

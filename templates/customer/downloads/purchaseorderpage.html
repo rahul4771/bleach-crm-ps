@@ -39,9 +39,7 @@
   <link href="{% static 'files/css/template.css' %}" rel="stylesheet" type="text/css">
     
 </head>
-<header>
-  {% include 'customer/downloads/header.html' %}
-</header>
+
 <body style="background: #F2F2F2;">
 <div id="app">
   <div id="container">
@@ -144,7 +142,7 @@
             Sub Total
           </td>
           
-          <td style="text-align: right;" id="total_order_amount">000.000</td>
+          <td style="text-align: right;" id="total_order_amount">{{items_total_price|floatformat:3|default_if_none:"0"}}</td>
         </tr>
       </table>
 
@@ -164,7 +162,7 @@
                     Discount %
                 </div>:
                 <div class="w-50 text-right">
-                    0
+                    {{purchase_order.discount|floatformat:3|default_if_none:"0"}}
                 </div>
             </div>
             <div class="d-flex mt-2">
@@ -172,7 +170,7 @@
                    Tax
                 </div>:
                 <div class="w-50 text-right">
-                    0
+                  {{purchase_order.tax|floatformat:3|default_if_none:"0"}}
                 </div>
             </div>
             <div class="d-flex mt-2">
@@ -180,7 +178,7 @@
                     Shipping Charge
                 </div>:
                 <div class="w-50 text-right">
-                    0
+                  {{purchase_order.shipping_charge|floatformat:3|default_if_none:"0"}}
                 </div>
             </div>
             <div class="d-flex mt-2">
@@ -188,7 +186,7 @@
                   Other Charges
                 </div>:
                 <div class="w-50 text-right">
-                    0
+                  {{purchase_order.other_charge|floatformat:3|default_if_none:"0"}}
                 </div>
             </div>
             
@@ -197,7 +195,7 @@
           <div id="soa_balance">
            Total
           </div>
-          <h1 id="totalamount">000.000</h1>
+          <h1 id="totalamount">{{items_final_price|floatformat:3|default_if_none:"0"}}</h1>
         </div>
       </div>
     </div>
@@ -309,7 +307,7 @@
 
 
 </div><!--app close-->
-{% block javascript %}
+
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.4/dist/JsBarcode.all.min.js"></script>
 
@@ -391,5 +389,4 @@ function send_items(){
 {% endblock %}
 
 </body>
-<footer>{% include 'customer/downloads/footer.html' %}</footer>
 </html>
