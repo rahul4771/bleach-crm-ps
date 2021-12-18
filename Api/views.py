@@ -2544,7 +2544,7 @@ class InvoiceSMSMailAPI(APIView):
 		print(options,"oid")
 
 		if subscription_topay:
-			Order.objects.filter(id=int(order_id)).update(subscription_topay=int(subscription_topay),subscription_topay_date=timezone.now())
+			Order.objects.filter(id=int(order_id)).update(subscription_topay=float(subscription_topay),subscription_topay_date=timezone.now())
 			data=True
 		
 		if selected_options:
@@ -2883,6 +2883,59 @@ class InventoryServiceRecipeAPI(APIView):
 			response_dict['staff_count'] = 0
 		return Response(response_dict,HTTP_200_OK)
 
+	def post(self,request):
+		response_dict = {}
+
+		action = request.data.get('action')
+
+		if action == 'add_ingredient':
+			service_type = request.data.get('service_type')
+			ingredient = request.data.get('ingredient')
+			print(ingredient,"itm")
+			item_count = request.data.get('item_count')
+			# unit_price = request.POST.get('unit_price')
+			item_status = request.data.get('item_status')
+			recipe_type = request.data.get('recipe_type')
+
+			# inventoryitem = InventoryItem.objects.get(id=int(item))
+
+			ServiceRecipe.objects.get_or_create(service=service_type)
+
+			get_servicetype = ServiceRecipe.objects.get(service=service_type)          
+
+			ServiceRecipeIngredients.objects.create(service_or_person=recipe_type,service_type=get_servicetype,ingredient=ingredient,quantity=item_count,status=item_status)
+
+			response_dict['success'] = True
+
+		if action == 'edit_ingredient':
+			service_ingredient_id = request.data.get('item_edit_id')
+			ingredient = request.data.get('ingredient')
+			item_count = request.data.get('item_count')
+			# unit_price = request.POST.get('unit_price')
+			item_status = request.data.get('item_status')
+			recipe_type = request.data.get('recipe_type')
+
+			# inventoryitem = InventoryItem.objects.get(id=int(item))
+
+			serviceingredient = ServiceRecipeIngredients.objects.get(id=int(service_ingredient_id))
+
+			serviceingredient.service_or_person = recipe_type
+			serviceingredient.ingredient = ingredient
+			serviceingredient.quantity = item_count
+			serviceingredient.status = item_status
+			serviceingredient.save()
+
+			response_dict['success'] = True
+
+		if action == 'delete_ingredient':
+			ingredient_id = request.data.get('object_id')
+
+			ServiceRecipeIngredients.objects.filter(id=int(ingredient_id)).delete()
+
+			response_dict['success'] = True
+
+		return Response(response_dict,HTTP_200_OK)
+
 class InventoryServiceAreaAPI(APIView):
 	permission_classes  	=   (AllowAny,)
 	authentication_classes  = ()
@@ -2932,18 +2985,19 @@ class InventoryServiceItemsAPI(APIView):
 		ingredient_item_id = request.GET.get('ingredient_item_id')
 		action = request.GET.get('action')
 		
-		print(ingredient_id,"iyyo","attrsed3")
+		print(ingredient_id,ingredient_item_id,"iyyo","attrsed3")
 		# try:
 		ingredient = ServiceRecipeIngredients.objects.get(id=int(ingredient_id))
 		print(ingredient,"ingri")
 
 		if action == 'add_item':
-			ingredient_items_exist = ServiceRecipeItems.objects.filter(ingredient=ingredient)
+			
 			print("add")
 			item = InventoryItem.objects.get(id=int(item_id))
+			ingredient_items_exist = ServiceRecipeItems.objects.filter(ingredient=ingredient,item=item)
 			
 			if ingredient_items_exist:
-				ServiceRecipeItems.objects.create(ingredient=ingredient,item=item)
+				pass
 			else:
 				ServiceRecipeItems.objects.create(ingredient=ingredient,item=item)
 
