@@ -2286,9 +2286,10 @@ function openNavAddStoreEdit(d) {
         var item_id = $('#id_pro_sel').val();
         var ingredient_id = $('#ingredient_id').val();
         var ingredient_item_id = $('#ingredient_item_id').val();
+        var ingredient_item_delete_id = $('#item_delete_id').val();
         var category = $('#id_name_category').val();
-        console.log(ingredient_id,action,"action")
-        var result = await _get('api/inventory-service-items/?ingredient_id='+ingredient_id+'&item_id='+item_id+'&ingredient_item_id='+ingredient_item_id+'&action='+action);
+        console.log(ingredient_item_id,ingredient_id,action,"action")
+        var result = await _get('api/inventory-service-items/?ingredient_id='+ingredient_id+'&item_id='+item_id+'&ingredient_item_id='+ingredient_item_id+'&ingredient_item_delete_id='+ingredient_item_delete_id+'&action='+action);
         if(result.status == 200){
             console.log(result.data,"yah")
             $('#pro-name').val('')
@@ -2302,7 +2303,7 @@ function openNavAddStoreEdit(d) {
                 showNotification('Item Updated !','success')
                 closeNavAddStore2()
             }
-            else{
+            if (action == 'delete_item'){
                 $('#id_delete_close').click()
                 showNotification('Item Deleted !','success');
 

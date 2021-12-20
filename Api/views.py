@@ -2983,6 +2983,7 @@ class InventoryServiceItemsAPI(APIView):
 		ingredient_id = request.GET.get('ingredient_id')
 		item_id = request.GET.get('item_id')
 		ingredient_item_id = request.GET.get('ingredient_item_id')
+		ingredient_item_delete_id = request.GET.get('ingredient_item_delete_id')
 		action = request.GET.get('action')
 		
 		print(ingredient_id,ingredient_item_id,"iyyo","attrsed3")
@@ -3009,7 +3010,7 @@ class InventoryServiceItemsAPI(APIView):
 			ingredient_item.save()
 
 		if action == 'delete_item':
-			ServiceRecipeItems.objects.get(id=int(ingredient_item_id)).delete()
+			ServiceRecipeItems.objects.get(id=int(ingredient_item_delete_id)).delete()
 
 		print(ingredient.ingredient,"ingr")
 		response_dict['ingredient'] = ingredient.ingredient
