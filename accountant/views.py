@@ -1383,7 +1383,7 @@ def export_users_xls(request):
 		for col_num in range(len(columns)):
 			ws.write(row_num, col_num, columns[col_num], font_style)
 
-		orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(prev_date_start,todate_date_end)).filter(Q(Q(work_status = 'CLEANING_TEAM_ASSIGNED') | Q(work_status = 'CLEANING_IN_PROGRESS') | Q(work_status='CLEANING_FULFILLED'))).exclude( Q(Q(Q(order__evaluation__payment_method='PREPAID')&~Q(order__payment_status='COMPLETED'))|Q(Q(order__evaluation__payment_method='BREAKDOWN')&Q(order__preamount_paid=0))) ).order_by('end_at')
+		orderschedules = OrderScheduler.objects.filter(is_active=True,end_at__range=(prev_date_start,todate_date_end)).filter(Q(Q(work_status = 'CLEANING_TEAM_ASSIGNED') | Q(work_status = 'CLEANING_IN_PROGRESS') | Q(work_status='CLEANING_FULFILLED'))).exclude( Q(Q(Q(order__evaluation__payment_method='PREPAID')&~Q(order__payment_status='COMPLETED'))|Q(Q(order__evaluation__payment_method='BREAKDOWN')&Q(order__preamount_paid=0))) ).order_by('end_at')
 
 		print(orderschedules,"countt")
 		
@@ -1421,13 +1421,28 @@ def export_users_xls(request):
 					if schedule.order.order_status == 'APPROVED_BY_CLIENT':
 						order_status = 'APPROVED'
 					elif schedule.order.order_status == 'ORDER_IN_PROGRESS':
-						order_status = 'ORDER_IN_PROGRESS'
+						order_status = 'ORDER IN PROGRESS'
 					elif schedule.order.order_status == 'ORDER_CLOSED':
-						order_status = 'ORDER_CLOSED'
+						order_status = 'ORDER CLOSED'
+					elif schedule.order.order_status == 'CANCEL_IN_PROGRESS':
+						order_status = 'CANCEL IN PROGRESS'
+					elif schedule.order.order_status == 'ORDER_CANCELLED':
+						order_status = 'ORDER CANCELLED'
 					else:
 						order_status = '-'
 				else:
 					order_status = 'APPROVED-NOT PAID'
+
+			elif schedule.order.evaluation.quatation_status == 'PENDING':
+				order_status = 'PENDING'
+
+			elif schedule.order.evaluation.quatation_status == 'REJECTED':
+				order_status = 'REJECTED'
+
+			elif schedule.order.evaluation.quatation_status == 'EXPIRED':
+				order_status = 'EXPIRED'
+			else:
+				order_status = '-'
 
 			if schedule.order.evaluation.payment_method == 'SUBSCRIPTION':
 				cleaning_policy = 'Subscription'
