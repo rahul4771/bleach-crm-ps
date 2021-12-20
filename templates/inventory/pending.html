@@ -1,0 +1,864 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+<div class="wrapper"><!--wrapper-->
+    {% include "inventory/common/header.html" %}
+    <section class="content">
+        <div class="container-fluid space topspace">
+            <div class="welcome-wrapper">
+                <!--welcome-wrapper-->
+                <h1 class="dashboard-head">Pending</h1>
+                <!-- <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p> -->
+            </div>
+        </div>
+
+        <div class="main-content-holder"><!--main-content-holder-->   
+            <div class="white-wrapper white-wrapper-padding">
+                <div class="d-flex d-grid">
+                    <div>
+                     
+                        <div class="inv-input-container h-30">
+                            <i class="fa fa-search inv-icon-input" aria-hidden="true"></i>
+                            <input type="text" placeholder="Search Inventory" id="search-bar" class="inv-input w-250" onchange ="set_params_go()" value="{{search_query|default_if_none:''}}" name="attributes">
+                          </div>
+                    
+                    
+                    </div>
+
+                    
+                    <div class="right-pos">
+                        
+                       
+                        <button class="inv-blue-btn filter_btn"  data-toggle="modal" data-target="#filterModel" > Filter </button>
+                    </div>
+                </div>
+                <br><br>
+                <div class="d-flex">
+                    <div>
+                        <label for="favcity" style="width:100%;"> 
+                            <select style="padding: 5px 50px 5px 7px !important; " name="no_of_entries" id="no_of_entries" onchange="set_params_go();"> 
+                            <option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
+                            <option value="50" {% if no_of_entries == '50' %}selected{% endif %}>50 Entries</option>
+                            <option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
+                            </select>
+                            </label>
+                    </div>
+                    <div class="right-pos">
+                        <p>{{no_of_entries}} Entries</p>
+                    </div>
+                </div>
+                <div class="mt-20">
+                    <table class="inv-table footable" style="border-top:1px solid #c4c4c4"> 
+                        <thead>
+                            <tr>
+                                <th style="width: %;">
+                                    Order
+                                </th>
+                                <th data-hide="phone,tablet"  style="width: %; text-align: center;">
+                                   Team Leader
+                                </th>
+                                <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                    Item Code
+                                </th>
+                                <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                   Item Name
+                                </th>
+                               <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                    Checkout Date
+                                </th>
+                               
+    
+                                <th data-hide="phone,tablet"  style="width: %;" class="text-center table-w-20">Action</th>
+                            </tr>
+                        </thead>
+                     <tbody>
+                        {% for item in items %}
+                        <tr>
+                            <td class="td-md-width">
+                                {{item.name}}
+                            </td>
+                            <td class="text-center">
+                                {{item.item_code}}
+                            </td>
+                            <td class="text-center">
+                                {{item.item_category.name}}
+                            <td class="text-center td-md-width">
+                                {{item.item_segment.name}}
+                            </td>
+                            <td class="text-center td-md-width" >
+                                {{item.item_line.name}}
+                            </td>
+                            <td class="text-center">
+                                {{item.reserve_count}}
+                            </td>
+                            {% comment %} <td>
+                                {% if item.status == True %}
+                                <span class="inv-dot c-active ml-5"></span>Active
+                                {% else %}
+                                <span class="inv-dot c-inactive ml-5"></span>Not Active
+                                {% endif %}
+                              
+                            </td> {% endcomment %}
+                            <td class="text-left">
+                                {% if item.item_status == 'available' %}
+                                <span class="inv-dot  c-active"></span>
+                                Available
+                                {% elif item.item_status == 'about_to_finish' %}
+                                <span class="inv-dot c-about-finish"></span>
+                                
+                                About to finish
+                                {% elif item.item_status == 'out_of_stock' %}
+                                <span class="inv-dot c-out-of-order"></span>
+
+                                Out of Stock
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                <a href="/bleach-inventory/item/{{item.id}}">
+                                <button class="inv-plan-img-btn"> <img class="view-img" src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
+                                </a>
+                                <button class="inv-plan-img-btn edit-item" onclick="openNavAddStore('edit')" data-itemid="{{item.id}}" data-itemname="{{item.name}}" data-itemcode="{{item.item_code}}" data-itemcategory="{{item.item_category.id}}" data-itemsegment="{{item.item_segment.id}}" data-itemline="{{item.item_line.id}}" data-itemdescription="{{item.description}}" data-itemreserve="{{item.reserve_count}}" data-itemaddtype="{{item.item_add_type}}" data-unitmeasure="{{item.measuring_unit}}" data-itemstatus="{{item.status}}" data-itemreusbale="{{item.is_reusable}}"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>
+                                <button class="inv-plan-img-btn delete-item"  data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
+
+                            </td>
+                        </tr>
+                        {% endfor %}
+                     </tbody>
+                       
+                      
+                     
+                        
+                    </table>
+                </div>
+
+                <div class="text-right">
+                    <ul class="pagination">
+
+                        {% if items.has_previous %}
+                        <li class="page-item">
+                          <a class="page-link" href="?page={{ items.previous_page_number }}&search={{request.GET.search}}&item_category={{item_category}}&item_segment={{item_segment}}&item_line={{item_line}}&item_status={{item_status}}&no_of_entries={{no_of_entries}}" aria-label="Previous">
+                            <span aria-hidden="true">«</span>
+                            <span class="sr-only">Previous</span>
+                          </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item">
+                          <a class="page-link" href="#" aria-label="Previous">
+                            <span aria-hidden="true">«</span>
+                            <span class="sr-only">Previous</span>
+                          </a>
+                        </li>
+                        {% endif %}
+
+                        {% for pg in page_range %}
+                            {% if vus.number == pg %}
+                                <li class="page-item"><a class="page-link active" href="?page={{pg}}&search={{request.GET.search}}&item_category={{item_category}}&item_segment={{item_segment}}&item_line={{item_line}}&item_status={{item_status}}&no_of_entries={{no_of_entries}}" >{{pg}}</a></li> 
+                            {% else %}
+                                <li class="page-item"><a class="page-link" href="?page={{pg}}&search={{request.GET.search}}&item_category={{item_category}}&item_segment={{item_segment}}&item_line={{item_line}}&item_status={{item_status}}&no_of_entries={{no_of_entries}}" >{{pg}}</a></li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if items.has_next %}
+                        <li class="page-item">
+                          <a class="page-link" href="?page={{ items.next_page_number }}&search={{request.GET.search}}&item_category={{item_category}}&item_segment={{item_segment}}&item_line={{item_line}}&item_status={{item_status}}&no_of_entries={{no_of_entries}}" aria-label="Next">
+                            <span aria-hidden="true">»</span>
+                            <span class="sr-only">Next</span>
+                          </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item">
+                          <a class="page-link" href="#" aria-label="Next">
+                            <span aria-hidden="true">»</span>
+                            <span class="sr-only">Next</span>
+                          </a>
+                        </li>
+                        {% endif %}
+                        
+                      </ul>
+                </div>
+                <div style="color: #928F8F;">
+                    Showing {{items.start_index}} to {{items.end_index}} of {{items.paginator.count}} entries
+                </div>
+
+
+            </div>
+        </div>
+    </section>
+    <div id="addStore" class="inv-sidedrawer">
+
+        <div class="inv-sidedrawer-inner">
+            <div class="d-flex">
+                <div class="inv-drawer-head" id="itemHead">
+                    Add Store
+                </div>
+                <div class="right-pos">
+
+                    <button onclick="closeNavAddStore()" class="img-button">
+                        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                    </button>
+                </div>
+            </div>
+            <hr>
+
+            <form method="POST" id="myForm" action="">{% csrf_token %}
+            <input type="hidden" name="action" id="item_action" value="add_item" />
+            <input type="hidden" name="item_edit_id" id="id_edit_item" />
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name required-field">Item</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text"  class="w-p-100 inv-in" name="item_name" id="id_item_name">
+                      </div>
+                </div>
+
+            </div>
+            {% comment %} <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Item code</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="text" id="id_item_code"  class="w-p-100 inv-in" name="item_code" value="{{item_code}}">
+                      </div>
+                </div>
+
+            </div> {% endcomment %}
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name required-field">Category</div>
+
+                    <!-- <select class="minimal" name="item_category" id="id_category" required>
+                        <option value="">--Select Category--</option>
+                        {% for category in categories %}
+                        <option value="{{category.id}}">{{category.name}}</option>
+                        {% endfor %}
+
+                    </select> -->
+                    <input hidden  type="text" name="item_category" id="id_category" required>
+                    <div class="wrap-drop" id="noble-gases"  >
+                        <span id="id_selectText">--Select Category--</span>
+                        <ul class="drop">
+                            {% for category in categories %}
+                            <li id="cat_id{{category.id}}" onclick="changeSelect({{category.id}})"><a>{{category.name}}</a></li>
+                   
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row mt-20 segment_dropdown">
+                <div class="col-md-12 ">
+                    <div class="model-input-name required-field">Segment</div>
+
+                    <!-- <select class="minimal" name="item_segment" id="id_segment">
+                        <option value="">--Select Segment--</option>
+                    
+                    </select> -->
+                    <input hidden  type="text" name="item_segment" id="id_segment" required>
+
+                    <div class="wrap-drop" id="noble-gases2" style="z-index: 5 !important;" >
+                        <span id="id_seg_text">--Select Segment--</span>
+                        <ul class="drop" id="id_ul_seg">
+                           
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row mt-20 line_dropdown">
+                <div class="col-md-12 ">
+                    <div class="model-input-name required-field">Line</div>
+
+                    <!-- <select class="minimal" name="item_line" id="id_line">
+                        <option value="">--Select Line--</option>
+                    
+                    </select> -->
+                    <input hidden  type="text" name="item_line" id="id_line" required>
+
+                    <div class="wrap-drop" id="noble-gases3" style="z-index: 5 !important;" >
+                        <span id="id_line_text">--Select Line--</span>
+                        <ul class="drop" id="id_ul_line">
+                           
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Description</div>
+
+                    <div class="inv-input-container "> 
+                    <textarea style="width: 100%;" rows="8" id="id_item_description" name="item_description"></textarea>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Reserve</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="number"  class="w-p-100 inv-in" name="item_reserve" value="0" id="id_item_reserve">
+                      </div>
+                </div>
+
+            </div>
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Is Reusable ?</div>
+                    <input hidden type="text" id="item_reusable_id" name="item_reusable" value="True">
+                    {% comment %} <select id="item_reusable_id" name="item_reusable" >
+                    <option value="True">Yes</option>
+                    <option value="False">No</option>
+                    </select> {% endcomment %}
+                    <div class="wrap-drop" id="noble-gases5" style="z-index: 4 !important;"  >
+                        <span id="id_selectText4">Yes</span>
+                        <ul class="drop">
+                            <li onclick="changeSelect5('True')"><a>Yes</a></li>
+                            <li onclick="changeSelect5('False')"><a>No</a></li> 
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Add Item by</div>
+
+                    <!-- <select id="item_status_id" name="item_status" class="minimal">
+                        <option value="True" selected>Active</option>
+                        <option value="False">Inactive</option>
+
+                    </select> -->
+                    <input hidden type="text" id="itemadd_type_id" name="itemadd_type" value="unit">
+                    <div class="wrap-drop" id="noble-gases6" style="z-index: 3 !important;"  >
+                        <span id="id_selectText5">unit</span>
+                        <ul class="drop">
+                            <li onclick="changeSelect6('quantity')"><a>Quantity</a></li>
+                            <li onclick="changeSelect6('unit')"><a>Unit</a></li> 
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Unit of Measure</div>
+
+                    <!-- <select id="item_status_id" name="item_status" class="minimal">
+                        <option value="True" selected>Active</option>
+                        <option value="False">Inactive</option>
+
+                    </select> -->
+                    <input hidden type="text" id="unit_measure_id" name="unit_measure" value="number">
+                    <div class="wrap-drop" id="noble-gases7" style="z-index: 2 !important;"  >
+                        <span id="id_selectText6">Number</span>
+                        <ul class="drop">
+                            <li onclick="changeSelect7('litre')"><a>Litre</a></li>
+                            <li onclick="changeSelect7('kg')"><a>Kg</a></li> 
+                            <li onclick="changeSelect7('number')"><a>Number</a></li> 
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Status</div>
+
+                    <!-- <select id="item_status_id" name="item_status" class="minimal">
+                        <option value="True" selected>Active</option>
+                        <option value="False">Inactive</option>
+
+                    </select> -->
+                    <input hidden type="text" id="item_status_id" name="item_status" value="True">
+                    <div class="wrap-drop" id="noble-gases4" style="z-index: 1 !important;"  >
+                        <span id="id_selectText3">Active</span>
+                        <ul class="drop">
+                            <li onclick="changeSelect4('True')"><a>Active</a></li>
+                            <li onclick="changeSelect4('False')"><a>Inactive</a></li> 
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+            
+  
+        </div>
+        <div class="inv-drawer-footer" style="position: relative !important;">
+            <button class="sent-button inventory-form-btn" type="button" onclick="formvalidation()" >Submit</button>
+            </form>
+                        <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
+        </div>
+        
+    </div>
+    <div class="modal fade" id="deleteModel" role="dialog">
+        <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12 mt-20">
+
+                        
+                        <div class="d-flex ">
+                            <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to delete inventory item ?</p></div>
+                            <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                                <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                            </button>
+    
+                        </div>
+                    </div>
+                </div>
+               
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <form method="POST" action="" >{% csrf_token %}
+                        <input type="hidden" name="action" value="delete_item" id="delete_item_id" />
+                        <input type="hidden" name="item_id" id="id_item" />
+                        <div class="cancel-model-content">
+                            <button class="sent-button" >Delete</button>
+                            <button data-dismiss="modal" class="view-button">Cancel</button>
+                          
+                        </div>
+                        </form>
+                    </div>
+    
+                </div>
+            </div>
+        </div>
+      </div>
+
+
+      <div class="modal fade" id="filterModel" role="dialog">
+        <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
+            <div class="container-fluid">
+                <div class="row m-0">
+                    <div class="col-md-12 mt-20">                       
+                        <div class="d-flex ">
+                            <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Filter options</p></div>
+                            <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                                <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                            </button>
+    
+                        </div>
+                    </div>
+                </div>
+               
+                <div class="row m-0">
+                    
+                    <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+                        <div class="ticket-form-left"><!--ticket-form-left-->
+                                        <div class=" bold-text common-label"> <label>Category</label></div>
+                                      <label for="favcity">
+                                      <select name="category_filter" id="category_filter_id" >
+                                      <option value=''>---ALL---</option>
+                                      {% for category in categories %}
+                                <option value='{{category.id}}' {% if category.id == item_category %}selected{%endif%} >{{category.name}}</option>
+                                      {% endfor %}                
+                                    </select>
+                                      </label>
+                        </div><!--ticket-form-left-->
+                        <div class="ticket-form-right"><!--ticket-form-right-->
+                                        <div class=" bold-text common-label"> <label>Segment</label></div>
+                                      <label for="favcity">
+                                      <select name="segment_filter" id="segment_filter_id">
+                                      <option value=''>------</option> 
+                                                   
+                                    </select>
+                                      </label>
+                        </div><!--ticket-form-right-->
+                      </div><!--ticket-wrapper-row ticket-forms-boxes--> 
+
+                      <div class="ticket-wrapper-row ticket-forms-boxes mt-10"><!--ticket-wrapper-row ticket-forms-boxes-->
+                        <div class="ticket-form-left"><!--ticket-form-left-->
+                                        <div class=" bold-text common-label"> <label>Line</label></div>
+                                      <label for="favcity">
+                                      <select name="line_filter" id="line_filter_id">
+                                      <option value=''>------</option>
+                                                   
+                                    </select>
+                                      </label>
+                        </div><!--ticket-form-left-->
+                        <div class="ticket-form-right "><!--ticket-form-right-->
+                                        <div class=" bold-text common-label"> <label>Item Status</label></div>
+                                      <label for="favcity">
+                                      <select name="item_status_filter" id="item_status_filter_id">
+                                      <option value=''>---ALL---</option> 
+                                      
+                                      <option value='available' {% if item_status == 'available' %}selected{% endif %}>Available</option>
+                                      <option value='about_to_finish' {% if item_status == 'about_to_finish' %}selected{% endif %}>About to Finish</option>
+                                      <option value='out_of_stock' {% if item_status == 'out_of_stock' %}selected{% endif %}>Out of Stock</option>
+                                                    
+                                    </select>
+                                      </label>
+                        </div><!--ticket-form-right-->
+                      </div><!--ticket-wrapper-row ticket-forms-boxes--> 
+                    <div class="col-md-12 text-center">
+                        
+                        <div class="cancel-model-content">
+                            <button class="sent-button" type="button" onclick="set_params_go()" >Submit</button>
+                            <button data-dismiss="modal" class="view-button" type="button">Cancel</button>
+                          
+                        </div>
+                        
+                    </div>
+                
+                </div>
+            </div>
+        </div>
+      </div>
+
+
+</div>
+
+
+
+{% endblock %}
+
+{% block javascript %}
+<script>
+    function DropDown(el) {
+    this.dd = el;
+    this.placeholder = this.dd.children('span');
+    this.opts = this.dd.find('ul.drop li');
+    this.val = '';
+    this.index = -1;
+    this.initEvents();
+}
+
+DropDown.prototype = {
+    initEvents: function () {
+        var obj = this;
+        obj.dd.on('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $(this).toggleClass('active');
+        });
+        obj.opts.on('click', function () {
+            var opt = $(this);
+            obj.val = opt.text();
+            obj.index = opt.index();
+            obj.placeholder.text(obj.val);
+            opt.siblings().removeClass('selected');
+            opt.filter(':contains("' + obj.val + '")').addClass('selected');
+        }).change();
+    },
+    getValue: function () {
+        return this.val;
+    },
+    getIndex: function () {
+        return this.index;
+    }
+};
+
+$(function () {
+    // create new variable for each menu
+    var dd1 = new DropDown($('#noble-gases'));
+    var dd2 = new DropDown($('#noble-gases2'));
+    var dd3 = new DropDown($('#noble-gases3'));
+    var dd4 = new DropDown($('#noble-gases4'));
+    var dd5 = new DropDown($('#noble-gases5'));
+    var dd6 = new DropDown($('#noble-gases6'));
+    var dd7 = new DropDown($('#noble-gases7'));
+
+
+
+    // var dd2 = new DropDown($('#other-gases'));
+    $(document).click(function () {
+        // close menu on document click
+        $('.wrap-drop').removeClass('active');
+    });
+});
+</script>
+<script>
+
+     
+function changeSelect4(va){
+        $('#item_status_id').val(va)
+    }
+
+function changeSelect5(va){
+        $('#item_reusable_id').val(va)
+    }
+
+function changeSelect6(va){
+        $('#itemadd_type_id').val(va)
+    }
+
+function changeSelect7(va){
+        $('#unit_measure_id').val(va)
+    }
+
+function changeSelect(va){
+        $('#id_category').val(va);
+        $('#id_segment').val('');
+        var category_id = $('#id_category').val();
+        getsegments(category_id);
+        $('.line_dropdown').hide();
+        $('#id_line').attr("required",false);
+    }
+
+    function changeSelect2(id){
+        $('#id_line').val('');
+         $('#id_segment').val(id);
+        $('#id_seg_text').text($('#seg_id'+id).text());
+        var segment_id = $('#id_segment').val();
+        getlines(segment_id);
+    }
+    function changeSelect3(id){
+         $('#id_line').val(id);
+        $('#id_line_text').text($('#line_id'+id).text());
+       
+    }
+    $(document).ready(function(){
+        $('.segment_dropdown').hide();
+        $('.line_dropdown').hide();
+
+        getsegments($('#category_filter_id').val());
+
+        {% if item_segment %}
+            getlines({{item_segment}});
+        {% else %}
+            getlines($('#segment_filter_id').val());
+        {% endif %}
+
+    })
+
+    $('.filter_btn').click(function(){
+        {% if item_segment %}
+        $("#segment_filter_id option[value="+{{item_segment}}+"]").attr('selected', true);
+        {% endif %}
+
+        {% if item_line %}
+        $("#line_filter_id option[value="+{{item_line}}+"]").attr('selected', true);
+        {% endif %}
+    })
+
+    function openNavAddStore(d) {
+    if(d == 'add'){
+        console.log("new")
+        document.getElementById("myForm").reset();
+        $('#item_action').val('add_item');
+        $('#id_edit_item').val(' ')
+        $('#item_status_id').val('True')
+            $('#id_selectText3').text('Active');
+        $('#item_reusbale_id').val('True')
+            $('#id_selectText4').text('Yes');
+        $('#id_category').val('');
+        $('#id_selectText').text('--Select Category--')
+            $("#itemHead").text("Add Item");
+            $('.inventory-form-btn').text('Add');
+            $('.segment_dropdown').hide();
+            $('.line_dropdown').hide();
+
+        }
+        if(d == 'edit'){
+            $("#itemHead").text("Edit Inventory");
+            $('.inventory-form-btn').text('Update');
+        }
+        if(screen.width<= 600){
+            document.getElementById("addStore").style.width = "100%";
+        }else if(screen.width<= 720){
+            document.getElementById("addStore").style.width = "50%";
+        }
+        else{
+            document.getElementById("addStore").style.width = "30%";
+        }  
+    }
+    function closeNavAddStore() {
+        document.getElementById("addStore").style.width = "0";
+    }
+
+
+    //form validation
+    function formvalidation(){
+
+        if ($('input[name=item_name]').val() == ''){
+            $('input[name=item_name]').addClass('red-border-input');
+        }else if ($('input[name=item_category]').val() == ''){
+            $('#noble-gases').addClass('red-border-input');
+        }else if ($('input[name=item_segment]').val() == ''){
+            $('#noble-gases2').addClass('red-border-input');
+        }else if ($('input[name=item_line]').val() == ''){
+            $('#noble-gases3').addClass('red-border-input');
+        }else{
+            console.log("lolo")
+            $('#myForm').submit();
+        }
+    }
+
+    
+    async function getsegments(category_id){
+         var result = await _get('api/inventory-segments/?category_id='+category_id);
+         $('#id_segment').find('option').remove();
+         $('#id_line').find('option').remove();
+         if(result.status == 200){
+             console.log(result.data.inventory_segment,"stat")
+            if (result.data.inventory_segment.length > 0){
+                $('#id_seg_text').text('--Select Segment--');
+                $('#id_ul_seg').empty();
+                $('#id_segment').attr("required",true);
+                $.each(result.data.inventory_segment,function(key,value){
+                    console.log(key.id,value.id,"stat")
+                    var tempName = String(value.name)
+                    console.log(tempName)
+                        $('#id_ul_seg').append(' <li id="seg_id'+value.id+'" data-id='+value.id+'  onclick="changeSelect2('+value.id+')" ><a>'+value.name+'</a></li>')
+                        $('#segment_filter_id').append('<option value="'+value.id+'" >'+value.name+'</option>')
+                    })
+                // $('#id_segment').find('option').remove();
+                // $('#id_segment').append('<option value="">--Select Segment--</option>')
+                // $('#id_segment').attr("required",true);
+                // $.each(result.data.inventory_segment,function(key,value){
+                //     console.log(key.id,value.id,"stat")
+                //         $('#id_segment').append('<option value='+value.id+'>'+value.name+'</option>')
+                // })
+
+                $('.segment_dropdown').show();
+            }else{
+                console.log('No Segments','error')
+            }
+            
+         }else{
+             $('#id_segment').attr("required",false);
+            showNotification('Something went wrong','error')
+         }
+    }
+
+    async function getlines(segment_id){
+         var result = await _get('api/inventory-lines/?segment_id='+segment_id);
+         
+         if(result.status == 200){
+             console.log(result.data.inventory_line,"stat")
+            if (result.data.inventory_line.length > 0 ){
+                $('#id_line_text').text('--Select Line--');
+                $('#id_ul_line').empty();
+
+                $.each(result.data.inventory_line,function(key,value){
+                    console.log(key.id,value.id,"stat")
+                       
+                        $('#id_ul_line').append(' <li id="line_id'+value.id+'" data-id='+value.id+'  onclick="changeSelect3('+value.id+')" ><a>'+value.name+'</a></li>')
+                        $('#line_filter_id').append('<option value='+value.id+'>'+value.name+'</option>')
+                    })
+                // $('#id_line').find('option').remove();
+                // $('#id_line').append('<option value="">--Select Line--</option>')
+                // $('#id_line').attr("required",true);
+                // $.each(result.data.inventory_line,function(key,value){
+                //     console.log(key.id,value.id,"stat")
+                //         $('#id_line').append('<option value='+value.id+'>'+value.name+'</option>')
+                // })
+
+                $('.line_dropdown').show();
+            }else{
+                $('#id_line').attr("required",false);
+                console.log('No Lines','error')
+            }
+            
+         }else{
+            showNotification('Something went wrong','error')
+         }
+    }
+   
+    //filter data load
+    $('#category_filter_id').change(function(){
+        getsegments($(this).val());
+    })
+
+    $('#segment_filter_id').change(function(){
+        getlines($(this).val());
+    })
+
+    $('#id_category').change(function(){
+        var category_id = $('#id_category').val();
+        console.log(category_id,"cid")
+        getsegments(category_id);
+        $('.line_dropdown').hide();
+        $('#id_line').attr("required",false);
+    })
+
+    $('#id_segment').change(function(){
+        var segment_id = $('#id_segment').val();
+        console.log(segment_id,"cid")
+        getlines(segment_id);
+    })
+
+
+    //edit attribute
+    $('.edit-item').click(async function(){
+        
+        $('#id_edit_item').val($(this).data('itemid'));
+        $('#item_action').val('edit_item');
+        $('#id_item_name').val($(this).data('itemname'));
+        $('#id_item_code').val($(this).data('itemcode'));
+        $('#id_item_reserve').val($(this).data('itemreserve'));
+        $('#id_item_description').val($(this).data('itemdescription'));
+
+       await getsegments($(this).data('itemcategory'));
+       await getlines($(this).data('itemsegment'));
+        
+        document.getElementById("id_category").value = $(this).data('itemcategory');
+        document.getElementById("id_line").value = $(this).data('itemline');
+        document.getElementById("id_segment").value = $(this).data('itemsegment');
+        $('#id_selectText').text($('#cat_id'+$(this).data('itemcategory')).text());
+        $('#id_seg_text').text($('#seg_id'+$(this).data('itemsegment')).text());
+       $('#id_line_text').text($('#line_id'+$(this).data('itemline')).text());
+       console.log($(this).data('itemstatus'),'s')
+        document.getElementById("item_status_id").value = $(this).data('itemstatus');
+        document.getElementById("item_reusable_id").value = $(this).data('itemreusbale');
+        document.getElementById("itemadd_type_id").value = $(this).data('itemaddtype');
+        document.getElementById("unit_measure_id").value = $(this).data('unitmeasure');
+        $('#id_selectText5').text($(this).data('itemaddtype'));
+        $('#id_selectText6').text($(this).data('unitmeasure'));
+
+        if($('#item_status_id').val() == 'True'){
+            console.log("true")
+            $('#id_selectText3').text('Active');
+        }else{
+            $('#id_selectText3').text('Inactive');
+
+        }
+
+        if($('#item_reusable_id').val() == 'True'){
+            console.log("true")
+            $('#id_selectText4').text('Yes');
+        }else{
+           $('#id_selectText4').text('No');
+
+        }
+        
+        $('.item-form-btn').text('Update');
+
+    })
+
+    
+    //delete item
+    $('.delete-item').click(function(){
+        $('#id_item').val($(this).data('itemid'));
+    })
+
+    function set_params_go(args)
+    {
+    var url='{% url 'bleach-inventory:inventory-inv' %}';
+    var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),item_category:$('#category_filter_id').val(),item_segment:$('#segment_filter_id').val(),item_line:$('#line_filter_id').val(),item_status:$('#item_status_filter_id').val()
+    };
+    for(key in args) 
+        params[key]=args[key];
+    var query='';
+    for(key in params)
+        if(params[key]) 
+            query+='&'+key+'='+params[key].toString();
+    query=query.replace('&','?');
+    window.location.href=url+query;  
+    }
+</script>
+{% endblock %}

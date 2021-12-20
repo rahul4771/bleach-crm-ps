@@ -1305,6 +1305,10 @@ class InventoryUsers(IsInventoryAdmin,View):
     def get(self,request):
         return render(request,'inventory/users.html',{})
 
+class PendingItems(IsInventoryAdmin,View):
+    def get(self,request):
+        return render(request,'inventory/pending.html',{})        
+
 class InventoryCheckout(IsInventoryAdmin,View):
     def get(self,request):
         return render(request,'inventory/checkout.html',{})
