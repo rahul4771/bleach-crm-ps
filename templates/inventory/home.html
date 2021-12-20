@@ -9,6 +9,12 @@
     .inv-plan-img-btn2{
         font-size: 12px;
     }
+    .inv-item-name{
+        white-space: nowrap;
+    width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    }
     .owl-theme .owl-nav {
         margin-top: 10px;
         text-align: center;
@@ -59,7 +65,7 @@
         <div class="main-content-holder">
             <div class="row">
                 <div class="col-md-6">
-                    <div class="white-wrapper m-0 white-wrapper-padding" style="margin-bottom: 10px !important;">
+                    <div class="white-wrapper m-0 white-wrapper-padding" style="margin-bottom: 10px !important;min-height:200px;">
                         <div class="inv-dash-card-head">
                             Insights
                         </div>
@@ -93,11 +99,11 @@
                 </div>
                 <div class="col-md-6 h-100">
                     <div class="white-wrapper white-wrapper-padding m-0"
-                        style="margin-bottom: 10px !important; padding-bottom: 0px !important;">
+                        style="margin-bottom: 10px !important; padding-bottom: 0px !important;min-height:200px;">
                         <div class="inv-dash-card-head">
                             Recently added item
                         </div>
-                        <div class="mt-10 row">
+                        <div class="mt-20 row">
                             <div class="owl-carousel owl-theme">
                                 
                                 
@@ -105,7 +111,7 @@
                                 <div class="col-md-12 pr-0 item">
                                     <div class="row inv-card2 ml-0 mb-10">
                                         <div class="col-xs-7 av-font p-10">
-                                            <p class="inv-item-card-head">{{item.name}}</p>
+                                            <p class="inv-item-card-head inv-item-name">{{item.name}}</p>
                                             {{item.item_code}}
                                             <div class="mt-10">
                                                 J&J Electricals
@@ -130,7 +136,7 @@
             </div>
 
             <div class="row">
-                <div class="col-md-12 col-lg-9" style="font-family: AvenirLTStd !important;">
+                <div class="col-md-12 col-lg-12" style="font-family: AvenirLTStd !important;">
                     
                     <div class="row">
                         <div class="col-md-12">

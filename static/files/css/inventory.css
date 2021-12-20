@@ -185,6 +185,9 @@
   background-position: 18px 7px;
   display: block;
 }
+#search-bar{
+  outline:none !important;
+}
 .inv-inv {
   background: url(../inventory/icons/inventory.png) no-repeat left;
   background-size: 30px 30px;
@@ -193,6 +196,11 @@
 }
 .inv-orders {
   background: url(../inventory/icons/Order.png) no-repeat left;
+  background-size: 30px 30px;
+  background-position: 18px 7px;
+  display: block;
+}.inv-pending{
+  background: url(../inventory/icons/pending70.png) no-repeat left;
   background-size: 30px 30px;
   background-position: 18px 7px;
   display: block;
