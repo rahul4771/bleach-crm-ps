@@ -56,6 +56,7 @@
   {% endif %}
 
   <v-app v-cloak>
+    <input style="display:none" value="{{request.user.id}}" v-model="user_id"/>
     <v-snackbar
       v-model="success_msg"
       color="primary"
