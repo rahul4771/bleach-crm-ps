@@ -186,7 +186,7 @@
                             </td> {% endcomment %}
                             
                             <td>
-                                {% if visit.work_status == 'CLEANING_FULFILLED' %}
+                                {% if visit.stock_in_initiated == True %}
                                 <span class="inv-dot c-checked-in ml-5"></span>
                                     Stock-In
                                 {% else %}
@@ -194,7 +194,7 @@
                                     <span class="inv-dot c-out-of-order ml-5"></span>
                                     Stock-Out
                                     {% else %}
-                                    <span class="inv-dot c-waiting-out ml-5"></span>
+                                    <span class="inv-dot c-about-finish ml-5"></span>
                                     Waiting
                                     {% endif %}
                                 {% endif %}

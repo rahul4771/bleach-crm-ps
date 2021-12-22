@@ -228,7 +228,7 @@
                                                     Team lead
                                                 </th>
                                                 <th  data-hide="phone,tablet" style="width: %;" class="text-center">
-                                                    Time
+                                                    Date & Time
                                                 </th>
                                                 <th data-hide="phone,tablet" style="width: %;" class="text-center">
                                                     Service
@@ -250,7 +250,7 @@
                                                     {% endfor %}
                                                 </td>
                                                 <td class="text-center">
-                                                    {{order.start_at|time:"g:i A"}}
+                                                    {{order.start_at|date:"d-m-Y g:i A"}}
                                                 </td>
                                                 <td class="text-center">
                                                     {{order.order_scheduler_book.service_type.name}}
@@ -554,10 +554,11 @@ async function openNavAddStore(visit_id) {
 
                   $.each(response.data.items_list,function(obj,value){
                     if (value.item_type == 'quantity'){
-                        $('#items_container').append('<tr><td><label style="padding-left: 0px !important;" class="c-container"><input type="checkbox" class="item_check" data-itemid="'+value.item_id+'"><span style="top:-4px !important;" class="c-checkmark"></span></label></td><td >'+value.item_name+'</td><td >'+value.item_code+'</td><td ><a class="quantity__minus pointer" onclick="decrement('+value.item_id+')"><span>-</span></a><input type="text" class="quantity__input" id="id_qty_'+value.item_id+'" value="0" name="qty"><a class="quantity__plus pointer" onclick="increment('+value.item_id+')"><span>+</span></a></td></tr>');
+                        $('#items_container').append('<tr><td><label style="padding-left: 0px !important;" class="c-container"><input type="checkbox" class="item_check" data-itemid="'+value.item_id+'"><span style="top:-4px !important;" class="c-checkmark"></span></label></td><td >'+value.item_name+'</td><td >'+value.item_code+'</td><td ><a class="quantity__minus pointer" onclick="decrement('+value.item_id+')"><span>-</span></a><input type="number" class="quantity__input" id="id_qty_'+value.item_id+'" value="0" max="'+value.quantity+'" min="0" name="qty"><a class="quantity__plus pointer" onclick="increment('+value.item_id+')"><span>+</span></a></td></tr>');
                     }
                     if (value.item_type == 'unit'){
-                        $('#items_container').append('<tr><td><label style="padding-left: 0px !important;" class="c-container"><input type="checkbox" class="item_check" data-itemid="'+value.item_id+'"><span style="top:-4px !important;" class="c-checkmark"></span></label></td><td >'+value.item_name+'</td><td >'+value.item_code+'</td><td >'+value.quantity+'</td></tr>');
+                        //$('#items_container').append('<tr><td><label style="padding-left: 0px !important;" class="c-container"><input type="checkbox" class="item_check" data-itemid="'+value.item_id+'"><span style="top:-4px !important;" class="c-checkmark"></span></label></td><td >'+value.item_name+'</td><td >'+value.item_code+'</td><td >'+value.quantity+'</td></tr>');
+                        $('#items_container').append('<tr><td><label style="padding-left: 0px !important;" class="c-container"><input type="checkbox" class="item_check" data-itemid="'+value.item_id+'"><span style="top:-4px !important;" class="c-checkmark"></span></label></td><td >'+value.item_name+'</td><td >'+value.item_code+'</td><td ><a class="quantity__minus pointer" onclick="decrement('+value.item_id+')"><span>-</span></a><input type="number" class="quantity__input" id="id_qty_'+value.item_id+'" value="'+value.quantity+'" max="'+value.quantity+'" min="0" name="qty"><a class="quantity__plus pointer" onclick="increment('+value.item_id+')"><span>+</span></a></td></tr>');
                     }
                     })
                   
