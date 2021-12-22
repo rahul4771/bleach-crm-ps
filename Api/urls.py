@@ -60,6 +60,7 @@ urlpatterns = [
 	url(r'^inventory-item-quantity-check/$',views.ItemQuantityCheck.as_view(),name='api-inventory-item-quantity-check'),
 	url(r'^inventory-checkout-item-add/$',views.CheckOutItemAdd.as_view(),name='api-inventory-checkout-item-add'),
 	url(r'^inventory-checkout-item-delete/$',views.CheckOutItemDelete.as_view(),name='api-inventory-checkout-item-delete'),
+	url(r'^inventory-checkout-item-swap/$',views.CheckOutItemSwap.as_view(),name='api-inventory-checkout-item-swap'),
 
 	###Team Leader Mobile app API'S
 	url(r'^login/$',views.LoginAPI.as_view(),name='api-login'),

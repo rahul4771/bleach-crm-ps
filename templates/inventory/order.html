@@ -79,7 +79,7 @@
                         <thead>
                             <tr>
                                 <th  style="width: %;">
-                                    Visit Date
+                                    Visit Time
                                 </th>
                                 <th data-hide="phone,tablet" style="width: %;">
                                     Order Number
@@ -101,7 +101,7 @@
                                     Cleaning Status
                                 </th>
     
-                                <th data-hide="phone,tablet"  style="width: %;" class="text-center table-w-20"">Action</th>
+                                <th data-hide="phone,tablet"  style="width: %;" class="text-center table-w-20">Action</th>
                             </tr>
                         </thead>
                       <tbody>
@@ -168,7 +168,7 @@
                         {% for visit in visits %}
                         <tr>
                             <td>
-                                {{visit.start_at|date:'d-m-Y'}}
+                                {{visit.start_at|date:'H:i'}}
                             </td>
                             <td>
                                 {{visit.order.order_no}}

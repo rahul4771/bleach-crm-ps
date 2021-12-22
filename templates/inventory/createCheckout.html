@@ -271,7 +271,7 @@
                 <form method="POST" action="" >{% csrf_token %}
                 <input type="hidden" name="action" value="submit_checkout_list">
                 {% for item in check_out_items %}
-                <tr data-itemid="{{item.item.id}}">
+                <tr data-itemid="{{item.item.id}}" id="id_tr_{{item.id}}">
                 <td>{% if item.service_item %}{{item.service_item.ingredient.ingredient}}{% else %}-{% endif %}</td>
                 <td {% if item.service_item %}id="id_item_name_{{item.service_item.item.id}}"{% else %}id="id_item_name_{{item.item.id}}"{% endif %} >
                   {% if item.service_item %}{{item.service_item.item.name}}{% else %}{{item.item.name}}{% endif %}
@@ -426,7 +426,7 @@
       </div>
       <hr>
 
-      <form method="POST" action="" >{% csrf_token %}
+      {% comment %} <form method="POST" action="" >{% csrf_token %} {% endcomment %}
       <div class="row mt-20">
         <div class="col-md-12 ">
           <div class="model-input-name">Item</div>
@@ -475,9 +475,9 @@
 
   </div>
   <div class="inv-drawer-footer">
-      <button class="sent-button" type="submit">Submit</button>
-      </form>
-      <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
+      <button class="sent-button" type="button" onclick="itemswap()">Submit</button>
+      {% comment %} </form> {% endcomment %}
+      <button data-dismiss="modal" onclick="closeNavAddStore2()" class="view-button">Cancel</button>
   </div>
 </div>
 
@@ -590,7 +590,7 @@ function hideselectedoptions(){
           console.log(result,"resss")
         $('#id_table').append(
 
-          `<tr data-itemid="`+result.data.item_id+`" >
+          `<tr data-itemid="`+result.data.item_id+`" id="id_tr_`+result.data.checkout_item_id+`">
             <td></td>
             <td id="id_item_name_`+result.data.item_id+`" >
               `+result.data.item_name+`
@@ -631,11 +631,66 @@ function hideselectedoptions(){
     
       var result = await _get('api/inventory-checkout-item-delete/?item_id='+item_id);
         if(result.status == 200){
-          console.log(result,"resss")
-          
-          $('tr').data('itemid')
+          console.log(result.data.checkout_item_id,"resss")
 
           $('.cancel_btn').click();
+
+          $('#id_tr_'+result.data.checkout_item_id+'').remove();
+        }
+    }
+
+    //checkout item swap
+    async function itemswap(){
+
+      var service_item = $('#id_pro_sel2').val() ;
+      var ingredient_id = $('#id_ingredient').val() ;
+      var checkout_item_id = parseInt($('#id_item_checkout').val()) ;
+      var item_count = 0 ;
+      
+      //getting forloop count for increment,decrenmt func
+      {% for item in check_out_items %}
+      
+        if ({{item.id}} == checkout_item_id ){
+          console.log("run")
+          item_count = {{forloop.counter}}
+        }
+      {% endfor %}
+
+      console.log(item_count,"cnt")
+
+      var result = await _get('api/inventory-checkout-item-swap/?service_item='+service_item+'&ingredient_id='+ingredient_id+'&checkout_item_id='+checkout_item_id);
+        if(result.status == 200){
+          console.log(result.data.checkout_item_id,"resss")
+
+          $('#id_tr_'+result.data.checkout_item_id+'').empty();
+          $('#id_tr_'+result.data.checkout_item_id+'').append(
+            `<td>`+result.data.ingredient_name+`</td>
+            <td id="id_item_name_`+result.data.item_id+`" >
+              `+result.data.item_name+`
+            </td>
+            <td>`+result.data.item_code+`</td>
+            <td>
+            <div class="qty-container">
+    
+              <div class="quantity">
+                
+                  <a class="quantity__minus pointer" onclick="decrement(`+item_count+`,`+result.data.item_id+`)"><span>-</span></a>
+                  <input  type="number" class="quantity__input item_quantity" step="0.01"  id="id_qty_`+item_count+`" value="0" name="qty" oninput="quantitychange(`+item_count+`,`+result.data.item_id+`)" >
+                  <a  class="quantity__plus pointer" onclick="increment(`+item_count+`,`+result.data.item_id+`)"><span>+</span></a>
+                
+                </div>
+                
+            </div>
+            </td>
+            <td>`+result.data.item_unit+`</td>
+            <td>
+                <button class="inv-plan-img-btn" type="button" data-toggle="modal" data-target="#deleteModel" onclick="delete_checkout_item(this)" data-checkoutid="`+result.data.checkout_item_id+`" > <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
+                <button type="button" class="inv-plan-img-btn" onclick="swapModal(`+result.data.ingredient_id+`,`+result.data.checkout_item_id+`)" > <img src="{% static 'files/inventory/swap.png' %}"  alt=""> </button>
+              </td>`
+          )
+
+          closeNavAddStore2()
+
         }
     }
 

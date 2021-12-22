@@ -10,7 +10,7 @@
         <div class="container-fluid space topspace">
             <div class="welcome-wrapper">
                 <!--welcome-wrapper-->
-                <h1 class="dashboard-head">Inventory</h1>
+                <h1 class="dashboard-head">Pending</h1>
                 <!-- <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p> -->
             </div>
         </div>
@@ -30,12 +30,8 @@
 
                     
                     <div class="right-pos">
-                        {% comment %} <button class="inv-plan-btn">
-                            <i class="fa fa-filter mr-5" aria-hidden="true"></i>
-                            Filter
-                        </button> {% endcomment %}
-
-                        <button class="inv-blue-btn"  onclick="openNavAddStore('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Item </button>
+                        
+                       
                         <button class="inv-blue-btn filter_btn"  data-toggle="modal" data-target="#filterModel" > Filter </button>
                     </div>
                 </div>
@@ -59,26 +55,21 @@
                         <thead>
                             <tr>
                                 <th style="width: %;">
-                                    Item
+                                    Order
                                 </th>
                                 <th data-hide="phone,tablet"  style="width: %; text-align: center;">
-                                    Item code
+                                   Team Leader
                                 </th>
                                 <th data-hide="phone,tablet"  style="width: %;" class="text-center">
-                                    Category
+                                    Item Code
                                 </th>
                                 <th data-hide="phone,tablet"  style="width: %;" class="text-center">
-                                    Segment
+                                   Item Name
                                 </th>
                                <th data-hide="phone,tablet"  style="width: %;" class="text-center">
-                                    Line
+                                    Checkout Date
                                 </th>
-                                <th data-hide="phone,tablet"  class="text-center">
-                                    Reserve
-                                </th>
-                                <th data-hide="phone,tablet" class="text-left table-w-12">
-                                    Item Status
-                                </th>
+                               
     
                                 <th data-hide="phone,tablet"  style="width: %;" class="text-center table-w-20">Action</th>
                             </tr>
@@ -451,10 +442,8 @@
       <div class="modal fade" id="filterModel" role="dialog">
         <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
             <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-12 mt-20">
-
-                        
+                <div class="row m-0">
+                    <div class="col-md-12 mt-20">                       
                         <div class="d-flex ">
                             <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Filter options</p></div>
                             <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
@@ -466,7 +455,7 @@
                     </div>
                 </div>
                
-                <div class="row">
+                <div class="row m-0">
                     
                     <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
                         <div class="ticket-form-left"><!--ticket-form-left-->
@@ -491,7 +480,7 @@
                         </div><!--ticket-form-right-->
                       </div><!--ticket-wrapper-row ticket-forms-boxes--> 
 
-                      <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
+                      <div class="ticket-wrapper-row ticket-forms-boxes mt-10"><!--ticket-wrapper-row ticket-forms-boxes-->
                         <div class="ticket-form-left"><!--ticket-form-left-->
                                         <div class=" bold-text common-label"> <label>Line</label></div>
                                       <label for="favcity">
@@ -501,7 +490,7 @@
                                     </select>
                                       </label>
                         </div><!--ticket-form-left-->
-                        <div class="ticket-form-right"><!--ticket-form-right-->
+                        <div class="ticket-form-right "><!--ticket-form-right-->
                                         <div class=" bold-text common-label"> <label>Item Status</label></div>
                                       <label for="favcity">
                                       <select name="item_status_filter" id="item_status_filter_id">

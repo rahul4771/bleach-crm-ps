@@ -49,6 +49,11 @@ border-radius: 10px;
     padding: 5px 30px 5px 30px;
     margin: 3px;
 }
+.assign-cleaner-btn{
+  cursor:pointer;
+  max-width:200px;
+  text-align: center;
+}
 .backup-input{
   border-radius: 5px;
       border: 1px solid #707070;
@@ -67,6 +72,11 @@ border-radius: 10px;
 .team-select-arrow{
   color:#2E4E85;
 }
+.v-application ul {
+  padding-left: 0px !important;
+}
+.nav {
+  padding-left: 0 !important;}
 .team-select-box{
   border: 1px solid #608BDF;
 border-radius: 7px;
@@ -776,6 +786,12 @@ border-radius: 7px;
 }
 .mt-2p{
   margin-top:2px !important;
+}
+.mt-3p{
+  margin-top:3px !important;
+}
+.mt-4p{
+  margin-top:4px !important;
 }
 .ml-auto{
   margin-left: auto !important;

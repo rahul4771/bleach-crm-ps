@@ -1152,7 +1152,7 @@ class PaymentDetails(IsAuthenticated,View):
 		
 		if subscription_due_payments:
 			for payment in subscription_due_payments:
-				if payment.evaluation.payment_method == 'SUBSCRIPTION':				
+				if payment.evaluation.payment_method == 'SUBSCRIPTION' and payment.subscription_topay_date:				
 					payment.delaydays= (timezone.now()-payment.subscription_topay_date).days
 
 

@@ -274,7 +274,7 @@
                                                
                                             </table>
                                             <div class="attribute-footer p-5">
-                                                <button class="inv-plan-btn" onclick="openNavAddStore2('add')"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Item</button>
+                                                <button class="inv-plan-btn" id="add_item_btn1" onclick="openNavAddStore2('add')"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Item</button>
                 
                                             </div>
                                         </div>
@@ -363,7 +363,7 @@
                                           <div class="d-flex inv-hide" id="id_area_edit_2">
                                             <div style="width: 50%; " class="inv-input-container h-30"> 
                                                 <input type="number"   class="w-p-100 inv-in" name="area2" id="id_area2">
-                                                <div class="av-font" style="margin-left:5px; margin-top: 5px; font-size:18px;">sqm</div>
+                                                <div class="av-font variable_type" style="margin-left:5px; margin-top: 5px; font-size:18px;">sqm</div>
                                             </div> 
                                             <button style="margin-left: 10px;" id="id_editDone" class="inv-blue-btn " type="submit" onclick="closeditShow(2)">Done </button>
                                         </div>
@@ -371,7 +371,7 @@
                                             <div class="model-input-name service_area" >
                                                 0
                                             </div>
-                                            <div class="av-font" style="margin-left:10px; margin-top: 0px; font-size:18px; color: #5a5a5a;">sqm</div>
+                                            <div class="av-font variable_type" style="margin-left:10px; margin-top: 0px; font-size:18px; color: #5a5a5a;">sqm</div>
 
                                             <div   class="edit-div" style="top: 0px !important; position: relative; margin-left: 15px;">
                                               <img onclick="showEditModal(2)" id="id_editButton2"  class="inv-edit-img"
@@ -448,7 +448,7 @@
                                                
                                             </table>
                                             <div class="attribute-footer p-5">
-                                                <button class="inv-plan-btn" onclick="openNavAddStore2('add')"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Item</button>
+                                                <button class="inv-plan-btn" id="add_item_btn2" onclick="openNavAddStore2('add')"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Item</button>
                 
                                             </div>
                                         </div>
@@ -615,7 +615,7 @@
                                                
                                             </table>
                                             <div class="attribute-footer p-5">
-                                                <button class="inv-plan-btn" onclick="openNavAddStore2('add')"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Item</button>
+                                                <button class="inv-plan-btn" id="add_item_btn3" onclick="openNavAddStore2('add')"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Item</button>
                 
                                             </div>
                                         </div>
@@ -783,7 +783,7 @@
                                                
                                             </table>
                                             <div class="attribute-footer p-5">
-                                                <button class="inv-plan-btn" onclick="openNavAddStore2('add')"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Item</button>
+                                                <button class="inv-plan-btn" id="add_item_btn4" onclick="openNavAddStore2('add')"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Add Item</button>
                 
                                             </div>
                                         </div>
@@ -1098,7 +1098,7 @@
                         <input type="hidden" id="action_delete_id" name="action" value="delete_ingredient" />
                         <input type="hidden" name="object_id" id="object_id" />
                         <div class="cancel-model-content">
-                            <button class="sent-button" >Delete</button>
+                            <button class="sent-button" type="button" onclick="deleteIngredientFunction()">Delete</button>
                             <button data-dismiss="modal" class="view-button">Cancel</button>
                           
                         </div>
@@ -1756,6 +1756,13 @@ console.log('calling funcation', name, type)
         $('#id_head2').text(name)
     }
 
+    if (name == 'Upholstery Cleaning'){
+        console.log("loho")
+        $('.variable_type').text('seater');
+    }else{
+        $('.variable_type').text('sqm');
+    }
+
     $('#id_name_cleaning').val(name)
     $('#id_name_cleaning2').val(name)
 
@@ -1789,6 +1796,13 @@ function selectActive(d,id,name){
 
     $('.area_service').val(name)
     $('#id_name_category').val(id)
+
+    if (name == 'Upholstery Cleaning'){
+        console.log("loho")
+        $('.variable_type').text('seater');
+    }else{
+        $('.variable_type').text('sqm');
+    }
 
     if (id == 'detailedCleaning'){
         var recipe_category = $('#id_recipe_type1').val();
@@ -1972,10 +1986,33 @@ function openNavAddStoreEdit(d) {
     }
     
 
-    //Delete line
+    //Delete ingredient popup value add
     function deleteIngredient(itemid){
         $('#object_id').val(itemid);
         //$('#action_delete_id').val('delete_line');
+    }
+
+    //delete ingredient
+    function deleteIngredientFunction(){
+        var formdata = {
+            'object_id' : $('#object_id').val(),
+            'action' : 'delete_ingredient'
+        }
+
+        axios.post(url+'/api/inventory-service-ingredients/',formdata)
+              .then(function (response) {
+                  console.log("submitted")
+
+                  if (response.data.success == true){
+                    $('.close-evaluation').click();
+                    var cleaning = $('.id_name_cleaning').val();
+                    var category = $('#id_name_category').val();
+                    var service_person = $('#id_recipe_type1').val();
+                    console.log(cleaning,category,service_person,"cling")
+                    getingredients(cleaning,category,service_person)
+                    showNotification('Ingredient Deleted !','success')
+                  }
+              })
     }
 
     function recipetype(d){
@@ -2031,8 +2068,12 @@ function openNavAddStoreEdit(d) {
                         }
                         $('.item-table1').append('<tr class="bundle_row" onclick="getitems('+value.ingredient_id+');selectedRow(this);"><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteIngredient('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
                     })
+                    $('#add_item_btn1').attr("disabled",false);
                 }else{
                     $(".item-table1 tr:not(:first)").remove(); 
+                    $(".item-table5 tr:not(:first)").remove(); 
+            
+                    $('#add_item_btn1').attr("disabled",true);
                 }
             }else if(category == 'specialCare'){
                 $('#id_area2').val(result.data.area_size);
@@ -2044,10 +2085,14 @@ function openNavAddStoreEdit(d) {
                         if (key == 0){
                             getitems(value.ingredient_id);
                         }
-                            $('.item-table2').append('<tr class="bundle_row" onclick="getitems('+value.ingredient_id+');selectedRow(this);"><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
+                            $('.item-table2').append('<tr class="bundle_row" onclick="getitems('+value.ingredient_id+');selectedRow(this);"><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteIngredient('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
                     })
+                    $('#add_item_btn2').attr("disabled",false);
                 }else{
                     $(".item-table2 tr:not(:first)").remove(); 
+                    $(".item-table6 tr:not(:first)").remove(); 
+            
+                    $('#add_item_btn2').attr("disabled",true);
                 }
             }else if(category == 'kitchenCleaning'){
                 $('#id_area3').val(result.data.area_size);
@@ -2057,10 +2102,17 @@ function openNavAddStoreEdit(d) {
                     $(".item-table3 tr:not(:first)").remove(); 
                     var edit = "edit";
                     $.each(result.data.service_ingredients,function(key,value){
-                            $('.item-table3').append('<tr class="bundle_row" onclick="getitems('+value.ingredient_id+');selectedRow(this);"><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
+                        if (key == 0){
+                            getitems(value.ingredient_id);
+                        }
+                            $('.item-table3').append('<tr class="bundle_row" onclick="getitems('+value.ingredient_id+');selectedRow(this);"><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteIngredient('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
                     })
+                    $('#add_item_btn3').attr("disabled",false);
                 }else{
                     $(".item-table3 tr:not(:first)").remove(); 
+                    $(".item-table7 tr:not(:first)").remove(); 
+            
+                    $('#add_item_btn3').attr("disabled",true);
                 }
             }else{
                 $('#id_area4').val(result.data.area_size);
@@ -2070,24 +2122,33 @@ function openNavAddStoreEdit(d) {
                     $(".item-table4 tr:not(:first)").remove(); 
                     var edit = "edit";
                     $.each(result.data.service_ingredients,function(key,value){
-                            $('.item-table4').append('<tr class="bundle_row" onclick="getitems('+value.ingredient_id+');selectedRow(this);"><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteItem('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
+                        if (key == 0){
+                            getitems(value.ingredient_id);
+                        }
+                            $('.item-table4').append('<tr class="bundle_row" onclick="getitems('+value.ingredient_id+');selectedRow(this);"><td>'+value.item_name+'</td><td>'+value.item_count+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavEditItngredient(this)" data-serviceitemid='+value.ingredient_id+' data-recipetype='+value.recipe_type+' data-itemname='+value.item_name+' data-itemid='+value.ingredient_id+' data-itemcount='+value.item_count+' data-itemstatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteIngredient('+value.ingredient_id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
                     })
+                    console.log("loggo")
+                    $('#add_item_btn4').attr("disabled",false);
                 }else{
                     $(".item-table4 tr:not(:first)").remove(); 
+                    $(".item-table8 tr:not(:first)").remove(); 
+                    console.log("logggo")
+                    $('#add_item_btn4').attr("disabled",true);
                 }
             }
 
          }else{
             showNotification('No Data','error')
+            
          }
     }
 
 
     //list items using api
     async function getitems(ingredient_id){
-            console.log(ingredient_id,"catoo")
+            
         var category = $('#id_name_category').val();
-
+        console.log(category,ingredient_id,"catoo")
          var result = await _get('api/inventory-service-items/?ingredient_id='+ingredient_id);
          if(result.status == 200){
              console.log(result.data.ingredient,"ing")
@@ -2101,10 +2162,12 @@ function openNavAddStoreEdit(d) {
                     var edit = "edit";
                     $.each(result.data.service_items,function(key,value){
                         console.log(value.item_name,"lo")
-                        $('.item-table5').append('<tr data-itemid='+value.item_id+'><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStoreEdit(this)" data-ingredientitemid='+value.ingredient_item_id+' data-itemid='+value.item_id+' data-itemname='+value.item_name+' ><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn delete_item" data-toggle="modal" onclick="deleteItem('+value.item_id+')" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
+                        $('.item-table5').append('<tr data-itemid='+value.item_id+'><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStoreEdit(this)" data-ingredientitemid='+value.ingredient_item_id+' data-itemid='+value.item_id+' data-itemname='+value.item_name+' ><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn delete_item" data-toggle="modal" onclick="deleteItem('+value.ingredient_item_id+')" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
                     })
+                    
                 }else{
                     $(".item-table5 tr:not(:first)").remove(); 
+                    
                 }
             
             }else if(category=='specialCare'){
@@ -2114,10 +2177,12 @@ function openNavAddStoreEdit(d) {
                     var edit = "edit";
                     $.each(result.data.service_items,function(key,value){
                         console.log(value.item_name,"lo")
-                        $('.item-table6').append('<tr data-itemid='+value.item_id+'><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStoreEdit(this)" data-ingredientitemid='+value.ingredient_item_id+' data-itemid='+value.item_id+' data-itemname='+value.item_name+'><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn delete_item" data-toggle="modal" onclick="deleteItem('+value.item_id+')" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
+                        $('.item-table6').append('<tr data-itemid='+value.item_id+'><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStoreEdit(this)" data-ingredientitemid='+value.ingredient_item_id+' data-itemid='+value.item_id+' data-itemname='+value.item_name+'><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn delete_item" data-toggle="modal" onclick="deleteItem('+value.ingredient_item_id+')" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
                     })
+                    
                 }else{
                     $(".item-table6 tr:not(:first)").remove(); 
+                    
                 }
             }
             else if(category=='kitchenCleaning'){
@@ -2127,10 +2192,12 @@ function openNavAddStoreEdit(d) {
                     var edit = "edit";
                     $.each(result.data.service_items,function(key,value){
                         console.log(value.item_name,"lo")
-                        $('.item-table7').append('<tr data-itemid='+value.item_id+'><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStoreEdit(this)" data-ingredientitemid='+value.ingredient_item_id+' data-itemid='+value.item_id+' data-itemname='+value.item_name+'><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn delete_item" data-toggle="modal" onclick="deleteItem('+value.item_id+')" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
+                        $('.item-table7').append('<tr data-itemid='+value.item_id+'><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStoreEdit(this)" data-ingredientitemid='+value.ingredient_item_id+' data-itemid='+value.item_id+' data-itemname='+value.item_name+'><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn delete_item" data-toggle="modal" onclick="deleteItem('+value.ingredient_item_id+')" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
                     })
+                    
                 }else{
                     $(".item-table7 tr:not(:first)").remove(); 
+                    
                 }              
             }else{
                 $('#id_ingredient_4').text(result.data.ingredient);
@@ -2139,18 +2206,19 @@ function openNavAddStoreEdit(d) {
                     var edit = "edit";
                     $.each(result.data.service_items,function(key,value){
                         console.log(value.item_name,"lo")
-                        $('.item-table8').append('<tr data-itemid='+value.item_id+'><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStoreEdit(this)" data-ingredientitemid='+value.ingredient_item_id+' data-itemid='+value.item_id+' data-itemname='+value.item_name+'><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn delete_item" data-toggle="modal" onclick="deleteItem('+value.item_id+')" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
+                        $('.item-table8').append('<tr data-itemid='+value.item_id+'><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStoreEdit(this)" data-ingredientitemid='+value.ingredient_item_id+' data-itemid='+value.item_id+' data-itemname='+value.item_name+'><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn delete_item" data-toggle="modal" onclick="deleteItem('+value.ingredient_item_id+')" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
                     })
+                    
                 }else{
                     $(".item-table8 tr:not(:first)").remove(); 
+                    
                 }
-            }
-
-
-            
+            }  
 
          }else{
             showNotification('No Data','error')
+            
+            
          }
     }
 
@@ -2164,7 +2232,41 @@ function openNavAddStoreEdit(d) {
             $('input[name=item_count]').addClass('red-border-input');
         }else{
             console.log("lolo")
-            $('#ingredientform').submit();
+            //$('#ingredientform').submit();
+
+            var formdata = {
+                'item_edit_id' : $('input[name=item_edit_id]').val(),
+                'service_type' : $('input[name=service_type]').val(),
+                'ingredient' : $('input[name=ingredient]').val(),
+                'item_count' : $('input[name=item_count]').val(),
+                'item_status' : $('input[name=item_status]').val(),
+                'recipe_type' : $('input[name=recipe_type]').val(),
+                'action' : $('#item_action').val()
+            }
+
+            axios.post(url+'/api/inventory-service-ingredients/',formdata)
+              .then(function (response) {
+                  console.log("submitted")
+
+                  if (response.data.success == true){
+                  closeNavAddStore()
+                    var cleaning = $('.id_name_cleaning').val();
+                    var category = $('#id_name_category').val();
+                    var service_person = $('#id_recipe_type1').val();
+                    console.log(cleaning,category,service_person,"cling")
+                    getingredients(cleaning,category,service_person)
+
+                    if ($('#item_action').val() == 'add_ingredient'){
+                        showNotification('Ingredient Added !','success')
+                    }
+
+                    if ($('#item_action').val() == 'edit_ingredient'){
+                        showNotification('Ingredient Updated !','success')
+                    }
+                  }
+              })
+
+
         }
     }
 
@@ -2184,9 +2286,10 @@ function openNavAddStoreEdit(d) {
         var item_id = $('#id_pro_sel').val();
         var ingredient_id = $('#ingredient_id').val();
         var ingredient_item_id = $('#ingredient_item_id').val();
+        var ingredient_item_delete_id = $('#item_delete_id').val();
         var category = $('#id_name_category').val();
-        console.log(ingredient_id,action,"action")
-        var result = await _get('api/inventory-service-items/?ingredient_id='+ingredient_id+'&item_id='+item_id+'&ingredient_item_id='+ingredient_item_id+'&action='+action);
+        console.log(ingredient_item_id,ingredient_id,action,"action")
+        var result = await _get('api/inventory-service-items/?ingredient_id='+ingredient_id+'&item_id='+item_id+'&ingredient_item_id='+ingredient_item_id+'&ingredient_item_delete_id='+ingredient_item_delete_id+'&action='+action);
         if(result.status == 200){
             console.log(result.data,"yah")
             $('#pro-name').val('')
@@ -2196,7 +2299,11 @@ function openNavAddStoreEdit(d) {
             if (action == 'add_item'){
                 showNotification('Item Added !','success')
                 closeNavAddStore2()
-            }else{
+            }if (action == 'edit_item'){
+                showNotification('Item Updated !','success')
+                closeNavAddStore2()
+            }
+            if (action == 'delete_item'){
                 $('#id_delete_close').click()
                 showNotification('Item Deleted !','success');
 
@@ -2207,7 +2314,7 @@ function openNavAddStoreEdit(d) {
                     $(".item-table5 tr:not(:first)").remove(); 
                     var edit = "edit";
                     $.each(result.data.service_items,function(key,value){
-                        $('.item-table5').append('<tr data-itemid='+value.item_id+'><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStoreEdit(this)" data-ingredientitemid='+value.ingredient_item_id+' data-itemid='+value.item_id+' data-itemname='+value.item_name+'><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn delete_item" data-toggle="modal" onclick="deleteItem('+value.item_id+')" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
+                        $('.item-table5').append('<tr data-itemid='+value.item_id+'><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStoreEdit(this)" data-ingredientitemid='+value.ingredient_item_id+' data-itemid='+value.item_id+' data-itemname='+value.item_name+'><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn delete_item" data-toggle="modal" onclick="deleteItem('+value.ingredient_item_id+')" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
                     })
                 }else{
                     $(".item-table5 tr:not(:first)").remove(); 
@@ -2217,7 +2324,7 @@ function openNavAddStoreEdit(d) {
                     $(".item-table6 tr:not(:first)").remove(); 
                     var edit = "edit";
                     $.each(result.data.service_items,function(key,value){
-                        $('.item-table6').append('<tr data-itemid='+value.item_id+'><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStoreEdit(this)" data-ingredientitemid='+value.ingredient_item_id+' data-itemid='+value.item_id+' data-itemname='+value.item_name+'><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn delete_item" data-toggle="modal" onclick="deleteItem('+value.item_id+')" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
+                        $('.item-table6').append('<tr data-itemid='+value.item_id+'><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStoreEdit(this)" data-ingredientitemid='+value.ingredient_item_id+' data-itemid='+value.item_id+' data-itemname='+value.item_name+'><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn delete_item" data-toggle="modal" onclick="deleteItem('+value.ingredient_item_id+')" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
                     })
                 }else{
                     $(".item-table6 tr:not(:first)").remove(); 
@@ -2228,7 +2335,7 @@ function openNavAddStoreEdit(d) {
                     $(".item-table7 tr:not(:first)").remove(); 
                     var edit = "edit";
                     $.each(result.data.service_items,function(key,value){
-                        $('.item-table7').append('<tr data-itemid='+value.item_id+'><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStoreEdit(this)" data-ingredientitemid='+value.ingredient_item_id+' data-itemid='+value.item_id+' data-itemname='+value.item_name+'><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn delete_item" data-toggle="modal" onclick="deleteItem('+value.item_id+')" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
+                        $('.item-table7').append('<tr data-itemid='+value.item_id+'><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStoreEdit(this)" data-ingredientitemid='+value.ingredient_item_id+' data-itemid='+value.item_id+' data-itemname='+value.item_name+'><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn delete_item" data-toggle="modal" onclick="deleteItem('+value.ingredient_item_id+')" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
                     })
                 }else{
                     $(".item-table7 tr:not(:first)").remove(); 
@@ -2239,7 +2346,7 @@ function openNavAddStoreEdit(d) {
                     $(".item-table8 tr:not(:first)").remove(); 
                     var edit = "edit";
                     $.each(result.data.service_items,function(key,value){
-                        $('.item-table8').append('<tr data-itemid='+value.item_id+'><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStoreEdit(this)" data-ingredientitemid='+value.ingredient_item_id+' data-itemid='+value.item_id+' data-itemname='+value.item_name+'><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn delete_item" data-toggle="modal" onclick="deleteItem('+value.item_id+')" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
+                        $('.item-table8').append('<tr data-itemid='+value.item_id+'><td>'+value.item_name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavAddStoreEdit(this)" data-ingredientitemid='+value.ingredient_item_id+' data-itemid='+value.item_id+' data-itemname='+value.item_name+'><img src="/static/files/inventory/pencil.png" alt=""></button><button class="inv-plan-img-btn delete_item" data-toggle="modal" onclick="deleteItem('+value.ingredient_item_id+')" data-target="#deleteModel2"><img src="/static/files/inventory/bin.png" alt=""></button></td></tr>')
                     })
                 }else{
                     $(".item-table8 tr:not(:first)").remove(); 

@@ -22,7 +22,7 @@ class InventoryHome(IsInventoryAdmin,View):
         recent_items = items.order_by('-id')
         
         purchase_items = items.filter(Q(item_status='out_of_stock') | Q(item_status='about_to_finish')).prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.all(),to_attr='units'))
-        orders = OrderScheduler.objects.filter(Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS')|Q(work_status='CLEANING_FULFILLED')).prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
+        orders = OrderScheduler.objects.filter(start_at__date=date.today()).filter(Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS')|Q(work_status='CLEANING_FULFILLED')).prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
         
         return_items_users = CheckOutItems.objects.filter(is_returned=True,is_checked_in=False).values_list('is_collected_by',flat=True).distinct()
         
@@ -1026,19 +1026,31 @@ class InventoryInv(IsInventoryAdmin,View):
     def get(self,request):
         search = request.GET.get('search')
 
-        item_category = request.GET.get('item_category',None)
-        if item_category:
+        try:
+            item_category = request.GET.get('item_category')
             item_category = int(item_category)
+        except:
+            item_category = ''
 
-        item_segment = request.GET.get('item_segment',None)
-        if item_segment:
+        try:
+            item_segment = request.GET.get('item_segment')
             item_segment = int(item_segment)
+        except:
+            item_segment = ''
 
-        item_line = request.GET.get('item_line',None)
-        if item_line:
+        try:
+            item_line = request.GET.get('item_line')
             item_line = int(item_line)
+        except:
+            item_line = ''
 
-        item_status = request.GET.get('item_status')
+        try:
+            item_status = request.GET.get('item_status')
+            if item_status == None:
+                item_status = ''
+        except:
+            item_status = ''
+
         print(item_category,item_segment,item_line,item_status,"mkk")
 
         if search:
@@ -1257,9 +1269,9 @@ class InventoryOrder(IsInventoryAdmin,View):
         print(search,order_date,"ser")
 
         if search:
-            orders = OrderScheduler.objects.filter(start_at__date=order_date).filter(Q(order_scheduler_book__service_type__icontains=search)|Q(cleaning_team_order_scheduler__team_leader__name__icontains=search)).filter(Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS')|Q(work_status='CLEANING_FULFILLED')).prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
+            orders = OrderScheduler.objects.filter(start_at__date=order_date).filter(Q(order_scheduler_book__service_type__icontains=search)|Q(cleaning_team_order_scheduler__team_leader__name__icontains=search)).filter(Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS')).prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
         else:
-            orders = OrderScheduler.objects.filter(start_at__date=order_date).filter(Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS')|Q(work_status='CLEANING_FULFILLED')).prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
+            orders = OrderScheduler.objects.filter(start_at__date=order_date).filter(Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS')).prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
         
         #PAGINATION ORDERS
         no_of_entries = request.GET.get('no_of_entries')
@@ -1293,6 +1305,10 @@ class InventoryUsers(IsInventoryAdmin,View):
     def get(self,request):
         return render(request,'inventory/users.html',{})
 
+class PendingItems(IsInventoryAdmin,View):
+    def get(self,request):
+        return render(request,'inventory/pending.html',{})        
+
 class InventoryCheckout(IsInventoryAdmin,View):
     def get(self,request):
         return render(request,'inventory/checkout.html',{})
@@ -1310,7 +1326,7 @@ class InventoryCreateCheckout(IsInventoryAdmin,View):
         for section in visit.order_scheduler_book.sections:
         
             if section.size.isnumeric() == True:
-                max_area = section.size
+                max_area += float(section.size)
                 print(max_area,"mx")
             else:
                 print("mok")
@@ -1318,11 +1334,11 @@ class InventoryCreateCheckout(IsInventoryAdmin,View):
                     
                     for price_range in price_ranges:
                         if price_range.name == section.size and price_range.service_type == section.evaluation_book.service_type and price_range.upholstery_type == section.upholstery_type:
-                            max_area = price_range.maximum_area
+                            max_area += float(price_range.maximum_area)
                 else:
                     for price_range in price_ranges:
                         if price_range.name == section.size and price_range.service_type == section.evaluation_book.service_type and section.evaluation_book.service_type.name != 'Mattress Cleaning' and price_range.is_newkitchen == section.new_kitchen and price_range.is_cabinet == section.is_cabinet and price_range.is_highprice_facade == section.is_highprice_facade and price_range.is_highprice_window == section.is_highprice_window:
-                            max_area = price_range.maximum_area
+                            max_area += float(price_range.maximum_area)
 
 
 
@@ -1336,44 +1352,81 @@ class InventoryCreateCheckout(IsInventoryAdmin,View):
         for ingredient in service_recipe_ingredients:
             service_quantity = ingredient.quantity
 
+            recommended_quantity = 0
+
             if ingredient.service_or_person == 'service':
                 
                 service_area = ingredient.service_type.area_size
-
-                print(math.ceil(float(max_area) / float(service_area)),service_quantity,"lolss")
                 
-                if service_area:
-                    print("lpppp")
+                if service_area != '0':
                     recommended_quantity = int(math.ceil(float(max_area) / float(service_area)) * float(service_quantity))
 
             else:
                 service_person = ingredient.service_type.staff_count
 
-                quantity_per_person = int(service_quantity) / int(service_person)
+                if service_person != '0':
+                    
+                    quantity_per_person = int(service_quantity) / int(service_person)
 
-                recommended_quantity = int(cleaners) * int(quantity_per_person)
+                    recommended_quantity = int(cleaners) * int(quantity_per_person)
 
         
+            items_list = []
             for service_item in ingredient.service_recipe_items:    
 
-                item = InventoryItem.objects.annotate(quantity_total=Sum('unit_item_history__quantity'),unit_count=Sum(Case(When(unit_item__status='active',then=1),default=0,output_field=IntegerField()))).get(id=int(service_item.item.id))
                 
-                print(item.item_add_type,item.unit_count,item.quantity_total,recommended_quantity,"tots")
-                if item.item_add_type == 'unit':
-                    item_count = item.unit_count
+                item = InventoryItem.objects.annotate(quantity_total=Sum(Case(When(unit_item__status='active',then=1),default=0,output_field=IntegerField()))).get(id=int(service_item.item.id))
+                
+                
+                if service_item.item.item_add_type == 'unit':
+                    item_dict = {
+                        'item_id' : item.id,
+                        'item_name' : item.name,
+                        'total_quantity' : float(item.quantity_total)
+                    }
+                    print(item.quantity_total,"qx")
                 else:
-                    if item.quantity_total:
-                        item_count = item.quantity_total
+
+                    item_dict = {
+                        'item_id' : item.id,
+                        'item_name' : item.name,
+                        'total_quantity' : float(item.total_quantity)
+                    }
+                    print(item.total_quantity,"qx2")
+
+                items_list.append(item_dict)        
+    
+
+            newlist = sorted(items_list, key=lambda d: d['total_quantity'], reverse=True) 
+            
+            variable_recommended_quantity = recommended_quantity
+
+            for item in newlist:
+                if variable_recommended_quantity != 0:
+                    print(variable_recommended_quantity,"recqty")
+
+                    service_item = ServiceRecipeItems.objects.get(ingredient=ingredient,item__id=int(item['item_id']))
+
+                    if item['total_quantity'] > 0 and float(item['total_quantity']) >= float(variable_recommended_quantity):
+                        try:
+                            checkout_item = CheckOutItems.objects.get(visit=visit,service_item=service_item,service_item__ingredient=ingredient)
+                        except:
+                            CheckOutItems.objects.create(visit=visit,service_item=service_item,units=recommended_quantity,is_swapped_item=False)
+                            variable_recommended_quantity = 0
+                            print(variable_recommended_quantity,"testchek1")
+                        print("klap")
+
+                    elif item['total_quantity'] > 0 and float(item['total_quantity']) < float(variable_recommended_quantity):
+                        variable_recommended_quantity -= float(item['total_quantity'])
+                        print(variable_recommended_quantity,"testchek")
+                        try:
+                            checkout_item = CheckOutItems.objects.get(visit=visit,service_item=service_item,service_item__ingredient=ingredient)
+                        except:
+                            CheckOutItems.objects.create(visit=visit,service_item=service_item,units=item['total_quantity'],is_swapped_item=False)
+                        print("klap2")     
+
                     else:
-                        item_count = 0
-
-                try:
-                    checkout_item = CheckOutItems.objects.get(visit=visit,service_item__ingredient=ingredient)
-                    
-                except:
-
-                    CheckOutItems.objects.create(visit=visit,service_item=service_item,units=recommended_quantity,is_swapped_item=False)
-                
+                        pass
 
         print(service_recipe_ingredients,"itt")
         return render(request,'inventory/createCheckout.html',{"price_ranges":price_ranges,"visit":visit,"items":items,"service_recipe_ingredients":service_recipe_ingredients,"check_out_items":check_out_items})
@@ -1410,10 +1463,10 @@ class InventoryCreateCheckout(IsInventoryAdmin,View):
 
             messages.success(request,"Item Swapped!")
 
-        if action == 'delete_item':
-            checkout_item = request.POST.get('item_id')
-            CheckOutItems.objects.get(id=int(checkout_item)).delete()
-            messages.success(request,"Item Deleted!")
+        # if action == 'delete_item':
+        #     checkout_item = request.POST.get('item_id')
+        #     CheckOutItems.objects.get(id=int(checkout_item)).delete()
+        #     messages.success(request,"Item Deleted!")
 
         if action == 'submit_checkout_list':
             quantities = request.POST.getlist('qty')
