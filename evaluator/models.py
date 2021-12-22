@@ -230,7 +230,6 @@ class Evaluation(models.Model):
 	quatation_status		= models.CharField(max_length=50,blank=True,null=True,choices=QUATATION_CHOICES)
 	quatation_approved_date = models.DateTimeField(blank=True,null=True)
 	quatation_rejected_date = models.DateTimeField(blank=True,null=True)
-
 	quatation_expiry_date   = models.DateTimeField(blank=True,null=True)
 	
 	payment_method			= models.CharField(max_length=20,blank=True,null=True,choices=PAYMENT_CHOICES)
