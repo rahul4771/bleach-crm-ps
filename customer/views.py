@@ -4600,7 +4600,7 @@ class DuplicateBookingPhase2(APIView):
 				tracking_no   = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
 
 			#duplicate the evaluation
-			new_evaluation = Evaluation.objects.create(tracking_no=int(tracking_no)+1,evaluation_id=evaluation_no,customer=duplicate_evaluation.customer,call_attender=duplicate_evaluation.call_attender,quatation_expiry_date=timezone.now()+timedelta(7))
+			new_evaluation = Evaluation.objects.create(tracking_no=int(tracking_no)+1,evaluation_id=evaluation_no,customer=duplicate_evaluation.customer,call_attender=request.user,quatation_expiry_date=timezone.now()+timedelta(7))
 			
 			#duplicate the order
 			new_order      = Order.objects.create(evaluation=new_evaluation,order_no=new_evaluation.evaluation_id)
@@ -4615,9 +4615,9 @@ class DuplicateBookingPhase2(APIView):
 					if duplicate_evaluation.evaluationbooks:
 						for duplicate_book in duplicate_evaluation.evaluationbooks:
 							if duplicate_book.cleaning_policy == 'SUBSCRIPTION':
-								new_duplicate_book = EvaluationBook.objects.create(evaluation_details=new_duplicate_evaluation_details,cleaning_policy=duplicate_book.cleaning_policy,service_type=duplicate_book.service_type,area_type=duplicate_book.area_type,cleaning_method=duplicate_book.cleaning_method,location_type=duplicate_book.location_type,evaluator_note=duplicate_book.evaluator_note,estimated_cost=duplicate_book.estimated_cost/len(duplicate_book.schedules))						
+								new_duplicate_book = EvaluationBook.objects.create(evaluation_details=new_duplicate_evaluation_details,cleaning_policy=duplicate_book.cleaning_policy,service_type=duplicate_book.service_type,area_type=duplicate_book.area_type,cleaning_method=duplicate_book.cleaning_method,location_type=duplicate_book.location_type,estimated_cost=duplicate_book.estimated_cost/len(duplicate_book.schedules))						
 							else:
-								new_duplicate_book = EvaluationBook.objects.create(evaluation_details=new_duplicate_evaluation_details,cleaning_policy=duplicate_book.cleaning_policy,service_type=duplicate_book.service_type,area_type=duplicate_book.area_type,cleaning_method=duplicate_book.cleaning_method,location_type=duplicate_book.location_type,evaluator_note=duplicate_book.evaluator_note,estimated_cost=duplicate_book.estimated_cost)
+								new_duplicate_book = EvaluationBook.objects.create(evaluation_details=new_duplicate_evaluation_details,cleaning_policy=duplicate_book.cleaning_policy,service_type=duplicate_book.service_type,area_type=duplicate_book.area_type,cleaning_method=duplicate_book.cleaning_method,location_type=duplicate_book.location_type,estimated_cost=duplicate_book.estimated_cost)
 							#new booksection
 							if duplicate_book.booksections:
 								for duplicate_book_section in duplicate_book.booksections:
