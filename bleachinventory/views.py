@@ -39,7 +39,7 @@ class InventoryHome(IsInventoryAdmin,View):
         
         todate = date.today()
         start_date_day = todate-timedelta(7)
-        end_date_day   = todate
+        end_date_day   = todate+timedelta(1)
         
         purchase_items = items.filter(Q(item_status='out_of_stock') | Q(item_status='about_to_finish')).prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.all(),to_attr='units'))
         orders = OrderScheduler.objects.filter(start_at__range=(start_date_day,end_date_day),stock_in_initiated=False).filter(Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS')|Q(work_status='CLEANING_FULFILLED')).prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
