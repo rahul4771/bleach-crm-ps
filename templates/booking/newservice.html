@@ -265,7 +265,7 @@
       Select  Day <%currentSlotDay%>
     </div>
     <div class="mt-4=2" v-if="!isSlotsSelected()">
-      Please Select <%cleaning_set[currentSlotDay-1][0]/2%> slot(s)
+      Please Select <%Math.ceil(cleaning_set[currentSlotDay-1][0]/2)%> slot(s)
     </div>
 <div class="row mt-2" style="margin:0 !important" >
   <div class="col-md-4" v-for="(slot,sindex) in parsedTimeSlots" v-bind:key="sindex" v-if="one_time_slots[oneTimeDateSelected] && !slot_loader && !isSlotsSelected()">
@@ -511,31 +511,7 @@ width="1000"
   </div>
   <!--- Hourly Cleaning Ends Here-->
   <div v-if="serviceType!='Hourly Cleaning'">
-  <div class="row m-0" style="margin:0 !important">
-    <div class="col-md-12">
-      <h6>Choose a duration</h6>
-    </div>
-    <div class="col-md-2 col-12">
-      <div class="text-center p-2">In Hours</div>
-    </div>
-    <div class="col-md-2 col-6" v-for="(item, durindex) in duration" v-bind:key="durindex">
-      <div class="duration-active text-center p-2" v-on:click="selectDuration(item)"
-        v-if="selectedDuration == item">
-        <b>
-          <% item.hours %>
-        </b>
-      </div>
-      <div class="duration text-center p-2" v-on:click="selectDuration(item)" v-else>
-        <b>
-          <% item.hours %>
-        </b>
-      </div>
-      <div v-if="selectedDuration == item" class="text-center sub-content">
-        <% item.hours / 2 %> slots<br>
-        <% item.cleaners %> <span v-if="item.cleaners<2">cleaner</span><span v-else>cleaners</span>
-      </div>
-    </div>
-    </div>
+
   <div class="row m-0" v-if="selectedDuration.hours" style="margin:0 !important">
     <div class="col-md-4">
       <div >
@@ -738,31 +714,7 @@ class="mt-4 ml-2 not-required"
 <!--- Hourly Cleaning Ends Here-->
 
 <div v-if="serviceType!='Hourly Cleaning'">
-  <div class="row m-0" style="margin:0 !important" >
-    <div class="col-md-12">
-      <h6>Choose a duration</h6>
-    </div>
-    <div class="col-md-2 col-12">
-      <div class="text-center p-2">In Hours</div>
-    </div>
-    <div class="col-md-2 col-6" v-for="(item, durindex) in duration" v-bind:key="durindex">
-      <div class="duration-active text-center p-2" v-on:click="selectDuration(item)"
-        v-if="selectedDuration == item">
-        <b>
-          <% item.hours %>
-        </b>
-      </div>
-      <div class="duration text-center p-2" v-on:click="selectDuration(item)" v-else>
-        <b>
-          <% item.hours %>
-        </b>
-      </div>
-      <div v-if="selectedDuration == item" class="text-center sub-content">
-        <% item.hours / 2 %> slots<br>
-        <% item.cleaners %> <span v-if="item.cleaners<2">cleaner</span><span v-else>cleaners</span>
-      </div>
-    </div>
-    </div>
+ 
 
 
   <div class="row m-0" v-if="selectedDuration.hours" style="margin:0 !important">
@@ -962,31 +914,7 @@ width="1000"
   </div>
    <!--- Hourly Cleaning Ends Here-->
    <div v-if="serviceType!='Hourly Cleaning'">
-<div class="row m-0" style="margin:0 !important" >
-  <div class="col-md-12">
-    <h6>Choose a duration</h6>
-  </div>
-  <div class="col-md-2 col-12">
-    <div class="text-center p-2">In Hours</div>
-  </div>
-  <div class="col-md-2 col-6" v-for="(item, durindex) in duration" v-bind:key="durindex">
-    <div class="duration-active text-center p-2" v-on:click="selectDuration(item)"
-      v-if="selectedDuration == item">
-      <b>
-        <% item.hours %>
-      </b>
-    </div>
-    <div class="duration text-center p-2" v-on:click="selectDuration(item)" v-else>
-      <b>
-        <% item.hours %>
-      </b>
-    </div>
-    <div v-if="selectedDuration == item" class="text-center sub-content">
-      <% item.hours / 2 %> slots<br>
-      <% item.cleaners %> <span v-if="item.cleaners<2">cleaner</span><span v-else>cleaners</span>
-    </div>
-  </div>
-  </div>
+
   <div class="row " style="margin:0 !important" v-if="selectedDuration.hours">
   <div class="col-md-4">
     <div >
@@ -3654,6 +3582,7 @@ Fill all the details of the Buildings  to proceed
       color="primary"
      @click="arrangeData()"
      :loading="submit_loader"
+     :disabled="submit_loader"
     >
       Submit
     </v-btn>
@@ -3663,6 +3592,7 @@ Fill all the details of the Buildings  to proceed
       color="primary"
      @click="arrangeCustData()"
      :loading="submit_loader"
+     :disabled="submit_loader"
     >
       Submit
     </v-btn>

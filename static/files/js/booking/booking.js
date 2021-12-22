@@ -79,6 +79,7 @@ function selectServiceOnly(service){
 
 }
 
+
 const app=new Vue({
     el: '#app',
     delimiters: ['<%', '%>'],
@@ -615,6 +616,7 @@ hourly_slots:true,
 
       },
       methods: {
+
         isSlotsSelected(){
           if(this.currentSlotDay>this.cleaning_set.length){
             return true
@@ -1307,7 +1309,7 @@ hourly_slots:true,
         },
         changeVisitDate(){
           this.slot_msg=false
-        if(this.selected_double_slots.length==this.selectedDuration.hours/2)
+        if(this.selected_double_slots.length==Math.ceil(this.selectedDuration.hours/2))
         {
           var day=moment(this.dateSelected,'YYYY-MM-DD') 
             var dayname=day.format('ddd')
@@ -1409,7 +1411,7 @@ hourly_slots:true,
           if(this.serviceType=='Hourly Cleaning'){
             this.findHourlyCost()
           }
-          if(this.selected_double_slots.length==this.selectedDuration.hours/2){
+          if(this.selected_double_slots.length==Math.ceil(this.selectedDuration.hours/2)){
 
           
           if(this.customDateSelected.length>0 && this.selected_double_slots.length>0 )
@@ -1448,7 +1450,7 @@ hourly_slots:true,
           if(this.serviceType=='Hourly Cleaning'){
             this.findHourlyCost()
           }
-          if(this.selected_double_slots.length==this.selectedDuration.hours/2){
+          if(this.selected_double_slots.length==Math.ceil(this.selectedDuration.hours/2)){
         if(this.selected_double_slots.length>0 && this.dateSelected)
         {
          this.scheduleDialog=false
@@ -1558,7 +1560,7 @@ hourly_slots:true,
           if(this.serviceType=='Hourly Cleaning'){
             this.findHourlyCost()
           }
-          if(this.selected_double_slots.length==this.selectedDuration.hours/2){
+          if(this.selected_double_slots.length==Math.ceil(this.selectedDuration.hours/2)){
           if(this.selected_monthly_date.length>0 && this.selected_double_slots.length>0 )
           {
         
@@ -2919,7 +2921,7 @@ checkSelectedDate(){
     for(var i in this.one_time_slots){
       counter=counter+this.one_time_slots[i].slots.length
     }
-    if(counter<(this.cleaning_set[this.currentSlotDay-1][0])/2)
+    if(counter<(Math.ceil((this.cleaning_set[this.currentSlotDay-1][0])/2)))
     {
       
     if(this.one_time_slots[this.oneTimeDateSelected].slots.length>0)
@@ -2972,7 +2974,7 @@ checkSelectedDate(){
   submitOneTimeSlots(){
     this.slot_msg=false
     var slotscount=this.oneTimeSlotCounter()
-    var slots_required=this.selectedDuration.hours/2
+    var slots_required=Math.ceil(this.selectedDuration.hours/2)
     if(slotscount==slots_required)
     {
     this.selected_onetime_slots={}
@@ -2997,7 +2999,7 @@ checkSelectedDate(){
   nextSlotSelection(){
     this.slot_msg=false
     var slotscount=this.oneTimeSlotCounter()
-    var slots_required=this.selectedDuration.hours/2
+    var slots_required=Math.ceil(this.selectedDuration.hours/2)
     if(slotscount==slots_required)
     {
    
@@ -5686,6 +5688,7 @@ try {
    });
  },
   newdurationcalculation(){
+    this.subStat=''
     this.max_cleaners=[]
     this.min_cleaners=[]
     this.max_hours=[]
@@ -5711,7 +5714,7 @@ try {
     // var n=this.n
     if(this.cleaningPolicy=='Subscription')
     {
-      this.oldHourCalculation(manhour)
+      this.subscriptionHourCalculation(manhour)
     }
     else{
       
@@ -6017,12 +6020,137 @@ try {
  this.selectedDuration={
     cleaners:this.cleaning_set[0][1],
     hours:this.cleaning_set[0][0],
-    slots:this.cleaning_set[0][0]/2
+    slots:Math.ceil(this.cleaning_set[0][0]/2)
   }
   this.calcSlots()
   this.getMultipleSlots()
 
  
+},
+subscriptionHourCalculation(n){
+   
+  console.log(n,"man hour")
+      
+ 
+   if (n%2 == 1){
+    n = n+1
+   } 
+   console.log("min man data is"+this.min_cleaners+" maxman:"+this.max_cleaners+"minhr:"+this.min_hours+"maxhr:"+this.max_hours)
+      var minman=Math.max(...this.min_cleaners)
+     var maxman=Math.max(...this.max_cleaners)
+      var minhr=Math.max(...this.min_hours)
+      var maxhr=Math.max(...this.max_hours)
+      console.log("min man is"+minman+" maxman:"+maxman+"minhr:"+minhr+"maxhr:"+maxhr)
+ 
+  
+  
+  //allowed calculation
+  var allowed = []
+  for(var i=minhr;i<=maxhr;i++){
+    if(i%2==0 && i!=8){
+      allowed.push(i)
+    }
+  }
+  //initialization
+
+ 
+  
+ 
+  var maxn= maxman*maxhr
+  var minn= minman*minhr
+  
+  var rem  = n%(maxn)
+  
+  var cleaningset =[] 
+  
+  //Append Each Days Pair
+  var days = parseInt((n-rem)/maxn) 
+  for(var i=0;i<days;i++){
+    cleaningset.push([maxhr,maxman])
+  }
+  
+  
+  //Append Remining Low Pair
+  if (rem != 0){
+      var lowpair = [allowed[0],Math.round(rem/allowed[0])]
+      for(var i=0;i<allowed.length;i++){
+        if (lowpair[0]+lowpair[1] > (allowed[i]+Math.round(rem/allowed[i]))){
+          lowpair = [allowed[i],Math.round(rem/allowed[i])]
+        }
+      }
+      if(lowpair[1] !=0 && lowpair[1]<minman){
+        cleaningset.push([minhr,minman])
+      }
+      else if(lowpair[1] !=0 && lowpair[1]>maxman){
+        for(var i=0;i<allowed.reverse();i++){
+          var rev=allowed.reverse()
+          if(round(rem/rev[i])<=maxman){
+            cleaningset.push(rev[i],round(rem/rev[i]))
+            break
+          }
+        }
+      }
+      else if(lowpair[1] != 0 && lowpair[1] >= minman && lowpair[1] <= maxman){
+        cleaningset.push(lowpair)
+      }
+     
+   
+     
+}
+if(cleaningset.length==0 && n!=0){
+  cleaningset=[minhr,minman]
+}
+//cleaning set smoothening for 2-D array
+if ((cleaningset.length>1) && !Number.isInteger(cleaningset[0]))
+{
+  last_set_length = cleaningset.length
+  last_set        = cleaningset[last_set_length-1]
+
+    
+
+    try{
+        fixed_hour      = cleaningset[0][0]
+        variable_cleaner= cleaningset[0][1]
+    }
+    catch{
+        fixed_hour      = cleaningset[0]
+        variable_cleaner= cleaningset[1]
+    }
+      for(var i=1;i<=variable_cleaner;i++){
+        if ((last_set_length*fixed_hour*i)>=n && i >= minman)
+        {
+        cleaningset    = []
+        for(var j=0;j<last_set_length;j++){
+          cleaningset.push([fixed_hour,i])
+        }
+      
+           
+        break
+      }
+      }
+}
+   
+//1D array to 2D array
+if (cleaningset.length>0) 
+    if (Number.isInteger(cleaningset[0])){
+      cleaningset = [cleaningset]
+    }
+        
+    this.cleaning_set=cleaningset
+console.log(cleaningset,"new cleaning set")
+var sub_cleaners=0
+for(var cs=0;cs<this.cleaning_set.length;cs++){
+  sub_cleaners=sub_cleaners+this.cleaning_set[cs][1]
+}
+this.selectedDuration={
+  cleaners:sub_cleaners,
+  hours:this.cleaning_set[0][0],
+  slots:Math.ceil(this.cleaning_set[0][0]/2)
+}
+this.calcSlots()
+this.getMultipleSlots()
+
+
 }
  
 },
