@@ -328,6 +328,28 @@
   height: 34px;
   width: 44px;
 }
+.inv-plan-img-btn2-disabled {
+  font-family: AvenirLTStd !important;
+  background: #ffffff 0% 0% no-repeat padding-box;
+  border: 2px solid #c4c4c4;
+  border-radius: 6px;
+  opacity: 1;
+  color: #777777;
+  height: 34px;
+  box-shadow: none;
+  opacity:0.8;
+}
+.inv-plan-img-btn2-disabled:hover{
+  font-family: AvenirLTStd !important;
+  background: #ffffff 0% 0% no-repeat padding-box;
+  border: 2px solid #c4c4c4;
+  border-radius: 6px;
+  opacity: 1;
+  color: #777777;
+  height: 34px;
+  box-shadow: none;
+  opacity:0.8;
+}
 .inv-plan-img-btn2 {
   font-family: AvenirLTStd !important;
   background: #ffffff 0% 0% no-repeat padding-box;
@@ -338,6 +360,14 @@
   height: 34px;
 
  
+}
+.inv-plan-img-btn2-disabled .btn-img2{
+  height: 22px !important;
+    width: 22px !important;
+    filter: gray;
+    -webkit-filter: grayscale(1);
+    filter: grayscale(1);
+    opacity: 0.5;
 }
 .inv-plan-img-btn:hover {
   background: #ffffff 0% 0% no-repeat padding-box;

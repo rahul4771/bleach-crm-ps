@@ -238,6 +238,23 @@
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            <!-- Row added for testing-->
+                                            <tr>
+                                                <td  class="text-center">test</td>
+                                                <td  class="text-center">test2</td>
+                                                <td  class="text-center">test3</td>
+                                                <td  class="text-center">test4</td>
+                                                <td style="float: right;">
+                                                    <button onclick="openNavAddStore({{order.id}})" class="btn-p inv-plan-img-btn2 btn-shadow"> <img class="btn-img2"
+                                                        src="{% static 'files/inventory/icons/icon3.png' %}" alt=""> Stock-In
+                                                </button>
+                                                <button  class="btn-p inv-plan-img-btn2-disabled" disabled> <img class="btn-img2"
+                                                    src="{% static 'files/inventory/icons/icon3.png' %}" alt=""> Stock-In
+                                            </button>
+                                                </td>
+                                               
+                                            </tr>
+                                              <!-- Row added for testing ends here-->
                                             {% for order in orders %}
                                             <tr>
                                                 <td class="inv-blue-border">

@@ -56,6 +56,7 @@
   {% endif %}
 
   <v-app v-cloak>
+    <input style="display:none" value="{{request.user.id}}" id="user_id"/>
     <v-snackbar
       v-model="success_msg"
       color="primary"
@@ -313,7 +314,7 @@
      <b>Select  Day <%currentSlotDay%></b> 
     </div>
     <div class="mt-4" v-if="!isSlotsSelected()">
-      Please Select <%cleaning_set[currentSlotDay-1][0]/2%> slot(s)
+      Please Select <%Math.ceil(cleaning_set[currentSlotDay-1][0]/2)%> slot(s)
     </div>
     
 <div class="row mt-2 " style="margin:0 !important">
@@ -452,30 +453,7 @@ width="1000"
   class="mt-4 ml-2 not-required"
   ></v-switch>
   </div>
-  <div class="row m-0" style="margin:0 !important">
-    <div class="col-md-12">
-      <h6>Choose a duration</h6>
-    </div>
-    <div class="col-md-2 col-12">
-      <div class="text-center p-2">In Hours</div>
-    </div>
-    <div class="col-md-2 col-6" v-for="(item, durindex) in duration" v-bind:key="durindex">
-      <div class="duration-active text-center p-2" v-on:click="selectDuration(item)"
-        v-if="selectedDuration == item">
-        <b>
-          <% item.hours %>
-        </b>
-      </div>
-      <div class="duration text-center p-2" v-on:click="selectDuration(item)" v-else>
-        <b>
-          <% item.hours %>
-        </b>
-      </div>
-      <div v-if="selectedDuration == item" class="text-center sub-content">
-        <% item.hours / 2 %> slots
-      </div>
-    </div>
-    </div>
+ 
   <div class="row m-0" v-if="selectedDuration.hours" style="margin:0 !important">
     <div class="col-md-4">
       <div >
@@ -486,7 +464,7 @@ width="1000"
     </div>
     <div class="col-md-8 "  >
       <div class="mt-4">
-        Select  Slots
+        Select <%selectedDuration.slots%> Slot(s)
       </div>
   <div class="row mt-2" style="margin:0 !important">
     <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex" v-if="outofshiftCheck(sindex)">
@@ -546,30 +524,7 @@ width="1000"
   class="mt-4 ml-2 not-required"
   ></v-switch>
   </div>
-  <div class="row m-0" style="margin:0 !important">
-    <div class="col-md-12">
-      <h6>Choose a duration</h6>
-    </div>
-    <div class="col-md-2 col-12">
-      <div class="text-center p-2">In Hours</div>
-    </div>
-    <div class="col-md-2 col-6" v-for="(item, durindex) in duration" v-bind:key="durindex">
-      <div class="duration-active text-center p-2" v-on:click="selectDuration(item)"
-        v-if="selectedDuration == item">
-        <b>
-          <% item.hours %>
-        </b>
-      </div>
-      <div class="duration text-center p-2" v-on:click="selectDuration(item)" v-else>
-        <b>
-          <% item.hours %>
-        </b>
-      </div>
-      <div v-if="selectedDuration == item" class="text-center sub-content">
-        <% item.hours / 2 %> slots
-      </div>
-    </div>
-    </div>
+  
   <div class="row m-0" v-if="selectedDuration.hours" style="margin:0 !important">
     <div class="col-md-4 text-center">
       <div class="mt-4">
@@ -610,7 +565,7 @@ width="1000"
     </div>
     <div class="col-md-8 "  >
       <div class="mt-4">
-        Select  Slots
+        Select <%selectedDuration.slots%> Slot(s)
       </div>
   <div class="row mt-2" style="margin:0 !important">
     <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex" v-if="outofshiftCheck(sindex)">
@@ -671,30 +626,7 @@ width="1000"
   class="mt-4 ml-2 not-required"
   ></v-switch>
   </div>
-<div class="row m-0" style="margin:0 !important">
-  <div class="col-md-12">
-    <h6>Choose a duration</h6>
-  </div>
-  <div class="col-md-2 col-12">
-    <div class="text-center p-2">In Hours</div>
-  </div>
-  <div class="col-md-2 col-6" v-for="(item, durindex) in duration" v-bind:key="durindex">
-    <div class="duration-active text-center p-2" v-on:click="selectDuration(item)"
-      v-if="selectedDuration == item">
-      <b>
-        <% item.hours %>
-      </b>
-    </div>
-    <div class="duration text-center p-2" v-on:click="selectDuration(item)" v-else>
-      <b>
-        <% item.hours %>
-      </b>
-    </div>
-    <div v-if="selectedDuration == item" class="text-center sub-content">
-      <% item.hours / 2 %> slots
-    </div>
-  </div>
-  </div>
+
   <div class="row " style="margin:0 !important" v-if="selectedDuration.hours">
   <div class="col-md-4">
     <div >
@@ -706,7 +638,7 @@ width="1000"
 
   <div class="col-md-8"  >
     <div>
-      Select  Slots
+      Select <%selectedDuration.slots%> Slot(s)
     </div>
 <div class="row mt-4">
   <div class="col-md-4" v-for="(slot,sindex) in double_slots" v-bind:key="sindex" v-if="outofshiftCheck(sindex)">
@@ -1033,6 +965,7 @@ width="1000"
      disabled
       color="grey"
       v-if="!scheduleStatChecker()"
+      
     >
       Submit
     </v-btn>
@@ -1048,7 +981,7 @@ width="1000"
     <v-btn
       class="ma-2 text-white"
       @click="bookLetCustService()"
-     
+      :loader="submit_loader"
       color="#289bac"
       v-if="scheduleStatChecker()"
     >
