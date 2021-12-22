@@ -5178,7 +5178,9 @@ function openNav() {
     },
   
     mounted() {
+   
       this.url = api;
+      this.user_id=$('#user_id').val();
       const urlSearchParams = new URLSearchParams(window.location.search);
       const params = Object.fromEntries(urlSearchParams.entries());
       this.custId=params.id
