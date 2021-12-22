@@ -23,14 +23,15 @@ class InventoryHome(IsInventoryAdmin,View):
         
         items = InventoryItem.objects.filter(status=True)
 
-        for item in items:
-            if item.item_add_type == 'quantity':
-                history_total = ItemHistory.objects.filter(item=item).exclude(quantity=None).aggregate(item_total=Sum('quantity'))['item_total']
-                if history_total == None:
-                    history_total = 0.00
-                print(history_total,item.name,"itzxc")
-                item.total_quantity = history_total
-                item.save()
+        # LOAD TOTAL QTY FOR QUANTITY ITEMS
+        # for item in items:
+        #     if item.item_add_type == 'quantity':
+        #         history_total = ItemHistory.objects.filter(item=item).exclude(quantity=None).aggregate(item_total=Sum('quantity'))['item_total']
+        #         if history_total == None:
+        #             history_total = 0.00
+        #         print(history_total,item.name,"itzxc")
+        #         item.total_quantity = history_total
+        #         item.save()
                 
         
         
