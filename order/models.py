@@ -179,7 +179,10 @@ class OrderScheduler(models.Model):
 	no_of_cleaners       	= models.IntegerField(null=True,blank=True)
 	cleaning_hours       	= models.FloatField(null=True,blank=True)
 	hourly_cleaning_duration= models.FloatField(null=True,blank=True)
+	stock_out_items_saved   = models.BooleanField(null=False,blank=True,default=False)
+	stock_out_items_submitted = models.BooleanField(null=False,blank=True,default=False)
 	items_collected       	= models.BooleanField(null=False,blank=True,default=False)
+	stock_in_initiated      = models.BooleanField(null=False,blank=True,default=False)
 
 	is_active       = models.BooleanField(null=False,blank=True,default=True)
 	created         = models.DateTimeField(auto_now_add=True)

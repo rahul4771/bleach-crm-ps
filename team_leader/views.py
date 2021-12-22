@@ -293,7 +293,7 @@ class Cleaning(IsTeamLeader,View):
 				remaining_team += 1
 
 		#cleaning items
-		cleaning_items = CheckOutItems.objects.filter(visit__id=cleaning_team_detail.order_scheduler.id,is_collected=False)
+		cleaning_items = CheckOutItems.objects.filter(visit__id=cleaning_team_detail.order_scheduler.id,is_collected=False,is_checked_out=True)
 		
 		return render(request,'tl/cleaning/cleaning.html',{"cleaning_items":cleaning_items,"price_ranges":price_ranges,"price_ranges_change":price_ranges_change,"cleaning_team_detail":cleaning_team_detail,"cleaning_team_members":cleaning_team_members,"is_customer_booking":is_customer_booking,"cleaning_teams_count":cleaning_teams_count,"remaining_team":remaining_team})
 

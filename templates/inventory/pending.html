@@ -22,18 +22,18 @@
                      
                         <div class="inv-input-container h-30">
                             <i class="fa fa-search inv-icon-input" aria-hidden="true"></i>
-                            <input type="text" placeholder="Search Inventory" id="search-bar" class="inv-input w-250" onchange ="set_params_go()" value="{{search_query|default_if_none:''}}" name="attributes">
+                            <input type="text" placeholder="Search Items" id="search-bar" class="inv-input w-250" onchange ="set_params_go()" value="{{search_query|default_if_none:''}}" name="attributes">
                           </div>
                     
                     
                     </div>
 
                     
-                    <div class="right-pos">
+                    {% comment %} <div class="right-pos">
                         
                        
                         <button class="inv-blue-btn filter_btn"  data-toggle="modal" data-target="#filterModel" > Filter </button>
-                    </div>
+                    </div> {% endcomment %}
                 </div>
                 <br><br>
                 <div class="d-flex">
@@ -75,54 +75,30 @@
                             </tr>
                         </thead>
                      <tbody>
-                        {% for item in items %}
+                        {% for item in checkout_items %}
                         <tr>
                             <td class="td-md-width">
-                                {{item.name}}
+                                {{item.visit.order.order_no}}
                             </td>
                             <td class="text-center">
-                                {{item.item_code}}
+                                {% for team in item.visit.cleaning_team %}
+                                {{team.team_leader.name}}
+                                {% endfor %}
                             </td>
                             <td class="text-center">
-                                {{item.item_category.name}}
+                                {% if item.service_item %}{{item.service_item.item.item_code}}{% else %}{{item.item.item_code}}{% endif %}
                             <td class="text-center td-md-width">
-                                {{item.item_segment.name}}
+                                {% if item.service_item %}{{item.service_item.item.name}}{% else %}{{item.item.name}}{% endif %}
                             </td>
                             <td class="text-center td-md-width" >
-                                {{item.item_line.name}}
+                                {{item.checked_out_date|date:'d-m-Y'}}
                             </td>
+                
+                            
                             <td class="text-center">
-                                {{item.reserve_count}}
-                            </td>
-                            {% comment %} <td>
-                                {% if item.status == True %}
-                                <span class="inv-dot c-active ml-5"></span>Active
-                                {% else %}
-                                <span class="inv-dot c-inactive ml-5"></span>Not Active
-                                {% endif %}
-                              
-                            </td> {% endcomment %}
-                            <td class="text-left">
-                                {% if item.item_status == 'available' %}
-                                <span class="inv-dot  c-active"></span>
-                                Available
-                                {% elif item.item_status == 'about_to_finish' %}
-                                <span class="inv-dot c-about-finish"></span>
-                                
-                                About to finish
-                                {% elif item.item_status == 'out_of_stock' %}
-                                <span class="inv-dot c-out-of-order"></span>
-
-                                Out of Stock
-                                {% endif %}
-                            </td>
-                            <td class="text-center">
-                                <a href="/bleach-inventory/item/{{item.id}}">
-                                <button class="inv-plan-img-btn"> <img class="view-img" src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
-                                </a>
-                                <button class="inv-plan-img-btn edit-item" onclick="openNavAddStore('edit')" data-itemid="{{item.id}}" data-itemname="{{item.name}}" data-itemcode="{{item.item_code}}" data-itemcategory="{{item.item_category.id}}" data-itemsegment="{{item.item_segment.id}}" data-itemline="{{item.item_line.id}}" data-itemdescription="{{item.description}}" data-itemreserve="{{item.reserve_count}}" data-itemaddtype="{{item.item_add_type}}" data-unitmeasure="{{item.measuring_unit}}" data-itemstatus="{{item.status}}" data-itemreusbale="{{item.is_reusable}}"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>
-                                <button class="inv-plan-img-btn delete-item"  data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
-
+                                <button onclick="openNavAddStore({{item.visit.id}})" class="btn-p inv-plan-img-btn2 btn-shadow"> <img class="btn-img2"
+                                    src="{% static 'files/inventory/icons/icon3.png' %}" alt=""> Stock-In
+                                </button>
                             </td>
                         </tr>
                         {% endfor %}
@@ -180,19 +156,22 @@
                       </ul>
                 </div>
                 <div style="color: #928F8F;">
-                    Showing {{items.start_index}} to {{items.end_index}} of {{items.paginator.count}} entries
+                    Showing {{checkout_items.start_index}} to {{checkout_items.end_index}} of {{checkout_items.paginator.count}} entries
                 </div>
 
 
             </div>
         </div>
     </section>
+
+
+    <!--item drawer-->
     <div id="addStore" class="inv-sidedrawer">
 
         <div class="inv-sidedrawer-inner">
             <div class="d-flex">
                 <div class="inv-drawer-head" id="itemHead">
-                    Add Store
+                    Stock-in
                 </div>
                 <div class="right-pos">
 
@@ -202,206 +181,81 @@
                 </div>
             </div>
             <hr>
-
-            <form method="POST" id="myForm" action="">{% csrf_token %}
-            <input type="hidden" name="action" id="item_action" value="add_item" />
-            <input type="hidden" name="item_edit_id" id="id_edit_item" />
-            <div class="row mt-20">
-                <div class="col-md-12 ">
-                    <div class="model-input-name required-field">Item</div>
-
-                    <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="item_name" id="id_item_name">
-                      </div>
-                </div>
-
-            </div>
-            {% comment %} <div class="row mt-20">
-                <div class="col-md-12 ">
-                    <div class="model-input-name">Item code</div>
-
-                    <div class="inv-input-container h-30"> 
-                        <input type="text" id="id_item_code"  class="w-p-100 inv-in" name="item_code" value="{{item_code}}">
-                      </div>
-                </div>
-
-            </div> {% endcomment %}
-            <div class="row mt-20">
-                <div class="col-md-12 ">
-                    <div class="model-input-name required-field">Category</div>
-
-                    <!-- <select class="minimal" name="item_category" id="id_category" required>
-                        <option value="">--Select Category--</option>
-                        {% for category in categories %}
-                        <option value="{{category.id}}">{{category.name}}</option>
-                        {% endfor %}
-
-                    </select> -->
-                    <input hidden  type="text" name="item_category" id="id_category" required>
-                    <div class="wrap-drop" id="noble-gases"  >
-                        <span id="id_selectText">--Select Category--</span>
-                        <ul class="drop">
-                            {% for category in categories %}
-                            <li id="cat_id{{category.id}}" onclick="changeSelect({{category.id}})"><a>{{category.name}}</a></li>
-                   
-                            {% endfor %}
-                        </ul>
+          
+            <div class="row mt-10">
+                <div class="col-md-12">
+                    <div class="d-flex">
+                        <div style="font-weight: 400;" class="inv-check-orderhead">
+                            Name
+                        </div>
+                      
                     </div>
                 </div>
-
             </div>
+          <div class="row mt-20">
+              <div class="col-md-12">
+                  <div style="border-top:1px solid #c4c4c4">
+                    <table class="inv-table"> 
+                        <tr>
+                            <th></th>
+                            <th style="width: %;">
+                                Item
+                            </th>
+                            <th style="width: %;">
+                                Item code
+                            </th>
+                            <th style="width: %;">
+                                Quantity
+                            </th>
+                        </tr>
+                        <tbody id="items_container">
+                            {% comment %} <tr>
+                                <td>
+                                    <label style="padding-left: 0px !important;" class="c-container">
+                                        <input type="checkbox">
+                                        <span style="top:-4px !important;" class="c-checkmark"></span>
+                                    </label>
+                                </td>
+                                <td id="id_item_name">
+                                    00000
+                                </td>
+                                <td id="id_item_code">
+                                    00
+                                </td>
+                                <td id="id_quantity">
+                                    8
+                                </td>
+                            </tr> {% endcomment %}
 
-            <div class="row mt-20 segment_dropdown">
-                <div class="col-md-12 ">
-                    <div class="model-input-name required-field">Segment</div>
+                        </tbody>
+                     
+                        
+                        
+                       
+                    </table>
+                  </div>
+              
+              </div>
+          </div>
 
-                    <!-- <select class="minimal" name="item_segment" id="id_segment">
-                        <option value="">--Select Segment--</option>
-                    
-                    </select> -->
-                    <input hidden  type="text" name="item_segment" id="id_segment" required>
 
-                    <div class="wrap-drop" id="noble-gases2" style="z-index: 5 !important;" >
-                        <span id="id_seg_text">--Select Segment--</span>
-                        <ul class="drop" id="id_ul_seg">
-                           
-                        </ul>
-                    </div>
-                </div>
 
-            </div>
 
-            <div class="row mt-20 line_dropdown">
-                <div class="col-md-12 ">
-                    <div class="model-input-name required-field">Line</div>
 
-                    <!-- <select class="minimal" name="item_line" id="id_line">
-                        <option value="">--Select Line--</option>
-                    
-                    </select> -->
-                    <input hidden  type="text" name="item_line" id="id_line" required>
 
-                    <div class="wrap-drop" id="noble-gases3" style="z-index: 5 !important;" >
-                        <span id="id_line_text">--Select Line--</span>
-                        <ul class="drop" id="id_ul_line">
-                           
-                        </ul>
-                    </div>
-                </div>
-
-            </div>
-            <div class="row mt-20">
-                <div class="col-md-12 ">
-                    <div class="model-input-name">Description</div>
-
-                    <div class="inv-input-container "> 
-                    <textarea style="width: 100%;" rows="8" id="id_item_description" name="item_description"></textarea>
-                    </div>
-                </div>
-
-            </div>
-            <div class="row mt-20">
-                <div class="col-md-12 ">
-                    <div class="model-input-name">Reserve</div>
-
-                    <div class="inv-input-container h-30"> 
-                        <input type="number"  class="w-p-100 inv-in" name="item_reserve" value="0" id="id_item_reserve">
-                      </div>
-                </div>
-
-            </div>
-            <div class="row mt-20">
-                <div class="col-md-12 ">
-                    <div class="model-input-name">Is Reusable ?</div>
-                    <input hidden type="text" id="item_reusable_id" name="item_reusable" value="True">
-                    {% comment %} <select id="item_reusable_id" name="item_reusable" >
-                    <option value="True">Yes</option>
-                    <option value="False">No</option>
-                    </select> {% endcomment %}
-                    <div class="wrap-drop" id="noble-gases5" style="z-index: 4 !important;"  >
-                        <span id="id_selectText4">Yes</span>
-                        <ul class="drop">
-                            <li onclick="changeSelect5('True')"><a>Yes</a></li>
-                            <li onclick="changeSelect5('False')"><a>No</a></li> 
-                        </ul>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="row mt-20">
-                <div class="col-md-12 ">
-                    <div class="model-input-name">Add Item by</div>
-
-                    <!-- <select id="item_status_id" name="item_status" class="minimal">
-                        <option value="True" selected>Active</option>
-                        <option value="False">Inactive</option>
-
-                    </select> -->
-                    <input hidden type="text" id="itemadd_type_id" name="itemadd_type" value="unit">
-                    <div class="wrap-drop" id="noble-gases6" style="z-index: 3 !important;"  >
-                        <span id="id_selectText5">unit</span>
-                        <ul class="drop">
-                            <li onclick="changeSelect6('quantity')"><a>Quantity</a></li>
-                            <li onclick="changeSelect6('unit')"><a>Unit</a></li> 
-                        </ul>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="row mt-20">
-                <div class="col-md-12 ">
-                    <div class="model-input-name">Unit of Measure</div>
-
-                    <!-- <select id="item_status_id" name="item_status" class="minimal">
-                        <option value="True" selected>Active</option>
-                        <option value="False">Inactive</option>
-
-                    </select> -->
-                    <input hidden type="text" id="unit_measure_id" name="unit_measure" value="number">
-                    <div class="wrap-drop" id="noble-gases7" style="z-index: 2 !important;"  >
-                        <span id="id_selectText6">Number</span>
-                        <ul class="drop">
-                            <li onclick="changeSelect7('litre')"><a>Litre</a></li>
-                            <li onclick="changeSelect7('kg')"><a>Kg</a></li> 
-                            <li onclick="changeSelect7('number')"><a>Number</a></li> 
-                        </ul>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="row mt-20">
-                <div class="col-md-12 ">
-                    <div class="model-input-name">Status</div>
-
-                    <!-- <select id="item_status_id" name="item_status" class="minimal">
-                        <option value="True" selected>Active</option>
-                        <option value="False">Inactive</option>
-
-                    </select> -->
-                    <input hidden type="text" id="item_status_id" name="item_status" value="True">
-                    <div class="wrap-drop" id="noble-gases4" style="z-index: 1 !important;"  >
-                        <span id="id_selectText3">Active</span>
-                        <ul class="drop">
-                            <li onclick="changeSelect4('True')"><a>Active</a></li>
-                            <li onclick="changeSelect4('False')"><a>Inactive</a></li> 
-                        </ul>
-                    </div>
-                </div>
-
-            </div>
-            
-  
         </div>
-        <div class="inv-drawer-footer" style="position: relative !important;">
-            <button class="sent-button inventory-form-btn" type="button" onclick="formvalidation()" >Submit</button>
-            </form>
-                        <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
+        <div class="inv-drawer-footer">
+            <form method="POST" id="checkinform" action="" >{% csrf_token %}
+                <input type="hidden" name="item_ids" id="id_item_ids" >
+                <button class="sent-button" type="button" onclick="checkinsubmit()">Stock-in</button>
+            </form>        
+            <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
         </div>
-        
     </div>
+
+
+
+
     <div class="modal fade" id="deleteModel" role="dialog">
         <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
             <div class="container-fluid">
@@ -645,37 +499,55 @@ function changeSelect(va){
         {% endif %}
     })
 
-    function openNavAddStore(d) {
-    if(d == 'add'){
-        console.log("new")
-        document.getElementById("myForm").reset();
-        $('#item_action').val('add_item');
-        $('#id_edit_item').val(' ')
-        $('#item_status_id').val('True')
-            $('#id_selectText3').text('Active');
-        $('#item_reusbale_id').val('True')
-            $('#id_selectText4').text('Yes');
-        $('#id_category').val('');
-        $('#id_selectText').text('--Select Category--')
-            $("#itemHead").text("Add Item");
-            $('.inventory-form-btn').text('Add');
-            $('.segment_dropdown').hide();
-            $('.line_dropdown').hide();
+    async function openNavAddStore(visit_id) {
+        $('#items_container').empty();
 
-        }
-        if(d == 'edit'){
-            $("#itemHead").text("Edit Inventory");
-            $('.inventory-form-btn').text('Update');
-        }
-        if(screen.width<= 600){
+        if (screen.width <= 600) {
             document.getElementById("addStore").style.width = "100%";
-        }else if(screen.width<= 720){
+        } else if (screen.width <= 720) {
             document.getElementById("addStore").style.width = "50%";
         }
-        else{
+        else {
             document.getElementById("addStore").style.width = "30%";
-        }  
+        }
+
+        axios.get(url+'/api/items-check-in/',{params:{item_user:visit_id}})
+              .then(function (response) {
+                  
+                  console.log(response,"resp")
+
+                  $.each(response.data.items_list,function(obj,value){
+                    if (value.item_type == 'quantity'){
+                        $('#items_container').append('<tr><td><label style="padding-left: 0px !important;" class="c-container"><input type="checkbox" class="item_check" data-itemid="'+value.item_id+'"><span style="top:-4px !important;" class="c-checkmark"></span></label></td><td >'+value.item_name+'</td><td >'+value.item_code+'</td><td ><a class="quantity__minus pointer" onclick="decrement('+value.item_id+')"><span>-</span></a><input type="text" class="quantity__input" id="id_qty_'+value.item_id+'" value="0" name="qty"><a class="quantity__plus pointer" onclick="increment('+value.item_id+')"><span>+</span></a></td></tr>');
+                    }
+                    if (value.item_type == 'unit'){
+                        $('#items_container').append('<tr><td><label style="padding-left: 0px !important;" class="c-container"><input type="checkbox" class="item_check" data-itemid="'+value.item_id+'"><span style="top:-4px !important;" class="c-checkmark"></span></label></td><td >'+value.item_name+'</td><td >'+value.item_code+'</td><td >'+value.quantity+'</td></tr>');
+                    }
+                    })
+                  
+
+              })
     }
+
+
+    async function increment(id){
+        console.log(id)
+        $('#id_qty_'+id).val(parseInt($('#id_qty_'+id).val()) + 1 );
+      
+      }
+      
+      async function decrement(id){
+        
+        if ($('#id_qty_'+id).val() > 0) {
+        $('#id_qty_'+id).val(parseInt($('#id_qty_'+id).val()) - 1 );
+        }
+      
+        if ($('#id_qty_'+id).val() == 0) {
+          $('#id_qty_'+id).val(parseInt($('#id_qty_'+id).val()) - 1 );
+          $('#id_qty_'+id).val(0);
+        }
+      }
+
     function closeNavAddStore() {
         document.getElementById("addStore").style.width = "0";
     }
@@ -840,7 +712,36 @@ function changeSelect(va){
 
     })
 
-    
+    function checkinsubmit(){
+        
+        var item_ids = [];
+        var item_qtys = [];
+
+        $('.item_check').each(function(){
+            if ($(this).is(":checked")){
+                item_ids.push($(this).data('itemid'))
+                item_qtys.push($('#id_qty_'+$(this).data('itemid')+'').val())
+            } 
+        })
+
+        var formdata = {
+            'item_ids' : item_ids,
+            'inventory_user' : "{{request.user.id}}",
+            'quantities' : item_qtys
+        }
+
+        axios.post(url+'/api/items-check-in/',formdata)
+              .then(function (response) {
+                  
+                  console.log(response,"resp")
+                  window.location.reload()
+
+              })
+
+        console.log(item_ids,"kok")
+        
+    }
+
     //delete item
     $('.delete-item').click(function(){
         $('#id_item').val($(this).data('itemid'));
@@ -848,7 +749,7 @@ function changeSelect(va){
 
     function set_params_go(args)
     {
-    var url='{% url 'bleach-inventory:inventory-inv' %}';
+    var url='{% url 'bleach-inventory:pending-items' %}';
     var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),item_category:$('#category_filter_id').val(),item_segment:$('#segment_filter_id').val(),item_line:$('#line_filter_id').val(),item_status:$('#item_status_filter_id').val()
     };
     for(key in args) 
