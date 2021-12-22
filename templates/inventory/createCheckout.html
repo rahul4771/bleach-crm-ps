@@ -226,6 +226,14 @@
                       <th data-hide="phone,tablet"  style="width: %;">Action</th>
                   </tr>
               </thead>
+              
+              <form id="stockform" method="POST" action="" >{% csrf_token %}
+                {% if stock_out == 'stockout' %}
+                <input type="hidden" name="action" value="submit_checkout_list">
+                {% else %}
+                <input type="hidden" name="action" value="save_checkout_list">
+                {% endif %}
+                <input type="hidden" name="quantities" >
               <tbody id="id_table">
                 {% comment %} {% for ingredient in service_recipe_ingredients %}
                 {% for item in ingredient.service_recipe_items %}
@@ -268,8 +276,7 @@
                 </tr>
                 {% endfor %} {% endcomment %}
 
-                <form method="POST" action="" >{% csrf_token %}
-                <input type="hidden" name="action" value="submit_checkout_list">
+                
                 {% for item in check_out_items %}
                 <tr data-itemid="{{item.item.id}}" id="id_tr_{{item.id}}">
                 <td>{% if item.service_item %}{{item.service_item.ingredient.ingredient}}{% else %}-{% endif %}</td>
@@ -283,11 +290,11 @@
                   <div class="quantity">
                     {% if item.service_item %}
                       <a class="quantity__minus pointer" onclick="decrement({{forloop.counter}},{{item.service_item.item.id}})"><span>-</span></a>
-                      <input  type="number" class="quantity__input item_quantity" step="0.01"  id="id_qty_{{forloop.counter}}" value="{{item.units}}" name="qty" oninput="quantitychange({{forloop.counter}},{{item.service_item.item.id}})" >
+                      <input  type="number" class="quantity__input item_quantity" step="0.01"  id="id_qty_{{forloop.counter}}" value="{{item.units}}" name="checkout_quantity" oninput="quantitychange({{forloop.counter}},{{item.service_item.item.id}})" >
                       <a  class="quantity__plus pointer" onclick="increment({{forloop.counter}},{{item.service_item.item.id}})"><span>+</span></a>
                     {% else %}
                       <a class="quantity__minus pointer" onclick="decrement({{forloop.counter}},{{item.item.id}})"><span>-</span></a>
-                      <input  type="number" class="quantity__input item_quantity" step="0.01"  id="id_qty_{{forloop.counter}}" value="{{item.units}}" name="qty" oninput="quantitychange({{forloop.counter}},{{item.item.id}})" >
+                      <input  type="number" class="quantity__input item_quantity" step="0.01"  id="id_qty_{{forloop.counter}}" value="{{item.units}}" name="checkout_quantity" oninput="quantitychange({{forloop.counter}},{{item.item.id}})" >
                       <a  class="quantity__plus pointer" onclick="increment({{forloop.counter}},{{item.item.id}})"><span>+</span></a>
                     {% endif %}
                     </div>
@@ -313,9 +320,13 @@
           </div>
         </div>
         <div class="row mt-20 text-center">
-          <button class="sent-button" type="submit" >Submit</button>
+          {% if stock_out == 'stockout' %}
+          <button class="sent-button" onclick="stocksubmit()" type="button" >Stock-Out</button>
+          {% else %}
+          <button class="sent-button" onclick="stocksubmit()" type="button" >Save</button>
+          {% endif %}
           </form>
-                        <button class="view-button">Cancel</button>
+                        <button class="view-button" onclick="window.location.href='/bleach-inventory/order/';">Cancel</button>
         </div>
       </div>  
 
@@ -602,7 +613,7 @@ function hideselectedoptions(){
               <div class="quantity">
                 
                   <a class="quantity__minus pointer" onclick="decrement(`+result.data.item_count+`,`+result.data.item_id+`)"><span>-</span></a>
-                  <input  type="number" class="quantity__input item_quantity" step="0.01"  id="id_qty_`+result.data.item_count+`" value="0" name="qty" oninput="quantitychange(`+result.data.item_count+`,`+result.data.item_id+`)" >
+                  <input  type="number" class="quantity__input item_quantity" step="0.01"  id="id_qty_`+result.data.item_count+`" value="0" name="checkout_quantity" oninput="quantitychange(`+result.data.item_count+`,`+result.data.item_id+`)" >
                   <a  class="quantity__plus pointer" onclick="increment(`+result.data.item_count+`,`+result.data.item_id+`)"><span>+</span></a>
                 
                 </div>
@@ -675,7 +686,7 @@ function hideselectedoptions(){
               <div class="quantity">
                 
                   <a class="quantity__minus pointer" onclick="decrement(`+item_count+`,`+result.data.item_id+`)"><span>-</span></a>
-                  <input  type="number" class="quantity__input item_quantity" step="0.01"  id="id_qty_`+item_count+`" value="0" name="qty" oninput="quantitychange(`+item_count+`,`+result.data.item_id+`)" >
+                  <input  type="number" class="quantity__input item_quantity" step="0.01"  id="id_qty_`+item_count+`" value="0" name="checkout_quantity" oninput="quantitychange(`+item_count+`,`+result.data.item_id+`)" >
                   <a  class="quantity__plus pointer" onclick="increment(`+item_count+`,`+result.data.item_id+`)"><span>+</span></a>
                 
                 </div>
@@ -706,10 +717,12 @@ function hideselectedoptions(){
           console.log(result.data.item_available,"lop1")
           if (result.data.item_available == true){
             console.log("lo1")
-            $('#id_item_name_'+item_id+'').attr("style","color:green;")
+            $('#id_item_name_'+item_id+'').addClass("inv-green")
+            $('#id_item_name_'+item_id+'').removeClass("inv-red")
           }else{
             console.log("lo2")
-            $('#id_item_name_'+item_id+'').attr("style","color:red;")
+            $('#id_item_name_'+item_id+'').addClass("inv-red")
+            $('#id_item_name_'+item_id+'').removeClass("inv-green")
           }
         }
     }
@@ -727,12 +740,19 @@ async function increment(id,item_id){
       console.log(result.data.item_available,"lop2")
       if (result.data.item_available == true){
         console.log("lo1")
-        $('#id_item_name_'+item_id+'').attr("style","color:green;")
+        $('#id_item_name_'+item_id+'').addClass("inv-green")
+        $('#id_item_name_'+item_id+'').removeClass("inv-red")
       }else{
         console.log("lo2")
-        $('#id_item_name_'+item_id+'').attr("style","color:red;")
+        $('#id_item_name_'+item_id+'').addClass("inv-red")
+        $('#id_item_name_'+item_id+'').removeClass("inv-green")
       }
     }
+
+    $('input[name="checkout_quantity"]').each(function(){
+      //code
+     console.log($(this).val(),"logg");
+});
 }
 
 async function decrement(id,item_id){
@@ -753,10 +773,12 @@ async function decrement(id,item_id){
       console.log(result.data.item_available,"lop3")
       if (result.data.item_available == true){
         console.log("lo1")
-        $('#id_item_name_'+item_id+'').attr("style","color:green;")
+        $('#id_item_name_'+item_id+'').addClass("inv-green")
+        $('#id_item_name_'+item_id+'').removeClass("inv-red")
       }else{
         console.log("lo2")
-        $('#id_item_name_'+item_id+'').attr("style","color:red;")
+        $('#id_item_name_'+item_id+'').addClass("inv-red")
+        $('#id_item_name_'+item_id+'').removeClass("inv-green")
       }
     }
 }
@@ -780,27 +802,53 @@ var products = [];
 
     {% endfor %}
     
+    function stocksubmit(){
+      var quantities = [] ;
 
+      $('input[name="checkout_quantity"]').each(function(){
+        console.log($(this).val(),"valli")
+        quantities.push($(this).val())
+      })
+      console.log(quantities.toString(),"quop")
+      $('input[name="quantities"').val(quantities);
+      $('#stockform').submit()
+    }
 
         $(document).ready(function(){
 
-          async function itemcheck(){
-          {% for item in check_out_items %}  
+          itemcheck()
+
           
-            var result = await _get('api/inventory-item-quantity-check/?item_id='+{% if item.service_item %}{{item.service_item.item.id}}{% else %}{{item.item.id}}{% endif %}+'&quantity='+{{item.units}});
-                if(result.status == 200){
-                  console.log(result.data.item_available,"lop")
-                  if (result.data.item_available == true){
-                    console.log("lo1")
-                    $('#id_item_name_'+{% if item.service_item %}{{item.service_item.item.id}}{% else %}{{item.item.id}}{% endif %}+'').attr("style","color:green;")
-                  }else{
-                    console.log("lo2")
-                    $('#id_item_name_'+{% if item.service_item %}{{item.service_item.item.id}}{% else %}{{item.item.id}}{% endif %}+'').attr("style","color:red;")
-                  }
-                }
-            {% endfor %}
-              }
+          //console.log($('td').classList.contains('inv-red'),"werrr")
+          
+
         });
+
+
+        async function itemcheck(){
+          console.log("lgm")
+        {% for item in check_out_items %}  
+        
+          var result = await _get('api/inventory-item-quantity-check/?item_id='+"{% if item.service_item %}{{item.service_item.item.id}}{% else %}{{item.item.id}}{% endif %}"+'&quantity='+"{{item.units}}");
+              if(result.status == 200){
+                console.log(result.data.item_available,"lop")
+                if (result.data.item_available == true){
+                  console.log("{% if item.service_item %}{{item.service_item.item.id}}{% else %}{{item.item.id}}{% endif %}","lo1")
+                  $('#id_item_name_'+"{% if item.service_item %}{{item.service_item.item.id}}{% else %}{{item.item.id}}{% endif %}"+'').addClass("inv-green")
+                  $('#id_item_name_'+"{% if item.service_item %}{{item.service_item.item.id}}{% else %}{{item.item.id}}{% endif %}"+'').removeClass("inv-red")
+                }else{
+                  console.log("{% if item.service_item %}{{item.service_item.item.id}}{% else %}{{item.item.id}}{% endif %}","lo2")
+                  $('#id_item_name_'+"{% if item.service_item %}{{item.service_item.item.id}}{% else %}{{item.item.id}}{% endif %}"+'').addClass("inv-red")
+                  $('#id_item_name_'+"{% if item.service_item %}{{item.service_item.item.id}}{% else %}{{item.item.id}}{% endif %}"+'').removeClass("inv-green")
+                }
+
+              }
+          {% endfor %}
+
+          
+
+            }
+
 
         function showProducts(){
     $('#id_search').empty();
@@ -821,6 +869,8 @@ var products = [];
         }
         
     }
+
+
     function showProducts2(){
     $('#id_search2').empty();
     for (var j=0; j<products2.length; j++) {

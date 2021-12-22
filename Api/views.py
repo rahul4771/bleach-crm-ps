@@ -12,7 +12,7 @@ from bleachadmin.models import ServicePriceRange,Settings
 from django.core.mail import send_mail,EmailMultiAlternatives
 from Api.serializers import DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, UsersListSerializer,ShiftScheduleSerializer,OccupiedMembersSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
 from agent.views import generate_random_username
-from bleachinventory.models import Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,CheckOutItems
+from bleachinventory.models import Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,CheckOutItems,ItemHistory
 import re
 import random
 import string
@@ -3392,7 +3392,7 @@ class ItemQuantityCheck(APIView):
 		if item.item_add_type == 'unit':
 			item_count = item.unit_count
 
-			if int(item_count) >= int(quantity) :
+			if float(item_count) >= float(quantity) :
 				response_dict['item_available'] = True
 			else:
 				response_dict['item_available'] = False
@@ -3508,6 +3508,24 @@ class CheckOutItemSwap(APIView):
 
 		return Response(response_dict, HTTP_200_OK)
 
+class CheckOutItemSubmit(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+	def get(self,request):
+		response_dict            = {'success':False}
+
+		checkout_item = request.GET.get('item_id')
+		checkout_item = CheckOutItems.objects.get(id=int(checkout_item))
+		checkout_item_id = checkout_item.id
+
+		checkout_item.delete()
+		
+		response_dict['checkout_item_id'] = checkout_item_id
+
+		response_dict['success'] = True
+
+		return Response(response_dict, HTTP_200_OK)
+
 class ItemCollectAPI(APIView):
 	permission_classes        = (AllowAny,)
 	authentication_classes    = ()
@@ -3539,11 +3557,13 @@ class ItemsCheckInAPI(APIView):
 	def get(self,request):
 		response_dict = {'success':True}
 
-		item_user    = request.GET.get('item_user')
+		visit_id    = request.GET.get('item_user')
 
-		print(item_user,"lpo")
+		print(visit_id,"lpo")
 
-		return_items = CheckOutItems.objects.filter(is_returned=True,is_checked_in=False,is_collected_by=int(item_user))
+		visit = OrderScheduler.objects.get(id=int(visit_id))
+
+		return_items = CheckOutItems.objects.filter(is_checked_in=False,visit=visit)
 
 		items_list = []
 
@@ -3551,9 +3571,9 @@ class ItemsCheckInAPI(APIView):
 			if item.service_item:
 				item_dict = {
 					'item_id' : item.id,
-					'item_name' : item.service_item.name,
-					'item_code' : item.service_item.item_code,
-					'item_type' : item.service_item.item_add_type,
+					'item_name' : item.service_item.item.name,
+					'item_code' : item.service_item.item.item_code,
+					'item_type' : item.service_item.item.item_add_type,
 					'quantity' : item.units
 				}
 			
@@ -3576,15 +3596,23 @@ class ItemsCheckInAPI(APIView):
 	def post(self,request):
 		
 		item_ids    = request.data.get('item_ids')
+		item_quantities   = request.data.get('quantities')
+		user_id = request.data.get('inventory_user')
+		inventory_user = UserProfile.objects.get(id=int(user_id))
+		print(item_quantities,"qts")
+
+		count = 0
 
 		for item_id in item_ids:
 
-			checkin_item = CheckOutItems.objects.get(id=int(item_id),is_returned=True,is_checked_in=False)
-			print(checkin_item.item.item_add_type,"iom")
+			checkin_item = CheckOutItems.objects.get(id=int(item_id),is_checked_in=False)
+			visit = OrderScheduler.objects.get(id=int(checkin_item.visit.id))
+
+			print(item_quantities[count],"iom")
 			checkin_item.is_checked_in = True
 			checkin_item.check_in_user = UserProfile.objects.get(id=int(request.data.get('inventory_user')),is_active=True)
 			
-			if checkin_item.item.item_add_type == 'unit':
+			if checkin_item.item and checkin_item.item.item_add_type == 'unit':
 				print("pam")
 				inventoryitem = InventoryItem.objects.prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(status='out_of_order'),to_attr='item_units')).get(id=int(checkin_item.item.id))
 				if inventoryitem.item_units:
@@ -3592,14 +3620,46 @@ class ItemsCheckInAPI(APIView):
 						unit.status = 'active'
 						unit.save()
 
-			checkin_item.save()
-
 			if checkin_item.service_item and checkin_item.service_item.item.item_add_type == 'unit':
 				inventoryitem = InventoryItem.objects.prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(status='active'),to_attr='item_units')).get(id=int(checkin_item.service_item.item.id))
 				if inventoryitem.item_units:
 					for unit in inventoryitem.item_units[:int(checkin_item.units)]:
 						unit.status = 'active'
 						unit.save()
+
+			if checkin_item.item and checkin_item.item.item_add_type == 'quantity':
+				print("pam")
+				inventoryitem = InventoryItem.objects.get(id=int(checkin_item.item.id))
+				inventoryitem.total_quantity = float(inventoryitem.total_quantity) + float(item_quantities[count])
+				inventoryitem.save()
+
+				ItemHistory.objects.create(
+				item = inventoryitem,
+				quantity = item_quantities[count],
+				purchase_date= date.today(),
+				added_by = inventory_user
+				)
+
+				count += 1
+
+			if checkin_item.service_item and checkin_item.service_item.item.item_add_type == 'quantity':
+				inventoryitem = InventoryItem.objects.get(id=int(checkin_item.service_item.item.id))
+				inventoryitem.total_quantity = float(inventoryitem.total_quantity) + float(item_quantities[count])
+				inventoryitem.save()
+
+				ItemHistory.objects.create(
+				item = inventoryitem,
+				quantity = item_quantities[count],
+				purchase_date= date.today(),
+				added_by = inventory_user
+				)
+
+				count += 1
+
+			checkin_item.save()
+
+			visit.stock_in_initiated = True
+			visit.save()
 
 		response_dict = {'success':True}
 
