@@ -215,7 +215,7 @@
                         <div class="col-md-12">
                             <div class="white-wrapper white-wrapper-padding m-0" style="margin-bottom: 0px !important;">
                                 <div class="inv-dash-card-head">
-                                    Todays Order
+                                    Stock In/Out
                                 </div>
                                 <div class="mt-10">
                                     <table class="inv-table footable">
@@ -250,15 +250,23 @@
                                                     {% endfor %}
                                                 </td>
                                                 <td class="text-center">
-                                                    {{order.start_at|date:'H:i'}}
+                                                    {{order.start_at|time:"g:i A"}}
                                                 </td>
                                                 <td class="text-center">
                                                     {{order.order_scheduler_book.service_type.name}}
                                                 </td>
     
                                                 <td style="float: right;">
-                                                    <a href="/bleach-inventory/createcheckout/{{order.id}}"><button class="btn-p inv-plan-img-btn2 btn-shadow" > <img class="btn-img2 mr-5"
-                                    src="{% static 'files/inventory/icons/icon4.png' %}" alt="">Stock-out</button></a>
+                                                    {% if order.work_status == 'CLEANING_FULFILLED' %}
+                                                        <button onclick="openNavAddStore({{order.id}})" class="btn-p inv-plan-img-btn2 btn-shadow"> <img class="btn-img2"
+                                                            src="{% static 'files/inventory/icons/icon3.png' %}" alt=""> Stock-In
+                                                    </button>
+                                                    
+                                                    {% else %}
+                                                    <a {% if order.stock_out_items_submitted == False %}href="/bleach-inventory/createcheckout/{{order.id}}/?stockout=stockout"{% else %}href="#"{% endif %}><button class="btn-p inv-plan-img-btn2 btn-shadow" > <img class="btn-img2 mr-5"
+                                                        src="{% static 'files/inventory/icons/icon4.png' %}" alt="">Stock-out</button></a>
+                                                    
+                                                    {% endif %}
     
     
                                                 </td>
@@ -497,7 +505,7 @@
         <div class="inv-drawer-footer">
             <form method="POST" id="checkinform" action="" >{% csrf_token %}
                 <input type="hidden" name="item_ids" id="id_item_ids" >
-                <button class="sent-button" type="button" onclick="checkinsubmit()">Check-in</button>
+                <button class="sent-button" type="button" onclick="checkinsubmit()">Stock-in</button>
             </form>        
             <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
         </div>
@@ -527,7 +535,7 @@
   });
 
 
-async function openNavAddStore(item_user_id) {
+async function openNavAddStore(visit_id) {
         $('#items_container').empty();
 
         if (screen.width <= 600) {
@@ -539,14 +547,14 @@ async function openNavAddStore(item_user_id) {
             document.getElementById("addStore").style.width = "30%";
         }
 
-        axios.get(url+'/api/items-check-in/',{params:{item_user:item_user_id}})
+        axios.get(url+'/api/items-check-in/',{params:{item_user:visit_id}})
               .then(function (response) {
                   
                   console.log(response,"resp")
 
                   $.each(response.data.items_list,function(obj,value){
                     if (value.item_type == 'quantity'){
-                        $('#items_container').append('<tr><td><label style="padding-left: 0px !important;" class="c-container"><input type="checkbox" class="item_check" data-itemid="'+value.item_id+'"><span style="top:-4px !important;" class="c-checkmark"></span></label></td><td >'+value.item_name+'</td><td >'+value.item_code+'</td><td ><a class="quantity__minus pointer" onclick="decrement(2,)"><span>-</span></a><input type="text" class="quantity__input" id="id_qty" value="0" name="qty"><a class="quantity__plus pointer" onclick="increment(2,)"><span>+</span></a></td></tr>');
+                        $('#items_container').append('<tr><td><label style="padding-left: 0px !important;" class="c-container"><input type="checkbox" class="item_check" data-itemid="'+value.item_id+'"><span style="top:-4px !important;" class="c-checkmark"></span></label></td><td >'+value.item_name+'</td><td >'+value.item_code+'</td><td ><a class="quantity__minus pointer" onclick="decrement('+value.item_id+')"><span>-</span></a><input type="text" class="quantity__input" id="id_qty_'+value.item_id+'" value="0" name="qty"><a class="quantity__plus pointer" onclick="increment('+value.item_id+')"><span>+</span></a></td></tr>');
                     }
                     if (value.item_type == 'unit'){
                         $('#items_container').append('<tr><td><label style="padding-left: 0px !important;" class="c-container"><input type="checkbox" class="item_check" data-itemid="'+value.item_id+'"><span style="top:-4px !important;" class="c-checkmark"></span></label></td><td >'+value.item_name+'</td><td >'+value.item_code+'</td><td >'+value.quantity+'</td></tr>');
@@ -556,6 +564,25 @@ async function openNavAddStore(item_user_id) {
 
               })
     }
+
+
+    async function increment(id){
+        console.log(id)
+        $('#id_qty_'+id).val(parseInt($('#id_qty_'+id).val()) + 1 );
+      
+      }
+      
+      async function decrement(id){
+        
+        if ($('#id_qty_'+id).val() > 0) {
+        $('#id_qty_'+id).val(parseInt($('#id_qty_'+id).val()) - 1 );
+        }
+      
+        if ($('#id_qty_'+id).val() == 0) {
+          $('#id_qty_'+id).val(parseInt($('#id_qty_'+id).val()) - 1 );
+          $('#id_qty_'+id).val(0);
+        }
+      }
 
 
     function closeNavAddStore() {
@@ -586,16 +613,19 @@ async function openNavAddStore(item_user_id) {
     function checkinsubmit(){
         
         var item_ids = [];
+        var item_qtys = [];
 
         $('.item_check').each(function(){
             if ($(this).is(":checked")){
                 item_ids.push($(this).data('itemid'))
+                item_qtys.push($('#id_qty_'+$(this).data('itemid')+'').val())
             } 
         })
 
         var formdata = {
             'item_ids' : item_ids,
-            'inventory_user' : {{request.user.id}}
+            'inventory_user' : "{{request.user.id}}",
+            'quantities' : item_qtys
         }
 
         axios.post(url+'/api/items-check-in/',formdata)

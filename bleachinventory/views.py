@@ -18,34 +18,54 @@ import operator
 
 class InventoryHome(IsInventoryAdmin,View):
     def get(self,request):
+        
+        
+        
         items = InventoryItem.objects.filter(status=True)
+
+        # LOAD TOTAL QTY FOR QUANTITY ITEMS
+        # for item in items:
+        #     if item.item_add_type == 'quantity':
+        #         history_total = ItemHistory.objects.filter(item=item).exclude(quantity=None).aggregate(item_total=Sum('quantity'))['item_total']
+        #         if history_total == None:
+        #             history_total = 0.00
+        #         print(history_total,item.name,"itzxc")
+        #         item.total_quantity = history_total
+        #         item.save()
+                
+        
+        
         recent_items = items.order_by('-id')
         
+        todate = date.today()
+        start_date_day = todate-timedelta(7)
+        end_date_day   = todate+timedelta(1)
+        
         purchase_items = items.filter(Q(item_status='out_of_stock') | Q(item_status='about_to_finish')).prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.all(),to_attr='units'))
-        orders = OrderScheduler.objects.filter(start_at__date=date.today()).filter(Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS')|Q(work_status='CLEANING_FULFILLED')).prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
+        orders = OrderScheduler.objects.filter(start_at__range=(start_date_day,end_date_day),stock_in_initiated=False).filter(Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS')|Q(work_status='CLEANING_FULFILLED')).prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
         
-        return_items_users = CheckOutItems.objects.filter(is_returned=True,is_checked_in=False).values_list('is_collected_by',flat=True).distinct()
+        # return_items_users = CheckOutItems.objects.filter(is_returned=True,is_checked_in=False).values_list('is_collected_by',flat=True).distinct()
         
-        return_items_list = []
+        # return_items_list = []
 
-        for item_user in return_items_users:
-            print(item_user,"mol")
-            total_items = 0
-            return_items = CheckOutItems.objects.filter(is_returned=True,is_checked_in=False,is_collected_by=int(item_user))
-            for item in return_items:
-                item_user_name = item.is_collected_by.name
-                total_items += 1
+        # for item_user in return_items_users:
+        #     print(item_user,"mol")
+        #     total_items = 0
+        #     return_items = CheckOutItems.objects.filter(is_returned=True,is_checked_in=False,is_collected_by=int(item_user))
+        #     for item in return_items:
+        #         item_user_name = item.is_collected_by.name
+        #         total_items += 1
 
-            return_item_dict = {
-                "item_user_id" : item_user,
-                "item_user_name" : item_user_name,
-                "total_items" : total_items,
-            }
+        #     return_item_dict = {
+        #         "item_user_id" : item_user,
+        #         "item_user_name" : item_user_name,
+        #         "total_items" : total_items,
+        #     }
 
-            return_items_list.append(return_item_dict)
+        #     return_items_list.append(return_item_dict)
 
-        print(return_items_list,"mok")
-        return render(request,'inventory/home.html',{"return_items":return_items_list,"recent_items":recent_items,"purchase_items":purchase_items,"orders":orders})
+        # print(return_items_list,"mok")
+        return render(request,'inventory/home.html',{"recent_items":recent_items,"purchase_items":purchase_items,"orders":orders})
 
 # Category.
 class InventoryCategory(IsInventoryAdmin,View):
@@ -1269,9 +1289,9 @@ class InventoryOrder(IsInventoryAdmin,View):
         print(search,order_date,"ser")
 
         if search:
-            orders = OrderScheduler.objects.filter(start_at__date=order_date).filter(Q(order_scheduler_book__service_type__icontains=search)|Q(cleaning_team_order_scheduler__team_leader__name__icontains=search)).filter(Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS')).prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
+            orders = OrderScheduler.objects.filter(start_at__date=order_date).filter(Q(order_scheduler_book__service_type__icontains=search)|Q(cleaning_team_order_scheduler__team_leader__name__icontains=search)).filter(Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS')|Q(work_status='CLEANING_FULFILLED')).prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
         else:
-            orders = OrderScheduler.objects.filter(start_at__date=order_date).filter(Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS')).prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
+            orders = OrderScheduler.objects.filter(start_at__date=order_date).filter(Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS')|Q(work_status='CLEANING_FULFILLED')).prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
         
         #PAGINATION ORDERS
         no_of_entries = request.GET.get('no_of_entries')
@@ -1307,7 +1327,40 @@ class InventoryUsers(IsInventoryAdmin,View):
 
 class PendingItems(IsInventoryAdmin,View):
     def get(self,request):
-        return render(request,'inventory/pending.html',{})        
+        search = request.GET.get('search')
+
+        if search:
+            checkout_items = CheckOutItems.objects.filter(is_checked_in=False,visit__stock_in_initiated=True).filter(Q(visit__order__order_no__icontains=search)|Q(is_collected_by__name__icontains=search)|Q(service_item__item__name__icontains=search)|Q(item__name__icontains=search)|Q(service_item__item__item_code__icontains=search)|Q(item__item_code__icontains=search)).select_related('visit').prefetch_related(Prefetch('visit__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team'))
+        else:
+            checkout_items = CheckOutItems.objects.filter(is_checked_in=False,visit__stock_in_initiated=True).select_related('visit').prefetch_related(Prefetch('visit__cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team'))
+        
+        #PAGINATION ITEMS
+        no_of_entries = request.GET.get('no_of_entries')
+        if not no_of_entries:
+            no_of_entries = 20
+
+        page = request.GET.get('page',1)
+        paginator=Paginator(checkout_items,no_of_entries)
+        try:
+            checkout_items=paginator.page(page)
+        except PageNotAnInteger:
+            checkout_items=paginator.page(1)
+        except EmptyPage:
+            checkout_items = paginator.page(paginator.num_pages)
+
+        # Get the index of the current page
+        index = checkout_items.number - 1  # edited to something easier without index
+        # This value is maximum index of your pages, so the last page - 1
+        max_index = len(paginator.page_range)
+        # You want a range of 7, so lets calculate where to slice the list
+        start_index = index - 3 if index >= 3 else 0
+        end_index = index + 3 if index <= max_index - 3 else max_index
+        # Get our new page range. In the latest versions of Django page_range returns
+        # an iterator. Thus pass it to list, to make our slice possible again.
+        page_range = list(paginator.page_range)[start_index:end_index]
+        entry_per_page=(checkout_items.end_index())-(checkout_items.start_index())+1
+        
+        return render(request,'inventory/pending.html',{"checkout_items":checkout_items,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"search_query":search})        
 
 class InventoryCheckout(IsInventoryAdmin,View):
     def get(self,request):
@@ -1320,7 +1373,8 @@ class InventoryCreateCheckout(IsInventoryAdmin,View):
         print(items,"its")
         service = visit.order_scheduler_book.service_type
         price_ranges = ServicePriceRange.objects.filter(is_active=True,service_type=service)
-
+        stock_out = request.GET.get('stockout')
+        print(stock_out,"stk")
         max_area = 0
 
         for section in visit.order_scheduler_book.sections:
@@ -1429,7 +1483,7 @@ class InventoryCreateCheckout(IsInventoryAdmin,View):
                         pass
 
         print(service_recipe_ingredients,"itt")
-        return render(request,'inventory/createCheckout.html',{"price_ranges":price_ranges,"visit":visit,"items":items,"service_recipe_ingredients":service_recipe_ingredients,"check_out_items":check_out_items})
+        return render(request,'inventory/createCheckout.html',{"stock_out":stock_out,"price_ranges":price_ranges,"visit":visit,"items":items,"service_recipe_ingredients":service_recipe_ingredients,"check_out_items":check_out_items})
 
     def post(self,request,visit_id):
         visit = OrderScheduler.objects.select_related('order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='team_members')),to_attr='cleaning_team'),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='sections')).get(id=int(visit_id))
@@ -1468,27 +1522,52 @@ class InventoryCreateCheckout(IsInventoryAdmin,View):
         #     CheckOutItems.objects.get(id=int(checkout_item)).delete()
         #     messages.success(request,"Item Deleted!")
 
-        if action == 'submit_checkout_list':
-            quantities = request.POST.getlist('qty')
+        if action == 'save_checkout_list':
+            quantities = request.POST.get('quantities')
+            
+            quantities = quantities.split(",")
 
             checkout_items=CheckOutItems.objects.filter(visit=visit)
 
             count = 0
 
             for item in checkout_items:
+                print(quantities[count],"cown")
+                item.units = quantities[count]
+                item.save()
+
+                count += 1
+
+            visit.stock_out_items_saved = True
+            visit.save()
+            messages.success(request,"Check Out List saved !")
+            return redirect('bleach-inventory:inventory-order')
+
+
+        if action == 'submit_checkout_list':
+            # quantities = request.POST.getlist('qty')
+
+            # print(quantities,"qtss")
+
+            checkout_items=CheckOutItems.objects.filter(visit=visit)
+
+            # count = 0
+
+            for item in checkout_items:
 
                 if item.item and item.item.item_add_type == 'unit':
                     inventoryitem = InventoryItem.objects.prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(status='active'),to_attr='item_units')).get(id=int(item.item.id))
                     if inventoryitem.item_units:
-                        for unit in inventoryitem.item_units[:int(quantities[count])]:
+                        for unit in inventoryitem.item_units[:int(item.units)]:
                             unit.status = 'out_of_order'
                             unit.save()
 
                 if item.item and item.item.item_add_type == 'quantity':
                     inventoryitem = InventoryItem.objects.prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(status='active'),to_attr='item_units')).get(id=int(item.item.id))
                     
-                    if float(inventoryitem.total_quantity) >= float(quantities[count]):
-                        inventoryitem.total_quantity = float(inventoryitem.total_quantity) - float(quantities[count])
+                    print(inventoryitem.total_quantity,"krok")
+                    if float(inventoryitem.total_quantity) >= float(item.units):
+                        inventoryitem.total_quantity = float(inventoryitem.total_quantity) - float(item.units)
                         inventoryitem.save()
                     else:
                         messages.error(request,"Quantity limit exceeded !")
@@ -1498,26 +1577,27 @@ class InventoryCreateCheckout(IsInventoryAdmin,View):
                     inventoryitem = InventoryItem.objects.prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(status='active'),to_attr='item_units')).get(id=int(item.service_item.item.id))
                     
                     if inventoryitem.item_units:
-                        for unit in inventoryitem.item_units[:int(quantities[count])]:
+                        for unit in inventoryitem.item_units[:int(item.units)]:
                             unit.status = 'out_of_order'
                             unit.save()
 
                 if item.service_item and item.service_item.item.item_add_type == 'quantity':
                     inventoryitem = InventoryItem.objects.prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(status='active'),to_attr='item_units')).get(id=int(item.service_item.item.id))
                     
-                    if float(inventoryitem.total_quantity) >= float(quantities[count]):
-                        inventoryitem.total_quantity = float(inventoryitem.total_quantity) - float(quantities[count])
+                    if float(inventoryitem.total_quantity) >= float(item.units):
+                        inventoryitem.total_quantity = float(inventoryitem.total_quantity) - float(item.units)
                         inventoryitem.save()
 
-                item.units = quantities[count]
                 item.is_checked_out = True
+                item.checked_out_date = date.today()
                 item.save()
 
-                count += 1
+            visit.stock_out_items_submitted = True
+            visit.save()
 
             messages.success(request,"Check Out List submitted !")
-
-            
+            return redirect('bleach-inventory:inventory-order')
+    
         return redirect('bleach-inventory:inventory-createcheckout',visit_id)
 
 class InventoryPurchaseOrder(IsInventoryAdmin,View):

@@ -43,7 +43,7 @@
 }
 /* inv colors */
 .inv-green{
-  color: #139275;
+  color: #139275 !important;
 }
 .inv-yellow{
   color: #FFA400;
@@ -52,7 +52,7 @@
   color: #FF5E00;
 }
 .inv-red{
-  color: #C91212;
+  color: #C91212 !important;
 }
 .c-inv-red{
   background-color: #C91212;

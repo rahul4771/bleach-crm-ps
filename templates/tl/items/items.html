@@ -67,13 +67,13 @@
                                    {% endif %}
 
                                     <td class="text-left">
-                                        {{item.item.name}}
+                                        {% if item.service_item %}{{item.service_item.item.name}}{% else %}{{item.item.name}} {% endif %}
                                     </td>
                                     <td class="text-left">
-                                        {{item.item.item_code}}
+                                        {% if item.service_item %}{{item.service_item.item.item_code}}{% else %}{{item.item.item_code}} {% endif %}
                                     </td>
                                     <td class="text-center"> 
-                                        {{item.item.item_category.name}}
+                                        {% if item.service_item %}{{item.service_item.item.item_category.name}}{% else %}{{item.item.item_category.name}} {% endif %}
                                     </td>
                                     <td class="text-left">
                                         {{item.units}}
