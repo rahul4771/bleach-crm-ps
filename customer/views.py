@@ -888,11 +888,8 @@ def purchaseorder_html_to_pdf_view(request,purchase_order_id):
 	main_doc = html.render()
 
 	main_doc.write_pdf(target='/home/pdf/tmp/purchaseorder/purchaseorder.pdf');
-
-	fs =FileSystemStorage('/home/pdf/tmp/purchaseorder/')
-#main_doc.write_pdf(target='/Users/admin/Desktop/purchaseorder.pdf');
-
-	#fs = FileSystemStorage('/Users/admin/Desktop/')
+	fs=FileSystemStorage('/home/pdf/tmp/purchaseorder/')
+	
 	with fs.open('purchaseorder.pdf') as pdf:
 		response = HttpResponse(pdf, content_type='application/pdf')
 		response['Content-Disposition'] = 'attachment; filename="'+purchase_order.purchase_order_id+'_purchaseorder.pdf"'
