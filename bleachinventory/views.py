@@ -16,7 +16,7 @@ import functools
 import operator
 # Create your views here.
 
-class InventoryHome(IsInventoryAdmin,View):
+class InventoryHome(IsInventoryAdminUser,View):
     def get(self,request):
         
         
@@ -38,7 +38,7 @@ class InventoryHome(IsInventoryAdmin,View):
         recent_items = items.order_by('-id')
         
         todate = date.today()
-        start_date_day = todate-timedelta(7)
+        start_date_day = todate-timedelta(200)
         end_date_day   = todate+timedelta(1)
         
         purchase_items = items.filter(Q(item_status='out_of_stock') | Q(item_status='about_to_finish')).prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.all(),to_attr='units'))
@@ -68,7 +68,7 @@ class InventoryHome(IsInventoryAdmin,View):
         return render(request,'inventory/home.html',{"recent_items":recent_items,"purchase_items":purchase_items,"orders":orders})
 
 # Category.
-class InventoryCategory(IsInventoryAdmin,View):
+class InventoryCategory(IsInventoryAdminUser,View):
     def get(self,request):
 
         search = request.GET.get('search')
@@ -134,7 +134,7 @@ class InventoryCategory(IsInventoryAdmin,View):
         return redirect('bleach-inventory:inventory-category')
 
 # Attribute.
-class InventoryAttribute(IsInventoryAdmin,View):
+class InventoryAttribute(IsInventoryAdminUser,View):
     def get(self,request):
         search = request.GET.get('search')
 
@@ -300,12 +300,12 @@ class InventoryAttribute(IsInventoryAdmin,View):
 
         return redirect('bleach-inventory:inventory-attribute')
 # value.
-class InventoryValue(IsInventoryAdmin,View):
+class InventoryValue(IsInventoryAdminUser,View):
     def get(self,request):
         return render(request,'inventory/value.html',{})
 
 # bundle.
-class InventoryBundle(IsInventoryAdmin,View):
+class InventoryBundle(IsInventoryAdminUser,View):
     def get(self,request):
 
         items = InventoryItem.objects.all()
@@ -547,7 +547,7 @@ class InventoryBundle(IsInventoryAdmin,View):
 
         return redirect('bleach-inventory:inventory-bundle')
 
-class InventoryItems(IsInventoryAdmin,View):
+class InventoryItems(IsInventoryAdminUser,View):
     def get(self,request,item_id):
         inventory_item = InventoryItem.objects.prefetch_related(Prefetch('image_item',queryset=InventoryItemImages.objects.all(),to_attr='item_images')).annotate(quantity_total=Sum('unit_item_history__quantity'),unit_count=Sum(Case(When(unit_item__status='active',then=1),default=0,output_field=IntegerField())),total_unit_price=Sum(Case(When(unit_item__status='active',then='unit_item__unit_price'),default=0,output_field=FloatField()))).get(id=item_id)
         categories = Category.objects.all()
@@ -821,7 +821,7 @@ class InventoryItems(IsInventoryAdmin,View):
 
         return redirect('bleach-inventory:inventory-item',item_id)
 
-class InventorySupplier(IsInventoryAdmin,View):
+class InventorySupplier(IsInventoryAdminUser,View):
     def get(self,request):
 
         search = request.GET.get('search')
@@ -980,7 +980,7 @@ class InventorySupplier(IsInventoryAdmin,View):
 
         return redirect('bleach-inventory:inventory-supplier')
 
-class InventoryStore(IsInventoryAdmin,View):
+class InventoryStore(IsInventoryAdminUser,View):
     def get(self,request):
         search = request.GET.get('search')
 
@@ -1042,7 +1042,7 @@ class InventoryStore(IsInventoryAdmin,View):
             messages.success(request,"Store Deleted Successfully !")
         return redirect('bleach-inventory:inventory-store')
 
-class InventoryInv(IsInventoryAdmin,View):
+class InventoryInv(IsInventoryAdminUser,View):
     def get(self,request):
         search = request.GET.get('search')
 
@@ -1276,7 +1276,7 @@ class InventoryInv(IsInventoryAdmin,View):
 
         return redirect('bleach-inventory:inventory-inv')
 
-class InventoryOrder(IsInventoryAdmin,View):
+class InventoryOrder(IsInventoryAdminUser,View):
     def get(self,request):
         search = request.GET.get('search')
         order_date = request.GET.get('order_date')          
@@ -1321,11 +1321,11 @@ class InventoryOrder(IsInventoryAdmin,View):
 
         return render(request,'inventory/order.html',{"no_of_entries":no_of_entries,"page_range":page_range,"entry_per_page":entry_per_page,"visits":orders,"search_query":search,"order_date":order_date})
 
-class InventoryUsers(IsInventoryAdmin,View):
+class InventoryUsers(IsInventoryAdminUser,View):
     def get(self,request):
         return render(request,'inventory/users.html',{})
 
-class PendingItems(IsInventoryAdmin,View):
+class PendingItems(IsInventoryAdminUser,View):
     def get(self,request):
         search = request.GET.get('search')
 
@@ -1362,11 +1362,11 @@ class PendingItems(IsInventoryAdmin,View):
         
         return render(request,'inventory/pending.html',{"checkout_items":checkout_items,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"search_query":search})        
 
-class InventoryCheckout(IsInventoryAdmin,View):
+class InventoryCheckout(IsInventoryAdminUser,View):
     def get(self,request):
         return render(request,'inventory/checkout.html',{})
 
-class InventoryCreateCheckout(IsInventoryAdmin,View):
+class InventoryCreateCheckout(IsInventoryAdminUser,View):
     def get(self,request,visit_id):
         visit = OrderScheduler.objects.select_related('order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='team_members')),to_attr='cleaning_team'),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='sections')).get(id=int(visit_id))
         items = InventoryItem.objects.filter(Q(item_status='available')|Q(item_status='about_to_finish'))
@@ -1545,15 +1545,21 @@ class InventoryCreateCheckout(IsInventoryAdmin,View):
 
 
         if action == 'submit_checkout_list':
-            # quantities = request.POST.getlist('qty')
-
-            # print(quantities,"qtss")
+            quantities = request.POST.get('quantities')
+            
+            quantities = quantities.split(",")
 
             checkout_items=CheckOutItems.objects.filter(visit=visit)
 
-            # count = 0
-
+            count = 0
+                
             for item in checkout_items:
+
+                print(quantities[count],"cown")
+                item.units = quantities[count]
+                item.save()
+
+                count += 1
 
                 if item.item and item.item.item_add_type == 'unit':
                     inventoryitem = InventoryItem.objects.prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(status='active'),to_attr='item_units')).get(id=int(item.item.id))
@@ -1592,6 +1598,7 @@ class InventoryCreateCheckout(IsInventoryAdmin,View):
                 item.checked_out_date = date.today()
                 item.save()
 
+            visit.stock_out_items_saved = True
             visit.stock_out_items_submitted = True
             visit.save()
 
@@ -1600,7 +1607,7 @@ class InventoryCreateCheckout(IsInventoryAdmin,View):
     
         return redirect('bleach-inventory:inventory-createcheckout',visit_id)
 
-class InventoryPurchaseOrder(IsInventoryAdmin,View):
+class InventoryPurchaseOrder(IsInventoryAdminUser,View):
     def get(self,request):
         search = request.GET.get('search')
 
@@ -1621,7 +1628,7 @@ class InventoryPurchaseOrder(IsInventoryAdmin,View):
 
         return redirect('bleach-inventory:inventory-purchaseorder')
 
-class PurchaseOrderItemsPage(IsInventoryAdmin,View):
+class PurchaseOrderItemsPage(IsInventoryAdminUser,View):
     def get(self,request,purchase_order_id):
         stores = Store.objects.filter(status=True)
         purchase_order = PurchaseOrder.objects.prefetch_related(Prefetch('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.all(),to_attr='purchase_order_items')).get(id=int(purchase_order_id))
@@ -1765,6 +1772,7 @@ class InventoryCreatePurchaseOrder(View):
             purchase_order = PurchaseOrder.objects.create(purchase_order_id=new_item_code,initiated_by=request.user)
 
         suppliers = Supplier.objects.filter(status=True)
+        stores = Store.objects.filter(status=True)
 
         supplier_id = request.GET.get('supplier_id')
         if supplier_id :
@@ -1774,10 +1782,18 @@ class InventoryCreatePurchaseOrder(View):
         else:
             supplier = None
 
+        store_id = request.GET.get('store_id')
+        if store_id :
+            store = Store.objects.get(id=int(store_id))
+            purchase_order.store = store
+            purchase_order.save()
+        else:
+            store = None
+
         items = SupplierItems.objects.all()
         purchase_order_items = PurchaseOrderItems.objects.filter(purchase_order=purchase_order,purchase_order__supplier=purchase_order.supplier)
 
-        return render(request,'inventory/createpo.html',{"items":items,"suppliers":suppliers,"supplier":supplier,"purchase_order":purchase_order,"purchase_order_items":purchase_order_items})
+        return render(request,'inventory/createpo.html',{"items":items,"suppliers":suppliers,"stores":stores,"supplier":supplier,"store":store,"purchase_order":purchase_order,"purchase_order_items":purchase_order_items})
 
     def post(self,request):
         action = request.POST.get('action')
@@ -1865,7 +1881,7 @@ class InventoryCreatePurchaseOrder(View):
 
         return redirect('bleach-inventory:inventory-createpurchaseorder')
 
-class InventoryEditPurchaseOrder(IsInventoryAdmin,View):
+class InventoryEditPurchaseOrder(IsInventoryAdminUser,View):
     def get(self,request,purchase_order_id):
 
         purchase_order = PurchaseOrder.objects.prefetch_related(Prefetch('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.all(),to_attr='purchase_order_items')).annotate(total_order_price=Sum('purchase_order_purchase_order_item__total_price')).get(id=int(purchase_order_id))
@@ -1955,19 +1971,19 @@ class InventoryEditPurchaseOrder(IsInventoryAdmin,View):
 
             return redirect('bleach-inventory:inventory-editpurchaseorder',purchase_order_id)
 
-class InventoryViewPurchaseOrder(IsInventoryAdmin,View):
+class InventoryViewPurchaseOrder(IsInventoryAdminUser,View):
     def get(self,request):
         return render(request,'inventory/viewpo.html',{})
 
-class InventoryCheckedIn(IsInventoryAdmin,View):
+class InventoryCheckedIn(IsInventoryAdminUser,View):
     def get(self,request):
         return render(request,'inventory/checkin.html',{})
 
-class InventoryOrderDetails(IsInventoryAdmin,View):
+class InventoryOrderDetails(IsInventoryAdminUser,View):
     def get(self,request):
         return render(request,'inventory/orderdetails.html',{})
 
-class InventoryServices(IsInventoryAdmin,View):
+class InventoryServices(IsInventoryAdminUser,View):
     def get(self,request):
         items = InventoryItem.objects.all()
         return render(request,'inventory/services.html',{"items":items})
@@ -2040,7 +2056,7 @@ class InventoryServices(IsInventoryAdmin,View):
 
         return redirect('bleach-inventory:inventory-services')
 
-class InventorySegment(IsInventoryAdmin,View):
+class InventorySegment(IsInventoryAdminUser,View):
     def get(self,request,category_id):
         search = request.GET.get('search')
 
