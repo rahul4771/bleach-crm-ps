@@ -109,7 +109,7 @@
       <div id="soa-customer-detials" >
           <div class="d-flex">
              
-            <div  style="font-size:10px;margin-top:0px;margin-bottom: 0px;" class="company_address addr-box" >
+            <div  style="font-size:10px;margin-top:0px;margin-bottom: 0px;min-width:50%;" class="company_address addr-box" >
                 To<br>
                 {{purchase_order.supplier.address}}<br> Tel:{{purchase_order.supplier.contact}}<br> Other Tel:{{purchase_order.supplier.other_contact}}
             </div>
@@ -181,8 +181,8 @@
       </script>-->
 
 
-      <div class="soa_section3">
-        <div id="soa_amount_calculation">
+      <div class="soa_section3 d-flex">
+        <div id="soa_amount_calculation_pdf">
             <div class="d-flex">
                 <div class="w-50 ">
                     Discount %
@@ -217,7 +217,7 @@
             </div>
             
           </div>
-        <div id="po_amount_section">
+        <div id="po_amount_section" style="margin-left:20% !important;">
           <div id="soa_balance">
            Total
           </div>
