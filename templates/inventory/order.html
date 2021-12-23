@@ -186,7 +186,7 @@
                             </td> {% endcomment %}
                             
                             <td>
-                                {% if visit.work_status == 'CLEANING_FULFILLED' %}
+                                {% if visit.stock_in_initiated == True %}
                                 <span class="inv-dot c-checked-in ml-5"></span>
                                     Stock-In
                                 {% else %}
@@ -194,7 +194,7 @@
                                     <span class="inv-dot c-out-of-order ml-5"></span>
                                     Stock-Out
                                     {% else %}
-                                    <span class="inv-dot c-waiting-out ml-5"></span>
+                                    <span class="inv-dot c-about-finish ml-5"></span>
                                     Waiting
                                     {% endif %}
                                 {% endif %}
@@ -204,8 +204,14 @@
                             </td>
                             <td class="text-center">
                                 {% if visit.stock_out_items_saved == True %}
-                                <a {% if visit.work_status == 'CLEANING_FULFILLED' %}href="#"{% else %}href="/bleach-inventory/createcheckout/{{visit.id}}"{% endif %}><button class="btn-p inv-plan-img-btn2 btn-shadow" > <img class="btn-img2"
-                                    src="{% static 'files/inventory/icons/checklist.png' %}" alt=""> Edit Check-out list </button></a>
+                                    {% if visit.work_status == 'CLEANING_FULFILLED' %}
+                                    <button  class="btn-p inv-plan-img-btn2-disabled" disabled> <img class="btn-img2"
+                                        src="{% static 'files/inventory/icons/checklist.png' %}" alt=""> Edit Check-out list
+                                    </button>
+                                    {% else %}
+                                    <a href="/bleach-inventory/createcheckout/{{visit.id}}"><button class="btn-p inv-plan-img-btn2 btn-shadow" > <img class="btn-img2"
+                                        src="{% static 'files/inventory/icons/checklist.png' %}" alt=""> Edit Check-out list </button></a>
+                                    {% endif %}
                                 {% else %}
                                 <a href="/bleach-inventory/createcheckout/{{visit.id}}"><button class="btn-p inv-plan-img-btn2 btn-shadow" > <img class="btn-img2"
                                     src="{% static 'files/inventory/icons/checklist.png' %}" alt=""> Create Check-out list </button></a>
