@@ -102,8 +102,11 @@
                                                 src="{% static 'files/inventory/view.png' %}" alt="">
                                         </button>
                                             <button class="inv-plan-img-btn edit_supplier" onclick="openNavAddBundle('edit')" data-supplierid="{{supplier.id}}" data-suppliername="{{supplier.supplier_name}}" data-suppliercontact="{{supplier.contact}}" data-suppliercontactother="{{supplier.other_contact}}" data-suppliercode="{{supplier.supplier_id}}" data-supplieraddress="{{supplier.address}}" data-supplierterms="{{supplier.terms}}" data-supplierstatus="{{supplier.status}}"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>
+                                            {% if request.user.user_type == 'INVENTORYADMIN' %}
                                             <button class="inv-plan-img-btn delete_supplier" data-supplierid="{{supplier.id}}" data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
-            
+                                            {% else %}
+                                            <button class="inv-plan-img-btn2-disabled" disabled> <img class="btn-img2" src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
+                                            {% endif %}
                                         </td>
                                     </tr>
                                     {% endfor %}

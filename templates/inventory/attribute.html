@@ -98,8 +98,11 @@
                                     <td>
                                   
                                         <button class="inv-plan-img-btn edit_attribute" data-attributeid="{{attribute.id}}" data-attributename="{{attribute.name}}" {% if attribute.attribute_category %}data-attributecategory="{{attribute.attribute_category.id}}"{% else %}data-attributecategory="0"{% endif %} {% if attribute.attribute_segment %}data-attributesegment="{{attribute.attribute_segment.id}}"{% else %}data-attributesegment="0"{% endif %} {% if attribute.attribute_line %}data-attributeline="{{attribute.attribute_line.id}}"{% else %}data-attributeline="0"{% endif %} data-attributestatus="{{attribute.status}}" onclick="showDrawer('edit')" > <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>
+                                        {% if request.user.user_type == 'INVENTORYADMIN' %}
                                         <button class="inv-plan-img-btn delete_attribute" data-attributeid="{{attribute.id}}" data-attributename="{{attribute.name}}" data-attributestatus="{{attribute.status}}" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
-        
+                                        {% else %}
+                                        <button class="inv-plan-img-btn2-disabled" disabled> <img class="btn-img2" src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
+                                        {% endif %}
                                     </td>
                                 </tr>
                                 {% empty%}
