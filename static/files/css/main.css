@@ -1605,3 +1605,13 @@ padding:10px;
 .prev-assign-btn{
   margin-left:auto;
 }
+.justify-center{
+  justify-content: center;
+}
+.inv-mr-5{
+  margin-right: 5px;
+}
+
+.ml-10{
+  margin-left: 10px !important;
+}

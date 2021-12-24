@@ -43,29 +43,10 @@ class InventoryHome(IsInventoryAdminUser,View):
         
         purchase_items = items.filter(Q(item_status='out_of_stock') | Q(item_status='about_to_finish')).prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.all(),to_attr='units'))
         orders = OrderScheduler.objects.filter(start_at__range=(start_date_day,end_date_day),stock_in_initiated=False).filter(Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS')|Q(work_status='CLEANING_FULFILLED')).prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
+        purchase_orders = PurchaseOrder.objects.filter(is_admin_approved=False,is_received=False,is_rejected=False,status=True)
+        po_count = purchase_orders.count()
         
-        # return_items_users = CheckOutItems.objects.filter(is_returned=True,is_checked_in=False).values_list('is_collected_by',flat=True).distinct()
-        
-        # return_items_list = []
-
-        # for item_user in return_items_users:
-        #     print(item_user,"mol")
-        #     total_items = 0
-        #     return_items = CheckOutItems.objects.filter(is_returned=True,is_checked_in=False,is_collected_by=int(item_user))
-        #     for item in return_items:
-        #         item_user_name = item.is_collected_by.name
-        #         total_items += 1
-
-        #     return_item_dict = {
-        #         "item_user_id" : item_user,
-        #         "item_user_name" : item_user_name,
-        #         "total_items" : total_items,
-        #     }
-
-        #     return_items_list.append(return_item_dict)
-
-        # print(return_items_list,"mok")
-        return render(request,'inventory/home.html',{"recent_items":recent_items,"purchase_items":purchase_items,"orders":orders})
+        return render(request,'inventory/home.html',{"recent_items":recent_items,"purchase_items":purchase_items,"orders":orders,"purchase_orders":purchase_orders,"po_count":po_count})
 
 # Category.
 class InventoryCategory(IsInventoryAdminUser,View):
@@ -1549,7 +1530,7 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
             
             quantities = quantities.split(",")
 
-            checkout_items=CheckOutItems.objects.filter(visit=visit)
+            checkout_items=CheckOutItems.objects.filter(visit=visit,is_checked_out=False)
 
             count = 0
                 
@@ -1628,22 +1609,38 @@ class InventoryPurchaseOrder(IsInventoryAdminUser,View):
 
         return redirect('bleach-inventory:inventory-purchaseorder')
 
+class PurchaseOrderApproval(IsInventoryAdmin,View):
+    def get(self,request,purchase_order_id):
+        purchase_order = PurchaseOrder.objects.prefetch_related(Prefetch('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.all(),to_attr='purchase_order_items')).annotate(po_total=Sum('purchase_order_purchase_order_item__total_price')).get(id=int(purchase_order_id))
+        shipment_status = request.GET.get('shipment_status')
+        if shipment_status == 'approved':
+            purchase_order.is_admin_approved = True
+            purchase_order.is_rejected = False
+            purchase_order.save()
+
+            return redirect('bleach-inventory:inventory-purchaseorder')
+
+        if shipment_status == 'rejected':
+            purchase_order.is_admin_approved = False
+            purchase_order.is_rejected = True
+            purchase_order.save() 
+
+            return redirect('bleach-inventory:inventory-purchaseorder') 
+
+        return render(request,"inventory/po_admin_approval.html",{"purchase_order":purchase_order})
+
 class PurchaseOrderItemsPage(IsInventoryAdminUser,View):
     def get(self,request,purchase_order_id):
         stores = Store.objects.filter(status=True)
-        purchase_order = PurchaseOrder.objects.prefetch_related(Prefetch('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.all(),to_attr='purchase_order_items')).get(id=int(purchase_order_id))
+        purchase_order = PurchaseOrder.objects.prefetch_related(Prefetch('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.all(),to_attr='purchase_order_items')).annotate(po_total=Sum('purchase_order_purchase_order_item__total_price')).get(id=int(purchase_order_id))
         shipment_status = request.GET.get('shipment_status')
         if shipment_status == 'complete':
             purchase_order.is_received = True
             purchase_order.save()
 
-            # for item in purchase_order.purchase_order_items:
-            #     item.is_received = True
-            #     item.save()
-
         if shipment_status == 'incomplete':
             purchase_order.is_received = False
-            purchase_order.save()       
+            purchase_order.save()    
 
         print(shipment_status,"ship")
         return render(request,"inventory/purchaseorderitems.html",{"purchase_order":purchase_order,"stores":stores})
@@ -1663,7 +1660,7 @@ class PurchaseOrderItemsPage(IsInventoryAdminUser,View):
                 print(item,item_counts[loopcount], "itm")
                 ItemHistory.objects.create(purchase_order=purchase_order,item=item,quantity=item_counts[loopcount],added_by=request.user)
                 
-                item.total_quantity += float(item_counts[loopcount])
+                item.total_quantity = float(item.total_quantity) + float(item_counts[loopcount])
                 item.save()
 
                 purchase_order_item.is_received = True

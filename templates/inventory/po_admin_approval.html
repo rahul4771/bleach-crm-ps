@@ -49,9 +49,7 @@
                       </div>
                    </div>
                 </div>
-                
-                {% if purchase_order.is_admin_approved == True %}
-                <div class="row mt-20">
+                <!-- <div class="row mt-20">
                     <div class="col-md-3">
                         <input type="hidden" name="status" id="id_shipment_status" >
                         <div class="wrap-drop" id="noble-gases" style="z-index: 9999 !important;"  >
@@ -62,9 +60,7 @@
                             </ul>
                         </div>
                     </div>
-                </div>
-                {% endif %}
-
+                </div> -->
                 <div class="mt-20">
                     <div class="d-flex" >
                         {% if purchase_order.is_received == True %}
@@ -93,8 +89,11 @@
                                     Unit Cost
                                 </th>
                                
-                                <th>
+                                <!-- <th>
                                     Status
+                                </th> -->
+                                <th>
+                                   Net Cost
                                 </th>
     
                             </tr>
@@ -118,13 +117,14 @@
                                {{item.unit_price|floatformat:3}}
                             </td>
                           
-                            <td>
+                            <!-- <td>
                                 {% if item.is_received == True %}
                                 <span class="inv-dot c-active ml-5"></span>Added
                                 {% else %}
                                 <span class="inv-dot c-active ml-5"></span>Waiting
                                 {% endif %}
-                            </td>
+                            </td> -->
+                            <td class="item_net_cost">{{item.total_price|floatformat:3}}</td>
                         </tr>
                         {% endfor %}
         
@@ -278,8 +278,27 @@
     
                     </table>
                     {% endif %}
+
+                    {% if purchase_order.is_received == True or purchase_order.is_rejected == True %}
+                    {% else %}
+                    <div class="d-flex justify-end inventory-total">
+                        <div class="inv-total-box">
+                            <div class="inv-total-label">Total </div>
+                       <div class="mt-10">  {{purchase_order.po_total|floatformat:3}} KD</div>
+                    </div>
+                    {% endif %}
+
+                    </div>
                 </div>
                 
+                {% if purchase_order.is_received == True or purchase_order.is_rejected == True%}
+                {% else %}
+                <input type="hidden" name="status" id="id_shipment_status" >
+                <div class="d-flex justify-center mt-20 mb-20">
+                    <button class="sent-button" type="button" onclick="changeSelect('approved')" ><i class="far fa-check-circle inv-mr-5"></i>Approve</button>
+                    <button class="view-button  ml-10" type="button" onclick="changeSelect('rejected')" ><i class="fas fa-ban inv-mr-5"></i>Reject</button>
+                </div>
+                {% endif %}
             </div>
         </div>
     </section>
@@ -437,7 +456,7 @@
         <div class="inv-sidedrawer-inner">
             <div class="d-flex">
                 <div class="inv-drawer-head" id="itemHead">
-                    Add to Inventory
+                    Add to inventory
                 </div>
                 <div class="right-pos">
 
@@ -805,7 +824,7 @@ function formvalidation(){
 
 function set_params_go(args)
     {
-    var url='{% url 'bleach-inventory:inventory-purchaseorderitems' purchase_order.id %}';
+    var url='{% url 'bleach-inventory:inventory-purchaseorderapproval' purchase_order.id %}';
     var params={shipment_status:$('#id_shipment_status').val()
     };
     for(key in args) 
