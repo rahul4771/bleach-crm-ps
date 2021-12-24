@@ -38,7 +38,7 @@ class InventoryHome(IsInventoryAdminUser,View):
         recent_items = items.order_by('-id')
         
         todate = date.today()
-        start_date_day = todate-timedelta(7)
+        start_date_day = todate-timedelta(200)
         end_date_day   = todate+timedelta(1)
         
         purchase_items = items.filter(Q(item_status='out_of_stock') | Q(item_status='about_to_finish')).prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.all(),to_attr='units'))
@@ -1663,7 +1663,7 @@ class PurchaseOrderItemsPage(IsInventoryAdminUser,View):
                 print(item,item_counts[loopcount], "itm")
                 ItemHistory.objects.create(purchase_order=purchase_order,item=item,quantity=item_counts[loopcount],added_by=request.user)
                 
-                item.total_quantity += float(item_counts[loopcount])
+                item.total_quantity = float(item.total_quantity) + float(item_counts[loopcount])
                 item.save()
 
                 purchase_order_item.is_received = True

@@ -299,6 +299,7 @@ class PurchaseOrder(models.Model):
     other_charge        = models.CharField(max_length=10,blank=True,null=True)
     is_order_completed  = models.BooleanField(default=False,blank=False,null=False)
     is_received         = models.BooleanField(default=False,blank=False,null=False)
+    is_received         = models.BooleanField(default=False,blank=False,null=False)
     created             = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
