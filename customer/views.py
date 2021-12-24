@@ -4678,8 +4678,10 @@ class DuplicateBookingPhase2(APIView):
 				evaluation_no = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10001'
 				tracking_no   = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
 
+
 			#duplicate the evaluation
-			new_evaluation = Evaluation.objects.create(tracking_no=int(tracking_no)+1,evaluation_id=evaluation_no,customer=duplicate_evaluation.customer,call_attender__id=request.GET.get('user_id'),quatation_expiry_date=timezone.now()+timedelta(7))
+			call_attender  = UserProfile.objects.get(id=request.GET.get('user_id'))
+			new_evaluation = Evaluation.objects.create(tracking_no=int(tracking_no)+1,evaluation_id=evaluation_no,customer=duplicate_evaluation.customer,call_attender=call_attender,quatation_expiry_date=timezone.now()+timedelta(7))
 			
 			#duplicate the order
 			new_order      = Order.objects.create(evaluation=new_evaluation,order_no=new_evaluation.evaluation_id)
