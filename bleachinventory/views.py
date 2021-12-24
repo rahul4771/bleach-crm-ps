@@ -38,7 +38,7 @@ class InventoryHome(IsInventoryAdminUser,View):
         recent_items = items.order_by('-id')
         
         todate = date.today()
-        start_date_day = todate-timedelta(7)
+        start_date_day = todate-timedelta(200)
         end_date_day   = todate+timedelta(1)
         
         purchase_items = items.filter(Q(item_status='out_of_stock') | Q(item_status='about_to_finish')).prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.all(),to_attr='units'))
@@ -1549,7 +1549,7 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
             
             quantities = quantities.split(",")
 
-            checkout_items=CheckOutItems.objects.filter(visit=visit)
+            checkout_items=CheckOutItems.objects.filter(visit=visit,is_checked_out=False)
 
             count = 0
                 
