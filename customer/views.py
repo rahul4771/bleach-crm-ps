@@ -4980,9 +4980,14 @@ class DuplicateBookingPhase2(APIView):
 					service_book.total_cost               = service_book.estimated_cost*len(schedules_dict)
 					service_book.estimated_cost           = service_book.estimated_cost*len(schedules_dict)
 				else:
-					service_book.total_cost            = service_book.estimated_cost
-					service_book.estimated_cost        = service_book.estimated_cost
+					service_book.total_cost               = service_book.estimated_cost
+					service_book.estimated_cost           = service_book.estimated_cost
 				service_book.save()
+
+				print(service_book.cleaning_policy,"cleaning_policy")
+				print(len(schedules_dict),"No of Cleanings")
+				print(service_book.total_cost,"Total Cost")
+				print(service_book.estimated_cost,"Estimated Cost")
 
 				##cost updation
 				evaluation_details.estimated_cost     += int(service_book.estimated_cost)
