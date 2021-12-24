@@ -136,6 +136,30 @@
                             {% endif %}
                         </div>
                         <br><br>
+
+
+                        
+                        <div class="model-input-name">Select Store</div>
+                        
+                            <input type="text" hidden id="store_id" >
+                            <div class="wrap-drop" id="noble-gases2" id="store_id" style="z-index: 2;">
+                            {% if purchase_order.store == None %}
+                            <span>--Select Store--</span>
+                            <ul class="drop">
+                                {% for store in stores %}
+                                <li onclick="dropSelectStore({{store.id}})" ><a>{{store.store_name}}</a></li>
+                                {% endfor %}
+                            </ul>
+                            {% else %}
+                            <span>{{purchase_order.store.store_name}}</span>
+                            <ul class="drop">
+                                
+                                <li class="drop-selected" ><a>{{purchase_order.store.store_name}}</a></li>
+                                
+                            </ul>
+                            {% endif %}
+                        </div>
+                        <br><br>
                        
                         
                         {% if purchase_order.supplier != None %}
@@ -562,6 +586,7 @@ DropDown.prototype = {
 $(function () {
     // create new variable for each menu
     var dd1 = new DropDown($('#noble-gases'));
+    var dd2 = new DropDown($('#noble-gases2'));
     // var dd2 = new DropDown($('#other-gases'));
     $(document).click(function () {
         // close menu on document click
@@ -616,6 +641,13 @@ function dropSelectSeller(id){
     $('#supplier_id').val(id);
     set_params_go();
 }
+
+function dropSelectStore(id){
+    console.log(id)
+    $('#store_id').val(id);
+    set_params_go();
+}
+
 function showRe(){
     console.log('j')
     $('#id_c').click();
@@ -831,7 +863,7 @@ function showAdditem(){
         //      document.getElementById("id_search").style.display="block"
         //  }
     var url='{% url 'bleach-inventory:inventory-createpurchaseorder' %}';
-    var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),supplier_id:$('#supplier_id').val()
+    var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),supplier_id:$('#supplier_id').val(),store_id:$('#store_id').val()
     };
     for(key in args) 
         params[key]=args[key];

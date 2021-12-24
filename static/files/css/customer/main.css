@@ -197,7 +197,7 @@ body{
     min-height:500px;
 }
 .inv-logo{
-    height:84px;
+    max-height:110px;
 }
 .inv-price-card{
   
@@ -482,7 +482,7 @@ outline: none !important;
     text-decoration: none;
 }
 .inv-form-switch{
-    max-width:120px;
+    max-width: 76px;
 }
 .inv-payment-disabled{
     cursor: not-allowed !important;

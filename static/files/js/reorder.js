@@ -602,7 +602,8 @@ function openNav() {
       editScheduleData:{},
       editScheduleStat:false,
       onetimeslots:[],
-      duplicate_id:''
+      duplicate_id:'',
+      user_id:''
           },
           
        
@@ -4805,7 +4806,9 @@ function openNav() {
   
   },
   getDuplicate(){
-    axios.get(this.url+'/customer/duplicatebookingphase2/'+this.custId).then(response=>{
+    axios.get(this.url+'/customer/duplicatebookingphase2/'+this.custId,{params:{
+      user_id:this.user_id
+    }}).then(response=>{
       this.duplicate_id='BLC'+response.data.evaluation_id
       this.getBookedServices('paw'+response.data.evaluation_id)
     })
@@ -5175,7 +5178,9 @@ function openNav() {
     },
   
     mounted() {
+   
       this.url = api;
+      this.user_id=$('#user_id').val();
       const urlSearchParams = new URLSearchParams(window.location.search);
       const params = Object.fromEntries(urlSearchParams.entries());
       this.custId=params.id

@@ -81,7 +81,7 @@
                                 {{order.created|date:'d-m-Y'}}
                             </td>
                             <td class="text-center">
-                                {{order.initiated_by}}
+                                {{order.initiated_by.name}}
                             <td class="text-center">
                                 {{order.supplier.supplier_name}}
                             </td>
@@ -107,8 +107,9 @@
                             src="{% static 'files/inventory/invoice.png' %}" alt="">
                 </button></a>
                                 <a href="/bleach-inventory/editpo/{{order.id}}"><button class="inv-plan-img-btn" > <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button></a>
+                                {% if request.user.user_type == 'INVENTORYADMIN' %}
                                 <button class="inv-plan-img-btn delete-order" data-id="{{order.id}}"  data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
-
+                                {% endif %}
                             </td>
                         </tr>
                         {% endif %}
@@ -160,7 +161,7 @@
                                 {{order.created|date:'d-m-Y'}}
                             </td>
                             <td class="text-center">
-                                {{order.initiated_by}}
+                                {{order.initiated_by.name}}
                             <td class="text-center">
                                 {{order.supplier.supplier_name}}
                             </td>
@@ -186,8 +187,9 @@
                             src="{% static 'files/inventory/invoice.png' %}" alt="">
                 </button></a>
                                 <a href="/bleach-inventory/editpo/{{order.id}}"><button class="inv-plan-img-btn" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button></a>
+                                {% if request.user.user_type == 'INVENTORYADMIN' %}
                                 <button class="inv-plan-img-btn delete-order" data-id="{{order.id}}"  data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-
+                                {% endif %}
                             </td>
                         </tr>
                         {% endif %}

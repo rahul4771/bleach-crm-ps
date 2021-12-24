@@ -37,7 +37,9 @@
   <link href="{% static 'files/css/externalusers.css' %}" rel="stylesheet" type="text/css">
   <link href="{% static 'files/css/message_wrapper.css' %}" rel="stylesheet" type="text/css">
   <link href="{% static 'files/css/template.css' %}" rel="stylesheet" type="text/css">
-    
+  <link href="{% static 'files/css/bootstrap-grid.css' %}" rel="stylesheet" type="text/css">
+
+ 
 </head>
 
 <body style="background: #F2F2F2;">
@@ -45,34 +47,46 @@
   <div id="container">
     <div class="right-statement">
 
-      <div id="soa-logo-div">
-        <img style="height: 40px;" src="{% static 'files/images/newlogo.png' %}" />
-        <svg id="barcode"></svg>
+      <div >
+        <img style="height: 40px;position: absolute; top:0" src="{% static 'files/images/newlogo.png' %}" />
+       
       </div>
       <div class="row">
           <div class="col-md-6">
+           
             <div id="soa-logo-div ">
-                <h1 id="soa_heading_2" class="text-left">Purchase Order : {{purchase_order.purchase_order_id}}</h1>
-                <div id="soa_detials" class="mt-3">
-                    <div id="soa_right">Order Date </div>
-                    <div>: {{purchase_order.created|date:'d-m-Y'}} </div>
+                <h1 id="soa_heading_2" class="text-left">PURCHASE ORDER : {{purchase_order.purchase_order_id}}</h1>
+                <div class="d-flex">
+                <div class="details-col-1">
+                <div id="soa_detials_pdf" class="mt-3 f-10" >
+                    <div id="soa_right" class="f-10">Order Date </div>
+                    <div class="f-10">: {{purchase_order.created|date:'d-m-Y'}} </div>
                   </div>
-                  <div id="soa_detials">
-                    <div id="soa_right">Sale Person </div>
-                    <div>: {{purchase_order.initiated_by.name}} </div>
+                  <div id="soa_detials_pdf"  class="f-10">
+                    <div id="soa_right" class="f-10">Sale Person </div>
+                    <div class="f-10" >: {{purchase_order.initiated_by.name}} </div>
                   </div>
-                  <div id="soa_detials">
-                    <div id="soa_right">Via </div>
-                    <div>: {{purchase_order.supplier.supplier_name}} </div>
+                  <div id="soa_detials_pdf"  class="f-10">
+                    <div id="soa_right" class="f-10">Via </div>
+                    <div class="f-10">: {{purchase_order.supplier.supplier_name}} </div>
                   </div>
-                  <div id="soa_detials">
-                    <div id="soa_right">Terms </div>
-                    <div>: {{purchase_order.supplier.terms}} </div>
                   </div>
-              </div>
+                  <div style="margin-left:20%" class="details-col-2">
+                    <div id="soa_detials_pdf" class="f-10 mt-3">
+                      <div id="soa_right" class="f-10">Terms </div>
+                      <div class="f-10">: {{purchase_order.supplier.terms}} </div>
+                    </div>
+                </div>
+                  </div>
+             </div>
+           
+            
+             
+            
+          </div>
           </div>
           <div class="col-md-6">
-              <div class="company_address">
+              <!-- <div class="company_address">
                 Bleach Cleaning Services Co
                 <div class="mt-2">
                     Salhiya, Kuwait City, Qibla Building, Mohamed Bin Thinan Al Ghanim Street, Po.Box: 4489, Safat 13045
@@ -87,26 +101,34 @@
                 Email : supplychain@bleach-kw.com
                </div>
                 
-              </div>
+              </div> -->
           </div>
       </div>
      
 
-      <div id="soa-customer-detials">
-          <div class="row">
+      <div id="soa-customer-detials" >
+          <div class="d-flex">
              
-            <div class="col-md-6">
+            <div  style="font-size:10px;margin-top:0px;margin-bottom: 0px;min-width:50%;" class="company_address addr-box" >
                 To<br>
                 {{purchase_order.supplier.address}}<br> Tel:{{purchase_order.supplier.contact}}<br> Other Tel:{{purchase_order.supplier.other_contact}}
             </div>
-            {% comment %} <div class="col-md-6">
+            {% comment %} <div class="col-6">
                 To<br>
-                Bleach Cleaning Service Co Salhiya, Kuwait City, Qibla Building, Mohamed Bin Thinan Al Ghanim Street, Po.Box: 4489, Safat 13045<br> Tel:1882707<br> Fax:188270
+                Bleach Cleaning Service Co Salhiya, Kuwait City, Qibla Building, Mohamed Bin Thinan Al Ghanim Street, Po.Box: 4489, Safat 13045 <br> Tel:1882707<br> Fax:188270
             </div> {% endcomment %}
+            <div >
+              <div class="company_address addr-box-2" style="font-size:10px;margin-top:0px;margin-bottom: 0px;">
+                From <br>
+                Bleach International Contracting Company, Qibla Area, Block 11, Street 408 Building 7, Elite Tower, 15th Floor, Po.Box: 4489, Safat 13045<br> Tel:1882707<br> Fax:188270 
+
+              </div>
+          </div>
+          </div>
             <div class="col-md-12 text-center mt-4 bottom-sub-text">
                 This order has been received and therefore CLOSED
             </div>
-          </div>
+         
        
       </div>
       <table id="soa_table">
@@ -155,8 +177,8 @@
       </script>-->
 
 
-      <div class="soa_section3">
-        <div id="soa_amount_calculation">
+      <div class="soa_section3 d-flex">
+        <div id="soa_amount_calculation_pdf">
             <div class="d-flex">
                 <div class="w-50 ">
                     Discount %
@@ -191,7 +213,7 @@
             </div>
             
           </div>
-        <div id="po_amount_section">
+        <div id="po_amount_section" style="margin-left:20% !important;">
           <div id="soa_balance">
            Total
           </div>
@@ -307,6 +329,16 @@
 
 
 </div><!--app close-->
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.4/dist/JsBarcode.all.min.js"></script>
 
+<script src="{% static 'files/js/table2excel.js' %}"></script>
+<script src="{% static 'files/js/barcode.min.js' %}"></script> <!-- Axios -->
+
+<script>
+JsBarcode("#barcode", "{{purchase_order.purchase_order_id}}",{
+  
+});
+</script>
 </body>
 </html>
