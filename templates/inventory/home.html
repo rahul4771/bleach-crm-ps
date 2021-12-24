@@ -238,6 +238,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
+                                           
                                             
                                             {% for order in orders %}
                                             <tr>
@@ -288,6 +289,10 @@
 
 
                                     </table>
+                                    <!-- wrap it inside a div with dflex-->
+                                    <!-- <div class="d-flex">
+                                        <a class="quantity__minus pointer" onclick="decrement('+value.item_id+')"><span>-</span></a><input type="number" class="quantity__input" id="id_qty_'+value.item_id+'" value="0" oninput="quantitychange('+value.item_id+','+value.quantity+')" name="qty"><a class="quantity__plus pointer" onclick="increment('+value.item_id+','+value.quantity+')"><span>+</span></a>
+                                    </div> -->
                                 </div>
                             </div>
                         </div>
