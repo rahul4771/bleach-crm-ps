@@ -350,6 +350,34 @@
   box-shadow: none;
   opacity:0.8;
 }
+.inventory-primary-btn{
+  padding: 10px;
+    background: #2d4e85;
+    color: #ffffff;
+    border-radius: 6px;
+    font-size: 16px;
+}
+.inv-total-box{
+  padding: 20px;
+    background: aliceblue;
+    min-width:300px;
+}
+.inv-total-label{
+  font-size:18px;
+}
+.inventory-primary-btn-outline{
+  padding: 10px;
+    border: 1px solid #2d4e85;
+    color: #2d4e85;
+    border-radius: 6px;
+    font-size: 16px;
+}
+.inventory-total{
+  justify-content: end;
+    font-size: 28px;
+    color: #2d4e85;
+    margin-top: 20px;
+}
 .inv-plan-img-btn2 {
   font-family: AvenirLTStd !important;
   background: #ffffff 0% 0% no-repeat padding-box;
@@ -1082,6 +1110,11 @@ border-radius: 3px;
 }
 
 @media only screen and (max-width: 600px) {
+  .inv-total-box{
+    padding: 20px;
+      background: aliceblue;
+      min-width:100%;
+  }
   .inv-drawer-footer{
     position: relative;
   }

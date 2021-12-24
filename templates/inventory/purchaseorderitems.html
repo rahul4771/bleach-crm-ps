@@ -49,7 +49,7 @@
                       </div>
                    </div>
                 </div>
-                <div class="row mt-20">
+                <!-- <div class="row mt-20">
                     <div class="col-md-3">
                         <input type="hidden" name="status" id="id_shipment_status" >
                         <div class="wrap-drop" id="noble-gases" style="z-index: 9999 !important;"  >
@@ -60,7 +60,7 @@
                             </ul>
                         </div>
                     </div>
-                </div>
+                </div> -->
                 <div class="mt-20">
                     <div class="d-flex" >
                         {% if purchase_order.is_received == True %}
@@ -89,8 +89,11 @@
                                     Unit Cost
                                 </th>
                                
-                                <th>
+                                <!-- <th>
                                     Status
+                                </th> -->
+                                <th>
+                                   Net Cost
                                 </th>
     
                             </tr>
@@ -114,13 +117,14 @@
                                {{item.unit_price|floatformat:3}}
                             </td>
                           
-                            <td>
+                            <!-- <td>
                                 {% if item.is_received == True %}
                                 <span class="inv-dot c-active ml-5"></span>Added
                                 {% else %}
                                 <span class="inv-dot c-active ml-5"></span>Waiting
                                 {% endif %}
-                            </td>
+                            </td> -->
+                            <td>100</td>
                         </tr>
                         {% endfor %}
         
@@ -274,6 +278,17 @@
     
                     </table>
                     {% endif %}
+                    <div class="d-flex justify-end inventory-total">
+                        <div class="inv-total-box">
+                            <div class="inv-total-label">Total </div>
+                       <div class="mt-10">  100 KD</div>
+                    </div>
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-center mt-20 mb-20">
+                    <button class="sent-button" type="button" ><i class="far fa-check-circle inv-mr-5"></i>Approve</button>
+                    <button class="view-button  ml-10" type="button" ><i class="fas fa-ban inv-mr-5"></i>Reject</button>
                 </div>
                 
             </div>

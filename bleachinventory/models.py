@@ -289,7 +289,7 @@ class ServiceRecipeItems(models.Model):
 
 class PurchaseOrder(models.Model):
     supplier            = models.ForeignKey(Supplier,blank=True,null=True,related_name='supplier_purchase_order')
-    store               = models.ForeignKey(Store,blank=True,null=True,related_name='store_purchase_order')
+   # store               = models.ForeignKey(Store,blank=True,null=True,related_name='store_purchase_order')
     purchase_order_id   = models.CharField(max_length=50,blank=False,null=False)
     status              = models.BooleanField(default=True,blank=False,null=False)
     initiated_by        = models.ForeignKey(UserProfile,blank=True,null=True,related_name='initiated_by_purchase_order')
