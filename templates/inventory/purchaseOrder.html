@@ -98,7 +98,7 @@
                                 <span class="inv-dot c-active ml-5"></span>Not Active
                                 {% endif %}
                             </td>
-                            <td style="float: right;">
+                            <td class="text-center">
                                
                         <a href="/bleach-inventory/purchaseOrder/items/{{order.id}}/"><button class="inv-plan-img-btn"> <img class="view-img"
                                     src="{% static 'files/inventory/view.png' %}" alt="">
@@ -172,13 +172,13 @@
                                {{order.total_price}}
                             </td>
                             <td>
-                                {% if order.status == True %}
-                                <span class="inv-dot c-active ml-5"></span>Active
+                                {% if order.is_order_completed == True %}
+                                <span class="inv-dot c-active ml-5"></span>Completed
                                 {% else %}
-                                <span class="inv-dot c-active ml-5"></span>Not Active
+                                <span class="inv-dot c-about-finish ml-5"></span>Waiting
                                 {% endif %}
                             </td>
-                            <td style="float: right;">
+                            <td class="text-center">
                                
                         <a href="/bleach-inventory/purchaseOrder/items/{{order.id}}/"><button class="inv-plan-img-btn"> <img class="view-img"
                                     src="{% static 'files/inventory/icons/view.png' %}" alt="">
@@ -186,10 +186,13 @@
                         <a href="/bleach-inventory/purchaseorderpage/{{order.id}}/"><button class="inv-plan-img-btn"> <img 
                             src="{% static 'files/inventory/invoice.png' %}" alt="">
                 </button></a>
-                                <a href="/bleach-inventory/editpo/{{order.id}}"><button class="inv-plan-img-btn" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button></a>
-                                {% if request.user.user_type == 'INVENTORYADMIN' %}
-                                <button class="inv-plan-img-btn delete-order" data-id="{{order.id}}"  data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-                                {% endif %}
+                {% if request.user.user_type == 'INVENTORYADMIN' %}                
+                <a href="/bleach-inventory/editpo/{{order.id}}"><button class="inv-plan-img-btn" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button></a>
+                <button class="inv-plan-img-btn delete-order" data-id="{{order.id}}"  data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                {% else %}
+                <button class="inv-plan-img-btn2-disabled" > <img class="btn-img2" src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
+                <button class="inv-plan-img-btn2-disabled" > <img class="btn-img2" src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
+                {% endif %}
                             </td>
                         </tr>
                         {% endif %}

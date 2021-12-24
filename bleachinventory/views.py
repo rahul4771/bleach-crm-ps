@@ -1549,7 +1549,7 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
             
             quantities = quantities.split(",")
 
-            checkout_items=CheckOutItems.objects.filter(visit=visit)
+            checkout_items=CheckOutItems.objects.filter(visit=visit,is_checked_out=False)
 
             count = 0
                 
