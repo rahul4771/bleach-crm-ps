@@ -138,79 +138,32 @@
             <div class="row">
                 <div class="col-md-12 col-lg-12" style="font-family: AvenirLTStd !important;">
                     
+                    {% if request.user.user_type == 'INVENTORYADMIN' %}
                     <div class="row">
                         <div class="col-md-12">
-                            {% comment %} <div class="white-wrapper white-wrapper-padding m-0" style="margin-bottom: 0px !important;">
-                                <div class="inv-dash-card-head">
-                                    Purchase order approval
+                            
+                                <div class="white-wrapper"><!--white-wrapper-->
+                                <h2 class="h2">Purchase Order Approval Task</h2>
+                                <table class="main-table">
+                                <tbody>
+                                    {% for order in purchase_orders %}
+                                    <tr>
+                                        <td>{{order.created|date:'d-m-Y'}}</td>
+                                        <td>{{order.purchase_order_id}}</td>
+                                        <td>{{order.initiated_by.name}}</td>
+                                        <td>{{order.supplier.name}}</td>
+                                        <td data-label=""><span class="green-bg clickable-row-list" data-href="{% url 'bleach-inventory:inventory-purchaseorderapproval' order.id %}">Click to Approve</span></td>
+                                    </tr>
+                                    
+                                    {% endfor %}
+                                </tbody>
+                                </table>
                                 </div>
-                                <div class="mt-10">
-                                    <table class="inv-table footable">
-                                        <thead>
-                                            <tr>
-                                                <th style="width: %;">
-                                                    PO ID
-                                                </th>
-                                                <th  style="width: %; text-align: center;">
-                                                    Initiated Date
-                                                </th>
-                                                <th data-hide="phone,tablet"  style="width: %;" class="text-center">
-                                                    Initiated by
-                                                </th>
-                                                <th data-hide="phone,tablet"  style="width: %;" class="text-center">
-                                                    Seller/vender
-                                                </th>
-                                                <th data-hide="phone,tablet"  style="width: %;" class="text-center">
-                                                    Number Of units
-                                                </th>
-                                                <th data-hide="phone,tablet"  style="width: %;" class="text-center">
-                                                    Total cost
-                                                </th>
-    
-                                                <th data-hide="phone,tablet"  style="width:%;" class="text-center">Action</th>
-                                            </tr>
-                                        </thead>
-                                       <tbody>
-                                        <tr>
-                                            <td >
-                                                0000000
-                                            </td>
-                                            <td class="text-center">
-                                                12/12/2021
-                                            </td>
-                                            <td class="text-center">
-                                                Name
-                                            </td>
-                                            <td class="text-center">
-                                                Name
-                                            </td>
-                                            <td class="text-center">
-                                                23
-                                            </td>
-                                            <td class="text-center">
-                                                2300
-                                            </td>
-
-                                            <td style="float: right;">
-
-                                                <a href="/bleach-inventory/viewpo/"><button class="inv-plan-img-btn"> <img class="view-img"
-                                                            src="{% static 'files/inventory/view.png' %}" alt="">
-                                                </button></a>
-
-                                                <button class="btn-p inv-plan-img-btn2" > <img class="btn-img2 mr-5" 
-                                                    src="{% static 'files/inventory/icons/checklist.png' %}" alt=""> Approve </button>
-
-                                            </td>
-                                        </tr>
-                                       
-                                       </tbody>
-                                        
-
-                                    </table>
-                                </div>
-                            </div> {% endcomment %}
+                                
                         </div>
                     </div>
+                    {% endif %}
+                    
                     <div class="row mt-10">
                         <div class="col-md-12">
                             <div class="white-wrapper white-wrapper-padding m-0" style="margin-bottom: 0px !important;">
