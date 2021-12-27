@@ -216,8 +216,12 @@
                                 <a href="/bleach-inventory/createcheckout/{{visit.id}}"><button class="btn-p inv-plan-img-btn2 btn-shadow" > <img class="btn-img2"
                                     src="{% static 'files/inventory/icons/checklist.png' %}" alt=""> Create Check-out list </button></a>
                                 {% endif %}
-                                    <a href="{% url 'customer:stockout-download' visit.id %}"><button class="inv-plan-img-btn2" > Download </button></a>
                                 
+                                {% if visit.stock_out_items_submitted == True %}
+                                <a href="{% url 'customer:stockout-download' visit.id %}"><button class="inv-plan-img-btn2" > Download </button></a>
+                                {%  else %}
+                                <button class="inv-plan-img-btn2-disabled" disabled> Download </button>
+                                {% endif %}
 
                             </td>
                         </tr>
