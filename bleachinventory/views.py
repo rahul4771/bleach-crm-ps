@@ -2163,8 +2163,8 @@ class InventorySegment(IsInventoryAdminUser,View):
             
         return redirect('bleach-inventory:inventory-segment', category_id)
 
-def stockout(request,visit_id):
-    visit = OrderScheduler.objects.select_related('order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='team_members')),to_attr='cleaning_team')).get(id=int(visit_id))
-    check_out_items = CheckOutItems.objects.filter(visit=visit)
-    return render(request,"customer/downloads/stock-out-sheet.html",{"visit":visit,"check_out_items":check_out_items})
+# def stockout(request,visit_id):
+#     visit = OrderScheduler.objects.select_related('order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='team_members')),to_attr='cleaning_team')).get(id=int(visit_id))
+#     check_out_items = CheckOutItems.objects.filter(visit=visit)
+#     return render(request,"customer/downloads/stock-out-sheet.html",{"visit":visit,"check_out_items":check_out_items})
 
