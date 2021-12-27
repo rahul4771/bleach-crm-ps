@@ -4678,8 +4678,10 @@ class DuplicateBookingPhase2(APIView):
 				evaluation_no = 'BLC'+str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10001'
 				tracking_no   = int(str(timezone.now().year)+str(timezone.now().month).zfill(2)+'10000')
 
+
 			#duplicate the evaluation
-			new_evaluation = Evaluation.objects.create(tracking_no=int(tracking_no)+1,evaluation_id=evaluation_no,customer=duplicate_evaluation.customer,call_attender_id=request.GET.get('user_id'),quatation_expiry_date=timezone.now()+timedelta(7))
+			call_attender  = UserProfile.objects.get(id=request.GET.get('user_id'))
+			new_evaluation = Evaluation.objects.create(tracking_no=int(tracking_no)+1,evaluation_id=evaluation_no,customer=duplicate_evaluation.customer,call_attender=call_attender,quatation_expiry_date=timezone.now()+timedelta(7))
 			
 			#duplicate the order
 			new_order      = Order.objects.create(evaluation=new_evaluation,order_no=new_evaluation.evaluation_id)
@@ -4980,9 +4982,14 @@ class DuplicateBookingPhase2(APIView):
 					service_book.total_cost               = service_book.estimated_cost*len(schedules_dict)
 					service_book.estimated_cost           = service_book.estimated_cost*len(schedules_dict)
 				else:
-					service_book.total_cost            = service_book.estimated_cost
-					service_book.estimated_cost        = service_book.estimated_cost
+					service_book.total_cost               = service_book.estimated_cost
+					service_book.estimated_cost           = service_book.estimated_cost
 				service_book.save()
+
+				print(service_book.cleaning_policy,"cleaning_policy")
+				print(len(schedules_dict),"No of Cleanings")
+				print(service_book.total_cost,"Total Cost")
+				print(service_book.estimated_cost,"Estimated Cost")
 
 				##cost updation
 				evaluation_details.estimated_cost     += int(service_book.estimated_cost)

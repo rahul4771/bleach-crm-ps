@@ -92,10 +92,14 @@
                                {{order.total_price}}
                             </td>
                             <td>
-                                {% if order.status == True %}
-                                <span class="inv-dot c-active ml-5"></span>Active
+                                {% if order.is_rejected == True %}
+                                <span class="inv-dot c-out-of-order ml-5"></span>Rejected
                                 {% else %}
-                                <span class="inv-dot c-active ml-5"></span>Not Active
+                                    {% if order.is_admin_approved == True %}
+                                    <span class="inv-dot c-active ml-5"></span>Approved
+                                    {% else %}
+                                    <span class="inv-dot c-about-finish ml-5"></span>Pending
+                                    {% endif %}
                                 {% endif %}
                             </td>
                             <td class="text-center">
@@ -106,10 +110,15 @@
                         <a href="/bleach-inventory/purchaseorderpage/{{order.id}}/"><button class="inv-plan-img-btn"> <img class=""
                             src="{% static 'files/inventory/invoice.png' %}" alt="">
                 </button></a>
-                                <a href="/bleach-inventory/editpo/{{order.id}}"><button class="inv-plan-img-btn" > <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button></a>
-                                {% if request.user.user_type == 'INVENTORYADMIN' %}
-                                <button class="inv-plan-img-btn delete-order" data-id="{{order.id}}"  data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
-                                {% endif %}
+                {% if order.is_admin_approved == False or order.is_rejected == True %}                
+                <a href="/bleach-inventory/editpo/{{order.id}}"><button class="inv-plan-img-btn" > <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button></a>
+                {% else %}
+                <button class="inv-plan-img-btn2-disabled" disabled> <img class="btn-img2" src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>
+                {% endif %}
+
+                {% if request.user.user_type == 'INVENTORYADMIN' %}
+                <button class="inv-plan-img-btn delete-order" data-id="{{order.id}}"  data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
+                {% endif %}
                             </td>
                         </tr>
                         {% endif %}
