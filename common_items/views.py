@@ -1308,6 +1308,11 @@ class ActiveSubscriptions(IsAuthenticated,View):
 		else:
 			subscriptions = Order.objects.filter(Q(Q( Q(payment_status='PENDING') |Q(payment_status='ON_HOLD') | Q(payment_status='COMPLETED') ) & Q(evaluation__payment_method='SUBSCRIPTION') & Q(evaluation__quatation_status='APPROVED') & ~Q(order_status='ORDER_CANCELLED') )).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='bookschedules')),to_attr='orderschedules')).annotate(total_cleanings_count=Count('order_scheduler_order'),completed_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())), remaining_cleanings_count= F('total_cleanings_count') - F('completed_cleanings_count') ).exclude(Q( Q(remaining_cleanings_count = 0) & Q(payment_status='COMPLETED') ))
 		
+		advance_count = 0
+		due_count = 0
+		advance_amount = 0 
+		due_amount = 0
+
 		if subscriptions:
 			for invoice in subscriptions:
 				cleaning_price = 0
@@ -1325,6 +1330,15 @@ class ActiveSubscriptions(IsAuthenticated,View):
 						cleaning_price -= (invoice.evaluation.writeback_amount/total_cleanings)
 						
 				invoice.balance       = cleaning_price-invoice.amount_paid
+
+				if invoice.balance < 0:
+					advance_count += 1
+					advance_amount += abs(invoice.balance)
+
+				if invoice.balance > 0:
+					due_count += 1
+					due_amount += invoice.balance
+
 
 		#PAGINATION CLIENTS
 		no_of_entries = request.GET.get('no_of_entries')
@@ -1352,7 +1366,7 @@ class ActiveSubscriptions(IsAuthenticated,View):
 		page_range = list(paginator.page_range)[start_index:end_index]
 		entry_per_page=(subscriptions.end_index())-(subscriptions.start_index())+1
 
-		return render(request,'common/subscription/active_subscriptions.html',{"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"subscriptions":subscriptions})
+		return render(request,'common/subscription/active_subscriptions.html',{"advance_count":advance_count,"due_count":due_count,"advance_amount":advance_amount,"due_amount":due_amount,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"subscriptions":subscriptions})
 
 	def post(self,request):
 		order_id            = request.POST.get('order')
