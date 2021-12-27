@@ -908,7 +908,7 @@ def stockout(request,visit_id):
 	fs = FileSystemStorage('/home/pdf/tmp/stockout/')
 	with fs.open('stockout.pdf') as pdf:
 		response = HttpResponse(pdf, content_type='application/pdf')
-		response['Content-Disposition'] = 'attachment; filename="'+str({{visit.order.order_no}})+'_'+str({{visit.start_at|date:'d-m-Y h:i A'}})+'_stockout.pdf"'
+		response['Content-Disposition'] = 'attachment; filename="'+{{visit.order.order_no}}+'_'+{{visit.start_at|date:'d-m-Y h:i A'}}+'_stockout.pdf"'
 		return response
 	return response
 	# return render(request,"customer/downloads/stock-out-sheet.html",{"visit":visit,"check_out_items":check_out_items})
