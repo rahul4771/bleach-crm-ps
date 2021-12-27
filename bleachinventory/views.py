@@ -1593,9 +1593,9 @@ class InventoryPurchaseOrder(IsInventoryAdminUser,View):
         search = request.GET.get('search')
 
         if search:
-            purchase_orders = PurchaseOrder.objects.filter(is_order_completed=True).filter(Q( Q(purchase_order_id__icontains = search) | Q(supplier__supplier_name__icontains = search) )) .annotate(total_units=Sum('purchase_order_purchase_order_item__item_count'),total_price=Sum('purchase_order_purchase_order_item__total_price'))
+            purchase_orders = PurchaseOrder.objects.filter(is_order_completed=True).filter(Q( Q(purchase_order_id__icontains = search) | Q(supplier__supplier_name__icontains = search) )).annotate(total_units=Sum('purchase_order_purchase_order_item__item_count'), total_added_units=Sum('purchase_order_purchase_order_item__added_item_count'), total_price=Sum('purchase_order_purchase_order_item__total_price'))
         else:
-            purchase_orders = PurchaseOrder.objects.filter(is_order_completed=True).annotate(total_units=Sum('purchase_order_purchase_order_item__item_count'),total_price=Sum('purchase_order_purchase_order_item__total_price'))
+            purchase_orders = PurchaseOrder.objects.filter(is_order_completed=True).annotate(total_units=Sum('purchase_order_purchase_order_item__item_count'), total_added_units=Sum('purchase_order_purchase_order_item__added_item_count'), total_price=Sum('purchase_order_purchase_order_item__total_price'))
         
         return render(request,'inventory/purchaseOrder.html',{"purchase_orders":purchase_orders,"search_query":search})
 
@@ -2162,4 +2162,9 @@ class InventorySegment(IsInventoryAdminUser,View):
             messages.success(request,"Line Deleted Successfully !")
             
         return redirect('bleach-inventory:inventory-segment', category_id)
+
+def stockout(request,visit_id):
+    visit = OrderScheduler.objects.select_related('order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='team_members')),to_attr='cleaning_team')).get(id=int(visit_id))
+    check_out_items = CheckOutItems.objects.filter(visit=visit)
+    return render(request,"customer/downloads/stock-out-sheet.html",{"visit":visit,"check_out_items":check_out_items})
 

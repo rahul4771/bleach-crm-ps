@@ -50,12 +50,12 @@ from agent.serializers import UserProfileShowSerializer
 from Api.serializers import OrderScheduleShowSerializer
 
 def get_client_ip(request):
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0]
-    else:
-        ip = request.META.get('REMOTE_ADDR')
-    return ip
+	x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+	if x_forwarded_for:
+		ip = x_forwarded_for.split(',')[0]
+	else:
+		ip = request.META.get('REMOTE_ADDR')
+	return ip
 
 #all users views
 class TermsandConditions(View):
@@ -897,6 +897,23 @@ def purchaseorder_html_to_pdf_view(request,purchase_order_id):
 	return response
 
 
+def stockout(request,visit_id):
+	visit = OrderScheduler.objects.select_related('order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='team_members')),to_attr='cleaning_team')).get(id=int(visit_id))
+	check_out_items = CheckOutItems.objects.filter(visit=visit)
+	html_string = render_to_string("customer/downloads/stock-out-sheet.html",{"visit":visit,"check_out_items":check_out_items})
+
+	html = HTML(string=html_string,base_url=request.build_absolute_uri())
+	html.write_pdf(target='/home/pdf/tmp/stockout/stockout.pdf');
+
+	fs = FileSystemStorage('/home/pdf/tmp/stockout/')
+	with fs.open('stockout.pdf') as pdf:
+		response = HttpResponse(pdf, content_type='application/pdf')
+		response['Content-Disposition'] = 'attachment; filename="'+{{visit.order.order_no}}+'_'+str({{visit.start_at|date:'d-m-Y h:i A'}})+'_stockout.pdf"'
+		return response
+	return response
+	# return render(request,"customer/downloads/stock-out-sheet.html",{"visit":visit,"check_out_items":check_out_items})
+
+
 def orderdetail_html_to_pdf_view(request,order_id,service_id,section_id):
 
 	order           = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate').prefetch_related(Prefetch('order_scheduler_book__evaluationbookmedia',queryset=EvaluationMedia.objects.filter(is_active=True),to_attr='evaluationmedia'),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',queryset=EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='sectionkeynotes')),to_attr='evaluationbooksection'),Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).select_related('team_leader','drop_off_driver','pick_up_driver').prefetch_related(Prefetch('media_cleaningteam',queryset=CleaningTeamMedia.objects.filter(is_active=True),to_attr='cleaning_team_medias'),Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.select_related('member').filter(is_active=True,member__user_type='CLEANER'),to_attr='cleaning_team_members')),to_attr='cleaning_team'),Prefetch('investigations_orderschedule',queryset=Investigation.objects.filter(is_active=True).prefetch_related(Prefetch('investigation_media',queryset=InvestigationMedia.objects.filter(is_active=True),to_attr='investigationmedias'),Prefetch('followup_investigation',queryset = FollowUp.objects.filter(is_active=True).prefetch_related(Prefetch('follow_up_of_scheduler',queryset=FollowUpScheduler.objects.filter(is_active=True).prefetch_related(Prefetch('followupteam_followupschedule',queryset=FollowUpTeam.objects.filter(is_active=True).prefetch_related(Prefetch('followup_member_team',queryset=FollowUpTeamMember.objects.filter(is_active=True),to_attr='followupmembers')),to_attr='followupteams')),to_attr='follow_up_schedules')),to_attr='followups')),to_attr='investigations')),to_attr='orderschedules'),Prefetch('feed_backs_order',FeedBack.objects.filter(is_active=True).select_related('question'),to_attr='feedbacks')).get(is_active=True,id=order_id)
@@ -965,7 +982,7 @@ def receipt_html_to_pdf_view(request,payment_id):
 			nonduplicate_schedules.append(orderschedule)	
 
 		duplicate_schedules.append(orderschedule.order_scheduler_book)
-    
+	
 
 	html_string = render_to_string('customer/receipt-voucher.html', {'payment_history':payment_history,'nonduplicate_schedules':nonduplicate_schedules,})
 
@@ -2205,7 +2222,7 @@ class GetMultipleServiceDateCleaningSlotes(APIView):
 		number_of_cleaners  = int(request.data.get('number_of_cleaners'))-1
 		cleaning_hours      = float(request.data.get('cleaning_hours'))
 		service_types       = request.data.get('service_types')
-		     
+			 
 
 		#count total cleaners and total leaders
 		total_cleaners = UserProfile.objects.filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
@@ -2445,7 +2462,7 @@ class GetMultipleServiceDateCleaningSlotesAutofix(APIView):
 		number_of_cleaners  = int(request.data.get('number_of_cleaners'))-1
 		cleaning_hours      = float(request.data.get('cleaning_hours'))
 		service_types       = request.data.get('service_types')
-		     
+			 
 
 		#count total cleaners and total leaders
 		total_cleaners = UserProfile.objects.filter(Q(Q(user_type='CLEANER')|Q(user_type='TEAMINCHARGE')))
@@ -5070,11 +5087,11 @@ class ClientCleaningBookingMediaSave(APIView):
 		if not medias==['']:
 			for media in medias:
 				EvaluationMedia.objects.create(
-				        evaluation_book=evaluation_book,
-				        media=media,
-				        media_type='PHOTO',
+						evaluation_book=evaluation_book,
+						media=media,
+						media_type='PHOTO',
 						taken_status='CUSTOMER_SEND'
-				        )
+						)
 		
 		response_dict['success'] = True
 		return Response(response_dict,HTTP_200_OK)
