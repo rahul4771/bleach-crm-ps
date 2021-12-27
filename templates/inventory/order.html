@@ -217,7 +217,7 @@
                                     src="{% static 'files/inventory/icons/checklist.png' %}" alt=""> Create Check-out list </button></a>
                                 {% endif %}
                                 
-                                {% if visit.stock_out_items_submitted == True %}
+                                {% if visit.stock_out_items_saved == True %}
                                 <a href="{% url 'customer:stockout-download' visit.id %}"><button class="inv-plan-img-btn2" > Download </button></a>
                                 {%  else %}
                                 <button class="inv-plan-img-btn2-disabled" disabled> Download </button>
