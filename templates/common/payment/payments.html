@@ -207,7 +207,7 @@
     </div>
   </div>
 
-  <div class="payment-card neworderdue-card">
+  {% comment %} <div class="payment-card neworderdue-card">
     <h1>New-Order Dues</h1>  
     <div class=" mt-10">
       <div style="flex-grow: 1; margin-left: 0px; color: #737373;">No.of entries : <span class="payment-card-amount">{{total_neworder_due_orders}}</span> </div>
@@ -215,7 +215,7 @@
     <div class=" mt-10">
       <div style="flex-grow: 1; margin-left: 0px; color: #737373;">Total amount : <span class="payment-card-amount">{{total_neworder_due_amount|floatformat:'3'}}</span> </div>
     </div>
-  </div>
+  </div> {% endcomment %}
 
 </div>
 
@@ -234,9 +234,9 @@
   <li class="nav-item" id="subscriptiondue_tab" role="presentation">
     <a class="nav-link primary-text" id="subscriptiondue-tab" data-toggle="tab" href="#subscriptiondue" role="tab" aria-controls="subscriptiondue" aria-selected="false">Subscription Due</a>
   </li>
-  <li class="nav-item" id="neworderdue_tab" role="presentation">
+  {% comment %} <li class="nav-item" id="neworderdue_tab" role="presentation">
     <a class="nav-link primary-text" id="neworderdue-tab" data-toggle="tab" href="#neworderdue" role="tab" aria-controls="neworderdue" aria-selected="false">New-Order Due</a>
-  </li>
+  </li> {% endcomment %}
 </ul>
 <div class="tab-content" id="paymentTabContent"  style="margin-top:20px">
   <!-- All Tab begins here-->
@@ -830,7 +830,7 @@
 
 
     <!-- New Order Due tab begins here-->
-    <div class="tab-pane fade" id="neworderdue" role="tabpanel" aria-labelledby="neworderdue-tab">
+    {% comment %} <div class="tab-pane fade" id="neworderdue" role="tabpanel" aria-labelledby="neworderdue-tab">
       <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
  
         <thead>
@@ -970,7 +970,7 @@
             </div><!--pagination-containter-->         
         </div><!--white-wrapper-pagination--> 
 
-    </div>
+    </div> {% endcomment %}
 </div>
 
 
