@@ -28,6 +28,7 @@ url(r'^checked-in/$',views.InventoryCheckedIn.as_view(),name='inventory-checked-
 url(r'^orderdetails/$',views.InventoryOrderDetails.as_view(),name='inventory-order-details'),
 url(r'^services/$',views.InventoryServices.as_view(),name='inventory-services'),
 url(r'^segment/(?P<category_id>[-\w]+)/$',views.InventorySegment.as_view(),name='inventory-segment'),
+url(r'^stock-out/(?P<visit_id>[-\w]+)/$',views.stockout,name='inventory-stockout'),
 
 
 
