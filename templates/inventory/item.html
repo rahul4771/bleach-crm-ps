@@ -441,11 +441,11 @@
                                 <tbody>
                                     {% for history in item_history %}
                                     <tr>
-                                        <td>{{history.purchase_order.purchase_order_id|default_if_none:"-"}}</td>
+                                        <td>{% if history.purchase_order %}{{history.purchase_order.purchase_order_id|default_if_none:"-"}}{% else %}-{% endif %}</td>
                                         <td>{% if history.purchase_order %}{{history.purchase_order.created|date:'d-m-Y'|default_if_none:'-'}}{% else %}{{history.purchase_date|date:'d-m-Y'}}{% endif %}</td>
                                         <td>{{history.quantity}}</td>
-                                        <td>{{history.added_by}}</td>
-                                        <td>{{history.purchase_order.created|date:'d-m-Y'|default_if_none:'-'}}</td>
+                                        <td>{{history.added_by.name}}</td>
+                                        <td>{% if history.purchase_order %}{{history.purchase_order.created|date:'d-m-Y'|default_if_none:'-'}}{% else %}-{% endif %}</td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>

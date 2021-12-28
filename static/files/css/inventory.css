@@ -597,9 +597,11 @@
   overflow: auto;
 }
 .attribute-table-2 {
-  height: 65vh;
+  height: 64.1vh;
   border: 1px solid #c4c4c4;
   position: relative;
+ 
+  
 }
 
 .attribute-table-div2{
@@ -610,14 +612,21 @@
 .h-180-min{
   max-height: 180px !important;
 }
-
+.inv-table-scroll{
+  height:59vh;
+  overflow:auto;
+}
 .attribute-footer {
   border: 1px solid #c4c4c4;
   background: #ebebeb;
-  position: absolute;
   bottom: 0;
   text-align: center;
   width: 100%;
+  position: absolute;
+}
+.attribute-footer-fixed{
+  width: 220px;
+  position: fixed;
 }
 .inv-dash-card-head {
   color: #2c4c82;
@@ -1437,4 +1446,8 @@ padding: 7px 30px 7px 30px;
 .item-with{
   color: #2E4E85;
   font-size: 25px;
+}
+
+.m-0{
+  margin: 0 !important ;
 }

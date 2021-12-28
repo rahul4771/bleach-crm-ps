@@ -3458,12 +3458,17 @@ class CheckOutItemDelete(APIView):
 		response_dict            = {'success':False}
 
 		checkout_item = request.GET.get('item_id')
-		checkout_item = CheckOutItems.objects.get(id=int(checkout_item))
-		checkout_item_id = checkout_item.id
-
-		checkout_item.delete()
+		visit_id = request.GET.get('visit_id')
 		
-		response_dict['checkout_item_id'] = checkout_item_id
+		if visit_id:
+			checkout_items = CheckOutItems.objects.filter(visit__id=int(visit_id)).delete()
+		else:
+			checkout_item = CheckOutItems.objects.get(id=int(checkout_item))
+			checkout_item_id = checkout_item.id
+
+			checkout_item.delete()
+			
+			response_dict['checkout_item_id'] = checkout_item_id
 
 		response_dict['success'] = True
 

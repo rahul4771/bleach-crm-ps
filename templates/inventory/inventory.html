@@ -74,6 +74,9 @@
                                     Line
                                 </th>
                                 <th data-hide="phone,tablet"  class="text-center">
+                                    Available Qty
+                                </th>
+                                <th data-hide="phone,tablet"  class="text-center">
                                     Reserve
                                 </th>
                                 <th data-hide="phone,tablet" class="text-left table-w-12">
@@ -99,6 +102,13 @@
                             </td>
                             <td class="text-center td-md-width" >
                                 {{item.item_line.name}}
+                            </td>
+                            <td class="text-center">
+                                {% if item.item_add_type == 'quantity' %}
+                                {{item.total_quantity|floatformat:3}}
+                                {% else %}
+                                {{item.unit_count}}
+                                {% endif %}
                             </td>
                             <td class="text-center">
                                 {{item.reserve_count}}
@@ -453,7 +463,7 @@
       <div class="modal fade" id="filterModel" role="dialog">
         <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
             <div class="container-fluid">
-                <div class="row">
+                <div class="row m-0">
                     <div class="col-md-12 mt-20">
 
                         
@@ -468,7 +478,7 @@
                     </div>
                 </div>
                
-                <div class="row">
+                <div class="row m-0">
                     
                     <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
                         <div class="ticket-form-left"><!--ticket-form-left-->

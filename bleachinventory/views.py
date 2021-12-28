@@ -43,7 +43,7 @@ class InventoryHome(IsInventoryAdminUser,View):
         
         purchase_items = items.filter(Q(item_status='out_of_stock') | Q(item_status='about_to_finish')).prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.all(),to_attr='units'))
         orders = OrderScheduler.objects.filter(start_at__range=(start_date_day,end_date_day),stock_in_initiated=False).filter(Q(work_status='CLEANING_TEAM_ASSIGNED')|Q(work_status='CLEANING_IN_PROGRESS')|Q(work_status='CLEANING_FULFILLED')).prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')).order_by('-start_at')
-        purchase_orders = PurchaseOrder.objects.filter(is_admin_approved=False,is_received=False,is_rejected=False,status=True)
+        purchase_orders = PurchaseOrder.objects.filter(is_admin_approved=False,is_received=False,is_rejected=False,status=True,is_order_completed=True)
         po_count = purchase_orders.count()
         
         return render(request,'inventory/home.html',{"recent_items":recent_items,"purchase_items":purchase_items,"orders":orders,"purchase_orders":purchase_orders,"po_count":po_count})
@@ -1055,9 +1055,9 @@ class InventoryInv(IsInventoryAdminUser,View):
         print(item_category,item_segment,item_line,item_status,"mkk")
 
         if search:
-            inventory_items       = InventoryItem.objects.filter(Q(name__icontains=search)|Q(item_code__icontains=search))
+            inventory_items       = InventoryItem.objects.filter(Q(name__icontains=search)|Q(item_code__icontains=search)).annotate(unit_count=Sum(Case(When(unit_item__status='active',then=1),default=0,output_field=IntegerField())))
         else:
-            inventory_items       = InventoryItem.objects.all()
+            inventory_items       = InventoryItem.objects.all().annotate(unit_count=Sum(Case(When(unit_item__status='active',then=1),default=0,output_field=IntegerField())))
 
         for item in inventory_items:
             
@@ -1470,38 +1470,15 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
         visit = OrderScheduler.objects.select_related('order_scheduler_book').prefetch_related(Prefetch('cleaning_team_order_scheduler',queryset=CleaningTeam.objects.filter(is_active=True).prefetch_related(Prefetch('cleaning_member_team',queryset=CleaningTeamMember.objects.filter(is_active=True),to_attr='team_members')),to_attr='cleaning_team'),Prefetch('order_scheduler_book__evaluationsection_book',queryset=EvaluationBookSection.objects.filter(is_active=True).prefetch_related(Prefetch('keynotesections',EvaluationSectionKeynote.objects.filter(is_active=True),to_attr='keynotes'),Prefetch('addonsections',queryset=EvaluationSectionAddons.objects.filter(is_active=True),to_attr='sectionaddons')),to_attr='sections')).get(id=int(visit_id))
         service = visit.order_scheduler_book.service_type
         action = request.POST.get('action')
-        # if action == 'add_item':
-        #     service_item = request.POST.get('item')
-        #     item = InventoryItem.objects.get(id=int(service_item))
-        #     # service_recipe_item = ServiceRecipeItems.objects.get(ingredient__service_type__service=service,item=item)
-        #     if item.item_status == 'available' or item.item_status == 'about_to_finish':
-        #         CheckOutItems.objects.create(visit=visit,item=item)
-        #         messages.success(request,"Item added!")
-        #     else:
-        #         messages.error(request,"Item out of stock!")
 
-        if action == 'swap_item':
-            checkout_item = request.POST.get('service_item')
-            ingredient_id = request.POST.get('ingredient_id')
-            checkout_item_id = request.POST.get('checkout_item_id')
-            print(checkout_item_id,checkout_item,"mpl")
-            checkout = CheckOutItems.objects.get(id=int(checkout_item_id))
+        if action == 'reset_list':
+            
+            checkout_items = CheckOutItems.objects.filter(visit=visit).delete()
 
-            ingredient = ServiceRecipeIngredients.objects.get(id=int(ingredient_id))
+            visit.stock_out_items_saved = False
+            visit.save()
 
-            swap_item = ServiceRecipeItems.objects.get(ingredient=ingredient,item__id=int(checkout_item))
-            print(swap_item,"swp")
-
-            checkout.service_item = swap_item
-            checkout.is_swapped_item = True
-            checkout.save()
-
-            messages.success(request,"Item Swapped!")
-
-        # if action == 'delete_item':
-        #     checkout_item = request.POST.get('item_id')
-        #     CheckOutItems.objects.get(id=int(checkout_item)).delete()
-        #     messages.success(request,"Item Deleted!")
+            messages.success(request,"List Reset!")
 
         if action == 'save_checkout_list':
             quantities = request.POST.get('quantities')

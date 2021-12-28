@@ -2651,12 +2651,12 @@ def export_users_xls(request):
 			for ebook in evaluationbooks:
 				if ebook['service_type__name'] not in found:
 					servicetypes.append(ebook['service_type__name'])
-					servicetypes.append(', ')
+					# servicetypes.append(', ')
 					found.add(ebook['service_type__name'])
 				
 				if ebook['cleaning_policy'] not in found:
 					cleaning_policies.append(ebook['cleaning_policy'])
-					cleaning_policies.append(', ')
+					# cleaning_policies.append('-')
 					found.add(ebook['cleaning_policy'])
 
 			evaluation_list[4] = tuple(servicetypes)
@@ -2684,12 +2684,12 @@ def export_users_xls(request):
 				if detail['evaluator__name'] != None:
 					if detail['evaluator__name'] not in found:
 						evaluators.append(detail['evaluator__name'])
-						evaluators.append(',')
+						# evaluators.append('-')
 						found.add(detail['evaluator__name'])
 				else:
 					if detail['evaluation__call_attender__name'] not in found:
 						evaluators.append(detail['evaluation__call_attender__name'])
-						evaluators.append(',')
+						# evaluators.append('-')
 						found.add(detail['evaluation__call_attender__name'])
 					
 				
@@ -2725,13 +2725,17 @@ def export_users_xls(request):
 				evaluation_list[11] = '-'
 
 			evaluation = tuple(evaluation_list)
+
+			print(evaluation,"rosse2")
 			rows.append(evaluation)
 		rows = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows ]
+
+		print(rows,"rosse")
 
 		for row in rows:
 			row_num += 1
 			for col_num in range(len(row)):
-				ws.write(row_num, col_num, row[col_num], font_style)
+				ws.write(row_num, col_num, str(row[col_num]), font_style)
 
 	wb.save(response)
 
