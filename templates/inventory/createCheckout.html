@@ -220,7 +220,7 @@
                         Quantity
                       </th>
                       <th data-hide="phone,tablet"  style="width: %;" >
-                          Unit
+                        U.o.m
                       </th>
                      
                       <th data-hide="phone,tablet"  style="width: %;">Action</th>
@@ -317,6 +317,10 @@
               </table> 
             </div>
             <button type="button" class="inv-plan-btn" onclick="openNavAddStore()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="" > Add Item</button>
+            
+            <button type="button" class="inv-plan-btn" onclick="resetlist()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="" > Reset</button>
+            </form>
+
           </div>
         </div>
         <div class="row mt-20 text-center">
@@ -823,6 +827,22 @@ var products = [];
           
 
         });
+
+        //reset items
+        async function resetlist(){
+
+            var visit_id = "{{visit.id}}" ;
+            
+            console.log(visit_id,"po")
+          
+            var result = await _get('api/inventory-checkout-item-delete/?visit_id='+visit_id);
+              if(result.status == 200){
+                
+                window.location.reload();
+                showNotification('List Reset !','success')
+                
+              }
+        }
 
 
         async function itemcheck(){
