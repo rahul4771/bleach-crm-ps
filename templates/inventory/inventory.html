@@ -74,6 +74,9 @@
                                     Line
                                 </th>
                                 <th data-hide="phone,tablet"  class="text-center">
+                                    Available Qty
+                                </th>
+                                <th data-hide="phone,tablet"  class="text-center">
                                     Reserve
                                 </th>
                                 <th data-hide="phone,tablet" class="text-left table-w-12">
@@ -99,6 +102,13 @@
                             </td>
                             <td class="text-center td-md-width" >
                                 {{item.item_line.name}}
+                            </td>
+                            <td class="text-center">
+                                {% if item.item_add_type == 'quantity' %}
+                                {{item.total_quantity|floatformat:3}}
+                                {% else %}
+                                {{item.unit_count}}
+                                {% endif %}
                             </td>
                             <td class="text-center">
                                 {{item.reserve_count}}
