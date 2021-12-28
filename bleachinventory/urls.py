@@ -19,6 +19,7 @@ url(r'^checkout/$',views.InventoryCheckout.as_view(),name='inventory-checkout'),
 url(r'^createcheckout/(?P<visit_id>[-\w]+)/$',views.InventoryCreateCheckout.as_view(),name='inventory-createcheckout'),
 url(r'^purchaseOrder/$',views.InventoryPurchaseOrder.as_view(),name='inventory-purchaseorder'),
 url(r'^purchaseOrder/items/(?P<purchase_order_id>[-\w]+)/$',views.PurchaseOrderItemsPage.as_view(),name='inventory-purchaseorderitems'),
+url(r'^purchaseOrder/approval/(?P<purchase_order_id>[-\w]+)/$',views.PurchaseOrderApproval.as_view(),name='inventory-purchaseorderapproval'),
 url(r'^purchaseorderpage/(?P<purchase_order_id>[-\w]+)/$',views.InventoryPurchaseOrderPage.as_view(),name='inventory-purchaseorderpage'),
 url(r'^createpo/$',views.InventoryCreatePurchaseOrder.as_view(),name='inventory-createpurchaseorder'),
 url(r'^editpo/(?P<purchase_order_id>[-\w]+)/$',views.InventoryEditPurchaseOrder.as_view(),name='inventory-editpurchaseorder'),
@@ -27,6 +28,7 @@ url(r'^checked-in/$',views.InventoryCheckedIn.as_view(),name='inventory-checked-
 url(r'^orderdetails/$',views.InventoryOrderDetails.as_view(),name='inventory-order-details'),
 url(r'^services/$',views.InventoryServices.as_view(),name='inventory-services'),
 url(r'^segment/(?P<category_id>[-\w]+)/$',views.InventorySegment.as_view(),name='inventory-segment'),
+# url(r'^stock-out/(?P<visit_id>[-\w]+)/$',views.stockout,name='inventory-stockout'),
 
 
 

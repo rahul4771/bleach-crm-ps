@@ -1038,30 +1038,30 @@ class PaymentDetails(IsAuthenticated,View):
 			total_subscription_due_orders = 0
 
 		#New Order due Payments
-		try:
-			neworder_due_payments = invoices.filter(Q( Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(amount_paid=0)) | Q(Q(evaluation__payment_method='PREPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(amount_paid=0)) )).filter(~Q(callback_status='LEGAL_ACTION'))
-		except:
-			neworder_due_payments = None
+		# try:
+		# 	neworder_due_payments = invoices.filter(Q( Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(amount_paid=0)) | Q(Q(evaluation__payment_method='PREPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(amount_paid=0)) )).filter(~Q(callback_status='LEGAL_ACTION'))
+		# except:
+		# 	neworder_due_payments = None
 
 		#New Order Due Payment and Order Count	
-		if neworder_due_payments: 
-			total_neworder_due_amount = 0
-			for payment in neworder_due_payments:
-				if payment.evaluation.payment_method in ['PREPAID','BREAKDOWN']:
-					if payment.evaluation.payment_method == 'PREPAID' :
-						total_neworder_due_amount += payment.total_amount
+		# if neworder_due_payments: 
+		# 	total_neworder_due_amount = 0
+		# 	for payment in neworder_due_payments:
+		# 		if payment.evaluation.payment_method in ['PREPAID','BREAKDOWN']:
+		# 			if payment.evaluation.payment_method == 'PREPAID' :
+		# 				total_neworder_due_amount += payment.total_amount
 
-					if payment.evaluation.payment_method == 'BREAKDOWN':
-						total_neworder_due_amount += payment.evaluation.before_cleaning_amount
+		# 			if payment.evaluation.payment_method == 'BREAKDOWN':
+		# 				total_neworder_due_amount += payment.evaluation.before_cleaning_amount
 					
 
-			total_neworder_due_orders = neworder_due_payments.count()		
-		else:
-			total_neworder_due_amount = 0
-			total_neworder_due_orders = 0
+		# 	total_neworder_due_orders = neworder_due_payments.count()		
+		# else:
+		# 	total_neworder_due_amount = 0
+		# 	total_neworder_due_orders = 0
 
-		total_due_amount = total_normal_due_amount+total_subscription_due_amount+total_neworder_due_amount
-		total_due_orders = total_normal_due_orders+total_subscription_due_orders+total_neworder_due_orders
+		total_due_amount = total_doubtful_due_amount+total_normal_due_amount+total_subscription_due_amount #+total_neworder_due_amount
+		total_due_orders = total_doubtful_due_orders+total_normal_due_orders+total_subscription_due_orders #+total_neworder_due_orders
 
 
 		#to find days
@@ -1156,19 +1156,19 @@ class PaymentDetails(IsAuthenticated,View):
 					payment.delaydays= (timezone.now()-payment.subscription_topay_date).days
 
 
-		if neworder_due_payments:
-			for payment in neworder_due_payments:
-				if payment.evaluation.payment_method == 'PREPAID' and payment.orderschedules:
-					very_old_cleaning   = payment.orderschedules[0]
-					payment.reminigdays = (very_old_cleaning.start_at-timezone.now()).days	
-				elif payment.evaluation.payment_method == 'BREAKDOWN' and payment.orderschedules:
+		# if neworder_due_payments:
+		# 	for payment in neworder_due_payments:
+		# 		if payment.evaluation.payment_method == 'PREPAID' and payment.orderschedules:
+		# 			very_old_cleaning   = payment.orderschedules[0]
+		# 			payment.reminigdays = (very_old_cleaning.start_at-timezone.now()).days	
+		# 		elif payment.evaluation.payment_method == 'BREAKDOWN' and payment.orderschedules:
 				
-					very_old_cleaning   = payment.orderschedules[0]
-					payment.reminigdays = (very_old_cleaning.start_at-timezone.now()).days	
+		# 			very_old_cleaning   = payment.orderschedules[0]
+		# 			payment.reminigdays = (very_old_cleaning.start_at-timezone.now()).days	
 
-					#to check last cleaning completed for break down after payment
-					if very_latest_cleaning.work_status == 'CLEANING_FULFILLED':
-						payment.last_completed = True
+		# 			#to check last cleaning completed for break down after payment
+		# 			if very_latest_cleaning.work_status == 'CLEANING_FULFILLED':
+		# 				payment.last_completed = True
 
 		#PAGINATION INVOICE		
 
@@ -1225,30 +1225,30 @@ class PaymentDetails(IsAuthenticated,View):
 			subscription_due_payments=paginator4.page(paginator4.num_pages)
 
 		#page5
-		page5     = request.GET.get('page5',1) 
+		# page5     = request.GET.get('page5',1) 
 
-		paginator5=Paginator(neworder_due_payments,no_of_entries)
+		# paginator5=Paginator(neworder_due_payments,no_of_entries)
 			
-		try: 
-			neworder_due_payments=paginator5.page(page5) 
-		except PageNotAnInteger:
-			neworder_due_payments=paginator5.page(1) 
-		except EmptyPage:
-			neworder_due_payments=paginator5.page(paginator5.num_pages) 
+		# try: 
+		# 	neworder_due_payments=paginator5.page(page5) 
+		# except PageNotAnInteger:
+		# 	neworder_due_payments=paginator5.page(1) 
+		# except EmptyPage:
+		# 	neworder_due_payments=paginator5.page(paginator5.num_pages) 
 
 		# Get the index of the current page
 		index1 = transactions.number - 1
 		index2 = doubtful_due_payments.number - 1
 		index3 = normal_due_payments.number - 1
 		index4 = subscription_due_payments.number - 1
-		index5 = neworder_due_payments.number - 1
+		# index5 = neworder_due_payments.number - 1
 		# edited to something easier without index
 		# This value is maximum index of your pages, so the last page - 1
 		max_index1 = len(paginator1.page_range)
 		max_index2 = len(paginator2.page_range)
 		max_index3 = len(paginator3.page_range)
 		max_index4 = len(paginator4.page_range)
-		max_index5 = len(paginator5.page_range)
+		# max_index5 = len(paginator5.page_range)
 		
 		# You want a range of 7, so lets calculate where to slice the list
 		start_index1 = index1 - 3 if index1 >= 3 else 0
@@ -1263,8 +1263,8 @@ class PaymentDetails(IsAuthenticated,View):
 		start_index4 = index4 - 3 if index4 >= 3 else 0
 		end_index4   = index4 + 3 if index4 <= max_index4 - 3 else max_index4
 
-		start_index5 = index4 - 3 if index5 >= 3 else 0
-		end_index5 = index4 + 3 if index5 <= max_index5 - 3 else max_index5
+		# start_index5 = index4 - 3 if index5 >= 3 else 0
+		# end_index5 = index4 + 3 if index5 <= max_index5 - 3 else max_index5
 
 		# Get our new page range. In the latest versions of Django page_range returns 
 		# an iterator. Thus pass it to list, to make our slice possible again.
@@ -1272,15 +1272,15 @@ class PaymentDetails(IsAuthenticated,View):
 		page_range2 = list(paginator2.page_range)[start_index2:end_index2]
 		page_range3 = list(paginator3.page_range)[start_index3:end_index3]
 		page_range4 = list(paginator4.page_range)[start_index4:end_index4]
-		page_range5 = list(paginator5.page_range)[start_index5:end_index5]
+		# page_range5 = list(paginator5.page_range)[start_index5:end_index5]
 
 		entry_per_page1 = (transactions.end_index())-(transactions.start_index())+1
 		entry_per_page2 = (doubtful_due_payments.end_index())-(doubtful_due_payments.start_index())+1
 		entry_per_page3 = (normal_due_payments.end_index())-(normal_due_payments.start_index())+1
 		entry_per_page4 = (subscription_due_payments.end_index())-(subscription_due_payments.start_index())+1
-		entry_per_page5 = (neworder_due_payments.end_index())-(neworder_due_payments.start_index())+1
+		# entry_per_page5 = (neworder_due_payments.end_index())-(neworder_due_payments.start_index())+1
 
-		return render(request,'common/payment/payments.html',{'total_transactions':total_transactions,'total_transactions_amount':total_transactions_amount,'total_due_amount':total_due_amount,'total_due_orders':total_due_orders,'total_doubtful_due_amount':total_doubtful_due_amount,'total_doubtful_due_orders':total_doubtful_due_orders,'total_normal_due_amount':total_normal_due_amount,'total_normal_due_orders':total_normal_due_orders,'total_neworder_due_orders':total_neworder_due_orders,'total_neworder_due_amount':total_neworder_due_amount,'total_subscription_due_amount':total_subscription_due_amount,'total_subscription_due_orders':total_subscription_due_orders,'tab':tab,'invoices':invoices,"search_query":search,"page_range1":page_range1,"page_range2":page_range2,"page_range3":page_range3,"page_range4":page_range4,"page_range5":page_range5,"entry_per_page1":entry_per_page1,"entry_per_page2":entry_per_page2,"entry_per_page3":entry_per_page3,"entry_per_page4":entry_per_page4,"entry_per_page5":entry_per_page5,"no_of_entries":no_of_entries,'transactions':transactions,"doubtful_due_payments":doubtful_due_payments,'normal_due_payments':normal_due_payments,'subscription_due_payments':subscription_due_payments,'neworder_due_payments':neworder_due_payments})
+		return render(request,'common/payment/payments.html',{'total_transactions':total_transactions,'total_transactions_amount':total_transactions_amount,'total_due_amount':total_due_amount,'total_due_orders':total_due_orders,'total_doubtful_due_amount':total_doubtful_due_amount,'total_doubtful_due_orders':total_doubtful_due_orders,'total_normal_due_amount':total_normal_due_amount,'total_normal_due_orders':total_normal_due_orders,'total_subscription_due_amount':total_subscription_due_amount,'total_subscription_due_orders':total_subscription_due_orders,'tab':tab,'invoices':invoices,"search_query":search,"page_range1":page_range1,"page_range2":page_range2,"page_range3":page_range3,"page_range4":page_range4,"entry_per_page1":entry_per_page1,"entry_per_page2":entry_per_page2,"entry_per_page3":entry_per_page3,"entry_per_page4":entry_per_page4,"no_of_entries":no_of_entries,'transactions':transactions,"doubtful_due_payments":doubtful_due_payments,'normal_due_payments':normal_due_payments,'subscription_due_payments':subscription_due_payments})  #'total_neworder_due_orders':total_neworder_due_orders,'neworder_due_payments':neworder_due_payments',total_neworder_due_amount':total_neworder_due_amount,
 
 	def post(self,request):
 		order_id = request.POST.get('orderid')
@@ -1308,6 +1308,11 @@ class ActiveSubscriptions(IsAuthenticated,View):
 		else:
 			subscriptions = Order.objects.filter(Q(Q( Q(payment_status='PENDING') |Q(payment_status='ON_HOLD') | Q(payment_status='COMPLETED') ) & Q(evaluation__payment_method='SUBSCRIPTION') & Q(evaluation__quatation_status='APPROVED') & ~Q(order_status='ORDER_CANCELLED') )).select_related('evaluation__customer').prefetch_related(Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='invoice_evaluation_details'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('order_scheduler_book').order_by('start_at').prefetch_related(Prefetch('order_scheduler_book__order_scheduler_book_details',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='bookschedules')),to_attr='orderschedules')).annotate(total_cleanings_count=Count('order_scheduler_order'),completed_cleanings_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())), remaining_cleanings_count= F('total_cleanings_count') - F('completed_cleanings_count') ).exclude(Q( Q(remaining_cleanings_count = 0) & Q(payment_status='COMPLETED') ))
 		
+		advance_count = 0
+		due_count = 0
+		advance_amount = 0 
+		due_amount = 0
+
 		if subscriptions:
 			for invoice in subscriptions:
 				cleaning_price = 0
@@ -1325,6 +1330,15 @@ class ActiveSubscriptions(IsAuthenticated,View):
 						cleaning_price -= (invoice.evaluation.writeback_amount/total_cleanings)
 						
 				invoice.balance       = cleaning_price-invoice.amount_paid
+
+				if invoice.balance < 0:
+					advance_count += 1
+					advance_amount += abs(invoice.balance)
+
+				if invoice.balance > 0:
+					due_count += 1
+					due_amount += invoice.balance
+
 
 		#PAGINATION CLIENTS
 		no_of_entries = request.GET.get('no_of_entries')
@@ -1352,7 +1366,7 @@ class ActiveSubscriptions(IsAuthenticated,View):
 		page_range = list(paginator.page_range)[start_index:end_index]
 		entry_per_page=(subscriptions.end_index())-(subscriptions.start_index())+1
 
-		return render(request,'common/subscription/active_subscriptions.html',{"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"subscriptions":subscriptions})
+		return render(request,'common/subscription/active_subscriptions.html',{"advance_count":advance_count,"due_count":due_count,"advance_amount":advance_amount,"due_amount":due_amount,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"subscriptions":subscriptions})
 
 	def post(self,request):
 		order_id            = request.POST.get('order')
