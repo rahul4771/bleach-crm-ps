@@ -15,8 +15,90 @@
         <!-- <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p> -->
       </div>
     </div>
+    <!-- Table modals begins here-->
+   
+<div class="modal fade bd-example-modal-lg" id="tableModal" tabindex="-1" role="dialog"
+aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal-dialog cancel-model cancel-order-border" role="document">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
 
+                <div class="d-flex cl-modal-icons">
+                    <button data-dismiss="modal" class="model-close" style="border:none;background: #ffffff;">
+                        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                    </button>
+
+                </div>
+            </div>
+        </div>
+        <div class="row mt-10">
+            <div class="col-md-12">
+              <table class="inv-table footable"> 
+                <thead>
+                  <tr>
+                      <th style="width: %;">
+                        Ingredient
+                      </th>
+                      <th data-hide="phone,tablet"  style="width: %; ">
+                          Item
+                      </th>
+                      <th data-hide="phone,tablet"  style="width: %; ">
+                          Item Code
+                      </th>
+                      <th data-hide="phone,tablet"  style="width: %;" >
+                        Quantity
+                      </th>
+                      <th data-hide="phone,tablet"  style="width: %;" >
+                        U.o.m
+                      </th>
+                     
+                     
+                  </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    test
+                  </td>
+                  <td>
+                    test
+                  </td>
+                  <td>
+                    test
+                  </td>
+                  <td>
+                    test
+                  </td>
+                  <td>
+                    test
+                  </td>
+                </tr>
+              </tbody>
+              </table>
+              
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <div class="cancel-model-content">
+                    
+               
+                    <!-- <button data-dismiss="modal" class="view-button">Close</button> -->
+                  
+                    
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</div>
+
+    <!-- table modal ends here-->
     <div class="main-content-holder">
+     
       <!--main-content-holder-->
       <div class="white-wrapper white-wrapper-padding">
         <div class="row av-font">
@@ -304,6 +386,8 @@
                 <td>{% if item.service_item %}  {% if item.service_item.item.measuring_unit %}{{item.service_item.item.measuring_unit}}(S){% else %}unit(s){% endif %} {% else %}  {% if item.item.measuring_unit %}{{item.item.measuring_unit}}(s){% else %}unit(s){% endif %}  {% endif %}</td>
                 <td>
                     <button class="inv-plan-img-btn" type="button" data-toggle="modal" data-target="#deleteModel" onclick="delete_checkout_item(this)" data-checkoutid="{{item.id}}" > <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
+                    <!-- <div data-toggle="modal" data-target="#tableModal" >popup</div>  -->
+                    <button type="button" class="inv-plan-img-btn" data-toggle="modal" data-target="#tableModal" > <img src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
                     {% if item.service_item %}<button type="button" class="inv-plan-img-btn" onclick="swapModal({{item.service_item.ingredient.id}},{{item.id}})" > <img src="{% static 'files/inventory/swap.png' %}"  alt=""> </button>{% endif %}
                 </td>
                 </tr>
@@ -316,9 +400,9 @@
               
               </table> 
             </div>
-            <button type="button" class="inv-plan-btn" onclick="openNavAddStore()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="" > Add Item</button>
+            <button type="button" class="inv-plan-btn mt-10" onclick="openNavAddStore()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="" > Add Item</button>
             
-            <button type="button" class="inv-plan-btn" onclick="resetlist()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="" > Reset</button>
+            <button type="button" class="inv-plan-btn mt-10 ml-10" onclick="resetlist()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="" > Reset</button>
             </form>
 
           </div>
