@@ -220,7 +220,7 @@
                         Quantity
                       </th>
                       <th data-hide="phone,tablet"  style="width: %;" >
-                        U.o.m
+                        UOM
                       </th>
                      
                       <th data-hide="phone,tablet"  style="width: %;">Action</th>
@@ -234,49 +234,9 @@
                 <input type="hidden" name="action" value="save_checkout_list">
                 {% endif %}
                 <input type="hidden" name="quantities" >
-              <tbody id="id_table">
-                {% comment %} {% for ingredient in service_recipe_ingredients %}
-                {% for item in ingredient.service_recipe_items %}
-                  {% if forloop.first %}
-                  <tr data-itemid="{{item.item.id}}">
-                  {% endif %}
-                  {% endfor %}
-               
-                  <td>{{ingredient.ingredient}}</td>
-                  {% for item in ingredient.service_recipe_items %}
-                    {% if item.is_swapped_item == True %}
-                      <td>{{item.item.name}}</td>
-                      <td>{{item.item.item_code}}</td>
-                    {% endif %}
-                  {% endfor %}
-                  <td>
-                  
-                    <!-- <div class="qty ">
-                      <span class="minus bg-dark" onclick="decrement({{forloop.counter}})" >-</span>
-                      <input type="text" class="count" id="id_qty_{{forloop.counter}}" name="qty" value="1">
-                      <span class="plus bg-dark" onclick="increment({{forloop.counter}})">+</span>
-                  </div> -->
-                  <div class="qty-container">
-  
-       
-                        
-                    <div class="quantity">
-                      <a class="quantity__minus pointer" onclick="decrement({{forloop.counter}})"><span>-</span></a>
-                      <input  type="text" class="quantity__input"  id="id_qty_{{forloop.counter}}" name="qty" value="1">
-                      <a  class="quantity__plus pointer" onclick="increment({{forloop.counter}})"><span>+</span></a>
-                    </div>
-                    
-                  </div>
-                  </td>
-                  <td>
-                    <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
-                    <button class="inv-plan-img-btn" onclick="swapModal({{ingredient.id}})" > <img src="{% static 'files/inventory/swap.png' %}"  alt=""> </button>
+              
+                <tbody id="id_table">
 
-                  </td>
-                </tr>
-                {% endfor %} {% endcomment %}
-
-                
                 {% for item in check_out_items %}
                 <tr data-itemid="{{item.item.id}}" id="id_tr_{{item.id}}">
                 <td>{% if item.service_item %}{{item.service_item.ingredient.ingredient}}{% else %}-{% endif %}</td>
@@ -285,7 +245,7 @@
                 </td>
                 <td>{% if item.service_item %}{{item.service_item.item.item_code}}{% else %}{{item.item.item_code}}{% endif %}</td>
                 <td>
-                <div class="qty-container">
+                {% comment %} <div class="qty-container">
         
                   <div class="quantity">
                     {% if item.service_item %}
@@ -299,14 +259,29 @@
                     {% endif %}
                     </div>
                     
-                </div>
+                </div> {% endcomment %}
+                {{item.units}}
                 </td>
-                <td>{% if item.service_item %}  {% if item.service_item.item.measuring_unit %}{{item.service_item.item.measuring_unit}}(S){% else %}unit(s){% endif %} {% else %}  {% if item.item.measuring_unit %}{{item.item.measuring_unit}}(s){% else %}unit(s){% endif %}  {% endif %}</td>
+                <td>{% if item.service_item %}  {% if item.service_item.item.measuring_unit %}{{item.service_item.item.measuring_unit}} (S){% else %}unit(s){% endif %} {% else %}  {% if item.item.measuring_unit %}{{item.item.measuring_unit}} (s){% else %}unit(s){% endif %}  {% endif %}</td>
                 <td>
                     <button class="inv-plan-img-btn" type="button" data-toggle="modal" data-target="#deleteModel" onclick="delete_checkout_item(this)" data-checkoutid="{{item.id}}" > <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
                     {% if item.service_item %}<button type="button" class="inv-plan-img-btn" onclick="swapModal({{item.service_item.ingredient.id}},{{item.id}})" > <img src="{% static 'files/inventory/swap.png' %}"  alt=""> </button>{% endif %}
                 </td>
                 </tr>
+
+                {% comment %} {% for itemunit in item.checkoutitem_units %}
+                {% if itemunit.checkout_item.service_item == item.service_item %}
+                <tr>
+                <td></td>
+                <td></td>
+                <td>{{itemunit.item_unit.unit_code}}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                </tr>
+                {% endif %}
+                {% endfor %} {% endcomment %}
+
                 {% endfor %}
 
                 {% comment %} <tr>
@@ -403,15 +378,27 @@
           <input type="hidden" name="item" id="id_pro_sel" value="" />
           <div style="position: relative;">
               <div class="inv-input-container inv-border h-30">
-                  <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()">
+                  <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()" onclick="listunits()">
                  
               </div>
               <div id="id_search" class="row inv-result-box" style="display: none;">
                 
               </div>
           </div>
-         
+         <br>
+          <div class="qty-container">
+    
+            <div class="quantity">
+              
+                <a class="quantity__minus pointer" onclick="decrement()"><span>-</span></a>
+                <input  type="number" class="quantity__input item_quantity" step="0.01"  id="id_qty" value="0" name="checkout_quantity" oninput="quantitychange()" >
+                <a  class="quantity__plus pointer" onclick="increment()"><span>+</span></a>
+              
+              </div>
+              
+          </div>
 
+          <div>Available : <span id="id_item_count">0</span></div>
 
       </div>
 
@@ -506,6 +493,10 @@
 {% block javascript %}
 
 <script>
+function listunits(){
+  console.log($('#id_pro_sel').val(),"vallss")
+}
+
 async function swapModal(id,checkout_item_id){
   console.log(id)
   $('#id_ingredient').val(id);
@@ -598,9 +589,10 @@ function hideselectedoptions(){
 
       var item_id = $('#id_pro_sel').val() ;
       var visit_id = "{{visit.id}}" ;
+      var quantity = $('#id_qty').val();
       console.log(item_id,visit_id,"po")
     
-      var result = await _get('api/inventory-checkout-item-add/?item_id='+item_id+'&visit_id='+visit_id);
+      var result = await _get('api/inventory-checkout-item-add/?item_id='+item_id+'&visit_id='+visit_id+'&quantity='+quantity);
         if(result.status == 200){
           console.log(result,"resss")
         $('#id_table').append(
@@ -611,19 +603,7 @@ function hideselectedoptions(){
               `+result.data.item_name+`
             </td>
             <td>`+result.data.item_code+`</td>
-            <td>
-            <div class="qty-container">
-    
-              <div class="quantity">
-                
-                  <a class="quantity__minus pointer" onclick="decrement(`+result.data.item_count+`,`+result.data.item_id+`)"><span>-</span></a>
-                  <input  type="number" class="quantity__input item_quantity" step="0.01"  id="id_qty_`+result.data.item_count+`" value="0" name="checkout_quantity" oninput="quantitychange(`+result.data.item_count+`,`+result.data.item_id+`)" >
-                  <a  class="quantity__plus pointer" onclick="increment(`+result.data.item_count+`,`+result.data.item_id+`)"><span>+</span></a>
-                
-                </div>
-                
-            </div>
-            </td>
+            <td>`+result.data.item_quantity+`</td>
             <td>`+result.data.item_unit+`</td>
             <td>
                 <button class="inv-plan-img-btn" type="button" data-toggle="modal" data-target="#deleteModel" onclick="delete_checkout_item(this)" data-checkoutid="`+result.data.checkout_item_id+`" > <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
@@ -636,7 +616,18 @@ function hideselectedoptions(){
         }
     }
 
+    //<div class="qty-container">
     
+    //  <div class="quantity">
+        
+    //      <a class="quantity__minus pointer" onclick="decrement(`+result.data.item_count+`,`+result.data.item_id+`)"><span>-</span></a>
+    //      <input  type="number" class="quantity__input item_quantity" step="0.01"  id="id_qty_`+result.data.item_count+`" value="0" name="checkout_quantity" oninput="quantitychange(`+result.data.item_count+`,`+result.data.item_id+`)" >
+    //      <a  class="quantity__plus pointer" onclick="increment(`+result.data.item_count+`,`+result.data.item_id+`)"><span>+</span></a>
+        
+    //    </div>
+        
+    //</div>
+
     //checkout item delete
     async function itemdelete(){
 
@@ -710,80 +701,59 @@ function hideselectedoptions(){
     }
 
 
-    async function quantitychange(id,item_id){
-      console.log("mac",id,item_id)
-    
-      var quantity = $('#id_qty_'+id).val() ;
-      console.log(quantity,"po")
+    async function quantitychange(){
+      
+      var item_id = $('#id_pro_sel').val();
+      var quantity = $('#id_qty').val() ;
+      console.log(item_id,quantity,"po")
     
       var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
         if(result.status == 200){
-          console.log(result.data.item_available,"lop1")
-          if (result.data.item_available == true){
-            console.log("lo1")
-            $('#id_item_name_'+item_id+'').addClass("inv-green")
-            $('#id_item_name_'+item_id+'').removeClass("inv-red")
-          }else{
-            console.log("lo2")
-            $('#id_item_name_'+item_id+'').addClass("inv-red")
-            $('#id_item_name_'+item_id+'').removeClass("inv-green")
-          }
+          console.log(result.data.item_available,result.data.item_count,"lop1")
+          $('#id_qty').val(result.data.item_quantity);
+          $('#id_item_count').text(result.data.item_count);
         }
     }
 
 
-async function increment(id,item_id){
-  console.log(id,item_id)
-  $('#id_qty_'+id).val(parseInt($('#id_qty_'+id).val()) + 1 );
+async function increment(){
+  //console.log(id,item_id)
+  var item_id = $('#id_pro_sel').val();
+  console.log($('#id_pro_sel').val(),"potto")
 
-  var quantity = parseInt($('#id_qty_'+id).val()) ;
+  $('#id_qty').val(parseInt($('#id_qty').val()) + 1 );
+
+  var quantity = parseInt($('#id_qty').val()) ;
   console.log(quantity,"po")
 
   var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
     if(result.status == 200){
       console.log(result.data.item_available,"lop2")
-      if (result.data.item_available == true){
-        console.log("lo1")
-        $('#id_item_name_'+item_id+'').addClass("inv-green")
-        $('#id_item_name_'+item_id+'').removeClass("inv-red")
-      }else{
-        console.log("lo2")
-        $('#id_item_name_'+item_id+'').addClass("inv-red")
-        $('#id_item_name_'+item_id+'').removeClass("inv-green")
-      }
-    }
 
-    $('input[name="checkout_quantity"]').each(function(){
-      //code
-     console.log($(this).val(),"logg");
-});
+      $('#id_qty').val(result.data.item_quantity);
+      $('#id_item_count').text(result.data.item_count);
+      
+    }
 }
 
 async function decrement(id,item_id){
-  
-  if ($('#id_qty_'+id).val() > 0) {
-  $('#id_qty_'+id).val(parseInt($('#id_qty_'+id).val()) - 1 );
+  var item_id = $('#id_pro_sel').val();
+
+  if ($('#id_qty').val() > 0) {
+  $('#id_qty').val(parseInt($('#id_qty').val()) - 1 );
   }
 
-  if ($('#id_qty_'+id).val() == 0) {
-    $('#id_qty_'+id).val(parseInt($('#id_qty_'+id).val()) - 1 );
-    $('#id_qty_'+id).val(0);
+  if ($('#id_qty').val() == 0) {
+    $('#id_qty').val(parseInt($('#id_qty').val()) - 1 );
+    $('#id_qty').val(0);
   }
 
-  var quantity = parseInt($('#id_qty_'+id).val()) ;
+  var quantity = parseInt($('#id_qty').val()) ;
 
   var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
     if(result.status == 200){
       console.log(result.data.item_available,"lop3")
-      if (result.data.item_available == true){
-        console.log("lo1")
-        $('#id_item_name_'+item_id+'').addClass("inv-green")
-        $('#id_item_name_'+item_id+'').removeClass("inv-red")
-      }else{
-        console.log("lo2")
-        $('#id_item_name_'+item_id+'').addClass("inv-red")
-        $('#id_item_name_'+item_id+'').removeClass("inv-green")
-      }
+      $('#id_qty').val(result.data.item_quantity);
     }
 }
 
@@ -820,7 +790,7 @@ var products = [];
 
         $(document).ready(function(){
 
-          itemcheck()
+          //itemcheck()
 
           
           //console.log($('td').classList.contains('inv-red'),"werrr")
@@ -845,7 +815,7 @@ var products = [];
         }
 
 
-        async function itemcheck(){
+        {% comment %} async function itemcheck(){
           console.log("lgm")
         {% for item in check_out_items %}  
         
@@ -867,7 +837,7 @@ var products = [];
 
           
 
-            }
+            } {% endcomment %}
 
 
         function showProducts(){
@@ -917,9 +887,11 @@ var products = [];
         $('#id_pro_sel').val($(d).attr("data-pro"));
         $('#pro-name').val($(d).attr("data-name"));
 
+        quantitychange();
 
         document.getElementById("id_search").style.display="none"
     }
+
     function closeProductShow2(d){
         console.log(d);
         var proId = $(d).attr("data-pro")
@@ -991,6 +963,7 @@ function ProductListShow(){
     searchFlag = true;
     document.getElementById("id_search").style.display="block"
 }
+
 function ProductListShow2(){
     searchFlag = true;
     document.getElementById("id_search2").style.display="block"

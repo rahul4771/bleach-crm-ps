@@ -1249,7 +1249,7 @@ class DailySalesAPI(APIView):
 			print(list_item,"elist")
 			
 			# if date < todate:
-			orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q(Q(work_status = 'CLEANING_TEAM_ASSIGNED') | Q(work_status = 'CLEANING_IN_PROGRESS') | Q(work_status='CLEANING_FULFILLED'))).exclude( Q(Q(Q(order__evaluation__payment_method='PREPAID')&~Q(order__payment_status='COMPLETED'))|Q(Q(order__evaluation__payment_method='BREAKDOWN')&Q(order__preamount_paid=0))) ).values_list('order__order_no','order_scheduler_book__estimated_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id','order_scheduler_book__evaluation_details__evaluation__id','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount','order_scheduler_book__evaluation_details__evaluator__id','order_scheduler_book__evaluation_details__evaluation__discount').order_by('end_at')
+			orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q(Q(work_status = 'CLEANING_TEAM_ASSIGNED') | Q(work_status = 'CLEANING_IN_PROGRESS') | Q(work_status='CLEANING_FULFILLED'))).exclude( Q(Q(Q(order__evaluation__payment_method='PREPAID')&~Q(order__payment_status='COMPLETED'))|Q(Q(order__evaluation__payment_method='BREAKDOWN')&Q(order__preamount_paid=0))) ).values_list('order__order_no','order_scheduler_book__estimated_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id','order_scheduler_book__evaluation_details__evaluation__id','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount','order_scheduler_book__evaluation_details__evaluator__id','order_scheduler_book__evaluation_details__evaluation__discount','order_scheduler_book__evaluation_details__evaluation__additional_charge').order_by('end_at')
 			# else:
 			# 	orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).exclude( Q(Q(Q(order__evaluation__payment_method='PREPAID')&~Q(order__payment_status='COMPLETED'))|Q(Q(order__evaluation__payment_method='BREAKDOWN')&Q(order__preamount_paid=0))) ).values_list('order__order_no','order_scheduler_book__estimated_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id','order_scheduler_book__evaluation_details__evaluation__id','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount','order_scheduler_book__evaluation_details__evaluator__id','order_scheduler_book__evaluation_details__evaluation__discount').order_by('end_at')
 
@@ -1284,6 +1284,8 @@ class DailySalesAPI(APIView):
 					cleaning_amount += float(schedule[8]/order_schedule_count)
 				if schedule[10] > 0:
 					cleaning_amount -= float(schedule[10]/order_schedule_count)
+				if schedule[11] > 0:
+					cleaning_amount += float(schedule[11]/order_schedule_count)
 
 				#adding amount to evaluators dict
 				if schedule[9] != None:
@@ -1303,6 +1305,8 @@ class DailySalesAPI(APIView):
 								evaluator_amount += float(schedule[8]/order_schedule_count)
 							if schedule[10] > 0:
 								evaluator_amount -= float(schedule[10]/order_schedule_count)
+							if schedule[11] > 0:
+								evaluator_amount += float(schedule[11]/order_schedule_count)
 							
 
 							eval_dict = {""+x+"":evaluator_amount}
@@ -1320,6 +1324,8 @@ class DailySalesAPI(APIView):
 						others += float(schedule[8]/order_schedule_count)	
 					if schedule[10] > 0:
 						others -= float(schedule[10]/order_schedule_count)
+					if schedule[11] > 0:
+						others += float(schedule[11]/order_schedule_count)
 					
 
 				if date == '05-07-2021' and schedule[0] == 'BLC20210610161':
@@ -1606,6 +1612,8 @@ class DailySalesBreakDownAPI(APIView):
 				cleaning_amount += float(schedule.order.evaluation.fine_amount/order_schedule_count)
 			if schedule.order.evaluation.discount > 0:
 				cleaning_amount -= float(schedule.order.evaluation.discount/order_schedule_count)
+			if schedule.order.evaluation.additional_charge > 0:
+				cleaning_amount += float(schedule.order.evaluation.additional_charge/order_schedule_count)
 
 			total_day_sales += float(cleaning_amount)			
 
@@ -2418,13 +2426,19 @@ class SOAMailAPI(APIView):
 					# job_remaining += float(book.total_cost - job_completed)	
 
 					if order.evaluation.fine_amount:
-						job_completed -= float(order.evaluation.fine_amount/cleanings_count)
+						job_completed += float(order.evaluation.fine_amount/cleanings_count)
 
 					if order.evaluation.writeback_amount:
 						job_completed -= float(order.evaluation.writeback_amount/cleanings_count)
 
 					if order.evaluation.promocode_amount:
 						job_completed -= float(order.evaluation.promocode_amount/cleanings_count)
+
+					if order.evaluation.additional_charge:
+						job_completed += float(order.evaluation.additional_charge/cleanings_count)
+
+					if order.evaluation.discount:
+						job_completed -= float(order.evaluation.discount/cleanings_count)
 				
 				total_balance += float(job_completed)
 				accounts_list.append({
@@ -3394,8 +3408,12 @@ class ItemQuantityCheck(APIView):
 
 			if float(item_count) >= float(quantity) :
 				response_dict['item_available'] = True
+				response_dict['item_quantity'] = quantity
 			else:
 				response_dict['item_available'] = False
+				response_dict['item_quantity'] = item_count
+
+			response_dict['item_count'] = item_count
 		else:
 			if item.quantity_total:
 				item_count = item.total_quantity
@@ -3406,8 +3424,14 @@ class ItemQuantityCheck(APIView):
 
 			if float(item_count) >= float(quantity) :
 				response_dict['item_available'] = True
+				response_dict['item_quantity'] = quantity
 			else:
 				response_dict['item_available'] = False
+				response_dict['item_quantity'] = item_count
+
+			item_count = float(item_count)
+			print(round(item_count,3),"roun")
+			response_dict['item_count'] = round(item_count,3)
 
 		response_dict['success'] = True
 
@@ -3421,6 +3445,7 @@ class CheckOutItemAdd(APIView):
 
 		service_item = request.GET.get('item_id')
 		visit_id = request.GET.get('visit_id')
+		quantity = request.GET.get('quantity')
 
 		print(visit_id,"vis")
 		visit = OrderScheduler.objects.get(id=int(visit_id))
@@ -3430,16 +3455,17 @@ class CheckOutItemAdd(APIView):
 		if item.item_status == 'available' or item.item_status == 'about_to_finish':
 			checkout_items_count = CheckOutItems.objects.filter(visit=visit).count()
 
-			checkout_item = CheckOutItems.objects.create(visit=visit,item=item)
+			checkout_item = CheckOutItems.objects.create(visit=visit,item=item,units=quantity)
 			response_dict['checkout_item_id'] = checkout_item.id
 			response_dict['item_id'] = checkout_item.item.id
 			response_dict['item_name'] = checkout_item.item.name
 			response_dict['item_code'] = checkout_item.item.item_code
+			response_dict['item_quantity'] = checkout_item.units
 
 			if checkout_item.item.item_add_type == 'unit':
 				response_dict['item_unit'] = 'unit(S)'
 			else:
-				response_dict['item_unit'] = checkout_item.item.measuring_unit
+				response_dict['item_unit'] = checkout_item.item.measuring_unit + '(S)'
 
 			response_dict['item_count'] = checkout_items_count + 1
 

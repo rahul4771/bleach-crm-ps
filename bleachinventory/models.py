@@ -21,7 +21,7 @@ ITEM_ADD_TYPE_CHOICES=(
 )
 
 MEASURING_UNIT_CHOICES=(
-    ('litre','litre'),
+    ('L','L'),
 	('kg','kg'),
     ('piece','piece'),
     ('pack','pack')
@@ -362,3 +362,13 @@ class CheckOutItems(models.Model):
     def __str__(self):
         return self.visit.order.order_no
 
+class CheckOutItemUnits(models.Model):
+    checkout_item        = models.ForeignKey(CheckOutItems,blank=True,null=True,related_name='checkoutitem')
+    item_unit            = models.ForeignKey(ItemUnit,blank=True,null=True,related_name='checkoutitem_unit')
+    created              = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return str(self.checkout_item.visit.order.order_no)
+
+    def __str__(self):
+        return self.checkout_item.visit.order.order_no

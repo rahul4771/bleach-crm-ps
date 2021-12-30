@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.views import View
 from bleach_crm_ps.permissions import IsInventoryAdmin,IsInventoryAdminUser
-from bleachinventory.models import CheckOutItems,ItemHistory,Category,Segment,Line,Attribute,AttributeValue,ItemAttributes,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,PurchaseOrder,PurchaseOrderItems
+from bleachinventory.models import CheckOutItems,CheckOutItemUnits,ItemHistory,Category,Segment,Line,Attribute,AttributeValue,ItemAttributes,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,PurchaseOrder,PurchaseOrderItems
 from django.contrib import messages
 import re
 import math
@@ -1380,7 +1380,7 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
         
         cleaners = visit.no_of_cleaners
         service_recipe_ingredients = ServiceRecipeIngredients.objects.filter(service_type__service=service).prefetch_related(Prefetch('item_ingredient',queryset=ServiceRecipeItems.objects.all(),to_attr='service_recipe_items'))
-        check_out_items = CheckOutItems.objects.filter(visit=visit)
+        check_out_items = CheckOutItems.objects.filter(visit=visit).prefetch_related(Prefetch('checkoutitem',queryset=CheckOutItemUnits.objects.all(),to_attr='checkoutitem_units'))
 
         # recommended quantity calc
             
@@ -1417,7 +1417,8 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
                     item_dict = {
                         'item_id' : item.id,
                         'item_name' : item.name,
-                        'total_quantity' : float(item.quantity_total)
+                        'total_quantity' : float(item.quantity_total),
+                        'item_type' : item.item_add_type
                     }
                     print(item.quantity_total,"qx")
                 else:
@@ -1425,7 +1426,8 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
                     item_dict = {
                         'item_id' : item.id,
                         'item_name' : item.name,
-                        'total_quantity' : float(item.total_quantity)
+                        'total_quantity' : float(item.total_quantity),
+                        'item_type' : item.item_add_type
                     }
                     print(item.total_quantity,"qx2")
 
@@ -1446,7 +1448,15 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
                         try:
                             checkout_item = CheckOutItems.objects.get(visit=visit,service_item=service_item,service_item__ingredient=ingredient)
                         except:
-                            CheckOutItems.objects.create(visit=visit,service_item=service_item,units=recommended_quantity,is_swapped_item=False)
+                            checkout_item = CheckOutItems.objects.create(visit=visit,service_item=service_item,units=recommended_quantity,is_swapped_item=False)
+                            
+                            if item['item_type'] == 'unit':
+                                itemunits = ItemUnit.objects.filter(item__id=int(item['item_id']),status='active')[:int(variable_recommended_quantity)]
+                                print(itemunits,"rrr")
+                                for unit in itemunits:
+                                    print(unit,"rrr2")
+                                    CheckOutItemUnits.objects.create(checkout_item=checkout_item,item_unit=unit)
+                            
                             variable_recommended_quantity = 0
                             print(variable_recommended_quantity,"testchek1")
                         print("klap")
@@ -1458,6 +1468,13 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
                             checkout_item = CheckOutItems.objects.get(visit=visit,service_item=service_item,service_item__ingredient=ingredient)
                         except:
                             CheckOutItems.objects.create(visit=visit,service_item=service_item,units=item['total_quantity'],is_swapped_item=False)
+                        
+                            if item['item_type'] == 'unit':
+                                itemunits = ItemUnit.objects.filter(item__id=int(item['item_id']),status='active')[:int(item['total_quantity'])]
+                                print(itemunits,"rrr3")
+                                for unit in itemunits:
+                                    CheckOutItemUnits.objects.create(checkout_item=checkout_item,item_unit=unit)
+
                         print("klap2")     
 
                     else:
