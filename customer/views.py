@@ -1172,13 +1172,19 @@ def statement_of_account(request,client_id):
 					# job_remaining += float(book.total_cost - job_completed)	
 
 					if order.evaluation.fine_amount:
-						job_completed -= float(order.evaluation.fine_amount/cleanings_count)
+						job_completed += float(order.evaluation.fine_amount/cleanings_count)
 
 					if order.evaluation.writeback_amount:
 						job_completed -= float(order.evaluation.writeback_amount/cleanings_count)
 
 					if order.evaluation.promocode_amount:
 						job_completed -= float(order.evaluation.promocode_amount/cleanings_count)
+
+					if order.evaluation.additional_charge:
+						job_completed += float(order.evaluation.additional_charge/cleanings_count)
+
+					if order.evaluation.discount:
+						job_completed -= float(order.evaluation.discount/cleanings_count)
 
 			opening_credit += float(job_completed)
 
