@@ -105,13 +105,13 @@
                             </td>
                             <td class="text-center">
                                 {% if item.item_add_type == 'quantity' %}
-                                {{item.total_quantity|floatformat:3}} {{item.measuring_unit}} (S)
+                                {{item.total_quantity|floatformat:3}} {{item.measuring_unit}}
                                 {% else %}
-                                {{item.unit_count}} unit(S)
+                                {{item.unit_count}} unit
                                 {% endif %}
                             </td>
                             <td class="text-center">
-                                {{item.reserve_count}} {% if item.item_add_type == 'quantity' %}{{item.measuring_unit}} (S){% else %}unit(S){% endif %}
+                                {{item.reserve_count}} {% if item.item_add_type == 'quantity' %}{{item.measuring_unit}}{% else %}unit{% endif %}
                             </td>
                             {% comment %} <td>
                                 {% if item.status == True %}
