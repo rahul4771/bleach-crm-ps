@@ -253,6 +253,10 @@
                                                             <button onclick="openNavAddStore({{order.id}})" class="btn-p inv-plan-img-btn2 btn-shadow"> <img class="btn-img2"
                                                                 src="{% static 'files/inventory/icons/icon3.png' %}" alt=""> Stock-In
                                                             </button>
+                                                        {% else %}
+                                                            <button  class="btn-p inv-plan-img-btn2-disabled" disabled> <img class="btn-img2"
+                                                                src="{% static 'files/inventory/icons/icon3.png' %}" alt=""> Stock-out
+                                                            </button>
                                                         {% endif %}
                                                     {% else %}
                                                     
