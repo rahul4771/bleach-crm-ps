@@ -1396,16 +1396,16 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
                     service_area = ingredient.service_type.area_size
                     
                     if service_area != '0':
-                        recommended_quantity = int(math.ceil(float(max_area) / float(service_area)) * float(service_quantity))
+                        recommended_quantity = float(math.ceil(float(max_area) / float(service_area)) * float(service_quantity))
 
                 else:
                     service_person = ingredient.service_type.staff_count
 
                     if service_person != '0':
                         
-                        quantity_per_person = int(service_quantity) / int(service_person)
+                        quantity_per_person = float(service_quantity) / float(service_person)
 
-                        recommended_quantity = int(cleaners) * int(quantity_per_person)
+                        recommended_quantity = float(cleaners) * float(quantity_per_person)
 
             
                 items_list = []
