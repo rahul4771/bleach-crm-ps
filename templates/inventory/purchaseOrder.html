@@ -107,9 +107,13 @@
                         <a href="/bleach-inventory/purchaseOrder/items/{{order.id}}/"><button class="inv-plan-img-btn"> <img class="view-img"
                                     src="{% static 'files/inventory/view.png' %}" alt="">
                         </button></a>
+                        {% if order.is_admin_approved == True %}
                         <a href="/bleach-inventory/purchaseorderpage/{{order.id}}/"><button class="inv-plan-img-btn"> <img class=""
                             src="{% static 'files/inventory/invoice.png' %}" alt="">
-                </button></a>
+                        {% else %}
+                        <button class="inv-plan-img-btn2-disabled" disabled> <img class="btn-img2" src="{% static 'files/inventory/invoice.png' %}" alt=""></button>
+                        {% endif %}
+                
                 {% if order.is_admin_approved == False or order.is_rejected == True %}                
                 <a href="/bleach-inventory/editpo/{{order.id}}"><button class="inv-plan-img-btn" > <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button></a>
                 {% else %}
@@ -181,8 +185,8 @@
                                {{order.total_price}}
                             </td>
                             <td>
-                                {% if order.is_order_completed == True %}
-                                <span class="inv-dot c-active ml-5"></span>Completed
+                                {% if order.total_units == order.total_added_units %}
+                                <span class="inv-dot c-active ml-5"></span>Added
                                 {% else %}
                                 <span class="inv-dot c-about-finish ml-5"></span>Waiting
                                 {% endif %}

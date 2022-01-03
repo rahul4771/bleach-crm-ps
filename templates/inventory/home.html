@@ -170,6 +170,36 @@
                                 <div class="inv-dash-card-head">
                                     Stock In/Out
                                 </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-12 mt-20">
+                                    <div class="d-flex">
+                                        <div>
+                                          
+                                        </div>
+                                        <div class="right-pos">
+                                            <div class="d-flex" style="z-index: 4;">
+                                                <div onclick="invPrevDay()" class="inv-day-round text-center pointer">
+                                                 <i class="fa fa-angle-left fa-lg" style="margin-top: 10px; color: #707070;" aria-hidden="true"></i>
+                                                </div>
+                                                <div onclick="viewPicker()" class="av-font inv-date-text text-center pointer" style="margin-left: -14px;">
+                                                    <div id="id_day_text" class="av-font" style="margin-top: 7px; font-size: 14px;">
+                                                     {{order_date|date:'d-m-Y'}}
+                                                    </div>
+                                                </div>
+                                                <div onclick="invNextDay()" class="inv-day-round text-center pointer" style="margin-left: -14px;">
+                                                 <i class="fa fa-angle-right fa-lg" style="margin-top: 10px; color: #707070;" aria-hidden="true"></i>
+                                                </div>
+                                               
+                                            </div>
+                                            <div style="margin-top: -22px;">
+                                                <input style="width: 20px; margin-left: 15px;" type="text" id="id_date_pick" value="{{order_date|date:'d-m-Y'}}" onchange="set_params_go();"  class=" date-box date_pick "> 
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                </div>
+
                                 <div class="mt-10">
                                     <table class="inv-table footable">
                                         <thead>
@@ -219,10 +249,15 @@
     
                                                 <td class="text-center">
                                                     {% if order.work_status == 'CLEANING_FULFILLED' %}
-                                                        <button onclick="openNavAddStore({{order.id}})" class="btn-p inv-plan-img-btn2 btn-shadow"> <img class="btn-img2"
-                                                            src="{% static 'files/inventory/icons/icon3.png' %}" alt=""> Stock-In
-                                                    </button>
-                                                    
+                                                        {% if order.stock_out_items_submitted == True %}
+                                                            <button onclick="openNavAddStore({{order.id}})" class="btn-p inv-plan-img-btn2 btn-shadow"> <img class="btn-img2"
+                                                                src="{% static 'files/inventory/icons/icon3.png' %}" alt=""> Stock-In
+                                                            </button>
+                                                        {% else %}
+                                                            <button  class="btn-p inv-plan-img-btn2-disabled" disabled> <img class="btn-img2"
+                                                                src="{% static 'files/inventory/icons/icon3.png' %}" alt=""> Stock-out
+                                                            </button>
+                                                        {% endif %}
                                                     {% else %}
                                                     
                                                         {% if order.stock_out_items_submitted == False %}
@@ -501,8 +536,46 @@
         $('.count').val(1);
       }
     });
+
+    //datepicker
+    var $tmpSelectedDay     = new Date();
+    var a = moment($tmpSelectedDay).format('DD-MM-YYYY')
+    var b = "{{order_date|date:'d-m-Y'}}"
+    if(a == b ){
+        $('#id_day_text').text('Today')
+    }
   });
 
+ //datepicker script start   
+ function viewPicker(){
+        $('#id_date_pick').click();
+    }
+
+    function invNextDay(){
+       
+        $selectedDay            = $('#id_date_pick').val()
+        var a =  $selectedDay.split('-')
+        var $tmpSelectedDay     = new Date(a[1]+'/'+ a[0]+'/' +a[2]);
+        $tmpSelectedDay.setDate($tmpSelectedDay.getDate() + 1);
+        var d = moment($tmpSelectedDay).format('DD-MM-YYYY');
+        $('#id_date_pick').val(d)
+        $('#id_day_text').text(d)
+        set_params_go();
+
+    }
+    function invPrevDay(){
+     
+       $selectedDay            = $('#id_date_pick').val()
+       var a =  $selectedDay.split('-')
+       var $tmpSelectedDay     = new Date(a[1]+'/'+ a[0]+'/' +a[2]);
+       $tmpSelectedDay.setDate($tmpSelectedDay.getDate() - 1);
+       var d = moment($tmpSelectedDay).format('DD-MM-YYYY');
+       $('#id_date_pick').val(d)
+       $('#id_day_text').text(d)
+       set_params_go();
+
+   }
+//datepicker script end   
 
 async function openNavAddStore(visit_id) {
         $('#items_container').empty();
@@ -627,6 +700,21 @@ async function openNavAddStore(visit_id) {
         console.log(item_ids,"kok")
         
     }
+
+    function set_params_go(args)
+        {
+        var url='{% url 'bleach-inventory:inventorydash-board' %}';
+        var params={order_date:$('#id_date_pick').val()
+        };
+        for(key in args) 
+            params[key]=args[key];
+        var query='';
+        for(key in params)
+            if(params[key]) 
+                query+='&'+key+'='+params[key].toString();
+        query=query.replace('&','?');
+        window.location.href=url+query;  
+        }
 </script>
 
 {% endblock %}

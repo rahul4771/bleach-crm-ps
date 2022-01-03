@@ -248,11 +248,73 @@ class AccountantHome(IsAccountant,View):
 		last_quarter_sales=payment_history.filter(paid_date__month__in=prvquarter,paid_date__year=prvquarteryear).aggregate(total=Sum('amount_paid'))['total']	
 
 
-		#due payments
-		due_payments     = invoices.filter(Q( Q( Q(Q(evaluation__payment_method='POSTPAID')|Q(evaluation__payment_method='BREAKDOWN')) & Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD')) & Q(completed_cleaning_count=F('cleaning_count')) ) | Q(Q(evaluation__payment_method='SUBSCRIPTION')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&~Q(subscription_topay=0)) ))
+		#due payments calculation
+
+		#doubtful due payments
+		try:
+			doubtful_due_payments = invoices.filter(Q( Q(Q(evaluation__payment_method='POSTPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) | Q(Q(evaluation__payment_method='SUBSCRIPTION')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&~Q(subscription_topay=0)) )).filter(callback_status='LEGAL_ACTION')
+		except:
+			doubtful_due_payments = None
+
+		#Doubtfull Due Payment and Order Count	
+		if doubtful_due_payments: 
+			total_doubtful_due_amount = 0
+			for payment in doubtful_due_payments:
+				if payment.evaluation.payment_method in ['POSTPAID','BREAKDOWN']:
+					total_doubtful_due_amount += payment.remining_amount
+
+				if payment.evaluation.payment_method == 'SUBSCRIPTION':
+					total_doubtful_due_amount += payment.subscription_topay		
+
+			total_doubtful_due_orders = doubtful_due_payments.count()
+		else:
+			total_doubtful_due_amount = 0
+			total_doubtful_due_orders = 0
+
+		#normal due Payments
+		try:
+			normal_due_payments = invoices.filter(Q( Q(Q(evaluation__payment_method='POSTPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) )).filter(~Q(callback_status='LEGAL_ACTION'))
+		except:
+			normal_due_payments = None
+		
+		#Normal Due Payment and Order Count	
+		if normal_due_payments: 
+			total_normal_due_amount = 0
+			for payment in normal_due_payments:
+				if payment.evaluation.payment_method in ['POSTPAID','BREAKDOWN']:
+					total_normal_due_amount += payment.remining_amount		
+
+			total_normal_due_orders = normal_due_payments.count()
+		else:
+			total_normal_due_amount = 0
+			total_normal_due_orders = 0
+
+		#subscription due Payments
+		try:
+			subscription_due_payments = invoices.filter(Q( Q(Q(evaluation__payment_method='SUBSCRIPTION')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&~Q(subscription_topay=0)) )).filter(~Q(callback_status='LEGAL_ACTION'))
+		except:
+			subscription_due_payments = None
+
+		#Subscription Due Payment and Order Count	
+		if subscription_due_payments: 
+			total_subscription_due_amount = 0
+			for payment in subscription_due_payments:
+
+				if payment.evaluation.payment_method == 'SUBSCRIPTION':
+					total_subscription_due_amount += payment.subscription_topay		
+
+			total_subscription_due_orders = subscription_due_payments.count()
+		else:
+			total_subscription_due_amount = 0
+			total_subscription_due_orders = 0
+
+
 		#Due Payment and Order Count			
-		total_due_amount = due_payments.aggregate(Sum('remining_amount'))['remining_amount__sum']
-		total_due_orders = due_payments.count()
+		# total_due_amount = due_payments.aggregate(Sum('remining_amount'))['remining_amount__sum']
+		# total_due_orders = due_payments.count()
+
+		total_due_amount = total_doubtful_due_amount+total_normal_due_amount+total_subscription_due_amount
+		total_due_orders = total_doubtful_due_orders+total_normal_due_orders+total_subscription_due_orders
 		
 		#Pending Payments
 		pending_payments = invoices.filter(Q( Q(Q(evaluation__payment_method='PREPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))) | Q(Q(evaluation__payment_method='POSTPAID')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(preamount_paid=0)) | Q(Q(evaluation__payment_method='BREAKDOWN')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&Q(completed_cleaning_count=F('cleaning_count'))) | Q(Q(evaluation__payment_method='SUBSCRIPTION')&Q(Q(payment_status='PENDING')|Q(payment_status='ON_HOLD'))&~Q(subscription_topay=0)) ))
@@ -2651,12 +2713,12 @@ def export_users_xls(request):
 			for ebook in evaluationbooks:
 				if ebook['service_type__name'] not in found:
 					servicetypes.append(ebook['service_type__name'])
-					servicetypes.append(', ')
+					# servicetypes.append(', ')
 					found.add(ebook['service_type__name'])
 				
 				if ebook['cleaning_policy'] not in found:
 					cleaning_policies.append(ebook['cleaning_policy'])
-					cleaning_policies.append(', ')
+					# cleaning_policies.append('-')
 					found.add(ebook['cleaning_policy'])
 
 			evaluation_list[4] = tuple(servicetypes)
@@ -2684,12 +2746,12 @@ def export_users_xls(request):
 				if detail['evaluator__name'] != None:
 					if detail['evaluator__name'] not in found:
 						evaluators.append(detail['evaluator__name'])
-						evaluators.append(',')
+						# evaluators.append('-')
 						found.add(detail['evaluator__name'])
 				else:
 					if detail['evaluation__call_attender__name'] not in found:
 						evaluators.append(detail['evaluation__call_attender__name'])
-						evaluators.append(',')
+						# evaluators.append('-')
 						found.add(detail['evaluation__call_attender__name'])
 					
 				
@@ -2725,13 +2787,17 @@ def export_users_xls(request):
 				evaluation_list[11] = '-'
 
 			evaluation = tuple(evaluation_list)
+
+			print(evaluation,"rosse2")
 			rows.append(evaluation)
 		rows = [[x.strftime("%d-%m-%Y") if isinstance(x, datetime) else x for x in row] for row in rows ]
+
+		print(rows,"rosse")
 
 		for row in rows:
 			row_num += 1
 			for col_num in range(len(row)):
-				ws.write(row_num, col_num, row[col_num], font_style)
+				ws.write(row_num, col_num, str(row[col_num]), font_style)
 
 	wb.save(response)
 

@@ -266,19 +266,48 @@
      
  
      </div><!--white-wrapper-search-->
-     
-            
+
+       
 <div class="white-wrapper"><!--white-wrapper-->
 <h2 class="h2">Subscriptions List</h2>
-<label for="favcity" style="width:20%;" class="m-width-100"> 
-<select name="no_of_entries" id="no_of_entries" onchange="set_params_go();"> 
-<option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
-<option value="50" {% if no_of_entries == '50' %}selected{% endif %}>50 Entries</option>
-<option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
-</select>
-</label>
+<div class="col-md-6">
+  <label for="favcity" style="width:20%;" class="m-width-100"> 
+  <select name="no_of_entries" id="no_of_entries" onchange="set_params_go();"> 
+  <option value="20" {% if no_of_entries == '20' %}selected{% endif %}>20 Entries</option>
+  <option value="50" {% if no_of_entries == '50' %}selected{% endif %}>50 Entries</option>
+  <option value="100" {% if no_of_entries == '100' %}selected{% endif %}>100 Entries</option>
+  </select>
+  </label>
+</div>
+
+<div class="col-md-6" style="flex-grow: 1; margin-bottom: 20px;">
+
+  <div class="payment-card doubtful-card " >
+    <h1>Due Amount</h1>  
+    <div class=" mt-10">
+      <div style="flex-grow: 1; margin-left: 0px; color: #737373;">No.of entries : <span class="payment-card-amount">{{due_count}}</span> </div>
+    </div>
+    <div class=" mt-10">
+      <div style="flex-grow: 1; margin-left: 0px; color: #737373;">Total amount : <span class="payment-card-amount">{{due_amount|floatformat:3}}</span> </div>
+    </div>
+  </div>
+
+  <div class="payment-card normaldue-card " style="flex-grow: 1; margin-right: 20px;">
+    <h1>Advance Amount</h1>  
+    <div class=" mt-10">
+      <div style="flex-grow: 1; margin-left: 0px; color: #737373;">No.of entries : <span class="payment-card-amount">{{advance_count}}</span> </div>
+    </div>
+    <div class=" mt-10">
+      <div style="flex-grow: 1; margin-left: 0px; color: #737373;">Total amount : <span class="payment-card-amount">{{advance_amount|floatformat:3}}</span> </div>
+    </div>
+  </div>
+
+</div>
+
 <br>
 <div class="page-entries">Show {{entry_per_page}} entries</div>
+
+
 <table cellpadding="0" cellspacing="0" border="0" summary="" class="table table-hover footable common-table">
  
 <thead>
@@ -303,9 +332,9 @@
     <td data-label="Completed Payment" style="text-align:center;">{{invoice.dropzerosamountpaid|default_if_none:'0'}}/{{invoice.dropzerostotalamount|default_if_none:'0'}}</td>
     
     {% if invoice.balance <= 0 %}
-    <td data-label="Remining" class="green-text" style="text-align:center;font-size:19px;">{{invoice.balance|default_if_none:'0'}}</td>
+    <td data-label="Remining" class="green-text" style="text-align:center;font-size:19px;">{{invoice.balance|floatformat:3|default_if_none:'0'}}</td>
     {% else %}
-    <td data-label="Remining" class="red-text" style="text-align:center;font-size:19px;">{{invoice.balance|default_if_none:'0'}}</td>
+    <td data-label="Remining" class="red-text" style="text-align:center;font-size:19px;">{{invoice.balance|floatformat:3|default_if_none:'0'}}</td>
     {% endif %}
     
     <td data-label="" style="text-align:center;">

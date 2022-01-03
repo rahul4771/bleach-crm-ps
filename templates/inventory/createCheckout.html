@@ -15,8 +15,73 @@
         <!-- <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p> -->
       </div>
     </div>
+    <!-- Table modals begins here-->
+   
+<div class="modal fade bd-example-modal-lg" id="tableModal" tabindex="-1" role="dialog"
+aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal-dialog cancel-model cancel-order-border" role="document">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
 
+                <div class="d-flex cl-modal-icons">
+                    <button data-dismiss="modal" class="model-close" style="border:none;background: #ffffff;">
+                        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                    </button>
+
+                </div>
+            </div>
+        </div>
+        <div class="row mt-10">
+            <div class="col-md-12">
+              <table class="inv-table footable"> 
+                <thead>
+                  <tr>
+                      <th data-hide="phone,tablet" style="width: %;">
+                        
+                      </th>
+                      <th style="width: %;">
+                        Unit Code
+                      </th>
+                      <th data-hide="phone,tablet"  style="width: %; ">
+                        Serial No.
+                      </th>
+                      <th data-hide="phone,tablet"  style="width: %; ">
+                        Expiry Date
+                      </th>
+                      <th>Action</th>
+                      
+                     
+                     
+                  </tr>
+              </thead>
+              <tbody id="id_unit_body">
+                
+              </tbody>
+              </table>
+              
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <div class="cancel-model-content">
+                    
+               
+                    <!-- <button data-dismiss="modal" class="view-button">Close</button> -->
+                  
+                    
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</div>
+
+    <!-- table modal ends here-->
     <div class="main-content-holder">
+     
       <!--main-content-holder-->
       <div class="white-wrapper white-wrapper-padding">
         <div class="row av-font">
@@ -219,9 +284,6 @@
                       <th data-hide="phone,tablet"  style="width: %;" >
                         Quantity
                       </th>
-                      <th data-hide="phone,tablet"  style="width: %;" >
-                          Unit
-                      </th>
                      
                       <th data-hide="phone,tablet"  style="width: %;">Action</th>
                   </tr>
@@ -234,49 +296,9 @@
                 <input type="hidden" name="action" value="save_checkout_list">
                 {% endif %}
                 <input type="hidden" name="quantities" >
-              <tbody id="id_table">
-                {% comment %} {% for ingredient in service_recipe_ingredients %}
-                {% for item in ingredient.service_recipe_items %}
-                  {% if forloop.first %}
-                  <tr data-itemid="{{item.item.id}}">
-                  {% endif %}
-                  {% endfor %}
-               
-                  <td>{{ingredient.ingredient}}</td>
-                  {% for item in ingredient.service_recipe_items %}
-                    {% if item.is_swapped_item == True %}
-                      <td>{{item.item.name}}</td>
-                      <td>{{item.item.item_code}}</td>
-                    {% endif %}
-                  {% endfor %}
-                  <td>
-                  
-                    <!-- <div class="qty ">
-                      <span class="minus bg-dark" onclick="decrement({{forloop.counter}})" >-</span>
-                      <input type="text" class="count" id="id_qty_{{forloop.counter}}" name="qty" value="1">
-                      <span class="plus bg-dark" onclick="increment({{forloop.counter}})">+</span>
-                  </div> -->
-                  <div class="qty-container">
-  
-       
-                        
-                    <div class="quantity">
-                      <a class="quantity__minus pointer" onclick="decrement({{forloop.counter}})"><span>-</span></a>
-                      <input  type="text" class="quantity__input"  id="id_qty_{{forloop.counter}}" name="qty" value="1">
-                      <a  class="quantity__plus pointer" onclick="increment({{forloop.counter}})"><span>+</span></a>
-                    </div>
-                    
-                  </div>
-                  </td>
-                  <td>
-                    <button class="inv-plan-img-btn" data-toggle="modal" data-target="#deleteModel" > <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
-                    <button class="inv-plan-img-btn" onclick="swapModal({{ingredient.id}})" > <img src="{% static 'files/inventory/swap.png' %}"  alt=""> </button>
+              
+                <tbody id="id_table">
 
-                  </td>
-                </tr>
-                {% endfor %} {% endcomment %}
-
-                
                 {% for item in check_out_items %}
                 <tr data-itemid="{{item.item.id}}" id="id_tr_{{item.id}}">
                 <td>{% if item.service_item %}{{item.service_item.ingredient.ingredient}}{% else %}-{% endif %}</td>
@@ -285,28 +307,62 @@
                 </td>
                 <td>{% if item.service_item %}{{item.service_item.item.item_code}}{% else %}{{item.item.item_code}}{% endif %}</td>
                 <td>
-                <div class="qty-container">
-        
+                
+                <div class="qty-container qty-box-{{item.id}}" hidden>
                   <div class="quantity">
                     {% if item.service_item %}
-                      <a class="quantity__minus pointer" onclick="decrement({{forloop.counter}},{{item.service_item.item.id}})"><span>-</span></a>
-                      <input  type="number" class="quantity__input item_quantity" step="0.01"  id="id_qty_{{forloop.counter}}" value="{{item.units}}" name="checkout_quantity" oninput="quantitychange({{forloop.counter}},{{item.service_item.item.id}})" >
-                      <a  class="quantity__plus pointer" onclick="increment({{forloop.counter}},{{item.service_item.item.id}})"><span>+</span></a>
+                      <a class="quantity__minus pointer" onclick="decrementupdate({{item.id}},{{item.service_item.item.id}})"><span>-</span></a>
+                      <input  type="number" class="quantity__input item_quantity" step="0.01"  id="id_qty_{{item.id}}" value="{{item.units}}" name="checkout_quantity" oninput="quantitychangeupdate({{item.id}},{{item.service_item.item.id}})" >
+                      <a  class="quantity__plus pointer" onclick="incrementupdate({{item.id}},{{item.service_item.item.id}})"><span>+</span></a>
                     {% else %}
-                      <a class="quantity__minus pointer" onclick="decrement({{forloop.counter}},{{item.item.id}})"><span>-</span></a>
-                      <input  type="number" class="quantity__input item_quantity" step="0.01"  id="id_qty_{{forloop.counter}}" value="{{item.units}}" name="checkout_quantity" oninput="quantitychange({{forloop.counter}},{{item.item.id}})" >
-                      <a  class="quantity__plus pointer" onclick="increment({{forloop.counter}},{{item.item.id}})"><span>+</span></a>
+                      <a class="quantity__minus pointer" onclick="decrementupdate({{item.id}},{{item.item.id}})"><span>-</span></a>
+                      <input  type="number" class="quantity__input item_quantity" step="0.01"  id="id_qty_{{item.id}}" value="{{item.units}}" name="checkout_quantity" oninput="quantitychangeupdate({{item.id}},{{item.item.id}})" >
+                      <a  class="quantity__plus pointer" onclick="incrementupdate({{item.id}},{{item.item.id}})"><span>+</span></a>
                     {% endif %}
+
+                    {% if item.service_item %}  {% if item.service_item.item.measuring_unit %}{{item.service_item.item.measuring_unit}}{% else %}unit{% endif %} {% else %}  {% if item.item.measuring_unit %}{{item.item.measuring_unit}}{% else %}unit{% endif %}  {% endif %}
                     </div>
                     
                 </div>
+                
+                <div class="qty-box2-{{item.id}}" >
+                  {{item.units}} {% if item.service_item %}  {% if item.service_item.item.measuring_unit %}{{item.service_item.item.measuring_unit}}{% else %}unit{% endif %} {% else %}  {% if item.item.measuring_unit %}{{item.item.measuring_unit}}{% else %}unit{% endif %}  {% endif %}
+                </div>
+
                 </td>
-                <td>{% if item.service_item %}  {% if item.service_item.item.measuring_unit %}{{item.service_item.item.measuring_unit}}(S){% else %}unit(s){% endif %} {% else %}  {% if item.item.measuring_unit %}{{item.item.measuring_unit}}(s){% else %}unit(s){% endif %}  {% endif %}</td>
                 <td>
+                  
+                    {% if item.item.item_add_type == 'unit' or item.service_item.item.item_add_type == 'unit' %}
+                    <button type="button" class="inv-plan-img-btn" data-toggle="modal" data-target="#tableModal" onclick="listunits({{item.id}})"> <img src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
+                    {% else %}
+                    <button type="button" class="inv-plan-img-btn2-disabled" disabled> <img class="btn-img2" src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
+                    {% endif %}
+                  
+                    {% if item.service_item.item.item_add_type == 'quantity' %}
+                    <button type="button" class="inv-plan-img-btn" onclick="swapModal({{item.service_item.ingredient.id}},{{item.id}})" > <img src="{% static 'files/inventory/swap.png' %}"  alt=""> </button>
+                    {% else %}
+                    <button type="button" class="inv-plan-img-btn2-disabled" disabled > <img class="btn-img2" src="{% static 'files/inventory/swap.png' %}"  alt=""> </button>
+                    {% endif %}
+
+                    <button class="inv-plan-img-btn" type="button" onclick="openEditbtns({{item.id}})"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>  
+
                     <button class="inv-plan-img-btn" type="button" data-toggle="modal" data-target="#deleteModel" onclick="delete_checkout_item(this)" data-checkoutid="{{item.id}}" > <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
-                    {% if item.service_item %}<button type="button" class="inv-plan-img-btn" onclick="swapModal({{item.service_item.ingredient.id}},{{item.id}})" > <img src="{% static 'files/inventory/swap.png' %}"  alt=""> </button>{% endif %}
                 </td>
                 </tr>
+
+                {% comment %} {% for itemunit in item.checkoutitem_units %}
+                {% if itemunit.checkout_item.service_item == item.service_item %}
+                <tr>
+                <td></td>
+                <td></td>
+                <td>{{itemunit.item_unit.unit_code}}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                </tr>
+                {% endif %}
+                {% endfor %} {% endcomment %}
+
                 {% endfor %}
 
                 {% comment %} <tr>
@@ -316,7 +372,11 @@
               
               </table> 
             </div>
-            <button type="button" class="inv-plan-btn" onclick="openNavAddStore()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="" > Add Item</button>
+            <button type="button" class="inv-plan-btn mt-10" onclick="openNavAddStore('addcount')"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="" > Add Item</button>
+            
+            <button type="button" class="inv-plan-btn mt-10 ml-10" onclick="resetlist()"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt="" > Reset</button>
+            </form>
+
           </div>
         </div>
         <div class="row mt-20 text-center">
@@ -399,15 +459,27 @@
           <input type="hidden" name="item" id="id_pro_sel" value="" />
           <div style="position: relative;">
               <div class="inv-input-container inv-border h-30">
-                  <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()">
+                  <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()" >
                  
               </div>
               <div id="id_search" class="row inv-result-box" style="display: none;">
                 
               </div>
           </div>
-         
+         <br>
+          <div class="qty-container">
+    
+            <div class="quantity">
+              
+                <a class="quantity__minus pointer" onclick="decrement()"><span>-</span></a>
+                <input  type="number" class="quantity__input item_quantity" step="0.01"  id="id_qty" value="0" name="checkout_quantity" oninput="quantitychange()" >
+                <a  class="quantity__plus pointer" onclick="increment()"><span>+</span></a>
+              
+              </div>
+              
+          </div>
 
+          <div>Available : <span id="id_item_count">0</span></div>
 
       </div>
 
@@ -421,6 +493,8 @@
       <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
   </div>
 </div>
+
+<!-- swap item -->
 <div id="addStore2" class="inv-sidedrawer">
 
   <div class="inv-sidedrawer-inner">
@@ -465,6 +539,20 @@
               </div>
           </div>
          
+          <br>
+          <div class="qty-container">
+    
+            <div class="quantity">
+              
+                <a class="quantity__minus pointer" onclick="swapdecrement()"><span>-</span></a>
+                <input  type="number" class="quantity__input item_quantity" step="0.01"  id="id_qty2" value="0" name="checkout_quantity" oninput="swapquantitychange()" >
+                <a  class="quantity__plus pointer" onclick="swapincrement()"><span>+</span></a>
+              
+              </div>
+              
+          </div>
+
+          <div>Available : <span id="id_item_count2">0</span></div>
 
 
       </div>
@@ -493,6 +581,78 @@
 </div>
 
 
+<!-- swap unit -->
+<div id="addStore3" class="inv-sidedrawer">
+
+  <div class="inv-sidedrawer-inner">
+      <div class="d-flex">
+          <div class="inv-drawer-head" id="itemHead2">
+              Swap Unit
+          </div>
+          <div class="right-pos">
+
+              <button onclick="closeNavAddStore3()" class="img-button">
+                  <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+              </button>
+          </div>
+      </div>
+      <hr>
+
+      {% comment %} <form method="POST" action="" >{% csrf_token %} {% endcomment %}
+      <div class="row mt-20">
+        <div class="col-md-12 ">
+          <div class="model-input-name">Unit</div>
+          
+          <input type="hidden" name="checkout_id" id="id_item_checkout_unit" value="" />
+          <input type="hidden" name="checkout_unit_id" id="id_checkout_unit" value="" />
+          <input type="hidden" name="item_unit_id" id="id_pro_sel3" value="" />
+
+          <div style="position: relative;">
+              <div class="inv-input-container inv-border h-30">
+                  <input autocomplete="off" onclick="ProductListShow3()" type="text" id="pro-name3" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts3()">
+                 
+                  <!-- <div onclick="ProductListShow()" class="model-filter">
+                      
+                          <i class="fa fa-angle-down fa-lg " style="color: #707070;" aria-hidden="true"></i>
+                      
+
+                  </div> -->
+
+
+
+              </div>
+              <div id="id_search3" class="row inv-result-box" style="display: none;">
+                
+              </div>
+          </div>
+         
+
+
+      </div>
+
+      </div>
+      <!-- <div class="row mt-20">
+          <div class="col-md-12 ">
+              <div class="model-input-name">Unit</div>
+
+              <div class="qty ">
+                  <span style="color: #4B4B4B;"  class="minus bg-dark qty-border-two">-</span>
+                  <input style="color: #4B4B4B;"  type="" class="count qty-border-two" name="qty" value="1" >
+                  <span style="color: #4B4B4B; margin-left: -4px !important;" class="plus bg-dark qty-border-two">+</span>
+              </div>
+          </div>
+
+      </div> -->
+
+
+  </div>
+  <div class="inv-drawer-footer">
+      <button class="sent-button" type="button" onclick="unitswap()">Submit</button>
+      {% comment %} </form> {% endcomment %}
+      <button data-dismiss="modal" onclick="closeNavAddStore3()" class="view-button">Cancel</button>
+  </div>
+</div>
+
 
 </div>
 
@@ -502,6 +662,7 @@
 {% block javascript %}
 
 <script>
+
 async function swapModal(id,checkout_item_id){
   console.log(id)
   $('#id_ingredient').val(id);
@@ -549,6 +710,56 @@ async function swapModal(id,checkout_item_id){
   
 }
 
+
+async function swapUnitModal(checkout_item_id,checkout_unit_id){
+  console.log(checkout_item_id,checkout_unit_id,"checkid")
+  $('#id_item_checkout_unit').val(checkout_item_id);
+  $('#id_checkout_unit').val(checkout_unit_id);
+  $('#id_search3').empty();
+  $('#pro-name3').val('');
+
+  //list items using api    
+
+    var result = await _get('api/inventory-checkout-item-units/?checkout_item_id='+checkout_item_id);
+    if(result.status == 200){
+        //console.log(result.data.ingredient,"ing")
+                    
+              $.each(result.data.unit_dropdown_list,function(key,value){
+                  console.log(value.item_name,"lo")
+                  var tempId = value.item_id;
+                  var tempName = value.item_name;
+
+                  $('#id_search3').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" id="id_product'+value.unit_id+'"  onclick="closeProductShow3(this)" data-pro="'+value.unit_id+'" data-name="'+value.unit_code+'"><div class="inv-search-result">'+value.unit_code+'</div></div>');
+              })     
+
+    }else{
+      showNotification('No Data','error')
+    }
+    
+     
+        //{% for item in items %}
+    //var tempId = '{{item.id}}';
+    //var tempName = '{{item.name}}';
+
+    //$('#id_search2').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" id="id_product{{item.id}}"  onclick="closeProductShow2(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
+
+    //{% endfor %}
+
+   
+    
+    if(screen.width<= 600){
+        document.getElementById("addStore3").style.width = "100%";
+    }else if(screen.width<= 720){
+        document.getElementById("addStore3").style.width = "50%";
+    }
+    else{
+        document.getElementById("addStore3").style.width = "30%";
+    }  
+    //hideselectedoptions2();
+  
+}
+
+
 function hideselectedoptions(){
             
 
@@ -594,45 +805,109 @@ function hideselectedoptions(){
 
       var item_id = $('#id_pro_sel').val() ;
       var visit_id = "{{visit.id}}" ;
+      var quantity = $('#id_qty').val();
       console.log(item_id,visit_id,"po")
     
-      var result = await _get('api/inventory-checkout-item-add/?item_id='+item_id+'&visit_id='+visit_id);
+      var result = await _get('api/inventory-checkout-item-add/?item_id='+item_id+'&visit_id='+visit_id+'&quantity='+quantity);
         if(result.status == 200){
-          console.log(result,"resss")
-        $('#id_table').append(
+          console.log(result.data.success,"resss")
+          if (result.data.success == true){
+            if (result.data.item_type == 'unit'){
+            
+                    $('#id_table').append(
 
-          `<tr data-itemid="`+result.data.item_id+`" id="id_tr_`+result.data.checkout_item_id+`">
-            <td></td>
-            <td id="id_item_name_`+result.data.item_id+`" >
-              `+result.data.item_name+`
-            </td>
-            <td>`+result.data.item_code+`</td>
-            <td>
-            <div class="qty-container">
-    
-              <div class="quantity">
-                
-                  <a class="quantity__minus pointer" onclick="decrement(`+result.data.item_count+`,`+result.data.item_id+`)"><span>-</span></a>
-                  <input  type="number" class="quantity__input item_quantity" step="0.01"  id="id_qty_`+result.data.item_count+`" value="0" name="checkout_quantity" oninput="quantitychange(`+result.data.item_count+`,`+result.data.item_id+`)" >
-                  <a  class="quantity__plus pointer" onclick="increment(`+result.data.item_count+`,`+result.data.item_id+`)"><span>+</span></a>
-                
-                </div>
-                
-            </div>
-            </td>
-            <td>`+result.data.item_unit+`</td>
-            <td>
-                <button class="inv-plan-img-btn" type="button" data-toggle="modal" data-target="#deleteModel" onclick="delete_checkout_item(this)" data-checkoutid="`+result.data.checkout_item_id+`" > <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
-            </td>
-            </tr>`
+                      `<tr data-itemid="`+result.data.item_id+`" id="id_tr_`+result.data.checkout_item_id+`">
+                        <td></td>
+                        <td id="id_item_name_`+result.data.item_id+`" >
+                          `+result.data.item_name+`
+                        </td>
+                        <td>`+result.data.item_code+`</td>
+                        <td>
+                          <div class="qty-container qty-box-`+result.data.checkout_item_id+`" hidden>
+                            <div class="quantity">
+                  
+                              <a class="quantity__minus pointer" onclick="decrementupdate(`+result.data.checkout_item_id+`,`+result.data.item_id+`)"><span>-</span></a>
+                              <input  type="number" class="quantity__input item_quantity" step="0.01"  id="id_qty_`+result.data.checkout_item_id+`" value="`+result.data.item_quantity+`" name="checkout_quantity" oninput="quantitychangeupdate(`+result.data.checkout_item_id+`,`+result.data.item_id+`)" >
+                              <a  class="quantity__plus pointer" onclick="incrementupdate(`+result.data.checkout_item_id+`,`+result.data.item_id+`)"><span>+</span></a>
+                              unit
+                            </div>
+                              
+                          </div>
+                          
+                          <div class="qty-box2-`+result.data.checkout_item_id+`" >
+                            `+result.data.item_quantity+` unit
+                          </div>
+                        </td>
+                        <td>
+                            <button type="button" class="inv-plan-img-btn" data-toggle="modal" data-target="#tableModal" onclick="listunits(`+result.data.checkout_item_id+`)"> <img src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
+                            <button type="button" class="inv-plan-img-btn2-disabled" disabled > <img class="btn-img2" src="{% static 'files/inventory/swap.png' %}"  alt=""> </button>
+                            <button class="inv-plan-img-btn" type="button" onclick="openEditbtns(`+result.data.checkout_item_id+`)"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>  
+                            <button class="inv-plan-img-btn" type="button" data-toggle="modal" data-target="#deleteModel" onclick="delete_checkout_item(this)" data-checkoutid="`+result.data.checkout_item_id+`" > <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
+                            
+                        </td>
+                        </tr>`
 
-        )
+                    )
+              }else{
+                console.log("lokam")
+                $('#id_table').append(
 
-        closeNavAddStore()
+                      `<tr data-itemid="`+result.data.item_id+`" id="id_tr_`+result.data.checkout_item_id+`">
+                        <td></td>
+                        <td id="id_item_name_`+result.data.item_id+`" >
+                          `+result.data.item_name+`
+                        </td>
+                        <td>`+result.data.item_code+`</td>
+                        <td>
+
+                          <div class="qty-container qty-box-`+result.data.checkout_item_id+`" hidden>
+                            <div class="quantity">
+                  
+                              <a class="quantity__minus pointer" onclick="decrementupdate(`+result.data.checkout_item_id+`,`+result.data.item_id+`)"><span>-</span></a>
+                              <input  type="number" class="quantity__input item_quantity" step="0.01"  id="id_qty_`+result.data.checkout_item_id+`" value="`+result.data.item_quantity+`" name="checkout_quantity" oninput="quantitychangeupdate(`+result.data.checkout_item_id+`,`+result.data.item_id+`)" >
+                              <a  class="quantity__plus pointer" onclick="incrementupdate(`+result.data.checkout_item_id+`,`+result.data.item_id+`)"><span>+</span></a>
+                              `+result.data.item_unit+`
+                            </div>
+                              
+                          </div>
+                          
+                          <div class="qty-box2-`+result.data.checkout_item_id+`" >
+                            `+result.data.item_quantity+` `+result.data.item_unit+`
+                          </div>
+
+                        </td>
+                        <td>
+                            <button type="button" class="inv-plan-img-btn2-disabled" disabled> <img class="btn-img2" src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
+                            <button type="button" class="inv-plan-img-btn2-disabled" disabled > <img class="btn-img2" src="{% static 'files/inventory/swap.png' %}"  alt=""> </button>
+                            <button class="inv-plan-img-btn" type="button" onclick="openEditbtns(`+result.data.checkout_item_id+`)"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>  
+                            <button class="inv-plan-img-btn" type="button" data-toggle="modal" data-target="#deleteModel" onclick="delete_checkout_item(this)" data-checkoutid="`+result.data.checkout_item_id+`" > <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
+                            
+                        </td>
+                        </tr>`
+
+                    )
+              }
+              closeNavAddStore()
+              showNotification(result.data.message,'success')
+          }else{
+          closeNavAddStore()
+          showNotification(result.data.message,'error')
+          }
         }
     }
 
+    //<div class="qty-container">
     
+    //  <div class="quantity">
+        
+    //      <a class="quantity__minus pointer" onclick="decrement(`+result.data.item_count+`,`+result.data.item_id+`)"><span>-</span></a>
+    //      <input  type="number" class="quantity__input item_quantity" step="0.01"  id="id_qty_`+result.data.item_count+`" value="0" name="checkout_quantity" oninput="quantitychange(`+result.data.item_count+`,`+result.data.item_id+`)" >
+    //      <a  class="quantity__plus pointer" onclick="increment(`+result.data.item_count+`,`+result.data.item_id+`)"><span>+</span></a>
+        
+    //    </div>
+        
+    //</div>
+
     //checkout item delete
     async function itemdelete(){
 
@@ -656,121 +931,223 @@ function hideselectedoptions(){
       var service_item = $('#id_pro_sel2').val() ;
       var ingredient_id = $('#id_ingredient').val() ;
       var checkout_item_id = parseInt($('#id_item_checkout').val()) ;
-      var item_count = 0 ;
-      
-      //getting forloop count for increment,decrenmt func
-      {% for item in check_out_items %}
-      
-        if ({{item.id}} == checkout_item_id ){
-          console.log("run")
-          item_count = {{forloop.counter}}
-        }
-      {% endfor %}
+      var quantity = $('#id_qty2').val() ;
 
-      console.log(item_count,"cnt")
-
-      var result = await _get('api/inventory-checkout-item-swap/?service_item='+service_item+'&ingredient_id='+ingredient_id+'&checkout_item_id='+checkout_item_id);
+      var result = await _get('api/inventory-checkout-item-swap/?service_item='+service_item+'&ingredient_id='+ingredient_id+'&checkout_item_id='+checkout_item_id+'&quantity='+quantity);
         if(result.status == 200){
           console.log(result.data.checkout_item_id,"resss")
 
           $('#id_tr_'+result.data.checkout_item_id+'').empty();
-          $('#id_tr_'+result.data.checkout_item_id+'').append(
-            `<td>`+result.data.ingredient_name+`</td>
-            <td id="id_item_name_`+result.data.item_id+`" >
-              `+result.data.item_name+`
-            </td>
-            <td>`+result.data.item_code+`</td>
-            <td>
-            <div class="qty-container">
-    
-              <div class="quantity">
-                
-                  <a class="quantity__minus pointer" onclick="decrement(`+item_count+`,`+result.data.item_id+`)"><span>-</span></a>
-                  <input  type="number" class="quantity__input item_quantity" step="0.01"  id="id_qty_`+item_count+`" value="0" name="checkout_quantity" oninput="quantitychange(`+item_count+`,`+result.data.item_id+`)" >
-                  <a  class="quantity__plus pointer" onclick="increment(`+item_count+`,`+result.data.item_id+`)"><span>+</span></a>
-                
+
+          if (result.data.item_type == 'unit'){
+            $('#id_tr_'+result.data.checkout_item_id+'').append(
+              `<td>`+result.data.ingredient_name+`</td>
+              <td id="id_item_name_`+result.data.item_id+`" >
+                `+result.data.item_name+`
+              </td>
+              <td>`+result.data.item_code+`</td>
+              <td>
+                <div class="qty-container qty-box-`+result.data.checkout_item_id+`" hidden>
+                  <div class="quantity">
+        
+                    <a class="quantity__minus pointer" onclick="decrementupdate(`+result.data.checkout_item_id+`,`+result.data.item_id+`)"><span>-</span></a>
+                    <input  type="number" class="quantity__input item_quantity" step="0.01"  id="id_qty_`+result.data.checkout_item_id+`" value="`+quantity+`" name="checkout_quantity" oninput="quantitychangeupdate(`+result.data.checkout_item_id+`,`+result.data.item_id+`)" >
+                    <a  class="quantity__plus pointer" onclick="incrementupdate(`+result.data.checkout_item_id+`,`+result.data.item_id+`)"><span>+</span></a>
+                    unit
+                  </div>
+                    
                 </div>
                 
-            </div>
-            </td>
-            <td>`+result.data.item_unit+`</td>
-            <td>
+                <div class="qty-box2-`+result.data.checkout_item_id+`" >
+                  `+quantity+` unit
+                </div>
+              </td>
+              <td>
+                <button type="button" class="inv-plan-img-btn" data-toggle="modal" data-target="#tableModal" onclick="listunits(`+result.data.checkout_item_id+`)"> <img src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
+                <button type="button" class="inv-plan-img-btn2-disabled" disabled > <img class="btn-img2" src="{% static 'files/inventory/swap.png' %}"  alt=""> </button>
+                <button class="inv-plan-img-btn" type="button" onclick="openEditbtns(`+result.data.checkout_item_id+`)"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>  
                 <button class="inv-plan-img-btn" type="button" data-toggle="modal" data-target="#deleteModel" onclick="delete_checkout_item(this)" data-checkoutid="`+result.data.checkout_item_id+`" > <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
+                </td>`
+            )
+          }else{
+            $('#id_tr_'+result.data.checkout_item_id+'').append(
+              `<td>`+result.data.ingredient_name+`</td>
+              <td id="id_item_name_`+result.data.item_id+`" >
+                `+result.data.item_name+`
+              </td>
+              <td>`+result.data.item_code+`</td>
+              <td>
+                <div class="qty-container qty-box-`+result.data.checkout_item_id+`" hidden>
+                  <div class="quantity">
+        
+                    <a class="quantity__minus pointer" onclick="decrementupdate(`+result.data.checkout_item_id+`,`+result.data.item_id+`)"><span>-</span></a>
+                    <input  type="number" class="quantity__input item_quantity" step="0.01"  id="id_qty_`+result.data.checkout_item_id+`" value="`+quantity+`" name="checkout_quantity" oninput="quantitychangeupdate(`+result.data.checkout_item_id+`,`+result.data.item_id+`)" >
+                    <a  class="quantity__plus pointer" onclick="incrementupdate(`+result.data.checkout_item_id+`,`+result.data.item_id+`)"><span>+</span></a>
+                    `+result.data.item_unit+`
+                  </div>
+                    
+                </div>
+                
+                <div class="qty-box2-`+result.data.checkout_item_id+`" >
+                  `+result.data.item_quantity+` `+result.data.item_unit+`
+                </div>
+              </td>
+              <td>
+                <button type="button" class="inv-plan-img-btn2-disabled" disabled> <img class="btn-img2" src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
                 <button type="button" class="inv-plan-img-btn" onclick="swapModal(`+result.data.ingredient_id+`,`+result.data.checkout_item_id+`)" > <img src="{% static 'files/inventory/swap.png' %}"  alt=""> </button>
-              </td>`
-          )
-
+                <button class="inv-plan-img-btn" type="button" onclick="openEditbtns(`+result.data.checkout_item_id+`)"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>  
+                <button class="inv-plan-img-btn" type="button" data-toggle="modal" data-target="#deleteModel" onclick="delete_checkout_item(this)" data-checkoutid="`+result.data.checkout_item_id+`" > <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
+                </td>`
+            )
+          }
           closeNavAddStore2()
 
         }
     }
 
 
-    async function quantitychange(id,item_id){
-      console.log("mac",id,item_id)
-    
-      var quantity = $('#id_qty_'+id).val() ;
-      console.log(quantity,"po")
-    
-      var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+    //checkout item swap
+    async function unitswap(){
+
+      var swap_unit_id = $('#id_pro_sel3').val() ;
+      var checkout_unit_id = $('#id_checkout_unit').val() ;
+
+      var result = await _get('api/inventory-checkout-item-unit-swap/?swap_unit_id='+swap_unit_id+'&checkout_unit_id='+checkout_unit_id);
         if(result.status == 200){
-          console.log(result.data.item_available,"lop1")
-          if (result.data.item_available == true){
-            console.log("lo1")
-            $('#id_item_name_'+item_id+'').addClass("inv-green")
-            $('#id_item_name_'+item_id+'').removeClass("inv-red")
-          }else{
-            console.log("lo2")
-            $('#id_item_name_'+item_id+'').addClass("inv-red")
-            $('#id_item_name_'+item_id+'').removeClass("inv-green")
-          }
+          //console.log(result.data.checkout_item_id,"resss")
+
+          listunits($('#id_item_checkout_unit').val())
+          closeNavAddStore3()
+
         }
     }
 
 
-async function increment(id,item_id){
-  console.log(id,item_id)
-  $('#id_qty_'+id).val(parseInt($('#id_qty_'+id).val()) + 1 );
+    function openEditbtns(id){
+      $('.qty-box-'+id+'').show()
+      $('.qty-box2-'+id+'').hide()
+      
+    }
 
-  var quantity = parseInt($('#id_qty_'+id).val()) ;
-  console.log(quantity,"po")
+
+    async function quantitychange(){
+      
+      var item_id = $('#id_pro_sel').val();
+      var quantity = $('#id_qty').val() ;
+      console.log(item_id,quantity,"po")
+    
+      var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+        if(result.status == 200){
+          console.log(result.data.item_available,result.data.item_count,"lop1")
+          $('#id_qty').val(result.data.item_quantity);
+          $('#id_item_count').text(result.data.item_count);
+        }
+    }
+
+    async function swapquantitychange(){
+      
+      var item_id = $('#id_pro_sel2').val();
+      var quantity = $('#id_qty2').val() ;
+      console.log(item_id,quantity,"po")
+    
+      var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+        if(result.status == 200){
+          console.log(result.data.item_available,result.data.item_count,"lop1")
+          $('#id_qty2').val(result.data.item_quantity);
+          $('#id_item_count2').text(result.data.item_count);
+        }
+    }
+
+async function increment(){
+  console.log($('#id_pro_sel2').val(),"prose")
+  
+  var item_id = $('#id_pro_sel').val();
+
+  $('#id_qty').val(parseInt($('#id_qty').val()) + 1 );
+
+  var quantity = parseInt($('#id_qty').val()) ;
+  console.log(item_id,quantity,"po")
 
   var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
     if(result.status == 200){
       console.log(result.data.item_available,"lop2")
-      if (result.data.item_available == true){
-        console.log("lo1")
-        $('#id_item_name_'+item_id+'').addClass("inv-green")
-        $('#id_item_name_'+item_id+'').removeClass("inv-red")
-      }else{
-        console.log("lo2")
-        $('#id_item_name_'+item_id+'').addClass("inv-red")
-        $('#id_item_name_'+item_id+'').removeClass("inv-green")
-      }
-    }
 
-    $('input[name="checkout_quantity"]').each(function(){
-      //code
-     console.log($(this).val(),"logg");
-});
+      $('#id_qty').val(result.data.item_quantity);
+      $('#id_item_count').text(result.data.item_count);
+      
+    }
 }
 
-async function decrement(id,item_id){
+async function swapincrement(){
   
-  if ($('#id_qty_'+id).val() > 0) {
-  $('#id_qty_'+id).val(parseInt($('#id_qty_'+id).val()) - 1 );
+  var item_id = $('#id_pro_sel2').val();
+
+  $('#id_qty2').val(parseInt($('#id_qty2').val()) + 1 );
+
+  var quantity = parseInt($('#id_qty2').val()) ;
+  console.log(item_id,quantity,"po")
+
+  var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+    if(result.status == 200){
+      console.log(result.data.item_available,"lop2")
+
+      $('#id_qty2').val(result.data.item_quantity);
+      $('#id_item_count2').text(result.data.item_count);
+      
+    }
+}
+
+async function decrement(){
+  var item_id = $('#id_pro_sel').val();
+
+  if ($('#id_qty').val() > 0) {
+  $('#id_qty').val(parseInt($('#id_qty').val()) - 1 );
   }
 
-  if ($('#id_qty_'+id).val() == 0) {
-    $('#id_qty_'+id).val(parseInt($('#id_qty_'+id).val()) - 1 );
-    $('#id_qty_'+id).val(0);
+  if ($('#id_qty').val() == 0) {
+    $('#id_qty').val(parseInt($('#id_qty').val()) - 1 );
+    $('#id_qty').val(0);
   }
 
-  var quantity = parseInt($('#id_qty_'+id).val()) ;
+  var quantity = parseInt($('#id_qty').val()) ;
 
   var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
     if(result.status == 200){
       console.log(result.data.item_available,"lop3")
+      $('#id_qty').val(result.data.item_quantity);
+    }
+}
+
+async function swapdecrement(){
+  var item_id = $('#id_pro_sel').val();
+
+  if ($('#id_qty2').val() > 0) {
+  $('#id_qty2').val(parseInt($('#id_qty2').val()) - 1 );
+  }
+
+  if ($('#id_qty2').val() == 0) {
+    $('#id_qty2').val(parseInt($('#id_qty2').val()) - 1 );
+    $('#id_qty2').val(0);
+  }
+
+  var quantity = parseInt($('#id_qty2').val()) ;
+
+  var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+    if(result.status == 200){
+      console.log(result.data.item_available,"lop3")
+      $('#id_qty2').val(result.data.item_quantity);
+    }
+}
+
+async function quantitychangeupdate(id,item_id){
+  console.log("mac",id,item_id)
+
+  var quantity = $('#id_qty_'+id).val() ;
+  console.log(quantity,"po")
+
+  var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+    if(result.status == 200){
+      console.log(result.data.item_available,result.data.item_count,"lop1")
       if (result.data.item_available == true){
         console.log("lo1")
         $('#id_item_name_'+item_id+'').addClass("inv-green")
@@ -779,9 +1156,79 @@ async function decrement(id,item_id){
         console.log("lo2")
         $('#id_item_name_'+item_id+'').addClass("inv-red")
         $('#id_item_name_'+item_id+'').removeClass("inv-green")
+        $('#id_qty_'+id).val(result.data.item_count);
       }
     }
 }
+
+
+async function incrementupdate(id,item_id){
+console.log(id,item_id)
+$('#id_qty_'+id).val(parseInt($('#id_qty_'+id).val()) + 1 );
+
+var quantity = parseInt($('#id_qty_'+id).val()) ;
+console.log(quantity,"po")
+
+var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+if(result.status == 200){
+  console.log(result.data.item_available,result.data.item_count,"lop2")
+  if (result.data.item_available == true){
+    console.log("lo1")
+    $('#id_item_name_'+item_id+'').addClass("inv-green")
+    $('#id_item_name_'+item_id+'').removeClass("inv-red")
+  }else{
+    console.log("lo2")
+    $('#id_item_name_'+item_id+'').addClass("inv-red")
+    $('#id_item_name_'+item_id+'').removeClass("inv-green")
+    $('#id_qty_'+id).val(result.data.item_count);
+  }
+}
+}
+
+async function decrementupdate(id,item_id){
+
+if ($('#id_qty_'+id).val() > 0) {
+$('#id_qty_'+id).val(parseInt($('#id_qty_'+id).val()) - 1 );
+}
+
+if ($('#id_qty_'+id).val() == 0) {
+$('#id_qty_'+id).val(parseInt($('#id_qty_'+id).val()) - 1 );
+$('#id_qty_'+id).val(0);
+}
+
+var quantity = parseInt($('#id_qty_'+id).val()) ;
+
+var result = await _get('api/inventory-item-quantity-check/?item_id='+item_id+'&quantity='+quantity);
+if(result.status == 200){
+  console.log(result.data.item_available,"lop3")
+  if (result.data.item_available == true){
+    console.log("lo1")
+    $('#id_item_name_'+item_id+'').addClass("inv-green")
+    $('#id_item_name_'+item_id+'').removeClass("inv-red")
+  }else{
+    console.log("lo2")
+    $('#id_item_name_'+item_id+'').addClass("inv-red")
+    $('#id_item_name_'+item_id+'').removeClass("inv-green")
+  }
+}
+}
+
+
+
+
+async function listunits(checkout_item_id){
+  $('#id_unit_body').empty();
+  //var checkout_item_id = $
+  var result = await _get('api/inventory-checkout-item-units/?checkout_item_id='+checkout_item_id);
+    if(result.status == 200){
+      console.log(result.data.item_units_list,"ulist")
+      $.each(result.data.item_units_list,function(key,value){
+        console.log(key,value,"romp")
+        $('#id_unit_body').append('<tr><td>'+ parseInt(key+1) +'</td><td>'+value.item_unit_code+'</td><td>'+value.item_unit_serial_no+'</td><td>'+value.item_unit_expiry+'</td><td><button type="button" class="inv-plan-img-btn" onclick="swapUnitModal('+checkout_item_id+','+value.item_unit_id+')" > <img src="{% static 'files/inventory/swap.png' %}"  alt=""> </button></td></tr>')
+      })
+    }
+}
+
 
 
 var products = [];
@@ -816,7 +1263,7 @@ var products = [];
 
         $(document).ready(function(){
 
-          itemcheck()
+          //itemcheck()
 
           
           //console.log($('td').classList.contains('inv-red'),"werrr")
@@ -824,8 +1271,24 @@ var products = [];
 
         });
 
+        //reset items
+        async function resetlist(){
 
-        async function itemcheck(){
+            var visit_id = "{{visit.id}}" ;
+            
+            console.log(visit_id,"po")
+          
+            var result = await _get('api/inventory-checkout-item-delete/?visit_id='+visit_id);
+              if(result.status == 200){
+                
+                window.location.reload();
+                showNotification('List Reset !','success')
+                
+              }
+        }
+
+
+        {% comment %} async function itemcheck(){
           console.log("lgm")
         {% for item in check_out_items %}  
         
@@ -847,7 +1310,7 @@ var products = [];
 
           
 
-            }
+            } {% endcomment %}
 
 
         function showProducts(){
@@ -891,15 +1354,37 @@ var products = [];
         
     }
 
+    function showProducts3(){
+      $('#id_search3').empty();
+      for (var j=0; j<products2.length; j++) {
+          if (products2[j].name.toUpperCase().match($('#pro-name2').val().toUpperCase())){
+              
+      $('#id_search3').append('<div class="col-md-12 inv-search-drop" style="padding:0px !important;" onclick="closeProductShow(this)"  data-pro="'+products2[j].id+'" data-name="'+products2[j].name+'"><div class="inv-search-result">'+products2[j].name+'</div></div>');
+  
+          }
+      }
+          console.log( $('#pro-name3').val());
+          if($('#pro-name3').val() !=""){
+          document.getElementById("id_search3").style.display="block"
+  
+          }else{
+          document.getElementById("id_search3").style.display="none"
+  
+          }
+          
+      }
+
     function closeProductShow(d){
         console.log(d);
         var proId = $(d).attr("data-pro")
         $('#id_pro_sel').val($(d).attr("data-pro"));
         $('#pro-name').val($(d).attr("data-name"));
 
+        quantitychange();
 
         document.getElementById("id_search").style.display="none"
     }
+
     function closeProductShow2(d){
         console.log(d);
         var proId = $(d).attr("data-pro")
@@ -909,6 +1394,19 @@ var products = [];
 
         document.getElementById("id_search2").style.display="none"
     }
+
+    function closeProductShow3(d){
+      console.log(d);
+      var proId = $(d).attr("data-pro")
+      $('#id_pro_sel3').val($(d).attr("data-pro"));
+      $('#pro-name3').val($(d).attr("data-name"));
+
+
+      document.getElementById("id_search3").style.display="none"
+  }
+
+
+
    $("#pro-name").click(function(){
         document.getElementById("id_cat").style.display="none"
     });
@@ -944,6 +1442,9 @@ function closeNavAddStore() {
 function closeNavAddStore2() {
     document.getElementById("addStore2").style.width = "0";
 }
+function closeNavAddStore3() {
+  document.getElementById("addStore3").style.width = "0";
+}
 
 function delete_checkout_item(d){
   console.log("lppp")
@@ -971,9 +1472,15 @@ function ProductListShow(){
     searchFlag = true;
     document.getElementById("id_search").style.display="block"
 }
+
 function ProductListShow2(){
     searchFlag = true;
     document.getElementById("id_search2").style.display="block"
+}
+
+function ProductListShow3(){
+  searchFlag = true;
+  document.getElementById("id_search3").style.display="block"
 }
 
 function showOf(id){

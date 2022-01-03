@@ -243,7 +243,7 @@
                                  
                                  <br>
                                  <div class="inv-item-amount2">
-                                     {% if inventory_item.item_add_type == 'unit' %}{{inventory_item.unit_count}}{% else %}{{inventory_item.total_quantity|floatformat:3}}{% endif %} <span style="font-size: 25px;"> {% if inventory_item.item_add_type == 'unit' %}Unit(s){% else %}{{inventory_item.measuring_unit}}(s){% endif %} </span>                    
+                                     {% if inventory_item.item_add_type == 'unit' %}{{inventory_item.unit_count}}{% else %}{{inventory_item.total_quantity|floatformat:3}}{% endif %} <span style="font-size: 25px;"> {% if inventory_item.item_add_type == 'unit' %}Unit{% else %}{{inventory_item.measuring_unit}}{% endif %} </span>                    
                                  </div>
                              </div>
                             </div>
@@ -260,7 +260,7 @@
                                            </div>    
                                          <!-- 135 Unit  -->
                                          <!-- <span id="id_res_val" class="inv-item-amount2"> {{inventory_item.reserve_count|default_if_none:'0'}}  <span style="font-size: 25px;"> unit(s) </span> </span> -->
-                                         <div id="id_res_val" class="inv-item-amount2"> {{inventory_item.reserve_count|default_if_none:'0'}}  <span style="font-size: 25px;"> {% if inventory_item.item_add_type == 'unit' %}Unit(s){% else %}{{inventory_item.measuring_unit}}(s){% endif %} </span>  </div>
+                                         <div id="id_res_val" class="inv-item-amount2"> {{inventory_item.reserve_count|default_if_none:'0'}}  <span style="font-size: 25px;"> {% if inventory_item.item_add_type == 'unit' %}Unit{% else %}{{inventory_item.measuring_unit}}{% endif %} </span>  </div>
                               </div>
                              </div>
                          </div>
@@ -441,11 +441,11 @@
                                 <tbody>
                                     {% for history in item_history %}
                                     <tr>
-                                        <td>{{history.purchase_order.purchase_order_id|default_if_none:"-"}}</td>
+                                        <td>{% if history.purchase_order %}{{history.purchase_order.purchase_order_id|default_if_none:"-"}}{% else %}-{% endif %}</td>
                                         <td>{% if history.purchase_order %}{{history.purchase_order.created|date:'d-m-Y'|default_if_none:'-'}}{% else %}{{history.purchase_date|date:'d-m-Y'}}{% endif %}</td>
                                         <td>{{history.quantity}}</td>
-                                        <td>{{history.added_by}}</td>
-                                        <td>{{history.purchase_order.created|date:'d-m-Y'|default_if_none:'-'}}</td>
+                                        <td>{{history.added_by.name}}</td>
+                                        <td>{% if history.purchase_order %}{{history.purchase_order.created|date:'d-m-Y'|default_if_none:'-'}}{% else %}-{% endif %}</td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>

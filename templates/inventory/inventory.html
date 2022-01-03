@@ -74,6 +74,9 @@
                                     Line
                                 </th>
                                 <th data-hide="phone,tablet"  class="text-center">
+                                    Available Qty
+                                </th>
+                                <th data-hide="phone,tablet"  class="text-center">
                                     Reserve
                                 </th>
                                 <th data-hide="phone,tablet" class="text-left table-w-12">
@@ -101,7 +104,14 @@
                                 {{item.item_line.name}}
                             </td>
                             <td class="text-center">
-                                {{item.reserve_count}}
+                                {% if item.item_add_type == 'quantity' %}
+                                {{item.total_quantity|floatformat:3}} {{item.measuring_unit}}
+                                {% else %}
+                                {{item.unit_count}} unit
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                {{item.reserve_count}} {% if item.item_add_type == 'quantity' %}{{item.measuring_unit}}{% else %}unit{% endif %}
                             </td>
                             {% comment %} <td>
                                 {% if item.status == True %}
@@ -372,11 +382,12 @@
                     </select> -->
                     <input hidden type="text" id="unit_measure_id" name="unit_measure" value="number">
                     <div class="wrap-drop" id="noble-gases7" style="z-index: 2 !important;"  >
-                        <span id="id_selectText6">Number</span>
+                        <span id="id_selectText6"></span>
                         <ul class="drop">
-                            <li onclick="changeSelect7('litre')"><a>Litre</a></li>
-                            <li onclick="changeSelect7('kg')"><a>Kg</a></li> 
-                            <li onclick="changeSelect7('number')"><a>Number</a></li> 
+                            <li onclick="changeSelect7('L')"><a>L</a></li>
+                            <li onclick="changeSelect7('kg')"><a>kg</a></li> 
+                            <li onclick="changeSelect7('piece')"><a>piece</a></li> 
+                            <li onclick="changeSelect7('pack')"><a>pack</a></li> 
                         </ul>
                     </div>
                 </div>
@@ -453,7 +464,7 @@
       <div class="modal fade" id="filterModel" role="dialog">
         <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
             <div class="container-fluid">
-                <div class="row">
+                <div class="row m-0">
                     <div class="col-md-12 mt-20">
 
                         
@@ -468,7 +479,7 @@
                     </div>
                 </div>
                
-                <div class="row">
+                <div class="row m-0">
                     
                     <div class="ticket-wrapper-row ticket-forms-boxes"><!--ticket-wrapper-row ticket-forms-boxes-->
                         <div class="ticket-form-left"><!--ticket-form-left-->
