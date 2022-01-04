@@ -4,8 +4,10 @@ from order.models import OrderScheduler
 # Create your models here.
 
 UNIT_STATUS_CHOICES=(
-	('active','active'),
-	('out_of_order','out_of_order'),
+	('available','available'),
+	('unavailable','unavailable'),
+    ('out_of_order','out_of_order'),
+    ('under_repair','under_repair'),
 	('expired','expired')
 	)
 
@@ -92,6 +94,7 @@ class InventoryItem(models.Model):
     item_status     =   models.CharField(max_length=50,blank=True,null=True,choices=ITEM_STATUS_CHOICES)
     item_add_type   =   models.CharField(max_length=50,blank=True,null=True,choices=ITEM_ADD_TYPE_CHOICES)
     measuring_unit  =   models.CharField(max_length=50,blank=True,null=True,choices=MEASURING_UNIT_CHOICES)
+    is_package      =   models.BooleanField(default=False,blank=False,null=False)
     status          =   models.BooleanField(default=True,blank=False,null=False)
     created         =   models.DateTimeField(auto_now_add=True)
     def __unicode__(self):
@@ -99,6 +102,18 @@ class InventoryItem(models.Model):
 
     def __str__(self):
         return self.name
+
+class InventoryItemPackage(models.Model):
+    inventory_item  = models.ForeignKey(InventoryItem,blank=True,null=True,related_name='package_item')
+    package_name    = models.CharField(max_length=100,blank=True,null=True)
+    package_quantity= models.CharField(max_length=10,blank=True,null=True,default=0)
+    created         = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return str(self.inventory_item.name)
+
+    def __str__(self):
+        return self.inventory_item.name
 
 class InventoryItemImages(models.Model):
     inventory_item  = models.ForeignKey(InventoryItem,blank=False,null=False,related_name='image_item')
@@ -325,6 +340,18 @@ class PurchaseOrderItems(models.Model):
 
     def __str__(self):
         return self.purchase_order.purchase_order_id
+
+class PurchaseOrderItemPackage(models.Model):
+    purchase_order_item = models.ForeignKey(PurchaseOrderItems,blank=True,null=True,related_name='package_purchase_order_item')
+    package_name        = models.CharField(max_length=100,blank=True,null=True)
+    package_quantity    = models.CharField(max_length=10,blank=True,null=True,default=0)
+    created             = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return str(self.purchase_order_item.purchase_order.purchase_order_id)
+
+    def __str__(self):
+        return self.purchase_order_item.purchase_order.purchase_order_id
 
 class ItemHistory(models.Model):
     purchase_order  =   models.ForeignKey(PurchaseOrder,blank=True,null=True,related_name='purchase_order_item_history')

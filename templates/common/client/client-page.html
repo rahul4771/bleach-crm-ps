@@ -350,7 +350,7 @@
 
                 {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'ADMIN'%}
                 {% comment %} <a style="text-decoration: none; color: #434343;" href="{% url 'customer:statement-of-account' client_details.id %}" target="_blank"> {% endcomment %}
-                <div class="text-center" data-toggle="modal" data-target="#soaModal">
+                <div class="text-center" onclick="window.location.href='{% url 'customer:statement-of-account' client_details.id %}';">
                     <div  class="secondary-btn cd-ml-4">
                         <i class="far fa-file-alt primary-icon"></i>
                         Statement Of Account
