@@ -1768,7 +1768,7 @@ class PurchaseOrderItemsPage(IsInventoryAdminUser,View):
 
             purchase_order_item = PurchaseOrderItems.objects.get(purchase_order=purchase_order,product__item__id=int(item_id))
             
-            purchase_order_item.added_item_count += 1
+            purchase_order_item.added_item_count = int(purchase_order_item.added_item_count) + 1
             if purchase_order_item.added_item_count == purchase_order_item.item_count:
                 purchase_order_item.is_received = True
             purchase_order_item.save()
