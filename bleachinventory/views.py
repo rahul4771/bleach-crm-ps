@@ -1037,8 +1037,8 @@ class InventoryInv(IsInventoryAdminUser,View):
     def get(self,request):
         search = request.GET.get('search')
 
-        ItemUnit.objects.filter(status='out_of_order').update(status='unavailable')
-        ItemUnit.objects.filter(status='active').update(status='available')
+        # ItemUnit.objects.filter(status='out_of_order').update(status='unavailable')
+        # ItemUnit.objects.filter(status='active').update(status='available')
 
         try:
             item_category = request.GET.get('item_category')
@@ -1072,7 +1072,7 @@ class InventoryInv(IsInventoryAdminUser,View):
         else:
             inventory_items       = InventoryItem.objects.all().annotate(unit_count=Sum(Case(When(unit_item__status='available',then=1),default=0,output_field=IntegerField())))
 
-        inventory_items.filter(measuring_unit='number').update(measuring_unit='piece')
+        # inventory_items.filter(measuring_unit='number').update(measuring_unit='piece')
 
         for item in inventory_items:
             
