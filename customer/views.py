@@ -70,16 +70,16 @@ class Quatation(View):
 
 		#evaluation id decryption
 		evaluation_id_encrypted = evaluation_id
-		evaluation_id = 'BLC'+evaluation_id_encrypted[3:14]
-		user_name     =  evaluation_id_encrypted[14:]
+		evaluation_id           = 'BLC'+evaluation_id_encrypted[3:14]
+		user_name               =  evaluation_id_encrypted[14:]
 
 
-		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate'),to_attr='orderschedules')).annotate(customerbooking=Sum(Case(When(evaluation__booking_evaluation__booking_type='CLEANINGBOOKING',then=1),default=0,output_field=IntegerField()))).get(is_active=True,order_no=evaluation_id,evaluation__customer__username=user_name)
+		order                   = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate'),to_attr='orderschedules')).annotate(customerbooking=Sum(Case(When(evaluation__booking_evaluation__booking_type='CLEANINGBOOKING',then=1),default=0,output_field=IntegerField()))).get(is_active=True,order_no=evaluation_id,evaluation__customer__username=user_name)
 
 
-		nonduplicate_schedules = []
+		nonduplicate_schedules  = []
 		#Remove duplicates for subscription
-		duplicate_schedules    = []
+		duplicate_schedules     = []
 		for orderschedule in order.orderschedules:
 			if orderschedule.order_scheduler_book in duplicate_schedules:
 				pass

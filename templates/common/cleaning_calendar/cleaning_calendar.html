@@ -1345,8 +1345,8 @@ transition="dialog-bottom-transition"
       <div class="row" style="margin:0">
         <div class="col-md-12">
           <div class="d-flex cl-modal-icons">
-            {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' or request.user.user_type == 'BOOKINGOFFICER' %}
-            <img src="{% static 'files/icons/edit.png'%}" class="cl-modal-icon" v-if="currentSlotDetails.work_status!='CLEANING_CANCELLED' && currentSlotDetails.work_status!='CLEANING_FULFILLED'" @click="editCleaning()"/>        
+            {% if request.user.user_type == 'SENIORTEAMLEADER' or request.user.user_type == 'OPERATIONSUPERVISOR' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'AGENT' %}
+            <img src="{% static 'files/icons/edit.png'%}" class="cl-modal-icon" v-if="currentSlotDetails.work_status!='CLEANING_CANCELLED' && currentSlotDetails.work_status!='CLEANING_IN_PROGRESS' && currentSlotDetails.work_status!='CLEANING_FULFILLED'" @click="editCleaning()"/>        
             {% endif %}
             <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" @click="closeCleaningModal()"/>
           </div>
