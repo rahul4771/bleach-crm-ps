@@ -320,13 +320,13 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
                       <a  class="quantity__plus pointer" onclick="incrementupdate({{item.id}},{{item.item.id}})"><span>+</span></a>
                     {% endif %}
 
-                    {% if item.service_item %}  {% if item.service_item.item.measuring_unit %}{{item.service_item.item.measuring_unit}}{% else %}unit{% endif %} {% else %}  {% if item.item.measuring_unit %}{{item.item.measuring_unit}}{% else %}unit{% endif %}  {% endif %}
+                    {% if item.service_item %}  {% if item.service_item.item.item_add_type == 'quantity' %}{{item.service_item.item.measuring_unit}}{% else %}unit{% endif %} {% else %}  {% if item.item.item_add_type == 'quantity' %}{{item.item.measuring_unit}}{% else %}unit{% endif %}  {% endif %}
                     </div>
                     
                 </div>
                 
                 <div class="qty-box2-{{item.id}}" >
-                  {{item.units}} {% if item.service_item %}  {% if item.service_item.item.measuring_unit %}{{item.service_item.item.measuring_unit}}{% else %}unit{% endif %} {% else %}  {% if item.item.measuring_unit %}{{item.item.measuring_unit}}{% else %}unit{% endif %}  {% endif %}
+                  {{item.units}} {% if item.service_item %}  {% if item.service_item.item.item_add_type == 'quantity' %}{{item.service_item.item.measuring_unit}}{% else %}unit{% endif %} {% else %}  {% if item.item.item_add_type == 'quantity' %}{{item.item.measuring_unit}}{% else %}unit{% endif %}  {% endif %}
                 </div>
 
                 </td>

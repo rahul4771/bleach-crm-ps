@@ -2781,7 +2781,7 @@ class InventoryItemsAPI(APIView):
 		item_id = request.GET.get('item_id')
 		print(item_id,"attrsed")
 		try:
-			item_units = ItemUnit.objects.filter(item__id=int(item_id),status='active')
+			item_units = ItemUnit.objects.filter(item__id=int(item_id),status='available')
 			unit_count = item_units.count()
 		except:
 			item_units = None
@@ -3401,7 +3401,7 @@ class ItemQuantityCheck(APIView):
 
 		print(item_id,quantity,"qty")
 
-		item = InventoryItem.objects.annotate(quantity_total=Sum('unit_item_history__quantity'),unit_count=Sum(Case(When(unit_item__status='active',then=1),default=0,output_field=IntegerField()))).get(id=int(item_id))
+		item = InventoryItem.objects.annotate(quantity_total=Sum('unit_item_history__quantity'),unit_count=Sum(Case(When(unit_item__status='available',then=1),default=0,output_field=IntegerField()))).get(id=int(item_id))
 		
 		if item.item_add_type == 'unit':
 			item_count = item.unit_count
@@ -3479,7 +3479,7 @@ class CheckOutItemAdd(APIView):
 					response_dict['item_unit'] = 'unit'
 					response_dict['item_type'] = 'unit'
 					
-					itemunits = ItemUnit.objects.filter(item=checkout_item.item,status='active')[:int(quantity)]
+					itemunits = ItemUnit.objects.filter(item=checkout_item.item,status='available')[:int(quantity)]
 					for unit in itemunits:
 						CheckOutItemUnits.objects.create(checkout_item=checkout_item,item_unit=unit)
 				else:
@@ -3537,9 +3537,9 @@ class CheckOutItemUnitsList(APIView):
 		
 		# for unit dropdown
 		if checkout_item.service_item:
-			units_list = ItemUnit.objects.filter(item=checkout_item.service_item.item,status='active')
+			units_list = ItemUnit.objects.filter(item=checkout_item.service_item.item,status='available')
 		else:
-			units_list = ItemUnit.objects.filter(item=checkout_item.item,status='active')
+			units_list = ItemUnit.objects.filter(item=checkout_item.item,status='available')
 
 		print(checkout_unit_id_list,"udroplist")
 		unit_dropdown_list = []
@@ -3614,7 +3614,7 @@ class CheckOutItemSwap(APIView):
 				CheckOutItemUnits.objects.filter(checkout_item=checkout).delete()
 
 			if swap_item.item.item_add_type == 'unit':
-				itemunits = ItemUnit.objects.filter(item__id=int(swap_item.item.id),status='active')[:int(quantity)]
+				itemunits = ItemUnit.objects.filter(item__id=int(swap_item.item.id),status='available')[:int(quantity)]
 
 				for unit in itemunits:
 					CheckOutItemUnits.objects.create(checkout_item=checkout,item_unit=unit)
@@ -3761,8 +3761,7 @@ class ItemsCheckInAPI(APIView):
 		count = 0
 
 		for item_id in item_ids:
-
-			checkin_item = CheckOutItems.objects.get(id=int(item_id),is_checked_in=False)
+			checkin_item = CheckOutItems.objects.prefetch_related(Prefetch('checkoutitem',CheckOutItemUnits.objects.all(),to_attr="checkin_item_units")).get(id=int(item_id),is_checked_in=False)
 			visit = OrderScheduler.objects.get(id=int(checkin_item.visit.id))
 
 			print(item_quantities[count],"iom")
@@ -3771,18 +3770,17 @@ class ItemsCheckInAPI(APIView):
 			
 			if checkin_item.item and checkin_item.item.item_add_type == 'unit':
 				print("pam")
-				inventoryitem = InventoryItem.objects.prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(status='out_of_order'),to_attr='item_units')).get(id=int(checkin_item.item.id))
-				if inventoryitem.item_units:
-					for unit in inventoryitem.item_units[:int(checkin_item.units)]:
-						unit.status = 'active'
-						unit.save()
+				for itemunit in checkin_item.checkin_item_units:
+					inventoryitemunit = ItemUnit.objects.get(id=int(itemunit.item_unit.id))
+					inventoryitemunit.status = 'available'
+					inventoryitemunit.save()
 
 			if checkin_item.service_item and checkin_item.service_item.item.item_add_type == 'unit':
-				inventoryitem = InventoryItem.objects.prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(status='active'),to_attr='item_units')).get(id=int(checkin_item.service_item.item.id))
-				if inventoryitem.item_units:
-					for unit in inventoryitem.item_units[:int(checkin_item.units)]:
-						unit.status = 'active'
-						unit.save()
+				for itemunit in checkin_item.checkin_item_units:
+					print(itemunit.item_unit.id,"itunitid")
+					inventoryitemunit = ItemUnit.objects.get(id=int(itemunit.item_unit.id))
+					inventoryitemunit.status = 'available'
+					inventoryitemunit.save()
 
 			if checkin_item.item and checkin_item.item.item_add_type == 'quantity':
 				print("pam")
