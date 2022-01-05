@@ -103,18 +103,6 @@ class InventoryItem(models.Model):
     def __str__(self):
         return self.name
 
-class InventoryItemPackage(models.Model):
-    inventory_item  = models.ForeignKey(InventoryItem,blank=True,null=True,related_name='package_item')
-    package_name    = models.CharField(max_length=100,blank=True,null=True)
-    package_quantity= models.CharField(max_length=10,blank=True,null=True,default=0)
-    created         = models.DateTimeField(auto_now_add=True)
-
-    def __unicode__(self):
-        return str(self.inventory_item.name)
-
-    def __str__(self):
-        return self.inventory_item.name
-
 class InventoryItemImages(models.Model):
     inventory_item  = models.ForeignKey(InventoryItem,blank=False,null=False,related_name='image_item')
     item_image      = models.FileField(upload_to='inventory_item_images/',blank=True,null=True,max_length=1000)
@@ -340,18 +328,6 @@ class PurchaseOrderItems(models.Model):
 
     def __str__(self):
         return self.purchase_order.purchase_order_id
-
-class PurchaseOrderItemPackage(models.Model):
-    purchase_order_item = models.ForeignKey(PurchaseOrderItems,blank=True,null=True,related_name='package_purchase_order_item')
-    package_name        = models.CharField(max_length=100,blank=True,null=True)
-    package_quantity    = models.CharField(max_length=10,blank=True,null=True,default=0)
-    created             = models.DateTimeField(auto_now_add=True)
-
-    def __unicode__(self):
-        return str(self.purchase_order_item.purchase_order.purchase_order_id)
-
-    def __str__(self):
-        return self.purchase_order_item.purchase_order.purchase_order_id
 
 class ItemHistory(models.Model):
     purchase_order  =   models.ForeignKey(PurchaseOrder,blank=True,null=True,related_name='purchase_order_item_history')
