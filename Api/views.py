@@ -3926,34 +3926,34 @@ class InventoryFinshedItemView(APIView):
 			
 
 		if action_type == 'add_finshed_item':
-			accessory_id  =	request.data.get('accessory_id')
-			count         =	request.data.get('count')
+			finished_item_id  =	request.data.get('finished_item_id')
+			count             =	request.data.get('count')
 			
-			InventoryAccessory.objects.create(
-				inventory_item_id      = inventory_id,
-				inventory_accessory_id = accessory_id,
-				count                  = count
+			InventoryFinshedItem.objects.create(
+				inventory_item_id           = inventory_id,
+				inventory_finished_item_id  = finished_item_id,
+				count                       = count
 				)
 			
 			response_dict['success'] = True
 
-		if action_type == 'edit_accessory':
+		if action_type == 'edit_finshed_item':
 			id                  = request.data.get('id')
-			accessory_id        = request.data.get('accessory_id')
+			finished_item_id    = request.data.get('finished_item_id')
 			count               = request.data.get('count')
 
-			accessory           = InventoryItem.objects.get(id=accessory_id)
+			finished_item           = InventoryItem.objects.get(id=finished_item_id)
 
-			inventory_accessory               = InventoryAccessory.objects.get(id=id)
-			inventory_accessory.accessory     = accessory
-			inventory_accessory.count         = count
-			inventory_accessory.save()
+			inventory_finished_item                           = InventoryFinshedItem.objects.get(id=id)
+			inventory_finished_item.inventory_finished_item   = finished_item
+			inventory_finished_item.count                     = count
+			inventory_finished_item.save()
 
 			response_dict['success'] = True
 
-		if action_type == 'delete_accessory':
+		if action_type == 'delete_finished_item':
 			id            = request.data.get('id')
-			InventoryAccessory.objects.filter(id=id).delete()
+			InventoryFinshedItem.objects.filter(id=id).delete()
 
 			response_dict['success'] = True
 
