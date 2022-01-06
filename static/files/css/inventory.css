@@ -603,6 +603,26 @@
  
   
 }
+.nav-tab-item{
+
+  padding: 5px;
+  border: 1px solid #dadada;
+  min-width: 100px;
+  text-align: center;
+cursor:pointer;
+padding-left:10px;
+padding-right:10px;
+
+}
+.nav-tab-item-active{
+  padding: 5px;
+  border: 1px solid #dadada;
+  min-width: 100px;
+  text-align: center;
+  border-bottom: 0px !important;
+  padding-left:10px;
+padding-right:10px;
+}
 
 .attribute-table-div2{
   height: 60vh;
