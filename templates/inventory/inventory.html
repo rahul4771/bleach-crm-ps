@@ -89,6 +89,9 @@
                         <thead>
                             <tr>
                                 <th style="width: %;">
+                                    Item Type
+                                </th>
+                                <th style="width: %;">
                                     Item
                                 </th>
                                 <th data-hide="phone,tablet"  style="width: %; text-align: center;">
@@ -120,6 +123,9 @@
                         {% for item in items %}
                         <tr>
                             <td class="td-md-width">
+                                {{item.item_type}}
+                            </td>
+                            <td class="td-md-width">
                                 {{item.name}}
                             </td>
                             <td class="text-center">
@@ -135,13 +141,13 @@
                             </td>
                             <td class="text-center">
                                 {% if item.item_add_type == 'quantity' %}
-                                {{item.total_quantity|floatformat:3}}
+                                {{item.total_quantity|floatformat:3}} {{item.measuring_unit}}
                                 {% else %}
-                                {{item.unit_count}}
+                                {{item.unit_count}} unit
                                 {% endif %}
                             </td>
                             <td class="text-center">
-                                {{item.reserve_count}}
+                                {{item.reserve_count|floatformat:3}} {% if item.item_add_type == 'quantity' %}{{item.measuring_unit}}{% else %}unit{% endif %}
                             </td>
                             {% comment %} <td>
                                 {% if item.status == True %}
@@ -169,7 +175,7 @@
                                 <a href="/bleach-inventory/item/{{item.id}}">
                                 <button class="inv-plan-img-btn"> <img class="view-img" src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
                                 </a>
-                                <button class="inv-plan-img-btn edit-item" onclick="openNavAddStore('edit')" data-itemid="{{item.id}}" data-itemname="{{item.name}}" data-itemcode="{{item.item_code}}" data-itemcategory="{{item.item_category.id}}" data-itemsegment="{{item.item_segment.id}}" data-itemline="{{item.item_line.id}}" data-itemdescription="{{item.description}}" data-itemreserve="{{item.reserve_count}}" data-itemaddtype="{{item.item_add_type}}" data-unitmeasure="{{item.measuring_unit}}" data-itemstatus="{{item.status}}" data-itemreusbale="{{item.is_reusable}}"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>
+                                <button class="inv-plan-img-btn edit-item" onclick="openNavAddStore('edit')" data-itemid="{{item.id}}" data-item_type="{{item.item_type}}" data-itemname="{{item.name}}" data-itemcode="{{item.item_code}}" data-itemcategory="{{item.item_category.id}}" data-itemsegment="{{item.item_segment.id}}" data-itemline="{{item.item_line.id}}" data-itemdescription="{{item.description}}" data-itemreserve="{{item.reserve_count}}" data-itemaddtype="{{item.item_add_type}}" data-unitmeasure="{{item.measuring_unit}}" data-itemstatus="{{item.status}}" data-itemreusbale="{{item.is_reusable}}" data-itempackage="{{item.is_package}}"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>
                                 
                                 {% if request.user.user_type == 'INVENTORYADMIN' %}
                                 <button class="inv-plan-img-btn delete-item"  data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
@@ -274,6 +280,18 @@
             <input type="hidden" name="item_edit_id" id="id_edit_item" />
             <div class="row mt-20">
                 <div class="col-md-12 ">
+                <div class="model-input-name required-field">Item Type</div>
+                <input hidden  type="text" name="item_type" id="id_item_type" required>
+                <div class="wrap-drop" id="noble-gases8"  >
+                    <span id="id_selectText8">--Select Item Type--</span>
+                    <ul class="drop">
+                        <li id="itemtype_idRAW_MATERIALS" onclick="changeSelect8('RAW MATERIALS')"><a>RAW MATERIALS</a></li>
+                        <li id="itemtype_idASSETS" onclick="changeSelect8('ASSETS')"><a>ASSETS</a></li>
+                        <li id="itemtype_idFINISHED_GOODS" onclick="changeSelect8('FINISHED GOODS')"><a>FINISHED GOODS</a></li>
+                    </ul>
+                </div>
+                </div>
+                <div class="col-md-12 ">
                     <div class="model-input-name required-field">Item</div>
 
                     <div class="inv-input-container h-30"> 
@@ -309,7 +327,6 @@
                         <ul class="drop">
                             {% for category in categories %}
                             <li id="cat_id{{category.id}}" onclick="changeSelect({{category.id}})"><a>{{category.name}}</a></li>
-                   
                             {% endfor %}
                         </ul>
                     </div>
@@ -371,7 +388,7 @@
                     <div class="model-input-name">Reserve</div>
 
                     <div class="inv-input-container h-30"> 
-                        <input type="number"  class="w-p-100 inv-in" name="item_reserve" value="0" id="id_item_reserve">
+                        <input type="number" step="0.01" class="w-p-100 inv-in" name="item_reserve" value="0" id="id_item_reserve">
                       </div>
                 </div>
 
@@ -416,7 +433,7 @@
 
             </div>
 
-            <div class="row mt-20">
+            <div class="row mt-20 unit_measure_div" hidden>
                 <div class="col-md-12 ">
                     <div class="model-input-name">Unit of Measure</div>
 
@@ -425,18 +442,27 @@
                         <option value="False">Inactive</option>
 
                     </select> -->
-                    <input hidden type="text" id="unit_measure_id" name="unit_measure" value="number">
+                    <input hidden type="text" id="unit_measure_id" name="unit_measure" value="piece">
                     <div class="wrap-drop" id="noble-gases7" style="z-index: 2 !important;"  >
-                        <span id="id_selectText6">Number</span>
+                        <span id="id_selectText6">piece</span>
                         <ul class="drop">
-                            <li onclick="changeSelect7('litre')"><a>Litre</a></li>
-                            <li onclick="changeSelect7('kg')"><a>Kg</a></li> 
-                            <li onclick="changeSelect7('number')"><a>Number</a></li> 
+                            <li onclick="changeSelect7('L')"><a>L</a></li>
+                            <li onclick="changeSelect7('kg')"><a>kg</a></li> 
+                            <li onclick="changeSelect7('piece')"><a>piece</a></li> 
+                            <li onclick="changeSelect7('pack')"><a>pack</a></li> 
                         </ul>
                     </div>
                 </div>
 
             </div>
+
+            {% comment %} <div class="row mt-20">
+                <div class="col-md-12 ">
+                
+                    <div class="model-input-name"><input type="checkbox" name="item_package" id="id_item_package" >Item Package</div>   
+                </div>
+
+            </div> {% endcomment %}
 
             <div class="row mt-20">
                 <div class="col-md-12 ">
@@ -658,6 +684,7 @@ $(function () {
     var dd5 = new DropDown($('#noble-gases5'));
     var dd6 = new DropDown($('#noble-gases6'));
     var dd7 = new DropDown($('#noble-gases7'));
+    var dd8 = new DropDown($('#noble-gases8'));
 
 
 
@@ -670,7 +697,10 @@ $(function () {
 </script>
 <script>
 
-     
+function changeSelect8(va){
+        $('#id_item_type').val(va)
+    }
+
 function changeSelect4(va){
         $('#item_status_id').val(va)
     }
@@ -681,6 +711,11 @@ function changeSelect5(va){
 
 function changeSelect6(va){
         $('#itemadd_type_id').val(va)
+        if (va == 'quantity'){
+            $('.unit_measure_div').show();
+        }else{
+            $('.unit_measure_div').hide();
+        }
     }
 
 function changeSelect7(va){
@@ -892,16 +927,28 @@ function changeSelect(va){
 
        await getsegments($(this).data('itemcategory'));
        await getlines($(this).data('itemsegment'));
+
+       console.log($(this).data('itempackage'),"pekkej")
         
         document.getElementById("id_category").value = $(this).data('itemcategory');
+        document.getElementById("id_item_type").value = $(this).data('item_type');
         document.getElementById("id_line").value = $(this).data('itemline');
         document.getElementById("id_segment").value = $(this).data('itemsegment');
         $('#id_selectText').text($('#cat_id'+$(this).data('itemcategory')).text());
+        $('#id_selectText8').text($('#itemtype_id'+$(this).data('item_type')).text());
         $('#id_seg_text').text($('#seg_id'+$(this).data('itemsegment')).text());
        $('#id_line_text').text($('#line_id'+$(this).data('itemline')).text());
-       console.log($(this).data('itemstatus'),'s')
+       console.log($(this).data('itemstatus'),$(this).data('itempackage'),'suas')
         document.getElementById("item_status_id").value = $(this).data('itemstatus');
         document.getElementById("item_reusable_id").value = $(this).data('itemreusbale');
+
+        //if ($(this).data('itempackage') == 'True'){
+        //    document.getElementById("id_item_package").checked = true;
+        //}else{
+        //    document.getElementById("id_item_package").checked = false;
+        //}
+
+        console.log($(this).data('itemaddtype'),"krok")
         document.getElementById("itemadd_type_id").value = $(this).data('itemaddtype');
         document.getElementById("unit_measure_id").value = $(this).data('unitmeasure');
         $('#id_selectText5').text($(this).data('itemaddtype'));
@@ -913,6 +960,12 @@ function changeSelect(va){
         }else{
             $('#id_selectText3').text('Inactive');
 
+        }
+
+        if ( $(this).data('itemaddtype') == 'quantity' ){
+            $('.unit_measure_div').show();
+        }else{
+            $('.unit_measure_div').hide();
         }
 
         if($('#item_reusable_id').val() == 'True'){

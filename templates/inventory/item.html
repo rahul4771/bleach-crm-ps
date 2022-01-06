@@ -243,7 +243,7 @@
                                  
                                  <br>
                                  <div class="inv-item-amount2">
-                                     {% if inventory_item.item_add_type == 'unit' %}{{inventory_item.unit_count}}{% else %}{{inventory_item.total_quantity|floatformat:3}}{% endif %} <span style="font-size: 25px;"> {% if inventory_item.item_add_type == 'unit' %}Unit(s){% else %}{{inventory_item.measuring_unit}}(s){% endif %} </span>                    
+                                     {% if inventory_item.item_add_type == 'unit' %}{{inventory_item.unit_count}}{% else %}{{inventory_item.total_quantity|floatformat:3}}{% endif %} <span style="font-size: 25px;"> {% if inventory_item.item_add_type == 'unit' %}Unit{% else %}{{inventory_item.measuring_unit}}{% endif %} </span>                    
                                  </div>
                              </div>
                             </div>
@@ -260,12 +260,41 @@
                                            </div>    
                                          <!-- 135 Unit  -->
                                          <!-- <span id="id_res_val" class="inv-item-amount2"> {{inventory_item.reserve_count|default_if_none:'0'}}  <span style="font-size: 25px;"> unit(s) </span> </span> -->
-                                         <div id="id_res_val" class="inv-item-amount2"> {{inventory_item.reserve_count|default_if_none:'0'}}  <span style="font-size: 25px;"> {% if inventory_item.item_add_type == 'unit' %}Unit(s){% else %}{{inventory_item.measuring_unit}}(s){% endif %} </span>  </div>
+                                         <div id="id_res_val" class="inv-item-amount2"> {{inventory_item.reserve_count|default_if_none:'0'}}  <span style="font-size: 25px;"> {% if inventory_item.item_add_type == 'unit' %}Unit{% else %}{{inventory_item.measuring_unit}}{% endif %} </span>  </div>
                               </div>
                              </div>
                          </div>
                                                    
                       </div>
+
+                      
+                      {% comment %} {% if inventory_item.is_package == True %}
+                      <div class="col-md-2  h-100 m-mt-10">
+                        <div class="inv-item-card ">
+                         <div class="av-font text-center">
+                            Package
+                             
+                            {% if inventory_item.item_package %}
+                            <div style="text-align: center;"  class=" av-font mt-40">       
+                                 <br>
+                                        <div id="id_res_text" class="inv-input-container h-30 inv-hide" > 
+                                            <input type="number"  class="w-p-100 inv-in" value="{{inventory_item.reserve_count|default_if_none:'0'}}" name="reserve" required>
+                                          </div>    
+                                        <!-- 135 Unit  -->
+                                        <!-- <span id="id_res_val" class="inv-item-amount2"> {{inventory_item.reserve_count|default_if_none:'0'}}  <span style="font-size: 25px;"> unit(s) </span> </span> -->
+                                        <div id="id_res_val" class="inv-item-amount2"> {{inventory_item.reserve_count|default_if_none:'0'}}  <span style="font-size: 25px;"> {% if inventory_item.item_add_type == 'unit' %}Unit{% else %}{{inventory_item.measuring_unit}}{% endif %} </span>  </div>
+                             </div>
+                             {% else %}
+                             <div style="text-align: center;"  class=" av-font mt-40">       
+                             <button type="button" data-toggle="modal" data-target="#packageModel" ><i class="fa fa-plus" aria-hidden="true"></i></button>
+                             </div>
+                             {% endif %}
+                            </div>
+                        </div>
+                                                  
+                     </div>
+                     {% endif %} {% endcomment %}
+
                     </form>
                     
                     {% comment %} <div class="col-md-3 inv-item-card2">
@@ -380,8 +409,8 @@
                                     </td> {% endcomment %}
                                     
                                     <td class="">
-                                        <span class="inv-dot {% if unit.status == 'active' %}c-active{% elif unit.status == 'expired' %}c-expired{% elif unit.status == 'out_of_order' %}c-out-of-order{% endif %} ml-5"></span>
-                                        {{unit.status}}
+                                        <span class="inv-dot {% if unit.status == 'available' %}c-active{% elif unit.status == 'under_repair' %}c-expired{% elif unit.status == 'out_of_order' %}c-out-of-order{% elif unit.status == 'unavailable' %}c-inactive{% endif %} ml-5"></span>
+                                        {% if unit.status == 'available' %}Available{% elif unit.status == 'under_repair' %}Under Repair{% elif unit.status == 'out_of_order' %}Out of Order{% elif unit.status == 'unavailable' %}Unavailable{% endif %}
     
                                     </td>
                                     <td class="text-center">
@@ -507,7 +536,7 @@
                 <div class="row mt-20">
                     <div class="col-md-12 ">
                         <div class="model-input-name">Purchase Order</div>
-                        <input hidden type="text" id="id_unit_status" name="unit_status" value="active" >
+                        <input hidden type="text" id="id_unit_status" name="unit_status" value="available" >
                         <div class="wrap-drop" id="noble-gases" style="z-index: 3;" >
                             <span id="id_selectText">Select PO</span>
                             <ul class="drop">
@@ -604,6 +633,28 @@
                 </div>
 
             </div>
+
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Unit Status</div>
+
+                    <!-- <select id="item_status_id" name="item_status" class="minimal">
+                        <option value="True" selected>Active</option>
+                        <option value="False">Inactive</option>
+
+                    </select> -->
+                    <input hidden type="text" id="unit_status_update_id" name="unit_status_update" value="available">
+                    <div class="wrap-drop" id="noble-gases-unitstatus" style="z-index: 2 !important;"  >
+                        <span id="id_selectText6">Available</span>
+                        <ul class="drop">
+                            <li onclick="changeSelect('available')"><a>Available</a></li>
+                            <li onclick="changeSelect('out_of_order')"><a>Out of Order</a></li> 
+                            <li onclick="changeSelect('under_repair')"><a>Under Repair</a></li> 
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
             {% endif %}
 
             {% if inventory_item.item_add_type == 'quantity' %}
@@ -627,7 +678,8 @@
         <div class="inv-drawer-footer">
             <button class="sent-button" type="button" id="submit-btn" onclick="formvalidation()">Submit</button>
             <a href="#" id="load_po"><button class="sent-button" type="button" id="po-btn" >Purchase Order</button></a>
-            </form>
+            <button class="sent-button" type="button" id="update-unit-btn" onclick="formvalidation()">Update Unit</button>    
+        </form>
                         <button data-dismiss="modal" onclick="closeNavAddBundle()" class="view-button">Cancel</button>
         </div>
         
@@ -661,7 +713,7 @@
 
                     <!-- <select id="id_unit_status" name="unit_status" class="minimal">
                         <option value="active">Active</option>
-                        <option value="out_of_order">Out Of order</option>
+                        <option value="unavailable">Out Of order</option>
                         <option value="expired">Expired</option>
                     </select> -->
                     <input type="hidden" id="id_attribute_value{{attribute.id}}" name="attribute_value{{attribute.id}}" {% if item_attributes %}{% for item_attribute in item_attributes %}{% if attribute.id == item_attribute.attribute.id %}value="{{item_attribute.attribute_value.id}}"{% endif %}{% endfor %}{% endif %}   required>
@@ -848,6 +900,45 @@
             </div>
         </div>
       </div>
+
+      <!--package modal-->
+      <div class="modal fade" id="packageModel" role="dialog">
+        <div class="modal-dialog cancel-model " style="border: none !important;" role="document">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12 mt-20">
+
+                        
+                        <div class="d-flex ">
+                            
+                            <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                                <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                            </button>
+    
+                        </div>
+                      
+                        <div style="margin-top: -20px; color: #5A5A5A !important;" class="text-center inv-item-head-sub-2">
+                            Update Package
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-20" style="margin-left: 15px; margin-right: 15px;">
+                             
+                <form method="POST" action="" enctype='multipart/form-data'>{% csrf_token %}
+                <input type="hidden" name="action" value="update_package" />
+                <input type="text" name="imageid" value="{{image.id}}" >
+                                    
+                </div>
+                <div class="row mt-20 text-center" style="margin-bottom: 20px;">
+                    <button class="sent-button" >Submit</button>
+                                  <button data-dismiss="modal"   class="view-button">Cancel</button>
+                  </div>
+            </div>
+        </div>
+      </div>
+      <!--package modal-->
+
       <div class="modal fade" id="addimgModel" role="dialog">
         <div class="modal-dialog cancel-model cancel-order-border " role="document">
             <div class="container-fluid">
@@ -1070,6 +1161,7 @@ DropDown.prototype = {
 $(function () {
     // create new variable for each menu
     var dd = new DropDown($('#noble-gases'));
+    var dd2 = new DropDown($('#noble-gases-unitstatus'));
     var select_methddrp = new DropDown($('#select_methddrp'));
     
     {% for attribute in attributes %}
@@ -1163,10 +1255,10 @@ function selectFileInp(){
         getlines(segmentid);
     });
     function openNavAdd(d) {
-    if(d == 'add'){
-       
-            $("#bundleHead").text("Add Bundle");
-        }
+        if(d == 'add'){
+        
+                $("#bundleHead").text("Add Bundle");
+            }
         if(d == 'edit'){
             $("#bundleHead").text("Edit Bundle");
         }
@@ -1189,6 +1281,9 @@ function viewImgModel(){
     
 }
 
+function changeSelect(va){
+    $('#unit_status_update_id').val(va)
+}
 
 var products = [];
         {% for store in stores %}
@@ -1383,7 +1478,8 @@ function openNavAddBundle(d) {
         $('#id_add_method').show();
         $('#id_man').hide();
         $('#id_po').hide();
-        $('#id_unit_status').val('active');
+        $('#update-unit-btn').hide();
+        $('#id_unit_status').val('available');
         $("#id_selectText").text("Select PO");
             {% if inventory_item.item_add_type == 'unit' %}
             $("#supHead").text("Add Unit");
@@ -1394,6 +1490,9 @@ function openNavAddBundle(d) {
         }
         if(d == 'edit'){
             $("#supHead").text("Edit Unit");
+            $('#update-unit-btn').show();
+            $('#submit-btn').hide()
+            $('#po-btn').hide()
             $("#unit_action").val("edit_unit");
             
         }
@@ -1430,6 +1529,8 @@ function openNavAddBundle(d) {
         $('#id_purchase_date').val($(this).data('purchasedate'));
         $('#id_expiry_date').val($(this).data('expirydate'));
         $('#unit_price_id').val($(this).data('unitprice'));
+        document.getElementById("unit_status_update_id").value = $(this).data('status');
+        $('#id_selectText6').text($(this).data('status'));
         $('#serial_number_id').val($(this).data('serialnumber'));
         $('#id_pro_sel').val($(this).data('unitstoreid'));
         document.getElementById("id_purchase_date").value = $(this).data('purchasedate');
@@ -1445,11 +1546,17 @@ function openNavAddBundle(d) {
             $('.expiry_date_div').show();
         }
 
-        if($('#id_unit_status').val()=='active'){
-            $("#id_selectText").text("Active");
+        if($('#id_unit_status').val()=='available'){
+            $("#id_selectText").text("Available");
+        }
+        if($('#id_unit_status').val()=='unavailable'){
+            $("#id_selectText").text("Unavailable");
         }
         if($('#id_unit_status').val()=='out_of_order'){
-            $("#id_selectText").text("Out Of order");
+            $("#id_selectText").text("Out of Order");
+        }
+        if($('#id_unit_status').val()=='under_repair'){
+            $("#id_selectText").text("Under Repair");
         }
         if($('#id_unit_status').val()=='expired'){
             $("#id_selectText").text("Expired");

@@ -12,7 +12,7 @@ from bleachadmin.models import ServicePriceRange,Settings
 from django.core.mail import send_mail,EmailMultiAlternatives
 from Api.serializers import DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, UsersListSerializer,ShiftScheduleSerializer,OccupiedMembersSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
 from agent.views import generate_random_username
-from bleachinventory.models import Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,CheckOutItems,ItemHistory
+from bleachinventory.models import Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,CheckOutItems,CheckOutItemUnits,ItemHistory
 import re
 import random
 import string
@@ -1249,7 +1249,7 @@ class DailySalesAPI(APIView):
 			print(list_item,"elist")
 			
 			# if date < todate:
-			orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q(Q(work_status = 'CLEANING_TEAM_ASSIGNED') | Q(work_status = 'CLEANING_IN_PROGRESS') | Q(work_status='CLEANING_FULFILLED'))).exclude( Q(Q(Q(order__evaluation__payment_method='PREPAID')&~Q(order__payment_status='COMPLETED'))|Q(Q(order__evaluation__payment_method='BREAKDOWN')&Q(order__preamount_paid=0))) ).values_list('order__order_no','order_scheduler_book__estimated_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id','order_scheduler_book__evaluation_details__evaluation__id','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount','order_scheduler_book__evaluation_details__evaluator__id','order_scheduler_book__evaluation_details__evaluation__discount').order_by('end_at')
+			orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).filter(Q(Q(work_status = 'CLEANING_TEAM_ASSIGNED') | Q(work_status = 'CLEANING_IN_PROGRESS') | Q(work_status='CLEANING_FULFILLED'))).exclude( Q(Q(Q(order__evaluation__payment_method='PREPAID')&~Q(order__payment_status='COMPLETED'))|Q(Q(order__evaluation__payment_method='BREAKDOWN')&Q(order__preamount_paid=0))) ).values_list('order__order_no','order_scheduler_book__estimated_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id','order_scheduler_book__evaluation_details__evaluation__id','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount','order_scheduler_book__evaluation_details__evaluator__id','order_scheduler_book__evaluation_details__evaluation__discount','order_scheduler_book__evaluation_details__evaluation__additional_charge').order_by('end_at')
 			# else:
 			# 	orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',end_at__range=(start_date_day,end_date_day)).exclude( Q(Q(Q(order__evaluation__payment_method='PREPAID')&~Q(order__payment_status='COMPLETED'))|Q(Q(order__evaluation__payment_method='BREAKDOWN')&Q(order__preamount_paid=0))) ).values_list('order__order_no','order_scheduler_book__estimated_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id','order_scheduler_book__evaluation_details__evaluation__id','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount','order_scheduler_book__evaluation_details__evaluator__id','order_scheduler_book__evaluation_details__evaluation__discount').order_by('end_at')
 
@@ -1284,6 +1284,8 @@ class DailySalesAPI(APIView):
 					cleaning_amount += float(schedule[8]/order_schedule_count)
 				if schedule[10] > 0:
 					cleaning_amount -= float(schedule[10]/order_schedule_count)
+				if schedule[11] > 0:
+					cleaning_amount += float(schedule[11]/order_schedule_count)
 
 				#adding amount to evaluators dict
 				if schedule[9] != None:
@@ -1303,6 +1305,8 @@ class DailySalesAPI(APIView):
 								evaluator_amount += float(schedule[8]/order_schedule_count)
 							if schedule[10] > 0:
 								evaluator_amount -= float(schedule[10]/order_schedule_count)
+							if schedule[11] > 0:
+								evaluator_amount += float(schedule[11]/order_schedule_count)
 							
 
 							eval_dict = {""+x+"":evaluator_amount}
@@ -1320,6 +1324,8 @@ class DailySalesAPI(APIView):
 						others += float(schedule[8]/order_schedule_count)	
 					if schedule[10] > 0:
 						others -= float(schedule[10]/order_schedule_count)
+					if schedule[11] > 0:
+						others += float(schedule[11]/order_schedule_count)
 					
 
 				if date == '05-07-2021' and schedule[0] == 'BLC20210610161':
@@ -1606,6 +1612,8 @@ class DailySalesBreakDownAPI(APIView):
 				cleaning_amount += float(schedule.order.evaluation.fine_amount/order_schedule_count)
 			if schedule.order.evaluation.discount > 0:
 				cleaning_amount -= float(schedule.order.evaluation.discount/order_schedule_count)
+			if schedule.order.evaluation.additional_charge > 0:
+				cleaning_amount += float(schedule.order.evaluation.additional_charge/order_schedule_count)
 
 			total_day_sales += float(cleaning_amount)			
 
@@ -2418,13 +2426,19 @@ class SOAMailAPI(APIView):
 					# job_remaining += float(book.total_cost - job_completed)	
 
 					if order.evaluation.fine_amount:
-						job_completed -= float(order.evaluation.fine_amount/cleanings_count)
+						job_completed += float(order.evaluation.fine_amount/cleanings_count)
 
 					if order.evaluation.writeback_amount:
 						job_completed -= float(order.evaluation.writeback_amount/cleanings_count)
 
 					if order.evaluation.promocode_amount:
 						job_completed -= float(order.evaluation.promocode_amount/cleanings_count)
+
+					if order.evaluation.additional_charge:
+						job_completed += float(order.evaluation.additional_charge/cleanings_count)
+
+					if order.evaluation.discount:
+						job_completed -= float(order.evaluation.discount/cleanings_count)
 				
 				total_balance += float(job_completed)
 				accounts_list.append({
@@ -2767,7 +2781,7 @@ class InventoryItemsAPI(APIView):
 		item_id = request.GET.get('item_id')
 		print(item_id,"attrsed")
 		try:
-			item_units = ItemUnit.objects.filter(item__id=int(item_id),status='active')
+			item_units = ItemUnit.objects.filter(item__id=int(item_id),status='available')
 			unit_count = item_units.count()
 		except:
 			item_units = None
@@ -3387,15 +3401,19 @@ class ItemQuantityCheck(APIView):
 
 		print(item_id,quantity,"qty")
 
-		item = InventoryItem.objects.annotate(quantity_total=Sum('unit_item_history__quantity'),unit_count=Sum(Case(When(unit_item__status='active',then=1),default=0,output_field=IntegerField()))).get(id=int(item_id))
+		item = InventoryItem.objects.annotate(quantity_total=Sum('unit_item_history__quantity'),unit_count=Sum(Case(When(unit_item__status='available',then=1),default=0,output_field=IntegerField()))).get(id=int(item_id))
 		
 		if item.item_add_type == 'unit':
 			item_count = item.unit_count
 
 			if float(item_count) >= float(quantity) :
 				response_dict['item_available'] = True
+				response_dict['item_quantity'] = quantity
 			else:
 				response_dict['item_available'] = False
+				response_dict['item_quantity'] = item_count
+
+			response_dict['item_count'] = item_count
 		else:
 			if item.quantity_total:
 				item_count = item.total_quantity
@@ -3406,8 +3424,14 @@ class ItemQuantityCheck(APIView):
 
 			if float(item_count) >= float(quantity) :
 				response_dict['item_available'] = True
+				response_dict['item_quantity'] = quantity
 			else:
 				response_dict['item_available'] = False
+				response_dict['item_quantity'] = item_count
+
+			item_count = float(item_count)
+			print(round(item_count,3),"roun")
+			response_dict['item_count'] = round(item_count,3)
 
 		response_dict['success'] = True
 
@@ -3421,33 +3445,121 @@ class CheckOutItemAdd(APIView):
 
 		service_item = request.GET.get('item_id')
 		visit_id = request.GET.get('visit_id')
+		quantity = request.GET.get('quantity')
 
-		print(visit_id,"vis")
+		print(service_item,visit_id,"vis")
 		visit = OrderScheduler.objects.get(id=int(visit_id))
 
 		item = InventoryItem.objects.get(id=int(service_item))
-		
-		if item.item_status == 'available' or item.item_status == 'about_to_finish':
-			checkout_items_count = CheckOutItems.objects.filter(visit=visit).count()
 
-			checkout_item = CheckOutItems.objects.create(visit=visit,item=item)
-			response_dict['checkout_item_id'] = checkout_item.id
-			response_dict['item_id'] = checkout_item.item.id
-			response_dict['item_name'] = checkout_item.item.name
-			response_dict['item_code'] = checkout_item.item.item_code
-
-			if checkout_item.item.item_add_type == 'unit':
-				response_dict['item_unit'] = 'unit(S)'
+		combined_checkout_items_id_list = []
+		checkout_items_id_list1 = CheckOutItems.objects.filter(visit=visit)
+		for checkout_item in checkout_items_id_list1:
+			if checkout_item.service_item:
+				combined_checkout_items_id_list.append(int(checkout_item.service_item.item.id))
 			else:
-				response_dict['item_unit'] = checkout_item.item.measuring_unit
+				combined_checkout_items_id_list.append(int(checkout_item.item.id))
 
-			response_dict['item_count'] = checkout_items_count + 1
+		print(combined_checkout_items_id_list,"idlist")
 
-			response_dict['message'] = 'Item Added'
+		if int(service_item) in combined_checkout_items_id_list:
+			response_dict['message'] = 'Item already added'
 		else:
-			response_dict['message'] = 'Out of stock'
+			print("itemaddd")
+			if item.item_status == 'available' or item.item_status == 'about_to_finish':
+
+				checkout_item = CheckOutItems.objects.create(visit=visit,item=item,units=quantity)
+				response_dict['checkout_item_id'] = checkout_item.id
+				response_dict['item_id'] = checkout_item.item.id
+				response_dict['item_name'] = checkout_item.item.name
+				response_dict['item_code'] = checkout_item.item.item_code
+				response_dict['item_quantity'] = checkout_item.units
+
+				if checkout_item.item.item_add_type == 'unit':
+					response_dict['item_unit'] = 'unit'
+					response_dict['item_type'] = 'unit'
+					
+					itemunits = ItemUnit.objects.filter(item=checkout_item.item,status='available')[:int(quantity)]
+					for unit in itemunits:
+						CheckOutItemUnits.objects.create(checkout_item=checkout_item,item_unit=unit)
+				else:
+					response_dict['item_unit'] = checkout_item.item.measuring_unit
+					response_dict['item_type'] = 'quantity'
+
+				response_dict['message'] = 'Item Added'
+			else:
+				response_dict['message'] = 'Out of stock'
+
+			response_dict['success'] = True
+
+		return Response(response_dict, HTTP_200_OK)
+
+class CheckOutItemUnitsList(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+
+	def get(self,request):
+		response_dict         = {'success':False}
+
+		checkout_item_id = request.GET.get('checkout_item_id')
+		print(checkout_item_id,"pry")
+		checkout_item = CheckOutItems.objects.get(id=int(checkout_item_id))
+		print(checkout_item,"unitttrroo")
+		
+		checkout_item_units = CheckOutItemUnits.objects.filter(checkout_item__id=int(checkout_item_id))
+		print(checkout_item_units,"unittt")
+		
+		# for item units listing in popup
+		item_units_list = []
+		checkout_unit_id_list = []
+
+		for unit in checkout_item_units:
+			checkout_unit_id_list.append(unit.item_unit.id)
+
+			if unit.item_unit.unit_serial_number:
+				serial_no = unit.item_unit.unit_serial_number
+			else:
+				serial_no = '-'
+
+			if unit.item_unit.expiry_date:
+				expiry_date = datetime.strftime(unit.item_unit.expiry_date,'%d-%m-%Y')
+			else:
+				expiry_date = '-'
+
+			item_unit_dict = {
+				'item_unit_id' : unit.id,
+				'item_unit_code' : unit.item_unit.unit_code,
+				'item_unit_serial_no' : serial_no,
+				'item_unit_expiry' : expiry_date,
+			}
+			item_units_list.append(item_unit_dict)
+
+		
+		# for unit dropdown
+		if checkout_item.service_item:
+			units_list = ItemUnit.objects.filter(item=checkout_item.service_item.item,status='available')
+		else:
+			units_list = ItemUnit.objects.filter(item=checkout_item.item,status='available')
+
+		print(checkout_unit_id_list,"udroplist")
+		unit_dropdown_list = []
+
+		for unit in units_list:
+
+			if unit.id not in checkout_unit_id_list:
+				print(unit.id,"eyed")
+				unit_dropdown_dict = {
+					'unit_id' : unit.id,
+					'unit_code' : unit.unit_code
+				}
+
+				unit_dropdown_list.append(unit_dropdown_dict)
+
 
 		response_dict['success'] = True
+		response_dict['item_units_list'] = item_units_list
+		response_dict['checkout_item_id'] = checkout_item_id
+		response_dict['unit_dropdown_list'] = unit_dropdown_list
 
 		return Response(response_dict, HTTP_200_OK)
 
@@ -3462,6 +3574,9 @@ class CheckOutItemDelete(APIView):
 		
 		if visit_id:
 			checkout_items = CheckOutItems.objects.filter(visit__id=int(visit_id)).delete()
+			visit = OrderScheduler.objects.get(id=int(visit_id))
+			visit.stock_out_items_saved = False
+			visit.save()
 		else:
 			checkout_item = CheckOutItems.objects.get(id=int(checkout_item))
 			checkout_item_id = checkout_item.id
@@ -3483,6 +3598,7 @@ class CheckOutItemSwap(APIView):
 		checkout_item = request.GET.get('service_item')
 		ingredient_id = request.GET.get('ingredient_id')
 		checkout_item_id = request.GET.get('checkout_item_id')
+		quantity = request.GET.get('quantity')
 		print(checkout_item_id,checkout_item,"mpl")
 		checkout = CheckOutItems.objects.get(id=int(checkout_item_id))
 
@@ -3491,21 +3607,57 @@ class CheckOutItemSwap(APIView):
 		swap_item = ServiceRecipeItems.objects.get(ingredient=ingredient,item__id=int(checkout_item))
 		print(swap_item,"swp")
 
-		checkout.service_item = swap_item
-		checkout.is_swapped_item = True
-		checkout.save()
+		if float(quantity) > 0 :
+			print("rorraaappp")
+			if checkout.service_item.item.item_add_type == 'unit':
+				print("rorraaa")
+				CheckOutItemUnits.objects.filter(checkout_item=checkout).delete()
 
-		response_dict['ingredient_id'] = ingredient.id
-		response_dict['ingredient_name'] = ingredient.ingredient
-		response_dict['checkout_item_id'] = checkout.id
-		response_dict['item_id'] = checkout.service_item.item.id
-		response_dict['item_name'] = checkout.service_item.item.name
-		response_dict['item_code'] = checkout.service_item.item.item_code
+			if swap_item.item.item_add_type == 'unit':
+				itemunits = ItemUnit.objects.filter(item__id=int(swap_item.item.id),status='available')[:int(quantity)]
 
-		if checkout.service_item.item.item_add_type == 'unit':
-			response_dict['item_unit'] = 'unit(S)'
-		else:
-			response_dict['item_unit'] = checkout.service_item.item.measuring_unit
+				for unit in itemunits:
+					CheckOutItemUnits.objects.create(checkout_item=checkout,item_unit=unit)
+
+			checkout.service_item = swap_item
+			checkout.units = quantity
+			checkout.is_swapped_item = True
+			checkout.save()
+
+			response_dict['ingredient_id'] = ingredient.id
+			response_dict['ingredient_name'] = ingredient.ingredient
+			response_dict['checkout_item_id'] = checkout.id
+			response_dict['item_id'] = checkout.service_item.item.id
+			response_dict['item_name'] = checkout.service_item.item.name
+			response_dict['item_code'] = checkout.service_item.item.item_code
+
+			if checkout.service_item.item.item_add_type == 'unit':
+				response_dict['item_unit'] = 'unit(S)'
+				response_dict['item_type'] = 'unit'
+			else:
+				response_dict['item_unit'] = checkout.service_item.item.measuring_unit
+				response_dict['item_type'] = 'quantity'
+
+			# response_dict['item_count'] = checkout_items_count + 1
+
+			response_dict['success'] = True
+
+		return Response(response_dict, HTTP_200_OK)
+
+class CheckOutItemUnitSwap(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+	def get(self,request):
+		response_dict            = {'success':False}
+
+		checkout_unit_id = request.GET.get('checkout_unit_id')
+		swap_unit_id = request.GET.get('swap_unit_id')
+		
+		swap_unit = ItemUnit.objects.get(id=int(swap_unit_id))
+
+		checkout_unit = CheckOutItemUnits.objects.get(id=int(checkout_unit_id))
+		checkout_unit.item_unit = swap_unit
+		checkout_unit.save()
 
 		# response_dict['item_count'] = checkout_items_count + 1
 
@@ -3609,8 +3761,7 @@ class ItemsCheckInAPI(APIView):
 		count = 0
 
 		for item_id in item_ids:
-
-			checkin_item = CheckOutItems.objects.get(id=int(item_id),is_checked_in=False)
+			checkin_item = CheckOutItems.objects.prefetch_related(Prefetch('checkoutitem',CheckOutItemUnits.objects.all(),to_attr="checkin_item_units")).get(id=int(item_id),is_checked_in=False)
 			visit = OrderScheduler.objects.get(id=int(checkin_item.visit.id))
 
 			print(item_quantities[count],"iom")
@@ -3619,18 +3770,17 @@ class ItemsCheckInAPI(APIView):
 			
 			if checkin_item.item and checkin_item.item.item_add_type == 'unit':
 				print("pam")
-				inventoryitem = InventoryItem.objects.prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(status='out_of_order'),to_attr='item_units')).get(id=int(checkin_item.item.id))
-				if inventoryitem.item_units:
-					for unit in inventoryitem.item_units[:int(checkin_item.units)]:
-						unit.status = 'active'
-						unit.save()
+				for itemunit in checkin_item.checkin_item_units:
+					inventoryitemunit = ItemUnit.objects.get(id=int(itemunit.item_unit.id))
+					inventoryitemunit.status = 'available'
+					inventoryitemunit.save()
 
 			if checkin_item.service_item and checkin_item.service_item.item.item_add_type == 'unit':
-				inventoryitem = InventoryItem.objects.prefetch_related(Prefetch('unit_item',queryset=ItemUnit.objects.filter(status='active'),to_attr='item_units')).get(id=int(checkin_item.service_item.item.id))
-				if inventoryitem.item_units:
-					for unit in inventoryitem.item_units[:int(checkin_item.units)]:
-						unit.status = 'active'
-						unit.save()
+				for itemunit in checkin_item.checkin_item_units:
+					print(itemunit.item_unit.id,"itunitid")
+					inventoryitemunit = ItemUnit.objects.get(id=int(itemunit.item_unit.id))
+					inventoryitemunit.status = 'available'
+					inventoryitemunit.save()
 
 			if checkin_item.item and checkin_item.item.item_add_type == 'quantity':
 				print("pam")

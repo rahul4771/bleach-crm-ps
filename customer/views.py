@@ -70,16 +70,16 @@ class Quatation(View):
 
 		#evaluation id decryption
 		evaluation_id_encrypted = evaluation_id
-		evaluation_id = 'BLC'+evaluation_id_encrypted[3:14]
-		user_name     =  evaluation_id_encrypted[14:]
+		evaluation_id           = 'BLC'+evaluation_id_encrypted[3:14]
+		user_name               =  evaluation_id_encrypted[14:]
 
 
-		order = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate'),to_attr='orderschedules')).annotate(customerbooking=Sum(Case(When(evaluation__booking_evaluation__booking_type='CLEANINGBOOKING',then=1),default=0,output_field=IntegerField()))).get(is_active=True,order_no=evaluation_id,evaluation__customer__username=user_name)
+		order                   = Order.objects.select_related('evaluation__customer').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).select_related('evaluation_details','order_scheduler_book','customer_address__area','customer_address__governorate'),to_attr='orderschedules')).annotate(customerbooking=Sum(Case(When(evaluation__booking_evaluation__booking_type='CLEANINGBOOKING',then=1),default=0,output_field=IntegerField()))).get(is_active=True,order_no=evaluation_id,evaluation__customer__username=user_name)
 
 
-		nonduplicate_schedules = []
+		nonduplicate_schedules  = []
 		#Remove duplicates for subscription
-		duplicate_schedules    = []
+		duplicate_schedules     = []
 		for orderschedule in order.orderschedules:
 			if orderschedule.order_scheduler_book in duplicate_schedules:
 				pass
@@ -1118,21 +1118,21 @@ def statement_of_account_old(request,client_id):
 
 def statement_of_account(request,client_id):
 
-	if request.method == 'POST':
-		start_date = request.POST.get('start_date')
-		end_date = request.POST.get('end_date')
+	# if request.method == 'POST':
+	# 	start_date = request.POST.get('start_date')
+	# 	end_date = request.POST.get('end_date')
 
-		list_data_check = request.POST.get('list_data_check')
-		print(list_data_check,"ch")
+	# 	list_data_check = request.POST.get('list_data_check')
+	# 	print(list_data_check,"ch")
 
-		if start_date and end_date:
-			start_date = datetime.strptime(start_date,'%Y-%m-%d')
-			end_date = datetime.strptime(end_date,'%Y-%m-%d')
+	# 	if start_date and end_date:
+	# 		start_date = datetime.strptime(start_date,'%Y-%m-%d')
+	# 		end_date = datetime.strptime(end_date,'%Y-%m-%d')
 
-			start_date = start_date.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
-			end_date = end_date+timedelta(1)
+	# 		start_date = start_date.replace(hour=0,minute=0,second=0,microsecond=0,tzinfo=None)
+	# 		end_date = end_date+timedelta(1)
 
-	print(start_date,end_date,"mlpp")
+	# print(start_date,end_date,"mlpp")
 	customer = UserProfile.objects.get(is_active=True,id=int(client_id))
 	address = Address.objects.filter(customer__id=int(client_id)).first()
 
@@ -1172,13 +1172,19 @@ def statement_of_account(request,client_id):
 					# job_remaining += float(book.total_cost - job_completed)	
 
 					if order.evaluation.fine_amount:
-						job_completed -= float(order.evaluation.fine_amount/cleanings_count)
+						job_completed += float(order.evaluation.fine_amount/cleanings_count)
 
 					if order.evaluation.writeback_amount:
 						job_completed -= float(order.evaluation.writeback_amount/cleanings_count)
 
 					if order.evaluation.promocode_amount:
 						job_completed -= float(order.evaluation.promocode_amount/cleanings_count)
+
+					if order.evaluation.additional_charge:
+						job_completed += float(order.evaluation.additional_charge/cleanings_count)
+
+					if order.evaluation.discount:
+						job_completed -= float(order.evaluation.discount/cleanings_count)
 
 			opening_credit += float(job_completed)
 
@@ -1190,10 +1196,10 @@ def statement_of_account(request,client_id):
 	
 	
 	# soa date range
-	if list_data_check == 'on':
-		customer_orders = Order.objects.filter(is_active=True).order_by('evaluation__quatation_approved_date').filter(evaluation__customer__id=int(client_id),evaluation__quatation_status='APPROVED',order_status__isnull=False).prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='evaluationdetails'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules')).annotate(cleaning_count=Count('order_scheduler_order'),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())),cleaning_in_progress_count=Sum(Case(When(Q(Q(order_scheduler_order__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler_order__work_status='CLEANING_IN_PROGRESS')),then=1),default=0,output_field=IntegerField())))
-	else:
-		customer_orders = Order.objects.filter(is_active=True,created__range=(start_date,end_date)).order_by('evaluation__quatation_approved_date').filter(evaluation__customer__id=int(client_id),evaluation__quatation_status='APPROVED',order_status__isnull=False).prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True,created__range=(start_date,end_date)),to_attr='paymenthistory'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='evaluationdetails'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules')).annotate(cleaning_count=Count('order_scheduler_order'),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())),cleaning_in_progress_count=Sum(Case(When(Q(Q(order_scheduler_order__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler_order__work_status='CLEANING_IN_PROGRESS')),then=1),default=0,output_field=IntegerField())))
+	# if list_data_check == 'on':
+	customer_orders = Order.objects.filter(is_active=True).order_by('evaluation__quatation_approved_date').filter(evaluation__customer__id=int(client_id),evaluation__quatation_status='APPROVED',order_status__isnull=False).prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True),to_attr='paymenthistory'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='evaluationdetails'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules')).annotate(cleaning_count=Count('order_scheduler_order'),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())),cleaning_in_progress_count=Sum(Case(When(Q(Q(order_scheduler_order__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler_order__work_status='CLEANING_IN_PROGRESS')),then=1),default=0,output_field=IntegerField())))
+	# else:
+	# 	customer_orders = Order.objects.filter(is_active=True,created__range=(start_date,end_date)).order_by('evaluation__quatation_approved_date').filter(evaluation__customer__id=int(client_id),evaluation__quatation_status='APPROVED',order_status__isnull=False).prefetch_related(Prefetch('history_order',queryset=PaymentHistory.objects.filter(is_active=True,created__range=(start_date,end_date)),to_attr='paymenthistory'),Prefetch('evaluation__evaluation_details',queryset=EvaluationDetails.objects.filter(is_active=True).select_related('address__area').prefetch_related(Prefetch('evaluation_book_evaluation_details',queryset=EvaluationBook.objects.filter(is_active=True),to_attr='evaluation_books')),to_attr='evaluationdetails'),Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True),to_attr='orderschedules')).annotate(cleaning_count=Count('order_scheduler_order'),completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())),cleaning_in_progress_count=Sum(Case(When(Q(Q(order_scheduler_order__work_status='CLEANING_TEAM_ASSIGNED')|Q(order_scheduler_order__work_status='CLEANING_IN_PROGRESS')),then=1),default=0,output_field=IntegerField())))
 
 	accounts_list = []
 
