@@ -29,6 +29,12 @@ MEASURING_UNIT_CHOICES=(
     ('pack','pack')
 )
 
+ITEM_TYPE_CHOICES=( 
+    ('RAW MATERIALS','RAW MATERIALS'), 
+    ('ASSETS','ASSETS'),
+    ('FINISHED GOODS','FINISHED GOODS')
+)
+
 class Category(models.Model):
     name            =   models.CharField(max_length=100,blank=False,null=False)
     category_code   =   models.CharField(max_length=50,blank=False,null=False)
@@ -82,6 +88,7 @@ class Store(models.Model):
 
 
 class InventoryItem(models.Model):
+    item_type       =   models.CharField(max_length=20,blank=False,null=False,choices=ITEM_TYPE_CHOICES)
     item_category   =   models.ForeignKey(Category,blank=False,null=False,related_name='item_category')
     item_segment    =   models.ForeignKey(Segment,blank=True,null=True,related_name='item_segment')
     item_line       =   models.ForeignKey(Line,blank=True,null=True,related_name='item_line')

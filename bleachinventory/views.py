@@ -1157,14 +1157,15 @@ class InventoryInv(IsInventoryAdminUser,View):
 
         if action == 'add_item':
             # category = Category.objects.get(id=int(category_id))
-            name     = request.POST.get('item_name')
-            category_id = request.POST.get('item_category')
-            segment_id = request.POST.get('item_segment')
-            line_id = request.POST.get('item_line')
-            description = request.POST.get('item_description')
-            reserve = request.POST.get('item_reserve')
-            status     = request.POST.get('item_status')
-            reusable     = request.POST.get('item_reusable')
+            item_type       = request.POST.get('item_type')
+            name            = request.POST.get('item_name')
+            category_id     = request.POST.get('item_category')
+            segment_id      = request.POST.get('item_segment')
+            line_id         = request.POST.get('item_line')
+            description     = request.POST.get('item_description')
+            reserve         = request.POST.get('item_reserve')
+            status          = request.POST.get('item_status')
+            reusable        = request.POST.get('item_reusable')
             
             # item_package     = request.POST.get('item_package')
             # if item_package == 'on':
@@ -1172,8 +1173,8 @@ class InventoryInv(IsInventoryAdminUser,View):
             # else:
             #     is_package = False
             
-            item_add_type     = request.POST.get('itemadd_type')
-            unit_measure     = request.POST.get('unit_measure')
+            item_add_type   = request.POST.get('itemadd_type')
+            unit_measure    = request.POST.get('unit_measure')
 
             if category_id:
                 category = Category.objects.get(id=int(category_id))
@@ -1202,12 +1203,13 @@ class InventoryInv(IsInventoryAdminUser,View):
                 new_item_code = item_code_series + '101'
             print(new_item_code,"lop")
 
-            inv_item = InventoryItem.objects.create(item_category=category,item_segment=segment,item_line=line,name=name,item_code=new_item_code,description=description,reserve_count=reserve,is_reusable=reusable,item_add_type=item_add_type,measuring_unit=unit_measure)
+            inv_item = InventoryItem.objects.create(item_type=item_type,item_category=category,item_segment=segment,item_line=line,name=name,item_code=new_item_code,description=description,reserve_count=reserve,is_reusable=reusable,item_add_type=item_add_type,measuring_unit=unit_measure)
             messages.success(request,"Item Added Successfully !")
             return redirect('bleach-inventory:inventory-item',inv_item.id)
 
         if action == 'edit_item':
             print("edit")
+            item_type= request.POST.get('item_type')
             name     = request.POST.get('item_name')
             item_id = request.POST.get('item_edit_id')
             category_id = request.POST.get('item_category')
@@ -1262,15 +1264,16 @@ class InventoryInv(IsInventoryAdminUser,View):
 
                 item.item_code = new_item_code
 
-            item.item_category = category
-            item.item_segment = segment
-            item.item_line = line
-            item.name = name
-            item.description = description
-            item.reserve_count   = reserve
-            item.status = status
-            item.is_reusable = reusable
-            item.item_add_type = item_add_type
+            item.item_type      = item_type
+            item.item_category  = category
+            item.item_segment   = segment
+            item.item_line      = line
+            item.name           = name
+            item.description    = description
+            item.reserve_count  = reserve
+            item.status         = status
+            item.is_reusable    = reusable
+            item.item_add_type  = item_add_type
             item.measuring_unit = unit_measure
             item.save()
             messages.success(request,"Item Updated Successfully !")
