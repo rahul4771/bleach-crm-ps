@@ -1068,9 +1068,22 @@ class InventoryInv(IsInventoryAdminUser,View):
         print(item_category,item_segment,item_line,item_status,"mkk")
 
         if search:
-            inventory_items       = InventoryItem.objects.filter(Q(name__icontains=search)|Q(item_code__icontains=search)).annotate(unit_count=Sum(Case(When(unit_item__status='available',then=1),default=0,output_field=IntegerField())))
+            inventory_items                 = InventoryItem.objects.filter(Q(name__icontains=search)|Q(item_code__icontains=search)).annotate(unit_count=Sum(Case(When(unit_item__status='available',then=1),default=0,output_field=IntegerField())))
+
+            inventory_items_rawmaterials    = InventoryItem.objects.filter(item_type='RAW MATERIALS').filter(Q(name__icontains=search)|Q(item_code__icontains=search)).annotate(unit_count=Sum(Case(When(unit_item__status='available',then=1),default=0,output_field=IntegerField())))
+        
+            inventory_items_assets          = InventoryItem.objects.filter(item_type='ASSETS').filter(Q(name__icontains=search)|Q(item_code__icontains=search)).annotate(unit_count=Sum(Case(When(unit_item__status='available',then=1),default=0,output_field=IntegerField())))
+        
+            inventory_items_finishedgoods   = InventoryItem.objects.filter(item_type='FINISHED GOODS').filter(Q(name__icontains=search)|Q(item_code__icontains=search)).annotate(unit_count=Sum(Case(When(unit_item__status='available',then=1),default=0,output_field=IntegerField())))
+
         else:
-            inventory_items       = InventoryItem.objects.all().annotate(unit_count=Sum(Case(When(unit_item__status='available',then=1),default=0,output_field=IntegerField())))
+            inventory_items                 = InventoryItem.objects.all().annotate(unit_count=Sum(Case(When(unit_item__status='available',then=1),default=0,output_field=IntegerField())))
+
+            inventory_items_rawmaterials    = InventoryItem.objects.filter(item_type='RAW MATERIALS').annotate(unit_count=Sum(Case(When(unit_item__status='available',then=1),default=0,output_field=IntegerField())))
+        
+            inventory_items_assets          = InventoryItem.objects.filter(item_type='ASSETS').annotate(unit_count=Sum(Case(When(unit_item__status='available',then=1),default=0,output_field=IntegerField())))
+        
+            inventory_items_finishedgoods   = InventoryItem.objects.filter(item_type='FINISHED GOODS').annotate(unit_count=Sum(Case(When(unit_item__status='available',then=1),default=0,output_field=IntegerField())))
 
         # inventory_items.filter(measuring_unit='number').update(measuring_unit='piece')
 
@@ -1150,7 +1163,7 @@ class InventoryInv(IsInventoryAdminUser,View):
         page_range = list(paginator.page_range)[start_index:end_index]
         entry_per_page=(inventory_items.end_index())-(inventory_items.start_index())+1
 
-        return render(request,'inventory/inventory.html',{"categories":categories,"items":inventory_items,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"item_category":item_category,"item_segment":item_segment,"item_line":item_line,"item_status":item_status})
+        return render(request,'inventory/inventory.html',{"categories":categories,"items":inventory_items,"inventory_items_rawmaterials":inventory_items_rawmaterials,"inventory_items_assets":inventory_items_assets,"inventory_items_finishedgoods":inventory_items_finishedgoods,"search_query":search,"page_range":page_range,"entry_per_page":entry_per_page,"no_of_entries":no_of_entries,"item_category":item_category,"item_segment":item_segment,"item_line":item_line,"item_status":item_status})
 
     def post(self,request):
         action =request.POST.get('action')

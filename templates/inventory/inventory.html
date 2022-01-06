@@ -193,17 +193,328 @@
                   <!-- ALL ITEMS ENDS HERE-->
                 <!-- Raw materials begins here -->
                 <div class="mt-20"  v-if="selected_item=='RAW MATERIALS'">
-
+                    
+                        <table class="inv-table footable" style="border-top:1px solid #c4c4c4"> 
+                            <thead>
+                                <tr>
+                                    <th style="width: %;">
+                                        Item Type
+                                    </th>
+                                    <th style="width: %;">
+                                        Item
+                                    </th>
+                                    <th data-hide="phone,tablet"  style="width: %; text-align: center;">
+                                        Item code
+                                    </th>
+                                    <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                        Category
+                                    </th>
+                                    <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                        Segment
+                                    </th>
+                                   <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                        Line
+                                    </th>
+                                    <th data-hide="phone,tablet"  class="text-center">
+                                        Available Qty
+                                    </th>
+                                    <th data-hide="phone,tablet"  class="text-center">
+                                        Reserve
+                                    </th>
+                                    <th data-hide="phone,tablet" class="text-left table-w-12">
+                                        Item Status
+                                    </th>
+        
+                                    <th data-hide="phone,tablet"  style="width: %;" class="text-center table-w-20">Action</th>
+                                </tr>
+                            </thead>
+                         <tbody>
+                            {% for item in inventory_items_rawmaterials %}
+                            <tr>
+                                <td class="td-md-width">
+                                    {{item.item_type}}
+                                </td>
+                                <td class="td-md-width">
+                                    {{item.name}}
+                                </td>
+                                <td class="text-center">
+                                    {{item.item_code}}
+                                </td>
+                                <td class="text-center">
+                                    {{item.item_category.name}}
+                                <td class="text-center td-md-width">
+                                    {{item.item_segment.name}}
+                                </td>
+                                <td class="text-center td-md-width" >
+                                    {{item.item_line.name}}
+                                </td>
+                                <td class="text-center">
+                                    {% if item.item_add_type == 'quantity' %}
+                                    {{item.total_quantity|floatformat:3}} {{item.measuring_unit}}
+                                    {% else %}
+                                    {{item.unit_count}} unit
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    {{item.reserve_count|floatformat:3}} {% if item.item_add_type == 'quantity' %}{{item.measuring_unit}}{% else %}unit{% endif %}
+                                </td>
+                                {% comment %} <td>
+                                    {% if item.status == True %}
+                                    <span class="inv-dot c-active ml-5"></span>Active
+                                    {% else %}
+                                    <span class="inv-dot c-inactive ml-5"></span>Not Active
+                                    {% endif %}
+                                  
+                                </td> {% endcomment %}
+                                <td class="text-left">
+                                    {% if item.item_status == 'available' %}
+                                    <span class="inv-dot  c-active"></span>
+                                    Available
+                                    {% elif item.item_status == 'about_to_finish' %}
+                                    <span class="inv-dot c-about-finish"></span>
+                                    
+                                    About to finish
+                                    {% elif item.item_status == 'out_of_stock' %}
+                                    <span class="inv-dot c-out-of-order"></span>
+    
+                                    Out of Stock
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    <a href="/bleach-inventory/item/{{item.id}}">
+                                    <button class="inv-plan-img-btn"> <img class="view-img" src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
+                                    </a>
+                                    <button class="inv-plan-img-btn edit-item" onclick="openNavAddStore('edit')" data-itemid="{{item.id}}" data-item_type="{{item.item_type}}" data-itemname="{{item.name}}" data-itemcode="{{item.item_code}}" data-itemcategory="{{item.item_category.id}}" data-itemsegment="{{item.item_segment.id}}" data-itemline="{{item.item_line.id}}" data-itemdescription="{{item.description}}" data-itemreserve="{{item.reserve_count}}" data-itemaddtype="{{item.item_add_type}}" data-unitmeasure="{{item.measuring_unit}}" data-itemstatus="{{item.status}}" data-itemreusbale="{{item.is_reusable}}" data-itempackage="{{item.is_package}}"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>
+                                    
+                                    {% if request.user.user_type == 'INVENTORYADMIN' %}
+                                    <button class="inv-plan-img-btn delete-item"  data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                         </tbody>
+                           
+                          
+                         
+                            
+                        </table>
+                    
                 </div>
                 <!-- Raw materials ends here -->
                 <!-- Assets begins here -->
                 <div class="mt-20"  v-if="selected_item=='ASSETS'">
-
+                    
+                            <table class="inv-table footable" style="border-top:1px solid #c4c4c4"> 
+                                <thead>
+                                    <tr>
+                                        <th style="width: %;">
+                                            Item Type
+                                        </th>
+                                        <th style="width: %;">
+                                            Item
+                                        </th>
+                                        <th data-hide="phone,tablet"  style="width: %; text-align: center;">
+                                            Item code
+                                        </th>
+                                        <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                            Category
+                                        </th>
+                                        <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                            Segment
+                                        </th>
+                                       <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                            Line
+                                        </th>
+                                        <th data-hide="phone,tablet"  class="text-center">
+                                            Available Qty
+                                        </th>
+                                        <th data-hide="phone,tablet"  class="text-center">
+                                            Reserve
+                                        </th>
+                                        <th data-hide="phone,tablet" class="text-left table-w-12">
+                                            Item Status
+                                        </th>
+            
+                                        <th data-hide="phone,tablet"  style="width: %;" class="text-center table-w-20">Action</th>
+                                    </tr>
+                                </thead>
+                             <tbody>
+                                {% for item in inventory_items_assets %}
+                                <tr>
+                                    <td class="td-md-width">
+                                        {{item.item_type}}
+                                    </td>
+                                    <td class="td-md-width">
+                                        {{item.name}}
+                                    </td>
+                                    <td class="text-center">
+                                        {{item.item_code}}
+                                    </td>
+                                    <td class="text-center">
+                                        {{item.item_category.name}}
+                                    <td class="text-center td-md-width">
+                                        {{item.item_segment.name}}
+                                    </td>
+                                    <td class="text-center td-md-width" >
+                                        {{item.item_line.name}}
+                                    </td>
+                                    <td class="text-center">
+                                        {% if item.item_add_type == 'quantity' %}
+                                        {{item.total_quantity|floatformat:3}} {{item.measuring_unit}}
+                                        {% else %}
+                                        {{item.unit_count}} unit
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center">
+                                        {{item.reserve_count|floatformat:3}} {% if item.item_add_type == 'quantity' %}{{item.measuring_unit}}{% else %}unit{% endif %}
+                                    </td>
+                                    {% comment %} <td>
+                                        {% if item.status == True %}
+                                        <span class="inv-dot c-active ml-5"></span>Active
+                                        {% else %}
+                                        <span class="inv-dot c-inactive ml-5"></span>Not Active
+                                        {% endif %}
+                                      
+                                    </td> {% endcomment %}
+                                    <td class="text-left">
+                                        {% if item.item_status == 'available' %}
+                                        <span class="inv-dot  c-active"></span>
+                                        Available
+                                        {% elif item.item_status == 'about_to_finish' %}
+                                        <span class="inv-dot c-about-finish"></span>
+                                        
+                                        About to finish
+                                        {% elif item.item_status == 'out_of_stock' %}
+                                        <span class="inv-dot c-out-of-order"></span>
+        
+                                        Out of Stock
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="/bleach-inventory/item/{{item.id}}">
+                                        <button class="inv-plan-img-btn"> <img class="view-img" src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
+                                        </a>
+                                        <button class="inv-plan-img-btn edit-item" onclick="openNavAddStore('edit')" data-itemid="{{item.id}}" data-item_type="{{item.item_type}}" data-itemname="{{item.name}}" data-itemcode="{{item.item_code}}" data-itemcategory="{{item.item_category.id}}" data-itemsegment="{{item.item_segment.id}}" data-itemline="{{item.item_line.id}}" data-itemdescription="{{item.description}}" data-itemreserve="{{item.reserve_count}}" data-itemaddtype="{{item.item_add_type}}" data-unitmeasure="{{item.measuring_unit}}" data-itemstatus="{{item.status}}" data-itemreusbale="{{item.is_reusable}}" data-itempackage="{{item.is_package}}"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>
+                                        
+                                        {% if request.user.user_type == 'INVENTORYADMIN' %}
+                                        <button class="inv-plan-img-btn delete-item"  data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                             </tbody>
+                               
+                              
+                             
+                                
+                            </table>
+                        
                 </div>
                 <!-- Assets ends here -->
                   <!--FINISHED GOODS begins here -->
                   <div class="mt-20"  v-if="selected_item=='FINISHED GOODS'">
-
+                    
+                            <table class="inv-table footable" style="border-top:1px solid #c4c4c4"> 
+                                <thead>
+                                    <tr>
+                                        <th style="width: %;">
+                                            Item Type
+                                        </th>
+                                        <th style="width: %;">
+                                            Item
+                                        </th>
+                                        <th data-hide="phone,tablet"  style="width: %; text-align: center;">
+                                            Item code
+                                        </th>
+                                        <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                            Category
+                                        </th>
+                                        <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                            Segment
+                                        </th>
+                                       <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                            Line
+                                        </th>
+                                        <th data-hide="phone,tablet"  class="text-center">
+                                            Available Qty
+                                        </th>
+                                        <th data-hide="phone,tablet"  class="text-center">
+                                            Reserve
+                                        </th>
+                                        <th data-hide="phone,tablet" class="text-left table-w-12">
+                                            Item Status
+                                        </th>
+            
+                                        <th data-hide="phone,tablet"  style="width: %;" class="text-center table-w-20">Action</th>
+                                    </tr>
+                                </thead>
+                             <tbody>
+                                {% for item in inventory_items_finishedgoods %}
+                                <tr>
+                                    <td class="td-md-width">
+                                        {{item.item_type}}
+                                    </td>
+                                    <td class="td-md-width">
+                                        {{item.name}}
+                                    </td>
+                                    <td class="text-center">
+                                        {{item.item_code}}
+                                    </td>
+                                    <td class="text-center">
+                                        {{item.item_category.name}}
+                                    <td class="text-center td-md-width">
+                                        {{item.item_segment.name}}
+                                    </td>
+                                    <td class="text-center td-md-width" >
+                                        {{item.item_line.name}}
+                                    </td>
+                                    <td class="text-center">
+                                        {% if item.item_add_type == 'quantity' %}
+                                        {{item.total_quantity|floatformat:3}} {{item.measuring_unit}}
+                                        {% else %}
+                                        {{item.unit_count}} unit
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center">
+                                        {{item.reserve_count|floatformat:3}} {% if item.item_add_type == 'quantity' %}{{item.measuring_unit}}{% else %}unit{% endif %}
+                                    </td>
+                                    {% comment %} <td>
+                                        {% if item.status == True %}
+                                        <span class="inv-dot c-active ml-5"></span>Active
+                                        {% else %}
+                                        <span class="inv-dot c-inactive ml-5"></span>Not Active
+                                        {% endif %}
+                                      
+                                    </td> {% endcomment %}
+                                    <td class="text-left">
+                                        {% if item.item_status == 'available' %}
+                                        <span class="inv-dot  c-active"></span>
+                                        Available
+                                        {% elif item.item_status == 'about_to_finish' %}
+                                        <span class="inv-dot c-about-finish"></span>
+                                        
+                                        About to finish
+                                        {% elif item.item_status == 'out_of_stock' %}
+                                        <span class="inv-dot c-out-of-order"></span>
+        
+                                        Out of Stock
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="/bleach-inventory/item/{{item.id}}">
+                                        <button class="inv-plan-img-btn"> <img class="view-img" src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
+                                        </a>
+                                        <button class="inv-plan-img-btn edit-item" onclick="openNavAddStore('edit')" data-itemid="{{item.id}}" data-item_type="{{item.item_type}}" data-itemname="{{item.name}}" data-itemcode="{{item.item_code}}" data-itemcategory="{{item.item_category.id}}" data-itemsegment="{{item.item_segment.id}}" data-itemline="{{item.item_line.id}}" data-itemdescription="{{item.description}}" data-itemreserve="{{item.reserve_count}}" data-itemaddtype="{{item.item_add_type}}" data-unitmeasure="{{item.measuring_unit}}" data-itemstatus="{{item.status}}" data-itemreusbale="{{item.is_reusable}}" data-itempackage="{{item.is_package}}"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>
+                                        
+                                        {% if request.user.user_type == 'INVENTORYADMIN' %}
+                                        <button class="inv-plan-img-btn delete-item"  data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                             </tbody>     
+                            </table>
+                        
                 </div>
                 <!-- FINISHED GOODS ends here -->
                 <div class="text-right">
