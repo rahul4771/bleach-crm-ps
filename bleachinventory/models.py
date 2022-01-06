@@ -123,6 +123,19 @@ class InventoryAccessory(models.Model):
     def __str__(self):
         return self.inventory_item
 
+class InventoryFinshedItem(models.Model):
+    inventory_item           =  models.ForeignKey(InventoryItem,blank=False,null=False,related_name='finshed_item_inventory')
+    inventory_finished_item  =  models.ForeignKey(InventoryItem,blank=False,null=False,related_name='finshed_item')  
+    count                    =  models.FloatField(max_length=10,blank=True,null=True,default=0)
+    status                   =  models.BooleanField(default=True,blank=False,null=False)
+    created                  =  models.DateTimeField(auto_now_add=True)
+    
+    def __unicode__(self):
+        return str(self.inventory_item)
+
+    def __str__(self):
+        return self.inventory_item
+
 class InventoryItemImages(models.Model):
     inventory_item  = models.ForeignKey(InventoryItem,blank=False,null=False,related_name='image_item')
     item_image      = models.FileField(upload_to='inventory_item_images/',blank=True,null=True,max_length=1000)
