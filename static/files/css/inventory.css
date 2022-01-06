@@ -605,7 +605,7 @@
 }
 .nav-tab-item{
 
-  padding: 5px;
+  padding: 10px;
   border: 1px solid #dadada;
   min-width: 100px;
   text-align: center;
@@ -615,7 +615,7 @@ padding-right:10px;
 display: flex;
 }
 .nav-tab-item-active{
-  padding: 5px;
+  padding: 10px;
   border: 1px solid #dadada;
   min-width: 100px;
   text-align: center;
@@ -1172,6 +1172,14 @@ border-radius: 3px;
   .inv-item-am {
    
     font-size: 12px;
+}
+.nav-tab-item{
+  display: block;
+  min-width:0px;
+}
+.nav-tab-item-active{
+  display: block;
+  min-width:0px;
 }
 }
 
