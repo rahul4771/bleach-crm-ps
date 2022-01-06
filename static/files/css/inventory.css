@@ -605,23 +605,29 @@
 }
 .nav-tab-item{
 
-  padding: 5px;
+  padding: 10px;
   border: 1px solid #dadada;
   min-width: 100px;
   text-align: center;
 cursor:pointer;
 padding-left:10px;
 padding-right:10px;
-
+display: flex;
 }
 .nav-tab-item-active{
-  padding: 5px;
+  padding: 10px;
   border: 1px solid #dadada;
   min-width: 100px;
   text-align: center;
   border-bottom: 0px !important;
   padding-left:10px;
 padding-right:10px;
+display: flex;
+}
+.tab-logo{
+  max-height: 20px;
+    width: 20px;
+    margin-right: 10px;
 }
 
 .attribute-table-div2{
@@ -1166,6 +1172,14 @@ border-radius: 3px;
   .inv-item-am {
    
     font-size: 12px;
+}
+.nav-tab-item{
+  display: block;
+  min-width:0px;
+}
+.nav-tab-item-active{
+  display: block;
+  min-width:0px;
 }
 }
 
