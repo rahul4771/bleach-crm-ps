@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
-<div class="wrapper"><!--wrapper-->
+<div class="wrapper" id="app" v-cloak><!--wrapper-->
     {% include "inventory/common/header.html" %}
     <section class="content">
         <div class="container-fluid space topspace">
@@ -39,6 +39,35 @@
                         <button class="inv-blue-btn filter_btn"  data-toggle="modal" data-target="#filterModel" > Filter </button>
                     </div>
                 </div>
+                
+                  <div class="d-flex mt-20">
+                        <div class="nav-tab-item-active" v-if="selected_item=='ALL'">
+                            All
+                        </div>
+                        <div class="nav-tab-item" v-else @click="selectItem('ALL')">
+                            All
+                        </div>
+                        <div class="nav-tab-item-active" v-if="selected_item=='RAW MATERIALS'">
+                          Raw Materials
+                        </div>
+                        <div class="nav-tab-item" v-else @click="selectItem('RAW MATERIALS')">
+                            Raw Materials
+                          </div>
+                          <div class="nav-tab-item-active" v-if="selected_item=='ASSETS'" >
+                            Assets
+                          </div>
+                          <div class="nav-tab-item" v-else @click="selectItem('ASSETS')">
+                            Assets
+                            </div>
+                            <div class="nav-tab-item-active" v-if="selected_item=='FINISHED GOODS'" >
+                                Finished Goods
+                              </div>
+                              <div class="nav-tab-item" v-else @click="selectItem('FINISHED GOODS')">
+                                Finished Goods
+                                </div>
+                        
+                       
+                  </div>
                 <br><br>
                 <div class="d-flex">
                     <div>
@@ -54,7 +83,8 @@
                         <p>{{no_of_entries}} Entries</p>
                     </div>
                 </div>
-                <div class="mt-20">
+                <!-- ALL ITEMS BEGINS HERE-->
+                <div class="mt-20"  v-if="selected_item=='ALL'">
                     <table class="inv-table footable" style="border-top:1px solid #c4c4c4"> 
                         <thead>
                             <tr>
@@ -160,7 +190,22 @@
                         
                     </table>
                 </div>
+                  <!-- ALL ITEMS ENDS HERE-->
+                <!-- Raw materials begins here -->
+                <div class="mt-20"  v-if="selected_item=='RAW MATERIALS'">
 
+                </div>
+                <!-- Raw materials ends here -->
+                <!-- Assets begins here -->
+                <div class="mt-20"  v-if="selected_item=='ASSETS'">
+
+                </div>
+                <!-- Assets ends here -->
+                  <!--FINISHED GOODS begins here -->
+                  <div class="mt-20"  v-if="selected_item=='FINISHED GOODS'">
+
+                </div>
+                <!-- FINISHED GOODS ends here -->
                 <div class="text-right">
                     <ul class="pagination">
 
@@ -576,6 +621,25 @@
 {% endblock %}
 
 {% block javascript %}
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+<script>
+    const app=new Vue({
+    el: '#app',
+    delimiters: ['<%', '%>'],
+      components:{
+        
+      },
+    data: {
+     selected_item:'ALL'
+    },
+    methods:{
+        selectItem(item){
+            this.selected_item=item
+        }
+    }
+}
+    )
+</script>
 <script>
     function DropDown(el) {
     this.dd = el;
