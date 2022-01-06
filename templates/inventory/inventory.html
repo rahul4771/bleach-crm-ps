@@ -47,22 +47,28 @@
                         <div class="nav-tab-item" v-else @click="selectItem('ALL')">
                             All
                         </div>
-                        <div class="nav-tab-item-active" v-if="selected_item=='RAW MATERIALS'">
+                        <div class="nav-tab-item-active " v-if="selected_item=='RAW MATERIALS'">
+                            <img src="{% static 'files/inventory/raw_materials.png'%}" class="tab-logo"/>
                           Raw Materials
                         </div>
                         <div class="nav-tab-item" v-else @click="selectItem('RAW MATERIALS')">
+                            <img src="{% static 'files/inventory/raw_materials.png'%}" class="tab-logo"/>
                             Raw Materials
                           </div>
                           <div class="nav-tab-item-active" v-if="selected_item=='ASSETS'" >
+                            <img src="{% static 'files/inventory/assets.png'%}" class="tab-logo"/>
                             Assets
                           </div>
                           <div class="nav-tab-item" v-else @click="selectItem('ASSETS')">
+                            <img src="{% static 'files/inventory/assets.png'%}" class="tab-logo"/>
                             Assets
                             </div>
                             <div class="nav-tab-item-active" v-if="selected_item=='FINISHED GOODS'" >
+                                <img src="{% static 'files/inventory/finished_goods.png'%}" class="tab-logo"/>
                                 Finished Goods
                               </div>
                               <div class="nav-tab-item" v-else @click="selectItem('FINISHED GOODS')">
+                                <img src="{% static 'files/inventory/finished_goods.png'%}" class="tab-logo"/>
                                 Finished Goods
                                 </div>
                         
