@@ -709,7 +709,7 @@ display: flex;
 .inv-item-head-sub{
   color: #333333;
   font-family:  AvenirLTStd !important;
-  font-size: 19px;
+  font-size: 14px;
 }
 .inv-item-head-sub-2{
   color: #333333;
@@ -736,7 +736,7 @@ display: flex;
   color: #333333;
 }
 .inv-edit-img{
-  width: 25px;
+  width: 20px;
   cursor: pointer;
 }
 
@@ -749,18 +749,22 @@ display: flex;
   right: 0;
   margin-right: 15px;
 }
-
+.inv-acc-card{
+  padding:10px;
+  background: #EDF1F6;
+ 
+ border-radius: 4px;
+}
 .inv-item-card{
-  padding-top: 20px;
+ padding:10px;
   background: #EDF1F6;
  font-size: 20px;
- min-height: 160px;
+ /* min-height: 160px; */
  font-weight: 500;
  border-radius: 4px;
  text-align: center;
- padding-left: 10px;
- padding-right: 10px;
- min-height: 150px;
+ 
+ 
 }
 .inv-item-card2{
   padding-top: 20px;
