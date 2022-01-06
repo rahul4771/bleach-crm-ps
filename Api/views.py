@@ -12,7 +12,7 @@ from bleachadmin.models import ServicePriceRange,Settings
 from django.core.mail import send_mail,EmailMultiAlternatives
 from Api.serializers import DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, UsersListSerializer,ShiftScheduleSerializer,OccupiedMembersSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
 from agent.views import generate_random_username
-from bleachinventory.models import Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,CheckOutItems,CheckOutItemUnits,ItemHistory
+from bleachinventory.models import Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,CheckOutItems,CheckOutItemUnits,ItemHistory,InventoryAccessory
 import re
 import random
 import string
@@ -3819,5 +3819,142 @@ class ItemsCheckInAPI(APIView):
 		response_dict = {'success':True}
 
 		return Response(response_dict, HTTP_200_OK)
+
+
+class InventoryAccessoryView(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+
+	def get(self,request,inventory_id):
+
+		response_dict = {'success':False}
+
+		try:
+			inventory_accessories = InventoryAccessory.objects.filter(inventory_item__id=inventory_id,status=True)
+		except:
+			inventory_accessories = None
+
+		accessories_list = []
+		if inventory_accessories:
+			for inventory_accessory in inventory_accessories:
+				accessory_dict = {
+					'accessory_id' : inventory_accessory.id,
+					'accessory_name' : inventory_accessory.inventory_accessory.name,
+					'count' : inventory_accessory.count
+				}
 			
-	
+				accessories_list.append(accessory_dict)
+
+		response_dict['accessories_list'] = accessories_list
+
+		return Response(response_dict, HTTP_200_OK)
+
+	def post(self,request,inventory_id):
+
+		response_dict = {'success':False}
+
+		action_type   =  request.data.get('action')
+			
+
+		if action_type == 'add_accessory':
+			accessory_id  =	request.data.get('accessory_id')
+			count         =	request.data.get('count')
+			
+			InventoryAccessory.objects.create(
+				inventory_item_id      = inventory_id,
+				inventory_accessory_id = accessory_id,
+				count                  = count
+				)
+			
+			response_dict['success'] = True
+
+		if action_type == 'edit_accessory':
+			id                  = request.data.get('id')
+			accessory_id        = request.data.get('accessory_id')
+			count               = request.data.get('count')
+
+			accessory           = InventoryItem.objects.get(id=accessory_id)
+
+			inventory_accessory               = InventoryAccessory.objects.get(id=id)
+			inventory_accessory.accessory     = accessory
+			inventory_accessory.count         = count
+			inventory_accessory.save()
+
+			response_dict['success'] = True
+
+		if action_type == 'delete_accessory':
+			id            = request.data.get('id')
+			InventoryAccessory.objects.filter(id=id).delete()
+
+			response_dict['success'] = True
+
+		return Response(response_dict, HTTP_200_OK)
+			
+class InventoryFinshedItemView(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+
+	def get(self,request,inventory_id):
+
+		response_dict = {'success':False}
+
+		try:
+			inventory_finshed_items = InventoryFinshedItem.objects.filter(inventory_item__id=inventory_id,status=True)
+		except:
+			inventory_finshed_items = None
+
+		finshed_items_list = []
+		if finshed_items:
+			for finshed_item in finshed_items:
+				finshed_item_dict = {
+					'finshed_item_id' : finshed_item.id,
+					'finshed_item_name' : finshed_item.inventory_finished_item.name,
+					'count' : finshed_item.count
+				}
+			
+				finshed_items_list.append(finshed_items)
+
+		response_dict['finshed_items_list'] = finshed_items_list
+
+		return Response(response_dict, HTTP_200_OK)
+
+	def post(self,request,inventory_id):
+
+		response_dict = {'success':False}
+
+		action_type   =  request.data.get('action')
+			
+
+		if action_type == 'add_finshed_item':
+			accessory_id  =	request.data.get('accessory_id')
+			count         =	request.data.get('count')
+			
+			InventoryAccessory.objects.create(
+				inventory_item_id      = inventory_id,
+				inventory_accessory_id = accessory_id,
+				count                  = count
+				)
+			
+			response_dict['success'] = True
+
+		if action_type == 'edit_accessory':
+			id                  = request.data.get('id')
+			accessory_id        = request.data.get('accessory_id')
+			count               = request.data.get('count')
+
+			accessory           = InventoryItem.objects.get(id=accessory_id)
+
+			inventory_accessory               = InventoryAccessory.objects.get(id=id)
+			inventory_accessory.accessory     = accessory
+			inventory_accessory.count         = count
+			inventory_accessory.save()
+
+			response_dict['success'] = True
+
+		if action_type == 'delete_accessory':
+			id            = request.data.get('id')
+			InventoryAccessory.objects.filter(id=id).delete()
+
+			response_dict['success'] = True
+
+		return Response(response_dict, HTTP_200_OK)
