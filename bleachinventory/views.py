@@ -541,7 +541,7 @@ class InventoryItems(IsInventoryAdminUser,View):
     def get(self,request,item_id):
         inventory_item = InventoryItem.objects.prefetch_related(Prefetch('image_item',queryset=InventoryItemImages.objects.all(),to_attr='item_images')).annotate(quantity_total=Sum('unit_item_history__quantity'),unit_count=Sum(Case(When(unit_item__status='available',then=1),default=0,output_field=IntegerField())),total_unit_price=Sum(Case(When(unit_item__status='available',then='unit_item__unit_price'),default=0,output_field=FloatField()))).get(id=item_id)
         categories = Category.objects.all()
-        item_units = ItemUnit.objects.filter(item=inventory_item)
+        item_units = ItemUnit.objects.filter(item=inventory_item).prefetch_related(Prefetch('checkoutitem_unit',CheckOutItemUnits.objects.all().select_related('checkout_item__visit').prefetch_related(Prefetch('checkout_item__visit__cleaning_team_order_scheduler',CleaningTeam.objects.filter(is_active=True),to_attr='cleaning_team')),to_attr='checkout_unit'))
         item_history = ItemHistory.objects.filter(item=inventory_item)
 
         stores = Store.objects.filter(status=True)
