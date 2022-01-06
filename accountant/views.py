@@ -1282,18 +1282,18 @@ def return_slots(start_time, end_time, visit_date):
 #export to excel
 def export_users_xls(request):
 
-	from_date = request.POST.get('from_date')
-	to_date = request.POST.get('to_date')
+	from_date   = request.POST.get('from_date')
+	to_date     = request.POST.get('to_date')
 	report_type = request.POST.get('report_type')
 	# print(from_date,to_date,report_type,"ftd")
 
-	prevdate = datetime.strptime(from_date, '%d-%m-%Y')
-	todate = datetime.strptime(to_date, '%d-%m-%Y')
+	prevdate          = datetime.strptime(from_date, '%d-%m-%Y')
+	todate            = datetime.strptime(to_date, '%d-%m-%Y')
 
-	prev_date_start  = prevdate.replace(hour=0,minute=0,second=0,microsecond=0)
-	prev_date_end = prevdate+timedelta(1)
-	todate_date_start= todate.replace(hour=0,minute=0,second=0,microsecond=0)   #single_date+timedelta(1)
-	todate_date_end = todate_date_start+timedelta(1)
+	prev_date_start   = prevdate.replace(hour=0,minute=0,second=0,microsecond=0)
+	prev_date_end     = prevdate+timedelta(1)
+	todate_date_start = todate.replace(hour=0,minute=0,second=0,microsecond=0)   #single_date+timedelta(1)
+	todate_date_end   = todate_date_start+timedelta(1)
 
 	print(prev_date_start,todate_date_end,"mko")
 
@@ -1440,7 +1440,7 @@ def export_users_xls(request):
 		wb = xlwt.Workbook(encoding='utf-8')
 		ws = wb.add_sheet('PAYMENT DETAILS SHEET')
 
-		columns = ['BLC No.','Job Type','Order Amount','Total Paid Amount','Balance','Order Status','Customer','Sales']
+		columns = ['BLC No.','Job Type','Order Amount','Total Paid Amount','Work Done','Balance','Order Status','Customer','Sales']
 		
 		for col_num in range(len(columns)):
 			ws.write(row_num, col_num, columns[col_num], font_style)
@@ -1460,10 +1460,10 @@ def export_users_xls(request):
 			order_schedule_count = OrderScheduler.objects.filter(order__order_no=schedule.order.order_no).count()
 
 			#schedule count of evaluation book
-			schedule_count = OrderScheduler.objects.filter(order__order_no=schedule.order.order_no,order_scheduler_book__id=schedule.order_scheduler_book.id).count()
+			schedule_count       = OrderScheduler.objects.filter(order__order_no=schedule.order.order_no,order_scheduler_book__id=schedule.order_scheduler_book.id).count()
 
-			order_amount     = schedule.order_scheduler_book.estimated_cost
-			cleaning_amount  = float(order_amount/schedule_count)
+			order_amount         = schedule.order_scheduler_book.estimated_cost
+			cleaning_amount      = float(order_amount/schedule_count)
 			
 			#fine,promocode, write off calc
 			if schedule.order.evaluation.promocode_amount > 0:

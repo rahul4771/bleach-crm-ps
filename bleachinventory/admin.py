@@ -1,10 +1,11 @@
 from django.contrib import admin
-from bleachinventory.models import CheckOutItems,CheckOutItemUnits,ItemHistory,PurchaseOrder,PurchaseOrderItems,Category,Line,Segment,Attribute,AttributeValue,ItemAttributes,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems,BundleItemUnits,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,InventoryAccessory
+from bleachinventory.models import CheckOutItems,CheckOutItemUnits,ItemHistory,PurchaseOrder,PurchaseOrderItems,Category,Line,Segment,Attribute,AttributeValue,ItemAttributes,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems,BundleItemUnits,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,InventoryAccessory,InventoryFinshedItem
 # Register your models here.
 
 admin.site.register(Category)
 admin.site.register(InventoryItem)
 admin.site.register(InventoryAccessory)
+admin.site.register(InventoryFinshedItem)
 admin.site.register(ItemUnit)
 admin.site.register(Line)
 admin.site.register(Segment)
