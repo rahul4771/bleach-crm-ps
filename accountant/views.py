@@ -1282,18 +1282,18 @@ def return_slots(start_time, end_time, visit_date):
 #export to excel
 def export_users_xls(request):
 
-	from_date = request.POST.get('from_date')
-	to_date = request.POST.get('to_date')
+	from_date   = request.POST.get('from_date')
+	to_date     = request.POST.get('to_date')
 	report_type = request.POST.get('report_type')
 	# print(from_date,to_date,report_type,"ftd")
 
-	prevdate = datetime.strptime(from_date, '%d-%m-%Y')
-	todate = datetime.strptime(to_date, '%d-%m-%Y')
+	prevdate          = datetime.strptime(from_date, '%d-%m-%Y')
+	todate            = datetime.strptime(to_date, '%d-%m-%Y')
 
-	prev_date_start  = prevdate.replace(hour=0,minute=0,second=0,microsecond=0)
-	prev_date_end = prevdate+timedelta(1)
-	todate_date_start= todate.replace(hour=0,minute=0,second=0,microsecond=0)   #single_date+timedelta(1)
-	todate_date_end = todate_date_start+timedelta(1)
+	prev_date_start   = prevdate.replace(hour=0,minute=0,second=0,microsecond=0)
+	prev_date_end     = prevdate+timedelta(1)
+	todate_date_start = todate.replace(hour=0,minute=0,second=0,microsecond=0)   #single_date+timedelta(1)
+	todate_date_end   = todate_date_start+timedelta(1)
 
 	print(prev_date_start,todate_date_end,"mko")
 
@@ -1440,193 +1440,67 @@ def export_users_xls(request):
 		wb = xlwt.Workbook(encoding='utf-8')
 		ws = wb.add_sheet('PAYMENT DETAILS SHEET')
 
-		columns = ['BLC No.','Job Type','Order Amount','Total Paid Amount','Balance','Order Status','Customer','Sales']
+		columns = ['Order No.','Cleaning Policy','Payment Policy', 'Order Amount','Total Paid Amount','Work Done','Balance','Order Status','Customer']
 		
 		for col_num in range(len(columns)):
 			ws.write(row_num, col_num, columns[col_num], font_style)
 
-		orderschedules = OrderScheduler.objects.filter(is_active=True,end_at__range=(prev_date_start,todate_date_end)).filter(Q(Q(work_status = 'CLEANING_TEAM_ASSIGNED') | Q(work_status = 'CLEANING_IN_PROGRESS') | Q(work_status='CLEANING_FULFILLED'))).exclude( Q(Q(Q(order__evaluation__payment_method='PREPAID')&~Q(order__payment_status='COMPLETED'))|Q(Q(order__evaluation__payment_method='BREAKDOWN')&Q(order__preamount_paid=0))) ).order_by('end_at')
-
-		print(orderschedules,"countt")
+		# evaluationbooks = EvaluationBook.objects.filter(evaluation_details__evaluation__quatation_status='APPROVED',created__range=(prev_date_start,todate_date_end)).select_related('evaluation_details__evaluation').prefetch_related(Prefetch('evaluation_details__evaluation__evaluation_order',queryset=Order.objects.filter(is_active=True).prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).exclude(work_status='CLEANING_CANCELLED'),to_attr='visits')),to_attr='order'))
+		# orderschedules = OrderScheduler.objects.filter(is_active=True,end_at__range=(prev_date_start,todate_date_end)).filter(Q(Q(work_status = 'CLEANING_TEAM_ASSIGNED') | Q(work_status = 'CLEANING_IN_PROGRESS') | Q(work_status='CLEANING_FULFILLED'))).exclude( Q(Q(Q(order__evaluation__payment_method='PREPAID')&~Q(order__payment_status='COMPLETED'))|Q(Q(order__evaluation__payment_method='BREAKDOWN')&Q(order__preamount_paid=0))) ).order_by('end_at')
+		orders = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end),evaluation__quatation_status='APPROVED').prefetch_related(Prefetch('order_scheduler_order',queryset=OrderScheduler.objects.filter(is_active=True).exclude(work_status='CLEANING_CANCELLED'),to_attr='visits')).annotate(completed_cleaning_count=Sum(Case(When(order_scheduler_order__work_status='CLEANING_FULFILLED',then=1),default=0,output_field=IntegerField())))
+		
+		print(orders,"countt")
 		
 		rows = []
 
 		total_day_sales = 0
 
-		for schedule in orderschedules:
-
+		for order in orders:
 			schedule_data_list = []
-			#schedule count of order
-			order_schedule_count = OrderScheduler.objects.filter(order__order_no=schedule.order.order_no).count()
 
-			#schedule count of evaluation book
-			schedule_count = OrderScheduler.objects.filter(order__order_no=schedule.order.order_no,order_scheduler_book__id=schedule.order_scheduler_book.id).count()
+			print(len(order.visits),order.completed_cleaning_count,"lenor")
 
-			order_amount     = schedule.order_scheduler_book.estimated_cost
-			cleaning_amount  = float(order_amount/schedule_count)
-			
-			#fine,promocode, write off calc
-			if schedule.order.evaluation.promocode_amount > 0:
-				cleaning_amount -= float(schedule.order.evaluation.promocode_amount/order_schedule_count)
-			if schedule.order.evaluation.writeback_amount > 0:
-				cleaning_amount -= float(schedule.order.evaluation.writeback_amount/order_schedule_count)
-			if schedule.order.evaluation.fine_amount > 0:
-				cleaning_amount += float(schedule.order.evaluation.fine_amount/order_schedule_count)
-			if schedule.order.evaluation.discount > 0:
-				cleaning_amount -= float(schedule.order.evaluation.discount/order_schedule_count)
-			if schedule.order.evaluation.additional_charge > 0:
-				cleaning_amount += float(schedule.order.evaluation.additional_charge/order_schedule_count)
-
-			total_day_sales += float(cleaning_amount)			
-
-			if schedule.order.evaluation.quatation_status == 'APPROVED':
-				if schedule.order.payment_status == 'COMPLETED' or schedule.order.preamount_paid != 0 or schedule.order.evaluation.payment_method == 'POSTPAID':
-					
-					if schedule.order.order_status == 'APPROVED_BY_CLIENT':
-						order_status = 'APPROVED'
-					elif schedule.order.order_status == 'ORDER_IN_PROGRESS':
-						order_status = 'ORDER IN PROGRESS'
-					elif schedule.order.order_status == 'ORDER_CLOSED':
-						order_status = 'ORDER CLOSED'
-					elif schedule.order.order_status == 'CANCEL_IN_PROGRESS':
-						order_status = 'CANCEL IN PROGRESS'
-					elif schedule.order.order_status == 'ORDER_CANCELLED':
-						order_status = 'ORDER CANCELLED'
-					else:
-						order_status = 'EVALUATING'
+			if order.evaluation.payment_method == 'SUBSCRIPTION' and int(len(order.visits)) > 0:
+				cleaning_policy = 'SUBSCRIPTION'
+				work_done = float(order.total_amount/len(order.visits)) * order.completed_cleaning_count
+			else:
+				cleaning_policy = 'ONE TIME CLEANING'
+				if int(len(order.visits)) == int(order.completed_cleaning_count):
+					work_done = order.total_amount
 				else:
-					order_status = 'APPROVED-NOT PAID'
+					work_done = 0.000
+			print(work_done,"wdonw")
 
-			elif schedule.order.evaluation.quatation_status == 'PENDING':
-				order_status = 'PENDING'
-
-			elif schedule.order.evaluation.quatation_status == 'REJECTED':
-				order_status = 'REJECTED'
-
-			elif schedule.order.evaluation.quatation_status == 'EXPIRED':
-				order_status = 'EXPIRED'
+			if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION':
+					
+				if order.order_status == 'APPROVED_BY_CLIENT':
+					order_status = 'APPROVED'
+				elif order.order_status == 'ORDER_IN_PROGRESS':
+					order_status = 'ORDER IN PROGRESS'
+				elif order.order_status == 'ORDER_CLOSED':
+					order_status = 'ORDER CLOSED'
+				elif order.order_status == 'CANCEL_IN_PROGRESS':
+					order_status = 'CANCEL IN PROGRESS'
+				elif order.order_status == 'ORDER_CANCELLED':
+					order_status = 'ORDER CANCELLED'
+				else:
+					order_status = 'EVALUATING'
 			else:
-				order_status = '-'
+				order_status = 'APPROVED-NOT PAID'
 
-			if schedule.order.evaluation.payment_method == 'SUBSCRIPTION':
-				cleaning_policy = 'Subscription'
-			else:
-				cleaning_policy = 'One Time Cleaning'
-
-			
-			schedule_data_list.append(schedule.order.order_no)
+			schedule_data_list.append(order.order_no)
 			schedule_data_list.append(cleaning_policy)
-			schedule_data_list.append(schedule.order.total_amount)
-			schedule_data_list.append(schedule.order.amount_paid)
-			schedule_data_list.append(schedule.order.remining_amount)
+			schedule_data_list.append(order.evaluation.payment_method)
+			schedule_data_list.append(order.total_amount)
+			schedule_data_list.append(order.amount_paid)
+			schedule_data_list.append(work_done)
+			schedule_data_list.append(order.remining_amount)
 			schedule_data_list.append(order_status)
-			schedule_data_list.append(schedule.order.evaluation.customer.name)
-			schedule_data_list.append(cleaning_amount)
-	
+			schedule_data_list.append(order.evaluation.customer.name)
 
 			rows.append(schedule_data_list)
 
-		# orders = Order.objects.filter(is_active=True,created__range=(prev_date_start,todate_date_end),evaluation__quatation_status='APPROVED').filter(~Q( order_status = 'ORDER_CANCELLED' )).values_list('order_no', 'evaluation__payment_method', 'total_amount', 'amount_paid', 'remining_amount','evaluation__quatation_status','evaluation__customer__name','payment_status','preamount_paid','order_status','evaluation__payment_method').order_by('-id')
-	
-		# #removing duplicates
-		# found = set()
-
-		# rows = []
-
-		# for order in orders:
-
-		# 	cleaning_amount = 0
-
-		# 	order_list = list(order)
-			
-		# 	#sales calculation
-		# 	orderschedules = OrderScheduler.objects.filter(is_active=True,order__evaluation__quatation_status='APPROVED',work_status='CLEANING_FULFILLED',order__order_no=order_list[0]).values_list('order__order_no','order_scheduler_book__estimated_cost','order_scheduler_book__service_type__name','order_scheduler_book__cleaning_policy','order_scheduler_book__id','order_scheduler_book__evaluation_details__evaluation__id','order_scheduler_book__evaluation_details__evaluation__promocode_amount','order_scheduler_book__evaluation_details__evaluation__writeback_amount','order_scheduler_book__evaluation_details__evaluation__fine_amount','order_scheduler_book__evaluation_details__evaluator__id','order_scheduler_book__evaluation_details__evaluation__discount').order_by('end_at')
-
-		# 	print(orderschedules.count(),"countt")
-			
-		# 	schedules_list = []
-
-		# 	for schedule in orderschedules:
-
-		# 		schedules_list.append(schedule)
-
-		# 	for schedule in schedules_list:
-
-		# 		#schedule count of order
-		# 		order_schedule_count = OrderScheduler.objects.filter(order__order_no=schedule[0]).count()
-
-		# 		#schedule count of evaluation book
-		# 		schedule_count = OrderScheduler.objects.filter(order__order_no=schedule[0],order_scheduler_book__id=schedule[4]).count()
-
-		# 		order_amount     = schedule[1]
-		# 		cleaning_amount += float(order_amount/schedule_count)
-
-				
-		# 		#fine,promocode, write off calc
-		# 		if schedule[6] > 0:
-		# 			cleaning_amount -= float(schedule[6]/order_schedule_count)
-		# 		if schedule[7] > 0:
-		# 			cleaning_amount -= float(schedule[7]/order_schedule_count)
-		# 		if schedule[8] > 0:
-		# 			cleaning_amount += float(schedule[8]/order_schedule_count)
-		# 		if schedule[10] > 0:
-		# 			cleaning_amount -= float(schedule[10]/order_schedule_count)
-
-
-		# 	#order 
-		# 	if order_list[5] == 'APPROVED':
-		# 		if order_list[7] == 'COMPLETED' or order_list[8] != 0 or order_list[10] == 'POSTPAID':
-		# 			if order_list[9] == 'APPROVED_BY_CLIENT':
-		# 				order_list[5] = 'APPROVED'
-		# 			elif order_list[9] == 'ORDER_IN_PROGRESS':
-		# 				order_list[5] = 'ORDER IN PROGRESS'
-		# 			elif order_list[9] == 'ORDER_CLOSED':
-		# 				order_list[5] = 'COMPLETED'
-		# 			else:
-		# 				order_list[5] = '-'
-		# 		else:
-		# 			order_list[5] = 'APPROVED-NOT PAID'
-
-		# 	order_list[7] = cleaning_amount
-		# 	order_list[8] = ''
-		# 	order_list[9] = ''
-		# 	order_list[10] = ''
-
-		# 	if order_list[1] == 'SUBSCRIPTION':
-		# 		order_list[1] = 'Subscription'
-		# 	else:
-		# 		order_list[1] = 'One Time Cleaning'
-
-		# 	order = tuple(order_list)
-			
-		# 	if order_list[0] not in found:
-		# 		rows.append(order)
-		# 	found.add(order_list[0])
-	
-		#combining duplicate rows
-		found = set()
-
-		combined_rows = []
-
 		for row in rows:
-			
-			if row[0] not in found:
-				sales_amount = 0
-
-				for duplicate_row in rows:
-					if row[0] == duplicate_row[0] :
-						print("wam")
-						sales_amount += float(duplicate_row[7])
-
-						print(sales_amount,"sam")
-				row[7] = sales_amount
-
-				combined_rows.append(row)
-
-			found.add(row[0])
-
-
-		for row in combined_rows:
 			row_num += 1
 			for col_num in range(len(row)):
 				ws.write(row_num, col_num, row[col_num], font_style)

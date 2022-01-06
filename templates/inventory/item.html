@@ -70,15 +70,28 @@
                 <input type="hidden" name="action" value="edit_item_details" />
               <div class="row">
                   <div class="col-md-12" style="position: relative;">
-                    <div class="edit-div">
+                    <div class="d-flex">
+                    <div class="d-flex d-grid " style="margin-left:auto">
+                           
+                        <div class="right-pos m-mt-10 mr-20">
+                            {% comment %} <button class="inv-blue-btn" onclick="openNavAdd('add')"> <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Bundle </button> {% endcomment %}
+                            <button class="inv-blue-btn" type="button" onclick="openNavAddBundle('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>{% if inventory_item.item_add_type == 'unit' %}Add Unit{% else %}Add Quantity{% endif %} </button>
+                        </div>
+                    </div>
+                    <div class="edit-div ml-10 mt-5" style="position: relative;">
+
                         <img id="id_editButton" onclick="editItemData()" class="inv-edit-img"
                         src="{% static 'files/icons/edit.png' %}">
                         <button id="id_editDone" class="inv-blue-btn inv-hide" type="button" onclick="doneEdit()">Done </button>
                     </div>
+                </div>
                   </div>
               </div>
                 <div class="row mt-40">
-                    <div class="col-md-6">
+                    <div class="col-md-12" style="padding-right: 0px !important;">
+                        
+                    </div>
+                    <div class="col-md-9">
                         <div class="row" style="position: relative;">
                             <div class="col-md-3 inv-item-img"  style="position: relative;">
                                 <div class="">
@@ -111,9 +124,24 @@
                                         <input type="text"  class="w-p-100 inv-in" name="item_name" value="{{inventory_item.name}}">
                                       </div>
                                 </div>
-                                <div class="inv-item-head-sub mt-20">
-                                    {{inventory_item.item_code}}
+                                <div class="d-flex">
+                                    <div class="inv-item-head-sub mt-20">
+                                        {{inventory_item.item_code}}
+                                    </div>
+                                    <div  class=" inv-item-head-sub mt-20 ml-20">
+                                        <img src="{% static 'files/inventory/assets.png'%}" class="tab-logo"/>
+                                        Assets
+                                      </div>
+                                      <!-- <div  class=" inv-item-head-sub mt-20 ml-20">
+                                        <img src="{% static 'files/inventory/raw_materials.png'%}" class="tab-logo"/>
+                                       Raw Materials
+                                      </div>
+                                      <div  class=" inv-item-head-sub mt-20 ml-20">
+                                        <img src="{% static 'files/inventory/finished_goods.png'%}" class="tab-logo"/>
+                                        Finished Goods
+                                      </div> -->
                                 </div>
+                              
                                 <div class="inv-item-head-sub mt-20">
                                     {% if inventory_item.item_status == 'available' %}
                                     <span class="inv-dot  c-active"></span>
@@ -127,75 +155,101 @@
                                     {% endif %}
                                 </div>
                                 
-                               <div class="row" style="margin-left: 0px; margin-top: 20px;">
-                                <div class="col-md-3 pl-0">
-                                    <div class="inv-item-head-sub" style="color: #707070;">Category</div>
-                                    <div class="inv-item-head-sub-2 mt-20" id="id_cat" >
-                                        <span id="id_cat_val"  class="av-font">  {{inventory_item.item_category.name}}</span>
-                                       
-                                        <select id="id_cat_select" name="item_category" class="minimal av-font inv-hide" >
-                                            <option value="">--Select Category--</option>
-                                            {% for category in categories %}
-                                            <option value="{{category.id}}" {% if inventory_item.item_category.id == category.id %}selected{% endif %}>{{category.name}}</option>
-                                            {% endfor %}
-                                                            
-                                        </select>
+                              
+                               <div  class="mt-10">
+                                <textarea class="inv-hide mt-30" id="id_des_text" name="description" style="width: 100%; border-radius: 5px;" rows="4"> {{inventory_item.description|default_if_none:"-"}} </textarea>
+                                <span id="id_des_val" class="av-font "> {{inventory_item.description|default_if_none:"-"}} </span> 
                                     </div>
-                                </div>
-                                <div class="col-md-3 pl-0 m-mt-10">
-                                    <div class="inv-item-head-sub" style="color: #707070;">Segment</div>
-                                    <div class="inv-item-head-sub-2 mt-20">
-                                        <span id="id_seg_val"  class="av-font">  {{inventory_item.item_segment.name|default_if_none:'-'}}</span>
-                                       
-                                        <select id="id_seg_select" name="item_segment" class="minimal av-font inv-hide">
-                                            <option value="">--Select Segment--</option>
-                                            
-                                                            
-                                        </select>
-                                    </div>
-                                
-                                </div> 
-                                <div class="col-md-3 pl-0 m-mt-10">
-                                    <div class="inv-item-head-sub" style="color: #707070;"> Line</div>
-                                    <div class="inv-item-head-sub-2 mt-20">
-                                        <span id="id_line_val" class="av-font">  {{inventory_item.item_line.name|default_if_none:'-'}}</span>
-                                       
-                                        <select id="id_line_select" name="item_line" class="minimal av-font inv-hide">
-                                            <option value="">--Select Line--</option>
-                                                            
-                                        </select>
-                                    </div>
-                                </div>
-                                {% comment %} <div class="col-md-3 pl-0 m-mt-10" >
-                                    <div class="inv-item-head-sub" style="color: #707070;">Price per unit</div>
-                                    <div class="inv-item-head-sub-2 mt-20">
-                                        <span style="color: #0085C9;"  class="av-font">  {{inventory_item.total_unit_price|floatformat:3}} KD </span>
-                                       
-                                        
-                                    </div>
-                                </div> {% endcomment %}
-                                
-                                
-                               </div>
                             </div>
                             
+                            
                         </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="col-md-12" style="padding-right: 0px !important;">
-                            <div class="d-flex d-grid">
-                               
-                                <div class="right-pos m-mt-10">
-                                    {% comment %} <button class="inv-blue-btn" onclick="openNavAdd('add')"> <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Bundle </button> {% endcomment %}
-                                    <button class="inv-blue-btn" type="button" onclick="openNavAddBundle('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>{% if inventory_item.item_add_type == 'unit' %}Add Unit{% else %}Add Quantity{% endif %} </button>
+                        <div class="row mt-20 ml-0 mr-0" >
+                            <div class="col-md-3 pl-0">
+                                <div class="inv-item-head-sub" style="color: #707070;">Category</div>
+                                <div class="inv-item-head-sub-2 mt-10" id="id_cat" >
+                                    <span id="id_cat_val"  class="av-font">  {{inventory_item.item_category.name}}</span>
+                                   
+                                    <select id="id_cat_select" name="item_category" class="minimal av-font inv-hide" >
+                                        <option value="">--Select Category--</option>
+                                        {% for category in categories %}
+                                        <option value="{{category.id}}" {% if inventory_item.item_category.id == category.id %}selected{% endif %}>{{category.name}}</option>
+                                        {% endfor %}
+                                                        
+                                    </select>
                                 </div>
                             </div>
-                        </div>
-                        <div style="margin-top: 90px;" >
-                        <textarea class="inv-hide mt-30" id="id_des_text" name="description" style="width: 100%; border-radius: 5px;" rows="4"> {{inventory_item.description|default_if_none:"-"}} </textarea>
-                        <span id="id_des_val" class="av-font "> {{inventory_item.description|default_if_none:"-"}} </span> 
+                            <div class="col-md-4 pl-0 m-mt-10">
+                                <div class="inv-item-head-sub" style="color: #707070;">Segment</div>
+                                <div class="inv-item-head-sub-2 mt-10">
+                                    <span id="id_seg_val"  class="av-font">  {{inventory_item.item_segment.name|default_if_none:'-'}}</span>
+                                   
+                                    <select id="id_seg_select" name="item_segment" class="minimal av-font inv-hide">
+                                        <option value="">--Select Segment--</option>
+                                        
+                                                        
+                                    </select>
+                                </div>
+                            
+                            </div> 
+                            <div class="col-md-4 pl-0 m-mt-10">
+                                <div class="inv-item-head-sub" style="color: #707070;"> Line</div>
+                                <div class="inv-item-head-sub-2 mt-10">
+                                    <span id="id_line_val" class="av-font">  {{inventory_item.item_line.name|default_if_none:'-'}}</span>
+                                   
+                                    <select id="id_line_select" name="item_line" class="minimal av-font inv-hide">
+                                        <option value="">--Select Line--</option>
+                                                        
+                                    </select>
+                                </div>
                             </div>
+                            {% comment %} <div class="col-md-3 pl-0 m-mt-10" >
+                                <div class="inv-item-head-sub" style="color: #707070;">Price per unit</div>
+                                <div class="inv-item-head-sub-2 mt-10">
+                                    <span style="color: #0085C9;"  class="av-font">  {{inventory_item.total_unit_price|floatformat:3}} KD </span>
+                                   
+                                    
+                                </div>
+                            </div> {% endcomment %}
+                            
+                            
+                           </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="  h-100 m-mt-30">
+                            <div class="inv-item-card ">
+                             <div class="av-font text-center">
+                                 Inventory
+                                 <div style="text-align: center;" class=" av-font mt-10 mb-10">
+                                     
+                                     <br>
+                                     <div class="inv-item-amount2">
+                                         {% if inventory_item.item_add_type == 'unit' %}{{inventory_item.unit_count}}{% else %}{{inventory_item.total_quantity|floatformat:3}}{% endif %} <span style="font-size: 16px;"> {% if inventory_item.item_add_type == 'unit' %}Unit{% else %}{{inventory_item.measuring_unit}}{% endif %} </span>                    
+                                     </div>
+                                 </div>
+                                </div>
+                            </div>           
+                         </div>
+                         <div class="mt-20  h-100 m-mt-10">
+                             <div class="inv-item-card ">
+                              <div class="av-font text-center">
+                                 Reserve
+                                  <div style="text-align: center;"  class=" av-font mt-10 mb-10">       
+                                      <br>
+                                             <div id="id_res_text" class="inv-input-container h-30 inv-hide" > 
+                                                 <input type="number"  class="w-p-100 inv-in" value="{{inventory_item.reserve_count|default_if_none:'0'}}" name="reserve" required>
+                                               </div>    
+                                             <!-- 135 Unit  -->
+                                             <!-- <span id="id_res_val" class="inv-item-amount2"> {{inventory_item.reserve_count|default_if_none:'0'}}  <span style="font-size: 25px;"> unit(s) </span> </span> -->
+                                             <div id="id_res_val" class="inv-item-amount2"> {{inventory_item.reserve_count|default_if_none:'0'}}  <span style="font-size: 16px;"> {% if inventory_item.item_add_type == 'unit' %}Unit{% else %}{{inventory_item.measuring_unit}}{% endif %} </span>  </div>
+                                  </div>
+                                 </div>
+                             </div>
+                                                       
+                          </div>
+                        
                      </div>
+                     
                    
                 </div>
                 <!-- <div class="row mt-20"> -->
@@ -212,60 +266,76 @@
 
                 <div class="row mt-30 " style="font-size: 16px; margin-left: 0px;">
                    
-                     <div class="col-md-6" style="padding-left: 0px;">
-                        <div class="col-md-12 inv-item-card2"  style="position: relative;">
-                            <div class="edit-div" style="margin-top: 5px; margin-right: 5px;">
+                     <div class="col-md-6 mt-10" style="padding-left: 0px;">
+                      
+                        <div class="d-flex">
+                            <div class="mb-10 inv-item-head-sub-2" >Attributes</div>
+                            <div class="edit-div" style="position: relative;margin-left: 20px;">
                                 <img id="id_editButton" onclick="editItemDetials()" class="inv-edit-img"
                                 src="{% static 'files/icons/edit.png' %}">
                               
                             </div>
-
-                            <h4><b>Attributes</b></h4>
+                        </div>
+                        <div class="col-md-12 inv-item-card2 mt-10"  style="position: relative;">
+                           <div class="row m-0">
                             {% for attribute in item_attributes %}
-                            <div class="row c-mb-3 mt-20">
-                                <div class="col-xs-6 av-font">{{attribute.attribute.name}}</div>
-                                <div class="col-xs-6 av-font">: {{attribute.attribute_value.name}}</div>
-                            </div>
-                            {% empty %}
-                            <div class="row c-mb-3 mt-20">
-                                <div class="col-xs-6 av-font">Add attribute values</div>
-                                <div class="col-xs-6 av-font"></div>
-                            </div>
-                            {% endfor %}
+                               <div class="col-md-4">
+                                <div class="row c-mb-3 mt-20">
+                                    <div class="col-xs-6 av-font">Size</div>
+                                    <div class="col-xs-6 av-font">:<span class="ml-10">56</span> </div>
+                                </div>
+                               </div>
+                               {% empty %}
+                               <div class="col-md-12">
+                                <div class="row c-mb-3 mt-20">
+                                    <div class="col-xs-6 av-font">Add attribute values</div>
+                                    <div class="col-xs-6 av-font"></div>
+                                </div>
+                               
+                               </div>
+                               {% endfor %}
+                           </div>
+                            
+                           
+                           
+                          
     
                         </div>
+                  
                      </div>
-                     <div class="col-md-2  h-100 m-mt-30">
-                        <div class="inv-item-card ">
-                         <div class="av-font text-center">
-                             Inventory
-                             <div style="text-align: center;" class=" av-font mt-40">
-                                 
-                                 <br>
-                                 <div class="inv-item-amount2">
-                                     {% if inventory_item.item_add_type == 'unit' %}{{inventory_item.unit_count}}{% else %}{{inventory_item.total_quantity|floatformat:3}}{% endif %} <span style="font-size: 25px;"> {% if inventory_item.item_add_type == 'unit' %}Unit{% else %}{{inventory_item.measuring_unit}}{% endif %} </span>                    
-                                 </div>
-                             </div>
+                     <div class="col-md-6 mt-10" style="padding-left: 0px;">
+                       
+                       
+                            <div class="row m-0">
+                                <div class="col-md-12">
+                                    <div class="mb-10 inv-item-head-sub-2 d-flex" >
+                                        Accessories
+                                        <div class="edit-div" style="position: relative;margin-left: 20px;">
+                                            <img id="id_editButton" onclick="editItemDetials()" class="inv-edit-img"
+                                            src="{% static 'files/icons/edit.png' %}">
+                                          
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 "> <!-- loop this tag-->
+                                    <div class="inv-acc-card mt-10">
+                                        3  Item Name Item Name Item Name 
+                                      </div>
+                                </div>
+                                <div class="col-md-6 ">
+                                    <div class="inv-acc-card mt-10">
+                                        3  Item Name Item Name Item Name 
+                                      </div>
+                                </div>
+                                <div class="col-md-6 ">
+                                    <div class="inv-acc-card mt-10">
+                                        3  Item Name Item Name Item Name 
+                                      </div>
+                                </div>
                             </div>
-                        </div>           
+                        
+                        
                      </div>
-                     <div class="col-md-2  h-100 m-mt-10">
-                         <div class="inv-item-card ">
-                          <div class="av-font text-center">
-                             Reserve
-                              <div style="text-align: center;"  class=" av-font mt-40">       
-                                  <br>
-                                         <div id="id_res_text" class="inv-input-container h-30 inv-hide" > 
-                                             <input type="number"  class="w-p-100 inv-in" value="{{inventory_item.reserve_count|default_if_none:'0'}}" name="reserve" required>
-                                           </div>    
-                                         <!-- 135 Unit  -->
-                                         <!-- <span id="id_res_val" class="inv-item-amount2"> {{inventory_item.reserve_count|default_if_none:'0'}}  <span style="font-size: 25px;"> unit(s) </span> </span> -->
-                                         <div id="id_res_val" class="inv-item-amount2"> {{inventory_item.reserve_count|default_if_none:'0'}}  <span style="font-size: 25px;"> {% if inventory_item.item_add_type == 'unit' %}Unit{% else %}{{inventory_item.measuring_unit}}{% endif %} </span>  </div>
-                              </div>
-                             </div>
-                         </div>
-                                                   
-                      </div>
 
                       
                       {% comment %} {% if inventory_item.is_package == True %}
@@ -337,7 +407,7 @@
                     <div class="col-md-12">
                     <div class="inv-item-head-sub-2">
                             
-                            Units
+                            Item Log
                             
                         </div>
                         <div class="d-flex d-grid">
@@ -359,9 +429,6 @@
                                         Serial No.
                                     </th>
                                     <th data-hide="phone,tablet"  style="width: %; ">
-                                        Store
-                                    </th>
-                                    <th data-hide="phone,tablet"  style="width: %; ">
                                         Purchase date
                                     </th>
                                     
@@ -371,6 +438,10 @@
                                     {% comment %} <th data-hide="phone,tablet"  class="text-center">
                                         Unit Price
                                     </th> {% endcomment %}
+
+                                    <th data-hide="phone,tablet"  style="width: %; ">
+                                        Custody
+                                    </th>
                                     
                                     <th>
                                         Status
@@ -389,9 +460,6 @@
                                         {{unit.unit_serial_number}}
                                     </td>
                                     <td>
-                                        {{unit.store.store_name}}
-                                    </td>
-                                    <td>
                                         {{unit.purchase_date|date:'d-m-Y'}}
                                     </td>
                                     
@@ -408,6 +476,22 @@
                                         {{unit.unit_price|floatformat:3}} KD
                                     </td> {% endcomment %}
                                     
+                                    <td>
+                                        {% if unit.status == 'unavailable' %}
+                                            {% if unit.checkout_unit %}
+                                                {% for checkoutunit in unit.checkout_unit %}
+                                                    {% for team in checkoutunit.checkout_item.visit.cleaning_team %}
+                                                        {{team.team_leader.name}}
+                                                    {% endfor %}    
+                                                {% endfor %}
+                                            {% else %}
+                                            -
+                                            {% endif %}
+                                        {% else %}
+                                            {{unit.store.store_name}}
+                                        {% endif %}
+                                    </td>
+
                                     <td class="">
                                         <span class="inv-dot {% if unit.status == 'available' %}c-active{% elif unit.status == 'under_repair' %}c-expired{% elif unit.status == 'out_of_order' %}c-out-of-order{% elif unit.status == 'unavailable' %}c-inactive{% endif %} ml-5"></span>
                                         {% if unit.status == 'available' %}Available{% elif unit.status == 'under_repair' %}Under Repair{% elif unit.status == 'out_of_order' %}Out of Order{% elif unit.status == 'unavailable' %}Unavailable{% endif %}
@@ -441,7 +525,7 @@
                     <div class="col-md-12">
                         <div class="inv-item-head-sub-2">
                             
-                            Purchase History
+                            Item Log
                             
                         </div>
                         <div class="mt-5" style="border-top: 1px solid #c4c4c4;">

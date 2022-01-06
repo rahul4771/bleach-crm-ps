@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
-<div class="wrapper"><!--wrapper-->
+<div class="wrapper" id="app" v-cloak><!--wrapper-->
     {% include "inventory/common/header.html" %}
     <section class="content">
         <div class="container-fluid space topspace">
@@ -39,6 +39,41 @@
                         <button class="inv-blue-btn filter_btn"  data-toggle="modal" data-target="#filterModel" > Filter </button>
                     </div>
                 </div>
+                
+                  <div class="d-flex mt-20">
+                        <div class="nav-tab-item-active" v-if="selected_item=='ALL'">
+                            All
+                        </div>
+                        <div class="nav-tab-item" v-else @click="selectItem('ALL')">
+                            All
+                        </div>
+                        <div class="nav-tab-item-active " v-if="selected_item=='RAW MATERIALS'">
+                            <img src="{% static 'files/inventory/raw_materials.png'%}" class="tab-logo"/>
+                          Raw Materials
+                        </div>
+                        <div class="nav-tab-item" v-else @click="selectItem('RAW MATERIALS')">
+                            <img src="{% static 'files/inventory/raw_materials.png'%}" class="tab-logo"/>
+                            Raw Materials
+                          </div>
+                          <div class="nav-tab-item-active" v-if="selected_item=='ASSETS'" >
+                            <img src="{% static 'files/inventory/assets.png'%}" class="tab-logo"/>
+                            Assets
+                          </div>
+                          <div class="nav-tab-item" v-else @click="selectItem('ASSETS')">
+                            <img src="{% static 'files/inventory/assets.png'%}" class="tab-logo"/>
+                            Assets
+                            </div>
+                            <div class="nav-tab-item-active" v-if="selected_item=='FINISHED GOODS'" >
+                                <img src="{% static 'files/inventory/finished_goods.png'%}" class="tab-logo"/>
+                                Finished Goods
+                              </div>
+                              <div class="nav-tab-item" v-else @click="selectItem('FINISHED GOODS')">
+                                <img src="{% static 'files/inventory/finished_goods.png'%}" class="tab-logo"/>
+                                Finished Goods
+                                </div>
+                        
+                       
+                  </div>
                 <br><br>
                 <div class="d-flex">
                     <div>
@@ -54,7 +89,8 @@
                         <p>{{no_of_entries}} Entries</p>
                     </div>
                 </div>
-                <div class="mt-20">
+                <!-- ALL ITEMS BEGINS HERE-->
+                <div class="mt-20"  v-if="selected_item=='ALL'">
                     <table class="inv-table footable" style="border-top:1px solid #c4c4c4"> 
                         <thead>
                             <tr>
@@ -154,14 +190,530 @@
                         </tr>
                         {% endfor %}
                      </tbody>
-                       
-                      
-                     
-                        
+   
                     </table>
+                
+                <div class="text-right">
+                    <ul class="pagination">
+
+                        {% if items.has_previous %}
+                        <li class="page-item">
+                          <a class="page-link" href="?page1={{ items.previous_page_number }}&search={{request.GET.search}}&item_category={{item_category}}&item_segment={{item_segment}}&item_line={{item_line}}&item_status={{item_status}}&no_of_entries={{no_of_entries}}&item_type='ALL'" aria-label="Previous">
+                            <span aria-hidden="true">«</span>
+                            <span class="sr-only">Previous</span>
+                          </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item">
+                          <a class="page-link" href="#" aria-label="Previous">
+                            <span aria-hidden="true">«</span>
+                            <span class="sr-only">Previous</span>
+                          </a>
+                        </li>
+                        {% endif %}
+
+                        {% for pg in page_range1 %}
+                            {% if vus.number == pg %}
+                                <li class="page-item"><a class="page-link active" href="?page1={{pg}}&search={{request.GET.search}}&item_category={{item_category}}&item_segment={{item_segment}}&item_line={{item_line}}&item_status={{item_status}}&no_of_entries={{no_of_entries}}&item_type='ALL'" >{{pg}}</a></li> 
+                            {% else %}
+                                <li class="page-item"><a class="page-link" href="?page1={{pg}}&search={{request.GET.search}}&item_category={{item_category}}&item_segment={{item_segment}}&item_line={{item_line}}&item_status={{item_status}}&no_of_entries={{no_of_entries}}&item_type='ALL'" >{{pg}}</a></li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if items.has_next %}
+                        <li class="page-item">
+                          <a class="page-link" href="?page1={{ items.next_page_number }}&search={{request.GET.search}}&item_category={{item_category}}&item_segment={{item_segment}}&item_line={{item_line}}&item_status={{item_status}}&no_of_entries={{no_of_entries}}&item_type='ALL'" aria-label="Next">
+                            <span aria-hidden="true">»</span>
+                            <span class="sr-only">Next</span>
+                          </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item">
+                          <a class="page-link" href="#" aria-label="Next">
+                            <span aria-hidden="true">»</span>
+                            <span class="sr-only">Next</span>
+                          </a>
+                        </li>
+                        {% endif %}
+                        
+                      </ul>
                 </div>
 
+                <div style="color: #928F8F;">
+                    Showing {{items.start_index}} to {{items.end_index}} of {{items.paginator.count}} entries
+                </div>
+
+                </div>
+                  <!-- ALL ITEMS ENDS HERE-->
+                <!-- Raw materials begins here -->
+                <div class="mt-20"  v-if="selected_item=='RAW MATERIALS'">
+                    
+                        <table class="inv-table footable" style="border-top:1px solid #c4c4c4"> 
+                            <thead>
+                                <tr>
+                                    <th style="width: %;">
+                                        Item Type
+                                    </th>
+                                    <th style="width: %;">
+                                        Item
+                                    </th>
+                                    <th data-hide="phone,tablet"  style="width: %; text-align: center;">
+                                        Item code
+                                    </th>
+                                    <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                        Category
+                                    </th>
+                                    <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                        Segment
+                                    </th>
+                                   <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                        Line
+                                    </th>
+                                    <th data-hide="phone,tablet"  class="text-center">
+                                        Available Qty
+                                    </th>
+                                    <th data-hide="phone,tablet"  class="text-center">
+                                        Reserve
+                                    </th>
+                                    <th data-hide="phone,tablet" class="text-left table-w-12">
+                                        Item Status
+                                    </th>
+        
+                                    <th data-hide="phone,tablet"  style="width: %;" class="text-center table-w-20">Action</th>
+                                </tr>
+                            </thead>
+                         <tbody>
+                            {% for item in inventory_items_rawmaterials %}
+                            <tr>
+                                <td class="td-md-width">
+                                    {{item.item_type}}
+                                </td>
+                                <td class="td-md-width">
+                                    {{item.name}}
+                                </td>
+                                <td class="text-center">
+                                    {{item.item_code}}
+                                </td>
+                                <td class="text-center">
+                                    {{item.item_category.name}}
+                                <td class="text-center td-md-width">
+                                    {{item.item_segment.name}}
+                                </td>
+                                <td class="text-center td-md-width" >
+                                    {{item.item_line.name}}
+                                </td>
+                                <td class="text-center">
+                                    {% if item.item_add_type == 'quantity' %}
+                                    {{item.total_quantity|floatformat:3}} {{item.measuring_unit}}
+                                    {% else %}
+                                    {{item.unit_count}} unit
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    {{item.reserve_count|floatformat:3}} {% if item.item_add_type == 'quantity' %}{{item.measuring_unit}}{% else %}unit{% endif %}
+                                </td>
+                                {% comment %} <td>
+                                    {% if item.status == True %}
+                                    <span class="inv-dot c-active ml-5"></span>Active
+                                    {% else %}
+                                    <span class="inv-dot c-inactive ml-5"></span>Not Active
+                                    {% endif %}
+                                  
+                                </td> {% endcomment %}
+                                <td class="text-left">
+                                    {% if item.item_status == 'available' %}
+                                    <span class="inv-dot  c-active"></span>
+                                    Available
+                                    {% elif item.item_status == 'about_to_finish' %}
+                                    <span class="inv-dot c-about-finish"></span>
+                                    
+                                    About to finish
+                                    {% elif item.item_status == 'out_of_stock' %}
+                                    <span class="inv-dot c-out-of-order"></span>
+    
+                                    Out of Stock
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    <a href="/bleach-inventory/item/{{item.id}}">
+                                    <button class="inv-plan-img-btn"> <img class="view-img" src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
+                                    </a>
+                                    <button class="inv-plan-img-btn edit-item" onclick="openNavAddStore('edit')" data-itemid="{{item.id}}" data-item_type="{{item.item_type}}" data-itemname="{{item.name}}" data-itemcode="{{item.item_code}}" data-itemcategory="{{item.item_category.id}}" data-itemsegment="{{item.item_segment.id}}" data-itemline="{{item.item_line.id}}" data-itemdescription="{{item.description}}" data-itemreserve="{{item.reserve_count}}" data-itemaddtype="{{item.item_add_type}}" data-unitmeasure="{{item.measuring_unit}}" data-itemstatus="{{item.status}}" data-itemreusbale="{{item.is_reusable}}" data-itempackage="{{item.is_package}}"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>
+                                    
+                                    {% if request.user.user_type == 'INVENTORYADMIN' %}
+                                    <button class="inv-plan-img-btn delete-item"  data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                         </tbody>
+                            
+                        </table>
+                    
+                
                 <div class="text-right">
+                    <ul class="pagination">
+
+                        {% if inventory_items_rawmaterials.has_previous %}
+                        <li class="page-item">
+                          <a class="page-link" href="?page2={{ inventory_items_rawmaterials.previous_page_number }}&search={{request.GET.search}}&item_category={{item_category}}&item_segment={{item_segment}}&item_line={{item_line}}&item_status={{item_status}}&no_of_entries={{no_of_entries}}&item_type='RAWMATERIALS'" aria-label="Previous">
+                            <span aria-hidden="true">«</span>
+                            <span class="sr-only">Previous</span>
+                          </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item">
+                          <a class="page-link" href="#" aria-label="Previous">
+                            <span aria-hidden="true">«</span>
+                            <span class="sr-only">Previous</span>
+                          </a>
+                        </li>
+                        {% endif %}
+
+                        {% for pg in page_range2 %}
+                            {% if vus.number == pg %}
+                                <li class="page-item"><a class="page-link active" href="?page2={{pg}}&search={{request.GET.search}}&item_category={{item_category}}&item_segment={{item_segment}}&item_line={{item_line}}&item_status={{item_status}}&no_of_entries={{no_of_entries}}&item_type='RAWMATERIALS'" >{{pg}}</a></li> 
+                            {% else %}
+                                <li class="page-item"><a class="page-link" href="?page2={{pg}}&search={{request.GET.search}}&item_category={{item_category}}&item_segment={{item_segment}}&item_line={{item_line}}&item_status={{item_status}}&no_of_entries={{no_of_entries}}&item_type='RAWMATERIALS'" >{{pg}}</a></li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if inventory_items_rawmaterials.has_next %}
+                        <li class="page-item">
+                          <a class="page-link" href="?page2={{ inventory_items_rawmaterials.next_page_number }}&search={{request.GET.search}}&item_category={{item_category}}&item_segment={{item_segment}}&item_line={{item_line}}&item_status={{item_status}}&no_of_entries={{no_of_entries}}&item_type='RAWMATERIALS'" aria-label="Next">
+                            <span aria-hidden="true">»</span>
+                            <span class="sr-only">Next</span>
+                          </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item">
+                          <a class="page-link" href="#" aria-label="Next">
+                            <span aria-hidden="true">»</span>
+                            <span class="sr-only">Next</span>
+                          </a>
+                        </li>
+                        {% endif %}
+                        
+                      </ul>
+                </div>
+                <div style="color: #928F8F;">
+                    Showing {{inventory_items_rawmaterials.start_index}} to {{inventory_items_rawmaterials.end_index}} of {{inventory_items_rawmaterials.paginator.count}} entries
+                </div>
+
+                </div>
+                <!-- Raw materials ends here -->
+                <!-- Assets begins here -->
+                <div class="mt-20"  v-if="selected_item=='ASSETS'">
+                    
+                            <table class="inv-table footable" style="border-top:1px solid #c4c4c4"> 
+                                <thead>
+                                    <tr>
+                                        <th style="width: %;">
+                                            Item Type
+                                        </th>
+                                        <th style="width: %;">
+                                            Item
+                                        </th>
+                                        <th data-hide="phone,tablet"  style="width: %; text-align: center;">
+                                            Item code
+                                        </th>
+                                        <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                            Category
+                                        </th>
+                                        <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                            Segment
+                                        </th>
+                                       <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                            Line
+                                        </th>
+                                        <th data-hide="phone,tablet"  class="text-center">
+                                            Available Qty
+                                        </th>
+                                        <th data-hide="phone,tablet"  class="text-center">
+                                            Reserve
+                                        </th>
+                                        <th data-hide="phone,tablet" class="text-left table-w-12">
+                                            Item Status
+                                        </th>
+            
+                                        <th data-hide="phone,tablet"  style="width: %;" class="text-center table-w-20">Action</th>
+                                    </tr>
+                                </thead>
+                             <tbody>
+                                {% for item in inventory_items_assets %}
+                                <tr>
+                                    <td class="td-md-width">
+                                        {{item.item_type}}
+                                    </td>
+                                    <td class="td-md-width">
+                                        {{item.name}}
+                                    </td>
+                                    <td class="text-center">
+                                        {{item.item_code}}
+                                    </td>
+                                    <td class="text-center">
+                                        {{item.item_category.name}}
+                                    <td class="text-center td-md-width">
+                                        {{item.item_segment.name}}
+                                    </td>
+                                    <td class="text-center td-md-width" >
+                                        {{item.item_line.name}}
+                                    </td>
+                                    <td class="text-center">
+                                        {% if item.item_add_type == 'quantity' %}
+                                        {{item.total_quantity|floatformat:3}} {{item.measuring_unit}}
+                                        {% else %}
+                                        {{item.unit_count}} unit
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center">
+                                        {{item.reserve_count|floatformat:3}} {% if item.item_add_type == 'quantity' %}{{item.measuring_unit}}{% else %}unit{% endif %}
+                                    </td>
+                                    {% comment %} <td>
+                                        {% if item.status == True %}
+                                        <span class="inv-dot c-active ml-5"></span>Active
+                                        {% else %}
+                                        <span class="inv-dot c-inactive ml-5"></span>Not Active
+                                        {% endif %}
+                                      
+                                    </td> {% endcomment %}
+                                    <td class="text-left">
+                                        {% if item.item_status == 'available' %}
+                                        <span class="inv-dot  c-active"></span>
+                                        Available
+                                        {% elif item.item_status == 'about_to_finish' %}
+                                        <span class="inv-dot c-about-finish"></span>
+                                        
+                                        About to finish
+                                        {% elif item.item_status == 'out_of_stock' %}
+                                        <span class="inv-dot c-out-of-order"></span>
+        
+                                        Out of Stock
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="/bleach-inventory/item/{{item.id}}">
+                                        <button class="inv-plan-img-btn"> <img class="view-img" src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
+                                        </a>
+                                        <button class="inv-plan-img-btn edit-item" onclick="openNavAddStore('edit')" data-itemid="{{item.id}}" data-item_type="{{item.item_type}}" data-itemname="{{item.name}}" data-itemcode="{{item.item_code}}" data-itemcategory="{{item.item_category.id}}" data-itemsegment="{{item.item_segment.id}}" data-itemline="{{item.item_line.id}}" data-itemdescription="{{item.description}}" data-itemreserve="{{item.reserve_count}}" data-itemaddtype="{{item.item_add_type}}" data-unitmeasure="{{item.measuring_unit}}" data-itemstatus="{{item.status}}" data-itemreusbale="{{item.is_reusable}}" data-itempackage="{{item.is_package}}"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>
+                                        
+                                        {% if request.user.user_type == 'INVENTORYADMIN' %}
+                                        <button class="inv-plan-img-btn delete-item"  data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                             </tbody>
+                                
+                            </table>
+                        
+                            <div class="text-right">
+                                <ul class="pagination">
+            
+                                    {% if inventory_items_assets.has_previous %}
+                                    <li class="page-item">
+                                      <a class="page-link" href="?page3={{ inventory_items_assets.previous_page_number }}&search={{request.GET.search}}&item_category={{item_category}}&item_segment={{item_segment}}&item_line={{item_line}}&item_status={{item_status}}&no_of_entries={{no_of_entries}}&item_type='ASSETS'" aria-label="Previous">
+                                        <span aria-hidden="true">«</span>
+                                        <span class="sr-only">Previous</span>
+                                      </a>
+                                    </li>
+                                    {% else %}
+                                    <li class="page-item">
+                                      <a class="page-link" href="#" aria-label="Previous">
+                                        <span aria-hidden="true">«</span>
+                                        <span class="sr-only">Previous</span>
+                                      </a>
+                                    </li>
+                                    {% endif %}
+            
+                                    {% for pg in page_range3 %}
+                                        {% if vus.number == pg %}
+                                            <li class="page-item"><a class="page-link active" href="?page3={{pg}}&search={{request.GET.search}}&item_category={{item_category}}&item_segment={{item_segment}}&item_line={{item_line}}&item_status={{item_status}}&no_of_entries={{no_of_entries}}&item_type='ASSETS'" >{{pg}}</a></li> 
+                                        {% else %}
+                                            <li class="page-item"><a class="page-link" href="?page3={{pg}}&search={{request.GET.search}}&item_category={{item_category}}&item_segment={{item_segment}}&item_line={{item_line}}&item_status={{item_status}}&no_of_entries={{no_of_entries}}&item_type='ASSETS'" >{{pg}}</a></li>
+                                        {% endif %}
+                                    {% endfor %}
+            
+                                    {% if inventory_items_assets.has_next %}
+                                    <li class="page-item">
+                                      <a class="page-link" href="?page3={{ inventory_items_assets.next_page_number }}&search={{request.GET.search}}&item_category={{item_category}}&item_segment={{item_segment}}&item_line={{item_line}}&item_status={{item_status}}&no_of_entries={{no_of_entries}}&item_type='ASSETS'" aria-label="Next">
+                                        <span aria-hidden="true">»</span>
+                                        <span class="sr-only">Next</span>
+                                      </a>
+                                    </li>
+                                    {% else %}
+                                    <li class="page-item">
+                                      <a class="page-link" href="#" aria-label="Next">
+                                        <span aria-hidden="true">»</span>
+                                        <span class="sr-only">Next</span>
+                                      </a>
+                                    </li>
+                                    {% endif %}
+                                    
+                                  </ul>
+                            </div>
+                            <div style="color: #928F8F;">
+                                Showing {{inventory_items_assets.start_index}} to {{inventory_items_assets.end_index}} of {{inventory_items_assets.paginator.count}} entries
+                            </div>
+            
+                            </div>
+                <!-- Assets ends here -->
+                  <!--FINISHED GOODS begins here -->
+                  <div class="mt-20"  v-if="selected_item=='FINISHED GOODS'">
+                    
+                            <table class="inv-table footable" style="border-top:1px solid #c4c4c4"> 
+                                <thead>
+                                    <tr>
+                                        <th style="width: %;">
+                                            Item Type
+                                        </th>
+                                        <th style="width: %;">
+                                            Item
+                                        </th>
+                                        <th data-hide="phone,tablet"  style="width: %; text-align: center;">
+                                            Item code
+                                        </th>
+                                        <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                            Category
+                                        </th>
+                                        <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                            Segment
+                                        </th>
+                                       <th data-hide="phone,tablet"  style="width: %;" class="text-center">
+                                            Line
+                                        </th>
+                                        <th data-hide="phone,tablet"  class="text-center">
+                                            Available Qty
+                                        </th>
+                                        <th data-hide="phone,tablet"  class="text-center">
+                                            Reserve
+                                        </th>
+                                        <th data-hide="phone,tablet" class="text-left table-w-12">
+                                            Item Status
+                                        </th>
+            
+                                        <th data-hide="phone,tablet"  style="width: %;" class="text-center table-w-20">Action</th>
+                                    </tr>
+                                </thead>
+                             <tbody>
+                                {% for item in inventory_items_finishedgoods %}
+                                <tr>
+                                    <td class="td-md-width">
+                                        {{item.item_type}}
+                                    </td>
+                                    <td class="td-md-width">
+                                        {{item.name}}
+                                    </td>
+                                    <td class="text-center">
+                                        {{item.item_code}}
+                                    </td>
+                                    <td class="text-center">
+                                        {{item.item_category.name}}
+                                    <td class="text-center td-md-width">
+                                        {{item.item_segment.name}}
+                                    </td>
+                                    <td class="text-center td-md-width" >
+                                        {{item.item_line.name}}
+                                    </td>
+                                    <td class="text-center">
+                                        {% if item.item_add_type == 'quantity' %}
+                                        {{item.total_quantity|floatformat:3}} {{item.measuring_unit}}
+                                        {% else %}
+                                        {{item.unit_count}} unit
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center">
+                                        {{item.reserve_count|floatformat:3}} {% if item.item_add_type == 'quantity' %}{{item.measuring_unit}}{% else %}unit{% endif %}
+                                    </td>
+                                    {% comment %} <td>
+                                        {% if item.status == True %}
+                                        <span class="inv-dot c-active ml-5"></span>Active
+                                        {% else %}
+                                        <span class="inv-dot c-inactive ml-5"></span>Not Active
+                                        {% endif %}
+                                      
+                                    </td> {% endcomment %}
+                                    <td class="text-left">
+                                        {% if item.item_status == 'available' %}
+                                        <span class="inv-dot  c-active"></span>
+                                        Available
+                                        {% elif item.item_status == 'about_to_finish' %}
+                                        <span class="inv-dot c-about-finish"></span>
+                                        
+                                        About to finish
+                                        {% elif item.item_status == 'out_of_stock' %}
+                                        <span class="inv-dot c-out-of-order"></span>
+        
+                                        Out of Stock
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="/bleach-inventory/item/{{item.id}}">
+                                        <button class="inv-plan-img-btn"> <img class="view-img" src="{% static 'files/inventory/view.png' %}"  alt=""> </button>
+                                        </a>
+                                        <button class="inv-plan-img-btn edit-item" onclick="openNavAddStore('edit')" data-itemid="{{item.id}}" data-item_type="{{item.item_type}}" data-itemname="{{item.name}}" data-itemcode="{{item.item_code}}" data-itemcategory="{{item.item_category.id}}" data-itemsegment="{{item.item_segment.id}}" data-itemline="{{item.item_line.id}}" data-itemdescription="{{item.description}}" data-itemreserve="{{item.reserve_count}}" data-itemaddtype="{{item.item_add_type}}" data-unitmeasure="{{item.measuring_unit}}" data-itemstatus="{{item.status}}" data-itemreusbale="{{item.is_reusable}}" data-itempackage="{{item.is_package}}"> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>
+                                        
+                                        {% if request.user.user_type == 'INVENTORYADMIN' %}
+                                        <button class="inv-plan-img-btn delete-item"  data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                             </tbody>     
+                            </table>
+                        
+                            <div class="text-right">
+                                <ul class="pagination">
+            
+                                    {% if inventory_items_finishedgoods.has_previous %}
+                                    <li class="page-item">
+                                      <a class="page-link" href="?page4={{ inventory_items_finishedgoods.previous_page_number }}&search={{request.GET.search}}&item_category={{item_category}}&item_segment={{item_segment}}&item_line={{item_line}}&item_status={{item_status}}&no_of_entries={{no_of_entries}}&item_type='FINISHEDGOODS'" aria-label="Previous">
+                                        <span aria-hidden="true">«</span>
+                                        <span class="sr-only">Previous</span>
+                                      </a>
+                                    </li>
+                                    {% else %}
+                                    <li class="page-item">
+                                      <a class="page-link" href="#" aria-label="Previous">
+                                        <span aria-hidden="true">«</span>
+                                        <span class="sr-only">Previous</span>
+                                      </a>
+                                    </li>
+                                    {% endif %}
+            
+                                    {% for pg in page_range4 %}
+                                        {% if vus.number == pg %}
+                                            <li class="page-item"><a class="page-link active" href="?page4={{pg}}&search={{request.GET.search}}&item_category={{item_category}}&item_segment={{item_segment}}&item_line={{item_line}}&item_status={{item_status}}&no_of_entries={{no_of_entries}}&item_type='FINISHEDGOODS'" >{{pg}}</a></li> 
+                                        {% else %}
+                                            <li class="page-item"><a class="page-link" href="?page4={{pg}}&search={{request.GET.search}}&item_category={{item_category}}&item_segment={{item_segment}}&item_line={{item_line}}&item_status={{item_status}}&no_of_entries={{no_of_entries}}&item_type='FINISHEDGOODS'" >{{pg}}</a></li>
+                                        {% endif %}
+                                    {% endfor %}
+            
+                                    {% if inventory_items_finishedgoods.has_next %}
+                                    <li class="page-item">
+                                      <a class="page-link" href="?page4={{ inventory_items_finishedgoods.next_page_number }}&search={{request.GET.search}}&item_category={{item_category}}&item_segment={{item_segment}}&item_line={{item_line}}&item_status={{item_status}}&no_of_entries={{no_of_entries}}&item_type='FINISHEDGOODS'" aria-label="Next">
+                                        <span aria-hidden="true">»</span>
+                                        <span class="sr-only">Next</span>
+                                      </a>
+                                    </li>
+                                    {% else %}
+                                    <li class="page-item">
+                                      <a class="page-link" href="#" aria-label="Next">
+                                        <span aria-hidden="true">»</span>
+                                        <span class="sr-only">Next</span>
+                                      </a>
+                                    </li>
+                                    {% endif %}
+                                    
+                                  </ul>
+                            </div>
+                            <div style="color: #928F8F;">
+                                Showing {{inventory_items_finishedgoods.start_index}} to {{inventory_items_finishedgoods.end_index}} of {{inventory_items_finishedgoods.paginator.count}} entries
+                            </div>
+            
+                            </div>
+                <!-- FINISHED GOODS ends here -->
+                {% comment %} <div class="text-right">
                     <ul class="pagination">
 
                         {% if items.has_previous %}
@@ -208,7 +760,7 @@
                 </div>
                 <div style="color: #928F8F;">
                     Showing {{items.start_index}} to {{items.end_index}} of {{items.paginator.count}} entries
-                </div>
+                </div> {% endcomment %}
 
 
             </div>
@@ -576,6 +1128,25 @@
 {% endblock %}
 
 {% block javascript %}
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+<script>
+    const app=new Vue({
+    el: '#app',
+    delimiters: ['<%', '%>'],
+      components:{
+        
+      },
+    data: {
+     selected_item:'ALL'
+    },
+    methods:{
+        selectItem(item){
+            this.selected_item=item
+        }
+    }
+}
+    )
+</script>
 <script>
     function DropDown(el) {
     this.dd = el;
