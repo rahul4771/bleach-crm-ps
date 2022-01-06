@@ -88,7 +88,7 @@ class Store(models.Model):
 
 
 class InventoryItem(models.Model):
-    item_type       =   models.CharField(max_length=20,blank=False,null=False,choices=ITEM_TYPE_CHOICES)
+    item_type       =   models.CharField(default='ASSETS',max_length=20,blank=False,null=False,choices=ITEM_TYPE_CHOICES)
     item_category   =   models.ForeignKey(Category,blank=False,null=False,related_name='item_category')
     item_segment    =   models.ForeignKey(Segment,blank=True,null=True,related_name='item_segment')
     item_line       =   models.ForeignKey(Line,blank=True,null=True,related_name='item_line')
