@@ -894,7 +894,7 @@
               </div>
             </div>
 
-            {% if request.user.user_type != 'AGENT' and request.user.user_type != 'ADMIN' and request.user.user_type != 'EVALUATOR' and order.payment_status != 'COMPLETED' %}
+            {% if order.payment_status != 'COMPLETED' %}
               <div class="col-12 mt-4 inv-text-color ">
                 Payment Option
               </div>

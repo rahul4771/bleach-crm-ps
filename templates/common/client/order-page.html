@@ -2706,7 +2706,7 @@
 
                                     {% if order.evaluation.quatation_status %}
 
-                                    {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR' or request.user.user_type == 'SALESADMIN' or request.user.user_type == 'ACCOUNTANT' %}
+                                    {% if request.user.user_type == 'AGENT' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR' or request.user.user_type == 'SALESADMIN' or request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'ADMIN' %}
                                     <div class="col-md-3 m-mt30">
                                         <div class="c-pr0060">
                                             <div class="order-payment-section-card">
