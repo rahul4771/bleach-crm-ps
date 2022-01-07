@@ -1038,8 +1038,9 @@ class InventoryInv(IsInventoryAdminUser,View):
 		search = request.GET.get('search')
 		item_type = request.GET.get('item_type',None)
 
-		# ItemUnit.objects.filter(status='out_of_order').update(status='unavailable')
-		# ItemUnit.objects.filter(status='active').update(status='available')
+		InventoryItem.objects.filter(item_category__name='Chemical').update(item_type='RAW MATERIALS')
+		InventoryItem.objects.filter(item_category__name='PPE').update(item_type='RAW MATERIALS')
+		InventoryItem.objects.all().exclude(Q(item_category__name='Chemical') | Q(item_category__name='PPE')).update(item_type='ASSETS')
 
 		try:
 			item_category = request.GET.get('item_category')
