@@ -1038,9 +1038,6 @@ class InventoryInv(IsInventoryAdminUser,View):
 		search = request.GET.get('search')
 		item_type = request.GET.get('item_type',None)
 
-		# ItemUnit.objects.filter(status='out_of_order').update(status='unavailable')
-		# ItemUnit.objects.filter(status='active').update(status='available')
-
 		try:
 			item_category = request.GET.get('item_category')
 			item_category = int(item_category)
