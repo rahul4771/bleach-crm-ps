@@ -4352,7 +4352,14 @@ try {
               this.otherService.size >= this.sizeData[item].min_size &&
               this.otherService.size <= this.sizeData[item].max_size
             ) {
-              this.otherService.size = this.sizeData[item];
+              this.otherService.size = {
+                name:this.otherService.size+' Seater',
+                cost:this.sizeData[item].cost,
+                combinedSize:this.otherService.size+' Seater',
+                upholstery_type: "SOFA",
+                min_size:this.otherService.size,
+                max_size:this.otherService.size
+              };
               sizeFound=true
               console.log("size test passed");
             }
