@@ -347,7 +347,7 @@
           <i class="fa fa-chevron-down action-icon" aria-hidden="true" ></i>
         </div>
         <div class="dropdown-menu" id="dropdown-menu-orders">
-          {% if request.user.user_type == 'AGENT' or request.user.user_type == 'SALESADMIN' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR' or request.user.user_type == 'ACCOUNTANT' %}
+          {% if request.user.user_type == 'AGENT' or request.user.user_type == 'SALESADMIN' or request.user.user_type == 'BOOKINGOFFICER' or request.user.user_type == 'EVALUATOR' or request.user.user_type == 'ACCOUNTANT' or request.user.user_type == 'ADMIN' %}
           
           {% if evaluation.quatation_status == 'APPROVED' %}<div class="d-flex dropdown-orders clickable-row" data-href="/customer/quatation/download/paw{{evaluation.evaluation_id|slice:'3:'}}{{evaluation.customer.username}}"><img src="{% static 'files/images/DownloadQuotation.png'%}" class="dropdown-icon pr-2"/> <div class="ml-2 dropdown-text">Download Quotation</div></div>{% endif %}
           

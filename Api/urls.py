@@ -63,8 +63,9 @@ urlpatterns = [
 	url(r'^inventory-checkout-item-swap/$',views.CheckOutItemSwap.as_view(),name='api-inventory-checkout-item-swap'),
 	url(r'^inventory-checkout-item-units/$',views.CheckOutItemUnitsList.as_view(),name='api-inventory-checkout-item-units'),
 	url(r'^inventory-checkout-item-unit-swap/$',views.CheckOutItemUnitSwap.as_view(),name='api-inventory-checkout-item-unit-swap'),
-	url(r'^accessory/$',views.InventoryAccessoryView.as_view(),name='api-accessory'),
-	url(r'^finished_item/$',views.InventoryFinshedItemView.as_view(),name='api-finished_item'),
+	url(r'^rawmaterials/$',views.InventoryRawMaterialsView.as_view(),name='api-rawmaterial'),
+	url(r'^accessory/(?P<inventory_id>\d+)/$',views.InventoryAccessoryView.as_view(),name='api-accessory'),
+	url(r'^finished_item/(?P<inventory_id>\d+)/$',views.InventoryFinshedItemView.as_view(),name='api-finished_item'),
 
 	###Team Leader Mobile app API'S
 	url(r'^login/$',views.LoginAPI.as_view(),name='api-login'),
