@@ -996,6 +996,12 @@ def receipt_html_to_pdf_view(request,payment_id):
 		return response
 	return response	
 
+def soa_calculate(n,collection):
+    collection_sum = sum(collection)
+    result           = [int(n/collection_sum*i) for i in collection]
+    result_sum       = sum(result)
+    result[-1]      += round((n-result_sum),3)
+    return(result)
 
 def statement_of_account(request,client_id):
 
@@ -1130,33 +1136,86 @@ def statement_of_account(request,client_id):
 			job_completed = 0
 			job_remaining = 0
 
+			if order.evaluation.fine_amount:
+				fine_amount = order.evaluation.fine_amount
+			else:
+				fine_amount = 0
+				# job_completed += float(order.evaluation.fine_amount/cleanings_count)
+
+			if order.evaluation.writeback_amount:
+				writeback_amount = order.evaluation.writeback_amount
+				# job_completed -= float(order.evaluation.writeback_amount/cleanings_count)
+			else:
+				writeback_amount = 0
+
+			if order.evaluation.promocode_amount:
+				promocode_amount = order.evaluation.promocode_amount
+				# job_completed -= float(order.evaluation.promocode_amount/cleanings_count)
+			else:
+				promocode_amount = 0
+
+			if order.evaluation.additional_charge:
+				additional_charge = order.evaluation.additional_charge
+				# job_completed += float(order.evaluation.additional_charge/cleanings_count)
+			else:
+				additional_charge = 0
+
+			# if order.evaluation.discount:
+			# 	discount = order.evaluation.discount
+			# 	# job_completed -= float(order.evaluation.discount/cleanings_count)
+			# else:
+			# 	discount = 0
+
+			if order.evaluation.cancelled_amount:
+				cancelled_amount = order.evaluation.cancelled_amount
+				# job_completed -= float(order.evaluation.discount/cleanings_count)
+			else:
+				cancelled_amount = 0
+			
+			order_miscellaneous_amount = float(fine_amount)+float(additional_charge)-float(writeback_amount)-float(promocode_amount)-float(cancelled_amount)
+
+			book_amounts = []
+			# cleaning_ratios = []
+
+			bookcount = 0
 			for book in evaluationbooks:
-				cleanings_count = OrderScheduler.objects.filter(is_active=True,order__id=order.id,order_scheduler_book__id=book.id).count()
+				book_amounts.append(book.total_cost)
+				print(book.total_cost,book_amounts,"rarr")
+				cleanings_count = OrderScheduler.objects.filter(is_active=True,order__id=order.id,order_scheduler_book__id=book.id).exclude(work_status='CLEANING_CANCELLED').count()
 				if cleanings_count > 0:
 					completed_cleanings = OrderScheduler.objects.filter(is_active=True,order__id=order.id,order_scheduler_book__id=book.id,work_status='CLEANING_FULFILLED')
 					completed_cleanings_count = completed_cleanings.count()
-					print(cleanings_count,order.order_status,"moppp")
-					total_cost = book.total_cost
+					print(completed_cleanings_count,cleanings_count,"moppperrr")
+					# cleaning_ratio = int(completed_cleanings_count / cleanings_count)
+					
+					# cleaning_ratios.append(cleaning_ratio)
 
-					per_cleaning_amount = float(book.total_cost/cleanings_count)
-					job_completed += float(per_cleaning_amount*completed_cleanings_count)
+					# print(cleanings_count,order.order_status,cleaning_ratio,"mopppyy")
+					# total_cost = book.total_cost
+					
+
+					# per_cleaning_amount = float(book.total_cost/cleanings_count)
+					# job_completed += float(per_cleaning_amount*completed_cleanings_count)
 					# job_remaining += float(book.total_cost - job_completed)	
-
-					if order.evaluation.fine_amount:
-						job_completed += float(order.evaluation.fine_amount/cleanings_count)
-
-					if order.evaluation.writeback_amount:
-						job_completed -= float(order.evaluation.writeback_amount/cleanings_count)
-
-					if order.evaluation.promocode_amount:
-						job_completed -= float(order.evaluation.promocode_amount/cleanings_count)
-
-					if order.evaluation.additional_charge:
-						job_completed += float(order.evaluation.additional_charge/cleanings_count)
-
-					if order.evaluation.discount:
-						job_completed -= float(order.evaluation.discount/cleanings_count)
 			
+
+					print(order_miscellaneous_amount,book_amounts,"bookss")
+					divided_amounts = soa_calculate(order_miscellaneous_amount,book_amounts)
+
+					print(len(book_amounts),divided_amounts,"divi")
+					print(book_amounts[0],divided_amounts[0],"roomer")
+
+				
+					print(book_amounts[bookcount],divided_amounts[bookcount],"roomer")
+					book_amounts[bookcount] = ((book_amounts[bookcount] + divided_amounts[bookcount]) * completed_cleanings_count) / cleanings_count
+
+				bookcount += 1 
+
+			print(book_amounts,"amts")
+
+			for i in range(0,len(book_amounts)):
+				job_completed += book_amounts[i]
+
 			accounts_list.append({
 						"date":order.created.date(),
 						"invoice_no":order.order_no,

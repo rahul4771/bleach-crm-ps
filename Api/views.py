@@ -3821,6 +3821,34 @@ class ItemsCheckInAPI(APIView):
 		return Response(response_dict, HTTP_200_OK)
 
 
+class InventoryRawMaterialsView(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+
+	def get(self,request):
+		response_dict            = {'success':False}
+
+		response_dict['success'] = True
+
+		try:
+			inventory_items = InventoryItem.objects.filter(item_type='RAW MATERIALS',status=True)
+		except:
+			inventory_items = None
+
+		inventoryitem_list = []
+		if inventory_items:
+			for inventory_item in inventory_items:
+				inventoryitem_dict = {
+					'accessory_id' : inventory_item.id,
+					'accessory_name' : inventory_item.name,
+					}
+				inventoryitem_list.append(inventoryitem_dict)
+
+		response_dict['inventoryitem_list'] = inventoryitem_list
+
+		return Response(response_dict, HTTP_200_OK)
+
+
 class InventoryAccessoryView(APIView):
 	permission_classes        = (AllowAny,)
 	authentication_classes    = ()

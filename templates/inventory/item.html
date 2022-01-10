@@ -312,6 +312,7 @@
                        
                        
                             <div class="row m-0">
+                                {% if inventory_item.item_type == 'ASSETS' %}
                                 <div class="col-md-12">
                                     <div class="mb-10 inv-item-head-sub-2 d-flex" >
                                         Accessories
@@ -337,6 +338,33 @@
                                         3  Item Name Item Name Item Name 
                                       </div>
                                 </div>
+                                {% elif inventory_item.item_type == 'FINISHED GOODS' %}
+                                <div class="col-md-12">
+                                    <div class="mb-10 inv-item-head-sub-2 d-flex" >
+                                        Sub Parts
+                                        <div class="edit-div" style="position: relative;margin-left: 20px;">
+                                            <img id="id_editButton" onclick="editItemDetials()" class="inv-edit-img"
+                                            src="{% static 'files/icons/edit.png' %}">
+                                          
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 "> <!-- loop this tag-->
+                                    <div class="inv-acc-card mt-10">
+                                        3  Item Name Item Name Item Name 
+                                      </div>
+                                </div>
+                                <div class="col-md-6 ">
+                                    <div class="inv-acc-card mt-10">
+                                        3  Item Name Item Name Item Name 
+                                      </div>
+                                </div>
+                                <div class="col-md-6 ">
+                                    <div class="inv-acc-card mt-10">
+                                        3  Item Name Item Name Item Name 
+                                      </div>
+                                </div>
+                                {% endif %}
                             </div>
                         
                         
