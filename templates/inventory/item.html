@@ -128,18 +128,23 @@
                                     <div class="inv-item-head-sub mt-20">
                                         {{inventory_item.item_code}}
                                     </div>
+                                    
+                                    {% if inventory_item.item_type == 'ASSETS' %}
                                     <div  class=" inv-item-head-sub mt-20 ml-20">
                                         <img src="{% static 'files/inventory/assets.png'%}" class="tab-logo"/>
                                         Assets
                                       </div>
-                                      <!-- <div  class=" inv-item-head-sub mt-20 ml-20">
+                                    {% elif inventory_item.item_type == 'RAW MATERIALS' %}
+                                      <div  class=" inv-item-head-sub mt-20 ml-20">
                                         <img src="{% static 'files/inventory/raw_materials.png'%}" class="tab-logo"/>
                                        Raw Materials
                                       </div>
+                                    {% elif inventory_item.item_type == 'FINISHED GOODS' %}
                                       <div  class=" inv-item-head-sub mt-20 ml-20">
                                         <img src="{% static 'files/inventory/finished_goods.png'%}" class="tab-logo"/>
                                         Finished Goods
-                                      </div> -->
+                                      </div>
+                                    {% endif %}
                                 </div>
                               
                                 <div class="inv-item-head-sub mt-20">
@@ -407,7 +412,7 @@
                     <div class="col-md-12">
                     <div class="inv-item-head-sub-2">
                             
-                            Units
+                            Item Log
                             
                         </div>
                         <div class="d-flex d-grid">
@@ -429,9 +434,6 @@
                                         Serial No.
                                     </th>
                                     <th data-hide="phone,tablet"  style="width: %; ">
-                                        Store
-                                    </th>
-                                    <th data-hide="phone,tablet"  style="width: %; ">
                                         Purchase date
                                     </th>
                                     
@@ -441,6 +443,10 @@
                                     {% comment %} <th data-hide="phone,tablet"  class="text-center">
                                         Unit Price
                                     </th> {% endcomment %}
+
+                                    <th data-hide="phone,tablet"  style="width: %; ">
+                                        Custody
+                                    </th>
                                     
                                     <th>
                                         Status
@@ -459,9 +465,6 @@
                                         {{unit.unit_serial_number}}
                                     </td>
                                     <td>
-                                        {{unit.store.store_name}}
-                                    </td>
-                                    <td>
                                         {{unit.purchase_date|date:'d-m-Y'}}
                                     </td>
                                     
@@ -478,6 +481,22 @@
                                         {{unit.unit_price|floatformat:3}} KD
                                     </td> {% endcomment %}
                                     
+                                    <td>
+                                        {% if unit.status == 'unavailable' %}
+                                            {% if unit.checkout_unit %}
+                                                {% for checkoutunit in unit.checkout_unit %}
+                                                    {% for team in checkoutunit.checkout_item.visit.cleaning_team %}
+                                                        {{team.team_leader.name}}
+                                                    {% endfor %}    
+                                                {% endfor %}
+                                            {% else %}
+                                            -
+                                            {% endif %}
+                                        {% else %}
+                                            {{unit.store.store_name}}
+                                        {% endif %}
+                                    </td>
+
                                     <td class="">
                                         <span class="inv-dot {% if unit.status == 'available' %}c-active{% elif unit.status == 'under_repair' %}c-expired{% elif unit.status == 'out_of_order' %}c-out-of-order{% elif unit.status == 'unavailable' %}c-inactive{% endif %} ml-5"></span>
                                         {% if unit.status == 'available' %}Available{% elif unit.status == 'under_repair' %}Under Repair{% elif unit.status == 'out_of_order' %}Out of Order{% elif unit.status == 'unavailable' %}Unavailable{% endif %}
@@ -511,7 +530,7 @@
                     <div class="col-md-12">
                         <div class="inv-item-head-sub-2">
                             
-                            Purchase History
+                            Item Log
                             
                         </div>
                         <div class="mt-5" style="border-top: 1px solid #c4c4c4;">
