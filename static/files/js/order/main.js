@@ -628,7 +628,7 @@ const app = new Vue({
   
   mounted() {
    this.url=api
-   
+   this.ser_bookids=[]
     this.getOrderId()
     this.setDate(moment().format('MM/DD/YYYY'))
     this.selected_date=moment().format('DD-MM-YYYY')
@@ -658,10 +658,15 @@ const app = new Vue({
         status:status
       })
     }
+    this.ser_bookids.push($(book_ids[i]).val())
     }
     }
-    
-   
+    // var item=$('.section-edit-area')
+    //   console.log("item is"+JSON.stringify(item))
+    //   for(var it=0;it<item.length;it++){
+    //     console.log("item data is "+item[it].data('section_id'))
+    //   }
+   this.formatCheck()
     
   },
   components: { Multiselect: window.VueMultiselect.default },
@@ -678,7 +683,7 @@ const app = new Vue({
     addon_size_data:{},
     newaddon_quantity:'',
     selected_addon:'',
-    
+    ser_bookids:[],
     priceupdate:true,
     customer_note:'',
     notes:'',
@@ -897,13 +902,66 @@ const app = new Vue({
           visit_step:1,
           visit_cleaners:[],
           selected_visit_cleaners:[],
-          visit_team_leader:''
+          visit_team_leader:'',
+          service_items:[],
+          sizeissue:false
 
          // url:'http://localhost:8000'
       // url:'https://test.bleach-kw.com'
             //url:'http://127.0.0.1:8000'
   },
   methods:{
+    async formatCheck(){
+      // var item=$('.section-edit-area').data('section_id')
+      // console.log("item is"+item)
+      var completed=false
+      this.service_items=[]
+      for(var i=0;i<this.ser_bookids.length;i++){
+        await axios.get(this.url+'/customer/editorder/'+this.orderId+'?evaluation_book_id='+this.ser_bookids[i]).then(response=>{
+          this.service_items.push(response.data.section_details)
+          if(i>=(this.ser_bookids.length-1)){
+
+           this.checkFormat()
+
+          }
+        }).catch(err=>{
+  
+        })
+      }
+      
+     
+    },
+    checkFormat(){
+     
+    
+      for(var i=0;i<this.service_items.length;i++){
+        if(this.service_items[i].service_type.name=='Upholstery Cleaning'){
+          
+          var size=this.service_items[i].evaluationsection_book[0].size
+       if(this.service_items[i].upholstery_type=='SOFA'){
+        if(size.includes('Seater')){
+          this.sizeissue=false
+        }
+        else{
+          this.sizeissue=true
+          break
+        }
+       }
+       else if(this.service_items[i].upholstery_type=='CHAIR'){
+        this.sizeissue=false
+       }
+       else{
+         this.sizeissue=true
+         break;
+       }
+          
+        }
+        else if(this.service_items[i].service_type.name=='Kitchen Cleaning'){
+          this.sizeissue=true
+          break;
+        }
+      }
+    },
     getVisitAvailability(){
       var visit_data=[]
       for(var i=0;i<this.selected_visit_list.length;i++){
@@ -2178,6 +2236,7 @@ setTimeout(function() {
       $('#edit-payment-tigger').click()
     },
     editSection(index,sid,service){
+      
       this.action_type="Edit"
       this.service_type=$(service).data('service')
       console.log("index is"+index)
