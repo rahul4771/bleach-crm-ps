@@ -1160,12 +1160,6 @@ def statement_of_account(request,client_id):
 			else:
 				additional_charge = 0
 
-			# if order.evaluation.discount:
-			# 	discount = order.evaluation.discount
-			# 	# job_completed -= float(order.evaluation.discount/cleanings_count)
-			# else:
-			# 	discount = 0
-
 			if order.evaluation.cancelled_amount:
 				cancelled_amount = order.evaluation.cancelled_amount
 				# job_completed -= float(order.evaluation.discount/cleanings_count)
@@ -1181,6 +1175,10 @@ def statement_of_account(request,client_id):
 			for book in evaluationbooks:
 				book_amounts.append(book.total_cost)
 				print(book.total_cost,book_amounts,"rarr")
+
+			divided_amounts = soa_calculate(order_miscellaneous_amount,book_amounts)
+
+			for book in evaluationbooks:
 				cleanings_count = OrderScheduler.objects.filter(is_active=True,order__id=order.id,order_scheduler_book__id=book.id).exclude(work_status='CLEANING_CANCELLED').count()
 				if cleanings_count > 0:
 					completed_cleanings = OrderScheduler.objects.filter(is_active=True,order__id=order.id,order_scheduler_book__id=book.id,work_status='CLEANING_FULFILLED')
@@ -1197,13 +1195,6 @@ def statement_of_account(request,client_id):
 					# per_cleaning_amount = float(book.total_cost/cleanings_count)
 					# job_completed += float(per_cleaning_amount*completed_cleanings_count)
 					# job_remaining += float(book.total_cost - job_completed)	
-			
-
-					print(order_miscellaneous_amount,book_amounts,"bookss")
-					divided_amounts = soa_calculate(order_miscellaneous_amount,book_amounts)
-
-					print(len(book_amounts),divided_amounts,"divi")
-					print(book_amounts[0],divided_amounts[0],"roomer")
 
 				
 					print(book_amounts[bookcount],divided_amounts[bookcount],"roomer")
