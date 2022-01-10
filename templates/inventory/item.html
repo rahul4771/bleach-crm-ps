@@ -49,7 +49,7 @@
     }
 
 </style>
-<div class="wrapper"><!--wrapper-->
+<div class="wrapper" id="app"><!--wrapper-->
     {% include "inventory/common/header.html" %}
     <section class="content">
         <div class="container-fluid space topspace">
@@ -316,11 +316,13 @@
                                 <div class="col-md-12">
                                     <div class="mb-10 inv-item-head-sub-2 d-flex" >
                                         Accessories
-                                        <div class="edit-div" style="position: relative;margin-left: 20px;">
+                                        <button class="inv-blue-btn" type="button" onclick="openNavAddAccessories('add')" style="margin-left:auto;font-weight:500"> <i class="fa fa-plus mr-10" aria-hidden="true"></i><span style="font-size:16px;">Add Accessories </span></button>
+
+                                        <!-- <div class="edit-div" style="position: relative;margin-left: 20px;">
                                             <img id="id_editButton" onclick="editItemDetials()" class="inv-edit-img"
                                             src="{% static 'files/icons/edit.png' %}">
                                           
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </div>
                                 <div class="col-md-6 "> <!-- loop this tag-->
@@ -606,6 +608,71 @@
       
     </section>
 
+    <!--- add accessories-->
+    <div id="addAccessories" class="inv-sidedrawer">
+
+        <div class="inv-sidedrawer-inner" style="height:100%">
+            <div class="d-flex">
+                <div class="inv-drawer-head" id="supHead">
+                 Add Accessories
+                </div>
+                <div class="right-pos">
+
+                    <button onclick="closeNavAddAccessories()" class="img-button">
+                        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                    </button>
+                </div>
+            </div>
+            <hr>
+            <div class="row mt-20">
+                <div class="col-md-12 " id="id_add_method">
+                   
+                    <input type="hidden" name="item_id" value="{{inventory_item.id}}" id="item_id">
+                    <div class="model-input-name required-field">Select Item</div>
+                   
+                    <div class="wrap-drop" id="select_methddrp" style="z-index: 4;" >
+                        <span id="id_selectText"><% selected_item.accessory_name %></span>
+                        <ul class="drop">
+                            <li @click="chooseItem(item)" v-for="item,index in raw_materials" v-bind:key="item">
+                             <a> <% item.accessory_name %></a>  
+                            </li>
+                            
+
+                        </ul>
+                      
+                      
+                    </div>
+                </div>
+                <div class="col-md-12 ">
+                    <div class="model-input-name required-field mt-20">Quantity</div>
+
+                    <div class="inv-input-container h-30"> 
+                        <input type="number" step="1"  class="w-p-100 inv-in" name="quantity" id="quantity_id" value="1" required v-model="qty">
+                      </div>
+                </div>
+                <div class="col-md-12" v-if="err_msg">
+                    <div class="text-center mt-20" style="color:red">
+                        <% err_msg %>
+                    </div>
+                </div>
+
+            </div>
+
+           
+        <div class="inv-drawer-footer">
+            <button class="sent-button" type="button" id="submit-btn" @click="addAccessory()">Submit</button>
+          
+            <button class="sent-button" type="button" id="update-unit-btn" onclick="formvalidation()">Update Unit</button>    
+        
+                        <button data-dismiss="modal" onclick="closeNavAddAccessories()" class="view-button">Cancel</button>
+        </div>
+        
+
+    </div>
+    </div>
+
+    <!--- add accessories ends here-->
+
     <div id="addBundle" class="inv-sidedrawer">
 
         <div class="inv-sidedrawer-inner">
@@ -623,7 +690,7 @@
             <hr>
 
             <form id="myform" method="POST" action="" >{% csrf_token %}
-            <input type="hidden" name="item_id" value="{{inventory_item.id}}">
+            <input type="hidden" name="item_id" value="{{inventory_item.id}}" >
             
             {% if inventory_item.item_add_type == 'unit' %}
             <input type="hidden" name="action" value="add_unit" id="unit_action" >
@@ -1237,7 +1304,60 @@
 
 
 {% block javascript %}
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+    const app=new Vue({
+    el: '#app',
+    delimiters: ['<%', '%>'],
+      components:{
+        
+      },
+    data: {
+     selected_item:'ALL',
+     raw_materials:[],
+     url:'',
+     item_id:'',
+     qty:'',
+     err_msg:''
+    },
+    mounted(){
+        this.url = api;
+       this.getItems()
+    },
+    methods:{
+        chooseItem(item){
+            this.selected_item=item
+        },
+        getItems(){
+            axios.get(this.url+'/api/rawmaterials/').then(response=>{
+                this.raw_materials=response.data.inventoryitem_list
+            })
+        },
+        addAccessory(){
+            if(!this.qty || !this.selected_item){
+                this.err_msg='Please fill all required fields'
+            }
+            else{
+                this.err_msg=''
+           var item_id= $('#item_id').val()
+            axios.post(this.url+'/api/accessory/'+item_id+'/',{
+                
+                action:'add_accessory',
+                accessory_id:this.selected_item.accessory_id,
+                count:parseInt(this.qty)
+            }).then(response=>{
+                this.selected_item={}
+                this.qty=''
+            }).catch(err=>{
 
+            })
+        }
+    }
+    }
+}
+    )
+</script>
 <script>
 
     
@@ -1308,6 +1428,9 @@ $(function () {
             $('#po-btn').hide()
             $('#submit-btn').show()
         }
+    }
+    function chooseItem(){
+        
     }
     function deleteImg(id){
         $('#id_delete_'+id).click();
@@ -1621,6 +1744,42 @@ function openNavAddBundle(d) {
         else{
             document.getElementById("addBundle").style.width = "30%";
         }  
+    }
+    function openNavAddAccessories(d) {
+    $('#id_search').empty();
+   
+
+    if(d == 'add'){
+        document.getElementById("myform").reset();
+        $('#id_add_method').show();
+        $('#id_man').hide();
+        $('#id_po').hide();
+        $('#update-unit-btn').hide();
+        $('#submit-btn').show()
+          
+            $("#supHead").text("Add Accessories");
+           
+        
+        
+        if(d == 'edit'){
+            $("#supHead").text("Edit Accessories");
+            $('#update-unit-btn').show();
+            $('#submit-btn').hide()
+            
+            
+        }
+        if(screen.width<= 600){
+            document.getElementById("addAccessories").style.width = "100%";
+        }else if(screen.width<= 720){
+            document.getElementById("addAccessories").style.width = "50%";
+        }
+        else{
+            document.getElementById("addAccessories").style.width = "30%";
+        }  
+    }
+}
+    function closeNavAddAccessories() {
+        document.getElementById("addAccessories").style.width = "0";
     }
     function closeNavAddBundle() {
         document.getElementById("addBundle").style.width = "0";
