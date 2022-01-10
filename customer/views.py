@@ -1131,7 +1131,7 @@ def statement_of_account(request,client_id):
 			job_remaining = 0
 
 			for book in evaluationbooks:
-				cleanings_count = OrderScheduler.objects.filter(is_active=True,order__id=order.id,order_scheduler_book__id=book.id).count()
+				cleanings_count = OrderScheduler.objects.filter(is_active=True,order__id=order.id,order_scheduler_book__id=book.id).exclude(work_status='CLEANING_CANCELLED').count()
 				if cleanings_count > 0:
 					completed_cleanings = OrderScheduler.objects.filter(is_active=True,order__id=order.id,order_scheduler_book__id=book.id,work_status='CLEANING_FULFILLED')
 					completed_cleanings_count = completed_cleanings.count()
