@@ -1136,6 +1136,7 @@ def statement_of_account(request,client_id):
 			job_completed = 0
 			job_remaining = 0
 
+			# miscellaneous amouunt calc
 			if order.evaluation.fine_amount:
 				fine_amount = order.evaluation.fine_amount
 			else:
@@ -1160,24 +1161,32 @@ def statement_of_account(request,client_id):
 			else:
 				additional_charge = 0
 
+			if order.evaluation.discount:
+				discount = order.evaluation.discount
+				# job_completed += float(order.evaluation.additional_charge/cleanings_count)
+			else:
+				discount = 0
+
 			if order.evaluation.cancelled_amount:
 				cancelled_amount = order.evaluation.cancelled_amount
 				# job_completed -= float(order.evaluation.discount/cleanings_count)
 			else:
 				cancelled_amount = 0
 			
-			order_miscellaneous_amount = float(fine_amount)+float(additional_charge)-float(writeback_amount)-float(promocode_amount)-float(cancelled_amount)
+			order_miscellaneous_amount = float(fine_amount)+float(additional_charge)-float(writeback_amount)-float(promocode_amount)-float(cancelled_amount)-float(discount)
 
 			book_amounts = []
-			# cleaning_ratios = []
 
+			#book amount list
 			bookcount = 0
 			for book in evaluationbooks:
 				book_amounts.append(book.total_cost)
 				print(book.total_cost,book_amounts,"rarr")
 
+			#misc amount split for books
 			divided_amounts = soa_calculate(order_miscellaneous_amount,book_amounts)
 
+			#final book amount calc
 			for book in evaluationbooks:
 				cleanings_count = OrderScheduler.objects.filter(is_active=True,order__id=order.id,order_scheduler_book__id=book.id).exclude(work_status='CLEANING_CANCELLED').count()
 				if cleanings_count > 0:
