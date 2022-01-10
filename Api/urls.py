@@ -63,6 +63,7 @@ urlpatterns = [
 	url(r'^inventory-checkout-item-swap/$',views.CheckOutItemSwap.as_view(),name='api-inventory-checkout-item-swap'),
 	url(r'^inventory-checkout-item-units/$',views.CheckOutItemUnitsList.as_view(),name='api-inventory-checkout-item-units'),
 	url(r'^inventory-checkout-item-unit-swap/$',views.CheckOutItemUnitSwap.as_view(),name='api-inventory-checkout-item-unit-swap'),
+	url(r'^rawmaterials/$',views.InventoryRawMaterialsView.as_view(),name='api-rawmaterial'),
 	url(r'^accessory/$',views.InventoryAccessoryView.as_view(),name='api-accessory'),
 	url(r'^finished_item/$',views.InventoryFinshedItemView.as_view(),name='api-finished_item'),
 
