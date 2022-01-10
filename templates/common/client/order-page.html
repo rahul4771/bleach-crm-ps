@@ -1838,7 +1838,7 @@
                                         {% if order.evaluation.quatation_status == 'APPROVED' %}
                                             {% if order.payment_status == 'COMPLETED' or order.preamount_paid != 0 or order.evaluation.payment_method == 'POSTPAID' or order.evaluation.payment_method == 'SUBSCRIPTION' %}
                                             {% else %}
-                                                <img class="pointer" src="{% static 'files/icons/edit.png' %}" onclick="editSection(this)" data-section_id="{{section.id}}" data-index="{{forloop.counter}}" data-service="{{evaluationbook.service_type.name}}" data-eval_book_id="{{evaluationbook.id}}">
+                                                <img class="pointer section-edit-area" src="{% static 'files/icons/edit.png' %}" onclick="editSection(this)" data-section_id="{{section.id}}" data-index="{{forloop.counter}}" data-service="{{evaluationbook.service_type.name}}" data-eval_book_id="{{evaluationbook.id}}">
                                                 {% if forloop.last and forloop.counter == 1  %}
                                                 {% else %}
                                                 <img class="pointer" src="{% static 'files/icons/delete.png' %}" @click="deleteSection({{forloop.counter}},{{section.id}})">
@@ -3590,9 +3590,17 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-12" v-if="!sizeissue">
                     <div class="cancel-model-content">
                         <h1>Do you want to Reorder?</h1>
+                    </div>
+                </div>
+                <div class="col-md-12" v-else>
+                    <div class="cancel-model-content">
+                        <div class="text-center">
+                            <i class="fas fa-ban" style="color: #dd2e11dd;font-size: 64px;"></i> 
+                        </div>
+                        <h1>This order cannot be reordered as the size format doesn't match.</h1>
                     </div>
                 </div>
 
@@ -3600,8 +3608,11 @@
             <div class="row">
                 <div class="col-md-12 text-center">
                     <div class="cancel-model-content">
-                        <button class="sent-button" type="submit" onclick="duplicate({{order.evaluation.id}});">Yes</button>
-                        <button data-dismiss="modal" class="view-button">Cancel</button>
+                        <button class="sent-button" type="submit" onclick="duplicate({{order.evaluation.id}});" v-if="!sizeissue">Yes</button>
+                     
+
+                        <button data-dismiss="modal" class="view-button"  v-if="!sizeissue">Cancel</button>
+                        <button data-dismiss="modal" class="view-button"  v-if="sizeissue" style="border:1px solid #dd2e11dd;color:#dd2e11dd">Cancel</button>
                         
                     </div>
                 </div>
