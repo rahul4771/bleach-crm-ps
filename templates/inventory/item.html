@@ -695,9 +695,9 @@
 
            
         <div class="inv-drawer-footer">
-            <button class="sent-button" type="button" id="submit-btn" @click="addAccessory()">Submit</button>
+            <button class="sent-button" type="button" id="submit-btn-accessories" @click="addAccessory()">Submit</button>
           
-            <button class="sent-button" type="button" id="update-unit-btn"  @click="updateAccessory()">Update Accessory</button>    
+            <button class="sent-button" type="button" id="update-unit-btn-accessories"  @click="updateAccessory()">Update Accessory</button>    
         
                         <button data-dismiss="modal" onclick="closeNavAddAccessories()" class="view-button">Cancel</button>
         </div>
@@ -2039,8 +2039,8 @@ function openNavAddBundle(d) {
         $('#id_add_method').show();
         $('#id_man').hide();
         $('#id_po').hide();
-        $('#update-unit-btn').hide();
-        $('#submit-btn').show()
+        $('#update-unit-btn-accessories').hide();
+        $('#submit-btn-accessories').show()
           
             $("#supHead").text("Add Accessories");
            
@@ -2048,8 +2048,8 @@ function openNavAddBundle(d) {
     }
         if(d == 'edit'){
             $("#supHead").text("Edit Accessories");
-            $('#update-unit-btn').show();
-            $('#submit-btn').hide()
+            $('#update-unit-btn-accessories').show();
+            $('#submit-btn-accessories').hide()
             
             
         }
