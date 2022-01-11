@@ -3965,7 +3965,7 @@ class InventoryFinshedItemView(APIView):
 			
 			response_dict['success'] = True
 
-		if action_type == 'edit_finshed_item':
+		if action_type == 'edit_finished_item':
 			id                  = request.data.get('id')
 			finished_item_id    = request.data.get('finished_item_id')
 			count               = request.data.get('count')
