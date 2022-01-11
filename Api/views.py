@@ -3940,7 +3940,7 @@ class InventoryFinshedItemView(APIView):
 					'count' : finshed_item.count
 				}
 			
-				finshed_items_list.append(finshed_items)
+				finshed_items_list.append(finshed_item_dict)
 
 		response_dict['finshed_items_list'] = finshed_items_list
 
