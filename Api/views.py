@@ -3935,8 +3935,8 @@ class InventoryFinshedItemView(APIView):
 		if inventory_finshed_items:
 			for finshed_item in inventory_finshed_items:
 				finshed_item_dict = {
-					'finshed_item_id' : finshed_item.id,
-					'finshed_item_name' : finshed_item.inventory_finished_item.name,
+					'finished_item_id' : finshed_item.id,
+					'finished_item_name' : finshed_item.inventory_finished_item.name,
 					'count' : finshed_item.count
 				}
 			
