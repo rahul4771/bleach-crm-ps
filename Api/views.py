@@ -3953,7 +3953,7 @@ class InventoryFinshedItemView(APIView):
 		action_type   =  request.data.get('action')
 			
 
-		if action_type == 'add_finshed_item':
+		if action_type == 'add_finished_item':
 			finished_item_id  =	request.data.get('finished_item_id')
 			count             =	request.data.get('count')
 			
