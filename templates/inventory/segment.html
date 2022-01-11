@@ -372,7 +372,8 @@
                         <input type="hidden" id="action_delete_id" name="action" value="delete_segment" />
                         <input type="hidden" name="object_id" id="object_id" />
                         <div class="cancel-model-content">
-                            <button class="sent-button" type="submit" >Delete</button>
+                            <button class="sent-button delete-btn" type="submit" >Delete</button>
+                            <button class="sent-button delete-btn2" type="button" onclick="deletelines()" >Delete</button>
                             <button data-dismiss="modal" class="view-button">Cancel</button>
                           
                         </div>
@@ -558,12 +559,16 @@ $(function () {
     $('.delete_segment').click(function(){
         $('#object_id').val($(this).data('segmentid'));
         $('#action_delete_id').val('delete_segment');
+        $('.delete-btn').show();
+        $('.delete-btn2').hide();
     })
 
     //Delete line
     function deleteLine(lineid){
         $('#object_id').val(lineid);
         $('#action_delete_id').val('delete_line');
+        $('.delete-btn').hide();
+        $('.delete-btn2').show();
     }
 
     $('.edit_segment').click(function(){
@@ -639,7 +644,7 @@ $(function () {
                 $('input[name=line_code]').addClass('red-border-input');
             }else{
                 console.log("lolo")
-                $('#myForm2').submit();
+                addlines();
             }
 
         }else{
@@ -647,7 +652,7 @@ $(function () {
                 $('input[name=line_name]').addClass('red-border-input');
             }else{
                 console.log("lolo")
-                $('#myForm2').submit();
+                editlines();
             }
         }
     }
@@ -668,6 +673,88 @@ $(function () {
             }else{
                 $(".line_table tr:not(:first)").remove(); 
             }
+         }else{
+            showNotification('Something went wrong','error')
+         }
+    }
+
+    async function addlines(){
+        
+        var formdata = {
+            'segment_id' : $('#line_segment_id').val(),
+            'line_name' : $('input[name=line_name]').val(),
+            'line_status' : $('input[name=line_status]').val(),
+            'line_code' : $('input[name=line_code]').val(),
+            'action' : 'add_line'
+        }
+
+         var result = await _post('api/inventory-lines/',formdata);
+         
+         if(result.status == 200){
+            if (result.data.inventory_line.length > 0){
+                $(".line_table tr:not(:first)").remove(); 
+                var edit = "edit";
+                $.each(result.data.inventory_line,function(key,value){
+                        $('.line_table').append('<tr><td>'+value.name+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavAddLine2(this)" data-lineid='+value.id+' data-linename='+value.name+' data-linestatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteLine('+value.id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
+                })
+            }else{
+                $(".line_table tr:not(:first)").remove(); 
+            }
+            closeNavAddLine()
+            showNotification('Line Added','success')
+         }else{
+            showNotification('Something went wrong','error')
+         }
+    }
+
+    async function editlines(){
+
+        var formdata = {
+            'line_id' : $('#id_edit_line').val(),
+            'line_name' : $('input[name=line_name]').val(),
+            'line_status' : $('input[name=line_status]').val(),
+            'action' : 'edit_line'
+        }
+
+         var result = await _post('api/inventory-lines/',formdata);
+         
+         if(result.status == 200){
+            if (result.data.inventory_line.length > 0){
+                $(".line_table tr:not(:first)").remove(); 
+                var edit = "edit";
+                $.each(result.data.inventory_line,function(key,value){
+                        $('.line_table').append('<tr><td>'+value.name+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavAddLine2(this)" data-lineid='+value.id+' data-linename='+value.name+' data-linestatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteLine('+value.id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
+                })
+            }else{
+                $(".line_table tr:not(:first)").remove(); 
+            }
+            closeNavAddLine()
+            showNotification('Line Updated','success')
+         }else{
+            showNotification('Something went wrong','error')
+         }
+    }
+
+    async function deletelines(){
+
+        var formdata = {
+            'line_id' : $('#id_object').val(),
+            'action' : 'delete_line'
+        }
+
+         var result = await _post('api/inventory-lines/',formdata);
+         
+         if(result.status == 200){
+            if (result.data.inventory_line.length > 0){
+                $(".line_table tr:not(:first)").remove(); 
+                var edit = "edit";
+                $.each(result.data.inventory_line,function(key,value){
+                        $('.line_table').append('<tr><td>'+value.name+'</td><td><button class="line_edit inv-plan-img-btn mr-5" onclick="openNavAddLine2(this)" data-lineid='+value.id+' data-linename='+value.name+' data-linestatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn line_delete" onclick="deleteLine('+value.id+')" data-lineid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
+                })
+            }else{
+                $(".line_table tr:not(:first)").remove(); 
+            }
+            showNotification('Line Deleted','success')
          }else{
             showNotification('Something went wrong','error')
          }

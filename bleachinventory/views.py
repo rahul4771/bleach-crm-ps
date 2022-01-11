@@ -64,10 +64,14 @@ class InventoryCategory(IsInventoryAdminUser,View):
 		search = request.GET.get('search')
 
 		if search:
-			categories       = Category.objects.filter(Q(name__icontains=search)|Q(category_code__icontains=search)).annotate(segments_count=Count('segment_category'),lines_count=Count('line_category'))
+			categories       = Category.objects.filter(Q(name__icontains=search)|Q(category_code__icontains=search))
 		else:
-			categories       = Category.objects.all().annotate(segments_count=Count('segment_category'),lines_count=Count('line_category'))
+			categories       = Category.objects.all()
 		
+		for category in categories:
+			category.segments_count = Segment.objects.filter(category=category).count()
+			category.lines_count = Line.objects.filter(category=category).count()
+
 		category_latest  = categories.last()
 		if category_latest:
 			code_number  =  int(re.findall(r'(\d+)', category_latest.category_code)[0]) + 1
