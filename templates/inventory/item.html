@@ -59,7 +59,7 @@
                 <!-- <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p> -->
             </div>
         </div>
-        <!-- Modal -->
+        <!-- Accessory delete confirmation Modal begins -->
 <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
@@ -79,6 +79,28 @@
       </div>
     </div>
   </div>
+  <!-- accessory delete confirmation ends here-->
+  <!-- subparts delete confirmation begins here-->
+  <div class="modal fade" id="subpartModalCenter" tabindex="-1" role="dialog" aria-labelledby="subpartModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Delete Subparts</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+         Are you sure Do you want to delete this Subpart ?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal" @click="removeSubparts()">Yes</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- subparts delete confirmation ends here-->
         <button  data-toggle="modal" data-target="#imgModel" id="id_model_button" hidden>Done </button>
         <button  data-toggle="modal" data-target="#addimgModel" id="id_model_close" hidden>Done </button>
 
@@ -369,21 +391,16 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6 "> <!-- loop this tag-->
+                                <div class="col-md-6" v-for="(item,index) in subparts" v-bind:key="index"> <!-- loop this tag-->
                                     <div class="inv-acc-card mt-10">
-                                        3  Item Name Item Name Item Name 
+                                        <% item.finished_item_name %> 
+                                        <img id="id_editButton" @click="deleteSubpart(item)" class="inv-edit-img" style="float:right;margin-left:10px" data-toggle="modal" data-target="#subpartModalCenter"
+                                       src="{% static 'files/icons/delete.png' %}">
+                                       <img id="id_editButton" @click="editSubpart(item)" class="inv-edit-img" style="float:right;"
+                                       src="{% static 'files/icons/edit.png' %}">
                                       </div>
                                 </div>
-                                <div class="col-md-6 ">
-                                    <div class="inv-acc-card mt-10">
-                                        3  Item Name Item Name Item Name 
-                                      </div>
-                                </div>
-                                <div class="col-md-6 ">
-                                    <div class="inv-acc-card mt-10">
-                                        3  Item Name Item Name Item Name 
-                                      </div>
-                                </div>
+                               
                                 {% endif %}
                             </div>
                         
@@ -742,7 +759,7 @@
 
            
         <div class="inv-drawer-footer">
-            <button class="sent-button" type="button" id="submit-btn" @click="addSubparts()">Submit</button>
+            <button class="sent-button" type="button" id="submit-btn-subparts" @click="addSubparts()">Submit</button>
           
             <button class="sent-button" type="button" id="update-subparts-btn"  @click="updateSubparts()">Update Subparts</button>    
         
@@ -1414,6 +1431,9 @@
        this.getSubparts()
     },
     methods:{
+        deleteSubpart(item){
+            this.current_item=item
+        },
         deleteAccessory(item){
             this.current_item=item
         },
@@ -1436,6 +1456,22 @@
             }
             openNavAddAccessories('edit')
         },
+        editSubpart(item){
+            this.qty=item.count
+            var access_id=null
+            this.edit_item_id=item.finished_item_id
+            for(var i=0;i<this.subparts.length;i++){
+                if(this.subparts[i].finished_item_name==item.finished_item_name){
+                     access_id=this.subparts[i].finished_item_id
+                    break
+                }
+            }
+            this.selected_item={
+                accessory_id:access_id,
+                accessory_name:item.finished_item_name
+            }
+            openNavAddSubparts('edit')
+        },
         getAccessories(){
             var item_id= $('#item_id').val()
             axios.get(this.url+'/api/accessory/'+item_id+'/').then(response=>{
@@ -1445,7 +1481,7 @@
         getSubparts(){
             var item_id= $('#item_id').val()
             axios.get(this.url+'/api/finished_item/'+item_id+'/').then(response=>{
-                this.subparts=response.data.accessories_list
+                this.subparts=response.data.finshed_items_list
             })
         },
         getItems(){
@@ -1488,7 +1524,7 @@
            var item_id= $('#item_id').val()
             axios.post(this.url+'/api/finished_item/'+item_id+'/',{
                 
-                action:'add_finshed_item',
+                action:'add_finished_item',
                 finished_item_id:this.selected_item.accessory_id,
                 count:parseInt(this.qty)
             }).then(response=>{
@@ -1530,6 +1566,32 @@
             })
         }
     },
+    updateSubparts(){
+        if(!this.qty || !this.selected_item){
+                this.err_msg='Please fill all required fields'
+            }
+            else{
+                this.err_msg=''
+           var item_id= $('#item_id').val()
+            axios.post(this.url+'/api/finished_item/'+item_id+'/',{
+                
+                action:'edit_finished_item',
+                id:this.edit_item_id,
+                finished_item_id:this.selected_item.accessory_id,
+                count:parseInt(this.qty)
+            }).then(response=>{
+                if(response.data.success)
+                {
+                this.selected_item=''
+                this.qty=''
+                this.getSubparts()
+                closeNavAddSubparts()
+                }
+            }).catch(err=>{
+
+            })
+        }
+    },
     removeAccessory(){
            
                 this.err_msg=''
@@ -1551,7 +1613,29 @@
 
             })
         
-    }
+    },
+    removeSubparts(){
+           
+           this.err_msg=''
+      var item_id= $('#item_id').val()
+       axios.post(this.url+'/api/finished_item/'+item_id+'/',{
+           
+           action:'delete_finished_item',
+           id:this.current_item.finished_item_id,
+         
+       }).then(response=>{
+           if(response.data.success)
+           {
+           this.selected_item=''
+           this.qty=''
+           this.getSubparts()
+           closeNavAddSubparts()
+           }
+       }).catch(err=>{
+
+       })
+   
+}
     }
 }
     )
@@ -1991,7 +2075,7 @@ function openNavAddSubparts(d){
       $('#id_man').hide();
       $('#id_po').hide();
       $('#update-subparts-btn').hide();
-      $('#submit-btn').show()
+      $('#submit-btn-subparts').show()
         
           $("#supHead").text("Add Sub Parts");
          
@@ -2000,7 +2084,7 @@ function openNavAddSubparts(d){
       if(d == 'edit'){
           $("#supHead").text("Edit Sub Parts");
           $('#update-subparts-btn').show();
-          $('#submit-btn').hide()
+          $('#submit-btn-subparts').hide()
           
           
       }
