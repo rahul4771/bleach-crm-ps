@@ -3932,7 +3932,7 @@ class InventoryFinshedItemView(APIView):
 			inventory_finshed_items = None
 
 		finshed_items_list = []
-		if finshed_items:
+		if inventory_finshed_items:
 			for finshed_item in inventory_finshed_items:
 				finshed_item_dict = {
 					'finshed_item_id' : finshed_item.id,
