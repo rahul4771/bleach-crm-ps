@@ -12,7 +12,7 @@ from bleachadmin.models import ServicePriceRange,Settings
 from django.core.mail import send_mail,EmailMultiAlternatives
 from Api.serializers import DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, UsersListSerializer,ShiftScheduleSerializer,OccupiedMembersSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
 from agent.views import generate_random_username
-from bleachinventory.models import Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,CheckOutItems,CheckOutItemUnits,ItemHistory,InventoryAccessory
+from bleachinventory.models import Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,CheckOutItems,CheckOutItemUnits,ItemHistory,InventoryAccessory,InventoryFinshedItem
 import re
 import random
 import string
@@ -4072,15 +4072,15 @@ class InventoryFinshedItemView(APIView):
 			inventory_finshed_items = None
 
 		finshed_items_list = []
-		if finshed_items:
-			for finshed_item in finshed_items:
+		if inventory_finshed_items:
+			for finshed_item in inventory_finshed_items:
 				finshed_item_dict = {
-					'finshed_item_id' : finshed_item.id,
-					'finshed_item_name' : finshed_item.inventory_finished_item.name,
+					'finished_item_id' : finshed_item.id,
+					'finished_item_name' : finshed_item.inventory_finished_item.name,
 					'count' : finshed_item.count
 				}
 			
-				finshed_items_list.append(finshed_items)
+				finshed_items_list.append(finshed_item_dict)
 
 		response_dict['finshed_items_list'] = finshed_items_list
 
@@ -4093,7 +4093,7 @@ class InventoryFinshedItemView(APIView):
 		action_type   =  request.data.get('action')
 			
 
-		if action_type == 'add_finshed_item':
+		if action_type == 'add_finished_item':
 			finished_item_id  =	request.data.get('finished_item_id')
 			count             =	request.data.get('count')
 			
@@ -4105,7 +4105,7 @@ class InventoryFinshedItemView(APIView):
 			
 			response_dict['success'] = True
 
-		if action_type == 'edit_finshed_item':
+		if action_type == 'edit_finished_item':
 			id                  = request.data.get('id')
 			finished_item_id    = request.data.get('finished_item_id')
 			count               = request.data.get('count')
