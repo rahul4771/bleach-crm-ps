@@ -701,7 +701,7 @@ $(function () {
                 $(".line_table tr:not(:first)").remove(); 
             }
             closeNavAddLine()
-            showNotification('Line Added','success')
+            showNotification(''+result.data.alert_message+'','success')
          }else{
             showNotification('Something went wrong','error')
          }
@@ -729,7 +729,7 @@ $(function () {
                 $(".line_table tr:not(:first)").remove(); 
             }
             closeNavAddLine()
-            showNotification('Line Updated','success')
+            showNotification(''+result.data.alert_message+'','success')
          }else{
             showNotification('Something went wrong','error')
          }
@@ -737,8 +737,9 @@ $(function () {
 
     async function deletelines(){
 
+        console.log($('#object_id').val(),"ruter")
         var formdata = {
-            'line_id' : $('#id_object').val(),
+            'line_id' : $('#object_id').val(),
             'action' : 'delete_line'
         }
 
@@ -754,7 +755,8 @@ $(function () {
             }else{
                 $(".line_table tr:not(:first)").remove(); 
             }
-            showNotification('Line Deleted','success')
+            $('.close-evaluation').click()
+            showNotification(''+result.data.alert_message+'','success')
          }else{
             showNotification('Something went wrong','error')
          }

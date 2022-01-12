@@ -2805,8 +2805,7 @@ class InventoryLinesAPI(APIView):
 			response_dict['inventory_line'] = line_serializer
 
 		if action == 'delete_line':
-			line_id = request.data.get('object_id')
-			Line.objects.get(id=int(line_id)).delete()
+			line_id = request.data.get('line_id')
 
 			line = Line.objects.get(id=int(line_id))
 			segment_id = line.segment.id
@@ -3931,6 +3930,8 @@ class ItemsCheckInAPI(APIView):
 				ItemHistory.objects.create(
 				item = inventoryitem,
 				quantity = item_quantities[count],
+				item_action='STOCK IN',
+				item_remark=checkin_item.visit.order.order_no,
 				purchase_date= date.today(),
 				added_by = inventory_user
 				)
@@ -3945,6 +3946,8 @@ class ItemsCheckInAPI(APIView):
 				ItemHistory.objects.create(
 				item = inventoryitem,
 				quantity = item_quantities[count],
+				item_action='STOCK IN',
+				item_remark=checkin_item.visit.order.order_no,
 				purchase_date= date.today(),
 				added_by = inventory_user
 				)

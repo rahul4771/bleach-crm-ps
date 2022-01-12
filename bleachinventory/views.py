@@ -1668,6 +1668,7 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 					if float(inventoryitem.total_quantity) >= float(item.units):
 						inventoryitem.total_quantity = float(inventoryitem.total_quantity) - float(item.units)
 						inventoryitem.save()
+						ItemHistory.objects.create(item=inventoryitem,quantity=float(item.units),item_action='STOCK OUT',item_remark=visit.order.order_no,added_by=request.user)
 					else:
 						messages.error(request,"Quantity limit exceeded !")
 						return redirect('bleach-inventory:inventory-createcheckout',visit_id)
@@ -1686,6 +1687,7 @@ class InventoryCreateCheckout(IsInventoryAdminUser,View):
 					if float(inventoryitem.total_quantity) >= float(item.units):
 						inventoryitem.total_quantity = float(inventoryitem.total_quantity) - float(item.units)
 						inventoryitem.save()
+						ItemHistory.objects.create(item=inventoryitem,quantity=float(item.units),item_action='STOCK OUT',item_remark=visit.order.order_no,added_by=request.user)
 
 				item.is_checked_out = True
 				item.checked_out_date = date.today()
@@ -1770,13 +1772,13 @@ class PurchaseOrderItemsPage(IsInventoryAdminUser,View):
 				item = InventoryItem.objects.get(id=int(product))
 				purchase_order_item = PurchaseOrderItems.objects.get(purchase_order=purchase_order,product__item__id=int(product))
 				print(item,item_counts[loopcount], "itm")
-				ItemHistory.objects.create(purchase_order=purchase_order,item=item,quantity=item_counts[loopcount],added_by=request.user)
+				ItemHistory.objects.create(purchase_order=purchase_order,item=item,quantity=item_counts[loopcount],item_action='PURCHASE ORDER',item_remark=purchase_order.purchase_order_id,added_by=request.user)
 				
 				item.total_quantity = float(item.total_quantity) + float(item_counts[loopcount])
 				item.save()
 
 				purchase_order_item.is_received = True
-				# purchase_order_item.added_item_count += 1
+				purchase_order_item.added_item_count = float(item_counts[loopcount])
 				purchase_order_item.save()
 				loopcount += 1
 
@@ -1845,9 +1847,13 @@ class PurchaseOrderItemsPage(IsInventoryAdminUser,View):
 			purchase_order_item = PurchaseOrderItems.objects.get(purchase_order=purchase_order,product__item__id=int(item_id))
 			
 			purchase_order_item.added_item_count = int(purchase_order_item.added_item_count) + 1
-			if purchase_order_item.added_item_count == purchase_order_item.item_count:
-				purchase_order_item.is_received = True
 			purchase_order_item.save()
+
+			print(purchase_order_item.added_item_count,purchase_order_item.item_count,"compr")
+			if int(purchase_order_item.added_item_count) == int(purchase_order_item.item_count):
+				print("reciv")
+				purchase_order_item.is_received = True
+				purchase_order_item.save()
 
 			messages.success(request,"Unit added to Inventory")
 
@@ -1888,8 +1894,13 @@ class InventoryCreatePurchaseOrder(View):
 			supplier = Supplier.objects.get(id=int(supplier_id))
 			purchase_order.supplier = supplier
 			purchase_order.save()
+
+			items = SupplierItems.objects.filter(supplier__id=purchase_order.supplier.id)
 		else:
 			supplier = None
+			items = SupplierItems.objects.all()
+
+		print(items,"prin")
 
 		store_id = request.GET.get('store_id')
 		if store_id :
@@ -1899,7 +1910,6 @@ class InventoryCreatePurchaseOrder(View):
 		else:
 			store = None
 
-		items = SupplierItems.objects.all()
 		purchase_order_items = PurchaseOrderItems.objects.filter(purchase_order=purchase_order,purchase_order__supplier=purchase_order.supplier)
 
 		return render(request,'inventory/createpo.html',{"items":items,"suppliers":suppliers,"stores":stores,"supplier":supplier,"store":store,"purchase_order":purchase_order,"purchase_order_items":purchase_order_items})
