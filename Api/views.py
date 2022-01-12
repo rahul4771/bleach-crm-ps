@@ -12,7 +12,7 @@ from bleachadmin.models import ServicePriceRange,Settings
 from django.core.mail import send_mail,EmailMultiAlternatives
 from Api.serializers import DiscountSettingSerializer,UserProfileSerializer, EvaluationSerializer, LeaveScheduleSerializer, UsersListSerializer,ShiftScheduleSerializer,OccupiedMembersSerializer,InventoryLineSerializer,InventorySegmentSerializer,InventoryValueSerializer,InventoryBundleItemSerializer,InventoryItemUnitSerializer,InventorySupplierItemSerializer
 from agent.views import generate_random_username
-from bleachinventory.models import Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,CheckOutItems,CheckOutItemUnits,ItemHistory,InventoryAccessory
+from bleachinventory.models import Line,Segment,Category,Attribute,AttributeValue,Bundle,BundleItems,InventoryItem,ItemUnit,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,CheckOutItems,CheckOutItemUnits,ItemHistory,InventoryAccessory,InventoryFinshedItem
 import re
 import random
 import string
@@ -2753,6 +2753,78 @@ class InventoryLinesAPI(APIView):
 		response_dict['inventory_line'] = line_serializer
 		return Response(response_dict,HTTP_200_OK)
 
+	def post(self,request):
+		response_dict = {}
+		
+		action =request.data.get('action')
+
+		if action == 'add_line':
+			segment_id = request.data.get('segment_id')
+			line_name   = request.data.get('line_name')
+			line_status = request.data.get('line_status')
+			line_code     = request.data.get('line_code')
+
+			segment = Segment.objects.get(id=int(segment_id))
+
+			line_id_exists = Line.objects.filter(line_id=line_code).first()
+			if line_id_exists:
+				response_dict['alert_message'] = 'Line ID exists !'
+			else:
+
+				Line.objects.create(category=segment.category,segment=segment,name=line_name,line_id=line_code,status=line_status)
+				response_dict['alert_message'] = 'Line Added !'
+
+			try:
+				inventory_lines = Line.objects.filter(segment__id=int(segment_id))
+			except:
+				inventory_lines = None
+			
+			line_serializer = InventoryLineSerializer(inventory_lines,many=True).data
+			
+			response_dict['inventory_line'] = line_serializer
+
+		if action == 'edit_line':
+			line_id = request.data.get('line_id')
+			line_name   = request.data.get('line_name')
+			line_status = request.data.get('line_status')
+			
+			line = Line.objects.get(id=int(line_id))
+
+			line.name = line_name
+			line.status = line_status
+			line.save()
+			response_dict['alert_message'] = 'Line updated !'
+
+			try:
+				inventory_lines = Line.objects.filter(segment__id=line.segment.id)
+			except:
+				inventory_lines = None
+			
+			line_serializer = InventoryLineSerializer(inventory_lines,many=True).data
+				
+			response_dict['inventory_line'] = line_serializer
+
+		if action == 'delete_line':
+			line_id = request.data.get('line_id')
+
+			line = Line.objects.get(id=int(line_id))
+			segment_id = line.segment.id
+
+			line.delete()
+
+			try:
+				inventory_lines = Line.objects.filter(segment__id=int(segment_id))
+			except:
+				inventory_lines = None
+			
+			line_serializer = InventoryLineSerializer(inventory_lines,many=True).data
+				
+			response_dict['inventory_line'] = line_serializer
+
+			response_dict['alert_message'] = 'Line Deleted !'			
+
+		return Response(response_dict,HTTP_200_OK)
+
 class InventoryValuesAPI(APIView):
 	permission_classes  	=   (AllowAny,)
 	authentication_classes  = ()
@@ -2770,6 +2842,73 @@ class InventoryValuesAPI(APIView):
 		value_serializer = InventoryValueSerializer(inventory_values,many=True).data
 		print(value_serializer,"sed")	
 		response_dict['inventory_value'] = value_serializer
+		return Response(response_dict,HTTP_200_OK)
+
+	def post(self,request):
+		response_dict = {}
+
+		action = request.data.get('action')
+
+		if action == 'add_value':
+			print("addet")
+			attribute_id = request.data.get('value_attribute_id')
+			value_name   = request.data.get('value_name')
+			value_status = request.data.get('value_status')
+			print(attribute_id,value_name,value_status,"attrval")
+
+			attribute = Attribute.objects.get(id=int(attribute_id))
+
+			AttributeValue.objects.create(attribute=attribute,name=value_name,status=value_status)
+
+			try:
+				inventory_values = AttributeValue.objects.filter(attribute__id=int(attribute_id))
+			except:
+				inventory_values = None
+			
+			print(inventory_values,"invo")
+			value_serializer = InventoryValueSerializer(inventory_values,many=True).data
+			print(value_serializer,"sed")	
+			response_dict['inventory_value'] = value_serializer
+
+		if action == 'edit_value':
+			value_id = request.data.get('value_id')
+			value_name   = request.data.get('value_name')
+			value_status = request.data.get('value_status')
+
+			value = AttributeValue.objects.get(id=int(value_id))
+
+			value.name = value_name
+			value.status = value_status
+			value.save()
+
+			try:
+				inventory_values = AttributeValue.objects.filter(attribute__id=value.attribute.id)
+			except:
+				inventory_values = None
+			
+			print(inventory_values,"invo")
+			value_serializer = InventoryValueSerializer(inventory_values,many=True).data
+			print(value_serializer,"sed")	
+			response_dict['inventory_value'] = value_serializer
+
+		if action == 'delete_value':
+			print("dletttt")
+			value_id = request.data.get('value_id')
+			value = AttributeValue.objects.get(id=int(value_id))
+			attribute_id = value.attribute.id
+
+			value.delete()
+
+			try:
+				inventory_values = AttributeValue.objects.filter(attribute__id=attribute_id)
+			except:
+				inventory_values = None
+			
+			print(inventory_values,"invo")
+			value_serializer = InventoryValueSerializer(inventory_values,many=True).data
+			print(value_serializer,"sed")	
+			response_dict['inventory_value'] = value_serializer
+
 		return Response(response_dict,HTTP_200_OK)
 
 class InventoryItemsAPI(APIView):
@@ -3791,6 +3930,8 @@ class ItemsCheckInAPI(APIView):
 				ItemHistory.objects.create(
 				item = inventoryitem,
 				quantity = item_quantities[count],
+				item_action='STOCK IN',
+				item_remark=checkin_item.visit.order.order_no,
 				purchase_date= date.today(),
 				added_by = inventory_user
 				)
@@ -3805,6 +3946,8 @@ class ItemsCheckInAPI(APIView):
 				ItemHistory.objects.create(
 				item = inventoryitem,
 				quantity = item_quantities[count],
+				item_action='STOCK IN',
+				item_remark=checkin_item.visit.order.order_no,
 				purchase_date= date.today(),
 				added_by = inventory_user
 				)
@@ -3932,15 +4075,15 @@ class InventoryFinshedItemView(APIView):
 			inventory_finshed_items = None
 
 		finshed_items_list = []
-		if finshed_items:
-			for finshed_item in finshed_items:
+		if inventory_finshed_items:
+			for finshed_item in inventory_finshed_items:
 				finshed_item_dict = {
-					'finshed_item_id' : finshed_item.id,
-					'finshed_item_name' : finshed_item.inventory_finished_item.name,
+					'finished_item_id' : finshed_item.id,
+					'finished_item_name' : finshed_item.inventory_finished_item.name,
 					'count' : finshed_item.count
 				}
 			
-				finshed_items_list.append(finshed_items)
+				finshed_items_list.append(finshed_item_dict)
 
 		response_dict['finshed_items_list'] = finshed_items_list
 
@@ -3953,7 +4096,7 @@ class InventoryFinshedItemView(APIView):
 		action_type   =  request.data.get('action')
 			
 
-		if action_type == 'add_finshed_item':
+		if action_type == 'add_finished_item':
 			finished_item_id  =	request.data.get('finished_item_id')
 			count             =	request.data.get('count')
 			
@@ -3965,7 +4108,7 @@ class InventoryFinshedItemView(APIView):
 			
 			response_dict['success'] = True
 
-		if action_type == 'edit_finshed_item':
+		if action_type == 'edit_finished_item':
 			id                  = request.data.get('id')
 			finished_item_id    = request.data.get('finished_item_id')
 			count               = request.data.get('count')

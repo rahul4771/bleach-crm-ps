@@ -1140,9 +1140,11 @@
         
       },
     data: {
-     selected_item:'ALL'
+     selected_item:'ALL',
+    
     },
     mounted(){
+       
         var itemtypeurl = new URL(window.location.href)
         this.selected_item = itemtypeurl.searchParams.get('item_type').slice(1,-1)
         if (!this.selected_item){
