@@ -93,40 +93,31 @@
         <div class="main-content-holder">
             <!--main-content-holder-->
             <div class="white-wrapper white-wrapper-padding2">
+                <div class="row">
+                    <div class="col-md-12">
+                        <span class="inv-po-id">{{request_order.request_order_id}}</span>
+                    </div>
+                </div>
                
                 <div class="row mt-20">
                     
                     <div class="col-md-3">
                         <div class="model-input-name">Requested By</div>
-                        
-                       {% comment %} <select id="supplier_id" class="minimal" onchange="set_params_go();">
-                            {% if purchase_order.supplier == None %}
-                                <option value="">--Select Supplier--</option>
-                            
-                                {% for supplier in suppliers %}
-                                <option value="{{supplier.id}}">{{supplier.supplier_name}}</option>
-                                {% endfor %}
-                            {% else %}
-                                <option value="{{purchase_order.supplier.id}}" selected>{{purchase_order.supplier.supplier_name}}</option>
-                            {% endif %}
-
-                        </select> {% endcomment %}
                        
-                       
-                          <input type="text" hidden id="supplier_id" >
-                         <div class="wrap-drop" id="noble-gases" id="supplier_id" >
-                            {% if purchase_order.supplier == None %}
-                            <span>--Select Supplier--</span>
+                          <input type="text" hidden id="requester_id" >
+                         <div class="wrap-drop" id="noble-gases">
+                            {% if request_order.requested_by == None %}
+                            <span>--Select Requester--</span>
                             <ul class="drop">
-                                {% for supplier in suppliers %}
-                                <li onclick="dropSelectSeller({{supplier.id}})" ><a>{{supplier.supplier_name}}</a></li>
+                                {% for request_user in request_users %}
+                                <li onclick="dropSelectRequester({{request_user.id}})" ><a>{{request_user.name}}</a></li>
                                 {% endfor %}
                             </ul>
                             {% else %}
-                            <span>{{purchase_order.supplier.supplier_name}}</span>
+                            <span>{{request_order.requested_by.name}}</span>
                             <ul class="drop">
                                
-                                <li class="drop-selected" ><a>{{purchase_order.supplier.supplier_name}}</a></li>
+                                <li class="drop-selected" ><a>{{request_order.requested_by.name}}</a></li>
                                 
                             </ul>
                             {% endif %}
@@ -136,21 +127,20 @@
 
                         
                         <div class="model-input-name">Purpose</div>
-                        
-                            <input type="text" hidden id="store_id" >
-                            <div class="wrap-drop" id="noble-gases2" id="store_id" >
-                            {% if purchase_order.store == None %}
-                            <span>--Select Store--</span>
+                            
+                            <input type="text" hidden id="purpose_id" >
+                            <div class="wrap-drop" id="noble-gases2">
+                            {% if not request_order.purpose %}
+                            <span>--Select Purpose--</span>
                             <ul class="drop">
-                                {% for store in stores %}
-                                <li onclick="dropSelectStore({{store.id}})" ><a>{{store.store_name}}</a></li>
-                                {% endfor %}
+                                <li onclick="dropSelectPurpose('INVENTORY PREPARATION')" ><a>INVENTORY PREPARATION</a></li>
+                                <li onclick="dropSelectPurpose('ADMINISTRATIVE')" ><a>ADMINISTRATIVE</a></li>
                             </ul>
                             {% else %}
-                            <span>{{purchase_order.store.store_name}}</span>
+                            <span>{{request_order.purpose}}</span>
                             <ul class="drop">
                                 
-                                <li class="drop-selected" ><a>{{purchase_order.store.store_name}}</a></li>
+                                <li class="drop-selected" ><a>{{request_order.purpose}}</a></li>
                                 
                             </ul>
                             {% endif %}
@@ -223,7 +213,7 @@
                                 <td></td><td></td><td>No Data</td><td></td><td></td><td></td>
                                 {% endfor %}
                                
-                                {% if purchase_order.supplier != None %}
+                                {% if request_order.requested_by != None %}
                                 <tr  id="id_addrow">
                                     <td>
                                         <button class="inv-plan-btn" onclick="openNavAddStore('add')" type="button"> <img
@@ -297,41 +287,10 @@
                 </div>
 
             </div>
-            {% comment %} <div class="row mt-20">
-                <div class="col-md-12 ">
-                    <div class="model-input-name">Unit Price   <span id="id_price"> 00</span></div>
-                </div>
-
-            </div> {% endcomment %}
 
             <div class="row mt-20">
                 <div class="col-md-12 ">
-                    <div class="model-input-name">Unit Price</div>
-
-                    <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" id="id_unit_price" name="unit_price" required readonly>
-                      </div>
-                </div>
-
-            </div>
-
-            <!-- <div class="row mt-20">
-                <div class="col-md-12 ">
-                    <div class="model-input-name">Unit</div>
-
-                    <div class="qty ">
-                        <span style="color: #4B4B4B;"  class="minus bg-dark qty-border-two" >-</span>
-                        <input style="color: #4B4B4B;"  type="text" class="count qty-border-two"   >
-                        <input style="color: #4B4B4B;"   type="hidden" class="count qty-border-two" value="1" id="id_item_count" name="item_count" onkeyup="calc_total_price()" >
-
-                        <span style="color: #4B4B4B; margin-left: -5px !important;" class="plus bg-dark qty-border-two" >+</span>
-                    </div>
-                </div>
-
-            </div> -->
-            <div class="row mt-20">
-                <div class="col-md-12 ">
-                    <div class="model-input-name">Unit</div>
+                    <div class="model-input-name">Quantity</div>
 
                     <div class="qty-container">
   
@@ -347,20 +306,6 @@
                 </div>
 
             </div>
-
-            <div class="row mt-20">
-                <div class="col-md-12 ">
-                    <div class="model-input-name">Total Price</div>
-
-                    <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" id="id_total_price"  name="total_price" readonly>
-                      </div>
-                </div>
-
-            </div>
-
-
-
 
         </div>
         <div class="inv-drawer-footer">
@@ -508,7 +453,6 @@ $(function () {
     // create new variable for each menu
     var dd1 = new DropDown($('#noble-gases'));
     var dd2 = new DropDown($('#noble-gases2'));
-    // var dd2 = new DropDown($('#other-gases'));
     $(document).click(function () {
         // close menu on document click
         $('.wrap-drop').removeClass('active');
@@ -557,15 +501,15 @@ $(function () {
             console.log(tempItem,itemIn)
     }
 
-function dropSelectSeller(id){
+function dropSelectRequester(id){
     console.log(id)
-    $('#supplier_id').val(id);
+    $('#requester_id').val(id);
     set_params_go();
 }
 
-function dropSelectStore(id){
+function dropSelectPurpose(id){
     console.log(id)
-    $('#store_id').val(id);
+    $('#purpose_id').val(id);
     set_params_go();
 }
 
@@ -578,11 +522,10 @@ function showAdditem(){
 
 }
         var products = [];
-        {% for item in items %}
+        {% for item in inventory_items %}
             var tempId = '{{item.id}}';
-            var tempName = '{{item.item.name}}';
-            var tempPrice = '{{item.item_price}}';
-            products.push({id:tempId,name:tempName,price:tempPrice})
+            var tempName = '{{item.name}}';
+            products.push({id:tempId,name:tempName})
         // $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
 
         {% endfor %}
@@ -617,17 +560,16 @@ function showAdditem(){
             
             var urlc = window.location.href;
             console.log(urlc)
-            if(urlc.includes('supplier_id')){
+            if(urlc.includes('requester_id')){
                 var supid = urlc.split("=")[1];
                 console.log(supid);
-                $('#supplier_id').val(supid);
+                $('#requester_id').val(supid);
             }
             var products = [];
-            {% for item in items %}
+            {% for item in inventory_items %}
                 var tempId = '{{item.id}}';
-                var tempName = '{{item.item.name}}';
-                var tempPrice = '{{item.item_price}}';
-            products.push({id:tempId,name:tempName,price:tempPrice})
+                var tempName = '{{item.name}}';
+            products.push({id:tempId,name:tempName})
             // $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
 
             {% endfor %}
@@ -717,11 +659,12 @@ function showAdditem(){
     }
 
     function showProducts(){
+        console.log("hiiiiiiiiiiiiiiii")
         $('#id_search').empty();
         for (var j=0; j<products.length; j++) {
             if (products[j].name.toUpperCase().match($('#pro-name').val().toUpperCase())){
                 console.log(products[j]);
-        $('#id_search').append('<div class="col-md-12 inv-search-drop" id="id_product'+products[j].id+'" style="padding:0px !important;" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-productprice="'+products[j].price+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
+        $('#id_search').append('<div class="col-md-12 inv-search-drop" id="id_product'+products[j].id+'" style="padding:0px !important;" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
 
             }
         }
@@ -774,17 +717,8 @@ function showAdditem(){
     
     function set_params_go(args)
     {
-       // console.log($('#supplier_id').val())
-        //  if($('#supplier_id').val()!='--Select Supplier--'){
-        //      document.getElementById("id_search").style.display="none"
-        //  }else if($('#supplier_id').val()!=''){
-        //      document.getElementById("id_search").style.display="none"
-        //  }
-        // else{
-        //      document.getElementById("id_search").style.display="block"
-        //  }
-    var url='{% url 'bleach-inventory:inventory-createpurchaseorder' %}';
-    var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),supplier_id:$('#supplier_id').val(),store_id:$('#store_id').val()
+    var url='{% url 'bleach-inventory:inventory-createinventoryrequest' %}';
+    var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),requester_id:$('#requester_id').val(),purpose:$('#purpose_id').val()
     };
     for(key in args) 
         params[key]=args[key];

@@ -42,6 +42,11 @@ ITEM_TYPE_CHOICES=(
     ('FINISHED GOODS','FINISHED GOODS')
 )
 
+PUPOSES_REQUEST_ORDER=(
+    ('ADMINISTRATIVE','ADMINISTRATIVE'),
+    ('INVENTORY PREPARATION','INVENTORY PREPARATION')
+)
+
 class Category(models.Model):
     name            =   models.CharField(max_length=100,blank=False,null=False)
     category_code   =   models.CharField(max_length=50,blank=False,null=False)
@@ -420,10 +425,13 @@ class CheckOutItemUnits(models.Model):
 
 class RequestOrder(models.Model):
     request_order_id    = models.CharField(max_length=50,blank=False,null=False)
+    purpose             = models.CharField(max_length=50,blank=False,null=False,choices=PUPOSES_REQUEST_ORDER)
     
     is_admin_approved   = models.BooleanField(default=False,blank=False,null=False)
     is_rejected         = models.BooleanField(default=False,blank=False,null=False)
     is_received         = models.BooleanField(default=False,blank=False,null=False)
+    
+    is_order_completed  = models.BooleanField(default=False,blank=False,null=False)
     
     created_by          = models.ForeignKey(UserProfile,blank=True,null=True,related_name='created_by_request_order')
     requested_by        = models.ForeignKey(UserProfile,blank=True,null=True,related_name='requested_by_request_order')
