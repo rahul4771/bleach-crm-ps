@@ -11,6 +11,13 @@ UNIT_STATUS_CHOICES=(
 	('expired','expired')
 	)
 
+ITEMHISTORY_CHOICES=(
+    ('PURCHASE ORDER','PURCHASE ORDER'), 
+    ('STOCK IN','STOCK IN'),
+    ('STOCK OUT','STOCK OUT'),
+    ('ITEM REQUEST','ITEM REQUEST')
+)
+
 ITEM_STATUS_CHOICES=(
 	('available','available'),
 	('out_of_stock','out_of_stock'),
@@ -159,7 +166,7 @@ class ItemUnit(models.Model):
     expiry_date     =   models.DateField(blank=True,null=True)
     no_expiry       =   models.BooleanField(default=False,blank=False,null=False)
     unit_price      =   models.CharField(max_length=10,blank=False,null=False)
-    status          =   models.CharField(max_length=50,default='active',blank=False,null=False,choices=UNIT_STATUS_CHOICES)
+    status          =   models.CharField(max_length=50,default='available',blank=False,null=False,choices=UNIT_STATUS_CHOICES)
     created         =   models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
@@ -365,6 +372,8 @@ class PurchaseOrderItems(models.Model):
 class ItemHistory(models.Model):
     purchase_order  =   models.ForeignKey(PurchaseOrder,blank=True,null=True,related_name='purchase_order_item_history')
     item            =   models.ForeignKey(InventoryItem,blank=False,null=False,related_name='unit_item_history')
+    item_action     =   models.CharField(max_length=50,default='PURCHASE ORDER',blank=False,null=False,choices=ITEMHISTORY_CHOICES)
+    item_remark     =   models.CharField(max_length=50,blank=True,null=True)
     purchase_date   =   models.DateField(blank=True,null=True)
     purchase_store  =   models.ForeignKey(Store,blank=True,null=True,related_name='quantity_store')
     quantity        =   models.CharField(max_length=50,blank=False,null=False)
