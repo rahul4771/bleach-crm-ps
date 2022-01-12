@@ -603,20 +603,19 @@
                                 <thead>
                                     <tr>
                                         <th style="width: %;">
-                                            Purchase Order ID
+                                            Date
                                         </th>
                                         <th data-hide="phone,tablet"  style="width: %; ">
-                                            Purchase Date
+                                            Name
+                                        </th>
+                                        <th data-hide="phone,tablet"  style="width: %; ">
+                                            Action
+                                        </th>
+                                        <th data-hide="phone,tablet"  style="width: %; ">
+                                            Details
                                         </th>
                                         <th data-hide="phone,tablet"  style="width: %; ">
                                             Quantity
-                                        </th>
-                                        <th data-hide="phone,tablet"  style="width: %; ">
-                                            Added by
-                                        </th>
-                                        
-                                        <th data-hide="phone,tablet"  style="width: %;" >
-                                            PO Date
                                         </th>
                                       
                                     </tr>
@@ -624,11 +623,15 @@
                                 <tbody>
                                     {% for history in item_history %}
                                     <tr>
-                                        <td>{% if history.purchase_order %}{{history.purchase_order.purchase_order_id|default_if_none:"-"}}{% else %}-{% endif %}</td>
-                                        <td>{% if history.purchase_order %}{{history.purchase_order.created|date:'d-m-Y'|default_if_none:'-'}}{% else %}{{history.purchase_date|date:'d-m-Y'}}{% endif %}</td>
-                                        <td>{{history.quantity}}</td>
-                                        <td>{{history.added_by.name}}</td>
-                                        <td>{% if history.purchase_order %}{{history.purchase_order.created|date:'d-m-Y'|default_if_none:'-'}}{% else %}-{% endif %}</td>
+                                        <td>{{history.created|date:"d-m-Y"}}</td>
+                                        <td>{{history.added_by.name|default_if_none:'-'}}</td>
+                                        <td>{{history.item_action}}</td>
+                                        <td>{{history.item_remark|default_if_none:'-'}}</td>
+                                        {% if history.item_action == 'PURCHASE ORDER' or history.item_action == 'STOCK IN' %}
+                                        <td style="color:green"><i class="fa fa-plus" aria-hidden="true"></i> {{history.quantity|floatformat:2}}</td>
+                                        {% else %}
+                                        <td style="color:red"><i class="fa fa-minus" aria-hidden="true"></i> {{history.quantity|floatformat:2}}</td>
+                                        {% endif %}
                                     </tr>
                                     {% endfor %}
                                 </tbody>

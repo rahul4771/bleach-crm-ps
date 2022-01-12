@@ -383,7 +383,8 @@
           
         </div>
         <div class="inv-drawer-footer">
-            <button class="sent-button value-form-btn" type="submit" >Submit</button>
+            <button class="sent-button value-form-btn" type="button" onclick="addvalues()">Add</button>
+            <button class="sent-button value-form-btn2" type="button" onclick="editvalues()">Update</button>
             </form>
                         <button data-dismiss="modal" onclick="closeNavAddValue()" class="view-button">Cancel</button>
         </div>
@@ -413,7 +414,8 @@
                         <input type="hidden" name="action" value="delete_attribute" id="delete_action_id" />
                         <input type="hidden" name="object_id" id="id_object" />
                         <div class="cancel-model-content">
-                            <button class="sent-button" type="submit" >Delete</button>
+                            <button class="sent-button delete-btn" type="submit" >Delete</button>
+                            <button class="sent-button delete-btn2" type="button" onclick="deletevalues()" >Delete</button>
                             <button data-dismiss="modal" class="view-button">Cancel</button>
                           
                         </div>
@@ -574,7 +576,9 @@ $(function () {
             $('#value_status_id').val('True')
             $('#id_selectText3').text('Active');
             $("#valueHead").text("Add Value");
-            $(".value-form-btn").text("Add");
+
+            $(".value-form-btn").show();
+            $(".value-form-btn2").hide();
             
         }
         if(d == 'edit'){
@@ -594,7 +598,8 @@ $(function () {
 
     function openNavEditValue(d) {
         $("#valueHead").text("Edit Value");
-        $(".value-form-btn").text("Update");
+        $(".value-form-btn").hide();
+        $(".value-form-btn2").show();
 
         $('#value_action').val('edit_value');
         $('#id_edit_value').val($(d).data('valueid'));
@@ -631,6 +636,8 @@ $(function () {
     $('.delete_attribute').click(function(){
         $('#id_object').val($(this).data('attributeid'));
         $('#delete_action_id').val('delete_attribute');
+        $('.delete-btn').show();
+        $('.delete-btn2').hide();
     })
 
     //edit attribute
@@ -704,6 +711,8 @@ $(function () {
     function deleteValue(value_id){
         $('#id_object').val(value_id);
         $('#delete_action_id').val('delete_value');
+        $('.delete-btn').hide();
+        $('.delete-btn2').show();
     }
 
     $('#id_category').change(function(){
@@ -814,6 +823,88 @@ $(function () {
             }else{
                 $(".value_table tr:not(:first)").remove(); 
             }
+         }else{
+            showNotification('Something went wrong','error')
+         }
+    }
+
+    async function addvalues(){
+        console.log($('#value_attribute_id').val(),$('input[name=value_name]').val(),$('input[name=value_status]').val(),"koreo")
+        var formdata = {
+            'value_attribute_id' : $('#value_attribute_id').val(),
+            'value_name' : $('input[name=value_name]').val(),
+            'value_status' : $('input[name=value_status]').val(),
+            'action' : 'add_value'
+        }
+
+         var result = await _post('api/inventory-values/',formdata);
+         
+         if(result.status == 200){
+            if (result.data.inventory_value.length > 0){
+                $(".value_table tr:not(:first)").remove(); 
+                var edit = "edit";
+                $.each(result.data.inventory_value,function(key,value){
+                        $('.value_table').append('<tr><td>'+value.name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavEditValue(this)" data-valueid='+value.id+' data-valuename='+value.name+' data-valuestatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn value_delete" onclick="deleteValue('+value.id+')" data-valueid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
+                })
+            }else{
+                $(".value_table tr:not(:first)").remove(); 
+            }
+            closeNavAddValue()
+            showNotification('Value Added','success')
+         }else{
+            showNotification('Something went wrong','error')
+         }
+    }
+
+    async function editvalues(){
+
+        var formdata = {
+            'value_id' : $('#id_edit_value').val(),
+            'value_name' : $('input[name=value_name]').val(),
+            'value_status' : $('input[name=value_status]').val(),
+            'action' : 'edit_value'
+        }
+
+         var result = await _post('api/inventory-values/',formdata);
+         
+         if(result.status == 200){
+            if (result.data.inventory_value.length > 0){
+                $(".value_table tr:not(:first)").remove(); 
+                var edit = "edit";
+                $.each(result.data.inventory_value,function(key,value){
+                        $('.value_table').append('<tr><td>'+value.name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavEditValue(this)" data-valueid='+value.id+' data-valuename='+value.name+' data-valuestatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn value_delete" onclick="deleteValue('+value.id+')" data-valueid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
+                })
+            }else{
+                $(".value_table tr:not(:first)").remove(); 
+            }
+            closeNavAddValue()
+            showNotification('Value Updated','success')
+         }else{
+            showNotification('Something went wrong','error')
+         }
+    }
+
+    async function deletevalues(){
+
+        var formdata = {
+            'value_id' : $('#id_object').val(),
+            'action' : 'delete_value'
+        }
+
+         var result = await _post('api/inventory-values/',formdata);
+         
+         if(result.status == 200){
+            if (result.data.inventory_value.length > 0){
+                $(".value_table tr:not(:first)").remove(); 
+                var edit = "edit";
+                $.each(result.data.inventory_value,function(key,value){
+                        $('.value_table').append('<tr><td>'+value.name+'</td><td><button class="value_edit inv-plan-img-btn mr-5" onclick="openNavEditValue(this)" data-valueid='+value.id+' data-valuename='+value.name+' data-valuestatus='+value.status+'> <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button><button class="inv-plan-img-btn value_delete" onclick="deleteValue('+value.id+')" data-valueid='+value.id+' data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button></td></tr>')
+                })
+            }else{
+                $(".value_table tr:not(:first)").remove(); 
+            }
+            $('.close-evaluation').click()
+            showNotification('Value Deleted','success')
          }else{
             showNotification('Something went wrong','error')
          }

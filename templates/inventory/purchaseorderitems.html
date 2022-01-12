@@ -306,7 +306,7 @@
             <form id="myform" method="POST" action="" >{% csrf_token %}
             <input type="hidden" name="item_id" id="add_item_id" >
             <input type="hidden" name="action" id="order_item_action" value="add_unit_to_inventory" />
-            <input type="hidden" name="store" id="id_pro_sel" value="" />
+            <input type="hidden" name="store" id="id_pro_sel" {% if purchase_order.store %}value="{{purchase_order.store.id}}"{% else %}value=""{% endif %} />
             
             <div class="row mt-20">
                 <div class="col-md-12 ">
@@ -314,7 +314,7 @@
 
                     <div style="position: relative;">
                         <div class="inv-input-container inv-border h-30">
-                            <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" name="storename" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()" required>
+                            <input autocomplete="off" type="text" id="pro-name" name="storename" {% if purchase_order.store %}value="{{purchase_order.store.store_name}}" disabled{% else %} onclick="ProductListShow()" style="border: none !important; width: 90%;" oninput="showProducts()" class=" inv-in"{% endif %}   required>
                             <!-- <div class="inv-hr"></div>
                             <div class="model-filter">
                                 <button class="inv-normal-btn" onclick="showDrop()">
@@ -401,13 +401,13 @@
                         <option value="out_of_order">Out Of order</option>
                         <option value="expired">Expired</option>
                     </select> -->
-                    <input hidden type="text" id="id_unit_status" name="unit_status" value="active" required>
+                    <input hidden type="text" id="id_unit_status" name="unit_status" value="available" required>
                     <div class="wrap-drop" id="noble-gases2"  >
-                        <span id="id_selectText">Active</span>
+                        <span id="id_selectText">Available</span>
                         <ul class="drop">
-                            <li onclick="changeSelect2('active')"><a>Active</a></li>
+                            <li onclick="changeSelect2('available')"><a>Available</a></li>
                             <li onclick="changeSelect2('out_of_order')"><a>Out Of order</a></li> 
-                            <li onclick="changeSelect2('expired')"><a>Expired</a></li> 
+                            <li onclick="changeSelect2('under_repair')"><a>Under Repair</a></li> 
 
                         </ul>
                     </div>
