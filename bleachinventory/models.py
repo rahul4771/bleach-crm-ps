@@ -408,3 +408,38 @@ class CheckOutItemUnits(models.Model):
 
     def __str__(self):
         return self.checkout_item.visit.order.order_no
+
+class RequestOrder(models.Model):
+    request_order_id    = models.CharField(max_length=50,blank=False,null=False)
+    
+    is_admin_approved   = models.BooleanField(default=False,blank=False,null=False)
+    is_rejected         = models.BooleanField(default=False,blank=False,null=False)
+    is_received         = models.BooleanField(default=False,blank=False,null=False)
+    
+    created_by          = models.ForeignKey(UserProfile,blank=True,null=True,related_name='created_by_request_order')
+    requested_by        = models.ForeignKey(UserProfile,blank=True,null=True,related_name='requested_by_request_order')
+    approved_by         = models.ForeignKey(UserProfile,blank=True,null=True,related_name='approved_by_request_order')
+    received_by         = models.ForeignKey(UserProfile,blank=True,null=True,related_name='send_by_request_order')
+
+    status              = models.BooleanField(default=True,blank=False,null=False)
+    created             = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return str(self.request_order_id)
+
+    def __str__(self):
+        return self.request_order_id
+
+
+class RequestOrderItems(models.Model):
+    request_order      = models.ForeignKey('RequestOrder',blank=True,null=True,related_name='items_request_order')
+    product             = models.ForeignKey('InventoryItem',blank=True,null=True,related_name='product_request_order')
+    item_count          = models.CharField(default=0,max_length=50,blank=True,null=True)
+    
+    created             = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return str(self.request_order)
+
+    def __str__(self):
+        return self.request_order
