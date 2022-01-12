@@ -1238,7 +1238,7 @@ select.minimal option:hover {
   padding:.5rem;
   position:relative;
   width:100%;
-  z-index:9999999999;
+  /* z-index:9999999999; */
     
   }
   
