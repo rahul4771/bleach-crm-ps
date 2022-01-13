@@ -816,6 +816,7 @@ opacity: 1;
 }
 .inv-sidedrawer-inner{
   max-height: 90vh;
+  height: 100%;
     overflow-y: auto;
     overflow-x:hidden;
   padding: 20px;

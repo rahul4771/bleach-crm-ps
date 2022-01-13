@@ -1,7 +1,8 @@
 from django.shortcuts import render,redirect
 from django.views import View
 from bleach_crm_ps.permissions import IsInventoryAdmin,IsInventoryAdminUser
-from bleachinventory.models import CheckOutItems,CheckOutItemUnits,ItemHistory,Category,Segment,Line,Attribute,AttributeValue,ItemAttributes,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,PurchaseOrder,PurchaseOrderItems
+from bleachinventory.models import CheckOutItems,CheckOutItemUnits,ItemHistory,Category,Segment,Line,Attribute,AttributeValue,ItemAttributes,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,PurchaseOrder,PurchaseOrderItems,RequestOrder,RequestOrderItems
+from user.models import UserProfile
 from django.contrib import messages
 import re
 import math
@@ -1722,7 +1723,26 @@ class InventoryPurchaseOrder(IsInventoryAdminUser,View):
 			messages.success(request,"Purchase Order Deleted successfully!")
 
 		return redirect('bleach-inventory:inventory-purchaseorder')
+class InventoryItemRequest(IsInventoryAdminUser,View):
+	def get(self,request):
+		search = request.GET.get('search')
 
+		if search:
+			purchase_orders = PurchaseOrder.objects.filter(is_order_completed=True).filter(Q( Q(purchase_order_id__icontains = search) | Q(supplier__supplier_name__icontains = search) )).annotate(total_units=Sum('purchase_order_purchase_order_item__item_count'), total_added_units=Sum('purchase_order_purchase_order_item__added_item_count'), total_price=Sum('purchase_order_purchase_order_item__total_price'))
+		else:
+			purchase_orders = PurchaseOrder.objects.filter(is_order_completed=True).annotate(total_units=Sum('purchase_order_purchase_order_item__item_count'), total_added_units=Sum('purchase_order_purchase_order_item__added_item_count'), total_price=Sum('purchase_order_purchase_order_item__total_price'))
+		
+		return render(request,'inventory/itemRequest.html',{"purchase_orders":purchase_orders,"search_query":search})
+
+	def post(self,request):
+		action = request.POST.get('action')
+
+		if action == 'delete_order':
+			order_id = request.POST.get('order_id')
+			PurchaseOrder.objects.get(id=int(order_id)).delete()
+			messages.success(request,"Purchase Order Deleted successfully!")
+
+		return redirect('bleach-inventory:inventory-itemrequest')
 class PurchaseOrderApproval(IsInventoryAdmin,View):
 	def get(self,request,purchase_order_id):
 		purchase_order = PurchaseOrder.objects.prefetch_related(Prefetch('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.all(),to_attr='purchase_order_items')).annotate(po_total=Sum('purchase_order_purchase_order_item__total_price')).get(id=int(purchase_order_id))
@@ -2002,131 +2022,106 @@ class InventoryCreatePurchaseOrder(View):
 class InventoryCreateInventoryRequest(View):
 	def get(self,request):
 
-		purchase_order = PurchaseOrder.objects.filter(is_order_completed=False,initiated_by=request.user).last()
+		request_order = RequestOrder.objects.filter(is_order_completed=False,created_by=request.user).last()
 
-		if not purchase_order:
+		if not request_order:
 			
 			todate = datetime.now()
-			print(todate.year+todate.month,"ic")
 
-			purchase_order_latest = PurchaseOrder.objects.all().last()
-			if purchase_order_latest:
-				code_number =  re.findall(r'(\d+)', purchase_order_latest.purchase_order_id)[0]
+			request_order_latest = RequestOrder.objects.all().last()
+			if request_order_latest:
+				code_number =  re.findall(r'(\d+)', request_order_latest.request_order_id)[0]
 				code_number = int(code_number[-4:])+1
-				print(code_number,"coda")
-				new_item_code = 'BLPO'+str(todate.year)+''+str(todate.month)+''+ str(code_number)
+				new_item_code = 'BLIR'+str(todate.year)+''+str(todate.month)+''+ str(code_number)
 			else:
-				new_item_code = 'BLPO'+str(todate.year)+''+str(todate.month)+'1001'
+				new_item_code = 'BLIR'+str(todate.year)+''+str(todate.month)+'1001'
 			
-			print(new_item_code,"ic")
-			purchase_order = PurchaseOrder.objects.create(purchase_order_id=new_item_code,initiated_by=request.user)
+			request_order = RequestOrder.objects.create(request_order_id=new_item_code,created_by=request.user)
 
-		suppliers = Supplier.objects.filter(status=True)
-		stores = Store.objects.filter(status=True)
+		requester_id                      = request.GET.get('requester_id')
+	
+		if requester_id:
+			request_order.requested_by_id = requester_id
+			request_order.save()
 
-		supplier_id = request.GET.get('supplier_id')
-		if supplier_id :
-			supplier = Supplier.objects.get(id=int(supplier_id))
-			purchase_order.supplier = supplier
-			purchase_order.save()
-		else:
-			supplier = None
+		purpose                           = request.GET.get('purpose')
+		if purpose:
+			request_order.purpose         = purpose
+			request_order.save()
+		
+		inventory_items     = InventoryItem.objects.filter(~Q(item_type='FINISHED GOODS'))
+		request_order_items = RequestOrderItems.objects.filter(request_order=request_order)
+		request_users       = UserProfile.objects.filter(Q(Q(is_active=True)&~Q(user_type='CUSTOMER')))
 
-		store_id = request.GET.get('store_id')
-		if store_id :
-			store = Store.objects.get(id=int(store_id))
-			purchase_order.store = store
-			purchase_order.save()
-		else:
-			store = None
-
-		items = SupplierItems.objects.all()
-		purchase_order_items = PurchaseOrderItems.objects.filter(purchase_order=purchase_order,purchase_order__supplier=purchase_order.supplier)
-
-		return render(request,'inventory/createir.html',{"items":items,"suppliers":suppliers,"stores":stores,"supplier":supplier,"store":store,"purchase_order":purchase_order,"purchase_order_items":purchase_order_items})
+		return render(request,'inventory/createir.html',{'request_users':request_users,'request_order':request_order,'inventory_items':inventory_items,'request_order_items':request_order_items})
 
 	def post(self,request):
 		action = request.POST.get('action')
-		print(action,"act")
 
 		if action == 'add_item':
-			purchase_order_id = request.POST.get('purchase_order_id')
-			product = request.POST.get('item')
-			
-			unit_price = request.POST.get('unit_price')
-			unit_count = request.POST.get('item_count')
-			total_price = request.POST.get('total_price')
-			print(product,unit_price,unit_count,total_price,"kok")
+			request_order_id = request.POST.get('request_order_id')
+			inventory_item   = request.POST.get('item')
+			quantity         = request.POST.get('item_count')
 
-			purchase_order = PurchaseOrder.objects.get(id=int(purchase_order_id))
-			product = SupplierItems.objects.get(id=int(product))
+			RequestOrderItems.objects.create(request_order_id=request_order_id,product_id=inventory_item,item_count=quantity)
 
-			PurchaseOrderItems.objects.create(purchase_order=purchase_order,product=product,unit_price=unit_price,item_count=unit_count,total_price=total_price)
-			
 			messages.success(request,"Item Added successfully!")
 
-		if action == 'order_close':
-			purchase_order_id = request.POST.get('purchase_order_id')
+		# if action == 'order_close':
+		# 	purchase_order_id = request.POST.get('purchase_order_id')
 
-			discount = request.POST.get('discount')
-			tax = request.POST.get('tax')
-			shipping_charges = request.POST.get('shipping_charges')
-			other_charges = request.POST.get('other_charges')
+		# 	discount = request.POST.get('discount')
+		# 	tax = request.POST.get('tax')
+		# 	shipping_charges = request.POST.get('shipping_charges')
+		# 	other_charges = request.POST.get('other_charges')
 
-			purchase_order = PurchaseOrder.objects.get(id=int(purchase_order_id))
-			purchase_order.discount = discount
-			purchase_order.tax = tax
-			purchase_order.shipping_charge = shipping_charges
-			purchase_order.other_charge = other_charges
+		# 	purchase_order = PurchaseOrder.objects.get(id=int(purchase_order_id))
+		# 	purchase_order.discount = discount
+		# 	purchase_order.tax = tax
+		# 	purchase_order.shipping_charge = shipping_charges
+		# 	purchase_order.other_charge = other_charges
 
-			purchase_order.is_order_completed = True
-			purchase_order.save()
-			messages.success(request,"Order Completed successfully!")
-			return redirect('bleach-inventory:inventory-purchaseorderpage',purchase_order.id)
+		# 	purchase_order.is_order_completed = True
+		# 	purchase_order.save()
+		# 	messages.success(request,"Order Completed successfully!")
+		# 	return redirect('bleach-inventory:inventory-purchaseorderpage',purchase_order.id)
 
+		print(request.POST)
 		if action == 'edit_item':
-			purchase_order_item_id = request.POST.get('item_edit_id')
-			
-			product = request.POST.get('item')
-			
-			unit_price = request.POST.get('unit_price')
-			unit_count = request.POST.get('item_count')
-			total_price = request.POST.get('total_price')
-			print(product,unit_price,unit_count,total_price,"kok")
+			request_item_id         = request.POST.get('request_item_id')			
+			product                 = request.POST.get('item')			
+			item_count              = request.POST.get('item_count')
 
-			product = SupplierItems.objects.get(id=int(product))
-
-			order_item = PurchaseOrderItems.objects.get(id=int(purchase_order_item_id))
-			order_item.product = product
-			order_item.item_count = unit_count
-			order_item.unit_price = unit_price
-			order_item.total_price = total_price
-			order_item.save()
+			request_item            = RequestOrderItems.objects.get(id=request_item_id)
+			request_item.product_id    = product
+			request_item.item_count = item_count
+			request_item.save()
 			
 			messages.success(request,"Item Updated successfully!")
 
 		
 		if action == 'delete_item':
-			order_item_id = request.POST.get('item_id')
-			PurchaseOrderItems.objects.get(id=int(order_item_id)).delete()
+			item_id                = request.POST.get('item_id')
+			RequestOrderItems.objects.get(id=item_id).delete()
+			
 			messages.success(request,"Item Deleted successfully!")
 
-		if action == 'reset':
-			purchase_order_id = request.POST.get('purchase_order_id')
+		# if action == 'reset':
+		# 	purchase_order_id = request.POST.get('purchase_order_id')
 
-			purchase_order = PurchaseOrder.objects.get(id=int(purchase_order_id))
+		# 	purchase_order = PurchaseOrder.objects.get(id=int(purchase_order_id))
 
-			purchase_order.is_order_completed = False
-			purchase_order.supplier = None
-			purchase_order.discount = 0.000
-			purchase_order.tax = 0.000
-			purchase_order.shipping_charge = 0.000
-			purchase_order.other_charge = 0.000
-			purchase_order.save()
+		# 	purchase_order.is_order_completed = False
+		# 	purchase_order.supplier = None
+		# 	purchase_order.discount = 0.000
+		# 	purchase_order.tax = 0.000
+		# 	purchase_order.shipping_charge = 0.000
+		# 	purchase_order.other_charge = 0.000
+		# 	purchase_order.save()
 
-			PurchaseOrderItems.objects.filter(purchase_order=purchase_order).delete()
+		# 	PurchaseOrderItems.objects.filter(purchase_order=purchase_order).delete()
 
-			messages.success(request,"Purchase Order Reset successfully!")
+		# 	messages.success(request,"Purchase Order Reset successfully!")
 
 
 		return redirect('bleach-inventory:inventory-createinventoryrequest')
