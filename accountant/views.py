@@ -2574,10 +2574,13 @@ def export_users_xls(request):
 		rows = []
 		
 		for evaluation in evaluations:
+
 			evaluation_list = list(evaluation)
+
+			estimated_cost = evaluation_list[8]
 			
 			#cleaning policy, service type
-			evaluationbooks = EvaluationBook.objects.filter(is_active=True,evaluation_details__evaluation__id=int(evaluation_list[11])).values('cleaning_policy','service_type__name')
+			evaluationbooks = EvaluationBook.objects.filter(is_active=True,evaluation_details__evaluation__id=int(evaluation_list[11])).values('cleaning_policy','service_type__name','discount')
 			print(evaluationbooks,"ebooks")
 
 			found = set()
@@ -2594,6 +2597,10 @@ def export_users_xls(request):
 					cleaning_policies.append(ebook['cleaning_policy'])
 					# cleaning_policies.append('-')
 					found.add(ebook['cleaning_policy'])
+
+				if ebook['discount']:
+					evaluation_list[9] = ebook['discount']
+					estimated_cost -= float(ebook['discount'])
 
 			evaluation_list[4] = tuple(servicetypes)
 			evaluation_list[5] = tuple(cleaning_policies)
@@ -2633,9 +2640,32 @@ def export_users_xls(request):
 
 
 			#quotation status
-			order = Order.objects.filter(is_active=True,evaluation__id=int(evaluation_list[11])).values('evaluation__quatation_status','payment_status','preamount_paid','order_status').first()
+			order = Order.objects.filter(is_active=True,evaluation__id=int(evaluation_list[11])).values('evaluation__writeback_amount','evaluation__promocode_amount','evaluation__cancelled_amount','evaluation__fine_amount','evaluation__additional_charge','evaluation__quatation_status','payment_status','preamount_paid','order_status','evaluation__discount').first()
 			
+			
+
 			if order:
+				if order['evaluation__discount']:
+					evaluation_list[9] = order['evaluation__discount']
+					estimated_cost -= float(order['evaluation__discount'])
+
+				if order['evaluation__writeback_amount']:
+					estimated_cost -= float(order['evaluation__writeback_amount'])
+
+				if order['evaluation__promocode_amount']:
+					estimated_cost -= float(order['evaluation__promocode_amount'])
+
+				if order['evaluation__cancelled_amount']:
+					estimated_cost -= float(order['evaluation__cancelled_amount'])
+
+				if order['evaluation__fine_amount']:
+					estimated_cost += float(order['evaluation__fine_amount'])
+
+				if order['evaluation__additional_charge']:
+					estimated_cost += float(order['evaluation__additional_charge'])
+
+				evaluation_list[10] = estimated_cost
+
 				if order['evaluation__quatation_status'] == 'APPROVED':
 					if order['payment_status'] == 'COMPLETED' or order['preamount_paid'] != 0 or evaluation_list[6] == 'POSTPAID':
 						if order['order_status'] == 'APPROVED_BY_CLIENT':
