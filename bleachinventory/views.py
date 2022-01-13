@@ -2537,3 +2537,9 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 	# 		messages.success(request,"Unit added to Inventory")
 
 	# 	return redirect('bleach-inventory:inventory-purchaseorderitems', purchase_order_id)
+
+
+class InventoryRequestOrderPage(View):
+	def get(self,request,request_order_id):
+		request_order = RequestOrder.objects.prefetch_related(Prefetch('items_request_order',queryset=RequestOrderItems.objects.all(),to_attr='request_order_items')).get(id=request_order_id)
+		return render(request,'inventory/requestorderpage.html',{"request_order":request_order})

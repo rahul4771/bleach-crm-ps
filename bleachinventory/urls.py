@@ -27,6 +27,7 @@ url(r'^createpo/$',views.InventoryCreatePurchaseOrder.as_view(),name='inventory-
 url(r'^requestorder/$',views.InventoryRequestOrder.as_view(),name='inventory-requestorder'),
 url(r'^requestOrder/items/(?P<request_order_id>[-\w]+)/$',views.RequestOrderItemsPage.as_view(),name='inventory-requestorderitems'),
 url(r'^requestOrder/approval/(?P<request_order_id>[-\w]+)/$',views.RequestOrderApproval.as_view(),name='inventory-requestorderapproval'),
+url(r'^requestorderpage/(?P<request_order_id>[-\w]+)/$',views.InventoryRequestOrderPage.as_view(),name='inventory-requestorderpage'),
 url(r'^createir/$',views.InventoryCreateInventoryRequest.as_view(),name='inventory-createinventoryrequest'),
 
 url(r'^editpo/(?P<purchase_order_id>[-\w]+)/$',views.InventoryEditPurchaseOrder.as_view(),name='inventory-editpurchaseorder'),
