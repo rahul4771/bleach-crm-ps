@@ -1,7 +1,8 @@
 from django.shortcuts import render,redirect
 from django.views import View
 from bleach_crm_ps.permissions import IsInventoryAdmin,IsInventoryAdminUser
-from bleachinventory.models import CheckOutItems,CheckOutItemUnits,ItemHistory,Category,Segment,Line,Attribute,AttributeValue,ItemAttributes,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,PurchaseOrder,PurchaseOrderItems
+from bleachinventory.models import CheckOutItems,CheckOutItemUnits,ItemHistory,Category,Segment,Line,Attribute,AttributeValue,ItemAttributes,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,PurchaseOrder,PurchaseOrderItems,RequestOrder,RequestOrderItems
+from user.models import UserProfile
 from django.contrib import messages
 import re
 import math
@@ -2002,52 +2003,41 @@ class InventoryCreatePurchaseOrder(View):
 class InventoryCreateInventoryRequest(View):
 	def get(self,request):
 
-		purchase_order = PurchaseOrder.objects.filter(is_order_completed=False,initiated_by=request.user).last()
+		request_order = RequestOrder.objects.filter(is_order_completed=False,created_by=request.user).last()
 
-		if not purchase_order:
+		if not request_order:
 			
 			todate = datetime.now()
-			print(todate.year+todate.month,"ic")
 
-			purchase_order_latest = PurchaseOrder.objects.all().last()
-			if purchase_order_latest:
-				code_number =  re.findall(r'(\d+)', purchase_order_latest.purchase_order_id)[0]
+			request_order_latest = RequestOrder.objects.all().last()
+			if request_order_latest:
+				code_number =  re.findall(r'(\d+)', request_order_latest.request_order_id)[0]
 				code_number = int(code_number[-4:])+1
-				print(code_number,"coda")
-				new_item_code = 'BLPO'+str(todate.year)+''+str(todate.month)+''+ str(code_number)
+				new_item_code = 'BLIR'+str(todate.year)+''+str(todate.month)+''+ str(code_number)
 			else:
-				new_item_code = 'BLPO'+str(todate.year)+''+str(todate.month)+'1001'
+				new_item_code = 'BLIR'+str(todate.year)+''+str(todate.month)+'1001'
 			
-			print(new_item_code,"ic")
-			purchase_order = PurchaseOrder.objects.create(purchase_order_id=new_item_code,initiated_by=request.user)
+			request_order = RequestOrder.objects.create(request_order_id=new_item_code,created_by=request.user)
 
-		suppliers = Supplier.objects.filter(status=True)
-		stores = Store.objects.filter(status=True)
+		requester_id                      = request.GET.get('requester_id')
+	
+		if requester_id:
+			request_order.requested_by_id = requester_id
+			request_order.save()
 
-		supplier_id = request.GET.get('supplier_id')
-		if supplier_id :
-			supplier = Supplier.objects.get(id=int(supplier_id))
-			purchase_order.supplier = supplier
-			purchase_order.save()
-		else:
-			supplier = None
+		purpose                           = request.GET.get('purpose')
+		if purpose:
+			request_order.purpose         = purpose
+			request_order.save()
+		
+		inventory_items     = InventoryItem.objects.all()
+		request_order_items = RequestOrderItems.objects.filter(request_order=request_order)
+		request_users       = UserProfile.objects.filter(Q(Q(is_active=True)&~Q(user_type='CUSTOMER')))
 
-		store_id = request.GET.get('store_id')
-		if store_id :
-			store = Store.objects.get(id=int(store_id))
-			purchase_order.store = store
-			purchase_order.save()
-		else:
-			store = None
-
-		items = SupplierItems.objects.all()
-		purchase_order_items = PurchaseOrderItems.objects.filter(purchase_order=purchase_order,purchase_order__supplier=purchase_order.supplier)
-
-		return render(request,'inventory/createir.html',{"items":items,"suppliers":suppliers,"stores":stores,"supplier":supplier,"store":store,"purchase_order":purchase_order,"purchase_order_items":purchase_order_items})
+		return render(request,'inventory/createir.html',{'request_users':request_users,'request_order':request_order,'inventory_items':inventory_items,'request_order_items':request_order_items})
 
 	def post(self,request):
 		action = request.POST.get('action')
-		print(action,"act")
 
 		if action == 'add_item':
 			purchase_order_id = request.POST.get('purchase_order_id')
