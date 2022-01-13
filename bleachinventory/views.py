@@ -1723,7 +1723,26 @@ class InventoryPurchaseOrder(IsInventoryAdminUser,View):
 			messages.success(request,"Purchase Order Deleted successfully!")
 
 		return redirect('bleach-inventory:inventory-purchaseorder')
+class InventoryItemRequest(IsInventoryAdminUser,View):
+	def get(self,request):
+		search = request.GET.get('search')
 
+		if search:
+			purchase_orders = PurchaseOrder.objects.filter(is_order_completed=True).filter(Q( Q(purchase_order_id__icontains = search) | Q(supplier__supplier_name__icontains = search) )).annotate(total_units=Sum('purchase_order_purchase_order_item__item_count'), total_added_units=Sum('purchase_order_purchase_order_item__added_item_count'), total_price=Sum('purchase_order_purchase_order_item__total_price'))
+		else:
+			purchase_orders = PurchaseOrder.objects.filter(is_order_completed=True).annotate(total_units=Sum('purchase_order_purchase_order_item__item_count'), total_added_units=Sum('purchase_order_purchase_order_item__added_item_count'), total_price=Sum('purchase_order_purchase_order_item__total_price'))
+		
+		return render(request,'inventory/itemRequest.html',{"purchase_orders":purchase_orders,"search_query":search})
+
+	def post(self,request):
+		action = request.POST.get('action')
+
+		if action == 'delete_order':
+			order_id = request.POST.get('order_id')
+			PurchaseOrder.objects.get(id=int(order_id)).delete()
+			messages.success(request,"Purchase Order Deleted successfully!")
+
+		return redirect('bleach-inventory:inventory-itemrequest')
 class PurchaseOrderApproval(IsInventoryAdmin,View):
 	def get(self,request,purchase_order_id):
 		purchase_order = PurchaseOrder.objects.prefetch_related(Prefetch('purchase_order_purchase_order_item',queryset=PurchaseOrderItems.objects.all(),to_attr='purchase_order_items')).annotate(po_total=Sum('purchase_order_purchase_order_item__total_price')).get(id=int(purchase_order_id))
