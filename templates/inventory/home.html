@@ -164,6 +164,32 @@
                     </div>
                     {% endif %}
 
+                    {% if request.user.user_type == 'INVENTORYADMIN' and ro_count > 0 %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            
+                                <div class="white-wrapper"><!--white-wrapper-->
+                                <h2 class="h2">Request Order Approval Task</h2>
+                                <table class="main-table">
+                                <tbody>
+                                    {% for order in request_orders %}
+                                    <tr>
+                                        <td>{{order.created|date:'d-m-Y'}}</td>
+                                        <td>{{order.request_order_id}}</td>
+                                        <td>{{order.requested_by.name}}</td>
+                                        <td>{{order.purpose}}</td>
+                                        <td data-label=""><span class="green-bg clickable-row-list" data-href="{% url 'bleach-inventory:inventory-requestorderapproval' order.id %}">Click to Approve</span></td>
+                                    </tr>
+                                    
+                                    {% endfor %}
+                                </tbody>
+                                </table>
+                                </div>
+                                
+                        </div>
+                    </div>
+                    {% endif %}
+
                     <div class="row mt-10">
                         <div class="col-md-12">
                             <div class="white-wrapper white-wrapper-padding m-0" style="margin-bottom: 0px !important;">

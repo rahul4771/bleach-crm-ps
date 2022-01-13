@@ -427,17 +427,17 @@ class RequestOrder(models.Model):
     request_order_id    = models.CharField(max_length=50,blank=False,null=False)
     purpose             = models.CharField(max_length=50,blank=False,null=False,choices=PUPOSES_REQUEST_ORDER)
     
-    is_completed        = models.BooleanField(default=False,blank=False,null=False)
+    is_order_completed  = models.BooleanField(default=False,blank=False,null=False)
     is_admin_approved   = models.BooleanField(default=False,blank=False,null=False)
     is_rejected         = models.BooleanField(default=False,blank=False,null=False)
     is_received         = models.BooleanField(default=False,blank=False,null=False)
     
-    is_order_completed  = models.BooleanField(default=False,blank=False,null=False)
     
     created_by          = models.ForeignKey(UserProfile,blank=True,null=True,related_name='created_by_request_order')
     requested_by        = models.ForeignKey(UserProfile,blank=True,null=True,related_name='requested_by_request_order')
     approved_by         = models.ForeignKey(UserProfile,blank=True,null=True,related_name='approved_by_request_order')
     received_by         = models.ForeignKey(UserProfile,blank=True,null=True,related_name='send_by_request_order')
+    rejected_by         = models.ForeignKey(UserProfile,blank=True,null=True,related_name='rejected_by_request_order')
 
     status              = models.BooleanField(default=True,blank=False,null=False)
     created             = models.DateTimeField(auto_now_add=True)
@@ -450,9 +450,10 @@ class RequestOrder(models.Model):
 
 
 class RequestOrderItems(models.Model):
-    request_order      = models.ForeignKey('RequestOrder',blank=True,null=True,related_name='items_request_order')
+    request_order       = models.ForeignKey('RequestOrder',blank=True,null=True,related_name='items_request_order')
     product             = models.ForeignKey('InventoryItem',blank=True,null=True,related_name='product_request_order')
     item_count          = models.CharField(default=0,max_length=50,blank=True,null=True)
+    is_received         = models.BooleanField(default=False,blank=False,null=False)
     
     created             = models.DateTimeField(auto_now_add=True)
 

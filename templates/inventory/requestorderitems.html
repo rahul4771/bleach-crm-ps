@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load mathfilters %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+<div class="wrapper"><!--wrapper-->
+    {% include "inventory/common/header.html" %}
+    <section class="content">
+        <div class="container-fluid space topspace">
+            <div class="welcome-wrapper">
+                <!--welcome-wrapper-->
+                <h1 class="dashboard-head av-font">{{request_order.request_order_id}}</h1>
+                <!-- <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p> -->
+            </div>
+        </div>
+
+        <div class="main-content-holder"><!--main-content-holder-->   
+            <div class="white-wrapper white-wrapper-padding">
+                
+                <div class="row mt-10">
+                   <div class="col-md-4">
+                    <div class="row c-mb-3 ">
+                        <div class="col-xs-5  inv-section-in">Initiated date</div>
+                        <div class="col-xs-7   ">: <span class="inv-section-in">{{request_order.created|date:'d-m-Y'}}</span></div>
+                      </div>
+                      <div class="row mt-10 ">
+                        <div class="col-xs-5  inv-section-in">Initiated by</div>
+                        <div class="col-xs-7   ">: <span class="inv-section-in">{{request_order.requested_by.name}}</span></div>
+                      </div>
+                   </div>
+                </div>
+                
+                {% if request_order.is_admin_approved == True %}
+                <div class="row mt-20">
+                    <div class="col-md-3">
+                        <input type="hidden" name="status" id="id_shipment_status" >
+                        <div class="wrap-drop" id="noble-gases" style="z-index: 9999 !important;"  >
+                            <span id="id_selectText">{% if request_order.is_received == True %}Shipment completed{% else %}Shipment not completed{% endif %}</span>
+                            <ul class="drop">
+                                <li onclick="changeSelect('complete')"><a>Shipment completed</a></li>
+                                <li onclick="changeSelect('incomplete')"><a>Shipment not completed</a></li> 
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="mt-20">
+                    
+                    <table id="id_table_common" class="inv-table footable" style="border-top:1px solid #c4c4c4; margin-top: -2px; z-index: 10 !important;"> 
+                        <thead>
+                            <tr>
+                                
+                                <th style="width: %;">
+                                    Product ID
+                                </th>
+                                <th data-hide="phone,tablet"  style="width: %; text-align: center;">
+                                    Product Name
+                                </th>
+                                <th data-hide="phone,tablet"  style="width: %;" class="text-left">
+                                    Product Type
+                                </th>
+                                <th  data-hide="phone,tablet"  style="width: %;" class="text-left">
+                                    Number of units
+                                </th>
+                               
+                                <th>
+                                    Status
+                                </th>
+    
+                            </tr>
+                        </thead>
+                     <tbody>
+                      
+                        {% for item in request_order.request_order_items %}
+                        <tr>
+                            
+                            <td>
+                                {{item.product.item_code}}
+                            </td>
+                            <td class="text-center">
+                              {{item.product.name}}
+                            </td>
+                            <td class="text-center">
+                                {{item.product.item_type}}
+                              </td>
+                            <td class="text-left">
+                              {{item.item_count}}
+                              </td>                          
+                            <td>
+                                {% if item.is_received == True %}
+                                <span class="inv-dot c-active ml-5"></span>Added
+                                {% else %}
+                                <span class="inv-dot c-active ml-5"></span>Waiting
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+        
+                      
+                     </tbody>
+    
+                    </table>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+</div>
+
+
+
+{% endblock %}
+
+{% block javascript %}
+<script>
+function changeSelect(va){
+    $('#id_shipment_status').val(va);
+    set_params_go();
+}
+
+function set_params_go(args)
+    {
+    var url='{% url 'bleach-inventory:inventory-requestorderitems' request_order.id %}';
+    var params={shipment_status:$('#id_shipment_status').val()
+    };
+    for(key in args) 
+        params[key]=args[key];
+    var query='';
+    for(key in params)
+        if(params[key]) 
+            query+='&'+key+'='+params[key].toString();
+    query=query.replace('&','?');
+    window.location.href=url+query;  
+    }
+</script>
+{% endblock %}
