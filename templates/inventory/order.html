@@ -203,7 +203,7 @@
                                 {{visit.work_status}}
                             </td>
                             <td class="text-center">
-                                {% if visit.stock_out_items_saved == True %}
+                                <!-- {% if visit.stock_out_items_saved == True %}
                                     {% if visit.work_status == 'CLEANING_FULFILLED' %}
                                     <button  class="btn-p inv-plan-img-btn2-disabled" disabled> <img class="btn-img2"
                                         src="{% static 'files/inventory/icons/checklist.png' %}" alt=""> Edit Check-out list
@@ -220,13 +220,31 @@
                                 {% if visit.stock_out_items_saved == True %}
                                 <a href="{% url 'customer:stockout-download' visit.id %}"><button class="inv-plan-img-btn2" > Download </button></a>
                                 {%  else %}
-                                <button class="inv-plan-img-btn2-disabled" disabled> Download </button>
-                                {% endif %}
+                                <button class="inv-plan-img-btn2-disabled" disabled> Download </button> 
+                                {% endif %}-->
+                                <div class="btn-group" id="actionDropdown">
+                                    <div class="order-dropdown " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+                                      Action
+                                      <i class="fa fa-chevron-down action-icon" aria-hidden="true" ></i>
+                                    </div>
+                                    <div class="dropdown-menu" id="dropdown-menu-orders">   
+                                    {% if visit.stock_out_items_saved == True %}
+                                        {% if visit.work_status != 'CLEANING_FULFILLED' %}
+                                        <a class="d-flex dropdown-orders" href="/bleach-inventory/createcheckout/{{visit.id}}"><img src="{% static 'files/inventory/pencil.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Edit Check-out list</div></a>    
+                                        {% endif %}
+                                    {% else %}    
+                                      <a class="d-flex dropdown-orders"  href="/bleach-inventory/createcheckout/{{visit.id}}" ><img src="{% static 'files/inventory/icons/checklist.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Create Check-out list </div></a>    
+                                      {% endif %}
+                                      {% if visit.stock_out_items_saved == True %}
+                                      <a class="d-flex dropdown-orders"  href="{% url 'customer:stockout-download' visit.id %}"><img src="{% static 'files/inventory/icons/checklist.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Download </div></a>    
+                                      {% endif %}
+                                    </div>
+                                  </div>
 
                             </td>
                         </tr>
                         {% endfor %}
-                        {% comment %} <tr>
+                         <!-- <tr>
                             <td>
                                 12/12/2021
                             </td>
@@ -248,14 +266,28 @@
                               
                             </td>
                             <td style="float: right;">
-                                <button class="btn-p inv-plan-img-btn inv-btn-dis" onclick="openNav()"> <img class="btn-img2"
-                                    src="{% static 'files/inventory/icons/checklist.png' %}" alt=""> Create Check-out list </button>
-                                <button class="inv-plan-img-btn" onclick="openNav()"> <img
-                                        src="{% static 'files/inventory/icons/edit.png' %}" alt=""> </button>
-                                
+                                <div class="btn-group" id="actionDropdown">
+                                    <div class="order-dropdown " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+                                      Action
+                                      <i class="fa fa-chevron-down action-icon" aria-hidden="true" ></i>
+                                    </div>
+                                    <div class="dropdown-menu" id="dropdown-menu-orders">   
+                                    {% if visit.stock_out_items_saved == True %}
+                                        {% if visit.work_status != 'CLEANING_FULFILLED' %}
+                                        <a class="d-flex dropdown-orders" href="/bleach-inventory/createcheckout/{{visit.id}}"><img src="{% static 'files/inventory/pencil.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Edit Check-out list</div></a>    
+                                        {% endif %}
+                                    {% else %}    
+                                      <a class="d-flex dropdown-orders"  href="/bleach-inventory/createcheckout/{{visit.id}}" ><img src="{% static 'files/inventory/icons/checklist.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Create Check-out list </div></a>    
+                                      {% endif %}
+                                      {% if visit.stock_out_items_saved == True %}
+                                      <a class="d-flex dropdown-orders"  href="{% url 'customer:stockout-download' visit.id %}"><img src="{% static 'files/inventory/icons/checklist.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Download </div></a>    
+                                      {% endif %}
+                                    </div>
+                                  </div>
+                               
 
                             </td>
-                        </tr> {% endcomment %}
+                        </tr> -->
 
                       </tbody>
                       
