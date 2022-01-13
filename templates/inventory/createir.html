@@ -213,10 +213,20 @@
                                     <td style="text-align: center;">{% if item.product.item.measuring_unit %}{{item.product.item.measuring_unit}}(s){% else %}Unit(s){% endif %}</td>
                                     <td style="text-align: center;">{{item.total_price|floatformat:3}} KD</td>
                                     <td style="text-align: center;"> 
-                                        <button type="button" class="inv-plan-img-btn edit-item-btn" data-itemid="{{item.id}}" data-productid="{{item.product.id}}" data-productname="{{item.product.item}}" data-unitprice="{{item.unit_price}}" data-itemcount="{{item.item_count}}" data-totalprice="{{item.total_price}}"> <img
+                                        <!-- <button type="button" class="inv-plan-img-btn edit-item-btn" data-itemid="{{item.id}}" data-productid="{{item.product.id}}" data-productname="{{item.product.item}}" data-unitprice="{{item.unit_price}}" data-itemcount="{{item.item_count}}" data-totalprice="{{item.total_price}}"> <img
                                             src="{% static 'files/inventory/pencil.png' %}" alt="" onclick="openNavAddStore('edit')"> </button>
                                         <button type="button" data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}"  class="inv-plan-img-btn delete-item-btn"> <img
-                                                src="{% static 'files/inventory/bin.png' %}" alt=""> </button>
+                                                src="{% static 'files/inventory/bin.png' %}" alt=""> </button> -->
+                                                <div class="btn-group" id="actionDropdown">
+                                                    <div class="order-dropdown " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+                                                      Action
+                                                      <i class="fa fa-chevron-down action-icon" aria-hidden="true" ></i>
+                                                    </div>
+                                                    <div class="dropdown-menu" id="dropdown-menu-orders">    
+                                                      <a class="d-flex dropdown-orders"  onclick="openNavAddStore('edit')" target="_blank" data-itemid="{{item.id}}" data-productid="{{item.product.id}}" data-productname="{{item.product.item}}" data-unitprice="{{item.unit_price}}" data-itemcount="{{item.item_count}}" data-totalprice="{{item.total_price}}"><img src="{% static 'files/inventory/pencil.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Edit Item</div></a>    
+                                                      <a class="d-flex dropdown-orders" data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}" target="_blank"><img src="{% static 'files/inventory/bin.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Delete Item</div></a>                                                                                                       
+                                                    </div>
+                                                  </div>
                                     </td>
                                 </tr>
                                 {% empty %}
