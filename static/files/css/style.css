@@ -99,6 +99,11 @@ footer {
     height:20px;
     width:20px;
 }
+.dropdown-icon2{
+    height: 20px;
+    width: 20px;
+    padding: 3px;
+}
 .dropdown-orders{
     padding:5px;
     cursor:pointer;
