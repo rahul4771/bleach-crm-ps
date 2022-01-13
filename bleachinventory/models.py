@@ -427,6 +427,7 @@ class RequestOrder(models.Model):
     request_order_id    = models.CharField(max_length=50,blank=False,null=False)
     purpose             = models.CharField(max_length=50,blank=False,null=False,choices=PUPOSES_REQUEST_ORDER)
     
+    is_completed        = models.BooleanField(default=False,blank=False,null=False)
     is_admin_approved   = models.BooleanField(default=False,blank=False,null=False)
     is_rejected         = models.BooleanField(default=False,blank=False,null=False)
     is_received         = models.BooleanField(default=False,blank=False,null=False)
