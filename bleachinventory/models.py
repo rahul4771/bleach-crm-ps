@@ -456,7 +456,7 @@ class RequestOrderItems(models.Model):
     created             = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
-        return str(self.request_order)
+        return str(self.request_order.request_order_id)
 
     def __str__(self):
-        return self.request_order
+        return self.request_order.request_order_id

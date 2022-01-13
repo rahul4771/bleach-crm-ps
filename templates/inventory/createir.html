@@ -154,13 +154,7 @@
                     
                     <form method="POST" action="" >{% csrf_token %}
                     <input type="hidden" name="action" value="order_close" />
-                    
-                    
-                    <!-- <div class="col-md-9 text-right">
-                        <button class="inv-plan-btn" onclick="openNavAddStore()"> <img
-                            src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5"
-                            alt=""> Add Item</button>
-                    </div> -->
+
                 </div>
                 
                
@@ -172,38 +166,31 @@
                             <thead>
                                 <tr>
                                     <th style="width: 15%;">
-                                        Product ID
+                                        Item Code
                                     </th>
                                     <th style="width: %;" data-hide="phone,tablet" >
-                                        Product
+                                        Item Name
                                     </th>
                                     <th data-hide="phone,tablet" style="text-align: center;">
-                                        Unit Price
+                                        Item Type
                                     </th>
                                     <th data-hide="phone,tablet" style="text-align: center;">
                                         Quantity
                                     </th>
                                     <th data-hide="phone,tablet" style="text-align: center;">
-                                        unit
+                                        Action
                                     </th>
-                                    <th data-hide="phone,tablet" style="text-align: center;">
-                                        Net Price
-                                    </th>
-
-                                    <th data-hide="phone,tablet" style="text-align: center;">Action</th>
                                 </tr>
                             </thead>
                             <tbody id="item_table">
-                                {% for item in purchase_order_items %}
+                                {% for item in request_order_items %}
                                 <tr data-itemid="{{item.product.id}}">
-                                    <td>{{item.product.supplier_item_id}}</td>
-                                    <td>{{item.product.item}}</td>
-                                    <td style="text-align: center;">{{item.unit_price|floatformat:3}} KD</td>
+                                    <td>{{item.product.item_code}}</td>
+                                    <td>{{item.product.name}}</td>
+                                    <td style="text-align: center;">{{item.product.item_type}}</td>
                                     <td style="text-align: center;">{{item.item_count}}</td>
-                                    <td style="text-align: center;">{% if item.product.item.measuring_unit %}{{item.product.item.measuring_unit}}(s){% else %}Unit(s){% endif %}</td>
-                                    <td style="text-align: center;">{{item.total_price|floatformat:3}} KD</td>
                                     <td style="text-align: center;"> 
-                                        <!-- <button type="button" class="inv-plan-img-btn edit-item-btn" data-itemid="{{item.id}}" data-productid="{{item.product.id}}" data-productname="{{item.product.item}}" data-unitprice="{{item.unit_price}}" data-itemcount="{{item.item_count}}" data-totalprice="{{item.total_price}}"> <img
+                                        <button type="button" class="inv-plan-img-btn edit-item-btn" data-itemid="{{item.id}}" data-productid="{{item.product.id}}" data-productname="{{item.product.name}}" data-itemcount="{{item.item_count}}"> <img
                                             src="{% static 'files/inventory/pencil.png' %}" alt="" onclick="openNavAddStore('edit')"> </button>
                                         <button type="button" data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}"  class="inv-plan-img-btn delete-item-btn"> <img
                                                 src="{% static 'files/inventory/bin.png' %}" alt=""> </button> -->
@@ -220,7 +207,7 @@
                                     </td>
                                 </tr>
                                 {% empty %}
-                                <td></td><td></td><td>No Data</td><td></td><td></td><td></td>
+                                <td></td><td></td><td>No Data</td><td></td><td></td>
                                 {% endfor %}
                                
                                 {% if request_order.requested_by != None %}
@@ -270,8 +257,8 @@
             <form method="POST" action="" >{% csrf_token %}
             <input type="hidden" name="action" id="purchase_order_action" value="add_item" />
             <input type="hidden" name="item" id="id_pro_sel" value="" />
-            <input type="hidden" name="purchase_order_id" value="{{purchase_order.id}}" />
-            <input type="hidden" name="item_edit_id" id="id_edit_item" />
+            <input type="hidden" name="request_order_id" value="{{request_order.id}}" />
+            <input type="hidden" name="request_item_id" id="id_edit_item" />
             <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Product</div>
@@ -308,7 +295,7 @@
                         
                         <div class="quantity">
                           <a class="quantity__minus pointer"><span>-</span></a>
-                          <input  type="text" class="quantity__input" value="1" id="id_item_count" name="item_count" onkeyup="calc_total_price()">
+                          <input  type="text" class="quantity__input" value="1" id="id_item_count" name="item_count">
                           <a  class="quantity__plus pointer"><span>+</span></a>
                         </div>
                         
@@ -381,13 +368,10 @@
                
                 <div class="row">
                     <div class="col-md-12 text-center">
-                        <!-- <form method="POST" action="" >{% csrf_token %}
-                        <input type="hidden" name="action" value="delete_item" />
-                        <input type="text" name="item_id" id="id_item" /> -->
                         <div class="cancel-model-content">
                             <form method="POST" action="" >{% csrf_token %}
                             <input type="hidden" name="action" value="reset" />
-                            <input type="hidden" name="purchase_order_id" value="{{purchase_order.id}}" />
+                            <input type="hidden" name="request_order_id" value="{{request_order.id}}" />
                             <button class="sent-button" type="submit" >reset</button>
                             </form>
                             <button data-dismiss="modal" class="view-button">Cancel</button>
@@ -531,18 +515,12 @@ function showRe(){
 function showAdditem(){
 
 }
-        var products = [];
-        {% for item in inventory_items %}
-            var tempId = '{{item.id}}';
-            var tempName = '{{item.name}}';
-            products.push({id:tempId,name:tempName})
-        // $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
-
-        {% endfor %}
-
-    	$(document).ready(function(){
 
 
+    $(document).ready(function(){
+
+
+            //Quantity Clicks
             const minus = $('.quantity__minus');
             const plus = $('.quantity__plus');
             const input = $('.quantity__input');
@@ -553,7 +531,6 @@ function showAdditem(){
                 value--;
                 }
                 input.val(value);
-                calc_total_price();
                 e.preventDefault();
 
             });
@@ -563,7 +540,6 @@ function showAdditem(){
                 var value = input.val();
                 value++;
                 input.val(value);
-                calc_total_price();
             })
 
             $('.active-right').hide();
@@ -575,40 +551,33 @@ function showAdditem(){
                 console.log(supid);
                 $('#requester_id').val(supid);
             }
+
             var products = [];
             {% for item in inventory_items %}
                 var tempId = '{{item.id}}';
                 var tempName = '{{item.name}}';
-            products.push({id:tempId,name:tempName})
-            // $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
-
+                products.push({id:tempId,name:tempName})
             {% endfor %}
 
 		    $('.count').val(1);
-   			$(document).on('click','.plus',function(){
+   			
+            $(document).on('click','.plus',function(){
 				$('.count').val(parseInt($('.count').val()) + 1 );
-                console.log($('#id_item_count').val(),'firs')
-               // $('#id_item_count').val(parseInt($('#id_item_count').val()) + 1 );
-                console.log($('#id_item_count').val(),'se')
-
-                calc_total_price();
-                console.log($('#id_item_count').val(),"countval")
     		});
+
         	$(document).on('click','.minus',function(){
                 
                 if($('.count').val() >= 1){
                     $('.count').val(parseInt($('.count').val()) - 1 );
-                //$('#id_item_count').val(parseInt($('#id_item_count').val()) - 1 )
     				if ($('.count').val() == 0) {
                         $('#id_item_count').val(1);
 						$('.count').val(1);
 					}
-                    calc_total_price();
-                    console.log($('.count').val(),"countval")
                 }
     			
-    	    	});
+    	    });
  		});
+
     
     function showDrop() {
        document.getElementById("id_cat").style.display="block"
@@ -617,15 +586,15 @@ function showAdditem(){
 
     function openNavAddStore(d) {
         $('#id_search').empty();
-        {% for item in items %}
+        {% for item in inventory_items %}
 
-    var tempId = '{{item.id}}';
-    var tempName = '{{item.item.name}}';
-    console.log(tempId,tempName)
+        var tempId = '{{item.id}}';
+        var tempName = '{{item.item.name}}';
+        console.log(tempId,tempName)
    
-    $('#id_search').append('<div class="col-md-12 inv-search-drop" id="id_product{{item.id}}" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-productprice="{{item.item_price}}" data-name="{{item.item}}"><div class="inv-search-result">{{item.item}}</div></div>');
+        $('#id_search').append('<div class="col-md-12 inv-search-drop" id="id_product{{item.id}}" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
 
-    {% endfor %}
+        {% endfor %}
 
        // $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
         if(d == 'add'){
@@ -669,7 +638,6 @@ function showAdditem(){
     }
 
     function showProducts(){
-        console.log("hiiiiiiiiiiiiiiii")
         $('#id_search').empty();
         for (var j=0; j<products.length; j++) {
             if (products[j].name.toUpperCase().match($('#pro-name').val().toUpperCase())){
@@ -702,27 +670,18 @@ function showAdditem(){
         document.getElementById("id_search").style.display="none"
     }
 
-    function calc_total_price(){
-        console.log("c")
-        var unit_price = $('#id_unit_price').val();
-        var count = $('#id_item_count').val();
-        console.log("log")
-        var total_price = parseFloat(unit_price * count);
-        $('#id_total_price').val(total_price);
-    }
-
+    //Delete Item
     $('.delete-item-btn').click(function(){
         $('#id_item').val($(this).data('itemid'));
     })
 
+    //Edit Item
     $('.edit-item-btn').click(function(){
         $('#id_edit_item').val($(this).data('itemid'));
-        $('#pro-name').val($(this).data('productname'));
         $('#id_pro_sel').val($(this).data('productid'));
-        $('#id_unit_price').val($(this).data('unitprice'));
+        $('#pro-name').val($(this).data('productname'));
         $('#id_item_count').val($(this).data('itemcount'));
         $('.count').val($(this).data('itemcount'));
-        $('#id_total_price').val($(this).data('totalprice'));
     })
     
     function set_params_go(args)
