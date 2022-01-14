@@ -2312,12 +2312,12 @@ class InventoryRequestOrder(IsInventoryAdminUser,View):
 	def post(self,request):
 		action = request.POST.get('action')
 
-		if action == 'delete_order':
-			order_id = request.POST.get('order_id')
-			PurchaseOrder.objects.get(id=int(order_id)).delete()
-			messages.success(request,"Purchase Order Deleted successfully!")
+		if action == 'delete_requestorder':
+			order_id       = request.POST.get('request_order_id')
+			RequestOrder.objects.get(id=order_id).delete()
+			messages.success(request,"Inventory Request Order Deleted successfully!")
 
-		return redirect('bleach-inventory:inventory-itemrequest')
+		return redirect('bleach-inventory:inventory-requestorder')
 
 class InventoryCreateInventoryRequest(View):
 	def get(self,request):

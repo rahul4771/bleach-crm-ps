@@ -23,16 +23,14 @@
                         <div class="inv-input-container h-30">
                             <i class="fa fa-search inv-icon-input" aria-hidden="true"></i>
                             <input type="text" id="search-bar" placeholder="Search" class="inv-input w-250" onchange="set_params_go();" name="attributes" value="{{search_query|default_if_none:''}}">
-                          </div>
-                    
-                    
+                        </div>                    
                     </div>
+                    
                     <div class="right-pos">
-                        <a href="/bleach-inventory/requestorder/"><button class="inv-blue-btn" onclick="showDrawer('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Create RO</button></a>
-
-                        <!-- <button class="inv-blue-btn" data-toggle="modal" data-target="#addModel" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Add Store </button> -->
+                        <a href="/bleach-inventory/requestorder/"><button class="inv-blue-btn" onclick="showDrawer('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Create IR</button></a>
                     </div>
-                </div>
+                    </div>
+
                 <div class="mt-20">
                     <div class="d-flex" >
                         <div class="inv-tab av-font inv-tab-active" onclick="selectTab('pen')" id="id_pen">Pending</div>
@@ -92,28 +90,30 @@
                                     {% endif %}
                                 {% endif %}
                             </td>
-                            <td class="text-center">
-                               
+                        <td class="text-center">       
+                        
                         <a href="/bleach-inventory/requestOrder/items/{{order.id}}/"><button class="inv-plan-img-btn"> <img class="view-img"
                                     src="{% static 'files/inventory/view.png' %}" alt="">
                         </button></a>
+                        
                         {% if order.is_admin_approved == True %}
                         <a href="/bleach-inventory/requestorderpage/{{order.id}}/"><button class="inv-plan-img-btn"> <img class=""
-                            src="{% static 'files/inventory/invoice.png' %}" alt="">
+                            src="{% static 'files/inventory/invoice.png' %}" alt=""></button></a>
                         {% else %}
                         <button class="inv-plan-img-btn2-disabled" disabled> <img class="btn-img2" src="{% static 'files/inventory/invoice.png' %}" alt=""></button>
                         {% endif %}
                 
-                {% if order.is_admin_approved == False or order.is_rejected == True %}                
-                <a href="/bleach-inventory/editpo/{{order.id}}"><button class="inv-plan-img-btn" > <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button></a>
-                {% else %}
-                <button class="inv-plan-img-btn2-disabled" disabled> <img class="btn-img2" src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>
-                {% endif %}
+                        {% if order.is_admin_approved == False or order.is_rejected == True %}                
+                        <a href="/bleach-inventory/editpo/{{order.id}}"><button class="inv-plan-img-btn" > <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button></a>
+                        {% else %}
+                        <button class="inv-plan-img-btn2-disabled" disabled> <img class="btn-img2" src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>
+                        {% endif %}
 
-                {% if request.user.user_type == 'INVENTORYADMIN' %}
-                <button class="inv-plan-img-btn delete-order" data-id="{{order.id}}"  data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
-                {% endif %}
-                            </td>
+                        {% if request.user.user_type == 'INVENTORYADMIN' %}
+                        <button class="inv-plan-img-btn delete-order" data-id="{{order.id}}"  data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/bin.png' %}"  alt=""> </button>
+                        {% endif %}
+                        
+                        </td>
                         </tr>
                         {% endif %}
                         {% endfor %}
@@ -310,7 +310,7 @@
 
                         
                         <div class="d-flex ">
-                            <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to delete this purchase order ?</p></div>
+                            <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to delete this Inventory Request order ?</p></div>
                             <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
 
                                 <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
@@ -324,8 +324,8 @@
                     <div class="col-md-12 text-center">
                         <div class="cancel-model-content">
                             <form method="POST" action="" >{% csrf_token %}
-                            <input type="hidden" name="action" value="delete_order" />
-                            <input type="hidden" name="order_id" id="id_order" />
+                            <input type="hidden" name="action" value="delete_requestorder" />
+                            <input type="hidden" name="request_order_id" id="id_order" />
                             <div style="align-items: center;
                             justify-content: center;" class="d-flex">
                                 <button class="sent-button" >Delete</button>
