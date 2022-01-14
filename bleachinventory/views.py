@@ -2409,14 +2409,14 @@ class RequestOrderApproval(IsInventoryAdmin,View):
 			request_order.is_admin_approved = True
 			request_order.approved_by       = request.user
 			request_order.save()
-
+			messages.success(request,"Item Request Approved successfully!")
 			return redirect('bleach-inventory:inventory-requestorder')
 
 		if shipment_status == 'rejected':
 			request_order.is_rejected = True
 			request_order.rejected_by = request.user
 			request_order.save() 
-
+			messages.success(request,"Item Request Rejected successfully!")
 			return redirect('bleach-inventory:inventory-requestorder') 
 
 		return render(request,"inventory/ro_admin_approval.html",{"request_order":request_order})
@@ -2424,119 +2424,32 @@ class RequestOrderApproval(IsInventoryAdmin,View):
 
 class RequestOrderItemsPage(IsInventoryAdminUser,View):
 	def get(self,request,request_order_id):
-		request_order = RequestOrder.objects.prefetch_related(Prefetch('items_request_order',queryset=RequestOrderItems.objects.all(),to_attr='request_order_items')).get(id=request_order_id)
-		shipment_status = request.GET.get('shipment_status')
-		if shipment_status == 'complete':
+		request_order       = RequestOrder.objects.get(id=request_order_id)
+		request_order_items = RequestOrderItems.objects.select_related('product').filter(request_order=request_order)
+		#item availability check
+		if request_order_items:
+			for request_order_item in request_order_items:
+				reminign_items = float(request_order_item.item_count)-float(request_order_item.product.total_quantity)
+				if reminign_items < 0:
+					request_order_item.status = 'Out Of Stock'
+				elif reminign_items <= float(request_order_item.product.reserve_count) and reminign_items >= 0:
+					request_order_item.status = 'About to Finish'
+				else:
+					request_order_item.status = 'Available'
+				
+		return render(request,"inventory/requestorderitems.html",{"request_order":request_order,"request_order_items":request_order_items})
+
+	def post(self,request,request_order_id):
+		purchase_order = PurchaseOrder.objects.get(id=purchase_order_id)
+		action         = request.POST.get('action')
+
+		if action == 'stock_out':
 			request_order.is_received = True
 			request_order.received_by = request.user
 			request_order.save()
+			messages.success(request,"Item Delivered successfully!")
 
-		if shipment_status == 'incomplete':
-			request_order.is_received = False
-			request_order.received_by = None
-			request_order.save()    
-
-		return render(request,"inventory/requestorderitems.html",{"request_order":request_order})
-
-	# def post(self,request,request_order_id):
-	# 	purchase_order = PurchaseOrder.objects.get(id=purchase_order_id)
-	# 	action = request.POST.get('action')
-	# 	if action == 'add_quantity_to_inventory':
-	# 		products = request.POST.getlist('product_id')
-	# 		item_counts = request.POST.getlist('item_count')
-	# 		print(products,item_counts,"cts")
-
-	# 		loopcount = 0
-	# 		for product in products:
-	# 			item = InventoryItem.objects.get(id=int(product))
-	# 			purchase_order_item = PurchaseOrderItems.objects.get(purchase_order=purchase_order,product__item__id=int(product))
-	# 			print(item,item_counts[loopcount], "itm")
-	# 			ItemHistory.objects.create(purchase_order=purchase_order,item=item,quantity=item_counts[loopcount],item_action='PURCHASE ORDER',item_remark=purchase_order.purchase_order_id,added_by=request.user)
-				
-	# 			item.total_quantity = float(item.total_quantity) + float(item_counts[loopcount])
-	# 			item.save()
-
-	# 			purchase_order_item.is_received = True
-	# 			purchase_order_item.added_item_count = float(item_counts[loopcount])
-	# 			purchase_order_item.save()
-	# 			loopcount += 1
-
-	# 		messages.success(request,"Quantity added to Inventory")
-
-	# 	if action == 'add_unit_to_inventory':
-	# 		item_id = request.POST.get('item_id')
-	# 		store_id = request.POST.get('store')
-	# 		serial_number = request.POST.get('serial_number')
-	# 		purchase_date = request.POST.get('purchase_date')
-	# 		expiry_date = request.POST.get('expiry_date')
-			
-	# 		no_expiry = request.POST.get('no_expiry')
-	# 		if no_expiry == 'on':
-	# 			expiry = True
-	# 		else:
-	# 			expiry = True
-
-	# 		no_expiry = request.POST.get('no_expiry')
-	# 		unit_price = request.POST.get('unit_price')
-	# 		unit_status = request.POST.get('unit_status')
-
-	# 		store = Store.objects.get(id=int(store_id))
-
-	# 		item = InventoryItem.objects.get(id=item_id)
-
-	# 		item_code = item.item_code
-
-	# 		latest_unit_code = ItemUnit.objects.filter(unit_code__contains=item_code).last()
-
-	# 		if latest_unit_code:
-	# 			code = latest_unit_code.unit_code.split("-")[1]
-	# 			new_unit_code = item_code + '-' + str(int(code)+1)
-	# 		else:
-	# 			new_unit_code = item_code + '-1'
-	# 		print(new_unit_code,"lop")
-
-	# 		if not expiry_date:
-	# 			ItemUnit.objects.create(
-	# 			purchase_order = purchase_order,
-	# 			item = item,
-	# 			name='name',
-	# 			store=store,
-	# 			unit_code = new_unit_code,
-	# 			unit_serial_number = serial_number,
-	# 			purchase_date = purchase_date,
-	# 			no_expiry = expiry,
-	# 			unit_price = unit_price,
-	# 			status = unit_status
-	# 			)
-	# 		else:
-	# 			ItemUnit.objects.create(
-	# 			purchase_order = purchase_order,
-	# 			item = item,
-	# 			name='name',
-	# 			store=store,
-	# 			unit_code = new_unit_code,
-	# 			unit_serial_number = serial_number,
-	# 			purchase_date = purchase_date,
-	# 			expiry_date = expiry_date,
-	# 			no_expiry = expiry,
-	# 			unit_price = unit_price,
-	# 			status = unit_status
-	# 			)
-
-	# 		purchase_order_item = PurchaseOrderItems.objects.get(purchase_order=purchase_order,product__item__id=int(item_id))
-			
-	# 		purchase_order_item.added_item_count = int(purchase_order_item.added_item_count) + 1
-	# 		purchase_order_item.save()
-
-	# 		print(purchase_order_item.added_item_count,purchase_order_item.item_count,"compr")
-	# 		if int(purchase_order_item.added_item_count) == int(purchase_order_item.item_count):
-	# 			print("reciv")
-	# 			purchase_order_item.is_received = True
-	# 			purchase_order_item.save()
-
-	# 		messages.success(request,"Unit added to Inventory")
-
-	# 	return redirect('bleach-inventory:inventory-purchaseorderitems', purchase_order_id)
+		return redirect('bleach-inventory:inventory-requestorder')
 
 
 class InventoryRequestOrderPage(View):
