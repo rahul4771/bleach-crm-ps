@@ -90,6 +90,9 @@
                      </tbody>
     
                     </table>
+                    {% if is_all_items_available %}
+                    Put Button form here.....action(text field)=stock_out
+                    {% endif %}
                 </div>
                 
             </div>
@@ -102,25 +105,4 @@
 {% endblock %}
 
 {% block javascript %}
-<script>
-function changeSelect(va){
-    $('#id_shipment_status').val(va);
-    set_params_go();
-}
-
-function set_params_go(args)
-    {
-    var url='{% url 'bleach-inventory:inventory-requestorderitems' request_order.id %}';
-    var params={shipment_status:$('#id_shipment_status').val()
-    };
-    for(key in args) 
-        params[key]=args[key];
-    var query='';
-    for(key in params)
-        if(params[key]) 
-            query+='&'+key+'='+params[key].toString();
-    query=query.replace('&','?');
-    window.location.href=url+query;  
-    }
-</script>
 {% endblock %}

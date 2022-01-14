@@ -2408,13 +2408,15 @@ class RequestOrderApproval(IsInventoryAdmin,View):
 		if shipment_status == 'approved':
 			request_order.is_admin_approved = True
 			request_order.approved_by       = request.user
+			request_order.approved_date     = timezone.now().date()
 			request_order.save()
 			messages.success(request,"Item Request Approved successfully!")
 			return redirect('bleach-inventory:inventory-requestorder')
 
 		if shipment_status == 'rejected':
 			request_order.is_rejected = True
-			request_order.rejected_by = request.user
+			request_order.rejected_by  = request.user
+			request_order.rejected_date= timezone.now().date()
 			request_order.save() 
 			messages.success(request,"Item Request Rejected successfully!")
 			return redirect('bleach-inventory:inventory-requestorder') 
@@ -2427,27 +2429,46 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 		request_order       = RequestOrder.objects.get(id=request_order_id)
 		request_order_items = RequestOrderItems.objects.select_related('product').filter(request_order=request_order)
 		#item availability check
+		is_all_items_available = True
 		if request_order_items:
 			for request_order_item in request_order_items:
 				reminign_items = float(request_order_item.item_count)-float(request_order_item.product.total_quantity)
 				if reminign_items < 0:
 					request_order_item.status = 'Out Of Stock'
+					is_all_items_available       = False
 				elif reminign_items <= float(request_order_item.product.reserve_count) and reminign_items >= 0:
 					request_order_item.status = 'About to Finish'
 				else:
 					request_order_item.status = 'Available'
 				
-		return render(request,"inventory/requestorderitems.html",{"request_order":request_order,"request_order_items":request_order_items})
+		return render(request,"inventory/requestorderitems.html",{"request_order":request_order,"request_order_items":request_order_items,"is_all_items_available":is_all_items_available})
 
 	def post(self,request,request_order_id):
-		purchase_order = PurchaseOrder.objects.get(id=purchase_order_id)
-		action         = request.POST.get('action')
-
+		request_order       = RequestOrder.objects.get(id=request_order_id)
+		request_order_items = RequestOrderItems.objects.select_related('product').filter(request_order=request_order)
+		
 		if action == 'stock_out':
-			request_order.is_received = True
-			request_order.received_by = request.user
-			request_order.save()
-			messages.success(request,"Item Delivered successfully!")
+			#item availability check
+			is_all_items_available = True
+			if request_order_items:
+				for request_order_item in request_order_items:
+					reminign_items = float(request_order_item.item_count)-float(request_order_item.product.total_quantity)
+					if reminign_items < 0:
+						messages.error(request,"Some Items are not Available")
+						return redirect('bleach-inventory:inventory-requestorderitems',request_order_id)
+			
+			#save delivery details
+			if is_all_items_available == True:
+				if request_order_items:
+					for request_order_item in request_order_items:
+						request_order_item.is_received = True
+						request_order_item.save()
+
+				request_order.is_received  = True
+				request_order.received_by  = request.user
+				request_order.received_date= timezone.now().date()
+				request_order.save()
+				messages.success(request,"Items Delivered successfully!")
 
 		return redirect('bleach-inventory:inventory-requestorder')
 
