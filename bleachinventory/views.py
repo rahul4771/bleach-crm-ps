@@ -2461,7 +2461,9 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 			if is_all_items_available == True:
 				if request_order_items:
 					for request_order_item in request_order_items:
-						request_order_item.is_received = True
+						request_order_item.product.total_quantity -= float(request_order_item.item_count)
+						request_order_item.product.save()
+						request_order_item.is_received             = True
 						request_order_item.save()
 
 				request_order.is_received  = True
