@@ -166,14 +166,14 @@
                        
                     </div>
                     
-                    <form method="POST" action="" >{% csrf_token %}
-                    <input type="hidden" name="action" value="order_close" />
+                    
 
                 </div>
                 
                
               
-
+                <form method="POST" action="" >{% csrf_token %}
+                    <input type="hidden" name="action" value="order_close" />
                 <div class="row mt-30">
                     <div class="col-md-12 ">
                         <table class="inv-table footable" style="border-top: 1px solid #c4c4c4;">
@@ -244,12 +244,12 @@
                 <div class="row mt-20 text-center">
                     <div class="d-flex" style="align-items: center;
                     justify-content: center;">  <button class="sent-button" type="submit" >Submit</button>
-                </form>
+                
                                   <a  onclick="showRe()" class="view-button2 pointer">Cancel</a>
                    
                 </div>
                 {% endif %}
-
+            </form>
             </div>
         </div>
     </section>
