@@ -31,21 +31,6 @@
                       </div>
                    </div>
                 </div>
-                
-                {% if request_order.is_admin_approved == True %}
-                <div class="row mt-20">
-                    <div class="col-md-3">
-                        <input type="hidden" name="status" id="id_shipment_status" >
-                        <div class="wrap-drop" id="noble-gases" style="z-index: 9999 !important;"  >
-                            <span id="id_selectText">{% if request_order.is_received == True %}Shipment completed{% else %}Shipment not completed{% endif %}</span>
-                            <ul class="drop">
-                                <li onclick="changeSelect('complete')"><a>Shipment completed</a></li>
-                                <li onclick="changeSelect('incomplete')"><a>Shipment not completed</a></li> 
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                {% endif %}
 
                 <div class="mt-20">
                     
@@ -74,7 +59,7 @@
                         </thead>
                      <tbody>
                       
-                        {% for item in request_order.request_order_items %}
+                        {% for item in request_order_items %}
                         <tr>
                             
                             <td>
@@ -90,10 +75,12 @@
                               {{item.item_count}}
                               </td>                          
                             <td>
-                                {% if item.is_received == True %}
-                                <span class="inv-dot c-active ml-5"></span>Added
-                                {% else %}
-                                <span class="inv-dot c-active ml-5"></span>Waiting
+                                {% if item.status   == 'Out Of Stock' %}
+                                <span class="inv-dot c-out-of-order ml-5"></span>Out Of Stock
+                                {% elif item.status == 'Available' %}
+                                <span class="inv-dot c-active ml-5"></span>Available
+                                {% elif item.status == 'About to Finish' %}
+                                <span class="inv-dot c-about-finish ml-5"></span>About to Finish
                                 {% endif %}
                             </td>
                         </tr>
@@ -103,10 +90,12 @@
                      </tbody>
     
                     </table>
+                    {% if is_all_items_available %}
                     <div class="mt-20 text-center">
                         <button class="inv-plan-btn" onclick="openNavAddStore('add')"> <img src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5" alt=""> Stock Out</button>
 
                     </div>
+                    {% endif %}
                 </div>
                 
             </div>
@@ -119,25 +108,4 @@
 {% endblock %}
 
 {% block javascript %}
-<script>
-function changeSelect(va){
-    $('#id_shipment_status').val(va);
-    set_params_go();
-}
-
-function set_params_go(args)
-    {
-    var url='{% url 'bleach-inventory:inventory-requestorderitems' request_order.id %}';
-    var params={shipment_status:$('#id_shipment_status').val()
-    };
-    for(key in args) 
-        params[key]=args[key];
-    var query='';
-    for(key in params)
-        if(params[key]) 
-            query+='&'+key+'='+params[key].toString();
-    query=query.replace('&','?');
-    window.location.href=url+query;  
-    }
-</script>
 {% endblock %}

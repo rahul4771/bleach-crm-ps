@@ -439,6 +439,10 @@ class RequestOrder(models.Model):
     received_by         = models.ForeignKey(UserProfile,blank=True,null=True,related_name='send_by_request_order')
     rejected_by         = models.ForeignKey(UserProfile,blank=True,null=True,related_name='rejected_by_request_order')
 
+    approved_date       = models.DateField(blank=True,null=True)
+    rejected_date       = models.DateField(blank=True,null=True)
+    received_date       = models.DateField(blank=True,null=True)
+
     status              = models.BooleanField(default=True,blank=False,null=False)
     created             = models.DateTimeField(auto_now_add=True)
 
