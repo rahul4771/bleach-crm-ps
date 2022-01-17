@@ -4157,8 +4157,8 @@ class ItemUnitsProduct(APIView):
 	def get(self,request):
 		response_dict = {'success':False}	
 		
-		product_id  = request.data.get('product_id')
-		item_units  = ItemUnit.objects.filter(item_id=product_id,status='available').values_list('id','unit_serial_number')
+		product_id  = request.GET.get('product_id')
+		item_units  = ItemUnit.objects.filter(item__id=product_id,status='available').values_list('id','unit_serial_number')
 
 		response_dict['item_units'] = list(item_units)
 		response_dict['success']    = True
