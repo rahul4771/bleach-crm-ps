@@ -241,6 +241,12 @@
   background-position: 18px 7px;
   display: block;
 }
+.inv-create-ir{
+  background: url(../inventory/icons/ir_icon.png) no-repeat left;
+  background-size: 30px 30px;
+  background-position: 18px 7px;
+  display: block;
+}
 .inv-cat {
   background: url(../inventory/icons/Category.png) no-repeat left;
   background-size: 30px 30px;

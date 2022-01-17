@@ -42,9 +42,11 @@
                 
                   <div class="d-flex mt-20">
                         <div class="nav-tab-item-active" v-if="selected_item=='ALL'">
+                            <img src="{% static 'files/inventory/icons/all_icon.png'%}" class="tab-logo"/>
                             All
                         </div>
                         <div class="nav-tab-item" v-else @click="selectItem('ALL')">
+                            <img src="{% static 'files/inventory/icons/all_icon.png'%}" class="tab-logo"/>
                             All
                         </div>
                         <div class="nav-tab-item-active " v-if="selected_item=='RAW MATERIALS'">
