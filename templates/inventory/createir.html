@@ -306,20 +306,22 @@
                         
                         <div class="quantity">
                           <a class="quantity__minus pointer"><span>-</span></a>
-                          <input  type="text" class="quantity__input" value="1" id="id_item_count" name="item_count">
+                          <input  type="text" class="quantity__input" value="1" id="id_item_count" name="quantity">
                           <a  class="quantity__plus pointer"><span>+</span></a>
                         </div>
                         
                       </div>
                 </div>
-                <div  class="col-md-12">
+                <div  class="col-md-12"  v-if="selected_product.item_add_type=='unit'">
                     <div class="model-input-name">Unit</div>
                             
                   
                     <div class="wrap-drop" id="noble-gases3">
                     <input style="display:none" id="selected_unit_id" name="unit"/>
                     <span v-if="!selected_unit">--Select Unit--</span>
-                    <span v-else="selected_unit">selected_unit.serial_number</span>
+                    <span v-else="selected_unit"><% selected_unit.serial_number %>
+                    </span>
+                    <input v-if="selected_unit" style="display: none;" name="unit" :value="selected_unit.id"/>
                     <ul class="drop">
                         <li v-for="(item,index) in units" v-bind:key="index" @click="dropSelectUnit(item)" ><a>
                             <% item.serial_number %>
@@ -343,7 +345,7 @@
             <input type="hidden" name="request_item_id" id="id_edit_item" />
             <button class="sent-button purchaseorder-form-btn" type="submit" >Submit</button>
             
-            <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
+            <button data-dismiss="modal" onclick="closeNavAddStore()" class="cancel-button">Cancel</button>
         </div>
         
     </div>
