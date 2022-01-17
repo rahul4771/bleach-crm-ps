@@ -468,6 +468,7 @@ class RequestOrder(models.Model):
 class RequestOrderItems(models.Model):
     request_order       = models.ForeignKey('RequestOrder',blank=True,null=True,related_name='items_request_order')
     product             = models.ForeignKey('InventoryItem',blank=True,null=True,related_name='product_request_order')
+    product_unit        = models.ForeignKey('ItemUnit',blank=True,null=True,related_name='product_request_unit')
     item_count          = models.CharField(default=0,max_length=50,blank=True,null=True)
     is_received         = models.BooleanField(default=False,blank=False,null=False)
     

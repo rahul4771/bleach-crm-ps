@@ -4131,6 +4131,7 @@ class InventoryFinshedItemView(APIView):
 		return Response(response_dict, HTTP_200_OK)
 
 
+
 class ExternalCustomersView(APIView):
 	permission_classes        = (AllowAny,)
 	authentication_classes    = ()
@@ -4145,5 +4146,21 @@ class ExternalCustomersView(APIView):
 
 		response_dict['external_customers'] = list(external_customers)
 		response_dict['success']            = True
+
+		return Response(response_dict, HTTP_200_OK)
+
+
+class ItemUnitsProduct(APIView):
+	permission_classes        = (AllowAny,)
+	authentication_classes    = ()
+
+	def get(self,request):
+		response_dict = {'success':False}	
+		
+		product_id  = request.data.get('product_id')
+		item_units  = ItemUnit.objects.filter(item_id=product_id,status='available').values_list('id','unit_serial_number')
+
+		response_dict['item_units'] = list(item_units)
+		response_dict['success']    = True
 
 		return Response(response_dict, HTTP_200_OK)
