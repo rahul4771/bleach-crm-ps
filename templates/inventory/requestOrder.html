@@ -104,7 +104,7 @@
                         {% endif %}
                 
                         {% if order.is_admin_approved == False or order.is_rejected == True %}                
-                        <a href="/bleach-inventory/editpo/{{order.id}}"><button class="inv-plan-img-btn" > <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button></a>
+                        <a href="/bleach-inventory/editro/{{order.id}}"><button class="inv-plan-img-btn" > <img src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button></a>
                         {% else %}
                         <button class="inv-plan-img-btn2-disabled" disabled> <img class="btn-img2" src="{% static 'files/inventory/pencil.png' %}"  alt=""> </button>
                         {% endif %}
@@ -138,13 +138,10 @@
                                     Initiated by
                                 </th>
                                 <th  data-hide="phone,tablet"  style="width: %;" class="text-center td-md-width">
-                                    Supplier
+                                    Purpose
                                 </th>
                                 <th data-hide="phone,tablet"  class="text-center">
                                     Number Of units
-                                </th>
-                                <th data-hide="phone,tablet"  class="text-center">
-                                    Total cost
                                 </th>
                                 <th>
                                     Status
@@ -154,25 +151,22 @@
                             </tr>
                         </thead>
                      <tbody>
-                        {% for order in purchase_orders %}
+                        {% for order in request_orders %}
                         {% if order.is_received == True %}
                         <tr>
                             <td>
-                                {{order.purchase_order_id}}
+                                {{order.request_order_id}}
                             </td>
                             <td class="text-center">
                                 {{order.created|date:'d-m-Y'}}
                             </td>
                             <td class="text-center">
-                                {{order.initiated_by.name}}
+                                {{order.requested_by.name}}
                             <td class="text-center">
-                                {{order.supplier.supplier_name}}
+                                {{order.purpose}}
                             </td>
                             <td class="text-center">
-                                {{order.total_units}}
-                            </td>
-                            <td class="text-center">
-                               {{order.total_price}}
+                                {{order.total_added_units}}
                             </td>
                             <td>
                                 {% if order.total_units == order.total_added_units %}
@@ -183,14 +177,14 @@
                             </td>
                             <td class="text-center">
                                
-                        <a href="/bleach-inventory/purchaseOrder/items/{{order.id}}/"><button class="inv-plan-img-btn"> <img class="view-img"
-                                    src="{% static 'files/inventory/icons/view.png' %}" alt="">
+                        <a href="/bleach-inventory/requestOrder/items/{{order.id}}/"><button class="inv-plan-img-btn"> <img class="view-img"
+                                    src="{% static 'files/inventory/view.png' %}" alt="">
                         </button></a>
-                        <a href="/bleach-inventory/purchaseorderpage/{{order.id}}/"><button class="inv-plan-img-btn"> <img 
-                            src="{% static 'files/inventory/invoice.png' %}" alt="">
+                        <a href="/bleach-inventory/requestorderpage/{{order.id}}/"><button class="inv-plan-img-btn"> <img class=""
+                            src="{% static 'files/inventory/invoice.png' %}" alt=""></button></a>
                 </button></a>
                 {% if request.user.user_type == 'INVENTORYADMIN' %}                
-                <a href="/bleach-inventory/editpo/{{order.id}}"><button class="inv-plan-img-btn" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button></a>
+                <a href="/bleach-inventory/editro/{{order.id}}"><button class="inv-plan-img-btn" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button></a>
                 <button class="inv-plan-img-btn delete-order" data-id="{{order.id}}"  data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
                 {% else %}
                 <button class="inv-plan-img-btn2-disabled" > <img class="btn-img2" src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
@@ -212,96 +206,6 @@
             </div>
         </div>
     </section>
-    <div id="addStore" class="inv-sidedrawer">
-
-        <div class="inv-sidedrawer-inner">
-            <div class="d-flex">
-                <div class="inv-drawer-head" id="itemHead">
-                    Add Store
-                </div>
-                <div class="right-pos">
-
-                    <button onclick="closeNavAddStore()" class="img-button">
-                        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
-                    </button>
-                </div>
-            </div>
-            <hr>
-            <div class="row mt-20">
-                <div class="col-md-12 ">
-                    <div class="model-input-name">Item</div>
-
-                    <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="attributes">
-                      </div>
-                </div>
-
-            </div>
-            <div class="row mt-20">
-                <div class="col-md-12 ">
-                    <div class="model-input-name">Item code</div>
-
-                    <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="attributes">
-                      </div>
-                </div>
-
-            </div>
-            <div class="row mt-20">
-                <div class="col-md-12 ">
-                    <div class="model-input-name">Category</div>
-
-                    <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="attributes">
-                      </div>
-                </div>
-
-            </div>
-            <div class="row mt-20">
-                <div class="col-md-12 ">
-                    <div class="model-input-name">Quantity</div>
-
-                    <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="attributes">
-                      </div>
-                </div>
-
-            </div>
-            <div class="row mt-20">
-                <div class="col-md-12 ">
-                    <div class="model-input-name">Unit Price</div>
-
-                    <div class="inv-input-container h-30"> 
-                        <input type="text"  class="w-p-100 inv-in" name="attributes">
-                      </div>
-                </div>
-
-            </div>
-            <div class="row mt-20">
-                <div class="col-md-12 ">
-                    <div class="model-input-name">Status</div>
-
-                    <select id="id_payment" class="minimal">
-                        <option  ></option>
-                        <option  >Active</option>
-                        <option value="Post Paid">Inactive</option>
-
-                    </select>
-                </div>
-
-            </div>
-            
-    
-            
-
-
-          
-        </div>
-        <div class="inv-drawer-footer">
-            <button class="sent-button" >Submit</button>
-                        <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
-        </div>
-    </div>
     <div class="modal fade" id="deleteModel" role="dialog">
         <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
             <div class="container-fluid">
