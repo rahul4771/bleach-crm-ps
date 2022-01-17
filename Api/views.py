@@ -4139,7 +4139,7 @@ class ExternalCustomersView(APIView):
 		response_dict = {'success':False}	
 		
 		try:
-			external_customers   = ExternalCustomer.objects.filter(status=True).values_list('name')
+			external_customers   = ExternalCustomer.objects.filter(status=True).values('name')
 		except:
 			external_customers   = []
 
