@@ -34,7 +34,7 @@
                 <div class="mt-20">
                     <div class="d-flex" >
                         <div class="inv-tab av-font inv-tab-active" onclick="selectTab('pen')" id="id_pen">Pending</div>
-                        <div class="inv-tab av-font" onclick="selectTab('rec')" id="id_rec">Received</div>
+                        <div class="inv-tab av-font" onclick="selectTab('rec')" id="id_rec">Delivered</div>
                     </div>
                     <table id="id_table_pen" class="inv-table footable" style="border-top:1px solid #c4c4c4; margin-top: -2px;"> 
                         <thead>
@@ -129,7 +129,7 @@
                         <thead>
                             <tr>
                                 <th style="width: %;">
-                                    PO ID
+                                    RO ID
                                 </th>
                                 <th data-hide="phone,tablet"  style="width: %; text-align: center;">
                                     Initiated Date
@@ -143,10 +143,7 @@
                                 <th data-hide="phone,tablet"  class="text-center">
                                     Number Of units
                                 </th>
-                                <th>
-                                    Status
-                                </th>
-    
+
                                 <th data-hide="phone,tablet"  style="width: %;" class="text-center">Action</th>
                             </tr>
                         </thead>
@@ -167,13 +164,6 @@
                             </td>
                             <td class="text-center">
                                 {{order.total_added_units}}
-                            </td>
-                            <td>
-                                {% if order.total_units == order.total_added_units %}
-                                <span class="inv-dot c-active ml-5"></span>Added
-                                {% else %}
-                                <span class="inv-dot c-about-finish ml-5"></span>Waiting
-                                {% endif %}
                             </td>
                             <td class="text-center">
                                
