@@ -256,7 +256,7 @@
     
     <form method="POST" action="" >{% csrf_token %}
     <div id="addStore" class="inv-sidedrawer" >
-
+       
         <div class="inv-sidedrawer-inner">
             <div class="d-flex">
                 <div class="inv-drawer-head" id="itemHead">
@@ -452,7 +452,7 @@
        },
        selectItem(item){
         this.search_item=item.name
-        this.user_option=false
+        
         
        },
        openOptions(){
@@ -477,9 +477,8 @@
              //  console.log("user array is"+JSON.stringify(user_list))
                //return user_list
            var users=this.users.filter(user => user.name.toUpperCase().startsWith(this.search_item.toUpperCase()));
-                if(users.length<1){
-                    this.conf_btn=true
-                }
+           this.conf_btn=true
+                
             return users
            }
        
@@ -500,7 +499,7 @@
 
 
 
-   
+$('#requester_id').val("{{request_order.requested_by.name|default_if_none:''}}")   
 DropDown.prototype = {
     initEvents: function () {
         var obj = this;
@@ -538,6 +537,11 @@ $(function () {
 </script>
 
 <script>
+    function addReqSubmit(){
+       
+        $('#req_add_submit').submit()
+        console.log("called it")
+    }
      function hideselectedoptions(){
             
 
@@ -632,7 +636,7 @@ function showAdditem(){
             if(urlc.includes('requester_id')){
                 var supid = urlc.split("=")[1];
                 console.log(supid);
-                $('#requester_id').val(supid);
+              //  $('#requester_id').val(supid);
             }
 
             var products = [];
