@@ -428,7 +428,15 @@
   border-bottom: 1px solid #c4c4c4;
   font-family: AvenirLTStd !important;
 }
-
+.conf-btn{
+  margin-left: 10px;
+    
+    border-radius: 3px;
+    cursor: pointer;
+    color: #2d4e85;
+    padding: 5px;
+    border: 1px solid #2d4e85;
+}
 
 .inv-table th {
   color: #333333;
