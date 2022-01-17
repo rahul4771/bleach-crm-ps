@@ -78,7 +78,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
-<div class="wrapper">
+<div class="wrapper" id="app">
     <!--wrapper-->
     {% include "inventory/common/header.html" %}
     <section class="content">
@@ -103,9 +103,16 @@
                     
                     <div class="col-md-3">
                         <div class="model-input-name">Requested By</div>
-                       
+                        <div style="position: relative;">
+                        <div class="inv-input-container inv-border h-30">
+                            <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" name="product" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()" required>
+                        </div>
+                        <div id="id_search" class="row inv-result-box" style="display: none;">
+                          
+                        </div>
+                    </div>
                           <input type="text" hidden id="requester_id" >
-                         <div class="wrap-drop" id="noble-gases">
+                         <!-- <div class="wrap-drop" id="noble-gases">
                             {% if request_order.requested_by == None %}
                             <span>--Select Requester--</span>
                             <ul class="drop">
@@ -121,7 +128,7 @@
                                 
                             </ul>
                             {% endif %}
-                        </div>
+                        </div> -->
                         <br><br>
 
 
@@ -190,10 +197,7 @@
                                     <td style="text-align: center;">{{item.product.item_type}}</td>
                                     <td style="text-align: center;">{{item.item_count}}</td>
                                     <td style="text-align: center;"> 
-                                        <button type="button" class="inv-plan-img-btn edit-item-btn" data-itemid="{{item.id}}" data-productid="{{item.product.id}}" data-productname="{{item.product.name}}" data-itemcount="{{item.item_count}}"> <img
-                                            src="{% static 'files/inventory/pencil.png' %}" alt="" onclick="openNavAddStore('edit')"> </button>
-                                        <button type="button" data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}"  class="inv-plan-img-btn delete-item-btn"> <img
-                                                src="{% static 'files/inventory/bin.png' %}" alt=""> </button> -->
+                                        
                                                 <div class="btn-group" id="actionDropdown">
                                                     <div class="order-dropdown " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
                                                       Action
@@ -405,6 +409,35 @@
 {% endblock %}
 
 {% block javascript %}
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<script>
+    const app=new Vue({
+    el: '#app',
+    delimiters: ['<%', '%>'],
+      components:{
+        
+      },
+    data: {
+        users:[],
+        url:''
+    
+    },
+    mounted(){
+        this.url = api;
+        this.getUsers()
+    },
+    methods:{
+       getUsers(){
+           axios.get(this.url+'/api/external_customers/').then(response=>{
+               this.users=response.data
+           })
+       }
+    }
+}
+    )
+</script>
 <script>
     function DropDown(el) {
     this.dd = el;
