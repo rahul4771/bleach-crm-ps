@@ -278,7 +278,7 @@
 
                     <div style="position: relative;">
                         <div class="inv-input-container inv-border h-30">
-                            <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" name="product" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()" required>
+                            <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" name="product" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()" required  >
                             <!-- <div class="inv-hr"></div>
                             <div class="model-filter">
                                 <button class="inv-normal-btn" onclick="showDrop()">
@@ -286,7 +286,6 @@
                                 </button>
 
                             </div> -->
-
 
 
                         </div>
@@ -297,9 +296,10 @@
                 </div>
 
             </div>
+            <input style="display:none"  name="add_type" v-model="selected_product.item_add_type" v-if="selected_product"/>
 
-            <div class="row mt-20">
-                <div class="col-md-12 ">
+            <div class="row mt-20" v-if="selected_product">
+                <div class="col-md-12 " v-if="selected_product.item_add_type=='quantity'">
                     <div class="model-input-name">Quantity</div>
 
                     <div class="qty-container">
@@ -312,8 +312,31 @@
                         
                       </div>
                 </div>
+                <div  class="col-md-12">
+                    <div class="model-input-name">Unit</div>
+                            
+                  
+                    <div class="wrap-drop" id="noble-gases3">
+                    <input style="display:none" id="selected_unit_id" name="unit"/>
+                    <span>--Select Unit--</span>
+                    <ul class="drop">
+                        <li v-for="(item,index) in units" v-bind:key="index" @click="dropSelectUnit(item)" ><a>
+                            <% item %>
+                        </a></li>
+                        <!-- <li onclick="dropSelectPurpose('INVENTORY PREPARATION')" ><a>INVENTORY PREPARATION</a></li>
+                        <li onclick="dropSelectPurpose('ADMINISTRATIVE')" ><a>ADMINISTRATIVE</a></li> -->
+                    </ul>
+                    <ul class="drop">
+                                
+                        <li class="drop-selected" ><a><%selected_unit%></a></li>
+                        
+                    </ul>
+                    
+                    </div>
+                </div>
 
             </div>
+            
 
         </div>
         <div class="inv-drawer-footer">
@@ -437,14 +460,23 @@
         url:'',
         user_option:false,
         search_item:'',
-        conf_btn:false
-    
+        conf_btn:false,
+        selected_product:{},
+        units:[],
+        selected_unit:''
     },
     mounted(){
         this.url = api;
         this.getUsers()
     },
     methods:{
+        getUnits(){
+            console.log("called get units")
+            axios.get(this.url+'/api/item_units/?product_id='+this.selected_product.id).then(response=>{
+              //  this.units=response.data
+              this.units=['KG','L','G']
+            })
+        },
        getUsers(){
            axios.get(this.url+'/api/external_customers/').then(response=>{
                this.users=response.data.external_customers
@@ -458,6 +490,11 @@
        openOptions(){
            this.user_option=true
        },
+       dropSelectUnit(id){
+    this.selected_unit=id
+    $('#selected_unit_id').val(id);
+   
+},
        getSearchUser(){
         this.user_option=true
         this.conf_btn=false
@@ -529,6 +566,7 @@ $(function () {
     // create new variable for each menu
     var dd1 = new DropDown($('#noble-gases'));
     var dd2 = new DropDown($('#noble-gases2'));
+    var dd3 = new DropDown($('#noble-gases3'));
     $(document).click(function () {
         // close menu on document click
         $('.wrap-drop').removeClass('active');
@@ -594,6 +632,7 @@ function dropSelectPurpose(id){
     set_params_go();
 }
 
+
 function showRe(){
     console.log('j')
     $('#id_c').click();
@@ -643,9 +682,10 @@ function showAdditem(){
             {% for item in inventory_items %}
                 var tempId = '{{item.id}}';
                 var tempName = '{{item.name}}';
-                products.push({id:tempId,name:tempName})
+                var productType = '{{item.item_add_type}}'
+                products.push({id:tempId,name:tempName,item_add_type:productType})
             {% endfor %}
-
+            console.log("prods"+JSON.stringify(products));
 		    $('.count').val(1);
    			
             $(document).on('click','.plus',function(){
@@ -676,10 +716,11 @@ function showAdditem(){
         {% for item in inventory_items %}
 
         var tempId = '{{item.id}}';
-        var tempName = '{{item.item.name}}';
-        console.log(tempId,tempName)
+        var tempName = '{{item.name}}';
+        var add_type = '{{item.item_add_type}}';
+        console.log(tempId,tempName,add_type)
    
-        $('#id_search').append('<div class="col-md-12 inv-search-drop" id="id_product{{item.id}}" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
+        $('#id_search').append('<div class="col-md-12 inv-search-drop" id="id_product{{item.id}}" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}" data-addtype="{{item.item_add_type}}"><div class="inv-search-result">{{item.name}}</div></div>');
 
         {% endfor %}
 
@@ -725,11 +766,12 @@ function showAdditem(){
     }
 
     function showProducts(){
+      
         $('#id_search').empty();
         for (var j=0; j<products.length; j++) {
             if (products[j].name.toUpperCase().match($('#pro-name').val().toUpperCase())){
-                console.log(products[j]);
-        $('#id_search').append('<div class="col-md-12 inv-search-drop" id="id_product'+products[j].id+'" style="padding:0px !important;" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
+                console.log("products are "+JSON.stringify(products[j]));
+        $('#id_search').append('<div class="col-md-12 inv-search-drop" id="id_product'+products[j].id+'" style="padding:0px !important;" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-name="'+products[j].name+'" data-addtype="'+products[j].item_add_type+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
 
             }
         }
@@ -746,8 +788,16 @@ function showAdditem(){
         }
 
     function closeProductShow(d){
+       
         console.log(d);
         var proId = $(d).attr("data-pro")
+        console.log("item add type is "+$(d).attr("data-addtype"))
+        app.selected_product={
+            name:$(d).attr("data-name"),
+            id:$(d).attr("data-pro"),
+            item_add_type:$(d).attr("data-addtype")
+        }
+        app.getUnits()
         $('#id_pro_sel').val($(d).attr("data-pro"));
         $('#id_unit_price').val($(d).attr("data-productprice"));
         $('#id_total_price').val($(d).attr("data-productprice"));
