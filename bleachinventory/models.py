@@ -424,7 +424,7 @@ class CheckOutItemUnits(models.Model):
         return self.checkout_item.visit.order.order_no
 
 class ExternalCustomer(models.Model):
-    name      = models.CharField(max_length=100,blank=True,null=True)
+    name      = models.CharField(max_length=100,blank=True,null=True,unique=True)
     
     status    = models.BooleanField(default=True,blank=False,null=False)
     created   = models.DateTimeField(auto_now_add=True)
