@@ -799,6 +799,9 @@ display: flex;
   opacity: 1;
   font-weight: 600;
 }
+.inv-input-container input{
+    outline:none ;
+}
 .inv-sidedrawer{
   height: 100%;
   width: 0;

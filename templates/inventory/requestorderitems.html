@@ -15,7 +15,43 @@
                 <!-- <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p> -->
             </div>
         </div>
-
+        <!-- Check out confirmation modal begins here-->
+        <div class="modal fade" id="stockoutModal" role="dialog">
+            <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12 mt-20">
+    
+                            
+                            <div class="d-flex ">
+                                <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Are you sure do you want to stock out ?</p></div>
+                                <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+    
+                                    <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                                </button>
+        
+                            </div>
+                        </div>
+                    </div>
+                   
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <form method="POST" action="" >{% csrf_token %}
+                            <input type="hidden" name="action" value="delete_item" />
+                            <input type="hidden" name="item_id" id="id_item" />
+                            <div class="cancel-model-content">
+                                <button class="sent-button" type="submit" >Stock Out</button>
+                                <button data-dismiss="modal" class="view-button">Cancel</button>
+                              
+                            </div>
+                            </form>
+                        </div>
+        
+                    </div>
+                </div>
+            </div>
+          </div>
+        <!-- check out confirmationmodal ends here-->
         <div class="main-content-holder"><!--main-content-holder-->   
             <div class="white-wrapper white-wrapper-padding">
                 
@@ -91,7 +127,10 @@
     
                     </table>
                     {% if is_all_items_available %}
-                    Put Button form here.....action(text field)=stock_out
+                    <div class="mt-20 text-center">
+                        <button class="inv-plan-btn" onclick="openNavAddStore('add')" data-toggle="modal" data-target="#stockoutModal">  Stock Out</button>
+
+                    </div>
                     {% endif %}
                 </div>
                 
@@ -105,4 +144,5 @@
 {% endblock %}
 
 {% block javascript %}
+
 {% endblock %}
