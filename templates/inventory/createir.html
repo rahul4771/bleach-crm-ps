@@ -78,7 +78,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
-<div class="wrapper" id="app">
+<div class="wrapper" id="app" v-cloak>
     <!--wrapper-->
     {% include "inventory/common/header.html" %}
     <section class="content">
@@ -90,7 +90,7 @@
             </div>
         </div>
 
-        <div class="main-content-holder">
+        <div class="main-content-holder" @click="user_option=false">
             <!--main-content-holder-->
             <div class="white-wrapper white-wrapper-padding2">
                 <div class="row">
@@ -105,10 +105,13 @@
                         <div class="model-input-name">Requested By</div>
                         <div style="position: relative;">
                         <div class="inv-input-container inv-border h-30">
-                            <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" name="product" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()" required>
+                            <input autocomplete="off"  type="text"  name="requested_by" style="border: none !important; width: 90%;" class="inv-in"   required v-model="search_item" @input="openOptions()">
                         </div>
-                        <div id="id_search" class="row inv-result-box" style="display: none;">
-                          
+                        <div  class="row inv-result-box"  v-if="user_option && getSearchUser().length>0" style="height:auto;max-height:200px;">
+                          <div v-for="(item,index) in getSearchUser()" v-bind:key="index" class="search-input-text" @click="selectItem(item)">
+                              <% item.name %>
+
+                          </div>
                         </div>
                     </div>
                           <input type="text" hidden id="requester_id" >
@@ -421,7 +424,9 @@
       },
     data: {
         users:[],
-        url:''
+        url:'',
+        user_option:false,
+        search_item:''
     
     },
     mounted(){
@@ -431,8 +436,39 @@
     methods:{
        getUsers(){
            axios.get(this.url+'/api/external_customers/').then(response=>{
-               this.users=response.data
+               this.users=response.data.external_customers
            })
+       },
+       selectItem(item){
+        this.search_item=item.name
+        this.user_option=false
+        
+       },
+       openOptions(){
+           this.user_option=true
+       },
+       getSearchUser(){
+        this.user_option=true
+        var user_list=[]
+           if(!this.search_item){
+               console.log("users is "+JSON.stringify(this.users))
+               return this.users
+           }
+           else{
+              
+            //    for(var i=0;i<this.users.length;i++){
+            //     console.log("serach term is"+this.search_item+" user list is"+this.users[i].name)
+            //        if(this.users[i].name.startsWith(this.search_item)){
+            //         user_list.push(this.users[i])
+            //        }
+            //    }
+             //  console.log("user array is"+JSON.stringify(user_list))
+               //return user_list
+           var users=this.users.filter(user => user.name.toUpperCase().startsWith(this.search_item.toUpperCase()));
+
+            return users
+           }
+       
        }
     }
 }
