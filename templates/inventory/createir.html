@@ -104,9 +104,14 @@
                     <div class="col-md-3">
                         <div class="model-input-name">Requested By</div>
                         <div style="position: relative;">
-                        <div class="inv-input-container inv-border h-30">
+                            <div class="d-flex">
+                        <div class="inv-input-container inv-border h-30 w-100">
                             <input autocomplete="off"  type="text"  name="requested_by" style="border: none !important; width: 90%;" class="inv-in"   required v-model="search_item" @input="openOptions()">
                         </div>
+                        <div class="conf-btn" onclick="set_params_go()" v-if="conf_btn">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </div>
                         <div  class="row inv-result-box"  v-if="user_option && getSearchUser().length>0" style="height:auto;max-height:200px;">
                           <div v-for="(item,index) in getSearchUser()" v-bind:key="index" class="search-input-text" @click="selectItem(item)">
                               <% item.name %>
@@ -426,7 +431,8 @@
         users:[],
         url:'',
         user_option:false,
-        search_item:''
+        search_item:'',
+        conf_btn:false
     
     },
     mounted(){
@@ -449,6 +455,7 @@
        },
        getSearchUser(){
         this.user_option=true
+        this.conf_btn=false
         var user_list=[]
            if(!this.search_item){
                console.log("users is "+JSON.stringify(this.users))
@@ -465,7 +472,9 @@
              //  console.log("user array is"+JSON.stringify(user_list))
                //return user_list
            var users=this.users.filter(user => user.name.toUpperCase().startsWith(this.search_item.toUpperCase()));
-
+                if(users.length<1){
+                    this.conf_btn=true
+                }
             return users
            }
        
