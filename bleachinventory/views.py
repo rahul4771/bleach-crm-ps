@@ -2344,7 +2344,7 @@ class InventoryCreateInventoryRequest(View):
 			try:
 				requester = ExternalCustomer.objects.get(name=requester_id)
 			except:
-				requester = None
+				requester = ExternalCustomer.objects.create(name=requester_id)
 			
 			if requester:
 				request_order.requested_by = requester
@@ -2389,7 +2389,7 @@ class InventoryCreateInventoryRequest(View):
 			item_count              = request.POST.get('item_count')
 
 			request_item            = RequestOrderItems.objects.get(id=request_item_id)
-			request_item.product_id    = product
+			request_item.product_id = product
 			request_item.item_count = item_count
 			request_item.save()
 			
@@ -2430,7 +2430,7 @@ class InventoryEditRequestOrder(IsInventoryAdminUser,View):
 			try:
 				requester = ExternalCustomer.objects.get(name=requester_id)
 			except:
-				requester = None
+				requester = ExternalCustomer.objects.create(name=requester_id)
 
 			request_order.requested_by = requester
 			request_order.save()
