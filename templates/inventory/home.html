@@ -73,9 +73,9 @@
                             <div class="col-md-4 mb-5">
                                 <div class="inv-sm-card">
                                     <p class="inv-dash-card-head">
-                                        Total Assets
+                                        Total Items
                                     </p>
-                                    <h1>2300</h1>
+                                    <h1>{{items_count}}</h1>
                                 </div>
                             </div>
                             <div class="col-md-4 mb-5 ">
@@ -83,7 +83,7 @@
                                     <p class="inv-dash-card-head">
                                         Todays Order
                                     </p>
-                                    <h1>2</h1>
+                                    <h1>{{orders|length}}</h1>
                                 </div>
                             </div>
                             <div class="col-md-4 mb-5">
@@ -91,7 +91,7 @@
                                     <p class="inv-dash-card-head">
                                         Purchase Reminder
                                     </p>
-                                    <h1>3</h1>
+                                    <h1>{{purchase_items|length}}</h1>
                                 </div>
                             </div>
                         </div>
@@ -190,6 +190,7 @@
                     </div>
                     {% endif %}
 
+                    
                     <div class="row mt-10">
                         <div class="col-md-12">
                             <div class="white-wrapper white-wrapper-padding m-0" style="margin-bottom: 0px !important;">
@@ -317,6 +318,9 @@
                             </div>
                         </div>
                     </div>
+                    
+
+
                     <div class="row mt-10">
                         <div class="col-md-12">
                             <div class="white-wrapper white-wrapper-padding m-0">
@@ -405,10 +409,12 @@
                                                           <i class="fa fa-chevron-down action-icon" aria-hidden="true" ></i>
                                                         </div>
                                                         <div class="dropdown-menu" id="dropdown-menu-orders">  
-                                                            <a class="d-flex dropdown-orders"  href="/bleach-inventory/item/"><img src="{% static 'files/inventory/view.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">View</div></a>    
+                                                            <a class="d-flex dropdown-orders"  href="/bleach-inventory/item/{{item.id}}"><img src="{% static 'files/inventory/view.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">View</div></a>    
   
-                                                          <a class="d-flex dropdown-orders"><img src="{% static 'files/inventory/pencil.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Edit </div></a>    
-                                                          <a class="d-flex dropdown-orders" ><img src="{% static 'files/inventory/bin.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Delete </div></a>                                                                                                       
+                                                          {% comment %} <a class="d-flex dropdown-orders"><img src="{% static 'files/inventory/pencil.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Edit </div></a>     {% endcomment %}
+                                                            {% if request.user.user_type == 'INVENTORYADMIN' %}
+                                                            <a class="d-flex dropdown-orders delete-item" data-toggle="modal" data-target="#deleteModel" data-invitemid="{{item.id}}"><img src="{% static 'files/inventory/bin.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Delete </div></a>                                                                                                       
+                                                            {% endif %}
                                                         </div>
                                                       </div>
                                                 </td>
@@ -547,7 +553,42 @@
     </div>
 </div>
 
+<div class="modal fade" id="deleteModel" role="dialog">
+    <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 mt-20">
 
+                    
+                    <div class="d-flex ">
+                        <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to delete inventory item ?</p></div>
+                        <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                            <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+           
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <form method="POST" action="/bleach-inventory/inventory/" >{% csrf_token %}
+                    <input type="hidden" name="action" value="delete_item" id="delete_item_id" />
+                    <input type="hidden" name="return_to" value="dashboard" />
+                    <input type="hidden" name="item_id" id="id_item" />
+                    <div class="cancel-model-content">
+                        <button class="sent-button" >Delete</button>
+                        <button data-dismiss="modal" type="button" class="view-button">Cancel</button>
+                      
+                    </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+  </div>
 
 {% endblock %}
 
@@ -701,6 +742,13 @@ async function openNavAddStore(visit_id) {
             ],
         });
     });
+
+    
+    //delete item
+    $('.delete-item').click(function(){
+        $('#id_item').val($(this).data('invitemid'));
+    })
+    
 
     function checkinsubmit(){
         
