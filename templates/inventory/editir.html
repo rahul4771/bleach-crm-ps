@@ -78,19 +78,19 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
-<div class="wrapper" id="app" v-cloak>
+<div class="wrapper">
     <!--wrapper-->
     {% include "inventory/common/header.html" %}
     <section class="content">
         <div class="container-fluid space topspace">
             <div class="welcome-wrapper">
                 <!--welcome-wrapper-->
-                <h1 class="dashboard-head">Create Inventory Request</h1>
+                <h1 class="dashboard-head">Edit Inventory Request</h1>
                 <!-- <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p> -->
             </div>
         </div>
 
-        <div class="main-content-holder" @click="user_option=false">
+        <div class="main-content-holder">
             <!--main-content-holder-->
             <div class="white-wrapper white-wrapper-padding2">
                 <div class="row">
@@ -103,19 +103,9 @@
                     
                     <div class="col-md-3">
                         <div class="model-input-name">Requested By</div>
-                        <div style="position: relative;">
-                        <div class="inv-input-container inv-border h-30">
-                            <input autocomplete="off"  type="text"  name="requested_by" style="border: none !important; width: 90%;" class="inv-in"   required v-model="search_item" @input="openOptions()">
-                        </div>
-                        <div  class="row inv-result-box"  v-if="user_option && getSearchUser().length>0" style="height:auto;max-height:200px;">
-                          <div v-for="(item,index) in getSearchUser()" v-bind:key="index" class="search-input-text" @click="selectItem(item)">
-                              <% item.name %>
-
-                          </div>
-                        </div>
-                    </div>
+                       
                           <input type="text" hidden id="requester_id" >
-                         <!-- <div class="wrap-drop" id="noble-gases">
+                         <div class="wrap-drop" id="noble-gases">
                             {% if request_order.requested_by == None %}
                             <span>--Select Requester--</span>
                             <ul class="drop">
@@ -131,7 +121,7 @@
                                 
                             </ul>
                             {% endif %}
-                        </div> -->
+                        </div>
                         <br><br>
 
 
@@ -185,9 +175,6 @@
                                         Item Type
                                     </th>
                                     <th data-hide="phone,tablet" style="text-align: center;">
-                                        Category
-                                    </th>
-                                    <th data-hide="phone,tablet" style="text-align: center;">
                                         Quantity
                                     </th>
                                     <th data-hide="phone,tablet" style="text-align: center;">
@@ -201,10 +188,12 @@
                                     <td>{{item.product.item_code}}</td>
                                     <td>{{item.product.name}}</td>
                                     <td style="text-align: center;">{{item.product.item_type}}</td>
-                                    <td style="text-align: center;">{{item.product.item_category.name}}</td>
                                     <td style="text-align: center;">{{item.item_count}}</td>
                                     <td style="text-align: center;"> 
-                                        
+                                        <button type="button" class="inv-plan-img-btn edit-item-btn" data-itemid="{{item.id}}" data-productid="{{item.product.id}}" data-productname="{{item.product.name}}" data-itemcount="{{item.item_count}}"> <img
+                                            src="{% static 'files/inventory/pencil.png' %}" alt="" onclick="openNavAddStore('edit')"> </button>
+                                        <button type="button" data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}"  class="inv-plan-img-btn delete-item-btn"> <img
+                                                src="{% static 'files/inventory/bin.png' %}" alt=""> </button> -->
                                                 <div class="btn-group" id="actionDropdown">
                                                     <div class="order-dropdown " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
                                                       Action
@@ -397,87 +386,10 @@
       </div>
 </div>
 
-{% comment %} <div class="row">
-    <div class="col-md-12 text-center">
-        <form method="POST" action="" >{% csrf_token %}
-        <input type="hidden" id="action_delete_id" name="action" value="delete_segment" />
-        <input type="hidden" name="object_id" id="object_id" />
-        <div class="cancel-model-content">
-            <button class="sent-button" type="submit" >Delete</button>
-            <button data-dismiss="modal" class="view-button">Cancel</button>
-            
-        </div>
-        </form>
-    </div>
-
-</div> {% endcomment %}
-
 
 {% endblock %}
 
 {% block javascript %}
-<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-
-<script>
-    const app=new Vue({
-    el: '#app',
-    delimiters: ['<%', '%>'],
-      components:{
-        
-      },
-    data: {
-        users:[],
-        url:'',
-        user_option:false,
-        search_item:''
-    
-    },
-    mounted(){
-        this.url = api;
-        this.getUsers()
-    },
-    methods:{
-       getUsers(){
-           axios.get(this.url+'/api/external_customers/').then(response=>{
-               this.users=response.data.external_customers
-           })
-       },
-       selectItem(item){
-        this.search_item=item.name
-        this.user_option=false
-        
-       },
-       openOptions(){
-           this.user_option=true
-       },
-       getSearchUser(){
-        this.user_option=true
-        var user_list=[]
-           if(!this.search_item){
-               console.log("users is "+JSON.stringify(this.users))
-               return this.users
-           }
-           else{
-              
-            //    for(var i=0;i<this.users.length;i++){
-            //     console.log("serach term is"+this.search_item+" user list is"+this.users[i].name)
-            //        if(this.users[i].name.startsWith(this.search_item)){
-            //         user_list.push(this.users[i])
-            //        }
-            //    }
-             //  console.log("user array is"+JSON.stringify(user_list))
-               //return user_list
-           var users=this.users.filter(user => user.name.toUpperCase().startsWith(this.search_item.toUpperCase()));
-
-            return users
-           }
-       
-       }
-    }
-}
-    )
-</script>
 <script>
     function DropDown(el) {
     this.dd = el;
@@ -759,7 +671,7 @@ function showAdditem(){
     
     function set_params_go(args)
     {
-    var url='{% url 'bleach-inventory:inventory-createinventoryrequest' %}';
+    var url='{% url 'bleach-inventory:inventory-editrequestorder' request_order.id %}';
     var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),requester_id:$('#requester_id').val(),purpose:$('#purpose_id').val()
     };
     for(key in args) 

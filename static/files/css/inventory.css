@@ -799,6 +799,13 @@ display: flex;
   opacity: 1;
   font-weight: 600;
 }
+.inv-input-container input{
+    outline:none ;
+}
+.search-input-text{
+  padding:6px;
+  cursor: pointer;
+}
 .inv-sidedrawer{
   height: 100%;
   width: 0;

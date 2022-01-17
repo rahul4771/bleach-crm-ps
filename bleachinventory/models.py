@@ -423,6 +423,18 @@ class CheckOutItemUnits(models.Model):
     def __str__(self):
         return self.checkout_item.visit.order.order_no
 
+class ExternalCustomer(models.Model):
+    name      = models.CharField(max_length=100,blank=True,null=True,unique=True)
+    
+    status    = models.BooleanField(default=True,blank=False,null=False)
+    created   = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return str(self.name)
+
+    def __str__(self):
+        return str(self.name)
+
 class RequestOrder(models.Model):
     request_order_id    = models.CharField(max_length=50,blank=False,null=False)
     purpose             = models.CharField(max_length=50,blank=False,null=False,choices=PUPOSES_REQUEST_ORDER)

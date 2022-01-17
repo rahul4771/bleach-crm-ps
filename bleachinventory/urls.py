@@ -23,14 +23,16 @@ url(r'^purchaseOrder/items/(?P<purchase_order_id>[-\w]+)/$',views.PurchaseOrderI
 url(r'^purchaseOrder/approval/(?P<purchase_order_id>[-\w]+)/$',views.PurchaseOrderApproval.as_view(),name='inventory-purchaseorderapproval'),
 url(r'^purchaseorderpage/(?P<purchase_order_id>[-\w]+)/$',views.InventoryPurchaseOrderPage.as_view(),name='inventory-purchaseorderpage'),
 url(r'^createpo/$',views.InventoryCreatePurchaseOrder.as_view(),name='inventory-createpurchaseorder'),
+url(r'^editpo/(?P<purchase_order_id>[-\w]+)/$',views.InventoryEditPurchaseOrder.as_view(),name='inventory-editpurchaseorder'),
+
 
 url(r'^requestorder/$',views.InventoryRequestOrder.as_view(),name='inventory-requestorder'),
 url(r'^requestOrder/items/(?P<request_order_id>[-\w]+)/$',views.RequestOrderItemsPage.as_view(),name='inventory-requestorderitems'),
 url(r'^requestOrder/approval/(?P<request_order_id>[-\w]+)/$',views.RequestOrderApproval.as_view(),name='inventory-requestorderapproval'),
 url(r'^requestorderpage/(?P<request_order_id>[-\w]+)/$',views.InventoryRequestOrderPage.as_view(),name='inventory-requestorderpage'),
 url(r'^createir/$',views.InventoryCreateInventoryRequest.as_view(),name='inventory-createinventoryrequest'),
+url(r'^editro/(?P<request_order_id>[-\w]+)/$',views.InventoryEditRequestOrder.as_view(),name='inventory-editrequestorder'),
 
-url(r'^editpo/(?P<purchase_order_id>[-\w]+)/$',views.InventoryEditPurchaseOrder.as_view(),name='inventory-editpurchaseorder'),
 url(r'^viewpo/$',views.InventoryViewPurchaseOrder.as_view(),name='inventory-viewpurchaseorder'),
 url(r'^checked-in/$',views.InventoryCheckedIn.as_view(),name='inventory-checked-in'),
 url(r'^orderdetails/$',views.InventoryOrderDetails.as_view(),name='inventory-order-details'),

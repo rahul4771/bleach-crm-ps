@@ -130,7 +130,7 @@ padding: 20px;
         </div>
         :
         <div class="w-50 ml-10 ">
-            00000000000
+            {{request_order.request_order_id}}
         </div> 
   </div>
   <div class="d-flex w-100 sos-details mt-5">
@@ -139,7 +139,7 @@ padding: 20px;
     </div>
     :
     <div class="w-50 ml-10">
-        00/00/0000
+        {{request_order.created|date:'d/m/Y'}}
     </div> 
 </div>
 <div class="d-flex w-100 sos-details mt-5">
@@ -148,7 +148,7 @@ padding: 20px;
   </div>
   :
   <div class="w-50 ml-10">
-    Name
+    {{request_order.requested_by.name}}
   </div> 
 </div>
 <div class="d-flex w-100 sos-details mt-5">
@@ -157,7 +157,7 @@ padding: 20px;
   </div>
   :
   <div class="w-50 ml-10 ">
-    Name
+    {{request_order.received_by.name}}
   </div> 
 </div>
 <div class="d-flex w-100 sos-details mt-5">
@@ -166,7 +166,7 @@ padding: 20px;
     </div>
     :
     <div class="w-50 ml-10 ">
-        type
+        {{request_order.purpose}}
     </div> 
   </div>
 <!-- <div class="d-flex w-100 sos-details mt-5">
@@ -201,31 +201,19 @@ padding: 20px;
         <th> Quantity</th>
       </tr>
       
-      {% for item in check_out_items%}
+      {% for item in request_order.request_order_items %}
       <tr class="sos-table-row">
         <td>
           {{forloop.counter}}
         </td>
         <td>
-          {% if item.service_item %}{{item.service_item.item.name}}{% else %}{{item.item.name}}{% endif %}
+          {{item.product.name}}
         </td>
         <td>
-          {% if item.service_item %}{{item.service_item.item.item_code}}{% else %}{{item.item.item_code}}{% endif %}
+          {{item.product.item_code}}
         </td>
         <td>
-          {% if item.service_item %}
-            {% if item.service_item.item.item_add_type == 'quantity' %} 
-              {{item.units}} {{item.service_item.item.measuring_unit}} (S)
-            {% else %}
-              {{item.units}} unit(S)
-            {% endif %}
-          {% else %}
-            {% if item.item.item_add_type == 'quantity' %} 
-              {{item.units}} {{item.item.measuring_unit}} (S)
-            {% else %}
-              {{item.units}} unit(S)
-            {% endif %}
-          {% endif %}
+          {{item.item_count}}
         </td>
       </tr>
       {% endfor %}
