@@ -106,7 +106,7 @@
                         <div style="position: relative;">
                             <div class="d-flex">
                         <div class="inv-input-container inv-border h-30 w-100">
-                            <input autocomplete="off"  type="text"  name="requested_by" style="border: none !important; width: 90%;" class="inv-in"   required v-model="search_item" @input="openOptions()" value="{{request_order.requested_by.name|default_if_none:''}}">
+                            <input id="requester_id" autocomplete="off"  type="text"  name="requested_by" style="border: none !important; width: 90%;" class="inv-in"   required v-model="search_item" @input="openOptions()" value="{{request_order.requested_by.name|default_if_none:''}}">
                         </div>
                         <div class="conf-btn" onclick="set_params_go()" v-if="conf_btn">
                             <i class="fas fa-check"></i>
@@ -119,7 +119,6 @@
                           </div>
                         </div>
                     </div>
-                          <input type="text" hidden id="requester_id" >
                          <!-- <div class="wrap-drop" id="noble-gases">
                             {% if request_order.requested_by == None %}
                             <span>--Select Requester--</span>
@@ -778,7 +777,7 @@ function showAdditem(){
         if(params[key]) 
             query+='&'+key+'='+params[key].toString();
     query=query.replace('&','?');
-    //window.location.href=url+query;  
+    window.location.href=url+query;  
     }
 
 </script>
