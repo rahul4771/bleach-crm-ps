@@ -2341,12 +2341,18 @@ class InventoryCreateInventoryRequest(View):
 		requester_id                      = request.GET.get('requester_id')
 	
 		if requester_id:
-			request_order.requested_by_id = requester_id
-			request_order.save()
+			try:
+				requester = ExternalCustomer.objects.get(name=requester_id)
+			except:
+				requester = None
+			
+			if requester:
+				request_order.requested_by = requester
+				request_order.save()
 
-		purpose                           = request.GET.get('purpose')
+		purpose                    = request.GET.get('purpose')
 		if purpose:
-			request_order.purpose         = purpose
+			request_order.purpose  = purpose
 			request_order.save()
 		
 		inventory_items     = InventoryItem.objects.filter(~Q(item_type='FINISHED GOODS'))
@@ -2421,7 +2427,12 @@ class InventoryEditRequestOrder(IsInventoryAdminUser,View):
 		requester_id                      = request.GET.get('requester_id')
 	
 		if requester_id:
-			request_order.requested_by_id = requester_id
+			try:
+				requester = ExternalCustomer.objects.get(name=requester_id)
+			except:
+				requester = None
+
+			request_order.requested_by = requester
 			request_order.save()
 
 		purpose                           = request.GET.get('purpose')

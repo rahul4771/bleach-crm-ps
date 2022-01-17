@@ -174,6 +174,9 @@
                                     <th data-hide="phone,tablet" style="text-align: center;">
                                         Item Type
                                     </th>
+                                    <th style="width: %;" data-hide="phone,tablet" >
+                                        Category
+                                    </th>
                                     <th data-hide="phone,tablet" style="text-align: center;">
                                         Quantity
                                     </th>
@@ -188,6 +191,7 @@
                                     <td>{{item.product.item_code}}</td>
                                     <td>{{item.product.name}}</td>
                                     <td style="text-align: center;">{{item.product.item_type}}</td>
+                                    <td style="text-align: center;">{{item.product.item_category.name}}</td>
                                     <td style="text-align: center;">{{item.item_count}}</td>
                                     <td style="text-align: center;"> 
                                         <button type="button" class="inv-plan-img-btn edit-item-btn" data-itemid="{{item.id}}" data-productid="{{item.product.id}}" data-productname="{{item.product.name}}" data-itemcount="{{item.item_count}}"> <img
@@ -207,7 +211,7 @@
                                     </td>
                                 </tr>
                                 {% empty %}
-                                <td></td><td></td><td>No Data</td><td></td><td></td>
+                                <td></td><td></td><td></td><td>No Data</td><td></td>
                                 {% endfor %}
                                
                                 {% if request_order.requested_by != None %}
