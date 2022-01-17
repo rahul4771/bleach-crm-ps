@@ -23,6 +23,7 @@ class InventoryHome(IsInventoryAdminUser,View):
 		
 		
 		items = InventoryItem.objects.filter(status=True)
+		items_count = items.count()
 
 		# LOAD TOTAL QTY FOR QUANTITY ITEMS
 		# for item in items:
@@ -60,7 +61,7 @@ class InventoryHome(IsInventoryAdminUser,View):
 		request_orders  = RequestOrder.objects.filter(is_admin_approved=False,is_received=False,is_rejected=False,status=True,is_order_completed=True)
 		ro_count        = request_orders.count()
 		
-		return render(request,'inventory/home.html',{"recent_items":recent_items,"purchase_items":purchase_items,"orders":orders,"purchase_orders":purchase_orders,"po_count":po_count,"request_orders":request_orders,"ro_count":ro_count,"order_date":order_date})
+		return render(request,'inventory/home.html',{"items_count":items_count,"recent_items":recent_items,"purchase_items":purchase_items,"orders":orders,"purchase_orders":purchase_orders,"po_count":po_count,"request_orders":request_orders,"ro_count":ro_count,"order_date":order_date})
 
 # Category.
 class InventoryCategory(IsInventoryAdminUser,View):
@@ -1360,6 +1361,9 @@ class InventoryInv(IsInventoryAdminUser,View):
 			item_id = request.POST.get('item_id')
 			InventoryItem.objects.get(id=int(item_id)).delete()
 			messages.success(request,"Item Deleted Successfully !")
+
+			if request.POST.get('return_to') == 'dashboard':
+				return redirect('bleach-inventory:inventorydash-board')
 
 		return redirect('bleach-inventory:inventory-inv')
 
