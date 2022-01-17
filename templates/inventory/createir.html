@@ -318,19 +318,16 @@
                   
                     <div class="wrap-drop" id="noble-gases3">
                     <input style="display:none" id="selected_unit_id" name="unit"/>
-                    <span>--Select Unit--</span>
+                    <span v-if="!selected_unit">--Select Unit--</span>
+                    <span v-else="selected_unit">selected_unit.serial_number</span>
                     <ul class="drop">
                         <li v-for="(item,index) in units" v-bind:key="index" @click="dropSelectUnit(item)" ><a>
-                            <% item %>
+                            <% item.serial_number %>
                         </a></li>
                         <!-- <li onclick="dropSelectPurpose('INVENTORY PREPARATION')" ><a>INVENTORY PREPARATION</a></li>
                         <li onclick="dropSelectPurpose('ADMINISTRATIVE')" ><a>ADMINISTRATIVE</a></li> -->
                     </ul>
-                    <ul class="drop">
-                                
-                        <li class="drop-selected" ><a><%selected_unit%></a></li>
-                        
-                    </ul>
+                   
                     
                     </div>
                 </div>
@@ -473,8 +470,8 @@
         getUnits(){
             console.log("called get units")
             axios.get(this.url+'/api/item_units/?product_id='+this.selected_product.id).then(response=>{
-              //  this.units=response.data
-              this.units=['KG','L','G']
+               this.units=response.data.item_units
+             
             })
         },
        getUsers(){
