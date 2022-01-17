@@ -2371,9 +2371,14 @@ class InventoryCreateInventoryRequest(View):
 		if action == 'add_item':
 			request_order_id = request.POST.get('request_order_id')
 			inventory_item   = request.POST.get('item')
-			quantity         = request.POST.get('item_count')
+			add_type         = request.POST.get('add_type')
 
-			RequestOrderItems.objects.create(request_order_id=request_order_id,product_id=inventory_item,item_count=quantity)
+			if add_type == 'quantity':
+				quantity         = request.POST.get('item_count')
+				RequestOrderItems.objects.create(request_order_id=request_order_id,product_id=inventory_item,item_count=quantity)
+			elif add_type == 'unit':
+				unit_id          = request.POST.get('unit_id')
+				RequestOrderItems.objects.create(request_order_id=request_order_id,product_id=inventory_item,product_unit_id=unit_id,item_count=1)
 
 			messages.success(request,"Item Added successfully!")
 
