@@ -1,0 +1,688 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+<!-- <style>
+    /*the container must be positioned relative:*/
+    .custom-select {
+      position: relative;
+      font-family: Arial;
+      z-index:999999999999;
+      
+    }
+    
+    .custom-select select {
+      display: none; /*hide original SELECT element:*/
+    }
+    
+    .select-selected {
+      background-color: #fff;
+      border: 1px solid #707070 !important;
+      border-radius: 7px;
+    }
+    
+    /*style the arrow inside the select element:*/
+    .select-selected:after {
+        position:absolute;
+  right:1rem;
+  top:35%;
+
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-right: 0.2em solid black;
+  border-top: 0.2em solid black;
+  transform: rotate(135deg);
+    }
+    
+    /*point the arrow upwards when the select box is open (active):*/
+    .select-selected.select-arrow-active:after {
+        transform: rotate(45deg);
+    }
+    
+    /*style the items (options), including the selected item:*/
+    .select-items div,.select-selected {
+      color: #5a5a5a;
+      padding: 8px 16px;
+      border: 1px solid transparent;
+      border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
+      cursor: pointer;
+      user-select: none;
+    }
+    
+    /*style items (options):*/
+    .select-items {
+        margin-top: -3px;
+        border-left: 1px solid #707070 !important;
+        border-bottom: 1px solid #707070 !important;
+        border-right: 1px solid #707070 !important;
+
+      position: absolute;
+      background-color: #fff;
+      top: 100%;
+      left: 0;
+      right: 0;
+      z-index: 99999;
+      border-radius: 0px 0px 7px 7px;
+    }
+    
+    /*hide the items when the select box is closed:*/
+    .select-hide {
+      display: none;
+    }
+    
+    .select-items div:hover, .same-as-selected {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+    </style> -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+<div class="wrapper">
+    <!--wrapper-->
+    {% include "inventory/common/header.html" %}
+    <section class="content">
+        <div class="container-fluid space topspace">
+            <div class="welcome-wrapper">
+                <!--welcome-wrapper-->
+                <h1 class="dashboard-head">Edit Inventory Request</h1>
+                <!-- <p>Bleach CRM-PS Version 1.0 developed and owned by Bleach-Kw</p> -->
+            </div>
+        </div>
+
+        <div class="main-content-holder">
+            <!--main-content-holder-->
+            <div class="white-wrapper white-wrapper-padding2">
+                <div class="row">
+                    <div class="col-md-12">
+                        <span class="inv-po-id">{{request_order.request_order_id}}</span>
+                    </div>
+                </div>
+               
+                <div class="row mt-20">
+                    
+                    <div class="col-md-3">
+                        <div class="model-input-name">Requested By</div>
+                       
+                          <input type="text" hidden id="requester_id" >
+                         <div class="wrap-drop" id="noble-gases">
+                            {% if request_order.requested_by == None %}
+                            <span>--Select Requester--</span>
+                            <ul class="drop">
+                                {% for request_user in request_users %}
+                                <li onclick="dropSelectRequester({{request_user.id}})" ><a>{{request_user.name}}</a></li>
+                                {% endfor %}
+                            </ul>
+                            {% else %}
+                            <span>{{request_order.requested_by.name}}</span>
+                            <ul class="drop">
+                               
+                                <li class="drop-selected" ><a>{{request_order.requested_by.name}}</a></li>
+                                
+                            </ul>
+                            {% endif %}
+                        </div>
+                        <br><br>
+
+
+                        
+                        <div class="model-input-name">Purpose</div>
+                            
+                            <input type="text" hidden id="purpose_id" >
+                            <div class="wrap-drop" id="noble-gases2">
+                            {% if not request_order.purpose %}
+                            <span>--Select Purpose--</span>
+                            <ul class="drop">
+                                <li onclick="dropSelectPurpose('INVENTORY PREPARATION')" ><a>INVENTORY PREPARATION</a></li>
+                                <li onclick="dropSelectPurpose('ADMINISTRATIVE')" ><a>ADMINISTRATIVE</a></li>
+                            </ul>
+                            {% else %}
+                            <span>{{request_order.purpose}}</span>
+                            <ul class="drop">
+                                
+                                <li class="drop-selected" ><a>{{request_order.purpose}}</a></li>
+                                
+                            </ul>
+                            {% endif %}
+                        </div>
+                        <br><br>
+                       
+                       
+        
+                       
+                    </div>
+                    
+                    <form method="POST" action="" >{% csrf_token %}
+                    <input type="hidden" name="action" value="order_close" />
+
+                </div>
+                
+               
+              
+
+                <div class="row mt-30">
+                    <div class="col-md-12 ">
+                        <table class="inv-table footable" style="border-top: 1px solid #c4c4c4;">
+                            <thead>
+                                <tr>
+                                    <th style="width: 15%;">
+                                        Item Code
+                                    </th>
+                                    <th style="width: %;" data-hide="phone,tablet" >
+                                        Item Name
+                                    </th>
+                                    <th data-hide="phone,tablet" style="text-align: center;">
+                                        Item Type
+                                    </th>
+                                    <th data-hide="phone,tablet" style="text-align: center;">
+                                        Quantity
+                                    </th>
+                                    <th data-hide="phone,tablet" style="text-align: center;">
+                                        Action
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="item_table">
+                                {% for item in request_order_items %}
+                                <tr data-itemid="{{item.product.id}}">
+                                    <td>{{item.product.item_code}}</td>
+                                    <td>{{item.product.name}}</td>
+                                    <td style="text-align: center;">{{item.product.item_type}}</td>
+                                    <td style="text-align: center;">{{item.item_count}}</td>
+                                    <td style="text-align: center;"> 
+                                        <button type="button" class="inv-plan-img-btn edit-item-btn" data-itemid="{{item.id}}" data-productid="{{item.product.id}}" data-productname="{{item.product.name}}" data-itemcount="{{item.item_count}}"> <img
+                                            src="{% static 'files/inventory/pencil.png' %}" alt="" onclick="openNavAddStore('edit')"> </button>
+                                        <button type="button" data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}"  class="inv-plan-img-btn delete-item-btn"> <img
+                                                src="{% static 'files/inventory/bin.png' %}" alt=""> </button> -->
+                                                <div class="btn-group" id="actionDropdown">
+                                                    <div class="order-dropdown " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+                                                      Action
+                                                      <i class="fa fa-chevron-down action-icon" aria-hidden="true" ></i>
+                                                    </div>
+                                                    <div class="dropdown-menu" id="dropdown-menu-orders">    
+                                                      <a class="d-flex dropdown-orders"  onclick="openNavAddStore('edit')" target="_blank" data-itemid="{{item.id}}" data-productid="{{item.product.id}}" data-productname="{{item.product.item}}" data-unitprice="{{item.unit_price}}" data-itemcount="{{item.item_count}}" data-totalprice="{{item.total_price}}"><img src="{% static 'files/inventory/pencil.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Edit Item</div></a>    
+                                                      <a class="d-flex dropdown-orders" data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}" target="_blank"><img src="{% static 'files/inventory/bin.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Delete Item</div></a>                                                                                                       
+                                                    </div>
+                                                  </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <td></td><td></td><td>No Data</td><td></td><td></td>
+                                {% endfor %}
+                               
+                                {% if request_order.requested_by != None %}
+                                <tr  id="id_addrow">
+                                    <td>
+                                        <button class="inv-plan-btn" onclick="openNavAddStore('add')" type="button"> <img
+                                                src="{% static 'files/inventory/icons/add.png' %}" class="btn-img mr-5"
+                                                alt=""> Add Item</button>
+                                    </td>
+                                </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                {% if request_order_items %}
+                <input type="hidden" name="request_order_id" value="{{request_order.id}}" />
+                <div class="row mt-20 text-center">
+                    <div class="d-flex" style="align-items: center;
+                    justify-content: center;">  <button class="sent-button" type="submit" >Submit</button>
+                </form>
+                                  <a  onclick="showRe()" class="view-button2 pointer">Cancel</a>
+                   
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </section>
+    <div id="addStore" class="inv-sidedrawer" >
+
+        <div class="inv-sidedrawer-inner">
+            <div class="d-flex">
+                <div class="inv-drawer-head" id="itemHead">
+                    Add Item
+                </div>
+                <div class="right-pos">
+
+                    <button onclick="closeNavAddStore()" class="img-button">
+                        <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                    </button>
+                </div>
+            </div>
+            <hr>
+
+            <form method="POST" action="" >{% csrf_token %}
+            <input type="hidden" name="action" id="purchase_order_action" value="add_item" />
+            <input type="hidden" name="item" id="id_pro_sel" value="" />
+            <input type="hidden" name="request_order_id" value="{{request_order.id}}" />
+            <input type="hidden" name="request_item_id" id="id_edit_item" />
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Product</div>
+
+                    <div style="position: relative;">
+                        <div class="inv-input-container inv-border h-30">
+                            <input autocomplete="off" onclick="ProductListShow()" type="text" id="pro-name" name="product" style="border: none !important; width: 90%;" class=" inv-in"  oninput="showProducts()" required>
+                            <!-- <div class="inv-hr"></div>
+                            <div class="model-filter">
+                                <button class="inv-normal-btn" onclick="showDrop()">
+                                    <i class="fa fa-angle-down fa-lg " style="color: #707070;" aria-hidden="true"></i>
+                                </button>
+
+                            </div> -->
+
+
+
+                        </div>
+                        <div id="id_search" class="row inv-result-box" style="display: none;">
+                          
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row mt-20">
+                <div class="col-md-12 ">
+                    <div class="model-input-name">Quantity</div>
+
+                    <div class="qty-container">
+  
+       
+                        
+                        <div class="quantity">
+                          <a class="quantity__minus pointer"><span>-</span></a>
+                          <input  type="text" class="quantity__input" value="1" id="id_item_count" name="item_count">
+                          <a  class="quantity__plus pointer"><span>+</span></a>
+                        </div>
+                        
+                      </div>
+                </div>
+
+            </div>
+
+        </div>
+        <div class="inv-drawer-footer">
+            <button class="sent-button purchaseorder-form-btn" type="submit" >Submit</button>
+            </form>
+            <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="deleteModel" role="dialog">
+        <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12 mt-20">
+
+                        
+                        <div class="d-flex ">
+                            <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to delete item ?</p></div>
+                            <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                                <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                            </button>
+    
+                        </div>
+                    </div>
+                </div>
+               
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <form method="POST" action="" >{% csrf_token %}
+                        <input type="hidden" name="action" value="delete_item" />
+                        <input type="hidden" name="item_id" id="id_item" />
+                        <div class="cancel-model-content">
+                            <button class="sent-button" type="submit" >Delete</button>
+                            <button data-dismiss="modal" class="view-button">Cancel</button>
+                          
+                        </div>
+                        </form>
+                    </div>
+    
+                </div>
+            </div>
+        </div>
+      </div>
+      <button id="id_c" hidden data-toggle="modal" data-target="#cancelModel">dd</button>
+      <div class="modal fade" id="cancelModel" role="dialog">
+        <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12 mt-20">
+
+                        
+                        <div class="d-flex ">
+                            <div style="margin: 0 auto; flex-grow: 3;"><p class="text-center model-head">Do you want to reset order?</p></div>
+                            <button data-dismiss="modal" class="img-button" style="margin-left: auto;">
+
+                                <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
+                            </button>
+    
+                        </div>
+                    </div>
+                </div>
+               
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <div class="cancel-model-content">
+                            <form method="POST" action="" >{% csrf_token %}
+                            <input type="hidden" name="action" value="reset" />
+                            <input type="hidden" name="request_order_id" value="{{request_order.id}}" />
+                            <button class="sent-button" type="submit" >reset</button>
+                            </form>
+                            <button data-dismiss="modal" class="view-button">Cancel</button>
+                          
+                        </div>
+                        <!-- </form> -->
+                    </div>
+    
+                </div>
+            </div>
+        </div>
+      </div>
+</div>
+
+
+{% endblock %}
+
+{% block javascript %}
+<script>
+    function DropDown(el) {
+    this.dd = el;
+    this.placeholder = this.dd.children('span');
+    this.opts = this.dd.find('ul.drop li');
+    this.val = '';
+    this.index = -1;
+    this.initEvents();
+}
+
+
+
+   
+DropDown.prototype = {
+    initEvents: function () {
+        var obj = this;
+        obj.dd.on('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $(this).toggleClass('active');
+        });
+        obj.opts.on('click', function () {
+            var opt = $(this);
+            obj.val = opt.text();
+            obj.index = opt.index();
+            obj.placeholder.text(obj.val);
+            opt.siblings().removeClass('selected');
+            opt.filter(':contains("' + obj.val + '")').addClass('selected');
+        }).change();
+    },
+    getValue: function () {
+        return this.val;
+    },
+    getIndex: function () {
+        return this.index;
+    }
+};
+
+$(function () {
+    // create new variable for each menu
+    var dd1 = new DropDown($('#noble-gases'));
+    var dd2 = new DropDown($('#noble-gases2'));
+    $(document).click(function () {
+        // close menu on document click
+        $('.wrap-drop').removeClass('active');
+    });
+});
+</script>
+
+<script>
+     function hideselectedoptions(){
+            
+
+            var tempItem = [];
+            var itemIn = [];
+            var div = true;
+
+            $('#id_search div').each(function(i) {
+                if (div == true){
+                    console.log($(this),"pro")
+                    tempItem.push($(this).data("pro"))
+                    //console.log($(this).data("id"));
+                    div = false;
+                }else{
+                    div = true;
+                }
+                
+            })
+          
+            $('#item_table tr').each(function() {
+                itemIn.push($(this).data("itemid"))
+                //console.log('table',$(this).data("itemid"));
+            })
+
+            itemIn.pop();
+
+            console.log(tempItem,itemIn,"lopp")
+
+            for(var i =0;i<tempItem.length;i++){
+                document.getElementById("id_product"+tempItem[i]).style.display ="block";
+                for(var j = 0;j<itemIn.length;j++){
+                    if(tempItem[i] == itemIn[j]){
+                        console.log('to be hide',tempItem[i]);
+                        document.getElementById("id_product"+tempItem[i]).style.display ="none";
+                    }
+                }
+            }
+            console.log(tempItem,itemIn)
+    }
+
+function dropSelectRequester(id){
+    console.log(id)
+    $('#requester_id').val(id);
+    set_params_go();
+}
+
+function dropSelectPurpose(id){
+    console.log(id)
+    $('#purpose_id').val(id);
+    set_params_go();
+}
+
+function showRe(){
+    console.log('j')
+    $('#id_c').click();
+}
+
+function showAdditem(){
+
+}
+
+
+    $(document).ready(function(){
+
+
+            //Quantity Clicks
+            const minus = $('.quantity__minus');
+            const plus = $('.quantity__plus');
+            const input = $('.quantity__input');
+            minus.click(function(e) {
+                e.preventDefault();
+                var value = input.val();
+                if (value > 1) {
+                value--;
+                }
+                input.val(value);
+                e.preventDefault();
+
+            });
+            
+            plus.click(function(e) {
+                e.preventDefault();
+                var value = input.val();
+                value++;
+                input.val(value);
+            })
+
+            $('.active-right').hide();
+            
+            var urlc = window.location.href;
+            console.log(urlc)
+            if(urlc.includes('requester_id')){
+                var supid = urlc.split("=")[1];
+                console.log(supid);
+                $('#requester_id').val(supid);
+            }
+
+            var products = [];
+            {% for item in inventory_items %}
+                var tempId = '{{item.id}}';
+                var tempName = '{{item.name}}';
+                products.push({id:tempId,name:tempName})
+            {% endfor %}
+
+		    $('.count').val(1);
+   			
+            $(document).on('click','.plus',function(){
+				$('.count').val(parseInt($('.count').val()) + 1 );
+    		});
+
+        	$(document).on('click','.minus',function(){
+                
+                if($('.count').val() >= 1){
+                    $('.count').val(parseInt($('.count').val()) - 1 );
+    				if ($('.count').val() == 0) {
+                        $('#id_item_count').val(1);
+						$('.count').val(1);
+					}
+                }
+    			
+    	    });
+ 		});
+
+    
+    function showDrop() {
+       document.getElementById("id_cat").style.display="block"
+    }
+
+
+    function openNavAddStore(d) {
+        $('#id_search').empty();
+        {% for item in inventory_items %}
+
+        var tempId = '{{item.id}}';
+        var tempName = '{{item.item.name}}';
+        console.log(tempId,tempName)
+   
+        $('#id_search').append('<div class="col-md-12 inv-search-drop" id="id_product{{item.id}}" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
+
+        {% endfor %}
+
+       // $('#id_search').append('<div class="col-md-12" onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}"><div class="inv-search-result">{{item.name}}</div></div>');
+        if(d == 'add'){
+            $('#itemHead').text('Add Item');
+            $('#purchase_order_action').val('add_item');
+            $('.purchaseorder-form-btn').text('Add');
+
+            $('#pro-name').val('');
+            $('#id_pro_sel').val('');
+            $('#id_unit_price').val('');
+            $('#id_item_count').val(1);
+            $('.count').val(1);
+            $('#id_total_price').val('');
+            hideselectedoptions();
+        }
+        if(d == 'edit'){
+            $('#itemHead').text('Edit Item');
+            $('#purchase_order_action').val('edit_item');
+            $('.purchaseorder-form-btn').text('Update');
+            hideselectedoptions();
+
+        }
+        document.body.style.backgroundColor = "rgba(0,0,0,0.4) !important";
+        if (screen.width <= 600) {
+            document.getElementById("addStore").style.width = "100%";
+        } else if (screen.width <= 720) {
+            document.getElementById("addStore").style.width = "50%";
+        }
+        else {
+            document.getElementById("addStore").style.width = "30%";
+        }
+    }
+    function closeNavAddStore() {
+        document.getElementById("addStore").style.width = "0";
+    }
+
+
+
+    function ProductListShow(){
+        document.getElementById("id_search").style.display="block"
+    }
+
+    function showProducts(){
+        $('#id_search').empty();
+        for (var j=0; j<products.length; j++) {
+            if (products[j].name.toUpperCase().match($('#pro-name').val().toUpperCase())){
+                console.log(products[j]);
+        $('#id_search').append('<div class="col-md-12 inv-search-drop" id="id_product'+products[j].id+'" style="padding:0px !important;" onclick="closeProductShow(this)" data-pro="'+products[j].id+'" data-name="'+products[j].name+'"><div class="inv-search-result">'+products[j].name+'</div></div>');
+
+            }
+        }
+            console.log( $('#pro-name').val());
+            if($('#pro-name').val() !=""){
+            document.getElementById("id_search").style.display="block"
+
+            }else{
+            document.getElementById("id_search").style.display="none"
+
+            }
+            hideselectedoptions();
+            
+        }
+
+    function closeProductShow(d){
+        console.log(d);
+        var proId = $(d).attr("data-pro")
+        $('#id_pro_sel').val($(d).attr("data-pro"));
+        $('#id_unit_price').val($(d).attr("data-productprice"));
+        $('#id_total_price').val($(d).attr("data-productprice"));
+        $('#pro-name').val($(d).attr("data-name"));
+
+
+        document.getElementById("id_search").style.display="none"
+    }
+
+    //Delete Item
+    $('.delete-item-btn').click(function(){
+        $('#id_item').val($(this).data('itemid'));
+    })
+
+    //Edit Item
+    $('.edit-item-btn').click(function(){
+        $('#id_edit_item').val($(this).data('itemid'));
+        $('#id_pro_sel').val($(this).data('productid'));
+        $('#pro-name').val($(this).data('productname'));
+        $('#id_item_count').val($(this).data('itemcount'));
+        $('.count').val($(this).data('itemcount'));
+    })
+    
+    function set_params_go(args)
+    {
+    var url='{% url 'bleach-inventory:inventory-editrequestorder' request_order.id %}';
+    var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),requester_id:$('#requester_id').val(),purpose:$('#purpose_id').val()
+    };
+    for(key in args) 
+        params[key]=args[key];
+    var query='';
+    for(key in params)
+        if(params[key]) 
+            query+='&'+key+'='+params[key].toString();
+    query=query.replace('&','?');
+    window.location.href=url+query;  
+    }
+
+</script>
+{% endblock %}

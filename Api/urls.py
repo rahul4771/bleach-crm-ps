@@ -67,6 +67,7 @@ urlpatterns = [
 	url(r'^rawmaterials/$',views.InventoryRawMaterialsView.as_view(),name='api-rawmaterial'),
 	url(r'^accessory/(?P<inventory_id>\d+)/$',views.InventoryAccessoryView.as_view(),name='api-accessory'),
 	url(r'^finished_item/(?P<inventory_id>\d+)/$',views.InventoryFinshedItemView.as_view(),name='api-finished_item'),
+	url(r'^external_customers/$',views.ExternalCustomersView.as_view(),name='api-external-customers'),
 
 	###Team Leader Mobile app API'S
 	url(r'^login/$',views.LoginAPI.as_view(),name='api-login'),
