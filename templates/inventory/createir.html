@@ -253,6 +253,8 @@
             </div>
         </div>
     </section>
+    
+    <form method="POST" action="" >{% csrf_token %}
     <div id="addStore" class="inv-sidedrawer" >
 
         <div class="inv-sidedrawer-inner">
@@ -269,11 +271,7 @@
             </div>
             <hr>
 
-            <form method="POST" action="" >{% csrf_token %}
-            <input type="hidden" name="action" id="purchase_order_action" value="add_item" />
-            <input type="hidden" name="item" id="id_pro_sel" value="" />
-            <input type="hidden" name="request_order_id" value="{{request_order.id}}" />
-            <input type="hidden" name="request_item_id" id="id_edit_item" />
+            
             <div class="row mt-20">
                 <div class="col-md-12 ">
                     <div class="model-input-name">Product</div>
@@ -305,8 +303,6 @@
                     <div class="model-input-name">Quantity</div>
 
                     <div class="qty-container">
-  
-       
                         
                         <div class="quantity">
                           <a class="quantity__minus pointer"><span>-</span></a>
@@ -321,12 +317,18 @@
 
         </div>
         <div class="inv-drawer-footer">
+            <input type="hidden" name="action" id="purchase_order_action" value="add_item" />
+            <input type="hidden" name="item" id="id_pro_sel" value="" />
+            <input type="hidden" name="request_order_id" value="{{request_order.id}}" />
+            <input type="hidden" name="request_item_id" id="id_edit_item" />
             <button class="sent-button purchaseorder-form-btn" type="submit" >Submit</button>
-            </form>
+            
             <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
         </div>
+        
     </div>
-    
+    </form>
+
     <div class="modal fade" id="deleteModel" role="dialog">
         <div class="modal-dialog cancel-model cancel-order-border w-p-70" role="document">
             <div class="container-fluid">
