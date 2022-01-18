@@ -98,7 +98,7 @@
                         <span class="inv-po-id">{{request_order.request_order_id}}</span>
                     </div>
                 </div>
-               
+                <form method="POST" action="" >{% csrf_token %}
                 <div class="row mt-20">
                     
                     <div class="col-md-3">
@@ -109,9 +109,7 @@
                             <input id="requester_id" autocomplete="off"  type="text"  name="requested_by" style="border: none !important; width: 90%;" class="inv-in"   required v-model="search_item" @input="openOptions()" value="{{request_order.requested_by.name|default_if_none:''}}">
                            
                         </div>
-                        <div class="conf-btn" onclick="set_params_go()" v-if="conf_btn">
-                            <i class="fas fa-check"></i>
-                        </div>
+                       
                     </div>
                         <div  class="row inv-result-box"  v-if="user_option && getSearchUser().length>0" style="height:auto;max-height:200px;">
                           <div v-for="(item,index) in getSearchUser()" v-bind:key="index" class="search-input-text" @click="selectItem(item)">
@@ -143,7 +141,7 @@
                         
                         <div class="model-input-name">Purpose</div>
                             
-                            <input type="text" hidden id="purpose_id" >
+                            <input type="text" hidden id="purpose_id"  required>
                             <div class="wrap-drop" id="noble-gases2">
                             {% if not request_order.purpose %}
                             <span>--Select Purpose--</span>
@@ -171,10 +169,11 @@
                     
 
                 </div>
+
                 
                
               
-                <form method="POST" action="" >{% csrf_token %}
+                
                     <input type="hidden" name="action" value="order_close" />
                 <div class="row mt-30">
                     <div class="col-md-12 ">
@@ -217,7 +216,7 @@
                                                       <i class="fa fa-chevron-down action-icon" aria-hidden="true" ></i>
                                                     </div>
                                                     <div class="dropdown-menu" id="dropdown-menu-orders">    
-                                                      <a class="d-flex dropdown-orders"  onclick="openNavAddStore('edit',this)" target="_blank" data-itemid="{{item.id}}" data-productid="{{item.product.id}}" data-item_add_type="{{item.product.item_add_type}}" data-unit_id="{{item.product_unit.id}}" data-unit_serial_number="{{item.product_unit.unit_serial_number}}" data-productname="{{item.product.name}}" data-itemcount="{{item.item_count}}"><img src="{% static 'files/inventory/pencil.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Edit Item</div></a>    
+                                                      <a class="d-flex dropdown-orders"  onclick="openNavAddStore('edit',this)" target="_blank" data-itemid="{{item.id}}" data-productid="{{item.product.id}}" data-item_add_type="{{item.product.item_add_type}}" data-unit_id="{{item.product_unit.id}}" data-unit_unit_code="{{item.product_unit.unit_serial_number}}" data-productname="{{item.product.name}}" data-itemcount="{{item.item_count}}"><img src="{% static 'files/inventory/pencil.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Edit Item</div></a>    
                                                       <a class="d-flex dropdown-orders delete-item-btn" data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}" target="_blank"><img src="{% static 'files/inventory/bin.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Delete Item</div></a>                                                                                                       
                                                     </div>
                                                   </div>
@@ -227,7 +226,7 @@
                                 <td></td><td></td><td></td><td>No Data</td><td></td>
                                 {% endfor %}
                                
-                                {% if request_order.requested_by != None %}
+                              
                                 <tr  id="id_addrow">
                                     <td>
                                         <button class="inv-plan-btn" onclick="openNavAddStore('add')" type="button"> <img
@@ -235,7 +234,7 @@
                                                 alt=""> Add Item</button>
                                     </td>
                                 </tr>
-                                {% endif %}
+                                
                             </tbody>
                         </table>
                     </div>
@@ -308,7 +307,7 @@
                         
                         <div class="quantity">
                           <a class="quantity__minus pointer"  onclick="subQty()"><span>-</span></a>
-                          <input  type="text" class="quantity__input" value="1" id="id_item_count" name="item_count" v-model="item_qty">
+                          <input  type="text" class="quantity__input" value="1" id="id_item_count" name="item_count" v-model="item_qty" required>
                           <a  class="quantity__plus pointer" onclick="addQty()"><span>+</span></a>
                         </div>
                         
@@ -319,15 +318,15 @@
                             
                   
                     <div class="wrap-drop" id="noble-gases3">
-                    <input style="display:none" id="selected_unit_id" name="unit_id"/>
+                    <input style="display:none" id="selected_unit_id" name="unit_id"  required/>
                     <span v-if="!selected_unit">--Select Unit--</span>
-                    <span v-else="selected_unit"><% selected_unit.serial_number %>
+                    <span v-else="selected_unit"><% selected_unit.unit_code %>
                     </span>
                     <input v-if="selected_unit" style="display: none;" name="unit_id" :value="selected_unit.id"/>
                     <ul class="drop">
                         
                         <li v-for="(item,index) in units" v-bind:key="index" @click="dropSelectUnit(item)" ><a>
-                            <% item.serial_number %>
+                            <% item.unit_code %>
                         </a></li> 
                         <!-- <li onclick="dropSelectPurpose('INVENTORY PREPARATION')" ><a>INVENTORY PREPARATION</a></li>
                         <li onclick="dropSelectPurpose('ADMINISTRATIVE')" ><a>ADMINISTRATIVE</a></li>-->
@@ -632,13 +631,13 @@ $(function () {
 function dropSelectRequester(id){
     console.log(id)
     $('#requester_id').val(id);
-    set_params_go();
+  //  set_params_go();
 }
 
 function dropSelectPurpose(id){
     console.log(id)
     $('#purpose_id').val(id);
-    set_params_go();
+   // set_params_go();
 }
 
 
@@ -762,7 +761,7 @@ function subQty(){
            else if(app.selected_product.item_add_type=='unit'){
                app.getUnits()
                app.selected_unit={
-                   serial_number:$(item_data).data('unit_serial_number'),
+                   unit_code:$(item_data).data('unit_unit_code'),
                    id:$(item_data).data('unit_id')
                }
 
