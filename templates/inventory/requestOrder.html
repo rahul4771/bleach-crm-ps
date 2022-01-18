@@ -25,10 +25,12 @@
                             <input type="text" id="search-bar" placeholder="Search" class="inv-input w-250" onchange="set_params_go();" name="attributes" value="{{search_query|default_if_none:''}}">
                         </div>                    
                     </div>
-                    
                     <div class="right-pos">
-                        <a href="/bleach-inventory/requestorder/"><button class="inv-blue-btn" onclick="showDrawer('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Create IR</button></a>
+                        <div onclick="window.location.href='/bleach-inventory/createir/'"><button class="inv-blue-btn" onclick="showDrawer('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Create IR</button></div>
                     </div>
+                    <!-- <div class="right-pos">
+                        <a href="/bleach-inventory/requestorder/"><button class="inv-blue-btn" onclick="showDrawer('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Create IR</button></a>
+                    </div> -->
                     </div>
 
                 <div class="mt-20">
