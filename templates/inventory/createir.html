@@ -713,13 +713,14 @@ function subQty(){
     }
 
 
-    function openNavAddStore(d) {
+    function openNavAddStore(d,item_data) {
         $('#id_search').empty();
         {% for item in inventory_items %}
 
         var tempId = '{{item.id}}';
         var tempName = '{{item.name}}';
         var add_type = '{{item.item_add_type}}';
+        
         console.log(tempId,tempName,add_type)
    
         $('#id_search').append('<div class="col-md-12 inv-search-drop" id="id_product{{item.id}}" style="padding:0px !important;"  onclick="closeProductShow(this)" data-pro="{{item.id}}" data-name="{{item.name}}" data-addtype="{{item.item_add_type}}"><div class="inv-search-result">{{item.name}}</div></div>');
@@ -741,6 +742,11 @@ function subQty(){
             hideselectedoptions();
         }
         if(d == 'edit'){
+            app.selected_product={
+                name:$(item_data).data('productname'),
+                id:$(item_data).data('itemid'),
+                item_add_type:$(item_data).data('item_add_type')
+            }
             $('#itemHead').text('Edit Item');
             $('#purchase_order_action').val('edit_item');
             $('.purchaseorder-form-btn').text('Update');
@@ -817,6 +823,7 @@ function subQty(){
     //Edit Item
     $('.edit-item-btn').click(function(){
         $('#id_edit_item').val($(this).data('itemid'));
+        
         $('#id_pro_sel').val($(this).data('productid'));
         $('#pro-name').val($(this).data('productname'));
         $('#id_item_count').val($(this).data('itemcount'));
