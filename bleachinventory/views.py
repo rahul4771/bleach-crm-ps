@@ -2406,7 +2406,7 @@ class InventoryCreateInventoryRequest(View):
 
 		
 		if action == 'delete_item':
-			item_id                = request.POST.get('item_id')
+			item_id                = int(request.POST.get('item_id'))
 			RequestOrderItems.objects.get(id=item_id).delete()
 			
 			messages.success(request,"Item Deleted successfully!")
