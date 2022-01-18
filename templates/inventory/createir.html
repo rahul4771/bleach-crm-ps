@@ -321,7 +321,7 @@
                     <span v-if="!selected_unit">--Select Unit--</span>
                     <span v-else="selected_unit"><% selected_unit.serial_number %>
                     </span>
-                    <input v-if="selected_unit" style="display: none;" name="unit" :value="selected_unit.id"/>
+                    <input v-if="selected_unit" style="display: none;" name="unit_id" :value="selected_unit.id"/>
                     <ul class="drop">
                         <li v-for="(item,index) in units" v-bind:key="index" @click="dropSelectUnit(item)" ><a>
                             <% item.serial_number %>
