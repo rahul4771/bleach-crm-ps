@@ -615,6 +615,8 @@ class InventoryItems(IsInventoryAdminUser,View):
 			line_id = request.POST.get('item_line')
 			print(category_id,segment_id,line_id,"ids")
 
+			item_unit_data = request.POST.get('item_unit_data')
+
 			if category_id:
 				category = Category.objects.get(id=int(category_id))
 			else:
@@ -636,6 +638,7 @@ class InventoryItems(IsInventoryAdminUser,View):
 			item.item_category = category
 			item.item_segment = segment
 			item.item_line = line
+			item.measuring_unit = item_unit_data
 			item.description = request.POST.get('description')
 			item.reserve_count = request.POST.get('reserve')
 			item.save()

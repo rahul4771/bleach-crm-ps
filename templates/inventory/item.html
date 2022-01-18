@@ -277,14 +277,20 @@
                                  </div>
 
                     <input type="hidden" name="item_id" value="{{inventory_item.id}}" id="item_id">
+                    
+                    {% if inventory_item.item_add_type == 'quantity' %}
                     <div id="unit_edit_data" style="display: none;">
                     <div class="model-input-name ">Select Unit</div>
                    
                     <select  name="item_unit_data" id="unit_select" class="minimal av-font inv-hide" required="required" >
-                        <option value="">--Select Unit--</option><option value="1" selected="">option 1</option>
-                        <option value="2">Option 2</option>
+                        <option value="L" {% if inventory_item.measuring_unit == 'L' %} selected {% endif %}>L</option>
+                        <option value="kg" {% if inventory_item.measuring_unit == 'kg' %} selected {% endif %}>kg</option>
+                        <option value="piece" {% if inventory_item.measuring_unit == 'piece' %} selected {% endif %}>piece</option>
+                        <option value="pack" {% if inventory_item.measuring_unit == 'pack' %} selected {% endif %}>pack</option>
                     </select>
-                </div>
+                    </div>
+                    {% endif %}
+
                                 </div>
                             </div>           
                          </div>
@@ -1041,10 +1047,9 @@
             
             {% if inventory_item.item_type == 'FINISHED GOODS' %}
             <button class="sent-button" type="button" onclick="formvalidation()">Submit</button>
-            {% else %}
-            <button class="sent-button" id="return-item-btn" type="button" onclick="formvalidation()">Item Return</button>
             {% endif %}
 
+            <button class="sent-button" id="return-item-btn" type="button" onclick="formvalidation()">Item Return</button>
             <a href="#" id="load_po"><button class="sent-button" type="button" id="po-btn" >Purchase Order</button></a>
             <button class="sent-button" type="button" id="update-unit-btn" onclick="formvalidation()">Update Unit</button>    
         </form>
