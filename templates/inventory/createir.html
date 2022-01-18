@@ -264,7 +264,7 @@
                 </div>
                 <div class="right-pos">
 
-                    <button onclick="closeNavAddStore()" class="img-button">
+                    <button onclick="closeNavAddStore()" class="img-button" type="button">
                         <img src="{% static 'files/icons/cancel.png'%}" class="cl-modal-icon close-evaluation" />
                     </button>
                 </div>
@@ -348,7 +348,7 @@
             <input type="hidden" name="request_item_id" id="id_edit_item" />
             <button class="sent-button purchaseorder-form-btn" type="submit" >Submit</button>
             
-            <button data-dismiss="modal" onclick="closeNavAddStore()" class="cancel-button">Cancel</button>
+            <button data-dismiss="modal" onclick="closeNavAddStore()" class="cancel-button" type="button">Cancel</button>
         </div>
         
     </div>
@@ -744,9 +744,11 @@ function subQty(){
         if(d == 'edit'){
             app.selected_product={
                 name:$(item_data).data('productname'),
-                id:$(item_data).data('itemid'),
+                id:String($(item_data).data('itemid')),
                 item_add_type:$(item_data).data('item_add_type')
             }
+            $('#pro-name').val(app.selected_product.name)
+            $('#id_search').append('<div class="col-md-12 inv-search-drop" id="id_product'+app.selected_product.id+'" style="padding:0px !important;" onclick="closeProductShow(this)" data-pro="'+app.selected_product.id+'" data-name="'+app.selected_product.name+'" data-addtype="'+app.selected_product.item_add_type+'"><div class="inv-search-result">'+app.selected_product.name+'</div></div>')
             $('#itemHead').text('Edit Item');
             $('#purchase_order_action').val('edit_item');
             $('.purchaseorder-form-btn').text('Update');
