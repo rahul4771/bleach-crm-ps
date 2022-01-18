@@ -305,9 +305,9 @@
                     <div class="qty-container">
                         
                         <div class="quantity">
-                          <a class="quantity__minus pointer"><span>-</span></a>
+                          <a class="quantity__minus pointer"  onclick="subQty()"><span>-</span></a>
                           <input  type="text" class="quantity__input" value="1" id="id_item_count" name="quantity">
-                          <a  class="quantity__plus pointer"><span>+</span></a>
+                          <a  class="quantity__plus pointer" onclick="addQty()"><span>+</span></a>
                         </div>
                         
                       </div>
@@ -644,7 +644,22 @@ function showRe(){
 function showAdditem(){
 
 }
-
+function addQty(){
+   
+    const input = $('.quantity__input');
+    var value = input.val();
+                value++;
+                input.val(value);
+}
+function subQty(){
+   
+    const input = $('.quantity__input');
+    var value = input.val();
+                if (value > 1) {
+                value--;
+                }
+                input.val(value);
+}
 
     $(document).ready(function(){
 
@@ -665,6 +680,7 @@ function showAdditem(){
             });
             
             plus.click(function(e) {
+                
                 e.preventDefault();
                 var value = input.val();
                 value++;
