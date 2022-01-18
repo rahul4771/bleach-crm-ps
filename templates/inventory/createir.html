@@ -107,6 +107,7 @@
                             <div class="d-flex">
                         <div class="inv-input-container inv-border h-30 w-100">
                             <input id="requester_id" autocomplete="off"  type="text"  name="requested_by" style="border: none !important; width: 90%;" class="inv-in"   required v-model="search_item" @input="openOptions()" value="{{request_order.requested_by.name|default_if_none:''}}">
+                           
                         </div>
                         <div class="conf-btn" onclick="set_params_go()" v-if="conf_btn">
                             <i class="fas fa-check"></i>
@@ -466,7 +467,8 @@
         selected_product:{},
         units:[],
         selected_unit:'',
-        item_qty:1
+        item_qty:1,
+        req_id:''
     },
     mounted(){
         this.url = api;
@@ -474,10 +476,12 @@
     },
     methods:{
         getUnits(){
+           this.req_id=$('#requester_id').val()
+           console.log("req id is"+this.req_id)
             console.log("called get units")
             axios.get(this.url+'/api/item_units/?product_id='+this.selected_product.id).then(response=>{
                this.units=response.data.item_units
-             
+                this.search_item=this.req_id
             })
         },
        getUsers(){
@@ -850,9 +854,11 @@ function subQty(){
     
     function set_params_go(args)
     {
+        
     var url='{% url 'bleach-inventory:inventory-createinventoryrequest' %}';
     var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),requester_id:$('#requester_id').val(),purpose:$('#purpose_id').val()
     };
+    
     for(key in args) 
         params[key]=args[key];
     var query='';
