@@ -2454,6 +2454,8 @@ class InventoryCreateInventoryRequest(View):
 				request_order.purpose  = purpose
 
 			request_order.is_order_completed = True
+			if request.user.user_type == 'INVENTORYADMIN': 
+				request_order.is_admin_approved = True
 			request_order.save()
 			
 			messages.success(request,"Inventory Request Order Completed successfully!")
@@ -2556,6 +2558,8 @@ class InventoryEditRequestOrder(IsInventoryAdminUser,View):
 					request_order.purpose  = purpose
 				
 				request_order.is_order_completed = True
+				if request.user.user_type == 'INVENTORYADMIN': 
+					request_order.is_admin_approved = True
 				request_order.save()
 				
 				messages.success(request,"Inventory Request Order Completed successfully!")
