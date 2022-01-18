@@ -2309,7 +2309,7 @@ class InventoryRequestOrder(IsInventoryAdminUser,View):
 		search = request.GET.get('search')
 
 		if search:
-			request_orders = RequestOrder.objects.filter(is_order_completed=True).filter(request_order_id__icontains = search).annotate(total_added_units=Sum('items_request_order__item_count'))
+			request_orders = RequestOrder.objects.filter(is_order_completed=True).filter(Q( Q(request_order_id__icontains = search) | Q(requested_by__name__icontains = search) )).annotate(total_added_units=Sum('items_request_order__item_count'))
 		else:
 			request_orders = RequestOrder.objects.filter(is_order_completed=True).annotate(total_added_units=Sum('items_request_order__item_count'))
 		
@@ -2472,28 +2472,45 @@ class InventoryEditRequestOrder(IsInventoryAdminUser,View):
 		return render(request,'inventory/editir.html',{'request_users':request_users,'request_order':request_order,'inventory_items':inventory_items,'request_order_items':request_order_items})
 
 	def post(self,request,request_order_id):
-			action = request.POST.get('action')
+			action        = request.POST.get('action')
+			
+			#Rejected Order Recover
+			request_order = RequestOrder.objects.get(id=request_order_id)
+			request_order.is_rejected   = False
+			request_order.rejected_by   = None
+			request_order.rejected_date = None
+			request_order.save()
 
-			if action == 'add_item':			
+			if action == 'add_item':
 				request_order_id = request.POST.get('request_order_id')
 				inventory_item   = request.POST.get('item')
-				quantity         = request.POST.get('item_count')
+				add_type         = request.POST.get('add_type')
 
-				inventory_item   =  InventoryItem.objects.get(id=inventory_item)
-
-				#add inventory item
-				RequestOrderItems.objects.create(request_order_id=request_order_id,product_id=inventory_item,item_count=quantity)
+				if add_type == 'quantity':
+					quantity             = float(request.POST.get('item_count'))
+					request_order_item   = RequestOrderItems.objects.create(request_order_id=request_order_id,product_id=inventory_item,item_count=quantity)
+				elif add_type == 'unit':
+					quantity             = 1
+					unit_id              = request.POST.get('unit_id')
+					request_order_item   = RequestOrderItems.objects.create(request_order_id=request_order_id,product_id=inventory_item,product_unit_id=unit_id,item_count=quantity)
 
 				messages.success(request,"Item Added successfully!")
 
 			if action == 'edit_item':
-				request_item_id            = request.POST.get('request_item_id')			
-				product                    = request.POST.get('item')			
-				item_count                 = request.POST.get('item_count')
+				request_item_id         = request.POST.get('request_item_id')			
+				product                 = request.POST.get('item')	
+				add_type                = request.POST.get('add_type')
+				request_item            = RequestOrderItems.objects.get(id=request_item_id)
 
-				request_item               = RequestOrderItems.objects.get(id=request_item_id)
-				request_item.product_id    = product
-				request_item.item_count    = item_count
+				if add_type == 'quantity':
+					item_count                   = request.POST.get('item_count')
+					request_item.product_id      = product
+					request_item.item_count      = item_count
+				elif add_type == 'unit':
+					unit_id                      = request.POST.get('unit_id')
+					request_item.product_id      = product
+					request_item.product_unit_id = unit_id
+					
 				request_item.save()
 				
 				messages.success(request,"Item Updated successfully!")
@@ -2539,13 +2556,23 @@ class RequestOrderApproval(IsInventoryAdmin,View):
 
 		if request_order_items:
 			for request_order_item in request_order_items:
-				reminign_items = float(request_order_item.item_count)-float(request_order_item.product.total_quantity)
-				if reminign_items < 0:
-					request_order_item.status = 'Out Of Stock'
-				elif reminign_items <= float(request_order_item.product.reserve_count) and reminign_items >= 0:
-					request_order_item.status = 'About to Finish'
-				else:
-					request_order_item.status = 'Available' 
+				if request_order_item.product.item_add_type == 'quantity':
+					reminign_items = float(request_order_item.item_count)-float(request_order_item.product.total_quantity)
+					if reminign_items < 0:
+						request_order_item.status = 'Out Of Stock'
+						is_all_items_available       = False
+					elif reminign_items <= float(request_order_item.product.reserve_count) and reminign_items >= 0:
+						request_order_item.status = 'About to Finish'
+					else:
+						request_order_item.status = 'Available'
+				
+				elif request_order_item.product.item_add_type == 'unit':
+					reminign_items = float(request_order_item.item_count)-float(request_order_item.product.total_quantity)
+					if	request_order_item.product_unit.status == 'available' and reminign_items > 0:
+						request_order_item.status = 'Available'
+					else:
+						request_order_item.status = 'Not Available'
+						is_all_items_available       = False
 
 		return render(request,"inventory/ro_admin_approval.html",{"request_order":request_order,"request_order_items":request_order_items})
 
@@ -2558,39 +2585,67 @@ class RequestOrderItemsPage(IsInventoryAdminUser,View):
 		is_all_items_available = True
 		if request_order_items:
 			for request_order_item in request_order_items:
-				reminign_items = float(request_order_item.item_count)-float(request_order_item.product.total_quantity)
-				if reminign_items < 0:
-					request_order_item.status = 'Out Of Stock'
-					is_all_items_available       = False
-				elif reminign_items <= float(request_order_item.product.reserve_count) and reminign_items >= 0:
-					request_order_item.status = 'About to Finish'
-				else:
-					request_order_item.status = 'Available'
+				if request_order_item.product.item_add_type == 'quantity':
+					reminign_items = float(request_order_item.item_count)-float(request_order_item.product.total_quantity)
+					if reminign_items < 0:
+						request_order_item.status = 'Out Of Stock'
+						is_all_items_available       = False
+					elif reminign_items <= float(request_order_item.product.reserve_count) and reminign_items >= 0:
+						request_order_item.status = 'About to Finish'
+					else:
+						request_order_item.status = 'Available'
+				
+				elif request_order_item.product.item_add_type == 'unit':
+					reminign_items = float(request_order_item.item_count)-float(request_order_item.product.total_quantity)
+					if	request_order_item.product_unit.status == 'available' and reminign_items > 0:
+						request_order_item.status = 'Available'
+					else:
+						request_order_item.status = 'Not Available'
+						is_all_items_available       = False
+						
 				
 		return render(request,"inventory/requestorderitems.html",{"request_order":request_order,"request_order_items":request_order_items,"is_all_items_available":is_all_items_available})
 
 	def post(self,request,request_order_id):
 		request_order       = RequestOrder.objects.get(id=request_order_id)
-		request_order_items = RequestOrderItems.objects.select_related('product').filter(request_order=request_order)
-		
+		request_order_items = RequestOrderItems.objects.select_related('product').filter(request_order=request_order)              
+		action              = request.POST.get('action')
 		if action == 'stock_out':
 			#item availability check
 			is_all_items_available = True
 			if request_order_items:
 				for request_order_item in request_order_items:
-					reminign_items = float(request_order_item.item_count)-float(request_order_item.product.total_quantity)
-					if reminign_items < 0:
-						messages.error(request,"Some Items are not Available")
-						return redirect('bleach-inventory:inventory-requestorderitems',request_order_id)
+					if request_order_item.product.item_add_type == 'quantity':
+						reminign_items = float(request_order_item.item_count)-float(request_order_item.product.total_quantity)
+						if reminign_items < 0:
+							request_order_item.status    = 'Out Of Stock'
+							is_all_items_available       = False
+
+							messages.error(request,"Some Items are not Available")
+							return redirect('bleach-inventory:inventory-requestorderitems',request_order_id)
+				
+					elif request_order_item.product.item_add_type == 'unit':
+						reminign_items = float(request_order_item.item_count)-float(request_order_item.product.total_quantity)
+						if not (request_order_item.product_unit.status == 'available' and reminign_items > 0):
+							request_order_item.status    = 'Not Available'
+							is_all_items_available       = False
+						
+							messages.error(request,"Some Items are not Available")
+							return redirect('bleach-inventory:inventory-requestorderitems',request_order_id)
 			
 			#save delivery details
 			if is_all_items_available == True:
 				if request_order_items:
 					for request_order_item in request_order_items:
-						request_order_item.product.total_quantity -= float(request_order_item.item_count)
+						request_order_item.product.total_quantity = float(request_order_item.product.total_quantity)-float(request_order_item.item_count)
 						request_order_item.product.save()
 						request_order_item.is_received             = True
 						request_order_item.save()
+
+						#update unit item status
+						if request_order_item.product_unit:
+							request_order_item.product_unit.status = 'unavailable'
+							request_order_item.product_unit.save()
 
 				request_order.is_received  = True
 				request_order.received_by  = request.user
