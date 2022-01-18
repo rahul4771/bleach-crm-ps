@@ -2377,8 +2377,16 @@ class InventoryCreateInventoryRequest(View):
 				quantity         = request.POST.get('item_count')
 				RequestOrderItems.objects.create(request_order_id=request_order_id,product_id=inventory_item,item_count=quantity)
 			elif add_type == 'unit':
+				quantity         = 1
 				unit_id          = request.POST.get('unit_id')
-				RequestOrderItems.objects.create(request_order_id=request_order_id,product_id=inventory_item,product_unit_id=unit_id,item_count=1)
+				RequestOrderItems.objects.create(request_order_id=request_order_id,product_id=inventory_item,product_unit_id=unit_id,item_count=quantity)
+
+			#for asset add accessories
+			if inventory_item.item_type == 'ASSETS':
+				accessories = InventoryAccessory.objects.filter(inventory_item=inventory_item)
+				for accessory in accessories:		
+					accessory_quantity = quantity*accessory.count
+					RequestOrderItems.objects.create(request_order_id=request_order_id,product_id=accessory.inventory_item,item_count=accessory_quantity)
 
 			messages.success(request,"Item Added successfully!")
 
@@ -2470,12 +2478,6 @@ class InventoryEditRequestOrder(IsInventoryAdminUser,View):
 				quantity         = request.POST.get('item_count')
 
 				inventory_item   =  InventoryItem.objects.get(id=inventory_item)
-				#for asset add accessories
-				if inventory_item.item_type == 'ASSETS':
-					accessories = InventoryAccessory.objects.filter(inventory_item=inventory_item)
-					for accessory in accessories:		
-						accessory_quantity = quantity*accessory.count
-						RequestOrderItems.objects.create(request_order_id=request_order_id,product_id=accessory.inventory_item,item_count=accessory_quantity)
 
 				#add inventory item
 				RequestOrderItems.objects.create(request_order_id=request_order_id,product_id=inventory_item,item_count=quantity)
