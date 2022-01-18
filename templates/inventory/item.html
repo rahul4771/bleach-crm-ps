@@ -880,7 +880,7 @@
                     <div class="col-md-12 ">
                         <div class="model-input-name required-field">Unit</div>
 
-                        <select name="return_unit" required>
+                        <select name="return_unit" class="minimal av-font " required>
                             <option value="">--Select Unit</option>
                             {% for unit in unavailable_units %}
                                 <option value="{{unit.id}}">{{unit.unit_code}}</option>
