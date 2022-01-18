@@ -735,7 +735,7 @@ class InventoryItems(IsInventoryAdminUser,View):
 			purchase_date = request.POST.get('purchase_date')
 			print(purchase_date,"pd")
 			
-			quantity = request.POST.get('quantity')
+			quantity = request.POST.get('inventory_item_quantity')
 
 			store = Store.objects.get(id=int(store_id))
 
@@ -755,27 +755,37 @@ class InventoryItems(IsInventoryAdminUser,View):
 			messages.success(request,"Quantity Added Successfully !")
 
 		if action == 'return_item':
-			externaluser = ExternalCustomer.objects.get( id=int(request.POST.get('external_user')) ) 
+			item = InventoryItem.objects.get(id=item_id)
+
+			externaluser = ExternalCustomer.objects.get( id=int(request.POST.get('externaluser')) ) 
 
 			if item.item_add_type == 'unit':
-				unit_id = request.POST.get('unit_id')
+				unit_id = request.POST.get('return_unit')
 				itemunit = ItemUnit.objects.get(id=int(unit_id))
 				itemunit.status = 'available'
 				itemunit.save()
+
+				messages.success(request,"Item received !")
 			else:
 				quantity = request.POST.get('return_quantity')
 
 				request_order_item = RequestOrderItems.objects.filter(request_order__requested_by=externaluser,product=item).last()
 
-				ItemHistory.objects.create(
-					item = item,
-					item_action = 'ITEM RETURN',
-					item_remark = request_order_item.request_order.request_order_id,
-					quantity = quantity
-				)
+				if request_order_item:
+					ItemHistory.objects.create(
+						item = item,
+						item_action = 'ITEM RETURN',
+						item_remark = request_order_item.request_order.request_order_id,
+						quantity = quantity,
+						added_by = request.user
+					)
 
-			messages.success(request,"Item received !")
+					item.total_quantity = float(item.total_quantity) + float(quantity)
+					item.save()
 
+					messages.success(request,"Item received !")
+				else:
+					messages.error(request,"No Returns !")
 
 		if action == "edit_unit":
 			unit_id = request.POST.get('edit_unit_id')
