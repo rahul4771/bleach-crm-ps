@@ -37,7 +37,7 @@
                     <div class="row">
                         <div class="col-md-12 text-center">
                             <form method="POST" action="" >{% csrf_token %}
-                            <input type="hidden" name="action" value="delete_item" />
+                            <input type="hidden" name="action" value="stock_out" />
                             <input type="hidden" name="item_id" id="id_item" />
                             <div class="cancel-model-content">
                                 <button class="sent-button" type="submit" >Stock Out</button>
@@ -80,11 +80,14 @@
                                 <th data-hide="phone,tablet"  style="width: %; text-align: center;">
                                     Product Name
                                 </th>
+                                <th data-hide="phone,tablet"  style="width: %; text-align: center;">
+                                    Category
+                                </th>
                                 <th data-hide="phone,tablet"  style="width: %;" class="text-left">
                                     Product Type
                                 </th>
-                                <th  data-hide="phone,tablet"  style="width: %;" class="text-left">
-                                    Number of units
+                                <th  data-hide="phone,tablet"  style="width: %; text-align: center;">
+                                    Quantity/Serial No
                                 </th>
                                
                                 <th>
@@ -105,10 +108,13 @@
                               {{item.product.name}}
                             </td>
                             <td class="text-center">
-                                {{item.product.item_type}}
-                              </td>
+                                {{item.product.item_category.name}}
+                            </td>
                             <td class="text-left">
-                              {{item.item_count}}
+                                {{item.product.item_type}}
+                            </td>
+                            <td class="text-center">
+                                {% if item.product.item_add_type == 'quantity' %}{{item.item_count}} {{item.product.measuring_unit}}{% elif item.product.item_add_type == 'unit' %}{{item.product_unit.unit_serial_number}}{% endif %}
                               </td>                          
                             <td>
                                 {% if item.status   == 'Out Of Stock' %}
@@ -117,6 +123,8 @@
                                 <span class="inv-dot c-active ml-5"></span>Available
                                 {% elif item.status == 'About to Finish' %}
                                 <span class="inv-dot c-about-finish ml-5"></span>About to Finish
+                                {% elif item.status   == 'Not Available' %}
+                                <span class="inv-dot c-out-of-order ml-5"></span>Not Available
                                 {% endif %}
                             </td>
                         </tr>
@@ -126,7 +134,7 @@
                      </tbody>
     
                     </table>
-                    {% if is_all_items_available %}
+                    {% if is_all_items_available and request_order.is_admin_approved and not request_order.is_received %}
                     <div class="mt-20 text-center">
                         <button class="inv-plan-btn" onclick="openNavAddStore('add')" data-toggle="modal" data-target="#stockoutModal">  Stock Out</button>
 

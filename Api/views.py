@@ -4163,7 +4163,7 @@ class ItemUnitsProduct(APIView):
 		item_units_array = []
 		item_units       = ItemUnit.objects.filter(item__id=product_id,status='available')
 		for item in item_units:
-			item_units_array.append({'id':item.id,'serial_number':item.unit_serial_number})
+			item_units_array.append({'id':item.id,'unit_code':item.unit_serial_number})
 		
 		response_dict['item_units'] = item_units_array
 		response_dict['success']    = True

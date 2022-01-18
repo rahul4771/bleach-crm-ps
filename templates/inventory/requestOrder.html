@@ -25,10 +25,12 @@
                             <input type="text" id="search-bar" placeholder="Search" class="inv-input w-250" onchange="set_params_go();" name="attributes" value="{{search_query|default_if_none:''}}">
                         </div>                    
                     </div>
-                    
                     <div class="right-pos">
-                        <a href="/bleach-inventory/requestorder/"><button class="inv-blue-btn" onclick="showDrawer('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Create IR</button></a>
+                        <div onclick="window.location.href='/bleach-inventory/createir/'"><button class="inv-blue-btn" onclick="showDrawer('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Create IR</button></div>
                     </div>
+                    <!-- <div class="right-pos">
+                        <a href="/bleach-inventory/requestorder/"><button class="inv-blue-btn" onclick="showDrawer('add')" > <i class="fa fa-plus mr-10" aria-hidden="true"></i>Create IR</button></a>
+                    </div> -->
                     </div>
 
                 <div class="mt-20">
@@ -172,15 +174,8 @@
                         </button></a>
                         <a href="/bleach-inventory/requestorderpage/{{order.id}}/"><button class="inv-plan-img-btn"> <img class=""
                             src="{% static 'files/inventory/invoice.png' %}" alt=""></button></a>
-                </button></a>
-                {% if request.user.user_type == 'INVENTORYADMIN' %}                
-                <a href="/bleach-inventory/editro/{{order.id}}"><button class="inv-plan-img-btn" > <img src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button></a>
-                <button class="inv-plan-img-btn delete-order" data-id="{{order.id}}"  data-toggle="modal" data-target="#deleteModel"> <img src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-                {% else %}
-                <button class="inv-plan-img-btn2-disabled" > <img class="btn-img2" src="{% static 'files/inventory/icons/edit.png' %}"  alt=""> </button>
-                <button class="inv-plan-img-btn2-disabled" > <img class="btn-img2" src="{% static 'files/inventory/icons/delete.png' %}"  alt=""> </button>
-                {% endif %}
-                            </td>
+                        </button></a>
+                        </td>
                         </tr>
                         {% endif %}
                         {% endfor %}
@@ -292,7 +287,7 @@ function selectTab(d){
 
     function set_params_go(args)
     {
-    var url='{% url 'bleach-inventory:inventory-purchaseorder' %}';
+    var url='{% url 'bleach-inventory:inventory-requestorder' %}';
     var params={search:$('#search-bar').val(),no_of_entries:$('#no_of_entries').val(),
     };
     for(key in args) 
