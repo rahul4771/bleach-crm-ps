@@ -194,7 +194,7 @@
                                         Category
                                     </th>
                                     <th data-hide="phone,tablet" style="text-align: center;">
-                                        Quantity/Serial No
+                                        Quantity
                                     </th>
                                     <th data-hide="phone,tablet" style="text-align: center;">
                                         Action
@@ -204,11 +204,11 @@
                             <tbody id="item_table">
                                 {% for item in request_order_items %}
                                 <tr data-itemid="{{item.product.id}}">
-                                    <td>{{item.product.item_code}}</td>
+                                    <td>{% if item.product.item_add_type == 'quantity' %}{{item.product.item_code}}{% elif item.product.item_add_type == 'unit' %}{{item.product_unit.unit_code}}{% endif %}</td>
                                     <td>{{item.product.name}}</td>
                                     <td style="text-align: center;">{{item.product.item_type}}</td>
                                     <td style="text-align: center;">{{item.product.item_category.name}}</td>
-                                    <td style="text-align: center;">{% if item.product.item_add_type == 'quantity' %}{{item.item_count}} {{item.product.measuring_unit}}{% elif item.product.item_add_type == 'unit' %}{{item.product_unit.unit_serial_number}}{% endif %}</td>
+                                    <td style="text-align: center;">{{item.item_count}} {{item.product.measuring_unit}}</td>
                                     <td style="text-align: center;"> 
                                         
                                                 <div class="btn-group" id="actionDropdown">

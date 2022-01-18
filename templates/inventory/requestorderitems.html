@@ -87,7 +87,7 @@
                                     Product Type
                                 </th>
                                 <th  data-hide="phone,tablet"  style="width: %; text-align: center;">
-                                    Quantity/Serial No
+                                    Quantity
                                 </th>
                                
                                 <th>
@@ -102,7 +102,7 @@
                         <tr>
                             
                             <td>
-                                {{item.product.item_code}}
+                            {% if item.product.item_add_type == 'quantity' %}{{item.product.item_code}}{% elif item.product.item_add_type == 'unit' %}{{item.product_unit.unit_code}}{% endif %}
                             </td>
                             <td class="text-center">
                               {{item.product.name}}
@@ -114,7 +114,7 @@
                                 {{item.product.item_type}}
                             </td>
                             <td class="text-center">
-                                {% if item.product.item_add_type == 'quantity' %}{{item.item_count}} {{item.product.measuring_unit}}{% elif item.product.item_add_type == 'unit' %}{{item.product_unit.unit_serial_number}}{% endif %}
+                                {{item.item_count}} {{item.product.measuring_unit}}
                               </td>                          
                             <td>
                                 {% if item.status   == 'Out Of Stock' %}
