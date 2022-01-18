@@ -312,7 +312,7 @@
                         
                       </div>
                 </div>
-                <div  class="col-md-12"  v-if="selected_product.item_add_type=='unit'">
+                <div  class="col-md-12" v-show="selected_product.item_add_type=='unit'">
                     <div class="model-input-name">Unit</div>
                             
                   
@@ -323,16 +323,19 @@
                     </span>
                     <input v-if="selected_unit" style="display: none;" name="unit" :value="selected_unit.id"/>
                     <ul class="drop">
+                        
                         <li v-for="(item,index) in units" v-bind:key="index" @click="dropSelectUnit(item)" ><a>
                             <% item.serial_number %>
-                        </a></li>
+                        </a></li> 
                         <!-- <li onclick="dropSelectPurpose('INVENTORY PREPARATION')" ><a>INVENTORY PREPARATION</a></li>
-                        <li onclick="dropSelectPurpose('ADMINISTRATIVE')" ><a>ADMINISTRATIVE</a></li> -->
+                        <li onclick="dropSelectPurpose('ADMINISTRATIVE')" ><a>ADMINISTRATIVE</a></li>-->
                     </ul>
                    
                     
                     </div>
+                    
                 </div>
+                
 
             </div>
             
@@ -462,7 +465,7 @@
         conf_btn:false,
         selected_product:{},
         units:[],
-        selected_unit:''
+        selected_unit:{}
     },
     mounted(){
         this.url = api;
@@ -566,6 +569,7 @@ $(function () {
     var dd1 = new DropDown($('#noble-gases'));
     var dd2 = new DropDown($('#noble-gases2'));
     var dd3 = new DropDown($('#noble-gases3'));
+    var dd4 = new DropDown($('#noble-gases4'));
     $(document).click(function () {
         // close menu on document click
         $('.wrap-drop').removeClass('active');
