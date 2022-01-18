@@ -215,8 +215,8 @@
                                                       <i class="fa fa-chevron-down action-icon" aria-hidden="true" ></i>
                                                     </div>
                                                     <div class="dropdown-menu" id="dropdown-menu-orders">    
-                                                      <a class="d-flex dropdown-orders"  onclick="openNavAddStore('edit')" target="_blank" data-itemid="{{item.id}}" data-productid="{{item.product.id}}" data-productname="{{item.product.item}}" data-unitprice="{{item.unit_price}}" data-itemcount="{{item.item_count}}" data-totalprice="{{item.total_price}}"><img src="{% static 'files/inventory/pencil.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Edit Item</div></a>    
-                                                      <a class="d-flex dropdown-orders" data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}" target="_blank"><img src="{% static 'files/inventory/bin.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Delete Item</div></a>                                                                                                       
+                                                      <a class="d-flex dropdown-orders edit-item-btn"  onclick="openNavAddStore('edit')" target="_blank" data-itemid="{{item.id}}" data-productid="{{item.product.id}}" data-productname="{{item.product.item}}" data-unitprice="{{item.unit_price}}" data-itemcount="{{item.item_count}}" data-totalprice="{{item.total_price}}"><img src="{% static 'files/inventory/pencil.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Edit Item</div></a>    
+                                                      <a class="d-flex dropdown-orders delete-item-btn" data-toggle="modal" data-target="#deleteModel" data-itemid="{{item.id}}" target="_blank"><img src="{% static 'files/inventory/bin.png'%}" class="dropdown-icon2 pr-2"/> <div class="ml-2 dropdown-text">Delete Item</div></a>                                                                                                       
                                                     </div>
                                                   </div>
                                     </td>
@@ -306,31 +306,30 @@
                         
                         <div class="quantity">
                           <a class="quantity__minus pointer"><span>-</span></a>
-                          <input  type="text" class="quantity__input" value="1" id="id_item_count" name="item_count">
+                          <input  type="text" class="quantity__input" value="1" id="id_item_count" name="quantity">
                           <a  class="quantity__plus pointer"><span>+</span></a>
                         </div>
                         
                       </div>
                 </div>
-                <div  class="col-md-12">
+                <div  class="col-md-12"  v-if="selected_product.item_add_type=='unit'">
                     <div class="model-input-name">Unit</div>
                             
                   
                     <div class="wrap-drop" id="noble-gases3">
                     <input style="display:none" id="selected_unit_id" name="unit_id"/>
-                    <span>--Select Unit--</span>
+                    <span v-if="!selected_unit">--Select Unit--</span>
+                    <span v-else="selected_unit"><% selected_unit.serial_number %>
+                    </span>
+                    <input v-if="selected_unit" style="display: none;" name="unit" :value="selected_unit.id"/>
                     <ul class="drop">
                         <li v-for="(item,index) in units" v-bind:key="index" @click="dropSelectUnit(item)" ><a>
-                            <% item %>
+                            <% item.serial_number %>
                         </a></li>
                         <!-- <li onclick="dropSelectPurpose('INVENTORY PREPARATION')" ><a>INVENTORY PREPARATION</a></li>
                         <li onclick="dropSelectPurpose('ADMINISTRATIVE')" ><a>ADMINISTRATIVE</a></li> -->
                     </ul>
-                    <ul class="drop">
-                                
-                        <li class="drop-selected" ><a><%selected_unit%></a></li>
-                        
-                    </ul>
+                   
                     
                     </div>
                 </div>
@@ -346,7 +345,7 @@
             <input type="hidden" name="request_item_id" id="id_edit_item" />
             <button class="sent-button purchaseorder-form-btn" type="submit" >Submit</button>
             
-            <button data-dismiss="modal" onclick="closeNavAddStore()" class="view-button">Cancel</button>
+            <button data-dismiss="modal" onclick="closeNavAddStore()" class="cancel-button">Cancel</button>
         </div>
         
     </div>
@@ -473,8 +472,8 @@
         getUnits(){
             console.log("called get units")
             axios.get(this.url+'/api/item_units/?product_id='+this.selected_product.id).then(response=>{
-              //  this.units=response.data
-              this.units=['KG','L','G']
+               this.units=response.data.item_units
+             
             })
         },
        getUsers(){
