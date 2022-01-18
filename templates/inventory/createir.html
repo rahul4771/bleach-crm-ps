@@ -109,9 +109,7 @@
                             <input id="requester_id" autocomplete="off"  type="text"  name="requested_by" style="border: none !important; width: 90%;" class="inv-in"   required v-model="search_item" @input="openOptions()" value="{{request_order.requested_by.name|default_if_none:''}}">
                            
                         </div>
-                        <div class="conf-btn" onclick="set_params_go()" v-if="conf_btn">
-                            <i class="fas fa-check"></i>
-                        </div>
+                       
                     </div>
                         <div  class="row inv-result-box"  v-if="user_option && getSearchUser().length>0" style="height:auto;max-height:200px;">
                           <div v-for="(item,index) in getSearchUser()" v-bind:key="index" class="search-input-text" @click="selectItem(item)">
