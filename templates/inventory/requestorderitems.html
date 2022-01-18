@@ -80,11 +80,14 @@
                                 <th data-hide="phone,tablet"  style="width: %; text-align: center;">
                                     Product Name
                                 </th>
+                                <th data-hide="phone,tablet"  style="width: %; text-align: center;">
+                                    Category
+                                </th>
                                 <th data-hide="phone,tablet"  style="width: %;" class="text-left">
                                     Product Type
                                 </th>
-                                <th  data-hide="phone,tablet"  style="width: %;" class="text-left">
-                                    Number of units
+                                <th  data-hide="phone,tablet"  style="width: %; text-align: center;">
+                                    Quantity/Serial No
                                 </th>
                                
                                 <th>
@@ -105,10 +108,13 @@
                               {{item.product.name}}
                             </td>
                             <td class="text-center">
-                                {{item.product.item_type}}
-                              </td>
+                                {{item.product.item_category.name}}
+                            </td>
                             <td class="text-left">
-                              {{item.item_count}}
+                                {{item.product.item_type}}
+                            </td>
+                            <td class="text-center">
+                                {% if item.product.item_add_type == 'quantity' %}{{item.item_count}} {{item.product.measuring_unit}}{% elif item.product.item_add_type == 'unit' %}{{item.product_unit.unit_serial_number}}{% endif %}
                               </td>                          
                             <td>
                                 {% if item.status   == 'Out Of Stock' %}
@@ -126,7 +132,7 @@
                      </tbody>
     
                     </table>
-                    {% if is_all_items_available %}
+                    {% if is_all_items_available and request_order.is_approved %}
                     <div class="mt-20 text-center">
                         <button class="inv-plan-btn" onclick="openNavAddStore('add')" data-toggle="modal" data-target="#stockoutModal">  Stock Out</button>
 

@@ -208,7 +208,7 @@
                                     <td>{{item.product.name}}</td>
                                     <td style="text-align: center;">{{item.product.item_type}}</td>
                                     <td style="text-align: center;">{{item.product.item_category.name}}</td>
-                                    <td style="text-align: center;">{% if item.product.item_add_type == 'quantity' %}{{item.item_count}}{% elif item.product.item_add_type == 'unit' %}{{item.product_unit.unit_serial_number}}{% endif %}</td>
+                                    <td style="text-align: center;">{% if item.product.item_add_type == 'quantity' %}{{item.item_count}} {{item.product.measuring_unit}}{% elif item.product.item_add_type == 'unit' %}{{item.product_unit.unit_serial_number}}{% endif %}</td>
                                     <td style="text-align: center;"> 
                                         
                                                 <div class="btn-group" id="actionDropdown">

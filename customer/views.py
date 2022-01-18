@@ -23,7 +23,7 @@ from django.db.models.functions import Cast,TruncDate,ExtractMonth,ExtractYear,C
 from django.db.models import Prefetch
 from django.contrib import messages
 
-from bleachinventory.models import PurchaseOrder,PurchaseOrderItems,CheckOutItems
+from bleachinventory.models import PurchaseOrder,PurchaseOrderItems,CheckOutItems,RequestOrder,RequestOrderItems
 from user.models import UserProfile,Address,Governorate,Area,LeaveSchedule,ShiftSchedule
 from evaluator.models import Evaluation,EvaluationDetails,EvaluationBook,EvaluationMedia,EvaluationBookSection,EvaluationSectionKeynote,CleaningMethod,CleaningSection,ServiceType,AreaType,EvaluationSectionAddons
 from order.models import OrderScheduler,FollowUpScheduler,FeedBack,Order,Investigation,InvestigationMedia,FollowUp,Question,Promocode,CancellOrderAmountHistory
@@ -896,7 +896,7 @@ def purchaseorder_html_to_pdf_view(request,purchase_order_id):
 		return response
 	return response
 
-def requestorder_html_to_pdf_view(request,purchase_order_id):
+def requestorder_html_to_pdf_view(request,request_order_id):
 	request_order = RequestOrder.objects.prefetch_related(Prefetch('items_request_order',queryset=RequestOrderItems.objects.all(),to_attr='request_order_items')).get(id=request_order_id)
 
 	html_string = render_to_string('customer/downloads/requestorderpage.html',{"request_order":request_order})

@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.views import View
 from bleach_crm_ps.permissions import IsInventoryAdmin,IsInventoryAdminUser
-from bleachinventory.models import CheckOutItems,CheckOutItemUnits,ItemHistory,Category,Segment,Line,Attribute,AttributeValue,ItemAttributes,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,PurchaseOrder,PurchaseOrderItems,RequestOrder,RequestOrderItems,ExternalCustomer
+from bleachinventory.models import CheckOutItems,CheckOutItemUnits,ItemHistory,Category,Segment,Line,Attribute,AttributeValue,ItemAttributes,InventoryItem,ItemUnit,InventoryItemImages,Bundle,BundleItems, BundleItemUnits, Store,Supplier,SupplierItems,ServiceRecipe,ServiceRecipeIngredients,ServiceRecipeItems,PurchaseOrder,PurchaseOrderItems,RequestOrder,RequestOrderItems,ExternalCustomer,InventoryAccessory
 from user.models import UserProfile
 from django.contrib import messages
 import re
@@ -15,6 +15,8 @@ from bleachadmin.models import ServicePriceRange
 from evaluator.models import EvaluationBookSection,EvaluationSectionKeynote,EvaluationSectionAddons
 import functools
 import operator
+from django.utils import timezone
+
 # Create your views here.
 
 class InventoryHome(IsInventoryAdminUser,View):
@@ -2374,19 +2376,19 @@ class InventoryCreateInventoryRequest(View):
 			add_type         = request.POST.get('add_type')
 
 			if add_type == 'quantity':
-				quantity         = request.POST.get('item_count')
-				RequestOrderItems.objects.create(request_order_id=request_order_id,product_id=inventory_item,item_count=quantity)
+				quantity             = float(request.POST.get('item_count'))
+				request_order_item   = RequestOrderItems.objects.create(request_order_id=request_order_id,product_id=inventory_item,item_count=quantity)
 			elif add_type == 'unit':
-				quantity         = 1
-				unit_id          = request.POST.get('unit_id')
-				RequestOrderItems.objects.create(request_order_id=request_order_id,product_id=inventory_item,product_unit_id=unit_id,item_count=quantity)
+				quantity             = 1
+				unit_id              = request.POST.get('unit_id')
+				request_order_item   = RequestOrderItems.objects.create(request_order_id=request_order_id,product_id=inventory_item,product_unit_id=unit_id,item_count=quantity)
 
 			#for asset add accessories
-			if inventory_item.item_type == 'ASSETS':
-				accessories = InventoryAccessory.objects.filter(inventory_item=inventory_item)
+			if request_order_item.product.item_type == 'ASSETS':
+				accessories = InventoryAccessory.objects.filter(inventory_item=request_order_item.product)
 				for accessory in accessories:		
 					accessory_quantity = quantity*accessory.count
-					RequestOrderItems.objects.create(request_order_id=request_order_id,product_id=accessory.inventory_item,item_count=accessory_quantity)
+					RequestOrderItems.objects.create(request_order_id=request_order_id,product=accessory.inventory_accessory,item_count=accessory_quantity)
 
 			messages.success(request,"Item Added successfully!")
 
@@ -2516,7 +2518,8 @@ class InventoryEditRequestOrder(IsInventoryAdminUser,View):
 
 class RequestOrderApproval(IsInventoryAdmin,View):
 	def get(self,request,request_order_id):
-		request_order = RequestOrder.objects.prefetch_related(Prefetch('items_request_order',queryset=RequestOrderItems.objects.all(),to_attr='request_order_items')).get(id=request_order_id)
+		request_order       = RequestOrder.objects.get(id=request_order_id)
+		request_order_items = RequestOrderItems.objects.select_related('product').filter(request_order=request_order)
 		shipment_status = request.GET.get('shipment_status')
 		if shipment_status == 'approved':
 			request_order.is_admin_approved = True
@@ -2532,9 +2535,19 @@ class RequestOrderApproval(IsInventoryAdmin,View):
 			request_order.rejected_date= timezone.now().date()
 			request_order.save() 
 			messages.success(request,"Item Request Rejected successfully!")
-			return redirect('bleach-inventory:inventory-requestorder') 
+			return redirect('bleach-inventory:inventory-requestorder')
 
-		return render(request,"inventory/ro_admin_approval.html",{"request_order":request_order})
+		if request_order_items:
+			for request_order_item in request_order_items:
+				reminign_items = float(request_order_item.item_count)-float(request_order_item.product.total_quantity)
+				if reminign_items < 0:
+					request_order_item.status = 'Out Of Stock'
+				elif reminign_items <= float(request_order_item.product.reserve_count) and reminign_items >= 0:
+					request_order_item.status = 'About to Finish'
+				else:
+					request_order_item.status = 'Available' 
+
+		return render(request,"inventory/ro_admin_approval.html",{"request_order":request_order,"request_order_items":request_order_items})
 
 
 class RequestOrderItemsPage(IsInventoryAdminUser,View):
