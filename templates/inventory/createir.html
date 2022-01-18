@@ -306,7 +306,7 @@
                         
                         <div class="quantity">
                           <a class="quantity__minus pointer"  onclick="subQty()"><span>-</span></a>
-                          <input  type="text" class="quantity__input" value="1" id="id_item_count" name="item_count">
+                          <input  type="text" class="quantity__input" value="1" id="id_item_count" name="item_count" v-model="item_qty">
                           <a  class="quantity__plus pointer" onclick="addQty()"><span>+</span></a>
                         </div>
                         
@@ -465,7 +465,8 @@
         conf_btn:false,
         selected_product:{},
         units:[],
-        selected_unit:''
+        selected_unit:'',
+        item_qty:1
     },
     mounted(){
         this.url = api;
@@ -747,6 +748,18 @@ function subQty(){
                 id:String($(item_data).data('productid')),
                 item_add_type:$(item_data).data('item_add_type')
             }
+            if(app.selected_product.item_add_type=='quantity'){
+                app.item_qty=parseInt($(item_data).data('itemcount'))
+            }
+           else if(app.selected_product.item_add_type=='unit'){
+               app.getUnits()
+               app.selected_unit={
+                   serial_number:$(item_data).data('unit_serial_number'),
+                   id:$(item_data).data('unit_id')
+               }
+
+           }
+            // $('#id_item_count').val(parseInt($(item_data).data('itemcount')))
             $('#pro-name').val(app.selected_product.name)
             $('#id_search').append('<div class="col-md-12 inv-search-drop" id="id_product'+app.selected_product.id+'" style="padding:0px !important;" onclick="closeProductShow(this)" data-pro="'+app.selected_product.id+'" data-name="'+app.selected_product.name+'" data-addtype="'+app.selected_product.item_add_type+'"><div class="inv-search-result">'+app.selected_product.name+'</div></div>')
             $('#itemHead').text('Edit Item');
