@@ -271,9 +271,20 @@
                                      
                                      <br>
                                      <div class="inv-item-amount2">
-                                         {% if inventory_item.item_add_type == 'unit' %}{{inventory_item.unit_count}}{% else %}{{inventory_item.total_quantity|floatformat:3}}{% endif %} <span style="font-size: 16px;"> {% if inventory_item.item_add_type == 'unit' %}Unit{% else %}{{inventory_item.measuring_unit}}{% endif %} </span>                    
+                                         {% if inventory_item.item_add_type == 'unit' %}{{inventory_item.unit_count}}{% else %}{{inventory_item.total_quantity|floatformat:3}}{% endif %} <span style="font-size: 16px;" id="unit_data"> {% if inventory_item.item_add_type == 'unit' %}Unit{% else %}{{inventory_item.measuring_unit}}{% endif %} </span>                    
                                      </div>
+
                                  </div>
+
+                    <input type="hidden" name="item_id" value="{{inventory_item.id}}" id="item_id">
+                    <div id="unit_edit_data" style="display: none;">
+                    <div class="model-input-name ">Select Unit</div>
+                   
+                    <select  name="item_unit_data" id="unit_select" class="minimal av-font inv-hide" required="required" >
+                        <option value="">--Select Unit--</option><option value="1" selected="">option 1</option>
+                        <option value="2">Option 2</option>
+                    </select>
+                </div>
                                 </div>
                             </div>           
                          </div>
@@ -1687,6 +1698,7 @@ $(function () {
     var select_methddrp = new DropDown($('#select_methddrp'));
     var select_methddrp2 = new DropDown($('#select_methddrp2'));
     var select_methddrp1 = new DropDown($('#select_methddrp1'));
+    var select_methddrp3 = new DropDown($('#select_methddrp3'));
     {% for attribute in attributes %}
     var dd{{forloop.counter}} = new DropDown($('#noble-gases{{forloop.counter}}'));
     {% endfor %}
@@ -1924,6 +1936,9 @@ function editItemData(){
     document.getElementById('id_des_text').style.display = 'block';
     document.getElementById('id_res_val').style.display = 'none';
     document.getElementById('id_res_text').style.display = 'block';
+    document.getElementById('unit_data').style.display = 'none';
+    document.getElementById('unit_edit_data').style.display = 'block';
+    document.getElementById('unit_select').style.display = 'block';
 
     
 }
@@ -1953,6 +1968,10 @@ function doneEdit(){
         document.getElementById('id_des_text').style.display = 'none';
         document.getElementById('id_res_val').style.display = 'block';
         document.getElementById('id_res_text').style.display = 'none';
+        document.getElementById('unit_data').style.display = 'block';
+    document.getElementById('unit_edit_data').style.display = 'none';
+    document.getElementById('unit_select').style.display = 'none';
+
         document.getElementById("itemdetailsform").submit();
     }
     
